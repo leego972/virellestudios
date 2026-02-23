@@ -285,3 +285,11 @@
 
 ## Domain Setup
 - [x] Add DEPLOYMENT.md with Railway + GoDaddy DNS instructions for Virelle.life
+
+## Logo Integration
+- [x] Download user's logo from Dropbox
+- [x] Upload logo to S3 CDN
+- [x] Replace logo in sidebar/DashboardLayout
+- [x] Replace logo on login/landing page
+- [x] Update favicon
+- [x] Update logo in index.html (favicon + apple-touch-icon)

@@ -26,7 +26,6 @@ import {
   LayoutDashboard,
   Film,
   Users,
-  Clapperboard,
   LogOut,
   PanelLeft,
   Sun,
@@ -73,8 +72,8 @@ export default function DashboardLayout({
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
           <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center gap-2 mb-4">
-              <Clapperboard className="h-8 w-8 text-primary" />
+            <div className="flex flex-col items-center gap-3 mb-4">
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png" alt="Virelle Studios" className="h-24 w-24 rounded-lg" />
               <span className="text-2xl font-semibold tracking-tight">Virelle Studios</span>
             </div>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
@@ -176,7 +175,7 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed && (
                 <div className="flex items-center gap-2 min-w-0">
-                  <Clapperboard className="h-5 w-5 text-primary shrink-0" />
+                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png" alt="Virelle Studios" className="h-6 w-6 rounded shrink-0" />
                   <span className="font-semibold tracking-tight truncate text-sm">
                     Virelle Studios
                   </span>
@@ -278,7 +277,7 @@ function DashboardLayoutContent({
           <div className="flex border-b h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-9 w-9 rounded-lg" />
-              <Clapperboard className="h-4 w-4 text-primary" />
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png" alt="Virelle Studios" className="h-5 w-5 rounded" />
               <span className="text-sm font-medium">Virelle Studios</span>
             </div>
             {switchable && (
