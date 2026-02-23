@@ -274,7 +274,7 @@
 ## Rename to Virelle Studios
 - [x] Rename all occurrences of "VIBA Studios" to "Virelle Studios" in codebase
 - [x] Rename all occurrences of "VIBA" to "Virelle" in codebase
-- [ ] Rename GitHub repo from vibastudios to virellestudios
+- [x] Rename GitHub repo from vibastudios to virellestudios
 - [x] Update title in index.html and DashboardLayout
 
 ## Railway Deployment Config
@@ -293,3 +293,16 @@
 - [x] Replace logo on login/landing page
 - [x] Update favicon
 - [x] Update logo in index.html (favicon + apple-touch-icon)
+
+## GitHub Repo Rename
+- [x] Rename GitHub repo from vibastudios to virellestudios
+- [x] Update local git remote URL
+
+## Railway Deployment (Live)
+- [ ] Install Railway CLI and authenticate
+- [ ] Create Railway project
+- [ ] Add MySQL database
+- [ ] Deploy service from GitHub repo
+- [ ] Configure environment variables
+- [ ] Add virelle.life custom domain
+- [ ] Provide exact GoDaddy DNS settings
