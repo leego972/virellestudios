@@ -31,13 +31,13 @@ import {
   Sun,
   Moon,
   Clapperboard,
-  ShieldX,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { toast } from "sonner";
 
 const ALLOWED_EMAILS = ['leego972@gmail.com'];
 
@@ -64,9 +64,19 @@ export default function DashboardLayout({
   });
   const { loading, user, logout } = useAuth();
 
+  const isAllowed = !user || ALLOWED_EMAILS.includes(user.email?.toLowerCase() ?? '');
+
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
   }, [sidebarWidth]);
+
+  useEffect(() => {
+    if (user && !isAllowed) {
+      logout().then(() => {
+        toast.error('Access restricted. This application is invite-only.');
+      });
+    }
+  }, [user, isAllowed, logout]);
 
   if (loading) {
     return <DashboardLayoutSkeleton />;
@@ -99,29 +109,8 @@ export default function DashboardLayout({
     );
   }
 
-  // Access denied for non-whitelisted emails
-  if (!ALLOWED_EMAILS.includes(user.email?.toLowerCase() ?? '')) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
-          <div className="flex flex-col items-center gap-2">
-            <ShieldX className="h-16 w-16 text-destructive mb-2" />
-            <span className="text-2xl font-semibold tracking-tight">Access Denied</span>
-            <p className="text-sm text-muted-foreground text-center max-w-sm">
-              This application is currently invite-only. Your account ({user.email}) does not have access.
-            </p>
-          </div>
-          <Button
-            onClick={logout}
-            variant="outline"
-            size="lg"
-            className="w-full"
-          >
-            Sign out
-          </Button>
-        </div>
-      </div>
-    );
+  if (!isAllowed) {
+    return <DashboardLayoutSkeleton />;
   }
 
   return (

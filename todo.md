@@ -320,3 +320,7 @@
 - [x] Video preview/playback
 - [x] Download button for each movie
 - [x] Add My Movies to sidebar navigation
+
+## UX Fix: Access Denied Screen
+- [x] Remove confusing "Access Denied + Sign out" dead-end screen
+- [x] Non-whitelisted users should be auto-logged out and redirected to login with a toast message
