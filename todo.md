@@ -225,3 +225,20 @@
 - [x] Resolution/Ending description
 - [x] Target Audience selector (7 options)
 - [x] Story tab added to ProjectDetail with full StoryEditor component (editable, save-on-change)
+
+## Dialogue Editor
+- [x] Dialogues table in database (projectId, sceneId, characterId, characterName, line, emotion, direction, orderIndex)
+- [x] Backend CRUD for dialogues + AI dialogue suggestion endpoint
+- [x] Dialogue Editor page with character-based conversation view
+- [x] AI suggestions for natural speech patterns matching character personality
+- [x] Emotion and direction tags per line
+- [x] Scene-based dialogue organization
+- [x] Link to project detail Tools tab
+
+## Production Budget Estimator
+- [x] Budgets table in database (projectId, totalEstimate, breakdown JSON, generatedAt)
+- [x] Backend AI budget analysis endpoint (analyzes scenes, locations, effects)
+- [x] Budget Estimator page with category breakdown (cast, locations, VFX, props, crew, post-production)
+- [x] Visual budget distribution bar chart and expandable categories
+- [x] AI analysis summary with recommendations
+- [x] Link to project detail Tools tab

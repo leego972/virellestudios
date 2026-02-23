@@ -12,6 +12,8 @@ import {
   InsertLocation, locations,
   InsertMoodBoardItem, moodBoardItems,
   InsertSubtitle, subtitles,
+  InsertDialogue, dialogues,
+  InsertBudget, budgets,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -534,4 +536,86 @@ export async function deleteSubtitle(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(subtitles).where(eq(subtitles.id, id));
+}
+
+// ─── Dialogues ───
+export async function createDialogue(data: InsertDialogue) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(dialogues).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(dialogues).where(eq(dialogues.id, id)))[0];
+}
+
+export async function getProjectDialogues(projectId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(dialogues).where(eq(dialogues.projectId, projectId)).orderBy(asc(dialogues.orderIndex));
+}
+
+export async function getSceneDialogues(sceneId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(dialogues).where(eq(dialogues.sceneId, sceneId)).orderBy(asc(dialogues.orderIndex));
+}
+
+export async function getDialogueById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(dialogues).where(eq(dialogues.id, id)).limit(1);
+  return result[0];
+}
+
+export async function updateDialogue(id: number, data: Partial<InsertDialogue>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(dialogues).set(data).where(eq(dialogues.id, id));
+  return (await db.select().from(dialogues).where(eq(dialogues.id, id)))[0];
+}
+
+export async function deleteDialogue(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(dialogues).where(eq(dialogues.id, id));
+}
+
+export async function deleteProjectDialogues(projectId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(dialogues).where(eq(dialogues.projectId, projectId));
+}
+
+// ─── Budgets ───
+export async function createBudget(data: InsertBudget) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(budgets).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(budgets).where(eq(budgets.id, id)))[0];
+}
+
+export async function getProjectBudgets(projectId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(budgets).where(eq(budgets.projectId, projectId)).orderBy(desc(budgets.createdAt));
+}
+
+export async function getBudgetById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(budgets).where(eq(budgets.id, id)).limit(1);
+  return result[0];
+}
+
+export async function updateBudget(id: number, data: Partial<InsertBudget>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(budgets).set(data).where(eq(budgets.id, id));
+  return (await db.select().from(budgets).where(eq(budgets.id, id)))[0];
+}
+
+export async function deleteBudget(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(budgets).where(eq(budgets.id, id));
 }

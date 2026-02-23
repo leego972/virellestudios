@@ -246,3 +246,39 @@ export const subtitles = mysqlTable("subtitles", {
 
 export type Subtitle = typeof subtitles.$inferSelect;
 export type InsertSubtitle = typeof subtitles.$inferInsert;
+
+// Dialogue lines
+export const dialogues = mysqlTable("dialogues", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  sceneId: int("sceneId"),
+  userId: int("userId").notNull(),
+  characterId: int("characterId"),
+  characterName: varchar("characterName", { length: 255 }).notNull(),
+  line: text("line").notNull(),
+  emotion: varchar("emotion", { length: 128 }), // angry, sad, happy, whisper, sarcastic, etc.
+  direction: text("direction"), // parenthetical acting direction
+  orderIndex: int("orderIndex").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Dialogue = typeof dialogues.$inferSelect;
+export type InsertDialogue = typeof dialogues.$inferInsert;
+
+// Production budgets
+export const budgets = mysqlTable("budgets", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  totalEstimate: float("totalEstimate").default(0),
+  currency: varchar("currency", { length: 8 }).default("USD"),
+  breakdown: json("breakdown"), // { category: { label, estimate, items: [{ name, cost, notes }] } }
+  aiAnalysis: text("aiAnalysis"), // AI-generated budget analysis narrative
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Budget = typeof budgets.$inferSelect;
+export type InsertBudget = typeof budgets.$inferInsert;

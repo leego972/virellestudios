@@ -1,6 +1,4 @@
 # Build Notes
-- No TypeScript errors, dev server running
-- New pages added: LocationScout, MoodBoard, Subtitles
-- All routed in App.tsx as full-screen pages
-- ProjectDetail Tools tab has cards for all tools including new 3
-- Need to run tests and push to GitHub
+- No TypeScript errors, no LSP errors, dev server running
+- All features working: Dashboard, Projects, Characters, SceneEditor, ScriptWriter, Storyboard, Credits, ShotList, Continuity, ColorGrading, LocationScout, MoodBoard, Subtitles, DialogueEditor, BudgetEstimator
+- Need to add vitest tests for dialogue and budget features then push to GitHub

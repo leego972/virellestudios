@@ -20,6 +20,8 @@ import ColorGrading from "./pages/ColorGrading";
 import LocationScout from "./pages/LocationScout";
 import MoodBoard from "./pages/MoodBoard";
 import Subtitles from "./pages/Subtitles";
+import DialogueEditor from "./pages/DialogueEditor";
+import BudgetEstimator from "./pages/BudgetEstimator";
 
 function Router() {
   return (
@@ -34,6 +36,8 @@ function Router() {
       <Route path="/projects/:id/locations" component={LocationScout} />
       <Route path="/projects/:id/mood-board" component={MoodBoard} />
       <Route path="/projects/:id/subtitles" component={Subtitles} />
+      <Route path="/projects/:projectId/dialogue" component={DialogueEditor} />
+      <Route path="/projects/:projectId/budget" component={BudgetEstimator} />
       <Route>
         <DashboardLayout>
           <Switch>

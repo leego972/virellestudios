@@ -1400,6 +1400,322 @@ export const appRouter = router({
         });
       }),
   }),
+
+  // ─── Dialogues ───
+  dialogue: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number().optional() }))
+      .query(async ({ input }) => {
+        if (input.sceneId) return db.getSceneDialogues(input.sceneId);
+        return db.getProjectDialogues(input.projectId);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().optional(),
+        characterId: z.number().optional(),
+        characterName: z.string().min(1),
+        line: z.string().min(1),
+        emotion: z.string().optional(),
+        direction: z.string().optional(),
+        orderIndex: z.number().default(0),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createDialogue({ ...input, userId: ctx.user.id });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        characterName: z.string().optional(),
+        line: z.string().optional(),
+        emotion: z.string().optional(),
+        direction: z.string().optional(),
+        orderIndex: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        return db.updateDialogue(id, data);
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteDialogue(input.id);
+        return { success: true };
+      }),
+
+    aiSuggest: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().optional(),
+        characterName: z.string(),
+        characterDescription: z.string().optional(),
+        context: z.string().optional(), // previous dialogue lines for context
+        emotion: z.string().optional(),
+        direction: z.string().optional(), // e.g. "character is nervous"
+      }))
+      .mutation(async ({ input }) => {
+        const project = await db.getProjectById(input.projectId, 0).catch(() => null);
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `You are a Hollywood screenwriter specializing in natural, compelling dialogue. Generate dialogue lines for a character in a film.
+
+Rules:
+- Write dialogue that sounds natural and authentic to the character
+- Match the emotion and tone specified
+- Consider the scene context and previous dialogue
+- Each line should feel like it belongs in a professional Hollywood production
+- Return a JSON object with: { "lines": [{ "line": "...", "emotion": "...", "direction": "..." }] }
+- Generate 3 alternative dialogue options
+- Keep lines concise and impactful — avoid exposition dumps`,
+            },
+            {
+              role: "user",
+              content: `Film: ${project?.title || "Untitled"} (${project?.genre || "Drama"}, ${project?.rating || "PG-13"})
+Plot: ${project?.plotSummary || "Not specified"}
+Character: ${input.characterName}${input.characterDescription ? ` — ${input.characterDescription}` : ""}
+${input.context ? `Previous dialogue:\n${input.context}` : ""}
+${input.emotion ? `Emotion: ${input.emotion}` : ""}
+${input.direction ? `Direction: ${input.direction}` : ""}
+
+Generate 3 dialogue line options for this character.`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "dialogue_suggestions",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  lines: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        line: { type: "string" },
+                        emotion: { type: "string" },
+                        direction: { type: "string" },
+                      },
+                      required: ["line", "emotion", "direction"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["lines"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+        const parsed = JSON.parse(response.choices[0].message.content as string || "{}");
+        return parsed;
+      }),
+
+    aiGenerateScene: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number(),
+        sceneDescription: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const project = await db.getProjectById(input.projectId, 0).catch(() => null);
+        const scene = await db.getSceneById(input.sceneId);
+        const chars = await db.getProjectCharacters(input.projectId);
+        const charNames = chars.map(c => c.name).join(", ");
+
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `You are a Hollywood screenwriter. Generate a complete dialogue sequence for a scene.
+
+Rules:
+- Write natural, compelling dialogue for each character
+- Include emotion tags and parenthetical directions
+- Match the film's tone, genre, and rating
+- Create a complete scene with beginning, middle, and end
+- Return JSON: { "dialogues": [{ "characterName": "...", "line": "...", "emotion": "...", "direction": "..." }] }
+- Generate 5-15 dialogue lines depending on scene complexity`,
+            },
+            {
+              role: "user",
+              content: `Film: ${project?.title || "Untitled"} (${project?.genre || "Drama"}, ${project?.rating || "PG-13"})
+Plot: ${project?.plotSummary || ""}
+Scene: ${scene?.title || ""} — ${scene?.description || input.sceneDescription || ""}
+Time: ${scene?.timeOfDay || "afternoon"}, Weather: ${scene?.weather || "clear"}, Mood: ${scene?.mood || "neutral"}
+Available Characters: ${charNames || "Generic characters"}
+
+Generate the full dialogue for this scene.`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "scene_dialogue",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  dialogues: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        characterName: { type: "string" },
+                        line: { type: "string" },
+                        emotion: { type: "string" },
+                        direction: { type: "string" },
+                      },
+                      required: ["characterName", "line", "emotion", "direction"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["dialogues"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+        const parsed = JSON.parse(response.choices[0].message.content as string || "{}");
+        return parsed;
+      }),
+  }),
+
+  // ─── Budget Estimator ───
+  budget: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getProjectBudgets(input.projectId);
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return db.getBudgetById(input.id);
+      }),
+
+    generate: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new Error("Project not found");
+        const scenes = await db.getProjectScenes(input.projectId);
+        const chars = await db.getProjectCharacters(input.projectId);
+        const locations = await db.getProjectLocations(input.projectId);
+        const soundtracks = await db.getProjectSoundtracks(input.projectId);
+
+        const sceneDetails = scenes.map(s => `Scene "${s.title}": ${s.locationType || "studio"}, ${s.weather}, ${s.lighting}, vehicles: ${s.vehicleType || "none"}, ${s.duration}s`).join("\n");
+
+        const response = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `You are a Hollywood production budget analyst. Analyze the film project details and generate a realistic production budget estimate.
+
+Rules:
+- Provide realistic Hollywood-scale budget estimates
+- Break down into standard production categories
+- Consider scene complexity, locations, VFX needs, cast size, equipment
+- Include both above-the-line and below-the-line costs
+- Return JSON with this exact structure:
+{
+  "totalEstimate": number,
+  "currency": "USD",
+  "breakdown": {
+    "preProduction": { "label": "Pre-Production", "estimate": number, "items": [{ "name": "...", "cost": number, "notes": "..." }] },
+    "cast": { "label": "Cast & Talent", "estimate": number, "items": [...] },
+    "crew": { "label": "Crew & Labor", "estimate": number, "items": [...] },
+    "locations": { "label": "Locations & Sets", "estimate": number, "items": [...] },
+    "equipment": { "label": "Equipment & Technology", "estimate": number, "items": [...] },
+    "vfx": { "label": "Visual Effects & CGI", "estimate": number, "items": [...] },
+    "music": { "label": "Music & Sound", "estimate": number, "items": [...] },
+    "postProduction": { "label": "Post-Production", "estimate": number, "items": [...] },
+    "marketing": { "label": "Marketing & Distribution", "estimate": number, "items": [...] },
+    "contingency": { "label": "Contingency (10%)", "estimate": number, "items": [...] }
+  },
+  "analysis": "A 2-3 paragraph analysis of the budget..."
+}`,
+            },
+            {
+              role: "user",
+              content: `Film: ${project.title}
+Genre: ${project.genre || "Drama"}
+Rating: ${project.rating}
+Duration: ${project.duration || 90} minutes
+Plot: ${project.plotSummary || "Not specified"}
+Number of scenes: ${scenes.length}
+Scene details:\n${sceneDetails || "No scenes defined yet"}
+Number of characters: ${chars.length}
+Character names: ${chars.map(c => c.name).join(", ") || "None"}
+Locations: ${locations.map(l => `${l.name} (${l.locationType})`).join(", ") || "None specified"}
+Soundtracks: ${soundtracks.length} tracks
+Color Grading: ${project.colorGrading || "natural"}
+
+Generate a detailed production budget estimate.`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "budget_estimate",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  totalEstimate: { type: "number" },
+                  currency: { type: "string" },
+                  breakdown: {
+                    type: "object",
+                    properties: {
+                      preProduction: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      cast: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      crew: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      locations: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      equipment: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      vfx: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      music: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      postProduction: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      marketing: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                      contingency: { type: "object", properties: { label: { type: "string" }, estimate: { type: "number" }, items: { type: "array", items: { type: "object", properties: { name: { type: "string" }, cost: { type: "number" }, notes: { type: "string" } }, required: ["name", "cost", "notes"], additionalProperties: false } } }, required: ["label", "estimate", "items"], additionalProperties: false },
+                    },
+                    required: ["preProduction", "cast", "crew", "locations", "equipment", "vfx", "music", "postProduction", "marketing", "contingency"],
+                    additionalProperties: false,
+                  },
+                  analysis: { type: "string" },
+                },
+                required: ["totalEstimate", "currency", "breakdown", "analysis"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+
+        const parsed = JSON.parse(response.choices[0].message.content as string || "{}");
+        return db.createBudget({
+          projectId: input.projectId,
+          userId: ctx.user.id,
+          totalEstimate: parsed.totalEstimate,
+          currency: parsed.currency || "USD",
+          breakdown: parsed.breakdown,
+          aiAnalysis: parsed.analysis,
+        });
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteBudget(input.id);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

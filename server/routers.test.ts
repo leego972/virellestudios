@@ -675,3 +675,81 @@ describe("subtitle router", () => {
     ).rejects.toThrow();
   });
 });
+
+// ─── Dialogue Router Tests ───
+describe("dialogue router", () => {
+  it("requires authentication for dialogue.list", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.dialogue.list({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+  it("requires authentication for dialogue.create", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.dialogue.create({ projectId: 1, characterName: "John", line: "Hello world" })
+    ).rejects.toThrow();
+  });
+  it("validates required fields for dialogue.create", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.dialogue.create({ projectId: 1, characterName: "", line: "" })
+    ).rejects.toThrow();
+  });
+  it("requires authentication for dialogue.update", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.dialogue.update({ id: 1, line: "Updated line" })
+    ).rejects.toThrow();
+  });
+  it("requires authentication for dialogue.delete", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.dialogue.delete({ id: 1 })
+    ).rejects.toThrow();
+  });
+  it("requires authentication for dialogue.aiSuggest", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.dialogue.aiSuggest({ projectId: 1, characterName: "John", context: "A tense scene" })
+    ).rejects.toThrow();
+  });
+});
+
+// ─── Budget Router Tests ───
+describe("budget router", () => {
+  it("requires authentication for budget.list", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.budget.list({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+  it("requires authentication for budget.get", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.budget.get({ id: 1 })
+    ).rejects.toThrow();
+  });
+  it("requires authentication for budget.generate", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.budget.generate({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+  it("requires authentication for budget.delete", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.budget.delete({ id: 1 })
+    ).rejects.toThrow();
+  });
+});

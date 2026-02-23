@@ -56,6 +56,8 @@ import {
   MapPin,
   Languages,
   BookOpen,
+  MessageSquare,
+  DollarSign,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -1417,6 +1419,28 @@ export default function ProjectDetail() {
               <div>
                 <p className="text-sm font-medium">Subtitles</p>
                 <p className="text-xs text-muted-foreground">Multi-language subtitle management</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <MessageSquare className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Dialogue Editor</p>
+                <p className="text-xs text-muted-foreground">Write and refine character dialogue</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget`)}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <DollarSign className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Budget Estimator</p>
+                <p className="text-xs text-muted-foreground">AI production budget breakdown</p>
               </div>
             </CardContent>
           </Card>
