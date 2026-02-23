@@ -241,3 +241,77 @@ describe("upload router", () => {
     ).rejects.toThrow();
   });
 });
+
+describe("script router", () => {
+  it("requires authentication for script.listByProject", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.listByProject({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for script.get", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.get({ id: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for script.create", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.create({ projectId: 1, title: "Test Script" })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for script.update", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.update({ id: 1, title: "Updated" })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for script.delete", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.delete({ id: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for script.aiGenerate", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.aiGenerate({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for script.aiAssist", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.aiAssist({ scriptId: 1, action: "continue" })
+    ).rejects.toThrow();
+  });
+
+  it("validates script.aiAssist action enum", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.aiAssist({ scriptId: 1, action: "invalid" as any })
+    ).rejects.toThrow();
+  });
+
+  it("validates script.create input - title max length", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.script.create({ projectId: 1, title: "a".repeat(256) })
+    ).rejects.toThrow();
+  });
+});

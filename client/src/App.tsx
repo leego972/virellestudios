@@ -11,28 +11,38 @@ import ProjectDetail from "./pages/ProjectDetail";
 import NewProject from "./pages/NewProject";
 import Characters from "./pages/Characters";
 import SceneEditor from "./pages/SceneEditor";
+import ScriptWriter from "./pages/ScriptWriter";
 
 function Router() {
   return (
-    <DashboardLayout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/projects" component={Projects} />
-        <Route path="/projects/new" component={NewProject} />
-        <Route path="/projects/:id" component={ProjectDetail} />
-        <Route path="/projects/:id/scenes" component={SceneEditor} />
-        <Route path="/characters" component={Characters} />
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
-    </DashboardLayout>
+    <Switch>
+      {/* Script writer has its own full-screen layout */}
+      <Route path="/project/:projectId/script/:scriptId" component={ScriptWriter} />
+      <Route>
+        <DashboardLayout>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/projects" component={Projects} />
+            <Route path="/projects/new" component={NewProject} />
+            <Route path="/projects/:id" component={ProjectDetail} />
+            <Route path="/projects/:id/scenes" component={SceneEditor} />
+            <Route path="/characters" component={Characters} />
+            <Route path="/404" component={NotFound} />
+            <Route component={NotFound} />
+          </Switch>
+        </DashboardLayout>
+      </Route>
+    </Switch>
   );
 }
 
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider
+        defaultTheme="dark"
+        switchable
+      >
         <TooltipProvider>
           <Toaster />
           <Router />

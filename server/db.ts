@@ -6,6 +6,7 @@ import {
   InsertCharacter, characters,
   InsertScene, scenes,
   InsertGenerationJob, generationJobs,
+  InsertScript, scripts,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -206,4 +207,39 @@ export async function updateJob(id: number, data: Partial<InsertGenerationJob>) 
   if (!db) throw new Error("Database not available");
   await db.update(generationJobs).set(data).where(eq(generationJobs.id, id));
   return (await db.select().from(generationJobs).where(eq(generationJobs.id, id)))[0];
+}
+
+// ─── Scripts ───
+export async function createScript(data: InsertScript) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(scripts).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(scripts).where(eq(scripts.id, id)))[0];
+}
+
+export async function getProjectScripts(projectId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(scripts).where(eq(scripts.projectId, projectId)).orderBy(desc(scripts.updatedAt));
+}
+
+export async function getScriptById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(scripts).where(eq(scripts.id, id)).limit(1);
+  return result[0];
+}
+
+export async function updateScript(id: number, userId: number, data: Partial<InsertScript>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(scripts).set(data).where(and(eq(scripts.id, id), eq(scripts.userId, userId)));
+  return (await db.select().from(scripts).where(eq(scripts.id, id)))[0];
+}
+
+export async function deleteScript(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(scripts).where(and(eq(scripts.id, id), eq(scripts.userId, userId)));
 }

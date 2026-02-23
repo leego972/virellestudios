@@ -101,3 +101,22 @@
 - [x] Character form: name, age, gender, ethnicity, build, hair color, role type, full description, photo upload
 - [x] Project form: title, description, genre, rating, duration, plot summary, resolution, quality
 - [x] Scene form: all parameters with clear labels and helpful defaults
+
+## Script Writer Feature
+- [x] Scripts table in database (projectId, title, content, version, format metadata)
+- [x] Backend CRUD for scripts (create, read, update, delete, list by project)
+- [x] AI script generation endpoint (generate full script from plot/scenes)
+- [x] AI script assist endpoint (continue writing, rewrite selection, add dialogue)
+- [x] Script Writer page with industry-standard screenplay formatting
+- [x] Scene headings (INT./EXT., location, time of day)
+- [x] Action lines, character cues, dialogue blocks, parentheticals, transitions
+- [x] Auto-formatting as director types (smart detection of element types)
+- [x] AI-assisted writing (generate next scene, rewrite selection, suggest dialogue)
+- [x] Script export/download
+- [x] Integration with project detail page and navigation
+
+## Day/Night Mode
+- [x] Enable switchable theme in ThemeProvider
+- [x] Add light theme CSS variables with proper contrast
+- [x] Add theme toggle button in sidebar/header
+- [x] Ensure all pages look good in both light and dark modes

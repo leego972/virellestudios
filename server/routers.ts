@@ -530,6 +530,144 @@ export const appRouter = router({
         return db.updateJob(input.id, { status: "processing" });
       }),
   }),
+
+  // ─── Scripts ───
+  script: router({
+    listByProject: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getProjectScripts(input.projectId);
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return db.getScriptById(input.id);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        title: z.string().min(1).max(255).optional(),
+        content: z.string().optional(),
+        metadata: z.any().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createScript({ ...input, userId: ctx.user.id });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().min(1).max(255).optional(),
+        content: z.string().optional(),
+        pageCount: z.number().optional(),
+        metadata: z.any().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { id, ...data } = input;
+        return db.updateScript(id, ctx.user.id, data);
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.deleteScript(input.id, ctx.user.id);
+        return { success: true };
+      }),
+
+    // AI: Generate a full screenplay from project details
+    aiGenerate: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        instructions: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new Error("Project not found");
+
+        const scenes = await db.getProjectScenes(project.id);
+        const characters = await db.getProjectCharacters(project.id);
+
+        const charBlock = characters.map(c => {
+          const attrs = c.attributes as any;
+          return `${c.name.toUpperCase()} — ${c.description || ""} ${attrs?.age ? `Age: ${attrs.age}` : ""} ${attrs?.gender || ""} ${attrs?.role || ""}`;
+        }).join("\n");
+
+        const sceneBlock = scenes.map((s, i) =>
+          `Scene ${i + 1}: "${s.title || "Untitled"}" — ${s.description || ""} (${s.locationType || ""}, ${s.timeOfDay || ""}, ${s.mood || ""})`
+        ).join("\n");
+
+        const llmResult = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `You are a professional Hollywood screenwriter. Write a properly formatted movie screenplay following industry-standard format:\n\n- Scene headings: INT./EXT. LOCATION - TIME OF DAY (all caps)\n- Action lines: Present tense, vivid, concise descriptions\n- Character names: ALL CAPS when first introduced, then CAPS above dialogue\n- Dialogue: Centered under character name\n- Parentheticals: (in parentheses) for delivery direction\n- Transitions: CUT TO:, FADE IN:, FADE OUT., DISSOLVE TO: (right-aligned)\n\nWrite compelling, cinematic dialogue and vivid action descriptions. The script should feel like a real Hollywood production.`,
+            },
+            {
+              role: "user",
+              content: `Write a screenplay for:\n\nTitle: ${project.title}\nGenre: ${project.genre || "Drama"}\nRating: ${project.rating || "PG-13"}\nDuration: ${project.duration || 90} minutes\nPlot: ${project.plotSummary || project.description || "An untold story"}\n\nCharacters:\n${charBlock || "(No characters defined yet — create compelling original characters)"}\n\n${sceneBlock ? `Scene Outline:\n${sceneBlock}` : ""}\n\n${input.instructions ? `Additional directions: ${input.instructions}` : ""}\n\nWrite the complete screenplay with proper formatting. Include FADE IN: at the start and FADE OUT. at the end.`,
+            },
+          ],
+        });
+
+        const scriptContent = llmResult.choices[0]?.message?.content || "";
+        const pageEstimate = Math.max(1, Math.round((typeof scriptContent === "string" ? scriptContent : "").length / 3000));
+
+        const script = await db.createScript({
+          projectId: project.id,
+          userId: ctx.user.id,
+          title: `${project.title} — Screenplay`,
+          content: typeof scriptContent === "string" ? scriptContent : "",
+          pageCount: pageEstimate,
+          metadata: {
+            genre: project.genre,
+            rating: project.rating,
+            generatedBy: "ai",
+            instructions: input.instructions || null,
+          },
+        });
+
+        return script;
+      }),
+
+    // AI: Continue writing / assist with a section
+    aiAssist: protectedProcedure
+      .input(z.object({
+        scriptId: z.number(),
+        action: z.enum(["continue", "rewrite", "dialogue", "action-line", "transition"]),
+        selectedText: z.string().optional(),
+        instructions: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const script = await db.getScriptById(input.scriptId);
+        if (!script) throw new Error("Script not found");
+
+        const actionPrompts: Record<string, string> = {
+          continue: "Continue writing the screenplay from where it left off. Maintain the same tone, style, and formatting. Write the next 2-3 scenes.",
+          rewrite: `Rewrite the following section while maintaining proper screenplay format and improving the quality:\n\n${input.selectedText || ""}`,
+          dialogue: `Write compelling dialogue for this section. The dialogue should feel natural and cinematic:\n\n${input.selectedText || input.instructions || "Write a dialogue exchange between the main characters."}`,
+          "action-line": `Write vivid, cinematic action lines for this moment:\n\n${input.selectedText || input.instructions || "Describe the scene action."}`,
+          transition: `Suggest an appropriate scene transition for:\n\n${input.selectedText || input.instructions || "Moving to the next scene."}`,
+        };
+
+        const llmResult = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: "You are a professional Hollywood screenwriter. Write in proper industry-standard screenplay format. Be vivid, concise, and cinematic.",
+            },
+            {
+              role: "user",
+              content: `Current script context (last 2000 chars):\n${(script.content || "").slice(-2000)}\n\n${actionPrompts[input.action]}\n\n${input.instructions ? `Director notes: ${input.instructions}` : ""}`,
+            },
+          ],
+        });
+
+        const result = llmResult.choices[0]?.message?.content || "";
+        return { text: typeof result === "string" ? result : "" };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

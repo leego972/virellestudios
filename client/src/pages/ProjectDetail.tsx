@@ -37,6 +37,7 @@ import {
   Sparkles,
   X,
   User,
+  FileText,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback } from "react";
@@ -163,6 +164,10 @@ export default function ProjectDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          <Button size="sm" variant="outline" onClick={() => setLocation(`/project/${project.id}/script/new`)}>
+            <FileText className="h-4 w-4 mr-1" />
+            Script Writer
+          </Button>
           {project.mode === "manual" && (
             <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/scenes`)}>
               <Layers className="h-4 w-4 mr-1" />

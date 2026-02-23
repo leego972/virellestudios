@@ -104,3 +104,20 @@ export const generationJobs = mysqlTable("generationJobs", {
 
 export type GenerationJob = typeof generationJobs.$inferSelect;
 export type InsertGenerationJob = typeof generationJobs.$inferInsert;
+
+// Movie scripts
+export const scripts = mysqlTable("scripts", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 255 }).default("Untitled Script").notNull(),
+  content: text("content"), // The full script content in structured format
+  version: int("version").default(1).notNull(),
+  pageCount: int("pageCount").default(0),
+  metadata: json("metadata"), // { genre, logline, author, draftNumber, notes }
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Script = typeof scripts.$inferSelect;
+export type InsertScript = typeof scripts.$inferInsert;
