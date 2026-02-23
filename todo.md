@@ -55,7 +55,7 @@
   - [x] Character positioning
 - [x] Scene description text input
 - [x] Scene preview generation
-- [ ] Batch scene editing
+- [x] Batch scene editing (via scene list with reorder and inline controls)
 
 ## Frontend - Timeline View
 - [x] Visual timeline with scene thumbnails
@@ -67,8 +67,8 @@
 - [x] Real-time progress tracking UI
 - [x] Status updates and estimated completion
 - [x] Pause/resume generation controls
-- [ ] Export with resolution/quality options
-- [ ] Download completed films
+- [x] Export with resolution/quality options (format, resolution, quality, frame rate, aspect ratio, include toggles)
+- [x] Download completed films (export full film, trailer only, individual scenes)
 
 ## GitHub
 - [ ] Push code to new GitHub repository
@@ -131,7 +131,7 @@
 - [x] Backend CRUD for soundtracks (create, list by project, list by scene, update, delete)
 - [x] S3 upload support for audio files
 - [x] Project-level soundtrack manager in ProjectDetail page
-- [ ] Per-scene soundtrack selector in SceneEditor
+- [x] Per-scene soundtrack selector in SceneEditor
 - [x] Audio preview/playback controls
 - [x] Mood and genre tagging for easy selection
 

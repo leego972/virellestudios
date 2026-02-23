@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -43,6 +44,9 @@ import {
   Volume2,
   Trash2,
   Wand2,
+  Download,
+  Settings,
+  Monitor,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -319,6 +323,9 @@ export default function ProjectDetail() {
             <Music className="h-3 w-3 mr-1" />Soundtrack {soundtracks?.length ? `(${soundtracks.length})` : ""}
           </TabsTrigger>
           <TabsTrigger value="trailer" className="text-xs">Trailer</TabsTrigger>
+          <TabsTrigger value="export" className="text-xs">
+            <Download className="h-3 w-3 mr-1" />Export
+          </TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -623,6 +630,150 @@ export default function ProjectDetail() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        {/* Export Tab */}
+        <TabsContent value="export" className="space-y-4">
+          <Card className="bg-card/50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Export Settings
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Configure output format, resolution, and quality for your film</p>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Format</Label>
+                  <Select defaultValue="mp4">
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="mp4">MP4 (H.264)</SelectItem>
+                      <SelectItem value="mov">MOV (ProRes)</SelectItem>
+                      <SelectItem value="webm">WebM (VP9)</SelectItem>
+                      <SelectItem value="avi">AVI</SelectItem>
+                      <SelectItem value="mkv">MKV</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Monitor className="h-3 w-3" />Resolution
+                  </Label>
+                  <Select defaultValue={project.resolution || "1920x1080"}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1280x720">720p HD</SelectItem>
+                      <SelectItem value="1920x1080">1080p Full HD</SelectItem>
+                      <SelectItem value="2560x1440">1440p QHD</SelectItem>
+                      <SelectItem value="3840x2160">4K UHD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Settings className="h-3 w-3" />Quality
+                  </Label>
+                  <Select defaultValue={project.quality || "high"}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft (Fast)</SelectItem>
+                      <SelectItem value="standard">Standard</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="ultra">Ultra (Cinema)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Frame Rate</Label>
+                  <Select defaultValue="24">
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="24">24 fps (Cinema)</SelectItem>
+                      <SelectItem value="30">30 fps</SelectItem>
+                      <SelectItem value="60">60 fps (Smooth)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Aspect Ratio</Label>
+                  <Select defaultValue="16:9">
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="16:9">16:9 (Widescreen)</SelectItem>
+                      <SelectItem value="2.39:1">2.39:1 (Cinemascope)</SelectItem>
+                      <SelectItem value="1.85:1">1.85:1 (Academy Flat)</SelectItem>
+                      <SelectItem value="4:3">4:3 (Classic)</SelectItem>
+                      <SelectItem value="1:1">1:1 (Square)</SelectItem>
+                      <SelectItem value="9:16">9:16 (Vertical)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-3">
+                <Label className="text-xs text-muted-foreground">Include in Export</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Subtitles", "Soundtrack", "Credits Sequence", "Opening Titles", "Color Grading", "Sound Effects"].map((item) => (
+                    <label key={item} className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="checkbox" defaultChecked className="rounded border-border" />
+                      {item}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <Button size="sm" onClick={() => toast.success("Export queued. You'll be notified when ready.")}>
+                  <Download className="h-4 w-4 mr-1" />
+                  Export Full Film
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => toast.success("Trailer export queued.")}>
+                  <Film className="h-4 w-4 mr-1" />
+                  Export Trailer Only
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => toast.success("Scene exports queued.")}>
+                  <Layers className="h-4 w-4 mr-1" />
+                  Export Individual Scenes
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Export History */}
+          <Card className="bg-card/50">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium">Export History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {jobs?.filter(j => (j.metadata as any)?.exportType).length ? (
+                <div className="space-y-2">
+                  {jobs.filter(j => (j.metadata as any)?.exportType).map(job => (
+                    <div key={job.id} className="flex items-center justify-between p-3 rounded-md border">
+                      <div>
+                        <p className="text-sm font-medium">{(job.metadata as any)?.format || "MP4"} Export</p>
+                        <p className="text-xs text-muted-foreground">{new Date(job.createdAt).toLocaleDateString()}</p>
+                      </div>
+                      <Badge variant="outline" className="text-xs capitalize">{job.status}</Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center py-8 text-center">
+                  <Download className="h-8 w-8 text-muted-foreground/30 mb-2" />
+                  <p className="text-xs text-muted-foreground">No exports yet. Configure settings above and export your film.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 

@@ -54,7 +54,10 @@ import {
   Users,
   MessageSquare,
   Clock,
+  Music,
+  Volume2,
 } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import { useLocation, useParams } from "wouter";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
@@ -83,6 +86,8 @@ type SceneForm = {
   characterIds: number[];
   dialogueText: string;
   duration: number;
+  soundtrackId: number | null;
+  soundtrackVolume: number;
 };
 
 const defaultScene: SceneForm = {
@@ -99,6 +104,8 @@ const defaultScene: SceneForm = {
   characterIds: [],
   dialogueText: "",
   duration: 30,
+  soundtrackId: null,
+  soundtrackVolume: 80,
 };
 
 export default function SceneEditor() {
@@ -114,6 +121,7 @@ export default function SceneEditor() {
   const { data: project } = trpc.project.get.useQuery({ id: projectId });
   const { data: scenes, isLoading } = trpc.scene.listByProject.useQuery({ projectId });
   const { data: characters } = trpc.character.listByProject.useQuery({ projectId });
+  const { data: soundtracks } = trpc.soundtrack.listByProject.useQuery({ projectId });
   const utils = trpc.useUtils();
 
   const createMutation = trpc.scene.create.useMutation({
@@ -179,6 +187,8 @@ export default function SceneEditor() {
       characterIds: (scene.characterIds as number[]) || [],
       dialogueText: scene.dialogueText || "",
       duration: scene.duration || 30,
+      soundtrackId: scene.soundtrackId || null,
+      soundtrackVolume: scene.soundtrackVolume ?? 80,
     });
     setEditDialogOpen(true);
   };
@@ -551,6 +561,60 @@ export default function SceneEditor() {
               ) : (
                 <p className="text-xs text-muted-foreground">
                   No characters in this project yet. Add characters from the project page.
+                </p>
+              )}
+            </div>
+
+            <Separator />
+
+            {/* Soundtrack */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                <Music className="h-3.5 w-3.5" />
+                Scene Soundtrack
+              </div>
+              {soundtracks && soundtracks.length > 0 ? (
+                <div className="space-y-3">
+                  <Select
+                    value={form.soundtrackId ? String(form.soundtrackId) : "none"}
+                    onValueChange={v => setField("soundtrackId", v === "none" ? null : parseInt(v))}
+                  >
+                    <SelectTrigger className="h-9 text-sm bg-background/50">
+                      <SelectValue placeholder="Select soundtrack" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No soundtrack</SelectItem>
+                      {soundtracks.map(st => (
+                        <SelectItem key={st.id} value={String(st.id)}>
+                          <span className="flex items-center gap-2">
+                            <Music className="h-3 w-3" />
+                            {st.title}
+                            {st.genre && <span className="text-muted-foreground">· {st.genre}</span>}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {form.soundtrackId && (
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Volume2 className="h-3 w-3" />
+                        Volume: {form.soundtrackVolume}%
+                      </Label>
+                      <Slider
+                        value={[form.soundtrackVolume]}
+                        onValueChange={([v]) => setField("soundtrackVolume", v)}
+                        min={0}
+                        max={100}
+                        step={5}
+                        className="w-full"
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  No soundtracks uploaded yet. Add soundtracks from the project Soundtrack tab.
                 </p>
               )}
             </div>
