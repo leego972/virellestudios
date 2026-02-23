@@ -33,6 +33,8 @@ export const projects = mysqlTable("projects", {
   estimatedTime: int("estimatedTime"), // seconds remaining
   resolution: varchar("resolution", { length: 32 }).default("1920x1080"),
   quality: mysqlEnum("quality", ["standard", "high", "ultra"]).default("high"),
+  colorGrading: varchar("colorGrading", { length: 128 }).default("natural"), // preset name or 'custom'
+  colorGradingSettings: json("colorGradingSettings"), // { temperature, tint, contrast, saturation, highlights, shadows }
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -76,6 +78,12 @@ export const scenes = mysqlTable("scenes", {
   characterPositions: json("characterPositions"), // { characterId: { x, y, action } }
   dialogueText: text("dialogueText"),
   duration: int("duration").default(30), // scene duration in seconds
+  transitionType: varchar("transitionType", { length: 64 }).default("cut"), // cut, fade, dissolve, wipe, etc.
+  transitionDuration: float("transitionDuration").default(0.5), // seconds
+  colorGrading: varchar("colorGrading", { length: 128 }), // override project-level grading
+  productionNotes: text("productionNotes"), // director notes for crew
+  soundtrackId: int("soundtrackId"), // per-scene soundtrack
+  soundtrackVolume: int("soundtrackVolume").default(80), // 0-100
   thumbnailUrl: text("thumbnailUrl"),
   generatedUrl: text("generatedUrl"),
   status: mysqlEnum("status", ["draft", "generating", "completed", "failed"]).default("draft").notNull(),
@@ -147,3 +155,19 @@ export const soundtracks = mysqlTable("soundtracks", {
 
 export type Soundtrack = typeof soundtracks.$inferSelect;
 export type InsertSoundtrack = typeof soundtracks.$inferInsert;
+
+// Film credits
+export const credits = mysqlTable("credits", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  role: varchar("role", { length: 128 }).notNull(), // Director, Producer, Lead Actor, etc.
+  name: varchar("name", { length: 255 }).notNull(),
+  characterName: varchar("characterName", { length: 255 }), // for cast members
+  orderIndex: int("orderIndex").notNull().default(0),
+  section: mysqlEnum("section", ["opening", "closing"]).default("closing").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Credit = typeof credits.$inferSelect;
+export type InsertCredit = typeof credits.$inferInsert;

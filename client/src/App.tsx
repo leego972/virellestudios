@@ -12,12 +12,22 @@ import NewProject from "./pages/NewProject";
 import Characters from "./pages/Characters";
 import SceneEditor from "./pages/SceneEditor";
 import ScriptWriter from "./pages/ScriptWriter";
+import Storyboard from "./pages/Storyboard";
+import CreditsEditor from "./pages/CreditsEditor";
+import ShotList from "./pages/ShotList";
+import ContinuityCheck from "./pages/ContinuityCheck";
+import ColorGrading from "./pages/ColorGrading";
 
 function Router() {
   return (
     <Switch>
-      {/* Script writer has its own full-screen layout */}
+      {/* Full-screen pages (own layout) */}
       <Route path="/project/:projectId/script/:scriptId" component={ScriptWriter} />
+      <Route path="/project/:projectId/storyboard" component={Storyboard} />
+      <Route path="/project/:projectId/credits" component={CreditsEditor} />
+      <Route path="/project/:projectId/shot-list" component={ShotList} />
+      <Route path="/project/:projectId/continuity" component={ContinuityCheck} />
+      <Route path="/project/:projectId/color-grading" component={ColorGrading} />
       <Route>
         <DashboardLayout>
           <Switch>

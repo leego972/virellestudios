@@ -61,6 +61,8 @@ export const appRouter = router({
         thumbnailUrl: z.string().optional(),
         resolution: z.string().optional(),
         quality: z.enum(["standard", "high", "ultra"]).optional(),
+        colorGrading: z.string().optional(),
+        colorGradingSettings: z.any().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
@@ -817,6 +819,197 @@ export const appRouter = router({
         const key = `soundtracks/${ctx.user.id}/${nanoid()}-${input.filename}`;
         const { url } = await storagePut(key, buffer, input.contentType);
         return { url, key };
+      }),
+  }),
+
+  // ─── Credits ───
+  credit: router({
+    listByProject: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getProjectCredits(input.projectId);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        role: z.string().min(1).max(128),
+        name: z.string().min(1).max(255),
+        characterName: z.string().max(255).optional(),
+        orderIndex: z.number().optional(),
+        section: z.enum(["opening", "closing"]).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createCredit({ ...input, userId: ctx.user.id });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        role: z.string().min(1).max(128).optional(),
+        name: z.string().min(1).max(255).optional(),
+        characterName: z.string().max(255).optional(),
+        orderIndex: z.number().optional(),
+        section: z.enum(["opening", "closing"]).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        return db.updateCredit(id, data);
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteCredit(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // ─── Project Duplication ───
+  projectDuplicate: router({
+    duplicate: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        return db.duplicateProject(input.projectId, ctx.user.id);
+      }),
+  }),
+
+  // ─── Shot List Generator ───
+  shotList: router({
+    generate: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new Error("Project not found");
+        const allScenes = await db.getProjectScenes(project.id);
+        const characters = await db.getProjectCharacters(project.id);
+
+        const sceneDescriptions = allScenes.map((s, i) =>
+          `Scene ${i + 1} "${s.title}": ${s.description} | Time: ${s.timeOfDay} | Location: ${s.locationType} | Camera: ${s.cameraAngle} | Lighting: ${s.lighting} | Weather: ${s.weather} | Mood: ${s.mood} | Duration: ${s.duration}s | Transition: ${s.transitionType || 'cut'}`
+        ).join("\n");
+
+        const charList = characters.map(c => `${c.name}: ${c.description || 'no description'}`).join("\n");
+
+        const llmResult = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: "You are a professional film production assistant. Generate a detailed, industry-standard shot list from the given scenes. Include shot number, scene reference, shot type, camera movement, lens, framing, action/description, dialogue cues, props needed, wardrobe notes, and special effects. Format as a structured JSON array.",
+            },
+            {
+              role: "user",
+              content: `Film: ${project.title} (${project.genre || 'Drama'}, ${project.rating || 'PG-13'})\n\nScenes:\n${sceneDescriptions}\n\nCharacters:\n${charList}\n\nGenerate a professional shot list with 2-4 shots per scene.`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "shot_list",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  shots: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        shotNumber: { type: "string" },
+                        sceneTitle: { type: "string" },
+                        shotType: { type: "string" },
+                        cameraMovement: { type: "string" },
+                        lens: { type: "string" },
+                        framing: { type: "string" },
+                        action: { type: "string" },
+                        dialogue: { type: "string" },
+                        props: { type: "string" },
+                        wardrobe: { type: "string" },
+                        vfx: { type: "string" },
+                        notes: { type: "string" },
+                      },
+                      required: ["shotNumber", "sceneTitle", "shotType", "cameraMovement", "lens", "framing", "action", "dialogue", "props", "wardrobe", "vfx", "notes"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["shots"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+
+        const content = llmResult.choices[0]?.message?.content;
+        const parsed = JSON.parse(typeof content === "string" ? content : "");
+        return parsed;
+      }),
+  }),
+
+  // ─── Continuity Check ───
+  continuity: router({
+    check: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new Error("Project not found");
+        const allScenes = await db.getProjectScenes(project.id);
+        const characters = await db.getProjectCharacters(project.id);
+
+        const sceneDescriptions = allScenes.map((s, i) =>
+          `Scene ${i + 1} "${s.title}": ${s.description} | Time: ${s.timeOfDay} | Location: ${s.locationType} | Weather: ${s.weather} | Characters: ${(s.characterIds as number[] || []).map(id => characters.find(c => c.id === id)?.name || 'Unknown').join(', ')} | Vehicles: ${s.vehicleType || 'none'} | Real Estate: ${s.realEstateStyle || 'none'}`
+        ).join("\n");
+
+        const charList = characters.map(c => {
+          const attrs = c.attributes as any || {};
+          return `${c.name}: ${c.description || ''} | Hair: ${attrs.hairColor || 'unknown'} | Build: ${attrs.build || 'unknown'} | Clothing: ${attrs.clothingStyle || 'unknown'}`;
+        }).join("\n");
+
+        const llmResult = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: "You are a professional script supervisor / continuity checker for Hollywood films. Analyze the scenes for continuity errors including: wardrobe changes between consecutive scenes, time-of-day inconsistencies, weather changes that don't make sense, character presence/absence issues, prop and vehicle continuity, location logic. Return a JSON array of issues found.",
+            },
+            {
+              role: "user",
+              content: `Film: ${project.title}\n\nScenes (in order):\n${sceneDescriptions}\n\nCharacters:\n${charList}\n\nCheck for continuity errors between adjacent scenes and across the film.`,
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "continuity_report",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  issues: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        severity: { type: "string" },
+                        category: { type: "string" },
+                        scenes: { type: "string" },
+                        description: { type: "string" },
+                        suggestion: { type: "string" },
+                      },
+                      required: ["severity", "category", "scenes", "description", "suggestion"],
+                      additionalProperties: false,
+                    },
+                  },
+                  summary: { type: "string" },
+                },
+                required: ["issues", "summary"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+
+        const content = llmResult.choices[0]?.message?.content;
+        const parsed = JSON.parse(typeof content === "string" ? content : "");
+        return parsed;
       }),
   }),
 });

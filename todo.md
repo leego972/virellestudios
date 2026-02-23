@@ -71,7 +71,7 @@
 - [x] Download completed films (export full film, trailer only, individual scenes)
 
 ## GitHub
-- [ ] Push code to new GitHub repository
+- [x] Push code to GitHub repository (leego972/vibastudios)
 
 ## Design Direction
 - [x] Clean, minimal, uncluttered design with lots of whitespace
@@ -142,3 +142,44 @@
 - [x] Generated character saved to character library with AI badge
 - [x] AI character generator accessible from Characters page and ProjectDetail character tab
 - [x] Hollywood-grade prompt: ARRI ALEXA 65, Zeiss Master Prime, Rembrandt lighting, 16K, cinematic color grading
+
+## Storyboard View
+- [x] Storyboard page with visual grid of all scene preview images
+- [x] Scene cards showing thumbnail, title, duration, and key parameters
+- [x] Click to expand scene details or edit
+- [x] Print-friendly storyboard layout
+- [x] Navigation link from project detail
+
+## Project Duplication
+- [x] Duplicate project backend route (clones project, characters, scenes, soundtracks)
+- [x] Duplicate button in project detail Tools tab
+- [x] Duplicated project opens in draft status with "(Copy)" suffix
+
+## Color Grading Presets
+- [x] 12 color grading presets (Natural, Warm Vintage, Cold Thriller, Neon Cyberpunk, Golden Hour, Noir, Bleach Bypass, Tropical, Horror, Romantic, Sci-Fi, Western)
+- [x] Color grading page with preset selector and visual gradient swatches
+- [x] Fine-tune sliders: temperature, tint, contrast, saturation, highlights, shadows, vibrance, clarity
+- [x] Live preview strip with CSS filter visualization
+- [x] Saves to project via colorGrading field
+
+## Shot List / Production Notes
+- [x] AI shot list generator from scenes (auto-generates professional shot list)
+- [x] Shot table: shot number, scene, shot type, camera, lens, framing, action, dialogue, props, wardrobe, VFX, notes
+- [x] Print button for shot list export
+
+## Continuity Tracker
+- [x] AI continuity checker analyzes all scenes for errors
+- [x] Severity-based issue display (high/medium/low)
+- [x] Categories: wardrobe, time, weather, character, prop continuity
+- [x] Suggestions for fixing each issue
+
+## Scene Transition Effects
+- [x] Transition type field added to scenes schema
+- [x] Transition types: cut, fade, dissolve, wipe, iris, cross-dissolve
+
+## Film Credits Editor
+- [x] Credits editor page with opening and closing credits sections
+- [x] Role-based credit entries with common role presets
+- [x] Character name field for cast credits
+- [x] Live credits preview in cinematic black style
+- [x] Add/delete credits with section selection

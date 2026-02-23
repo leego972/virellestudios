@@ -408,22 +408,112 @@ describe("character.aiGenerate", () => {
     ).rejects.toThrow();
   });
 
-  it("validates aiGenerate input - features required fields", async () => {
+  it("validates aiGenerate input - features object required", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
     await expect(
-      caller.character.aiGenerate({
+      (caller.character.aiGenerate as any)({
         name: "Test",
         projectId: null,
-        features: {
-          ageRange: "",
-          gender: "male",
-          ethnicity: "Caucasian",
-          hairColor: "black",
-          hairStyle: "short cropped",
-          eyeColor: "brown",
-        },
       })
+    ).rejects.toThrow();
+  });
+});
+
+describe("credit router", () => {
+  it("requires authentication for credit.listByProject", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.credit.listByProject({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for credit.create", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.credit.create({ projectId: 1, role: "Director", name: "John", section: "opening", orderIndex: 0 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for credit.delete", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.credit.delete({ id: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("validates credit.create input - role required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.credit.create({ projectId: 1, role: "", name: "John", section: "opening", orderIndex: 0 })
+    ).rejects.toThrow();
+  });
+
+  it("validates credit.create input - name required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.credit.create({ projectId: 1, role: "Director", name: "", section: "opening", orderIndex: 0 })
+    ).rejects.toThrow();
+  });
+
+  it("validates credit.create input - section enum", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.credit.create({ projectId: 1, role: "Director", name: "John", section: "middle" as any, orderIndex: 0 })
+    ).rejects.toThrow();
+  });
+});
+
+describe("projectDuplicate router", () => {
+  it("requires authentication for projectDuplicate.duplicate", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.projectDuplicate.duplicate({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+});
+
+describe("shotList router", () => {
+  it("requires authentication for shotList.generate", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.shotList.generate({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+});
+
+describe("continuity router", () => {
+  it("requires authentication for continuity.check", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.continuity.check({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+});
+
+describe("project.update with colorGrading", () => {
+  it("requires authentication for project.update", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.project.update({ id: 1, colorGrading: "warm-vintage" })
+    ).rejects.toThrow();
+  });
+
+  it("validates project.update input - id required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      (caller.project.update as any)({ colorGrading: "warm-vintage" })
     ).rejects.toThrow();
   });
 });

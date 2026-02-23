@@ -8,6 +8,7 @@ import {
   InsertGenerationJob, generationJobs,
   InsertScript, scripts,
   InsertSoundtrack, soundtracks,
+  InsertCredit, credits,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -290,4 +291,146 @@ export async function deleteProjectSoundtracks(projectId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(soundtracks).where(eq(soundtracks.projectId, projectId));
+}
+
+// ─── Credits ───
+export async function createCredit(data: InsertCredit) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(credits).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(credits).where(eq(credits.id, id)))[0];
+}
+
+export async function getProjectCredits(projectId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(credits).where(eq(credits.projectId, projectId)).orderBy(asc(credits.orderIndex));
+}
+
+export async function updateCredit(id: number, data: Partial<InsertCredit>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(credits).set(data).where(eq(credits.id, id));
+  return (await db.select().from(credits).where(eq(credits.id, id)))[0];
+}
+
+export async function deleteCredit(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(credits).where(eq(credits.id, id));
+}
+
+export async function deleteProjectCredits(projectId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(credits).where(eq(credits.projectId, projectId));
+}
+
+// ─── Project Duplication ───
+export async function duplicateProject(projectId: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Get original project
+  const original = await getProjectById(projectId, userId);
+  if (!original) throw new Error("Project not found");
+  
+  // Create new project
+  const newProject = await createProject({
+    userId,
+    title: `${original.title} (Copy)`,
+    description: original.description,
+    mode: original.mode,
+    rating: original.rating,
+    duration: original.duration,
+    genre: original.genre,
+    plotSummary: original.plotSummary,
+    status: "draft",
+    resolution: original.resolution,
+    quality: original.quality,
+    colorGrading: original.colorGrading,
+    colorGradingSettings: original.colorGradingSettings,
+  });
+  
+  // Duplicate characters
+  const origChars = await getProjectCharacters(projectId);
+  const charIdMap = new Map<number, number>();
+  for (const char of origChars) {
+    const newChar = await createCharacter({
+      userId,
+      projectId: newProject.id,
+      name: char.name,
+      description: char.description,
+      photoUrl: char.photoUrl,
+      attributes: char.attributes,
+    });
+    charIdMap.set(char.id, newChar.id);
+  }
+  
+  // Duplicate scenes
+  const origScenes = await getProjectScenes(projectId);
+  for (const scene of origScenes) {
+    const newCharIds = (scene.characterIds as number[] || []).map(id => charIdMap.get(id) || id);
+    await createScene({
+      projectId: newProject.id,
+      orderIndex: scene.orderIndex,
+      title: scene.title,
+      description: scene.description,
+      timeOfDay: scene.timeOfDay,
+      weather: scene.weather,
+      lighting: scene.lighting,
+      cameraAngle: scene.cameraAngle,
+      locationType: scene.locationType,
+      realEstateStyle: scene.realEstateStyle,
+      vehicleType: scene.vehicleType,
+      mood: scene.mood,
+      characterIds: newCharIds,
+      characterPositions: scene.characterPositions,
+      dialogueText: scene.dialogueText,
+      duration: scene.duration,
+      transitionType: scene.transitionType,
+      transitionDuration: scene.transitionDuration,
+      colorGrading: scene.colorGrading,
+      productionNotes: scene.productionNotes,
+      status: "draft",
+    });
+  }
+  
+  // Duplicate soundtracks
+  const origSoundtracks = await getProjectSoundtracks(projectId);
+  for (const st of origSoundtracks) {
+    await createSoundtrack({
+      projectId: newProject.id,
+      userId,
+      title: st.title,
+      artist: st.artist,
+      genre: st.genre,
+      mood: st.mood,
+      fileUrl: st.fileUrl,
+      fileKey: st.fileKey,
+      duration: st.duration,
+      volume: st.volume,
+      fadeIn: st.fadeIn,
+      fadeOut: st.fadeOut,
+      loop: st.loop,
+      notes: st.notes,
+    });
+  }
+  
+  // Duplicate credits
+  const origCredits = await getProjectCredits(projectId);
+  for (const cr of origCredits) {
+    await createCredit({
+      projectId: newProject.id,
+      userId,
+      role: cr.role,
+      name: cr.name,
+      characterName: cr.characterName,
+      orderIndex: cr.orderIndex,
+      section: cr.section,
+    });
+  }
+  
+  return newProject;
 }

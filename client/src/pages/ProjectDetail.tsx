@@ -47,6 +47,12 @@ import {
   Download,
   Settings,
   Monitor,
+  Grid3X3,
+  Award,
+  ListOrdered,
+  ShieldCheck,
+  Palette,
+  Copy,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -170,6 +176,15 @@ export default function ProjectDetail() {
     onError: (err) => toast.error(err.message),
   });
 
+  const duplicateMutation = trpc.projectDuplicate.duplicate.useMutation({
+    onSuccess: (newProject: any) => {
+      utils.project.list.invalidate();
+      toast.success("Project duplicated");
+      setLocation(`/projects/${newProject.id}`);
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   const trailerMutation = trpc.generation.generateTrailer.useMutation({
     onSuccess: () => {
       utils.generation.listJobs.invalidate({ projectId });
@@ -268,9 +283,13 @@ export default function ProjectDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+          <Button size="sm" variant="outline" onClick={() => setLocation(`/project/${project.id}/storyboard`)}>
+            <Grid3X3 className="h-4 w-4 mr-1" />
+            Storyboard
+          </Button>
           <Button size="sm" variant="outline" onClick={() => setLocation(`/project/${project.id}/script/new`)}>
             <FileText className="h-4 w-4 mr-1" />
-            Script Writer
+            Script
           </Button>
           {project.mode === "manual" && (
             <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/scenes`)}>
@@ -325,6 +344,9 @@ export default function ProjectDetail() {
           <TabsTrigger value="trailer" className="text-xs">Trailer</TabsTrigger>
           <TabsTrigger value="export" className="text-xs">
             <Download className="h-3 w-3 mr-1" />Export
+          </TabsTrigger>
+          <TabsTrigger value="tools" className="text-xs">
+            <Settings className="h-3 w-3 mr-1" />Tools
           </TabsTrigger>
         </TabsList>
 
@@ -1302,6 +1324,72 @@ export default function ProjectDetail() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Tools Tab Content */}
+      <TabsContent value="tools" className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/project/${project.id}/color-grading`)}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Palette className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Color Grading</p>
+                <p className="text-xs text-muted-foreground">Set cinematic look & presets</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/project/${project.id}/credits`)}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Award className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Credits Editor</p>
+                <p className="text-xs text-muted-foreground">Opening & closing credits</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/project/${project.id}/shot-list`)}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <ListOrdered className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Shot List</p>
+                <p className="text-xs text-muted-foreground">AI-generated shot breakdown</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/project/${project.id}/continuity`)}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Continuity Check</p>
+                <p className="text-xs text-muted-foreground">AI script supervision</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => {
+            if (confirm('Duplicate this project? A copy will be created with all settings.')) {
+              duplicateMutation.mutate({ projectId: project.id });
+            }
+          }}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Copy className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Duplicate Project</p>
+                <p className="text-xs text-muted-foreground">Clone as a new project</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </TabsContent>
+
     </div>
   );
 }
