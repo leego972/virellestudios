@@ -124,6 +124,71 @@ export const appRouter = router({
         await db.deleteCharacter(input.id);
         return { success: true };
       }),
+
+    // AI Character Generator — create photorealistic portrait from feature selections
+    aiGenerate: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1).max(128),
+        projectId: z.number().nullable().optional(),
+        features: z.object({
+          ageRange: z.string(), // "20s", "30s", "40s", etc.
+          gender: z.string(),
+          ethnicity: z.string(),
+          skinTone: z.string().optional(),
+          build: z.string().optional(), // slim, athletic, average, heavy
+          height: z.string().optional(), // short, average, tall
+          hairColor: z.string(),
+          hairStyle: z.string(),
+          eyeColor: z.string(),
+          facialFeatures: z.string().optional(), // sharp jawline, round face, etc.
+          facialHair: z.string().optional(),
+          distinguishingMarks: z.string().optional(), // scars, tattoos, freckles
+          clothingStyle: z.string().optional(),
+          expression: z.string().optional(), // serious, warm, mysterious
+          additionalNotes: z.string().optional(),
+        }),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const f = input.features;
+        const promptParts = [
+          "Ultra-photorealistic Hollywood A-list actor headshot, indistinguishable from a real photograph,",
+          "shot on ARRI ALEXA 65 with Zeiss Master Prime lens, shallow depth of field,",
+          `${f.gender} in their ${f.ageRange},`,
+          `${f.ethnicity} ethnicity,`,
+        ];
+        if (f.skinTone) promptParts.push(`${f.skinTone} skin tone with natural skin texture and pores,`);
+        if (f.build) promptParts.push(`${f.build} build,`);
+        if (f.height) promptParts.push(`${f.height} height,`);
+        promptParts.push(`${f.hairColor} ${f.hairStyle} hair with individual strand detail,`);
+        promptParts.push(`${f.eyeColor} eyes with natural iris detail and light reflections,`);
+        if (f.facialFeatures) promptParts.push(`${f.facialFeatures},`);
+        if (f.facialHair) promptParts.push(`facial hair: ${f.facialHair},`);
+        if (f.distinguishingMarks) promptParts.push(`${f.distinguishingMarks},`);
+        if (f.clothingStyle) promptParts.push(`wearing ${f.clothingStyle},`);
+        if (f.expression) promptParts.push(`${f.expression} expression with subtle micro-expressions,`);
+        if (f.additionalNotes) promptParts.push(f.additionalNotes);
+        promptParts.push(
+          "three-point Rembrandt lighting with soft key light and subtle fill,",
+          "natural skin subsurface scattering, volumetric light,",
+          "shot at f/1.4 with cinematic bokeh background,",
+          "color graded like a major Hollywood studio production,",
+          "16K resolution, hyperdetailed, award-winning portrait photography"
+        );
+
+        const result = await generateImage({ prompt: promptParts.join(" ") });
+
+        // Save to character library
+        const character = await db.createCharacter({
+          userId: ctx.user.id,
+          projectId: input.projectId ?? null,
+          name: input.name,
+          description: `AI-generated character: ${f.gender}, ${f.ageRange}, ${f.ethnicity}`,
+          photoUrl: result.url,
+          attributes: { ...f, aiGenerated: true },
+        });
+
+        return character;
+      }),
   }),
 
   // ─── Scenes ───
@@ -666,6 +731,92 @@ export const appRouter = router({
 
         const result = llmResult.choices[0]?.message?.content || "";
         return { text: typeof result === "string" ? result : "" };
+      }),
+  }),
+
+  // ─── Soundtracks ───
+  soundtrack: router({
+    listByProject: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getProjectSoundtracks(input.projectId);
+      }),
+
+    listByScene: protectedProcedure
+      .input(z.object({ sceneId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getSceneSoundtracks(input.sceneId);
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return db.getSoundtrackById(input.id);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().nullable().optional(),
+        title: z.string().min(1).max(255),
+        artist: z.string().max(255).optional(),
+        genre: z.string().max(128).optional(),
+        mood: z.string().max(128).optional(),
+        fileUrl: z.string().optional(),
+        fileKey: z.string().optional(),
+        duration: z.number().optional(),
+        startTime: z.number().min(0).optional(),
+        volume: z.number().min(0).max(1).optional(),
+        fadeIn: z.number().min(0).optional(),
+        fadeOut: z.number().min(0).optional(),
+        loop: z.number().min(0).max(1).optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createSoundtrack({ ...input, userId: ctx.user.id });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().min(1).max(255).optional(),
+        artist: z.string().max(255).optional(),
+        genre: z.string().max(128).optional(),
+        mood: z.string().max(128).optional(),
+        fileUrl: z.string().optional(),
+        fileKey: z.string().optional(),
+        duration: z.number().optional(),
+        startTime: z.number().min(0).optional(),
+        volume: z.number().min(0).max(1).optional(),
+        fadeIn: z.number().min(0).optional(),
+        fadeOut: z.number().min(0).optional(),
+        loop: z.number().min(0).max(1).optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { id, ...data } = input;
+        return db.updateSoundtrack(id, ctx.user.id, data);
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.deleteSoundtrack(input.id, ctx.user.id);
+        return { success: true };
+      }),
+
+    // Upload audio file
+    uploadAudio: protectedProcedure
+      .input(z.object({
+        base64: z.string(),
+        filename: z.string(),
+        contentType: z.string().default("audio/mpeg"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const buffer = Buffer.from(input.base64, "base64");
+        const key = `soundtracks/${ctx.user.id}/${nanoid()}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.contentType);
+        return { url, key };
       }),
   }),
 });

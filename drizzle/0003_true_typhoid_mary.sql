@@ -1,0 +1,22 @@
+CREATE TABLE `soundtracks` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`projectId` int NOT NULL,
+	`sceneId` int,
+	`userId` int NOT NULL,
+	`title` varchar(255) NOT NULL,
+	`artist` varchar(255),
+	`genre` varchar(128),
+	`mood` varchar(128),
+	`fileUrl` text,
+	`fileKey` varchar(512),
+	`duration` int,
+	`startTime` float DEFAULT 0,
+	`volume` float DEFAULT 0.7,
+	`fadeIn` float DEFAULT 0,
+	`fadeOut` float DEFAULT 0,
+	`loop` int DEFAULT 0,
+	`notes` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `soundtracks_id` PRIMARY KEY(`id`)
+);

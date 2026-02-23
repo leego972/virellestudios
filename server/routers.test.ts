@@ -315,3 +315,115 @@ describe("script router", () => {
     ).rejects.toThrow();
   });
 });
+
+describe("soundtrack router", () => {
+  it("requires authentication for soundtrack.listByProject", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.soundtrack.listByProject({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for soundtrack.create", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.soundtrack.create({ projectId: 1, title: "Main Theme" })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for soundtrack.delete", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.soundtrack.delete({ id: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("validates soundtrack.create input - title required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.soundtrack.create({ projectId: 1, title: "" })
+    ).rejects.toThrow();
+  });
+
+  it("validates soundtrack.create input - volume range", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.soundtrack.create({ projectId: 1, title: "Test", volume: 2 })
+    ).rejects.toThrow();
+    await expect(
+      caller.soundtrack.create({ projectId: 1, title: "Test", volume: -1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for soundtrack.uploadAudio", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.soundtrack.uploadAudio({ base64: "abc", filename: "test.mp3", contentType: "audio/mpeg" })
+    ).rejects.toThrow();
+  });
+});
+
+describe("character.aiGenerate", () => {
+  it("requires authentication for character.aiGenerate", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.character.aiGenerate({
+        name: "Test",
+        projectId: null,
+        features: {
+          ageRange: "30s",
+          gender: "male",
+          ethnicity: "Caucasian",
+          hairColor: "black",
+          hairStyle: "short cropped",
+          eyeColor: "brown",
+        },
+      })
+    ).rejects.toThrow();
+  });
+
+  it("validates aiGenerate input - name required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.character.aiGenerate({
+        name: "",
+        projectId: null,
+        features: {
+          ageRange: "30s",
+          gender: "male",
+          ethnicity: "Caucasian",
+          hairColor: "black",
+          hairStyle: "short cropped",
+          eyeColor: "brown",
+        },
+      })
+    ).rejects.toThrow();
+  });
+
+  it("validates aiGenerate input - features required fields", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.character.aiGenerate({
+        name: "Test",
+        projectId: null,
+        features: {
+          ageRange: "",
+          gender: "male",
+          ethnicity: "Caucasian",
+          hairColor: "black",
+          hairStyle: "short cropped",
+          eyeColor: "brown",
+        },
+      })
+    ).rejects.toThrow();
+  });
+});

@@ -125,3 +125,20 @@
 - [x] Ensure no login loop exists in auth flow
 - [x] Unauthenticated users should see login screen without redirect loops
 - [x] ScriptWriter page auth guard added (was outside DashboardLayout)
+
+## Soundtrack / Background Music
+- [x] Soundtracks database table (projectId, sceneId nullable, title, artist, genre, mood, fileUrl, duration)
+- [x] Backend CRUD for soundtracks (create, list by project, list by scene, update, delete)
+- [x] S3 upload support for audio files
+- [x] Project-level soundtrack manager in ProjectDetail page
+- [ ] Per-scene soundtrack selector in SceneEditor
+- [x] Audio preview/playback controls
+- [x] Mood and genre tagging for easy selection
+
+## AI Character Generator
+- [x] Backend route to generate AI character portrait from feature selections
+- [x] Feature selection UI: age range, gender, ethnicity, build, hair color/style, eye color, facial features, skin tone, clothing style
+- [x] AI generates Hollywood-grade photorealistic character portrait from selections
+- [x] Generated character saved to character library with AI badge
+- [x] AI character generator accessible from Characters page and ProjectDetail character tab
+- [x] Hollywood-grade prompt: ARRI ALEXA 65, Zeiss Master Prime, Rembrandt lighting, 16K, cinematic color grading

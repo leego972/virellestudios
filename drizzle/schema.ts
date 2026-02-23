@@ -121,3 +121,29 @@ export const scripts = mysqlTable("scripts", {
 
 export type Script = typeof scripts.$inferSelect;
 export type InsertScript = typeof scripts.$inferInsert;
+
+// Soundtracks / background music
+export const soundtracks = mysqlTable("soundtracks", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  sceneId: int("sceneId"), // null = project-level soundtrack
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  artist: varchar("artist", { length: 255 }),
+  genre: varchar("genre", { length: 128 }),
+  mood: varchar("mood", { length: 128 }), // epic, romantic, tense, upbeat, melancholic, etc.
+  fileUrl: text("fileUrl"), // S3 URL for uploaded audio
+  fileKey: varchar("fileKey", { length: 512 }), // S3 key
+  duration: int("duration"), // in seconds
+  startTime: float("startTime").default(0), // when to start playing in the scene (seconds)
+  volume: float("volume").default(0.7), // 0.0 - 1.0
+  fadeIn: float("fadeIn").default(0), // fade in duration in seconds
+  fadeOut: float("fadeOut").default(0), // fade out duration in seconds
+  loop: int("loop").default(0), // 0 = no loop, 1 = loop
+  notes: text("notes"), // director notes about this track
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Soundtrack = typeof soundtracks.$inferSelect;
+export type InsertSoundtrack = typeof soundtracks.$inferInsert;

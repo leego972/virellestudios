@@ -7,6 +7,7 @@ import {
   InsertScene, scenes,
   InsertGenerationJob, generationJobs,
   InsertScript, scripts,
+  InsertSoundtrack, soundtracks,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -242,4 +243,51 @@ export async function deleteScript(id: number, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(scripts).where(and(eq(scripts.id, id), eq(scripts.userId, userId)));
+}
+
+// ─── Soundtracks ───
+export async function createSoundtrack(data: InsertSoundtrack) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(soundtracks).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(soundtracks).where(eq(soundtracks.id, id)))[0];
+}
+
+export async function getProjectSoundtracks(projectId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(soundtracks).where(and(eq(soundtracks.projectId, projectId), isNull(soundtracks.sceneId))).orderBy(desc(soundtracks.createdAt));
+}
+
+export async function getSceneSoundtracks(sceneId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(soundtracks).where(eq(soundtracks.sceneId, sceneId)).orderBy(asc(soundtracks.startTime));
+}
+
+export async function getSoundtrackById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(soundtracks).where(eq(soundtracks.id, id)).limit(1);
+  return result[0];
+}
+
+export async function updateSoundtrack(id: number, userId: number, data: Partial<InsertSoundtrack>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(soundtracks).set(data).where(and(eq(soundtracks.id, id), eq(soundtracks.userId, userId)));
+  return (await db.select().from(soundtracks).where(eq(soundtracks.id, id)))[0];
+}
+
+export async function deleteSoundtrack(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(soundtracks).where(and(eq(soundtracks.id, id), eq(soundtracks.userId, userId)));
+}
+
+export async function deleteProjectSoundtracks(projectId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(soundtracks).where(eq(soundtracks.projectId, projectId));
 }
