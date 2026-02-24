@@ -387,3 +387,6 @@
 
 ## Bug Fixes
 - [x] Investigate and fix deployment issue — removed hardcoded email allowlist that blocked non-whitelisted users
+- [ ] Fix TypeError: Failed to construct URL on Railway — getLoginUrl() crashes when VITE_OAUTH_PORTAL_URL is missing
+- [ ] Fix useAuth eagerly calling getLoginUrl() as default param
+- [ ] Guide user on Railway custom domain re-configuration for virelle.life

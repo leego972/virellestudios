@@ -18,7 +18,14 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 
   if (!isUnauthorized) return;
 
-  window.location.href = getLoginUrl();
+  try {
+    const loginUrl = getLoginUrl();
+    if (loginUrl && loginUrl !== "/login-unavailable") {
+      window.location.href = loginUrl;
+    }
+  } catch {
+    console.warn("[Auth] Could not construct login URL. OAuth may not be configured.");
+  }
 };
 
 queryClient.getQueryCache().subscribe(event => {
