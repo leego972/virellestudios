@@ -2257,6 +2257,14 @@ You will receive:
 
 Your job is to apply the edit command to the current text and return the result.
 
+IMPORTANT: The director may chain multiple commands in a single utterance using "and", "then", "also", commas, or periods. Apply ALL commands sequentially in the order given.
+
+Examples of chained commands:
+- "Replace sunset with sunrise and add dramatic music at the end"
+- "Delete the first sentence, then make it more dramatic"
+- "Fix the grammar and also make it shorter"
+- "Change the tone to be more serious, remove the last line, and add a new ending about hope"
+
 Common edit commands include:
 - "Replace X with Y" or "Change X to Y" — find and replace text
 - "Delete/Remove [text or description]" — remove specified text
@@ -2272,8 +2280,9 @@ Common edit commands include:
 Rules:
 - Return ONLY the edited text, nothing else
 - Do NOT add explanations, quotes, or markdown
+- Apply ALL chained commands in sequence
 - Preserve the original meaning and intent unless the command explicitly changes it
-- If the command is unclear or cannot be applied, return the original text unchanged
+- If a command is unclear or cannot be applied, skip it and apply the rest
 - If the command says "clear all" or "start over", return exactly: __CLEAR__`,
             },
             {

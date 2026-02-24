@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +25,10 @@ import {
   Pencil,
   Undo2,
   Check,
+  History,
+  ChevronDown,
+  ChevronUp,
+  RotateCcw,
 } from "lucide-react";
 
 interface DirectorChatProps {
@@ -35,6 +39,14 @@ interface ActionBadge {
   type: string;
   success: boolean;
   message: string;
+}
+
+interface EditHistoryEntry {
+  id: number;
+  command: string;
+  beforeText: string;
+  afterText: string;
+  timestamp: number;
 }
 
 function getFileIcon(mimeType: string) {
@@ -70,6 +82,112 @@ function ActionBadges({ actions }: { actions: ActionBadge[] }) {
   );
 }
 
+// ─── Word-level diff ───
+interface DiffSegment {
+  type: "equal" | "added" | "removed";
+  text: string;
+}
+
+function computeWordDiff(oldText: string, newText: string): DiffSegment[] {
+  if (!oldText && !newText) return [];
+  if (!oldText) return [{ type: "added", text: newText }];
+  if (!newText) return [{ type: "removed", text: oldText }];
+
+  const oldWords = oldText.split(/(\s+)/);
+  const newWords = newText.split(/(\s+)/);
+
+  // Simple LCS-based diff
+  const m = oldWords.length;
+  const n = newWords.length;
+
+  // For performance, if texts are very long, fall back to simple comparison
+  if (m * n > 50000) {
+    if (oldText === newText) return [{ type: "equal", text: oldText }];
+    return [
+      { type: "removed", text: oldText },
+      { type: "added", text: newText },
+    ];
+  }
+
+  // Build LCS table
+  const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (oldWords[i - 1] === newWords[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1] + 1;
+      } else {
+        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+      }
+    }
+  }
+
+  // Backtrack to build diff
+  const segments: DiffSegment[] = [];
+  let i = m, j = n;
+
+  const rawSegments: DiffSegment[] = [];
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && oldWords[i - 1] === newWords[j - 1]) {
+      rawSegments.unshift({ type: "equal", text: oldWords[i - 1] });
+      i--; j--;
+    } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+      rawSegments.unshift({ type: "added", text: newWords[j - 1] });
+      j--;
+    } else {
+      rawSegments.unshift({ type: "removed", text: oldWords[i - 1] });
+      i--;
+    }
+  }
+
+  // Merge consecutive segments of the same type
+  for (const seg of rawSegments) {
+    const last = segments[segments.length - 1];
+    if (last && last.type === seg.type) {
+      last.text += seg.text;
+    } else {
+      segments.push({ ...seg });
+    }
+  }
+
+  return segments;
+}
+
+function DiffView({ oldText, newText }: { oldText: string; newText: string }) {
+  const segments = useMemo(() => computeWordDiff(oldText, newText), [oldText, newText]);
+
+  if (!oldText && !newText) {
+    return <span className="text-muted-foreground italic">Empty</span>;
+  }
+
+  return (
+    <span className="text-sm leading-relaxed">
+      {segments.map((seg, i) => {
+        if (seg.type === "equal") {
+          return <span key={i}>{seg.text}</span>;
+        }
+        if (seg.type === "removed") {
+          return (
+            <span
+              key={i}
+              className="bg-red-500/20 text-red-400 line-through decoration-red-400/50 rounded-sm px-0.5"
+            >
+              {seg.text}
+            </span>
+          );
+        }
+        return (
+          <span
+            key={i}
+            className="bg-emerald-500/20 text-emerald-400 rounded-sm px-0.5"
+          >
+            {seg.text}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
 // Voice recording states
 type VoiceState = "idle" | "recording" | "recording_edit" | "transcribing" | "applying_edit";
 
@@ -95,11 +213,13 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const streamRef = useRef<MediaStream | null>(null);
 
   // Voice edit state
-  const [editHistory, setEditHistory] = useState<string[]>([]);
+  const [editHistory, setEditHistory] = useState<EditHistoryEntry[]>([]);
+  const [editIdCounter, setEditIdCounter] = useState(0);
   const [lastEditCommand, setLastEditCommand] = useState<string>("");
   const [showEditPreview, setShowEditPreview] = useState(false);
   const [previewText, setPreviewText] = useState("");
   const [preEditText, setPreEditText] = useState("");
+  const [showHistoryPanel, setShowHistoryPanel] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -162,8 +282,6 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           const newText = prev ? prev + " " + data.text.trim() : data.text.trim();
           return newText;
         });
-        // Save to edit history
-        setEditHistory((prev) => [...prev, data.text.trim()]);
         toast.success("Voice transcribed — review and send");
         setTimeout(() => textareaRef.current?.focus(), 100);
       } else {
@@ -182,7 +300,6 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     onSuccess: (data) => {
       setVoiceState("idle");
       if (data.applied) {
-        // Show preview of the edit
         setPreviewText(data.editedText);
         setShowEditPreview(true);
         toast.success(`Edit applied: "${data.command}"`);
@@ -348,7 +465,6 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           return;
         }
 
-        // If edit mode, save the current text before transcription
         if (isEditMode) {
           setPreEditText(input);
         }
@@ -415,15 +531,22 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
   // ─── Edit Preview Actions ───
   const acceptEdit = useCallback(() => {
-    // Save current text to history before applying
-    setEditHistory((prev) => [...prev, input]);
+    const newEntry: EditHistoryEntry = {
+      id: editIdCounter + 1,
+      command: lastEditCommand,
+      beforeText: input,
+      afterText: previewText,
+      timestamp: Date.now(),
+    };
+    setEditIdCounter((prev) => prev + 1);
+    setEditHistory((prev) => [...prev, newEntry]);
     setInput(previewText);
     setShowEditPreview(false);
     setPreviewText("");
     setPreEditText("");
     toast.success("Edit accepted");
     setTimeout(() => textareaRef.current?.focus(), 100);
-  }, [input, previewText]);
+  }, [input, previewText, lastEditCommand, editIdCounter]);
 
   const rejectEdit = useCallback(() => {
     setShowEditPreview(false);
@@ -434,13 +557,26 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
   const undoLastEdit = useCallback(() => {
     if (editHistory.length > 0) {
-      const previousText = editHistory[editHistory.length - 1];
+      const lastEntry = editHistory[editHistory.length - 1];
       setEditHistory((prev) => prev.slice(0, -1));
-      setInput(previousText);
+      setInput(lastEntry.beforeText);
       toast.success("Undo successful");
       setTimeout(() => textareaRef.current?.focus(), 100);
     } else {
       toast.info("Nothing to undo");
+    }
+  }, [editHistory]);
+
+  // Revert to a specific point in edit history
+  const revertToEdit = useCallback((entryId: number) => {
+    const idx = editHistory.findIndex((e) => e.id === entryId);
+    if (idx >= 0) {
+      // Revert to the state before this edit was applied
+      const targetEntry = editHistory[idx];
+      setInput(targetEntry.beforeText);
+      setEditHistory((prev) => prev.slice(0, idx));
+      toast.success(`Reverted to before: "${targetEntry.command}"`);
+      setTimeout(() => textareaRef.current?.focus(), 100);
     }
   }, [editHistory]);
 
@@ -449,6 +585,12 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
+  // Format timestamp
+  const formatTime = (ts: number) => {
+    const d = new Date(ts);
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
   };
 
   // Send message
@@ -481,7 +623,9 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     setInput("");
     setAttachments([]);
     setEditHistory([]);
+    setEditIdCounter(0);
     setShowEditPreview(false);
+    setShowHistoryPanel(false);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -731,7 +875,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 <div>
                   <p className="text-sm font-medium text-violet-400">Voice editing...</p>
                   <p className="text-xs text-muted-foreground">
-                    Say: "replace X with Y", "delete last sentence", "make it shorter"
+                    Chain commands: "replace X with Y and add Z at the end"
                   </p>
                 </div>
               </div>
@@ -783,16 +927,35 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           </div>
         )}
 
-        {/* Edit preview banner */}
+        {/* Edit preview with diff view */}
         {showEditPreview && (
           <div className="px-4 py-3 border-t bg-violet-500/5 border-violet-500/20">
             <div className="mb-2">
-              <p className="text-xs font-medium text-violet-400 mb-1">
-                <Pencil className="size-3 inline mr-1" />
-                Voice edit preview
-              </p>
-              <div className="bg-background/60 rounded-lg p-2.5 text-sm border border-violet-500/10 max-h-[80px] overflow-y-auto">
-                {previewText || <span className="text-muted-foreground italic">Empty (text cleared)</span>}
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs font-medium text-violet-400">
+                  <Pencil className="size-3 inline mr-1" />
+                  Voice edit preview
+                </p>
+                <span className="text-[10px] text-muted-foreground">
+                  "{lastEditCommand}"
+                </span>
+              </div>
+              <div className="bg-background/60 rounded-lg p-2.5 border border-violet-500/10 max-h-[100px] overflow-y-auto">
+                {!preEditText && !previewText ? (
+                  <span className="text-muted-foreground italic text-sm">Empty (text cleared)</span>
+                ) : (
+                  <DiffView oldText={preEditText} newText={previewText} />
+                )}
+              </div>
+              <div className="flex items-center gap-3 mt-1">
+                <div className="flex items-center gap-1 text-[10px] text-red-400">
+                  <span className="inline-block w-2 h-2 rounded-sm bg-red-500/20 border border-red-500/30" />
+                  Removed
+                </div>
+                <div className="flex items-center gap-1 text-[10px] text-emerald-400">
+                  <span className="inline-block w-2 h-2 rounded-sm bg-emerald-500/20 border border-emerald-500/30" />
+                  Added
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -819,6 +982,54 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 </Button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Edit history panel */}
+        {editHistory.length > 0 && voiceState === "idle" && !showEditPreview && (
+          <div className="border-t border-violet-500/10">
+            <button
+              onClick={() => setShowHistoryPanel((prev) => !prev)}
+              className="w-full px-4 py-2 flex items-center justify-between text-xs hover:bg-violet-500/5 transition-colors"
+            >
+              <div className="flex items-center gap-1.5 text-violet-400">
+                <History className="size-3" />
+                <span className="font-medium">Edit history ({editHistory.length})</span>
+              </div>
+              {showHistoryPanel ? (
+                <ChevronDown className="size-3 text-muted-foreground" />
+              ) : (
+                <ChevronUp className="size-3 text-muted-foreground" />
+              )}
+            </button>
+            {showHistoryPanel && (
+              <div className="max-h-[150px] overflow-y-auto px-4 pb-2 space-y-1.5">
+                {[...editHistory].reverse().map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="flex items-center justify-between gap-2 rounded-lg bg-background/40 border border-border/50 px-2.5 py-1.5"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-foreground truncate">
+                        "{entry.command}"
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {formatTime(entry.timestamp)}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-6 shrink-0 text-muted-foreground hover:text-violet-400"
+                      onClick={() => revertToEdit(entry.id)}
+                      title={`Revert to before "${entry.command}"`}
+                    >
+                      <RotateCcw className="size-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -871,16 +1082,15 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
               )}
             </Button>
 
-            {/* Voice input / Voice edit button */}
+            {/* Voice edit button — shown when there's text to edit */}
             {hasInputText && voiceState === "idle" ? (
-              /* Voice Edit button — shown when there's text to edit */
               <Button
                 variant="ghost"
                 size="icon"
                 className="size-9 shrink-0 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 transition-all"
                 onClick={startEditRecording}
                 disabled={sendMutation.isPending || showEditPreview}
-                title="Voice edit — speak a command to edit your text"
+                title="Voice edit — speak commands to edit your text (chain with 'and')"
               >
                 <Pencil className="size-4" />
               </Button>
@@ -978,7 +1188,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           </div>
           <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
             {hasInputText && voiceState === "idle"
-              ? "Tap the pencil icon to voice-edit your text"
+              ? "Tap the pencil to voice-edit — chain commands with 'and'"
               : "Type, speak, or upload — actions execute in real-time"}
           </p>
         </div>

@@ -1181,7 +1181,7 @@ describe("directorChat router", () => {
   it("accepts valid directorChat.send input with optional imageUrls", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
-    // This will fail at the DB level but validates input schema passes
+    // This will fail at the DB/LLM level but validates input schema passes
     try {
       await caller.directorChat.send({
         projectId: 999999,
@@ -1192,7 +1192,7 @@ describe("directorChat router", () => {
       // Should not be a Zod validation error
       expect(e.code).not.toBe("BAD_REQUEST");
     }
-  });
+  }, 15000);
 
   // ─── voiceEditText tests ───
   it("requires authentication for directorChat.voiceEditText", async () => {
@@ -1261,6 +1261,47 @@ describe("directorChat router", () => {
     await expect(
       (caller.directorChat.voiceEditText as any)({
         editCommand: "fix grammar",
+      })
+    ).rejects.toThrow();
+  });
+
+  // ─── Command chaining tests ───
+  it("accepts chained voice edit commands (long editCommand string)", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    // Chained commands should pass validation — the LLM handles parsing
+    // This will fail at the LLM call level but validates input schema passes
+    try {
+      await caller.directorChat.voiceEditText({
+        currentText: "The sunset was beautiful over the mountains.",
+        editCommand: "Replace sunset with sunrise and add dramatic music at the end and make it shorter",
+      });
+    } catch (e: any) {
+      // Should not be a Zod validation error — it should reach the LLM call
+      expect(e.code).not.toBe("BAD_REQUEST");
+    }
+  });
+
+  it("accepts complex chained commands with commas and periods", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    try {
+      await caller.directorChat.voiceEditText({
+        currentText: "A long film script about nature and wildlife.",
+        editCommand: "Delete the first sentence, then make it more dramatic. Also fix the grammar and add a new ending.",
+      });
+    } catch (e: any) {
+      expect(e.code).not.toBe("BAD_REQUEST");
+    }
+  });
+
+  it("validates voiceEditText still rejects empty chained commands", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.directorChat.voiceEditText({
+        currentText: "Some text",
+        editCommand: "",
       })
     ).rejects.toThrow();
   });

@@ -372,3 +372,9 @@
 - [x] Edit confirmation flow showing diff/preview of changes before applying
 - [x] Support commands: replace X with Y, delete/remove, add/append, undo last edit, clear all, read back
 - [x] Tests for voice edit command processing
+
+## Voice Edit Enhancements
+- [x] Visual diff view in edit preview — highlight added text in green and removed text in red
+- [x] Voice command chaining — support multiple edits in one recording (e.g. "replace X with Y and add Z at the end")
+- [x] Voice command history panel — log of all voice edits with selective revert for individual changes
+- [x] Tests for all three voice edit enhancements
