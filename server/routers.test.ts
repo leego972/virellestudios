@@ -1077,3 +1077,120 @@ describe("movie router", () => {
     await expect(caller.movie.delete({ id: 1 })).rejects.toThrow();
   });
 });
+
+
+describe("directorChat router", () => {
+  it("requires authentication for directorChat.history", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.directorChat.history({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for directorChat.send", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.directorChat.send({ projectId: 1, message: "Hello" })
+    ).rejects.toThrow();
+  });
+
+  it("validates directorChat.send input - message required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.directorChat.send({ projectId: 1, message: "" })
+    ).rejects.toThrow();
+  });
+
+  it("validates directorChat.send input - message max length", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.directorChat.send({ projectId: 1, message: "a".repeat(5001) })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for directorChat.uploadAttachment", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.directorChat.uploadAttachment({
+        projectId: 1,
+        fileName: "test.png",
+        fileData: "dGVzdA==",
+        mimeType: "image/png",
+      })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for directorChat.clear", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.directorChat.clear({ projectId: 1 })
+    ).rejects.toThrow();
+  });
+
+  it("requires authentication for directorChat.transcribeVoice", async () => {
+    const ctx = createUnauthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      caller.directorChat.transcribeVoice({
+        projectId: 1,
+        audioData: "dGVzdA==",
+        mimeType: "audio/webm",
+      })
+    ).rejects.toThrow();
+  });
+
+  it("validates directorChat.transcribeVoice input - projectId required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      (caller.directorChat.transcribeVoice as any)({
+        audioData: "dGVzdA==",
+        mimeType: "audio/webm",
+      })
+    ).rejects.toThrow();
+  });
+
+  it("validates directorChat.transcribeVoice input - audioData required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      (caller.directorChat.transcribeVoice as any)({
+        projectId: 1,
+        mimeType: "audio/webm",
+      })
+    ).rejects.toThrow();
+  });
+
+  it("validates directorChat.transcribeVoice input - mimeType required", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(
+      (caller.directorChat.transcribeVoice as any)({
+        projectId: 1,
+        audioData: "dGVzdA==",
+      })
+    ).rejects.toThrow();
+  });
+
+  it("accepts valid directorChat.send input with optional imageUrls", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    // This will fail at the DB level but validates input schema passes
+    try {
+      await caller.directorChat.send({
+        projectId: 999999,
+        message: "Test message",
+        imageUrls: ["https://example.com/img.jpg"],
+      });
+    } catch (e: any) {
+      // Should not be a Zod validation error
+      expect(e.code).not.toBe("BAD_REQUEST");
+    }
+  });
+});

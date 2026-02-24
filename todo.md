@@ -357,3 +357,10 @@
 - [x] AI analyzes uploaded photos to understand characters/locations and uses them as visual references
 - [x] AI auto-generates all scenes with appropriate pacing, dialogue, sound effects, transitions for a full film
 - [x] Support specifying film duration (e.g. "2 minute film") and AI creates appropriate number of scenes
+
+## Voice Input for Director's Chat
+- [x] Voice input button (microphone icon) in Director's Chat input area
+- [x] Audio recording via MediaRecorder API with visual feedback (pulsing animation)
+- [x] Server-side Whisper transcription endpoint for audio-to-text
+- [x] Transcribed text auto-populates chat input for review before sending
+- [x] Tests for voice input functionality

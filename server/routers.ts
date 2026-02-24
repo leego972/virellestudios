@@ -9,6 +9,8 @@ import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { nanoid } from "nanoid";
 import { processDirectorMessage } from "./directorAssistant";
+import { transcribeAudio } from "./_core/voiceTranscription";
+import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
   system: systemRouter,
@@ -2200,6 +2202,41 @@ Generate a detailed production budget estimate.`,
       .mutation(async ({ ctx, input }) => {
         await db.clearProjectChat(input.projectId, ctx.user.id);
         return { success: true };
+      }),
+
+    transcribeVoice: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        audioData: z.string(), // base64 encoded audio
+        mimeType: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Upload audio to S3 first
+        const buffer = Buffer.from(input.audioData, "base64");
+        const ext = input.mimeType.includes("webm") ? "webm" : input.mimeType.includes("mp4") ? "m4a" : "wav";
+        const key = `voice-recordings/${input.projectId}/${nanoid()}.${ext}`;
+        const { url: audioUrl } = await storagePut(key, buffer, input.mimeType);
+
+        // Transcribe using Whisper
+        const result = await transcribeAudio({
+          audioUrl,
+          language: "en",
+          prompt: "Director giving film production commands. Transcribe exactly what is said.",
+        });
+
+        if ("error" in result) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: result.error,
+            cause: result,
+          });
+        }
+
+        return {
+          text: result.text,
+          language: result.language,
+          duration: result.duration,
+        };
       }),
   }),
 });

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Streamdown } from "streamdown";
@@ -17,11 +16,12 @@ import {
   Trash2,
   CheckCircle2,
   XCircle,
-  ChevronDown,
   FileText,
   Image as ImageIcon,
   Film,
   Music,
+  Mic,
+  Square,
 } from "lucide-react";
 
 interface DirectorChatProps {
@@ -67,6 +67,9 @@ function ActionBadges({ actions }: { actions: ActionBadge[] }) {
   );
 }
 
+// Voice recording states
+type VoiceState = "idle" | "recording" | "transcribing";
+
 export default function DirectorChat({ projectId }: DirectorChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -79,6 +82,15 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const [localMessages, setLocalMessages] = useState<
     Array<{ role: string; content: string; actions?: ActionBadge[] }>
   >([]);
+
+  // Voice input state
+  const [voiceState, setVoiceState] = useState<VoiceState>("idle");
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -94,7 +106,6 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   // Send message mutation
   const sendMutation = trpc.directorChat.send.useMutation({
     onSuccess: (data) => {
-      // Replace optimistic message with real response
       setLocalMessages((prev) => {
         const withoutLoading = prev.filter((m) => m.content !== "__loading__");
         return [
@@ -106,7 +117,6 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           },
         ];
       });
-      // Invalidate history to sync
       utils.directorChat.history.invalidate({ projectId });
     },
     onError: (error) => {
@@ -119,6 +129,29 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
   // Upload mutation
   const uploadMutation = trpc.directorChat.uploadAttachment.useMutation();
+
+  // Transcribe voice mutation
+  const transcribeMutation = trpc.directorChat.transcribeVoice.useMutation({
+    onSuccess: (data) => {
+      setVoiceState("idle");
+      if (data.text && data.text.trim()) {
+        // Auto-populate the input with transcribed text
+        setInput((prev) => {
+          const newText = prev ? prev + " " + data.text.trim() : data.text.trim();
+          return newText;
+        });
+        toast.success("Voice transcribed — review and send");
+        // Focus the textarea so user can review
+        setTimeout(() => textareaRef.current?.focus(), 100);
+      } else {
+        toast.error("No speech detected. Please try again.");
+      }
+    },
+    onError: (error) => {
+      setVoiceState("idle");
+      toast.error("Transcription failed: " + error.message);
+    },
+  });
 
   // Clear chat mutation
   const clearMutation = trpc.directorChat.clear.useMutation({
@@ -153,11 +186,20 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     }
   }, [history]);
 
+  // Cleanup recording on unmount
+  useEffect(() => {
+    return () => {
+      if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, []);
+
   // Auto-resize textarea
   const handleTextareaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setInput(e.target.value);
-      // Auto-resize
       const ta = e.target;
       ta.style.height = "auto";
       ta.style.height = Math.min(ta.scrollHeight, 160) + "px";
@@ -212,6 +254,129 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     [projectId, uploadMutation]
   );
 
+  // ─── Voice Recording ───
+  const startRecording = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100,
+        },
+      });
+      streamRef.current = stream;
+
+      // Determine best supported mime type
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/mp4")
+        ? "audio/mp4"
+        : "audio/webm";
+
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        // Stop all tracks
+        stream.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+
+        // Clear timer
+        if (recordingTimerRef.current) {
+          clearInterval(recordingTimerRef.current);
+          recordingTimerRef.current = null;
+        }
+
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+
+        // Check minimum size (too short recordings produce empty transcriptions)
+        if (audioBlob.size < 1000) {
+          setVoiceState("idle");
+          toast.error("Recording too short. Hold the mic button longer.");
+          return;
+        }
+
+        // Check max size (16MB)
+        if (audioBlob.size > 16 * 1024 * 1024) {
+          setVoiceState("idle");
+          toast.error("Recording exceeds 16MB limit. Try a shorter recording.");
+          return;
+        }
+
+        // Convert to base64
+        setVoiceState("transcribing");
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = (reader.result as string).split(",")[1];
+          const baseMime = mimeType.split(";")[0]; // strip codecs
+          transcribeMutation.mutate({
+            projectId,
+            audioData: base64,
+            mimeType: baseMime,
+          });
+        };
+        reader.readAsDataURL(audioBlob);
+      };
+
+      // Start recording with 250ms timeslice for smoother data collection
+      mediaRecorder.start(250);
+      setVoiceState("recording");
+      setRecordingDuration(0);
+
+      // Start duration timer
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingDuration((prev) => prev + 1);
+      }, 1000);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      if (errorMessage.includes("Permission denied") || errorMessage.includes("NotAllowedError")) {
+        toast.error("Microphone access denied. Please allow microphone access in your browser settings.");
+      } else {
+        toast.error("Could not access microphone: " + errorMessage);
+      }
+    }
+  }, [projectId, transcribeMutation]);
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      mediaRecorderRef.current.stop();
+    }
+  }, []);
+
+  const cancelRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      // Remove the onstop handler to prevent transcription
+      mediaRecorderRef.current.onstop = null;
+      mediaRecorderRef.current.stop();
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
+      recordingTimerRef.current = null;
+    }
+    audioChunksRef.current = [];
+    setVoiceState("idle");
+    setRecordingDuration(0);
+    toast.info("Recording cancelled");
+  }, []);
+
+  // Format seconds to mm:ss
+  const formatDuration = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
   // Send message
   const handleSend = useCallback(() => {
     const trimmed = input.trim();
@@ -224,14 +389,12 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         : trimmed
       : `[Shared files: ${attachNames}]`;
 
-    // Add user message + loading indicator
     setLocalMessages((prev) => [
       ...prev,
       { role: "user", content: messageContent },
       { role: "assistant", content: "__loading__" },
     ]);
 
-    // Send first attachment URL for backward compat, and all image URLs as separate field
     const imageUrls = attachments.filter((a) => a.mimeType.startsWith("image/")).map((a) => a.url);
     sendMutation.mutate({
       projectId,
@@ -243,7 +406,6 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
     setInput("");
     setAttachments([]);
-    // Reset textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -272,6 +434,8 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     "Review my project and suggest improvements",
   ];
 
+  const isBusy = sendMutation.isPending || voiceState !== "idle";
+
   return (
     <>
       {/* Floating chat button */}
@@ -293,9 +457,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
       <div
         className={cn(
           "fixed z-50 flex flex-col bg-background border border-border shadow-2xl transition-all duration-300 ease-out",
-          // Mobile: full screen
           "inset-0 sm:inset-auto",
-          // Desktop: bottom-right panel
           "sm:bottom-6 sm:right-6 sm:w-[420px] sm:h-[600px] sm:max-h-[80vh] sm:rounded-2xl",
           isOpen
             ? "opacity-100 translate-y-0 scale-100"
@@ -349,7 +511,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 </p>
                 <p className="text-xs text-muted-foreground max-w-[280px]">
                   I can modify scenes, add sound effects, adjust transitions,
-                  and help you build a better film.
+                  and help you build a better film. Type or use the mic to speak.
                 </p>
               </div>
               <div className="flex flex-col gap-2 w-full max-w-[300px]">
@@ -442,6 +604,56 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           )}
         </div>
 
+        {/* Voice recording overlay */}
+        {voiceState === "recording" && (
+          <div className="px-4 py-3 border-t bg-red-500/5 border-red-500/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {/* Pulsing red dot */}
+                <div className="relative flex items-center justify-center">
+                  <span className="absolute size-5 rounded-full bg-red-500/30 animate-ping" />
+                  <span className="relative size-3 rounded-full bg-red-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-red-400">Recording...</p>
+                  <p className="text-xs text-muted-foreground">{formatDuration(recordingDuration)}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={cancelRecording}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-red-500 hover:bg-red-400 text-white gap-1.5"
+                  onClick={stopRecording}
+                >
+                  <Square className="size-3 fill-current" />
+                  Stop & Transcribe
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Transcribing overlay */}
+        {voiceState === "transcribing" && (
+          <div className="px-4 py-3 border-t bg-amber-500/5 border-amber-500/20">
+            <div className="flex items-center gap-3">
+              <Loader2 className="size-4 animate-spin text-amber-500" />
+              <div>
+                <p className="text-sm font-medium text-amber-400">Transcribing your voice...</p>
+                <p className="text-xs text-muted-foreground">This may take a few seconds</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Attachment preview */}
         {attachments.length > 0 && (
           <div className="px-4 py-2 border-t bg-muted/30 space-y-1.5">
@@ -481,7 +693,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
               size="icon"
               className="size-9 shrink-0"
               onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading || sendMutation.isPending}
+              disabled={isUploading || isBusy}
               title="Attach files (photos, videos, documents)"
             >
               {isUploading ? (
@@ -491,16 +703,48 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
               )}
             </Button>
 
+            {/* Voice input button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "size-9 shrink-0 transition-all",
+                voiceState === "recording" && "text-red-500 bg-red-500/10 hover:bg-red-500/20",
+                voiceState === "transcribing" && "text-amber-500 bg-amber-500/10"
+              )}
+              onClick={voiceState === "idle" ? startRecording : voiceState === "recording" ? stopRecording : undefined}
+              disabled={voiceState === "transcribing" || sendMutation.isPending}
+              title={
+                voiceState === "idle"
+                  ? "Voice input — speak your command"
+                  : voiceState === "recording"
+                  ? "Stop recording"
+                  : "Transcribing..."
+              }
+            >
+              {voiceState === "transcribing" ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : voiceState === "recording" ? (
+                <Square className="size-3.5 fill-current text-red-500" />
+              ) : (
+                <Mic className="size-4 text-muted-foreground" />
+              )}
+            </Button>
+
             {/* Text input */}
             <Textarea
               ref={textareaRef}
               value={input}
               onChange={handleTextareaChange}
               onKeyDown={handleKeyDown}
-              placeholder="Tell me what to do... (Shift+Enter for new line)"
+              placeholder={
+                voiceState === "transcribing"
+                  ? "Transcribing your voice..."
+                  : "Type or tap the mic to speak..."
+              }
               className="flex-1 min-h-[42px] max-h-[160px] resize-none text-sm rounded-xl border-border/50 focus-visible:ring-amber-500/30 py-2.5 px-3"
               rows={1}
-              disabled={sendMutation.isPending}
+              disabled={sendMutation.isPending || voiceState === "transcribing"}
             />
 
             {/* Send button */}
@@ -509,7 +753,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
               className="size-9 shrink-0 bg-amber-500 hover:bg-amber-400 text-black"
               onClick={handleSend}
               disabled={
-                (!input.trim() && attachments.length === 0) || sendMutation.isPending
+                (!input.trim() && attachments.length === 0) || sendMutation.isPending || voiceState !== "idle"
               }
             >
               {sendMutation.isPending ? (
@@ -520,7 +764,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
             </Button>
           </div>
           <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
-            Actions execute on your project in real-time
+            Type, speak, or upload — actions execute on your project in real-time
           </p>
         </div>
       </div>
