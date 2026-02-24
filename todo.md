@@ -392,16 +392,16 @@
 - [ ] Guide user on Railway custom domain re-configuration for virelle.life
 
 ## Remove Manus OAuth / Standalone Auth
-- [ ] Remove all Manus OAuth dependencies and references
-- [ ] Add password hash column to users table in schema
-- [ ] Implement server-side email/password register endpoint
-- [ ] Implement server-side email/password login endpoint
-- [ ] Implement JWT session management independent of Manus SDK
-- [ ] Build login page UI
-- [ ] Build register page UI
-- [ ] Update useAuth hook to work without Manus OAuth
-- [ ] Update DashboardLayout auth flow
-- [ ] Update main.tsx to remove OAuth redirect logic
-- [ ] Update App.tsx routing for login/register pages
-- [ ] Write tests for new auth system
-- [ ] Push to GitHub for Railway deployment
+- [x] Remove all Manus OAuth dependencies and references
+- [x] Add password hash column to users table in schema
+- [x] Implement server-side email/password register endpoint
+- [x] Implement server-side email/password login endpoint
+- [x] Implement JWT session management independent of Manus SDK
+- [x] Build login page UI
+- [x] Build register page UI
+- [x] Update useAuth hook to work without Manus OAuth
+- [x] Update DashboardLayout auth flow
+- [x] Update main.tsx to remove OAuth redirect logic
+- [x] Update App.tsx routing for login/register pages
+- [x] Write tests for new auth system
+- [x] Push to GitHub for Railway deployment
