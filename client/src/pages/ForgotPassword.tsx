@@ -28,7 +28,7 @@ export default function ForgotPassword() {
       toast.error("Please enter your email");
       return;
     }
-    resetMutation.mutate({ email });
+    resetMutation.mutate({ email, origin: window.location.origin });
   };
 
   return (

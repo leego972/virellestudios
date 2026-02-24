@@ -73,7 +73,7 @@ export const appRouter = router({
         return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     requestPasswordReset: publicProcedure
-      .input(z.object({ email: z.string().email().max(320) }))
+      .input(z.object({ email: z.string().email().max(320), origin: z.string().url() }))
       .mutation(async ({ input }) => {
         const user = await db.getUserByEmail(input.email.toLowerCase());
         if (!user) {
@@ -83,11 +83,12 @@ export const appRouter = router({
         const token = nanoid(64);
         const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
         await db.createPasswordResetToken(user.id, token, expiresAt);
-        // Notify owner with the reset link
-        await notifyOwner({
-          title: "Password Reset Requested",
-          content: `User ${user.email} requested a password reset.\nReset token: ${token}\nExpires: ${expiresAt.toISOString()}\n\nShare this link with the user: [your-domain]/reset-password?token=${token}`,
-        });
+        // Send password reset email via Gmail SMTP
+        const { sendPasswordResetEmail } = await import("./email");
+        const sent = await sendPasswordResetEmail(user.email!, token, input.origin);
+        if (!sent) {
+          console.error("Failed to send password reset email to", user.email);
+        }
         return { success: true, message: "If an account with that email exists, a reset link has been sent." };
       }),
     validateResetToken: publicProcedure

@@ -1386,7 +1386,7 @@ describe("auth.requestPasswordReset", () => {
   it("returns success message even for non-existent email (no info leak)", async () => {
     const { ctx } = createPublicContext();
     const caller = appRouter.createCaller(ctx);
-    const result = await caller.auth.requestPasswordReset({ email: "nonexistent@test.com" });
+    const result = await caller.auth.requestPasswordReset({ email: "nonexistent@test.com", origin: "https://virelle.life" });
     expect(result.success).toBe(true);
     expect(result.message).toContain("If an account");
   });
@@ -1395,7 +1395,7 @@ describe("auth.requestPasswordReset", () => {
     const { ctx } = createPublicContext();
     const caller = appRouter.createCaller(ctx);
     await expect(
-      caller.auth.requestPasswordReset({ email: "not-an-email" })
+      caller.auth.requestPasswordReset({ email: "not-an-email", origin: "https://virelle.life" })
     ).rejects.toThrow();
   });
 });

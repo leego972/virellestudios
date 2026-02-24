@@ -425,3 +425,12 @@
 
 ## Domain Re-configuration
 - [x] Pushed all fixes to GitHub for Railway auto-deploy
+
+## Gmail SMTP Email Integration for Password Reset
+- [ ] Install Nodemailer
+- [ ] Set GMAIL_USER and GMAIL_APP_PASSWORD secrets
+- [ ] Create email sending helper (server/email.ts)
+- [ ] Create styled password reset email HTML template
+- [ ] Update requestPasswordReset endpoint to send email via Gmail SMTP
+- [ ] Write tests for email integration
+- [ ] Push to GitHub for Railway deployment
