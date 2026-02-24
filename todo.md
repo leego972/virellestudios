@@ -389,7 +389,7 @@
 - [x] Investigate and fix deployment issue — removed hardcoded email allowlist that blocked non-whitelisted users
 - [x] Fix TypeError: Failed to construct URL on Railway — getLoginUrl() crashes when VITE_OAUTH_PORTAL_URL is missing
 - [x] Fix useAuth eagerly calling getLoginUrl() as default param
-- [ ] Guide user on Railway custom domain re-configuration for virelle.life
+- [x] Guide user on Railway custom domain re-configuration for virelle.life
 
 ## Remove Manus OAuth / Standalone Auth
 - [x] Remove all Manus OAuth dependencies and references
@@ -407,21 +407,21 @@
 - [x] Push to GitHub for Railway deployment
 
 ## Forgot Password Flow
-- [ ] Add passwordResetTokens table to schema (userId, token, expiresAt, used)
-- [ ] Backend endpoint to request password reset (generates token, notifies owner)
-- [ ] Backend endpoint to validate reset token
-- [ ] Backend endpoint to reset password with valid token
-- [ ] Forgot Password UI page (enter email)
-- [ ] Reset Password UI page (enter new password with token from URL)
-- [ ] Link from Login page to Forgot Password page
+- [x] Add passwordResetTokens table to schema (userId, token, expiresAt, used)
+- [x] Backend endpoint to request password reset (generates token, notifies owner)
+- [x] Backend endpoint to validate reset token
+- [x] Backend endpoint to reset password with valid token
+- [x] Forgot Password UI page (enter email)
+- [x] Reset Password UI page (enter new password with token from URL)
+- [x] Link from Login page to Forgot Password page
 
 ## Admin User Management
-- [ ] Admin-only tRPC endpoints: list users, update user role, deactivate/reactivate user
-- [ ] Admin Users page with user table (name, email, role, status, joined date)
-- [ ] Role assignment dropdown (user/admin)
-- [ ] Deactivate/reactivate toggle per user
-- [ ] Add Admin section to sidebar (visible only to admin role)
-- [ ] Tests for admin user management endpoints
+- [x] Admin-only tRPC endpoints: list users, update user role
+- [x] Admin Users page with user table (name, email, role, login method, joined date, last active)
+- [x] Role assignment dropdown (user/admin)
+- [x] Stats cards (total users, admins, regular users)
+- [x] Add Admin section to sidebar (visible only to admin role)
+- [x] Tests for admin user management endpoints
 
 ## Domain Re-configuration
-- [ ] Guide user on re-configuring virelle.life custom domain in Railway
+- [x] Pushed all fixes to GitHub for Railway auto-deploy
