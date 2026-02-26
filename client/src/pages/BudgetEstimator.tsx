@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, DollarSign, Loader2, Sparkles, Trash2, TrendingUp, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, DollarSign, Loader2, Sparkles, Trash2, TrendingUp, ChevronDown, ChevronUp, Download, FileText } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { getLoginUrl } from "@/const";
@@ -68,6 +68,57 @@ export default function BudgetEstimator() {
 
   const breakdown = activeBudget?.breakdown as Record<string, { label: string; estimate: number; items: { name: string; cost: number; notes: string }[] }> | undefined;
 
+  function exportCSV() {
+    if (!activeBudget || !breakdown) return;
+    const rows = ["Category,Item,Cost,Notes"];
+    Object.entries(breakdown).forEach(([, cat]) => {
+      cat.items.forEach((item) => {
+        rows.push(`"${cat.label}","${item.name}",${item.cost},"${item.notes || ""}"`);
+      });
+      rows.push(`"${cat.label} — Subtotal",,${cat.estimate},`);
+    });
+    rows.push(`"TOTAL",,${activeBudget.totalEstimate},`);
+    const blob = new Blob([rows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `budget_${projectId}_${activeBudget.id}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Budget exported as CSV");
+  }
+
+  function exportPDF() {
+    if (!activeBudget || !breakdown) return;
+    const lines = [
+      `PRODUCTION BUDGET ESTIMATE`,
+      `Project: ${project.data?.title || "Untitled"}`,
+      `Generated: ${new Date(activeBudget.createdAt).toLocaleDateString()}`,
+      `Total Estimate: ${formatCurrency(activeBudget.totalEstimate)}`,
+      `Confidence: ${activeBudget.confidence}%`,
+      ``,
+      `${"-".repeat(60)}`,
+    ];
+    Object.entries(breakdown).forEach(([, cat]) => {
+      lines.push(`\n${cat.label.toUpperCase()} — ${formatCurrency(cat.estimate)}`);
+      lines.push(`${"-".repeat(40)}`);
+      cat.items.forEach((item) => {
+        lines.push(`  ${item.name.padEnd(30)} ${formatCurrency(item.cost)}`);
+        if (item.notes) lines.push(`    → ${item.notes}`);
+      });
+    });
+    lines.push(`\n${"-".repeat(60)}`);
+    lines.push(`GRAND TOTAL: ${formatCurrency(activeBudget.totalEstimate)}`);
+    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `budget_${projectId}_${activeBudget.id}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Budget exported");
+  }
+
   function toggleCategory(key: string) {
     setExpandedCategories((prev) => {
       const next = new Set(prev);
@@ -91,13 +142,25 @@ export default function BudgetEstimator() {
               <p className="text-sm text-muted-foreground">{project.data?.title || "Loading..."}</p>
             </div>
           </div>
-          <Button onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending}>
-            {generateMutation.isPending ? (
-              <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Analyzing project...</>
-            ) : (
-              <><Sparkles className="h-4 w-4 mr-2" /> Generate Budget Estimate</>
+          <div className="flex items-center gap-2">
+            {activeBudget && (
+              <>
+                <Button variant="outline" size="sm" onClick={exportCSV}>
+                  <Download className="h-4 w-4 mr-1" /> CSV
+                </Button>
+                <Button variant="outline" size="sm" onClick={exportPDF}>
+                  <FileText className="h-4 w-4 mr-1" /> Export
+                </Button>
+              </>
             )}
-          </Button>
+            <Button onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending}>
+              {generateMutation.isPending ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Analyzing project...</>
+              ) : (
+                <><Sparkles className="h-4 w-4 mr-2" /> Generate Budget Estimate</>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 

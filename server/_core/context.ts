@@ -6,6 +6,12 @@ import * as db from "../db";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET || "dev-secret-change-me";
 const secretKey = new TextEncoder().encode(JWT_SECRET_KEY);
+const JWT_ISSUER = "virelle-studios";
+
+// Warn loudly if using default secret in production
+if (process.env.NODE_ENV === "production" && JWT_SECRET_KEY === "dev-secret-change-me") {
+  console.error("⚠️  CRITICAL: JWT_SECRET is using the default value in production! Set a strong random secret.");
+}
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -32,6 +38,7 @@ async function authenticateFromCookie(req: CreateExpressContextOptions["req"]): 
   try {
     const { payload } = await jwtVerify(sessionCookie, secretKey, {
       algorithms: ["HS256"],
+      issuer: JWT_ISSUER,
     });
     const userId = payload.userId as number;
     if (userId) {
@@ -45,7 +52,19 @@ async function authenticateFromCookie(req: CreateExpressContextOptions["req"]): 
       return user ?? null;
     }
   } catch {
-    // JWT verification failed
+    // New JWT format failed — try legacy tokens without issuer check
+    try {
+      const { payload } = await jwtVerify(sessionCookie, secretKey, {
+        algorithms: ["HS256"],
+      });
+      const userId = payload.userId as number;
+      if (userId) {
+        const user = await db.getUserById(userId);
+        return user ?? null;
+      }
+    } catch {
+      // JWT verification failed entirely
+    }
   }
 
   // Try Manus SDK as fallback (for dev environment)
@@ -64,7 +83,9 @@ async function authenticateFromCookie(req: CreateExpressContextOptions["req"]): 
 export async function createSessionToken(userId: number, name: string): Promise<string> {
   const token = await new SignJWT({ userId, name })
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-    .setExpirationTime("365d")
+    .setIssuer(JWT_ISSUER)
+    .setIssuedAt()
+    .setExpirationTime("30d")
     .sign(secretKey);
   return token;
 }

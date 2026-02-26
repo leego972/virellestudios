@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { useParams, useLocation } from "wouter";
-import { Loader2, ArrowLeft, Palette, Check } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Loader2, ArrowLeft, Palette, Check, Eye } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 
@@ -194,30 +194,51 @@ export default function ColorGrading() {
           </Card>
         </div>
 
-        {/* Preview Strip */}
+        {/* Before / After Preview */}
         <div>
-          <h2 className="text-sm font-medium mb-3">Preview</h2>
+          <h2 className="text-sm font-medium mb-3 flex items-center gap-2">
+            <Eye className="h-4 w-4 text-primary" />
+            Before / After Preview
+          </h2>
           <Card className="overflow-hidden">
             <CardContent className="p-0">
-              <div
-                className="h-40 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-500 relative"
-                style={{
-                  filter: `
-                    contrast(${0.5 + settings.contrast / 100})
-                    saturate(${settings.saturation / 50})
-                    brightness(${0.7 + settings.highlights / 150})
-                    hue-rotate(${(settings.temperature - 50) * 1.5}deg)
-                  `,
-                }}
-              >
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-white text-lg font-light tracking-widest opacity-60">
-                    {COLOR_PRESETS.find(p => p.name === selectedPreset)?.label || "Custom"} Look
-                  </p>
+              <div className="relative h-56 select-none" onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                e.currentTarget.style.setProperty("--split", `${Math.max(5, Math.min(95, x))}%`);
+              }} style={{ "--split": "50%" } as React.CSSProperties}>
+                {/* Before (original) */}
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-600 to-gray-400">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-white/80 text-sm font-medium tracking-wider">ORIGINAL</p>
+                      <p className="text-white/40 text-xs mt-1">No grading applied</p>
+                    </div>
+                  </div>
+                </div>
+                {/* After (graded) */}
+                <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 0 0 var(--split))` }}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-600 to-gray-400" style={{
+                    filter: `contrast(${0.5 + settings.contrast / 100}) saturate(${settings.saturation / 50}) brightness(${0.7 + settings.highlights / 150}) hue-rotate(${(settings.temperature - 50) * 1.5}deg)`,
+                  }}>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <p className="text-white/80 text-sm font-medium tracking-wider">{(COLOR_PRESETS.find(p => p.name === selectedPreset)?.label || "Custom").toUpperCase()}</p>
+                        <p className="text-white/40 text-xs mt-1">Graded look</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Divider line */}
+                <div className="absolute top-0 bottom-0 w-0.5 bg-white/80 shadow-lg" style={{ left: "var(--split)" }}>
+                  <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-white/90 shadow flex items-center justify-center">
+                    <span className="text-[10px] text-gray-600">↔</span>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
+          <p className="text-[10px] text-muted-foreground mt-1 text-center">Hover to move the comparison slider</p>
         </div>
       </div>
     </div>

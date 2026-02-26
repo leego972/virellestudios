@@ -165,6 +165,14 @@ export default function SceneEditor() {
     onError: (err) => toast.error(err.message),
   });
 
+  const bulkGenMutation = trpc.scene.bulkGeneratePreviews.useMutation({
+    onSuccess: (result) => {
+      utils.scene.listByProject.invalidate({ projectId });
+      toast.success(`Generated ${result.generated} preview images (${result.total} total scenes)`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
   const openNewScene = () => {
     setSelectedSceneId(null);
     setForm({ ...defaultScene });
@@ -259,10 +267,28 @@ export default function SceneEditor() {
             </p>
           </div>
         </div>
-        <Button size="sm" onClick={openNewScene}>
-          <Plus className="h-4 w-4 mr-1" />
-          Add Scene
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              if (!projectId) return;
+              bulkGenMutation.mutate({ projectId: Number(projectId) });
+            }}
+            disabled={bulkGenMutation.isPending}
+          >
+            {bulkGenMutation.isPending ? (
+              <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4 mr-1" />
+            )}
+            Generate All Previews
+          </Button>
+          <Button size="sm" onClick={openNewScene}>
+            <Plus className="h-4 w-4 mr-1" />
+            Add Scene
+          </Button>
+        </div>
       </div>
 
       {/* Timeline */}

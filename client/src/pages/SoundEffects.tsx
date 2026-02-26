@@ -260,6 +260,49 @@ export default function SoundEffects() {
     return projectSounds.some((s) => s.name === presetName);
   };
 
+  // Web Audio API preview for preset sounds
+  const playPreview = (name: string, category: string) => {
+    if (playingId === name) {
+      setPlayingId(null);
+      return;
+    }
+    setPlayingId(name);
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
+      // Different sounds per category
+      const catLower = category.toLowerCase();
+      if (catLower.includes("explosion") || catLower.includes("impact")) {
+        osc.type = "sawtooth"; osc.frequency.setValueAtTime(80, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(20, ctx.currentTime + 1);
+      } else if (catLower.includes("ambient") || catLower.includes("nature")) {
+        osc.type = "sine"; osc.frequency.setValueAtTime(220, ctx.currentTime);
+      } else if (catLower.includes("sci-fi") || catLower.includes("electronic")) {
+        osc.type = "square"; osc.frequency.setValueAtTime(440, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.5);
+      } else if (catLower.includes("horror") || catLower.includes("tension")) {
+        osc.type = "sine"; osc.frequency.setValueAtTime(60, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(120, ctx.currentTime + 1);
+      } else if (catLower.includes("weather")) {
+        osc.type = "triangle"; osc.frequency.setValueAtTime(300, ctx.currentTime);
+      } else if (catLower.includes("vehicle") || catLower.includes("mechanical")) {
+        osc.type = "sawtooth"; osc.frequency.setValueAtTime(150, ctx.currentTime);
+      } else {
+        osc.type = "sine"; osc.frequency.setValueAtTime(330, ctx.currentTime);
+      }
+      osc.start();
+      osc.stop(ctx.currentTime + 1.2);
+      setTimeout(() => { setPlayingId(null); ctx.close(); }, 1200);
+    } catch {
+      setPlayingId(null);
+    }
+  };
+
   const handleAssignToScene = (soundName: string) => {
     setSelectedSoundForAssign(soundName);
     setShowAssignDialog(true);
@@ -477,20 +520,34 @@ export default function SoundEffects() {
                             </Badge>
                           </div>
                         </div>
-                        <Button
-                          variant={added ? "secondary" : "outline"}
-                          size="sm"
-                          className="h-7 text-xs shrink-0"
-                          disabled={added || addMutation.isPending}
-                          onClick={() => addPresetToProject(preset)}
-                        >
-                          {added ? "Added" : (
-                            <>
-                              <Plus className="h-3 w-3 mr-1" />
-                              Add
-                            </>
-                          )}
-                        </Button>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0"
+                            onClick={() => playPreview(preset.name, preset.category)}
+                          >
+                            {playingId === preset.name ? (
+                              <Volume2 className="h-3.5 w-3.5 text-primary animate-pulse" />
+                            ) : (
+                              <Play className="h-3.5 w-3.5" />
+                            )}
+                          </Button>
+                          <Button
+                            variant={added ? "secondary" : "outline"}
+                            size="sm"
+                            className="h-7 text-xs"
+                            disabled={added || addMutation.isPending}
+                            onClick={() => addPresetToProject(preset)}
+                          >
+                            {added ? "Added" : (
+                              <>
+                                <Plus className="h-3 w-3 mr-1" />
+                                Add
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       </div>
                     );
                   })}

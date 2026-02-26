@@ -135,8 +135,28 @@ const DIRECTOR_TOOLS: Tool[] = [
   {
     type: "function",
     function: {
+      name: "add_visual_effect",
+      description: "Add a visual effect (VFX) to a scene. Can add preset effects (explosions, weather, magic, particles, etc.) or custom effects.",
+      parameters: {
+        type: "object",
+        properties: {
+          sceneName: { type: "string", description: "The scene title or number to add the VFX to" },
+          effectName: { type: "string", description: "Name of the visual effect (e.g. 'Fireball Explosion', 'Lightning Storm', 'Magic Portal')" },
+          category: { type: "string", description: "VFX category: Explosions, Weather, Magic, Particles, Light, Smoke, Water, Sci-Fi" },
+          intensity: { type: "number", description: "Effect intensity from 0.0 to 1.0, default 0.7" },
+          duration: { type: "number", description: "Effect duration in seconds" },
+          startTime: { type: "number", description: "When to start the effect (seconds from scene start)" },
+          colorTint: { type: "string", description: "Optional color tint hex code (e.g. '#ff4400')" },
+        },
+        required: ["sceneName", "effectName", "category"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "get_project_summary",
-      description: "Get a summary of the current project state including all scenes, characters, and settings. Use this to understand the project before making suggestions.",
+      description: "Get a summary of the current project state including all scenes, characters, sound effects, and visual effects. Use this to understand the project before making suggestions.",
       parameters: {
         type: "object",
         properties: {},
@@ -520,11 +540,36 @@ Be creative and specific. If the director mentions characters, write realistic d
         };
       }
 
+      case "add_visual_effect": {
+        const scene = await findScene(projectId, args.sceneName as string);
+        if (!scene) return { success: false, message: `Could not find scene "${args.sceneName}". Please check the scene name or number.`, actionType: toolName, actionData: args };
+        await db.createVisualEffect({
+          projectId,
+          sceneId: scene.id,
+          userId,
+          name: args.effectName as string,
+          category: (args.category as string) || "Custom",
+          intensity: (args.intensity as number) || 0.7,
+          duration: (args.duration as number) || 3,
+          startTime: (args.startTime as number) || 0,
+          colorTint: (args.colorTint as string) || null,
+          isCustom: 0,
+          tags: [],
+        });
+        return {
+          success: true,
+          message: `Added VFX "${args.effectName}" to "${scene.title || `Scene ${scene.orderIndex + 1}`}" — intensity ${args.intensity || 0.7}, duration ${args.duration || 3}s, starts at ${args.startTime || 0}s.`,
+          actionType: toolName,
+          actionData: { ...args, sceneId: scene.id, sceneTitle: scene.title },
+        };
+      }
+
       case "get_project_summary": {
         const project = await db.getProjectById(projectId, userId);
         const scenes = await db.getProjectScenes(projectId);
         const characters = await db.getProjectCharacters(projectId);
         const soundEffects = await db.listSoundEffectsByProject(projectId);
+        const visualEffects = await db.listVisualEffectsByProject(projectId);
         const summary = {
           title: project?.title,
           description: project?.description,
@@ -535,6 +580,7 @@ Be creative and specific. If the director mentions characters, write realistic d
           sceneCount: scenes.length,
           characterCount: characters.length,
           soundEffectCount: soundEffects.length,
+          visualEffectCount: visualEffects.length,
           scenes: scenes.map((s, i) => ({
             number: i + 1,
             title: s.title,
@@ -826,6 +872,7 @@ YOUR CAPABILITIES:
 - CREATE SCENES FROM VISION: When the director describes what they see in their mind, create a complete scene with ALL production details filled in (lighting, camera, weather, mood, transitions, dialogue, sound effects, duration, color grading, production notes). Use create_scene_from_vision for this — it's your most powerful tool.
 - Add, modify, cut (delete), and reorder scenes
 - Add sound effects to specific scenes with timing and volume control
+- Add visual effects (VFX) to scenes: explosions, weather, magic, particles, light, smoke, water, sci-fi effects with intensity, duration, and color tint controls
 - Add dialogue lines for characters
 - Change scene properties: transitions (cut, fade, dissolve, wipe, iris, cross-dissolve), lighting, camera angles, mood, weather, time of day, duration, color grading
 - Get a full project summary to understand the current state

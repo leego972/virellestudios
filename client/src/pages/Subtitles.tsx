@@ -266,8 +266,40 @@ export default function Subtitles() {
                   </div>
                 </div>
 
+                {/* Visual Timeline */}
+                {entries.length > 0 && (
+                  <div className="mb-4 p-3 rounded-lg bg-muted/30 border">
+                    <div className="text-xs font-medium text-muted-foreground mb-2">Timeline</div>
+                    <div className="relative h-10 bg-muted/50 rounded overflow-hidden">
+                      {(() => {
+                        const maxTime = Math.max(...entries.map((e: any) => e.endTime), 1);
+                        return entries.map((entry: any, i: number) => {
+                          const left = (entry.startTime / maxTime) * 100;
+                          const width = Math.max(((entry.endTime - entry.startTime) / maxTime) * 100, 0.5);
+                          return (
+                            <div
+                              key={i}
+                              className="absolute top-1 h-8 rounded-sm bg-primary/60 hover:bg-primary/80 transition-colors cursor-pointer flex items-center justify-center overflow-hidden"
+                              style={{ left: `${left}%`, width: `${width}%`, minWidth: "2px" }}
+                              title={`${formatTime(entry.startTime)} → ${formatTime(entry.endTime)}\n${entry.text}`}
+                              onClick={() => { setEditingEntry(i); setEditText(entry.text); }}
+                            >
+                              {width > 3 && <span className="text-[8px] text-white truncate px-0.5">{i + 1}</span>}
+                            </div>
+                          );
+                        });
+                      })()}
+                      {/* Time markers */}
+                      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-1">
+                        <span className="text-[8px] text-muted-foreground">0:00</span>
+                        <span className="text-[8px] text-muted-foreground">{formatTime(Math.max(...entries.map((e: any) => e.endTime), 0))}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Entries Table */}
-                <ScrollArea className="h-[600px]">
+                <ScrollArea className="h-[500px]">
                   {entries.length === 0 ? (
                     <div className="text-center py-12">
                       <p className="text-sm text-muted-foreground">No subtitle entries yet. Use AI to generate them.</p>

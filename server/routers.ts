@@ -606,6 +606,36 @@ export const appRouter = router({
 
         return { url: result.url };
       }),
+
+    // Bulk generate preview images for all scenes without thumbnails
+    bulkGeneratePreviews: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const scenes = await db.getProjectScenes(project.id);
+        const scenesNeedingImages = scenes.filter(s => !s.thumbnailUrl);
+        if (scenesNeedingImages.length === 0) return { generated: 0, total: scenes.length };
+
+        const characters = await db.getProjectCharacters(project.id);
+        const charLookup = Object.fromEntries(characters.map(c => [c.name, c]));
+        let generated = 0;
+        const BATCH = 4;
+        for (let i = 0; i < scenesNeedingImages.length; i += BATCH) {
+          const batch = scenesNeedingImages.slice(i, i + BATCH);
+          await Promise.allSettled(batch.map(async (scene) => {
+            try {
+              const prompt = `Cinematic film still, ${scene.description}, ${scene.lighting || "natural"} lighting, ${scene.cameraAngle || "medium"} shot, ${scene.mood || "dramatic"} mood, ${scene.weather || "clear"} weather, ${scene.timeOfDay || "afternoon"}, photorealistic, shot on ARRI ALEXA 65, 8K, film grain, professional color grading`;
+              const result = await generateImage({ prompt });
+              await db.updateScene(scene.id, { thumbnailUrl: result.url });
+              generated++;
+            } catch (e) {
+              console.error(`Bulk gen failed for scene "${scene.title}":`, e);
+            }
+          }));
+        }
+        return { generated, total: scenes.length };
+      }),
   }),
 
   // ─── File Upload ───
@@ -647,6 +677,8 @@ export const appRouter = router({
           status: "generating",
           progress: 0,
         });
+
+        try {
 
         // Use LLM to break down the plot into scenes
         const characters = await db.getProjectCharacters(project.id);
@@ -720,18 +752,36 @@ export const appRouter = router({
           });
         }
 
-        // Generate preview for first scene as project thumbnail
+        // Generate preview images for ALL scenes in parallel (batches of 4)
         const allScenes = await db.getProjectScenes(project.id);
-        if (allScenes.length > 0) {
-          try {
-            const firstScene = allScenes[0];
-            const thumbPrompt = `Cinematic Hollywood movie poster style, ${firstScene.description}, ${firstScene.lighting} lighting, ${firstScene.mood} mood, photorealistic, 8k`;
-            const thumbResult = await generateImage({ prompt: thumbPrompt });
-            await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: thumbResult.url });
-            await db.updateScene(firstScene.id, { thumbnailUrl: thumbResult.url });
-          } catch (e) {
-            console.error("Failed to generate thumbnail:", e);
+        const BATCH_SIZE = 4;
+        let generatedCount = 0;
+        for (let batch = 0; batch < allScenes.length; batch += BATCH_SIZE) {
+          const batchScenes = allScenes.slice(batch, batch + BATCH_SIZE);
+          const imagePromises = batchScenes.map(async (scene) => {
+            try {
+              const prompt = `Cinematic film still, ${scene.description}, ${scene.lighting} lighting, ${scene.cameraAngle} shot, ${scene.mood} mood, ${scene.weather} weather, ${scene.timeOfDay}, photorealistic, shot on ARRI ALEXA 65, 8K resolution, film grain, professional color grading`;
+              const result = await generateImage({ prompt });
+              await db.updateScene(scene.id, { thumbnailUrl: result.url });
+              generatedCount++;
+              return result.url;
+            } catch (e) {
+              console.error(`Failed to generate image for scene "${scene.title}":`, e);
+              return null;
+            }
+          });
+          const results = await Promise.allSettled(imagePromises);
+          // Use first successful image as project thumbnail
+          if (batch === 0) {
+            const firstUrl = results.find(r => r.status === "fulfilled" && r.value);
+            if (firstUrl && firstUrl.status === "fulfilled" && firstUrl.value) {
+              await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: firstUrl.value });
+            }
           }
+          // Update progress
+          const progress = Math.min(95, Math.round(((batch + batchScenes.length) / allScenes.length) * 90) + 10);
+          await db.updateJob(job.id, { progress });
+          await db.updateProject(project.id, ctx.user.id, { progress });
         }
 
         // Update job and project
@@ -741,7 +791,17 @@ export const appRouter = router({
           progress: 100,
         });
 
-        return { jobId: job.id, scenesCreated: scenesData.length };
+        return { jobId: job.id, scenesCreated: scenesData.length, imagesGenerated: generatedCount };
+        } catch (error: any) {
+          // Error recovery: ensure project doesn't get stuck in "generating" state
+          console.error("quickGenerate failed:", error);
+          await db.updateJob(job.id, { status: "failed", progress: 0 });
+          await db.updateProject(project.id, ctx.user.id, {
+            status: "draft",
+            progress: 0,
+          });
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Generation failed: ${error.message}. Project has been reset to draft.` });
+        }
       }),
 
     // Generate trailer from existing scenes
