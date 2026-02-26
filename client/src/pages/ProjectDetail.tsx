@@ -1460,6 +1460,17 @@ export default function ProjectDetail() {
               </div>
             </CardContent>
           </Card>
+          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/visual-effects`)}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
+                <Sparkles className="h-5 w-5 text-purple-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Visual Effects</p>
+                <p className="text-xs text-muted-foreground">VFX library — explosions, weather, magic & more</p>
+              </div>
+            </CardContent>
+          </Card>
           <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
             <CardContent className="p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">

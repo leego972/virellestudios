@@ -31,6 +31,8 @@ export const appRouter = router({
         name: z.string().min(1).max(255),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Registration is locked — only the owner can have an account
+        throw new TRPCError({ code: "FORBIDDEN", message: "Registration is currently closed. This is a private studio." });
         // Check if user already exists
         const existing = await db.getUserByEmail(input.email.toLowerCase());
         if (existing) {
@@ -326,6 +328,156 @@ export const appRouter = router({
           description: `AI-generated character: ${f.gender}, ${f.ageRange}, ${f.ethnicity}`,
           photoUrl: result.url,
           attributes: { ...f, aiGenerated: true },
+        });
+
+        return character;
+      }),
+
+    // AI Character Generator from Photo — analyze a reference photo and create a cinematic character portrait
+    aiGenerateFromPhoto: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1).max(128),
+        projectId: z.number().nullable().optional(),
+        photoBase64: z.string(), // base64 encoded reference photo
+        photoMimeType: z.string().default("image/jpeg"),
+        characterRole: z.string().optional(), // hero, villain, mentor, etc.
+        style: z.string().optional(), // cinematic, noir, sci-fi, fantasy, etc.
+        additionalNotes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Step 1: Upload the reference photo to S3
+        const photoBuffer = Buffer.from(input.photoBase64, "base64");
+        const photoKey = `uploads/${ctx.user.id}/ref-${nanoid()}.jpg`;
+        const { url: refPhotoUrl } = await storagePut(photoKey, photoBuffer, input.photoMimeType);
+
+        // Step 2: Use LLM with vision to analyze the photo and extract detailed features
+        const analysisResult = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `You are an expert casting director and character designer for a Hollywood production studio. Analyze the provided reference photo in extreme detail. Extract every physical characteristic you can observe. Be precise and specific — your description will be used to recreate this person as a movie character.`,
+            },
+            {
+              role: "user",
+              content: [
+                {
+                  type: "image_url",
+                  image_url: { url: `data:${input.photoMimeType};base64,${input.photoBase64}` },
+                },
+                {
+                  type: "text",
+                  text: `Analyze this person's appearance in detail for character recreation. Character name: ${input.name}. ${input.characterRole ? `Role: ${input.characterRole}.` : ""} ${input.additionalNotes ? `Notes: ${input.additionalNotes}` : ""}\n\nProvide your analysis as JSON.`,
+                },
+              ],
+            },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "character_analysis",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  estimatedAge: { type: "string" },
+                  gender: { type: "string" },
+                  ethnicity: { type: "string" },
+                  skinTone: { type: "string" },
+                  build: { type: "string" },
+                  hairColor: { type: "string" },
+                  hairStyle: { type: "string" },
+                  hairLength: { type: "string" },
+                  eyeColor: { type: "string" },
+                  eyeShape: { type: "string" },
+                  faceShape: { type: "string" },
+                  noseType: { type: "string" },
+                  lipShape: { type: "string" },
+                  facialHair: { type: "string" },
+                  distinguishingFeatures: { type: "string" },
+                  clothing: { type: "string" },
+                  expression: { type: "string" },
+                  overallVibe: { type: "string" },
+                  detailedDescription: { type: "string" },
+                },
+                required: ["estimatedAge", "gender", "ethnicity", "skinTone", "build", "hairColor", "hairStyle", "hairLength", "eyeColor", "eyeShape", "faceShape", "noseType", "lipShape", "facialHair", "distinguishingFeatures", "clothing", "expression", "overallVibe", "detailedDescription"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+
+        let analysis: any = {};
+        try {
+          const content = analysisResult.choices?.[0]?.message?.content || "{}";
+          analysis = JSON.parse(content);
+        } catch {
+          analysis = { detailedDescription: "Character from reference photo" };
+        }
+
+        // Step 3: Build a rich prompt for image generation using the analysis + reference photo
+        const style = input.style || "cinematic";
+        const styleMap: Record<string, string> = {
+          cinematic: "Ultra-photorealistic Hollywood movie character portrait, shot on ARRI ALEXA 65 with Zeiss Master Prime lens, three-point Rembrandt lighting, cinematic color grading, shallow depth of field f/1.4, volumetric light",
+          noir: "Film noir style character portrait, dramatic high-contrast black and white with selective lighting, deep shadows, venetian blind light patterns, 1940s Hollywood aesthetic",
+          "sci-fi": "Futuristic sci-fi character portrait, holographic rim lighting, cyberpunk color palette with neon accents, advanced technology elements, sleek futuristic styling",
+          fantasy: "Epic fantasy character portrait, ethereal magical lighting, rich detailed costume and armor, mystical atmosphere, painterly quality with photorealistic detail",
+          horror: "Dark atmospheric horror character portrait, unsettling low-key lighting, desaturated color palette with accent reds, subtle menacing quality, psychological tension",
+          comedy: "Bright warm character portrait, friendly approachable lighting, vibrant colors, natural relaxed expression, inviting and charismatic presence",
+          period: "Period drama character portrait, classical painting-inspired lighting, historically accurate styling, rich textures and fabrics, golden hour warmth",
+          action: "Dynamic action hero character portrait, dramatic backlighting with lens flare, intense determined expression, gritty textured look, high contrast cinematic grading",
+        };
+        const stylePrompt = styleMap[style] || styleMap.cinematic;
+
+        const promptParts = [
+          stylePrompt + ",",
+          `Recreate this exact person as a movie character named ${input.name},`,
+          `${analysis.gender || "person"} appearing ${analysis.estimatedAge || "adult"},`,
+          `${analysis.ethnicity || ""} with ${analysis.skinTone || "natural"} skin tone,`,
+          `${analysis.build || "average"} build,`,
+          `${analysis.hairColor || ""} ${analysis.hairStyle || ""} ${analysis.hairLength || ""} hair,`,
+          `${analysis.eyeColor || ""} ${analysis.eyeShape || ""} eyes,`,
+          `${analysis.faceShape || ""} face shape, ${analysis.noseType || ""} nose, ${analysis.lipShape || ""} lips,`,
+        ];
+        if (analysis.facialHair && analysis.facialHair !== "none" && analysis.facialHair !== "None") {
+          promptParts.push(`facial hair: ${analysis.facialHair},`);
+        }
+        if (analysis.distinguishingFeatures && analysis.distinguishingFeatures !== "none") {
+          promptParts.push(`distinguishing features: ${analysis.distinguishingFeatures},`);
+        }
+        if (input.characterRole) {
+          promptParts.push(`character archetype: ${input.characterRole},`);
+        }
+        promptParts.push(
+          `${analysis.expression || "confident"} expression,`,
+          `overall presence: ${analysis.overallVibe || "commanding"},`,
+          "natural skin subsurface scattering, hyperdetailed skin pores and texture,",
+          "16K resolution, award-winning portrait photography"
+        );
+
+        // Step 4: Generate the character image using the reference photo
+        const result = await generateImage({
+          prompt: promptParts.join(" "),
+          originalImages: [{
+            url: refPhotoUrl,
+            mimeType: input.photoMimeType,
+          }],
+        });
+
+        // Step 5: Save the character with all extracted attributes
+        const character = await db.createCharacter({
+          userId: ctx.user.id,
+          projectId: input.projectId ?? null,
+          name: input.name,
+          description: analysis.detailedDescription || `Character created from reference photo — ${analysis.gender}, ${analysis.estimatedAge}, ${analysis.ethnicity}`,
+          photoUrl: result.url,
+          attributes: {
+            ...analysis,
+            referencePhotoUrl: refPhotoUrl,
+            characterRole: input.characterRole,
+            style,
+            aiGenerated: true,
+            generatedFromPhoto: true,
+          },
         });
 
         return character;
@@ -1980,9 +2132,145 @@ Generate a detailed production budget estimate.`,
       ];
     }),
   }),
-
+  // ─── Visual Effects (VFX) Database ───
+  visualEffect: router({
+    listByProject: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ input }) => {
+        return db.listVisualEffectsByProject(input.projectId);
+      }),
+    listByScene: protectedProcedure
+      .input(z.object({ sceneId: z.number() }))
+      .query(async ({ input }) => {
+        return db.listVisualEffectsByScene(input.sceneId);
+      }),
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().optional(),
+        name: z.string().min(1).max(255),
+        category: z.string().min(1).max(128),
+        subcategory: z.string().max(128).optional(),
+        description: z.string().optional(),
+        previewUrl: z.string().optional(),
+        intensity: z.number().min(0).max(1).optional(),
+        duration: z.number().optional(),
+        startTime: z.number().optional(),
+        layer: z.enum(["background", "midground", "foreground", "overlay"]).optional(),
+        blendMode: z.string().optional(),
+        colorTint: z.string().optional(),
+        parameters: z.any().optional(),
+        isCustom: z.number().optional(),
+        tags: z.array(z.string()).optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createVisualEffect({
+          ...input,
+          sceneId: input.sceneId ?? null,
+          userId: ctx.user.id,
+        });
+      }),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).max(255).optional(),
+        category: z.string().max(128).optional(),
+        subcategory: z.string().max(128).optional(),
+        description: z.string().optional(),
+        previewUrl: z.string().optional(),
+        intensity: z.number().min(0).max(1).optional(),
+        duration: z.number().optional(),
+        startTime: z.number().optional(),
+        layer: z.enum(["background", "midground", "foreground", "overlay"]).optional(),
+        blendMode: z.string().optional(),
+        colorTint: z.string().optional(),
+        parameters: z.any().optional(),
+        tags: z.array(z.string()).optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        return db.updateVisualEffect(id, data);
+      }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteVisualEffect(input.id);
+        return { success: true };
+      }),
+    presets: protectedProcedure.query(async () => {
+      return [
+        // Explosions & Fire
+        { name: "Fireball Explosion", category: "explosions", subcategory: "fire", tags: ["blast", "fire", "action"], description: "Large fireball explosion with debris and shockwave" },
+        { name: "Dust Explosion", category: "explosions", subcategory: "debris", tags: ["dust", "blast", "demolition"], description: "Massive dust cloud explosion from building collapse" },
+        { name: "Spark Shower", category: "explosions", subcategory: "sparks", tags: ["sparks", "metal", "grind"], description: "Cascading sparks from metal impact or welding" },
+        { name: "Nuclear Blast", category: "explosions", subcategory: "fire", tags: ["mushroom", "massive", "destruction"], description: "Mushroom cloud nuclear-style explosion" },
+        { name: "Grenade Blast", category: "explosions", subcategory: "fire", tags: ["small", "tactical", "military"], description: "Small tactical grenade explosion with shrapnel" },
+        { name: "Vehicle Explosion", category: "explosions", subcategory: "fire", tags: ["car", "crash", "fire"], description: "Car or vehicle explosion with rolling flames" },
+        { name: "Campfire", category: "explosions", subcategory: "fire", tags: ["warm", "cozy", "ambient"], description: "Realistic campfire with flickering flames and embers" },
+        { name: "Wall of Fire", category: "explosions", subcategory: "fire", tags: ["barrier", "intense", "heat"], description: "Continuous wall of fire spreading across scene" },
+        // Weather Effects
+        { name: "Heavy Rain", category: "weather", subcategory: "rain", tags: ["storm", "wet", "dark"], description: "Torrential downpour with visible rain streaks" },
+        { name: "Light Drizzle", category: "weather", subcategory: "rain", tags: ["gentle", "mist", "mood"], description: "Soft gentle rain with atmospheric mist" },
+        { name: "Snowfall", category: "weather", subcategory: "snow", tags: ["winter", "cold", "peaceful"], description: "Gentle snowflakes falling with wind drift" },
+        { name: "Blizzard", category: "weather", subcategory: "snow", tags: ["storm", "intense", "whiteout"], description: "Intense blizzard with heavy snow and wind" },
+        { name: "Lightning Strike", category: "weather", subcategory: "lightning", tags: ["bolt", "flash", "storm"], description: "Dramatic lightning bolt with flash illumination" },
+        { name: "Fog / Mist", category: "weather", subcategory: "fog", tags: ["atmospheric", "mystery", "low"], description: "Low-lying fog rolling across the ground" },
+        { name: "Tornado", category: "weather", subcategory: "wind", tags: ["destruction", "spiral", "debris"], description: "Massive tornado funnel with flying debris" },
+        { name: "Sandstorm", category: "weather", subcategory: "wind", tags: ["desert", "dust", "visibility"], description: "Desert sandstorm reducing visibility" },
+        // Sci-Fi Effects
+        { name: "Laser Beam", category: "sci-fi", subcategory: "weapons", tags: ["beam", "energy", "weapon"], description: "Focused laser beam with glow and heat distortion" },
+        { name: "Plasma Bolt", category: "sci-fi", subcategory: "weapons", tags: ["projectile", "energy", "alien"], description: "Plasma energy projectile with trail" },
+        { name: "Force Field", category: "sci-fi", subcategory: "shields", tags: ["barrier", "energy", "protection"], description: "Translucent energy shield with ripple effects" },
+        { name: "Hologram", category: "sci-fi", subcategory: "display", tags: ["projection", "blue", "tech"], description: "Flickering holographic display projection" },
+        { name: "Teleportation", category: "sci-fi", subcategory: "transport", tags: ["beam", "dissolve", "travel"], description: "Teleportation beam-up effect with particle dissolution" },
+        { name: "Warp Speed", category: "sci-fi", subcategory: "transport", tags: ["stars", "stretch", "fast"], description: "Star-streaking warp speed travel effect" },
+        { name: "Energy Shield Impact", category: "sci-fi", subcategory: "shields", tags: ["hit", "ripple", "absorb"], description: "Energy shield absorbing an impact with ripples" },
+        { name: "Cybernetic HUD", category: "sci-fi", subcategory: "display", tags: ["interface", "data", "overlay"], description: "Heads-up display with scanning and data readouts" },
+        // Magic & Fantasy
+        { name: "Magic Spell Cast", category: "magic", subcategory: "casting", tags: ["glow", "runes", "power"], description: "Glowing rune circle spell casting effect" },
+        { name: "Healing Aura", category: "magic", subcategory: "aura", tags: ["green", "glow", "restore"], description: "Warm green healing energy surrounding character" },
+        { name: "Fire Magic", category: "magic", subcategory: "elemental", tags: ["flames", "hands", "power"], description: "Fire erupting from character's hands" },
+        { name: "Ice Magic", category: "magic", subcategory: "elemental", tags: ["frost", "crystal", "freeze"], description: "Ice crystals forming and spreading from source" },
+        { name: "Lightning Magic", category: "magic", subcategory: "elemental", tags: ["electricity", "arc", "power"], description: "Electrical arcs and lightning from fingertips" },
+        { name: "Portal", category: "magic", subcategory: "transport", tags: ["gateway", "swirl", "dimension"], description: "Swirling interdimensional portal gateway" },
+        { name: "Enchantment Glow", category: "magic", subcategory: "aura", tags: ["shimmer", "object", "power"], description: "Magical shimmer on enchanted objects" },
+        { name: "Dark Magic", category: "magic", subcategory: "dark", tags: ["shadow", "evil", "corruption"], description: "Dark shadowy tendrils of corrupt magic" },
+        // Particles & Atmosphere
+        { name: "Dust Motes", category: "particles", subcategory: "ambient", tags: ["floating", "light", "indoor"], description: "Floating dust particles in light beams" },
+        { name: "Ember Particles", category: "particles", subcategory: "fire", tags: ["glow", "float", "warm"], description: "Glowing embers floating upward" },
+        { name: "Smoke Wisps", category: "particles", subcategory: "smoke", tags: ["thin", "drift", "atmospheric"], description: "Thin smoke wisps drifting through scene" },
+        { name: "Thick Smoke", category: "particles", subcategory: "smoke", tags: ["dense", "fire", "aftermath"], description: "Dense billowing smoke from fire or explosion" },
+        { name: "Falling Leaves", category: "particles", subcategory: "nature", tags: ["autumn", "wind", "gentle"], description: "Autumn leaves gently falling and drifting" },
+        { name: "Cherry Blossoms", category: "particles", subcategory: "nature", tags: ["petals", "spring", "beautiful"], description: "Pink cherry blossom petals floating in wind" },
+        { name: "Confetti", category: "particles", subcategory: "celebration", tags: ["party", "colorful", "joy"], description: "Colorful confetti falling from above" },
+        { name: "Fireflies", category: "particles", subcategory: "nature", tags: ["glow", "night", "magical"], description: "Glowing fireflies floating in nighttime scene" },
+        // Water Effects
+        { name: "Ocean Waves", category: "water", subcategory: "ocean", tags: ["sea", "surf", "coast"], description: "Realistic ocean waves crashing on shore" },
+        { name: "Underwater Bubbles", category: "water", subcategory: "underwater", tags: ["bubbles", "deep", "dive"], description: "Rising bubbles in underwater scene" },
+        { name: "Waterfall", category: "water", subcategory: "falls", tags: ["cascade", "mist", "nature"], description: "Cascading waterfall with mist spray" },
+        { name: "Blood Splatter", category: "water", subcategory: "liquid", tags: ["gore", "impact", "action"], description: "Blood splatter impact effect" },
+        { name: "Water Splash", category: "water", subcategory: "splash", tags: ["drop", "impact", "ripple"], description: "Water splash from object impact" },
+        // Screen Effects & Transitions
+        { name: "Lens Flare", category: "screen", subcategory: "lens", tags: ["sun", "light", "cinematic"], description: "Cinematic lens flare from bright light source" },
+        { name: "Motion Blur", category: "screen", subcategory: "blur", tags: ["speed", "fast", "action"], description: "Directional motion blur for speed effect" },
+        { name: "Depth of Field", category: "screen", subcategory: "blur", tags: ["focus", "bokeh", "cinematic"], description: "Selective focus with beautiful bokeh" },
+        { name: "Film Grain", category: "screen", subcategory: "texture", tags: ["vintage", "noise", "retro"], description: "Film grain overlay for vintage look" },
+        { name: "Chromatic Aberration", category: "screen", subcategory: "distortion", tags: ["color", "split", "edge"], description: "RGB color fringing at edges" },
+        { name: "Screen Shake", category: "screen", subcategory: "camera", tags: ["impact", "earthquake", "explosion"], description: "Camera shake from impact or explosion" },
+        { name: "Vignette", category: "screen", subcategory: "overlay", tags: ["dark", "edges", "focus"], description: "Dark vignette around screen edges" },
+        { name: "Color Grade: Teal & Orange", category: "screen", subcategory: "color", tags: ["cinematic", "blockbuster", "warm"], description: "Classic Hollywood teal and orange color grade" },
+        // Destruction
+        { name: "Building Collapse", category: "destruction", subcategory: "structural", tags: ["rubble", "dust", "demolition"], description: "Building collapsing with dust and debris" },
+        { name: "Ground Crack", category: "destruction", subcategory: "earth", tags: ["earthquake", "split", "power"], description: "Ground cracking and splitting open" },
+        { name: "Shattered Glass", category: "destruction", subcategory: "material", tags: ["break", "window", "sharp"], description: "Glass shattering into fragments" },
+        { name: "Bullet Holes", category: "destruction", subcategory: "impact", tags: ["wall", "gunfire", "damage"], description: "Bullet impact holes appearing in surfaces" },
+      ];
+    }),
+  }),
   // ─── Project Collaboration ───
-  collaboration: router({
+  collaboration: router({{
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .query(async ({ input }) => {

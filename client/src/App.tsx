@@ -23,6 +23,7 @@ import Subtitles from "./pages/Subtitles";
 import DialogueEditor from "./pages/DialogueEditor";
 import BudgetEstimator from "./pages/BudgetEstimator";
 import SoundEffects from "./pages/SoundEffects";
+import VisualEffects from "./pages/VisualEffects";
 import Collaboration from "./pages/Collaboration";
 import Movies from "./pages/Movies";
 import Login from "./pages/Login";
@@ -52,6 +53,7 @@ function Router() {
       <Route path="/projects/:projectId/dialogue" component={DialogueEditor} />
       <Route path="/projects/:projectId/budget" component={BudgetEstimator} />
       <Route path="/projects/:id/sound-effects" component={SoundEffects} />
+      <Route path="/projects/:id/visual-effects" component={VisualEffects} />
       <Route path="/projects/:id/collaboration" component={Collaboration} />
       <Route>
         <DashboardLayout>

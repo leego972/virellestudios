@@ -19,6 +19,7 @@ import {
   InsertMovie, movies,
   InsertDirectorChat, directorChats,
   InsertPasswordResetToken, passwordResetTokens,
+  InsertVisualEffect, visualEffects,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -688,6 +689,41 @@ export async function deleteSoundEffect(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(soundEffects).where(eq(soundEffects.id, id));
+}
+
+// ─── Visual Effects ───
+export async function createVisualEffect(data: InsertVisualEffect) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(visualEffects).values(data);
+  const rows = await db.select().from(visualEffects).where(eq(visualEffects.projectId, data.projectId)).orderBy(visualEffects.id);
+  return rows[rows.length - 1];
+}
+
+export async function listVisualEffectsByProject(projectId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(visualEffects).where(eq(visualEffects.projectId, projectId)).orderBy(visualEffects.category, visualEffects.name);
+}
+
+export async function listVisualEffectsByScene(sceneId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(visualEffects).where(eq(visualEffects.sceneId, sceneId)).orderBy(visualEffects.startTime);
+}
+
+export async function updateVisualEffect(id: number, data: Partial<InsertVisualEffect>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(visualEffects).set(data).where(eq(visualEffects.id, id));
+  const rows = await db.select().from(visualEffects).where(eq(visualEffects.id, id));
+  return rows[0];
+}
+
+export async function deleteVisualEffect(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(visualEffects).where(eq(visualEffects.id, id));
 }
 
 // ─── Collaborators ───

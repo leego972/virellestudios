@@ -367,6 +367,35 @@ export type DirectorChat = typeof directorChats.$inferSelect;
 export type InsertDirectorChat = typeof directorChats.$inferInsert;
 
 
+// Visual Effects (VFX) / Special Effects library
+export const visualEffects = mysqlTable("visualEffects", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  sceneId: int("sceneId"), // null = project-level / library
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  category: varchar("category", { length: 128 }).notNull(), // explosions, weather, magic, sci-fi, particles, transitions, etc.
+  subcategory: varchar("subcategory", { length: 128 }), // more specific classification
+  description: text("description"),
+  previewUrl: text("previewUrl"), // preview image or video URL
+  previewKey: varchar("previewKey", { length: 512 }),
+  intensity: float("intensity").default(0.8), // 0.0 - 1.0
+  duration: float("duration"), // in seconds
+  startTime: float("startTime").default(0), // when to apply in the scene
+  layer: mysqlEnum("layer", ["background", "midground", "foreground", "overlay"]).default("overlay"),
+  blendMode: varchar("blendMode", { length: 64 }).default("normal"), // normal, screen, multiply, overlay, add
+  colorTint: varchar("colorTint", { length: 32 }), // hex color for tinting the effect
+  parameters: json("parameters"), // effect-specific parameters { speed, scale, direction, etc. }
+  isCustom: int("isCustom").default(0), // 0 = preset, 1 = custom uploaded
+  tags: json("tags"), // array of string tags
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VisualEffect = typeof visualEffects.$inferSelect;
+export type InsertVisualEffect = typeof visualEffects.$inferInsert;
+
 // Password reset tokens
 export const passwordResetTokens = mysqlTable("password_reset_tokens", {
   id: int("id").autoincrement().primaryKey(),

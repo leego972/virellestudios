@@ -112,11 +112,8 @@ export default function Login() {
               <Link href="/forgot-password" className="text-sm text-amber-500 hover:text-amber-400 font-medium text-center">
                 Forgot your password?
               </Link>
-              <p className="text-sm text-muted-foreground text-center">
-                Don't have an account?{" "}
-                <Link href="/register" className="text-amber-500 hover:text-amber-400 font-medium">
-                  Create one
-                </Link>
+              <p className="text-[11px] text-muted-foreground/50 text-center mt-2">
+                Private studio — authorized access only
               </p>
             </CardFooter>
           </form>

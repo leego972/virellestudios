@@ -216,7 +216,7 @@ export default function SoundEffects() {
       name: preset.name,
       category: preset.category,
       tags: preset.tags.split(","),
-      isCustom: 1,
+      isCustom: 0,
       volume: 0.8,
     });
   };
