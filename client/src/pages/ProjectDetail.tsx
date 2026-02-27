@@ -304,7 +304,7 @@ export default function ProjectDetail() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end max-w-full">
           <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/storyboard`)}>
             <Grid3X3 className="h-4 w-4 mr-1" />
             Storyboard
@@ -414,7 +414,7 @@ export default function ProjectDetail() {
               </CardContent>
             </Card>
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Card className="bg-card/50">
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{scenes?.length || 0}</p>
@@ -830,6 +830,159 @@ export default function ProjectDetail() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Tools Tab Content */}
+        <TabsContent value="tools" className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Palette className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Color Grading</p>
+                  <p className="text-xs text-muted-foreground">Set cinematic look & presets</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/credits`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Award className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Credits Editor</p>
+                  <p className="text-xs text-muted-foreground">Opening & closing credits</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/shot-list`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <ListOrdered className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Shot List</p>
+                  <p className="text-xs text-muted-foreground">AI-generated shot breakdown</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Continuity Check</p>
+                  <p className="text-xs text-muted-foreground">AI script supervision</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <MapPin className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Location Scout</p>
+                  <p className="text-xs text-muted-foreground">Find & manage filming locations</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/mood-board`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Palette className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Mood Board</p>
+                  <p className="text-xs text-muted-foreground">Visual inspiration & creative direction</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/subtitles`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Languages className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Subtitles</p>
+                  <p className="text-xs text-muted-foreground">Multi-language subtitle management</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Dialogue Editor</p>
+                  <p className="text-xs text-muted-foreground">Write and refine character dialogue</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/sound-effects`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Volume2 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Sound Effects</p>
+                  <p className="text-xs text-muted-foreground">Standard & custom SFX library</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/visual-effects`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
+                  <Sparkles className="h-5 w-5 text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Visual Effects</p>
+                  <p className="text-xs text-muted-foreground">VFX library — explosions, weather, magic & more</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <UserPlus className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Collaboration</p>
+                  <p className="text-xs text-muted-foreground">Invite team members to collaborate</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Budget Estimator</p>
+                  <p className="text-xs text-muted-foreground">AI production budget breakdown</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => {
+              if (confirm('Duplicate this project? A copy will be created with all settings.')) {
+                duplicateMutation.mutate({ projectId: project.id });
+              }
+            }}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Copy className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Duplicate Project</p>
+                  <p className="text-xs text-muted-foreground">Clone as a new project</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
 
       {/* Add Character (Photo Upload) Dialog */}
@@ -1003,7 +1156,7 @@ export default function ProjectDetail() {
               <Input placeholder="e.g. Detective Marcus Cole" value={aiCharForm.name} onChange={e => setAiCharForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" />
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Gender <span className="text-destructive">*</span></Label>
                 <Select value={aiCharForm.gender} onValueChange={v => setAiCharForm(p => ({ ...p, gender: v }))}>
@@ -1051,7 +1204,7 @@ export default function ProjectDetail() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Skin Tone</Label>
                 <Select value={aiCharForm.skinTone} onValueChange={v => setAiCharForm(p => ({ ...p, skinTone: v }))}>
@@ -1100,7 +1253,7 @@ export default function ProjectDetail() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Hair Color <span className="text-destructive">*</span></Label>
                 <Select value={aiCharForm.hairColor} onValueChange={v => setAiCharForm(p => ({ ...p, hairColor: v }))}>
@@ -1358,159 +1511,6 @@ export default function ProjectDetail() {
         </DialogContent>
       </Dialog>
 
-      {/* Tools Tab Content */}
-      <TabsContent value="tools" className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Palette className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Color Grading</p>
-                <p className="text-xs text-muted-foreground">Set cinematic look & presets</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/credits`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Award className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Credits Editor</p>
-                <p className="text-xs text-muted-foreground">Opening & closing credits</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/shot-list`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <ListOrdered className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Shot List</p>
-                <p className="text-xs text-muted-foreground">AI-generated shot breakdown</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <ShieldCheck className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Continuity Check</p>
-                <p className="text-xs text-muted-foreground">AI script supervision</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <MapPin className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Location Scout</p>
-                <p className="text-xs text-muted-foreground">Find & manage filming locations</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/mood-board`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Palette className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Mood Board</p>
-                <p className="text-xs text-muted-foreground">Visual inspiration & creative direction</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/subtitles`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Languages className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Subtitles</p>
-                <p className="text-xs text-muted-foreground">Multi-language subtitle management</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <MessageSquare className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Dialogue Editor</p>
-                <p className="text-xs text-muted-foreground">Write and refine character dialogue</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/sound-effects`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Volume2 className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Sound Effects</p>
-                <p className="text-xs text-muted-foreground">Standard & custom SFX library</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/visual-effects`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
-                <Sparkles className="h-5 w-5 text-purple-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Visual Effects</p>
-                <p className="text-xs text-muted-foreground">VFX library — explosions, weather, magic & more</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <UserPlus className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Collaboration</p>
-                <p className="text-xs text-muted-foreground">Invite team members to collaborate</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget`)}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <DollarSign className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Budget Estimator</p>
-                <p className="text-xs text-muted-foreground">AI production budget breakdown</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => {
-            if (confirm('Duplicate this project? A copy will be created with all settings.')) {
-              duplicateMutation.mutate({ projectId: project.id });
-            }
-          }}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Copy className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">Duplicate Project</p>
-                <p className="text-xs text-muted-foreground">Clone as a new project</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </TabsContent>
-
       {/* Director's Assistant Chat */}
       <DirectorChat projectId={project.id} />
     </div>
@@ -1572,7 +1572,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <CardTitle className="text-sm font-medium">Structure & Tone</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Act Structure</Label>
               <Select value={actStructure} onValueChange={(v) => { setActStructure(v); setDirty(true); }}>

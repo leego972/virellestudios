@@ -220,6 +220,10 @@ export const appRouter = router({
 
   // ─── Characters ───
   character: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserLibraryCharacters(ctx.user.id);
+    }),
+
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .query(async ({ input }) => {

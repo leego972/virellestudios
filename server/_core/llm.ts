@@ -296,10 +296,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     payload.tool_choice = normalizedToolChoice;
   }
 
-  payload.max_tokens = 32768
-  payload.thinking = {
-    "budget_tokens": 128
-  }
+  payload.max_tokens = 32768;
 
   const normalizedResponseFormat = normalizeResponseFormat({
     responseFormat,
@@ -310,6 +307,12 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
 
   if (normalizedResponseFormat) {
     payload.response_format = normalizedResponseFormat;
+  } else {
+    // Only enable thinking when not using structured output (json_schema)
+    // as they are incompatible with the Gemini model
+    payload.thinking = {
+      budget_tokens: 128,
+    };
   }
 
   const response = await fetch(resolveApiUrl(), {

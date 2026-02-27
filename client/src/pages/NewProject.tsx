@@ -164,7 +164,7 @@ export default function NewProject() {
 
         {/* Tabbed sections */}
         <Tabs defaultValue="basics" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-3 h-auto">
             <TabsTrigger value="basics" className="gap-1.5">
               <Film className="h-3.5 w-3.5" />
               Basics
@@ -241,7 +241,7 @@ export default function NewProject() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
                     <Label htmlFor="duration" className="text-xs text-muted-foreground">
                       Duration (min)

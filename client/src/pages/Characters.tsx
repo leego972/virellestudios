@@ -293,14 +293,14 @@ export default function Characters() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Character Library</h1>
           <p className="text-muted-foreground text-sm mt-1">
             Build your cast — upload photos, generate with AI, or create from scratch
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button size="sm" className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-md" onClick={() => setPhotoDialogOpen(true)}>
             <Camera className="h-4 w-4 mr-1.5" />
             Create from Photo
@@ -825,7 +825,7 @@ export default function Characters() {
               <Label className="text-xs text-muted-foreground">Character Name <span className="text-destructive">*</span></Label>
               <Input placeholder="e.g. Detective Marcus Cole" value={aiForm.name} onChange={e => setAiForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" />
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Gender <span className="text-destructive">*</span></Label>
                 <Select value={aiForm.gender} onValueChange={v => setAiForm(p => ({ ...p, gender: v }))}>
@@ -872,7 +872,7 @@ export default function Characters() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Skin Tone</Label>
                 <Select value={aiForm.skinTone} onValueChange={v => setAiForm(p => ({ ...p, skinTone: v }))}>
@@ -920,7 +920,7 @@ export default function Characters() {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Hair Color <span className="text-destructive">*</span></Label>
                 <Select value={aiForm.hairColor} onValueChange={v => setAiForm(p => ({ ...p, hairColor: v }))}>
