@@ -1,7 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import { storagePut } from "./storage";
@@ -13,6 +13,9 @@ import { transcribeAudio } from "./_core/voiceTranscription";
 import { TRPCError } from "@trpc/server";
 import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buildTrailerPrompt, ENHANCED_SCENE_SCHEMA } from "./_core/cinematicPromptEngine";
 import bcrypt from "bcryptjs";
+import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload } from "./_core/rateLimit";
+import { sanitizeText } from "./_core/sanitize";
+import { logger } from "./_core/logger";
 import { createSessionToken } from "./_core/context";
 import { notifyOwner } from "./_core/notification";
 
@@ -122,14 +125,12 @@ export const appRouter = router({
 
   // ─── Admin ───
   admin: router({
-    listUsers: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
+    listUsers: adminProcedure.query(async () => {
       return db.getAllUsers();
     }),
-    updateUserRole: protectedProcedure
+    updateUserRole: adminProcedure
       .input(z.object({ userId: z.number(), role: z.enum(["user", "admin"]) }))
       .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
         if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "Cannot change your own role" });
         await db.updateUserRole(input.userId, input.role);
         return { success: true };
@@ -174,7 +175,16 @@ export const appRouter = router({
         storyResolution: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        return db.createProject({ ...input, userId: ctx.user.id });
+        const sanitized = {
+          ...input,
+          title: sanitizeText(input.title),
+          description: input.description ? sanitizeText(input.description) : undefined,
+          plotSummary: input.plotSummary ? sanitizeText(input.plotSummary) : undefined,
+          mainPlot: input.mainPlot ? sanitizeText(input.mainPlot) : undefined,
+          userId: ctx.user.id,
+        };
+        logger.info("Project created", { userId: ctx.user.id, title: sanitized.title });
+        return db.createProject(sanitized);
       }),
 
     update: protectedProcedure
@@ -261,14 +271,18 @@ export const appRouter = router({
         photoUrl: z.string().optional(),
         attributes: z.any().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const char = await db.getCharacterById(input.id);
+        if (!char || char.userId !== ctx.user.id) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
         const { id, ...data } = input;
         return db.updateCharacter(id, data);
       }),
 
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const char = await db.getCharacterById(input.id);
+        if (!char || char.userId !== ctx.user.id) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
         await db.deleteCharacter(input.id);
         return { success: true };
       }),
@@ -297,6 +311,7 @@ export const appRouter = router({
         }),
       }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const f = input.features;
         const promptParts = [
           "Ultra-photorealistic Hollywood A-list actor headshot, indistinguishable from a real photograph,",
@@ -343,13 +358,14 @@ export const appRouter = router({
       .input(z.object({
         name: z.string().min(1).max(128),
         projectId: z.number().nullable().optional(),
-        photoBase64: z.string(), // base64 encoded reference photo
+        photoBase64: z.string().max(14_000_000, "File too large. Max 10MB."), // base64 encoded reference photo
         photoMimeType: z.string().default("image/jpeg"),
         characterRole: z.string().optional(), // hero, villain, mentor, etc.
         style: z.string().optional(), // cinematic, noir, sci-fi, fantasy, etc.
         additionalNotes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         // Step 1: Upload the reference photo to S3
         const photoBuffer = Buffer.from(input.photoBase64, "base64");
         const photoKey = `uploads/${ctx.user.id}/ref-${nanoid()}.jpg`;
@@ -546,14 +562,22 @@ export const appRouter = router({
         duration: z.number().min(1).max(600).optional(),
         status: z.enum(["draft", "generating", "completed", "failed"]).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const scene = await db.getSceneById(input.id);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        const project = await db.getProjectById(scene.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
         const { id, ...data } = input;
         return db.updateScene(id, data);
       }),
 
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const scene = await db.getSceneById(input.id);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        const project = await db.getProjectById(scene.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
         await db.deleteScene(input.id);
         return { success: true };
       }),
@@ -563,7 +587,9 @@ export const appRouter = router({
         projectId: z.number(),
         sceneIds: z.array(z.number()),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         await db.reorderScenes(input.projectId, input.sceneIds);
         return { success: true };
       }),
@@ -572,6 +598,7 @@ export const appRouter = router({
     generatePreview: protectedProcedure
       .input(z.object({ sceneId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const scene = await db.getSceneById(input.sceneId);
         if (!scene) throw new Error("Scene not found");
 
@@ -631,6 +658,7 @@ export const appRouter = router({
     bulkGeneratePreviews: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitHeavyAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         const scenes = await db.getProjectScenes(project.id);
@@ -685,7 +713,7 @@ export const appRouter = router({
   upload: router({
     image: protectedProcedure
       .input(z.object({
-        base64: z.string(),
+        base64: z.string().max(14_000_000, "File too large. Max 10MB."),
         filename: z.string(),
         contentType: z.string().default("image/jpeg"),
       }))
@@ -704,6 +732,8 @@ export const appRouter = router({
     quickGenerate: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitHeavyAI(ctx.user.id);
+        logger.aiGeneration("quickGenerate started", ctx.user.id, { projectId: input.projectId });
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
 
@@ -790,7 +820,12 @@ Break this into 8-15 scenes. For each scene, provide:
         });
 
         const content = llmResult.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "");
+        let parsed: any;
+        try {
+          parsed = JSON.parse(typeof content === "string" ? content : "");
+        } catch {
+          throw new Error("AI returned invalid scene data. Please try again.");
+        }
         const scenesData = parsed.scenes || [];
 
         // ── Step 3: Create scenes in DB with enhanced data ──
@@ -904,6 +939,7 @@ Break this into 8-15 scenes. For each scene, provide:
     generateTrailer: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitHeavyAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
 
@@ -970,7 +1006,12 @@ Break this into 8-15 scenes. For each scene, provide:
         });
 
         const trailerContent = llmResult.choices[0]?.message?.content;
-        const trailerData = JSON.parse(typeof trailerContent === "string" ? trailerContent : "");
+        let trailerData: any;
+        try {
+          trailerData = JSON.parse(typeof trailerContent === "string" ? trailerContent : "");
+        } catch {
+          throw new Error("AI returned invalid trailer data. Please try again.");
+        }
 
         // Build Visual DNA for consistent trailer style
         const visualDNA = buildVisualDNA(project, characters);
@@ -1111,6 +1152,7 @@ Break this into 8-15 scenes. For each scene, provide:
         instructions: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
 
@@ -1168,6 +1210,7 @@ Break this into 8-15 scenes. For each scene, provide:
         instructions: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const script = await db.getScriptById(input.scriptId);
         if (!script) throw new Error("Script not found");
 
@@ -1271,7 +1314,7 @@ Break this into 8-15 scenes. For each scene, provide:
     // Upload audio file
     uploadAudio: protectedProcedure
       .input(z.object({
-        base64: z.string(),
+        base64: z.string().max(70_000_000, "File too large. Max 50MB."),
         filename: z.string(),
         contentType: z.string().default("audio/mpeg"),
       }))
@@ -1340,6 +1383,7 @@ Break this into 8-15 scenes. For each scene, provide:
     generate: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
         const allScenes = await db.getProjectScenes(project.id);
@@ -1401,8 +1445,11 @@ Break this into 8-15 scenes. For each scene, provide:
         });
 
         const content = llmResult.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "");
-        return parsed;
+        try {
+          return JSON.parse(typeof content === "string" ? content : "");
+        } catch {
+          throw new Error("AI returned invalid shot list data. Please try again.");
+        }
       }),
   }),
 
@@ -1411,6 +1458,7 @@ Break this into 8-15 scenes. For each scene, provide:
     check: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
         const allScenes = await db.getProjectScenes(project.id);
@@ -1469,8 +1517,11 @@ Break this into 8-15 scenes. For each scene, provide:
         });
 
         const content = llmResult.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "");
-        return parsed;
+        try {
+          return JSON.parse(typeof content === "string" ? content : "");
+        } catch {
+          throw new Error("AI returned invalid continuity data. Please try again.");
+        }
       }),
   }),
 
@@ -1537,6 +1588,7 @@ Break this into 8-15 scenes. For each scene, provide:
     aiSuggest: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneDescription: z.string().optional() }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
         const scenes = await db.getProjectScenes(input.projectId);
@@ -1579,7 +1631,11 @@ Break this into 8-15 scenes. For each scene, provide:
           },
         });
         const content = llmResult.choices[0]?.message?.content;
-        return JSON.parse(typeof content === "string" ? content : "");
+        try {
+          return JSON.parse(typeof content === "string" ? content : "");
+        } catch {
+          throw new Error("AI returned invalid location data. Please try again.");
+        }
       }),
 
     generateImage: protectedProcedure
@@ -1717,6 +1773,7 @@ Break this into 8-15 scenes. For each scene, provide:
     aiGenerate: protectedProcedure
       .input(z.object({ projectId: z.number(), language: z.string().default("en"), languageName: z.string().default("English") }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
         const scenes = await db.getProjectScenes(input.projectId);
@@ -1762,7 +1819,12 @@ Break this into 8-15 scenes. For each scene, provide:
         });
 
         const content = llmResult.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "");
+        let parsed: any;
+        try {
+          parsed = JSON.parse(typeof content === "string" ? content : "");
+        } catch {
+          throw new Error("AI returned invalid subtitle data. Please try again.");
+        }
 
         return db.createSubtitle({
           projectId: input.projectId,
@@ -1781,6 +1843,7 @@ Break this into 8-15 scenes. For each scene, provide:
         targetLanguageName: z.string().min(1).max(128),
       }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const source = await db.getSubtitleById(input.subtitleId);
         if (!source) throw new Error("Source subtitle not found");
         const entries = source.entries as any[] || [];
@@ -1821,7 +1884,12 @@ Break this into 8-15 scenes. For each scene, provide:
         });
 
         const content = llmResult.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "");
+        let parsed: any;
+        try {
+          parsed = JSON.parse(typeof content === "string" ? content : "");
+        } catch {
+          throw new Error("AI returned invalid translation data. Please try again.");
+        }
 
         return db.createSubtitle({
           projectId: source.projectId,
@@ -1891,7 +1959,8 @@ Break this into 8-15 scenes. For each scene, provide:
         emotion: z.string().optional(),
         direction: z.string().optional(), // e.g. "character is nervous"
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, 0).catch(() => null);
         const response = await invokeLLM({
           messages: [
@@ -1948,8 +2017,11 @@ Generate 3 dialogue line options for this character.`,
             },
           },
         });
-        const parsed = JSON.parse(response.choices[0].message.content as string || "{}");
-        return parsed;
+        try {
+          return JSON.parse(response.choices[0].message.content as string || "{}");
+        } catch {
+          throw new Error("AI returned invalid dialogue suggestions. Please try again.");
+        }
       }),
 
     aiGenerateScene: protectedProcedure
@@ -1958,7 +2030,8 @@ Generate 3 dialogue line options for this character.`,
         sceneId: z.number(),
         sceneDescription: z.string().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, 0).catch(() => null);
         const scene = await db.getSceneById(input.sceneId);
         const chars = await db.getProjectCharacters(input.projectId);
@@ -2018,8 +2091,11 @@ Generate the full dialogue for this scene.`,
             },
           },
         });
-        const parsed = JSON.parse(response.choices[0].message.content as string || "{}");
-        return parsed;
+        try {
+          return JSON.parse(response.choices[0].message.content as string || "{}");
+        } catch {
+          throw new Error("AI returned invalid scene dialogue. Please try again.");
+        }
       }),
   }),
 
@@ -2040,6 +2116,7 @@ Generate the full dialogue for this scene.`,
     generate: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
         const scenes = await db.getProjectScenes(input.projectId);
@@ -2133,7 +2210,12 @@ Generate a detailed production budget estimate.`,
           },
         });
 
-        const parsed = JSON.parse(response.choices[0].message.content as string || "{}");
+        let parsed: any;
+        try {
+          parsed = JSON.parse(response.choices[0].message.content as string || "{}");
+        } catch {
+          throw new Error("AI returned invalid budget data. Please try again.");
+        }
         return db.createBudget({
           projectId: input.projectId,
           userId: ctx.user.id,
@@ -2146,7 +2228,9 @@ Generate a detailed production budget estimate.`,
 
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const budget = await db.getBudgetById(input.id);
+        if (!budget || budget.userId !== ctx.user.id) throw new TRPCError({ code: "NOT_FOUND", message: "Budget not found" });
         await db.deleteBudget(input.id);
         return { success: true };
       }),
@@ -2187,7 +2271,7 @@ Generate a detailed production budget estimate.`,
       .input(z.object({
         projectId: z.number(),
         fileName: z.string(),
-        fileData: z.string(), // base64
+        fileData: z.string().max(70_000_000, "File too large. Max 50MB."), // base64
         contentType: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -2206,13 +2290,13 @@ Generate a detailed production budget estimate.`,
         loop: z.number().optional(),
         notes: z.string().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
         return db.updateSoundEffect(id, data);
       }),
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         await db.deleteSoundEffect(input.id);
         return { success: true };
       }),
@@ -2359,13 +2443,13 @@ Generate a detailed production budget estimate.`,
         tags: z.array(z.string()).optional(),
         notes: z.string().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
         return db.updateVisualEffect(id, data);
       }),
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         await db.deleteVisualEffect(input.id);
         return { success: true };
       }),
@@ -2489,12 +2573,12 @@ Generate a detailed production budget estimate.`,
         id: z.number(),
         role: z.enum(["viewer", "editor", "producer", "director"]),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         return db.updateCollaborator(input.id, { role: input.role });
       }),
     remove: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         await db.deleteCollaborator(input.id);
         return { success: true };
       }),
@@ -2601,7 +2685,7 @@ Generate a detailed production budget estimate.`,
       .input(z.object({
         movieId: z.number(),
         fileName: z.string(),
-        fileBase64: z.string(),
+        fileBase64: z.string().max(70_000_000, "File too large. Max 50MB."),
         contentType: z.string().default("video/mp4"),
         fileSize: z.number().optional(),
       }))
@@ -2622,7 +2706,7 @@ Generate a detailed production budget estimate.`,
       .input(z.object({
         movieId: z.number(),
         fileName: z.string(),
-        fileBase64: z.string(),
+        fileBase64: z.string().max(14_000_000, "File too large. Max 10MB."),
         contentType: z.string().default("image/jpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -2754,7 +2838,7 @@ Generate a detailed production budget estimate.`,
       .input(z.object({
         projectId: z.number(),
         fileName: z.string(),
-        fileData: z.string(), // base64 encoded
+        fileData: z.string().max(70_000_000, "File too large. Max 50MB."), // base64 encoded
         mimeType: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -2775,7 +2859,7 @@ Generate a detailed production budget estimate.`,
     transcribeVoice: protectedProcedure
       .input(z.object({
         projectId: z.number(),
-        audioData: z.string(), // base64 encoded audio
+        audioData: z.string().max(70_000_000, "File too large. Max 50MB."), // base64 encoded audio
         mimeType: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -2886,7 +2970,8 @@ Rules:
         prompt: z.string().min(1).max(2000),
         templateType: z.string(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const result = await generateImage({
           prompt: input.prompt,
         });
@@ -2900,7 +2985,8 @@ Rules:
         description: z.string(),
         templateType: z.string(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
         const templateDescriptions: Record<string, string> = {
           "poster": "classic movie poster",
           "social-square": "social media square post",
@@ -2923,7 +3009,7 @@ Rules:
               content: `Generate marketing copy for a ${input.genre} film:\n\nTitle: ${input.title}\nGenre: ${input.genre}\nDescription: ${input.description}\n\nReturn JSON with these fields:\n- title: the film title, possibly stylized (max 40 chars)\n- tagline: a compelling tagline (max 80 chars)\n- credits: a credits line like "Directed by X • Starring Y, Z" (max 120 chars)`,
             },
           ],
-          responseFormat: {
+          response_format: {
             type: "json_schema",
             json_schema: {
               name: "poster_copy",

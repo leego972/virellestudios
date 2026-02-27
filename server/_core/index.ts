@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { logger } from "./logger";
 
 const startedAt = new Date();
 
@@ -65,6 +66,12 @@ async function startServer() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
+  // Request logging middleware
+  app.use("/api/", (req, _res, next) => {
+    logger.request(req.method, req.path);
+    next();
+  });
+
   // Health check endpoint for Railway monitoring
   app.get("/api/health", (_req, res) => {
     const uptime = Math.floor((Date.now() - startedAt.getTime()) / 1000);
@@ -118,7 +125,7 @@ async function startServer() {
   }
 
   server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}/`);
+    logger.info(`Server running on http://localhost:${port}/`, { port });
   });
 }
 
