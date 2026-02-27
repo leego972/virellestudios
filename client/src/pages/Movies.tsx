@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import MediaPlayer from "@/components/MediaPlayer";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -1022,73 +1023,15 @@ export default function Movies() {
         </DialogContent>
       </Dialog>
 
-      {/* Video Player Dialog */}
-      <Dialog
-        open={!!showPlayer}
-        onOpenChange={(open) => !open && setShowPlayer(null)}
-      >
-        <DialogContent className="max-w-4xl p-0 overflow-hidden">
-          <div className="relative">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="absolute top-2 right-2 z-10 bg-black/50 hover:bg-black/70 text-white"
-              onClick={() => setShowPlayer(null)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-            {playerMovie?.fileUrl && (
-              <video
-                src={playerMovie.fileUrl}
-                controls
-                autoPlay
-                className="w-full max-h-[80vh]"
-              />
-            )}
-          </div>
-          {playerMovie && (
-            <div className="p-4 border-t">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">{playerMovie.title}</h3>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                    <Badge
-                      className={`${TYPE_COLORS[playerMovie.type as MovieType]} border text-[10px]`}
-                    >
-                      {TYPE_LABELS[playerMovie.type as MovieType]}
-                    </Badge>
-                    {playerMovie.movieTitle && (
-                      <span className="text-muted-foreground">
-                        from {playerMovie.movieTitle}
-                      </span>
-                    )}
-                    {playerMovie.duration && (
-                      <span>{formatDuration(playerMovie.duration)}</span>
-                    )}
-                    {playerMovie.fileSize && (
-                      <span>{formatFileSize(playerMovie.fileSize)}</span>
-                    )}
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1"
-                  onClick={() => {
-                    const a = document.createElement("a");
-                    a.href = playerMovie.fileUrl!;
-                    a.download = playerMovie.title;
-                    a.click();
-                  }}
-                >
-                  <Download className="h-3 w-3" />
-                  Download
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Full-Featured Media Player */}
+      {showPlayer && playerMovie && (
+        <MediaPlayer
+          movie={playerMovie}
+          playlist={activeFolder ? folderContents : allMovies}
+          onClose={() => setShowPlayer(null)}
+          onNavigate={(movieId) => setShowPlayer(movieId)}
+        />
+      )}
     </div>
   );
 }
