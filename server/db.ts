@@ -20,6 +20,9 @@ import {
   InsertDirectorChat, directorChats,
   InsertPasswordResetToken, passwordResetTokens,
   InsertVisualEffect, visualEffects,
+  InsertBlogArticle, blogArticles,
+  InsertReferralCode, referralCodes,
+  InsertReferralTracking, referralTracking,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -935,4 +938,147 @@ export async function getUserMovieCount(userId: number): Promise<number> {
   if (!db) return 0;
   const result = await db.select().from(movies).where(eq(movies.userId, userId));
   return result.length;
+}
+
+// ─── Blog Articles ───
+export async function createBlogArticle(data: InsertBlogArticle) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(blogArticles).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(blogArticles).where(eq(blogArticles.id, id)))[0];
+}
+
+export async function getPublishedArticles(limit = 20, offset = 0) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogArticles)
+    .where(eq(blogArticles.status, "published"))
+    .orderBy(desc(blogArticles.publishedAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function getArticleBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(blogArticles).where(eq(blogArticles.slug, slug)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getArticlesByCategory(category: string, limit = 20) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogArticles)
+    .where(and(eq(blogArticles.category, category), eq(blogArticles.status, "published")))
+    .orderBy(desc(blogArticles.publishedAt))
+    .limit(limit);
+}
+
+export async function incrementArticleViews(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  const article = await db.select().from(blogArticles).where(eq(blogArticles.id, id)).limit(1);
+  if (article[0]) {
+    await db.update(blogArticles).set({ viewCount: (article[0].viewCount || 0) + 1 }).where(eq(blogArticles.id, id));
+  }
+}
+
+export async function getAllArticles(limit = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogArticles).orderBy(desc(blogArticles.createdAt)).limit(limit);
+}
+
+export async function updateBlogArticle(id: number, data: Partial<InsertBlogArticle>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(blogArticles).set(data).where(eq(blogArticles.id, id));
+  return (await db.select().from(blogArticles).where(eq(blogArticles.id, id)))[0];
+}
+
+export async function deleteBlogArticle(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(blogArticles).where(eq(blogArticles.id, id));
+}
+
+export async function getPublishedArticleCount() {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select().from(blogArticles).where(eq(blogArticles.status, "published"));
+  return result.length;
+}
+
+// ─── Referral Codes ───
+export async function createReferralCode(data: InsertReferralCode) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(referralCodes).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(referralCodes).where(eq(referralCodes.id, id)))[0];
+}
+
+export async function getReferralCodeByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getReferralCodeByCode(code: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(referralCodes).where(eq(referralCodes.code, code)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateReferralCode(id: number, data: Partial<InsertReferralCode>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(referralCodes).set(data).where(eq(referralCodes.id, id));
+  return (await db.select().from(referralCodes).where(eq(referralCodes.id, id)))[0];
+}
+
+// ─── Referral Tracking ───
+export async function createReferralTracking(data: InsertReferralTracking) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(referralTracking).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(referralTracking).where(eq(referralTracking.id, id)))[0];
+}
+
+export async function getReferralTrackingByCode(referralCodeId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(referralTracking)
+    .where(eq(referralTracking.referralCodeId, referralCodeId))
+    .orderBy(desc(referralTracking.createdAt));
+}
+
+export async function getReferralTrackingByReferredUser(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(referralTracking)
+    .where(eq(referralTracking.referredUserId, userId))
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateReferralTracking(id: number, data: Partial<InsertReferralTracking>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(referralTracking).set(data).where(eq(referralTracking.id, id));
+  return (await db.select().from(referralTracking).where(eq(referralTracking.id, id)))[0];
+}
+
+export async function addBonusGenerations(userId: number, amount: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const user = await getUserById(userId);
+  if (!user) return;
+  // Reduce the used count (effectively giving bonus generations)
+  const newUsed = Math.max(0, (user.monthlyGenerationsUsed || 0) - amount);
+  await db.update(users).set({ monthlyGenerationsUsed: newUsed }).where(eq(users.id, userId));
 }

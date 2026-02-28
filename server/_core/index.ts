@@ -11,6 +11,7 @@ import { logger } from "./logger";
 import { stripe, priceIdToTier } from "./subscription";
 import { ENV } from "./env";
 import * as db from "../db";
+import { startBlogScheduler } from "./blogEngine";
 
 const startedAt = new Date();
 
@@ -228,6 +229,31 @@ async function startServer() {
 
   server.listen(port, () => {
     logger.info(`Server running on http://localhost:${port}/`, { port });
+
+    // Start autonomous blog engine - generates and publishes SEO articles every 8 hours
+    startBlogScheduler(async (article) => {
+      try {
+        await db.createBlogArticle({
+          slug: article.slug,
+          title: article.title,
+          subtitle: article.subtitle,
+          content: article.content,
+          excerpt: article.excerpt,
+          category: article.category,
+          tags: article.tags,
+          metaTitle: article.metaTitle,
+          metaDescription: article.metaDescription,
+          generationPrompt: article.generationPrompt,
+          generatedByAI: true,
+          status: "published",
+          publishedAt: new Date(),
+        });
+        logger.info(`[BlogEngine] Auto-published: "${article.title}"`);
+      } catch (err: any) {
+        logger.error(`[BlogEngine] Failed to save article: ${err.message}`);
+      }
+    });
+    logger.info("[BlogEngine] Autonomous blog scheduler initialized");
   });
 }
 

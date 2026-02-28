@@ -35,6 +35,8 @@ import {
   Shield,
   Megaphone,
   CreditCard,
+  Gift,
+  BookOpen,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -48,6 +50,8 @@ const menuItems = [
   { icon: Clapperboard, label: "My Movies", path: "/movies" },
   { icon: Users, label: "Characters", path: "/characters" },
   { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker" },
+  { icon: Gift, label: "Referrals", path: "/referrals" },
+  { icon: BookOpen, label: "Blog", path: "/blog" },
   { icon: CreditCard, label: "Subscription", path: "/pricing" },
 ];
 

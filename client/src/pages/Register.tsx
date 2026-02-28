@@ -1,21 +1,32 @@
-import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useSearch } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Film, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Film, Eye, EyeOff, Loader2, Gift } from "lucide-react";
 import LeegoFooter from "@/components/LeegoFooter";
 
 export default function Register() {
   const [, navigate] = useLocation();
+  const searchString = useSearch();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+
+  // Extract referral code from URL query params
+  useEffect(() => {
+    const params = new URLSearchParams(searchString);
+    const ref = params.get("ref");
+    if (ref) {
+      setReferralCode(ref);
+    }
+  }, [searchString]);
 
   const utils = trpc.useUtils();
   const registerMutation = trpc.auth.register.useMutation({
@@ -43,7 +54,7 @@ export default function Register() {
       toast.error("Passwords do not match");
       return;
     }
-    registerMutation.mutate({ email, password, name });
+    registerMutation.mutate({ email, password, name, referralCode: referralCode || undefined });
   };
 
   return (
@@ -59,6 +70,16 @@ export default function Register() {
             <p className="text-sm text-muted-foreground mt-1">AI-powered film production</p>
           </div>
         </div>
+
+        {/* Referral Banner */}
+        {referralCode && (
+          <div className="flex items-center gap-2 bg-amber-600/10 border border-amber-500/20 rounded-lg px-4 py-3 text-sm">
+            <Gift className="h-4 w-4 text-amber-400 shrink-0" />
+            <span className="text-amber-400">
+              You've been referred! Sign up to get <strong>3 bonus AI generations</strong> free.
+            </span>
+          </div>
+        )}
 
         {/* Register Card */}
         <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl">
@@ -125,6 +146,23 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   autoComplete="new-password"
+                  disabled={registerMutation.isPending}
+                />
+              </div>
+
+              {/* Referral code field - pre-filled if from URL, but editable */}
+              <div className="space-y-2">
+                <Label htmlFor="referralCode" className="flex items-center gap-1.5">
+                  <Gift className="h-3.5 w-3.5 text-amber-400" />
+                  Referral Code
+                  <span className="text-muted-foreground font-normal">(optional)</span>
+                </Label>
+                <Input
+                  id="referralCode"
+                  type="text"
+                  placeholder="Enter referral code"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
                   disabled={registerMutation.isPending}
                 />
               </div>

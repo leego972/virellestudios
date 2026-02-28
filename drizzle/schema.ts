@@ -416,3 +416,71 @@ export const passwordResetTokens = mysqlTable("password_reset_tokens", {
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;
+
+// ============================================================
+// SEO BLOG - Auto-generating content engine
+// ============================================================
+export const blogArticles = mysqlTable("blog_articles", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  title: varchar("title", { length: 512 }).notNull(),
+  subtitle: varchar("subtitle", { length: 512 }),
+  content: text("content").notNull(), // Markdown content
+  excerpt: text("excerpt"), // Short summary for listings and meta description
+  category: varchar("category", { length: 128 }).notNull(), // ai-filmmaking, cinematography, industry-trends, tutorials, etc.
+  tags: json("tags"), // array of string tags for SEO
+  coverImageUrl: text("coverImageUrl"),
+  coverImageAlt: varchar("coverImageAlt", { length: 512 }),
+  // SEO fields
+  metaTitle: varchar("metaTitle", { length: 160 }),
+  metaDescription: varchar("metaDescription", { length: 320 }),
+  canonicalUrl: varchar("canonicalUrl", { length: 512 }),
+  // Publishing
+  status: mysqlEnum("articleStatus", ["draft", "scheduled", "published", "archived"]).default("draft").notNull(),
+  publishedAt: timestamp("publishedAt"),
+  scheduledFor: timestamp("scheduledFor"),
+  // Engagement tracking
+  viewCount: int("viewCount").default(0).notNull(),
+  // Generation metadata
+  generatedByAI: boolean("generatedByAI").default(true).notNull(),
+  generationPrompt: text("generationPrompt"), // The prompt used to generate this article
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type BlogArticle = typeof blogArticles.$inferSelect;
+export type InsertBlogArticle = typeof blogArticles.$inferInsert;
+
+// ============================================================
+// REFERRAL SYSTEM - Autonomous reward tracking
+// ============================================================
+export const referralCodes = mysqlTable("referral_codes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // The user who owns this referral code
+  code: varchar("code", { length: 32 }).notNull().unique(), // e.g. "LEEGO-XK9F"
+  totalReferrals: int("totalReferrals").default(0).notNull(),
+  successfulReferrals: int("successfulReferrals").default(0).notNull(), // Referrals that signed up
+  bonusGenerationsEarned: int("bonusGenerationsEarned").default(0).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ReferralCode = typeof referralCodes.$inferSelect;
+export type InsertReferralCode = typeof referralCodes.$inferInsert;
+
+export const referralTracking = mysqlTable("referral_tracking", {
+  id: int("id").autoincrement().primaryKey(),
+  referralCodeId: int("referralCodeId").notNull(), // Which referral code was used
+  referrerId: int("referrerId").notNull(), // The user who referred
+  referredUserId: int("referredUserId"), // The user who signed up (null until they register)
+  referredEmail: varchar("referredEmail", { length: 320 }),
+  status: mysqlEnum("referralStatus", ["clicked", "registered", "rewarded"]).default("clicked").notNull(),
+  rewardType: varchar("rewardType", { length: 64 }), // "bonus_generations", "extended_trial", "feature_unlock"
+  rewardAmount: int("rewardAmount"), // e.g. 5 bonus generations
+  rewardedAt: timestamp("rewardedAt"),
+  ipAddress: varchar("ipAddress", { length: 45 }), // For fraud prevention
+  userAgent: text("userAgent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ReferralTracking = typeof referralTracking.$inferSelect;
+export type InsertReferralTracking = typeof referralTracking.$inferInsert;

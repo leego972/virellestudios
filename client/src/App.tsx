@@ -31,6 +31,13 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 
+// Public pages — lazy loaded
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogArticle = lazy(() => import("./pages/BlogArticle"));
+
+// Dashboard feature pages — lazy loaded
+const Referrals = lazy(() => import("./pages/Referrals"));
+
 // Full-screen tool pages — lazy loaded (Pro features, heavy components)
 const ScriptWriter = lazy(() => import("./pages/ScriptWriter"));
 const Storyboard = lazy(() => import("./pages/Storyboard"));
@@ -90,6 +97,10 @@ function Router() {
       <Route path="/forgot-password">{() => <LazyPage><ForgotPassword /></LazyPage>}</Route>
       <Route path="/reset-password">{() => <LazyPage><ResetPassword /></LazyPage>}</Route>
 
+      {/* Public blog pages (no auth required) */}
+      <Route path="/blog">{() => <LazyPage><Blog /></LazyPage>}</Route>
+      <Route path="/blog/:slug">{() => <LazyPage><BlogArticle /></LazyPage>}</Route>
+
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />
       <Route path="/projects/:projectId/storyboard" component={GatedStoryboard} />
@@ -120,6 +131,7 @@ function Router() {
               <Route path="/poster-maker">{() => <AdPosterMaker />}</Route>
               <Route path="/characters">{() => <Characters />}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
+              <Route path="/referrals">{() => <Referrals />}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />

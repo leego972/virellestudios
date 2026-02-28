@@ -21,6 +21,7 @@ import { notifyOwner } from "./_core/notification";
 import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota, requireResourceQuota, getOrCreateStripeCustomer, createCheckoutSession, createBillingPortalSession, TIER_LIMITS, type SubscriptionTier } from "./_core/subscription";
 import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
 import { ENV } from "./_core/env";
+import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 
 export const appRouter = router({
   system: systemRouter,
@@ -36,6 +37,7 @@ export const appRouter = router({
         email: z.string().email().max(320),
         password: z.string().min(8).max(128),
         name: z.string().min(1).max(255),
+        referralCode: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if user already exists
@@ -51,6 +53,40 @@ export const appRouter = router({
           passwordHash,
         });
         if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create account" });
+
+        // Process referral code if provided
+        if (input.referralCode) {
+          try {
+            const refCode = await db.getReferralCodeByCode(input.referralCode);
+            if (refCode && refCode.isActive && refCode.userId !== user.id) {
+              const existingRef = await db.getReferralTrackingByReferredUser(user.id);
+              if (!existingRef) {
+                const REFERRER_REWARD = 5;
+                const NEW_USER_REWARD = 3;
+                await db.createReferralTracking({
+                  referralCodeId: refCode.id,
+                  referrerId: refCode.userId,
+                  referredUserId: user.id,
+                  referredEmail: user.email,
+                  status: "rewarded",
+                  rewardType: "bonus_generations",
+                  rewardAmount: REFERRER_REWARD,
+                  rewardedAt: new Date(),
+                });
+                await db.updateReferralCode(refCode.id, {
+                  successfulReferrals: (refCode.successfulReferrals || 0) + 1,
+                  bonusGenerationsEarned: (refCode.bonusGenerationsEarned || 0) + REFERRER_REWARD,
+                });
+                await db.addBonusGenerations(refCode.userId, REFERRER_REWARD);
+                await db.addBonusGenerations(user.id, NEW_USER_REWARD);
+              }
+            }
+          } catch (err) {
+            // Don't fail registration if referral processing fails
+            console.error("Referral processing error:", err);
+          }
+        }
+
         // Create session
         const token = await createSessionToken(user.id, user.name ?? "");
         const cookieOptions = getSessionCookieOptions(ctx.req);
@@ -3388,6 +3424,215 @@ Rules:
         const deleted = deleteCampaign(input.id);
         if (!deleted) throw new TRPCError({ code: "NOT_FOUND", message: "Campaign not found" });
         return { success: true };
+      }),
+  }),
+
+  // ─── Blog (Public + Admin) ───
+  blog: router({
+    // Public: list published articles
+    list: publicProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(50).default(20),
+        offset: z.number().min(0).default(0),
+        category: z.string().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const { limit = 20, offset = 0, category } = input || {};
+        if (category) {
+          return db.getArticlesByCategory(category, limit);
+        }
+        return db.getPublishedArticles(limit, offset);
+      }),
+
+    // Public: get single article by slug
+    bySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const article = await db.getArticleBySlug(input.slug);
+        if (!article || article.status !== "published") {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Article not found" });
+        }
+        // Increment view count asynchronously
+        db.incrementArticleViews(article.id).catch(() => {});
+        return article;
+      }),
+
+    // Public: get article count
+    count: publicProcedure.query(async () => {
+      return { count: await db.getPublishedArticleCount() };
+    }),
+
+    // Admin: list all articles (including drafts)
+    adminList: adminProcedure.query(async () => {
+      return db.getAllArticles(100);
+    }),
+
+    // Admin: generate a new article on demand
+    generate: adminProcedure.mutation(async () => {
+      const article = await generateBlogArticle();
+      const saved = await db.createBlogArticle({
+        slug: article.slug,
+        title: article.title,
+        subtitle: article.subtitle,
+        content: article.content,
+        excerpt: article.excerpt,
+        category: article.category,
+        tags: article.tags,
+        metaTitle: article.metaTitle,
+        metaDescription: article.metaDescription,
+        generationPrompt: article.generationPrompt,
+        generatedByAI: true,
+        status: "published",
+        publishedAt: new Date(),
+      });
+      return saved;
+    }),
+
+    // Admin: update article
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        content: z.string().optional(),
+        excerpt: z.string().optional(),
+        status: z.enum(["draft", "scheduled", "published", "archived"]).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        if (data.status === "published") {
+          (data as any).publishedAt = new Date();
+        }
+        return db.updateBlogArticle(id, data);
+      }),
+
+    // Admin: delete article
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteBlogArticle(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // ─── Referral System ───
+  referral: router({
+    // Get or create the user's referral code
+    getMyCode: protectedProcedure.query(async ({ ctx }) => {
+      let code = await db.getReferralCodeByUserId(ctx.user.id);
+      if (!code) {
+        // Auto-generate a referral code for the user
+        const prefix = (ctx.user.name || "VRL").substring(0, 4).toUpperCase().replace(/[^A-Z]/g, "V");
+        const suffix = nanoid(6).toUpperCase();
+        const codeStr = `${prefix}-${suffix}`;
+        code = await db.createReferralCode({
+          userId: ctx.user.id,
+          code: codeStr,
+        });
+      }
+      return code;
+    }),
+
+    // Get referral stats for the current user
+    myStats: protectedProcedure.query(async ({ ctx }) => {
+      const code = await db.getReferralCodeByUserId(ctx.user.id);
+      if (!code) return { totalReferrals: 0, successfulReferrals: 0, bonusGenerationsEarned: 0, referrals: [] };
+      const referrals = await db.getReferralTrackingByCode(code.id);
+      return {
+        code: code.code,
+        totalReferrals: code.totalReferrals,
+        successfulReferrals: code.successfulReferrals,
+        bonusGenerationsEarned: code.bonusGenerationsEarned,
+        referrals: referrals.map(r => ({
+          status: r.status,
+          rewardType: r.rewardType,
+          rewardAmount: r.rewardAmount,
+          createdAt: r.createdAt,
+        })),
+      };
+    }),
+
+    // Track a referral click (public - called when someone visits with ?ref=CODE)
+    track: publicProcedure
+      .input(z.object({
+        code: z.string(),
+        ipAddress: z.string().optional(),
+        userAgent: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const refCode = await db.getReferralCodeByCode(input.code);
+        if (!refCode || !refCode.isActive) {
+          return { success: false, message: "Invalid referral code" };
+        }
+        // Record the click
+        await db.createReferralTracking({
+          referralCodeId: refCode.id,
+          referrerId: refCode.userId,
+          ipAddress: input.ipAddress || null,
+          userAgent: input.userAgent || null,
+        });
+        // Increment total referrals
+        await db.updateReferralCode(refCode.id, {
+          totalReferrals: (refCode.totalReferrals || 0) + 1,
+        });
+        return { success: true };
+      }),
+
+    // Complete a referral (called during registration when ref code is present)
+    complete: publicProcedure
+      .input(z.object({
+        code: z.string(),
+        referredUserId: z.number(),
+        referredEmail: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const refCode = await db.getReferralCodeByCode(input.code);
+        if (!refCode || !refCode.isActive) {
+          return { success: false, message: "Invalid referral code" };
+        }
+
+        // Check if this user was already referred
+        const existing = await db.getReferralTrackingByReferredUser(input.referredUserId);
+        if (existing) {
+          return { success: false, message: "User already referred" };
+        }
+
+        // Create tracking record
+        const REWARD_GENERATIONS = 5;
+        await db.createReferralTracking({
+          referralCodeId: refCode.id,
+          referrerId: refCode.userId,
+          referredUserId: input.referredUserId,
+          referredEmail: input.referredEmail || null,
+          status: "rewarded",
+          rewardType: "bonus_generations",
+          rewardAmount: REWARD_GENERATIONS,
+          rewardedAt: new Date(),
+        });
+
+        // Update referral code stats
+        await db.updateReferralCode(refCode.id, {
+          successfulReferrals: (refCode.successfulReferrals || 0) + 1,
+          bonusGenerationsEarned: (refCode.bonusGenerationsEarned || 0) + REWARD_GENERATIONS,
+        });
+
+        // Award bonus generations to the referrer
+        await db.addBonusGenerations(refCode.userId, REWARD_GENERATIONS);
+
+        // Also give the new user 3 bonus generations as a welcome gift
+        await db.addBonusGenerations(input.referredUserId, 3);
+
+        return { success: true, referrerReward: REWARD_GENERATIONS, newUserReward: 3 };
+      }),
+
+    // Validate a referral code (public - for registration form)
+    validate: publicProcedure
+      .input(z.object({ code: z.string() }))
+      .query(async ({ input }) => {
+        const refCode = await db.getReferralCodeByCode(input.code);
+        if (!refCode || !refCode.isActive) {
+          return { valid: false };
+        }
+        return { valid: true, referrerName: "A VirÉlle Studios user" };
       }),
   }),
 });
