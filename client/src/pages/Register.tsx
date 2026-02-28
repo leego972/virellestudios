@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Film, Eye, EyeOff, Loader2, Gift } from "lucide-react";
+import { Eye, EyeOff, Loader2, Gift } from "lucide-react";
 import LeegoFooter from "@/components/LeegoFooter";
 
 export default function Register() {
@@ -58,13 +58,16 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
-        {/* Logo */}
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20">
-            <Film className="w-7 h-7 text-white" />
-          </div>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-sm space-y-6">
+        {/* Virelle Studios Logo */}
+        <div className="flex flex-col items-center gap-4">
+          <img
+            src="/apple-touch-icon.png"
+            alt="Virelle Studios"
+            className="w-24 h-24 rounded-2xl shadow-lg shadow-amber-500/20"
+            draggable={false}
+          />
           <div className="text-center">
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Virelle Studios</h1>
             <p className="text-sm text-muted-foreground mt-1">AI-powered film production</p>
@@ -84,8 +87,8 @@ export default function Register() {
         {/* Register Card */}
         <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-xl">Create an account</CardTitle>
-            <CardDescription>Enter your details to get started</CardDescription>
+            <CardTitle className="text-xl text-center">Create an account</CardTitle>
+            <CardDescription className="text-center">Enter your details to get started</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
@@ -167,7 +170,7 @@ export default function Register() {
                 />
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col gap-4 pt-2">
+            <CardFooter className="flex flex-col gap-3 pt-2">
               <Button
                 type="submit"
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white"
@@ -192,7 +195,11 @@ export default function Register() {
           </form>
         </Card>
       </div>
-      <LeegoFooter />
+
+      {/* Leego Footer */}
+      <div className="mt-8">
+        <LeegoFooter />
+      </div>
     </div>
   );
 }
