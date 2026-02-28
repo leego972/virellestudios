@@ -37,6 +37,7 @@ const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 
 // Dashboard feature pages — lazy loaded
 const Referrals = lazy(() => import("./pages/Referrals"));
+const SettingsPage = lazy(() => import("./pages/Settings"));
 
 // Full-screen tool pages — lazy loaded (Pro features, heavy components)
 const ScriptWriter = lazy(() => import("./pages/ScriptWriter"));
@@ -132,6 +133,7 @@ function Router() {
               <Route path="/characters">{() => <Characters />}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
               <Route path="/referrals">{() => <Referrals />}</Route>
+              <Route path="/settings">{() => <SettingsPage />}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />

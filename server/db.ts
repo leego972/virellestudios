@@ -1,5 +1,6 @@
 import { eq, and, asc, desc, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import { sql } from "drizzle-orm";
 import {
   InsertUser, users,
   InsertProject, projects,
@@ -1081,4 +1082,64 @@ export async function addBonusGenerations(userId: number, amount: number) {
   // Reduce the used count (effectively giving bonus generations)
   const newUsed = Math.max(0, (user.monthlyGenerationsUsed || 0) - amount);
   await db.update(users).set({ monthlyGenerationsUsed: newUsed }).where(eq(users.id, userId));
+}
+
+// ─── BYOK API Key Management ───
+
+export async function updateUserApiKey(userId: number, column: string, value: string | null) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  // Use raw SQL since column name is dynamic
+  if (value === null) {
+    await db.execute(
+      sql`UPDATE users SET ${sql.raw(column)} = NULL, apiKeysUpdatedAt = NOW() WHERE id = ${userId}`
+    );
+  } else {
+    await db.execute(
+      sql`UPDATE users SET ${sql.raw(column)} = ${value}, apiKeysUpdatedAt = NOW() WHERE id = ${userId}`
+    );
+  }
+}
+
+export async function updateUserPreferredProvider(userId: number, provider: string | null) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users)
+    .set({ preferredVideoProvider: provider } as any)
+    .where(eq(users.id, userId));
+}
+
+export async function getUserApiKeys(userId: number): Promise<{
+  openaiKey: string | null;
+  runwayKey: string | null;
+  replicateKey: string | null;
+  falKey: string | null;
+  lumaKey: string | null;
+  hfToken: string | null;
+  preferredProvider: string | null;
+}> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user) throw new Error("User not found");
+
+  // Decode base64-encoded keys
+  const decode = (val: string | null | undefined): string | null => {
+    if (!val) return null;
+    try {
+      return Buffer.from(val, "base64").toString("utf-8");
+    } catch {
+      return val; // Already plain text
+    }
+  };
+
+  return {
+    openaiKey: decode((user as any).userOpenaiKey),
+    runwayKey: decode((user as any).userRunwayKey),
+    replicateKey: decode((user as any).userReplicateKey),
+    falKey: decode((user as any).userFalKey),
+    lumaKey: decode((user as any).userLumaKey),
+    hfToken: decode((user as any).userHfToken),
+    preferredProvider: (user as any).preferredVideoProvider || null,
+  };
 }

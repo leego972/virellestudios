@@ -19,6 +19,18 @@ export const users = mysqlTable("users", {
   subscriptionCurrentPeriodEnd: timestamp("subscriptionCurrentPeriodEnd"),
   monthlyGenerationsUsed: int("monthlyGenerationsUsed").default(0).notNull(),
   monthlyGenerationsResetAt: timestamp("monthlyGenerationsResetAt"),
+  bonusGenerations: int("bonusGenerations").default(0),
+  referralCode: varchar("referralCode", { length: 32 }),
+  referralStats: json("referralStats"),
+  // BYOK (Bring Your Own Key) — user API keys for video generation
+  userOpenaiKey: text("userOpenaiKey"),       // OpenAI API key (Sora video + DALL-E images)
+  userRunwayKey: text("userRunwayKey"),       // Runway ML API key (Gen-3/Gen-4 video)
+  userReplicateKey: text("userReplicateKey"), // Replicate API key (Wan2.1, etc.)
+  userFalKey: text("userFalKey"),             // fal.ai API key (HunyuanVideo, Veo3, etc.)
+  userLumaKey: text("userLumaKey"),           // Luma AI API key (Dream Machine video)
+  userHfToken: text("userHfToken"),           // Hugging Face token (free inference API)
+  preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface
+  apiKeysUpdatedAt: timestamp("apiKeysUpdatedAt"),
 });
 
 export type User = typeof users.$inferSelect;

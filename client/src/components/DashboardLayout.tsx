@@ -37,6 +37,7 @@ import {
   CreditCard,
   Gift,
   BookOpen,
+  Settings,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -53,6 +54,7 @@ const menuItems = [
   { icon: Gift, label: "Referrals", path: "/referrals" },
   { icon: BookOpen, label: "Blog", path: "/blog" },
   { icon: CreditCard, label: "Subscription", path: "/pricing" },
+  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 const adminMenuItems = [

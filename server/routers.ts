@@ -9,6 +9,7 @@ import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { generateVideo, generateVideoWithFallback, buildVideoPrompt } from "./_core/videoGeneration";
 import { generateUnifiedVideo, generateScenesParallel, buildUnifiedVideoPrompt, getAvailableProviders } from "./_core/unifiedVideoEngine";
+import { generateVideo as generateBYOKVideo, VIDEO_PROVIDERS, validateApiKey, type UserApiKeys, type VideoProvider } from "./_core/byokVideoEngine";
 import { nanoid } from "nanoid";
 import { processDirectorMessage } from "./directorAssistant";
 import { transcribeAudio } from "./_core/voiceTranscription";
@@ -975,48 +976,55 @@ Break this into 8-15 scenes. For each scene, provide:
               console.error(`Failed to generate thumbnail for scene "${scene.title}":`, imgErr);
             }
 
-            // Step 4b: Generate video clip using Unified Video Engine (Runway + Sora)
-            const videoPrompt = buildUnifiedVideoPrompt(
-              scene.description || scene.title || "A cinematic scene",
-              {
-                cameraMovement: (scene.cameraAngle as string) === "tracking" ? "smooth tracking shot" : "slow cinematic dolly",
-                mood: scene.mood || undefined,
-                lighting: scene.lighting || undefined,
-                timeOfDay: scene.timeOfDay || undefined,
-                weather: scene.weather || undefined,
-                genre: project.genre || undefined,
-                characterAction: scene.productionNotes?.split("\n").find(l => l.startsWith("Action:"))?.replace("Action: ", "") || undefined,
-              }
-            );
+            // Step 4b: Generate video clip using BYOK (Bring Your Own Key) Video Engine
+            // Fetch user's API keys from the database
+            const userKeys = await db.getUserApiKeys(ctx.user!.id);
+            const byokKeys: UserApiKeys = {
+              openaiKey: userKeys.openaiKey,
+              runwayKey: userKeys.runwayKey,
+              replicateKey: userKeys.replicateKey,
+              falKey: userKeys.falKey,
+              lumaKey: userKeys.lumaKey,
+              hfToken: userKeys.hfToken,
+              preferredProvider: userKeys.preferredProvider,
+            };
 
-            // Calculate scene video duration (2-10 seconds for Runway, 4-12 for Sora)
+            const videoPrompt = [
+              `Cinematic video scene: ${scene.description || scene.title || "A cinematic scene"}.`,
+              scene.mood ? `Mood: ${scene.mood}.` : "",
+              scene.lighting ? `Lighting: ${scene.lighting}.` : "",
+              scene.timeOfDay ? `Time: ${scene.timeOfDay}.` : "",
+              scene.weather ? `Weather: ${scene.weather}.` : "",
+              project.genre ? `Genre: ${project.genre}.` : "",
+              (scene.cameraAngle as string) === "tracking" ? "Smooth tracking camera movement." : "Slow cinematic dolly shot.",
+              "Photorealistic, shot on ARRI Alexa, 35mm anamorphic lens, shallow depth of field, natural lighting, film grain.",
+            ].filter(Boolean).join(" ");
+
             const sceneDuration = Math.min(10, Math.max(2, Math.round((scene.duration || 10) / 3)));
 
             try {
-              const videoResult = await generateUnifiedVideo({
+              const videoResult = await generateBYOKVideo(byokKeys, {
                 prompt: videoPrompt,
-                seconds: sceneDuration,
-                resolution: videoResolution as any,
-                inputImageUrl: scene.thumbnailUrl || undefined,
-                aspectRatio: "landscape",
+                imageUrl: scene.thumbnailUrl || undefined,
+                duration: sceneDuration,
+                aspectRatio: "16:9",
+                resolution: "720p",
               });
 
               await db.updateScene(scene.id, {
                 videoUrl: videoResult.videoUrl,
-                videoJobId: videoResult.jobId,
+                videoJobId: videoResult.jobId || null,
                 status: "completed",
               });
-
-              // If video generated a thumbnail and we don't have one, use it
-              if (videoResult.thumbnailUrl && !scene.thumbnailUrl) {
-                await db.updateScene(scene.id, { thumbnailUrl: videoResult.thumbnailUrl });
-              }
 
               generatedCount++;
               console.log(`[QuickGen] Scene ${sceneIdx + 1}/${allScenes.length} video generated via ${videoResult.provider}: ${videoResult.videoUrl}`);
             } catch (videoErr: any) {
-              console.error(`[QuickGen] Video generation failed for scene "${scene.title}", scene will have thumbnail only:`, videoErr.message);
-              // Scene still has its thumbnail image — video generation is best-effort
+              console.error(`[QuickGen] Video generation failed for scene "${scene.title}":`, videoErr.message);
+              if (videoErr.message.startsWith("NO_API_KEY")) {
+                // No API keys configured — mark scene as completed with thumbnail only
+                console.log(`[QuickGen] No video API keys configured. Scene will have thumbnail only.`);
+              }
               await db.updateScene(scene.id, { status: "completed" });
             }
           } catch (e) {
@@ -3790,6 +3798,163 @@ Rules:
           return { valid: false };
         }
         return { valid: true, referrerName: "A VirÉlle Studios user" };
+      }),
+  }),
+
+  // ─── User Settings & API Key Management ───
+  settings: router({
+    // Get current user profile and API key status
+    getProfile: protectedProcedure.query(async ({ ctx }) => {
+      const user = ctx.user!;
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        subscriptionTier: (user as any).subscriptionTier || "free",
+        // Return which keys are configured (never return the actual keys)
+        apiKeys: {
+          openai: !!(user as any).userOpenaiKey,
+          runway: !!(user as any).userRunwayKey,
+          replicate: !!(user as any).userReplicateKey,
+          fal: !!(user as any).userFalKey,
+          luma: !!(user as any).userLumaKey,
+          huggingface: !!(user as any).userHfToken,
+        },
+        preferredVideoProvider: (user as any).preferredVideoProvider || null,
+        apiKeysUpdatedAt: (user as any).apiKeysUpdatedAt || null,
+      };
+    }),
+
+    // Get available video providers info
+    getProviders: protectedProcedure.query(async () => {
+      return VIDEO_PROVIDERS;
+    }),
+
+    // Save an API key for a specific provider
+    saveApiKey: protectedProcedure
+      .input(z.object({
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface"]),
+        key: z.string().min(1).max(500),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { provider, key } = input;
+
+        // Validate key format
+        const validation = validateApiKey(provider as VideoProvider, key);
+        if (!validation.valid) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: validation.message });
+        }
+
+        // Map provider to database column
+        const columnMap: Record<string, string> = {
+          openai: "userOpenaiKey",
+          runway: "userRunwayKey",
+          replicate: "userReplicateKey",
+          fal: "userFalKey",
+          luma: "userLumaKey",
+          huggingface: "userHfToken",
+        };
+
+        const column = columnMap[provider];
+        if (!column) throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid provider" });
+
+        // Simple obfuscation (base64) — in production you'd use proper encryption
+        const encoded = Buffer.from(key).toString("base64");
+
+        await db.updateUserApiKey(ctx.user!.id, column, encoded);
+
+        return { success: true, provider, message: `${provider} API key saved successfully` };
+      }),
+
+    // Remove an API key
+    removeApiKey: protectedProcedure
+      .input(z.object({
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const columnMap: Record<string, string> = {
+          openai: "userOpenaiKey",
+          runway: "userRunwayKey",
+          replicate: "userReplicateKey",
+          fal: "userFalKey",
+          luma: "userLumaKey",
+          huggingface: "userHfToken",
+        };
+
+        const column = columnMap[input.provider];
+        if (!column) throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid provider" });
+
+        await db.updateUserApiKey(ctx.user!.id, column, null);
+
+        return { success: true, provider: input.provider, message: `${input.provider} API key removed` };
+      }),
+
+    // Set preferred video provider
+    setPreferredProvider: protectedProcedure
+      .input(z.object({
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface"]).nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateUserPreferredProvider(ctx.user!.id, input.provider);
+        return { success: true };
+      }),
+
+    // Test an API key to verify it works
+    testApiKey: protectedProcedure
+      .input(z.object({
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface"]),
+        key: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        const { provider, key } = input;
+
+        try {
+          switch (provider) {
+            case "openai": {
+              const resp = await fetch("https://api.openai.com/v1/models", {
+                headers: { "Authorization": `Bearer ${key}` },
+              });
+              if (resp.ok) return { valid: true, message: "OpenAI key is valid" };
+              return { valid: false, message: `OpenAI returned ${resp.status}` };
+            }
+            case "runway": {
+              const resp = await fetch("https://api.dev.runwayml.com/v1/tasks?limit=1", {
+                headers: { "Authorization": `Bearer ${key}`, "X-Runway-Version": "2024-11-06" },
+              });
+              if (resp.ok || resp.status === 200) return { valid: true, message: "Runway key is valid" };
+              return { valid: false, message: `Runway returned ${resp.status}: ${await resp.text()}` };
+            }
+            case "replicate": {
+              const resp = await fetch("https://api.replicate.com/v1/account", {
+                headers: { "Authorization": `Bearer ${key}` },
+              });
+              if (resp.ok) return { valid: true, message: "Replicate key is valid" };
+              return { valid: false, message: `Replicate returned ${resp.status}` };
+            }
+            case "fal": {
+              // fal.ai doesn't have a simple validation endpoint, just check format
+              return { valid: true, message: "fal.ai key format accepted (will be verified on first use)" };
+            }
+            case "luma": {
+              const resp = await fetch("https://api.lumalabs.ai/dream-machine/v1/generations?limit=1", {
+                headers: { "Authorization": `Bearer ${key}` },
+              });
+              if (resp.ok) return { valid: true, message: "Luma AI key is valid" };
+              return { valid: false, message: `Luma returned ${resp.status}` };
+            }
+            case "huggingface": {
+              const resp = await fetch("https://huggingface.co/api/whoami-v2", {
+                headers: { "Authorization": `Bearer ${key}` },
+              });
+              if (resp.ok) return { valid: true, message: "Hugging Face token is valid" };
+              return { valid: false, message: `Hugging Face returned ${resp.status}` };
+            }
+            default:
+              return { valid: false, message: "Unknown provider" };
+          }
+        } catch (err: any) {
+          return { valid: false, message: `Connection error: ${err.message}` };
+        }
       }),
   }),
 });

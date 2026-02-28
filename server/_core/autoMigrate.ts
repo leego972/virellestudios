@@ -119,6 +119,15 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "bonusGenerations", definition: "INT NOT NULL DEFAULT 0" },
     { table: "users", column: "referralCode", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "referralStats", definition: "JSON NULL" },
+    // Users table - BYOK (Bring Your Own Key) for video generation
+    { table: "users", column: "userOpenaiKey", definition: "TEXT NULL" },
+    { table: "users", column: "userRunwayKey", definition: "TEXT NULL" },
+    { table: "users", column: "userReplicateKey", definition: "TEXT NULL" },
+    { table: "users", column: "userFalKey", definition: "TEXT NULL" },
+    { table: "users", column: "userLumaKey", definition: "TEXT NULL" },
+    { table: "users", column: "userHfToken", definition: "TEXT NULL" },
+    { table: "users", column: "preferredVideoProvider", definition: "VARCHAR(32) NULL" },
+    { table: "users", column: "apiKeysUpdatedAt", definition: "TIMESTAMP NULL" },
   ];
 
   let tablesCreated = 0;
