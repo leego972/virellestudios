@@ -12,6 +12,7 @@ import { stripe, priceIdToTier } from "./subscription";
 import { ENV } from "./env";
 import * as db from "../db";
 import { startBlogScheduler } from "./blogEngine";
+import { runAutoMigration } from "./autoMigrate";
 
 const startedAt = new Date();
 
@@ -63,6 +64,14 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  // Auto-migrate database schema on startup — adds missing columns and tables
+  try {
+    await runAutoMigration();
+  } catch (err: any) {
+    console.error("[AutoMigrate] Migration failed:", err.message);
+    // Continue starting — the server may still work with existing schema
+  }
+
   const app = express();
   const server = createServer(app);
 
