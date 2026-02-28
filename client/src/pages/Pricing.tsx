@@ -21,7 +21,7 @@ export default function Pricing() {
 
   const handleSubscribe = async (tier: "pro" | "industry") => {
     if (!status) {
-      setLocation("/login");
+      setLocation("/register");
       return;
     }
 

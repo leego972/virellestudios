@@ -141,24 +141,24 @@ export default function Collaboration() {
       {/* Header */}
       <div className="border-b bg-background/95 backdrop-blur sticky top-0 z-30">
         <div className="container py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => setLocation(`/projects/${projectId}`)}>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <div>
-                <h1 className="text-lg font-semibold">Project Collaboration</h1>
-                <p className="text-xs text-muted-foreground">{project.data?.title}</p>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-semibold truncate">Project Collaboration</h1>
+                <p className="text-xs text-muted-foreground truncate">{project.data?.title}</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <Button variant="outline" size="sm" onClick={handleGenerateLink}>
-                <LinkIcon className="h-4 w-4 mr-2" />
-                Generate Link
+                <LinkIcon className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Generate Link</span>
               </Button>
               <Button size="sm" onClick={() => setShowInviteDialog(true)}>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Invite Member
+                <UserPlus className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Invite Member</span>
               </Button>
             </div>
           </div>
@@ -215,7 +215,7 @@ export default function Collaboration() {
             <CardTitle className="text-sm">Team Roles</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               {(Object.entries(ROLE_CONFIG) as [keyof typeof ROLE_CONFIG, typeof ROLE_CONFIG[keyof typeof ROLE_CONFIG]][]).map(([key, config]) => {
                 const Icon = config.icon;
                 return (
@@ -245,13 +245,13 @@ export default function Collaboration() {
                 const RoleIcon = roleConfig?.icon || Eye;
                 return (
                   <Card key={member.id}>
-                    <CardContent className="p-4 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+                    <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                           <RoleIcon className={`h-4 w-4 ${roleConfig?.color || ""}`} />
                         </div>
-                        <div>
-                          <p className="text-sm font-medium">{member.email || "Team Member"}</p>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{member.email || "Team Member"}</p>
                           <div className="flex items-center gap-2 mt-0.5">
                             <Badge variant="secondary" className="text-[10px]">
                               {roleConfig?.label || member.role}
@@ -262,7 +262,7 @@ export default function Collaboration() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0">
                         <Select
                           value={member.role}
                           onValueChange={(v) => updateRoleMutation.mutate({ id: member.id, role: v as any })}

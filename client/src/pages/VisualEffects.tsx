@@ -259,31 +259,31 @@ export default function VisualEffects() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-purple-400" />
             Visual Effects
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1 hidden sm:block">
             Browse the VFX library or create custom effects for your scenes
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button size="sm" variant={showPresets ? "default" : "outline"} onClick={() => setShowPresets(true)}>
-            <Layers className="h-4 w-4 mr-1" />Preset Library
+            <Layers className="h-4 w-4 mr-1" />Presets
           </Button>
           <Button size="sm" variant={!showPresets ? "default" : "outline"} onClick={() => setShowPresets(false)}>
-            <Filter className="h-4 w-4 mr-1" />Project Effects ({effects?.length || 0})
+            <Filter className="h-4 w-4 mr-1" />Project ({effects?.length || 0})
           </Button>
           <Button size="sm" variant="outline" onClick={openCreate}>
-            <Plus className="h-4 w-4 mr-1" />Custom Effect
+            <Plus className="h-4 w-4 mr-1" />Custom
           </Button>
         </div>
       </div>
 
       {/* Search & Filter */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -294,7 +294,7 @@ export default function VisualEffects() {
           />
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-[200px] h-9 bg-background/50">
+          <SelectTrigger className="w-full sm:w-[200px] h-9 bg-background/50">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>

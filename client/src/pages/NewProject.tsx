@@ -105,7 +105,7 @@ export default function NewProject() {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-10 w-10 sm:h-8 sm:w-8 p-0"
           onClick={() => setLocation("/projects")}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -212,7 +212,7 @@ export default function NewProject() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Genre</Label>
                     <Select value={genre} onValueChange={setGenre}>
@@ -287,7 +287,7 @@ export default function NewProject() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Tone / Style</Label>
                     <Select value={tone} onValueChange={setTone}>

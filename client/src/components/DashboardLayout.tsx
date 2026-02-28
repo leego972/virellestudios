@@ -297,16 +297,16 @@ function DashboardLayoutContent({
 
       <SidebarInset>
         {isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
+          <div data-mobile-header className="flex border-b h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
             <div className="flex items-center gap-2">
-              <SidebarTrigger className="h-9 w-9 rounded-lg" />
+              <SidebarTrigger className="h-11 w-11 rounded-lg" />
               <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png" alt="Virelle Studios" className="h-5 w-5 rounded" />
               <span className="text-sm font-medium">Virelle Studios</span>
             </div>
             {switchable && (
               <button
                 onClick={toggleTheme}
-                className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-accent transition-colors"
+                className="h-11 w-11 flex items-center justify-center rounded-lg hover:bg-accent active:bg-accent/70 transition-colors"
                 aria-label="Toggle theme"
               >
                 {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -314,7 +314,7 @@ function DashboardLayoutContent({
             )}
           </div>
         )}
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>{children}</main>
       </SidebarInset>
     </>
   );

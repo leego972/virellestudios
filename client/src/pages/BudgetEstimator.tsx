@@ -132,39 +132,39 @@ export default function BudgetEstimator() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b border-border/40 bg-card/50 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="text-xl font-semibold">Production Budget</h1>
-              <p className="text-sm text-muted-foreground">{project.data?.title || "Loading..."}</p>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-semibold truncate">Production Budget</h1>
+              <p className="text-sm text-muted-foreground truncate">{project.data?.title || "Loading..."}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {activeBudget && (
               <>
                 <Button variant="outline" size="sm" onClick={exportCSV}>
-                  <Download className="h-4 w-4 mr-1" /> CSV
+                  <Download className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline"> CSV</span>
                 </Button>
                 <Button variant="outline" size="sm" onClick={exportPDF}>
-                  <FileText className="h-4 w-4 mr-1" /> Export
+                  <FileText className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline"> Export</span>
                 </Button>
               </>
             )}
-            <Button onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending}>
+            <Button size="sm" onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending}>
               {generateMutation.isPending ? (
-                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Analyzing project...</>
+                <><Loader2 className="h-4 w-4 mr-1 sm:mr-2 animate-spin" /><span className="hidden sm:inline">Analyzing...</span></>
               ) : (
-                <><Sparkles className="h-4 w-4 mr-2" /> Generate Budget Estimate</>
+                <><Sparkles className="h-4 w-4 sm:mr-2" /><span className="hidden sm:inline">Generate Budget</span></>
               )}
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         {!activeBudget && !generateMutation.isPending ? (
           <div className="text-center py-24">
             <DollarSign className="h-16 w-16 mx-auto mb-6 text-muted-foreground/30" />

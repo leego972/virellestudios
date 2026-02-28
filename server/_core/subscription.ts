@@ -82,7 +82,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseScriptWriter: false,
     canUseStoryboard: false,
     canUseCollaboration: false,
-    canExportMovies: false,
+    canExportMovies: true,
     canExportHD: false,
     canExportUltraHD: false,
     canUseAICharacterGen: false,

@@ -363,19 +363,19 @@ export default function ScriptWriter() {
     <div className="min-h-screen bg-background">
       {/* Top bar */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="flex items-center gap-3 px-4 py-2">
-          <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${pid}`)}>
+        <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 flex-wrap">
+          <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${pid}`)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
 
           <Input
             value={title}
             onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
-            className="max-w-xs bg-transparent border-none text-lg font-semibold focus-visible:ring-0 px-2"
+            className="max-w-[200px] sm:max-w-xs bg-transparent border-none text-base sm:text-lg font-semibold focus-visible:ring-0 px-2 flex-1 min-w-0"
             placeholder="Script title..."
           />
 
-          <div className="flex items-center gap-1 ml-auto">
+          <div className="flex items-center gap-1 ml-auto shrink-0">
             {isDirty && (
               <span className="text-xs text-muted-foreground mr-2">Unsaved changes</span>
             )}

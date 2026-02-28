@@ -135,6 +135,27 @@
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
   }
+
+  /* Prevent iOS text size adjustment */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Smooth momentum scrolling on iOS */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Remove tap highlight on mobile */
+  a, button, [role="button"], input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent pull-to-refresh on mobile */
+  body {
+    overscroll-behavior-y: contain;
+  }
 }
 
 @layer components {
@@ -144,11 +165,6 @@
     margin-right: auto;
     padding-left: 1rem;
     padding-right: 1rem;
-  }
-
-  .flex {
-    min-height: 0;
-    min-width: 0;
   }
 
   @media (min-width: 640px) {
@@ -164,5 +180,40 @@
       padding-right: 2rem;
       max-width: 1400px;
     }
+  }
+}
+
+/* ===== Mobile Responsive Utilities ===== */
+
+@media (max-width: 767px) {
+  /* Prevent iOS zoom on input focus (must be >= 16px) */
+  select, input, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Tabs scroll horizontally on mobile instead of wrapping */
+  [role="tablist"] {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  [role="tablist"]::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Small phone screens — tighter spacing */
+@media (max-width: 374px) {
+  h1 {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Landscape mode on small screens */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Compact the mobile header bar in landscape */
+  [data-mobile-header] {
+    height: 2.5rem;
   }
 }

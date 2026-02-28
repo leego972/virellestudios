@@ -38,8 +38,6 @@ export const appRouter = router({
         name: z.string().min(1).max(255),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Registration is locked — only the owner can have an account
-        throw new TRPCError({ code: "FORBIDDEN", message: "Registration is currently closed. This is a private studio." });
         // Check if user already exists
         const existing = await db.getUserByEmail(input.email.toLowerCase());
         if (existing) {
@@ -3110,9 +3108,49 @@ Rules:
 
   // ─── Subscription / Billing ─────────────────────────────────────────────────
   subscription: router({
-    // Get current user's subscription status and limits
+    // Get current user's subscription status and limits (with live Stripe sync)
     status: protectedProcedure.query(async ({ ctx }) => {
-      const user = ctx.user;
+      let user = ctx.user;
+
+      // Live-sync with Stripe if user has a subscription ID
+      // This catches cases where webhooks were missed or delayed
+      if (user.stripeSubscriptionId && ENV.stripeSecretKey) {
+        try {
+          const { stripe, priceIdToTier } = await import("./_core/subscription");
+          if (stripe) {
+            const sub = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+            const priceId = sub.items.data[0]?.price?.id || "";
+            const liveTier = priceIdToTier(priceId);
+            const liveStatus = sub.status === "active" ? "active"
+              : sub.status === "past_due" ? "past_due"
+              : sub.status === "canceled" ? "canceled"
+              : sub.status === "trialing" ? "trialing"
+              : sub.status === "unpaid" ? "unpaid" : "none";
+            const livePeriodEnd = new Date((sub as any).current_period_end * 1000);
+
+            // Only update DB if something changed
+            const tierChanged = (liveStatus === "active" || liveStatus === "trialing" ? liveTier : "free") !== user.subscriptionTier;
+            const statusChanged = liveStatus !== user.subscriptionStatus;
+            const periodChanged = !user.subscriptionCurrentPeriodEnd || 
+              Math.abs(livePeriodEnd.getTime() - new Date(user.subscriptionCurrentPeriodEnd).getTime()) > 60000;
+
+            if (tierChanged || statusChanged || periodChanged) {
+              await db.updateUserSubscription(user.id, {
+                subscriptionTier: liveStatus === "active" || liveStatus === "trialing" ? liveTier : "free",
+                subscriptionStatus: liveStatus as any,
+                subscriptionCurrentPeriodEnd: livePeriodEnd,
+              });
+              // Refresh user data
+              const refreshed = await db.getUserById(user.id);
+              if (refreshed) user = refreshed;
+            }
+          }
+        } catch (err: any) {
+          // Don't fail the status check if Stripe sync fails
+          logger.warn(`Stripe sync failed for user ${user.id}: ${err.message}`);
+        }
+      }
+
       const tier = getEffectiveTier(user);
       const limits = getUserLimits(user);
       return {

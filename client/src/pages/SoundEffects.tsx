@@ -336,17 +336,17 @@ export default function SoundEffects() {
     <div className="min-h-screen bg-background">
       <div className="border-b bg-background/95 backdrop-blur sticky top-0 z-30">
         <div className="container py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => setLocation(`/projects/${projectId}`)}>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <div>
-                <h1 className="text-lg font-semibold">Sound Effects Library</h1>
-                <p className="text-xs text-muted-foreground">{project.data?.title}</p>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-semibold truncate">Sound Effects Library</h1>
+                <p className="text-xs text-muted-foreground truncate">{project.data?.title}</p>
               </div>
             </div>
-            <Button onClick={() => setShowUploadDialog(true)} size="sm">
+            <Button onClick={() => setShowUploadDialog(true)} size="sm" className="shrink-0">
               <Upload className="h-4 w-4 mr-2" />
               Upload Custom Sound
             </Button>

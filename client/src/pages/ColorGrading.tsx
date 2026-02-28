@@ -115,13 +115,13 @@ export default function ColorGrading() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b bg-card/50 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}>
+        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h1 className="text-lg font-semibold">{project?.title} — Color Grading</h1>
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-lg font-semibold truncate">{project?.title} — Color Grading</h1>
               <p className="text-xs text-muted-foreground">Set the cinematic look for your film</p>
             </div>
           </div>

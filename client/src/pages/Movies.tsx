@@ -292,7 +292,8 @@ export default function Movies() {
   const renderMovieCard = (movie: MovieItem) => (
     <Card
       key={movie.id}
-      className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all"
+      className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer"
+      onClick={() => movie.fileUrl ? setShowPlayer(movie.id) : undefined}
     >
       <div className="relative aspect-video bg-muted">
         {movie.thumbnailUrl ? (
@@ -306,27 +307,41 @@ export default function Movies() {
             <Film className="h-12 w-12 text-muted-foreground/30" />
           </div>
         )}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+        {/* Always-visible play button for movies with files */}
+        {movie.fileUrl && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary/80 transition-all group-hover:scale-110">
+              <Play className="h-7 w-7 text-white fill-white ml-1" />
+            </div>
+          </div>
+        )}
+        {/* Hover overlay with action buttons (visible on hover for desktop, hidden on mobile - play button is always visible) */}
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-end justify-center pb-3 gap-2">
           {movie.fileUrl && (
             <>
               <Button
-                size="icon"
+                size="sm"
                 variant="secondary"
-                onClick={() => setShowPlayer(movie.id)}
+                className="gap-1 h-8"
+                onClick={(e) => { e.stopPropagation(); setShowPlayer(movie.id); }}
               >
-                <Eye className="h-4 w-4" />
+                <Play className="h-3 w-3" />
+                Watch
               </Button>
               <Button
-                size="icon"
+                size="sm"
                 variant="secondary"
-                onClick={() => {
+                className="gap-1 h-8"
+                onClick={(e) => {
+                  e.stopPropagation();
                   const a = document.createElement("a");
                   a.href = movie.fileUrl!;
                   a.download = movie.title;
                   a.click();
                 }}
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-3 w-3" />
+                Download
               </Button>
             </>
           )}
@@ -336,7 +351,8 @@ export default function Movies() {
               variant="secondary"
               className="gap-1"
               disabled={uploadingId === movie.id}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 fileInputRef.current?.setAttribute(
                   "data-movie-id",
                   String(movie.id)
@@ -379,8 +395,9 @@ export default function Movies() {
             <Button
               size="icon"
               variant="ghost"
-              className="h-7 w-7"
-              onClick={() => {
+              className="h-8 w-8 sm:h-7 sm:w-7"
+              onClick={(e) => {
+                e.stopPropagation();
                 thumbInputRef.current?.setAttribute(
                   "data-movie-id",
                   String(movie.id)
@@ -388,19 +405,20 @@ export default function Movies() {
                 thumbInputRef.current?.click();
               }}
             >
-              <Upload className="h-3 w-3" />
+              <Upload className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
             </Button>
             <Button
               size="icon"
               variant="ghost"
-              className="h-7 w-7 text-destructive hover:text-destructive"
-              onClick={() => {
+              className="h-8 w-8 sm:h-7 sm:w-7 text-destructive hover:text-destructive"
+              onClick={(e) => {
+                e.stopPropagation();
                 if (confirm("Delete this movie?")) {
                   deleteMutation.mutate({ id: movie.id });
                 }
               }}
             >
-              <Trash2 className="h-3 w-3" />
+              <Trash2 className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
             </Button>
           </div>
         </div>
@@ -442,10 +460,11 @@ export default function Movies() {
   const renderMovieRow = (movie: MovieItem) => (
     <Card
       key={movie.id}
-      className="hover:ring-1 hover:ring-primary/30 transition-all"
+      className="hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer"
+      onClick={() => movie.fileUrl ? setShowPlayer(movie.id) : undefined}
     >
       <CardContent className="p-3 flex items-center gap-4">
-        <div className="w-24 h-16 rounded-md overflow-hidden bg-muted shrink-0">
+        <div className="w-24 h-16 rounded-md overflow-hidden bg-muted shrink-0 relative group">
           {movie.thumbnailUrl ? (
             <img
               src={movie.thumbnailUrl}
@@ -455,6 +474,13 @@ export default function Movies() {
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <Film className="h-6 w-6 text-muted-foreground/30" />
+            </div>
+          )}
+          {movie.fileUrl && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center group-hover:bg-primary/80 transition-all">
+                <Play className="h-4 w-4 text-white fill-white ml-0.5" />
+              </div>
             </div>
           )}
         </div>
@@ -484,16 +510,17 @@ export default function Movies() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8"
-                onClick={() => setShowPlayer(movie.id)}
+                className="h-9 w-9 sm:h-8 sm:w-8"
+                onClick={(e) => { e.stopPropagation(); setShowPlayer(movie.id); }}
               >
-                <Eye className="h-4 w-4" />
+                <Play className="h-4 w-4" />
               </Button>
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8"
-                onClick={() => {
+                className="h-9 w-9 sm:h-8 sm:w-8 hidden sm:flex"
+                onClick={(e) => {
+                  e.stopPropagation();
                   const a = document.createElement("a");
                   a.href = movie.fileUrl!;
                   a.download = movie.title;
@@ -508,9 +535,10 @@ export default function Movies() {
             <Button
               size="sm"
               variant="outline"
-              className="gap-1 h-8"
+              className="gap-1 h-9 sm:h-8"
               disabled={uploadingId === movie.id}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 fileInputRef.current?.setAttribute(
                   "data-movie-id",
                   String(movie.id)
@@ -525,8 +553,9 @@ export default function Movies() {
           <Button
             size="icon"
             variant="ghost"
-            className="h-8 w-8 text-destructive hover:text-destructive"
-            onClick={() => {
+            className="h-9 w-9 sm:h-8 sm:w-8 text-destructive hover:text-destructive"
+            onClick={(e) => {
+              e.stopPropagation();
               if (confirm("Delete this movie?")) {
                 deleteMutation.mutate({ id: movie.id });
               }
@@ -540,7 +569,7 @@ export default function Movies() {
   );
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -718,7 +747,7 @@ export default function Movies() {
                     Movie Folders
                   </h2>
                   {viewMode === "grid" ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       {filteredFolderNames.map((folderName) => {
                         const items = folders[folderName];
                         const sceneCount = items.filter(
@@ -857,7 +886,7 @@ export default function Movies() {
                     {folderNames.length > 0 ? "Standalone" : "All Movies"}
                   </h2>
                   {viewMode === "grid" ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       {filteredTopLevel.map(renderMovieCard)}
                     </div>
                   ) : (
@@ -899,7 +928,7 @@ export default function Movies() {
               )}
             </div>
           ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {filteredFolderContents.map(renderMovieCard)}
             </div>
           ) : (

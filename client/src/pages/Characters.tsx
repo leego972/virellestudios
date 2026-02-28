@@ -364,12 +364,12 @@ export default function Characters() {
                         alt={char.name}
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-3">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-end justify-center pb-3">
                         <div className="flex gap-1">
-                          <Button variant="secondary" size="sm" className="h-7 px-2 text-xs bg-white/90 text-black hover:bg-white" onClick={(e) => { e.stopPropagation(); openEdit(char); }}>
+                          <Button variant="secondary" size="sm" className="h-8 sm:h-7 px-2.5 sm:px-2 text-xs bg-white/90 text-black hover:bg-white active:bg-white/70" onClick={(e) => { e.stopPropagation(); openEdit(char); }}>
                             <Pencil className="h-3 w-3 mr-1" />Edit
                           </Button>
-                          <Button variant="secondary" size="sm" className="h-7 px-2 text-xs bg-red-500/90 text-white hover:bg-red-600" onClick={(e) => { e.stopPropagation(); setDeleteId(char.id); }}>
+                          <Button variant="secondary" size="sm" className="h-8 sm:h-7 px-2.5 sm:px-2 text-xs bg-red-500/90 text-white hover:bg-red-600 active:bg-red-700" onClick={(e) => { e.stopPropagation(); setDeleteId(char.id); }}>
                             <Trash2 className="h-3 w-3" />
                           </Button>
                         </div>

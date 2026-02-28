@@ -288,9 +288,9 @@ export default function ProjectDetail() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
         <div className="flex items-center gap-3 min-w-0">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => setLocation("/projects")}>
+          <Button variant="ghost" size="sm" className="h-10 w-10 sm:h-8 sm:w-8 p-0 shrink-0" onClick={() => setLocation("/projects")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
@@ -304,7 +304,7 @@ export default function ProjectDetail() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end max-w-full">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-start sm:justify-end max-w-full overflow-x-auto">
           <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/storyboard`)}>
             <Grid3X3 className="h-4 w-4 mr-1" />
             Storyboard
@@ -352,7 +352,7 @@ export default function ProjectDetail() {
       )}
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="bg-card/50 flex-wrap h-auto gap-1 p-1">
+        <TabsList className="bg-card/50 flex-nowrap sm:flex-wrap h-auto gap-1 p-1 overflow-x-auto w-full justify-start">
           <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
           <TabsTrigger value="characters" className="text-xs">
             Characters {characters?.length ? `(${characters.length})` : ""}

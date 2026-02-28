@@ -126,7 +126,17 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
       }
     };
     const onWaiting = () => setIsLoading(true);
-    const onCanPlay = () => { setIsLoading(false); setHasError(false); };
+    const onCanPlay = () => {
+      setIsLoading(false);
+      setHasError(false);
+      // Auto-unmute after iOS muted autoplay succeeds
+      if (video.muted && isMuted) {
+        setTimeout(() => {
+          video.muted = false;
+          setIsMuted(false);
+        }, 100);
+      }
+    };
     const onError = () => { setIsLoading(false); setHasError(true); };
     const onEnded = () => {
       if (isLooping) {
@@ -267,22 +277,34 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
   };
 
   const toggleFullscreen = async () => {
-    const container = containerRef.current;
-    if (!container) return;
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    } else {
-      await container.requestFullscreen();
+    try {
+      const container = containerRef.current;
+      const video = videoRef.current;
+      if (!container) return;
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else if (container.requestFullscreen) {
+        await container.requestFullscreen();
+      } else if ((video as any)?.webkitEnterFullscreen) {
+        // iOS Safari fallback - fullscreen on video element directly
+        (video as any).webkitEnterFullscreen();
+      }
+    } catch (err) {
+      console.warn('Fullscreen not supported:', err);
     }
   };
 
   const togglePiP = async () => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (document.pictureInPictureElement) {
-      await document.exitPictureInPicture();
-    } else {
-      await video.requestPictureInPicture();
+    try {
+      const video = videoRef.current;
+      if (!video) return;
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else if (video.requestPictureInPicture) {
+        await video.requestPictureInPicture();
+      }
+    } catch (err) {
+      console.warn('PiP not supported:', err);
     }
   };
 
@@ -327,13 +349,14 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
   const playableMovies = playlist?.filter((m) => m.fileUrl) ?? [];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/95 flex flex-col">
+    <div className="fixed inset-0 z-50 bg-black/95 flex flex-col" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {/* Top Bar */}
       <div
         className={`absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 to-transparent px-4 py-3 flex items-center justify-between transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <Button size="icon" variant="ghost" className="text-white hover:bg-white/10 shrink-0" onClick={onClose}>
+          <Button size="icon" variant="ghost" className="text-white hover:bg-white/10 active:bg-white/20 shrink-0 h-11 w-11" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
           <div className="min-w-0">
@@ -380,10 +403,10 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
 
       {/* Playlist Sidebar */}
       {showPlaylist && playlist && (
-        <div className="absolute top-0 right-0 bottom-0 w-72 sm:w-80 z-30 bg-black/90 backdrop-blur-sm border-l border-white/10 overflow-y-auto">
+        <div className="absolute top-0 right-0 bottom-0 w-full sm:w-80 z-30 bg-black/90 backdrop-blur-sm border-l border-white/10 overflow-y-auto">
           <div className="p-3 border-b border-white/10 flex items-center justify-between sticky top-0 bg-black/90 backdrop-blur-sm">
             <h3 className="text-white text-sm font-medium">Playlist</h3>
-            <Button size="icon" variant="ghost" className="text-white/70 hover:text-white h-7 w-7" onClick={() => setShowPlaylist(false)}>
+            <Button size="icon" variant="ghost" className="text-white/70 hover:text-white active:bg-white/20 h-9 w-9" onClick={() => setShowPlaylist(false)}>
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -391,7 +414,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             {playableMovies.map((m, i) => (
               <button
                 key={m.id}
-                className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors ${m.id === movie.id ? "bg-white/15 ring-1 ring-primary/50" : "hover:bg-white/10"}`}
+                className={`w-full flex items-center gap-3 p-3 sm:p-2 rounded-lg text-left transition-colors ${m.id === movie.id ? "bg-white/15 ring-1 ring-primary/50" : "hover:bg-white/10 active:bg-white/15"}`}
                 onClick={() => {
                   if (onNavigate && m.id !== movie.id) onNavigate(m.id);
                 }}
@@ -445,7 +468,10 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             className="max-w-full max-h-full w-full h-full object-contain"
             playsInline
             autoPlay
+            muted
             poster={movie.thumbnailUrl || undefined}
+            x-webkit-airplay="allow"
+            controlsList="nodownload"
           />
         ) : (
           <div className="flex flex-col items-center gap-4 text-white/50">
@@ -495,12 +521,13 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           <div
             data-controls
             className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-16 pb-3 px-3 sm:px-5 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Progress Bar */}
             <div
               ref={progressBarRef}
-              className="group relative h-6 flex items-center cursor-pointer mb-1"
+              className="group relative h-10 sm:h-6 flex items-center cursor-pointer mb-1 touch-none"
               onMouseMove={handleProgressHover}
               onMouseLeave={() => setHoverTime(null)}
             >
@@ -515,7 +542,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
               )}
 
               {/* Track Background */}
-              <div className="absolute left-0 right-0 h-1 group-hover:h-1.5 bg-white/20 rounded-full transition-all">
+              <div className="absolute left-0 right-0 h-1.5 sm:h-1 sm:group-hover:h-1.5 bg-white/20 rounded-full transition-all">
                 {/* Buffered */}
                 <div
                   className="absolute h-full bg-white/30 rounded-full"
@@ -528,7 +555,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                 />
                 {/* Thumb */}
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                  className="absolute top-1/2 -translate-y-1/2 w-4 h-4 sm:w-3 sm:h-3 bg-primary rounded-full sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-lg"
                   style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, transform: "translate(-50%, -50%)" }}
                 />
               </div>
@@ -613,7 +640,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="text-white/80 hover:text-white hover:bg-white/10 h-8 w-8 sm:h-9 sm:w-9"
+                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 sm:h-9 sm:w-9"
                           onClick={() => {
                             const video = videoRef.current;
                             if (!video) return;
@@ -627,7 +654,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                       <TooltipContent side="top"><p>Mute (M)</p></TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <div className="w-0 overflow-hidden group-hover/vol:w-20 transition-all duration-200">
+                  <div className="hidden sm:block w-0 overflow-hidden group-hover/vol:w-20 transition-all duration-200">
                     <Slider
                       value={[isMuted ? 0 : volume]}
                       min={0}
@@ -682,11 +709,11 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                     </Tooltip>
                   </TooltipProvider>
                   {showSpeedMenu && (
-                    <div className="absolute bottom-full right-0 mb-2 bg-black/95 border border-white/10 rounded-lg p-1 min-w-[100px]">
+                    <div className="absolute bottom-full right-0 mb-2 bg-black/95 border border-white/10 rounded-lg p-1 min-w-[100px] z-50">
                       {PLAYBACK_SPEEDS.map((speed) => (
                         <button
                           key={speed}
-                          className={`w-full text-left px-3 py-1.5 rounded text-sm transition-colors ${speed === playbackSpeed ? "bg-primary/20 text-primary" : "text-white/70 hover:text-white hover:bg-white/10"}`}
+                          className={`w-full text-left px-3 py-2.5 sm:py-1.5 rounded text-sm transition-colors ${speed === playbackSpeed ? "bg-primary/20 text-primary" : "text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20"}`}
                           onClick={() => handleSpeedChange(speed)}
                         >
                           {speed}x

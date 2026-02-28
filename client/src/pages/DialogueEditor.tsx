@@ -105,39 +105,39 @@ export default function DialogueEditor() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b border-border/40 bg-card/50 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="text-xl font-semibold">Dialogue Editor</h1>
-              <p className="text-sm text-muted-foreground">{project.data?.title || "Loading..."}</p>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-semibold truncate">Dialogue Editor</h1>
+              <p className="text-sm text-muted-foreground truncate">{project.data?.title || "Loading..."}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 shrink-0">
             {selectedSceneId && (
-              <Button variant="outline" onClick={() => setShowAiScene(true)} disabled={aiSceneMutation.isPending}>
-                <Wand2 className="h-4 w-4 mr-2" />
-                {aiSceneMutation.isPending ? "Generating..." : "AI Generate Scene Dialogue"}
+              <Button variant="outline" size="sm" onClick={() => setShowAiScene(true)} disabled={aiSceneMutation.isPending}>
+                <Wand2 className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{aiSceneMutation.isPending ? "Generating..." : "AI Generate"}</span>
               </Button>
             )}
-            <Button variant="outline" onClick={() => setShowAiSuggest(true)}>
-              <Sparkles className="h-4 w-4 mr-2" />
-              AI Suggest
+            <Button variant="outline" size="sm" onClick={() => setShowAiSuggest(true)}>
+              <Sparkles className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">AI Suggest</span>
             </Button>
-            <Button onClick={() => setShowAddDialog(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Line
+            <Button size="sm" onClick={() => setShowAddDialog(true)}>
+              <Plus className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Add Line</span>
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-12 gap-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6">
           {/* Scene Sidebar */}
-          <div className="col-span-3">
+          <div className="sm:col-span-3">
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium">Scenes</CardTitle>
@@ -175,7 +175,7 @@ export default function DialogueEditor() {
           </div>
 
           {/* Dialogue Conversation View */}
-          <div className="col-span-9">
+          <div className="sm:col-span-9">
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
