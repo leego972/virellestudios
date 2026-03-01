@@ -33,6 +33,7 @@ import {
   Moon,
   Clapperboard,
   Shield,
+  ShieldAlert,
   Megaphone,
   CreditCard,
   Gift,
@@ -59,6 +60,7 @@ const menuItems = [
 
 const adminMenuItems = [
   { icon: Shield, label: "User Management", path: "/admin/users" },
+  { icon: ShieldAlert, label: "Security", path: "/admin/security" },
   { icon: Megaphone, label: "Campaign Manager", path: "/campaigns" },
 ];
 

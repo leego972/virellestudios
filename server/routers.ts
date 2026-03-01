@@ -18,6 +18,21 @@ import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buil
 import bcrypt from "bcryptjs";
 import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload } from "./_core/rateLimit";
 import { sanitizeText } from "./_core/sanitize";
+import {
+  checkRegistrationFraud,
+  trackLoginAttempt,
+  trackGeneration,
+  logAuditEvent,
+  encryptApiKey,
+  decryptApiKey,
+  getSecurityEvents,
+  getFlaggedUsers,
+  getAuditLog,
+  getSecurityStats,
+  unflagUser,
+  lockUser,
+  trackPaymentFailure,
+} from "./_core/securityEngine";
 import { logger } from "./_core/logger";
 import { createSessionToken } from "./_core/context";
 import { notifyOwner } from "./_core/notification";
@@ -43,6 +58,14 @@ export const appRouter = router({
         referralCode: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Security: Fraud detection on registration
+        const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
+        const fraudCheck = checkRegistrationFraud(clientIP, input.email);
+        if (!fraudCheck.allowed) {
+          throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: fraudCheck.reason || "Registration blocked" });
+        }
+        logAuditEvent(0, "register_attempt", clientIP, true, { email: input.email });
+
         // Check if user already exists
         const existing = await db.getUserByEmail(input.email.toLowerCase());
         if (existing) {
@@ -102,14 +125,29 @@ export const appRouter = router({
         password: z.string().min(1).max(128),
       }))
       .mutation(async ({ ctx, input }) => {
+        const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
         const user = await db.getUserByEmail(input.email.toLowerCase());
         if (!user || !user.passwordHash) {
+          logAuditEvent(0, "login_failed_no_user", clientIP, false, { email: input.email });
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
         }
+
+        // Security: Check for brute force / lockout before password check
+        const loginPreCheck = trackLoginAttempt(user.id, clientIP, false);
+        if (!loginPreCheck.allowed) {
+          logAuditEvent(user.id, "login_blocked_lockout", clientIP, false);
+          throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: loginPreCheck.reason || "Account locked" });
+        }
+
         const valid = await bcrypt.compare(input.password, user.passwordHash);
         if (!valid) {
+          logAuditEvent(user.id, "login_failed_wrong_password", clientIP, false);
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
         }
+
+        // Mark login as successful
+        trackLoginAttempt(user.id, clientIP, true);
+        logAuditEvent(user.id, "login_success", clientIP, true);
         // Update last signed in
         await db.upsertUser({ openId: user.openId, lastSignedIn: new Date() });
         // Create session
@@ -797,6 +835,14 @@ export const appRouter = router({
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         rateLimitHeavyAI(ctx.user.id);
+        // Security: Track generation and check for abuse
+        const genIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
+        const genCheck = trackGeneration(ctx.user.id, genIP, "quickGenerate");
+        if (!genCheck.allowed) {
+          throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: genCheck.reason || "Generation rate limit exceeded" });
+        }
+        logAuditEvent(ctx.user.id, "quickGenerate", genIP, true, { projectId: input.projectId });
+
         // Subscription: check feature access and generation quota
         requireFeature(ctx.user, "canUseQuickGenerate", "Quick Generate");
         requireGenerationQuota(ctx.user);
@@ -3955,6 +4001,53 @@ Rules:
         } catch (err: any) {
           return { valid: false, message: `Connection error: ${err.message}` };
         }
+      }),
+  }),
+
+  // ─── Security Admin Dashboard ───
+  security: router({
+    stats: adminProcedure.query(() => {
+      return getSecurityStats();
+    }),
+
+    events: adminProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(500).optional(),
+        severity: z.enum(["low", "medium", "high", "critical"]).optional(),
+      }).optional())
+      .query(({ input }) => {
+        return getSecurityEvents(input?.limit || 100, input?.severity);
+      }),
+
+    flaggedUsers: adminProcedure.query(() => {
+      return getFlaggedUsers();
+    }),
+
+    auditLog: adminProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(500).optional(),
+        userId: z.number().optional(),
+      }).optional())
+      .query(({ input }) => {
+        return getAuditLog(input?.limit || 100, input?.userId);
+      }),
+
+    unflagUser: adminProcedure
+      .input(z.object({ userId: z.number() }))
+      .mutation(({ input }) => {
+        unflagUser(input.userId);
+        return { success: true, message: `User ${input.userId} unflagged` };
+      }),
+
+    lockUser: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        durationMinutes: z.number().min(1).max(43200), // max 30 days
+        reason: z.string().min(1).max(500),
+      }))
+      .mutation(({ input }) => {
+        lockUser(input.userId, input.durationMinutes * 60 * 1000, input.reason);
+        return { success: true, message: `User ${input.userId} locked for ${input.durationMinutes} minutes` };
       }),
   }),
 });

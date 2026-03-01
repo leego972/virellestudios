@@ -25,6 +25,7 @@ const Movies = lazy(() => import("./pages/Movies"));
 const AdPosterMaker = lazy(() => import("./pages/AdPosterMaker"));
 const CampaignManager = lazy(() => import("./pages/CampaignManager"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
+const SecurityDashboard = lazy(() => import("./pages/SecurityDashboard"));
 
 // Auth pages — lazy loaded (less frequently visited)
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
@@ -135,6 +136,7 @@ function Router() {
               <Route path="/referrals">{() => <Referrals />}</Route>
               <Route path="/settings">{() => <SettingsPage />}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
+              <Route path="/admin/security">{() => <SecurityDashboard />}</Route>
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>
