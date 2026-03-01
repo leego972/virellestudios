@@ -134,7 +134,10 @@ export default function Login() {
             src="/leego-logo.png"
             alt="Created by Leego"
             className="h-28 sm:h-32 lg:h-40 w-auto object-contain"
-            style={{ mixBlendMode: "lighten" }}
+            style={{
+              mixBlendMode: "lighten",
+              filter: "drop-shadow(0 0 8px rgba(34, 197, 94, 0.6)) drop-shadow(0 0 20px rgba(34, 197, 94, 0.4)) drop-shadow(0 0 40px rgba(34, 197, 94, 0.2))",
+            }}
             draggable={false}
           />
         </div>

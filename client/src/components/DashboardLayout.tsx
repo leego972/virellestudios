@@ -235,7 +235,10 @@ function DashboardLayoutContent({
                 src="/leego-logo.png"
                 alt="Created by Leego"
                 className="h-10 w-auto object-contain group-data-[collapsible=icon]:h-7"
-                style={{ mixBlendMode: "lighten" }}
+                style={{
+                  mixBlendMode: "lighten",
+                  filter: "drop-shadow(0 0 6px rgba(34, 197, 94, 0.6)) drop-shadow(0 0 16px rgba(34, 197, 94, 0.4)) drop-shadow(0 0 30px rgba(34, 197, 94, 0.2))",
+                }}
                 draggable={false}
               />
             </div>

@@ -3,45 +3,27 @@ import MediaPlayer from "@/components/MediaPlayer";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
-  Plus,
   Film,
   Clapperboard,
   Play,
   Download,
   Trash2,
-  Upload,
   Search,
   Grid3X3,
   List,
-  Eye,
-  X,
   FileVideo,
   Clock,
   HardDrive,
   FolderOpen,
   ChevronLeft,
   Folder,
+  Sparkles,
 } from "lucide-react";
+import { useLocation } from "wouter";
 
 type MovieType = "scene" | "trailer" | "film";
 
@@ -98,59 +80,15 @@ type MovieItem = {
 };
 
 export default function Movies() {
-  const [showCreate, setShowCreate] = useState(false);
   const [showPlayer, setShowPlayer] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [uploadingId, setUploadingId] = useState<number | null>(null);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
-
-  // Form state
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [movieType, setMovieType] = useState<MovieType>("film");
-  const [movieTitleField, setMovieTitleField] = useState("");
-  const [tags, setTags] = useState("");
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const thumbInputRef = useRef<HTMLInputElement>(null);
+  const [, setLocation] = useLocation();
 
   const utils = trpc.useUtils();
   const { data: grouped, isLoading } = trpc.movie.listGrouped.useQuery();
   const { data: allMovies = [] } = trpc.movie.list.useQuery();
-
-  const createMutation = trpc.movie.create.useMutation({
-    onSuccess: () => {
-      utils.movie.listGrouped.invalidate();
-      utils.movie.list.invalidate();
-      setShowCreate(false);
-      resetForm();
-      toast.success("Movie entry created");
-    },
-    onError: (err) => toast.error(err.message),
-  });
-
-  const uploadMutation = trpc.movie.upload.useMutation({
-    onSuccess: () => {
-      utils.movie.listGrouped.invalidate();
-      utils.movie.list.invalidate();
-      setUploadingId(null);
-      toast.success("Video uploaded successfully");
-    },
-    onError: (err) => {
-      setUploadingId(null);
-      toast.error(err.message);
-    },
-  });
-
-  const uploadThumbMutation = trpc.movie.uploadThumbnail.useMutation({
-    onSuccess: () => {
-      utils.movie.listGrouped.invalidate();
-      utils.movie.list.invalidate();
-      toast.success("Thumbnail uploaded");
-    },
-    onError: (err) => toast.error(err.message),
-  });
 
   const deleteMutation = trpc.movie.delete.useMutation({
     onSuccess: () => {
@@ -160,78 +98,6 @@ export default function Movies() {
     },
     onError: (err) => toast.error(err.message),
   });
-
-  const resetForm = () => {
-    setTitle("");
-    setDescription("");
-    setMovieType("film");
-    setMovieTitleField("");
-    setTags("");
-  };
-
-  const handleCreate = () => {
-    if (!title.trim()) {
-      toast.error("Title is required");
-      return;
-    }
-    createMutation.mutate({
-      title: title.trim(),
-      description: description.trim() || undefined,
-      type: movieType,
-      movieTitle:
-        movieType !== "film"
-          ? movieTitleField.trim() || activeFolder || undefined
-          : undefined,
-      tags: tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-    });
-  };
-
-  const handleFileUpload = useCallback(
-    async (movieId: number, file: File) => {
-      if (file.size > 500 * 1024 * 1024) {
-        toast.error("File too large. Maximum size is 500MB.");
-        return;
-      }
-      setUploadingId(movieId);
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = (reader.result as string).split(",")[1];
-        uploadMutation.mutate({
-          movieId,
-          fileName: file.name,
-          fileBase64: base64,
-          contentType: file.type || "video/mp4",
-          fileSize: file.size,
-        });
-      };
-      reader.readAsDataURL(file);
-    },
-    [uploadMutation]
-  );
-
-  const handleThumbUpload = useCallback(
-    async (movieId: number, file: File) => {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error("Thumbnail too large. Maximum size is 10MB.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = (reader.result as string).split(",")[1];
-        uploadThumbMutation.mutate({
-          movieId,
-          fileName: file.name,
-          fileBase64: base64,
-          contentType: file.type || "image/jpeg",
-        });
-      };
-      reader.readAsDataURL(file);
-    },
-    [uploadThumbMutation]
-  );
 
   // Get folder contents when inside a folder
   const folderContents: MovieItem[] = activeFolder && grouped?.folders
@@ -288,7 +154,7 @@ export default function Movies() {
       m.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Render a movie card (used in both folder view and top-level)
+  // Render a movie card
   const renderMovieCard = (movie: MovieItem) => (
     <Card
       key={movie.id}
@@ -307,61 +173,40 @@ export default function Movies() {
             <Film className="h-12 w-12 text-muted-foreground/30" />
           </div>
         )}
-        {/* Always-visible play button for movies with files */}
-        {movie.fileUrl && (
+        {/* Play button - visible for any movie with content */}
+        {(movie.fileUrl || movie.thumbnailUrl) && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary/80 transition-all group-hover:scale-110">
               <Play className="h-7 w-7 text-white fill-white ml-1" />
             </div>
           </div>
         )}
-        {/* Hover overlay with action buttons (visible on hover for desktop, hidden on mobile - play button is always visible) */}
+        {/* Hover overlay with action buttons */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-end justify-center pb-3 gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            className="gap-1 h-8"
+            onClick={(e) => { e.stopPropagation(); setShowPlayer(movie.id); }}
+          >
+            <Play className="h-3 w-3" />
+            Watch
+          </Button>
           {movie.fileUrl && (
-            <>
-              <Button
-                size="sm"
-                variant="secondary"
-                className="gap-1 h-8"
-                onClick={(e) => { e.stopPropagation(); setShowPlayer(movie.id); }}
-              >
-                <Play className="h-3 w-3" />
-                Watch
-              </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                className="gap-1 h-8"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const a = document.createElement("a");
-                  a.href = movie.fileUrl!;
-                  a.download = movie.title;
-                  a.click();
-                }}
-              >
-                <Download className="h-3 w-3" />
-                Download
-              </Button>
-            </>
-          )}
-          {!movie.fileUrl && (
             <Button
               size="sm"
               variant="secondary"
-              className="gap-1"
-              disabled={uploadingId === movie.id}
+              className="gap-1 h-8"
               onClick={(e) => {
                 e.stopPropagation();
-                fileInputRef.current?.setAttribute(
-                  "data-movie-id",
-                  String(movie.id)
-                );
-                fileInputRef.current?.click();
+                const a = document.createElement("a");
+                a.href = movie.fileUrl!;
+                a.download = movie.title;
+                a.click();
               }}
             >
-              <Upload className="h-3 w-3" />
-              {uploadingId === movie.id ? "Uploading..." : "Upload Video"}
+              <Download className="h-3 w-3" />
+              Download
             </Button>
           )}
         </div>
@@ -391,36 +236,19 @@ export default function Movies() {
               </p>
             )}
           </div>
-          <div className="flex gap-1 shrink-0">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 sm:h-7 sm:w-7"
-              onClick={(e) => {
-                e.stopPropagation();
-                thumbInputRef.current?.setAttribute(
-                  "data-movie-id",
-                  String(movie.id)
-                );
-                thumbInputRef.current?.click();
-              }}
-            >
-              <Upload className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 sm:h-7 sm:w-7 text-destructive hover:text-destructive"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (confirm("Delete this movie?")) {
-                  deleteMutation.mutate({ id: movie.id });
-                }
-              }}
-            >
-              <Trash2 className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
-            </Button>
-          </div>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 sm:h-7 sm:w-7 text-destructive hover:text-destructive shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (confirm("Delete this movie?")) {
+                deleteMutation.mutate({ id: movie.id });
+              }
+            }}
+          >
+            <Trash2 className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
+          </Button>
         </div>
         <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
           {movie.fileSize && (
@@ -476,7 +304,7 @@ export default function Movies() {
               <Film className="h-6 w-6 text-muted-foreground/30" />
             </div>
           )}
-          {movie.fileUrl && (
+          {(movie.fileUrl || movie.thumbnailUrl) && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center group-hover:bg-primary/80 transition-all">
                 <Play className="h-4 w-4 text-white fill-white ml-0.5" />
@@ -505,49 +333,28 @@ export default function Movies() {
           </div>
         </div>
         <div className="flex gap-1 shrink-0">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-9 w-9 sm:h-8 sm:w-8"
+            onClick={(e) => { e.stopPropagation(); setShowPlayer(movie.id); }}
+          >
+            <Play className="h-4 w-4" />
+          </Button>
           {movie.fileUrl && (
-            <>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-9 w-9 sm:h-8 sm:w-8"
-                onClick={(e) => { e.stopPropagation(); setShowPlayer(movie.id); }}
-              >
-                <Play className="h-4 w-4" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-9 w-9 sm:h-8 sm:w-8 hidden sm:flex"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const a = document.createElement("a");
-                  a.href = movie.fileUrl!;
-                  a.download = movie.title;
-                  a.click();
-                }}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            </>
-          )}
-          {!movie.fileUrl && (
             <Button
-              size="sm"
-              variant="outline"
-              className="gap-1 h-9 sm:h-8"
-              disabled={uploadingId === movie.id}
+              size="icon"
+              variant="ghost"
+              className="h-9 w-9 sm:h-8 sm:w-8 hidden sm:flex"
               onClick={(e) => {
                 e.stopPropagation();
-                fileInputRef.current?.setAttribute(
-                  "data-movie-id",
-                  String(movie.id)
-                );
-                fileInputRef.current?.click();
+                const a = document.createElement("a");
+                a.href = movie.fileUrl!;
+                a.download = movie.title;
+                a.click();
               }}
             >
-              <Upload className="h-3 w-3" />
-              {uploadingId === movie.id ? "..." : "Upload"}
+              <Download className="h-4 w-4" />
             </Button>
           )}
           <Button
@@ -608,20 +415,17 @@ export default function Movies() {
                 My Movies
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                Your scenes, trailers, and films organized by movie title
+                Your generated films, scenes, and trailers
               </p>
             </>
           )}
         </div>
         <Button
-          onClick={() => {
-            if (activeFolder) setMovieTitleField(activeFolder);
-            setShowCreate(true);
-          }}
+          onClick={() => setLocation("/projects")}
           className="gap-2"
         >
-          <Plus className="h-4 w-4" />
-          Add Movie
+          <Sparkles className="h-4 w-4" />
+          Create New Film
         </Button>
       </div>
 
@@ -726,15 +530,15 @@ export default function Movies() {
               <p className="text-sm text-muted-foreground mt-1 max-w-sm">
                 {searchQuery
                   ? "No movies match your search. Try a different query."
-                  : "Export films from your projects or add movies manually to build your library."}
+                  : "Create a project and generate your first film to see it here."}
               </p>
               {!searchQuery && (
                 <Button
-                  onClick={() => setShowCreate(true)}
+                  onClick={() => setLocation("/projects")}
                   className="mt-4 gap-2"
                 >
-                  <Plus className="h-4 w-4" />
-                  Add Movie
+                  <Sparkles className="h-4 w-4" />
+                  Create Your First Film
                 </Button>
               )}
             </div>
@@ -911,21 +715,8 @@ export default function Movies() {
               <p className="text-sm text-muted-foreground mt-1 max-w-sm">
                 {searchQuery
                   ? "No items match your search."
-                  : "Export scenes from your project or add items manually."}
+                  : "Generate scenes from your project to populate this folder."}
               </p>
-              {!searchQuery && (
-                <Button
-                  onClick={() => {
-                    setMovieTitleField(activeFolder);
-                    setMovieType("scene");
-                    setShowCreate(true);
-                  }}
-                  className="mt-4 gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Scene
-                </Button>
-              )}
             </div>
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -938,119 +729,6 @@ export default function Movies() {
           )}
         </>
       )}
-
-      {/* Hidden file inputs */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="video/*"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          const movieId = fileInputRef.current?.getAttribute("data-movie-id");
-          if (file && movieId) {
-            handleFileUpload(Number(movieId), file);
-          }
-          e.target.value = "";
-        }}
-      />
-      <input
-        ref={thumbInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          const movieId =
-            thumbInputRef.current?.getAttribute("data-movie-id");
-          if (file && movieId) {
-            handleThumbUpload(Number(movieId), file);
-          }
-          e.target.value = "";
-        }}
-      />
-
-      {/* Create Dialog */}
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Movie</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Title</Label>
-              <Input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder={
-                  movieType === "scene"
-                    ? "Scene 1 - The Chase"
-                    : movieType === "trailer"
-                      ? "Official Trailer"
-                      : "My Film Title"
-                }
-              />
-            </div>
-            <div>
-              <Label>Type</Label>
-              <Select
-                value={movieType}
-                onValueChange={(v) => setMovieType(v as MovieType)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="scene">Scene</SelectItem>
-                  <SelectItem value="trailer">Trailer</SelectItem>
-                  <SelectItem value="film">Full Film</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {(movieType === "scene" || movieType === "trailer") && (
-              <div>
-                <Label>Movie Title (folder name)</Label>
-                <Input
-                  value={movieTitleField}
-                  onChange={(e) => setMovieTitleField(e.target.value)}
-                  placeholder="Which movie does this belong to?"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Scenes and trailers are grouped under their movie title folder
-                </p>
-              </div>
-            )}
-            <div>
-              <Label>Description</Label>
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Brief description..."
-                rows={3}
-              />
-            </div>
-            <div>
-              <Label>Tags (comma-separated)</Label>
-              <Input
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                placeholder="action, chase, night"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreate(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleCreate}
-              disabled={createMutation.isPending}
-            >
-              {createMutation.isPending ? "Creating..." : "Create"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Full-Featured Media Player */}
       {showPlayer && playerMovie && (
