@@ -374,7 +374,7 @@ export interface AdPostRecord {
 const VIRELLE_INFO = {
   name: "Virelle Studios",
   tagline: "AI-Powered Film Production Studio",
-  url: "https://virellestudios.com",
+  url: "https://virelle.life",
   description: "Virelle Studios is an AI-powered film production platform that lets anyone create professional-quality films using artificial intelligence. From script to screen — write your plot, and our AI generates cinematic scenes, characters, soundtracks, and complete movies.",
   features: [
     "AI Film Generation — Write a plot, get a complete film with scenes, characters, and visuals",
@@ -584,15 +584,20 @@ export async function generateCampaignContent(
   const campaign = campaigns.get(campaignId);
   if (!campaign) throw new Error("Campaign not found");
 
+  // Generate content for all platforms in parallel for faster execution
+  const results = await Promise.allSettled(
+    campaign.platforms.map(platformId =>
+      generateAdContent(platformId, campaign.contentType, customContext)
+    )
+  );
+
   const contents: GeneratedAdContent[] = [];
-  
-  for (const platformId of campaign.platforms) {
-    try {
-      const content = await generateAdContent(platformId, campaign.contentType, customContext);
-      contents.push(content);
-    } catch (error) {
-      console.error(`Failed to generate content for ${platformId}:`, error);
-      // Continue with other platforms
+  for (let i = 0; i < results.length; i++) {
+    const result = results[i];
+    if (result.status === "fulfilled") {
+      contents.push(result.value);
+    } else {
+      console.error(`Failed to generate content for ${campaign.platforms[i]}:`, result.reason);
     }
   }
 
