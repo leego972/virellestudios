@@ -3386,6 +3386,33 @@ Rules:
           return { title: null, tagline: null, credits: null };
         }
       }),
+
+    generateVideoAd: protectedProcedure
+      .input(z.object({
+        prompt: z.string().min(1).max(2000),
+        platform: z.string().default("youtube"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
+        requireGenerationQuota(ctx.user);
+        await db.incrementGenerationCount(ctx.user.id);
+
+        const byokKeys = await db.getUserApiKeys(ctx.user.id);
+        const aspectRatio = input.platform === "tiktok" ? "9:16" : "16:9";
+
+        try {
+          const result = await generateBYOKVideo(byokKeys, {
+            prompt: input.prompt,
+            aspectRatio,
+            duration: 5,
+          });
+          return { videoUrl: result.videoUrl || null };
+        } catch (err: any) {
+          console.error("Video ad generation failed:", err.message);
+          return { videoUrl: null };
+        }
+      }),
   }),
 
   // ─── Subscription / Billing ─────────────────────────────────────────────────

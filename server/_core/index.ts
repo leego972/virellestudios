@@ -12,6 +12,7 @@ import { stripe, priceIdToTier } from "./subscription";
 import { ENV } from "./env";
 import * as db from "../db";
 import { startBlogScheduler } from "./blogEngine";
+import { startAdScheduler } from "./advertisingEngine";
 import { runAutoMigration } from "./autoMigrate";
 
 const startedAt = new Date();
@@ -263,6 +264,10 @@ async function startServer() {
       }
     });
     logger.info("[BlogEngine] Autonomous blog scheduler initialized");
+
+    // Start autonomous advertising engine - generates text, image, and video ads every 8 hours
+    startAdScheduler();
+    logger.info("[AdEngine] Autonomous advertising scheduler initialized");
   });
 }
 

@@ -1,4 +1,8 @@
 import { invokeLLM } from "./llm";
+import { generateImage } from "./imageGeneration";
+import { generateVideo as byokGenerateVideo } from "./byokVideoEngine";
+import type { UserApiKeys } from "./byokVideoEngine";
+import { storagePut } from "../storage";
 
 // ============================================================
 // ADVERTISING ENGINE - Automated free platform advertising
@@ -637,4 +641,295 @@ export function getRecommendedPlatforms(contentType: AdContentType): AdPlatform[
 
   const ids = recommendations[contentType] || [];
   return AD_PLATFORMS.filter(p => ids.includes(p.id));
+}
+
+
+// ============================================================
+// IMAGE AD GENERATION
+// ============================================================
+
+export interface GeneratedImageAd {
+  imageUrl: string;
+  style: string;
+  prompt: string;
+  platform: string;
+  createdAt: string;
+}
+
+const IMAGE_AD_STYLES = [
+  { name: "Movie Poster", prompt: (topic: string) => `Cinematic movie poster style promotional image for Virelle Studios AI filmmaking platform. Theme: "${topic}". Dark dramatic lighting, film grain texture, bold typography space, professional Hollywood poster aesthetic. Rich colors, atmospheric depth.` },
+  { name: "Social Banner", prompt: (topic: string) => `Eye-catching social media banner for Virelle Studios. Topic: "${topic}". Cinematic widescreen composition, AI-generated film scene showcase, modern dark theme with gold/amber accents. Professional, shareable, 1200x628 aspect ratio.` },
+  { name: "Instagram Square", prompt: (topic: string) => `Instagram-optimized square promotional image for Virelle Studios AI film production. Theme: "${topic}". Sleek dark background with cinematic lighting, film reel or camera elements, neon accents. Clean typography space. 1080x1080.` },
+  { name: "Story/Reel Cover", prompt: (topic: string) => `Vertical story cover for Virelle Studios. Theme: "${topic}". Dynamic cinematic composition, dramatic lighting, film production elements (clapperboard, camera, screen). Dark theme with vibrant accent colors. Mobile-optimized 1080x1920.` },
+  { name: "Feature Showcase", prompt: (topic: string) => `Product feature showcase image for Virelle Studios AI filmmaking. Feature: "${topic}". Clean UI mockup style showing the platform interface with a cinematic scene being generated. Dark theme, professional, enterprise-grade look.` },
+  { name: "Behind The Scenes", prompt: (topic: string) => `Behind-the-scenes style image showing AI film production process. Theme: "${topic}". Split view: one side shows AI interface/code, other side shows cinematic output. Futuristic, tech-meets-art aesthetic. Teal and orange color grading.` },
+];
+
+export async function generateImageAd(
+  topic?: string,
+  style?: string
+): Promise<GeneratedImageAd> {
+  const selectedTopic = topic || VIRELLE_INFO.features[Math.floor(Math.random() * VIRELLE_INFO.features.length)];
+  const selectedStyle = style 
+    ? IMAGE_AD_STYLES.find(s => s.name === style) || IMAGE_AD_STYLES[0]
+    : IMAGE_AD_STYLES[Math.floor(Math.random() * IMAGE_AD_STYLES.length)];
+
+  const prompt = selectedStyle.prompt(selectedTopic);
+  const result = await generateImage({ prompt });
+
+  return {
+    imageUrl: result.url || "",
+    style: selectedStyle.name,
+    prompt,
+    platform: "multi_platform",
+    createdAt: new Date().toISOString(),
+  };
+}
+
+// ============================================================
+// VIDEO AD GENERATION
+// ============================================================
+
+export interface GeneratedVideoAd {
+  videoUrl: string;
+  model: string;
+  duration: number;
+  prompt: string;
+  platform: string;
+  createdAt: string;
+}
+
+const VIDEO_AD_PROMPTS = [
+  (topic: string) => `Cinematic showcase of AI film production: ${topic}. Smooth camera movement through a virtual film studio, screens showing AI-generated movie scenes. Futuristic, professional, inspiring. Dark ambient lighting with glowing screens.`,
+  (topic: string) => `Time-lapse of an AI creating a movie scene: ${topic}. Starting from text prompt, morphing into storyboard, then into full cinematic scene. Magical transformation effect, particles of light forming the image. Dark background.`,
+  (topic: string) => `Split-screen comparison: traditional film set vs AI filmmaking with Virelle Studios. Topic: ${topic}. Left side: expensive equipment, large crew. Right side: single person at laptop, same quality output. Clean, modern aesthetic.`,
+  (topic: string) => `Dramatic reveal of an AI-generated film scene: ${topic}. Camera pushes through a digital portal into a fully realized cinematic world. Lens flares, volumetric lighting, film grain. Epic and inspiring.`,
+  (topic: string) => `Montage of diverse AI-generated film genres: ${topic}. Quick cuts between horror, romance, sci-fi, action, documentary — all created by Virelle Studios. Each genre has distinct color grading and mood. Professional quality.`,
+];
+
+export async function generateVideoAd(
+  topic?: string,
+  platform?: string
+): Promise<GeneratedVideoAd> {
+  const selectedTopic = topic || VIRELLE_INFO.differentiators[Math.floor(Math.random() * VIRELLE_INFO.differentiators.length)];
+  const promptFn = VIDEO_AD_PROMPTS[Math.floor(Math.random() * VIDEO_AD_PROMPTS.length)];
+  const prompt = promptFn(selectedTopic);
+
+  try {
+    // Use empty keys so BYOK engine falls back to platform keys / Pollinations (free)
+    const emptyKeys: UserApiKeys = {
+      openaiKey: null, runwayKey: null, replicateKey: null,
+      falKey: null, lumaKey: null, hfToken: null, preferredProvider: null,
+    };
+    const result = await byokGenerateVideo(emptyKeys, {
+      prompt,
+      duration: 5,
+      aspectRatio: platform === "tiktok" || platform === "instagram" ? "9:16" : "16:9",
+    });
+
+    return {
+      videoUrl: result.videoUrl,
+      model: result.provider,
+      duration: result.durationSeconds || 5,
+      prompt,
+      platform: platform || "multi_platform",
+      createdAt: new Date().toISOString(),
+    };
+  } catch (err: any) {
+    throw new Error(`Video ad generation failed: ${err.message}`);
+  }
+}
+
+// ============================================================
+// ENHANCED AD CONTENT WITH MEDIA
+// ============================================================
+
+export interface EnhancedAdContent {
+  text: GeneratedAdContent;
+  imageAd?: GeneratedImageAd;
+  videoAd?: GeneratedVideoAd;
+}
+
+/**
+ * Generate a complete ad package: text + image + optional video
+ */
+export async function generateFullAdPackage(
+  platformId: string,
+  contentType: AdContentType,
+  options?: { includeVideo?: boolean; customContext?: string }
+): Promise<EnhancedAdContent> {
+  // Generate text content
+  const text = await generateAdContent(platformId, contentType, options?.customContext);
+
+  // Generate image ad using the text's image prompt
+  let imageAd: GeneratedImageAd | undefined;
+  try {
+    imageAd = await generateImageAd(text.imagePrompt);
+  } catch (err) {
+    console.error("[AdEngine] Image ad generation failed:", err);
+  }
+
+  // Generate video ad if requested
+  let videoAd: GeneratedVideoAd | undefined;
+  if (options?.includeVideo) {
+    try {
+      videoAd = await generateVideoAd(text.title);
+    } catch (err) {
+      console.error("[AdEngine] Video ad generation failed:", err);
+    }
+  }
+
+  return { text, imageAd, videoAd };
+}
+
+// ============================================================
+// AUTONOMOUS ADVERTISING SCHEDULER
+// ============================================================
+
+interface AdSchedulerState {
+  isRunning: boolean;
+  lastRun: string | null;
+  totalRuns: number;
+  totalContentGenerated: number;
+  totalImagesGenerated: number;
+  totalVideosGenerated: number;
+  errors: string[];
+}
+
+const schedulerState: AdSchedulerState = {
+  isRunning: false,
+  lastRun: null,
+  totalRuns: 0,
+  totalContentGenerated: 0,
+  totalImagesGenerated: 0,
+  totalVideosGenerated: 0,
+  errors: [],
+};
+
+export function getSchedulerState(): AdSchedulerState {
+  return { ...schedulerState };
+}
+
+/**
+ * Run one autonomous advertising cycle:
+ * 1. Generate text content for 2-3 random platforms
+ * 2. Generate 1-2 promotional images
+ * 3. Generate 1 short video ad (if available)
+ * 4. Store everything in campaigns for admin review
+ */
+export async function runAutonomousAdCycle(): Promise<{
+  textContent: GeneratedAdContent[];
+  images: GeneratedImageAd[];
+  videos: GeneratedVideoAd[];
+  errors: string[];
+}> {
+  console.log("[AdEngine] Starting autonomous advertising cycle...");
+  
+  const results = {
+    textContent: [] as GeneratedAdContent[],
+    images: [] as GeneratedImageAd[],
+    videos: [] as GeneratedVideoAd[],
+    errors: [] as string[],
+  };
+
+  // 1. Generate text content for random platforms
+  const contentTypes: AdContentType[] = [
+    "launch_announcement", "feature_showcase", "behind_the_scenes",
+    "user_testimonial", "tutorial_teaser", "free_tier_promo",
+  ];
+  const selectedType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
+  const recommended = getRecommendedPlatforms(selectedType);
+  const platformsToTarget = recommended.slice(0, 2 + Math.floor(Math.random() * 2));
+
+  for (const platform of platformsToTarget) {
+    try {
+      const content = await generateAdContent(platform.id, selectedType);
+      results.textContent.push(content);
+      schedulerState.totalContentGenerated++;
+    } catch (err: any) {
+      results.errors.push(`Text for ${platform.name}: ${err.message}`);
+    }
+  }
+
+  // 2. Generate promotional images (1-2)
+  const imageCount = 1 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < imageCount; i++) {
+    try {
+      const imageAd = await generateImageAd();
+      results.images.push(imageAd);
+      schedulerState.totalImagesGenerated++;
+    } catch (err: any) {
+      results.errors.push(`Image ad: ${err.message}`);
+    }
+  }
+
+  // 3. Generate a short video ad
+  try {
+    const videoAd = await generateVideoAd();
+    results.videos.push(videoAd);
+    schedulerState.totalVideosGenerated++;
+  } catch (err: any) {
+    results.errors.push(`Video ad: ${err.message}`);
+  }
+
+  // Store in a campaign for admin review
+  const campaign = createCampaign(
+    `Auto-Campaign ${new Date().toLocaleDateString()}`,
+    platformsToTarget.map(p => p.id),
+    selectedType,
+    "weekly"
+  );
+  campaign.generatedContent = results.textContent;
+  campaign.status = "active";
+
+  schedulerState.lastRun = new Date().toISOString();
+  schedulerState.totalRuns++;
+  schedulerState.errors = results.errors;
+
+  console.log(`[AdEngine] Cycle complete: ${results.textContent.length} text, ${results.images.length} images, ${results.videos.length} videos, ${results.errors.length} errors`);
+
+  return results;
+}
+
+let schedulerInterval: ReturnType<typeof setInterval> | null = null;
+
+/**
+ * Start the autonomous advertising scheduler.
+ * Runs every 8 hours (3x/day) to generate fresh marketing content.
+ */
+export function startAdScheduler(): void {
+  if (schedulerInterval) {
+    console.log("[AdEngine] Scheduler already running");
+    return;
+  }
+
+  console.log("[AdEngine] Starting autonomous advertising scheduler (every 8 hours)");
+  schedulerState.isRunning = true;
+
+  // Run first cycle after 5 minutes (let server fully start)
+  setTimeout(async () => {
+    try {
+      await runAutonomousAdCycle();
+    } catch (err) {
+      console.error("[AdEngine] First cycle failed:", err);
+    }
+  }, 5 * 60 * 1000);
+
+  // Then run every 8 hours
+  schedulerInterval = setInterval(async () => {
+    try {
+      await runAutonomousAdCycle();
+    } catch (err) {
+      console.error("[AdEngine] Scheduled cycle failed:", err);
+    }
+  }, 8 * 60 * 60 * 1000);
+}
+
+export function stopAdScheduler(): void {
+  if (schedulerInterval) {
+    clearInterval(schedulerInterval);
+    schedulerInterval = null;
+    schedulerState.isRunning = false;
+    console.log("[AdEngine] Scheduler stopped");
+  }
 }
