@@ -128,6 +128,27 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "userHfToken", definition: "TEXT NULL" },
     { table: "users", column: "preferredVideoProvider", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "apiKeysUpdatedAt", definition: "TIMESTAMP NULL" },
+    // Users table - profile/onboarding fields (sign-up flow)
+    { table: "users", column: "phone", definition: "VARCHAR(32) NULL" },
+    { table: "users", column: "avatarUrl", definition: "TEXT NULL" },
+    { table: "users", column: "bio", definition: "TEXT NULL" },
+    { table: "users", column: "country", definition: "VARCHAR(128) NULL" },
+    { table: "users", column: "city", definition: "VARCHAR(128) NULL" },
+    { table: "users", column: "timezone", definition: "VARCHAR(64) NULL" },
+    { table: "users", column: "companyName", definition: "VARCHAR(255) NULL" },
+    { table: "users", column: "companyWebsite", definition: "VARCHAR(512) NULL" },
+    { table: "users", column: "jobTitle", definition: "VARCHAR(255) NULL" },
+    { table: "users", column: "professionalRole", definition: "VARCHAR(64) NULL" },
+    { table: "users", column: "experienceLevel", definition: "VARCHAR(32) NULL" },
+    { table: "users", column: "industryType", definition: "VARCHAR(64) NULL" },
+    { table: "users", column: "teamSize", definition: "VARCHAR(32) NULL" },
+    { table: "users", column: "preferredGenres", definition: "JSON NULL" },
+    { table: "users", column: "primaryUseCase", definition: "VARCHAR(128) NULL" },
+    { table: "users", column: "portfolioUrl", definition: "VARCHAR(512) NULL" },
+    { table: "users", column: "socialLinks", definition: "JSON NULL" },
+    { table: "users", column: "howDidYouHear", definition: "VARCHAR(128) NULL" },
+    { table: "users", column: "marketingOptIn", definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
+    { table: "users", column: "onboardingCompleted", definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
   ];
 
   let tablesCreated = 0;
