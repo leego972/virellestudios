@@ -15,6 +15,19 @@ export const ENV = {
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   stripeProPriceId: process.env.STRIPE_PRO_PRICE_ID ?? "price_1T5dO9CZdXS1BlcXotyjYN76",
   stripeIndustryPriceId: process.env.STRIPE_INDUSTRY_PRICE_ID ?? "price_1T5dOACZdXS1BlcXvlOmG7o9",
+  // Creator tier (new)
+  stripeCreatorMonthlyPriceId: process.env.STRIPE_CREATOR_MONTHLY_PRICE_ID ?? "",
+  stripeCreatorAnnualPriceId: process.env.STRIPE_CREATOR_ANNUAL_PRICE_ID ?? "",
+  // Monthly aliases (backward compat)
+  stripeProMonthlyPriceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID ?? process.env.STRIPE_PRO_PRICE_ID ?? "price_1T5dO9CZdXS1BlcXotyjYN76",
+  stripeIndustryMonthlyPriceId: process.env.STRIPE_INDUSTRY_MONTHLY_PRICE_ID ?? process.env.STRIPE_INDUSTRY_PRICE_ID ?? "price_1T5dOACZdXS1BlcXvlOmG7o9",
+  // Annual pricing
+  stripeProAnnualPriceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID ?? "",
+  stripeIndustryAnnualPriceId: process.env.STRIPE_INDUSTRY_ANNUAL_PRICE_ID ?? "",
+  // Top-up packs
+  stripeTopUp10PriceId: process.env.STRIPE_TOPUP_10_PRICE_ID ?? "",
+  stripeTopUp30PriceId: process.env.STRIPE_TOPUP_30_PRICE_ID ?? "",
+  stripeTopUp100PriceId: process.env.STRIPE_TOPUP_100_PRICE_ID ?? "",
   // OpenAI (Sora video generation)
   openaiApiKey: process.env.OPENAI_API_KEY || Buffer.from("c2stcHJvai05S0lrSy10LU00ZHFxSzFRM01vY1hDSDVJT1BzY0Y2NzBMWVkxYzg3VmlMRWtYV0NoaDBCRnNOX1locmJHQ2tETmtLYm15V00zYlQzQmxia0ZKMURtbTg5RURkRHB2SEhINFlqTGRXNHdPQ2VPSjNZX3BSZFljVk41MUlDdXBMRHVlenZQWDMxMWwzdEItV2haQ2Y5ZFhWcG1nb0E=", "base64").toString("utf-8"),
   // Runway ML (video generation)

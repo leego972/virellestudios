@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 
-export type SubscriptionTier = "free" | "pro" | "industry";
+export type SubscriptionTier = "free" | "creator" | "pro" | "industry";
 
 export function useSubscription() {
   const { data, isLoading, error } = trpc.subscription.status.useQuery(undefined, {
@@ -14,7 +14,7 @@ export function useSubscription() {
   // Admin always has full access
   const hasAccess = (requiredTier: SubscriptionTier): boolean => {
     if (isAdmin) return true;
-    const tierOrder: Record<SubscriptionTier, number> = { free: 0, pro: 1, industry: 2 };
+    const tierOrder: Record<SubscriptionTier, number> = { free: 0, creator: 1, pro: 2, industry: 3 };
     return tierOrder[tier] >= tierOrder[requiredTier];
   };
 
@@ -39,6 +39,7 @@ export function useSubscription() {
     currentPeriodEnd: data?.currentPeriodEnd,
     hasAccess,
     canUseFeature,
+    isCreator: tier === "creator" || tier === "pro" || tier === "industry" || isAdmin,
     isPro: tier === "pro" || tier === "industry" || isAdmin,
     isIndustry: tier === "industry" || isAdmin,
     isFree: tier === "free" && !isAdmin,

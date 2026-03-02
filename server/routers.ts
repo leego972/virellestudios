@@ -115,8 +115,8 @@ export const appRouter = router({
             if (refCode && refCode.isActive && refCode.userId !== user.id) {
               const existingRef = await db.getReferralTrackingByReferredUser(user.id);
               if (!existingRef) {
-                const REFERRER_REWARD = 5;
-                const NEW_USER_REWARD = 3;
+                const REFERRER_REWARD = 15;  // 3x increase to drive referrals
+                const NEW_USER_REWARD = 10;  // Generous welcome bonus
                 await db.createReferralTracking({
                   referralCodeId: refCode.id,
                   referrerId: refCode.userId,
@@ -3480,24 +3480,66 @@ Rules:
       };
     }),
 
-    // Create a Stripe checkout session
+    // Create a Stripe checkout session for subscription
     createCheckout: protectedProcedure
       .input(z.object({
-        tier: z.enum(["pro", "industry"]),
+        tier: z.enum(["creator", "pro", "industry"]),
+        billing: z.enum(["monthly", "annual"]).default("monthly"),
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
-        const priceId = input.tier === "pro" ? ENV.stripeProPriceId : ENV.stripeIndustryPriceId;
-        if (!priceId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Stripe price not configured" });
+        // Resolve the correct Stripe price ID based on tier + billing interval
+        const priceMap: Record<string, Record<string, string>> = {
+          creator: { monthly: ENV.stripeCreatorMonthlyPriceId, annual: ENV.stripeCreatorAnnualPriceId },
+          pro: { monthly: ENV.stripeProPriceId || ENV.stripeProMonthlyPriceId, annual: ENV.stripeProAnnualPriceId },
+          industry: { monthly: ENV.stripeIndustryPriceId || ENV.stripeIndustryMonthlyPriceId, annual: ENV.stripeIndustryAnnualPriceId },
+        };
+        const priceId = priceMap[input.tier]?.[input.billing];
+        if (!priceId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Stripe price not configured for ${input.tier} ${input.billing}` });
 
         const customerId = await getOrCreateStripeCustomer(ctx.user);
-        // Save customer ID to user
         await db.updateUserSubscription(ctx.user.id, { stripeCustomerId: customerId });
+
+        // First-time subscribers on Creator/Pro get a 7-day free trial
+        const isFirstSub = ctx.user.subscriptionTier === "free" && ctx.user.subscriptionStatus === "none";
+        const trialDays = isFirstSub && (input.tier === "creator" || input.tier === "pro") ? 7 : undefined;
 
         const url = await createCheckoutSession(
           ctx.user,
           customerId,
+          priceId,
+          input.successUrl,
+          input.cancelUrl,
+          trialDays,
+        );
+        return { url };
+      }),
+
+    // Create a Stripe checkout session for generation top-up pack
+    createTopUpCheckout: protectedProcedure
+      .input(z.object({
+        packId: z.enum(["topup_10", "topup_30", "topup_100"]),
+        successUrl: z.string().url(),
+        cancelUrl: z.string().url(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { createTopUpCheckoutSession } = await import("./_core/subscription");
+        const packPriceMap: Record<string, string> = {
+          topup_10: ENV.stripeTopUp10PriceId,
+          topup_30: ENV.stripeTopUp30PriceId,
+          topup_100: ENV.stripeTopUp100PriceId,
+        };
+        const priceId = packPriceMap[input.packId];
+        if (!priceId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Top-up pack price not configured" });
+
+        const customerId = await getOrCreateStripeCustomer(ctx.user);
+        await db.updateUserSubscription(ctx.user.id, { stripeCustomerId: customerId });
+
+        const url = await createTopUpCheckoutSession(
+          ctx.user,
+          customerId,
+          input.packId,
           priceId,
           input.successUrl,
           input.cancelUrl,
@@ -3518,36 +3560,72 @@ Rules:
 
     // Get pricing info (public)
     pricing: publicProcedure.query(async () => {
+      const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS } = await import("./_core/subscription");
       return {
         tiers: [
           {
             id: "free" as const,
             name: "Free",
-            price: 0,
+            monthlyPrice: 0,
+            annualPrice: 0,
+            annualTotal: 0,
             priceLabel: "$0",
             interval: "forever",
             description: "Get started with basic film creation",
             limits: TIER_LIMITS.free,
             highlights: [
-              "1 project",
-              "3 AI generations/month",
+              "2 projects",
+              "5 AI generations/month",
               "5 scenes per project",
               "3 characters per project",
               "720p resolution",
               "1 movie export",
+              "Script writer & storyboard",
+              "AI character generation",
+            ],
+          },
+          {
+            id: "creator" as const,
+            name: "Creator",
+            monthlyPrice: TIER_PRICING.creator.monthly,
+            annualPrice: TIER_PRICING.creator.annual,
+            annualTotal: TIER_PRICING.creator.annualTotal,
+            priceLabel: "$29",
+            interval: "month",
+            description: "Essential tools for indie filmmakers",
+            limits: TIER_LIMITS.creator,
+            trial: true,
+            highlights: [
+              "5 projects",
+              "30 AI generations/month",
+              "15 scenes per project",
+              "10 characters per project",
+              "1080p HD resolution",
+              "5 movie exports",
+              "Director AI assistant",
+              "Trailer generation",
+              "Sound effects & color grading",
+              "Dialogue editor & subtitles",
+              "Mood board & shot list",
+              "Collaboration (2 members)",
+              "7-day free trial",
             ],
           },
           {
             id: "pro" as const,
             name: "Pro",
-            price: 200,
-            priceLabel: "$200",
+            monthlyPrice: TIER_PRICING.pro.monthly,
+            annualPrice: TIER_PRICING.pro.annual,
+            annualTotal: TIER_PRICING.pro.annualTotal,
+            priceLabel: "$99",
             interval: "month",
             description: "Full creative toolkit for serious filmmakers",
             limits: TIER_LIMITS.pro,
+            popular: true,
+            trial: true,
             highlights: [
               "25 projects",
-              "100 AI generations/month",
+              "200 AI generations/month",
               "50 scenes per project",
               "30 characters per project",
               "1080p HD resolution",
@@ -3556,15 +3634,19 @@ Rules:
               "Trailer generation",
               "Script writer & dialogue editor",
               "Sound & visual effects",
+              "Location scout & continuity check",
+              "Budget estimator & ad maker",
               "Collaboration (5 members)",
-              "Ad & poster maker",
+              "7-day free trial",
             ],
           },
           {
             id: "industry" as const,
             name: "Industry",
-            price: 1000,
-            priceLabel: "$1,000",
+            monthlyPrice: TIER_PRICING.industry.monthly,
+            annualPrice: TIER_PRICING.industry.annual,
+            annualTotal: TIER_PRICING.industry.annualTotal,
+            priceLabel: "$499",
             interval: "month",
             description: "Unlimited power for studios and production houses",
             limits: TIER_LIMITS.industry,
@@ -3578,9 +3660,12 @@ Rules:
               "Unlimited collaborators",
               "Unlimited movie exports",
               "Priority support",
+              "180 min max duration",
             ],
           },
         ],
+        topUpPacks: TOP_UP_PACKS,
+        referralRewards: REFERRAL_REWARDS,
       };
     }),
   }),

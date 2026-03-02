@@ -6,7 +6,7 @@ interface SubscriptionGateProps {
   children: React.ReactNode;
   feature: string;
   featureKey: string;
-  requiredTier: "pro" | "industry";
+  requiredTier: "creator" | "pro" | "industry";
 }
 
 /**

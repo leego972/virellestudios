@@ -118,6 +118,24 @@ async function startServer() {
           const session = event.data.object;
           const customerId = session.customer as string;
           const userId = await resolveUserId(session.metadata, customerId);
+
+          // Check if this is a generation top-up pack purchase (one-time payment)
+          if (session.metadata?.type === "generation_topup" && userId) {
+            const packId = session.metadata.packId;
+            const packAmounts: Record<string, number> = {
+              topup_10: 10,
+              topup_30: 30,
+              topup_100: 100,
+            };
+            const generations = packAmounts[packId] || 0;
+            if (generations > 0) {
+              await db.addBonusGenerations(userId, generations);
+              logger.info(`Top-up pack ${packId} (+${generations} gens) applied for user ${userId}`);
+            }
+            break;
+          }
+
+          // Otherwise it's a subscription checkout
           const subscriptionId = session.subscription as string;
           if (userId && subscriptionId) {
             const sub = await stripe.subscriptions.retrieve(subscriptionId);

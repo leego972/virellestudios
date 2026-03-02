@@ -396,9 +396,10 @@ const VIRELLE_INFO = {
     "Export — Full movie export with credits and soundtrack",
   ],
   pricing: {
-    free: "Free tier — 1 project, 3 AI generations/month",
-    pro: "$200/month — 25 projects, 100 generations, all creative tools",
-    industry: "$1,000/month — Unlimited everything, 4K, ultra quality",
+    free: "Free tier — 2 projects, 5 AI generations/month",
+    creator: "$29/month — 5 projects, 30 generations, 1080p, trailer generation",
+    pro: "$99/month — 25 projects, 200 generations, all creative tools",
+    industry: "$499/month — Unlimited everything, 4K, ultra quality",
   },
   differentiators: [
     "End-to-end film production in one platform",
