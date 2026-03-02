@@ -4,7 +4,7 @@ import type { User } from "../../drizzle/schema";
 
 // Initialize Stripe
 export const stripe = ENV.stripeSecretKey
-  ? new Stripe(ENV.stripeSecretKey, { apiVersion: "2025-04-30.basil" as any })
+  ? new Stripe(ENV.stripeSecretKey, { apiVersion: "2026-02-25.clover" as any })
   : null;
 
 // ============================================================

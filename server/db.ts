@@ -114,12 +114,15 @@ export async function createEmailUser(data: {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const openId = `email_${data.email}`; // generate a stable openId from email
+  // Auto-assign admin role for the owner account
+  const isOwner = data.email.toLowerCase() === (ENV.adminEmail || "leego972@gmail.com").toLowerCase();
   await db.insert(users).values({
     openId,
     email: data.email,
     name: data.name,
     passwordHash: data.passwordHash,
     loginMethod: "email",
+    role: isOwner ? "admin" : "user",
     lastSignedIn: new Date(),
     phone: data.phone || null,
     country: data.country || null,
@@ -964,6 +967,23 @@ export async function incrementGenerationCount(userId: number) {
       monthlyGenerationsUsed: (user.monthlyGenerationsUsed || 0) + 1,
     }).where(eq(users.id, userId));
   }
+}
+
+/**
+ * Reset the monthly generation counter for a user.
+ * Called on subscription activation, upgrade, or renewal to give fresh quota.
+ */
+export async function resetGenerationCounter(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  const nextReset = new Date();
+  nextReset.setMonth(nextReset.getMonth() + 1);
+  nextReset.setDate(1);
+  nextReset.setHours(0, 0, 0, 0);
+  await db.update(users).set({
+    monthlyGenerationsUsed: 0,
+    monthlyGenerationsResetAt: nextReset,
+  }).where(eq(users.id, userId));
 }
 
 export async function getUserProjectCount(userId: number): Promise<number> {

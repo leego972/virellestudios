@@ -11,6 +11,7 @@ import { logger } from "./logger";
 import { stripe, priceIdToTier } from "./subscription";
 import { ENV } from "./env";
 import * as db from "../db";
+import { trackPaymentFailure } from "./securityEngine";
 import { startBlogScheduler } from "./blogEngine";
 import { startAdScheduler } from "./advertisingEngine";
 import { runAutoMigration } from "./autoMigrate";
@@ -99,30 +100,47 @@ async function startServer() {
       return;
     }
 
+    // Helper: resolve userId from metadata or fallback to stripeCustomerId lookup
+    async function resolveUserId(metadata: any, customerId?: string): Promise<number> {
+      const fromMeta = parseInt(metadata?.userId || "0");
+      if (fromMeta) return fromMeta;
+      // Fallback: look up user by Stripe customer ID
+      if (customerId) {
+        const user = await db.getUserByStripeCustomerId(customerId);
+        if (user) return user.id;
+      }
+      return 0;
+    }
+
     try {
       switch (event.type) {
         case "checkout.session.completed": {
           const session = event.data.object;
-          const userId = parseInt(session.metadata?.userId || "0");
+          const customerId = session.customer as string;
+          const userId = await resolveUserId(session.metadata, customerId);
           const subscriptionId = session.subscription as string;
           if (userId && subscriptionId) {
             const sub = await stripe.subscriptions.retrieve(subscriptionId);
             const priceId = sub.items.data[0]?.price?.id || "";
             const tier = priceIdToTier(priceId);
+            // Activate subscription and reset generation counter for fresh start
             await db.updateUserSubscription(userId, {
-              stripeCustomerId: session.customer as string,
+              stripeCustomerId: customerId,
               stripeSubscriptionId: subscriptionId,
               subscriptionTier: tier,
               subscriptionStatus: "active",
               subscriptionCurrentPeriodEnd: new Date((sub as any).current_period_end * 1000),
             });
+            // Reset generation counter on new subscription (fresh quota)
+            await db.resetGenerationCounter(userId);
             logger.info(`Subscription activated for user ${userId}: ${tier}`);
           }
           break;
         }
         case "customer.subscription.updated": {
           const sub = event.data.object;
-          const userId = parseInt(sub.metadata?.userId || "0");
+          const customerId = sub.customer as string;
+          const userId = await resolveUserId(sub.metadata, customerId);
           if (userId) {
             const priceId = sub.items.data[0]?.price?.id || "";
             const tier = priceIdToTier(priceId);
@@ -131,18 +149,26 @@ async function startServer() {
               : sub.status === "canceled" ? "canceled"
               : sub.status === "trialing" ? "trialing"
               : sub.status === "unpaid" ? "unpaid" : "none";
+            // Check if this is an upgrade (tier changed to higher)
+            const existingUser = await db.getUserById(userId);
+            const isUpgrade = existingUser && tier !== "free" && existingUser.subscriptionTier !== tier;
             await db.updateUserSubscription(userId, {
               subscriptionTier: status === "active" || status === "trialing" ? tier : "free",
               subscriptionStatus: status,
               subscriptionCurrentPeriodEnd: new Date(sub.current_period_end * 1000),
             });
+            // Reset generation counter on tier upgrade (fresh quota for new plan)
+            if (isUpgrade && (status === "active" || status === "trialing")) {
+              await db.resetGenerationCounter(userId);
+            }
             logger.info(`Subscription updated for user ${userId}: ${tier} (${status})`);
           }
           break;
         }
         case "customer.subscription.deleted": {
           const sub = event.data.object;
-          const userId = parseInt(sub.metadata?.userId || "0");
+          const customerId = sub.customer as string;
+          const userId = await resolveUserId(sub.metadata, customerId);
           if (userId) {
             await db.updateUserSubscription(userId, {
               subscriptionTier: "free",
@@ -154,6 +180,29 @@ async function startServer() {
           }
           break;
         }
+        case "invoice.paid": {
+          // Successful payment — confirm subscription is active and update period end
+          const invoice = event.data.object;
+          const customerId = invoice.customer as string;
+          const subscriptionId = invoice.subscription as string;
+          if (customerId && subscriptionId) {
+            const user = await db.getUserByStripeCustomerId(customerId);
+            if (user) {
+              const sub = await stripe.subscriptions.retrieve(subscriptionId);
+              const priceId = sub.items.data[0]?.price?.id || "";
+              const tier = priceIdToTier(priceId);
+              await db.updateUserSubscription(user.id, {
+                subscriptionTier: tier,
+                subscriptionStatus: "active",
+                subscriptionCurrentPeriodEnd: new Date(sub.current_period_end * 1000),
+              });
+              // Reset generation counter on renewal (new billing period = fresh quota)
+              await db.resetGenerationCounter(user.id);
+              logger.info(`Invoice paid for user ${user.id}: ${tier} renewed`);
+            }
+          }
+          break;
+        }
         case "invoice.payment_failed": {
           const invoice = event.data.object;
           const customerId = invoice.customer as string;
@@ -162,6 +211,8 @@ async function startServer() {
             await db.updateUserSubscription(user.id, {
               subscriptionStatus: "past_due",
             });
+            // Track payment failure in security engine
+            trackPaymentFailure(user.id);
             logger.warn(`Payment failed for user ${user.id}`);
           }
           break;

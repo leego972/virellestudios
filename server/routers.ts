@@ -154,7 +154,7 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
-        const user = await db.getUserByEmail(input.email.toLowerCase());
+        let user = await db.getUserByEmail(input.email.toLowerCase());
         if (!user || !user.passwordHash) {
           logAuditEvent(0, "login_failed_no_user", clientIP, false, { email: input.email });
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
@@ -176,6 +176,12 @@ export const appRouter = router({
         // Mark login as successful
         trackLoginAttempt(user.id, clientIP, true);
         logAuditEvent(user.id, "login_success", clientIP, true);
+        // Auto-promote admin account if not already admin
+        const isAdminEmail = user.email?.toLowerCase() === (ENV.adminEmail || "leego972@gmail.com").toLowerCase();
+        if (isAdminEmail && user.role !== "admin") {
+          await db.updateUserRole(user.id, "admin");
+          user = { ...user, role: "admin" } as typeof user;
+        }
         // Update last signed in
         await db.upsertUser({ openId: user.openId, lastSignedIn: new Date() });
         // Create session

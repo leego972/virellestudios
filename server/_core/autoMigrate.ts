@@ -197,4 +197,23 @@ export async function runAutoMigration(): Promise<void> {
   } else {
     console.log("[AutoMigrate] Schema is up to date — no changes needed");
   }
+
+  // ─── Step 3: Ensure admin account has admin role ───
+  const adminEmail = process.env.ADMIN_EMAIL || "leego972@gmail.com";
+  try {
+    const [adminRows] = await db.execute(sql.raw(
+      `SELECT id, role FROM users WHERE email = '${adminEmail}' LIMIT 1`
+    ));
+    const adminUser = (adminRows as any)?.[0];
+    if (adminUser && adminUser.role !== "admin") {
+      await db.execute(sql.raw(
+        `UPDATE users SET role = 'admin' WHERE id = ${adminUser.id}`
+      ));
+      console.log(`[AutoMigrate] Promoted ${adminEmail} (user ${adminUser.id}) to admin role`);
+    } else if (adminUser) {
+      console.log(`[AutoMigrate] Admin account ${adminEmail} already has admin role`);
+    }
+  } catch (err: any) {
+    console.error(`[AutoMigrate] Failed to check/promote admin account:`, err.message);
+  }
 }

@@ -3,6 +3,7 @@ import type { User } from "../../drizzle/schema";
 import { COOKIE_NAME } from "@shared/const";
 import { SignJWT, jwtVerify } from "jose";
 import * as db from "../db";
+import { registerAdminForRateLimit } from "./rateLimit";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET || "dev-secret-change-me";
 const secretKey = new TextEncoder().encode(JWT_SECRET_KEY);
@@ -100,6 +101,11 @@ export async function createContext(
   } catch (error) {
     // Authentication is optional for public procedures.
     user = null;
+  }
+
+  // Register admin users for rate limit bypass
+  if (user && user.role === "admin") {
+    registerAdminForRateLimit(user.id);
   }
 
   return {

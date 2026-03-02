@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { ENV } from "./env";
 
 /**
  * Simple in-memory rate limiter.
@@ -12,6 +13,17 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
+// Admin user IDs cache — populated on first admin check
+const adminUserIds = new Set<number>();
+
+/**
+ * Register a user ID as admin so rate limits are bypassed.
+ * Called from context or login when an admin user is detected.
+ */
+export function registerAdminForRateLimit(userId: number): void {
+  adminUserIds.add(userId);
+}
+
 // Clean up expired entries every 5 minutes
 setInterval(() => {
   const now = Date.now();
@@ -24,6 +36,7 @@ setInterval(() => {
 
 /**
  * Check rate limit for a given user + action combination.
+ * Admin users are exempt from all rate limits.
  * @param userId - The user's ID
  * @param action - The action category (e.g., "ai-generation", "upload")
  * @param maxRequests - Maximum requests allowed in the window
@@ -36,6 +49,9 @@ export function checkRateLimit(
   maxRequests: number,
   windowMs: number,
 ): void {
+  // Admin users bypass all rate limits
+  if (adminUserIds.has(userId)) return;
+
   const key = `${userId}:${action}`;
   const now = Date.now();
   const entry = store.get(key);
