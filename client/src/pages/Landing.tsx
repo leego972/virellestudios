@@ -116,7 +116,17 @@ export default function Landing() {
       </nav>
 
       {/* ─── Hero ─── */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* VS Logo watermark background */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <img
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png"
+            alt=""
+            className="w-[500px] h-[500px] sm:w-[600px] sm:h-[600px] lg:w-[700px] lg:h-[700px] object-contain opacity-[0.06]"
+            style={{ filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg)" }}
+            draggable={false}
+          />
+        </div>
         {/* Gradient orbs */}
         <div className="absolute top-20 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-40 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
