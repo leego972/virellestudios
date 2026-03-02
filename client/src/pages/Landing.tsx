@@ -2,7 +2,7 @@ import { useLocation } from "wouter";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
   Film, Zap, Layers, Users, Wand2, Music, Palette, Camera,
-  Sparkles, ArrowRight, Star, CheckCircle2, Play, Shield,
+  ArrowRight, Star, CheckCircle2, Play, Shield,
   Globe, Clock, ChevronDown, Sun, Moon, BookOpen, CreditCard,
   MessageSquare, Clapperboard, Monitor, Scissors, MapPin,
 } from "lucide-react";
@@ -122,7 +122,7 @@ export default function Landing() {
         <div className="absolute top-40 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-6">
-            <Sparkles className="h-3.5 w-3.5" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png" alt="Virelle Studios" className="h-5 w-5 rounded" />
             AI-Powered Film Production Studio
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
