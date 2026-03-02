@@ -1,5 +1,6 @@
 import { invokeLLM } from "./llm";
 import { ENV } from "./env";
+import { generateImage } from "./imageGeneration";
 
 // ============================================================
 // AUTONOMOUS SEO BLOG ENGINE
@@ -145,6 +146,7 @@ export interface GeneratedArticle {
   metaTitle: string;
   metaDescription: string;
   generationPrompt: string;
+  coverImageUrl?: string;
 }
 
 /**
@@ -211,6 +213,17 @@ Return your response as JSON with this exact structure:
     const parsed = JSON.parse(content);
     const slug = slugify(parsed.title || topic) + "-" + Date.now().toString(36);
 
+    // Generate a cover image for the article
+    let coverImageUrl: string | undefined;
+    try {
+      const imagePrompt = `Professional blog header image for an article titled "${parsed.title || topic}". Cinematic, modern, high-quality editorial photography style. Dark moody tones with amber/gold accent lighting. Film production, AI technology, or cinematography theme. No text overlays.`;
+      const imgResult = await generateImage({ prompt: imagePrompt });
+      coverImageUrl = imgResult.url || undefined;
+      console.log(`[BlogEngine] Cover image generated for "${parsed.title || topic}"`);
+    } catch (imgErr: any) {
+      console.warn(`[BlogEngine] Cover image generation failed (non-fatal): ${imgErr.message}`);
+    }
+
     return {
       title: parsed.title || topic,
       subtitle: parsed.subtitle || "",
@@ -222,6 +235,7 @@ Return your response as JSON with this exact structure:
       metaTitle: parsed.metaTitle || parsed.title || topic,
       metaDescription: parsed.metaDescription || parsed.excerpt || "",
       generationPrompt: topic,
+      coverImageUrl,
     };
   } catch (error: any) {
     console.error("[BlogEngine] Article generation failed:", error.message);

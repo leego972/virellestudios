@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import DirectorChat from "@/components/DirectorChat";
+import ShareButton from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -305,6 +306,7 @@ export default function ProjectDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-start sm:justify-end max-w-full overflow-x-auto">
+          <ShareButton title={project.title} description={project.plotSummary || project.description || undefined} compact />
           <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/storyboard`)}>
             <Grid3X3 className="h-4 w-4 mr-1" />
             Storyboard

@@ -97,6 +97,21 @@ export async function runAutoMigration(): Promise<void> {
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       )`,
     },
+    {
+      name: "notifications",
+      createSQL: `CREATE TABLE IF NOT EXISTS notifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        notificationType ENUM('generation_complete','export_complete','subscription_change','referral_reward','system','welcome','tip') NOT NULL DEFAULT 'system',
+        title VARCHAR(255) NOT NULL,
+        message TEXT,
+        link VARCHAR(512),
+        isRead BOOLEAN NOT NULL DEFAULT FALSE,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_notifications_user (userId),
+        INDEX idx_notifications_unread (userId, isRead)
+      )`,
+    },
   ];
 
   // ─── Columns that may be missing from existing tables ───

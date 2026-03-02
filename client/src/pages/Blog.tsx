@@ -112,8 +112,12 @@ export default function Blog() {
               <Link key={article.id} href={`/blog/${article.slug}`}>
                 <article className="group bg-white/5 rounded-xl overflow-hidden border border-white/10 hover:border-amber-500/30 transition-all hover:bg-white/[0.07] cursor-pointer h-full flex flex-col">
                   {/* Cover Image or Gradient */}
-                  <div className="h-40 bg-gradient-to-br from-amber-600/20 to-orange-600/10 flex items-center justify-center">
-                    <BookOpen className="h-10 w-10 text-amber-400/40 group-hover:text-amber-400/60 transition-colors" />
+                  <div className="h-40 bg-gradient-to-br from-amber-600/20 to-orange-600/10 flex items-center justify-center overflow-hidden">
+                    {(article as any).coverImageUrl ? (
+                      <img src={(article as any).coverImageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <BookOpen className="h-10 w-10 text-amber-400/40 group-hover:text-amber-400/60 transition-colors" />
+                    )}
                   </div>
 
                   <div className="p-5 flex flex-col flex-1">

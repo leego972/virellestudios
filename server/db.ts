@@ -1202,3 +1202,92 @@ export async function getUserApiKeys(userId: number): Promise<{
     preferredProvider: (user as any).preferredVideoProvider || null,
   };
 }
+
+export async function updateUserProfile(userId: number, data: {
+  name?: string;
+  phone?: string | null;
+  bio?: string | null;
+  country?: string | null;
+  city?: string | null;
+  timezone?: string | null;
+  companyName?: string | null;
+  companyWebsite?: string | null;
+  jobTitle?: string | null;
+  professionalRole?: string | null;
+  experienceLevel?: string | null;
+  portfolioUrl?: string | null;
+  socialLinks?: Record<string, string> | null;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users)
+    .set({ ...data, updatedAt: new Date() } as any)
+    .where(eq(users.id, userId));
+}
+
+// ─── Notifications ───
+export async function createNotification(data: {
+  userId: number;
+  type?: "generation_complete" | "export_complete" | "subscription_change" | "referral_reward" | "system" | "welcome" | "tip";
+  title: string;
+  message?: string;
+  link?: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const { notifications } = await import("../drizzle/schema");
+  const [result] = await db.insert(notifications).values({
+    userId: data.userId,
+    type: data.type || "system",
+    title: data.title,
+    message: data.message || null,
+    link: data.link || null,
+  } as any);
+  return { id: (result as any).insertId };
+}
+
+export async function getUserNotifications(userId: number, limit = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  const { notifications } = await import("../drizzle/schema");
+  return db.select().from(notifications)
+    .where(eq(notifications.userId, userId))
+    .orderBy(desc(notifications.createdAt))
+    .limit(limit);
+}
+
+export async function getUnreadNotificationCount(userId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const { notifications } = await import("../drizzle/schema");
+  const rows = await db.select({ count: sql<number>`COUNT(*)` })
+    .from(notifications)
+    .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+  return rows[0]?.count || 0;
+}
+
+export async function markNotificationRead(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  const { notifications } = await import("../drizzle/schema");
+  await db.update(notifications)
+    .set({ isRead: true } as any)
+    .where(and(eq(notifications.id, id), eq(notifications.userId, userId)));
+}
+
+export async function markAllNotificationsRead(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  const { notifications } = await import("../drizzle/schema");
+  await db.update(notifications)
+    .set({ isRead: true } as any)
+    .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+}
+
+export async function deleteNotification(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  const { notifications } = await import("../drizzle/schema");
+  await db.delete(notifications)
+    .where(and(eq(notifications.id, id), eq(notifications.userId, userId)));
+}

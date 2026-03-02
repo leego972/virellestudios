@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import OnboardingOverlay from "@/components/OnboardingOverlay";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -69,6 +70,7 @@ export default function Home() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
+      <OnboardingOverlay />
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">

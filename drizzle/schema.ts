@@ -522,3 +522,20 @@ export const referralTracking = mysqlTable("referral_tracking", {
 });
 export type ReferralTracking = typeof referralTracking.$inferSelect;
 export type InsertReferralTracking = typeof referralTracking.$inferInsert;
+
+// ─── In-App Notifications ───
+export const notifications = mysqlTable("notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  type: mysqlEnum("notificationType", [
+    "generation_complete", "export_complete", "subscription_change",
+    "referral_reward", "system", "welcome", "tip",
+  ]).notNull().default("system"),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message"),
+  link: varchar("link", { length: 512 }), // optional in-app link
+  isRead: boolean("isRead").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;

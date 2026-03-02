@@ -45,6 +45,7 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import NotificationBell from "./NotificationBell";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -89,8 +90,8 @@ export default function DashboardLayout({
   }
 
   if (!user) {
-    // Redirect to login page
-    window.location.href = "/login";
+    // Redirect to landing page for unauthenticated visitors
+    window.location.href = "/welcome";
     return <DashboardLayoutSkeleton />;
   }
 
@@ -175,13 +176,14 @@ function DashboardLayoutContent({
                 <PanelLeft className="h-4 w-4 text-muted-foreground" />
               </button>
               {!isCollapsed && (
-                <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png" alt="Virelle Studios" className="h-6 w-6 rounded shrink-0" />
                   <span className="font-semibold tracking-tight truncate text-sm">
                     Virelle Studios
                   </span>
                 </div>
               )}
+              {!isCollapsed && <NotificationBell />}
             </div>
           </SidebarHeader>
 

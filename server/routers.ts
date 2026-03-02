@@ -137,14 +137,25 @@ export const appRouter = router({
             }
           } catch (err) {
             // Don't fail registration if referral processing fails
-            console.error("Referral processing error:", err);
+             console.error("Referral processing error:", err);
           }
         }
-
         // Create session
         const token = await createSessionToken(user.id, user.name ?? "");
         const cookieOptions = getSessionCookieOptions(ctx.req);
         ctx.res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
+
+        // Send welcome notification
+        try {
+          await db.createNotification({
+            userId: user.id,
+            type: "welcome",
+            title: "Welcome to Vir\u00c9lle Studios!",
+            message: "Your account is ready. Start by creating your first project or explore Quick Generate to make an AI film in minutes.",
+            link: "/",
+          });
+        } catch (_) { /* non-critical */ }
+
         return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     login: publicProcedure
@@ -2974,7 +2985,46 @@ Generate a detailed production budget estimate.`,
         const created: number[] = [];
 
         if (input.exportType === "film") {
-          // Create a single full film entry
+          // Check if any scenes have video clips
+          const scenesWithVideo = scenes.filter((s: any) => s.videoUrl);
+
+          let fileUrl: string | undefined;
+          let fileKey: string | undefined;
+          let fileSize: number | undefined;
+          let totalDuration = (project.duration || 0) * 60;
+          let mimeType: string | undefined;
+
+          if (scenesWithVideo.length >= 2) {
+            // Stitch scene videos into a single movie using ffmpeg
+            try {
+              const { stitchMovie } = await import("./_core/videoStitcher");
+              const result = await stitchMovie({
+                scenes: scenesWithVideo.map((s: any) => ({
+                  videoUrl: s.videoUrl,
+                  title: s.title || undefined,
+                  duration: s.duration || undefined,
+                  orderIndex: s.orderIndex || 0,
+                })),
+                projectTitle: project.title,
+                userId: ctx.user.id,
+                projectId: project.id,
+              });
+              fileUrl = result.fileUrl;
+              fileKey = result.fileKey;
+              fileSize = result.fileSize;
+              totalDuration = result.duration;
+              mimeType = result.mimeType;
+            } catch (err: any) {
+              console.error("[Export] Video stitching failed:", err.message);
+              // Fall back to creating entry without stitched file
+            }
+          } else if (scenesWithVideo.length === 1) {
+            // Only one scene — use its video directly
+            fileUrl = (scenesWithVideo[0] as any).videoUrl;
+            totalDuration = scenesWithVideo[0].duration || totalDuration;
+            mimeType = "video/mp4";
+          }
+
           const movie = await db.createMovie({
             userId: ctx.user.id,
             title: project.title,
@@ -2983,7 +3033,11 @@ Generate a detailed production budget estimate.`,
             projectId: project.id,
             movieTitle: project.title,
             thumbnailUrl: project.thumbnailUrl,
-            duration: (project.duration || 0) * 60,
+            fileUrl,
+            fileKey,
+            fileSize,
+            duration: totalDuration,
+            mimeType,
             tags: project.genre ? [project.genre] : [],
           });
           created.push(movie.id);
@@ -3000,7 +3054,6 @@ Generate a detailed production budget estimate.`,
               movieTitle: project.title,
               sceneNumber: scene.orderIndex || i + 1,
               thumbnailUrl: scene.thumbnailUrl,
-              // Include the video URL if the scene has a generated video
               fileUrl: (scene as any).videoUrl || undefined,
               duration: scene.duration || undefined,
               mimeType: (scene as any).videoUrl ? "video/mp4" : undefined,
@@ -3009,7 +3062,42 @@ Generate a detailed production budget estimate.`,
             created.push(movie.id);
           }
         } else if (input.exportType === "trailer") {
-          // Create a trailer entry grouped under the movie title
+          // For trailers, stitch first 3 scenes (or first 30s of each) if available
+          const scenesWithVideo = scenes.filter((s: any) => s.videoUrl).slice(0, 3);
+          let fileUrl: string | undefined;
+          let fileKey: string | undefined;
+          let fileSize: number | undefined;
+          let totalDuration: number | undefined;
+          let mimeType: string | undefined;
+
+          if (scenesWithVideo.length >= 2) {
+            try {
+              const { stitchMovie } = await import("./_core/videoStitcher");
+              const result = await stitchMovie({
+                scenes: scenesWithVideo.map((s: any) => ({
+                  videoUrl: s.videoUrl,
+                  title: s.title || undefined,
+                  duration: s.duration || undefined,
+                  orderIndex: s.orderIndex || 0,
+                })),
+                projectTitle: `${project.title} - Trailer`,
+                userId: ctx.user.id,
+                projectId: project.id,
+              });
+              fileUrl = result.fileUrl;
+              fileKey = result.fileKey;
+              fileSize = result.fileSize;
+              totalDuration = result.duration;
+              mimeType = result.mimeType;
+            } catch (err: any) {
+              console.error("[Export] Trailer stitching failed:", err.message);
+            }
+          } else if (scenesWithVideo.length === 1) {
+            fileUrl = (scenesWithVideo[0] as any).videoUrl;
+            totalDuration = scenesWithVideo[0].duration || undefined;
+            mimeType = "video/mp4";
+          }
+
           const movie = await db.createMovie({
             userId: ctx.user.id,
             title: `${project.title} - Trailer`,
@@ -3018,10 +3106,26 @@ Generate a detailed production budget estimate.`,
             projectId: project.id,
             movieTitle: project.title,
             thumbnailUrl: project.thumbnailUrl,
+            fileUrl,
+            fileKey,
+            fileSize,
+            duration: totalDuration,
+            mimeType,
             tags: project.genre ? [project.genre, "trailer"] : ["trailer"],
           });
           created.push(movie.id);
         }
+        // Notify user about export completion
+        try {
+          await db.createNotification({
+            userId: ctx.user.id,
+            type: "export_complete",
+            title: `"${project.title}" exported to My Movies`,
+            message: `Your ${input.exportType} export is ready with ${created.length} item(s).`,
+            link: "/movies",
+          });
+        } catch (_) { /* non-critical */ }
+
         return { exported: created.length, movieIds: created };
       }),
 
@@ -3838,6 +3942,7 @@ Rules:
         metaTitle: article.metaTitle,
         metaDescription: article.metaDescription,
         generationPrompt: article.generationPrompt,
+        coverImageUrl: article.coverImageUrl || null,
         generatedByAI: true,
         status: "published",
         publishedAt: new Date(),
@@ -3998,24 +4103,82 @@ Rules:
     // Get current user profile and API key status
     getProfile: protectedProcedure.query(async ({ ctx }) => {
       const user = ctx.user!;
+      const u = user as any;
       return {
         id: user.id,
         name: user.name,
         email: user.email,
-        subscriptionTier: (user as any).subscriptionTier || "free",
+        role: u.role || "user",
+        subscriptionTier: u.subscriptionTier || "free",
+        phone: u.phone || null,
+        avatarUrl: u.avatarUrl || null,
+        bio: u.bio || null,
+        country: u.country || null,
+        city: u.city || null,
+        timezone: u.timezone || null,
+        companyName: u.companyName || null,
+        companyWebsite: u.companyWebsite || null,
+        jobTitle: u.jobTitle || null,
+        professionalRole: u.professionalRole || null,
+        experienceLevel: u.experienceLevel || null,
+        portfolioUrl: u.portfolioUrl || null,
+        socialLinks: u.socialLinks || null,
+        createdAt: u.createdAt || null,
         // Return which keys are configured (never return the actual keys)
         apiKeys: {
-          openai: !!(user as any).userOpenaiKey,
-          runway: !!(user as any).userRunwayKey,
-          replicate: !!(user as any).userReplicateKey,
-          fal: !!(user as any).userFalKey,
-          luma: !!(user as any).userLumaKey,
-          huggingface: !!(user as any).userHfToken,
+          openai: !!u.userOpenaiKey,
+          runway: !!u.userRunwayKey,
+          replicate: !!u.userReplicateKey,
+          fal: !!u.userFalKey,
+          luma: !!u.userLumaKey,
+          huggingface: !!u.userHfToken,
         },
-        preferredVideoProvider: (user as any).preferredVideoProvider || null,
-        apiKeysUpdatedAt: (user as any).apiKeysUpdatedAt || null,
+        preferredVideoProvider: u.preferredVideoProvider || null,
+        apiKeysUpdatedAt: u.apiKeysUpdatedAt || null,
       };
     }),
+
+    // Update user profile
+    updateProfile: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1).max(255).optional(),
+        phone: z.string().max(32).optional().nullable(),
+        bio: z.string().max(1000).optional().nullable(),
+        country: z.string().max(128).optional().nullable(),
+        city: z.string().max(128).optional().nullable(),
+        timezone: z.string().max(64).optional().nullable(),
+        companyName: z.string().max(255).optional().nullable(),
+        companyWebsite: z.string().max(512).optional().nullable(),
+        jobTitle: z.string().max(255).optional().nullable(),
+        professionalRole: z.string().max(128).optional().nullable(),
+        experienceLevel: z.string().max(32).optional().nullable(),
+        portfolioUrl: z.string().max(512).optional().nullable(),
+        socialLinks: z.record(z.string()).optional().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateUserProfile(ctx.user!.id, input);
+        return { success: true, message: "Profile updated" };
+      }),
+
+    // Change password
+    changePassword: protectedProcedure
+      .input(z.object({
+        currentPassword: z.string().min(1),
+        newPassword: z.string().min(8).max(128),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const user = ctx.user! as any;
+        if (!user.passwordHash) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Account uses OAuth login — no password to change" });
+        }
+        const valid = await bcrypt.compare(input.currentPassword, user.passwordHash);
+        if (!valid) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Current password is incorrect" });
+        }
+        const newHash = await bcrypt.hash(input.newPassword, 12);
+        await db.updateUserPassword(ctx.user!.id, newHash);
+        return { success: true, message: "Password changed successfully" };
+      }),
 
     // Get available video providers info
     getProviders: protectedProcedure.query(async () => {
@@ -4194,6 +4357,34 @@ Rules:
       .mutation(({ input }) => {
         lockUser(input.userId, input.durationMinutes * 60 * 1000, input.reason);
         return { success: true, message: `User ${input.userId} locked for ${input.durationMinutes} minutes` };
+      }),
+  }),
+
+  // ─── Notifications ───
+  notifications: router({
+    list: protectedProcedure
+      .input(z.object({ limit: z.number().min(1).max(100).default(50) }).optional())
+      .query(async ({ ctx, input }) => {
+        return db.getUserNotifications(ctx.user.id, input?.limit || 50);
+      }),
+    unreadCount: protectedProcedure.query(async ({ ctx }) => {
+      return { count: await db.getUnreadNotificationCount(ctx.user.id) };
+    }),
+    markRead: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.markNotificationRead(input.id, ctx.user.id);
+        return { success: true };
+      }),
+    markAllRead: protectedProcedure.mutation(async ({ ctx }) => {
+      await db.markAllNotificationsRead(ctx.user.id);
+      return { success: true };
+    }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.deleteNotification(input.id, ctx.user.id);
+        return { success: true };
       }),
   }),
 });

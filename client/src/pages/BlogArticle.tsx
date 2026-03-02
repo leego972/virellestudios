@@ -173,6 +173,13 @@ export default function BlogArticle() {
           </p>
         )}
 
+        {/* Cover Image */}
+        {(article as any).coverImageUrl && (
+          <div className="rounded-xl overflow-hidden mb-8 border border-white/10">
+            <img src={(article as any).coverImageUrl} alt={article.title} className="w-full h-64 sm:h-80 object-cover" />
+          </div>
+        )}
+
         <hr className="border-white/10 mb-8" />
 
         {/* Content */}

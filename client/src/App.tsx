@@ -13,7 +13,9 @@ import { Loader2 } from "lucide-react";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Landing from "./pages/Landing";
 import NotFound from "@/pages/NotFound";
+import { useAuth } from "./_core/hooks/useAuth";
 
 // Dashboard pages — lazy loaded
 const Projects = lazy(() => import("./pages/Projects"));
@@ -92,6 +94,9 @@ function GatedCollaboration() { return <LazyPage><SubscriptionGate feature="Coll
 function Router() {
   return (
     <Switch>
+      {/* Public landing page */}
+      <Route path="/welcome" component={Landing} />
+
       {/* Auth pages (no layout) */}
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
@@ -125,6 +130,7 @@ function Router() {
           <Suspense fallback={<PageLoader />}>
             <Switch>
               <Route path="/" component={Home} />
+              <Route path="/dashboard" component={Home} />
               <Route path="/projects">{() => <Projects />}</Route>
               <Route path="/projects/new">{() => <NewProject />}</Route>
               <Route path="/projects/:id">{() => <ProjectDetail />}</Route>

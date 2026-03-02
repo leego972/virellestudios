@@ -323,6 +323,7 @@ async function startServer() {
           metaTitle: article.metaTitle,
           metaDescription: article.metaDescription,
           generationPrompt: article.generationPrompt,
+          coverImageUrl: article.coverImageUrl || null,
           generatedByAI: true,
           status: "published",
           publishedAt: new Date(),
