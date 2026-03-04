@@ -3280,19 +3280,84 @@ Generate a detailed production budget estimate.`,
           let mimeType: string | undefined;
 
           if (scenesWithVideo.length >= 2) {
-            // Stitch scene videos into a single movie using ffmpeg
+            // Fetch all post-production data from database
+            const [projectSfx, projectSubtitles, projectCredits, projectSoundtracks] = await Promise.all([
+              db.listSoundEffectsByProject(project.id),
+              db.getProjectSubtitles(project.id),
+              db.getProjectCredits(project.id),
+              db.getProjectSoundtracks(project.id),
+            ]);
+
+            // Get per-scene SFX
+            const sceneSfxMap = new Map<number, any[]>();
+            for (const sfx of projectSfx) {
+              if (sfx.sceneId) {
+                if (!sceneSfxMap.has(sfx.sceneId)) sceneSfxMap.set(sfx.sceneId, []);
+                sceneSfxMap.get(sfx.sceneId)!.push(sfx);
+              }
+            }
+
+            // Parse subtitle entries and map to scenes
+            const subtitleEntries: any[] = [];
+            if (projectSubtitles.length > 0) {
+              const primarySub = projectSubtitles[0]; // Use first language
+              const entries = (primarySub.entries as any[]) || [];
+              subtitleEntries.push(...entries);
+            }
+            const sceneSubMap = new Map<number, any[]>();
+            for (const entry of subtitleEntries) {
+              const sid = entry.sceneId;
+              if (sid) {
+                if (!sceneSubMap.has(sid)) sceneSubMap.set(sid, []);
+                sceneSubMap.get(sid)!.push(entry);
+              }
+            }
+
+            // Find the main soundtrack
+            const mainSoundtrack = projectSoundtracks.find((s: any) => s.fileUrl);
+
             try {
               const { stitchMovie } = await import("./_core/videoStitcher");
               const result = await stitchMovie({
-                scenes: scenesWithVideo.map((s: any) => ({
-                  videoUrl: s.videoUrl,
-                  title: s.title || undefined,
-                  duration: s.duration || undefined,
-                  orderIndex: s.orderIndex || 0,
-                })),
+                scenes: scenesWithVideo.map((s: any) => {
+                  const sfxList = sceneSfxMap.get(s.id) || [];
+                  const subList = sceneSubMap.get(s.id) || [];
+                  return {
+                    videoUrl: s.videoUrl,
+                    title: s.title || undefined,
+                    duration: s.duration || undefined,
+                    orderIndex: s.orderIndex || 0,
+                    voiceAudio: (s as any).voiceUrl ? { voiceUrl: (s as any).voiceUrl, voiceVolume: 0.9 } : undefined,
+                    soundEffects: sfxList.filter((x: any) => x.fileUrl).map((x: any) => ({
+                      fileUrl: x.fileUrl,
+                      startTime: x.startTime || 0,
+                      volume: x.volume || 0.5,
+                      loop: !!(x.loop),
+                      name: x.name,
+                    })),
+                    subtitles: subList.map((x: any) => ({
+                      startTime: x.startTime || 0,
+                      endTime: x.endTime || 3,
+                      text: x.text || "",
+                    })),
+                    transition: "fade",
+                    transitionDuration: 0.8,
+                  };
+                }),
                 projectTitle: project.title,
                 userId: ctx.user.id,
                 projectId: project.id,
+                soundtrackUrl: mainSoundtrack?.fileUrl || undefined,
+                soundtrackVolume: 20,
+                burnSubtitles: subtitleEntries.length > 0,
+                showTitleCard: true,
+                titleCardDuration: 5,
+                showCredits: projectCredits.length > 0,
+                credits: projectCredits.map((c: any) => ({ role: c.role, name: c.name })),
+                creditsDuration: Math.max(15, projectCredits.length * 3),
+                genre: project.genre || undefined,
+                directorName: projectCredits.find((c: any) => c.role.toLowerCase().includes("director"))?.name,
+                resolution: "1080p",
               });
               fileUrl = result.fileUrl;
               fileKey = result.fileKey;

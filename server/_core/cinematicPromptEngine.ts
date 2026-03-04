@@ -389,6 +389,8 @@ export function buildScenePrompt(
     vehicleType?: string | null;
     colorGrading?: string | null;
     productionNotes?: string | null;
+    crowdLevel?: string | null;
+    extrasDescription?: string | null;
   },
   visualDNA: VisualDNA,
   options?: {
@@ -443,6 +445,21 @@ export function buildScenePrompt(
   }
   if (scene.vehicleType && scene.vehicleType !== "None") {
     parts.push(`Vehicle: ${scene.vehicleType}`);
+  }
+
+  // 6b. Crowd/Extras — background population for scene realism
+  if (scene.crowdLevel && scene.crowdLevel !== "empty") {
+    const crowdDescriptions: Record<string, string> = {
+      sparse: "a few background people visible, sparse foot traffic, mostly empty environment with occasional passersby",
+      moderate: "moderate number of background extras going about their business, realistic ambient population for the location, natural foot traffic",
+      crowded: "crowded scene with many background extras, busy environment full of people, realistic crowd density with diverse extras walking, talking, and interacting naturally",
+      packed: "densely packed crowd filling the frame, massive number of background extras creating energy and chaos, shoulder-to-shoulder people, overwhelming crowd atmosphere",
+    };
+    const crowdDesc = crowdDescriptions[scene.crowdLevel] || crowdDescriptions["moderate"];
+    parts.push(`Background population: ${crowdDesc}`);
+  }
+  if (scene.extrasDescription) {
+    parts.push(`Extras/Background activity: ${scene.extrasDescription}`);
   }
 
   // 7. Time of day with technical lighting
@@ -570,6 +587,12 @@ CRITICAL INSTRUCTIONS:
 6. Vary your shot types — don't use the same camera angle twice in a row.
 7. Build visual tension through the narrative arc — the visual intensity should escalate toward the climax.
 8. Every scene must serve both the narrative AND the visual storytelling.
+9. ALWAYS consider the background population for every scene:
+   - Is this location empty, sparse, moderate, crowded, or packed with people?
+   - What are the background extras doing? (walking, sitting, dancing, working, running, etc.)
+   - Describe specific background activity that adds life and realism to the scene.
+   - Street scenes should have pedestrians, restaurants should have diners, offices should have workers, clubs should have dancers.
+   - The extrasDescription should paint a vivid picture of the ambient life in the scene.
 
 Return JSON with an array of scenes.`;
 }
@@ -602,12 +625,15 @@ export const ENHANCED_SCENE_SCHEMA = {
           characterAction: { type: "string" as const },
           emotionalBeat: { type: "string" as const },
           transitionFromPrevious: { type: "string" as const },
+          crowdLevel: { type: "string" as const, description: "Background population density: empty, sparse, moderate, crowded, or packed" },
+          extrasDescription: { type: "string" as const, description: "Vivid description of what background extras are doing in this scene — pedestrians walking, dancers moving, diners eating, workers typing, soldiers marching, etc." },
         },
         required: [
           "title", "description", "visualDescription", "timeOfDay", "weather",
           "lighting", "cameraAngle", "locationType", "mood", "estimatedDuration",
           "colorPalette", "focalLength", "depthOfField", "foregroundElements",
-          "backgroundElements", "characterAction", "emotionalBeat", "transitionFromPrevious"
+          "backgroundElements", "characterAction", "emotionalBeat", "transitionFromPrevious",
+          "crowdLevel", "extrasDescription"
         ] as const,
         additionalProperties: false as const,
       },
