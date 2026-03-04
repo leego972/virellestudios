@@ -926,7 +926,7 @@ export async function updateUserRole(userId: number, role: "user" | "admin") {
 
 // ─── Subscription ───
 export async function updateUserSubscription(userId: number, data: {
-  subscriptionTier?: "free" | "pro" | "industry";
+  subscriptionTier?: "free" | "creator" | "pro" | "industry";
   stripeCustomerId?: string;
   stripeSubscriptionId?: string | null;
   subscriptionStatus?: "active" | "canceled" | "past_due" | "unpaid" | "trialing" | "none";
@@ -1216,7 +1216,7 @@ export async function updateUserProfile(userId: number, data: {
   professionalRole?: string | null;
   experienceLevel?: string | null;
   portfolioUrl?: string | null;
-  socialLinks?: Record<string, string> | null;
+  socialLinks?: Record<string, unknown> | null;
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

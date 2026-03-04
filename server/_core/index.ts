@@ -212,7 +212,7 @@ async function startServer() {
               await db.updateUserSubscription(user.id, {
                 subscriptionTier: tier,
                 subscriptionStatus: "active",
-                subscriptionCurrentPeriodEnd: new Date(sub.current_period_end * 1000),
+                subscriptionCurrentPeriodEnd: new Date((sub as any).current_period_end * 1000),
               });
               // Reset generation counter on renewal (new billing period = fresh quota)
               await db.resetGenerationCounter(user.id);
@@ -230,7 +230,7 @@ async function startServer() {
               subscriptionStatus: "past_due",
             });
             // Track payment failure in security engine
-            trackPaymentFailure(user.id);
+            trackPaymentFailure(user.id, "invoice_payment_failed");
             logger.warn(`Payment failed for user ${user.id}`);
           }
           break;

@@ -4153,7 +4153,7 @@ Rules:
         professionalRole: z.string().max(128).optional().nullable(),
         experienceLevel: z.string().max(32).optional().nullable(),
         portfolioUrl: z.string().max(512).optional().nullable(),
-        socialLinks: z.record(z.string()).optional().nullable(),
+        socialLinks: z.record(z.string(), z.string()).optional().nullable(),
       }))
       .mutation(async ({ ctx, input }) => {
         await db.updateUserProfile(ctx.user!.id, input);

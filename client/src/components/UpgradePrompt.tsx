@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Crown, Lock, Zap, Film } from "lucide-react";
 import { useLocation } from "wouter";
@@ -44,7 +45,7 @@ export function UpgradePrompt({ feature, requiredTier, currentTier = "free", com
     );
   }
 
-  const iconMap: Record<string, JSX.Element> = {
+  const iconMap: Record<string, React.ReactNode> = {
     creator: <Film className="w-8 h-8 text-blue-500" />,
     pro: <Crown className="w-8 h-8 text-amber-500" />,
     industry: <Zap className="w-8 h-8 text-violet-500" />,
