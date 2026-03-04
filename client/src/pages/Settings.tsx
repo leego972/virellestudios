@@ -18,6 +18,7 @@ import { toast } from "sonner";
 
 const PROVIDER_ICONS: Record<string, string> = {
   runway: "🎬", fal: "⚡", replicate: "🔄", openai: "🤖", luma: "🌙", huggingface: "🤗",
+  elevenlabs: "🎙️", suno: "🎵",
 };
 const PROVIDER_COLORS: Record<string, string> = {
   runway: "from-purple-500/20 to-purple-600/10 border-purple-500/30",
@@ -26,7 +27,28 @@ const PROVIDER_COLORS: Record<string, string> = {
   openai: "from-emerald-500/20 to-emerald-600/10 border-emerald-500/30",
   luma: "from-indigo-500/20 to-indigo-600/10 border-indigo-500/30",
   huggingface: "from-yellow-500/20 to-yellow-600/10 border-yellow-500/30",
+  elevenlabs: "from-pink-500/20 to-pink-600/10 border-pink-500/30",
+  suno: "from-orange-500/20 to-orange-600/10 border-orange-500/30",
 };
+
+const VOICE_MUSIC_PROVIDERS = [
+  {
+    id: "elevenlabs",
+    name: "ElevenLabs",
+    description: "Industry-leading AI voice acting. Natural, expressive dialogue for every character.",
+    signupUrl: "https://elevenlabs.io/app/settings/api-keys",
+    pricing: "Free tier: 10K chars/mo. Starter: $5/mo. Creator: $22/mo.",
+    models: "Multilingual v2, Turbo v2.5, Voice Cloning",
+  },
+  {
+    id: "suno",
+    name: "Suno AI",
+    description: "AI-composed original soundtracks and music scores for your films.",
+    signupUrl: "https://suno.com",
+    pricing: "Free tier: 5 songs/day. Pro: $10/mo.",
+    models: "Suno v4, Chirp v3.5",
+  },
+];
 
 export default function Settings() {
   const [keyInputs, setKeyInputs] = useState<Record<string, string>>({});
@@ -506,6 +528,67 @@ export default function Settings() {
                               <Star className="w-3 h-3 mr-1" />Set as Preferred
                             </Button>
                           )}
+                          <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30" onClick={() => removeKeyMutation.mutate({ provider: provider.id as any })}>
+                            <XCircle className="w-3 h-3 mr-1" />Remove Key
+                          </Button>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Voice & Music API Keys */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-pink-500" />
+              Voice & Music API Keys
+            </h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Add ElevenLabs for AI voice acting and Suno for AI soundtrack generation. These bring your films to life with professional dialogue and original music.
+            </p>
+            <div className="grid gap-4">
+              {VOICE_MUSIC_PROVIDERS.map((provider) => {
+                const isConfigured = configuredKeys[provider.id as keyof typeof configuredKeys];
+                const inputValue = keyInputs[provider.id] || "";
+                const colorClass = PROVIDER_COLORS[provider.id] || "from-gray-500/20 to-gray-600/10 border-gray-500/30";
+                return (
+                  <Card key={provider.id} className={`border ${colorClass} bg-gradient-to-br`}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <span className="text-xl">{PROVIDER_ICONS[provider.id] || "🔑"}</span>
+                          {provider.name}
+                          {isConfigured && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
+                        </CardTitle>
+                        <a href={provider.signupUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+                          Get API Key <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                      <CardDescription>{provider.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Info className="w-3 h-3" />
+                        <span>Models: {provider.models}</span>
+                        <span className="mx-1">•</span>
+                        <span>Pricing: {provider.pricing}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Input type="password" placeholder={isConfigured ? "••••••••••••••••" : `Paste your ${provider.name} API key here...`} value={inputValue} onChange={(e) => setKeyInputs((prev) => ({ ...prev, [provider.id]: e.target.value }))} className="font-mono text-sm" />
+                        <Button size="sm" onClick={() => { if (!inputValue.trim()) return; setSavingProvider(provider.id); saveKeyMutation.mutate({ provider: provider.id as any, key: inputValue.trim() }); }} disabled={!inputValue.trim() || savingProvider === provider.id}>
+                          {savingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                        </Button>
+                        {inputValue.trim() && (
+                          <Button size="sm" variant="outline" onClick={() => { setTestingProvider(provider.id); testKeyMutation.mutate({ provider: provider.id as any, key: inputValue.trim() }); }} disabled={testingProvider === provider.id}>
+                            {testingProvider === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Test"}
+                          </Button>
+                        )}
+                      </div>
+                      {isConfigured && (
+                        <div className="flex gap-2 pt-1">
                           <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30" onClick={() => removeKeyMutation.mutate({ provider: provider.id as any })}>
                             <XCircle className="w-3 h-3 mr-1" />Remove Key
                           </Button>

@@ -129,7 +129,7 @@ export default function Pricing() {
         <div className="text-center mb-8 sm:mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <img
-              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png"
+              src="/vs-watermark.png"
               alt="Virelle Studios"
               className="h-10 w-10 rounded-lg"
             />

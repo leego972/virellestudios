@@ -136,10 +136,10 @@ async function startServer() {
               short_film: 200,       // 30-min film: ~100 scenes × 2 credits
               feature_film: 400,     // 60-min film: ~200 scenes × 2 credits
               full_feature: 600,     // 90-min film: ~300 scenes × 2 credits
-              premium_film: 1200,    // 180-min film: ~600 scenes × 2 credits
+              premium: 1200,         // 180-min film: ~600 scenes × 2 credits
               vfx_single: 10,        // Single VFX scene
               vfx_pack_5: 50,        // 5 VFX scenes
-              vfx_pack_20: 200,      // 20 VFX scenes
+              vfx_pack_15: 150,      // 15 VFX scenes
               vfx_unlimited: 10000,  // Unlimited VFX for a year
             };
             const credits = filmPackageCredits[packageId] || 100;

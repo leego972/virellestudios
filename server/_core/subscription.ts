@@ -222,7 +222,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCharacterConsistency: true,
     canUseSceneContinuity: true,
     canUseClipChaining: true,
-    resolution: "1080p",
+    resolution: "4k",
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 90,
     maxClipsPerScene: 8,

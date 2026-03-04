@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Film, Loader2, ArrowLeft, Mail } from "lucide-react";
 import LeegoFooter from "@/components/LeegoFooter";
+import GoldWatermark from "@/components/GoldWatermark";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -33,8 +34,9 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      <GoldWatermark />
+      <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Logo */}
         <div className="flex flex-col items-center gap-3">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20">

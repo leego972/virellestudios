@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Eye, EyeOff, Loader2, ArrowRight, UserPlus } from "lucide-react";
+import GoldWatermark from "@/components/GoldWatermark";
 
 export default function Login() {
   const [, navigate] = useLocation();
@@ -36,14 +37,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      <GoldWatermark />
       <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full max-w-3xl">
         {/* Left side: Login form */}
         <div className="w-full max-w-sm space-y-6">
           {/* Virelle Studios Logo */}
           <div className="flex flex-col items-center gap-4">
             <img
-              src="/apple-touch-icon.png"
+              src="/vs-watermark.png"
               alt="Virelle Studios"
               className="w-24 h-24 rounded-2xl shadow-lg shadow-amber-500/20"
               draggable={false}
