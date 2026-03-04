@@ -110,7 +110,51 @@ export const characters = mysqlTable("characters", {
   name: varchar("name", { length: 128 }).notNull(),
   description: text("description"),
   photoUrl: text("photoUrl"),
-  attributes: json("attributes"), // { age, gender, ethnicity, build, etc. }
+  attributes: json("attributes"), // legacy + AI-generated physical attributes
+  // ─── Identity & Background ───
+  role: varchar("role", { length: 128 }), // hero, villain, mentor, comic relief, etc.
+  storyImportance: varchar("storyImportance", { length: 64 }), // lead, supporting, minor, cameo
+  screenTime: varchar("screenTime", { length: 64 }), // heavy, moderate, light
+  nationality: varchar("nationality", { length: 128 }),
+  countryOfOrigin: varchar("countryOfOrigin", { length: 128 }),
+  cityOfOrigin: varchar("cityOfOrigin", { length: 128 }),
+  dateOfBirth: varchar("dateOfBirth", { length: 64 }), // e.g. "March 15, 1985" or "mid-30s"
+  zodiacSign: varchar("zodiacSign", { length: 32 }),
+  occupation: varchar("occupation", { length: 255 }),
+  educationLevel: varchar("educationLevel", { length: 128 }),
+  socialClass: varchar("socialClass", { length: 64 }), // working, middle, upper, royalty, etc.
+  religion: varchar("religion", { length: 128 }),
+  languages: json("languages"), // ["English", "French", "Arabic"]
+  // ─── Personality & Psychology ───
+  personality: json("personality"), // { mbti, bigFive, traits: [], temperament }
+  arcType: varchar("arcType", { length: 128 }), // hero, anti-hero, tragic, redemption, flat, etc.
+  moralAlignment: varchar("moralAlignment", { length: 64 }), // lawful-good, chaotic-neutral, etc.
+  emotionalRange: json("emotionalRange"), // ["stoic", "explosive anger", "hidden warmth"]
+  backstory: text("backstory"),
+  motivations: text("motivations"),
+  fears: text("fears"),
+  secrets: text("secrets"),
+  strengths: json("strengths"), // ["strategic thinker", "physically powerful"]
+  weaknesses: json("weaknesses"), // ["trusts too easily", "impulsive"]
+  // ─── Speech & Voice ───
+  speechPattern: varchar("speechPattern", { length: 255 }), // formal, slang-heavy, poetic, etc.
+  accent: varchar("accent", { length: 128 }),
+  catchphrase: varchar("catchphrase", { length: 512 }),
+  voiceType: varchar("voiceType", { length: 128 }), // deep baritone, high soprano, raspy, etc.
+  voiceId: varchar("voiceId", { length: 255 }), // ElevenLabs voice ID
+  // ─── Relationships ───
+  relationships: json("relationships"), // [{ characterId, type: "ally"|"enemy"|"lover", description }]
+  // ─── Environment & Preferences ───
+  environmentPreference: varchar("environmentPreference", { length: 255 }), // urban, rural, coastal, etc.
+  preferredWeather: varchar("preferredWeather", { length: 128 }),
+  preferredSeason: varchar("preferredSeason", { length: 64 }),
+  preferredTimeOfDay: varchar("preferredTimeOfDay", { length: 64 }),
+  // ─── Abilities & Skills ───
+  physicalAbilities: json("physicalAbilities"), // ["martial arts", "parkour"]
+  mentalAbilities: json("mentalAbilities"), // ["photographic memory", "hacking"]
+  specialSkills: json("specialSkills"), // ["speaks 5 languages", "master chef"]
+  // ─── Appearance Details ───
+  wardrobe: json("wardrobe"), // { signature: "...", formal: "...", casual: "...", action: "..." }
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -144,10 +188,51 @@ export const scenes = mysqlTable("scenes", {
   productionNotes: text("productionNotes"), // director notes for crew
   soundtrackId: int("soundtrackId"), // per-scene soundtrack
   soundtrackVolume: int("soundtrackVolume").default(80), // 0-100
+  // ─── Camera & Optics ───
+  lensType: varchar("lensType", { length: 128 }), // prime, zoom, anamorphic, fisheye, tilt-shift
+  focalLength: varchar("focalLength", { length: 64 }), // "24mm wide", "85mm portrait", "135mm telephoto"
+  depthOfField: varchar("depthOfField", { length: 64 }), // "shallow f/1.4", "deep focus f/11"
+  cameraMovement: varchar("cameraMovement", { length: 128 }), // static, dolly, crane, handheld, steadicam, drone
+  shotType: varchar("shotType", { length: 64 }), // establishing, reaction, insert, cutaway, two-shot
+  frameRate: varchar("frameRate", { length: 32 }), // 24fps, 30fps, 48fps, 60fps, 120fps slow-mo
+  aspectRatio: varchar("aspectRatio", { length: 16 }), // 2.39:1, 1.85:1, 16:9, 4:3
+  // ─── Color & Visual Style ───
+  colorPalette: varchar("colorPalette", { length: 255 }), // "warm amber and deep shadow"
+  colorTemperature: varchar("colorTemperature", { length: 64 }), // warm, cool, neutral, mixed
+  // ─── Location & Environment ───
+  season: varchar("season", { length: 32 }), // spring, summer, autumn, winter
+  country: varchar("country", { length: 128 }),
+  city: varchar("city", { length: 128 }),
+  locationDetail: text("locationDetail"), // specific address, landmark, or description
+  // ─── Composition & Staging ───
+  foregroundElements: text("foregroundElements"),
+  backgroundElements: text("backgroundElements"),
+  characterBlocking: text("characterBlocking"), // where each character stands/moves
+  emotionalBeat: varchar("emotionalBeat", { length: 255 }),
+  actionDescription: text("actionDescription"), // physical action happening in scene
+  // ─── Sound Design ───
+  ambientSound: varchar("ambientSound", { length: 255 }), // rain, city traffic, forest birds
+  sfxNotes: text("sfxNotes"), // specific sound effects needed
+  musicMood: varchar("musicMood", { length: 128 }),
+  musicTempo: varchar("musicTempo", { length: 64 }), // slow, moderate, fast, building
+  // ─── Dialogue ───
+  dialogueLines: json("dialogueLines"), // [{ characterId, characterName, line, emotion, direction }]
+  subtitleText: text("subtitleText"),
+  // ─── Production ───
+  vfxNotes: text("vfxNotes"),
+  sfxProductionNotes: text("sfxProductionNotes"),
+  visualEffects: json("visualEffects"), // ["explosion", "rain simulation", "lens flare"]
+  props: json("props"), // ["vintage pistol", "leather briefcase"]
+  wardrobe: json("wardrobe"), // { characterId: "outfit description" }
+  makeupNotes: text("makeupNotes"),
+  stuntNotes: text("stuntNotes"),
+  budgetEstimate: int("budgetEstimate"), // USD estimate for this scene
+  shootingDays: float("shootingDays"),
+  aiPromptOverride: text("aiPromptOverride"), // director can write exact AI prompt
   thumbnailUrl: text("thumbnailUrl"),
   generatedUrl: text("generatedUrl"),
   videoUrl: text("videoUrl"), // S3 URL for the generated video clip (MP4)
-  videoJobId: varchar("videoJobId", { length: 255 }), // Sora job ID for tracking
+  videoJobId: varchar("videoJobId", { length: 255 }), // job ID for tracking
   status: mysqlEnum("status", ["draft", "generating", "completed", "failed"]).default("draft").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

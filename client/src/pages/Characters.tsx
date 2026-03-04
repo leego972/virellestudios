@@ -49,6 +49,8 @@ import {
 } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
+import { DeepCharacterProfile, type DeepProfile } from "@/components/DeepCharacterProfile";
+import { Separator } from "@/components/ui/separator";
 
 type CharacterForm = {
   name: string;
@@ -60,6 +62,7 @@ type CharacterForm = {
   build: string;
   hairColor: string;
   role: string;
+  deepProfile: DeepProfile;
 };
 
 const emptyForm: CharacterForm = {
@@ -72,6 +75,7 @@ const emptyForm: CharacterForm = {
   build: "",
   hairColor: "",
   role: "",
+  deepProfile: {},
 };
 
 const emptyAiForm = {
@@ -183,6 +187,7 @@ export default function Characters() {
       build: attrs.build || "",
       hairColor: attrs.hairColor || "",
       role: attrs.role || attrs.characterRole || "",
+      deepProfile: attrs.deepProfile || {},
     });
     setEditingId(char.id);
     setDialogOpen(true);
@@ -265,6 +270,7 @@ export default function Characters() {
       build: form.build || undefined,
       hairColor: form.hairColor || undefined,
       role: form.role || undefined,
+      deepProfile: Object.keys(form.deepProfile).length > 0 ? form.deepProfile : undefined,
     };
 
     if (editingId) {
@@ -286,7 +292,7 @@ export default function Characters() {
     }
   };
 
-  const setField = (key: keyof CharacterForm, value: string) =>
+  const setField = (key: keyof CharacterForm, value: any) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
   const isSaving = createMutation.isPending || updateMutation.isPending;
@@ -638,7 +644,7 @@ export default function Characters() {
           MANUAL CHARACTER DIALOG
           ═══════════════════════════════════════════════════════════════════ */}
       <Dialog open={dialogOpen} onOpenChange={(open) => !open && closeDialog()}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base">
               {editingId ? "Edit Character" : "New Character"}
@@ -760,9 +766,29 @@ export default function Characters() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Full Description</Label>
-              <Textarea placeholder="Personality, background, motivations, wardrobe..." value={form.description} onChange={(e) => setField("description", e.target.value)} className="min-h-[100px] text-sm bg-background/50 resize-y" />
+              <Textarea placeholder="Personality, background, motivations, wardrobe..." value={form.description} onChange={(e) => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" />
             </div>
-            <div className="flex justify-end gap-2 pt-2">
+
+            <Separator />
+
+            {/* ── DEEP CHARACTER PROFILE ─────────────────────────────── */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-2">Deep Character Profile</span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Build a complete character bible — identity, personality, speech, environment, wardrobe, and relationships. The AI uses every detail to generate consistent, authentic scenes.
+              </p>
+            </div>
+            <DeepCharacterProfile
+              profile={form.deepProfile}
+              onChange={(dp) => setField("deepProfile", dp)}
+              characterName={form.name}
+            />
+
+            <div className="flex justify-end gap-2 pt-2 border-t">
               <Button type="button" variant="ghost" size="sm" onClick={closeDialog}>Cancel</Button>
               <Button type="submit" size="sm" disabled={isSaving}>
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}

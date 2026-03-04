@@ -671,40 +671,140 @@ export const appRouter = router({
         orderIndex: z.number().optional(),
         title: z.string().optional(),
         description: z.string().optional(),
-        timeOfDay: z.enum(["dawn", "morning", "afternoon", "evening", "night", "golden-hour"]).optional(),
-        weather: z.enum(["clear", "cloudy", "rainy", "stormy", "snowy", "foggy", "windy"]).optional(),
-        lighting: z.enum(["natural", "dramatic", "soft", "neon", "candlelight", "studio", "backlit", "silhouette"]).optional(),
-        cameraAngle: z.enum(["wide", "medium", "close-up", "extreme-close-up", "birds-eye", "low-angle", "dutch-angle", "over-shoulder", "pov"]).optional(),
+        // Atmosphere
+        timeOfDay: z.string().optional(),
+        weather: z.string().optional(),
+        season: z.string().optional(),
+        lighting: z.string().optional(),
+        mood: z.string().optional(),
+        emotionalBeat: z.string().optional(),
+        // Camera & Optics
+        cameraAngle: z.string().optional(),
+        cameraMovement: z.string().optional(),
+        lensType: z.string().optional(),
+        focalLength: z.string().optional(),
+        depthOfField: z.string().optional(),
+        shotType: z.string().optional(),
+        frameRate: z.string().optional(),
+        aspectRatio: z.string().optional(),
+        // Color
+        colorGrading: z.string().optional(),
+        colorPalette: z.string().optional(),
+        colorTemperature: z.string().optional(),
+        // Location
         locationType: z.string().optional(),
         realEstateStyle: z.string().optional(),
+        country: z.string().optional(),
+        city: z.string().optional(),
+        locationDetail: z.string().optional(),
         vehicleType: z.string().optional(),
-        mood: z.string().optional(),
+        // Composition
+        foregroundElements: z.string().optional(),
+        backgroundElements: z.string().optional(),
+        characterBlocking: z.string().optional(),
+        actionDescription: z.string().optional(),
+        crowdLevel: z.string().optional(),
+        // Characters
         characterIds: z.array(z.number()).optional(),
+        characterPositions: z.any().optional(),
+        // Dialogue
         dialogueText: z.string().optional(),
+        dialogueLines: z.any().optional(),
+        subtitleText: z.string().optional(),
+        // Sound
+        ambientSound: z.string().optional(),
+        sfxNotes: z.string().optional(),
+        musicMood: z.string().optional(),
+        musicTempo: z.string().optional(),
+        soundtrackId: z.number().nullable().optional(),
+        soundtrackVolume: z.number().min(0).max(100).optional(),
+        // VFX & Production
+        vfxNotes: z.string().optional(),
+        visualEffects: z.any().optional(),
+        props: z.any().optional(),
+        wardrobe: z.any().optional(),
+        makeupNotes: z.string().optional(),
+        stuntNotes: z.string().optional(),
+        productionNotes: z.string().optional(),
+        budgetEstimate: z.number().optional(),
+        shootingDays: z.number().optional(),
+        aiPromptOverride: z.string().optional(),
+        // Timing
         duration: z.number().min(1).max(600).optional(),
+        transitionType: z.string().optional(),
+        transitionDuration: z.number().optional(),
       }))
       .mutation(async ({ input }) => {
-        return db.createScene(input);
+        return db.createScene(input as any);
       }),
-
     update: protectedProcedure
       .input(z.object({
         id: z.number(),
         title: z.string().optional(),
         description: z.string().optional(),
         orderIndex: z.number().optional(),
-        timeOfDay: z.enum(["dawn", "morning", "afternoon", "evening", "night", "golden-hour"]).optional(),
-        weather: z.enum(["clear", "cloudy", "rainy", "stormy", "snowy", "foggy", "windy"]).optional(),
-        lighting: z.enum(["natural", "dramatic", "soft", "neon", "candlelight", "studio", "backlit", "silhouette"]).optional(),
-        cameraAngle: z.enum(["wide", "medium", "close-up", "extreme-close-up", "birds-eye", "low-angle", "dutch-angle", "over-shoulder", "pov"]).optional(),
+        // Atmosphere
+        timeOfDay: z.string().optional(),
+        weather: z.string().optional(),
+        season: z.string().optional(),
+        lighting: z.string().optional(),
+        mood: z.string().optional(),
+        emotionalBeat: z.string().optional(),
+        // Camera & Optics
+        cameraAngle: z.string().optional(),
+        cameraMovement: z.string().optional(),
+        lensType: z.string().optional(),
+        focalLength: z.string().optional(),
+        depthOfField: z.string().optional(),
+        shotType: z.string().optional(),
+        frameRate: z.string().optional(),
+        aspectRatio: z.string().optional(),
+        // Color
+        colorGrading: z.string().optional(),
+        colorPalette: z.string().optional(),
+        colorTemperature: z.string().optional(),
+        // Location
         locationType: z.string().optional(),
         realEstateStyle: z.string().optional(),
+        country: z.string().optional(),
+        city: z.string().optional(),
+        locationDetail: z.string().optional(),
         vehicleType: z.string().optional(),
-        mood: z.string().optional(),
+        // Composition
+        foregroundElements: z.string().optional(),
+        backgroundElements: z.string().optional(),
+        characterBlocking: z.string().optional(),
+        actionDescription: z.string().optional(),
+        crowdLevel: z.string().optional(),
+        // Characters
         characterIds: z.array(z.number()).optional(),
         characterPositions: z.any().optional(),
+        // Dialogue
         dialogueText: z.string().optional(),
+        dialogueLines: z.any().optional(),
+        subtitleText: z.string().optional(),
+        // Sound
+        ambientSound: z.string().optional(),
+        sfxNotes: z.string().optional(),
+        musicMood: z.string().optional(),
+        musicTempo: z.string().optional(),
+        soundtrackId: z.number().nullable().optional(),
+        soundtrackVolume: z.number().min(0).max(100).optional(),
+        // VFX & Production
+        vfxNotes: z.string().optional(),
+        visualEffects: z.any().optional(),
+        props: z.any().optional(),
+        wardrobe: z.any().optional(),
+        makeupNotes: z.string().optional(),
+        stuntNotes: z.string().optional(),
+        productionNotes: z.string().optional(),
+        budgetEstimate: z.number().optional(),
+        shootingDays: z.number().optional(),
+        aiPromptOverride: z.string().optional(),
+        // Timing
         duration: z.number().min(1).max(600).optional(),
+        transitionType: z.string().optional(),
+        transitionDuration: z.number().optional(),
         status: z.enum(["draft", "generating", "completed", "failed"]).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -713,7 +813,7 @@ export const appRouter = router({
         const project = await db.getProjectById(scene.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
         const { id, ...data } = input;
-        return db.updateScene(id, data);
+        return db.updateScene(id, data as any);
       }),
 
     delete: protectedProcedure
@@ -1466,9 +1566,13 @@ Break this into 8-15 scenes. For each scene, provide:
                 gender: c.attributes?.gender || null,
                 ageRange: c.attributes?.ageRange || c.attributes?.estimatedAge || null,
                 ethnicity: c.attributes?.ethnicity || null,
+                nationality: c.attributes?.nationality || c.nationality || null,
                 skinTone: c.attributes?.skinTone || null,
                 build: c.attributes?.build || null,
                 height: c.attributes?.height || null,
+                weight: c.attributes?.weight || c.weight || null,
+                fitnessLevel: c.attributes?.fitnessLevel || c.fitnessLevel || null,
+                posture: c.attributes?.posture || c.posture || null,
                 hairColor: c.attributes?.hairColor || null,
                 hairStyle: c.attributes?.hairStyle || null,
                 hairLength: c.attributes?.hairLength || null,
@@ -1478,6 +1582,10 @@ Break this into 8-15 scenes. For each scene, provide:
                 clothing: c.attributes?.clothingStyle || null,
                 referenceImageUrl: c.photoUrl || null,
                 thumbnailUrl: c.thumbnailUrl || null,
+                faceDnaPrompt: c.faceDnaPrompt || null,
+                bodyDnaPrompt: c.bodyDnaPrompt || null,
+                consistencyNotes: c.consistencyNotes || null,
+                deepProfile: c.deepProfile || null,
               })),
               scenes: scenesWithDialogue,
             },
@@ -2926,7 +3034,7 @@ Generate a detailed production budget estimate.`,
       }))
       .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
-        return db.updateSoundEffect(id, data);
+        return db.updateScene(id, data as any);
       }),
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))

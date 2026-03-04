@@ -97,9 +97,13 @@ export function buildCharacterDNA(character: {
   gender?: string | null;
   ageRange?: string | null;
   ethnicity?: string | null;
+  nationality?: string | null;
   skinTone?: string | null;
   build?: string | null;
   height?: string | null;
+  weight?: string | null;
+  fitnessLevel?: string | null;
+  posture?: string | null;
   hairColor?: string | null;
   hairStyle?: string | null;
   hairLength?: string | null;
@@ -109,14 +113,35 @@ export function buildCharacterDNA(character: {
   clothing?: string | null;
   referenceImageUrl?: string | null;
   thumbnailUrl?: string | null;
+  // Deep profile fields
+  faceDnaPrompt?: string | null;
+  bodyDnaPrompt?: string | null;
+  consistencyNotes?: string | null;
+  deepProfile?: string | null; // JSON string with CharacterAttributesExtended
+}, sceneWardrobeOverride?: {
+  wardrobeDescription?: string;
+  wardrobeCategory?: string;
+  makeupNotes?: string;
+  hairNotes?: string;
+  accessories?: string;
 }): CharacterDNA {
+  // Parse deep profile if available
+  let deepProfile: any = null;
+  if (character.deepProfile) {
+    try { deepProfile = JSON.parse(character.deepProfile); } catch { /* ignore */ }
+  }
+
   const attrs = {
     gender: character.gender || "unspecified",
     age: character.ageRange || "adult",
-    ethnicity: character.ethnicity || "unspecified",
+    ethnicity: character.ethnicity || deepProfile?.ethnicity || "unspecified",
+    nationality: character.nationality || deepProfile?.nationality || undefined,
     skinTone: character.skinTone || "medium",
     build: character.build || "average",
     height: character.height || undefined,
+    weight: character.weight || deepProfile?.weight || undefined,
+    fitnessLevel: character.fitnessLevel || deepProfile?.fitnessLevel || undefined,
+    posture: character.posture || deepProfile?.posture || undefined,
     hairColor: character.hairColor || "dark",
     hairStyle: character.hairStyle || "natural",
     hairLength: character.hairLength || "medium",
@@ -125,23 +150,53 @@ export function buildCharacterDNA(character: {
     distinguishingFeatures: character.distinguishingFeatures
       ? character.distinguishingFeatures.split(",").map(s => s.trim()).filter(Boolean)
       : [],
-    clothing: character.clothing || undefined,
+    clothing: sceneWardrobeOverride?.wardrobeDescription || character.clothing || undefined,
   };
 
   // Build the prompt anchor — a compact, specific description
+  // Priority: faceDnaPrompt > manual description > auto-built
   const parts: string[] = [];
-  parts.push(`${attrs.age} ${attrs.gender}`);
-  if (attrs.ethnicity !== "unspecified") parts.push(`${attrs.ethnicity}`);
-  parts.push(`${attrs.skinTone} skin`);
-  parts.push(`${attrs.build} build`);
-  if (attrs.height) parts.push(`${attrs.height}`);
-  parts.push(`${attrs.hairLength} ${attrs.hairColor} ${attrs.hairStyle} hair`);
-  parts.push(`${attrs.eyeColor} eyes`);
-  parts.push(`${attrs.faceShape} face`);
-  if (attrs.distinguishingFeatures.length > 0) {
-    parts.push(attrs.distinguishingFeatures.join(", "));
+
+  // If director uploaded a reference photo and we have a face DNA prompt, use it
+  if (character.faceDnaPrompt) {
+    parts.push(character.faceDnaPrompt);
+  } else {
+    parts.push(`${attrs.age} ${attrs.gender}`);
+    if (attrs.ethnicity !== "unspecified") parts.push(`${attrs.ethnicity}`);
+    if (attrs.nationality) parts.push(`${attrs.nationality} nationality`);
+    parts.push(`${attrs.skinTone} skin`);
+    parts.push(`${attrs.build} build`);
+    if (attrs.height) parts.push(`${attrs.height}`);
+    if (attrs.weight) parts.push(`${attrs.weight}`);
+    if (attrs.fitnessLevel) parts.push(`${attrs.fitnessLevel} fitness`);
+    if (attrs.posture) parts.push(`${attrs.posture} posture`);
+    parts.push(`${attrs.hairLength} ${attrs.hairColor} ${attrs.hairStyle} hair`);
+    parts.push(`${attrs.eyeColor} eyes`);
+    parts.push(`${attrs.faceShape} face`);
+    if (attrs.distinguishingFeatures.length > 0) {
+      parts.push(attrs.distinguishingFeatures.join(", "));
+    }
   }
-  if (attrs.clothing) parts.push(`wearing ${attrs.clothing}`);
+
+  // Body DNA override
+  if (character.bodyDnaPrompt) {
+    parts.push(character.bodyDnaPrompt);
+  }
+
+  // Wardrobe — scene-specific override takes priority over character default
+  if (sceneWardrobeOverride?.wardrobeDescription) {
+    parts.push(`wearing ${sceneWardrobeOverride.wardrobeDescription}`);
+    if (sceneWardrobeOverride.makeupNotes) parts.push(`makeup: ${sceneWardrobeOverride.makeupNotes}`);
+    if (sceneWardrobeOverride.hairNotes) parts.push(`hair styled: ${sceneWardrobeOverride.hairNotes}`);
+    if (sceneWardrobeOverride.accessories) parts.push(`accessories: ${sceneWardrobeOverride.accessories}`);
+  } else if (attrs.clothing) {
+    parts.push(`wearing ${attrs.clothing}`);
+  }
+
+  // Consistency notes from director
+  if (character.consistencyNotes) {
+    parts.push(`[CONSISTENCY: ${character.consistencyNotes}]`);
+  }
 
   const promptAnchor = `[${character.name}: ${parts.join(", ")}]`;
 

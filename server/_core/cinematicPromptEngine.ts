@@ -381,16 +381,38 @@ export function buildScenePrompt(
     description?: string | null;
     timeOfDay?: string | null;
     weather?: string | null;
+    season?: string | null;
     lighting?: string | null;
     cameraAngle?: string | null;
+    cameraMovement?: string | null;
+    lensType?: string | null;
+    focalLength?: string | null;
+    depthOfField?: string | null;
+    shotType?: string | null;
+    frameRate?: string | null;
+    aspectRatio?: string | null;
+    colorGrading?: string | null;
+    colorPalette?: string | null;
+    colorTemperature?: string | null;
     locationType?: string | null;
+    country?: string | null;
+    city?: string | null;
+    locationDetail?: string | null;
     mood?: string | null;
+    emotionalBeat?: string | null;
     realEstateStyle?: string | null;
     vehicleType?: string | null;
-    colorGrading?: string | null;
+    foregroundElements?: string | null;
+    backgroundElements?: string | null;
+    characterBlocking?: string | null;
+    actionDescription?: string | null;
     productionNotes?: string | null;
     crowdLevel?: string | null;
     extrasDescription?: string | null;
+    makeupNotes?: string | null;
+    stuntNotes?: string | null;
+    vfxNotes?: string | null;
+    aiPromptOverride?: string | null;
   },
   visualDNA: VisualDNA,
   options?: {
@@ -412,8 +434,38 @@ export function buildScenePrompt(
   const cameraDetail = CAMERA_ANGLE_DETAILS[cameraAngle] || CAMERA_ANGLE_DETAILS["medium"];
   parts.push(`RAW photograph, photorealistic cinematic film frame — ${cameraDetail}`);
 
+  // 2b. AI Prompt Override — if set, skip all auto-building and return override directly
+  if (scene.aiPromptOverride && scene.aiPromptOverride.trim().length > 0) {
+    return scene.aiPromptOverride.trim();
+  }
+
+  // 2c. Lens and focal length precision
+  if (scene.lensType) {
+    parts.push(`Lens: ${scene.lensType}`);
+  } else {
+    parts.push(`Lens: ${visualDNA.genreProfile.lensPreference}`);
+  }
+  if (scene.focalLength) {
+    parts.push(`Focal length: ${scene.focalLength}`);
+  }
+  if (scene.depthOfField) {
+    parts.push(`Depth of field: ${scene.depthOfField}`);
+  }
+  if (scene.shotType) {
+    parts.push(`Shot type: ${scene.shotType}`);
+  }
+  if (scene.frameRate) {
+    parts.push(`Frame rate: ${scene.frameRate}`);
+  }
+  if (scene.aspectRatio) {
+    parts.push(`Aspect ratio: ${scene.aspectRatio}`);
+  }
+
   // 3. Camera movement context
-  if (options?.cameraMovement) {
+  if (scene.cameraMovement) {
+    const movementDetail = CAMERA_MOVEMENTS[scene.cameraMovement] || scene.cameraMovement;
+    parts.push(`Camera movement: ${movementDetail}`);
+  } else if (options?.cameraMovement) {
     const movementDetail = CAMERA_MOVEMENTS[options.cameraMovement] || options.cameraMovement;
     parts.push(`Camera movement: ${movementDetail}`);
   } else {
@@ -437,14 +489,33 @@ export function buildScenePrompt(
   }
 
   // 6. Location and setting with architectural detail
+  if (scene.country || scene.city) {
+    const locationParts = [scene.city, scene.country].filter(Boolean).join(', ');
+    parts.push(`Geographic location: ${locationParts}`);
+  }
   if (scene.locationType) {
-    parts.push(`Location: ${scene.locationType}`);
+    parts.push(`Location type: ${scene.locationType}`);
+  }
+  if (scene.locationDetail) {
+    parts.push(`Location detail: ${scene.locationDetail}`);
   }
   if (scene.realEstateStyle) {
     parts.push(`Architecture: ${scene.realEstateStyle}`);
   }
   if (scene.vehicleType && scene.vehicleType !== "None") {
     parts.push(`Vehicle: ${scene.vehicleType}`);
+  }
+  if (scene.foregroundElements) {
+    parts.push(`Foreground: ${scene.foregroundElements}`);
+  }
+  if (scene.backgroundElements) {
+    parts.push(`Background elements: ${scene.backgroundElements}`);
+  }
+  if (scene.characterBlocking) {
+    parts.push(`Character blocking: ${scene.characterBlocking}`);
+  }
+  if (scene.actionDescription) {
+    parts.push(`Action: ${scene.actionDescription}`);
   }
 
   // 6b. Crowd/Extras — background population for scene realism
@@ -467,6 +538,11 @@ export function buildScenePrompt(
   const timeLight = TIME_OF_DAY_LIGHTING[timeOfDay] || TIME_OF_DAY_LIGHTING["afternoon"];
   parts.push(`Time: ${timeLight}`);
 
+  // 7b. Season context
+  if (scene.season) {
+    parts.push(`Season: ${scene.season}`);
+  }
+
   // 8. Weather atmosphere
   const weather = scene.weather || "clear";
   const weatherAtmo = WEATHER_ATMOSPHERE[weather] || WEATHER_ATMOSPHERE["clear"];
@@ -480,6 +556,9 @@ export function buildScenePrompt(
   if (scene.mood) {
     parts.push(`Mood: ${scene.mood}, ${visualDNA.genreProfile.moodKeywords}`);
   }
+  if (scene.emotionalBeat) {
+    parts.push(`Emotional beat: ${scene.emotionalBeat}`);
+  }
 
   // 11. Genre-specific composition
   parts.push(`Composition: ${visualDNA.genreProfile.compositionNotes}`);
@@ -491,14 +570,29 @@ export function buildScenePrompt(
   // 13. Skin rendering (critical for realism)
   parts.push(`Skin: ${visualDNA.genreProfile.skinRendering}`);
 
-  // 14. Scene-specific color grading override
+  // 14. Scene-specific color grading and palette override
   if (scene.colorGrading && scene.colorGrading !== "natural") {
-    parts.push(`Scene color grade override: ${scene.colorGrading}`);
+    parts.push(`Color grade: ${scene.colorGrading}`);
+  }
+  if (scene.colorPalette) {
+    parts.push(`Color palette: ${scene.colorPalette}`);
+  }
+  if (scene.colorTemperature) {
+    parts.push(`Color temperature: ${scene.colorTemperature}`);
   }
 
   // 15. Production notes (director's vision)
   if (scene.productionNotes) {
     parts.push(`Director's notes: ${scene.productionNotes}`);
+  }
+  if (scene.makeupNotes) {
+    parts.push(`Makeup/SFX makeup: ${scene.makeupNotes}`);
+  }
+  if (scene.stuntNotes) {
+    parts.push(`Stunt/action choreography: ${scene.stuntNotes}`);
+  }
+  if (scene.vfxNotes) {
+    parts.push(`VFX notes: ${scene.vfxNotes}`);
   }
 
   // 16. Narrative position context with visual escalation
