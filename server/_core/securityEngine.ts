@@ -71,8 +71,8 @@ const MAX_EVENTS = 10000;
 // Configurable thresholds
 const THRESHOLDS = {
   // Registration fraud
-  maxRegistrationsPerIPPerHour: 3,
-  maxRegistrationsPerIPPerDay: 5,
+  maxRegistrationsPerIPPerHour: 10,
+  maxRegistrationsPerIPPerDay: 20,
   // Generation abuse
   maxGenerationsPerHour: 30,
   maxGenerationsPerDay: 200,

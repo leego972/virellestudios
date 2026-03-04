@@ -215,11 +215,12 @@ export default function Register() {
   }, [searchString]);
 
   const utils = trpc.useUtils();
+  const [showWelcome, setShowWelcome] = useState(false);
+
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
       utils.auth.me.invalidate();
-      toast.success("Welcome to Virelle Studios! Your account is ready.");
-      navigate("/");
+      setShowWelcome(true);
     },
     onError: (err) => {
       toast.error(err.message || "Registration failed");
@@ -296,6 +297,54 @@ export default function Register() {
       marketingOptIn,
     });
   };
+
+  if (showWelcome) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10">
+            <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-6">
+              <div className="w-20 h-20 rounded-full bg-amber-600/20 flex items-center justify-center">
+                <Check className="w-10 h-10 text-amber-500" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold text-foreground">Welcome to Virelle Studios!</h2>
+                <p className="text-muted-foreground">
+                  Your account has been created successfully. You're now part of the future of AI filmmaking.
+                </p>
+              </div>
+              <div className="w-full space-y-3 pt-2">
+                <div className="flex items-center gap-3 text-left p-3 rounded-lg bg-amber-600/5 border border-amber-500/10">
+                  <div className="w-8 h-8 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-amber-500 text-sm font-bold">1</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Create your first project and describe your film concept</p>
+                </div>
+                <div className="flex items-center gap-3 text-left p-3 rounded-lg bg-amber-600/5 border border-amber-500/10">
+                  <div className="w-8 h-8 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-amber-500 text-sm font-bold">2</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Add your API keys in Settings to unlock AI video, voice, and music</p>
+                </div>
+                <div className="flex items-center gap-3 text-left p-3 rounded-lg bg-amber-600/5 border border-amber-500/10">
+                  <div className="w-8 h-8 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-amber-500 text-sm font-bold">3</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Let the AI Director generate your screenplay, scenes, and full film</p>
+                </div>
+              </div>
+              <Button
+                onClick={() => navigate("/")}
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white text-lg py-6 mt-4"
+              >
+                Enter Your Studio
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
