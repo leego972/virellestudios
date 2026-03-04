@@ -1343,7 +1343,7 @@ Break this into 8-15 scenes. For each scene, provide:
       }))
       .mutation(async ({ ctx, input }) => {
         rateLimitHeavyAI(ctx.user.id);
-        requireFeature(ctx.user, "canUseQuickGenerate", "Full Film Generation");
+        requireFeature(ctx.user, "canUseFullFilmGeneration", "Full Film Generation");
 
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
@@ -1351,6 +1351,35 @@ Break this into 8-15 scenes. For each scene, provide:
         const characters = await db.getProjectCharacters(project.id);
         const allScenes = await db.getProjectScenes(project.id);
         if (allScenes.length === 0) throw new Error("No scenes found. Generate scenes first using Quick Generate or the Director Assistant.");
+
+        // ── Credit System: Full Film Generation ──
+        // Each scene costs credits based on complexity:
+        // - Video generation: 1 credit per scene (covers clip chaining)
+        // - Voice acting: 0.5 credits per scene with dialogue
+        // - Soundtrack: 0.5 credits per scene
+        // Total: ~2 credits per scene for a fully-featured scene
+        const scenesWithDialogueCount = allScenes.length;
+        const creditsPerScene = 2; // video + voice + music
+        const totalCreditsNeeded = scenesWithDialogueCount * creditsPerScene;
+        
+        // Check if user has enough credits for the entire film
+        const userLimits = getUserLimits(ctx.user);
+        if (userLimits.maxGenerationsPerMonth !== -1) {
+          const used = ctx.user.monthlyGenerationsUsed || 0;
+          const bonus = ctx.user.bonusGenerations || 0;
+          const totalAvailable = userLimits.maxGenerationsPerMonth + bonus;
+          const remaining = totalAvailable - used;
+          if (remaining < totalCreditsNeeded) {
+            throw new Error(
+              `GENERATION_LIMIT: Full film generation requires ${totalCreditsNeeded} credits (${scenesWithDialogueCount} scenes × ${creditsPerScene} credits/scene). You have ${remaining} credits remaining. Upgrade your plan or purchase a top-up pack.`
+            );
+          }
+        }
+
+        // Pre-deduct all credits for the film upfront
+        for (let i = 0; i < totalCreditsNeeded; i++) {
+          await db.incrementGenerationCount(ctx.user.id);
+        }
 
         // Fetch user API keys
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
@@ -3828,12 +3857,22 @@ Rules:
 
       const tier = getEffectiveTier(user);
       const limits = getUserLimits(user);
+      const used = user.monthlyGenerationsUsed || 0;
+      const bonus = user.bonusGenerations || 0;
+      const limit = limits.maxGenerationsPerMonth;
+      const totalAvailable = limit === -1 ? -1 : limit + bonus;
+      const remaining = totalAvailable === -1 ? -1 : Math.max(0, totalAvailable - used);
+
       return {
         tier,
         status: user.subscriptionStatus || "none",
         currentPeriodEnd: user.subscriptionCurrentPeriodEnd,
-        generationsUsed: user.monthlyGenerationsUsed || 0,
-        generationsLimit: limits.maxGenerationsPerMonth,
+        generationsUsed: used,
+        generationsLimit: limit,
+        bonusCredits: bonus,
+        totalAvailable,
+        generationsRemaining: remaining,
+        resetDate: user.monthlyGenerationsResetAt || null,
         limits,
         isAdmin: user.email === ENV.adminEmail || user.role === "admin",
         stripePublishableKey: ENV.stripePublishableKey,

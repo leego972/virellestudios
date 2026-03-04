@@ -128,6 +128,26 @@ async function startServer() {
           const customerId = session.customer as string;
           const userId = await resolveUserId(session.metadata, customerId);
 
+          // Check if this is a film production package purchase
+          if (session.metadata?.type === "film_production" && userId) {
+            const packageId = session.metadata.packageId;
+            // Film packages grant massive bonus credits based on package size
+            const filmPackageCredits: Record<string, number> = {
+              short_film: 200,       // 30-min film: ~100 scenes × 2 credits
+              feature_film: 400,     // 60-min film: ~200 scenes × 2 credits
+              full_feature: 600,     // 90-min film: ~300 scenes × 2 credits
+              premium_film: 1200,    // 180-min film: ~600 scenes × 2 credits
+              vfx_single: 10,        // Single VFX scene
+              vfx_pack_5: 50,        // 5 VFX scenes
+              vfx_pack_20: 200,      // 20 VFX scenes
+              vfx_unlimited: 10000,  // Unlimited VFX for a year
+            };
+            const credits = filmPackageCredits[packageId] || 100;
+            await db.addBonusGenerations(userId, credits);
+            logger.info(`Film package ${packageId} (+${credits} credits) applied for user ${userId}`);
+            break;
+          }
+
           // Check if this is a generation top-up pack purchase (one-time payment)
           if (session.metadata?.type === "generation_topup" && userId) {
             const packId = session.metadata.packId;

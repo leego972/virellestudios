@@ -1138,9 +1138,12 @@ export async function addBonusGenerations(userId: number, amount: number) {
   if (!db) throw new Error("Database not available");
   const user = await getUserById(userId);
   if (!user) return;
-  // Reduce the used count (effectively giving bonus generations)
-  const newUsed = Math.max(0, (user.monthlyGenerationsUsed || 0) - amount);
-  await db.update(users).set({ monthlyGenerationsUsed: newUsed }).where(eq(users.id, userId));
+  // Add to the bonusGenerations pool — these persist across monthly resets
+  // and are counted alongside the monthly limit when checking quota
+  const currentBonus = user.bonusGenerations || 0;
+  await db.update(users).set({ 
+    bonusGenerations: currentBonus + amount 
+  }).where(eq(users.id, userId));
 }
 
 // ─── BYOK API Key Management ───
