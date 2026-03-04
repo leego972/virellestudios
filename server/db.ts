@@ -1175,6 +1175,8 @@ export async function getUserApiKeys(userId: number): Promise<{
   falKey: string | null;
   lumaKey: string | null;
   hfToken: string | null;
+  elevenlabsKey: string | null;
+  sunoKey: string | null;
   preferredProvider: string | null;
 }> {
   const db = await getDb();
@@ -1199,6 +1201,8 @@ export async function getUserApiKeys(userId: number): Promise<{
     falKey: decode((user as any).userFalKey),
     lumaKey: decode((user as any).userLumaKey),
     hfToken: decode((user as any).userHfToken),
+    elevenlabsKey: decode((user as any).userElevenlabsKey),
+    sunoKey: decode((user as any).userSunoKey),
     preferredProvider: (user as any).preferredVideoProvider || null,
   };
 }

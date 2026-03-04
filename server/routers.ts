@@ -40,6 +40,9 @@ import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota
 import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
 import { ENV } from "./_core/env";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
+import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
+import { generateSceneDialogue, TTS_PROVIDERS, type VoiceActingKeys } from "./_core/voiceActingEngine";
+import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
 
 export const appRouter = router({
   system: systemRouter,
@@ -1067,7 +1070,7 @@ Break this into 8-15 scenes. For each scene, provide:
               console.error(`Failed to generate thumbnail for scene "${scene.title}":`, imgErr);
             }
 
-            // Step 4b: Generate video clip using BYOK (Bring Your Own Key) Video Engine
+            // Step 4b: Generate extended video scene using clip chaining (30-60s per scene)
             // Fetch user's API keys from the database
             const userKeys = await db.getUserApiKeys(ctx.user!.id);
             const byokKeys: UserApiKeys = {
@@ -1091,36 +1094,59 @@ Break this into 8-15 scenes. For each scene, provide:
               "Photorealistic, shot on ARRI Alexa, 35mm anamorphic lens, shallow depth of field, natural lighting, film grain.",
             ].filter(Boolean).join(" ");
 
-            const sceneDuration = Math.min(10, Math.max(2, Math.round((scene.duration || 10) / 3)));
+            // Use extended scene generation for longer scenes (30-60s)
+            const targetSceneDuration = Math.max(20, Math.min(90, scene.duration || 45));
 
             try {
-              const videoResult = await generateBYOKVideo(byokKeys, {
-                prompt: videoPrompt,
-                imageUrl: scene.thumbnailUrl || undefined,
-                duration: sceneDuration,
-                aspectRatio: "16:9",
-                resolution: "720p",
+              // Import and use extended scene generator for clip chaining
+              const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
+              const extResult = await generateExtendedScene(byokKeys, {
+                sceneId: scene.id,
+                projectId: project.id,
+                description: videoPrompt,
+                targetDurationSeconds: targetSceneDuration,
+                mood: scene.mood || undefined,
+                lighting: scene.lighting || undefined,
+                timeOfDay: scene.timeOfDay || undefined,
+                weather: scene.weather || undefined,
+                genre: project.genre || undefined,
+                locationDescription: scene.locationType || undefined,
+                previousSceneLastFrameUrl: sceneIdx > 0 ? (allScenes[sceneIdx - 1] as any)?.lastFrameUrl : undefined,
               });
 
               await db.updateScene(scene.id, {
-                videoUrl: videoResult.videoUrl,
-                videoJobId: videoResult.jobId || null,
+                videoUrl: extResult.videoUrl,
                 status: "completed",
               });
 
+              // Store last frame URL for continuity
+              (scene as any).lastFrameUrl = extResult.lastFrameUrl;
+
               generatedCount++;
-              console.log(`[QuickGen] Scene ${sceneIdx + 1}/${allScenes.length} video generated via ${videoResult.provider}: ${videoResult.videoUrl}`);
+              console.log(`[QuickGen] Scene ${sceneIdx + 1}/${allScenes.length} extended video generated (${extResult.totalDuration.toFixed(1)}s, ${extResult.subClipCount} clips): ${extResult.videoUrl}`);
             } catch (videoErr: any) {
-              console.error(`[QuickGen] Video generation failed for scene "${scene.title}":`, videoErr.message);
-              // Mark scene as completed (with thumbnail only) so the project doesn't get stuck
-              await db.updateScene(scene.id, { status: "completed" });
-              // Log the specific failure reason for debugging
-              if (videoErr.message.includes("insufficient pollen") || videoErr.message.includes("402")) {
-                console.log(`[QuickGen] Pollen exhausted — scene will have thumbnail only. User should wait for pollen refresh or provide own API key.`);
-              } else if (videoErr.message.includes("401") || videoErr.message.includes("invalid")) {
-                console.log(`[QuickGen] API key invalid — scene will have thumbnail only.`);
-              } else {
-                console.log(`[QuickGen] Video generation error: ${videoErr.message}. Scene will have thumbnail only.`);
+              console.error(`[QuickGen] Extended video generation failed for scene "${scene.title}":`, videoErr.message);
+              
+              // Fallback to single clip generation
+              try {
+                const sceneDuration = Math.min(10, Math.max(2, Math.round((scene.duration || 10) / 3)));
+                const videoResult = await generateBYOKVideo(byokKeys, {
+                  prompt: videoPrompt,
+                  imageUrl: scene.thumbnailUrl || undefined,
+                  duration: sceneDuration,
+                  aspectRatio: "16:9",
+                  resolution: "720p",
+                });
+                await db.updateScene(scene.id, {
+                  videoUrl: videoResult.videoUrl,
+                  videoJobId: videoResult.jobId || null,
+                  status: "completed",
+                });
+                generatedCount++;
+                console.log(`[QuickGen] Scene ${sceneIdx + 1} fallback single-clip generated via ${videoResult.provider}`);
+              } catch (fallbackErr: any) {
+                console.error(`[QuickGen] All video generation failed for scene "${scene.title}":`, fallbackErr.message);
+                await db.updateScene(scene.id, { status: "completed" });
               }
             }
           } catch (e) {
@@ -1304,6 +1330,231 @@ Break this into 8-15 scenes. For each scene, provide:
       .query(async ({ input }) => {
         return db.getProjectJobs(input.projectId);
       }),
+
+    // ── Generate Full Film (90-minute pipeline) ──
+    generateFullFilm: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        targetDurationMinutes: z.number().min(1).max(180).default(90),
+        generateDialogue: z.boolean().default(true),
+        generateSoundtrack: z.boolean().default(true),
+        useCharacterConsistency: z.boolean().default(true),
+        useSceneContinuity: z.boolean().default(true),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitHeavyAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseQuickGenerate", "Full Film Generation");
+
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new Error("Project not found");
+
+        const characters = await db.getProjectCharacters(project.id);
+        const allScenes = await db.getProjectScenes(project.id);
+        if (allScenes.length === 0) throw new Error("No scenes found. Generate scenes first using Quick Generate or the Director Assistant.");
+
+        // Fetch user API keys
+        const userKeys = await db.getUserApiKeys(ctx.user!.id);
+        const videoKeys: UserApiKeys = {
+          openaiKey: userKeys.openaiKey,
+          runwayKey: userKeys.runwayKey,
+          replicateKey: userKeys.replicateKey,
+          falKey: userKeys.falKey,
+          lumaKey: userKeys.lumaKey,
+          hfToken: userKeys.hfToken,
+          preferredProvider: userKeys.preferredProvider,
+        };
+        const voiceKeys: VoiceActingKeys = {
+          elevenlabsKey: userKeys.elevenlabsKey,
+          openaiKey: userKeys.openaiKey,
+        };
+        const musicKeys: SoundtrackKeys = {
+          sunoKey: userKeys.sunoKey,
+          replicateKey: userKeys.replicateKey,
+        };
+
+        // Create generation job
+        const job = await db.createGenerationJob({
+          projectId: project.id,
+          type: "full-film",
+          status: "processing",
+          progress: 0,
+          estimatedSeconds: input.targetDurationMinutes * 60,
+          metadata: { pipeline: "v2-full-film", targetMinutes: input.targetDurationMinutes },
+        });
+
+        await db.updateProject(project.id, ctx.user.id, { status: "generating", progress: 0 });
+
+        try {
+          // Fetch dialogue for each scene
+          const scenesWithDialogue = await Promise.all(
+            allScenes.map(async (scene) => {
+              const dialogues = await db.getSceneDialogues(scene.id);
+              return {
+                ...scene,
+                characterIds: characters.filter(c => {
+                  const desc = scene.description || "";
+                  return desc.toLowerCase().includes(c.name.toLowerCase());
+                }).map(c => c.id),
+                dialogueLines: dialogues.map((d: any) => ({
+                  characterName: d.characterName,
+                  line: d.line,
+                  emotion: d.emotion || undefined,
+                  direction: d.direction || undefined,
+                  pauseAfterMs: 800,
+                })),
+              };
+            })
+          );
+
+          const result = await generateFullFilm(
+            {
+              config: {
+                projectId: project.id,
+                targetDurationMinutes: input.targetDurationMinutes,
+                genre: project.genre || "drama",
+                mood: (project as any).tone || undefined,
+                generateDialogue: input.generateDialogue,
+                generateSoundtrack: input.generateSoundtrack,
+                useCharacterConsistency: input.useCharacterConsistency,
+                useSceneContinuity: input.useSceneContinuity,
+              },
+              videoKeys,
+              voiceKeys,
+              musicKeys,
+              project: {
+                id: project.id,
+                title: project.title,
+                plotSummary: project.plotSummary || undefined,
+                description: project.description || undefined,
+                genre: project.genre || undefined,
+                duration: project.duration || undefined,
+                rating: project.rating || undefined,
+              },
+              characters: characters.map((c: any) => ({
+                id: c.id,
+                name: c.name,
+                description: c.description,
+                gender: c.attributes?.gender || null,
+                ageRange: c.attributes?.ageRange || c.attributes?.estimatedAge || null,
+                ethnicity: c.attributes?.ethnicity || null,
+                skinTone: c.attributes?.skinTone || null,
+                build: c.attributes?.build || null,
+                height: c.attributes?.height || null,
+                hairColor: c.attributes?.hairColor || null,
+                hairStyle: c.attributes?.hairStyle || null,
+                hairLength: c.attributes?.hairLength || null,
+                eyeColor: c.attributes?.eyeColor || null,
+                faceShape: c.attributes?.faceShape || null,
+                distinguishingFeatures: c.attributes?.distinguishingFeatures || null,
+                clothing: c.attributes?.clothingStyle || null,
+                referenceImageUrl: c.photoUrl || null,
+                thumbnailUrl: c.thumbnailUrl || null,
+              })),
+              scenes: scenesWithDialogue,
+            },
+            async (progress: FilmGenerationProgress) => {
+              const pct = Math.min(95, Math.round((progress.completedScenes / Math.max(1, progress.totalScenes)) * 90) + 5);
+              await db.updateJob(job.id, {
+                progress: pct,
+                metadata: {
+                  phase: progress.phase,
+                  completedScenes: progress.completedScenes,
+                  totalScenes: progress.totalScenes,
+                  completedClips: progress.completedClips,
+                  totalClips: progress.totalClips,
+                  dialogueLinesGenerated: progress.dialogueLinesGenerated,
+                  soundtrackSegments: progress.soundtrackSegmentsGenerated,
+                  currentScene: progress.currentSceneTitle,
+                  errors: progress.errors,
+                },
+              });
+              await db.updateProject(project.id, ctx.user.id, { progress: pct });
+            }
+          );
+
+          // Update scene records with generated video URLs
+          for (const sr of result.sceneResults) {
+            if (sr.videoUrl) {
+              await db.updateScene(sr.sceneId, {
+                videoUrl: sr.videoUrl,
+                status: "completed",
+              });
+            }
+          }
+
+          // Create movie record if film was assembled
+          if (result.filmUrl) {
+            await db.createMovie({
+              userId: ctx.user.id,
+              title: project.title,
+              description: project.plotSummary || project.description || "",
+              type: "film",
+              projectId: project.id,
+              movieTitle: project.title,
+              thumbnailUrl: project.thumbnailUrl,
+              fileUrl: result.filmUrl,
+              duration: result.totalDuration,
+              mimeType: "video/mp4",
+              tags: project.genre ? [project.genre] : [],
+            });
+          }
+
+          await db.updateJob(job.id, { status: "completed", progress: 100 });
+          await db.updateProject(project.id, ctx.user.id, { status: "completed", progress: 100 });
+
+          return {
+            jobId: job.id,
+            filmUrl: result.filmUrl,
+            totalDuration: result.totalDuration,
+            scenesGenerated: result.sceneResults.filter(r => r.success).length,
+            totalScenes: result.sceneResults.length,
+            stats: result.stats,
+          };
+        } catch (error: any) {
+          console.error("generateFullFilm failed:", error);
+          await db.updateJob(job.id, { status: "failed", progress: 0 });
+          await db.updateProject(project.id, ctx.user.id, { status: "draft", progress: 0 });
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Full film generation failed: ${error.message}` });
+        }
+      }),
+
+    // ── Estimate film generation cost ──
+    estimateFilmCost: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        targetDurationMinutes: z.number().min(1).max(180).default(90),
+      }))
+      .query(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new Error("Project not found");
+
+        const scenes = await db.getProjectScenes(project.id);
+        let totalDialogueLines = 0;
+        for (const scene of scenes) {
+          const dialogues = await db.getSceneDialogues(scene.id);
+          totalDialogueLines += dialogues.length;
+        }
+
+        const userKeys = await db.getUserApiKeys(ctx.user!.id);
+        const videoProvider = userKeys.preferredProvider || (userKeys.openaiKey ? "openai" : userKeys.runwayKey ? "runway" : "pollinations");
+        const voiceProvider = userKeys.elevenlabsKey ? "elevenlabs" : userKeys.openaiKey ? "openai" : "pollinations";
+        const musicProvider = userKeys.sunoKey ? "suno" : userKeys.replicateKey ? "replicate" : "pollinations";
+
+        return estimateFilmCost(input.targetDurationMinutes, {
+          videoProvider,
+          voiceProvider,
+          musicProvider,
+          dialogueLineCount: totalDialogueLines,
+        });
+      }),
+
+    // ── Get available TTS and music providers ──
+    getAudioProviders: protectedProcedure.query(async () => {
+      return {
+        ttsProviders: TTS_PROVIDERS,
+        musicProviders: MUSIC_PROVIDERS,
+      };
+    }),
 
     // Pause/resume generation
     pauseJob: protectedProcedure
@@ -3669,7 +3920,7 @@ Rules:
 
     // Get pricing info (public)
     pricing: publicProcedure.query(async () => {
-      const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS } = await import("./_core/subscription");
+      const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS, FILM_PACKAGES, VFX_SCENE_PACKAGES, EXTENSION_PRICING, LAUNCH_SPECIAL_ACTIVE } = await import("./_core/subscription");
       return {
         tiers: [
           {
@@ -3680,17 +3931,16 @@ Rules:
             annualTotal: 0,
             priceLabel: "$0",
             interval: "forever",
-            description: "Get started with basic film creation",
+            description: "Preview the platform — limited demo access",
             limits: TIER_LIMITS.free,
             highlights: [
-              "2 projects",
-              "5 AI generations/month",
+              "1 demo project",
+              "3 AI generations/month",
               "5 scenes per project",
-              "3 characters per project",
-              "720p resolution",
-              "1 movie export",
+              "720p preview resolution",
               "Script writer & storyboard",
               "AI character generation",
+              "No film export",
             ],
           },
           {
@@ -3699,25 +3949,23 @@ Rules:
             monthlyPrice: TIER_PRICING.creator.monthly,
             annualPrice: TIER_PRICING.creator.annual,
             annualTotal: TIER_PRICING.creator.annualTotal,
-            priceLabel: "$29",
+            priceLabel: "$2,500",
             interval: "month",
-            description: "Essential tools for indie filmmakers",
+            description: "Short films up to 30 minutes — full production pipeline",
             limits: TIER_LIMITS.creator,
-            trial: true,
             highlights: [
-              "5 projects",
-              "30 AI generations/month",
-              "15 scenes per project",
-              "10 characters per project",
-              "1080p HD resolution",
-              "5 movie exports",
+              "10 projects",
+              "100 AI generations/month",
+              "40 scenes per project",
+              "20 characters per project",
+              "1080p Full HD",
+              "AI voice acting & soundtrack",
+              "Character consistency",
+              "Scene-to-scene continuity",
               "Director AI assistant",
-              "Trailer generation",
-              "Sound effects & color grading",
-              "Dialogue editor & subtitles",
-              "Mood board & shot list",
-              "Collaboration (2 members)",
-              "7-day free trial",
+              "All production tools",
+              "5 team members",
+              "Up to 30-minute films",
             ],
           },
           {
@@ -3726,27 +3974,24 @@ Rules:
             monthlyPrice: TIER_PRICING.pro.monthly,
             annualPrice: TIER_PRICING.pro.annual,
             annualTotal: TIER_PRICING.pro.annualTotal,
-            priceLabel: "$99",
+            priceLabel: "$5,000",
             interval: "month",
-            description: "Full creative toolkit for serious filmmakers",
+            description: "Feature-length films up to 90 minutes — complete studio",
             limits: TIER_LIMITS.pro,
             popular: true,
-            trial: true,
             highlights: [
-              "25 projects",
-              "200 AI generations/month",
-              "50 scenes per project",
-              "30 characters per project",
-              "1080p HD resolution",
-              "All creative tools",
-              "Director AI assistant",
-              "Trailer generation",
-              "Script writer & dialogue editor",
-              "Sound & visual effects",
-              "Location scout & continuity check",
-              "Budget estimator & ad maker",
-              "Collaboration (5 members)",
-              "7-day free trial",
+              "50 projects",
+              "500 AI generations/month",
+              "90 scenes per project",
+              "50 characters per project",
+              "1080p + 4K UHD",
+              "Everything in Creator",
+              "VFX Scene Studio",
+              "Bulk generation",
+              "Ultra quality exports",
+              "15 team members",
+              "Up to 90-minute films",
+              "Most popular for studios",
             ],
           },
           {
@@ -3755,28 +4000,57 @@ Rules:
             monthlyPrice: TIER_PRICING.industry.monthly,
             annualPrice: TIER_PRICING.industry.annual,
             annualTotal: TIER_PRICING.industry.annualTotal,
-            priceLabel: "$499",
+            priceLabel: "$10,000",
             interval: "month",
-            description: "Unlimited power for studios and production houses",
+            description: "Unlimited production for studios and production houses",
             limits: TIER_LIMITS.industry,
             highlights: [
-              "Unlimited projects",
+              "Unlimited everything",
               "Unlimited AI generations",
               "Unlimited scenes & characters",
-              "4K Ultra HD resolution",
-              "All Pro features",
-              "Ultra quality exports",
-              "Unlimited collaborators",
-              "Unlimited movie exports",
-              "Priority support",
-              "180 min max duration",
+              "4K Ultra HD + ProRes",
+              "Everything in Pro",
+              "White-label exports",
+              "API access",
+              "Unlimited team members",
+              "Up to 180-minute films",
+              "Priority rendering",
+              "Dedicated support",
+              "Custom model fine-tuning",
             ],
           },
         ],
+        filmPackages: FILM_PACKAGES,
+        vfxScenePackages: VFX_SCENE_PACKAGES,
+        extensionPricing: EXTENSION_PRICING,
+        launchSpecialActive: LAUNCH_SPECIAL_ACTIVE,
         topUpPacks: TOP_UP_PACKS,
         referralRewards: REFERRAL_REWARDS,
       };
     }),
+
+    // Create a Stripe checkout for film production package
+    createFilmPackageCheckout: protectedProcedure
+      .input(z.object({
+        packageId: z.string(),
+        useLaunchPrice: z.boolean().default(true),
+        successUrl: z.string().url(),
+        cancelUrl: z.string().url(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { createFilmPackageCheckoutSession } = await import("./_core/subscription");
+        const customerId = await getOrCreateStripeCustomer(ctx.user);
+        await db.updateUserSubscription(ctx.user.id, { stripeCustomerId: customerId });
+        const url = await createFilmPackageCheckoutSession(
+          ctx.user,
+          customerId,
+          input.packageId,
+          input.useLaunchPrice,
+          input.successUrl,
+          input.cancelUrl,
+        );
+        return { url };
+      }),
   }),
 
   // ============================================================
@@ -4137,6 +4411,8 @@ Rules:
           fal: !!u.userFalKey,
           luma: !!u.userLumaKey,
           huggingface: !!u.userHfToken,
+          elevenlabs: !!u.userElevenlabsKey,
+          suno: !!u.userSunoKey,
         },
         preferredVideoProvider: u.preferredVideoProvider || null,
         apiKeysUpdatedAt: u.apiKeysUpdatedAt || null,
@@ -4193,7 +4469,7 @@ Rules:
     // Save an API key for a specific provider
     saveApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno"]),
         key: z.string().min(1).max(500),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -4213,6 +4489,8 @@ Rules:
           fal: "userFalKey",
           luma: "userLumaKey",
           huggingface: "userHfToken",
+          elevenlabs: "userElevenlabsKey",
+          suno: "userSunoKey",
         };
 
         const column = columnMap[provider];
@@ -4229,7 +4507,7 @@ Rules:
     // Remove an API key
     removeApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno"]),
       }))
       .mutation(async ({ ctx, input }) => {
         const columnMap: Record<string, string> = {
@@ -4239,6 +4517,8 @@ Rules:
           fal: "userFalKey",
           luma: "userLumaKey",
           huggingface: "userHfToken",
+          elevenlabs: "userElevenlabsKey",
+          suno: "userSunoKey",
         };
 
         const column = columnMap[input.provider];
@@ -4262,7 +4542,7 @@ Rules:
     // Test an API key to verify it works
     testApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno"]),
         key: z.string().min(1),
       }))
       .mutation(async ({ input }) => {
@@ -4308,6 +4588,18 @@ Rules:
               });
               if (resp.ok) return { valid: true, message: "Hugging Face token is valid" };
               return { valid: false, message: `Hugging Face returned ${resp.status}` };
+            }
+            case "elevenlabs": {
+              const resp = await fetch("https://api.elevenlabs.io/v1/user", {
+                headers: { "xi-api-key": key },
+              });
+              if (resp.ok) return { valid: true, message: "ElevenLabs key is valid" };
+              return { valid: false, message: `ElevenLabs returned ${resp.status}` };
+            }
+            case "suno": {
+              // Suno doesn't have a simple validation endpoint
+              if (key.length > 10) return { valid: true, message: "Suno key format accepted (will be verified on first use)" };
+              return { valid: false, message: "Suno key appears too short" };
             }
             default:
               return { valid: false, message: "Unknown provider" };

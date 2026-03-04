@@ -334,8 +334,18 @@ function DashboardLayoutContent({
             )}
           </div>
         )}
-        <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
-          <div className="flex-1">{children}</div>
+        <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
+          {/* Gold VS watermark branding */}
+          <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0" style={{ marginLeft: 'var(--sidebar-width, 0px)' }}>
+            <img
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663313597286/dwVZvrRZfbSYrwld.png"
+              alt=""
+              className="w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.04]"
+              style={{ filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg)" }}
+              draggable={false}
+            />
+          </div>
+          <div className="flex-1 relative z-10">{children}</div>
           <LeegoFooter />
         </main>
       </SidebarInset>

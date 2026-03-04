@@ -29,6 +29,8 @@ export const users = mysqlTable("users", {
   userFalKey: text("userFalKey"),             // fal.ai API key (HunyuanVideo, Veo3, etc.)
   userLumaKey: text("userLumaKey"),           // Luma AI API key (Dream Machine video)
   userHfToken: text("userHfToken"),           // Hugging Face token (free inference API)
+  userElevenlabsKey: text("userElevenlabsKey"), // ElevenLabs API key (AI voice acting)
+  userSunoKey: text("userSunoKey"),             // Suno AI API key (AI soundtrack generation)
   preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface
   apiKeysUpdatedAt: timestamp("apiKeysUpdatedAt"),
   // ─── Profile & Business Details ───
