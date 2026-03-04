@@ -143,6 +143,9 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "userHfToken", definition: "TEXT NULL" },
     { table: "users", column: "preferredVideoProvider", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "apiKeysUpdatedAt", definition: "TIMESTAMP NULL" },
+    // Users table - BYOK for voice acting and soundtrack
+    { table: "users", column: "elevenLabsApiKey", definition: "TEXT NULL" },
+    { table: "users", column: "sunoApiKey", definition: "TEXT NULL" },
     // Users table - profile/onboarding fields (sign-up flow)
     { table: "users", column: "phone", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "avatarUrl", definition: "TEXT NULL" },

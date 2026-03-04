@@ -3849,11 +3849,21 @@ Rules:
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Resolve the correct Stripe price ID based on tier + billing interval
+        // Resolve the correct Stripe price ID — check ENV first, then auto-provisioned IDs
+        const { getStripePriceId } = await import("./_core/stripeProvisioning");
         const priceMap: Record<string, Record<string, string>> = {
-          creator: { monthly: ENV.stripeCreatorMonthlyPriceId, annual: ENV.stripeCreatorAnnualPriceId },
-          pro: { monthly: ENV.stripeProPriceId || ENV.stripeProMonthlyPriceId, annual: ENV.stripeProAnnualPriceId },
-          industry: { monthly: ENV.stripeIndustryPriceId || ENV.stripeIndustryMonthlyPriceId, annual: ENV.stripeIndustryAnnualPriceId },
+          creator: {
+            monthly: ENV.stripeCreatorMonthlyPriceId || getStripePriceId("creator_monthly"),
+            annual: ENV.stripeCreatorAnnualPriceId || getStripePriceId("creator_annual"),
+          },
+          pro: {
+            monthly: ENV.stripeProPriceId || ENV.stripeProMonthlyPriceId || getStripePriceId("pro_monthly"),
+            annual: ENV.stripeProAnnualPriceId || getStripePriceId("pro_annual"),
+          },
+          industry: {
+            monthly: ENV.stripeIndustryPriceId || ENV.stripeIndustryMonthlyPriceId || getStripePriceId("industry_monthly"),
+            annual: ENV.stripeIndustryAnnualPriceId || getStripePriceId("industry_annual"),
+          },
         };
         const priceId = priceMap[input.tier]?.[input.billing];
         if (!priceId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Stripe price not configured for ${input.tier} ${input.billing}` });
@@ -3885,10 +3895,11 @@ Rules:
       }))
       .mutation(async ({ ctx, input }) => {
         const { createTopUpCheckoutSession } = await import("./_core/subscription");
+        const { getStripePriceId: getProvisionedId } = await import("./_core/stripeProvisioning");
         const packPriceMap: Record<string, string> = {
-          topup_10: ENV.stripeTopUp10PriceId,
-          topup_30: ENV.stripeTopUp30PriceId,
-          topup_100: ENV.stripeTopUp100PriceId,
+          topup_10: ENV.stripeTopUp10PriceId || getProvisionedId("topup_10"),
+          topup_30: ENV.stripeTopUp30PriceId || getProvisionedId("topup_30"),
+          topup_100: ENV.stripeTopUp100PriceId || getProvisionedId("topup_100"),
         };
         const priceId = packPriceMap[input.packId];
         if (!priceId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Top-up pack price not configured" });

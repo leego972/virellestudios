@@ -15,6 +15,7 @@ import { trackPaymentFailure } from "./securityEngine";
 import { startBlogScheduler } from "./blogEngine";
 import { startAdScheduler } from "./advertisingEngine";
 import { runAutoMigration } from "./autoMigrate";
+import { runStripeProvisioning } from "./stripeProvisioning";
 
 const startedAt = new Date();
 
@@ -72,6 +73,14 @@ async function startServer() {
   } catch (err: any) {
     console.error("[AutoMigrate] Migration failed:", err.message);
     // Continue starting — the server may still work with existing schema
+  }
+
+  // Auto-provision Stripe products and prices on startup
+  try {
+    await runStripeProvisioning();
+  } catch (err: any) {
+    console.error("[StripeProvisioning] Failed:", err.message);
+    // Continue starting — existing price IDs from ENV will still work
   }
 
   const app = express();
