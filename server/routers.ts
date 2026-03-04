@@ -1112,11 +1112,16 @@ Break this into 8-15 scenes. For each scene, provide:
               console.log(`[QuickGen] Scene ${sceneIdx + 1}/${allScenes.length} video generated via ${videoResult.provider}: ${videoResult.videoUrl}`);
             } catch (videoErr: any) {
               console.error(`[QuickGen] Video generation failed for scene "${scene.title}":`, videoErr.message);
-              if (videoErr.message.startsWith("NO_API_KEY")) {
-                // No API keys configured — mark scene as completed with thumbnail only
-                console.log(`[QuickGen] No video API keys configured. Scene will have thumbnail only.`);
-              }
+              // Mark scene as completed (with thumbnail only) so the project doesn't get stuck
               await db.updateScene(scene.id, { status: "completed" });
+              // Log the specific failure reason for debugging
+              if (videoErr.message.includes("insufficient pollen") || videoErr.message.includes("402")) {
+                console.log(`[QuickGen] Pollen exhausted — scene will have thumbnail only. User should wait for pollen refresh or provide own API key.`);
+              } else if (videoErr.message.includes("401") || videoErr.message.includes("invalid")) {
+                console.log(`[QuickGen] API key invalid — scene will have thumbnail only.`);
+              } else {
+                console.log(`[QuickGen] Video generation error: ${videoErr.message}. Scene will have thumbnail only.`);
+              }
             }
           } catch (e) {
             console.error(`Failed to process scene "${scene.title}":`, e);

@@ -1,18 +1,17 @@
 /**
  * BYOK (Bring Your Own Key) Video Engine
  * 
- * Supports ALL major video generation APIs:
- * - Runway ML (Gen-3, Gen-4) — key starts with "key_"
- * - OpenAI Sora — key starts with "sk-"
- * - Replicate (Wan2.1, etc.) — key starts with "r8_"
- * - fal.ai (HunyuanVideo, Veo3, LTX-Video) — key starts with various
- * - Luma AI (Dream Machine) — key starts with "luma-"
- * - Hugging Face (free inference API) — key starts with "hf_"
- * - Pollinations.ai (FREE, no user key needed) — platform key
+ * Provider Priority:
+ * 1. Pollinations.ai (grok-video) — ALWAYS the default for free users
+ * 2. User-provided keys (Runway, Sora, Replicate, fal, Luma, HuggingFace) — ONLY when user explicitly provides their own key
  * 
- * Each provider has its own generate function.
- * The engine selects the provider based on user preference or available keys.
- * If NO keys are configured, Pollinations is used as the free fallback.
+ * Platform-level Runway/OpenAI keys are NEVER used for video generation automatically.
+ * They are reserved for other purposes (LLM scene breakdown, etc.).
+ * 
+ * Pollinations Key Rotation:
+ * - Multiple API keys are rotated round-robin to spread pollen usage
+ * - Pollen balance is checked before generation to avoid silent failures
+ * - If one key is exhausted, the next key in the pool is tried
  */
 
 import { ENV } from "./env";
@@ -47,42 +46,82 @@ export interface VideoGenerationResult {
   thumbnailUrl?: string;
 }
 
+// ─── Pollinations Key Rotation Pool ───
+
+const POLLINATIONS_KEY_POOL: string[] = [
+  ENV.pollinationsApiKey || "sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP",
+  "sk_FNPdDzSn5ue5VQnUJrBeY7wF2m6nI0ht",
+].filter(k => k && k.length > 0);
+
+let pollinationsKeyIndex = 0;
+
+function getNextPollinationsKey(): string {
+  if (POLLINATIONS_KEY_POOL.length === 0) return "";
+  const key = POLLINATIONS_KEY_POOL[pollinationsKeyIndex % POLLINATIONS_KEY_POOL.length];
+  pollinationsKeyIndex++;
+  return key;
+}
+
+// Check pollen balance for a given key
+async function checkPollenBalance(apiKey: string): Promise<{ balance: number; sufficient: boolean }> {
+  try {
+    const resp = await fetch("https://api.pollinations.ai/v1/profile", {
+      headers: { "Authorization": `Bearer ${apiKey}` },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!resp.ok) return { balance: 0, sufficient: false };
+    const data = await resp.json() as any;
+    const balance = data.pollen?.total ?? data.balance ?? 0;
+    // grok-video costs roughly 0.5 pollen per generation
+    return { balance, sufficient: balance >= 0.3 };
+  } catch {
+    // If we can't check, assume it's fine and let the generation attempt handle errors
+    return { balance: -1, sufficient: true };
+  }
+}
+
 // ─── Provider Detection ───
 
 function getAvailableProviders(keys: UserApiKeys): VideoProvider[] {
   const providers: VideoProvider[] = [];
+  // Only add paid providers if user explicitly provides their own key
   if (keys.runwayKey) providers.push("runway");
   if (keys.openaiKey) providers.push("openai");
   if (keys.replicateKey) providers.push("replicate");
   if (keys.falKey) providers.push("fal");
   if (keys.lumaKey) providers.push("luma");
   if (keys.hfToken) providers.push("huggingface");
-  // Pollinations is ALWAYS available as the free fallback
+  // Pollinations is ALWAYS available as the primary free provider
   providers.push("pollinations");
   return providers;
 }
 
 function selectProvider(keys: UserApiKeys): VideoProvider {
-  // Use preferred provider if key is available
+  // If user explicitly set a preferred provider AND provided their own key for it, use it
   if (keys.preferredProvider) {
     const pref = keys.preferredProvider as VideoProvider;
-    if (pref === "pollinations") return "pollinations"; // Always available
-    const available = getAvailableProviders(keys);
-    if (available.includes(pref)) return pref;
+    if (pref === "pollinations") return "pollinations";
+    // Only use paid providers if user provided their OWN key (not platform keys)
+    const hasOwnKey = (
+      (pref === "runway" && keys.runwayKey) ||
+      (pref === "openai" && keys.openaiKey) ||
+      (pref === "replicate" && keys.replicateKey) ||
+      (pref === "fal" && keys.falKey) ||
+      (pref === "luma" && keys.lumaKey) ||
+      (pref === "huggingface" && keys.hfToken)
+    );
+    if (hasOwnKey) return pref;
   }
 
-  // Check for platform-level keys (Runway, OpenAI) as first priority
-  if (keys.runwayKey || ENV.runwayApiKey) return "runway";
-  if (keys.openaiKey || ENV.openaiApiKey) return "openai";
+  // Check if user provided ANY of their own paid keys (in priority order)
+  if (keys.runwayKey) return "runway";
+  if (keys.openaiKey) return "openai";
+  if (keys.falKey) return "fal";
+  if (keys.replicateKey) return "replicate";
+  if (keys.lumaKey) return "luma";
+  if (keys.hfToken) return "huggingface";
 
-  // Then user BYOK keys in priority order
-  const priority: VideoProvider[] = ["fal", "replicate", "luma", "huggingface"];
-  const available = getAvailableProviders(keys);
-  for (const p of priority) {
-    if (available.includes(p) && p !== "pollinations") return p;
-  }
-
-  // Ultimate fallback: Pollinations (always free, always available)
+  // DEFAULT: Always use Pollinations (free) when user has no keys
   return "pollinations";
 }
 
@@ -301,7 +340,7 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
 
   const submitData = await submitResp.json() as any;
   const requestId = submitData.request_id;
-  console.log(`[BYOK:fal.ai] Job submitted: ${requestId}`);
+  console.log(`[BYOK:fal] Request submitted: ${requestId}`);
 
   const maxWait = 600000;
   const startTime = Date.now();
@@ -325,9 +364,9 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
     if (statusData.status === "FAILED") {
       throw new Error(`fal.ai failed: ${statusData.error || "Unknown"}`);
     }
-    console.log(`[BYOK:fal.ai] Job ${requestId} status: ${statusData.status}`);
+    console.log(`[BYOK:fal] Request ${requestId} status: ${statusData.status}`);
   }
-  throw new Error("fal.ai job timed out");
+  throw new Error("fal.ai request timed out");
 }
 
 // ─── Luma AI ───
@@ -340,9 +379,7 @@ async function generateWithLuma(key: string, req: VideoGenerationRequest): Promi
   };
 
   if (req.imageUrl) {
-    body.keyframes = {
-      frame0: { type: "image", url: req.imageUrl },
-    };
+    body.keyframes = { frame0: { type: "image", url: req.imageUrl } };
   }
 
   const createResp = await fetch("https://api.lumalabs.ai/dream-machine/v1/generations", {
@@ -356,48 +393,48 @@ async function generateWithLuma(key: string, req: VideoGenerationRequest): Promi
 
   if (!createResp.ok) {
     const errText = await createResp.text();
-    throw new Error(`Luma AI error ${createResp.status}: ${errText}`);
+    throw new Error(`Luma API error ${createResp.status}: ${errText}`);
   }
 
-  const generation = await createResp.json() as any;
-  console.log(`[BYOK:Luma] Generation created: ${generation.id}`);
+  const createData = await createResp.json() as any;
+  const genId = createData.id;
+  console.log(`[BYOK:Luma] Generation created: ${genId}`);
 
   const maxWait = 600000;
   const startTime = Date.now();
   while (Date.now() - startTime < maxWait) {
     await new Promise(r => setTimeout(r, 5000));
 
-    const pollResp = await fetch(`https://api.lumalabs.ai/dream-machine/v1/generations/${generation.id}`, {
+    const pollResp = await fetch(`https://api.lumalabs.ai/dream-machine/v1/generations/${genId}`, {
       headers: { "Authorization": `Bearer ${key}` },
     });
     const data = await pollResp.json() as any;
 
     if (data.state === "completed") {
       const videoUrl = data.assets?.video;
-      if (!videoUrl) throw new Error("Luma completed but no video URL");
-      return { provider: "luma", videoUrl, jobId: generation.id, durationSeconds: 5 };
+      if (!videoUrl) throw new Error("Luma completed but no video URL found");
+      return { provider: "luma", videoUrl, jobId: genId, durationSeconds: req.duration || 5 };
     }
     if (data.state === "failed") {
       throw new Error(`Luma failed: ${data.failure_reason || "Unknown"}`);
     }
-    console.log(`[BYOK:Luma] Generation ${generation.id} state: ${data.state}`);
+    console.log(`[BYOK:Luma] Generation ${genId} state: ${data.state}`);
   }
   throw new Error("Luma generation timed out");
 }
 
-// ─── Hugging Face (Free Tier) ───
+// ─── Hugging Face ───
 
 async function generateWithHuggingFace(token: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
-  const model = "Lightricks/LTX-Video-0.9.8-13B-distilled";
-
-  const headers: any = {
+  const model = "ali-vilab/text-to-video-ms-1.7b";
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
   if (token && token !== "free") {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const payload: any = {
+  const payload = {
     inputs: req.prompt,
     parameters: {
       num_frames: Math.min((req.duration || 5) * 8, 65),
@@ -433,14 +470,14 @@ async function generateWithHuggingFace(token: string, req: VideoGenerationReques
   throw new Error("HuggingFace did not return video data");
 }
 
-// ─── Pollinations.ai (FREE — No User Key Needed) ───
+// ─── Pollinations.ai (FREE — Primary Provider for All Users) ───
 
 async function generateWithPollinations(apiKey: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
-  // Pollinations supports multiple free video models
-  // Priority: seedance (best free), grok-video (alpha/free), wan (paid), ltx-2 (paid)
-  const freeModels = ["seedance", "grok-video"];
+  // grok-video is the ONLY free video model on Pollinations (available with daily pollen grant)
+  // Other models (seedance, wan, veo, ltx-2) are PAID ONLY
+  const freeModels = ["grok-video"];
   
-  const duration = Math.min(req.duration || 4, 8); // Pollinations max ~8s
+  const duration = Math.min(req.duration || 4, 8); // Pollinations max ~8s per clip
   const encodedPrompt = encodeURIComponent(req.prompt);
   
   // Build query params
@@ -457,75 +494,103 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
     params.set("height", "480");
   }
 
-  // Try each free model until one works
+  // Try each key in the rotation pool
+  const keysToTry = apiKey ? [apiKey] : POLLINATIONS_KEY_POOL.slice();
+  
   for (const model of freeModels) {
-    try {
-      console.log(`[BYOK:Pollinations] Trying model: ${model}`);
-      params.set("model", model);
-      
-      const url = `https://gen.pollinations.ai/video/${encodedPrompt}?${params.toString()}`;
-      
-      const headers: Record<string, string> = {};
-      if (apiKey) {
-        headers["Authorization"] = `Bearer ${apiKey}`;
-      }
-      
-      const resp = await fetch(url, {
-        method: "GET",
-        headers,
-        // Pollinations can take a while for video generation
-        signal: AbortSignal.timeout(300000), // 5 minute timeout
-      });
-
-      if (!resp.ok) {
-        const errText = await resp.text().catch(() => "Unknown error");
-        console.log(`[BYOK:Pollinations] Model ${model} failed (${resp.status}): ${errText}`);
-        continue; // Try next model
-      }
-
-      const contentType = resp.headers.get("content-type") || "";
-      
-      // Check if we got a redirect URL or direct video
-      if (contentType.includes("video") || contentType.includes("octet-stream")) {
-        // Direct video binary response
-        const videoBuffer = Buffer.from(await resp.arrayBuffer());
-        if (videoBuffer.length < 1000) {
-          console.log(`[BYOK:Pollinations] Model ${model} returned too-small response, skipping`);
+    for (const currentKey of keysToTry) {
+      try {
+        // Check pollen balance before attempting generation
+        const { balance, sufficient } = await checkPollenBalance(currentKey);
+        if (!sufficient && balance >= 0) {
+          console.log(`[BYOK:Pollinations] Key ${currentKey.slice(0, 8)}... has insufficient pollen (${balance}), trying next key`);
           continue;
         }
-        const { uploadBufferToS3 } = await import("./s3Upload");
-        const videoUrl = await uploadBufferToS3(videoBuffer, `pollinations-${model}-${Date.now()}.mp4`, "video/mp4");
-        console.log(`[BYOK:Pollinations] Video generated successfully with ${model}`);
-        return { provider: "pollinations", videoUrl, durationSeconds: duration };
-      }
-      
-      // Some models return a JSON with a URL
-      if (contentType.includes("json")) {
-        const data = await resp.json() as any;
-        if (data.url || data.video_url || data.output) {
-          const videoUrl = data.url || data.video_url || data.output;
-          console.log(`[BYOK:Pollinations] Video URL received from ${model}: ${videoUrl}`);
+
+        console.log(`[BYOK:Pollinations] Trying model: ${model} with key ${currentKey.slice(0, 8)}... (balance: ${balance})`);
+        params.set("model", model);
+        
+        // CORRECT API URL: /image/{prompt} with model parameter, NOT /video/
+        const url = `https://gen.pollinations.ai/image/${encodedPrompt}?${params.toString()}`;
+        
+        const headers: Record<string, string> = {};
+        if (currentKey) {
+          headers["Authorization"] = `Bearer ${currentKey}`;
+        }
+        
+        const resp = await fetch(url, {
+          method: "GET",
+          headers,
+          // Pollinations can take a while for video generation
+          signal: AbortSignal.timeout(300000), // 5 minute timeout
+        });
+
+        if (resp.status === 402) {
+          console.log(`[BYOK:Pollinations] Key ${currentKey.slice(0, 8)}... has insufficient pollen (402), trying next key`);
+          continue; // Try next key
+        }
+
+        if (resp.status === 401) {
+          console.log(`[BYOK:Pollinations] Key ${currentKey.slice(0, 8)}... is invalid (401), trying next key`);
+          continue; // Try next key
+        }
+
+        if (!resp.ok) {
+          const errText = await resp.text().catch(() => "Unknown error");
+          console.log(`[BYOK:Pollinations] Model ${model} failed (${resp.status}): ${errText}`);
+          continue; // Try next model/key
+        }
+
+        const contentType = resp.headers.get("content-type") || "";
+        
+        // Check if we got a redirect URL or direct video
+        if (contentType.includes("video") || contentType.includes("octet-stream")) {
+          // Direct video binary response
+          const videoBuffer = Buffer.from(await resp.arrayBuffer());
+          if (videoBuffer.length < 1000) {
+            console.log(`[BYOK:Pollinations] Model ${model} returned too-small response (${videoBuffer.length} bytes), skipping`);
+            continue;
+          }
+          const { uploadBufferToS3 } = await import("./s3Upload");
+          const videoUrl = await uploadBufferToS3(videoBuffer, `pollinations-${model}-${Date.now()}.mp4`, "video/mp4");
+          console.log(`[BYOK:Pollinations] Video generated successfully with ${model} (${videoBuffer.length} bytes)`);
           return { provider: "pollinations", videoUrl, durationSeconds: duration };
         }
-      }
+        
+        // Some models return a JSON with a URL
+        if (contentType.includes("json")) {
+          const data = await resp.json() as any;
+          if (data.url || data.video_url || data.output) {
+            const videoUrl = data.url || data.video_url || data.output;
+            console.log(`[BYOK:Pollinations] Video URL received from ${model}: ${videoUrl}`);
+            return { provider: "pollinations", videoUrl, durationSeconds: duration };
+          }
+        }
 
-      // If the response URL itself is the video (redirect)
-      if (resp.url && resp.url !== url) {
-        console.log(`[BYOK:Pollinations] Redirected to video URL: ${resp.url}`);
-        return { provider: "pollinations", videoUrl: resp.url, durationSeconds: duration };
-      }
+        // If the response URL itself is the video (redirect)
+        if (resp.url && resp.url !== url) {
+          console.log(`[BYOK:Pollinations] Redirected to video URL: ${resp.url}`);
+          return { provider: "pollinations", videoUrl: resp.url, durationSeconds: duration };
+        }
 
-      console.log(`[BYOK:Pollinations] Model ${model} returned unexpected content-type: ${contentType}`);
-    } catch (err: any) {
-      if (err.name === "TimeoutError" || err.name === "AbortError") {
-        console.log(`[BYOK:Pollinations] Model ${model} timed out`);
-      } else {
-        console.log(`[BYOK:Pollinations] Model ${model} error: ${err.message}`);
+        console.log(`[BYOK:Pollinations] Model ${model} returned unexpected content-type: ${contentType}`);
+      } catch (err: any) {
+        if (err.name === "TimeoutError" || err.name === "AbortError") {
+          console.log(`[BYOK:Pollinations] Model ${model} timed out with key ${currentKey.slice(0, 8)}...`);
+        } else {
+          console.log(`[BYOK:Pollinations] Model ${model} error with key ${currentKey.slice(0, 8)}...: ${err.message}`);
+        }
       }
     }
   }
 
-  throw new Error("Pollinations: All free video models failed. The service may be temporarily unavailable.");
+  throw new Error(
+    "Video generation failed: All Pollinations API keys have insufficient pollen balance. " +
+    "Pollen refreshes weekly on Monday. To generate videos now, you can: " +
+    "(1) Wait for your pollen to refresh, " +
+    "(2) Purchase pollen at enter.pollinations.ai, or " +
+    "(3) Provide your own Runway/Sora API key in Settings for premium video generation."
+  );
 }
 
 // ─── Main Entry Point ───
@@ -536,17 +601,18 @@ export async function generateVideo(
 ): Promise<VideoGenerationResult> {
   const provider = selectProvider(keys);
 
-  console.log(`[BYOK] Using provider: ${provider}`);
+  console.log(`[BYOK] Selected provider: ${provider}`);
 
-  // Build the key map, merging user keys with platform-level keys
+  // Build the key map — ONLY use user-provided keys for paid providers
+  // Platform-level Runway/OpenAI keys are NOT used for video generation
   const keyMap: Record<VideoProvider, string | null | undefined> = {
-    runway: keys.runwayKey || ENV.runwayApiKey || null,
-    openai: keys.openaiKey || ENV.openaiApiKey || null,
+    runway: keys.runwayKey || null,       // User's own key ONLY
+    openai: keys.openaiKey || null,       // User's own key ONLY
     replicate: keys.replicateKey || null,
     fal: keys.falKey || null,
     luma: keys.lumaKey || null,
     huggingface: keys.hfToken || "free",
-    pollinations: ENV.pollinationsApiKey || "",
+    pollinations: getNextPollinationsKey(),
   };
 
   const providerFunctions: Record<VideoProvider, (key: string, req: VideoGenerationRequest) => Promise<VideoGenerationResult>> = {
@@ -562,9 +628,9 @@ export async function generateVideo(
   const key = keyMap[provider];
   if (!key && provider !== "pollinations") {
     // If no key for selected provider, fall back to Pollinations
-    console.log(`[BYOK] No key for ${provider}, falling back to Pollinations (free)`);
+    console.log(`[BYOK] No user key for ${provider}, falling back to Pollinations (free)`);
     try {
-      return await generateWithPollinations(ENV.pollinationsApiKey || "", req);
+      return await generateWithPollinations(getNextPollinationsKey(), req);
     } catch (err: any) {
       throw new Error(`Video generation failed. No API key for ${provider} and Pollinations fallback failed: ${err.message}`);
     }
@@ -575,20 +641,21 @@ export async function generateVideo(
   } catch (err: any) {
     console.error(`[BYOK:${provider}] Failed:`, err.message);
 
-    // Try fallback providers (user keys first, then platform keys, then Pollinations)
-    const available = getAvailableProviders(keys).filter(p => p !== provider);
-    for (const fallback of available) {
-      const fallbackKey = keyMap[fallback];
-      if (!fallbackKey && fallback !== "pollinations") continue;
-      console.log(`[BYOK] Falling back to ${fallback}...`);
+    // If a paid provider failed, try Pollinations as fallback
+    if (provider !== "pollinations") {
+      console.log(`[BYOK] ${provider} failed, falling back to Pollinations (free)...`);
       try {
-        return await providerFunctions[fallback](fallbackKey || "", req);
+        return await generateWithPollinations(getNextPollinationsKey(), req);
       } catch (fbErr: any) {
-        console.error(`[BYOK:${fallback}] Fallback also failed:`, fbErr.message);
+        console.error(`[BYOK:pollinations] Fallback also failed:`, fbErr.message);
+        throw new Error(
+          `Video generation failed with ${provider} (${err.message}). ` +
+          `Pollinations fallback also failed: ${fbErr.message}`
+        );
       }
     }
 
-    throw new Error(`Video generation failed with all providers. Last error: ${err.message}`);
+    throw err;
   }
 }
 
@@ -608,25 +675,34 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
   {
     id: "pollinations",
     name: "Pollinations.ai (Free)",
-    description: "Free AI video generation. No API key needed. Lower quality but zero cost — perfect for previews and free-tier users.",
+    description: "Free AI video generation using grok-video. Default for all users. No API key needed.",
     keyPrefix: "sk_",
     signupUrl: "https://pollinations.ai",
     pricing: "FREE — 1.5 pollen/week on Spore tier. No credit card required.",
-    models: "Seedance, Grok-Video (free models)",
+    models: "Grok-Video (free with daily pollen grant)",
   },
   {
     id: "runway",
     name: "Runway ML",
-    description: "Industry-leading AI video generation. Best quality and consistency.",
+    description: "Industry-leading AI video generation. Best quality and consistency. Bring your own key.",
     keyPrefix: "key_",
     signupUrl: "https://app.runwayml.com/settings/api-keys",
     pricing: "From $12/mo (Standard). ~$0.05-0.10 per second of video.",
     models: "Gen-4 Turbo, Gen-3 Alpha",
   },
   {
+    id: "openai",
+    name: "OpenAI (Sora)",
+    description: "OpenAI's Sora video model. Requires Plus/Pro subscription. Bring your own key.",
+    keyPrefix: "sk-",
+    signupUrl: "https://platform.openai.com/api-keys",
+    pricing: "Requires OpenAI Plus ($20/mo) or Pro ($200/mo) for Sora access.",
+    models: "Sora 2, Sora 2 Pro",
+  },
+  {
     id: "fal",
     name: "fal.ai",
-    description: "Fast and affordable. Supports HunyuanVideo, Veo3, LTX-Video.",
+    description: "Fast and affordable. Supports HunyuanVideo, Veo3, LTX-Video. Bring your own key.",
     keyPrefix: "",
     signupUrl: "https://fal.ai/dashboard/keys",
     pricing: "Pay-per-use. ~$0.40 per video clip.",
@@ -635,25 +711,16 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
   {
     id: "replicate",
     name: "Replicate",
-    description: "Run open-source video models in the cloud. Great for Wan2.1.",
+    description: "Run open-source video models in the cloud. Great for Wan2.1. Bring your own key.",
     keyPrefix: "r8_",
     signupUrl: "https://replicate.com/account/api-tokens",
     pricing: "Pay-per-use. Free tier available for some models.",
     models: "Wan2.1, CogVideoX, Stable Video Diffusion",
   },
   {
-    id: "openai",
-    name: "OpenAI (Sora)",
-    description: "OpenAI's Sora video model. Requires Plus/Pro subscription.",
-    keyPrefix: "sk-",
-    signupUrl: "https://platform.openai.com/api-keys",
-    pricing: "Requires OpenAI Plus ($20/mo) or Pro ($200/mo) for Sora access.",
-    models: "Sora 2, Sora 2 Pro",
-  },
-  {
     id: "luma",
     name: "Luma AI",
-    description: "Dream Machine video generation. Great for cinematic content.",
+    description: "Dream Machine video generation. Great for cinematic content. Bring your own key.",
     keyPrefix: "",
     signupUrl: "https://lumalabs.ai/dream-machine/api",
     pricing: "Pay-per-use. Free trial credits available.",
