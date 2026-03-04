@@ -621,7 +621,7 @@ export function DeepCharacterProfile({ profile, onChange, characterName }: Props
                         <Select value={item.season || ""} onValueChange={v => updateWardrobeItem(item.id, { season: v })}>
                           <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue placeholder="Any" /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">Any Season</SelectItem>
+                            <SelectItem value="any">Any Season</SelectItem>
                             {SEASON_OPTIONS.map(s => (
                               <SelectItem key={s} value={s} className="text-xs">{SEASON_LABELS[s] || s}</SelectItem>
                             ))}

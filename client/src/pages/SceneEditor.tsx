@@ -700,7 +700,7 @@ export default function SceneEditor() {
                   <Select value={form.season} onValueChange={v => setField("season", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Any" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any Season</SelectItem>
+                      <SelectItem value="any_season">Any Season</SelectItem>
                       {Object.entries(SEASON_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -728,7 +728,7 @@ export default function SceneEditor() {
                   <Select value={form.emotionalBeat} onValueChange={v => setField("emotionalBeat", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select beat" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Unspecified</SelectItem>
+                      <SelectItem value="unspecified">Unspecified</SelectItem>
                       {EMOTIONAL_BEAT_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -757,7 +757,7 @@ export default function SceneEditor() {
                   <Select value={form.cameraMovement} onValueChange={v => setField("cameraMovement", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select movement" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No movement (static)</SelectItem>
+                      <SelectItem value="static">No movement (static)</SelectItem>
                       {Object.entries(CAMERA_MOVEMENT_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -767,7 +767,7 @@ export default function SceneEditor() {
                   <Select value={form.lensType} onValueChange={v => setField("lensType", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select lens" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Auto / Default</SelectItem>
+                      <SelectItem value="auto_default">Auto / Default</SelectItem>
                       {Object.entries(LENS_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -777,7 +777,7 @@ export default function SceneEditor() {
                   <Select value={form.depthOfField} onValueChange={v => setField("depthOfField", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select DoF" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Auto</SelectItem>
+                      <SelectItem value="auto">Auto</SelectItem>
                       {Object.entries(DEPTH_OF_FIELD_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -796,7 +796,7 @@ export default function SceneEditor() {
                   <Select value={form.colorGrade} onValueChange={v => setField("colorGrade", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select grade" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No specific grade</SelectItem>
+                      <SelectItem value="none">No specific grade</SelectItem>
                       {Object.entries(COLOR_GRADE_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -806,7 +806,7 @@ export default function SceneEditor() {
                   <Select value={form.focalLength} onValueChange={v => setField("focalLength", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select focal length" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Auto / Director's choice</SelectItem>
+                      <SelectItem value="auto_director">Auto / Director's choice</SelectItem>
                       {FOCAL_LENGTH_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -816,7 +816,7 @@ export default function SceneEditor() {
                   <Select value={form.shotType} onValueChange={v => setField("shotType", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select shot type" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Unspecified</SelectItem>
+                      <SelectItem value="unspecified">Unspecified</SelectItem>
                       {SHOT_TYPE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -826,7 +826,7 @@ export default function SceneEditor() {
                   <Select value={form.frameRate} onValueChange={v => setField("frameRate", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select frame rate" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Default (24fps)</SelectItem>
+                      <SelectItem value="default_24fps">Default (24fps)</SelectItem>
                       {FRAME_RATE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -836,7 +836,7 @@ export default function SceneEditor() {
                   <Select value={form.aspectRatio} onValueChange={v => setField("aspectRatio", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select aspect ratio" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Project default</SelectItem>
+                      <SelectItem value="project_default">Project default</SelectItem>
                       {ASPECT_RATIO_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -846,7 +846,7 @@ export default function SceneEditor() {
                   <Select value={form.colorTemperature} onValueChange={v => setField("colorTemperature", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select temperature" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Auto</SelectItem>
+                      <SelectItem value="auto">Auto</SelectItem>
                       {COLOR_TEMPERATURE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -856,7 +856,7 @@ export default function SceneEditor() {
                   <Select value={form.colorPalette} onValueChange={v => setField("colorPalette", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select palette" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Auto</SelectItem>
+                      <SelectItem value="auto">Auto</SelectItem>
                       {COLOR_PALETTE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -885,7 +885,7 @@ export default function SceneEditor() {
                   <Select value={form.realEstateStyle} onValueChange={v => setField("realEstateStyle", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select style" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any style</SelectItem>
+                      <SelectItem value="any_style">Any style</SelectItem>
                       {REAL_ESTATE_STYLES.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -918,7 +918,7 @@ export default function SceneEditor() {
                   <Select value={form.crowdLevel} onValueChange={v => setField("crowdLevel", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Unspecified</SelectItem>
+                      <SelectItem value="unspecified">Unspecified</SelectItem>
                       {Object.entries(CROWD_LEVEL_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -988,7 +988,7 @@ export default function SceneEditor() {
                                 <Select value={entry.wardrobeCategory} onValueChange={v => updateWardrobe({ wardrobeCategory: v })}>
                                   <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue placeholder="Default" /></SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="">Default (from profile)</SelectItem>
+                                    <SelectItem value="from_profile">Default (from profile)</SelectItem>
                                     {WARDROBE_CATEGORIES.map(c => <SelectItem key={c} value={c}>{WARDROBE_CATEGORY_LABELS[c]}</SelectItem>)}
                                   </SelectContent>
                                 </Select>
@@ -1105,7 +1105,7 @@ export default function SceneEditor() {
                   <Select value={form.vfxElements} onValueChange={v => setField("vfxElements", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No VFX" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No VFX</SelectItem>
+                      <SelectItem value="none">No VFX</SelectItem>
                       {Object.entries(VFX_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -1115,7 +1115,7 @@ export default function SceneEditor() {
                   <Select value={form.transition} onValueChange={v => setField("transition", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Cut" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Hard Cut (default)</SelectItem>
+                      <SelectItem value="hard_cut">Hard Cut (default)</SelectItem>
                       {Object.entries(TRANSITION_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -1153,7 +1153,7 @@ export default function SceneEditor() {
                   <Select value={form.musicMood} onValueChange={v => setField("musicMood", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select music mood" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No preference</SelectItem>
+                      <SelectItem value="no_preference">No preference</SelectItem>
                       {MUSIC_MOOD_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -1163,7 +1163,7 @@ export default function SceneEditor() {
                   <Select value={form.musicTempo} onValueChange={v => setField("musicTempo", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select tempo" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No preference</SelectItem>
+                      <SelectItem value="no_preference">No preference</SelectItem>
                       {MUSIC_TEMPO_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -1173,7 +1173,7 @@ export default function SceneEditor() {
                   <Select value={form.ambientSound} onValueChange={v => setField("ambientSound", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select ambient" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No specific ambient</SelectItem>
+                      <SelectItem value="none">No specific ambient</SelectItem>
                       {AMBIENT_SOUND_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -1201,7 +1201,7 @@ export default function SceneEditor() {
                   <Select value={form.actionDescription} onValueChange={v => setField("actionDescription", v)}>
                     <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select action type" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Custom (see description)</SelectItem>
+                      <SelectItem value="custom">Custom (see description)</SelectItem>
                       {ACTION_PRESETS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
                     </SelectContent>
                   </Select>
