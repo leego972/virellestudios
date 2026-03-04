@@ -167,6 +167,36 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "howDidYouHear", definition: "VARCHAR(128) NULL" },
     { table: "users", column: "marketingOptIn", definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
     { table: "users", column: "onboardingCompleted", definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
+    // Projects table - story & narrative fields
+    { table: "projects", column: "mainPlot", definition: "TEXT NULL" },
+    { table: "projects", column: "sidePlots", definition: "TEXT NULL" },
+    { table: "projects", column: "plotTwists", definition: "TEXT NULL" },
+    { table: "projects", column: "characterArcs", definition: "TEXT NULL" },
+    { table: "projects", column: "themes", definition: "TEXT NULL" },
+    { table: "projects", column: "setting", definition: "TEXT NULL" },
+    { table: "projects", column: "actStructure", definition: "VARCHAR(64) NULL DEFAULT 'three-act'" },
+    { table: "projects", column: "tone", definition: "VARCHAR(128) NULL" },
+    { table: "projects", column: "targetAudience", definition: "VARCHAR(255) NULL" },
+    { table: "projects", column: "openingScene", definition: "TEXT NULL" },
+    { table: "projects", column: "climax", definition: "TEXT NULL" },
+    { table: "projects", column: "storyResolution", definition: "TEXT NULL" },
+    // Projects table - color grading & quality
+    { table: "projects", column: "colorGrading", definition: "VARCHAR(128) NULL DEFAULT 'natural'" },
+    { table: "projects", column: "colorGradingSettings", definition: "JSON NULL" },
+    { table: "projects", column: "quality", definition: "ENUM('standard','high','ultra') NULL DEFAULT 'high'" },
+    { table: "projects", column: "resolution", definition: "VARCHAR(32) NULL DEFAULT '1920x1080'" },
+    { table: "projects", column: "plotSummary", definition: "TEXT NULL" },
+    { table: "projects", column: "genre", definition: "VARCHAR(128) NULL" },
+    { table: "projects", column: "duration", definition: "INT NULL" },
+    { table: "projects", column: "rating", definition: "ENUM('G','PG','PG-13','R') NULL DEFAULT 'PG-13'" },
+    { table: "projects", column: "progress", definition: "INT NOT NULL DEFAULT 0" },
+    { table: "projects", column: "estimatedTime", definition: "INT NULL" },
+    { table: "projects", column: "thumbnailUrl", definition: "TEXT NULL" },
+    { table: "projects", column: "outputUrl", definition: "TEXT NULL" },
+    // Scenes table - additional fields
+    { table: "scenes", column: "voiceUrl", definition: "TEXT NULL" },
+    { table: "scenes", column: "crowdLevel", definition: "VARCHAR(32) NULL" },
+    { table: "scenes", column: "extras", definition: "TEXT NULL" },
   ];
 
   let tablesCreated = 0;

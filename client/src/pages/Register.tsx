@@ -264,6 +264,15 @@ export default function Register() {
     if (step > 1) setStep(step - 1);
   };
 
+  const skipToEnd = () => {
+    // Skip directly to final step and submit with minimal info
+    if (step === 2) {
+      setStep(3);
+    } else if (step === 3) {
+      handleSubmit();
+    }
+  };
+
   // ─── Submit ───
 
   const handleSubmit = () => {
@@ -536,12 +545,17 @@ export default function Register() {
                   />
                 </div>
               </CardContent>
-              <CardFooter className="flex gap-3 pt-2">
-                <Button variant="outline" onClick={prevStep} className="flex-1">
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                </Button>
-                <Button onClick={nextStep} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">
-                  Continue <ArrowRight className="w-4 h-4 ml-2" />
+              <CardFooter className="flex flex-col gap-2 pt-2">
+                <div className="flex gap-3 w-full">
+                  <Button variant="outline" onClick={prevStep} className="flex-1">
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                  </Button>
+                  <Button onClick={nextStep} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">
+                    Continue <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
+                <Button variant="ghost" onClick={skipToEnd} className="w-full text-muted-foreground hover:text-foreground text-sm">
+                  Skip for now
                 </Button>
               </CardFooter>
             </>
@@ -610,25 +624,30 @@ export default function Register() {
                   </span>
                 </label>
               </CardContent>
-              <CardFooter className="flex gap-3 pt-2">
-                <Button variant="outline" onClick={prevStep} className="flex-1">
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
-                </Button>
-                <Button
-                  onClick={handleSubmit}
-                  disabled={registerMutation.isPending}
-                  className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
-                >
-                  {registerMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      Create Account <Check className="w-4 h-4 ml-2" />
-                    </>
-                  )}
+              <CardFooter className="flex flex-col gap-2 pt-2">
+                <div className="flex gap-3 w-full">
+                  <Button variant="outline" onClick={prevStep} className="flex-1">
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                  </Button>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={registerMutation.isPending}
+                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
+                  >
+                    {registerMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        Create Account <Check className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <Button variant="ghost" onClick={skipToEnd} className="w-full text-muted-foreground hover:text-foreground text-sm">
+                  Skip for now — complete profile later
                 </Button>
               </CardFooter>
             </>
