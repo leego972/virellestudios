@@ -15,6 +15,13 @@
 // ─── Minor Protection Integration ───
 import { applyMinorProtection } from "./minorProtectionEngine";
 
+// ─── Hyper-Realism Constants ───
+// Defined before GENRE_PROFILES so they can be referenced in genre skinRendering fields
+const PHOTOREALISM_SKIN_AND_EYES = {
+  skin: "hyper-realistic human skin with visible pores, fine lines, and natural imperfections; subtle subsurface scattering showing blood flow beneath the epidermis; micro-expressions creating authentic emotion; skin texture that reacts to light and environment (e.g., glistening with sweat, goosebumps from cold); avoid airbrushed, plastic, or overly smooth skin at all costs",
+  eyes: "photorealistic human eyes with detailed iris fibers, natural reflections (corneal glare), and subtle moisture in the waterline; sclera should have faint, realistic veins; eyes should have a 'soulful' quality, conveying emotion and thought; avoid dead, glassy, or doll-like eyes",
+};
+
 // ─── Genre Visual Profiles ───
 // Each genre has a distinct visual language derived from real Hollywood productions
 
@@ -283,11 +290,6 @@ const NEGATIVE_PROMPTS: Record<string, string> = {
 // ─── Quality Tier Definitions ───
 
 export type QualityTier = "free" | "pro" | "industry";
-
-const PHOTOREALISM_SKIN_AND_EYES = {
-  skin: "hyper-realistic human skin with visible pores, fine lines, and natural imperfections; subtle subsurface scattering showing blood flow beneath the epidermis; micro-expressions creating authentic emotion; skin texture that reacts to light and environment (e.g., glistening with sweat, goosebumps from cold); avoid airbrushed, plastic, or overly smooth skin at all costs",
-  eyes: "photorealistic human eyes with detailed iris fibers, natural reflections (corneal glare), and subtle moisture in the waterline; sclera should have faint, realistic veins; eyes should have a 'soulful' quality, conveying emotion and thought; avoid dead, glassy, or doll-like eyes",
-};
 
 const QUALITY_ANCHORS: Record<QualityTier, string> = {
   "free": "RAW photograph, photorealistic, shot on Canon EOS R5 with 50mm f/1.4 lens, natural available light, real human skin with visible pores and natural imperfections, authentic facial features, genuine emotion, real-world location, 1080p resolution, slight natural film grain, sensor noise at ISO 800, chromatic aberration at frame edges, natural lens vignetting, real photograph indistinguishable from a DSLR capture",
