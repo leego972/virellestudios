@@ -271,9 +271,9 @@ export default function TVCommercial() {
     <div className="min-h-screen bg-background text-foreground">
       {/* ─── Header ─── */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
-        <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}>
+        <div className="flex items-center justify-between px-4 py-3 gap-2 overflow-hidden">
+          <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+            <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setLocation(`/projects/${projectId}`)}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="min-w-0">
@@ -286,7 +286,7 @@ export default function TVCommercial() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+          <div className="flex items-center gap-1 md:gap-2 shrink-0">
             {isMobile && (
               <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setMobileConfigOpen(true)}>
                 <Settings2 className="h-3 w-3" />
