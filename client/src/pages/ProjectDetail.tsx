@@ -70,6 +70,7 @@ import {
   Scissors,
   Tv,
   Megaphone,
+  Pencil,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -129,6 +130,8 @@ export default function ProjectDetail() {
   });
   const [uploading, setUploading] = useState(false);
   const [audioUploading, setAudioUploading] = useState(false);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [descForm, setDescForm] = useState({ description: "", plotSummary: "" });
   const fileRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLInputElement>(null);
 
@@ -407,19 +410,64 @@ export default function ProjectDetail() {
               </CardContent>
             </Card>
             <Card className="bg-card/50 lg:col-span-2">
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-3 flex flex-row items-center justify-between">
                 <CardTitle className="text-sm font-medium">Project Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {project.description && <p className="text-sm text-muted-foreground">{project.description}</p>}
-                {project.plotSummary && (
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Plot Summary</Label>
-                    <p className="text-sm mt-1 leading-relaxed">{project.plotSummary}</p>
+                {!editingDescription ? (
+                  <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
+                    setDescForm({ description: project.description || "", plotSummary: project.plotSummary || "" });
+                    setEditingDescription(true);
+                  }}>
+                    <Pencil className="h-3 w-3 mr-1" />
+                    Edit
+                  </Button>
+                ) : (
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setEditingDescription(false)}>Cancel</Button>
+                    <Button size="sm" className="h-7 text-xs" onClick={() => {
+                      updateMutation.mutate({ id: projectId, description: descForm.description || undefined, plotSummary: descForm.plotSummary || undefined });
+                      setEditingDescription(false);
+                    }}>Save</Button>
                   </div>
                 )}
-                {!project.plotSummary && !project.description && (
-                  <p className="text-sm text-muted-foreground/60">No description added yet.</p>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {editingDescription ? (
+                  <>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Description</Label>
+                      <Textarea
+                        placeholder="Brief project description..."
+                        value={descForm.description}
+                        onChange={e => setDescForm(f => ({ ...f, description: e.target.value }))}
+                        className="min-h-[60px] text-sm bg-background/50 resize-y"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Plot Summary</Label>
+                      <Textarea
+                        placeholder="Full plot summary..."
+                        value={descForm.plotSummary}
+                        onChange={e => setDescForm(f => ({ ...f, plotSummary: e.target.value }))}
+                        className="min-h-[100px] text-sm bg-background/50 resize-y"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {project.description && <p className="text-sm text-muted-foreground">{project.description}</p>}
+                    {project.plotSummary && (
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Plot Summary</Label>
+                        <p className="text-sm mt-1 leading-relaxed">{project.plotSummary}</p>
+                      </div>
+                    )}
+                    {!project.plotSummary && !project.description && (
+                      <p className="text-sm text-muted-foreground/60 cursor-pointer hover:text-muted-foreground" onClick={() => {
+                        setDescForm({ description: "", plotSummary: "" });
+                        setEditingDescription(true);
+                      }}>Click to add description...</p>
+                    )}
+                  </>
                 )}
               </CardContent>
             </Card>

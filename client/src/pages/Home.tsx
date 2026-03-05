@@ -21,6 +21,9 @@ import {
   Key,
   Settings,
   ShoppingBag,
+  BookOpen,
+  Gift,
+  CreditCard,
 } from "lucide-react";
 import { useLocation } from "wouter";
 
@@ -327,6 +330,10 @@ export default function Home() {
             {[
               { label: "Characters", icon: Users, path: "/characters" },
               { label: "My Movies", icon: Film, path: "/movies" },
+              { label: "Blog", icon: BookOpen, path: "/blog" },
+              { label: "Marketplace", icon: ShoppingBag, path: "/marketplace" },
+              { label: "Referrals", icon: Gift, path: "/referrals" },
+              { label: "Subscription", icon: CreditCard, path: "/pricing" },
             ].map((link) => (
               <Button
                 key={link.path}
