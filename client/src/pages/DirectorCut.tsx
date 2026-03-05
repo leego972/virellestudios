@@ -22,6 +22,8 @@ import {
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { useIsMobile } from "@/hooks/useMobile";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -318,6 +320,10 @@ export default function DirectorCut() {
   // Drag state
   const dragFromIdx = useRef<number | null>(null);
 
+  // Mobile
+  const isMobile = useIsMobile();
+  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
+
   // Retake dialog
   const [retakeDialogOpen, setRetakeDialogOpen] = useState(false);
   const [retakeText, setRetakeText] = useState("");
@@ -548,26 +554,26 @@ export default function DirectorCut() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
       {/* ── Top Bar ── */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-zinc-950/80 backdrop-blur shrink-0">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(`/projects/${projectId}`)}>
+      <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-2.5 border-b border-white/10 bg-zinc-950/80 backdrop-blur shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0">
+          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <div>
-            <h1 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Scissors className="w-4 h-4 text-primary" />
-              Director's Cut
-              {hasUnsavedChanges && <span className="text-[10px] text-amber-400 font-normal">● Unsaved changes</span>}
+          <div className="min-w-0">
+            <h1 className="text-xs md:text-sm font-semibold text-white flex items-center gap-1.5 md:gap-2">
+              <Scissors className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary shrink-0" />
+              <span className="truncate">Director's Cut</span>
+              {hasUnsavedChanges && <span className="text-[10px] text-amber-400 font-normal shrink-0">●</span>}
             </h1>
-            <p className="text-[11px] text-zinc-500">{project?.title || "Loading..."}</p>
+            <p className="text-[11px] text-zinc-500 truncate">{project?.title || "Loading..."}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-zinc-500 font-mono">{scenes.filter(s => !s.isDisabled).length} scenes · {formatTime(totalDuration)}</span>
+        <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+          <span className="text-[10px] md:text-xs text-zinc-500 font-mono hidden sm:inline">{scenes.filter(s => !s.isDisabled).length} scenes · {formatTime(totalDuration)}</span>
           <Button
             size="sm"
             variant="outline"
-            className="h-7 text-xs gap-1.5"
+            className="h-7 text-xs gap-1.5 hidden md:flex"
             onClick={() => navigate(`/projects/${projectId}/scenes`)}
           >
             <Film className="w-3 h-3" />
@@ -576,7 +582,7 @@ export default function DirectorCut() {
           <Button
             size="sm"
             variant="outline"
-            className="h-7 text-xs gap-1.5"
+            className="h-7 text-xs gap-1.5 hidden md:flex"
             onClick={() => navigate(`/projects/${projectId}/nle-export`)}
           >
             <Download className="w-3 h-3" />
@@ -598,10 +604,10 @@ export default function DirectorCut() {
       <div className="flex flex-1 overflow-hidden">
 
         {/* ── Left: Preview + Timeline ── */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
           {/* Preview Monitor */}
-          <div className="bg-black border-b border-white/10 flex items-center justify-center" style={{ height: "240px" }}>
+          <div className="bg-black border-b border-white/10 flex items-center justify-center" style={{ height: isMobile ? "160px" : "240px" }}>
             {selectedScene?.videoUrl ? (
               <video
                 ref={videoRef}
@@ -625,8 +631,8 @@ export default function DirectorCut() {
           </div>
 
           {/* Playback Controls */}
-          <div className="flex items-center justify-between px-4 py-2 bg-zinc-950 border-b border-white/10 shrink-0">
-            <div className="flex items-center gap-1">
+          <div className="flex items-center justify-between px-2 md:px-4 py-1.5 md:py-2 bg-zinc-950 border-b border-white/10 shrink-0">
+            <div className="flex items-center gap-0.5 md:gap-1">
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPlayheadTime(0)}>
                 <SkipBack className="w-3.5 h-3.5" />
               </Button>
@@ -641,12 +647,17 @@ export default function DirectorCut() {
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPlayheadTime(totalDuration)}>
                 <SkipForward className="w-3.5 h-3.5" />
               </Button>
-              <span className="text-xs font-mono text-zinc-400 ml-2">
+              <span className="text-[10px] md:text-xs font-mono text-zinc-400 ml-1 md:ml-2">
                 {formatTime(playheadTime)} / {formatTime(totalDuration)}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-zinc-600">Zoom</span>
+            <div className="flex items-center gap-1 md:gap-2">
+              {isMobile && selectedScene && (
+                <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1 px-2" onClick={() => setMobileInspectorOpen(true)}>
+                  <Layers className="w-3 h-3" /> Edit
+                </Button>
+              )}
+              <span className="text-[10px] text-zinc-600 hidden sm:inline">Zoom</span>
               <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setZoom(z => Math.max(3, z - 2))}>
                 <ZoomOut className="w-3 h-3" />
               </Button>
@@ -731,18 +742,21 @@ export default function DirectorCut() {
             </ScrollArea>
 
             {/* Timeline footer: keyboard shortcuts hint */}
-            <div className="px-4 py-1.5 border-t border-white/5 bg-zinc-950 flex items-center gap-4 shrink-0">
-              <span className="text-[10px] text-zinc-600">
-                <kbd className="bg-zinc-800 px-1 rounded text-zinc-400">Space</kbd> Play/Pause ·
-                <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">←→</kbd> Select scene ·
-                <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">Del</kbd> Remove ·
-                Drag clips to reorder
-              </span>
-            </div>
+            {!isMobile && (
+              <div className="px-4 py-1.5 border-t border-white/5 bg-zinc-950 flex items-center gap-4 shrink-0">
+                <span className="text-[10px] text-zinc-600">
+                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400">Space</kbd> Play/Pause ·
+                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">←→</kbd> Select scene ·
+                  <kbd className="bg-zinc-800 px-1 rounded text-zinc-400 ml-1">Del</kbd> Remove ·
+                  Drag clips to reorder
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* ── Right: Inspector Panel ── */}
+        {/* ── Right: Inspector Panel (desktop only) ── */}
+        {!isMobile && (
         <div className="w-80 border-l border-white/10 bg-zinc-950 flex flex-col shrink-0">
           {/* Panel tabs */}
           <div className="flex border-b border-white/10 shrink-0">
@@ -1109,7 +1123,125 @@ export default function DirectorCut() {
             </div>
           )}
         </div>
+        )}
       </div>
+
+      {/* ── Mobile Inspector Sheet ── */}
+      {isMobile && (
+        <Sheet open={mobileInspectorOpen} onOpenChange={setMobileInspectorOpen}>
+          <SheetContent side="bottom" className="h-[70vh] bg-zinc-950 border-white/10 p-0">
+            <SheetHeader className="px-4 py-3 border-b border-white/10">
+              <SheetTitle className="text-sm text-white flex items-center gap-2">
+                <Layers className="w-4 h-4 text-primary" />
+                {selectedScene?.title || "Scene Inspector"}
+              </SheetTitle>
+            </SheetHeader>
+            <div className="flex border-b border-white/10 shrink-0">
+              {(["inspector", "retake", "transition"] as PanelMode[]).map((mode) => (
+                <button
+                  key={mode}
+                  className={`flex-1 py-2.5 text-xs font-medium capitalize transition-colors
+                    ${panelMode === mode ? "text-white border-b-2 border-primary bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
+                  onClick={() => setPanelMode(mode)}
+                >
+                  {mode === "inspector" ? "Inspector" : mode === "retake" ? "Retake" : "Transition"}
+                </button>
+              ))}
+            </div>
+            <ScrollArea className="flex-1 h-[calc(70vh-100px)]">
+              {selectedScene && (
+                <div className="p-4 space-y-4">
+                  {panelMode === "inspector" && (
+                    <>
+                      <div>
+                        <p className="text-xs font-semibold text-zinc-300 mb-1">Scene {(selectedIdx ?? 0) + 1}</p>
+                        <p className="text-sm font-medium text-white">{selectedScene.title || "Untitled Scene"}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="bg-zinc-900 rounded p-2">
+                          <p className="text-zinc-500 mb-0.5">Duration</p>
+                          <p className="font-mono text-white">{formatTime(selectedScene.duration)}</p>
+                        </div>
+                        <div className="bg-zinc-900 rounded p-2">
+                          <p className="text-zinc-500 mb-0.5">Effective</p>
+                          <p className="font-mono text-white">{formatTime(Math.max(1, selectedScene.duration - selectedScene.trimIn - selectedScene.trimOut))}</p>
+                        </div>
+                      </div>
+                      <Separator className="bg-white/10" />
+                      <div className="space-y-3">
+                        <p className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5"><Scissors className="w-3 h-3" /> Trim</p>
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <Label className="text-[11px] text-zinc-500">Trim In</Label>
+                            <span className="text-[11px] font-mono text-zinc-400">{formatTime(selectedScene.trimIn)}</span>
+                          </div>
+                          <Slider value={[selectedScene.trimIn]} min={0} max={Math.max(0, selectedScene.duration - selectedScene.trimOut - 1)} step={0.5} onValueChange={([v]) => updateScene(selectedIdx!, { trimIn: v })} className="w-full" />
+                        </div>
+                        <div>
+                          <div className="flex justify-between mb-1">
+                            <Label className="text-[11px] text-zinc-500">Trim Out</Label>
+                            <span className="text-[11px] font-mono text-zinc-400">{formatTime(selectedScene.trimOut)}</span>
+                          </div>
+                          <Slider value={[selectedScene.trimOut]} min={0} max={Math.max(0, selectedScene.duration - selectedScene.trimIn - 1)} step={0.5} onValueChange={([v]) => updateScene(selectedIdx!, { trimOut: v })} className="w-full" />
+                        </div>
+                      </div>
+                      <Separator className="bg-white/10" />
+                      <div>
+                        <Label className="text-[11px] text-zinc-500 mb-1.5 block">Director Notes</Label>
+                        <Textarea value={selectedScene.localNotes} onChange={(e) => updateScene(selectedIdx!, { localNotes: e.target.value })} placeholder="Add notes..." className="text-xs min-h-[60px] bg-zinc-900 border-zinc-700 resize-none" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button size="sm" variant="outline" className="h-8 text-xs gap-1.5" onClick={() => generatePreviewMutation.mutate({ sceneId: selectedScene.id })} disabled={generatePreviewMutation.isPending}>
+                          <Wand2 className="w-3 h-3" /> Regen
+                        </Button>
+                        <Button size="sm" variant="outline" className="h-8 text-xs gap-1.5" onClick={() => navigate(`/projects/${projectId}/scenes`)}>
+                          <Settings2 className="w-3 h-3" /> Edit
+                        </Button>
+                        <Button size="sm" variant="outline" className="h-8 text-xs gap-1.5" onClick={() => duplicateScene(selectedIdx!)}>
+                          <Copy className="w-3 h-3" /> Duplicate
+                        </Button>
+                        <Button size="sm" variant="outline" className="h-8 text-xs gap-1.5 text-red-400 border-red-500/20" onClick={() => setDeleteConfirmIdx(selectedIdx!)}>
+                          <Trash2 className="w-3 h-3" /> Remove
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                  {panelMode === "retake" && (
+                    <div className="space-y-3">
+                      <p className="text-xs font-semibold text-white flex items-center gap-1.5"><Flag className="w-3 h-3 text-amber-400" /> Request Retake</p>
+                      <Textarea value={retakeText} onChange={(e) => setRetakeText(e.target.value)} placeholder="Describe what needs to change..." className="text-xs min-h-[100px] bg-zinc-900 border-zinc-700 resize-none" />
+                      <Button className="w-full h-8 text-xs gap-1.5 bg-amber-600 hover:bg-amber-500 text-black font-semibold" onClick={submitRetake} disabled={updateSceneMutation.isPending}>
+                        <Flag className="w-3 h-3" /> Save Retake
+                      </Button>
+                    </div>
+                  )}
+                  {panelMode === "transition" && (
+                    <div className="space-y-3">
+                      <p className="text-xs font-semibold text-white flex items-center gap-1.5"><SplitSquareHorizontal className="w-3 h-3 text-primary" /> Transition</p>
+                      <Select value={selectedScene.transitionType} onValueChange={(v) => updateScene(selectedIdx!, { transitionType: v })}>
+                        <SelectTrigger className="h-8 text-xs bg-zinc-900 border-zinc-700"><SelectValue /></SelectTrigger>
+                        <SelectContent>{TRANSITION_OPTIONS.map((opt) => (<SelectItem key={opt.value} value={opt.value} className="text-xs">{opt.label}</SelectItem>))}</SelectContent>
+                      </Select>
+                      <div>
+                        <div className="flex justify-between mb-1.5">
+                          <Label className="text-[11px] text-zinc-500">Duration</Label>
+                          <span className="text-[11px] font-mono text-zinc-400">{selectedScene.transitionDuration.toFixed(1)}s</span>
+                        </div>
+                        <Slider value={[selectedScene.transitionDuration]} min={0.1} max={3.0} step={0.1} onValueChange={([v]) => updateScene(selectedIdx!, { transitionDuration: v })} disabled={selectedScene.transitionType === "cut"} className="w-full" />
+                      </div>
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {TRANSITION_OPTIONS.map((opt) => (
+                          <button key={opt.value} className={`p-2 rounded text-[10px] text-center border transition-all ${selectedScene.transitionType === opt.value ? "bg-primary/20 border-primary/60 text-primary" : "bg-zinc-900 border-zinc-700 text-zinc-400"}`} onClick={() => updateScene(selectedIdx!, { transitionType: opt.value })}>{opt.label}</button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </ScrollArea>
+          </SheetContent>
+        </Sheet>
+      )}
 
       {/* ── Delete Confirm Dialog ── */}
       <Dialog open={deleteConfirmIdx !== null} onOpenChange={() => setDeleteConfirmIdx(null)}>

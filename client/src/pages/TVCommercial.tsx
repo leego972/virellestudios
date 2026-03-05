@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { useIsMobile } from "@/hooks/useMobile";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -145,6 +147,9 @@ export default function TVCommercial() {
   const [brandColors, setBrandColors] = useState({ primary: "#ffffff", secondary: "#000000" });
   const [tab, setTab] = useState<"shots" | "script" | "brand">("shots");
   const [aiScriptLoading, setAiScriptLoading] = useState(false);
+  const isMobile = useIsMobile();
+  const [mobileConfigOpen, setMobileConfigOpen] = useState(false);
+  const [mobileShotOpen, setMobileShotOpen] = useState(false);
 
   // Auto-populate from project
   useEffect(() => {
@@ -271,33 +276,40 @@ export default function TVCommercial() {
             <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h1 className="text-lg font-bold flex items-center gap-2">
-                <Tv className="h-5 w-5 text-blue-500" />
-                TV Commercial Creator
+            <div className="min-w-0">
+              <h1 className="text-sm md:text-lg font-bold flex items-center gap-2">
+                <Tv className="h-4 w-4 md:h-5 md:w-5 text-blue-500 shrink-0" />
+                <span className="truncate">TV Commercial</span>
               </h1>
-              <p className="text-xs text-muted-foreground">
-                {project?.title || "Loading..."} — {currentPlatform?.label} · {duration}s · {shots.length} shots · {formatTime(totalDuration)} actual
+              <p className="text-[10px] md:text-xs text-muted-foreground truncate">
+                {project?.title || "Loading..."} — {currentPlatform?.label} · {duration}s · {shots.length} shots
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={autoAssignScenes}>
+          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+            {isMobile && (
+              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setMobileConfigOpen(true)}>
+                <Settings2 className="h-3 w-3" />
+              </Button>
+            )}
+            <Button variant="outline" size="sm" className="h-7 text-xs hidden md:flex" onClick={autoAssignScenes}>
               <Wand2 className="h-3 w-3 mr-1" />Auto-Assign
             </Button>
-            <Button variant="outline" size="sm" onClick={generateAIScript} disabled={aiScriptLoading}>
-              {aiScriptLoading ? <RotateCcw className="h-3 w-3 mr-1 animate-spin" /> : <MessageSquare className="h-3 w-3 mr-1" />}
-              AI Script
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={generateAIScript} disabled={aiScriptLoading}>
+              {aiScriptLoading ? <RotateCcw className="h-3 w-3 animate-spin" /> : <MessageSquare className="h-3 w-3" />}
+              <span className="hidden sm:inline ml-1">AI Script</span>
             </Button>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-              <Sparkles className="h-3 w-3 mr-1" />Generate Commercial
+            <Button size="sm" className="h-7 text-xs bg-blue-600 hover:bg-blue-700">
+              <Sparkles className="h-3 w-3" />
+              <span className="hidden sm:inline ml-1">Generate</span>
             </Button>
           </div>
         </div>
       </div>
 
       <div className="flex h-[calc(100vh-57px)]">
-        {/* ─── Left Panel: Platform & Format ─── */}
+        {/* ─── Left Panel: Platform & Format (desktop) ─── */}
+        {!isMobile && (
         <div className="w-80 border-r border-border overflow-y-auto p-4 space-y-4 bg-card/30">
           {/* Platform Selector */}
           <div>
@@ -371,9 +383,10 @@ export default function TVCommercial() {
             </div>
           </div>
         </div>
+        )}
 
         {/* ─── Center: Shot Storyboard ─── */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-2 md:p-4 min-w-0">
           {/* Tabs */}
           <div className="flex gap-1 mb-4 border-b border-border pb-2">
             {(["shots", "script", "brand"] as const).map(t => (
@@ -394,7 +407,7 @@ export default function TVCommercial() {
                       key={shot.id}
                       className={`bg-blue-600 relative cursor-pointer transition-all hover:brightness-125 ${selectedShotId === shot.id ? "ring-1 ring-white" : ""}`}
                       style={{ width: `${widthPct}%`, minWidth: "2px" }}
-                      onClick={() => setSelectedShotId(shot.id)}
+                      onClick={() => { setSelectedShotId(shot.id); if (isMobile) setMobileShotOpen(true); }}
                       title={`${shot.label} (${shot.durationSec}s)`}
                     >
                       {widthPct > 10 && <span className="absolute inset-0 flex items-center justify-center text-[8px] text-white/80 truncate px-1">{shot.label}</span>}
@@ -431,7 +444,7 @@ export default function TVCommercial() {
                   return (
                     <div
                       key={shot.id}
-                      onClick={() => setSelectedShotId(shot.id)}
+                      onClick={() => { setSelectedShotId(shot.id); if (isMobile) setMobileShotOpen(true); }}
                       className={`group flex items-stretch gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
                         isSelected ? "border-blue-500 bg-blue-500/5" : "border-border/50 hover:border-border hover:bg-muted/20"
                       }`}
@@ -613,7 +626,8 @@ export default function TVCommercial() {
           )}
         </div>
 
-        {/* ─── Right Panel: Shot Inspector ─── */}
+        {/* ─── Right Panel: Shot Inspector (desktop) ─── */}
+        {!isMobile && (
         <div className="w-80 border-l border-border overflow-y-auto p-4 space-y-4 bg-card/30">
           {selectedShot ? (
             <>
@@ -704,7 +718,103 @@ export default function TVCommercial() {
             </div>
           )}
         </div>
+        )}
       </div>
+
+      {/* ─── Mobile Config Sheet ─── */}
+      {isMobile && (
+        <Sheet open={mobileConfigOpen} onOpenChange={setMobileConfigOpen}>
+          <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
+            <SheetHeader className="px-4 py-3 border-b">
+              <SheetTitle className="text-sm flex items-center gap-2"><Settings2 className="h-4 w-4 text-blue-500" /> Platform & Format</SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto h-[calc(100vh-60px)] p-4 space-y-4">
+              <div>
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Platform</h3>
+                <div className="space-y-1.5">
+                  {PLATFORMS.map(p => {
+                    const Icon = p.icon;
+                    return (
+                      <button key={p.id} onClick={() => handlePlatformChange(p.id)} className={`w-full text-left p-2.5 rounded-lg border transition-all ${platform === p.id ? "border-blue-500 bg-blue-500/10" : "border-border/50 hover:bg-muted/30"}`}>
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-medium">{p.label}</span>
+                              <span className="text-[10px] text-muted-foreground">{p.aspect}</span>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">{p.description}</p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Duration</h3>
+                <div className="flex gap-1.5 flex-wrap">
+                  {currentPlatform?.durations.map(d => (
+                    <button key={d} onClick={() => { setDuration(d); setShots(getDefaultShots(d)); }} className={`px-3 py-1.5 text-xs rounded-lg border transition-all ${duration === d ? "border-blue-500 bg-blue-500/10 text-blue-400" : "border-border/50 text-muted-foreground"}`}>{d}s</button>
+                  ))}
+                </div>
+              </div>
+              <Button className="w-full" size="sm" onClick={autoAssignScenes}>
+                <Wand2 className="h-3 w-3 mr-1" /> Auto-Assign Scenes
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
+
+      {/* ─── Mobile Shot Inspector Sheet ─── */}
+      {isMobile && (
+        <Sheet open={mobileShotOpen} onOpenChange={setMobileShotOpen}>
+          <SheetContent side="bottom" className="h-[70vh] p-0">
+            <SheetHeader className="px-4 py-3 border-b">
+              <SheetTitle className="text-sm flex items-center gap-2"><Layers className="h-4 w-4 text-blue-500" /> {selectedShot?.label || "Shot Inspector"}</SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto h-[calc(70vh-60px)] p-4 space-y-4">
+              {selectedShot && (
+                <>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Shot Name</label>
+                    <Input value={selectedShot.label} onChange={e => updateShot(selectedShot.id, { label: e.target.value })} className="mt-1 h-8 text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Description</label>
+                    <Textarea value={selectedShot.description} onChange={e => updateShot(selectedShot.id, { description: e.target.value })} className="mt-1 text-sm min-h-[50px]" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Visual Description (for AI)</label>
+                    <Textarea value={selectedShot.visualDescription} onChange={e => updateShot(selectedShot.id, { visualDescription: e.target.value })} placeholder="Detailed visual description..." className="mt-1 text-sm min-h-[60px]" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Duration (seconds)</label>
+                    <Input type="number" min={1} max={120} value={selectedShot.durationSec} onChange={e => updateShot(selectedShot.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Voiceover Text</label>
+                    <Textarea value={selectedShot.voiceoverText} onChange={e => updateShot(selectedShot.id, { voiceoverText: e.target.value })} placeholder="Narrator says..." className="mt-1 text-sm min-h-[50px]" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">On-Screen Text</label>
+                    <Input value={selectedShot.onScreenText} onChange={e => updateShot(selectedShot.id, { onScreenText: e.target.value })} placeholder="Text overlay..." className="mt-1 h-8 text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Transition Out</label>
+                    <div className="flex gap-1 mt-1 flex-wrap">
+                      {(["cut", "dissolve", "fade-black", "fade-white", "whip", "wipe"] as const).map(t => (
+                        <button key={t} onClick={() => updateShot(selectedShot.id, { transition: t })} className={`text-[10px] py-0.5 px-1.5 rounded border transition-all ${selectedShot.transition === t ? "border-blue-500 bg-blue-500/10 text-blue-400" : "border-border/50 text-muted-foreground"}`}>{t}</button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
     </div>
   );
 }

@@ -87,7 +87,7 @@ function ShotCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <Label className="text-xs text-muted-foreground mb-1 block">Duration</Label>
             <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ function ShotCard({
             className="text-xs min-h-[60px] resize-none"
           />
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
             <Label className="text-xs text-muted-foreground mb-1 block">Start Frame URL</Label>
             <Input
@@ -263,7 +263,7 @@ export default function MultiShotSequencer() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-4 grid grid-cols-3 gap-4">
+      <div className="max-w-6xl mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Left: Camera Rig Setup */}
         <div className="col-span-1 space-y-4">
           <Card className="border-amber-500/20">

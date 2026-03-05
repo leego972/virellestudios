@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { useIsMobile } from "@/hooks/useMobile";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -129,6 +131,9 @@ export default function TrailerStudio() {
   const [aspectRatio, setAspectRatio] = useState<"16:9" | "2.39:1" | "4:3" | "9:16">("16:9");
   const [generatedResult, setGeneratedResult] = useState<any>(null);
   const [previewPlaying, setPreviewPlaying] = useState(false);
+  const isMobile = useIsMobile();
+  const [mobileConfigOpen, setMobileConfigOpen] = useState(false);
+  const [mobileBeatOpen, setMobileBeatOpen] = useState(false);
   const [currentBeatPreview, setCurrentBeatPreview] = useState(0);
   const previewTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -268,35 +273,43 @@ export default function TrailerStudio() {
     <div className="min-h-screen bg-background text-foreground">
       {/* ─── Header ─── */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
-        <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}>
+        <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-3">
+          <div className="flex items-center gap-2 md:gap-3 min-w-0">
+            <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setLocation(`/projects/${projectId}`)}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h1 className="text-lg font-bold flex items-center gap-2">
-                <Film className="h-5 w-5 text-amber-500" />
-                Trailer Studio
+            <div className="min-w-0">
+              <h1 className="text-sm md:text-lg font-bold flex items-center gap-2">
+                <Film className="h-4 w-4 md:h-5 md:w-5 text-amber-500 shrink-0" />
+                <span className="truncate">Trailer Studio</span>
               </h1>
-              <p className="text-xs text-muted-foreground">{project?.title || "Loading..."} — {formatTime(totalDuration)} total</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground truncate">{project?.title || "Loading..."} — {formatTime(totalDuration)}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={togglePreview}>
-              {previewPlaying ? <><Pause className="h-3 w-3 mr-1" />Stop Preview</> : <><Play className="h-3 w-3 mr-1" />Preview</>}
+          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+            {isMobile && (
+              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setMobileConfigOpen(true)}>
+                <Settings2 className="h-3 w-3" />
+              </Button>
+            )}
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={togglePreview}>
+              {previewPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+              <span className="hidden sm:inline ml-1">{previewPlaying ? "Stop" : "Preview"}</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={autoAssignScenes}>
-              <Wand2 className="h-3 w-3 mr-1" />Auto-Assign Scenes
+            <Button variant="outline" size="sm" className="h-7 text-xs hidden md:flex" onClick={autoAssignScenes}>
+              <Wand2 className="h-3 w-3 mr-1" />Auto-Assign
             </Button>
-            <Button size="sm" className="bg-amber-600 hover:bg-amber-700" onClick={handleGenerate} disabled={generateTrailer.isPending}>
-              {generateTrailer.isPending ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" />Generating...</> : <><Sparkles className="h-3 w-3 mr-1" />Generate Trailer</>}
+            <Button size="sm" className="h-7 text-xs bg-amber-600 hover:bg-amber-700" onClick={handleGenerate} disabled={generateTrailer.isPending}>
+              {generateTrailer.isPending ? <RotateCcw className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+              <span className="hidden sm:inline ml-1">{generateTrailer.isPending ? "Generating..." : "Generate"}</span>
             </Button>
           </div>
         </div>
       </div>
 
       <div className="flex h-[calc(100vh-57px)]">
-        {/* ─── Left Panel: Trailer Config ─── */}
+        {/* ─── Left Panel: Trailer Config (desktop) ─── */}
+        {!isMobile && (
         <div className="w-80 border-r border-border overflow-y-auto p-4 space-y-4 bg-card/30">
           {/* Trailer Type Selector */}
           <div>
@@ -392,8 +405,10 @@ export default function TrailerStudio() {
           </div>
         </div>
 
+        )}
+
         {/* ─── Center: Beat Timeline ─── */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-2 md:p-4 min-w-0">
           {/* Preview Area */}
           <div className="mb-4">
             <div className={`relative rounded-lg overflow-hidden bg-black/80 border border-border/50 ${aspectRatio === "9:16" ? "w-48 h-80 mx-auto" : aspectRatio === "4:3" ? "aspect-[4/3] max-w-2xl mx-auto" : aspectRatio === "2.39:1" ? "aspect-[2.39/1] max-w-3xl mx-auto" : "aspect-video max-w-2xl mx-auto"}`}>
@@ -454,8 +469,7 @@ export default function TrailerStudio() {
                   key={beat.id}
                   className={`${colors[beat.pacing]} relative cursor-pointer transition-all hover:brightness-125 ${selectedBeatId === beat.id ? "ring-1 ring-white" : ""}`}
                   style={{ width: `${widthPct}%`, minWidth: "2px" }}
-                  onClick={() => setSelectedBeatId(beat.id)}
-                  title={`${beat.label} (${beat.durationSec}s — ${beat.pacing})`}
+                  onClick={() => { setSelectedBeatId(beat.id); if (isMobile) setMobileBeatOpen(true); }}
                 >
                   {widthPct > 8 && <span className="absolute inset-0 flex items-center justify-center text-[8px] text-white/80 truncate px-1">{beat.label}</span>}
                 </div>
@@ -565,7 +579,8 @@ export default function TrailerStudio() {
           )}
         </div>
 
-        {/* ─── Right Panel: Beat Inspector ─── */}
+        {/* ─── Right Panel: Beat Inspector (desktop) ─── */}
+        {!isMobile && (
         <div className="w-80 border-l border-border overflow-y-auto p-4 space-y-4 bg-card/30">
           {selectedBeat ? (
             <>
@@ -683,7 +698,111 @@ export default function TrailerStudio() {
             </div>
           )}
         </div>
+        )}
       </div>
+
+      {/* ─── Mobile Config Sheet ─── */}
+      {isMobile && (
+        <Sheet open={mobileConfigOpen} onOpenChange={setMobileConfigOpen}>
+          <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
+            <SheetHeader className="px-4 py-3 border-b">
+              <SheetTitle className="text-sm flex items-center gap-2"><Settings2 className="h-4 w-4 text-amber-500" /> Trailer Config</SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto h-[calc(100vh-60px)] p-4 space-y-4">
+              <div>
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Trailer Type</h3>
+                <div className="space-y-1.5">
+                  {TRAILER_TYPES.map(t => (
+                    <button key={t.id} onClick={() => { handleTypeChange(t.id); }} className={`w-full text-left p-2.5 rounded-lg border transition-all ${trailerType === t.id ? "border-amber-500 bg-amber-500/10" : "border-border/50 hover:bg-muted/30"}`}>
+                      <div className="flex items-center gap-2">
+                        <span>{t.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium">{t.label}</span>
+                            <span className="text-[10px] text-muted-foreground">{t.duration}</span>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">{t.description}</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Pacing</label>
+                <div className="flex gap-1 mt-1">
+                  {(["slow", "standard", "fast"] as const).map(p => (
+                    <button key={p} onClick={() => setOverallPacing(p)} className={`flex-1 text-[10px] py-1.5 rounded border transition-all ${overallPacing === p ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-border/50 text-muted-foreground"}`}>{p}</button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Aspect Ratio</label>
+                <div className="flex gap-1 mt-1">
+                  {(["16:9", "2.39:1", "4:3", "9:16"] as const).map(ar => (
+                    <button key={ar} onClick={() => setAspectRatio(ar)} className={`flex-1 text-[10px] py-1.5 rounded border transition-all ${aspectRatio === ar ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-border/50 text-muted-foreground"}`}>{ar}</button>
+                  ))}
+                </div>
+              </div>
+              <Button className="w-full" size="sm" onClick={autoAssignScenes}>
+                <Wand2 className="h-3 w-3 mr-1" /> Auto-Assign Scenes
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
+
+      {/* ─── Mobile Beat Inspector Sheet ─── */}
+      {isMobile && (
+        <Sheet open={mobileBeatOpen} onOpenChange={setMobileBeatOpen}>
+          <SheetContent side="bottom" className="h-[70vh] p-0">
+            <SheetHeader className="px-4 py-3 border-b">
+              <SheetTitle className="text-sm flex items-center gap-2"><Layers className="h-4 w-4 text-amber-500" /> {selectedBeat?.label || "Beat Inspector"}</SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto h-[calc(70vh-60px)] p-4 space-y-4">
+              {selectedBeat && (
+                <>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Beat Name</label>
+                    <Input value={selectedBeat.label} onChange={e => updateBeat(selectedBeat.id, { label: e.target.value })} className="mt-1 h-8 text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Description</label>
+                    <Textarea value={selectedBeat.description} onChange={e => updateBeat(selectedBeat.id, { description: e.target.value })} className="mt-1 text-sm min-h-[60px]" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Duration (seconds)</label>
+                    <Input type="number" min={1} max={120} value={selectedBeat.durationSec} onChange={e => updateBeat(selectedBeat.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Assign Scene</label>
+                    <select value={selectedBeat.sceneId ?? ""} onChange={e => updateBeat(selectedBeat.id, { sceneId: e.target.value ? Number(e.target.value) : null })} className="mt-1 w-full h-8 text-sm bg-background border border-border rounded px-2">
+                      <option value="">— None —</option>
+                      {scenes?.map(s => (<option key={s.id} value={s.id}>{s.title || `Scene ${s.id}`}</option>))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Pacing</label>
+                    <div className="flex gap-1 mt-1">
+                      {(["slow", "medium", "fast", "frenetic"] as const).map(p => (
+                        <button key={p} onClick={() => updateBeat(selectedBeat.id, { pacing: p })} className={`flex-1 text-[10px] py-1.5 rounded border transition-all ${selectedBeat.pacing === p ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-border/50 text-muted-foreground"}`}>{p}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Transition Out</label>
+                    <div className="flex gap-1 mt-1 flex-wrap">
+                      {(["cut", "dissolve", "fade-black", "fade-white", "whip", "smash-cut", "match-cut"] as const).map(t => (
+                        <button key={t} onClick={() => updateBeat(selectedBeat.id, { transition: t })} className={`text-[10px] py-0.5 px-1.5 rounded border transition-all ${selectedBeat.transition === t ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-border/50 text-muted-foreground"}`}>{t}</button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+      )}
     </div>
   );
 }

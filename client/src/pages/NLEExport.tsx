@@ -109,7 +109,7 @@ export default function NLEExport() {
         {/* Format Selection */}
         <div>
           <h2 className="text-sm font-medium mb-3">Select Export Format</h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {NLE_EXPORT_OPTIONS.map((format) => (
               <button
                 key={format}
@@ -142,7 +142,7 @@ export default function NLEExport() {
           <h2 className="text-sm font-medium mb-3">Include in Export</h2>
           <Card className="border-amber-500/20">
             <CardContent className="pt-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {Object.entries(includeOptions).map(([key, value]) => (
                   <div key={key} className="flex items-center gap-2">
                     <Checkbox

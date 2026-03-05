@@ -123,7 +123,7 @@ export default function VFXSuite() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto p-4 grid grid-cols-3 gap-4">
+      <div className="max-w-5xl mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* VFX Operations */}
         <div className="col-span-2 space-y-4">
           {Object.entries(VFX_CATEGORIES).map(([category, ops]) => (
@@ -131,7 +131,7 @@ export default function VFXSuite() {
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
                 {category}
               </h3>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {ops.map((op) => (
                   <button
                     key={op}

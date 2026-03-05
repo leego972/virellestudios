@@ -153,7 +153,7 @@ export default function AssetMarketplace() {
         </div>
 
         {/* Asset Grid */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {filteredAssets.map((asset) => (
             <Card key={asset.id} className="border-border/40 bg-black/20 hover:border-amber-500/40 transition-all">
               <CardContent className="pt-4 space-y-3">

@@ -536,23 +536,23 @@ export default function SceneEditor() {
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-4 md:space-y-6 px-2 md:px-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={() => setLocation(`/projects/${projectId}`)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="min-w-0">
-            <h1 className="text-xl font-semibold tracking-tight truncate">
+            <h1 className="text-base md:text-xl font-semibold tracking-tight truncate">
               Scene Editor {project?.title ? `— ${project.title}` : ""}
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">
               {scenes?.length || 0} scenes · Drag to reorder
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 md:gap-2 pl-11 sm:pl-0 flex-wrap">
           <Button
             size="sm"
             variant="outline"
@@ -567,7 +567,8 @@ export default function SceneEditor() {
             ) : (
               <Sparkles className="h-4 w-4 mr-1" />
             )}
-            Generate All Previews
+            <span className="hidden sm:inline">Generate All</span>
+            <span className="sm:hidden">Gen All</span>
           </Button>
           <Button
             size="sm"
@@ -575,12 +576,12 @@ export default function SceneEditor() {
             className="border-primary/40 text-primary hover:bg-primary/10"
             onClick={() => setLocation(`/projects/${projectId}/director-cut`)}
           >
-            <Scissors className="h-4 w-4 mr-1" />
-            Director's Cut
+            <Scissors className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Director's Cut</span>
           </Button>
           <Button size="sm" onClick={openNewScene}>
-            <Plus className="h-4 w-4 mr-1" />
-            Add Scene
+            <Plus className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Add Scene</span>
           </Button>
         </div>
       </div>
@@ -709,7 +710,7 @@ export default function SceneEditor() {
 
       {/* Scene Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={(open) => { if (!open) { setEditDialogOpen(false); setSelectedSceneId(null); } }}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto w-[95vw] md:w-auto">
           <DialogHeader>
             <DialogTitle className="text-base">
               {selectedSceneId ? "Edit Scene" : "New Scene"}
@@ -722,7 +723,7 @@ export default function SceneEditor() {
                 <Clapperboard className="h-3.5 w-3.5" />
                 Scene Info
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Scene Title</Label>
                   <Input placeholder="e.g. The Chase Begins" value={form.title} onChange={e => setField("title", e.target.value)} className="h-9 text-sm bg-background/50" />
@@ -803,7 +804,7 @@ export default function SceneEditor() {
                 <Camera className="h-3.5 w-3.5" />
                 Camera, Lens & Lighting
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Camera Angle / Shot</Label>
                   <Select value={form.cameraAngle} onValueChange={v => setField("cameraAngle", v)}>
@@ -932,7 +933,7 @@ export default function SceneEditor() {
                 <span className="text-amber-400">Camera Rig</span>
                 <Badge className="text-xs h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Camera Body / Sensor</Label>
                   <Select value={form.cameraBody || ""} onValueChange={v => setField("cameraBody", v)}>
@@ -979,7 +980,7 @@ export default function SceneEditor() {
                 <span className="text-amber-400">Visual Style & Motion Logic</span>
                 <Badge className="text-xs h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Visual Style</Label>
                   <Select value={form.visualStyle || "photorealistic"} onValueChange={v => setField("visualStyle", v)}>
@@ -1016,7 +1017,7 @@ export default function SceneEditor() {
                 <MapPin className="h-3.5 w-3.5" />
                 Location & Setting
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Location Type</Label>
                   <Select value={form.locationType} onValueChange={v => setField("locationType", v)}>
@@ -1049,7 +1050,7 @@ export default function SceneEditor() {
                 <Label className="text-xs text-muted-foreground">Location Details</Label>
                 <Input placeholder="e.g. Rooftop of a glass skyscraper, rain-slicked streets below" value={form.locationDetails} onChange={e => setField("locationDetails", e.target.value)} className="h-9 text-sm bg-background/50" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground flex items-center gap-1"><Car className="h-3 w-3" />Vehicle</Label>
                   <Select value={form.vehicleType} onValueChange={v => setField("vehicleType", v)}>
@@ -1128,7 +1129,7 @@ export default function SceneEditor() {
                               {char.photoUrl ? <img src={char.photoUrl} alt="" className="h-5 w-5 rounded-full object-cover" /> : <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center"><span className="text-[10px]">{char.name[0]}</span></div>}
                               <span className="text-xs font-medium">{char.name}</span>
                             </div>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                               <div className="space-y-1">
                                 <Label className="text-[11px] text-muted-foreground">Wardrobe Category</Label>
                                 <Select value={entry.wardrobeCategory} onValueChange={v => updateWardrobe({ wardrobeCategory: v })}>
@@ -1148,7 +1149,7 @@ export default function SceneEditor() {
                               <Label className="text-[11px] text-muted-foreground">Outfit Description</Label>
                               <Input placeholder="e.g. black tuxedo, white dress shirt, no tie" value={entry.wardrobeDescription} onChange={e => updateWardrobe({ wardrobeDescription: e.target.value })} className="h-8 text-xs bg-background/50" />
                             </div>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                               <div className="space-y-1">
                                 <Label className="text-[11px] text-muted-foreground">Makeup / FX</Label>
                                 <Input placeholder="e.g. bruised eye, blood on lip" value={entry.makeupNotes || ""} onChange={e => updateWardrobe({ makeupNotes: e.target.value })} className="h-8 text-xs bg-background/50" />
@@ -1245,7 +1246,7 @@ export default function SceneEditor() {
                 <Sparkles className="h-3.5 w-3.5" />
                 VFX & Post Production
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Visual Effects</Label>
                   <Select value={form.vfxElements} onValueChange={v => setField("vfxElements", v)}>
@@ -1293,7 +1294,7 @@ export default function SceneEditor() {
                 <Volume2 className="h-3.5 w-3.5" />
                 Sound Design
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Music Mood</Label>
                   <Select value={form.musicMood} onValueChange={v => setField("musicMood", v)}>
@@ -1341,7 +1342,7 @@ export default function SceneEditor() {
                 <Sparkles className="h-3.5 w-3.5" />
                 Production Details
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Action Description</Label>
                   <Select value={form.actionDescription} onValueChange={v => setField("actionDescription", v)}>
