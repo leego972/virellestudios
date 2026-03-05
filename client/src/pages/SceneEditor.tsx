@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Upload } from "lucide-react";
+import { Upload, Video, Film, Play } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -334,6 +334,24 @@ export default function SceneEditor() {
     onError: (err) => toast.error(err.message),
   });
 
+  const videoMutation = trpc.scene.generateVideo.useMutation({
+    onSuccess: (result) => {
+      utils.scene.listByProject.invalidate({ projectId });
+      toast.success(`Video generated via ${result.provider} (${result.duration}s)`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const bulkVideoMutation = trpc.scene.bulkGenerateVideos.useMutation({
+    onSuccess: (result) => {
+      utils.scene.listByProject.invalidate({ projectId });
+      toast.success(`Generated ${result.generated} videos (${result.total} total scenes)`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
+
   const openNewScene = () => {
     setSelectedSceneId(null);
     setForm({ ...defaultScene });
@@ -573,6 +591,24 @@ export default function SceneEditor() {
           <Button
             size="sm"
             variant="outline"
+            className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+            onClick={() => {
+              if (!projectId) return;
+              bulkVideoMutation.mutate({ projectId: Number(projectId) });
+            }}
+            disabled={bulkVideoMutation.isPending}
+          >
+            {bulkVideoMutation.isPending ? (
+              <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+            ) : (
+              <Film className="h-4 w-4 mr-1" />
+            )}
+            <span className="hidden sm:inline">Generate Videos</span>
+            <span className="sm:hidden">Videos</span>
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
             className="border-primary/40 text-primary hover:bg-primary/10"
             onClick={() => setLocation(`/projects/${projectId}/director-cut`)}
           >
@@ -663,15 +699,30 @@ export default function SceneEditor() {
                   </Button>
                 </div>
 
-                {scene.thumbnailUrl ? (
-                  <div className="h-16 w-24 rounded overflow-hidden bg-muted shrink-0">
-                    <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
-                  </div>
-                ) : (
-                  <div className="h-16 w-24 rounded bg-muted/50 flex items-center justify-center shrink-0">
-                    <ImageIcon className="h-5 w-5 text-muted-foreground/30" />
-                  </div>
-                )}
+                <div className="relative h-16 w-24 shrink-0">
+                  {scene.thumbnailUrl ? (
+                    <div className="h-full w-full rounded overflow-hidden bg-muted">
+                      <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="h-full w-full rounded bg-muted/50 flex items-center justify-center">
+                      <ImageIcon className="h-5 w-5 text-muted-foreground/30" />
+                    </div>
+                  )}
+                  {(scene as any).videoUrl && (
+                    <button
+                      className="absolute inset-0 flex items-center justify-center bg-black/40 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => { e.stopPropagation(); setVideoPreviewUrl((scene as any).videoUrl); }}
+                    >
+                      <Play className="h-6 w-6 text-white fill-white" />
+                    </button>
+                  )}
+                  {(scene as any).videoUrl && (
+                    <div className="absolute top-0.5 right-0.5">
+                      <Badge className="text-[8px] h-3.5 px-1 bg-amber-500/80 text-white border-0">VIDEO</Badge>
+                    </div>
+                  )}
+                </div>
 
                 <div className="min-w-0 flex-1 cursor-pointer" onClick={() => openEditScene(scene)}>
                   <div className="flex items-center gap-2">
@@ -684,10 +735,17 @@ export default function SceneEditor() {
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className="text-[10px] h-5 capitalize">{scene.status}</Badge>
                     <span className="text-[10px] text-muted-foreground">{scene.duration || 30}s</span>
+                    {(scene as any).videoUrl && <Badge variant="outline" className="text-[10px] h-5 text-amber-400 border-amber-500/30"><Video className="h-2.5 w-2.5 mr-0.5" />Video</Badge>}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                    onClick={() => videoMutation.mutate({ sceneId: scene.id })}
+                    disabled={videoMutation.isPending}>
+                    {videoMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Film className="h-3 w-3 mr-1" />}
+                    Video
+                  </Button>
                   <Button variant="ghost" size="sm" className="h-7 px-2 text-xs"
                     onClick={() => previewMutation.mutate({ sceneId: scene.id })}
                     disabled={previewMutation.isPending}>
@@ -1480,22 +1538,43 @@ export default function SceneEditor() {
             {/* Actions */}
             <div className="flex items-center justify-between pt-2 border-t">
               {selectedSceneId && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    previewMutation.mutate({ sceneId: selectedSceneId });
-                  }}
-                  disabled={previewMutation.isPending}
-                >
-                  {previewMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                  ) : (
-                    <Sparkles className="h-4 w-4 mr-1" />
-                  )}
-                  Generate Preview
-                </Button>
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      previewMutation.mutate({ sceneId: selectedSceneId });
+                    }}
+                    disabled={previewMutation.isPending}
+                  >
+                    {previewMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                    ) : (
+                      <Sparkles className="h-4 w-4 mr-1" />
+                    )}
+                    <span className="hidden sm:inline">Generate Preview</span>
+                    <span className="sm:hidden">Preview</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+                    onClick={() => {
+                      videoMutation.mutate({ sceneId: selectedSceneId });
+                    }}
+                    disabled={videoMutation.isPending}
+                  >
+                    {videoMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                    ) : (
+                      <Film className="h-4 w-4 mr-1" />
+                    )}
+                    <span className="hidden sm:inline">Generate Video</span>
+                    <span className="sm:hidden">Video</span>
+                  </Button>
+                </>
               )}
               <div className="flex gap-2 ml-auto">
                 <Button type="button" variant="ghost" size="sm" onClick={() => setEditDialogOpen(false)}>
@@ -1520,6 +1599,23 @@ export default function SceneEditor() {
           {previewUrl && (
             <div className="aspect-video rounded-md overflow-hidden bg-muted">
               <img src={previewUrl} alt="Scene preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Video Preview Dialog */}
+      <Dialog open={!!videoPreviewUrl} onOpenChange={() => setVideoPreviewUrl(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-base flex items-center gap-2">
+              <Film className="h-4 w-4 text-amber-400" />
+              Scene Video
+            </DialogTitle>
+          </DialogHeader>
+          {videoPreviewUrl && (
+            <div className="aspect-video rounded-md overflow-hidden bg-black">
+              <video src={videoPreviewUrl} controls autoPlay className="w-full h-full object-contain" />
             </div>
           )}
         </DialogContent>

@@ -1185,6 +1185,109 @@ export const appRouter = router({
         }
         return { generated, total: scenes.length };
       }),
+
+    // Generate video for a single scene
+    generateVideo: protectedProcedure
+      .input(z.object({ sceneId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitHeavyAI(ctx.user.id);
+        requireGenerationQuota(ctx.user);
+        await db.incrementGenerationCount(ctx.user.id);
+        const scene = await db.getSceneById(input.sceneId);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        const project = await db.getProjectById(scene.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const characters = await db.getProjectCharacters(project.id);
+        const userTier = getEffectiveTier(ctx.user) as QualityTier;
+        const visualDNA = buildVisualDNA(project, characters, userTier);
+        const allScenes = await db.getProjectScenes(project.id);
+        const sceneIdx = allScenes.findIndex(s => s.id === scene.id);
+        const prompt = buildScenePrompt(
+          { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
+          visualDNA,
+          {
+            sceneIndex: sceneIdx >= 0 ? sceneIdx : 0,
+            totalScenes: allScenes.length || 1,
+            previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
+            characterNames: characters.map(c => c.name),
+          }
+        );
+        // Use the scene thumbnail as input image for video generation if available
+        const inputImageUrl = scene.thumbnailUrl || undefined;
+        try {
+          const result = await generateUnifiedVideo({
+            prompt: `Cinematic video: ${prompt}`,
+            seconds: Math.min(scene.duration || 8, 20),
+            resolution: "720p",
+            inputImageUrl,
+            aspectRatio: "landscape",
+            genre: project.genre || "Drama",
+            cameraMovement: scene.cameraMovement || undefined,
+            mood: scene.mood || undefined,
+            lighting: scene.lighting || undefined,
+          });
+          await db.updateScene(scene.id, { videoUrl: result.videoUrl } as any);
+          return { videoUrl: result.videoUrl, duration: result.duration, provider: result.provider };
+        } catch (err: any) {
+          console.error(`[SceneVideo] Failed for scene ${scene.id}:`, err.message);
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Video generation failed: ${err.message}` });
+        }
+      }),
+
+    // Bulk generate videos for all scenes without videos
+    bulkGenerateVideos: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitHeavyAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseBulkGenerate", "Bulk Generate Videos");
+        requireGenerationQuota(ctx.user);
+        await db.incrementGenerationCount(ctx.user.id);
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const scenes = await db.getProjectScenes(project.id);
+        const scenesNeedingVideo = scenes.filter(s => !(s as any).videoUrl);
+        if (scenesNeedingVideo.length === 0) return { generated: 0, total: scenes.length };
+        const characters = await db.getProjectCharacters(project.id);
+        const userTier = getEffectiveTier(ctx.user) as QualityTier;
+        const visualDNA = buildVisualDNA(project, characters, userTier);
+        let generated = 0;
+        // Process 2 at a time to avoid API overload
+        const BATCH = 2;
+        for (let i = 0; i < scenesNeedingVideo.length; i += BATCH) {
+          const batch = scenesNeedingVideo.slice(i, i + BATCH);
+          await Promise.allSettled(batch.map(async (scene) => {
+            try {
+              const sceneIdx = scenes.findIndex(s => s.id === scene.id);
+              const prompt = buildScenePrompt(
+                { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
+                visualDNA,
+                {
+                  sceneIndex: sceneIdx >= 0 ? sceneIdx : 0,
+                  totalScenes: scenes.length,
+                  previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
+                  characterNames: characters.map(c => c.name),
+                }
+              );
+              const result = await generateUnifiedVideo({
+                prompt: `Cinematic video: ${prompt}`,
+                seconds: Math.min(scene.duration || 8, 20),
+                resolution: "720p",
+                inputImageUrl: scene.thumbnailUrl || undefined,
+                aspectRatio: "landscape",
+                genre: project.genre || "Drama",
+                cameraMovement: scene.cameraMovement || undefined,
+                mood: scene.mood || undefined,
+                lighting: scene.lighting || undefined,
+              });
+              await db.updateScene(scene.id, { videoUrl: result.videoUrl } as any);
+              generated++;
+            } catch (e) {
+              console.error(`Bulk video gen failed for scene "${scene.title}":`, e);
+            }
+          }));
+        }
+        return { generated, total: scenes.length };
+      }),
   }),
 
   // ─── File Upload ───
