@@ -395,6 +395,39 @@ export default function NewProject() {
                   </div>
                 </div>
 
+                {/* Cinema Industry Selector */}
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Film className="h-3 w-3" />
+                    Cinema Industry
+                  </Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {CINEMA_INDUSTRY_OPTIONS.map((opt) => {
+                      const profile = CINEMA_INDUSTRY_PROFILES[opt.value];
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setCinemaIndustry(opt.value)}
+                          className={`flex flex-col items-start gap-0.5 p-2.5 rounded-lg border text-left transition-all ${
+                            cinemaIndustry === opt.value
+                              ? 'border-primary bg-primary/10 text-primary'
+                              : 'border-border/50 bg-background/30 hover:border-border hover:bg-background/50 text-muted-foreground'
+                          }`}
+                        >
+                          <span className="text-sm font-medium">{profile?.flag ?? ''} {opt.label}</span>
+                          {profile && <span className="text-[10px] opacity-70 leading-tight">{profile.primaryLanguages[0]}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {cinemaIndustry && CINEMA_INDUSTRY_PROFILES[cinemaIndustry] && (
+                    <p className="text-[10px] text-muted-foreground/60">
+                      {CINEMA_INDUSTRY_PROFILES[cinemaIndustry].description}
+                    </p>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Tone / Style</Label>
