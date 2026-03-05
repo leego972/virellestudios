@@ -926,7 +926,7 @@ export async function updateUserRole(userId: number, role: "user" | "admin") {
 
 // ─── Subscription ───
 export async function updateUserSubscription(userId: number, data: {
-  subscriptionTier?: "free" | "creator" | "pro" | "industry";
+  subscriptionTier?: "creator" | "pro" | "industry";
   stripeCustomerId?: string;
   stripeSubscriptionId?: string | null;
   subscriptionStatus?: "active" | "canceled" | "past_due" | "unpaid" | "trialing" | "none";

@@ -11,7 +11,7 @@ export const stripe = ENV.stripeSecretKey
 // TIER DEFINITIONS & LIMITS
 // ============================================================
 
-export type SubscriptionTier = "free" | "creator" | "pro" | "industry";
+export type SubscriptionTier = "creator" | "pro" | "industry";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -79,60 +79,12 @@ export interface TierLimits {
  *   Premium (white-glove):       $250,000  (Launch Special: $125,000)
  * 
  * PLATFORM ACCESS TIERS (subscription for ongoing access to tools):
- *   Free — Demo/preview (5 min max, limited features)
- *   Creator — Short films up to 30 min, all core tools
+ *   Creator — Short films up to 30 min, all core tools (entry level)
  *   Pro — Feature films up to 90 min, full pipeline, VFX Scene Studio
  *   Industry — Unlimited, 4K, 180 min, white-label, API access
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
-  free: {
-    maxProjects: 1,
-    maxCharactersPerProject: 3,
-    maxScenesPerProject: 5,
-    maxGenerationsPerMonth: 3,
-    maxMovieExports: 0,
-    maxCollaboratorsPerProject: 0,
-    maxScriptsPerProject: 1,
-    maxStorageMB: 200,
-    canUseQuickGenerate: true,
-    canUseTrailerGeneration: false,
-    canUseBulkGenerate: false,
-    canUseDirectorAssistant: false,
-    canUseAdPosterMaker: false,
-    canUseBudgetEstimator: false,
-    canUseColorGrading: false,
-    canUseSoundEffects: false,
-    canUseVisualEffects: false,
-    canUseSubtitles: false,
-    canUseDialogueEditor: false,
-    canUseLocationScout: false,
-    canUseMoodBoard: false,
-    canUseShotList: false,
-    canUseContinuityCheck: false,
-    canUseScriptWriter: true,
-    canUseStoryboard: true,
-    canUseCollaboration: false,
-    canExportMovies: false,
-    canExportHD: false,
-    canExportUltraHD: false,
-    canUseAICharacterGen: true,
-    canUseAIScriptGen: true,
-    canUseAIDialogueGen: false,
-    canUseAIBudgetGen: false,
-    canUseAISubtitleGen: false,
-    canUseAILocationSuggest: false,
-    canUseFullFilmGeneration: false,
-    canUseAIVoiceActing: false,
-    canUseAISoundtrack: false,
-    canUseCharacterConsistency: false,
-    canUseSceneContinuity: false,
-    canUseClipChaining: false,
-    resolution: "720p",
-    quality: ["standard"],
-    maxDurationMinutes: 5,
-    maxClipsPerScene: 1,
-  },
   creator: {
     maxProjects: 10,
     maxCharactersPerProject: 20,
@@ -481,7 +433,7 @@ export interface TierPricing {
  * Pro: $5,000/mo — Full pipeline, 90 min films, VFX Scene Studio
  * Industry: $10,000/mo — Unlimited, 4K, 180 min, white-label, API access
  */
-export const TIER_PRICING: Record<Exclude<SubscriptionTier, "free">, TierPricing> = {
+export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
   creator: { monthly: 2500, annual: 2000, annualTotal: 24000 },
   pro: { monthly: 5000, annual: 4000, annualTotal: 48000 },
   industry: { monthly: 10000, annual: 8000, annualTotal: 96000 },
@@ -564,9 +516,9 @@ export function getEffectiveTier(user: User): SubscriptionTier {
     return "industry";
   }
   if (user.subscriptionStatus === "active" || user.subscriptionStatus === "trialing") {
-    return (user.subscriptionTier as SubscriptionTier) || "free";
+    return (user.subscriptionTier as SubscriptionTier) || "creator";
   }
-  return "free";
+  return "creator";
 }
 
 /**

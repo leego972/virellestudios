@@ -37,7 +37,7 @@ const VOICE_MUSIC_PROVIDERS = [
     name: "ElevenLabs",
     description: "Industry-leading AI voice acting. Natural, expressive dialogue for every character.",
     signupUrl: "https://elevenlabs.io/app/settings/api-keys",
-    pricing: "Free tier: 10K chars/mo. Starter: $5/mo. Creator: $22/mo.",
+    pricing: "Starter: $5/mo (30K chars). Creator: $22/mo (100K chars).",
     models: "Multilingual v2, Turbo v2.5, Voice Cloning",
   },
   {
@@ -45,7 +45,7 @@ const VOICE_MUSIC_PROVIDERS = [
     name: "Suno AI",
     description: "AI-composed original soundtracks and music scores for your films.",
     signupUrl: "https://suno.com",
-    pricing: "Free tier: 5 songs/day. Pro: $10/mo.",
+    pricing: "Pro: $10/mo (500 songs). Premier: $30/mo (2000 songs).",
     models: "Suno v4, Chirp v3.5",
   },
 ];
@@ -307,7 +307,7 @@ export default function Settings() {
             <CardContent>
               <div className="flex items-center gap-3">
                 <Badge className={`${profile?.subscriptionTier === "industry" ? "bg-amber-500/20 text-amber-400" : profile?.subscriptionTier === "pro" ? "bg-purple-500/20 text-purple-400" : "bg-muted text-muted-foreground"}`}>
-                  {(profile?.subscriptionTier || "free").toUpperCase()}
+                  {(profile?.subscriptionTier || "creator").toUpperCase()}
                 </Badge>
                 {profile?.role === "admin" && <Badge className="bg-red-500/20 text-red-400">Admin</Badge>}
                 <span className="text-xs text-muted-foreground">

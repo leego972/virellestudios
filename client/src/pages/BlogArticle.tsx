@@ -138,7 +138,7 @@ export default function BlogArticle() {
               Share
             </Button>
             <Link href="/register">
-              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">Get Started Free</Button>
+              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">View Plans</Button>
             </Link>
           </div>
         </div>
@@ -210,7 +210,7 @@ export default function BlogArticle() {
           </p>
           <Link href="/register">
             <Button className="bg-amber-600 hover:bg-amber-700 text-white px-6">
-              Start Creating — It's Free
+              Start Creating Now
             </Button>
           </Link>
         </div>

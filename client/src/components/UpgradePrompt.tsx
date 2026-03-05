@@ -23,7 +23,7 @@ const tierLabels: Record<string, string> = {
   industry: "Industry",
 };
 
-export function UpgradePrompt({ feature, requiredTier, currentTier = "free", compact = false }: UpgradePromptProps) {
+export function UpgradePrompt({ feature, requiredTier, currentTier = "creator", compact = false }: UpgradePromptProps) {
   const [, setLocation] = useLocation();
 
   if (compact) {

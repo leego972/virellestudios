@@ -366,12 +366,12 @@ export async function verifySubscriptionForAction(
   }
 
   // Verify tier level
-  const tierRank: Record<string, number> = { free: 0, pro: 1, industry: 2 };
-  const userTierRank = tierRank[user.subscriptionTier || "free"] || 0;
+  const tierRank: Record<string, number> = { creator: 0, pro: 1, industry: 2 };
+  const userTierRank = tierRank[user.subscriptionTier || "creator"] || 0;
   const requiredRank = tierRank[requiredTier] || 0;
 
   if (userTierRank < requiredRank) {
-    return { valid: false, reason: `This feature requires the ${requiredTier} plan. You are on the ${user.subscriptionTier || "free"} plan.` };
+    return { valid: false, reason: `This feature requires the ${requiredTier} plan. You are on the ${user.subscriptionTier || "creator"} plan.` };
   }
 
   return { valid: true };

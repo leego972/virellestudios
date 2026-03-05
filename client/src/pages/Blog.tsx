@@ -53,7 +53,7 @@ export default function Blog() {
               <Button variant="ghost" size="sm" className="text-white/60 hover:text-white">Sign In</Button>
             </Link>
             <Link href="/register">
-              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">Get Started Free</Button>
+              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">View Plans</Button>
             </Link>
           </div>
         </div>
@@ -168,7 +168,7 @@ export default function Blog() {
         </p>
         <Link href="/register">
           <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-white px-8">
-            Start Creating — It's Free
+            Start Creating Now
           </Button>
         </Link>
       </section>

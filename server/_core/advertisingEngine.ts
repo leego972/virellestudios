@@ -393,7 +393,7 @@ export type AdContentType =
   | "comparison"
   | "tutorial_teaser"
   | "milestone"
-  | "free_tier_promo"
+
   // Film industry-specific content types
   | "pitch_deck_teaser"
   | "industry_insight"
@@ -461,7 +461,7 @@ const VIRELLE_INFO = {
     "Export — Full movie export with credits and soundtrack",
   ],
   pricing: {
-    free: "Free tier — 2 projects, 5 AI generations/month",
+    creator: "Creator plan — 10 projects, 100 AI generations/month, full pipeline",
     creator: "$29/month — 5 projects, 30 generations, 1080p, trailer generation",
     pro: "$99/month — 25 projects, 200 generations, all creative tools",
     industry: "$499/month — Unlimited everything, 4K, ultra quality",
@@ -546,7 +546,7 @@ function buildAdPrompt(
     comparison: "Write a comparison showing how Virelle Studios changes the filmmaking workflow. Compare traditional film production (months, expensive) vs AI-powered (minutes, accessible). Don't bash competitors — elevate the category.",
     tutorial_teaser: "Write a teaser for a tutorial on how to use Virelle Studios. Give just enough to intrigue people and make them want to try it. Include one concrete tip or workflow.",
     milestone: "Write a milestone/update post. Share growth, new features, or community achievements. Make the community feel like they're part of the journey.",
-    free_tier_promo: "Promote the free tier of Virelle Studios. Emphasize that anyone can try AI filmmaking for free. Lower the barrier to entry. Make it irresistible to try.",
+
     // Film industry-specific
     pitch_deck_teaser: isLinkedInFilmIndustry
       ? "Write a LinkedIn post for film industry professionals about how Virelle Studios transforms the pitch process. The hook: 'What if you could show investors a fully visualised film before spending a dollar on production?' Walk through how a producer used Virelle Studios to create a cinematic pitch deck — script, storyboard, character designs, and scene previews — in 48 hours instead of 6 weeks. End with a call to action for producers to try it. Use professional film industry language. Include hashtags: #FilmProducer #FilmFinance #IndieFilm #PitchDeck #FilmProduction."
@@ -723,7 +723,7 @@ export function getRecommendedPlatforms(contentType: AdContentType): AdPlatform[
     comparison: ["reddit_filmmakers", "reddit_screenwriting", "linkedin", "stage32"],
     tutorial_teaser: ["reddit_filmmaking", "reddit_screenwriting", "twitter", "deviantart"],
     milestone: ["indiehackers", "twitter", "linkedin", "reddit_sideproject"],
-    free_tier_promo: ["reddit_filmmakers", "reddit_indiefilm", "reddit_digitalart", "facebook_groups", "deviantart"],
+
     // Film industry LinkedIn-specific
     pitch_deck_teaser: ["linkedin", "linkedin_producers", "reddit_filmmakers", "reddit_indiefilm", "stage32"],
     industry_insight: ["linkedin", "linkedin_studios", "reddit_filmmakers", "stage32"],
@@ -940,7 +940,7 @@ export async function runAutonomousAdCycle(): Promise<{
   // Rotate through all content types including film-industry-specific LinkedIn types
   const generalContentTypes: AdContentType[] = [
     "launch_announcement", "feature_showcase", "behind_the_scenes",
-    "user_testimonial", "tutorial_teaser", "free_tier_promo",
+    "user_testimonial", "tutorial_teaser",
   ];
   const linkedInContentTypes: AdContentType[] = [
     "pitch_deck_teaser", "industry_insight", "case_study",

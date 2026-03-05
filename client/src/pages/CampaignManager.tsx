@@ -43,7 +43,7 @@ const CONTENT_TYPES = [
   { value: "comparison", label: "Comparison", icon: TrendingUp, description: "Traditional vs AI filmmaking" },
   { value: "tutorial_teaser", label: "Tutorial Teaser", icon: Monitor, description: "Tease a how-to guide" },
   { value: "milestone", label: "Milestone Update", icon: Target, description: "Share growth and achievements" },
-  { value: "free_tier_promo", label: "Free Tier Promo", icon: Zap, description: "Promote the free plan" },
+  
 ] as const;
 
 const SCHEDULES = [

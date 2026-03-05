@@ -198,9 +198,9 @@ async function startServer() {
               : sub.status === "unpaid" ? "unpaid" : "none";
             // Check if this is an upgrade (tier changed to higher)
             const existingUser = await db.getUserById(userId);
-            const isUpgrade = existingUser && tier !== "free" && existingUser.subscriptionTier !== tier;
+            const isUpgrade = existingUser && existingUser.subscriptionTier !== tier;
             await db.updateUserSubscription(userId, {
-              subscriptionTier: status === "active" || status === "trialing" ? tier : "free",
+              subscriptionTier: status === "active" || status === "trialing" ? tier : "creator",
               subscriptionStatus: status,
               subscriptionCurrentPeriodEnd: new Date(sub.current_period_end * 1000),
             });
@@ -218,7 +218,7 @@ async function startServer() {
           const userId = await resolveUserId(sub.metadata, customerId);
           if (userId) {
             await db.updateUserSubscription(userId, {
-              subscriptionTier: "free",
+              subscriptionTier: "creator",
               subscriptionStatus: "canceled",
               stripeSubscriptionId: null,
               subscriptionCurrentPeriodEnd: null,

@@ -4062,14 +4062,14 @@ Rules:
             const livePeriodEnd = new Date((sub as any).current_period_end * 1000);
 
             // Only update DB if something changed
-            const tierChanged = (liveStatus === "active" || liveStatus === "trialing" ? liveTier : "free") !== user.subscriptionTier;
+            const tierChanged = (liveStatus === "active" || liveStatus === "trialing" ? liveTier : "creator") !== user.subscriptionTier;
             const statusChanged = liveStatus !== user.subscriptionStatus;
             const periodChanged = !user.subscriptionCurrentPeriodEnd || 
               Math.abs(livePeriodEnd.getTime() - new Date(user.subscriptionCurrentPeriodEnd).getTime()) > 60000;
 
             if (tierChanged || statusChanged || periodChanged) {
               await db.updateUserSubscription(user.id, {
-                subscriptionTier: liveStatus === "active" || liveStatus === "trialing" ? liveTier : "free",
+                subscriptionTier: liveStatus === "active" || liveStatus === "trialing" ? liveTier : "creator",
                 subscriptionStatus: liveStatus as any,
                 subscriptionCurrentPeriodEnd: livePeriodEnd,
               });
@@ -4140,7 +4140,7 @@ Rules:
         await db.updateUserSubscription(ctx.user.id, { stripeCustomerId: customerId });
 
         // First-time subscribers on Creator/Pro get a 7-day free trial
-        const isFirstSub = ctx.user.subscriptionTier === "free" && ctx.user.subscriptionStatus === "none";
+        const isFirstSub = ctx.user.subscriptionTier === "creator" && ctx.user.subscriptionStatus === "none";
         const trialDays = isFirstSub && (input.tier === "creator" || input.tier === "pro") ? 7 : undefined;
 
         const url = await createCheckoutSession(
@@ -4203,8 +4203,8 @@ Rules:
       return {
         tiers: [
           {
-            id: "free" as const,
-            name: "Free",
+            id: "creator" as const,
+            name: "Creator",
             monthlyPrice: 0,
             annualPrice: 0,
             annualTotal: 0,
@@ -4370,7 +4370,7 @@ Rules:
       .input(z.object({
         name: z.string().min(1).max(200),
         platforms: z.array(z.string()).min(1),
-        contentType: z.enum(["launch_announcement", "feature_showcase", "behind_the_scenes", "user_testimonial", "comparison", "tutorial_teaser", "milestone", "free_tier_promo"]),
+        contentType: z.enum(["launch_announcement", "feature_showcase", "behind_the_scenes", "user_testimonial", "comparison", "tutorial_teaser", "milestone"]),
         schedule: z.enum(["once", "daily", "weekly", "biweekly", "monthly"]),
       }))
       .mutation(({ input }) => {
@@ -4393,7 +4393,7 @@ Rules:
     generateSingleContent: adminProcedure
       .input(z.object({
         platformId: z.string(),
-        contentType: z.enum(["launch_announcement", "feature_showcase", "behind_the_scenes", "user_testimonial", "comparison", "tutorial_teaser", "milestone", "free_tier_promo"]),
+        contentType: z.enum(["launch_announcement", "feature_showcase", "behind_the_scenes", "user_testimonial", "comparison", "tutorial_teaser", "milestone"]),
         customContext: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
@@ -4741,7 +4741,7 @@ Rules:
         name: user.name,
         email: user.email,
         role: u.role || "user",
-        subscriptionTier: u.subscriptionTier || "free",
+        subscriptionTier: u.subscriptionTier || "creator",
         phone: u.phone || null,
         avatarUrl: u.avatarUrl || null,
         bio: u.bio || null,

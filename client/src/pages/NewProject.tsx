@@ -34,7 +34,7 @@ export default function NewProject() {
   const params = new URLSearchParams(searchString);
   const initialMode = params.get("mode") === "manual" ? "manual" : "quick";
 
-  const { limits, tier, isFree } = useSubscription();
+  const { limits, tier } = useSubscription();
   const maxDuration = (limits as any)?.maxDurationMinutes || 180;
   const [mode, setMode] = useState<"quick" | "manual">(initialMode as "quick" | "manual");
   // Basic Info

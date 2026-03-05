@@ -289,7 +289,7 @@ const NEGATIVE_PROMPTS: Record<string, string> = {
 
 // ─── Quality Tier Definitions ───
 
-export type QualityTier = "free" | "pro" | "industry";
+export type QualityTier = "creator" | "pro" | "industry";
 
 const QUALITY_ANCHORS: Record<QualityTier, string> = {
   "free": "RAW photograph, photorealistic, shot on Canon EOS R5 with 50mm f/1.4 lens, natural available light, real human skin with visible pores and natural imperfections, authentic facial features, genuine emotion, real-world location, 1080p resolution, slight natural film grain, sensor noise at ISO 800, chromatic aberration at frame edges, natural lens vignetting, real photograph indistinguishable from a DSLR capture",
@@ -298,7 +298,7 @@ const QUALITY_ANCHORS: Record<QualityTier, string> = {
 };
 
 const QUALITY_NEGATIVE: Record<QualityTier, string> = {
-  "free": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}`,
+  "creator": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}, ${PHOTOREALISM_SKIN_AND_EYES}`,
   "pro": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}, ${NEGATIVE_PROMPTS.photorealistic}`,
   "industry": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}, ${NEGATIVE_PROMPTS.photorealistic}, ${NEGATIVE_PROMPTS.cinematic}`,
 };

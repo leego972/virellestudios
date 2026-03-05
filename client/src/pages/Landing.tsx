@@ -15,8 +15,8 @@ import { useState, useEffect, useRef } from "react";
 const FULL_FILM_FEATURES = [
   { icon: Zap, title: "Full Film Generation", desc: "Describe your concept and AI generates a complete 90-minute film — screenplay, scenes, dialogue, soundtrack, and final cut." },
   { icon: Layers, title: "Clip Chaining", desc: "Each scene is built from 4-8 AI video clips stitched seamlessly. 30-60 seconds per scene, 60-90 scenes per film." },
-  { icon: Mic, title: "AI Voice Acting", desc: "Every line of dialogue is spoken by AI voices with emotion, pacing, and character. ElevenLabs, OpenAI TTS, or free tier." },
-  { icon: Music, title: "AI Film Score", desc: "Original soundtracks generated for every scene. Suno AI, MusicGen, or free ambient — matched to mood and genre." },
+  { icon: Mic, title: "AI Voice Acting", desc: "Every line of dialogue is spoken by AI voices with emotion, pacing, and character. ElevenLabs, OpenAI TTS, and more." },
+  { icon: Music, title: "AI Film Score", desc: "Original soundtracks generated for every scene. Suno AI, MusicGen, and more — matched to mood and genre." },
   { icon: Eye, title: "Hyper-Realistic Characters", desc: "Characters are indistinguishable from real people. Subsurface skin scattering, iris fiber detail, authentic facial asymmetry, and micro-expressions — not CGI, not illustration: a real photograph." },
   { icon: Camera, title: "Scene Continuity", desc: "Last frame of each scene feeds into the next. Smooth visual flow across your entire film — no jarring cuts." },
 ];
@@ -49,23 +49,6 @@ const TESTIMONIALS = [
 ];
 
 const PRICING = [
-  {
-    tier: "Free",
-    price: "$0",
-    period: "forever",
-    highlight: false,
-    badge: null,
-    desc: "Preview the platform. See what AI filmmaking can do.",
-    features: [
-      "1 demo project",
-      "3 generations / month",
-      "5 scenes, 720p preview",
-      "AI Script Writer",
-      "AI Character Generation",
-      "Storyboard",
-    ],
-    limitations: ["No film export", "No voice acting", "No soundtrack", "No clip chaining"],
-  },
   {
     tier: "Creator",
     price: "$2,500",
@@ -222,7 +205,7 @@ export default function Landing() {
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setLocation("/login")} className="text-sm">Sign In</Button>
             <Button size="sm" onClick={() => setLocation("/register")} className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium">
-              Get Started Free
+              View Plans
             </Button>
           </div>
         </div>
@@ -266,7 +249,7 @@ export default function Landing() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12 text-base">
-              Start Creating — It's Free
+              Start Creating Now
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => {
@@ -277,7 +260,7 @@ export default function Landing() {
               See Use Cases
             </Button>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">No credit card required. BYOK — bring your own API keys. Free tier available.</p>
+          <p className="mt-4 text-xs text-muted-foreground">BYOK — bring your own API keys. Professional plans from $2,500/mo.</p>
         </div>
       </section>
 
@@ -490,7 +473,7 @@ export default function Landing() {
                   "OpenAI Sora — Cinematic realism",
                   "fal.ai — Best value (HunyuanVideo, Veo 3)",
                   "Luma AI, Replicate, Hugging Face",
-                  "Pollinations.ai — Completely free tier",
+                  "Pollinations.ai — No key needed",
                 ].map((provider) => (
                   <div key={provider} className="flex items-center gap-2 text-sm">
                     <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
@@ -518,7 +501,7 @@ export default function Landing() {
                 { emoji: "🎤", name: "ElevenLabs", detail: "Turbo v2.5 · Voice Acting", color: "purple" },
                 { emoji: "🎵", name: "Suno AI", detail: "Chirp v3.5 · Film Score", color: "blue" },
                 { emoji: "⚡", name: "fal.ai", detail: "HunyuanVideo · VFX Scenes", color: "green" },
-                { emoji: "🌿", name: "Pollinations.ai", detail: "Free tier · No key needed", color: "emerald" },
+                { emoji: "🌿", name: "Pollinations.ai", detail: "No key needed", color: "emerald" },
               ].map((p) => (
                 <div key={p.name} className="flex items-center gap-3 p-3 rounded-lg bg-background/50 border border-border/30">
                   <div className={`h-8 w-8 rounded bg-${p.color}-500/10 flex items-center justify-center text-lg`}>{p.emoji}</div>
@@ -684,9 +667,9 @@ export default function Landing() {
                     className={`w-full mb-4 ${plan.highlight ? "bg-amber-500 hover:bg-amber-600 text-black font-semibold" : ""}`}
                     variant={plan.highlight ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setLocation(plan.tier === "Free" ? "/register" : "/pricing")}
+                    onClick={() => setLocation(plan.tier === "Industry" ? "/contact" : "/pricing")}
                   >
-                    {plan.tier === "Free" ? "Get Started" : plan.tier === "Industry" ? "Contact Sales" : "Subscribe"}
+                    {plan.tier === "Industry" ? "Contact Sales" : "Subscribe Now"}
                   </Button>
                   <ul className="space-y-2">
                     {plan.features.map((f) => (
@@ -797,11 +780,11 @@ export default function Landing() {
             <span className="text-amber-400">First Film?</span>
           </h2>
           <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
-            Generate a complete feature-length film or create impossible VFX scenes for your production. Start for free — bring your own API keys.
+            Generate a complete feature-length film or create impossible VFX scenes for your production. Bring your own API keys.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12 text-base">
-              Start Creating — It's Free
+              Start Creating Now
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => setLocation("/contact")} className="h-12 text-base px-8">

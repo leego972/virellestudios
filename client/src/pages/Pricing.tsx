@@ -21,7 +21,7 @@ export default function Pricing() {
   const filmPackageMutation = trpc.subscription.createFilmPackageCheckout.useMutation();
   const portalMutation = trpc.subscription.createBillingPortal.useMutation();
 
-  const currentTier = status?.tier || "free";
+  const currentTier = status?.tier || "creator";
 
   const handleSubscribe = async (tier: "creator" | "pro" | "industry") => {
     if (!status) {
@@ -31,7 +31,7 @@ export default function Pricing() {
 
     setLoadingTier(tier);
     try {
-      if (status.status === "active" && status.tier !== "free") {
+      if (status.status === "active" && true) {
         const result = await portalMutation.mutateAsync({
           returnUrl: window.location.href,
         });
@@ -97,21 +97,18 @@ export default function Pricing() {
   };
 
   const tierIcons: Record<string, any> = {
-    free: Zap,
     creator: Film,
     pro: Crown,
     industry: Building2,
   };
 
   const tierColors: Record<string, string> = {
-    free: "border-zinc-700",
     creator: "border-blue-500 ring-2 ring-blue-500/20",
     pro: "border-amber-500 ring-2 ring-amber-500/20",
     industry: "border-violet-500 ring-2 ring-violet-500/20",
   };
 
   const tierButtonColors: Record<string, string> = {
-    free: "bg-zinc-700 hover:bg-zinc-600",
     creator: "bg-blue-600 hover:bg-blue-500",
     pro: "bg-amber-600 hover:bg-amber-500",
     industry: "bg-violet-600 hover:bg-violet-500",
@@ -162,7 +159,7 @@ export default function Pricing() {
         )}
 
         {/* Current subscription info */}
-        {status && status.tier !== "free" && status.status === "active" && (
+        {status && true && status.status === "active" && (
           <div className="max-w-md mx-auto mb-10 p-4 rounded-lg border border-green-500/30 bg-green-500/5 text-center">
             <p className="text-sm text-green-400">
               You're on the <strong className="capitalize">{status.tier}</strong> plan
@@ -374,12 +371,10 @@ export default function Pricing() {
               const Icon = tierIcons[tier.id] || Zap;
               const isCurrentTier = currentTier === tier.id;
               const isPopular = tier.popular;
-              const displayPrice = tier.id === "free"
-                ? "$0"
-                : billingInterval === "annual"
+              const displayPrice = billingInterval === "annual"
                 ? formatPrice(tier.annualPrice)
                 : formatPrice(tier.monthlyPrice);
-              const priceInterval = tier.id === "free" ? "forever" : "/mo";
+              const priceInterval = "/mo";
 
               return (
                 <Card
@@ -403,7 +398,7 @@ export default function Pricing() {
                       <span className="text-muted-foreground ml-1">
                         {priceInterval}
                       </span>
-                      {billingInterval === "annual" && tier.id !== "free" && (
+                      {billingInterval === "annual" && (
                         <div className="text-xs text-green-400 mt-1">
                           {formatPrice(tier.annualTotal)}/year (save {formatPrice((tier.monthlyPrice * 12) - tier.annualTotal)}/yr)
                         </div>
@@ -423,16 +418,7 @@ export default function Pricing() {
                   </CardContent>
 
                   <CardFooter className="pt-4">
-                    {tier.id === "free" ? (
-                      <Button
-                        className="w-full"
-                        variant={isCurrentTier ? "outline" : "secondary"}
-                        disabled={isCurrentTier}
-                      >
-                        {isCurrentTier ? "Current Plan" : "Get Started Free"}
-                      </Button>
-                    ) : (
-                      <Button
+                    <Button
                         className={`w-full text-white ${tierButtonColors[tier.id] || ""}`}
                         disabled={isCurrentTier || loadingTier === tier.id}
                         onClick={() => handleSubscribe(tier.id as "creator" | "pro" | "industry")}
@@ -442,11 +428,10 @@ export default function Pricing() {
                         ) : null}
                         {isCurrentTier
                           ? "Current Plan"
-                          : status?.status === "active" && status?.tier !== "free"
+                          : status?.status === "active"
                           ? `Switch to ${tier.name}`
                           : `Subscribe to ${tier.name}`}
                       </Button>
-                    )}
                   </CardFooter>
                 </Card>
               );
@@ -462,7 +447,7 @@ export default function Pricing() {
               <thead>
                 <tr className="border-b border-zinc-700">
                   <th className="text-left py-3 px-4 font-medium">Feature</th>
-                  <th className="text-center py-3 px-4 font-medium">Free</th>
+                  
                   <th className="text-center py-3 px-4 font-medium text-blue-500">Creator</th>
                   <th className="text-center py-3 px-4 font-medium text-amber-500">Pro</th>
                   <th className="text-center py-3 px-4 font-medium text-violet-500">Industry</th>
@@ -470,31 +455,31 @@ export default function Pricing() {
               </thead>
               <tbody className="divide-y divide-zinc-800">
                 {[
-                  { feature: "Projects", free: "1", creator: "10", pro: "50", industry: "Unlimited" },
-                  { feature: "AI Generations / Month", free: "3", creator: "100", pro: "500", industry: "Unlimited" },
-                  { feature: "Scenes per Project", free: "5", creator: "40", pro: "90", industry: "Unlimited" },
-                  { feature: "Characters per Project", free: "3", creator: "20", pro: "50", industry: "Unlimited" },
-                  { feature: "Max Film Duration", free: "5 min", creator: "30 min", pro: "90 min", industry: "180 min" },
-                  { feature: "Max Resolution", free: "720p", creator: "1080p", pro: "1080p + 4K", industry: "4K + ProRes" },
-                  { feature: "Team Members", free: "—", creator: "5", pro: "15", industry: "Unlimited" },
-                  { feature: "Full Film Generation", free: false, creator: true, pro: true, industry: true },
-                  { feature: "AI Voice Acting", free: false, creator: true, pro: true, industry: true },
-                  { feature: "AI Soundtrack", free: false, creator: true, pro: true, industry: true },
-                  { feature: "Character Consistency", free: false, creator: true, pro: true, industry: true },
-                  { feature: "Scene Continuity", free: false, creator: true, pro: true, industry: true },
-                  { feature: "Clip Chaining (30-60s scenes)", free: false, creator: true, pro: true, industry: true },
-                  { feature: "Director AI Assistant", free: false, creator: true, pro: true, industry: true },
-                  { feature: "VFX Scene Studio", free: false, creator: false, pro: true, industry: true },
-                  { feature: "Bulk Generation", free: false, creator: false, pro: true, industry: true },
-                  { feature: "White-Label Exports", free: false, creator: false, pro: false, industry: true },
-                  { feature: "API Access", free: false, creator: false, pro: false, industry: true },
-                  { feature: "Custom Model Fine-Tuning", free: false, creator: false, pro: false, industry: true },
-                  { feature: "Priority Rendering", free: false, creator: false, pro: false, industry: true },
-                  { feature: "Dedicated Support", free: false, creator: false, pro: false, industry: true },
+                  { feature: "Projects", creator: "10", pro: "50", industry: "Unlimited" },
+                  { feature: "AI Generations / Month", creator: "100", pro: "500", industry: "Unlimited" },
+                  { feature: "Scenes per Project", creator: "40", pro: "90", industry: "Unlimited" },
+                  { feature: "Characters per Project", creator: "20", pro: "50", industry: "Unlimited" },
+                  { feature: "Max Film Duration", creator: "30 min", pro: "90 min", industry: "180 min" },
+                  { feature: "Max Resolution", creator: "1080p", pro: "1080p + 4K", industry: "4K + ProRes" },
+                  { feature: "Team Members", creator: "5", pro: "15", industry: "Unlimited" },
+                  { feature: "Full Film Generation", creator: true, pro: true, industry: true },
+                  { feature: "AI Voice Acting", creator: true, pro: true, industry: true },
+                  { feature: "AI Soundtrack", creator: true, pro: true, industry: true },
+                  { feature: "Character Consistency", creator: true, pro: true, industry: true },
+                  { feature: "Scene Continuity", creator: true, pro: true, industry: true },
+                  { feature: "Clip Chaining (30-60s scenes)", creator: true, pro: true, industry: true },
+                  { feature: "Director AI Assistant", creator: true, pro: true, industry: true },
+                  { feature: "VFX Scene Studio", creator: false, pro: true, industry: true },
+                  { feature: "Bulk Generation", creator: false, pro: true, industry: true },
+                  { feature: "White-Label Exports", creator: false, pro: false, industry: true },
+                  { feature: "API Access", creator: false, pro: false, industry: true },
+                  { feature: "Custom Model Fine-Tuning", creator: false, pro: false, industry: true },
+                  { feature: "Priority Rendering", creator: false, pro: false, industry: true },
+                  { feature: "Dedicated Support", creator: false, pro: false, industry: true },
                 ].map((row, i) => (
                   <tr key={i} className="hover:bg-zinc-900/50">
                     <td className="py-3 px-4 font-medium">{row.feature}</td>
-                    {(["free", "creator", "pro", "industry"] as const).map((tier) => {
+                    {(["creator", "pro", "industry"] as const).map((tier) => {
                       const val = row[tier];
                       return (
                         <td key={tier} className="text-center py-3 px-4">

@@ -126,7 +126,7 @@ function DashboardLayoutContent({
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const { theme, toggleTheme, switchable } = useTheme();
-  const { tier, isFree } = useSubscription();
+  const { tier, isCreator } = useSubscription();
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -291,7 +291,7 @@ function DashboardLayoutContent({
                       tier === "pro" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
                       "bg-muted text-muted-foreground border border-border"
                     }`}>
-                      {tier === "industry" ? "Industry" : tier === "pro" ? "Pro" : "Free"}
+                      {tier === "industry" ? "Industry" : tier === "pro" ? "Pro" : tier === "creator" ? "Creator" : "Subscribe"}
                     </span>
                   </div>
                 </button>
