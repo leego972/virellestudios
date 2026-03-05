@@ -26,6 +26,8 @@ import {
   ACT_STRUCTURE_LABELS,
   TONE_OPTIONS,
   TARGET_AUDIENCE_OPTIONS,
+  CINEMA_INDUSTRY_OPTIONS,
+  CINEMA_INDUSTRY_PROFILES,
 } from "@shared/types";
 
 export default function NewProject() {
@@ -41,6 +43,7 @@ export default function NewProject() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [genre, setGenre] = useState("");
+  const [cinemaIndustry, setCinemaIndustry] = useState("Hollywood");
   const [rating, setRating] = useState<string>("PG-13");
   const [duration, setDuration] = useState<number>(Math.min(90, maxDuration));
   const [plotSummary, setPlotSummary] = useState("");
@@ -83,6 +86,7 @@ export default function NewProject() {
       description: description.trim() || undefined,
       mode,
       genre: genre || undefined,
+      cinemaIndustry: cinemaIndustry || undefined,
       rating: rating as any,
       duration: duration || undefined,
       plotSummary: plotSummary.trim() || undefined,

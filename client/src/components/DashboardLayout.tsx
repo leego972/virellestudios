@@ -41,6 +41,7 @@ import {
   Settings,
   ShoppingBag,
   Wand2,
+  Globe,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -66,6 +67,62 @@ const adminMenuItems = [
   { icon: Shield, label: "User Management", path: "/admin/users" },
   { icon: ShieldAlert, label: "Security", path: "/admin/security" },
   { icon: Megaphone, label: "Campaign Manager", path: "/campaigns" },
+];
+
+const SUPPORTED_LANGUAGES = [
+  // ─── English-speaking markets ───
+  { code: "en", name: "English", dir: "ltr", flag: "🇺🇸" },
+  // ─── South Asian cinema (Bollywood, Tamil, Telugu, Bengali) ───
+  { code: "hi", name: "हिन्दी (Hindi)", dir: "ltr", flag: "🇮🇳" },
+  { code: "ta", name: "தமிழ் (Tamil)", dir: "ltr", flag: "🇮🇳" },
+  { code: "te", name: "తెలుగు (Telugu)", dir: "ltr", flag: "🇮🇳" },
+  { code: "bn", name: "বাংলা (Bengali)", dir: "ltr", flag: "🇧🇩" },
+  { code: "ml", name: "മലയാളം (Malayalam)", dir: "ltr", flag: "🇮🇳" },
+  { code: "mr", name: "मराठी (Marathi)", dir: "ltr", flag: "🇮🇳" },
+  // ─── East Asian cinema (Korean Wave, J-Cinema, Chinese) ───
+  { code: "ko", name: "한국어 (Korean)", dir: "ltr", flag: "🇰🇷" },
+  { code: "ja", name: "日本語 (Japanese)", dir: "ltr", flag: "🇯🇵" },
+  { code: "zh", name: "中文 普通话 (Mandarin)", dir: "ltr", flag: "🇨🇳" },
+  { code: "zh-TW", name: "中文 繁體 (Cantonese/HK)", dir: "ltr", flag: "🇭🇰" },
+  // ─── Middle Eastern & North African cinema ───
+  { code: "ar", name: "العربية (Arabic)", dir: "rtl", flag: "🇸🇦" },
+  { code: "he", name: "עברית (Hebrew)", dir: "rtl", flag: "🇮🇱" },
+  { code: "fa", name: "فارسی (Persian/Farsi)", dir: "rtl", flag: "🇮🇷" },
+  { code: "tr", name: "Türkçe (Turkish)", dir: "ltr", flag: "🇹🇷" },
+  // ─── European cinema ───
+  { code: "fr", name: "Français", dir: "ltr", flag: "🇫🇷" },
+  { code: "es", name: "Español", dir: "ltr", flag: "🇪🇸" },
+  { code: "es-MX", name: "Español (México)", dir: "ltr", flag: "🇲🇽" },
+  { code: "it", name: "Italiano", dir: "ltr", flag: "🇮🇹" },
+  { code: "de", name: "Deutsch", dir: "ltr", flag: "🇩🇪" },
+  { code: "pt", name: "Português (Brasil)", dir: "ltr", flag: "🇧🇷" },
+  { code: "pt-PT", name: "Português (Portugal)", dir: "ltr", flag: "🇵🇹" },
+  { code: "ru", name: "Русский", dir: "ltr", flag: "🇷🇺" },
+  { code: "pl", name: "Polski", dir: "ltr", flag: "🇵🇱" },
+  { code: "nl", name: "Nederlands", dir: "ltr", flag: "🇳🇱" },
+  { code: "sv", name: "Svenska", dir: "ltr", flag: "🇸🇪" },
+  { code: "da", name: "Dansk", dir: "ltr", flag: "🇩🇰" },
+  { code: "no", name: "Norsk", dir: "ltr", flag: "🇳🇴" },
+  { code: "fi", name: "Suomi", dir: "ltr", flag: "🇫🇮" },
+  { code: "el", name: "Ελληνικά (Greek)", dir: "ltr", flag: "🇬🇷" },
+  { code: "cs", name: "Čeština (Czech)", dir: "ltr", flag: "🇨🇿" },
+  { code: "hu", name: "Magyar (Hungarian)", dir: "ltr", flag: "🇭🇺" },
+  { code: "ro", name: "Română", dir: "ltr", flag: "🇷🇴" },
+  { code: "uk", name: "Українська (Ukrainian)", dir: "ltr", flag: "🇺🇦" },
+  // ─── African cinema (Nollywood, South African, East African) ───
+  { code: "yo", name: "Yorùbá", dir: "ltr", flag: "🇳🇬" },
+  { code: "ig", name: "Igbo", dir: "ltr", flag: "🇳🇬" },
+  { code: "ha", name: "Hausa", dir: "ltr", flag: "🇳🇬" },
+  { code: "sw", name: "Kiswahili", dir: "ltr", flag: "🇰🇪" },
+  { code: "am", name: "አማርኛ (Amharic)", dir: "ltr", flag: "🇪🇹" },
+  { code: "zu", name: "isiZulu", dir: "ltr", flag: "🇿🇦" },
+  { code: "af", name: "Afrikaans", dir: "ltr", flag: "🇿🇦" },
+  // ─── Southeast Asian cinema ───
+  { code: "th", name: "ภาษาไทย (Thai)", dir: "ltr", flag: "🇹🇭" },
+  { code: "vi", name: "Tiếng Việt (Vietnamese)", dir: "ltr", flag: "🇻🇳" },
+  { code: "id", name: "Bahasa Indonesia", dir: "ltr", flag: "🇮🇩" },
+  { code: "ms", name: "Bahasa Melayu", dir: "ltr", flag: "🇲🇾" },
+  { code: "tl", name: "Filipino", dir: "ltr", flag: "🇵🇭" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -126,6 +183,16 @@ function DashboardLayoutContent({
   const [location, setLocation] = useLocation();
   const { state, toggleSidebar } = useSidebar();
   const { theme, toggleTheme, switchable } = useTheme();
+  const [uiLang, setUiLang] = useState<string>(() => localStorage.getItem("virelle_ui_lang") || "en");
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+
+  // Apply RTL direction when Hebrew or Arabic is selected
+  useEffect(() => {
+    const lang = SUPPORTED_LANGUAGES.find(l => l.code === uiLang);
+    document.documentElement.dir = lang?.dir || "ltr";
+    document.documentElement.lang = uiLang;
+    localStorage.setItem("virelle_ui_lang", uiLang);
+  }, [uiLang]);
   const { tier, isCreator } = useSubscription();
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
@@ -245,6 +312,40 @@ function DashboardLayoutContent({
                 draggable={false}
               />
             </div>
+            {/* Language Switcher */}
+            <DropdownMenu open={langMenuOpen} onOpenChange={setLangMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      aria-label="Change language"
+                    >
+                      <Globe className="h-4 w-4 text-primary shrink-0" />
+                      <span className="text-sm group-data-[collapsible=icon]:hidden">
+                        {SUPPORTED_LANGUAGES.find(l => l.code === uiLang)?.flag}{" "}
+                        {SUPPORTED_LANGUAGES.find(l => l.code === uiLang)?.name || "Language"}
+                      </span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">Change language</TooltipContent>
+                </Tooltip>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="end" className="w-52 max-h-72 overflow-y-auto">
+                {SUPPORTED_LANGUAGES.map(lang => (
+                  <DropdownMenuItem
+                    key={lang.code}
+                    onClick={() => { setUiLang(lang.code); setLangMenuOpen(false); }}
+                    className={`cursor-pointer gap-2 ${uiLang === lang.code ? "bg-accent font-medium" : ""}`}
+                  >
+                    <span>{lang.flag}</span>
+                    <span>{lang.name}</span>
+                    {uiLang === lang.code && <span className="ml-auto text-primary text-xs">✓</span>}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {/* Theme toggle */}
             {switchable && (
               <Tooltip>

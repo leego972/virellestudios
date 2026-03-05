@@ -430,6 +430,7 @@ export function buildScenePrompt(
     visualStyle?: string | null;
     genreMotion?: string | null;
     lipSyncMode?: string | null;
+    cinemaIndustry?: string | null;
   },
   visualDNA: VisualDNA,
   options?: {
@@ -701,6 +702,23 @@ export function buildScenePrompt(
     parts.push(`Visual continuity from previous scene: ${options.previousSceneDescription.substring(0, 150)}`);
   }
 
+  // 17b. Cinema Industry Directive
+  if (scene.cinemaIndustry && CINEMA_INDUSTRY_PROFILES[scene.cinemaIndustry]) {
+    const industryProfile = CINEMA_INDUSTRY_PROFILES[scene.cinemaIndustry];
+    parts.push(`Cinema industry: ${industryProfile.promptDirective}`);
+    // Override camera body and lens if not already set by the scene
+    if (!scene.cameraBody) {
+      parts.push(`Camera: ${industryProfile.cameraBody}`);
+    }
+    if (!scene.lensBrand) {
+      parts.push(`Lens: ${industryProfile.lensGlass}`);
+    }
+    if (!scene.aspectRatio) {
+      parts.push(`Aspect ratio: ${industryProfile.aspectRatio}`);
+    }
+    parts.push(`Lighting style: ${industryProfile.lightingStyle}`);
+    parts.push(`Color grade: ${industryProfile.colorGrade} — ${industryProfile.colorGradeDescription}`);
+  }
   // 18. Quality anchor based on subscription tier
   parts.push(QUALITY_ANCHORS[tier]);
 

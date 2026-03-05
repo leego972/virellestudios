@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
+import { sql } from "drizzle-orm";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -301,6 +302,7 @@ export const appRouter = router({
         openingScene: z.string().optional(),
         climax: z.string().optional(),
         storyResolution: z.string().optional(),
+        cinemaIndustry: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Subscription: check project quota
@@ -356,6 +358,7 @@ export const appRouter = router({
         openingScene: z.string().optional(),
         climax: z.string().optional(),
         storyResolution: z.string().optional(),
+        cinemaIndustry: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
@@ -920,7 +923,7 @@ export const appRouter = router({
 
         // Build rich cinematic prompt
         const prompt = buildScenePrompt(
-          scene,
+          { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
           visualDNA,
           {
             sceneIndex: sceneIdx >= 0 ? sceneIdx : 0,
@@ -1028,6 +1031,37 @@ export const appRouter = router({
         const key = `uploads/${ctx.user.id}/${nanoid()}-${input.filename}`;
         const { url } = await storagePut(key, buffer, input.contentType);
         return { url };
+      }),
+
+    // ─── External Scene Footage Upload ───
+    // Allows directors to upload externally shot footage (MP4, MOV, AVI, MKV) into a scene
+    footage: protectedProcedure
+      .input(z.object({
+        base64: z.string().max(200_000_000, "File too large. Max 150MB."),
+        filename: z.string(),
+        contentType: z.string().default("video/mp4"),
+        sceneId: z.number().optional(),
+        footageType: z.enum(["replace", "overlay", "reference"]).default("replace"),
+        label: z.string().max(255).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitUpload(ctx.user.id);
+        const buffer = Buffer.from(input.base64, "base64");
+        const key = `footage/${ctx.user.id}/${nanoid()}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.contentType);
+
+        // If a sceneId is provided, update the scene with the footage URL
+        if (input.sceneId) {
+          await db.db.update(db.schema.scenes)
+            .set({
+              externalFootageUrl: url,
+              externalFootageType: input.footageType,
+              externalFootageLabel: input.label || input.filename,
+            })
+            .where(eq(db.schema.scenes.id, input.sceneId));
+        }
+
+        return { url, key };
       }),
   }),
 
@@ -4198,6 +4232,22 @@ Rules:
       }),
 
     // Get pricing info (public)
+    // Public endpoint: count of paid subscribers (for founding offer banner)
+    // Returns count + 30 offset to show social proof
+    foundingSpots: publicProcedure.query(async () => {
+      try {
+        const result = await db.db.select({ count: sql<number>`COUNT(*)` })
+          .from(db.schema.users)
+          .where(sql`subscriptionTier IN ('creator','pro','industry') AND subscriptionStatus = 'active'`);
+        const realCount = Number((result[0] as any)?.count || 0);
+        const displayCount = Math.min(realCount + 30, 50); // offset by 30, cap at 50
+        const spotsRemaining = Math.max(50 - displayCount, 0);
+        return { displayCount, spotsRemaining, isFull: spotsRemaining === 0 };
+      } catch {
+        return { displayCount: 30, spotsRemaining: 20, isFull: false };
+      }
+    }),
+
     pricing: publicProcedure.query(async () => {
       const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS, FILM_PACKAGES, VFX_SCENE_PACKAGES, EXTENSION_PRICING, LAUNCH_SPECIAL_ACTIVE } = await import("./_core/subscription");
       return {

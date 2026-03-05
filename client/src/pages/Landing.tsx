@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
   Film, Zap, Layers, Users, Wand2, Music, Palette, Camera,
@@ -181,11 +182,68 @@ export default function Landing() {
   const [, setLocation] = useLocation();
   const { theme, setTheme } = useTheme();
   const [useCase, setUseCase] = useState<"film" | "vfx">("film");
+  const [bannerDismissed, setBannerDismissed] = useState(() => {
+    try { return localStorage.getItem("virelle_offer_dismissed") === "1"; } catch { return false; }
+  });
+  const { data: spotsData } = trpc.subscription.foundingSpots.useQuery(undefined, {
+    refetchInterval: 60_000, // refresh every minute
+    staleTime: 30_000,
+  });
+  const spotsRemaining = spotsData?.spotsRemaining ?? 20;
+  const displayCount = spotsData?.displayCount ?? 30;
+  const offerFull = spotsData?.isFull ?? false;
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      {/* ─── Founding Offer Banner ─── */}
+      {!bannerDismissed && !offerFull && (
+        <div className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-black py-2.5 px-4">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <span className="text-sm font-black uppercase tracking-widest shrink-0 hidden sm:inline">🎬 FOUNDING OFFER</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-bold">
+                  50% OFF your first 60-min feature film
+                </span>
+                <span className="text-xs font-medium opacity-80">— Limited to 50 founding directors.</span>
+                <span className="bg-black/20 text-black text-xs font-black px-2 py-0.5 rounded-full">
+                  {spotsRemaining} of 50 spots left
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setLocation("/register")}
+                className="bg-black text-amber-400 text-xs font-black px-3 py-1.5 rounded-lg hover:bg-zinc-900 transition-colors whitespace-nowrap"
+              >
+                Claim Your Spot →
+              </button>
+              <button
+                onClick={() => { setBannerDismissed(true); try { localStorage.setItem("virelle_offer_dismissed", "1"); } catch {} }}
+                className="text-black/60 hover:text-black transition-colors text-lg leading-none font-bold"
+                aria-label="Dismiss offer"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+          {/* Progress bar */}
+          <div className="max-w-7xl mx-auto mt-1.5">
+            <div className="h-1 bg-black/20 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-black/50 rounded-full transition-all duration-1000"
+                style={{ width: `${(displayCount / 50) * 100}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-[10px] font-medium opacity-70 mt-0.5">
+              <span>{displayCount} directors have already joined</span>
+              <span>Only {spotsRemaining} spots remaining</span>
+            </div>
+          </div>
+        </div>
+      )}
       {/* ─── Navbar ─── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40">
+      <nav className={`fixed left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 transition-all ${!bannerDismissed && !offerFull ? "top-[72px]" : "top-0"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             <img src="/vs-watermark.png" alt="Virelle Studios" className="w-9 h-9 rounded-lg" draggable={false} />
@@ -203,6 +261,43 @@ export default function Landing() {
             <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="h-9 w-9">
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
+            {/* Language selector */}
+            <div className="relative group">
+              <Button variant="ghost" size="sm" className="text-sm gap-1.5">
+                <Globe className="h-4 w-4" />
+                <span className="hidden md:inline">Language</span>
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+              <div className="absolute right-0 top-full mt-1 w-52 bg-popover border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 max-h-64 overflow-y-auto">
+                {[
+                  { code: "en", name: "English", flag: "🇺🇸" },
+                  { code: "he", name: "עברית (Hebrew)", flag: "🇮🇱" },
+                  { code: "ar", name: "العربية (Arabic)", flag: "🇸🇦" },
+                  { code: "fr", name: "Français", flag: "🇫🇷" },
+                  { code: "es", name: "Español", flag: "🇪🇸" },
+                  { code: "de", name: "Deutsch", flag: "🇩🇪" },
+                  { code: "zh", name: "中文", flag: "🇨🇳" },
+                  { code: "ja", name: "日本語", flag: "🇯🇵" },
+                  { code: "ko", name: "한국어", flag: "🇰🇷" },
+                  { code: "pt", name: "Português", flag: "🇧🇷" },
+                  { code: "ru", name: "Русский", flag: "🇷🇺" },
+                  { code: "hi", name: "हिन्दी", flag: "🇮🇳" },
+                ].map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      document.documentElement.lang = lang.code;
+                      document.documentElement.dir = ["he","ar"].includes(lang.code) ? "rtl" : "ltr";
+                      localStorage.setItem("virelle_ui_lang", lang.code);
+                    }}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
+                  >
+                    <span>{lang.flag}</span>
+                    <span>{lang.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
             <Button variant="ghost" size="sm" onClick={() => setLocation("/login")} className="text-sm">Sign In</Button>
             <Button size="sm" onClick={() => setLocation("/register")} className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium">
               View Plans
@@ -212,7 +307,7 @@ export default function Landing() {
       </nav>
 
       {/* ─── Hero ─── */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className={`pb-20 ${!bannerDismissed && !offerFull ? "pt-52" : "pt-32"} px-4 sm:px-6 lg:px-8 relative overflow-hidden`}>
         {/* VS Logo watermark background */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <img

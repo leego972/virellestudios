@@ -17,14 +17,62 @@ import { getLoginUrl } from "@/const";
 import { Languages, Plus, Sparkles, Trash2, Download, ArrowLeft, Loader2, Globe, Copy } from "lucide-react";
 
 const LANGUAGES = [
-  { code: "en", name: "English" }, { code: "es", name: "Spanish" }, { code: "fr", name: "French" },
-  { code: "de", name: "German" }, { code: "it", name: "Italian" }, { code: "pt", name: "Portuguese" },
-  { code: "ru", name: "Russian" }, { code: "zh", name: "Chinese (Mandarin)" }, { code: "ja", name: "Japanese" },
-  { code: "ko", name: "Korean" }, { code: "ar", name: "Arabic" }, { code: "hi", name: "Hindi" },
-  { code: "tr", name: "Turkish" }, { code: "pl", name: "Polish" }, { code: "nl", name: "Dutch" },
-  { code: "sv", name: "Swedish" }, { code: "da", name: "Danish" }, { code: "no", name: "Norwegian" },
-  { code: "fi", name: "Finnish" }, { code: "th", name: "Thai" }, { code: "vi", name: "Vietnamese" },
-  { code: "id", name: "Indonesian" }, { code: "ms", name: "Malay" }, { code: "tl", name: "Filipino" },
+  // English-speaking
+  { code: "en", name: "English" },
+  // South Asian cinema
+  { code: "hi", name: "Hindi (हिन्दी)" },
+  { code: "ta", name: "Tamil (தமிழ்)" },
+  { code: "te", name: "Telugu (తెలుగు)" },
+  { code: "bn", name: "Bengali (বাংলা)" },
+  { code: "ml", name: "Malayalam (മലയാളം)" },
+  { code: "mr", name: "Marathi (मराठी)" },
+  { code: "pa", name: "Punjabi (ਪੰਜਾਬੀ)" },
+  { code: "gu", name: "Gujarati (ગુજરાતી)" },
+  { code: "ur", name: "Urdu (اردو)" },
+  // East Asian cinema
+  { code: "ko", name: "Korean (한국어)" },
+  { code: "ja", name: "Japanese (日本語)" },
+  { code: "zh", name: "Chinese Mandarin (普通话)" },
+  { code: "zh-TW", name: "Chinese Cantonese / Traditional" },
+  // Middle Eastern & North African
+  { code: "ar", name: "Arabic (العربية)" },
+  { code: "he", name: "Hebrew (עברית)" },
+  { code: "fa", name: "Persian / Farsi (فارسی)" },
+  { code: "tr", name: "Turkish (Türkçe)" },
+  // European cinema
+  { code: "fr", name: "French (Français)" },
+  { code: "es", name: "Spanish (Español)" },
+  { code: "es-MX", name: "Spanish — Mexican (Español MX)" },
+  { code: "it", name: "Italian (Italiano)" },
+  { code: "de", name: "German (Deutsch)" },
+  { code: "pt", name: "Portuguese — Brazilian" },
+  { code: "pt-PT", name: "Portuguese — European" },
+  { code: "ru", name: "Russian (Русский)" },
+  { code: "pl", name: "Polish (Polski)" },
+  { code: "nl", name: "Dutch (Nederlands)" },
+  { code: "sv", name: "Swedish (Svenska)" },
+  { code: "da", name: "Danish (Dansk)" },
+  { code: "no", name: "Norwegian (Norsk)" },
+  { code: "fi", name: "Finnish (Suomi)" },
+  { code: "el", name: "Greek (Ελληνικά)" },
+  { code: "cs", name: "Czech (Čeština)" },
+  { code: "hu", name: "Hungarian (Magyar)" },
+  { code: "ro", name: "Romanian (Română)" },
+  { code: "uk", name: "Ukrainian (Українська)" },
+  // African cinema
+  { code: "yo", name: "Yorùbá (Nigeria)" },
+  { code: "ig", name: "Igbo (Nigeria)" },
+  { code: "ha", name: "Hausa (Nigeria/Niger)" },
+  { code: "sw", name: "Swahili (Kiswahili)" },
+  { code: "am", name: "Amharic (አማርኛ)" },
+  { code: "zu", name: "Zulu (isiZulu)" },
+  { code: "af", name: "Afrikaans" },
+  // Southeast Asian cinema
+  { code: "th", name: "Thai (ภาษาไทย)" },
+  { code: "vi", name: "Vietnamese (Tiếng Việt)" },
+  { code: "id", name: "Indonesian (Bahasa Indonesia)" },
+  { code: "ms", name: "Malay (Bahasa Melayu)" },
+  { code: "tl", name: "Filipino" },
 ];
 
 function formatTime(seconds: number): string {

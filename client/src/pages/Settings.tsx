@@ -211,6 +211,42 @@ export default function Settings() {
                   <Input value={profileForm.timezone} onChange={(e) => setProfileForm((p) => ({ ...p, timezone: e.target.value }))} placeholder="e.g. America/New_York" className="h-9 text-sm bg-background/50" />
                 </div>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground flex items-center gap-1"><Globe className="h-3 w-3" />Platform Language</Label>
+                  <select
+                    value={typeof window !== "undefined" ? (localStorage.getItem("virelle_ui_lang") || "en") : "en"}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      localStorage.setItem("virelle_ui_lang", code);
+                      document.documentElement.lang = code;
+                      document.documentElement.dir = ["he", "ar"].includes(code) ? "rtl" : "ltr";
+                    }}
+                    className="h-9 text-sm bg-background/50 border border-input rounded-md px-3 w-full"
+                  >
+                    <option value="en">🇺🇸 English</option>
+                    <option value="he">🇮🇱 עברית (Hebrew)</option>
+                    <option value="ar">🇸🇦 العربية (Arabic)</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="zh">🇨🇳 中文 (Chinese)</option>
+                    <option value="ja">🇯🇵 日本語 (Japanese)</option>
+                    <option value="ko">🇰🇷 한국어 (Korean)</option>
+                    <option value="pt">🇧🇷 Português</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+                    <option value="tr">🇹🇷 Türkçe</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Text Direction</Label>
+                  <div className="h-9 flex items-center text-sm text-muted-foreground">
+                    Auto-detected from language selection
+                  </div>
+                </div>
+              </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Bio</Label>
                 <Textarea value={profileForm.bio} onChange={(e) => setProfileForm((p) => ({ ...p, bio: e.target.value }))} placeholder="Tell us about yourself..." className="min-h-[80px] text-sm bg-background/50 resize-y" maxLength={1000} />

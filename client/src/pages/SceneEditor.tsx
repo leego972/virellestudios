@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Upload } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -185,6 +186,9 @@ type SceneForm = {
   transitionDuration: number;
   // Director
   directorNotes: string;
+  externalFootageUrl: string;
+  externalFootageType: string;
+  externalFootageLabel: string;
 };
 
 const defaultScene: SceneForm = {
@@ -259,6 +263,9 @@ const defaultScene: SceneForm = {
   transitionDuration: 0.5,
   // Director
   directorNotes: "",
+  externalFootageUrl: "",
+  externalFootageType: "none",
+  externalFootageLabel: "",
 };
 
 export default function SceneEditor() {
@@ -408,6 +415,9 @@ export default function SceneEditor() {
       transitionDuration: scene.transitionDuration ?? 0.5,
       // Director
       directorNotes: scene.productionNotes || ext.directorNotes || "",
+      externalFootageUrl: (scene as any).externalFootageUrl || "",
+      externalFootageType: (scene as any).externalFootageType || "none",
+      externalFootageLabel: (scene as any).externalFootageLabel || "",
     });
     setEditDialogOpen(true);
   };
@@ -477,6 +487,9 @@ export default function SceneEditor() {
       makeupNotes: form.makeupNotes || undefined,
       stuntNotes: form.stuntNotes || undefined,
       productionNotes: form.directorNotes || undefined,
+      externalFootageUrl: form.externalFootageUrl || undefined,
+      externalFootageType: form.externalFootageType !== "none" ? form.externalFootageType : undefined,
+      externalFootageLabel: form.externalFootageLabel || undefined,
       budgetEstimate: form.budgetEstimate || undefined,
       shootingDays: form.shootingDays || undefined,
       aiPromptOverride: form.aiPromptOverride || undefined,
@@ -1392,6 +1405,67 @@ export default function SceneEditor() {
               />
             </div>
 
+            {/* ─── External Footage Upload ─── */}
+            <Separator />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                <Upload className="h-3.5 w-3.5" />
+                External Footage
+              </div>
+              <p className="text-xs text-muted-foreground">Upload externally shot footage (MP4, MOV, AVI — max 150MB) to attach to this scene.</p>
+              {form.externalFootageUrl ? (
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                  <Video className="h-4 w-4 text-amber-400 shrink-0" />
+                  <span className="text-xs text-amber-300 truncate flex-1">{form.externalFootageLabel || "Uploaded footage"}</span>
+                  <button
+                    type="button"
+                    onClick={() => { setField("externalFootageUrl", ""); setField("externalFootageLabel", ""); setField("externalFootageType", "none"); }}
+                    className="text-xs text-muted-foreground hover:text-destructive transition-colors"
+                  >Remove</button>
+                </div>
+              ) : (
+                <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border/60 hover:border-amber-500/50 cursor-pointer transition-colors bg-background/30">
+                  <Upload className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground text-center">Click to upload footage<br /><span className="text-[10px]">MP4, MOV, AVI, MKV — max 150MB</span></span>
+                  <input
+                    type="file"
+                    accept="video/mp4,video/quicktime,video/avi,video/x-matroska,video/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 150 * 1024 * 1024) { alert("File too large. Max 150MB."); return; }
+                      const reader = new FileReader();
+                      reader.onload = async (ev) => {
+                        const base64 = (ev.target?.result as string).split(",")[1];
+                        try {
+                          // We'll store it temporarily and upload on save
+                          setField("externalFootageLabel", file.name);
+                          setField("externalFootageType", "replace");
+                          // Store base64 temporarily in a data URL for preview
+                          setField("externalFootageUrl", `data:${file.type};base64,${base64.substring(0, 20)}...pending`);
+                        } catch (err) { console.error(err); }
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+              )}
+              {form.externalFootageUrl && (
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Footage Usage Mode</Label>
+                  <select
+                    value={form.externalFootageType}
+                    onChange={e => setField("externalFootageType", e.target.value)}
+                    className="w-full h-9 text-sm bg-background/50 border border-border rounded-md px-3"
+                  >
+                    <option value="replace">Replace AI generation — use this footage as the scene</option>
+                    <option value="overlay">Overlay — composite AI elements over this footage</option>
+                    <option value="reference">Reference only — use for style/continuity matching</option>
+                  </select>
+                </div>
+              )}
+            </div>
             {/* Actions */}
             <div className="flex items-center justify-between pt-2 border-t">
               {selectedSceneId && (

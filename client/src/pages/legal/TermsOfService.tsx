@@ -147,9 +147,42 @@ export default function TermsOfService() {
           </section>
 
           <section>
+            <h2 className="text-lg font-semibold mb-3 text-foreground">13. Error Reporting and Technical Support</h2>
+            <p className="text-muted-foreground mb-3">
+              In the event that you experience a technical error, generation failure, or any other malfunction on the Platform, you are required to report the issue by submitting a clear, descriptive email to{" "}
+              <a href="mailto:studiosvirelle@gmail.com" className="text-primary hover:underline">studiosvirelle@gmail.com</a>. Your error report <strong className="text-foreground">must include one or more clear screenshots</strong> that accurately document the issue you have encountered. Reports submitted without supporting screenshots may not be actioned.
+            </p>
+            <p className="text-muted-foreground mb-3">
+              Virelle Studios will endeavour to investigate and resolve reported errors within <strong className="text-foreground">24 hours</strong> of receiving a complete and valid error report. This 24-hour resolution window is a target and not a guarantee. Complex technical issues may require additional time to investigate and resolve. Virelle Studios accepts no liability for any loss, delay, or inconvenience caused by technical errors or the time taken to resolve them.
+            </p>
+            <p className="text-muted-foreground">
+              Users acknowledge that the Platform is provided on an "as is" and "as available" basis, and that temporary errors, interruptions, or degraded performance may occur from time to time. Virelle Studios does not warrant that the Platform will be error-free or uninterrupted.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold mb-3 text-foreground">14. Credits, Compensation, and Refunds</h2>
+            <div className="bg-card/50 border border-border/50 rounded-lg p-4 mb-3">
+              <p className="text-muted-foreground font-medium">
+                <strong className="text-foreground">No credits, compensation, or refunds of any kind will be issued without express written approval from a Virelle Studios administrator.</strong>
+              </p>
+            </div>
+            <p className="text-muted-foreground mb-3">
+              Any request for a credit, generation credit top-up, monetary compensation, or subscription refund arising from a technical error, generation failure, or service interruption must be submitted via email to{" "}
+              <a href="mailto:studiosvirelle@gmail.com" className="text-primary hover:underline">studiosvirelle@gmail.com</a>, accompanied by clear screenshots evidencing the issue. All such requests are subject to administrator review and approval, which may take <strong className="text-foreground">up to 24 hours</strong>.
+            </p>
+            <p className="text-muted-foreground mb-3">
+              Virelle Studios reserves the sole and absolute right to approve or decline any request for compensation, credits, or refunds. Approval of one request does not constitute a precedent or obligation to approve future requests. Users have no automatic entitlement to any form of compensation or credit as a result of any error, interruption, or failure of the Platform.
+            </p>
+            <p className="text-muted-foreground">
+              Any credits issued by Virelle Studios are non-transferable, have no monetary value, cannot be exchanged for cash, and expire upon account termination or as otherwise specified at the time of issuance. Credits issued as a goodwill gesture do not constitute an admission of fault or liability by Virelle Studios.
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-lg font-semibold mb-3 text-foreground">12. Contact</h2>
             <p className="text-muted-foreground">
-              For legal inquiries, content moderation appeals, or questions about these Terms, contact us at: <a href="mailto:legal@virelle.life" className="text-primary hover:underline">legal@virelle.life</a>
+              For legal inquiries, content moderation appeals, or questions about these Terms, contact us at: <a href="mailto:legal@virelle.life" className="text-primary hover:underline">legal@virelle.life</a>. For technical support and error reporting, contact us at: <a href="mailto:studiosvirelle@gmail.com" className="text-primary hover:underline">studiosvirelle@gmail.com</a>
             </p>
           </section>
 

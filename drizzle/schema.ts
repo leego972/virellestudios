@@ -95,6 +95,7 @@ export const projects = mysqlTable("projects", {
   setting: text("setting"), // world-building, time period, universe details
   actStructure: varchar("actStructure", { length: 64 }).default("three-act"), // three-act, five-act, heros-journey, nonlinear, episodic
   tone: varchar("tone", { length: 128 }), // dark, comedic, suspenseful, romantic, etc.
+  cinemaIndustry: varchar("cinemaIndustry", { length: 128 }).default("Hollywood"), // Hollywood, Bollywood, Korean Cinema, etc.
   targetAudience: varchar("targetAudience", { length: 255 }), // who the film is for
   openingScene: text("openingScene"), // description of the opening
   climax: text("climax"), // description of the climax
@@ -275,6 +276,10 @@ export const scenes = mysqlTable("scenes", {
   liveActionPlateUrl: text("liveActionPlateUrl"),
   liveActionCompositeMode: varchar("liveActionCompositeMode", { length: 64 }).default("none"),
   compositeOutputUrl: text("compositeOutputUrl"),
+  // ─── External Footage Upload ───
+  externalFootageUrl: text("externalFootageUrl"),        // S3 URL for user-uploaded external footage (MP4, MOV, etc.)
+  externalFootageType: varchar("externalFootageType", { length: 32 }).default("none"), // none | replace | overlay | reference
+  externalFootageLabel: varchar("externalFootageLabel", { length: 255 }), // user-given label for the footage
   thumbnailUrl: text("thumbnailUrl"),
   generatedUrl: text("generatedUrl"),
   videoUrl: text("videoUrl"), // S3 URL for the generated video clip (MP4)

@@ -131,6 +131,56 @@ const PRESET_SOUNDS = [
   { name: "Sting (Dramatic)", category: "Transition", tags: "sting,dramatic,reveal,shock" },
   { name: "Reverse Cymbal", category: "Transition", tags: "cymbal,reverse,transition,build" },
   { name: "Record Scratch", category: "Transition", tags: "record,scratch,comedy,stop" },
+  // ─── Bollywood ───
+  { name: "Tabla Rhythm", category: "Bollywood", tags: "tabla,bollywood,indian,percussion,rhythm" },
+  { name: "Sitar Melody", category: "Bollywood", tags: "sitar,bollywood,indian,strings,melody" },
+  { name: "Dhol Drum", category: "Bollywood", tags: "dhol,bollywood,indian,drum,celebration" },
+  { name: "Bollywood Orchestral Swell", category: "Bollywood", tags: "bollywood,orchestral,swell,dramatic,indian" },
+  { name: "Monsoon Rain (Mumbai)", category: "Bollywood", tags: "monsoon,rain,mumbai,bollywood,india" },
+  { name: "Bazaar Market Ambience", category: "Bollywood", tags: "bazaar,market,india,crowd,ambience" },
+  { name: "Temple Bells", category: "Bollywood", tags: "temple,bells,india,spiritual,hindu" },
+  { name: "Crowd Celebration (Holi)", category: "Bollywood", tags: "holi,celebration,crowd,india,festival" },
+  // ─── Korean Cinema ───
+  { name: "Seoul Street Ambience", category: "Korean Cinema", tags: "seoul,korea,street,urban,ambience" },
+  { name: "Neon Hum (Seoul Night)", category: "Korean Cinema", tags: "neon,seoul,night,urban,hum" },
+  { name: "Subway Rumble", category: "Korean Cinema", tags: "subway,metro,underground,rumble,korea" },
+  { name: "Tension Drone (Korean)", category: "Korean Cinema", tags: "tension,drone,korean,thriller,suspense" },
+  { name: "Rain on Concrete (Seoul)", category: "Korean Cinema", tags: "rain,concrete,seoul,korea,urban" },
+  { name: "Heartbeat Pulse", category: "Korean Cinema", tags: "heartbeat,pulse,tension,thriller,korean" },
+  // ─── Japanese Cinema ───
+  { name: "Shakuhachi Flute", category: "Japanese Cinema", tags: "shakuhachi,flute,japanese,traditional,zen" },
+  { name: "Taiko Drum", category: "Japanese Cinema", tags: "taiko,drum,japanese,traditional,epic" },
+  { name: "Koto Strings", category: "Japanese Cinema", tags: "koto,strings,japanese,traditional,melody" },
+  { name: "Cherry Blossom Wind", category: "Japanese Cinema", tags: "cherry,blossom,wind,japan,spring" },
+  { name: "Cicada Summer (Japan)", category: "Japanese Cinema", tags: "cicada,summer,japan,insects,nature" },
+  { name: "Temple Bell (Japan)", category: "Japanese Cinema", tags: "temple,bell,japan,buddhist,spiritual" },
+  // ─── Nollywood ───
+  { name: "Afrobeats Rhythm", category: "Nollywood", tags: "afrobeats,nigeria,nollywood,rhythm,african" },
+  { name: "Talking Drum (Yoruba)", category: "Nollywood", tags: "talking,drum,yoruba,nigeria,african" },
+  { name: "Lagos Street Ambience", category: "Nollywood", tags: "lagos,nigeria,street,urban,nollywood" },
+  { name: "Tropical Rain (Nigeria)", category: "Nollywood", tags: "rain,tropical,nigeria,nollywood,weather" },
+  { name: "Church Choir (Gospel)", category: "Nollywood", tags: "church,choir,gospel,nigeria,spiritual" },
+  { name: "Kora Strings", category: "African Cinema", tags: "kora,strings,african,west africa,traditional" },
+  { name: "Djembe Drum", category: "African Cinema", tags: "djembe,drum,african,percussion,traditional" },
+  { name: "Savanna Ambience", category: "African Cinema", tags: "savanna,africa,nature,wildlife,ambient" },
+  // ─── Middle Eastern Cinema ───
+  { name: "Oud Melody", category: "Middle Eastern", tags: "oud,arabic,middle eastern,strings,melody" },
+  { name: "Darbuka Percussion", category: "Middle Eastern", tags: "darbuka,percussion,arabic,middle eastern,rhythm" },
+  { name: "Desert Wind", category: "Middle Eastern", tags: "desert,wind,middle eastern,ambient,sand" },
+  { name: "Ney Flute", category: "Middle Eastern", tags: "ney,flute,turkish,middle eastern,traditional" },
+  { name: "Qanun Strings", category: "Middle Eastern", tags: "qanun,strings,arabic,middle eastern,traditional" },
+  // ─── French Cinema ───
+  { name: "Parisian Street Ambience", category: "French Cinema", tags: "paris,france,street,cafe,ambience" },
+  { name: "Accordion Melody", category: "French Cinema", tags: "accordion,french,paris,melody,chanson" },
+  { name: "Café Interior (Paris)", category: "French Cinema", tags: "cafe,paris,interior,ambience,french" },
+  { name: "Seine River Ambience", category: "French Cinema", tags: "seine,river,paris,water,ambient" },
+  // ─── Latin American Cinema ───
+  { name: "Classical Guitar (Latin)", category: "Latin American", tags: "guitar,latin,classical,spanish,melody" },
+  { name: "Mariachi Brass", category: "Latin American", tags: "mariachi,brass,mexican,latin,trumpet" },
+  { name: "Samba Percussion", category: "Latin American", tags: "samba,percussion,brazil,latin,rhythm" },
+  { name: "Cumbia Rhythm", category: "Latin American", tags: "cumbia,colombia,latin,rhythm,dance" },
+  { name: "Tropical Market Ambience", category: "Latin American", tags: "market,tropical,latin,crowd,ambience" },
+
 ];
 
 const CATEGORIES = ["All", "Nature", "Urban", "Indoor", "Action", "Emotional", "Sci-Fi", "Transition", "Custom"] as const;
