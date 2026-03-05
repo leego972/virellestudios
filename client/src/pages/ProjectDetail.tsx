@@ -68,6 +68,8 @@ import {
   VideoIcon,
   Users2,
   Scissors,
+  Tv,
+  Megaphone,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -1045,6 +1047,50 @@ export default function ProjectDetail() {
                 <div>
                   <p className="text-sm font-medium flex items-center gap-1.5">VFX Suite <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
                   <p className="text-xs text-muted-foreground">Scene extension, object removal, style transfer</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+           </div>
+
+          {/* Marketing & Distribution */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-border/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Marketing & Distribution</span>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <Card className="cursor-pointer hover:ring-2 hover:ring-blue-500/60 transition-all border-blue-500/40 bg-blue-500/5" onClick={() => setLocation(`/projects/${project.id}/trailer-studio`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                  <Film className="h-5 w-5 text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-blue-400">Trailer Studio</p>
+                  <p className="text-xs text-muted-foreground">Teaser, theatrical & TV spot trailers with beat editor</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-green-500/60 transition-all border-green-500/40 bg-green-500/5" onClick={() => setLocation(`/projects/${project.id}/tv-commercial`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
+                  <Tv className="h-5 w-5 text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-green-400">TV Commercial Creator</p>
+                  <p className="text-xs text-muted-foreground">Broadcast, streaming & social ads with AI script</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/poster-maker`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Megaphone className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Ad & Poster Maker</p>
+                  <p className="text-xs text-muted-foreground">Movie posters, social cards & promotional art</p>
                 </div>
               </CardContent>
             </Card>

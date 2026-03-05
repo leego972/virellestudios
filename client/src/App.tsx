@@ -70,6 +70,8 @@ const LiveActionPlate = lazy(() => import("./pages/LiveActionPlate"));
 const AICasting = lazy(() => import("./pages/AICasting"));
 const AssetMarketplace = lazy(() => import("./pages/AssetMarketplace"));
 const DirectorCut = lazy(() => import("./pages/DirectorCut"));
+const TrailerStudio = lazy(() => import("./pages/TrailerStudio"));
+const TVCommercial = lazy(() => import("./pages/TVCommercial"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -109,6 +111,8 @@ function GatedVFXSuite() { return <LazyPage><SubscriptionGate feature="VFX Suite
 function GatedLiveActionPlate() { return <LazyPage><SubscriptionGate feature="Live Action Plate" featureKey="canUseLiveActionPlate" requiredTier="pro"><LiveActionPlate /></SubscriptionGate></LazyPage>; }
 function GatedAICasting() { return <LazyPage><SubscriptionGate feature="AI Casting" featureKey="canUseAICasting" requiredTier="pro"><AICasting /></SubscriptionGate></LazyPage>; }
 function GatedDirectorCut() { return <LazyPage><DirectorCut /></LazyPage>; }
+function GatedTrailerStudio() { return <LazyPage><SubscriptionGate feature="Trailer Studio" featureKey="canUseFullFilmGeneration" requiredTier="creator"><TrailerStudio /></SubscriptionGate></LazyPage>; }
+function GatedTVCommercial() { return <LazyPage><SubscriptionGate feature="TV Commercial Creator" featureKey="canUseAdPosterMaker" requiredTier="creator"><TVCommercial /></SubscriptionGate></LazyPage>; }
 
 function Router() {
   return (
@@ -154,6 +158,8 @@ function Router() {
       <Route path="/projects/:projectId/live-action-plate" component={GatedLiveActionPlate} />
       <Route path="/projects/:projectId/ai-casting" component={GatedAICasting} />
       <Route path="/projects/:projectId/director-cut" component={GatedDirectorCut} />
+      <Route path="/projects/:projectId/trailer-studio" component={GatedTrailerStudio} />
+      <Route path="/projects/:projectId/tv-commercial" component={GatedTVCommercial} />
 
       {/* Dashboard layout pages */}
       <Route>
