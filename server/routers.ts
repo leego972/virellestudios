@@ -402,10 +402,54 @@ export const appRouter = router({
         description: z.string().optional(),
         photoUrl: z.string().optional(),
         attributes: z.any().optional(),
+        // Extended profile fields
+        role: z.string().optional(),
+        storyImportance: z.string().optional(),
+        screenTime: z.string().optional(),
+        nationality: z.string().optional(),
+        countryOfOrigin: z.string().optional(),
+        cityOfOrigin: z.string().optional(),
+        dateOfBirth: z.string().optional(),
+        zodiacSign: z.string().optional(),
+        occupation: z.string().optional(),
+        educationLevel: z.string().optional(),
+        socialClass: z.string().optional(),
+        religion: z.string().optional(),
+        languages: z.any().optional(),
+        personality: z.any().optional(),
+        arcType: z.string().optional(),
+        moralAlignment: z.string().optional(),
+        emotionalRange: z.any().optional(),
+        backstory: z.string().optional(),
+        motivations: z.string().optional(),
+        fears: z.string().optional(),
+        secrets: z.string().optional(),
+        strengths: z.any().optional(),
+        weaknesses: z.any().optional(),
+        speechPattern: z.string().optional(),
+        accent: z.string().optional(),
+        catchphrase: z.string().optional(),
+        voiceType: z.string().optional(),
+        voiceId: z.string().optional(),
+        relationships: z.any().optional(),
+        environmentPreference: z.string().optional(),
+        preferredWeather: z.string().optional(),
+        preferredSeason: z.string().optional(),
+        preferredTimeOfDay: z.string().optional(),
+        physicalAbilities: z.any().optional(),
+        mentalAbilities: z.any().optional(),
+        specialSkills: z.any().optional(),
+        wardrobe: z.any().optional(),
+        performanceStyle: z.string().optional(),
+        castingNotes: z.string().optional(),
+        signatureMannerisms: z.string().optional(),
+        voiceDescription: z.string().optional(),
+        isAiActor: z.boolean().optional(),
+        aiActorId: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Content moderation scan
-        const scanText = [input.name, input.description].filter(Boolean).join(' ');
+        const scanText = [input.name, input.description, input.backstory, input.motivations].filter(Boolean).join(' ');
         if (scanText.trim()) {
           const modResult = scanContent(scanText);
           if (modResult.flagged) {
@@ -432,6 +476,50 @@ export const appRouter = router({
         description: z.string().optional(),
         photoUrl: z.string().optional(),
         attributes: z.any().optional(),
+        // Extended profile fields
+        role: z.string().optional(),
+        storyImportance: z.string().optional(),
+        screenTime: z.string().optional(),
+        nationality: z.string().optional(),
+        countryOfOrigin: z.string().optional(),
+        cityOfOrigin: z.string().optional(),
+        dateOfBirth: z.string().optional(),
+        zodiacSign: z.string().optional(),
+        occupation: z.string().optional(),
+        educationLevel: z.string().optional(),
+        socialClass: z.string().optional(),
+        religion: z.string().optional(),
+        languages: z.any().optional(),
+        personality: z.any().optional(),
+        arcType: z.string().optional(),
+        moralAlignment: z.string().optional(),
+        emotionalRange: z.any().optional(),
+        backstory: z.string().optional(),
+        motivations: z.string().optional(),
+        fears: z.string().optional(),
+        secrets: z.string().optional(),
+        strengths: z.any().optional(),
+        weaknesses: z.any().optional(),
+        speechPattern: z.string().optional(),
+        accent: z.string().optional(),
+        catchphrase: z.string().optional(),
+        voiceType: z.string().optional(),
+        voiceId: z.string().optional(),
+        relationships: z.any().optional(),
+        environmentPreference: z.string().optional(),
+        preferredWeather: z.string().optional(),
+        preferredSeason: z.string().optional(),
+        preferredTimeOfDay: z.string().optional(),
+        physicalAbilities: z.any().optional(),
+        mentalAbilities: z.any().optional(),
+        specialSkills: z.any().optional(),
+        wardrobe: z.any().optional(),
+        performanceStyle: z.string().optional(),
+        castingNotes: z.string().optional(),
+        signatureMannerisms: z.string().optional(),
+        voiceDescription: z.string().optional(),
+        isAiActor: z.boolean().optional(),
+        aiActorId: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const char = await db.getCharacterById(input.id);
@@ -864,6 +952,51 @@ export const appRouter = router({
         transitionType: z.string().optional(),
         transitionDuration: z.number().optional(),
         status: z.enum(["draft", "generating", "completed", "failed"]).optional(),
+        // Advanced camera & lens control
+        cameraBody: z.string().optional(),
+        lensBrand: z.string().optional(),
+        aperture: z.string().optional(),
+        // Multi-shot sequencing
+        multiShotEnabled: z.boolean().optional(),
+        multiShotCount: z.number().optional(),
+        multiShotData: z.any().optional(),
+        // Character staging & emotion
+        characterEmotions: z.any().optional(),
+        characterActions: z.any().optional(),
+        // 3D scene exploration
+        heroFrameUrl: z.string().optional(),
+        sceneExploreData: z.any().optional(),
+        startFrameUrl: z.string().optional(),
+        endFrameUrl: z.string().optional(),
+        // Genre motion & visual style
+        genreMotion: z.string().optional(),
+        speedRamp: z.string().optional(),
+        visualStyle: z.string().optional(),
+        // Retakes
+        retakeInstructions: z.string().optional(),
+        retakeRegion: z.any().optional(),
+        retakeCount: z.number().optional(),
+        // Lip sync
+        lipSyncMode: z.string().optional(),
+        lipSyncAudioUrl: z.string().optional(),
+        // VFX suite
+        vfxSuiteOperations: z.any().optional(),
+        vfxSuiteOutputUrl: z.string().optional(),
+        // Live action plate integration
+        liveActionPlateUrl: z.string().optional(),
+        liveActionCompositeMode: z.string().optional(),
+        compositeOutputUrl: z.string().optional(),
+        // External footage upload
+        externalFootageUrl: z.string().optional(),
+        externalFootageType: z.string().optional(),
+        externalFootageLabel: z.string().optional(),
+        // Generated media
+        thumbnailUrl: z.string().optional(),
+        generatedUrl: z.string().optional(),
+        videoUrl: z.string().optional(),
+        videoJobId: z.string().optional(),
+        // SFX production notes
+        sfxProductionNotes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const scene = await db.getSceneById(input.id);
