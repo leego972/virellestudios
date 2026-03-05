@@ -40,7 +40,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "intense, kinetic, explosive, visceral, adrenaline-pumping, relentless",
     referenceFilms: "Mad Max: Fury Road (John Seale), John Wick (Dan Laustsen), The Dark Knight (Wally Pfister)",
     cameraMovement: "handheld with controlled shake during combat, smooth dolly tracking alongside running characters, crane shots for scale reveals, snap zooms on impacts",
-    skinRendering: "glistening with sweat, visible pores, cuts and bruises with realistic subsurface scattering, dirt-streaked, high-contrast skin tones",
+    skinRendering: `glistening with sweat, visible pores, cuts and bruises with realistic subsurface scattering, dirt-streaked, high-contrast skin tones. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
   },
   "Drama": {
     colorPalette: "muted earth tones with selective warm highlights, desaturated backgrounds preserving natural skin tones, subtle color shifts reflecting emotional state — warm for hope, cool for despair",
@@ -51,7 +51,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "intimate, contemplative, raw, emotional, grounded, achingly human",
     referenceFilms: "Moonlight (James Laxton), Manchester by the Sea (Jody Lee Lipes), Nomadland (Joshua James Richards)",
     cameraMovement: "slow deliberate dolly moves, locked-off static shots for contemplation, gentle handheld for emotional vulnerability, slow push-in during revelations",
-    skinRendering: "natural imperfections visible — freckles, wrinkles, age spots, realistic subsurface scattering showing blood beneath skin, tear tracks, natural makeup or no makeup look",
+    skinRendering: `natural imperfections visible — freckles, wrinkles, age spots, realistic subsurface scattering showing blood beneath skin, tear tracks, natural makeup or no makeup look. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
   },
   "Comedy": {
     colorPalette: "bright warm palette, slightly elevated saturation, cheerful color temperature around 5600K, pastel accents, clean whites",
@@ -62,7 +62,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "lighthearted, vibrant, playful, warm, inviting, witty",
     referenceFilms: "The Grand Budapest Hotel (Robert Yeoman), Booksmart (Jason McCormick), Barbie (Rodrigo Prieto)",
     cameraMovement: "smooth tracking shots, whip pans for comedic reveals, static locked-off for deadpan, quick push-ins for emphasis",
-    skinRendering: "healthy glowing skin, even complexion, flattering soft lighting on faces, minimal visible imperfections, warm healthy skin tones",
+    skinRendering: `healthy glowing skin, even complexion, flattering soft lighting on faces, minimal visible imperfections, warm healthy skin tones. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
   },
   "Horror": {
     colorPalette: "desaturated cold blue-green tones, sickly yellows in practicals, deep crushed blacks with detail lost in shadows, selective red accents for blood and danger, greenish skin undertones",
@@ -73,7 +73,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "dread, claustrophobic, unsettling, ominous, visceral terror, suffocating",
     referenceFilms: "Hereditary (Pawel Pogorzelski), The Shining (John Alcott), It Follows (Mike Gioulakis)",
     cameraMovement: "slow creeping dolly moves, static locked-off shots where nothing moves then something does, slow 360-degree pans, Steadicam following characters through corridors",
-    skinRendering: "pale sickly complexion, visible veins, dark circles under eyes, cold clammy appearance, goosebumps, blood appearing hyper-real against pale skin",
+    skinRendering: `pale sickly complexion, visible veins, dark circles under eyes, cold clammy appearance, goosebumps, blood appearing hyper-real against pale skin. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
   },
   "Sci-Fi": {
     colorPalette: "cool blue-steel palette with neon accent colors, cyan and magenta highlights, metallic silver tones, holographic iridescence, bioluminescent greens for organic tech",
@@ -84,7 +84,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "awe-inspiring, vast, technological, otherworldly, cerebral, transcendent",
     referenceFilms: "Blade Runner 2049 (Roger Deakins), Dune (Greig Fraser), Interstellar (Hoyte van Hoytema), Arrival (Bradford Young)",
     cameraMovement: "slow majestic crane reveals, smooth dolly through environments, locked-off symmetrical compositions, slow-motion for awe moments",
-    skinRendering: "clean skin with colored light reflections, neon rim light on skin edges, helmet visor reflections on face, sweat beading in tense moments, realistic skin under artificial lighting",
+    skinRendering: `clean skin with colored light reflections, neon rim light on skin edges, helmet visor reflections on face, sweat beading in tense moments, realistic skin under artificial lighting. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
   },
   "Romance": {
     colorPalette: "warm golden tones, soft pastels, rosy skin tones, gentle amber highlights, dreamy color wash, selective soft focus creating romantic haze",
@@ -95,7 +95,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "tender, warm, intimate, yearning, passionate, bittersweet",
     referenceFilms: "In the Mood for Love (Christopher Doyle), La La Land (Linus Sandgren), Portrait of a Lady on Fire (Claire Mathon)",
     cameraMovement: "slow dolly-in during intimate moments, gentle orbiting around couples, static shots letting emotion breathe, slow-motion for first kiss/reunion moments",
-    skinRendering: "warm glowing skin with golden highlights, soft focus on skin imperfections, visible blush, lips with natural moisture, eyes with catchlights reflecting the other person",
+    skinRendering: `warm glowing skin with golden highlights, soft focus on skin imperfections, visible blush, lips with natural moisture, eyes with catchlights reflecting the other person. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
   },
   "Thriller": {
     colorPalette: "cold desaturated palette with sickly green undertones, high contrast, selective warm accents on faces, shadows tinted deep blue, sodium vapor orange for street scenes",
@@ -284,10 +284,15 @@ const NEGATIVE_PROMPTS: Record<string, string> = {
 
 export type QualityTier = "free" | "pro" | "industry";
 
+const PHOTOREALISM_SKIN_AND_EYES = {
+  skin: "hyper-realistic human skin with visible pores, fine lines, and natural imperfections; subtle subsurface scattering showing blood flow beneath the epidermis; micro-expressions creating authentic emotion; skin texture that reacts to light and environment (e.g., glistening with sweat, goosebumps from cold); avoid airbrushed, plastic, or overly smooth skin at all costs",
+  eyes: "photorealistic human eyes with detailed iris fibers, natural reflections (corneal glare), and subtle moisture in the waterline; sclera should have faint, realistic veins; eyes should have a 'soulful' quality, conveying emotion and thought; avoid dead, glassy, or doll-like eyes",
+};
+
 const QUALITY_ANCHORS: Record<QualityTier, string> = {
   "free": "RAW photograph, photorealistic, shot on Canon EOS R5 with 50mm f/1.4 lens, natural available light, real human skin with visible pores and natural imperfections, authentic facial features, genuine emotion, real-world location, 1080p resolution, slight natural film grain, sensor noise at ISO 800, chromatic aberration at frame edges, natural lens vignetting, real photograph indistinguishable from a DSLR capture",
   "pro": "RAW photograph captured on ARRI ALEXA Mini with Cooke S7/i Full Frame Plus anamorphic lenses, utterly indistinguishable from a real Hollywood film frame, real human skin with visible pores and subsurface scattering showing blood beneath skin, natural skin blemishes and micro-texture, authentic facial asymmetry, real sweat and moisture on skin, 4K resolution, Kodak Vision3 500T film stock emulation with organic grain structure, volumetric atmospheric lighting with physically accurate light falloff, real optical lens characteristics including subtle barrel distortion and natural bokeh with cat-eye shapes at frame edges, authentic set design with lived-in production detail",
-  "industry": "RAW photograph captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lenses, absolutely indistinguishable from a real $200M Hollywood production frame by Roger Deakins or Emmanuel Lubezki, real human skin rendered with perfect subsurface scattering showing veins and blood flow beneath translucent skin layers, visible pores and micro-wrinkles and peach fuzz hair, natural skin blemishes and freckles and age spots, authentic facial asymmetry with real bone structure, 8K resolution, Kodak Vision3 500T color science with organic halation on highlights, volumetric atmospheric lighting with physically accurate inverse-square light falloff and color temperature mixing, real optical characteristics including anamorphic lens breathing and oval bokeh and subtle chromatic fringing, Academy Award-winning cinematography, every surface material rendered with physically-based accuracy including specular microstructure on metals and translucency in fabrics and caustics in glass",
+  "industry": "RAW photograph captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lenses, absolutely indistinguishable from a real $200M Hollywood production frame by Roger Deakins or Emmanuel Lubezki, real human skin rendered with perfect subsurface scattering showing veins and blood flow beneath translucent skin layers, visible pores and micro-wrinkles and peach fuzz hair, natural skin blemishes and freckles and age spots, authentic facial asymmetry with real bone structure, 8K resolution, Kodak Vision3 500T color science with organic halation on highlights, volumetric atmospheric lighting with physically accurate inverse-square light falloff and color temperature mixing, real optical characteristics including anamorphic lens breathing and oval bokeh and subtle chromatic fringing, Academy Award-winning cinematography, every surface material rendered with physically-based accuracy including specular microstructure on metals and translucency in fabrics and caustics in glass. Eyes are hyper-realistic with detailed iris fibers, corneal reflections, and subtle moisture. Micro-expressions convey genuine emotion.",
 };
 
 const QUALITY_NEGATIVE: Record<QualityTier, string> = {

@@ -17,7 +17,7 @@ const FULL_FILM_FEATURES = [
   { icon: Layers, title: "Clip Chaining", desc: "Each scene is built from 4-8 AI video clips stitched seamlessly. 30-60 seconds per scene, 60-90 scenes per film." },
   { icon: Mic, title: "AI Voice Acting", desc: "Every line of dialogue is spoken by AI voices with emotion, pacing, and character. ElevenLabs, OpenAI TTS, or free tier." },
   { icon: Music, title: "AI Film Score", desc: "Original soundtracks generated for every scene. Suno AI, MusicGen, or free ambient — matched to mood and genre." },
-  { icon: Eye, title: "Character Consistency", desc: "Characters maintain their appearance across all scenes using visual DNA anchoring and reference image propagation." },
+  { icon: Eye, title: "Hyper-Realistic Characters", desc: "Characters are indistinguishable from real people. Subsurface skin scattering, iris fiber detail, authentic facial asymmetry, and micro-expressions — not CGI, not illustration: a real photograph." },
   { icon: Camera, title: "Scene Continuity", desc: "Last frame of each scene feeds into the next. Smooth visual flow across your entire film — no jarring cuts." },
 ];
 
@@ -530,6 +530,64 @@ export default function Landing() {
                 </div>
               ))}
               <p className="text-[10px] text-muted-foreground text-center pt-2">Keys are encrypted and never exposed to the frontend.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Hyper-Realism Showcase Section ─── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-4">
+              <Eye className="h-3.5 w-3.5" />
+              Photorealism Engine
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight mb-4">
+              Characters{" "}
+              <span className="text-amber-400">Indistinguishable</span>{" "}from Real People
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Virelle's photorealism engine generates characters that cannot be told apart from real human beings on film. Every frame is engineered at the level of a $200M Hollywood production.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="bg-card/50 border border-amber-500/20 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
+                <Eye className="h-5 w-5 text-amber-400" />
+              </div>
+              <h3 className="font-semibold mb-2">Hyper-Realistic Skin</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Subsurface scattering shows blood flow beneath translucent skin layers. Visible pores, micro-wrinkles, fine peach fuzz, natural blemishes, and authentic facial asymmetry. No airbrushed, plastic, or porcelain skin — ever.
+              </p>
+            </div>
+            <div className="bg-card/50 border border-amber-500/20 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
+                <Camera className="h-5 w-5 text-amber-400" />
+              </div>
+              <h3 className="font-semibold mb-2">Soulful, Living Eyes</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Iris fibers rendered in full detail. Natural corneal reflections, subtle moisture in the waterline, and faint sclera veins. Eyes that convey genuine emotion and thought — not the dead, glassy look of AI.
+              </p>
+            </div>
+            <div className="bg-card/50 border border-amber-500/20 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
+                <Film className="h-5 w-5 text-amber-400" />
+              </div>
+              <h3 className="font-semibold mb-2">Hollywood Cinematography</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Every scene is generated as if captured on an ARRI ALEXA 65 with Zeiss Supreme Prime Radiance lenses. Kodak Vision3 500T film stock color science, anamorphic bokeh, and physically accurate light falloff.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-card/50 border border-border/50 rounded-xl p-6">
+              <h3 className="font-semibold mb-3 flex items-center gap-2"><Sparkles className="h-4 w-4 text-amber-400" /> Micro-Expression Engine</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">Characters don't just look real — they feel real. The prompt engine injects authentic micro-expression directives so every face conveys genuine emotion: the slight tension around the eyes before a lie, the involuntary lip compression of grief, the asymmetric smile of real joy.</p>
+            </div>
+            <div className="bg-card/50 border border-border/50 rounded-xl p-6">
+              <h3 className="font-semibold mb-3 flex items-center gap-2"><Layers className="h-4 w-4 text-amber-400" /> Character DNA Lock</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">A character's face, bone structure, skin tone, and physical attributes are locked via a DNA prompt anchor injected into every scene. Your lead actor looks identical in scene 1 and scene 87 — the only thing that changes is their wardrobe and emotional state.</p>
             </div>
           </div>
         </div>

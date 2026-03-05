@@ -198,6 +198,11 @@ export function buildCharacterDNA(character: {
     parts.push(`[CONSISTENCY: ${character.consistencyNotes}]`);
   }
 
+    // Add hyper-realism directives
+  parts.push("hyper-realistic digital human, photorealistic face and body, authentic human features");
+  parts.push("skin with visible pores, micro-wrinkles, and natural imperfections, subsurface scattering");
+  parts.push("eyes with detailed iris fibers, corneal reflections, and subtle moisture");
+
   const promptAnchor = `[${character.name}: ${parts.join(", ")}]`;
 
   return {

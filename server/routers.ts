@@ -476,28 +476,36 @@ export const appRouter = router({
         await db.incrementGenerationCount(ctx.user.id);
         const f = input.features;
         const promptParts = [
-          "Ultra-photorealistic Hollywood A-list actor headshot, indistinguishable from a real photograph,",
-          "shot on ARRI ALEXA 65 with Zeiss Master Prime lens, shallow depth of field,",
+          // Core photorealism anchor — this is the most critical part
+          "RAW photograph, ultra-photorealistic Hollywood A-list actor headshot, absolutely indistinguishable from a real photograph of a real human being,",
+          "captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lens at f/1.4, shallow cinematic depth of field with natural oval bokeh,",
+          // Physical description
           `${f.gender} in their ${f.ageRange},`,
           `${f.ethnicity} ethnicity,`,
         ];
-        if (f.skinTone) promptParts.push(`${f.skinTone} skin tone with natural skin texture and pores,`);
+        if (f.skinTone) promptParts.push(`${f.skinTone} skin tone — skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers, visible pores, micro-wrinkles, fine peach fuzz hair on skin surface, natural blemishes and freckles, authentic facial asymmetry — no airbrushed or plastic skin,`);
         if (f.build) promptParts.push(`${f.build} build,`);
         if (f.height) promptParts.push(`${f.height} height,`);
-        promptParts.push(`${f.hairColor} ${f.hairStyle} hair with individual strand detail,`);
-        promptParts.push(`${f.eyeColor} eyes with natural iris detail and light reflections,`);
+        promptParts.push(`${f.hairColor} ${f.hairStyle} hair — individual strand detail visible, natural hair texture with flyaways and imperfections, realistic hair sheen,`);
+        promptParts.push(`${f.eyeColor} eyes — hyper-realistic iris with detailed fiber structure, natural corneal reflections and specular highlights, subtle moisture in waterline, sclera with faint realistic veins, soulful and alive expression,`);
         if (f.facialFeatures) promptParts.push(`${f.facialFeatures},`);
-        if (f.facialHair) promptParts.push(`facial hair: ${f.facialHair},`);
+        if (f.facialHair) promptParts.push(`facial hair: ${f.facialHair} with individual hair strand detail,`);
         if (f.distinguishingMarks) promptParts.push(`${f.distinguishingMarks},`);
-        if (f.clothingStyle) promptParts.push(`wearing ${f.clothingStyle},`);
-        if (f.expression) promptParts.push(`${f.expression} expression with subtle micro-expressions,`);
+        if (f.clothingStyle) promptParts.push(`wearing ${f.clothingStyle} — fabric texture and material weight visible,`);
+        if (f.expression) promptParts.push(`${f.expression} expression with authentic micro-expressions and genuine emotion,`);
         if (f.additionalNotes) promptParts.push(f.additionalNotes);
         promptParts.push(
-          "three-point Rembrandt lighting with soft key light and subtle fill,",
-          "natural skin subsurface scattering, volumetric light,",
-          "shot at f/1.4 with cinematic bokeh background,",
-          "color graded like a major Hollywood studio production,",
-          "16K resolution, hyperdetailed, award-winning portrait photography"
+          // Lighting — Hollywood three-point Rembrandt setup
+          "three-point Rembrandt lighting: warm key light at 45 degrees creating a Rembrandt triangle on the face, soft fill light reducing shadow ratio to 2:1, subtle rim/hair light separating subject from background,",
+          "volumetric atmospheric light with physically accurate inverse-square falloff,",
+          // Skin and face realism
+          "skin pores visible under magnification, micro-wrinkles around eyes and mouth, natural skin oil and moisture, capillaries visible in sclera,",
+          "authentic facial bone structure with natural asymmetry — no perfect symmetry, no uncanny valley,",
+          // Technical quality
+          "Kodak Vision3 500T film stock color science with organic grain structure and natural highlight rolloff,",
+          "8K resolution, hyperdetailed, Academy Award-winning portrait photography,",
+          // Negative guidance embedded in prompt
+          "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin, NOT doll-like, NOT overly smooth — a REAL PHOTOGRAPH of a REAL PERSON"
         );
 
         const result = await generateImage({ prompt: promptParts.join(" ") });
@@ -603,15 +611,17 @@ export const appRouter = router({
 
         // Step 3: Build a rich prompt for image generation using the analysis + reference photo
         const style = input.style || "cinematic";
+        // All styles are photorealistic — the style changes the lighting/mood, not the realism level
+        const photorealismBase = "RAW photograph, absolutely indistinguishable from a real photograph of a real human being, captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lens, skin with perfect subsurface scattering, visible pores and micro-wrinkles, hyper-realistic eyes with detailed iris fibers and corneal reflections, authentic facial asymmetry, Kodak Vision3 500T film stock color science, 8K resolution, NOT CGI, NOT illustration, NOT AI-looking";
         const styleMap: Record<string, string> = {
-          cinematic: "Ultra-photorealistic Hollywood movie character portrait, shot on ARRI ALEXA 65 with Zeiss Master Prime lens, three-point Rembrandt lighting, cinematic color grading, shallow depth of field f/1.4, volumetric light",
-          noir: "Film noir style character portrait, dramatic high-contrast black and white with selective lighting, deep shadows, venetian blind light patterns, 1940s Hollywood aesthetic",
-          "sci-fi": "Futuristic sci-fi character portrait, holographic rim lighting, cyberpunk color palette with neon accents, advanced technology elements, sleek futuristic styling",
-          fantasy: "Epic fantasy character portrait, ethereal magical lighting, rich detailed costume and armor, mystical atmosphere, painterly quality with photorealistic detail",
-          horror: "Dark atmospheric horror character portrait, unsettling low-key lighting, desaturated color palette with accent reds, subtle menacing quality, psychological tension",
-          comedy: "Bright warm character portrait, friendly approachable lighting, vibrant colors, natural relaxed expression, inviting and charismatic presence",
-          period: "Period drama character portrait, classical painting-inspired lighting, historically accurate styling, rich textures and fabrics, golden hour warmth",
-          action: "Dynamic action hero character portrait, dramatic backlighting with lens flare, intense determined expression, gritty textured look, high contrast cinematic grading",
+          cinematic: `${photorealismBase}, three-point Rembrandt lighting, shallow depth of field f/1.4, cinematic color grading, volumetric atmospheric light, Hollywood movie character portrait`,
+          noir: `${photorealismBase}, dramatic high-contrast lighting with deep shadows, venetian blind light patterns casting bars across the face, desaturated with selective warm practical light, 1940s Hollywood noir aesthetic`,
+          "sci-fi": `${photorealismBase}, holographic rim lighting casting colored shadows, neon accent lights reflecting off skin, cyberpunk color palette with cyan and magenta, futuristic environment reflections in eyes`,
+          fantasy: `${photorealismBase}, ethereal magical golden-hour backlight, rich detailed costume and armor with physically-based material rendering, mystical atmospheric haze, epic scale environment in background`,
+          horror: `${photorealismBase}, extreme low-key lighting with single harsh source creating deep impenetrable shadows, underlighting for menace, pale sickly complexion with visible veins, desaturated with selective red accents`,
+          comedy: `${photorealismBase}, bright warm high-key lighting, cheerful 5600K color temperature, natural relaxed expression with genuine smile, inviting and charismatic presence, vibrant saturated background`,
+          period: `${photorealismBase}, classical old-master painting-inspired lighting with warm candlelight tones, historically accurate styling and costume, rich fabric textures, golden hour warmth`,
+          action: `${photorealismBase}, dramatic hard backlighting with anamorphic lens flare, intense determined expression, grit and sweat on skin, high contrast cinematic grading, dust particles in air`,
         };
         const stylePrompt = styleMap[style] || styleMap.cinematic;
 
@@ -635,10 +645,17 @@ export const appRouter = router({
           promptParts.push(`character archetype: ${input.characterRole},`);
         }
         promptParts.push(
-          `${analysis.expression || "confident"} expression,`,
+          `${analysis.expression || "confident"} expression with authentic micro-expressions and genuine emotion,`,
           `overall presence: ${analysis.overallVibe || "commanding"},`,
-          "natural skin subsurface scattering, hyperdetailed skin pores and texture,",
-          "16K resolution, award-winning portrait photography"
+          // Deep skin realism
+          "skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers, visible pores and micro-wrinkles, fine peach fuzz on skin surface, natural blemishes, authentic facial asymmetry,",
+          // Eye realism
+          "eyes with hyper-realistic iris fiber structure, natural corneal reflections, subtle moisture in waterline, sclera with faint realistic veins — eyes that look alive and soulful,",
+          // Hair realism
+          "individual hair strand detail, natural hair texture with flyaways and imperfections, realistic hair sheen and weight,",
+          // Technical
+          "8K resolution, hyperdetailed, Academy Award-winning portrait photography,",
+          "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin — a REAL PHOTOGRAPH of a REAL PERSON"
         );
 
         // Step 4: Generate the character image using the reference photo
