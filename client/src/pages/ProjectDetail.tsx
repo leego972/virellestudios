@@ -62,6 +62,11 @@ import {
   DollarSign,
   Volume2 as Volume2Icon,
   UserPlus,
+  Layers2,
+  Download,
+  Sparkle,
+  VideoIcon,
+  Users2,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -954,6 +959,61 @@ export default function ProjectDetail() {
                 <div>
                   <p className="text-sm font-medium">Collaboration</p>
                   <p className="text-xs text-muted-foreground">Invite team members to collaborate</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/multi-shot`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <Layers2 className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">Multi-Shot Sequencer <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-xs text-muted-foreground">Build shot sequences with timeline editing</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/nle-export`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <Download className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">NLE Export <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-xs text-muted-foreground">Export XML/EDL for Premiere, DaVinci, Final Cut</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/vfx-suite`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <Sparkle className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">VFX Suite <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-xs text-muted-foreground">Scene extension, object removal, style transfer</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/live-action-plate`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <VideoIcon className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">Live Action Plate <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-xs text-muted-foreground">Blend AI scenes with real footage</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/ai-casting`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <Users2 className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">AI Casting <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-xs text-muted-foreground">AI-powered casting suggestions for your script</p>
                 </div>
               </CardContent>
             </Card>

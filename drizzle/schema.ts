@@ -159,6 +159,13 @@ export const characters = mysqlTable("characters", {
   specialSkills: json("specialSkills"), // ["speaks 5 languages", "master chef"]
   // ─── Appearance Details ───
   wardrobe: json("wardrobe"), // { signature: "...", formal: "...", casual: "...", action: "..." }
+  // ─── Tier 3: AI Casting & Performance ───
+  performanceStyle: varchar("performanceStyle", { length: 128 }), // method-naturalistic, classical-theatrical, etc.
+  castingNotes: text("castingNotes"), // director notes for casting this character
+  signatureMannerisms: text("signatureMannerisms"), // physical tics, gestures, habits
+  voiceDescription: text("voiceDescription"), // detailed voice description for TTS
+  isAiActor: boolean("isAiActor").default(false), // true = from AI casting library
+  aiActorId: varchar("aiActorId", { length: 128 }), // reference to AI actor library entry
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -233,6 +240,41 @@ export const scenes = mysqlTable("scenes", {
   budgetEstimate: int("budgetEstimate"), // USD estimate for this scene
   shootingDays: float("shootingDays"),
   aiPromptOverride: text("aiPromptOverride"), // director can write exact AI prompt
+  // ─── Tier 1: Deterministic Camera & Lens Control ───
+  cameraBody: varchar("cameraBody", { length: 128 }), // ARRI ALEXA 65, RED KOMODO, Sony VENICE 2, etc.
+  lensBrand: varchar("lensBrand", { length: 128 }), // Zeiss Supreme Prime, Cooke S8/i, etc.
+  aperture: varchar("aperture", { length: 16 }), // T1.0, T1.8, T2.8, T5.6, etc.
+  // ─── Tier 1: Multi-Shot Sequencing ───
+  multiShotEnabled: boolean("multiShotEnabled").default(false),
+  multiShotCount: int("multiShotCount").default(1),
+  multiShotData: json("multiShotData"), // [{shotIndex, duration, cameraMovement, speedRamp, startFrameUrl, endFrameUrl}]
+  // ─── Tier 1: Advanced Character Staging & Emotion Control ───
+  characterEmotions: json("characterEmotions"), // { characterId: emotion }
+  characterActions: json("characterActions"), // { characterId: action description }
+  // ─── Tier 1: 3D Scene Exploration ───
+  heroFrameUrl: text("heroFrameUrl"),
+  sceneExploreData: json("sceneExploreData"), // { cameraX, cameraY, cameraZ, fov }
+  startFrameUrl: text("startFrameUrl"),
+  endFrameUrl: text("endFrameUrl"),
+  // ─── Tier 2: Genre-Based Motion Logic ───
+  genreMotion: varchar("genreMotion", { length: 64 }).default("auto"),
+  speedRamp: varchar("speedRamp", { length: 64 }).default("normal"),
+  // ─── Tier 2: Visual Style Mode ───
+  visualStyle: varchar("visualStyle", { length: 64 }).default("photorealistic"),
+  // ─── Tier 2: In-Scene Editing & Retakes ───
+  retakeInstructions: text("retakeInstructions"),
+  retakeRegion: json("retakeRegion"), // { x, y, width, height }
+  retakeCount: int("retakeCount").default(0),
+  // ─── Tier 2: Lip-Sync ───
+  lipSyncMode: varchar("lipSyncMode", { length: 64 }).default("none"),
+  lipSyncAudioUrl: text("lipSyncAudioUrl"),
+  // ─── Tier 2: VFX Suite ───
+  vfxSuiteOperations: json("vfxSuiteOperations"),
+  vfxSuiteOutputUrl: text("vfxSuiteOutputUrl"),
+  // ─── Tier 3: Live Action Plate Integration ───
+  liveActionPlateUrl: text("liveActionPlateUrl"),
+  liveActionCompositeMode: varchar("liveActionCompositeMode", { length: 64 }).default("none"),
+  compositeOutputUrl: text("compositeOutputUrl"),
   thumbnailUrl: text("thumbnailUrl"),
   generatedUrl: text("generatedUrl"),
   videoUrl: text("videoUrl"), // S3 URL for the generated video clip (MP4)

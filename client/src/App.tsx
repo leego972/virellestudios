@@ -63,6 +63,12 @@ const BudgetEstimator = lazy(() => import("./pages/BudgetEstimator"));
 const SoundEffects = lazy(() => import("./pages/SoundEffects"));
 const VisualEffects = lazy(() => import("./pages/VisualEffects"));
 const Collaboration = lazy(() => import("./pages/Collaboration"));
+const MultiShotSequencer = lazy(() => import("./pages/MultiShotSequencer"));
+const NLEExport = lazy(() => import("./pages/NLEExport"));
+const VFXSuite = lazy(() => import("./pages/VFXSuite"));
+const LiveActionPlate = lazy(() => import("./pages/LiveActionPlate"));
+const AICasting = lazy(() => import("./pages/AICasting"));
+const AssetMarketplace = lazy(() => import("./pages/AssetMarketplace"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -96,6 +102,11 @@ function GatedBudgetEstimator() { return <LazyPage><SubscriptionGate feature="Bu
 function GatedSoundEffects() { return <LazyPage><SubscriptionGate feature="Sound Effects" featureKey="canUseSoundEffects" requiredTier="pro"><SoundEffects /></SubscriptionGate></LazyPage>; }
 function GatedVisualEffects() { return <LazyPage><SubscriptionGate feature="Visual Effects" featureKey="canUseVisualEffects" requiredTier="pro"><VisualEffects /></SubscriptionGate></LazyPage>; }
 function GatedCollaboration() { return <LazyPage><SubscriptionGate feature="Collaboration" featureKey="canUseCollaboration" requiredTier="pro"><Collaboration /></SubscriptionGate></LazyPage>; }
+function GatedMultiShotSequencer() { return <LazyPage><SubscriptionGate feature="Multi-Shot Sequencer" featureKey="canUseVisualEffects" requiredTier="pro"><MultiShotSequencer /></SubscriptionGate></LazyPage>; }
+function GatedNLEExport() { return <LazyPage><SubscriptionGate feature="NLE Export" featureKey="canUseVisualEffects" requiredTier="pro"><NLEExport /></SubscriptionGate></LazyPage>; }
+function GatedVFXSuite() { return <LazyPage><SubscriptionGate feature="VFX Suite" featureKey="canUseVisualEffects" requiredTier="pro"><VFXSuite /></SubscriptionGate></LazyPage>; }
+function GatedLiveActionPlate() { return <LazyPage><SubscriptionGate feature="Live Action Plate" featureKey="canUseVisualEffects" requiredTier="pro"><LiveActionPlate /></SubscriptionGate></LazyPage>; }
+function GatedAICasting() { return <LazyPage><SubscriptionGate feature="AI Casting" featureKey="canUseVisualEffects" requiredTier="pro"><AICasting /></SubscriptionGate></LazyPage>; }
 
 function Router() {
   return (
@@ -133,6 +144,13 @@ function Router() {
       <Route path="/projects/:id/sound-effects" component={GatedSoundEffects} />
       <Route path="/projects/:id/visual-effects" component={GatedVisualEffects} />
       <Route path="/projects/:id/collaboration" component={GatedCollaboration} />
+      <Route path="/projects/:projectId/multi-shot/:sceneId" component={GatedMultiShotSequencer} />
+      <Route path="/projects/:projectId/multi-shot" component={GatedMultiShotSequencer} />
+      <Route path="/projects/:projectId/nle-export" component={GatedNLEExport} />
+      <Route path="/projects/:projectId/vfx-suite/:sceneId" component={GatedVFXSuite} />
+      <Route path="/projects/:projectId/vfx-suite" component={GatedVFXSuite} />
+      <Route path="/projects/:projectId/live-action-plate" component={GatedLiveActionPlate} />
+      <Route path="/projects/:projectId/ai-casting" component={GatedAICasting} />
 
       {/* Dashboard layout pages */}
       <Route>
@@ -150,6 +168,7 @@ function Router() {
               <Route path="/characters">{() => <Characters />}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
               <Route path="/referrals">{() => <Referrals />}</Route>
+              <Route path="/marketplace">{() => <LazyPage><AssetMarketplace /></LazyPage>}</Route>
               <Route path="/settings">{() => <SettingsPage />}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/admin/security">{() => <SecurityDashboard />}</Route>

@@ -39,6 +39,8 @@ import {
   Gift,
   BookOpen,
   Settings,
+  ShoppingBag,
+  Wand2,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -54,6 +56,7 @@ const menuItems = [
   { icon: Users, label: "Characters", path: "/characters" },
   { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker" },
   { icon: Gift, label: "Referrals", path: "/referrals" },
+  { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace" },
   { icon: BookOpen, label: "Blog", path: "/blog" },
   { icon: CreditCard, label: "Subscription", path: "/pricing" },
   { icon: Settings, label: "Settings", path: "/settings" },

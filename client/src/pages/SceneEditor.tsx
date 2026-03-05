@@ -56,6 +56,7 @@ import {
   Clock,
   Music,
   Volume2,
+  Palette,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLocation, useParams } from "wouter";
@@ -91,6 +92,14 @@ import {
   MUSIC_TEMPO_OPTIONS,
   AMBIENT_SOUND_OPTIONS,
   ACTION_PRESETS,
+  CAMERA_BODY_OPTIONS, CAMERA_BODY_LABELS,
+  LENS_BRAND_OPTIONS, LENS_BRAND_LABELS,
+  APERTURE_OPTIONS, APERTURE_LABELS,
+  GENRE_MOTION_OPTIONS, GENRE_MOTION_LABELS,
+  VISUAL_STYLE_OPTIONS, VISUAL_STYLE_LABELS,
+  CHARACTER_EMOTION_OPTIONS, CHARACTER_EMOTION_LABELS,
+  SPEED_RAMP_OPTIONS, SPEED_RAMP_LABELS,
+  LIP_SYNC_OPTIONS, LIP_SYNC_LABELS,
 } from "@shared/types";
 
 type SceneWardrobeEntry = {
@@ -125,6 +134,14 @@ type SceneForm = {
   // Color
   colorGrade: string;
   colorPalette: string;
+  // Tier 1-3 new fields
+  cameraBody: string;
+  lensBrand: string;
+  aperture: string;
+  speedRamp: string;
+  visualStyle: string;
+  genreMotion: string;
+  lipSyncMode: string;
   colorTemperature: string;
   // Location
   locationType: string;
@@ -192,6 +209,13 @@ const defaultScene: SceneForm = {
   // Color
   colorGrade: "",
   colorPalette: "",
+  cameraBody: "",
+  lensBrand: "",
+  aperture: "",
+  speedRamp: "normal",
+  visualStyle: "photorealistic",
+  genreMotion: "auto",
+  lipSyncMode: "none",
   colorTemperature: "",
   // Location
   locationType: "",
@@ -334,6 +358,13 @@ export default function SceneEditor() {
       // Color
       colorGrade: scene.colorGrading || ext.colorGrade || "",
       colorPalette: scene.colorPalette || "",
+      cameraBody: (scene as any).cameraBody || "",
+      lensBrand: (scene as any).lensBrand || "",
+      aperture: (scene as any).aperture || "",
+      speedRamp: (scene as any).speedRamp || "normal",
+      visualStyle: (scene as any).visualStyle || "photorealistic",
+      genreMotion: (scene as any).genreMotion || "auto",
+      lipSyncMode: (scene as any).lipSyncMode || "none",
       colorTemperature: scene.colorTemperature || "",
       // Location
       locationType: scene.locationType || "",
@@ -405,6 +436,13 @@ export default function SceneEditor() {
       // Color
       colorGrading: form.colorGrade || undefined,
       colorPalette: form.colorPalette || undefined,
+      cameraBody: form.cameraBody || undefined,
+      lensBrand: form.lensBrand || undefined,
+      aperture: form.aperture || undefined,
+      speedRamp: form.speedRamp || undefined,
+      visualStyle: form.visualStyle || undefined,
+      genreMotion: form.genreMotion || undefined,
+      lipSyncMode: form.lipSyncMode || undefined,
       colorTemperature: form.colorTemperature || undefined,
       // Location
       locationType: form.locationType || undefined,
@@ -858,6 +896,91 @@ export default function SceneEditor() {
                     <SelectContent>
                       <SelectItem value="auto">Auto</SelectItem>
                       {COLOR_PALETTE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <Separator />
+            {/* Camera Rig — Tier 1 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                <Camera className="h-3.5 w-3.5 text-amber-400" />
+                <span className="text-amber-400">Camera Rig</span>
+                <Badge className="text-xs h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Camera Body / Sensor</Label>
+                  <Select value={form.cameraBody || ""} onValueChange={v => setField("cameraBody", v)}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select camera body" /></SelectTrigger>
+                    <SelectContent>
+                      {CAMERA_BODY_OPTIONS.map(o => <SelectItem key={o} value={o}>{CAMERA_BODY_LABELS[o] || o}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Lens Glass</Label>
+                  <Select value={form.lensBrand || ""} onValueChange={v => setField("lensBrand", v)}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select lens" /></SelectTrigger>
+                    <SelectContent>
+                      {LENS_BRAND_OPTIONS.map(o => <SelectItem key={o} value={o}>{LENS_BRAND_LABELS[o] || o}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Aperture / T-Stop</Label>
+                  <Select value={form.aperture || ""} onValueChange={v => setField("aperture", v)}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select aperture" /></SelectTrigger>
+                    <SelectContent>
+                      {APERTURE_OPTIONS.map(o => <SelectItem key={o} value={o}>{APERTURE_LABELS[o] || o}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Speed Ramp</Label>
+                  <Select value={form.speedRamp || "normal"} onValueChange={v => setField("speedRamp", v)}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Normal speed" /></SelectTrigger>
+                    <SelectContent>
+                      {SPEED_RAMP_OPTIONS.map(o => <SelectItem key={o} value={o}>{SPEED_RAMP_LABELS[o] || o}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <Separator />
+            {/* Visual Style & Genre Motion — Tier 2 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                <Palette className="h-3.5 w-3.5 text-amber-400" />
+                <span className="text-amber-400">Visual Style & Motion Logic</span>
+                <Badge className="text-xs h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Visual Style</Label>
+                  <Select value={form.visualStyle || "photorealistic"} onValueChange={v => setField("visualStyle", v)}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Photorealistic" /></SelectTrigger>
+                    <SelectContent>
+                      {VISUAL_STYLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{VISUAL_STYLE_LABELS[o] || o}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Genre Motion Logic</Label>
+                  <Select value={form.genreMotion || "auto"} onValueChange={v => setField("genreMotion", v)}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto" /></SelectTrigger>
+                    <SelectContent>
+                      {GENRE_MOTION_OPTIONS.map(o => <SelectItem key={o} value={o}>{GENRE_MOTION_LABELS[o] || o}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Lip-Sync Mode</Label>
+                  <Select value={form.lipSyncMode || "none"} onValueChange={v => setField("lipSyncMode", v)}>
+                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No lip sync" /></SelectTrigger>
+                    <SelectContent>
+                      {LIP_SYNC_OPTIONS.map(o => <SelectItem key={o} value={o}>{LIP_SYNC_LABELS[o] || o}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>

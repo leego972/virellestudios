@@ -423,6 +423,13 @@ export function buildScenePrompt(
     stuntNotes?: string | null;
     vfxNotes?: string | null;
     aiPromptOverride?: string | null;
+    cameraBody?: string | null;
+    lensBrand?: string | null;
+    aperture?: string | null;
+    speedRamp?: string | null;
+    visualStyle?: string | null;
+    genreMotion?: string | null;
+    lipSyncMode?: string | null;
   },
   visualDNA: VisualDNA,
   options?: {
@@ -462,6 +469,68 @@ export function buildScenePrompt(
   }
   if (scene.depthOfField) {
     parts.push(`Depth of field: ${scene.depthOfField}`);
+  }
+  // Tier 1: Deterministic Camera Body, Lens Glass, Aperture
+  if (scene.cameraBody) {
+    const bodyLabel = scene.cameraBody.replace(/-/g, " ").toUpperCase();
+    parts.push(`Camera sensor: ${bodyLabel} -- cinema-grade sensor, photochemical color science`);
+  }
+  if (scene.lensBrand) {
+    const lensLabel = scene.lensBrand.replace(/-/g, " ");
+    parts.push(`Optical glass: ${lensLabel} -- characteristic bokeh, flare, and micro-contrast`);
+  }
+  if (scene.aperture) {
+    const apertureNote = scene.aperture.startsWith("t1") ? "extremely shallow depth of field, creamy background separation" : scene.aperture.startsWith("t2") ? "shallow depth of field, soft background" : "moderate depth of field";
+    parts.push(`Aperture: ${scene.aperture} -- ${apertureNote}`);
+  }
+  // Tier 2: Speed Ramp
+  if (scene.speedRamp && scene.speedRamp !== "normal") {
+    const speedMap: Record<string, string> = {
+      "slow-motion-50": "slow motion 50% -- 2x slow, motion blur on fast elements",
+      "slow-motion-25": "slow motion 25% -- 4x slow, ultra-detailed motion",
+      "slow-motion-10": "slow motion 10% -- 10x ultra-slow, every detail frozen in time",
+      "speed-ramp-in": "speed ramp -- starts in slow motion, accelerates to normal speed",
+      "speed-ramp-out": "speed ramp -- starts at normal speed, decelerates to slow motion",
+      "speed-ramp-in-out": "speed ramp -- slow-fast-slow dramatic timing",
+      "time-lapse-10x": "time-lapse 10x -- compressed time, fluid motion trails",
+      "time-lapse-60x": "time-lapse 60x -- day to night transition, dramatic sky movement",
+      "undercranked-silent-era": "undercranked -- slightly accelerated, comedic or dreamlike quality",
+    };
+    parts.push(`Temporal effect: ${speedMap[scene.speedRamp] || scene.speedRamp}`);
+  }
+  // Tier 2: Visual Style Override
+  if (scene.visualStyle && scene.visualStyle !== "photorealistic") {
+    const styleMap: Record<string, string> = {
+      "cinematic-film": "cinematic film look -- Hollywood production quality, film grain, rich contrast",
+      "anime-2d": "anime 2D animation style -- Studio Ghibli quality, hand-drawn cel shading, expressive linework",
+      "cartoon-3d-pixar": "3D animation -- Pixar quality, subsurface scattering on stylized characters, rich color",
+      "cartoon-2d-flat": "2D flat cartoon -- bold outlines, flat color fills, graphic design aesthetic",
+      "comic-book-ink": "comic book ink style -- bold black outlines, halftone dots, graphic novel panels",
+      "oil-painting": "oil painting -- classical Renaissance technique, visible brushwork, rich impasto texture",
+      "watercolor": "watercolor illustration -- soft wet-on-wet edges, translucent washes, paper texture",
+      "noir-graphic-novel": "noir graphic novel -- high contrast black and white, deep shadows, Sin City aesthetic",
+      "claymation": "claymation stop-motion -- textured clay surfaces, fingerprint marks, Wallace and Gromit quality",
+      "stop-motion": "stop-motion animation -- tactile puppet surfaces, Laika studio quality, visible texture",
+      "rotoscope": "rotoscoped animation -- traced over live action, Waking Life dreamlike quality",
+      "cyberpunk-neon": "cyberpunk neon aesthetic -- neon-drenched rain-slicked streets, Blade Runner 2049 palette",
+      "painterly-impressionist": "painterly impressionist -- Loving Vincent style, swirling Van Gogh brushstrokes",
+    };
+    parts.push(`VISUAL STYLE OVERRIDE: ${styleMap[scene.visualStyle] || scene.visualStyle} -- render in this style`);
+  }
+  // Tier 2: Genre Motion Logic
+  if (scene.genreMotion && scene.genreMotion !== "auto") {
+    const motionMap: Record<string, string> = {
+      "action-thriller": "action/thriller pacing -- dynamic energy, tension in every frame",
+      "horror-suspense": "horror/suspense atmosphere -- dread, creeping unease, shadows that hide threats",
+      "romance-intimate": "romantic intimacy -- soft warm light, close proximity, tender emotional connection",
+      "comedy-light": "comedic lightness -- bright open lighting, expressive reactions, playful energy",
+      "drama-contemplative": "contemplative drama -- weight of silence, emotional interiority",
+      "sci-fi-spectacle": "sci-fi spectacle -- epic scale, technological wonder, vast environments",
+      "western-epic": "western epic -- vast landscapes, golden hour dust, stoic faces against the sky",
+      "documentary-observational": "documentary observational -- natural light, unposed authenticity",
+      "musical-expressive": "musical expressiveness -- rhythm in composition, movement synchronized to beat",
+    };
+    parts.push(`Genre motion energy: ${motionMap[scene.genreMotion] || scene.genreMotion}`);
   }
   if (scene.shotType) {
     parts.push(`Shot type: ${scene.shotType}`);
