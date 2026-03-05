@@ -18,6 +18,9 @@ import {
   Music,
   Wand2,
   MessageSquare,
+  Key,
+  Settings,
+  ShoppingBag,
 } from "lucide-react";
 import { useLocation } from "wouter";
 
@@ -42,6 +45,8 @@ export default function Home() {
   const { data: characters } = trpc.character.list.useQuery();
 
   const recentProjects = projects?.slice(0, 4) || [];
+  const { data: providers } = trpc.settings.getProviders.useQuery();
+  const hasApiKey = providers && (providers as any[]).some((p: any) => p.isConfigured);
   const stats = {
     total: projects?.length || 0,
     generating: projects?.filter((p) => p.status === "generating").length || 0,
@@ -80,6 +85,32 @@ export default function Home() {
           Your AI-powered film production studio
         </p>
       </div>
+
+      {/* API Key Setup Banner — shown only when no key is configured */}
+      {providers !== undefined && !hasApiKey && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3.5">
+          <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
+            <Key className="h-4 w-4 text-amber-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-amber-300">Add an API key to unlock video generation</p>
+            <p className="text-xs text-amber-200/60 mt-0.5 leading-relaxed">
+              Virelle uses your own AI provider keys (Runway ML, fal.ai, Sora, etc.) — you only pay for what you generate. Without a key, scenes will only produce preview images.
+            </p>
+            <div className="flex items-center gap-2 mt-2.5">
+              <Button
+                size="sm"
+                className="h-7 text-xs bg-amber-600 hover:bg-amber-700 text-white"
+                onClick={() => setLocation("/settings")}
+              >
+                <Key className="h-3 w-3 mr-1.5" />
+                Add API Key
+              </Button>
+              <span className="text-[10px] text-amber-200/40">Pollinations.ai is free — no key needed to start</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

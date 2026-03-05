@@ -166,8 +166,80 @@ export default function NewProject() {
           </div>
         </div>
 
-        {/* Tabbed sections */}
-        <Tabs defaultValue="basics" className="w-full">
+        {/* Quick Generate simplified form — only show when mode is quick */}
+        {mode === "quick" && (
+          <Card className="bg-card/50 border-primary/20">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-primary" />
+                <CardTitle className="text-sm font-medium">Quick Generate — Just the Essentials</CardTitle>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Fill in a title and describe your film. Our AI Director handles the rest — screenplay, scenes, characters, and cinematography.</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="title-quick" className="text-xs text-muted-foreground">
+                  Project Title <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="title-quick"
+                  placeholder="e.g. The Last Horizon"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="bg-background/50 h-9 text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="plotSummary-quick" className="text-xs text-muted-foreground">
+                  Describe your film <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  id="plotSummary-quick"
+                  placeholder="e.g. A retired detective is pulled back into a case from 20 years ago when a copycat killer resurfaces in Los Angeles. Noir thriller, gritty and tense, set in 1990s LA."
+                  value={plotSummary}
+                  onChange={(e) => setPlotSummary(e.target.value)}
+                  className="bg-background/50 min-h-[110px] text-sm resize-y"
+                />
+                <p className="text-[10px] text-muted-foreground/60">Include genre, tone, setting, and key characters for the best results.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Genre</Label>
+                  <Select value={genre} onValueChange={setGenre}>
+                    <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectValue placeholder="Select genre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GENRE_OPTIONS.map((g) => (
+                        <SelectItem key={g} value={g}>{g}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Rating</Label>
+                  <Select value={rating} onValueChange={setRating}>
+                    <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {RATING_OPTIONS.map((r) => (
+                        <SelectItem key={r} value={r}>{r}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground/40 flex items-center gap-1">
+                <Sparkles className="h-3 w-3" />
+                Want full creative control? Switch to Scene-by-Scene mode above.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Tabbed sections — only show in manual/scene-by-scene mode */}
+        {mode === "manual" && <Tabs defaultValue="basics" className="w-full">
           <TabsList className="flex flex-wrap w-full h-auto gap-1">
             <TabsTrigger value="basics" className="gap-1.5">
               <Film className="h-3.5 w-3.5" />
@@ -529,7 +601,7 @@ export default function NewProject() {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
+        </Tabs>}
 
         {/* Submit */}
         <div className="flex items-center justify-end gap-3 pt-2">

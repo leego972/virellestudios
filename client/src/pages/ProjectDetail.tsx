@@ -839,8 +839,126 @@ export default function ProjectDetail() {
         </TabsContent>
 
         {/* Tools Tab Content */}
-        <TabsContent value="tools" className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <TabsContent value="tools" className="space-y-6">
+
+          {/* Pre-Production */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-border/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Pre-Production</span>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/mood-board`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Palette className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Mood Board</p>
+                  <p className="text-xs text-muted-foreground">Visual inspiration & creative direction</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <MapPin className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Location Scout</p>
+                  <p className="text-xs text-muted-foreground">Find & manage filming locations</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/shot-list`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <ListOrdered className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Shot List</p>
+                  <p className="text-xs text-muted-foreground">AI-generated shot breakdown</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/ai-casting`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <Users2 className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">AI Casting <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-xs text-muted-foreground">AI-powered casting suggestions for your script</p>
+                </div>
+              </CardContent>
+            </Card>
+            </div>
+          </div>
+
+          {/* Production */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-border/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Production</span>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Continuity Check</p>
+                  <p className="text-xs text-muted-foreground">AI script supervision</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Dialogue Editor</p>
+                  <p className="text-xs text-muted-foreground">Write and refine character dialogue</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/multi-shot`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <Layers2 className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">Multi-Shot Sequencer <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-xs text-muted-foreground">Build shot sequences with timeline editing</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/live-action-plate`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <VideoIcon className="h-5 w-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-1.5">Live Action Plate <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-xs text-muted-foreground">Blend AI scenes with real footage</p>
+                </div>
+              </CardContent>
+            </Card>
+            </div>
+          </div>
+
+          {/* Post-Production */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-border/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Post-Production</span>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -863,50 +981,6 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/shot-list`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <ListOrdered className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Shot List</p>
-                  <p className="text-xs text-muted-foreground">AI-generated shot breakdown</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Continuity Check</p>
-                  <p className="text-xs text-muted-foreground">AI script supervision</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <MapPin className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Location Scout</p>
-                  <p className="text-xs text-muted-foreground">Find & manage filming locations</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/mood-board`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <Palette className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Mood Board</p>
-                  <p className="text-xs text-muted-foreground">Visual inspiration & creative direction</p>
-                </div>
-              </CardContent>
-            </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/subtitles`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -915,17 +989,6 @@ export default function ProjectDetail() {
                 <div>
                   <p className="text-sm font-medium">Subtitles</p>
                   <p className="text-xs text-muted-foreground">Multi-language subtitle management</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <MessageSquare className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Dialogue Editor</p>
-                  <p className="text-xs text-muted-foreground">Write and refine character dialogue</p>
                 </div>
               </CardContent>
             </Card>
@@ -951,28 +1014,6 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <UserPlus className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Collaboration</p>
-                  <p className="text-xs text-muted-foreground">Invite team members to collaborate</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/multi-shot`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                  <Layers2 className="h-5 w-5 text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">Multi-Shot Sequencer <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
-                  <p className="text-xs text-muted-foreground">Build shot sequences with timeline editing</p>
-                </div>
-              </CardContent>
-            </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/nle-export`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
@@ -995,28 +1036,17 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/live-action-plate`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                  <VideoIcon className="h-5 w-5 text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">Live Action Plate <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
-                  <p className="text-xs text-muted-foreground">Blend AI scenes with real footage</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/ai-casting`)}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-                  <Users2 className="h-5 w-5 text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">AI Casting <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
-                  <p className="text-xs text-muted-foreground">AI-powered casting suggestions for your script</p>
-                </div>
-              </CardContent>
-            </Card>
+          </div>
+          </div>
+
+          {/* Project Management */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-border/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Project Management</span>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -1025,6 +1055,17 @@ export default function ProjectDetail() {
                 <div>
                   <p className="text-sm font-medium">Budget Estimator</p>
                   <p className="text-xs text-muted-foreground">AI production budget breakdown</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <UserPlus className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Collaboration</p>
+                  <p className="text-xs text-muted-foreground">Invite team members to collaborate</p>
                 </div>
               </CardContent>
             </Card>
@@ -1043,7 +1084,9 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
+            </div>
           </div>
+
         </TabsContent>
       </Tabs>
 
