@@ -1030,15 +1030,18 @@ export const appRouter = router({
         // SFX production notes
         sfxProductionNotes: z.string().optional(),
       }))
-      .mutation(async ({ ctx, input }) => {
+       .mutation(async ({ ctx, input }) => {
         const scene = await db.getSceneById(input.id);
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
         const project = await db.getProjectById(scene.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        // Enforce Pro-only features
+        if (input.multiShotEnabled) requireFeature(ctx.user, "canUseMultiShotSequencer", "Multi-Shot Sequencer");
+        if (input.liveActionPlateUrl) requireFeature(ctx.user, "canUseLiveActionPlate", "Live Action Plate");
+        if (input.lipSyncMode && input.lipSyncMode !== "none") requireFeature(ctx.user, "canUseLipSync", "Lip Sync");
         const { id, ...data } = input;
         return db.updateScene(id, data as any);
       }),
-
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
@@ -3416,6 +3419,7 @@ Generate a detailed production budget estimate.`,
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        requireFeature(ctx.user, "canUseVisualEffects", "VFX Scene Studio");
         return db.createVisualEffect({
           ...input,
           sceneId: input.sceneId ?? null,
@@ -3441,6 +3445,7 @@ Generate a detailed production budget estimate.`,
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        requireFeature(ctx.user, "canUseVisualEffects", "VFX Scene Studio");
         const { id, ...data } = input;
         return db.updateVisualEffect(id, data);
       }),

@@ -23,16 +23,14 @@ export interface TierLimits {
   maxCollaboratorsPerProject: number;
   maxScriptsPerProject: number;
   maxStorageMB: number;
-  // Feature access
+  // Feature access — Core (all tiers)
   canUseQuickGenerate: boolean;
   canUseTrailerGeneration: boolean;
-  canUseBulkGenerate: boolean;
   canUseDirectorAssistant: boolean;
   canUseAdPosterMaker: boolean;
   canUseBudgetEstimator: boolean;
   canUseColorGrading: boolean;
   canUseSoundEffects: boolean;
-  canUseVisualEffects: boolean;
   canUseSubtitles: boolean;
   canUseDialogueEditor: boolean;
   canUseLocationScout: boolean;
@@ -44,20 +42,32 @@ export interface TierLimits {
   canUseCollaboration: boolean;
   canExportMovies: boolean;
   canExportHD: boolean;
-  canExportUltraHD: boolean;
   canUseAICharacterGen: boolean;
   canUseAIScriptGen: boolean;
   canUseAIDialogueGen: boolean;
   canUseAIBudgetGen: boolean;
   canUseAISubtitleGen: boolean;
   canUseAILocationSuggest: boolean;
-  // Full film pipeline features
+  // Full film pipeline — all tiers
   canUseFullFilmGeneration: boolean;
   canUseAIVoiceActing: boolean;
   canUseAISoundtrack: boolean;
   canUseCharacterConsistency: boolean;
   canUseSceneContinuity: boolean;
   canUseClipChaining: boolean;
+  // Pro-tier features
+  canUseVisualEffects: boolean;       // VFX Scene Studio (scene-level VFX)
+  canUseBulkGenerate: boolean;        // Bulk/parallel generation
+  canUseMultiShotSequencer: boolean;  // Multi-shot sequencer
+  canUseLiveActionPlate: boolean;     // Live action plate compositing
+  canUseNLEExport: boolean;           // NLE/DaVinci export
+  canUseAICasting: boolean;           // AI casting tool
+  canExportUltraHD: boolean;          // 4K UHD export
+  // Industry-tier features
+  canUseWhiteLabel: boolean;          // White-label exports
+  canUseAPIAccess: boolean;           // API access
+  canUseCustomFineTuning: boolean;    // Custom model fine-tuning
+  canUsePriorityRendering: boolean;   // Priority rendering queue
   resolution: "720p" | "1080p" | "4k";
   quality: ("standard" | "high" | "ultra")[];
   maxDurationMinutes: number;
@@ -85,6 +95,7 @@ export interface TierLimits {
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
+  // ─── CREATOR ─── Entry-level: core tools, 30 min films, 1080p
   creator: {
     maxProjects: 10,
     maxCharactersPerProject: 20,
@@ -94,15 +105,14 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     maxCollaboratorsPerProject: 5,
     maxScriptsPerProject: 10,
     maxStorageMB: 20000, // 20GB
+    // Core tools — available to all tiers
     canUseQuickGenerate: true,
     canUseTrailerGeneration: true,
-    canUseBulkGenerate: false,
     canUseDirectorAssistant: true,
     canUseAdPosterMaker: true,
     canUseBudgetEstimator: true,
     canUseColorGrading: true,
     canUseSoundEffects: true,
-    canUseVisualEffects: true,
     canUseSubtitles: true,
     canUseDialogueEditor: true,
     canUseLocationScout: true,
@@ -114,7 +124,6 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCollaboration: true,
     canExportMovies: true,
     canExportHD: true,
-    canExportUltraHD: false,
     canUseAICharacterGen: true,
     canUseAIScriptGen: true,
     canUseAIDialogueGen: true,
@@ -127,11 +136,25 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCharacterConsistency: true,
     canUseSceneContinuity: true,
     canUseClipChaining: true,
+    // Pro features — NOT available on Creator
+    canUseVisualEffects: false,
+    canUseBulkGenerate: false,
+    canUseMultiShotSequencer: false,
+    canUseLiveActionPlate: false,
+    canUseNLEExport: false,
+    canUseAICasting: false,
+    canExportUltraHD: false,
+    // Industry features — NOT available on Creator
+    canUseWhiteLabel: false,
+    canUseAPIAccess: false,
+    canUseCustomFineTuning: false,
+    canUsePriorityRendering: false,
     resolution: "1080p",
     quality: ["standard", "high"],
     maxDurationMinutes: 30,
     maxClipsPerScene: 6,
   },
+  // ─── PRO ─── Full pipeline: 90 min films, VFX Scene Studio, 4K
   pro: {
     maxProjects: 50,
     maxCharactersPerProject: 50,
@@ -141,15 +164,14 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     maxCollaboratorsPerProject: 15,
     maxScriptsPerProject: 25,
     maxStorageMB: 100000, // 100GB
+    // Core tools — all enabled
     canUseQuickGenerate: true,
     canUseTrailerGeneration: true,
-    canUseBulkGenerate: true,
     canUseDirectorAssistant: true,
     canUseAdPosterMaker: true,
     canUseBudgetEstimator: true,
     canUseColorGrading: true,
     canUseSoundEffects: true,
-    canUseVisualEffects: true,
     canUseSubtitles: true,
     canUseDialogueEditor: true,
     canUseLocationScout: true,
@@ -161,7 +183,6 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCollaboration: true,
     canExportMovies: true,
     canExportHD: true,
-    canExportUltraHD: true,
     canUseAICharacterGen: true,
     canUseAIScriptGen: true,
     canUseAIDialogueGen: true,
@@ -174,11 +195,25 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCharacterConsistency: true,
     canUseSceneContinuity: true,
     canUseClipChaining: true,
+    // Pro features — all enabled
+    canUseVisualEffects: true,
+    canUseBulkGenerate: true,
+    canUseMultiShotSequencer: true,
+    canUseLiveActionPlate: true,
+    canUseNLEExport: true,
+    canUseAICasting: true,
+    canExportUltraHD: true,
+    // Industry features — NOT available on Pro
+    canUseWhiteLabel: false,
+    canUseAPIAccess: false,
+    canUseCustomFineTuning: false,
+    canUsePriorityRendering: false,
     resolution: "4k",
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 90,
     maxClipsPerScene: 8,
   },
+  // ─── INDUSTRY ─── Unlimited: 180 min, white-label, API, fine-tuning
   industry: {
     maxProjects: -1,
     maxCharactersPerProject: -1,
@@ -188,15 +223,14 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     maxCollaboratorsPerProject: -1,
     maxScriptsPerProject: -1,
     maxStorageMB: -1,
+    // All features enabled
     canUseQuickGenerate: true,
     canUseTrailerGeneration: true,
-    canUseBulkGenerate: true,
     canUseDirectorAssistant: true,
     canUseAdPosterMaker: true,
     canUseBudgetEstimator: true,
     canUseColorGrading: true,
     canUseSoundEffects: true,
-    canUseVisualEffects: true,
     canUseSubtitles: true,
     canUseDialogueEditor: true,
     canUseLocationScout: true,
@@ -208,7 +242,6 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCollaboration: true,
     canExportMovies: true,
     canExportHD: true,
-    canExportUltraHD: true,
     canUseAICharacterGen: true,
     canUseAIScriptGen: true,
     canUseAIDialogueGen: true,
@@ -221,6 +254,17 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCharacterConsistency: true,
     canUseSceneContinuity: true,
     canUseClipChaining: true,
+    canUseVisualEffects: true,
+    canUseBulkGenerate: true,
+    canUseMultiShotSequencer: true,
+    canUseLiveActionPlate: true,
+    canUseNLEExport: true,
+    canUseAICasting: true,
+    canExportUltraHD: true,
+    canUseWhiteLabel: true,
+    canUseAPIAccess: true,
+    canUseCustomFineTuning: true,
+    canUsePriorityRendering: true,
     resolution: "4k",
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
