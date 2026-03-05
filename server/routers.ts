@@ -194,7 +194,8 @@ export const appRouter = router({
         trackLoginAttempt(user.id, clientIP, true);
         logAuditEvent(user.id, "login_success", clientIP, true);
         // Auto-promote admin account if not already admin
-        const isAdminEmail = user.email?.toLowerCase() === (ENV.adminEmail || "leego972@gmail.com").toLowerCase();
+        const adminEmails = [(ENV.adminEmail || "leego972@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
+        const isAdminEmail = adminEmails.includes(user.email?.toLowerCase() || "");
         if (isAdminEmail && user.role !== "admin") {
           await db.updateUserRole(user.id, "admin");
           user = { ...user, role: "admin" } as typeof user;
