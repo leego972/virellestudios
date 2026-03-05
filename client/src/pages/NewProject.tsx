@@ -402,20 +402,20 @@ export default function NewProject() {
                     Cinema Industry
                   </Label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {CINEMA_INDUSTRY_OPTIONS.map((opt) => {
-                      const profile = CINEMA_INDUSTRY_PROFILES[opt.value];
+                    {CINEMA_INDUSTRY_OPTIONS.map((industry) => {
+                      const profile = CINEMA_INDUSTRY_PROFILES[industry];
                       return (
                         <button
-                          key={opt.value}
+                          key={industry}
                           type="button"
-                          onClick={() => setCinemaIndustry(opt.value)}
+                          onClick={() => setCinemaIndustry(industry)}
                           className={`flex flex-col items-start gap-0.5 p-2.5 rounded-lg border text-left transition-all ${
-                            cinemaIndustry === opt.value
+                            cinemaIndustry === industry
                               ? 'border-primary bg-primary/10 text-primary'
                               : 'border-border/50 bg-background/30 hover:border-border hover:bg-background/50 text-muted-foreground'
                           }`}
                         >
-                          <span className="text-sm font-medium">{profile?.flag ?? ''} {opt.label}</span>
+                          <span className="text-sm font-medium">{profile?.flag ?? ''} {industry}</span>
                           {profile && <span className="text-[10px] opacity-70 leading-tight">{profile.primaryLanguages[0]}</span>}
                         </button>
                       );
