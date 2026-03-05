@@ -379,8 +379,8 @@ export default function Characters() {
             return char.name.toLowerCase().includes(q) ||
               (char.description || "").toLowerCase().includes(q) ||
               (char.role || "").toLowerCase().includes(q) ||
-              (char.gender || "").toLowerCase().includes(q) ||
-              (char.ethnicity || "").toLowerCase().includes(q);
+              ((char.attributes as any)?.gender || "").toLowerCase().includes(q) ||
+              ((char.attributes as any)?.ethnicity || "").toLowerCase().includes(q);
           }).map((char) => {
             const attrs = (char.attributes || {}) as any;
             return (

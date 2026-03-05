@@ -461,8 +461,7 @@ const VIRELLE_INFO = {
     "Export — Full movie export with credits and soundtrack",
   ],
   pricing: {
-    creator: "Creator plan — 10 projects, 100 AI generations/month, full pipeline",
-    creator: "$29/month — 5 projects, 30 generations, 1080p, trailer generation",
+    creator: "$29/month — 10 projects, 100 AI generations/month, full pipeline",
     pro: "$99/month — 25 projects, 200 generations, all creative tools",
     industry: "$499/month — Unlimited everything, 4K, ultra quality",
   },
@@ -585,7 +584,7 @@ PRODUCT INFO:
 - URL: ${VIRELLE_INFO.url}
 - Description: ${VIRELLE_INFO.description}
 - Key Features: ${VIRELLE_INFO.features.join("; ")}
-- Pricing: Free: ${VIRELLE_INFO.pricing.free} | Pro: ${VIRELLE_INFO.pricing.pro} | Industry: ${VIRELLE_INFO.pricing.industry}
+- Pricing: Creator: ${VIRELLE_INFO.pricing.creator} | Pro: ${VIRELLE_INFO.pricing.pro} | Industry: ${VIRELLE_INFO.pricing.industry}
 - Differentiators: ${VIRELLE_INFO.differentiators.join("; ")}
 
 CONTENT INSTRUCTIONS:

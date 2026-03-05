@@ -60,10 +60,8 @@ import {
   BookOpen,
   MessageSquare,
   DollarSign,
-  Volume2 as Volume2Icon,
   UserPlus,
   Layers2,
-  Download,
   Sparkle,
   VideoIcon,
   Users2,
@@ -326,12 +324,10 @@ export default function ProjectDetail() {
             <FileText className="h-4 w-4 mr-1" />
             Script
           </Button>
-          {project.mode === "manual" && (
-            <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/scenes`)}>
-              <Layers className="h-4 w-4 mr-1" />
-              Scene Editor
-            </Button>
-          )}
+          <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/scenes`)}>
+            <Layers className="h-4 w-4 mr-1" />
+            Scene Editor
+          </Button>
           {project.mode === "quick" && project.status === "draft" && (
             <Button
               size="sm"
@@ -689,6 +685,11 @@ export default function ProjectDetail() {
               <p className="text-sm text-muted-foreground">AI-generated movie trailer</p>
               <p className="text-xs text-muted-foreground/60 mt-0.5">All trailers are G-rated and spoiler-free</p>
             </div>
+            <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/trailer-studio`)}>
+              <Film className="h-4 w-4 mr-1" />
+              Trailer Studio
+            </Button>
             <Button
               size="sm"
               onClick={() => trailerMutation.mutate({ projectId: project.id })}
@@ -700,6 +701,7 @@ export default function ProjectDetail() {
                 <><Sparkles className="h-4 w-4 mr-1" />Generate Trailer</>
               )}
             </Button>
+            </div>
           </div>
           {!scenes?.length && (
             <Card className="bg-card/50 border-dashed">

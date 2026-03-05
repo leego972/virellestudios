@@ -127,7 +127,7 @@ export default function TrailerStudio() {
   const [releaseDate, setReleaseDate] = useState("");
   const [targetAudience, setTargetAudience] = useState("general");
   const [musicTrack, setMusicTrack] = useState("auto");
-  const [overallPacing, setOverallPacing] = useState<"standard" | "slow-burn" | "high-energy">("standard");
+  const [overallPacing, setOverallPacing] = useState<"standard" | "slow" | "fast">("standard");
   const [aspectRatio, setAspectRatio] = useState<"16:9" | "2.39:1" | "4:3" | "9:16">("16:9");
   const [generatedResult, setGeneratedResult] = useState<any>(null);
   const [previewPlaying, setPreviewPlaying] = useState(false);
@@ -363,9 +363,9 @@ export default function TrailerStudio() {
             <div>
               <label className="text-xs text-muted-foreground">Overall Pacing</label>
               <div className="flex gap-1 mt-1">
-                {(["slow-burn", "standard", "high-energy"] as const).map(p => (
+                {(["slow", "standard", "fast"] as const).map(p => (
                   <button key={p} onClick={() => setOverallPacing(p)} className={`flex-1 text-[10px] py-1.5 rounded border transition-all ${overallPacing === p ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-border/50 text-muted-foreground hover:bg-muted/30"}`}>
-                    {p === "slow-burn" ? "Slow Burn" : p === "standard" ? "Standard" : "High Energy"}
+                    {p === "slow" ? "Slow Burn" : p === "standard" ? "Standard" : "High Energy"}
                   </button>
                 ))}
               </div>

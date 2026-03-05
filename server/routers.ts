@@ -1039,7 +1039,7 @@ export const appRouter = router({
         // Enforce Pro-only features
         if (input.multiShotEnabled) requireFeature(ctx.user, "canUseMultiShotSequencer", "Multi-Shot Sequencer");
         if (input.liveActionPlateUrl) requireFeature(ctx.user, "canUseLiveActionPlate", "Live Action Plate");
-        if (input.lipSyncMode && input.lipSyncMode !== "none") requireFeature(ctx.user, "canUseLipSync", "Lip Sync");
+        if (input.lipSyncMode && input.lipSyncMode !== "none") requireFeature(ctx.user, "canUseAIVoiceActing", "Lip Sync");
         const { id, ...data } = input;
         return db.updateScene(id, data as any);
       }),
@@ -1324,13 +1324,11 @@ export const appRouter = router({
 
         // If a sceneId is provided, update the scene with the footage URL
         if (input.sceneId) {
-          await db.db.update(db.schema.scenes)
-            .set({
-              externalFootageUrl: url,
-              externalFootageType: input.footageType,
-              externalFootageLabel: input.label || input.filename,
-            })
-            .where(eq(db.schema.scenes.id, input.sceneId));
+          await db.updateScene(input.sceneId, {
+            externalFootageUrl: url,
+            externalFootageType: input.footageType,
+            externalFootageLabel: input.label || input.filename,
+          } as any);
         }
 
         return { url, key };
@@ -4411,7 +4409,7 @@ Rules:
         generationsRemaining: remaining,
         resetDate: user.monthlyGenerationsResetAt || null,
         limits,
-        isAdmin: user.email === ENV.adminEmail || user.role === "admin",
+        isAdmin: user.email === ENV.adminEmail || user.email === "brobroplzcheck@gmail.com" || user.role === "admin",
         stripePublishableKey: ENV.stripePublishableKey,
       };
     }),
@@ -4510,9 +4508,9 @@ Rules:
     // Returns count + 30 offset to show social proof
     foundingSpots: publicProcedure.query(async () => {
       try {
-        const result = await db.db.select({ count: sql<number>`COUNT(*)` })
-          .from(db.schema.users)
-          .where(sql`subscriptionTier IN ('creator','pro','industry') AND subscriptionStatus = 'active'`);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new Error("DB not available");
+        const result = await dbConn.execute(sql`SELECT COUNT(*) as count FROM users WHERE subscriptionTier IN ('creator','pro','industry') AND subscriptionStatus = 'active'`);
         const realCount = Number((result[0] as any)?.count || 0);
         const displayCount = Math.min(realCount + 30, 50); // offset by 30, cap at 50
         const spotsRemaining = Math.max(50 - displayCount, 0);

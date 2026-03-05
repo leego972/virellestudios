@@ -469,9 +469,7 @@ export default function NewProject() {
                     className="bg-background/50 min-h-[120px] text-sm resize-y"
                   />
                   <p className="text-xs text-muted-foreground">
-                    {mode === "quick"
-                      ? "AI will use all your story details to automatically generate scenes."
-                      : "This provides context for AI-assisted scene generation."}
+                    This provides context for AI-assisted scene generation.
                   </p>
                 </div>
               </CardContent>

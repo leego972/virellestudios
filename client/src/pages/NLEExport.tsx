@@ -49,7 +49,7 @@ export default function NLEExport() {
   const [isExporting, setIsExporting] = useState(false);
   const [exportComplete, setExportComplete] = useState(false);
 
-  const { data: project } = trpc.getProject.useQuery({ id: projectId }, { enabled: !!projectId });
+  const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
 
   const handleExport = async () => {
     setIsExporting(true);
