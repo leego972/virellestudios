@@ -58,6 +58,7 @@ import {
   Music,
   Volume2,
   Palette,
+  Scissors,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLocation, useParams } from "wouter";
@@ -567,6 +568,15 @@ export default function SceneEditor() {
               <Sparkles className="h-4 w-4 mr-1" />
             )}
             Generate All Previews
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-primary/40 text-primary hover:bg-primary/10"
+            onClick={() => setLocation(`/projects/${projectId}/director-cut`)}
+          >
+            <Scissors className="h-4 w-4 mr-1" />
+            Director's Cut
           </Button>
           <Button size="sm" onClick={openNewScene}>
             <Plus className="h-4 w-4 mr-1" />

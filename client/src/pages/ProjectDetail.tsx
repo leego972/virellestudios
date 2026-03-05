@@ -67,6 +67,7 @@ import {
   Sparkle,
   VideoIcon,
   Users2,
+  Scissors,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -959,6 +960,17 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <Card className="cursor-pointer hover:ring-2 hover:ring-primary/60 transition-all border-primary/40 bg-primary/5" onClick={() => setLocation(`/projects/${project.id}/director-cut`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+                  <Scissors className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-primary">Director's Cut</p>
+                  <p className="text-xs text-muted-foreground">Timeline editor — trim, reorder &amp; retake scenes</p>
+                </div>
+              </CardContent>
+            </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">

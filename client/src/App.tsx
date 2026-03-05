@@ -69,6 +69,7 @@ const VFXSuite = lazy(() => import("./pages/VFXSuite"));
 const LiveActionPlate = lazy(() => import("./pages/LiveActionPlate"));
 const AICasting = lazy(() => import("./pages/AICasting"));
 const AssetMarketplace = lazy(() => import("./pages/AssetMarketplace"));
+const DirectorCut = lazy(() => import("./pages/DirectorCut"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -107,6 +108,7 @@ function GatedNLEExport() { return <LazyPage><SubscriptionGate feature="NLE Expo
 function GatedVFXSuite() { return <LazyPage><SubscriptionGate feature="VFX Suite" featureKey="canUseVisualEffects" requiredTier="pro"><VFXSuite /></SubscriptionGate></LazyPage>; }
 function GatedLiveActionPlate() { return <LazyPage><SubscriptionGate feature="Live Action Plate" featureKey="canUseVisualEffects" requiredTier="pro"><LiveActionPlate /></SubscriptionGate></LazyPage>; }
 function GatedAICasting() { return <LazyPage><SubscriptionGate feature="AI Casting" featureKey="canUseVisualEffects" requiredTier="pro"><AICasting /></SubscriptionGate></LazyPage>; }
+function GatedDirectorCut() { return <LazyPage><DirectorCut /></LazyPage>; }
 
 function Router() {
   return (
@@ -151,6 +153,7 @@ function Router() {
       <Route path="/projects/:projectId/vfx-suite" component={GatedVFXSuite} />
       <Route path="/projects/:projectId/live-action-plate" component={GatedLiveActionPlate} />
       <Route path="/projects/:projectId/ai-casting" component={GatedAICasting} />
+      <Route path="/projects/:projectId/director-cut" component={GatedDirectorCut} />
 
       {/* Dashboard layout pages */}
       <Route>
