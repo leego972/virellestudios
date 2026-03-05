@@ -12,6 +12,9 @@
  * - Tier-based quality scaling (Free/Pro/Industry)
  */
 
+// ─── Minor Protection Integration ───
+import { applyMinorProtection } from "./minorProtectionEngine";
+
 // ─── Genre Visual Profiles ───
 // Each genre has a distinct visual language derived from real Hollywood productions
 
@@ -421,6 +424,8 @@ export function buildScenePrompt(
     previousSceneDescription?: string;
     characterNames?: string[];
     cameraMovement?: string;
+    // Minor protection: pass character age ranges for automatic modesty enforcement
+    characters?: Array<{ name: string; ageRange?: string | null }>;
   }
 ): string {
   const parts: string[] = [];
@@ -623,8 +628,37 @@ export function buildScenePrompt(
   // 18. Quality anchor based on subscription tier
   parts.push(QUALITY_ANCHORS[tier]);
 
-  // 19. Negative prompt (what to avoid)
-  parts.push(`[AVOID: ${QUALITY_NEGATIVE[tier]}]`);
+  // 19. Minor Protection — auto-inject modesty directives for minor characters
+  if (options?.characters && options.characters.length > 0) {
+    const minorProtection = applyMinorProtection(
+      scene.description || scene.title || "",
+      scene.locationType,
+      scene.actionDescription,
+      options.characters
+    );
+    if (minorProtection.hasMinors) {
+      for (const directive of minorProtection.promptAdditions) {
+        parts.push(directive);
+      }
+    }
+  }
+
+  // 20. Negative prompt (what to avoid)
+  const baseNegative = QUALITY_NEGATIVE[tier];
+  // Add minor protection negative prompts if minors are in the scene
+  let negativePrompt = baseNegative;
+  if (options?.characters && options.characters.length > 0) {
+    const minorCheck = applyMinorProtection(
+      scene.description || scene.title || "",
+      scene.locationType,
+      scene.actionDescription,
+      options.characters
+    );
+    if (minorCheck.hasMinors && minorCheck.negativePromptAdditions.length > 0) {
+      negativePrompt = `${baseNegative}, ${minorCheck.negativePromptAdditions.join(", ")}`;
+    }
+  }
+  parts.push(`[AVOID: ${negativePrompt}]`);
 
   return parts.join(". ");
 }

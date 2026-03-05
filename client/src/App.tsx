@@ -38,6 +38,12 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 
+// Legal pages — lazy loaded
+const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
+const AcceptableUsePolicy = lazy(() => import("./pages/legal/AcceptableUsePolicy"));
+const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
+
 // Dashboard feature pages — lazy loaded
 const Referrals = lazy(() => import("./pages/Referrals"));
 const SettingsPage = lazy(() => import("./pages/Settings"));
@@ -107,6 +113,10 @@ function Router() {
       {/* Public blog pages (no auth required) */}
       <Route path="/blog">{() => <LazyPage><Blog /></LazyPage>}</Route>
       <Route path="/blog/:slug">{() => <LazyPage><BlogArticle /></LazyPage>}</Route>
+      <Route path="/terms">{() => <LazyPage><TermsOfService /></LazyPage>}</Route>
+      <Route path="/privacy">{() => <LazyPage><PrivacyPolicy /></LazyPage>}</Route>
+      <Route path="/acceptable-use">{() => <LazyPage><AcceptableUsePolicy /></LazyPage>}</Route>
+      <Route path="/ai-content-policy">{() => <LazyPage><AIContentPolicy /></LazyPage>}</Route>
 
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />

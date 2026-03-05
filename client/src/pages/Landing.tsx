@@ -2,10 +2,10 @@ import { useLocation } from "wouter";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
   Film, Zap, Layers, Users, Wand2, Music, Palette, Camera,
-  ArrowRight, Star, CheckCircle2, Play, Shield,
+  ArrowRight, Star, CheckCircle2, Play, Shield, ShieldCheck,
   Globe, Clock, ChevronDown, Sun, Moon, BookOpen, CreditCard,
   MessageSquare, Clapperboard, Monitor, Scissors, MapPin,
-  Mic, Sparkles, Video, Eye, Cpu, Building2, Rocket,
+  Mic, Sparkles, Video, Eye, Cpu, Building2, Rocket, Lock, AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -535,6 +535,63 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ─── Responsible AI & Minor Protection Section ─── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium mb-4">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Responsible AI Filmmaking
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight mb-4">
+              Built for{" "}
+              <span className="text-green-400">Responsible</span>{" "}Creators
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Virelle Studios is the only AI film platform with built-in child protection, content moderation, and industry-leading safeguards — so you can create freely without legal risk.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="bg-card/50 border border-green-500/20 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center mb-4">
+                <ShieldCheck className="h-5 w-5 text-green-400" />
+              </div>
+              <h3 className="font-semibold mb-2">AI Minor Protection</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                When a minor character appears in a sensitive scene — shower, beach, changing — our AI automatically applies cinematic modesty: heavy steam, fog, tasteful camera angles, and appropriate framing. No nudity, ever. Automatically.
+              </p>
+            </div>
+            <div className="bg-card/50 border border-blue-500/20 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">
+                <Lock className="h-5 w-5 text-blue-400" />
+              </div>
+              <h3 className="font-semibold mb-2">Face & Likeness Consent</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Directors are legally responsible for obtaining consent from living individuals whose likeness they use. Our platform requires acknowledgment of consent obligations at upload. Historical public figures (pre-1900) are exempt with quality source images.
+              </p>
+            </div>
+            <div className="bg-card/50 border border-amber-500/20 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
+                <AlertTriangle className="h-5 w-5 text-amber-400" />
+              </div>
+              <h3 className="font-semibold mb-2">Instant Misuse Alerts</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Our content moderation engine scans every generation in real time. Suspected policy violations trigger an immediate account freeze and alert to our safety team — reviewed within 24 hours. Zero tolerance for CSAM.
+              </p>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-green-500/5 to-blue-500/5 border border-green-500/10 rounded-xl p-6 flex flex-col sm:flex-row items-center gap-4">
+            <ShieldCheck className="h-8 w-8 text-green-400 shrink-0" />
+            <div>
+              <p className="font-semibold text-sm mb-1">Zero Tolerance for Child Sexual Abuse Material (CSAM)</p>
+              <p className="text-xs text-muted-foreground">
+                Any attempt to generate CSAM results in immediate permanent account termination, IP ban, and mandatory reporting to NCMEC and law enforcement. This is non-negotiable and fully automated.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── Pricing ─── */}
       <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30 border-y border-border/40">
         <div className="max-w-6xl mx-auto">
@@ -724,8 +781,10 @@ export default function Landing() {
               <ul className="space-y-2">
                 <li><span className="text-xs text-muted-foreground">About</span></li>
                 <li><span className="text-xs text-muted-foreground">Contact</span></li>
-                <li><span className="text-xs text-muted-foreground">Privacy Policy</span></li>
-                <li><span className="text-xs text-muted-foreground">Terms of Service</span></li>
+                <li><button onClick={() => setLocation("/terms")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms of Service</button></li>
+                <li><button onClick={() => setLocation("/privacy")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</button></li>
+                <li><button onClick={() => setLocation("/acceptable-use")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Acceptable Use</button></li>
+                <li><button onClick={() => setLocation("/ai-content-policy")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">AI Content Policy</button></li>
               </ul>
             </div>
             <div>

@@ -57,6 +57,10 @@ export const users = mysqlTable("users", {
   howDidYouHear: varchar("howDidYouHear", { length: 128 }), // google, social_media, friend, blog, producthunt, reddit, youtube, other
   marketingOptIn: boolean("marketingOptIn").default(false),
   onboardingCompleted: boolean("onboardingCompleted").default(false),
+  // ─── Content Moderation ───
+  isFrozen: boolean("isFrozen").default(false).notNull(),
+  frozenReason: text("frozenReason"),
+  frozenAt: timestamp("frozenAt"),
 });
 
 export type User = typeof users.$inferSelect;
@@ -626,3 +630,22 @@ export const notifications = mysqlTable("notifications", {
 });
 export type Notification = typeof notifications.$inferSelect;
 export type InsertNotification = typeof notifications.$inferInsert;
+
+// ─── Content Moderation Incidents ───
+export const moderationIncidents = mysqlTable("moderationIncidents", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  contentType: varchar("contentType", { length: 128 }).notNull(),
+  contentSnippet: text("contentSnippet").notNull(),
+  violations: json("violations").notNull(),
+  severity: mysqlEnum("severity", ["CRITICAL", "HIGH", "MEDIUM", "LOW"]).notNull().default("LOW"),
+  shouldFreeze: boolean("shouldFreeze").notNull().default(false),
+  shouldReport: boolean("shouldReport").notNull().default(false),
+  status: mysqlEnum("moderationStatus", ["pending_review", "reviewed_cleared", "reviewed_actioned", "reported_to_authorities"]).notNull().default("pending_review"),
+  reviewedBy: int("reviewedBy"),
+  reviewNotes: text("reviewNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ModerationIncident = typeof moderationIncidents.$inferSelect;
+export type InsertModerationIncident = typeof moderationIncidents.$inferInsert;

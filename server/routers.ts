@@ -44,6 +44,7 @@ import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
 import { generateSceneDialogue, TTS_PROVIDERS, type VoiceActingKeys } from "./_core/voiceActingEngine";
 import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
+import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 
 export const appRouter = router({
   system: systemRouter,
@@ -400,6 +401,24 @@ export const appRouter = router({
         attributes: z.any().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Content moderation scan
+        const scanText = [input.name, input.description].filter(Boolean).join(' ');
+        if (scanText.trim()) {
+          const modResult = scanContent(scanText);
+          if (modResult.flagged) {
+            await handleModerationViolation({
+              userId: ctx.user.id,
+              userEmail: ctx.user.email ?? '',
+              userName: ctx.user.name ?? '',
+              contentType: 'character_create',
+              contentSnippet: scanText.substring(0, 500),
+              scanResult: modResult,
+            });
+            if (modResult.shouldFreeze) {
+              throw new TRPCError({ code: 'FORBIDDEN', message: 'Your account has been suspended pending review. Please check your email.' });
+            }
+          }
+        }
         return db.createCharacter({ ...input, userId: ctx.user.id });
       }),
 
@@ -735,7 +754,25 @@ export const appRouter = router({
         transitionType: z.string().optional(),
         transitionDuration: z.number().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        // Content moderation scan on scene description and dialogue
+        const scanText = [input.title, input.description, input.dialogueText, input.aiPromptOverride].filter(Boolean).join(' ');
+        if (scanText.trim()) {
+          const modResult = scanContent(scanText);
+          if (modResult.flagged) {
+            await handleModerationViolation({
+              userId: ctx.user.id,
+              userEmail: ctx.user.email ?? '',
+              userName: ctx.user.name ?? '',
+              contentType: 'scene_create',
+              contentSnippet: scanText.substring(0, 500),
+              scanResult: modResult,
+            });
+            if (modResult.shouldFreeze) {
+              throw new TRPCError({ code: 'FORBIDDEN', message: 'Your account has been suspended pending review. Please check your email.' });
+            }
+          }
+        }
         return db.createScene(input as any);
       }),
     update: protectedProcedure
@@ -873,6 +910,7 @@ export const appRouter = router({
             totalScenes: allScenes.length || 1,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
+            characters: characters.map(c => ({ name: c.name, ageRange: c.dateOfBirth })),
           }
         );
 
