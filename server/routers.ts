@@ -854,6 +854,7 @@ export const appRouter = router({
         makeupNotes: z.string().optional(),
         stuntNotes: z.string().optional(),
         productionNotes: z.string().optional(),
+        sfxProductionNotes: z.string().optional(),
         budgetEstimate: z.number().optional(),
         shootingDays: z.number().optional(),
         aiPromptOverride: z.string().optional(),
@@ -861,6 +862,37 @@ export const appRouter = router({
         duration: z.number().min(1).max(600).optional(),
         transitionType: z.string().optional(),
         transitionDuration: z.number().optional(),
+        // Advanced camera & lens control
+        cameraBody: z.string().optional(),
+        lensBrand: z.string().optional(),
+        aperture: z.string().optional(),
+        // Multi-shot sequencing
+        multiShotEnabled: z.boolean().optional(),
+        multiShotCount: z.number().optional(),
+        multiShotData: z.any().optional(),
+        // Character staging & emotion
+        characterEmotions: z.any().optional(),
+        characterActions: z.any().optional(),
+        // Genre motion & visual style
+        genreMotion: z.string().optional(),
+        speedRamp: z.string().optional(),
+        visualStyle: z.string().optional(),
+        // Retakes
+        retakeInstructions: z.string().optional(),
+        retakeRegion: z.any().optional(),
+        retakeCount: z.number().optional(),
+        // Lip sync
+        lipSyncMode: z.string().optional(),
+        lipSyncAudioUrl: z.string().optional(),
+        // VFX suite
+        vfxSuiteOperations: z.any().optional(),
+        // Live action plate integration
+        liveActionPlateUrl: z.string().optional(),
+        liveActionCompositeMode: z.string().optional(),
+        // External footage upload
+        externalFootageUrl: z.string().optional(),
+        externalFootageType: z.string().optional(),
+        externalFootageLabel: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Content moderation scan on scene description and dialogue
