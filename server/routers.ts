@@ -4202,26 +4202,7 @@ Rules:
       const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS, FILM_PACKAGES, VFX_SCENE_PACKAGES, EXTENSION_PRICING, LAUNCH_SPECIAL_ACTIVE } = await import("./_core/subscription");
       return {
         tiers: [
-          {
-            id: "creator" as const,
-            name: "Creator",
-            monthlyPrice: 0,
-            annualPrice: 0,
-            annualTotal: 0,
-            priceLabel: "$0",
-            interval: "forever",
-            description: "Preview the platform — limited demo access",
-            limits: TIER_LIMITS.free,
-            highlights: [
-              "1 demo project",
-              "3 AI generations/month",
-              "5 scenes per project",
-              "720p preview resolution",
-              "Script writer & storyboard",
-              "AI character generation",
-              "No film export",
-            ],
-          },
+
           {
             id: "creator" as const,
             name: "Creator",
