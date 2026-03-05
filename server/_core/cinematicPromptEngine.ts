@@ -14,6 +14,8 @@
 
 // ─── Minor Protection Integration ───
 import { applyMinorProtection } from "./minorProtectionEngine";
+// ─── Cinema Industry Profiles ───
+import { CINEMA_INDUSTRY_PROFILES } from "../../shared/types";
 
 // ─── Hyper-Realism Constants ───
 // Defined before GENRE_PROFILES so they can be referenced in genre skinRendering fields
