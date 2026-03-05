@@ -915,8 +915,8 @@ export default function Landing() {
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Company</h4>
               <ul className="space-y-2">
-                <li><span className="text-xs text-muted-foreground">About</span></li>
-                <li><span className="text-xs text-muted-foreground">Contact</span></li>
+                <li><button onClick={() => setLocation("/contact")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">About</button></li>
+                <li><button onClick={() => setLocation("/contact")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Contact</button></li>
                 <li><button onClick={() => setLocation("/terms")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms of Service</button></li>
                 <li><button onClick={() => setLocation("/privacy")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</button></li>
                 <li><button onClick={() => setLocation("/acceptable-use")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Acceptable Use</button></li>

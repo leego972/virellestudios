@@ -46,6 +46,7 @@ import {
   Image as ImageIcon,
   Sparkles,
   Eye,
+  Search,
 } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
@@ -106,6 +107,7 @@ export default function Characters() {
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [photoMimeType, setPhotoMimeType] = useState<string>("image/jpeg");
   const [uploading, setUploading] = useState(false);
+  const [charSearch, setCharSearch] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const photoFileRef = useRef<HTMLInputElement>(null);
 
@@ -322,6 +324,19 @@ export default function Characters() {
         </div>
       </div>
 
+      {/* Search */}
+      {(characters?.length || 0) > 3 && (
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search characters..."
+            value={charSearch}
+            onChange={(e) => setCharSearch(e.target.value)}
+            className="pl-9 h-9 text-sm bg-card/50"
+          />
+        </div>
+      )}
+
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
@@ -358,7 +373,15 @@ export default function Characters() {
         </Card>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {characters.map((char) => {
+          {characters.filter(char => {
+            if (!charSearch.trim()) return true;
+            const q = charSearch.toLowerCase();
+            return char.name.toLowerCase().includes(q) ||
+              (char.description || "").toLowerCase().includes(q) ||
+              (char.role || "").toLowerCase().includes(q) ||
+              (char.gender || "").toLowerCase().includes(q) ||
+              (char.ethnicity || "").toLowerCase().includes(q);
+          }).map((char) => {
             const attrs = (char.attributes || {}) as any;
             return (
               <Card key={char.id} className="bg-card/50 group cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => openDetail(char)}>
