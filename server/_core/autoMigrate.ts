@@ -217,6 +217,18 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "frozenAt", definition: "TIMESTAMP NULL" },
     // Projects table - cinema industry
     { table: "projects", column: "cinemaIndustry", definition: "VARCHAR(128) NULL DEFAULT 'Hollywood'" },
+    // Scenes table - soundtrack fields
+    { table: "scenes", column: "soundtrackId", definition: "INT NULL" },
+    { table: "scenes", column: "soundtrackVolume", definition: "INT NOT NULL DEFAULT 80" },
+    // Scenes table - camera & optics fields
+    { table: "scenes", column: "lensType", definition: "VARCHAR(128) NULL" },
+    { table: "scenes", column: "focalLength", definition: "VARCHAR(64) NULL" },
+    { table: "scenes", column: "depthOfField", definition: "VARCHAR(64) NULL" },
+    { table: "scenes", column: "cameraMovement", definition: "VARCHAR(128) NULL" },
+    { table: "scenes", column: "shotType", definition: "VARCHAR(64) NULL" },
+    { table: "scenes", column: "frameRate", definition: "VARCHAR(32) NULL" },
+    { table: "scenes", column: "aspectRatio", definition: "VARCHAR(16) NULL" },
+    { table: "scenes", column: "colorPalette", definition: "VARCHAR(255) NULL" },
     // Scenes table - additional fields
     { table: "scenes", column: "voiceUrl", definition: "TEXT NULL" },
     { table: "scenes", column: "crowdLevel", definition: "VARCHAR(32) NULL" },
