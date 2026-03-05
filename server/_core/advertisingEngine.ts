@@ -3,6 +3,13 @@ import { generateImage } from "./imageGeneration";
 import { generateVideo as byokGenerateVideo } from "./byokVideoEngine";
 import type { UserApiKeys } from "./byokVideoEngine";
 import { storagePut } from "../storage";
+import {
+  postToLinkedIn,
+  postToFilmSubreddits,
+  broadcastWhatsApp,
+  getSocialCredentialStatus,
+  type PostResult,
+} from "./socialPostingEngine";
 
 // ============================================================
 // ADVERTISING ENGINE - Automated free platform advertising
@@ -290,20 +297,71 @@ export const AD_PLATFORMS: AdPlatform[] = [
   },
   {
     id: "linkedin",
-    name: "LinkedIn",
+    name: "LinkedIn — Film Industry",
     type: "social",
-    category: "general",
+    category: "film",
     url: "https://linkedin.com",
-    description: "Professional networking platform",
-    audienceType: "Business professionals, media industry",
-    postingStrategy: "Share thought leadership on AI in film production. Professional tone.",
+    description: "Professional networking — targeting film production companies, studio executives, independent producers, directors, cinematographers, and entertainment industry professionals",
+    audienceType: "Film production companies, studio executives, independent producers, directors, cinematographers, screenwriters, VFX supervisors, casting directors, film finance professionals, entertainment lawyers, distribution executives, post-production supervisors",
+    postingStrategy: "Write thought leadership posts specifically for film industry professionals. Address their real pain points: production costs, pre-production time, pitching to studios, visualising scripts before shoot. Use industry terminology (pre-production, principal photography, post-production, above-the-line, below-the-line, P&A budget, day-out-of-days). Tag relevant industry hashtags: #FilmProduction #IndieFilm #FilmFinance #Cinematography #Screenwriting #HollywoodAI #FilmIndustry #PostProduction #VFX #FilmMaking. Mention specific use cases: pitch decks, pre-vis, animatics, table reads. Professional, authoritative tone — speak as a fellow industry professional, not a tech startup.",
     requiresAuth: true,
     authType: "oauth",
     maxPostLength: 3000,
     supportsImages: true,
     supportsLinks: true,
-    bestTimeToPost: "08:00-10:00 EST",
+    bestTimeToPost: "08:00-10:00 EST weekdays",
     cooldownHours: 48,
+  },
+  {
+    id: "linkedin_producers",
+    name: "LinkedIn — Independent Producers",
+    type: "social",
+    category: "film",
+    url: "https://linkedin.com",
+    description: "Targeting independent film producers and production company owners",
+    audienceType: "Independent film producers, production company founders, executive producers, line producers, film financiers",
+    postingStrategy: "Focus on ROI and budget efficiency. Independent producers are obsessed with budget. Show how Virelle Studios eliminates pre-production costs: no location scouts, no concept artists, no storyboard artists. Quantify savings: '$50K pre-vis budget → $0 with AI'. Speak to the business case. Address the pitch process: 'Show investors a fully visualised film before spending a dollar on production.' Use hashtags: #FilmFinance #IndependentFilm #FilmProducer #FilmBudget #MovieProduction.",
+    requiresAuth: true,
+    authType: "oauth",
+    maxPostLength: 3000,
+    supportsImages: true,
+    supportsLinks: true,
+    bestTimeToPost: "07:30-09:30 EST weekdays",
+    cooldownHours: 72,
+  },
+  {
+    id: "linkedin_directors",
+    name: "LinkedIn — Directors & Cinematographers",
+    type: "social",
+    category: "film",
+    url: "https://linkedin.com",
+    description: "Targeting film directors, cinematographers, and visual storytellers",
+    audienceType: "Film directors, cinematographers, DPs, visual effects supervisors, production designers, art directors",
+    postingStrategy: "Speak to the creative vision. Directors and DPs care about visual language, not cost. Show how Virelle Studios lets them pre-visualise every shot: exact camera angles, lens choices, lighting setups, color grades — before a single day of principal photography. Position as the ultimate pre-vis tool. Reference real cinematography concepts: Dutch angle, rack focus, golden hour, motivated lighting, color temperature. Use hashtags: #Cinematography #FilmDirector #DirectorOfPhotography #PreVis #VisualStorytelling #FilmCraft.",
+    requiresAuth: true,
+    authType: "oauth",
+    maxPostLength: 3000,
+    supportsImages: true,
+    supportsLinks: true,
+    bestTimeToPost: "09:00-11:00 EST weekdays",
+    cooldownHours: 72,
+  },
+  {
+    id: "linkedin_studios",
+    name: "LinkedIn — Production Companies & Studios",
+    type: "social",
+    category: "film",
+    url: "https://linkedin.com",
+    description: "Targeting production companies, studios, and entertainment conglomerates",
+    audienceType: "Production company executives, studio development executives, head of production, VP of development, content acquisition executives",
+    postingStrategy: "Enterprise pitch. Studios care about content volume, speed to market, and IP development. Position Virelle Studios as an enterprise AI production tool that lets studios develop and visualise 10x more projects in the same time. Address the development slate problem: 'Most projects die in development because visualisation is too expensive. Virelle Studios eliminates that barrier.' Use case: rapid prototyping of IP before greenlight. Tone: boardroom-ready, data-driven. Use hashtags: #FilmStudio #EntertainmentIndustry #ContentProduction #IPDevelopment #FilmDevelopment.",
+    requiresAuth: true,
+    authType: "oauth",
+    maxPostLength: 3000,
+    supportsImages: true,
+    supportsLinks: true,
+    bestTimeToPost: "08:00-10:00 EST weekdays",
+    cooldownHours: 96,
   },
   {
     id: "facebook_groups",
@@ -335,7 +393,14 @@ export type AdContentType =
   | "comparison"
   | "tutorial_teaser"
   | "milestone"
-  | "free_tier_promo";
+  | "free_tier_promo"
+  // Film industry-specific content types
+  | "pitch_deck_teaser"
+  | "industry_insight"
+  | "case_study"
+  | "pre_vis_showcase"
+  | "roi_breakdown"
+  | "executive_briefing";
 
 export interface GeneratedAdContent {
   title: string;
@@ -471,6 +536,8 @@ function buildAdPrompt(
   contentType: AdContentType,
   customContext?: string
 ): string {
+  const isLinkedInFilmIndustry = platform.id.startsWith("linkedin");
+
   const contentTypeInstructions: Record<AdContentType, string> = {
     launch_announcement: "Write a launch announcement for Virelle Studios. Make it exciting but authentic. Focus on the problem it solves and the 'wow' factor of AI film generation.",
     feature_showcase: "Showcase a specific feature of Virelle Studios. Pick the most impressive feature for this audience and explain it with enthusiasm. Show how it works and why it matters.",
@@ -480,6 +547,25 @@ function buildAdPrompt(
     tutorial_teaser: "Write a teaser for a tutorial on how to use Virelle Studios. Give just enough to intrigue people and make them want to try it. Include one concrete tip or workflow.",
     milestone: "Write a milestone/update post. Share growth, new features, or community achievements. Make the community feel like they're part of the journey.",
     free_tier_promo: "Promote the free tier of Virelle Studios. Emphasize that anyone can try AI filmmaking for free. Lower the barrier to entry. Make it irresistible to try.",
+    // Film industry-specific
+    pitch_deck_teaser: isLinkedInFilmIndustry
+      ? "Write a LinkedIn post for film industry professionals about how Virelle Studios transforms the pitch process. The hook: 'What if you could show investors a fully visualised film before spending a dollar on production?' Walk through how a producer used Virelle Studios to create a cinematic pitch deck — script, storyboard, character designs, and scene previews — in 48 hours instead of 6 weeks. End with a call to action for producers to try it. Use professional film industry language. Include hashtags: #FilmProducer #FilmFinance #IndieFilm #PitchDeck #FilmProduction."
+      : "Write a post about how Virelle Studios helps filmmakers pitch their projects with AI-generated visuals.",
+    industry_insight: isLinkedInFilmIndustry
+      ? "Write a thought leadership LinkedIn post for film industry professionals. Topic: 'AI is not replacing filmmakers — it's eliminating the gatekeepers.' Argue that the biggest barrier to filmmaking has never been talent — it's been access to expensive pre-production resources. AI removes that barrier. This is the most democratising moment in film history since the invention of the digital camera. Speak with authority. Reference industry trends, streaming platform demand for content, and the economics of independent film. End with how Virelle Studios fits into this shift. Use hashtags: #FilmIndustry #AIFilm #FutureOfFilm #HollywoodAI #FilmMaking."
+      : "Write an insight post about how AI is transforming the film industry.",
+    case_study: isLinkedInFilmIndustry
+      ? "Write a LinkedIn case study post for film industry professionals. Format: Problem → Solution → Result. Problem: An independent director had a feature film script but couldn't afford pre-production visualisation ($80K+ for storyboards, concept art, and pre-vis). Solution: Used Virelle Studios to generate the full visual package — character designs, scene storyboards, location concepts, and a 3-minute pre-vis reel — in 72 hours. Result: Secured $2M in film finance at their first investor meeting because investors could SEE the film. Make it specific, credible, and compelling. Use hashtags: #FilmFinance #IndependentFilm #CaseStudy #FilmProduction."
+      : "Write a case study showing how someone used Virelle Studios to create a film.",
+    pre_vis_showcase: isLinkedInFilmIndustry
+      ? "Write a LinkedIn post for directors and cinematographers showcasing Virelle Studios as the ultimate pre-visualisation tool. Explain how directors can now plan every shot before the first day of principal photography: exact camera angles (Dutch angle, bird's eye, tracking shot), lens choices (24mm wide, 85mm portrait, 200mm telephoto), lighting setups (golden hour, motivated practicals, three-point), and color grades (desaturated cold thriller, warm golden drama, high-contrast noir). This eliminates the most expensive mistakes on set. Speak in cinematography language. Use hashtags: #PreVis #Cinematography #FilmDirector #DirectorOfPhotography #FilmCraft."
+      : "Write a post showcasing the pre-visualisation capabilities of Virelle Studios.",
+    roi_breakdown: isLinkedInFilmIndustry
+      ? "Write a LinkedIn post for film producers and studio executives with a clear ROI breakdown for Virelle Studios. Format as a financial comparison: Traditional pre-production costs vs Virelle Studios. Include: Storyboard artist ($15K-$40K) → $0. Concept artist ($10K-$25K) → $0. Pre-vis studio ($50K-$200K) → $0. Location scouting ($5K-$20K) → reduced by 80%. Total savings on a typical indie feature: $80K-$285K. Then show the Virelle Studios cost: $499/month Industry plan. ROI: 160x in year one. Make it punchy, data-driven, and undeniable. Use hashtags: #FilmBudget #FilmProducer #ROI #FilmProduction #IndependentFilm."
+      : "Write a post breaking down the cost savings of using Virelle Studios vs traditional film production.",
+    executive_briefing: isLinkedInFilmIndustry
+      ? "Write a LinkedIn post in the style of an executive briefing for studio heads and production company executives. Topic: 'The AI Production Revolution — What Every Studio Needs to Know in 2025.' Cover: (1) The content volume problem — streaming platforms need 10x more content than studios can produce. (2) The solution — AI-powered production tools that multiply output without multiplying headcount. (3) Virelle Studios as the enterprise solution — unlimited projects, 4K output, team collaboration, full pipeline from script to screen. (4) The competitive risk — studios that don't adopt AI production tools will be outpaced by those that do. Authoritative, boardroom tone. Use hashtags: #FilmStudio #EntertainmentIndustry #ContentStrategy #AIProduction #FilmIndustry."
+      : "Write an executive-level post about the strategic importance of AI in film production.",
   };
 
   return `
@@ -638,9 +724,15 @@ export function getRecommendedPlatforms(contentType: AdContentType): AdPlatform[
     tutorial_teaser: ["reddit_filmmaking", "reddit_screenwriting", "twitter", "deviantart"],
     milestone: ["indiehackers", "twitter", "linkedin", "reddit_sideproject"],
     free_tier_promo: ["reddit_filmmakers", "reddit_indiefilm", "reddit_digitalart", "facebook_groups", "deviantart"],
+    // Film industry LinkedIn-specific
+    pitch_deck_teaser: ["linkedin", "linkedin_producers", "reddit_filmmakers", "reddit_indiefilm", "stage32"],
+    industry_insight: ["linkedin", "linkedin_studios", "reddit_filmmakers", "stage32"],
+    case_study: ["linkedin_producers", "linkedin", "reddit_indiefilm", "stage32"],
+    pre_vis_showcase: ["linkedin_directors", "linkedin", "reddit_filmmakers", "reddit_filmmaking", "behance"],
+    roi_breakdown: ["linkedin_producers", "linkedin_studios", "reddit_indiefilm", "reddit_filmmakers"],
+    executive_briefing: ["linkedin_studios", "linkedin", "hackernews"],
   };
-
-  const ids = recommendations[contentType] || [];
+  const ids = recommendations[contentType] || [];;
   return AD_PLATFORMS.filter(p => ids.includes(p.id));
 }
 
@@ -794,7 +886,9 @@ interface AdSchedulerState {
   totalContentGenerated: number;
   totalImagesGenerated: number;
   totalVideosGenerated: number;
+  totalPostsPublished: number;
   errors: string[];
+  credentialStatus?: Record<string, { configured: boolean; missing: string[] }>;
 }
 
 const schedulerState: AdSchedulerState = {
@@ -804,8 +898,16 @@ const schedulerState: AdSchedulerState = {
   totalContentGenerated: 0,
   totalImagesGenerated: 0,
   totalVideosGenerated: 0,
+  totalPostsPublished: 0,
   errors: [],
 };
+
+// Lazy-load credential status (avoids import-time env var issues)
+function ensureCredentialStatus() {
+  if (!schedulerState.credentialStatus) {
+    schedulerState.credentialStatus = getSocialCredentialStatus();
+  }
+}
 
 export function getSchedulerState(): AdSchedulerState {
   return { ...schedulerState };
@@ -823,6 +925,7 @@ export async function runAutonomousAdCycle(): Promise<{
   images: GeneratedImageAd[];
   videos: GeneratedVideoAd[];
   errors: string[];
+  socialResults?: PostResult[];
 }> {
   console.log("[AdEngine] Starting autonomous advertising cycle...");
   
@@ -834,13 +937,35 @@ export async function runAutonomousAdCycle(): Promise<{
   };
 
   // 1. Generate text content for random platforms
-  const contentTypes: AdContentType[] = [
+  // Rotate through all content types including film-industry-specific LinkedIn types
+  const generalContentTypes: AdContentType[] = [
     "launch_announcement", "feature_showcase", "behind_the_scenes",
     "user_testimonial", "tutorial_teaser", "free_tier_promo",
   ];
-  const selectedType = contentTypes[Math.floor(Math.random() * contentTypes.length)];
-  const recommended = getRecommendedPlatforms(selectedType);
-  const platformsToTarget = recommended.slice(0, 2 + Math.floor(Math.random() * 2));
+  const linkedInContentTypes: AdContentType[] = [
+    "pitch_deck_teaser", "industry_insight", "case_study",
+    "pre_vis_showcase", "roi_breakdown", "executive_briefing",
+  ];
+  // Alternate between general and LinkedIn-specific content (50/50)
+  const useLinkedInContent = Math.random() > 0.5;
+  const selectedType = useLinkedInContent
+    ? linkedInContentTypes[Math.floor(Math.random() * linkedInContentTypes.length)]
+    : generalContentTypes[Math.floor(Math.random() * generalContentTypes.length)];
+
+  // LinkedIn segments to rotate through
+  const linkedInSegments = ["linkedin", "linkedin_producers", "linkedin_directors", "linkedin_studios"];
+  const selectedLinkedInSegment = linkedInSegments[schedulerState.totalRuns % linkedInSegments.length];
+
+  // Build platform list: always include the rotating LinkedIn segment + 1-2 film Reddit communities
+  const filmRedditPlatforms = AD_PLATFORMS.filter(p =>
+    ["reddit_filmmakers", "reddit_filmmaking", "reddit_indiefilm", "reddit_screenwriting"].includes(p.id)
+  );
+  const shuffledReddit = [...filmRedditPlatforms].sort(() => Math.random() - 0.5);
+  const linkedInPlatform = AD_PLATFORMS.find(p => p.id === selectedLinkedInSegment);
+  const platformsToTarget = [
+    ...(linkedInPlatform ? [linkedInPlatform] : []),
+    ...shuffledReddit.slice(0, 1 + Math.floor(Math.random() * 2)),
+  ];
 
   for (const platform of platformsToTarget) {
     try {
@@ -883,13 +1008,70 @@ export async function runAutonomousAdCycle(): Promise<{
   campaign.generatedContent = results.textContent;
   campaign.status = "active";
 
+  // ── ACTUAL SOCIAL POSTING ────────────────────────────────────────────────
+  const socialResults: PostResult[] = [];
+  const primaryContent = results.textContent[0];
+  const imageAd = results.images[0];
+
+  if (primaryContent) {
+    // 1. Post to LinkedIn
+    try {
+      const linkedInResult = await postToLinkedIn({
+        text: `${primaryContent.title}\n\n${primaryContent.body}\n\n${primaryContent.callToAction}\n\nhttps://virelle.life`,
+        imageUrl: imageAd?.imageUrl,
+        title: primaryContent.title,
+      });
+      socialResults.push(linkedInResult);
+      if (linkedInResult.success) {
+        schedulerState.totalPostsPublished++;
+      } else {
+        results.errors.push(`LinkedIn: ${linkedInResult.error}`);
+      }
+    } catch (err: any) {
+      results.errors.push(`LinkedIn post: ${err.message}`);
+    }
+
+    // 2. Post to Reddit film communities (2 subreddits per cycle)
+    try {
+      const redditTitle = primaryContent.title.length > 300
+        ? primaryContent.title.slice(0, 297) + "..."
+        : primaryContent.title;
+      const redditText = `${primaryContent.body}\n\n${primaryContent.callToAction}\n\nTry it free: https://virelle.life`;
+      const redditResults = await postToFilmSubreddits(redditTitle, redditText, "https://virelle.life", 2);
+      socialResults.push(...redditResults);
+      const redditSuccesses = redditResults.filter(r => r.success).length;
+      schedulerState.totalPostsPublished += redditSuccesses;
+      redditResults.filter(r => !r.success).forEach(r => results.errors.push(`Reddit: ${r.error}`));
+    } catch (err: any) {
+      results.errors.push(`Reddit post: ${err.message}`);
+    }
+
+    // 3. Broadcast to WhatsApp subscriber list
+    try {
+      const whatsappText = `🎬 *${primaryContent.title}*\n\n${primaryContent.body.slice(0, 500)}\n\n${primaryContent.callToAction}\n\n🔗 https://virelle.life`;
+      const whatsappResults = await broadcastWhatsApp(whatsappText, imageAd?.imageUrl);
+      socialResults.push(...whatsappResults);
+      const waSuccesses = whatsappResults.filter(r => r.success).length;
+      schedulerState.totalPostsPublished += waSuccesses;
+      whatsappResults.filter(r => !r.success).forEach(r => results.errors.push(`WhatsApp: ${r.error}`));
+    } catch (err: any) {
+      results.errors.push(`WhatsApp broadcast: ${err.message}`);
+    }
+  }
+
+  // Store social results on the campaign for admin review
+  (campaign as any).socialPostResults = socialResults;
+  // ────────────────────────────────────────────────────────────────────────
+
   schedulerState.lastRun = new Date().toISOString();
   schedulerState.totalRuns++;
   schedulerState.errors = results.errors;
+  ensureCredentialStatus();
+  schedulerState.credentialStatus = getSocialCredentialStatus();
 
-  console.log(`[AdEngine] Cycle complete: ${results.textContent.length} text, ${results.images.length} images, ${results.videos.length} videos, ${results.errors.length} errors`);
+  console.log(`[AdEngine] Cycle complete: ${results.textContent.length} text, ${results.images.length} images, ${results.videos.length} videos, ${socialResults.length} social posts, ${results.errors.length} errors`);
 
-  return results;
+  return { ...results, socialResults };
 }
 
 let schedulerInterval: ReturnType<typeof setInterval> | null = null;

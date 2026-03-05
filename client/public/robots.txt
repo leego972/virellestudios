@@ -1,9 +1,22 @@
 User-agent: *
 Allow: /
-Allow: /login
-Allow: /register
 Allow: /pricing
+Allow: /register
+Allow: /sign-in
+Allow: /blog
+Allow: /blog/
 Disallow: /api/
 Disallow: /api/trpc/
+Disallow: /dashboard
+Disallow: /projects
+Disallow: /characters
+Disallow: /scenes
+Disallow: /settings
+Disallow: /admin
 
-Sitemap: https://virellestudios.com/sitemap.xml
+# Sitemaps
+Sitemap: https://virelle.life/sitemap.xml
+Sitemap: https://virelle.life/sitemap-blog.xml
+
+# Crawl-delay for bots
+Crawl-delay: 1

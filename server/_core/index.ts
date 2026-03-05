@@ -312,6 +312,25 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
+  // Dynamic blog sitemap — auto-includes all published articles
+  app.get("/sitemap-blog.xml", async (_req, res) => {
+    try {
+      const articles = await db.getPublishedArticles(500, 0);
+      const urls = (articles as any[]).map((a: any) => {
+        const lastmod = a.publishedAt
+          ? new Date(a.publishedAt).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0];
+        return `  <url><loc>https://virelle.life/blog/${a.slug}</loc><lastmod>${lastmod}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`;
+      }).join("\n");
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
+      res.setHeader("Content-Type", "application/xml");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      res.send(xml);
+    } catch (_err) {
+      res.status(500).send('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

@@ -37,7 +37,8 @@ import { logger } from "./_core/logger";
 import { createSessionToken } from "./_core/context";
 import { notifyOwner } from "./_core/notification";
 import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota, requireResourceQuota, getOrCreateStripeCustomer, createCheckoutSession, createBillingPortalSession, TIER_LIMITS, type SubscriptionTier } from "./_core/subscription";
-import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
+import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, getSchedulerState, runAutonomousAdCycle, generateImageAd, generateVideoAd, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
+import { getSocialCredentialStatus, postToLinkedIn, postToReddit, sendWhatsAppMessage, broadcastWhatsApp } from "./_core/socialPostingEngine";
 import { ENV } from "./_core/env";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
@@ -4388,6 +4389,80 @@ Rules:
         if (!deleted) throw new TRPCError({ code: "NOT_FOUND", message: "Campaign not found" });
         return { success: true };
       }),
+
+    // Get autonomous scheduler status + credential status
+    schedulerStatus: adminProcedure.query(() => {
+      return {
+        ...getSchedulerState(),
+        credentialStatus: getSocialCredentialStatus(),
+      };
+    }),
+
+    // Manually trigger one full advertising cycle
+    triggerCycle: adminProcedure.mutation(async ({ ctx }) => {
+      await rateLimitHeavyAI(ctx.user!.id);
+      logger.info("advertising.triggerCycle", { userId: ctx.user!.id });
+      const results = await runAutonomousAdCycle();
+      return results;
+    }),
+
+    // Get social credential status
+    credentialStatus: adminProcedure.query(() => {
+      return getSocialCredentialStatus();
+    }),
+
+    // Manually post to LinkedIn
+    postLinkedIn: adminProcedure
+      .input(z.object({
+        text: z.string().min(1).max(3000),
+        imageUrl: z.string().url().optional(),
+        title: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await rateLimitAI(ctx.user!.id);
+        logger.info("advertising.postLinkedIn", { userId: ctx.user!.id });
+        return postToLinkedIn(input);
+      }),
+
+    // Manually post to a specific subreddit
+    postReddit: adminProcedure
+      .input(z.object({
+        subreddit: z.string().min(1),
+        title: z.string().min(1).max(300),
+        text: z.string().optional(),
+        url: z.string().url().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await rateLimitAI(ctx.user!.id);
+        logger.info("advertising.postReddit", { userId: ctx.user!.id, subreddit: input.subreddit });
+        return postToReddit(input);
+      }),
+
+    // Send WhatsApp broadcast to subscriber list
+    broadcastWhatsApp: adminProcedure
+      .input(z.object({
+        text: z.string().min(1).max(1600),
+        mediaUrl: z.string().url().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await rateLimitAI(ctx.user!.id);
+        logger.info("advertising.broadcastWhatsApp", { userId: ctx.user!.id });
+        return broadcastWhatsApp(input.text, input.mediaUrl);
+      }),
+
+    // Generate image ad on demand
+    generateImageAd: adminProcedure.mutation(async ({ ctx }) => {
+      await rateLimitHeavyAI(ctx.user!.id);
+      logger.info("advertising.generateImageAd", { userId: ctx.user!.id });
+      return generateImageAd();
+    }),
+
+    // Generate video ad on demand
+    generateVideoAd: adminProcedure.mutation(async ({ ctx }) => {
+      await rateLimitHeavyAI(ctx.user!.id);
+      logger.info("advertising.generateVideoAd", { userId: ctx.user!.id });
+      return generateVideoAd();
+    }),
   }),
 
   // ─── Blog (Public + Admin) ───
