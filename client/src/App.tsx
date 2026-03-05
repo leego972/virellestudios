@@ -37,6 +37,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 // Public pages — lazy loaded
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 // Legal pages — lazy loaded
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -124,6 +125,8 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
+      <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
+      <Route path="/contact">{() => <LazyPage><Contact /></LazyPage>}</Route>
       <Route path="/forgot-password">{() => <LazyPage><ForgotPassword /></LazyPage>}</Route>
       <Route path="/reset-password">{() => <LazyPage><ResetPassword /></LazyPage>}</Route>
 
@@ -137,6 +140,7 @@ function Router() {
 
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />
+      <Route path="/projects/:projectId/script" component={GatedScriptWriter} />
       <Route path="/projects/:projectId/storyboard" component={GatedStoryboard} />
       <Route path="/projects/:projectId/credits" component={GatedCreditsEditor} />
       <Route path="/projects/:projectId/shot-list" component={GatedShotList} />
