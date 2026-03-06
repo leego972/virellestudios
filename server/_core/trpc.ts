@@ -20,7 +20,7 @@ const t = initTRPC.context<TrpcContext>().create({
           console.error('[tRPC] Database error (hidden from client):', error.message);
       return {
         ...shape,
-        message: `Database error: ${error.message?.substring(0, 200)}`,
+        message: `Database error: ${error.message?.substring(0, 1000)}`,
         data: {
           ...shape.data,
           // Strip any SQL details from the error
