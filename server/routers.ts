@@ -5069,6 +5069,7 @@ Rules:
           huggingface: !!u.userHfToken,
           elevenlabs: !!u.userElevenlabsKey,
           suno: !!u.userSunoKey,
+          seedance: !!(u as any).userByteplusKey,
         },
         preferredVideoProvider: u.preferredVideoProvider || null,
         apiKeysUpdatedAt: u.apiKeysUpdatedAt || null,
@@ -5125,7 +5126,7 @@ Rules:
     // Save an API key for a specific provider
     saveApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance"]),
         key: z.string().min(1).max(500),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -5147,6 +5148,7 @@ Rules:
           huggingface: "userHfToken",
           elevenlabs: "userElevenlabsKey",
           suno: "userSunoKey",
+          seedance: "userByteplusKey",
         };
 
         const column = columnMap[provider];
@@ -5163,7 +5165,7 @@ Rules:
     // Remove an API key
     removeApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance"]),
       }))
       .mutation(async ({ ctx, input }) => {
         const columnMap: Record<string, string> = {
@@ -5175,6 +5177,7 @@ Rules:
           huggingface: "userHfToken",
           elevenlabs: "userElevenlabsKey",
           suno: "userSunoKey",
+          seedance: "userByteplusKey",
         };
 
         const column = columnMap[input.provider];
@@ -5188,7 +5191,7 @@ Rules:
     // Set preferred video provider
     setPreferredProvider: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface"]).nullable(),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "seedance"]).nullable(),
       }))
       .mutation(async ({ ctx, input }) => {
         await db.updateUserPreferredProvider(ctx.user!.id, input.provider);
@@ -5198,7 +5201,7 @@ Rules:
     // Test an API key to verify it works
     testApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance"]),
         key: z.string().min(1),
       }))
       .mutation(async ({ input }) => {
@@ -5256,6 +5259,23 @@ Rules:
               // Suno doesn't have a simple validation endpoint
               if (key.length > 10) return { valid: true, message: "Suno key format accepted (will be verified on first use)" };
               return { valid: false, message: "Suno key appears too short" };
+            }
+            case "seedance": {
+              // Validate BytePlus ModelArk key by listing available models
+              try {
+                const resp = await fetch("https://ark.ap-southeast.bytepluses.com/api/v3/models", {
+                  headers: { "Authorization": `Bearer ${key}` },
+                  signal: AbortSignal.timeout(10000),
+                });
+                if (resp.ok) return { valid: true, message: "BytePlus ModelArk key is valid — SeedDance ready" };
+                if (resp.status === 401) return { valid: false, message: "BytePlus key is invalid or expired" };
+                // Other status codes might still be valid keys (e.g., 403 = no model access)
+                return { valid: true, message: `BytePlus key accepted (status ${resp.status} — will be verified on first use)` };
+              } catch {
+                // If we can't reach BytePlus, accept the key and let generation verify it
+                if (key.length > 10) return { valid: true, message: "BytePlus key format accepted (will be verified on first use)" };
+                return { valid: false, message: "BytePlus API key appears too short" };
+              }
             }
             default:
               return { valid: false, message: "Unknown provider" };

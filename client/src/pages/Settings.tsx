@@ -18,7 +18,7 @@ import { toast } from "sonner";
 
 const PROVIDER_ICONS: Record<string, string> = {
   runway: "🎬", fal: "⚡", replicate: "🔄", openai: "🤖", luma: "🌙", huggingface: "🤗",
-  elevenlabs: "🎙️", suno: "🎵",
+  elevenlabs: "🎙️", suno: "🎵", seedance: "🌊",
 };
 const PROVIDER_COLORS: Record<string, string> = {
   runway: "from-purple-500/20 to-purple-600/10 border-purple-500/30",
@@ -29,6 +29,7 @@ const PROVIDER_COLORS: Record<string, string> = {
   huggingface: "from-yellow-500/20 to-yellow-600/10 border-yellow-500/30",
   elevenlabs: "from-pink-500/20 to-pink-600/10 border-pink-500/30",
   suno: "from-orange-500/20 to-orange-600/10 border-orange-500/30",
+  seedance: "from-cyan-500/20 to-cyan-600/10 border-cyan-500/30",
 };
 
 const VOICE_MUSIC_PROVIDERS = [

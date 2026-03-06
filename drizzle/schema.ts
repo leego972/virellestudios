@@ -31,7 +31,8 @@ export const users = mysqlTable("users", {
   userHfToken: text("userHfToken"),           // Hugging Face token (free inference API)
   userElevenlabsKey: text("userElevenlabsKey"), // ElevenLabs API key (AI voice acting)
   userSunoKey: text("userSunoKey"),             // Suno AI API key (AI soundtrack generation)
-  preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface
+  userByteplusKey: text("userByteplusKey"),       // BytePlus ModelArk API key (SeedDance video generation)
+  preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface, seedance
   apiKeysUpdatedAt: timestamp("apiKeysUpdatedAt"),
   // ─── Profile & Business Details ───
   phone: varchar("phone", { length: 32 }),

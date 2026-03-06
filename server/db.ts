@@ -1181,6 +1181,7 @@ export async function getUserApiKeys(userId: number): Promise<{
   hfToken: string | null;
   elevenlabsKey: string | null;
   sunoKey: string | null;
+  byteplusKey: string | null;
   preferredProvider: string | null;
 }> {
   const db = await getDb();
@@ -1207,6 +1208,7 @@ export async function getUserApiKeys(userId: number): Promise<{
     hfToken: decode((user as any).userHfToken),
     elevenlabsKey: decode((user as any).userElevenlabsKey),
     sunoKey: decode((user as any).userSunoKey),
+    byteplusKey: decode((user as any).userByteplusKey),
     preferredProvider: (user as any).preferredVideoProvider || null,
   };
 }

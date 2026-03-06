@@ -18,7 +18,7 @@ import { ENV } from "./env";
 
 // ─── Types ───
 
-export type VideoProvider = "runway" | "openai" | "replicate" | "fal" | "luma" | "huggingface" | "pollinations";
+export type VideoProvider = "runway" | "openai" | "replicate" | "fal" | "luma" | "huggingface" | "pollinations" | "seedance";
 
 export interface UserApiKeys {
   openaiKey?: string | null;
@@ -27,6 +27,7 @@ export interface UserApiKeys {
   falKey?: string | null;
   lumaKey?: string | null;
   hfToken?: string | null;
+  byteplusKey?: string | null;  // BytePlus ModelArk key for SeedDance
   preferredProvider?: string | null;
 }
 
@@ -91,6 +92,7 @@ function getAvailableProviders(keys: UserApiKeys): VideoProvider[] {
   if (keys.falKey) providers.push("fal");
   if (keys.lumaKey) providers.push("luma");
   if (keys.hfToken) providers.push("huggingface");
+  if (keys.byteplusKey) providers.push("seedance");
   // Pollinations is ALWAYS available as the primary free provider
   providers.push("pollinations");
   return providers;
@@ -108,7 +110,8 @@ function selectProvider(keys: UserApiKeys): VideoProvider {
       (pref === "replicate" && keys.replicateKey) ||
       (pref === "fal" && keys.falKey) ||
       (pref === "luma" && keys.lumaKey) ||
-      (pref === "huggingface" && keys.hfToken)
+      (pref === "huggingface" && keys.hfToken) ||
+      (pref === "seedance" && keys.byteplusKey)
     );
     if (hasOwnKey) return pref;
   }
@@ -117,6 +120,7 @@ function selectProvider(keys: UserApiKeys): VideoProvider {
   if (keys.runwayKey) return "runway";
   if (keys.openaiKey) return "openai";
   if (keys.falKey) return "fal";
+  if (keys.byteplusKey) return "seedance";
   if (keys.replicateKey) return "replicate";
   if (keys.lumaKey) return "luma";
   if (keys.hfToken) return "huggingface";
@@ -593,6 +597,117 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
   );
 }
 
+// ─── BytePlus ModelArk (SeedDance) ───
+
+/**
+ * Generate video using BytePlus ModelArk SeedDance API.
+ * Uses async job submission + polling pattern.
+ * 
+ * SeedDance 2.0 API is not yet available — using Seedance 1.5 Pro (latest available).
+ * The model field will be updated to seedance-2-0 when BytePlus enables it.
+ * 
+ * API Docs: https://docs.byteplus.com/en/docs/ModelArk/Video_Generation_API
+ */
+async function generateWithSeedance(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
+  const BYTEPLUS_API_BASE = "https://ark.ap-southeast.bytepluses.com/api/v3";
+  const duration = Math.min(req.duration || 5, 10);
+
+  // Select model — Seedance 1.5 Pro is the latest available via API
+  // Will be upgraded to seedance-2-0 when BytePlus enables it
+  const model = "seedance-1-5-pro-251215";
+
+  // Build content array
+  const content: any[] = [
+    { type: "text", text: req.prompt },
+  ];
+
+  // Add image for image-to-video if provided
+  if (req.imageUrl) {
+    content.push({
+      type: "image_url",
+      image_url: { url: req.imageUrl },
+    });
+  }
+
+  // Map aspect ratio to SeedDance resolution parameter
+  const resolution = req.aspectRatio === "9:16" ? "720p" : req.resolution === "1080p" ? "1080p" : "720p";
+
+  const createResp = await fetch(`${BYTEPLUS_API_BASE}/contents/generations/tasks`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      content,
+      parameters: {
+        resolution,
+        duration: `${duration}s`,
+        aspect_ratio: req.aspectRatio || "16:9",
+      },
+    }),
+    signal: AbortSignal.timeout(30000),
+  });
+
+  if (!createResp.ok) {
+    const errText = await createResp.text();
+    throw new Error(`SeedDance API error ${createResp.status}: ${errText}`);
+  }
+
+  const createData = await createResp.json() as any;
+  const taskId = createData.id;
+  if (!taskId) throw new Error(`SeedDance: no task ID in response: ${JSON.stringify(createData)}`);
+  console.log(`[BYOK:SeedDance] Task created: ${taskId} (model: ${model})`);
+
+  // Poll for completion
+  const videoUrl = await pollSeedanceTask(key, taskId, BYTEPLUS_API_BASE);
+  return { provider: "seedance", videoUrl, jobId: taskId, durationSeconds: duration };
+}
+
+async function pollSeedanceTask(key: string, taskId: string, apiBase: string, maxWaitMs = 600000): Promise<string> {
+  const startTime = Date.now();
+  while (Date.now() - startTime < maxWaitMs) {
+    await new Promise(r => setTimeout(r, 8000)); // SeedDance typically takes 30-120s
+
+    const resp = await fetch(`${apiBase}/contents/generations/tasks/${taskId}`, {
+      headers: { "Authorization": `Bearer ${key}` },
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!resp.ok) {
+      console.log(`[BYOK:SeedDance] Poll error ${resp.status}, retrying...`);
+      continue;
+    }
+
+    const data = await resp.json() as any;
+    const status = data.status;
+
+    if (status === "succeeded") {
+      // Extract video URL from response
+      const videoUrl =
+        data.content?.[0]?.video_url ||
+        data.content?.[0]?.url ||
+        data.output?.[0]?.url ||
+        data.output?.video_url;
+      if (!videoUrl) throw new Error(`SeedDance task succeeded but no video URL found in: ${JSON.stringify(data)}`);
+      console.log(`[BYOK:SeedDance] Task ${taskId} completed: ${videoUrl}`);
+      return videoUrl;
+    }
+
+    if (status === "failed") {
+      throw new Error(`SeedDance task failed: ${data.error?.message || data.failure || "Unknown error"}`);
+    }
+
+    if (status === "expired") {
+      throw new Error("SeedDance task expired — exceeded maximum wait time");
+    }
+
+    console.log(`[BYOK:SeedDance] Task ${taskId} status: ${status}`);
+  }
+  throw new Error("SeedDance task timed out after 10 minutes");
+}
+
 // ─── Main Entry Point ───
 
 export async function generateVideo(
@@ -612,6 +727,7 @@ export async function generateVideo(
     fal: keys.falKey || null,
     luma: keys.lumaKey || null,
     huggingface: keys.hfToken || "free",
+    seedance: keys.byteplusKey || null,   // BytePlus ModelArk key for SeedDance
     pollinations: getNextPollinationsKey(),
   };
 
@@ -622,6 +738,7 @@ export async function generateVideo(
     fal: generateWithFal,
     luma: generateWithLuma,
     huggingface: generateWithHuggingFace,
+    seedance: generateWithSeedance,
     pollinations: generateWithPollinations,
   };
 
@@ -735,6 +852,15 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
     pricing: "FREE tier: 300 requests/hour. Pro: $9/mo for more.",
     models: "LTX-Video, Wan2.1, HunyuanVideo (via providers)",
   },
+  {
+    id: "seedance",
+    name: "SeedDance (BytePlus ModelArk)",
+    description: "ByteDance's cinematic AI video model. Exceptional motion quality and semantic understanding. Bring your own BytePlus API key.",
+    keyPrefix: "",
+    signupUrl: "https://console.byteplus.com/ark/region:ark+ap-southeast-1/apiKey",
+    pricing: "Pay-per-use via BytePlus ModelArk. ~$0.10-0.30 per video clip.",
+    models: "Seedance 1.5 Pro (API available now) · Seedance 2.0 (coming soon — will auto-upgrade)",
+  },
 ];
 
 export function getProviderInfo(id: VideoProvider): ProviderInfo | undefined {
@@ -765,6 +891,10 @@ export function validateApiKey(provider: VideoProvider, key: string): { valid: b
       break;
     case "huggingface":
       if (!key.startsWith("hf_")) return { valid: false, message: "Hugging Face tokens must start with 'hf_'" };
+      break;
+    case "seedance":
+      // BytePlus API keys don't have a fixed prefix — just check it's non-empty
+      if (key.length < 10) return { valid: false, message: "BytePlus API key appears too short" };
       break;
   }
 
