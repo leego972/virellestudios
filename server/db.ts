@@ -231,29 +231,68 @@ export async function deleteCharacter(id: number) {
 export async function createScene(data: InsertScene) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(scenes).values(data);
-  const id = result[0].insertId;
-  return (await db.select().from(scenes).where(eq(scenes.id, id)))[0];
+  
+  // Use raw SQL to only insert columns that are explicitly provided.
+  // This avoids "Unknown column" errors when the DB schema hasn't been
+  // fully migrated to include all columns defined in the Drizzle schema.
+  const entries = Object.entries(data).filter(
+    ([_, v]) => v !== undefined
+  );
+  if (entries.length === 0) throw new Error("No data to insert");
+  
+  const columns = entries.map(([k]) => `\`${k}\``).join(", ");
+  const placeholders = entries.map(() => "?").join(", ");
+  const values = entries.map(([_, v]) => {
+    if (v === null) return null;
+    if (typeof v === "object") return JSON.stringify(v);
+    if (typeof v === "boolean") return v ? 1 : 0;
+    return v;
+  });
+  
+  try {
+    const insertResult = await db.execute(
+      sql`INSERT INTO scenes (${sql.raw(columns)}) VALUES (${sql.join(values.map(v => sql`${v}`), sql`, `)})`
+    );
+    const id = (insertResult as any)[0]?.insertId;
+    if (!id) throw new Error("Failed to get insert ID");
+    // Use SELECT * to avoid "Unknown column" errors from Drizzle's column-specific SELECT
+    const [rows] = await db.execute(sql`SELECT * FROM scenes WHERE id = ${id} LIMIT 1`);
+    return (rows as any)?.[0];
+  } catch (err: any) {
+    throw new Error(`Failed query: insert into \`scenes\` (${columns}): ${err.message}`);
+  }
 }
 
 export async function getProjectScenes(projectId: number) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(scenes).where(eq(scenes.projectId, projectId)).orderBy(asc(scenes.orderIndex));
+  const [rows] = await db.execute(sql`SELECT * FROM scenes WHERE projectId = ${projectId} ORDER BY orderIndex ASC`);
+  return rows as unknown as any[];
 }
 
 export async function getSceneById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
-  const result = await db.select().from(scenes).where(eq(scenes.id, id)).limit(1);
-  return result[0];
+  const [rows] = await db.execute(sql`SELECT * FROM scenes WHERE id = ${id} LIMIT 1`);
+  return (rows as unknown as any[])?.[0];
 }
 
 export async function updateScene(id: number, data: Partial<InsertScene>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  await db.update(scenes).set(data).where(eq(scenes.id, id));
-  return (await db.select().from(scenes).where(eq(scenes.id, id)))[0];
+  // Use raw SQL to only update columns that are explicitly provided
+  const entries = Object.entries(data).filter(([_, v]) => v !== undefined);
+  if (entries.length === 0) return getSceneById(id);
+  const setClauses = entries.map(([k]) => `\`${k}\` = ?`).join(", ");
+  const values = entries.map(([_, v]) => {
+    if (v === null) return null;
+    if (typeof v === "object") return JSON.stringify(v);
+    if (typeof v === "boolean") return v ? 1 : 0;
+    return v;
+  });
+  const setSQL = entries.map(([k], i) => sql`${sql.raw(`\`${k}\``)} = ${values[i]}`).reduce((acc, s, i) => i === 0 ? s : sql`${acc}, ${s}`);
+  await db.execute(sql`UPDATE scenes SET ${setSQL} WHERE id = ${id}`);
+  return getSceneById(id);
 }
 
 export async function deleteScene(id: number) {
