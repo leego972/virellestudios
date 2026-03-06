@@ -642,11 +642,14 @@ export async function runAutoMigration(): Promise<void> {
       const [rows] = await db.execute(sql.raw(
         `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '${col.table}' AND COLUMN_NAME = '${col.column}'`
       ));
-      const count = (rows as any)?.[0]?.cnt ?? (rows as any)?.cnt ?? 0;
-      if (Number(count) === 0) {
-        await db.execute(sql.raw(
-          `ALTER TABLE \`${col.table}\` ADD COLUMN \`${col.column}\` ${col.definition}`
-        ));
+      // Handle various result formats from mysql2/drizzle
+      const rawCount = (rows as any)?.[0]?.cnt ?? (rows as any)?.cnt ?? 0;
+      const count = Number(rawCount);
+      console.log(`[AutoMigrate] Check ${col.table}.${col.column}: count=${count}, raw=${JSON.stringify(rawCount)}`);
+      if (count === 0) {
+        const alterSQL = `ALTER TABLE \`${col.table}\` ADD COLUMN \`${col.column}\` ${col.definition}`;
+        console.log(`[AutoMigrate] Running: ${alterSQL}`);
+        await db.execute(sql.raw(alterSQL));
         columnsAdded++;
         console.log(`[AutoMigrate] Added column ${col.table}.${col.column}`);
       }

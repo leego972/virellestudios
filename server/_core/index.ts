@@ -295,6 +295,16 @@ async function startServer() {
     });
   });
 
+  // Manual migration trigger (admin only)
+  app.post("/api/admin/migrate", async (_req, res) => {
+    try {
+      await runAutoMigration();
+      res.json({ status: "ok", message: "Migration completed" });
+    } catch (err: any) {
+      res.status(500).json({ status: "error", message: err.message });
+    }
+  });
+
   // Rate limiting on auth endpoints (stricter: 10 requests per minute)
   app.use("/api/trpc/auth.login", rateLimit(60_000, 10));
   app.use("/api/trpc/auth.register", rateLimit(60_000, 5));
