@@ -1629,7 +1629,7 @@ Break this into 8-15 scenes. For each scene, provide:
         return { jobId: job.id, scenesCreated: scenesData.length, imagesGenerated: generatedCount };
         } catch (error: any) {
           // Error recovery: ensure project doesn't get stuck in "generating" state
-          console.error("quickGenerate failed:", error);
+          console.error("quickGenerate failed:", error?.message, error?.stack);
           await db.updateJob(job.id, { status: "failed", progress: 0 });
           await db.updateProject(project.id, ctx.user.id, {
             status: "draft",

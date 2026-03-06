@@ -17,10 +17,10 @@ const t = initTRPC.context<TrpcContext>().create({
       error.message?.includes('ER_');
     
     if (isSqlError) {
-      console.error('[tRPC] Database error (hidden from client):', error.message);
+          console.error('[tRPC] Database error (hidden from client):', error.message);
       return {
         ...shape,
-        message: 'Something went wrong. Please try again or contact support.',
+        message: `Database error: ${error.message?.substring(0, 200)}`,
         data: {
           ...shape.data,
           // Strip any SQL details from the error
