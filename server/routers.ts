@@ -1495,7 +1495,7 @@ Break this into 8-15 scenes. For each scene, provide:
 
         // Determine video settings based on subscription tier
         const videoModel = userTier === "industry" ? "sora-2-pro" : "sora-2";
-        const videoResolution = userTier === "industry" ? "1080p" : userTier === "pro" ? "720p" : "480p";
+        const videoResolution = userTier === "industry" ? "1080p" : "720p";
 
         // Generate videos sequentially (Sora is async and rate-limited)
         for (let sceneIdx = 0; sceneIdx < allScenes.length; sceneIdx++) {
@@ -4368,14 +4368,14 @@ Rules:
             const livePeriodEnd = new Date((sub as any).current_period_end * 1000);
 
             // Only update DB if something changed
-            const tierChanged = (liveStatus === "active" || liveStatus === "trialing" ? liveTier : "creator") !== user.subscriptionTier;
+            const tierChanged = (liveStatus === "active" || liveStatus === "trialing" ? liveTier : "independent") !== user.subscriptionTier;
             const statusChanged = liveStatus !== user.subscriptionStatus;
             const periodChanged = !user.subscriptionCurrentPeriodEnd || 
               Math.abs(livePeriodEnd.getTime() - new Date(user.subscriptionCurrentPeriodEnd).getTime()) > 60000;
 
             if (tierChanged || statusChanged || periodChanged) {
               await db.updateUserSubscription(user.id, {
-                subscriptionTier: liveStatus === "active" || liveStatus === "trialing" ? liveTier : "creator",
+                subscriptionTier: liveStatus === "active" || liveStatus === "trialing" ? liveTier : "independent",
                 subscriptionStatus: liveStatus as any,
                 subscriptionCurrentPeriodEnd: livePeriodEnd,
               });
@@ -4417,8 +4417,8 @@ Rules:
     // Create a Stripe checkout session for subscription
     createCheckout: protectedProcedure
       .input(z.object({
-        tier: z.enum(["creator", "pro", "industry"]),
-        billing: z.enum(["monthly", "annual"]).default("monthly"),
+        tier: z.enum(["independent", "industry"]),
+        billing: z.enum(["annual"]).default("annual"),
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
       }))
@@ -4426,16 +4426,10 @@ Rules:
         // Resolve the correct Stripe price ID — check ENV first, then auto-provisioned IDs
         const { getStripePriceId } = await import("./_core/stripeProvisioning");
         const priceMap: Record<string, Record<string, string>> = {
-          creator: {
-            monthly: ENV.stripeCreatorMonthlyPriceId || getStripePriceId("creator_monthly"),
-            annual: ENV.stripeCreatorAnnualPriceId || getStripePriceId("creator_annual"),
-          },
-          pro: {
-            monthly: ENV.stripeProPriceId || ENV.stripeProMonthlyPriceId || getStripePriceId("pro_monthly"),
-            annual: ENV.stripeProAnnualPriceId || getStripePriceId("pro_annual"),
+          independent: {
+            annual: ENV.stripeCreatorAnnualPriceId || ENV.stripeProAnnualPriceId || getStripePriceId("independent_annual"),
           },
           industry: {
-            monthly: ENV.stripeIndustryPriceId || ENV.stripeIndustryMonthlyPriceId || getStripePriceId("industry_monthly"),
             annual: ENV.stripeIndustryAnnualPriceId || getStripePriceId("industry_annual"),
           },
         };
@@ -4445,9 +4439,9 @@ Rules:
         const customerId = await getOrCreateStripeCustomer(ctx.user);
         await db.updateUserSubscription(ctx.user.id, { stripeCustomerId: customerId });
 
-        // First-time subscribers on Creator/Pro get a 7-day free trial
-        const isFirstSub = ctx.user.subscriptionTier === "creator" && ctx.user.subscriptionStatus === "none";
-        const trialDays = isFirstSub && (input.tier === "creator" || input.tier === "pro") ? 7 : undefined;
+        // First-time subscribers get a 7-day free trial
+        const isFirstSub = !ctx.user.subscriptionTier || ctx.user.subscriptionStatus === "none";
+        const trialDays = isFirstSub ? 7 : undefined;
 
         const url = await createCheckoutSession(
           ctx.user,
@@ -4510,7 +4504,7 @@ Rules:
       try {
         const dbConn = await db.getDb();
         if (!dbConn) throw new Error("DB not available");
-        const result = await dbConn.execute(sql`SELECT COUNT(*) as count FROM users WHERE subscriptionTier IN ('creator','pro','industry') AND subscriptionStatus = 'active'`);
+        const result = await dbConn.execute(sql`SELECT COUNT(*) as count FROM users WHERE subscriptionTier IN ('independent','industry') AND subscriptionStatus = 'active'`);
         const realCount = Number((result[0] as any)?.count || 0);
         const displayCount = Math.min(realCount + 30, 50); // offset by 30, cap at 50
         const spotsRemaining = Math.max(50 - displayCount, 0);
@@ -4521,59 +4515,36 @@ Rules:
     }),
 
     pricing: publicProcedure.query(async () => {
-      const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS, FILM_PACKAGES, VFX_SCENE_PACKAGES, EXTENSION_PRICING, LAUNCH_SPECIAL_ACTIVE } = await import("./_core/subscription");
+      const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS, FILM_PACKAGES, VFX_SCENE_PACKAGES, EXTENSION_PRICING, LAUNCH_SPECIAL_ACTIVE, SCENE_BY_SCENE_PRICING } = await import("./_core/subscription");
       return {
         tiers: [
-
           {
-            id: "creator" as const,
-            name: "Creator",
-            monthlyPrice: TIER_PRICING.creator.monthly,
-            annualPrice: TIER_PRICING.creator.annual,
-            annualTotal: TIER_PRICING.creator.annualTotal,
-            priceLabel: "$2,500",
-            interval: "month",
-            description: "Short films up to 30 minutes — full production pipeline",
-            limits: TIER_LIMITS.creator,
-            highlights: [
-              "10 projects",
-              "100 AI generations/month",
-              "40 scenes per project",
-              "20 characters per project",
-              "1080p Full HD",
-              "AI voice acting & soundtrack",
-              "Character consistency",
-              "Scene-to-scene continuity",
-              "Director AI assistant",
-              "All production tools",
-              "5 team members",
-              "Up to 30-minute films",
-            ],
-          },
-          {
-            id: "pro" as const,
-            name: "Pro",
-            monthlyPrice: TIER_PRICING.pro.monthly,
-            annualPrice: TIER_PRICING.pro.annual,
-            annualTotal: TIER_PRICING.pro.annualTotal,
+            id: "independent" as const,
+            name: "Independent",
+            monthlyPrice: TIER_PRICING.independent.monthly,
+            annualPrice: TIER_PRICING.independent.annual,
+            annualTotal: TIER_PRICING.independent.annualTotal,
             priceLabel: "$5,000",
-            interval: "month",
-            description: "Feature-length films up to 90 minutes — complete studio",
-            limits: TIER_LIMITS.pro,
+            interval: "year",
+            description: "Everything you need to generate AI films up to 90 minutes",
+            limits: TIER_LIMITS.independent,
             popular: true,
             highlights: [
-              "50 projects",
-              "500 AI generations/month",
-              "90 scenes per project",
-              "50 characters per project",
-              "1080p + 4K UHD",
-              "Everything in Creator",
-              "VFX Scene Studio",
-              "Bulk generation",
-              "Ultra quality exports",
-              "15 team members",
-              "Up to 90-minute films",
-              "Most popular for studios",
+              "Full Film Generation (up to 90 min)",
+              "AI Voice Acting & Dialogue",
+              "AI-Generated Film Score",
+              "Character Consistency (DNA Lock)",
+              "Scene-to-Scene Continuity",
+              "Clip Chaining (30-60s scenes)",
+              "AI Script Writer",
+              "Storyboard Generator",
+              "Director's AI Assistant",
+              "Color Grading & LUTs",
+              "Location Scout",
+              "1080p + 4K UHD Export",
+              "Up to 5 team members",
+              "200 AI generations / month",
+              "25 projects",
             ],
           },
           {
@@ -4582,28 +4553,33 @@ Rules:
             monthlyPrice: TIER_PRICING.industry.monthly,
             annualPrice: TIER_PRICING.industry.annual,
             annualTotal: TIER_PRICING.industry.annualTotal,
-            priceLabel: "$10,000",
-            interval: "month",
-            description: "Unlimited production for studios and production houses",
+            priceLabel: "$25,000",
+            interval: "year",
+            description: "Enterprise-grade tools for production houses and studios",
             limits: TIER_LIMITS.industry,
             highlights: [
-              "Unlimited everything",
-              "Unlimited AI generations",
-              "Unlimited scenes & characters",
-              "4K Ultra HD + ProRes",
-              "Everything in Pro",
-              "White-label exports",
-              "API access",
+              "Everything in Independent",
+              "Films up to 180 minutes",
+              "White-Label Exports (no branding)",
+              "API Access & Pipeline Integration",
+              "Custom AI Model Fine-Tuning",
+              "Priority Rendering Queue",
+              "NLE / DaVinci Resolve Export",
+              "Live Action Plate Compositing",
+              "Multi-Shot Sequencer",
+              "VFX Suite (Advanced Effects)",
+              "AI Casting Tool",
+              "Bulk / Parallel Generation",
+              "4K UHD + ProRes Export",
               "Unlimited team members",
-              "Up to 180-minute films",
-              "Priority rendering",
-              "Dedicated support",
-              "Custom model fine-tuning",
+              "Unlimited projects & generations",
+              "Dedicated Account Manager",
             ],
           },
         ],
         filmPackages: FILM_PACKAGES,
         vfxScenePackages: VFX_SCENE_PACKAGES,
+        sceneByScenePricing: SCENE_BY_SCENE_PRICING,
         extensionPricing: EXTENSION_PRICING,
         launchSpecialActive: LAUNCH_SPECIAL_ACTIVE,
         topUpPacks: TOP_UP_PACKS,
@@ -5044,7 +5020,7 @@ Rules:
         name: user.name,
         email: user.email,
         role: u.role || "user",
-        subscriptionTier: u.subscriptionTier || "creator",
+        subscriptionTier: u.subscriptionTier || "independent",
         phone: u.phone || null,
         avatarUrl: u.avatarUrl || null,
         bio: u.bio || null,

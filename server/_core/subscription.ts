@@ -11,7 +11,7 @@ export const stripe = ENV.stripeSecretKey
 // TIER DEFINITIONS & LIMITS
 // ============================================================
 
-export type SubscriptionTier = "creator" | "pro" | "industry";
+export type SubscriptionTier = "independent" | "industry";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -81,31 +81,34 @@ export interface TierLimits {
  * BYOK (Bring Your Own Key) — users provide their own API keys for video, voice, and music generation.
  * The platform charges per-film production fees for the orchestration, pipeline, and production tools.
  * 
- * FILM PRODUCTION PACKAGES (one-time per film):
+ * MEMBERSHIP TIERS (annual, required to use the platform):
+ *   Independent — $5,000/year — Films up to 90 min, all core production tools
+ *   Industry — $25,000/year — Unlimited, 180 min, white-label, API, fine-tuning, priority rendering
+ * 
+ * FILM PRODUCTION PACKAGES (one-time per film, members only):
  *   Short Film (up to 30 min):  $80,000   (Launch Special: $40,000)
  *   Feature Film (up to 60 min): $140,000  (Launch Special: $70,000)
  *   Full Feature (up to 90 min): $200,000  (Launch Special: $100,000)
+ *   Premium (white-glove, 180 min): $250,000  (Launch Special: $125,000)
  *   Each additional 30 min:      +$60,000  (Launch Special: +$30,000)
- *   Premium (white-glove):       $250,000  (Launch Special: $125,000)
  * 
- * PLATFORM ACCESS TIERS (subscription for ongoing access to tools):
- *   Creator — Short films up to 30 min, all core tools (entry level)
- *   Pro — Feature films up to 90 min, full pipeline, VFX Scene Studio
- *   Industry — Unlimited, 4K, 180 min, white-label, API access
+ * SCENE-BY-SCENE PRICING (per individual scene, members only):
+ *   $10,000 per scene (30-60s cinematic footage)
+ *   Priced to incentivize full film packages
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
-  // ─── CREATOR ─── Entry-level: core tools, 30 min films, 1080p
-  creator: {
-    maxProjects: 10,
-    maxCharactersPerProject: 20,
-    maxScenesPerProject: 40,
-    maxGenerationsPerMonth: 100,
-    maxMovieExports: 10,
+  // ─── INDEPENDENT ─── Full production pipeline: 90 min films, 4K, all core tools
+  independent: {
+    maxProjects: 25,
+    maxCharactersPerProject: 30,
+    maxScenesPerProject: 90,
+    maxGenerationsPerMonth: 200,
+    maxMovieExports: 25,
     maxCollaboratorsPerProject: 5,
-    maxScriptsPerProject: 10,
-    maxStorageMB: 20000, // 20GB
-    // Core tools — available to all tiers
+    maxScriptsPerProject: 15,
+    maxStorageMB: 50000, // 50GB
+    // Core tools — all enabled for Independent
     canUseQuickGenerate: true,
     canUseTrailerGeneration: true,
     canUseDirectorAssistant: true,
@@ -136,84 +139,24 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCharacterConsistency: true,
     canUseSceneContinuity: true,
     canUseClipChaining: true,
-    // Pro features — NOT available on Creator
+    // Industry-only features — NOT available on Independent
     canUseVisualEffects: false,
     canUseBulkGenerate: false,
     canUseMultiShotSequencer: false,
     canUseLiveActionPlate: false,
     canUseNLEExport: false,
     canUseAICasting: false,
-    canExportUltraHD: false,
-    // Industry features — NOT available on Creator
-    canUseWhiteLabel: false,
-    canUseAPIAccess: false,
-    canUseCustomFineTuning: false,
-    canUsePriorityRendering: false,
-    resolution: "1080p",
-    quality: ["standard", "high"],
-    maxDurationMinutes: 30,
-    maxClipsPerScene: 6,
-  },
-  // ─── PRO ─── Full pipeline: 90 min films, VFX Scene Studio, 4K
-  pro: {
-    maxProjects: 50,
-    maxCharactersPerProject: 50,
-    maxScenesPerProject: 90,
-    maxGenerationsPerMonth: 500,
-    maxMovieExports: 50,
-    maxCollaboratorsPerProject: 15,
-    maxScriptsPerProject: 25,
-    maxStorageMB: 100000, // 100GB
-    // Core tools — all enabled
-    canUseQuickGenerate: true,
-    canUseTrailerGeneration: true,
-    canUseDirectorAssistant: true,
-    canUseAdPosterMaker: true,
-    canUseBudgetEstimator: true,
-    canUseColorGrading: true,
-    canUseSoundEffects: true,
-    canUseSubtitles: true,
-    canUseDialogueEditor: true,
-    canUseLocationScout: true,
-    canUseMoodBoard: true,
-    canUseShotList: true,
-    canUseContinuityCheck: true,
-    canUseScriptWriter: true,
-    canUseStoryboard: true,
-    canUseCollaboration: true,
-    canExportMovies: true,
-    canExportHD: true,
-    canUseAICharacterGen: true,
-    canUseAIScriptGen: true,
-    canUseAIDialogueGen: true,
-    canUseAIBudgetGen: true,
-    canUseAISubtitleGen: true,
-    canUseAILocationSuggest: true,
-    canUseFullFilmGeneration: true,
-    canUseAIVoiceActing: true,
-    canUseAISoundtrack: true,
-    canUseCharacterConsistency: true,
-    canUseSceneContinuity: true,
-    canUseClipChaining: true,
-    // Pro features — all enabled
-    canUseVisualEffects: true,
-    canUseBulkGenerate: true,
-    canUseMultiShotSequencer: true,
-    canUseLiveActionPlate: true,
-    canUseNLEExport: true,
-    canUseAICasting: true,
-    canExportUltraHD: true,
-    // Industry features — NOT available on Pro
+    canExportUltraHD: true, // 4K available for Independent
     canUseWhiteLabel: false,
     canUseAPIAccess: false,
     canUseCustomFineTuning: false,
     canUsePriorityRendering: false,
     resolution: "4k",
-    quality: ["standard", "high", "ultra"],
+    quality: ["standard", "high"],
     maxDurationMinutes: 90,
     maxClipsPerScene: 8,
   },
-  // ─── INDUSTRY ─── Unlimited: 180 min, white-label, API, fine-tuning
+  // ─── INDUSTRY ─── Unlimited: 180 min, white-label, API, fine-tuning, priority
   industry: {
     maxProjects: -1,
     maxCharactersPerProject: -1,
@@ -306,7 +249,7 @@ export const FILM_PACKAGES: FilmPackage[] = [
       "1080p Full HD export",
       "2 revision passes",
     ],
-    requiredTier: "creator",
+    requiredTier: "independent",
   },
   {
     id: "feature_film",
@@ -326,7 +269,7 @@ export const FILM_PACKAGES: FilmPackage[] = [
       "3 revision passes",
       "Dedicated production timeline",
     ],
-    requiredTier: "pro",
+    requiredTier: "independent",
   },
   {
     id: "full_feature",
@@ -347,7 +290,7 @@ export const FILM_PACKAGES: FilmPackage[] = [
       "5 revision passes",
       "Priority rendering queue",
     ],
-    requiredTier: "pro",
+    requiredTier: "independent",
   },
   {
     id: "premium",
@@ -454,12 +397,37 @@ export const VFX_SCENE_PACKAGES: VFXScenePackage[] = [
   },
 ];
 
+// ============================================================
+// SCENE-BY-SCENE PRICING — Individual scene production
+// ============================================================
+
+export interface SceneByScenePricing {
+  pricePerScene: number;        // Price per individual scene in USD
+  sceneDurationSeconds: string; // Duration range per scene
+  features: string[];
+}
+
+export const SCENE_BY_SCENE_PRICING: SceneByScenePricing = {
+  pricePerScene: 10000,
+  sceneDurationSeconds: "30-60",
+  features: [
+    "30-60 seconds of AI-generated cinematic footage",
+    "AI voice acting & dialogue",
+    "AI soundtrack per scene",
+    "Character consistency",
+    "Art direction control",
+    "Color grading",
+    "2 revision passes per scene",
+    "1080p or 4K export",
+  ],
+};
+
 // Launch special flag — set to false to disable 50% off
 export const LAUNCH_SPECIAL_ACTIVE = true;
 export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first film
 
 // ============================================================
-// PLATFORM ACCESS SUBSCRIPTION — Monthly access to tools
+// PLATFORM MEMBERSHIP — Annual access to tools (required)
 // ============================================================
 
 export interface TierPricing {
@@ -469,18 +437,16 @@ export interface TierPricing {
 }
 
 /**
- * Platform access subscription pricing.
- * This is the recurring fee for access to the Virelle Studios platform and tools.
+ * Platform membership pricing.
+ * Annual membership is REQUIRED to use the Virelle Studios platform.
  * Film production packages are charged separately as one-time fees.
  * 
- * Creator: $2,500/mo — Access to all production tools, up to 30 min films
- * Pro: $5,000/mo — Full pipeline, 90 min films, VFX Scene Studio
- * Industry: $10,000/mo — Unlimited, 4K, 180 min, white-label, API access
+ * Independent: $5,000/year — Films up to 90 min, all core production tools
+ * Industry: $25,000/year — Unlimited, 180 min, white-label, API, fine-tuning
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
-  creator: { monthly: 2500, annual: 2000, annualTotal: 24000 },
-  pro: { monthly: 5000, annual: 4000, annualTotal: 48000 },
-  industry: { monthly: 10000, annual: 8000, annualTotal: 96000 },
+  independent: { monthly: 417, annual: 417, annualTotal: 5000 },
+  industry: { monthly: 2083, annual: 2083, annualTotal: 25000 },
 };
 
 // Referral Rewards
@@ -516,12 +482,9 @@ export const TOP_UP_PACKS: TopUpPack[] = [
  */
 export function priceIdToTier(priceId: string): SubscriptionTier {
   // Check all configured price IDs and map to tiers
-  const creatorPriceIds = [
+  const independentPriceIds = [
     ENV.stripeCreatorMonthlyPriceId,
     ENV.stripeCreatorAnnualPriceId,
-  ].filter(Boolean);
-
-  const proPriceIds = [
     ENV.stripeProPriceId,
     ENV.stripeProMonthlyPriceId,
     ENV.stripeProAnnualPriceId,
@@ -533,19 +496,17 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
     ENV.stripeIndustryAnnualPriceId,
   ].filter(Boolean);
 
-  if (creatorPriceIds.includes(priceId)) return "creator";
-  if (proPriceIds.includes(priceId)) return "pro";
+  if (independentPriceIds.includes(priceId)) return "independent";
   if (industryPriceIds.includes(priceId)) return "industry";
 
   // Fallback: try to infer from price ID naming convention
   const lower = priceId.toLowerCase();
-  if (lower.includes("creator")) return "creator";
-  if (lower.includes("pro")) return "pro";
+  if (lower.includes("independent") || lower.includes("creator") || lower.includes("pro")) return "independent";
   if (lower.includes("industry") || lower.includes("enterprise")) return "industry";
 
-  // Default to pro if we can't determine
-  console.warn(`[Subscription] Unknown price ID: ${priceId}, defaulting to pro`);
-  return "pro";
+  // Default to independent if we can't determine
+  console.warn(`[Subscription] Unknown price ID: ${priceId}, defaulting to independent`);
+  return "independent";
 }
 
 // ============================================================
@@ -560,9 +521,9 @@ export function getEffectiveTier(user: User): SubscriptionTier {
     return "industry";
   }
   if (user.subscriptionStatus === "active" || user.subscriptionStatus === "trialing") {
-    return (user.subscriptionTier as SubscriptionTier) || "creator";
+    return (user.subscriptionTier as SubscriptionTier) || "independent";
   }
-  return "creator";
+  return "independent";
 }
 
 /**

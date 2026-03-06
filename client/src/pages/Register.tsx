@@ -8,10 +8,65 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import {
   Eye, EyeOff, Loader2, Gift, ArrowRight, ArrowLeft, Check,
-  User, Building2, Palette, ChevronDown,
+  User, Building2, Palette, ChevronDown, Phone,
 } from "lucide-react";
 import LeegoFooter from "@/components/LeegoFooter";
 import GoldWatermark from "@/components/GoldWatermark";
+
+// ─── Country Codes ───
+
+const COUNTRY_CODES = [
+  { code: "+1", country: "US", flag: "🇺🇸", label: "United States" },
+  { code: "+1", country: "CA", flag: "🇨🇦", label: "Canada" },
+  { code: "+44", country: "GB", flag: "🇬🇧", label: "United Kingdom" },
+  { code: "+33", country: "FR", flag: "🇫🇷", label: "France" },
+  { code: "+49", country: "DE", flag: "🇩🇪", label: "Germany" },
+  { code: "+61", country: "AU", flag: "🇦🇺", label: "Australia" },
+  { code: "+81", country: "JP", flag: "🇯🇵", label: "Japan" },
+  { code: "+82", country: "KR", flag: "🇰🇷", label: "South Korea" },
+  { code: "+86", country: "CN", flag: "🇨🇳", label: "China" },
+  { code: "+91", country: "IN", flag: "🇮🇳", label: "India" },
+  { code: "+55", country: "BR", flag: "🇧🇷", label: "Brazil" },
+  { code: "+52", country: "MX", flag: "🇲🇽", label: "Mexico" },
+  { code: "+34", country: "ES", flag: "🇪🇸", label: "Spain" },
+  { code: "+39", country: "IT", flag: "🇮🇹", label: "Italy" },
+  { code: "+31", country: "NL", flag: "🇳🇱", label: "Netherlands" },
+  { code: "+46", country: "SE", flag: "🇸🇪", label: "Sweden" },
+  { code: "+47", country: "NO", flag: "🇳🇴", label: "Norway" },
+  { code: "+45", country: "DK", flag: "🇩🇰", label: "Denmark" },
+  { code: "+41", country: "CH", flag: "🇨🇭", label: "Switzerland" },
+  { code: "+43", country: "AT", flag: "🇦🇹", label: "Austria" },
+  { code: "+48", country: "PL", flag: "🇵🇱", label: "Poland" },
+  { code: "+351", country: "PT", flag: "🇵🇹", label: "Portugal" },
+  { code: "+353", country: "IE", flag: "🇮🇪", label: "Ireland" },
+  { code: "+32", country: "BE", flag: "🇧🇪", label: "Belgium" },
+  { code: "+7", country: "RU", flag: "🇷🇺", label: "Russia" },
+  { code: "+90", country: "TR", flag: "🇹🇷", label: "Turkey" },
+  { code: "+966", country: "SA", flag: "🇸🇦", label: "Saudi Arabia" },
+  { code: "+971", country: "AE", flag: "🇦🇪", label: "UAE" },
+  { code: "+972", country: "IL", flag: "🇮🇱", label: "Israel" },
+  { code: "+27", country: "ZA", flag: "🇿🇦", label: "South Africa" },
+  { code: "+234", country: "NG", flag: "🇳🇬", label: "Nigeria" },
+  { code: "+254", country: "KE", flag: "🇰🇪", label: "Kenya" },
+  { code: "+20", country: "EG", flag: "🇪🇬", label: "Egypt" },
+  { code: "+62", country: "ID", flag: "🇮🇩", label: "Indonesia" },
+  { code: "+60", country: "MY", flag: "🇲🇾", label: "Malaysia" },
+  { code: "+65", country: "SG", flag: "🇸🇬", label: "Singapore" },
+  { code: "+66", country: "TH", flag: "🇹🇭", label: "Thailand" },
+  { code: "+63", country: "PH", flag: "🇵🇭", label: "Philippines" },
+  { code: "+84", country: "VN", flag: "🇻🇳", label: "Vietnam" },
+  { code: "+64", country: "NZ", flag: "🇳🇿", label: "New Zealand" },
+  { code: "+54", country: "AR", flag: "🇦🇷", label: "Argentina" },
+  { code: "+56", country: "CL", flag: "🇨🇱", label: "Chile" },
+  { code: "+57", country: "CO", flag: "🇨🇴", label: "Colombia" },
+  { code: "+51", country: "PE", flag: "🇵🇪", label: "Peru" },
+  { code: "+380", country: "UA", flag: "🇺🇦", label: "Ukraine" },
+  { code: "+40", country: "RO", flag: "🇷🇴", label: "Romania" },
+  { code: "+30", country: "GR", flag: "🇬🇷", label: "Greece" },
+  { code: "+36", country: "HU", flag: "🇭🇺", label: "Hungary" },
+  { code: "+420", country: "CZ", flag: "🇨🇿", label: "Czech Republic" },
+  { code: "+358", country: "FI", flag: "🇫🇮", label: "Finland" },
+];
 
 // ─── Constants ───
 
@@ -190,6 +245,8 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
+  const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [referralCode, setReferralCode] = useState("");
 
   // Step 2: Professional
@@ -283,7 +340,7 @@ export default function Register() {
       email: email.trim().toLowerCase(),
       password,
       referralCode: referralCode.trim() || undefined,
-      phone: phone.trim() || undefined,
+      phone: phone.trim() ? `${countryCode} ${phone.trim()}` : undefined,
       companyName: companyName.trim() || undefined,
       companyWebsite: companyWebsite.trim() || undefined,
       jobTitle: jobTitle.trim() || undefined,
@@ -404,14 +461,46 @@ export default function Register() {
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+1 (555) 000-0000"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      autoComplete="tel"
-                    />
+                    <div className="flex gap-1.5">
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
+                          className="h-10 px-2.5 rounded-md border border-input bg-background text-sm flex items-center gap-1.5 hover:bg-accent transition-colors min-w-[90px]"
+                        >
+                          <span className="text-base leading-none">{COUNTRY_CODES.find(c => c.code === countryCode && c.country === (countryCode === "+1" ? "US" : COUNTRY_CODES.find(cc => cc.code === countryCode)?.country))?.flag || COUNTRY_CODES.find(c => c.code === countryCode)?.flag || "\ud83c\uddfa\ud83c\uddf8"}</span>
+                          <span className="text-xs text-muted-foreground">{countryCode}</span>
+                          <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                        </button>
+                        {countryDropdownOpen && (
+                          <div className="absolute top-full left-0 mt-1 w-64 max-h-60 overflow-y-auto rounded-md border border-input bg-background shadow-lg z-50">
+                            {COUNTRY_CODES.map((c) => (
+                              <button
+                                key={`${c.country}-${c.code}`}
+                                type="button"
+                                onClick={() => { setCountryCode(c.code); setCountryDropdownOpen(false); }}
+                                className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-accent transition-colors text-left ${
+                                  countryCode === c.code ? "bg-amber-500/10 text-amber-400" : "text-foreground"
+                                }`}
+                              >
+                                <span className="text-base leading-none">{c.flag}</span>
+                                <span className="flex-1 truncate">{c.label}</span>
+                                <span className="text-xs text-muted-foreground">{c.code}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="(555) 000-0000"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        autoComplete="tel"
+                        className="flex-1"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-1.5">

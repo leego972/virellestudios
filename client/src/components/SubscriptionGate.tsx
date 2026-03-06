@@ -6,7 +6,7 @@ interface SubscriptionGateProps {
   children: React.ReactNode;
   feature: string;
   featureKey: string;
-  requiredTier: "creator" | "pro" | "industry";
+  requiredTier: "independent" | "industry" | "creator" | "pro"; // backward compat
 }
 
 /**
@@ -15,6 +15,9 @@ interface SubscriptionGateProps {
  */
 export function SubscriptionGate({ children, feature, featureKey, requiredTier }: SubscriptionGateProps) {
   const { canUseFeature, tier, isLoading } = useSubscription();
+
+  // Map old tier names to new ones for backward compatibility
+  const mappedTier = requiredTier === "creator" ? "independent" : requiredTier === "pro" ? "industry" : requiredTier;
 
   if (isLoading) {
     return (
@@ -27,7 +30,7 @@ export function SubscriptionGate({ children, feature, featureKey, requiredTier }
   if (!canUseFeature(featureKey)) {
     return (
       <div className="p-4 sm:p-6">
-        <UpgradePrompt feature={feature} requiredTier={requiredTier} currentTier={tier} />
+        <UpgradePrompt feature={feature} requiredTier={mappedTier as "independent" | "industry"} currentTier={tier} />
       </div>
     );
   }

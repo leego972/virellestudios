@@ -51,66 +51,55 @@ const TESTIMONIALS = [
 
 const PRICING = [
   {
-    tier: "Creator",
-    price: "$2,500",
-    period: "/mo",
-    highlight: false,
-    badge: null,
-    desc: "Short films up to 30 minutes. Full production pipeline.",
-    features: [
-      "100 generations / month",
-      "10 projects, 40 scenes each",
-      "1080p Full HD",
-      "Full Film Generation (up to 30 min)",
-      "AI Voice Acting",
-      "AI Soundtrack",
-      "Character consistency",
-      "Scene continuity",
-      "Director's Assistant",
-      "All production tools",
-      "5 team members",
-    ],
-    limitations: [],
-  },
-  {
-    tier: "Pro",
+    tier: "Independent",
     price: "$5,000",
-    period: "/mo",
+    period: "/year",
     highlight: true,
-    badge: "Most Popular",
-    desc: "Feature-length films up to 90 minutes. Complete studio.",
+    badge: "For Creators",
+    desc: "Everything you need to generate AI films up to 90 minutes.",
     features: [
-      "500 generations / month",
-      "50 projects, 90 scenes each",
-      "1080p + 4K UHD",
       "Full Film Generation (up to 90 min)",
-      "Everything in Creator",
-      "VFX Scene Studio",
-      "Bulk generation",
-      "Ultra quality exports",
-      "Trailer generation",
-      "15 team members",
+      "AI Voice Acting & Dialogue",
+      "AI-Generated Film Score",
+      "Character Consistency (DNA Lock)",
+      "Scene-to-Scene Continuity",
+      "Clip Chaining (30-60s scenes)",
+      "AI Script Writer",
+      "Storyboard Generator",
+      "Director's AI Assistant",
+      "Color Grading & LUTs",
+      "Location Scout",
+      "1080p + 4K UHD Export",
+      "Up to 5 team members",
+      "200 AI generations / month",
+      "25 projects",
     ],
     limitations: [],
   },
   {
     tier: "Industry",
-    price: "$10,000",
-    period: "/mo",
+    price: "$25,000",
+    period: "/year",
     highlight: false,
-    badge: "Studios",
-    desc: "Unlimited production. 4K. 180 minutes. White-label.",
+    badge: "For Studios",
+    desc: "Enterprise-grade tools for production houses and studios.",
     features: [
-      "Unlimited everything",
-      "4K UHD + ProRes",
-      "Full Film Generation (up to 180 min)",
-      "Everything in Pro",
-      "White-label exports",
-      "API access",
+      "Everything in Independent",
+      "Films up to 180 minutes",
+      "White-Label Exports (no branding)",
+      "API Access & Pipeline Integration",
+      "Custom AI Model Fine-Tuning",
+      "Priority Rendering Queue",
+      "NLE / DaVinci Resolve Export",
+      "Live Action Plate Compositing",
+      "Multi-Shot Sequencer",
+      "VFX Suite (Advanced Effects)",
+      "AI Casting Tool",
+      "Bulk / Parallel Generation",
+      "4K UHD + ProRes Export",
       "Unlimited team members",
-      "Custom model fine-tuning",
-      "Priority rendering",
-      "Dedicated support",
+      "Unlimited projects & generations",
+      "Dedicated Account Manager",
     ],
     limitations: [],
   },
@@ -299,7 +288,7 @@ export default function Landing() {
               </div>
             </div>
             <Button variant="ghost" size="sm" onClick={() => setLocation("/login")} className="text-sm">Sign In</Button>
-            <Button size="sm" onClick={() => setLocation("/register")} className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium">
+            <Button size="sm" onClick={() => setLocation("/pricing")} className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium">
               View Plans
             </Button>
           </div>
@@ -355,7 +344,7 @@ export default function Landing() {
               See Use Cases
             </Button>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">BYOK — bring your own API keys. Professional plans from $2,500/mo.</p>
+          <p className="mt-4 text-xs text-muted-foreground">BYOK — bring your own API keys. Membership starts at $5,000/year.</p>
         </div>
       </section>
 
@@ -737,34 +726,38 @@ export default function Landing() {
               <span className="text-amber-400">Pricing</span>
             </h2>
             <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
-              You pay for the platform. You bring your own AI keys. Zero hidden costs.
+              A paid membership is required to use the platform. You bring your own AI keys. Then pay per project based on length and complexity.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+          {/* Membership Tiers */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {PRICING.map((plan) => (
-              <Card key={plan.tier} className={`relative overflow-hidden ${plan.highlight ? "border-amber-500/50 bg-amber-500/5 shadow-lg shadow-amber-500/10" : "bg-card/50 border-border/50"}`}>
+              <Card key={plan.tier} className={`relative overflow-hidden ${plan.highlight ? "border-amber-500/50 bg-amber-500/5 shadow-lg shadow-amber-500/10" : "bg-card/50 border-purple-500/30"}`}>
                 {plan.highlight && (
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-orange-500" />
                 )}
-                <CardContent className="p-5">
+                {!plan.highlight && (
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-violet-500" />
+                )}
+                <CardContent className="p-6">
                   {plan.badge && (
                     <span className={`inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded mb-3 ${
                       plan.highlight ? "text-amber-400 bg-amber-500/10" : "text-purple-400 bg-purple-500/10"
                     }`}>{plan.badge}</span>
                   )}
-                  <h3 className="text-lg font-bold">{plan.tier}</h3>
+                  <h3 className="text-xl font-bold">{plan.tier}</h3>
                   <div className="mt-1 mb-2">
                     <span className="text-3xl font-bold">{plan.price}</span>
                     <span className="text-sm text-muted-foreground">{plan.period}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mb-4">{plan.desc}</p>
                   <Button
-                    className={`w-full mb-4 ${plan.highlight ? "bg-amber-500 hover:bg-amber-600 text-black font-semibold" : ""}`}
-                    variant={plan.highlight ? "default" : "outline"}
+                    className={`w-full mb-4 ${plan.highlight ? "bg-amber-500 hover:bg-amber-600 text-black font-semibold" : "bg-purple-600 hover:bg-purple-700 text-white font-semibold"}`}
                     size="sm"
-                    onClick={() => setLocation(plan.tier === "Industry" ? "/contact" : "/pricing")}
+                    onClick={() => setLocation("/pricing")}
                   >
-                    {plan.tier === "Industry" ? "Contact Sales" : "Subscribe Now"}
+                    Get Started
                   </Button>
                   <ul className="space-y-2">
                     {plan.features.map((f) => (
@@ -773,25 +766,21 @@ export default function Landing() {
                         <span className="text-muted-foreground">{f}</span>
                       </li>
                     ))}
-                    {plan.limitations.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-xs">
-                        <span className="h-3.5 w-3.5 text-red-400/60 shrink-0 mt-0.5 text-center">—</span>
-                        <span className="text-muted-foreground/60 line-through">{f}</span>
-                      </li>
-                    ))}
                   </ul>
                 </CardContent>
               </Card>
             ))}
           </div>
+          <p className="text-center text-xs text-muted-foreground mt-6">Membership is required to access the platform and purchase film production packages.</p>
+
           {/* Film Production Packages */}
           <div className="mt-14 mb-10">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold">Film Production Packages</h3>
-              <p className="text-sm text-muted-foreground mt-2">One-time payment per film. Full AI-generated production.</p>
+              <p className="text-sm text-muted-foreground mt-2">One-time payment per film. Available to all members. Full AI-generated production.</p>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-semibold mt-4">
                 <Sparkles className="h-4 w-4" />
-                Launch Special — 50% Off Your First Film
+                Launch Special — 50% Off Your First Film (Members Only)
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -830,6 +819,54 @@ export default function Landing() {
               ))}
             </div>
             <p className="text-center text-xs text-muted-foreground mt-4">Additional 30 minutes: +$30,000 (launch) / +$60,000 (full price). VFX Scene packages also available.</p>
+          </div>
+
+          {/* Scene-by-Scene Pricing */}
+          <div className="mt-10 mb-10">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold">Scene-by-Scene Production</h3>
+              <p className="text-sm text-muted-foreground mt-2">Pay per scene for maximum flexibility. Best for hybrid productions or individual VFX scenes.</p>
+            </div>
+            <div className="max-w-2xl mx-auto">
+              <Card className="bg-card/50 border-border/50">
+                <CardContent className="p-6">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div>
+                      <h4 className="text-lg font-bold">Individual Scene</h4>
+                      <p className="text-xs text-muted-foreground mt-1">30–60 seconds of AI-generated cinematic footage per scene</p>
+                      <div className="mt-3">
+                        <span className="text-3xl font-bold">$10,000</span>
+                        <span className="text-sm text-muted-foreground"> / scene</span>
+                      </div>
+                      <ul className="mt-3 space-y-1.5">
+                        {["AI voice acting & dialogue", "AI soundtrack per scene", "Character consistency", "Art direction control", "2 revision passes", "1080p or 4K export"].map((f) => (
+                          <li key={f} className="flex items-start gap-2 text-xs">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-400 shrink-0 mt-0.5" />
+                            <span className="text-muted-foreground">{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="text-center sm:text-right shrink-0">
+                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+                        <p className="text-xs text-amber-400 font-semibold mb-1">Full Feature Comparison</p>
+                        <p className="text-xs text-muted-foreground">90 scenes × $10K = <span className="text-red-400 font-bold">$900,000</span></p>
+                        <p className="text-xs text-muted-foreground mt-1">Full Feature package = <span className="text-green-400 font-bold">$100,000</span></p>
+                        <p className="text-[10px] text-amber-400 mt-2 font-medium">Save up to 89% with a full package</p>
+                      </div>
+                      <Button
+                        className="mt-3 w-full"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setLocation("/pricing")}
+                      >
+                        View All Options
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </section>

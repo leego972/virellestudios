@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 
-export type SubscriptionTier = "creator" | "pro" | "industry";
+export type SubscriptionTier = "independent" | "industry";
 
 export function useSubscription() {
   const { data, isLoading, error } = trpc.subscription.status.useQuery(undefined, {
@@ -8,13 +8,13 @@ export function useSubscription() {
     staleTime: 30_000, // Cache for 30 seconds
   });
 
-  const tier: SubscriptionTier = (data?.tier as SubscriptionTier) || "creator";
+  const tier: SubscriptionTier = (data?.tier as SubscriptionTier) || "independent";
   const isAdmin = data?.isAdmin || false;
 
   // Admin always has full access
   const hasAccess = (requiredTier: SubscriptionTier): boolean => {
     if (isAdmin) return true;
-    const tierOrder: Record<SubscriptionTier, number> = { creator: 0, pro: 1, industry: 2 };
+    const tierOrder: Record<SubscriptionTier, number> = { independent: 0, industry: 1 };
     return tierOrder[tier] >= tierOrder[requiredTier];
   };
 
@@ -39,9 +39,11 @@ export function useSubscription() {
     currentPeriodEnd: data?.currentPeriodEnd,
     hasAccess,
     canUseFeature,
-    isCreator: tier === "creator" || tier === "pro" || tier === "industry" || isAdmin,
-    isPro: tier === "pro" || tier === "industry" || isAdmin,
+    isIndependent: tier === "independent" || tier === "industry" || isAdmin,
     isIndustry: tier === "industry" || isAdmin,
-    isSubscribed: tier !== "creator" || isAdmin,
+    isSubscribed: true, // All users must have a paid membership
+    // Backward compatibility aliases
+    isCreator: tier === "independent" || tier === "industry" || isAdmin,
+    isPro: tier === "independent" || tier === "industry" || isAdmin,
   };
 }

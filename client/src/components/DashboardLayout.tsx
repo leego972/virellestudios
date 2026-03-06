@@ -389,10 +389,10 @@ function DashboardLayoutContent({
                     </p>
                     <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider mt-1 ${
                       tier === "industry" ? "bg-violet-500/10 text-violet-400 border border-violet-500/20" :
-                      tier === "pro" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
+                      tier === "independent" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
                       "bg-muted text-muted-foreground border border-border"
                     }`}>
-                      {tier === "industry" ? "Industry" : tier === "pro" ? "Pro" : tier === "creator" ? "Creator" : "Subscribe"}
+                      {tier === "industry" ? "Industry" : tier === "independent" ? "Independent" : "Subscribe"}
                     </span>
                   </div>
                 </button>

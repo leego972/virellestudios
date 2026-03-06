@@ -676,7 +676,7 @@ export default function AdPosterMaker() {
   if (!canUseFeature("canUseAdPosterMaker")) {
     return (
       <div className="p-4 sm:p-6">
-        <FeatureGate feature="Ad & Poster Maker" requiredTier="pro" currentTier={tier} hasAccess={false}>
+        <FeatureGate feature="Ad & Poster Maker" requiredTier="industry" currentTier={tier} hasAccess={false}>
           <div />
         </FeatureGate>
       </div>
