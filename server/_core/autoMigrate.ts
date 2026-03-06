@@ -394,7 +394,7 @@ export async function runAutoMigration(): Promise<void> {
   // ─── Columns that may be missing from existing tables ───
   const missingColumns: ColumnCheck[] = [
     // Users table - subscription fields
-    { table: "users", column: "subscriptionTier", definition: "ENUM('creator','pro','industry') NOT NULL DEFAULT 'creator'" },
+    { table: "users", column: "subscriptionTier", definition: "ENUM('creator','pro','industry','independent') NOT NULL DEFAULT 'independent'" },
     { table: "users", column: "stripeCustomerId", definition: "VARCHAR(255) NULL" },
     { table: "users", column: "stripeSubscriptionId", definition: "VARCHAR(255) NULL" },
     { table: "users", column: "subscriptionStatus", definition: "ENUM('active','canceled','past_due','unpaid','trialing','none') NOT NULL DEFAULT 'none'" },

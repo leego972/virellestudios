@@ -291,17 +291,20 @@ const NEGATIVE_PROMPTS: Record<string, string> = {
 
 // ─── Quality Tier Definitions ───
 
-export type QualityTier = "creator" | "pro" | "industry";
+export type QualityTier = "independent" | "industry";
+// Backward compat: map old tier names
+function resolveQualityTier(tier: string): QualityTier {
+  if (tier === "creator" || tier === "pro" || tier === "independent") return "independent";
+  return "industry";
+}
 
 const QUALITY_ANCHORS: Record<QualityTier, string> = {
-  "creator": "RAW photograph, photorealistic, shot on Canon EOS R5 with 50mm f/1.4 lens, natural available light, real human skin with visible pores and natural imperfections, authentic facial features, genuine emotion, real-world location, 1080p resolution, slight natural film grain, sensor noise at ISO 800, chromatic aberration at frame edges, natural lens vignetting, real photograph indistinguishable from a DSLR capture",
-  "pro": "RAW photograph captured on ARRI ALEXA Mini with Cooke S7/i Full Frame Plus anamorphic lenses, utterly indistinguishable from a real Hollywood film frame, real human skin with visible pores and subsurface scattering showing blood beneath skin, natural skin blemishes and micro-texture, authentic facial asymmetry, real sweat and moisture on skin, 4K resolution, Kodak Vision3 500T film stock emulation with organic grain structure, volumetric atmospheric lighting with physically accurate light falloff, real optical lens characteristics including subtle barrel distortion and natural bokeh with cat-eye shapes at frame edges, authentic set design with lived-in production detail",
+  "independent": "RAW photograph captured on ARRI ALEXA Mini with Cooke S7/i Full Frame Plus anamorphic lenses, utterly indistinguishable from a real Hollywood film frame, real human skin with visible pores and subsurface scattering showing blood beneath skin, natural skin blemishes and micro-texture, authentic facial asymmetry, real sweat and moisture on skin, 4K resolution, Kodak Vision3 500T film stock emulation with organic grain structure, volumetric atmospheric lighting with physically accurate light falloff, real optical lens characteristics including subtle barrel distortion and natural bokeh with cat-eye shapes at frame edges, authentic set design with lived-in production detail",
   "industry": "RAW photograph captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lenses, absolutely indistinguishable from a real $200M Hollywood production frame by Roger Deakins or Emmanuel Lubezki, real human skin rendered with perfect subsurface scattering showing veins and blood flow beneath translucent skin layers, visible pores and micro-wrinkles and peach fuzz hair, natural skin blemishes and freckles and age spots, authentic facial asymmetry with real bone structure, 8K resolution, Kodak Vision3 500T color science with organic halation on highlights, volumetric atmospheric lighting with physically accurate inverse-square light falloff and color temperature mixing, real optical characteristics including anamorphic lens breathing and oval bokeh and subtle chromatic fringing, Academy Award-winning cinematography, every surface material rendered with physically-based accuracy including specular microstructure on metals and translucency in fabrics and caustics in glass. Eyes are hyper-realistic with detailed iris fibers, corneal reflections, and subtle moisture. Micro-expressions convey genuine emotion.",
 };
 
 const QUALITY_NEGATIVE: Record<QualityTier, string> = {
-  "creator": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}, ${PHOTOREALISM_SKIN_AND_EYES}`,
-  "pro": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}, ${NEGATIVE_PROMPTS.photorealistic}`,
+  "independent": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}, ${NEGATIVE_PROMPTS.photorealistic}`,
   "industry": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}, ${NEGATIVE_PROMPTS.photorealistic}, ${NEGATIVE_PROMPTS.cinematic}`,
 };
 
@@ -332,7 +335,8 @@ export function buildVisualDNA(project: {
   description?: string | null;
   photoUrl?: string | null;
   attributes?: any;
-}>, qualityTier: QualityTier = "pro"): VisualDNA {
+}>, qualityTier: QualityTier | string = "independent"): VisualDNA {
+  qualityTier = resolveQualityTier(qualityTier as string);
   const genre = project.genre || "Drama";
   const profile = GENRE_PROFILES[genre] || DEFAULT_PROFILE;
   
@@ -446,7 +450,7 @@ export function buildScenePrompt(
   }
 ): string {
   const parts: string[] = [];
-  const tier = visualDNA.qualityTier || "pro";
+  const tier = resolveQualityTier(visualDNA.qualityTier || "independent");
 
   // 1. Core visual identity (consistency anchor)
   parts.push(`[VISUAL STYLE: ${visualDNA.consistencyTokens}]`);
@@ -878,7 +882,7 @@ export function buildTrailerPrompt(
   visualDNA: VisualDNA,
   trailerDescription: string
 ): string {
-  const tier = visualDNA.qualityTier || "pro";
+  const tier = resolveQualityTier(visualDNA.qualityTier || "independent");
   const parts = [
     `[VISUAL STYLE: ${visualDNA.consistencyTokens}]`,
     `Cinematic Hollywood trailer shot, dramatic and visually stunning`,

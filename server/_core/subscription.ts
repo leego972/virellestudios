@@ -528,12 +528,20 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
 /**
  * Get the effective tier for a user. Admin always gets industry-level access.
  */
+// Map old DB tier values to new tier names
+function mapTierName(tier: string | null | undefined): SubscriptionTier {
+  if (!tier) return "independent";
+  if (tier === "industry") return "industry";
+  // "creator", "pro", "independent" all map to independent
+  return "independent";
+}
+
 export function getEffectiveTier(user: User): SubscriptionTier {
   if (user.email === ENV.adminEmail || user.role === "admin") {
     return "industry";
   }
   if (user.subscriptionStatus === "active" || user.subscriptionStatus === "trialing") {
-    return (user.subscriptionTier as SubscriptionTier) || "independent";
+    return mapTierName(user.subscriptionTier);
   }
   return "independent";
 }
