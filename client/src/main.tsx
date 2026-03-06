@@ -16,9 +16,9 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
   if (!isUnauthorized) return;
 
-  // Don't redirect if already on login/register page
+  // Don't redirect if already on login/register/pricing/public pages
   const path = window.location.pathname;
-  if (path === "/login" || path === "/register") return;
+  if (path === "/login" || path === "/register" || path === "/pricing" || path === "/subscription" || path === "/welcome") return;
 
   window.location.href = "/login";
 };

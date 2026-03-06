@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Package, Sparkles, Clapperboard, Wand2, Timer, User } from "lucide-react";
+import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 import { useLocation } from "wouter";
@@ -12,25 +12,33 @@ export default function Pricing() {
   const [, setLocation] = useLocation();
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
+  // pricing is a public query — always works
   const { data: pricing } = trpc.subscription.pricing.useQuery();
-  const { data: status } = trpc.subscription.status.useQuery(undefined, {
+
+  // status is a protected query — will be null/error for unauthenticated visitors
+  const { data: status, error: statusError } = trpc.subscription.status.useQuery(undefined, {
     retry: false,
   });
+
   const checkoutMutation = trpc.subscription.createCheckout.useMutation();
-  const filmPackageMutation = trpc.subscription.createFilmPackageCheckout.useMutation();
   const portalMutation = trpc.subscription.createBillingPortal.useMutation();
 
-  const currentTier = status?.tier || "independent";
+  // Determine auth & membership state
+  const isLoggedIn = !!status && !statusError;
+  const isActiveMember = isLoggedIn && status?.status === "active";
+  const currentTier = status?.tier || null;
 
   const handleSubscribe = async (tier: "independent" | "industry") => {
-    if (!status) {
+    // Not logged in — send to register
+    if (!isLoggedIn) {
       setLocation("/register");
       return;
     }
 
     setLoadingTier(tier);
     try {
-      if (status.status === "active" && true) {
+      // Already active — open billing portal to switch
+      if (isActiveMember) {
         const result = await portalMutation.mutateAsync({
           returnUrl: window.location.href,
         });
@@ -38,6 +46,7 @@ export default function Pricing() {
         return;
       }
 
+      // Logged in but no active sub — create checkout
       const result = await checkoutMutation.mutateAsync({
         tier,
         billing: "annual",
@@ -49,31 +58,6 @@ export default function Pricing() {
       }
     } catch (err: any) {
       console.error("Checkout error:", err);
-      alert(err.message || "Failed to start checkout");
-    } finally {
-      setLoadingTier(null);
-    }
-  };
-
-  const handleFilmPackage = async (packageId: string) => {
-    if (!status) {
-      setLocation("/register");
-      return;
-    }
-
-    setLoadingTier(packageId);
-    try {
-      const result = await filmPackageMutation.mutateAsync({
-        packageId,
-        useLaunchPrice: pricing?.launchSpecialActive ?? true,
-        successUrl: `${window.location.origin}/?film_purchase=success`,
-        cancelUrl: `${window.location.origin}/pricing?film_purchase=canceled`,
-      });
-      if (result.url) {
-        window.location.href = result.url;
-      }
-    } catch (err: any) {
-      console.error("Film package error:", err);
       alert(err.message || "Failed to start checkout");
     } finally {
       setLoadingTier(null);
@@ -140,8 +124,8 @@ export default function Pricing() {
           )}
         </div>
 
-        {/* Current subscription info */}
-        {status && true && status.status === "active" && (
+        {/* Current subscription info — only shown for active members */}
+        {isActiveMember && (
           <div className="max-w-md mx-auto mb-10 p-4 rounded-lg border border-green-500/30 bg-green-500/5 text-center">
             <p className="text-sm text-green-400">
               You're on the <strong className="capitalize">{status.tier}</strong> membership
@@ -222,19 +206,21 @@ export default function Pricing() {
 
                   <CardFooter className="pt-4">
                     <Button
-                        className={`w-full text-white ${tierButtonColors[tier.id] || ""}`}
-                        disabled={isCurrentTier || loadingTier === tier.id}
-                        onClick={() => handleSubscribe(tier.id as "independent" | "industry")}
-                      >
-                        {loadingTier === tier.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        ) : null}
-                        {isCurrentTier
-                          ? "Current Membership"
-                          : status?.status === "active"
-                          ? `Switch to ${tier.name}`
-                          : `Join ${tier.name}`}
-                      </Button>
+                      className={`w-full text-white ${tierButtonColors[tier.id] || ""}`}
+                      disabled={isCurrentTier || loadingTier === tier.id}
+                      onClick={() => handleSubscribe(tier.id as "independent" | "industry")}
+                    >
+                      {loadingTier === tier.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      ) : null}
+                      {isCurrentTier
+                        ? "Current Membership"
+                        : isActiveMember
+                        ? `Switch to ${tier.name}`
+                        : isLoggedIn
+                        ? `Join ${tier.name}`
+                        : `Get Started — ${tier.name}`}
+                    </Button>
                   </CardFooter>
                 </Card>
               );
@@ -269,13 +255,14 @@ export default function Pricing() {
               Film Production Packages
             </h2>
             <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              One-time payment per film. Available to all members. Full AI-generated production with voice acting, soundtrack, and visual continuity.
+              One-time payment per film. Full AI-generated production with voice acting, soundtrack, and visual continuity.
+              {!isActiveMember && " Become a member to start your production."}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {pricing?.filmPackages?.map((pkg: any) => (
-              <Card key={pkg.id} className={`relative flex flex-col border-zinc-700 hover:border-amber-500/50 transition-all ${pkg.id === "full_feature" ? "ring-2 ring-amber-500/30 lg:scale-105" : ""}`}>
+              <Card key={pkg.id} className={`relative flex flex-col border-zinc-700 ${isActiveMember ? "hover:border-amber-500/50" : "opacity-80"} transition-all ${pkg.id === "full_feature" ? "ring-2 ring-amber-500/30 lg:scale-105" : ""}`}>
                 {pkg.id === "full_feature" && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge className="bg-amber-600 text-white px-4 py-1">Most Popular</Badge>
@@ -315,17 +302,28 @@ export default function Pricing() {
                     ))}
                   </ul>
                 </CardContent>
-                <CardFooter className="pt-4">
-                  <Button
-                    className="w-full bg-amber-600 hover:bg-amber-500 text-white"
-                    disabled={loadingTier === pkg.id}
-                    onClick={() => handleFilmPackage(pkg.id)}
-                  >
-                    {loadingTier === pkg.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : null}
-                    Start Production
-                  </Button>
+                <CardFooter className="pt-4 flex flex-col gap-2">
+                  {isActiveMember ? (
+                    <Button
+                      className="w-full bg-amber-600 hover:bg-amber-500 text-white"
+                      onClick={() => setLocation("/projects/new")}
+                    >
+                      Start Production
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        className="w-full bg-zinc-700 text-zinc-400 cursor-not-allowed"
+                        disabled
+                      >
+                        <Lock className="w-4 h-4 mr-2" />
+                        Membership Required
+                      </Button>
+                      <p className="text-[10px] text-muted-foreground text-center">
+                        Join a membership above to purchase film packages
+                      </p>
+                    </>
+                  )}
                 </CardFooter>
               </Card>
             ))}
@@ -407,18 +405,27 @@ export default function Pricing() {
                         </div>
                       </div>
                     </div>
-                    <Button
-                      className="w-full bg-cyan-600 hover:bg-cyan-500 text-white"
-                      onClick={() => {
-                        if (!status) setLocation("/register");
-                        // Scene-by-scene checkout would go here
-                      }}
-                    >
-                      Purchase Scene
-                    </Button>
-                    <p className="text-[10px] text-muted-foreground text-center mt-2">
-                      Requires active membership
-                    </p>
+                    {isActiveMember ? (
+                      <Button
+                        className="w-full bg-cyan-600 hover:bg-cyan-500 text-white"
+                        onClick={() => setLocation("/projects/new")}
+                      >
+                        Purchase Scene
+                      </Button>
+                    ) : (
+                      <>
+                        <Button
+                          className="w-full bg-zinc-700 text-zinc-400 cursor-not-allowed"
+                          disabled
+                        >
+                          <Lock className="w-4 h-4 mr-2" />
+                          Membership Required
+                        </Button>
+                        <p className="text-[10px] text-muted-foreground text-center mt-2">
+                          Join a membership above to purchase scenes
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -442,7 +449,7 @@ export default function Pricing() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {pricing?.vfxScenePackages?.map((pkg: any) => (
-              <Card key={pkg.id} className="relative flex flex-col border-zinc-700 hover:border-violet-500/50 transition-all">
+              <Card key={pkg.id} className={`relative flex flex-col border-zinc-700 ${isActiveMember ? "hover:border-violet-500/50" : "opacity-80"} transition-all`}>
                 {pricing.launchSpecialActive && (
                   <div className="absolute -top-3 right-3">
                     <Badge className="bg-red-600 text-white px-2 py-0.5 text-xs">50% OFF</Badge>
@@ -475,17 +482,28 @@ export default function Pricing() {
                     ))}
                   </ul>
                 </CardContent>
-                <CardFooter className="pt-4">
-                  <Button
-                    className="w-full bg-violet-600 hover:bg-violet-500 text-white"
-                    disabled={loadingTier === pkg.id}
-                    onClick={() => handleFilmPackage(pkg.id)}
-                  >
-                    {loadingTier === pkg.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : null}
-                    Get Started
-                  </Button>
+                <CardFooter className="pt-4 flex flex-col gap-2">
+                  {isActiveMember ? (
+                    <Button
+                      className="w-full bg-violet-600 hover:bg-violet-500 text-white"
+                      onClick={() => setLocation("/projects/new")}
+                    >
+                      Get Started
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        className="w-full bg-zinc-700 text-zinc-400 cursor-not-allowed"
+                        disabled
+                      >
+                        <Lock className="w-4 h-4 mr-2" />
+                        Membership Required
+                      </Button>
+                      <p className="text-[10px] text-muted-foreground text-center">
+                        Join a membership above to access VFX packages
+                      </p>
+                    </>
+                  )}
                 </CardFooter>
               </Card>
             ))}
@@ -612,11 +630,22 @@ export default function Pricing() {
           </div>
         )}
 
-        {/* Back to dashboard */}
-        <div className="text-center mt-12">
-          <Button variant="ghost" onClick={() => setLocation("/")}>
-            ← Back to Dashboard
-          </Button>
+        {/* Bottom CTA / Navigation */}
+        <div className="text-center mt-12 flex items-center justify-center gap-4">
+          {isLoggedIn ? (
+            <Button variant="ghost" onClick={() => setLocation("/")}>
+              ← Back to Dashboard
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" onClick={() => setLocation("/welcome")}>
+                ← Back to Home
+              </Button>
+              <Button className="bg-amber-600 hover:bg-amber-500 text-white" onClick={() => setLocation("/register")}>
+                Create Account
+              </Button>
+            </>
+          )}
         </div>
         <LeegoFooter />
       </div>
