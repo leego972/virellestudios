@@ -335,8 +335,8 @@ export function buildVisualDNA(project: {
   description?: string | null;
   photoUrl?: string | null;
   attributes?: any;
-}>, qualityTier: QualityTier | string = "independent"): VisualDNA {
-  qualityTier = resolveQualityTier(qualityTier as string);
+}>, qualityTierInput: QualityTier | string = "independent"): VisualDNA {
+  const qualityTier: QualityTier = resolveQualityTier(qualityTierInput as string);
   const genre = project.genre || "Drama";
   const profile = GENRE_PROFILES[genre] || DEFAULT_PROFILE;
   

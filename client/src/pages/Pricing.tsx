@@ -125,7 +125,7 @@ export default function Pricing() {
             </h1>
           </div>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Professional AI film production at a fraction of traditional costs. Membership required, then pay per project.
+            Your membership unlocks all creative and pre-production tools. When you're ready to generate your film, pay per project based on length and complexity.
           </p>
           {status?.isAdmin && (
             <Badge variant="outline" className="mt-4 border-amber-500 text-amber-500">
@@ -167,7 +167,7 @@ export default function Pricing() {
               Membership Plans
             </h2>
             <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              Membership is required to use the Virelle Studios platform. Choose the tier and billing cycle that fits your production needs.
+              Membership gives you full access to all creative and pre-production tools — script writing, storyboarding, character creation, and more. Film generation is charged separately per project.
             </p>
           </div>
 
@@ -238,12 +238,24 @@ export default function Pricing() {
 
                   <CardContent className="flex-1">
                     <ul className="space-y-2.5">
-                      {tier.highlights.map((highlight: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-sm">
-                          <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
-                          <span>{highlight}</span>
-                        </li>
-                      ))}
+                      {tier.highlights.map((highlight: string, i: number) => {
+                        // Section headers (──...──) render as dividers
+                        if (highlight.startsWith("──")) {
+                          return (
+                            <li key={i} className="pt-3 pb-1 border-t border-zinc-700 first:border-t-0 first:pt-0">
+                              <span className="text-xs font-bold uppercase tracking-wider text-amber-400/80">
+                                {highlight.replace(/──/g, "").trim()}
+                              </span>
+                            </li>
+                          );
+                        }
+                        return (
+                          <li key={i} className="flex items-start gap-2 text-sm">
+                            <Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                            <span>{highlight}</span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </CardContent>
 
@@ -557,7 +569,7 @@ export default function Pricing() {
 
         {/* Feature comparison table */}
         <div className="mb-16 max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8">Membership Feature Comparison</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">What's Included vs. What's Paid Separately</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -569,38 +581,65 @@ export default function Pricing() {
               </thead>
               <tbody className="divide-y divide-zinc-800">
                 {[
-                  { feature: "Annual Price", independent: "$10,000", industry: "$50,000" },
-                  { feature: "Monthly (Direct Debit)", independent: "$900/mo", industry: "$4,500/mo" },
-                  { feature: "Projects", independent: "25", industry: "Unlimited" },
-                  { feature: "AI Generations / Month", independent: "200", industry: "Unlimited" },
-                  { feature: "Scenes per Project", independent: "90", industry: "Unlimited" },
-                  { feature: "Characters per Project", independent: "30", industry: "Unlimited" },
-                  { feature: "Max Film Duration", independent: "90 min", industry: "180 min" },
-                  { feature: "Max Resolution", independent: "1080p + 4K", industry: "4K + ProRes" },
-                  { feature: "Team Members", independent: "5", industry: "Unlimited" },
-                  { feature: "Full Film Generation", independent: true, industry: true },
-                  { feature: "AI Voice Acting & Dialogue", independent: true, industry: true },
-                  { feature: "AI-Generated Film Score", independent: true, industry: true },
-                  { feature: "Character Consistency (DNA Lock)", independent: true, industry: true },
-                  { feature: "Scene-to-Scene Continuity", independent: true, industry: true },
-                  { feature: "Clip Chaining (30-60s scenes)", independent: true, industry: true },
-                  { feature: "AI Script Writer", independent: true, industry: true },
-                  { feature: "Storyboard Generator", independent: true, industry: true },
-                  { feature: "Director's AI Assistant", independent: true, industry: true },
-                  { feature: "Color Grading & LUTs", independent: true, industry: true },
-                  { feature: "Location Scout", independent: true, industry: true },
-                  { feature: "VFX Suite (Advanced Effects)", independent: false, industry: true },
-                  { feature: "Multi-Shot Sequencer", independent: false, industry: true },
-                  { feature: "Live Action Plate Compositing", independent: false, industry: true },
-                  { feature: "NLE / DaVinci Resolve Export", independent: false, industry: true },
-                  { feature: "AI Casting Tool", independent: false, industry: true },
-                  { feature: "Bulk / Parallel Generation", independent: false, industry: true },
-                  { feature: "White-Label Exports", independent: false, industry: true },
-                  { feature: "API Access & Pipeline Integration", independent: false, industry: true },
-                  { feature: "Custom AI Model Fine-Tuning", independent: false, industry: true },
-                  { feature: "Priority Rendering Queue", independent: false, industry: true },
-                  { feature: "Dedicated Account Manager", independent: false, industry: true },
-                ].map((row, i) => (
+                  // Pricing
+                  { feature: "Annual Price", independent: "$10,000", industry: "$50,000", section: "" },
+                  { feature: "Monthly (Direct Debit)", independent: "$900/mo", industry: "$4,500/mo", section: "" },
+                  // Section: Included in Membership
+                  { feature: "INCLUDED IN MEMBERSHIP", independent: "", industry: "", section: "header" },
+                  { feature: "AI Script Writer & Screenplay", independent: true, industry: true, section: "" },
+                  { feature: "Storyboard Generator", independent: true, industry: true, section: "" },
+                  { feature: "Character Creator & DNA Lock", independent: true, industry: true, section: "" },
+                  { feature: "Director's AI Assistant", independent: true, industry: true, section: "" },
+                  { feature: "Location Scout & Mood Board", independent: true, industry: true, section: "" },
+                  { feature: "Dialogue Editor", independent: true, industry: true, section: "" },
+                  { feature: "Budget Estimator", independent: true, industry: true, section: "" },
+                  { feature: "Color Grading & LUT Presets", independent: true, industry: true, section: "" },
+                  { feature: "Shot List & Continuity Check", independent: true, industry: true, section: "" },
+                  { feature: "Ad & Poster Maker", independent: true, industry: true, section: "" },
+                  { feature: "Trailer Studio", independent: true, industry: true, section: "" },
+                  { feature: "TV Commercial Creator", independent: true, industry: true, section: "" },
+                  { feature: "Subtitle Generator", independent: true, industry: true, section: "" },
+                  { feature: "Sound Effects Library", independent: true, industry: true, section: "" },
+                  // Section: Industry-Only Tools
+                  { feature: "INDUSTRY-EXCLUSIVE TOOLS", independent: "", industry: "", section: "header" },
+                  { feature: "VFX Suite (Advanced Effects)", independent: false, industry: true, section: "" },
+                  { feature: "Multi-Shot Sequencer", independent: false, industry: true, section: "" },
+                  { feature: "Live Action Plate Compositing", independent: false, industry: true, section: "" },
+                  { feature: "NLE / DaVinci Resolve Export", independent: false, industry: true, section: "" },
+                  { feature: "AI Casting Tool", independent: false, industry: true, section: "" },
+                  { feature: "Bulk / Parallel Generation", independent: false, industry: true, section: "" },
+                  { feature: "White-Label Exports", independent: false, industry: true, section: "" },
+                  { feature: "API Access & Pipeline Integration", independent: false, industry: true, section: "" },
+                  { feature: "Custom AI Model Fine-Tuning", independent: false, industry: true, section: "" },
+                  { feature: "Priority Rendering Queue", independent: false, industry: true, section: "" },
+                  { feature: "Dedicated Account Manager", independent: false, industry: true, section: "" },
+                  // Section: Film Generation (paid separately)
+                  { feature: "FILM GENERATION (PAID PER PROJECT)", independent: "", industry: "", section: "header" },
+                  { feature: "Full Film Generation", independent: "from $40K", industry: "from $40K", section: "" },
+                  { feature: "Scene-by-Scene Generation", independent: "$10K/scene", industry: "$10K/scene", section: "" },
+                  { feature: "AI Voice Acting & Dialogue", independent: "Included in film", industry: "Included in film", section: "" },
+                  { feature: "AI-Generated Film Score", independent: "Included in film", industry: "Included in film", section: "" },
+                  { feature: "Character Consistency Across Scenes", independent: "Included in film", industry: "Included in film", section: "" },
+                  { feature: "Scene-to-Scene Visual Continuity", independent: "Included in film", industry: "Included in film", section: "" },
+                  // Limits
+                  { feature: "PLATFORM LIMITS", independent: "", industry: "", section: "header" },
+                  { feature: "Projects", independent: "25", industry: "Unlimited", section: "" },
+                  { feature: "AI Generations / Month", independent: "200", industry: "Unlimited", section: "" },
+                  { feature: "Max Film Duration", independent: "90 min", industry: "180 min", section: "" },
+                  { feature: "Max Resolution", independent: "1080p + 4K", industry: "4K + ProRes", section: "" },
+                  { feature: "Team Members", independent: "5", industry: "Unlimited", section: "" },
+                ].map((row: any, i: number) => {
+                  // Section header rows
+                  if (row.section === "header") {
+                    return (
+                      <tr key={i} className="bg-zinc-900/80">
+                        <td colSpan={3} className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-amber-400/80">
+                          {row.feature}
+                        </td>
+                      </tr>
+                    );
+                  }
+                  return (
                   <tr key={i} className="hover:bg-zinc-900/50">
                     <td className="py-3 px-4 font-medium">{row.feature}</td>
                     {(["independent", "industry"] as const).map((tier) => {
@@ -624,7 +663,8 @@ export default function Pricing() {
                       );
                     })}
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

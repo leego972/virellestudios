@@ -57,23 +57,22 @@ const PRICING = [
     period: "/year",
     highlight: true,
     badge: "For Creators",
-    desc: "Everything you need to generate AI films up to 90 minutes. Or $900/mo via direct debit.",
+    desc: "Full access to all creative & pre-production tools. Film generation charged separately. Or $900/mo via direct debit.",
     features: [
-      "Full Film Generation (up to 90 min)",
-      "AI Voice Acting & Dialogue",
-      "AI-Generated Film Score",
-      "Character Consistency (DNA Lock)",
-      "Scene-to-Scene Continuity",
-      "Clip Chaining (30-60s scenes)",
-      "AI Script Writer",
+      "── INCLUDED IN MEMBERSHIP ──",
+      "AI Script Writer & Screenplay Tools",
       "Storyboard Generator",
+      "Character Creator & DNA Lock",
       "Director's AI Assistant",
-      "Color Grading & LUTs",
-      "Location Scout",
+      "Location Scout & Mood Board",
+      "Dialogue Editor & Budget Estimator",
+      "Color Grading, Shot List & More",
+      "Ad & Poster Maker",
+      "Up to 5 team collaborators",
+      "── FILM GENERATION (per project) ──",
+      "Films up to 90 min (from $40K)",
+      "Scene-by-scene ($10K/scene)",
       "1080p + 4K UHD Export",
-      "Up to 5 team members",
-      "200 AI generations / month",
-      "25 projects",
     ],
     limitations: [],
   },
@@ -84,24 +83,22 @@ const PRICING = [
     period: "/year",
     highlight: false,
     badge: "For Studios",
-    desc: "Enterprise-grade tools for production houses and studios. Or $4,500/mo via direct debit.",
+    desc: "Everything in Independent plus enterprise tools, API access, and unlimited capacity. Or $4,500/mo via direct debit.",
     features: [
-      "Everything in Independent",
-      "Films up to 180 minutes",
+      "── EVERYTHING IN INDEPENDENT PLUS ──",
+      "VFX Suite & Multi-Shot Sequencer",
+      "Live Action Plate Compositing",
+      "NLE / DaVinci Resolve Export",
+      "AI Casting & Bulk Generation",
       "White-Label Exports (no branding)",
       "API Access & Pipeline Integration",
       "Custom AI Model Fine-Tuning",
       "Priority Rendering Queue",
-      "NLE / DaVinci Resolve Export",
-      "Live Action Plate Compositing",
-      "Multi-Shot Sequencer",
-      "VFX Suite (Advanced Effects)",
-      "AI Casting Tool",
-      "Bulk / Parallel Generation",
-      "4K UHD + ProRes Export",
-      "Unlimited team members",
-      "Unlimited projects & generations",
       "Dedicated Account Manager",
+      "Unlimited everything",
+      "── FILM GENERATION (per project) ──",
+      "Films up to 180 min (from $40K)",
+      "4K UHD + ProRes Export",
     ],
     limitations: [],
   },
@@ -762,12 +759,23 @@ export default function Landing() {
                     Get Started
                   </Button>
                   <ul className="space-y-2">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-xs">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-green-400 shrink-0 mt-0.5" />
-                        <span className="text-muted-foreground">{f}</span>
-                      </li>
-                    ))}
+                    {plan.features.map((f) => {
+                      if (f.startsWith("──")) {
+                        return (
+                          <li key={f} className="pt-2 pb-1 border-t border-zinc-700 first:border-t-0 first:pt-0">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400/80">
+                              {f.replace(/──/g, "").trim()}
+                            </span>
+                          </li>
+                        );
+                      }
+                      return (
+                        <li key={f} className="flex items-start gap-2 text-xs">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-green-400 shrink-0 mt-0.5" />
+                          <span className="text-muted-foreground">{f}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </CardContent>
               </Card>

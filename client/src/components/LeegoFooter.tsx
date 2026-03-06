@@ -4,7 +4,7 @@ export default function LeegoFooter() {
   const [expanded, setExpanded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number>(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Matrix rain effect
   const startMatrixRain = useCallback(() => {
