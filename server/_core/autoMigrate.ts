@@ -404,6 +404,11 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "email", definition: "VARCHAR(320) NULL" },
     { table: "users", column: "passwordHash", definition: "VARCHAR(255) NULL" },
     { table: "users", column: "loginMethod", definition: "VARCHAR(64) NULL" },
+    // Scenes table - transition & grading (missing from original CREATE TABLE)
+    { table: "scenes", column: "transitionType", definition: "VARCHAR(64) NULL DEFAULT 'cut'" },
+    { table: "scenes", column: "transitionDuration", definition: "FLOAT NULL DEFAULT 0.5" },
+    { table: "scenes", column: "colorGrading", definition: "VARCHAR(128) NULL" },
+    { table: "scenes", column: "productionNotes", definition: "TEXT NULL" },
     // Scenes table - video generation fields
     { table: "scenes", column: "videoUrl", definition: "TEXT NULL" },
     { table: "scenes", column: "videoJobId", definition: "VARCHAR(255) NULL" },

@@ -343,16 +343,83 @@ export default function ScriptWriter() {
     );
   };
 
-  const handleExport = () => {
-    const content = elementsToScript(elements);
-    const blob = new Blob([content], { type: "text/plain" });
+  const elementsToFountain = (els: ScriptElement[]): string => {
+    return els.map((el) => {
+      switch (el.type) {
+        case "scene-heading": return `\n.${el.text}\n`;
+        case "action": return `${el.text}`;
+        case "character": return `\n@${el.text}`;
+        case "dialogue": return `${el.text}`;
+        case "parenthetical": return `(${el.text.replace(/^\(|\)$/g, '')})`;
+        case "transition": return `\n> ${el.text}`;
+        default: return el.text;
+      }
+    }).join("\n").trim();
+  };
+
+  const elementsToScreenplayPDF = (els: ScriptElement[]): string => {
+    const lines: string[] = [
+      `Title: ${title}`,
+      `Author: VirElle Studios`,
+      `Date: ${new Date().toLocaleDateString()}`,
+      ``,
+      `${'='.repeat(60)}`,
+      ``
+    ];
+    els.forEach((el) => {
+      switch (el.type) {
+        case "scene-heading":
+          lines.push(``, `${el.text.toUpperCase()}`, ``);
+          break;
+        case "action":
+          lines.push(el.text);
+          break;
+        case "character":
+          lines.push(``, `${' '.repeat(20)}${el.text.toUpperCase()}`);
+          break;
+        case "dialogue":
+          lines.push(`${' '.repeat(10)}${el.text}`);
+          break;
+        case "parenthetical":
+          lines.push(`${' '.repeat(15)}${el.text}`);
+          break;
+        case "transition":
+          lines.push(``, `${' '.repeat(40)}${el.text.toUpperCase()}`, ``);
+          break;
+      }
+    });
+    return lines.join("\n");
+  };
+
+  const handleExport = (format: "txt" | "fountain" | "pdf") => {
+    const safeName = title.replace(/[^a-zA-Z0-9]/g, "_");
+    let content: string;
+    let mimeType: string;
+    let ext: string;
+    switch (format) {
+      case "fountain":
+        content = elementsToFountain(elements);
+        mimeType = "text/plain";
+        ext = "fountain";
+        break;
+      case "pdf":
+        content = elementsToScreenplayPDF(elements);
+        mimeType = "text/plain";
+        ext = "txt";
+        break;
+      default:
+        content = elementsToScript(elements);
+        mimeType = "text/plain";
+        ext = "txt";
+    }
+    const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${title.replace(/[^a-zA-Z0-9]/g, "_")}.txt`;
+    a.download = `${safeName}.${ext}`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Script exported");
+    toast.success(`Script exported as .${ext}`);
   };
 
   const autoResizeTextarea = (textarea: HTMLTextAreaElement) => {
@@ -390,14 +457,17 @@ export default function ScriptWriter() {
               <TooltipContent>Save (auto-saves after 3s)</TooltipContent>
             </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={handleExport}>
-                  <Download className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Export as text</TooltipContent>
-            </Tooltip>
+            <Select onValueChange={(v) => handleExport(v as "txt" | "fountain" | "pdf")}>
+              <SelectTrigger className="w-auto h-8 px-2 gap-1 border-none bg-transparent hover:bg-accent">
+                <Download className="h-4 w-4" />
+                <span className="text-xs hidden sm:inline">Export</span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="txt">Plain Text (.txt)</SelectItem>
+                <SelectItem value="fountain">Fountain (.fountain)</SelectItem>
+                <SelectItem value="pdf">Screenplay Format (.txt)</SelectItem>
+              </SelectContent>
+            </Select>
 
             {scriptId && scriptId !== "new" && (
               <Tooltip>

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { trpc } from "@/lib/trpc";
 import { useParams, useLocation } from "wouter";
-import { Loader2, ArrowLeft, ListOrdered, Printer, Sparkles } from "lucide-react";
+import { Loader2, ArrowLeft, ListOrdered, Printer, Sparkles, Download } from "lucide-react";
 import { useState } from "react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
@@ -79,9 +79,28 @@ export default function ShotList() {
           </div>
           <div className="flex items-center gap-2">
             {generated && (
+              <>
+              <Button variant="outline" size="sm" onClick={() => {
+                const headers = ['Shot #','Scene','Shot Type','Camera','Lens','Framing','Action','Dialogue','Props','Wardrobe','VFX','Notes'];
+                const csvRows = [headers.join(',')];
+                shots.forEach(s => {
+                  csvRows.push([s.shotNumber,s.sceneTitle,s.shotType,s.cameraMovement,s.lens,s.framing,s.action,s.dialogue,s.props,s.wardrobe,s.vfx,s.notes].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
+                });
+                const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${(project?.title || 'shot_list').replace(/[^a-zA-Z0-9]/g, '_')}_shots.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast.success('Shot list exported as CSV');
+              }}>
+                <Download className="h-4 w-4 mr-1" />CSV
+              </Button>
               <Button variant="outline" size="sm" onClick={() => window.print()}>
                 <Printer className="h-4 w-4 mr-1" />Print
               </Button>
+              </>
             )}
             <Button
               size="sm"
