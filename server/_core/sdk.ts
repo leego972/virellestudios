@@ -114,6 +114,31 @@ class SDKServer {
   }
 
   /**
+   * Initiate OAuth authorization flow — returns the redirect URL for the provider
+   * @example
+   * const url = await sdk.getAuthorizationUrl("google", "https://virelle.life/api/oauth/callback");
+   */
+  async getAuthorizationUrl(
+    provider: "google" | "github",
+    callbackUrl: string
+  ): Promise<string> {
+    const AUTHORIZE_PATH = `/webdev.v1.WebDevAuthPublicService/Authorize`;
+    const state = Buffer.from(callbackUrl).toString("base64");
+    const payload = {
+      redirectUri: callbackUrl,
+      projectId: ENV.appId,
+      state,
+      responseType: "code",
+      scope: `openid profile email platform:${provider}`,
+    };
+    const { data } = await this.client.post<{ redirectUrl: string }>(
+      AUTHORIZE_PATH,
+      payload
+    );
+    return data.redirectUrl;
+  }
+
+  /**
    * Exchange OAuth authorization code for access token
    * @example
    * const tokenResponse = await sdk.exchangeCodeForToken(code, state);

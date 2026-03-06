@@ -10,6 +10,34 @@ function getQueryParam(req: Request, key: string): string | undefined {
 }
 
 export function registerOAuthRoutes(app: Express) {
+  // OAuth initiation routes — redirect user to Google/GitHub via Manus OAuth
+  app.get("/api/auth/google", async (req: Request, res: Response) => {
+    try {
+      const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+      const host = req.headers["x-forwarded-host"] || req.headers.host;
+      const callbackUrl = `${protocol}://${host}/api/oauth/callback`;
+      const redirectUrl = await sdk.getAuthorizationUrl("google", callbackUrl);
+      res.redirect(302, redirectUrl);
+    } catch (error) {
+      console.error("[OAuth] Google auth initiation failed", error);
+      res.redirect(302, "/login?error=oauth_failed");
+    }
+  });
+
+  app.get("/api/auth/github", async (req: Request, res: Response) => {
+    try {
+      const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+      const host = req.headers["x-forwarded-host"] || req.headers.host;
+      const callbackUrl = `${protocol}://${host}/api/oauth/callback`;
+      const redirectUrl = await sdk.getAuthorizationUrl("github", callbackUrl);
+      res.redirect(302, redirectUrl);
+    } catch (error) {
+      console.error("[OAuth] GitHub auth initiation failed", error);
+      res.redirect(302, "/login?error=oauth_failed");
+    }
+  });
+
+  // OAuth callback — exchange code for token and create session
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");

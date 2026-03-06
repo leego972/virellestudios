@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  // Show OAuth error if redirected back with error param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "oauth_failed") {
+      toast.error("OAuth sign-in failed. Please try again or use email/password.");
+      // Clean the URL
+      window.history.replaceState({}, "", "/login");
+    }
+  }, []);
 
   const utils = trpc.useUtils();
   const loginMutation = trpc.auth.login.useMutation({
