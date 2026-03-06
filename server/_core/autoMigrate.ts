@@ -636,27 +636,19 @@ export async function runAutoMigration(): Promise<void> {
   }
 
   // Step 2: Add missing columns to existing tables
+  // Strategy: Just try ALTER TABLE ADD COLUMN directly — if column exists, MySQL throws
+  // "Duplicate column name" which we catch and ignore. This is more reliable than
+  // querying INFORMATION_SCHEMA which can have caching/permission issues.
   for (const col of missingColumns) {
     try {
-      // Check if column exists
-      const [rows] = await db.execute(sql.raw(
-        `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '${col.table}' AND COLUMN_NAME = '${col.column}'`
-      ));
-      // Handle various result formats from mysql2/drizzle
-      const rawCount = (rows as any)?.[0]?.cnt ?? (rows as any)?.cnt ?? 0;
-      const count = Number(rawCount);
-      console.log(`[AutoMigrate] Check ${col.table}.${col.column}: count=${count}, raw=${JSON.stringify(rawCount)}`);
-      if (count === 0) {
-        const alterSQL = `ALTER TABLE \`${col.table}\` ADD COLUMN \`${col.column}\` ${col.definition}`;
-        console.log(`[AutoMigrate] Running: ${alterSQL}`);
-        await db.execute(sql.raw(alterSQL));
-        columnsAdded++;
-        console.log(`[AutoMigrate] Added column ${col.table}.${col.column}`);
-      }
+      const alterSQL = `ALTER TABLE \`${col.table}\` ADD COLUMN \`${col.column}\` ${col.definition}`;
+      await db.execute(sql.raw(alterSQL));
+      columnsAdded++;
+      console.log(`[AutoMigrate] Added column ${col.table}.${col.column}`);
     } catch (err: any) {
       // "Duplicate column name" means it already exists — that's fine
-      if (err.message?.includes("Duplicate column")) {
-        // Already exists, skip
+      if (err.message?.includes("Duplicate column") || err.code === 'ER_DUP_FIELDNAME' || err.errno === 1060) {
+        // Already exists, skip silently
       } else {
         console.error(`[AutoMigrate] Error adding column ${col.table}.${col.column}:`, err.message);
       }
