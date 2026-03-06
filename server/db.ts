@@ -232,34 +232,38 @@ export async function createScene(data: InsertScene) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  // Use raw SQL to only insert columns that are explicitly provided.
-  // This avoids "Unknown column" errors when the DB schema hasn't been
-  // fully migrated to include all columns defined in the Drizzle schema.
+  // Build a minimal INSERT with only the columns that are explicitly provided.
+  // Uses Drizzle's sql template tag for proper parameterization.
   const entries = Object.entries(data).filter(
     ([_, v]) => v !== undefined
   );
   if (entries.length === 0) throw new Error("No data to insert");
   
-  const columns = entries.map(([k]) => `\`${k}\``).join(", ");
-  const placeholders = entries.map(() => "?").join(", ");
-  const values = entries.map(([_, v]) => {
+  const columns = entries.map(([k]) => k);
+  const vals = entries.map(([_, v]) => {
     if (v === null) return null;
     if (typeof v === "object") return JSON.stringify(v);
     if (typeof v === "boolean") return v ? 1 : 0;
     return v;
   });
   
+  // Build: INSERT INTO scenes (`col1`, `col2`) VALUES (val1, val2)
+  const colsSql = sql.raw(columns.map(c => `\`${c}\``).join(", "));
+  const valChunks = vals.map(v => sql`${v}`);
+  const valsSql = sql.join(valChunks, sql.raw(", "));
+  
   try {
     const insertResult = await db.execute(
-      sql`INSERT INTO scenes (${sql.raw(columns)}) VALUES (${sql.join(values.map(v => sql`${v}`), sql`, `)})`
+      sql`INSERT INTO scenes (${colsSql}) VALUES (${valsSql})`
     );
     const id = (insertResult as any)[0]?.insertId;
     if (!id) throw new Error("Failed to get insert ID");
-    // Use SELECT * to avoid "Unknown column" errors from Drizzle's column-specific SELECT
     const [rows] = await db.execute(sql`SELECT * FROM scenes WHERE id = ${id} LIMIT 1`);
-    return (rows as any)?.[0];
+    return (rows as unknown as any[])?.[0];
   } catch (err: any) {
-    throw new Error(`Failed query: insert into \`scenes\` (${columns}): ${err.message}`);
+    // Log the actual error for debugging, only include the MySQL error not the full query
+    const mysqlErr = err.message?.split('\n')?.[0] || err.message;
+    throw new Error(`Scene insert failed: ${mysqlErr}`);
   }
 }
 
