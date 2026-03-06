@@ -81,9 +81,9 @@ export interface TierLimits {
  * BYOK (Bring Your Own Key) — users provide their own API keys for video, voice, and music generation.
  * The platform charges per-film production fees for the orchestration, pipeline, and production tools.
  * 
- * MEMBERSHIP TIERS (annual, required to use the platform):
- *   Independent — $5,000/year — Films up to 90 min, all core production tools
- *   Industry — $25,000/year — Unlimited, 180 min, white-label, API, fine-tuning, priority rendering
+ * MEMBERSHIP TIERS (required to use the platform):
+ *   Independent — $10,000/year ($900/month via direct debit) — Films up to 90 min, all core production tools
+ *   Industry — $50,000/year ($4,500/month via direct debit) — Unlimited, 180 min, white-label, API, fine-tuning, priority rendering
  * 
  * FILM PRODUCTION PACKAGES (one-time per film, members only):
  *   Short Film (up to 30 min):  $80,000   (Launch Special: $40,000)
@@ -431,9 +431,10 @@ export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first film
 // ============================================================
 
 export interface TierPricing {
-  monthly: number;
-  annual: number;
-  annualTotal: number;
+  monthly: number;       // monthly price when paying monthly via direct debit
+  annual: number;        // effective monthly price when paying annually
+  annualTotal: number;   // total annual price
+  monthlyTotal: number;  // total if paid monthly for 12 months (monthly × 12)
 }
 
 /**
@@ -441,12 +442,12 @@ export interface TierPricing {
  * Annual membership is REQUIRED to use the Virelle Studios platform.
  * Film production packages are charged separately as one-time fees.
  * 
- * Independent: $5,000/year — Films up to 90 min, all core production tools
- * Industry: $25,000/year — Unlimited, 180 min, white-label, API, fine-tuning
+ * Independent: $10,000/year ($900/month via direct debit) — Films up to 90 min, all core production tools
+ * Industry: $50,000/year ($4,500/month via direct debit) — Unlimited, 180 min, white-label, API, fine-tuning
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
-  independent: { monthly: 417, annual: 417, annualTotal: 5000 },
-  industry: { monthly: 2083, annual: 2083, annualTotal: 25000 },
+  independent: { monthly: 900, annual: 833, annualTotal: 10000, monthlyTotal: 10800 },
+  industry: { monthly: 4500, annual: 4167, annualTotal: 50000, monthlyTotal: 54000 },
 };
 
 // Referral Rewards
@@ -481,16 +482,27 @@ export const TOP_UP_PACKS: TopUpPack[] = [
  * Used by the webhook handler to determine which tier a subscription belongs to.
  */
 export function priceIdToTier(priceId: string): SubscriptionTier {
-  // Check all configured price IDs and map to tiers
+  // Import resolved price IDs from auto-provisioning
+  const { getStripePriceId } = require("./stripeProvisioning");
+
+  // Check auto-provisioned price IDs first
   const independentPriceIds = [
+    getStripePriceId("independent_monthly"),
+    getStripePriceId("independent_annual"),
+    // Legacy ENV keys for backward compatibility
     ENV.stripeCreatorMonthlyPriceId,
     ENV.stripeCreatorAnnualPriceId,
     ENV.stripeProPriceId,
     ENV.stripeProMonthlyPriceId,
     ENV.stripeProAnnualPriceId,
+    (ENV as any).stripeIndependentMonthlyPriceId,
+    (ENV as any).stripeIndependentAnnualPriceId,
   ].filter(Boolean);
 
   const industryPriceIds = [
+    getStripePriceId("industry_monthly"),
+    getStripePriceId("industry_annual"),
+    // Legacy ENV keys for backward compatibility
     ENV.stripeIndustryPriceId,
     ENV.stripeIndustryMonthlyPriceId,
     ENV.stripeIndustryAnnualPriceId,
@@ -499,7 +511,7 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
   if (independentPriceIds.includes(priceId)) return "independent";
   if (industryPriceIds.includes(priceId)) return "industry";
 
-  // Fallback: try to infer from price ID naming convention
+  // Fallback: try to infer from price metadata or naming convention
   const lower = priceId.toLowerCase();
   if (lower.includes("independent") || lower.includes("creator") || lower.includes("pro")) return "independent";
   if (lower.includes("industry") || lower.includes("enterprise")) return "industry";
@@ -618,6 +630,7 @@ export async function getOrCreateStripeCustomer(user: User): Promise<string> {
 
 /**
  * Create a Stripe Checkout session for platform subscription.
+ * Supports both annual (card) and monthly (direct debit / ACH + card) billing.
  */
 export async function createCheckoutSession(
   user: User,
@@ -625,26 +638,47 @@ export async function createCheckoutSession(
   priceId: string,
   successUrl: string,
   cancelUrl: string,
+  billing: "monthly" | "annual" = "annual",
   trialDays?: number
 ): Promise<string> {
   if (!stripe) throw new Error("Stripe is not configured");
-  
+
+  // Monthly billing supports direct debit (ACH bank transfer) + card
+  // Annual billing is card-only
+  const paymentMethodTypes: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] =
+    billing === "monthly"
+      ? ["card", "us_bank_account"]
+      : ["card"];
+
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     customer: customerId,
     mode: "subscription",
-    payment_method_types: ["card"],
+    payment_method_types: paymentMethodTypes,
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: successUrl,
     cancel_url: cancelUrl,
     metadata: {
       userId: String(user.id),
+      billing,
     },
     subscription_data: {
       metadata: {
         userId: String(user.id),
+        billing,
       },
       ...(trialDays ? { trial_period_days: trialDays } : {}),
     },
+    // For ACH direct debit, allow mandate collection
+    ...(billing === "monthly" ? {
+      payment_method_options: {
+        us_bank_account: {
+          financial_connections: {
+            permissions: ["payment_method" as any],
+          },
+          verification_method: "instant" as any,
+        },
+      },
+    } : {}),
   };
   
   const session = await stripe.checkout.sessions.create(sessionParams);

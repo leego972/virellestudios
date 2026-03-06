@@ -5,6 +5,10 @@
  * if they don't already exist. Uses the STRIPE_SECRET_KEY from env vars.
  * 
  * This ensures the enterprise pricing model is always in sync with Stripe.
+ * 
+ * MEMBERSHIP TIERS:
+ *   Independent — $10,000/year or $900/month (direct debit)
+ *   Industry    — $50,000/year or $4,500/month (direct debit)
  */
 
 import Stripe from "stripe";
@@ -36,68 +40,50 @@ interface PriceDefinition {
   currency: string;
   recurring?: { interval: "month" | "year" };  // undefined = one-time
   metadata?: Record<string, string>;
+  paymentMethodTypes?: string[];  // e.g. ["us_bank_account", "card"] for direct debit
 }
 
 const SUBSCRIPTION_PRICES: PriceDefinition[] = [
-  // Creator tier
+  // ─── Independent tier ───
   {
-    key: "creator_monthly",
-    envKey: "stripeCreatorMonthlyPriceId",
-    productName: "Virelle Studios — Creator (Monthly)",
-    productDesc: "AI film production platform access — Creator tier, billed monthly",
-    unitAmount: 250000, // $2,500
+    key: "independent_monthly",
+    envKey: "stripeIndependentMonthlyPriceId",
+    productName: "Virelle Studios — Independent (Monthly)",
+    productDesc: "AI film production platform access — Independent tier, billed monthly via direct debit",
+    unitAmount: 90000, // $900/month
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "creator", billing: "monthly" },
+    metadata: { tier: "independent", billing: "monthly" },
+    paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
-    key: "creator_annual",
-    envKey: "stripeCreatorAnnualPriceId",
-    productName: "Virelle Studios — Creator (Annual)",
-    productDesc: "AI film production platform access — Creator tier, billed annually",
-    unitAmount: 2400000, // $24,000/yr
+    key: "independent_annual",
+    envKey: "stripeIndependentAnnualPriceId",
+    productName: "Virelle Studios — Independent (Annual)",
+    productDesc: "AI film production platform access — Independent tier, billed annually",
+    unitAmount: 1000000, // $10,000/year
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "creator", billing: "annual" },
+    metadata: { tier: "independent", billing: "annual" },
   },
-  // Pro tier
-  {
-    key: "pro_monthly",
-    envKey: "stripeProMonthlyPriceId",
-    productName: "Virelle Studios — Pro (Monthly)",
-    productDesc: "AI film production platform access — Pro tier, billed monthly",
-    unitAmount: 500000, // $5,000
-    currency: "usd",
-    recurring: { interval: "month" },
-    metadata: { tier: "pro", billing: "monthly" },
-  },
-  {
-    key: "pro_annual",
-    envKey: "stripeProAnnualPriceId",
-    productName: "Virelle Studios — Pro (Annual)",
-    productDesc: "AI film production platform access — Pro tier, billed annually",
-    unitAmount: 4800000, // $48,000/yr
-    currency: "usd",
-    recurring: { interval: "year" },
-    metadata: { tier: "pro", billing: "annual" },
-  },
-  // Industry tier
+  // ─── Industry tier ───
   {
     key: "industry_monthly",
     envKey: "stripeIndustryMonthlyPriceId",
     productName: "Virelle Studios — Industry (Monthly)",
-    productDesc: "AI film production platform access — Industry tier, billed monthly",
-    unitAmount: 1000000, // $10,000
+    productDesc: "AI film production platform access — Industry tier, billed monthly via direct debit",
+    unitAmount: 450000, // $4,500/month
     currency: "usd",
     recurring: { interval: "month" },
     metadata: { tier: "industry", billing: "monthly" },
+    paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "industry_annual",
     envKey: "stripeIndustryAnnualPriceId",
     productName: "Virelle Studios — Industry (Annual)",
     productDesc: "AI film production platform access — Industry tier, billed annually",
-    unitAmount: 9600000, // $96,000/yr
+    unitAmount: 5000000, // $50,000/year
     currency: "usd",
     recurring: { interval: "year" },
     metadata: { tier: "industry", billing: "annual" },
@@ -282,9 +268,19 @@ export async function runStripeProvisioning(): Promise<void> {
 }
 
 /**
+ * Get the payment method types for a given price key.
+ * Monthly plans support direct debit (ACH) + card; annual plans default to card.
+ */
+export function getPaymentMethodTypes(priceKey: string): string[] {
+  const def = [...SUBSCRIPTION_PRICES, ...TOPUP_PRICES].find(d => d.key === priceKey);
+  return def?.paymentMethodTypes || ["card"];
+}
+
+/**
  * Get all resolved price IDs as a map (for use in routers).
- * Keys: creator_monthly, creator_annual, pro_monthly, pro_annual,
- *       industry_monthly, industry_annual, topup_10, topup_30, topup_100
+ * Keys: independent_monthly, independent_annual,
+ *       industry_monthly, industry_annual,
+ *       topup_10, topup_30, topup_100
  */
 export function getAllResolvedPriceIds(): Record<string, string> {
   return { ...resolvedPriceIds };

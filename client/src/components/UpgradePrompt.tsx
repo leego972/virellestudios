@@ -12,10 +12,10 @@ interface UpgradePromptProps {
 }
 
 const tierPricing: Record<string, string> = {
-  independent: "$5,000/year",
-  industry: "$25,000/year",
-  creator: "$5,000/year",
-  pro: "$25,000/year",
+  independent: "$10,000/year",
+  industry: "$50,000/year",
+  creator: "$10,000/year",
+  pro: "$50,000/year",
 };
 
 const tierLabels: Record<string, string> = {

@@ -11,6 +11,7 @@ import GoldWatermark from "@/components/GoldWatermark";
 export default function Pricing() {
   const [, setLocation] = useLocation();
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const [billingCycle, setBillingCycle] = useState<"annual" | "monthly">("annual");
 
   // ── PUBLIC query: always works, never triggers auth redirect ──
   const { data: pricing } = trpc.subscription.pricing.useQuery();
@@ -58,7 +59,7 @@ export default function Pricing() {
       // Logged in but no active sub — create checkout
       const result = await checkoutMutation.mutateAsync({
         tier,
-        billing: "annual",
+        billing: billingCycle,
         successUrl: `${window.location.origin}/?subscription=success`,
         cancelUrl: `${window.location.origin}/pricing?subscription=canceled`,
       });
@@ -166,8 +167,33 @@ export default function Pricing() {
               Membership Plans
             </h2>
             <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              Annual membership is required to use the Virelle Studios platform. Choose the tier that fits your production needs.
+              Membership is required to use the Virelle Studios platform. Choose the tier and billing cycle that fits your production needs.
             </p>
+          </div>
+
+          {/* Billing cycle toggle */}
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <button
+              onClick={() => setBillingCycle("monthly")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                billingCycle === "monthly"
+                  ? "bg-amber-600 text-white"
+                  : "bg-zinc-800 text-zinc-400 hover:text-white"
+              }`}
+            >
+              Monthly (Direct Debit)
+            </button>
+            <button
+              onClick={() => setBillingCycle("annual")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                billingCycle === "annual"
+                  ? "bg-amber-600 text-white"
+                  : "bg-zinc-800 text-zinc-400 hover:text-white"
+              }`}
+            >
+              Annual
+              <span className="ml-1.5 text-xs text-green-400">(Save ~8%)</span>
+            </button>
           </div>
 
           {/* Pricing cards */}
@@ -195,10 +221,18 @@ export default function Pricing() {
                     </div>
                     <CardDescription className="min-h-[2.5rem]">{tier.description}</CardDescription>
                     <div className="mt-4">
-                      <span className="text-3xl font-bold">{tier.priceLabel}</span>
-                      <span className="text-muted-foreground ml-1">
-                        /{tier.interval}
-                      </span>
+                      {billingCycle === "annual" ? (
+                        <>
+                          <span className="text-3xl font-bold">{tier.priceLabel}</span>
+                          <span className="text-muted-foreground ml-1">/year</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-3xl font-bold">{tier.monthlyPriceLabel}</span>
+                          <span className="text-muted-foreground ml-1">/month</span>
+                          <p className="text-xs text-muted-foreground mt-1">via ACH direct debit or card</p>
+                        </>
+                      )}
                     </div>
                   </CardHeader>
 
@@ -236,7 +270,9 @@ export default function Pricing() {
             })}
           </div>
           <p className="text-center text-xs text-muted-foreground mt-6">
-            All memberships are billed annually. A paid membership is required to access the platform and purchase film production packages.
+            {billingCycle === "annual"
+              ? "Billed annually. A paid membership is required to access the platform and purchase film production packages."
+              : "Billed monthly via ACH direct debit or card. Cancel anytime. A paid membership is required to access the platform."}
           </p>
         </div>
 
@@ -533,7 +569,8 @@ export default function Pricing() {
               </thead>
               <tbody className="divide-y divide-zinc-800">
                 {[
-                  { feature: "Annual Price", independent: "$5,000", industry: "$25,000" },
+                  { feature: "Annual Price", independent: "$10,000", industry: "$50,000" },
+                  { feature: "Monthly (Direct Debit)", independent: "$900/mo", industry: "$4,500/mo" },
                   { feature: "Projects", independent: "25", industry: "Unlimited" },
                   { feature: "AI Generations / Month", independent: "200", industry: "Unlimited" },
                   { feature: "Scenes per Project", independent: "90", industry: "Unlimited" },

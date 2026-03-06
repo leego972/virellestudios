@@ -4418,19 +4418,21 @@ Rules:
     createCheckout: protectedProcedure
       .input(z.object({
         tier: z.enum(["independent", "industry"]),
-        billing: z.enum(["annual"]).default("annual"),
+        billing: z.enum(["monthly", "annual"]).default("annual"),
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Resolve the correct Stripe price ID — check ENV first, then auto-provisioned IDs
+        // Resolve the correct Stripe price ID — check auto-provisioned first, then ENV fallbacks
         const { getStripePriceId } = await import("./_core/stripeProvisioning");
         const priceMap: Record<string, Record<string, string>> = {
           independent: {
-            annual: ENV.stripeCreatorAnnualPriceId || ENV.stripeProAnnualPriceId || getStripePriceId("independent_annual"),
+            monthly: getStripePriceId("independent_monthly") || (ENV as any).stripeIndependentMonthlyPriceId || "",
+            annual: getStripePriceId("independent_annual") || (ENV as any).stripeIndependentAnnualPriceId || ENV.stripeCreatorAnnualPriceId || ENV.stripeProAnnualPriceId || "",
           },
           industry: {
-            annual: ENV.stripeIndustryAnnualPriceId || getStripePriceId("industry_annual"),
+            monthly: getStripePriceId("industry_monthly") || (ENV as any).stripeIndustryMonthlyPriceId || "",
+            annual: getStripePriceId("industry_annual") || ENV.stripeIndustryAnnualPriceId || "",
           },
         };
         const priceId = priceMap[input.tier]?.[input.billing];
@@ -4449,6 +4451,7 @@ Rules:
           priceId,
           input.successUrl,
           input.cancelUrl,
+          input.billing,  // pass billing type for payment method selection
           trialDays,
         );
         return { url };
@@ -4524,7 +4527,9 @@ Rules:
             monthlyPrice: TIER_PRICING.independent.monthly,
             annualPrice: TIER_PRICING.independent.annual,
             annualTotal: TIER_PRICING.independent.annualTotal,
-            priceLabel: "$5,000",
+            monthlyTotal: TIER_PRICING.independent.monthlyTotal,
+            priceLabel: "$10,000",
+            monthlyPriceLabel: "$900",
             interval: "year",
             description: "Everything you need to generate AI films up to 90 minutes",
             limits: TIER_LIMITS.independent,
@@ -4553,7 +4558,9 @@ Rules:
             monthlyPrice: TIER_PRICING.industry.monthly,
             annualPrice: TIER_PRICING.industry.annual,
             annualTotal: TIER_PRICING.industry.annualTotal,
-            priceLabel: "$25,000",
+            monthlyTotal: TIER_PRICING.industry.monthlyTotal,
+            priceLabel: "$50,000",
+            monthlyPriceLabel: "$4,500",
             interval: "year",
             description: "Enterprise-grade tools for production houses and studios",
             limits: TIER_LIMITS.industry,

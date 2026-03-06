@@ -52,11 +52,12 @@ const TESTIMONIALS = [
 const PRICING = [
   {
     tier: "Independent",
-    price: "$5,000",
+    price: "$10,000",
+    monthlyPrice: "$900",
     period: "/year",
     highlight: true,
     badge: "For Creators",
-    desc: "Everything you need to generate AI films up to 90 minutes.",
+    desc: "Everything you need to generate AI films up to 90 minutes. Or $900/mo via direct debit.",
     features: [
       "Full Film Generation (up to 90 min)",
       "AI Voice Acting & Dialogue",
@@ -78,11 +79,12 @@ const PRICING = [
   },
   {
     tier: "Industry",
-    price: "$25,000",
+    price: "$50,000",
+    monthlyPrice: "$4,500",
     period: "/year",
     highlight: false,
     badge: "For Studios",
-    desc: "Enterprise-grade tools for production houses and studios.",
+    desc: "Enterprise-grade tools for production houses and studios. Or $4,500/mo via direct debit.",
     features: [
       "Everything in Independent",
       "Films up to 180 minutes",
@@ -344,7 +346,7 @@ export default function Landing() {
               See Use Cases
             </Button>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">BYOK — bring your own API keys. Membership starts at $5,000/year.</p>
+          <p className="mt-4 text-xs text-muted-foreground">BYOK — bring your own API keys. Membership starts at $10,000/year or $900/month via direct debit.</p>
         </div>
       </section>
 
