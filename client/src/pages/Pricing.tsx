@@ -12,19 +12,28 @@ export default function Pricing() {
   const [, setLocation] = useLocation();
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
-  // pricing is a public query — always works
+  // ── PUBLIC query: always works, never triggers auth redirect ──
   const { data: pricing } = trpc.subscription.pricing.useQuery();
 
-  // status is a protected query — will be null/error for unauthenticated visitors
-  const { data: status, error: statusError } = trpc.subscription.status.useQuery(undefined, {
+  // ── PUBLIC query: auth.me returns user or null, never throws UNAUTHORIZED ──
+  const { data: currentUser } = trpc.auth.me.useQuery(undefined, {
     retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const isLoggedIn = !!currentUser;
+
+  // ── PROTECTED query: ONLY called when user is logged in ──
+  // This prevents the UNAUTHORIZED error that was causing the redirect
+  const { data: status } = trpc.subscription.status.useQuery(undefined, {
+    retry: false,
+    enabled: isLoggedIn,
   });
 
   const checkoutMutation = trpc.subscription.createCheckout.useMutation();
   const portalMutation = trpc.subscription.createBillingPortal.useMutation();
 
-  // Determine auth & membership state
-  const isLoggedIn = !!status && !statusError;
+  // Determine membership state
   const isActiveMember = isLoggedIn && status?.status === "active";
   const currentTier = status?.tier || null;
 
@@ -128,9 +137,9 @@ export default function Pricing() {
         {isActiveMember && (
           <div className="max-w-md mx-auto mb-10 p-4 rounded-lg border border-green-500/30 bg-green-500/5 text-center">
             <p className="text-sm text-green-400">
-              You're on the <strong className="capitalize">{status.tier}</strong> membership
-              {status.currentPeriodEnd && (
-                <> · Renews {new Date(status.currentPeriodEnd).toLocaleDateString()}</>
+              You're on the <strong className="capitalize">{status!.tier}</strong> membership
+              {status!.currentPeriodEnd && (
+                <> · Renews {new Date(status!.currentPeriodEnd).toLocaleDateString()}</>
               )}
             </p>
             <Button

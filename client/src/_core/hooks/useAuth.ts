@@ -68,7 +68,7 @@ export function useAuth(options?: UseAuthOptions) {
 
     const target = redirectPath ?? "/login";
     const currentPath = window.location.pathname;
-    if (currentPath === target || currentPath === "/login" || currentPath === "/register") return;
+    if (currentPath === target || currentPath === "/login" || currentPath === "/register" || currentPath === "/pricing" || currentPath === "/subscription" || currentPath === "/welcome") return;
 
     window.location.href = target;
   }, [
