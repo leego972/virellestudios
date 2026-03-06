@@ -261,9 +261,10 @@ export async function createScene(data: InsertScene) {
     const [rows] = await db.execute(sql`SELECT * FROM scenes WHERE id = ${id} LIMIT 1`);
     return (rows as unknown as any[])?.[0];
   } catch (err: any) {
-    // Log the actual error for debugging, only include the MySQL error not the full query
-    const mysqlErr = err.message?.split('\n')?.[0] || err.message;
-    throw new Error(`Scene insert failed: ${mysqlErr}`);
+    // Capture MySQL-specific error details
+    const sqlMsg = err.sqlMessage || err.message?.split('\n')?.[0] || err.message;
+    const code = err.code || err.errno || 'UNKNOWN';
+    throw new Error(`Scene insert failed [${code}]: ${sqlMsg}`);
   }
 }
 
