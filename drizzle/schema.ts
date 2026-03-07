@@ -285,6 +285,8 @@ export const scenes = mysqlTable("scenes", {
   liveActionPlateUrl: text("liveActionPlateUrl"),
   liveActionCompositeMode: varchar("liveActionCompositeMode", { length: 64 }).default("none"),
   compositeOutputUrl: text("compositeOutputUrl"),
+  // ─── Reference Images ───
+  referenceImages: json("referenceImages"), // array of S3 URLs for reference images (logos, concept art, mood boards)
   // ─── External Footage Upload ───
   externalFootageUrl: text("externalFootageUrl"),        // S3 URL for user-uploaded external footage (MP4, MOV, etc.)
   externalFootageType: varchar("externalFootageType", { length: 32 }).default("none"), // none | replace | overlay | reference

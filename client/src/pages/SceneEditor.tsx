@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Upload, Video, Film, Play } from "lucide-react";
+import { Upload, Video, Film, Play, ImagePlus, X } from "lucide-react";
 import VirelleChatBubble from "@/components/VirelleChatBubble";
 import {
   Select,
@@ -191,6 +191,7 @@ type SceneForm = {
   externalFootageUrl: string;
   externalFootageType: string;
   externalFootageLabel: string;
+  referenceImages: string[];
 };
 
 const defaultScene: SceneForm = {
@@ -268,6 +269,7 @@ const defaultScene: SceneForm = {
   externalFootageUrl: "",
   externalFootageType: "none",
   externalFootageLabel: "",
+  referenceImages: [],
 };
 
 export default function SceneEditor() {
@@ -348,6 +350,13 @@ export default function SceneEditor() {
       utils.scene.listByProject.invalidate({ projectId });
       toast.success(`Generated ${result.generated} videos (${result.total} total scenes)`);
     },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const refImageUploadMutation = trpc.upload.referenceImage.useMutation({
+    onError: (err) => toast.error(err.message),
+  });
+  const refImageRemoveMutation = trpc.upload.removeReferenceImage.useMutation({
     onError: (err) => toast.error(err.message),
   });
 
@@ -438,6 +447,7 @@ export default function SceneEditor() {
       externalFootageUrl: (scene as any).externalFootageUrl || "",
       externalFootageType: (scene as any).externalFootageType || "none",
       externalFootageLabel: (scene as any).externalFootageLabel || "",
+      referenceImages: (scene as any).referenceImages || [],
     });
     setEditDialogOpen(true);
   };
@@ -510,6 +520,7 @@ export default function SceneEditor() {
       externalFootageUrl: form.externalFootageUrl || undefined,
       externalFootageType: form.externalFootageType !== "none" ? form.externalFootageType : undefined,
       externalFootageLabel: form.externalFootageLabel || undefined,
+      referenceImages: form.referenceImages.length > 0 ? form.referenceImages : undefined,
       budgetEstimate: form.budgetEstimate || undefined,
       shootingDays: form.shootingDays || undefined,
       aiPromptOverride: form.aiPromptOverride || undefined,
@@ -1473,6 +1484,69 @@ export default function SceneEditor() {
                 onChange={e => setField("directorNotes", e.target.value)}
                 className="min-h-[60px] text-sm bg-background/50 resize-y"
               />
+            </div>
+
+            {/* ─── Reference Images ─── */}
+            <Separator />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                <ImagePlus className="h-3.5 w-3.5" />
+                Reference Images
+              </div>
+              <p className="text-xs text-muted-foreground">Upload reference images (logos, concept art, mood boards) to guide AI generation. PNG, JPG, WEBP — max 10MB each.</p>
+              {form.referenceImages.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {form.referenceImages.map((url: string, idx: number) => (
+                    <div key={idx} className="relative group rounded-lg overflow-hidden border border-border/60 aspect-square">
+                      <img src={url} alt={`Reference ${idx + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (selectedSceneId) {
+                            refImageRemoveMutation.mutate({ sceneId: selectedSceneId, imageUrl: url }, {
+                              onSuccess: (result) => setField("referenceImages", result.referenceImages),
+                              onError: () => setField("referenceImages", form.referenceImages.filter((_: string, i: number) => i !== idx)),
+                            });
+                          } else { setField("referenceImages", form.referenceImages.filter((_: string, i: number) => i !== idx)); }
+                        }}
+                        className="absolute top-1 right-1 bg-black/70 rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      ><X className="h-3 w-3 text-white" /></button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border/60 hover:border-amber-500/50 cursor-pointer transition-colors bg-background/30">
+                <ImagePlus className="h-5 w-5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground text-center">Click to upload reference image<br /><span className="text-[10px]">PNG, JPG, WEBP — max 10MB</span></span>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    if (file.size > 10 * 1024 * 1024) { alert("File too large. Max 10MB."); return; }
+                    const reader = new FileReader();
+                    reader.onload = async (ev) => {
+                      const base64 = (ev.target?.result as string).split(",")[1];
+                      if (selectedSceneId) {
+                        refImageUploadMutation.mutate({
+                          base64,
+                          filename: file.name,
+                          contentType: file.type,
+                          sceneId: selectedSceneId,
+                        }, {
+                          onSuccess: (result) => setField("referenceImages", result.referenceImages),
+                        });
+                      } else {
+                        // Scene not saved yet — store as data URL temporarily
+                        setField("referenceImages", [...form.referenceImages, ev.target?.result as string]);
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  }}
+                />
+              </label>
             </div>
 
             {/* ─── External Footage Upload ─── */}

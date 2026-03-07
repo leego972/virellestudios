@@ -595,6 +595,7 @@ export async function runAutoMigration(): Promise<void> {
     { table: "scenes", column: "shadowDepth", definition: "VARCHAR(64) NULL" },
     { table: "scenes", column: "thumbnailUrl", definition: "TEXT NULL" },
     { table: "scenes", column: "generatedUrl", definition: "TEXT NULL" },
+    { table: "scenes", column: "referenceImages", definition: "JSON NULL" },
     // Characters table - extended profile fields
     { table: "characters", column: "role", definition: "VARCHAR(128) NULL" },
     { table: "characters", column: "storyImportance", definition: "VARCHAR(64) NULL" },

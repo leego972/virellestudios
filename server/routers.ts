@@ -1552,6 +1552,41 @@ Be creative, enthusiastic, and cinematic in your responses. You are a passionate
 
         return { url, key };
       }),
+
+    // Upload reference images (PNG, JPG, WEBP) for a scene — logos, concept art, mood boards
+    referenceImage: protectedProcedure
+      .input(z.object({
+        base64: z.string().max(50_000_000, "File too large. Max 10MB."),
+        filename: z.string(),
+        contentType: z.string().default("image/png"),
+        sceneId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitUpload(ctx.user.id);
+        const buffer = Buffer.from(input.base64, "base64");
+        const key = `reference-images/${ctx.user.id}/${nanoid()}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.contentType);
+        // Get existing reference images and append
+        const scene = await db.getSceneById(input.sceneId);
+        const existing = (scene?.referenceImages as string[] || []);
+        existing.push(url);
+        await db.updateScene(input.sceneId, { referenceImages: existing } as any);
+        return { url, key, referenceImages: existing };
+      }),
+
+    // Remove a reference image from a scene
+    removeReferenceImage: protectedProcedure
+      .input(z.object({
+        sceneId: z.number(),
+        imageUrl: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const scene = await db.getSceneById(input.sceneId);
+        const existing = (scene?.referenceImages as string[] || []);
+        const updated = existing.filter((url: string) => url !== input.imageUrl);
+        await db.updateScene(input.sceneId, { referenceImages: updated } as any);
+        return { referenceImages: updated };
+      }),
   }),
 
   // ─── Generation ───
