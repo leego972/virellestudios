@@ -37,7 +37,7 @@ import {
 import { logger } from "./_core/logger";
 import { createSessionToken } from "./_core/context";
 import { notifyOwner } from "./_core/notification";
-import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota, requireResourceQuota, getOrCreateStripeCustomer, createCheckoutSession, createBillingPortalSession, TIER_LIMITS, type SubscriptionTier } from "./_core/subscription";
+import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota, requireResourceQuota, getOrCreateStripeCustomer, createCheckoutSession, createBillingPortalSession, TIER_LIMITS, CREDIT_COSTS, type SubscriptionTier } from "./_core/subscription";
 import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, getSchedulerState, runAutonomousAdCycle, generateImageAd, generateVideoAd, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
 import { getSocialCredentialStatus, postToLinkedIn, postToReddit, sendWhatsAppMessage, broadcastWhatsApp } from "./_core/socialPostingEngine";
 import { ENV } from "./_core/env";
@@ -306,6 +306,8 @@ export const appRouter = router({
         cinemaIndustry: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Credits: deduct for creating a project
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.create_project.cost, "create_project", `Create project: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // Subscription: check project quota
         const projectCount = await db.getUserProjectCount(ctx.user.id);
         requireResourceQuota(ctx.user, "maxProjects", projectCount, "projects");
@@ -1073,6 +1075,8 @@ export const appRouter = router({
         rateLimitAI(ctx.user.id);
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
+        // Credits: deduct for preview image
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_preview_image.cost, "generate_preview_image", `Preview for scene ${input.sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const scene = await db.getSceneById(input.sceneId);
         if (!scene) throw new Error("Scene not found");
 
@@ -1142,6 +1146,10 @@ export const appRouter = router({
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         const scenes = await db.getProjectScenes(project.id);
         const scenesNeedingImages = scenes.filter(s => !s.thumbnailUrl);
+        // Credits: deduct per scene for bulk previews
+        if (scenesNeedingImages.length > 0) {
+          try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.bulk_generate_previews.cost * scenesNeedingImages.length, "bulk_generate_previews", `Bulk previews for ${scenesNeedingImages.length} scenes`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        }
         if (scenesNeedingImages.length === 0) return { generated: 0, total: scenes.length };
 
         // Build Visual DNA for consistent style across all bulk-generated images
@@ -1193,6 +1201,8 @@ export const appRouter = router({
         rateLimitHeavyAI(ctx.user.id);
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
+        // Credits: deduct for scene video generation
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_scene_video.cost, "generate_scene_video", `Video for scene ${input.sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const scene = await db.getSceneById(input.sceneId);
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
         const project = await db.getProjectById(scene.projectId, ctx.user.id);
@@ -1247,6 +1257,8 @@ export const appRouter = router({
         const scenes = await db.getProjectScenes(project.id);
         const scenesNeedingVideo = scenes.filter(s => !(s as any).videoUrl);
         if (scenesNeedingVideo.length === 0) return { generated: 0, total: scenes.length };
+        // Credits: deduct per scene for bulk video generation
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.bulk_generate_videos.cost * scenesNeedingVideo.length, "bulk_generate_videos", `Bulk videos for ${scenesNeedingVideo.length} scenes`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const characters = await db.getProjectCharacters(project.id);
         const userTier = getEffectiveTier(ctx.user) as QualityTier;
         const visualDNA = buildVisualDNA(project, characters, userTier);
@@ -1300,6 +1312,9 @@ export const appRouter = router({
         })).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Credits: deduct for Virelle chat message
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "virelle_chat", `Virelle chat for scene ${input.sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+
         // Get the scene data
         const scene = await db.getSceneById(input.sceneId);
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
@@ -1560,6 +1575,17 @@ Be creative, enthusiastic, and cinematic in your responses. You are a passionate
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
 
+        // Credits: deduct for film generation
+        try {
+          await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_film.cost, "generate_film", `Generate Film for project ${input.projectId}`);
+        } catch (e: any) {
+          if (e.message?.includes("INSUFFICIENT_CREDITS")) {
+            throw new TRPCError({ code: "FORBIDDEN", message: e.message });
+          }
+          // Non-credit errors don't block generation for now
+          console.warn("[Credits] Deduction warning:", e.message);
+        }
+
         logger.aiGeneration("quickGenerate started", ctx.user.id, { projectId: input.projectId });
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
@@ -1698,8 +1724,8 @@ Break this into 8-15 scenes. For each scene, provide:
         }
 
         // Determine video settings based on subscription tier
-        const videoModel = userTier === "industry" ? "sora-2-pro" : "sora-2";
-        const videoResolution = userTier === "industry" ? "1080p" : "720p";
+        const videoModel = (userTier === "industry" || userTier === "studio") ? "sora-2-pro" : "sora-2";
+        const videoResolution = (userTier === "industry" || userTier === "studio") ? "1080p" : "720p";
 
         // Generate videos sequentially (Sora is async and rate-limited)
         for (let sceneIdx = 0; sceneIdx < allScenes.length; sceneIdx++) {
@@ -3938,6 +3964,9 @@ Generate a detailed production budget estimate.`,
       }))
       .mutation(async ({ ctx, input }) => {
         requireFeature(ctx.user, "canExportMovies", "Movie Export");
+        // Credits: deduct for export
+        const exportCost = input.exportType === "film" ? CREDIT_COSTS.export_final_film.cost : CREDIT_COSTS.movie_export.cost;
+        try { await db.deductCredits(ctx.user.id, exportCost, input.exportType === "film" ? "export_final_film" : "movie_export", `Export ${input.exportType} for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
         const scenes = await db.getProjectScenes(project.id);
@@ -4244,7 +4273,7 @@ Generate a detailed production budget estimate.`,
       // Get projects that are marked as featured or have completed generations
       const [projects] = await dbConn.execute(
         sql`SELECT p.id, p.title, p.genre, p.plotSummary, p.duration, p.quality, p.resolution,
-                   p.status, p.createdAt, u.displayName as directorName
+                   p.status, p.createdAt, u.name as directorName
             FROM projects p
             LEFT JOIN users u ON p.userId = u.id
             WHERE p.status = 'completed'
@@ -4291,7 +4320,7 @@ Generate a detailed production budget estimate.`,
         const dbConn = await db.getDb();
         if (!dbConn) return null;
         const [rows] = await dbConn.execute(
-          sql`SELECT p.*, u.displayName as directorName
+          sql`SELECT p.*, u.name as directorName
               FROM projects p
               LEFT JOIN users u ON p.userId = u.id
               WHERE p.id = ${input.id}
@@ -4714,7 +4743,7 @@ Rules:
     // Create a Stripe checkout session for subscription
     createCheckout: protectedProcedure
       .input(z.object({
-        tier: z.enum(["independent", "industry"]),
+        tier: z.enum(["independent", "creator", "studio", "industry"]),
         billing: z.enum(["monthly", "annual"]).default("annual"),
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
@@ -4725,7 +4754,15 @@ Rules:
         const priceMap: Record<string, Record<string, string>> = {
           independent: {
             monthly: getStripePriceId("independent_monthly") || (ENV as any).stripeIndependentMonthlyPriceId || "",
-            annual: getStripePriceId("independent_annual") || (ENV as any).stripeIndependentAnnualPriceId || ENV.stripeCreatorAnnualPriceId || ENV.stripeProAnnualPriceId || "",
+            annual: getStripePriceId("independent_annual") || (ENV as any).stripeIndependentAnnualPriceId || "",
+          },
+          creator: {
+            monthly: getStripePriceId("creator_monthly") || "",
+            annual: getStripePriceId("creator_annual") || "",
+          },
+          studio: {
+            monthly: getStripePriceId("studio_monthly") || "",
+            annual: getStripePriceId("studio_annual") || "",
           },
           industry: {
             monthly: getStripePriceId("industry_monthly") || (ENV as any).stripeIndustryMonthlyPriceId || "",
@@ -4757,7 +4794,7 @@ Rules:
     // Create a Stripe checkout session for generation top-up pack
     createTopUpCheckout: protectedProcedure
       .input(z.object({
-        packId: z.enum(["topup_10", "topup_30", "topup_100"]),
+        packId: z.enum(["pack_10", "pack_50", "pack_100", "pack_250", "pack_500", "pack_1000", "topup_10", "topup_30", "topup_100"]),
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
       }))
@@ -4765,6 +4802,12 @@ Rules:
         const { createTopUpCheckoutSession } = await import("./_core/subscription");
         const { getStripePriceId: getProvisionedId } = await import("./_core/stripeProvisioning");
         const packPriceMap: Record<string, string> = {
+          pack_10: getProvisionedId("pack_10") || "",
+          pack_50: getProvisionedId("pack_50") || "",
+          pack_100: getProvisionedId("pack_100") || "",
+          pack_250: getProvisionedId("pack_250") || "",
+          pack_500: getProvisionedId("pack_500") || "",
+          pack_1000: getProvisionedId("pack_1000") || "",
           topup_10: ENV.stripeTopUp10PriceId || getProvisionedId("topup_10"),
           topup_30: ENV.stripeTopUp30PriceId || getProvisionedId("topup_30"),
           topup_100: ENV.stripeTopUp100PriceId || getProvisionedId("topup_100"),
@@ -4804,7 +4847,7 @@ Rules:
       try {
         const dbConn = await db.getDb();
         if (!dbConn) throw new Error("DB not available");
-        const result = await dbConn.execute(sql`SELECT COUNT(*) as count FROM users WHERE subscriptionTier IN ('independent','industry') AND subscriptionStatus = 'active'`);
+        const result = await dbConn.execute(sql`SELECT COUNT(*) as count FROM users WHERE subscriptionTier IN ('independent','creator','studio','industry') AND subscriptionStatus = 'active'`);
         const realCount = Number((result[0] as any)?.count || 0);
         const displayCount = Math.min(realCount + 30, 50); // offset by 30, cap at 50
         const spotsRemaining = Math.max(50 - displayCount, 0);
@@ -4815,73 +4858,48 @@ Rules:
     }),
 
     pricing: publicProcedure.query(async () => {
-      const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS, FILM_PACKAGES, VFX_SCENE_PACKAGES, EXTENSION_PRICING, LAUNCH_SPECIAL_ACTIVE, SCENE_BY_SCENE_PRICING } = await import("./_core/subscription");
+      const { TIER_PRICING, TOP_UP_PACKS, REFERRAL_REWARDS, FILM_PACKAGES, VFX_SCENE_PACKAGES, EXTENSION_PRICING, LAUNCH_SPECIAL_ACTIVE, SCENE_BY_SCENE_PRICING, CREDIT_COSTS } = await import("./_core/subscription");
       return {
         tiers: [
           {
             id: "independent" as const,
             name: "Independent",
-            monthlyPrice: TIER_PRICING.independent.monthly,
-            annualPrice: TIER_PRICING.independent.annual,
-            annualTotal: TIER_PRICING.independent.annualTotal,
-            monthlyTotal: TIER_PRICING.independent.monthlyTotal,
-            priceLabel: "$10,000",
-            monthlyPriceLabel: "$900",
-            interval: "year",
-            description: "Full access to all creative & pre-production tools. Film generation charged separately.",
-            limits: TIER_LIMITS.independent,
+            monthly: TIER_PRICING.independent.monthly,
+            annual: TIER_PRICING.independent.annualTotal,
+            credits: TIER_LIMITS.independent.monthlyCredits,
+            extraCreditCost: 50,
+            description: "For independent filmmakers and solo creators.",
+          },
+          {
+            id: "creator" as const,
+            name: "Creator",
+            monthly: TIER_PRICING.creator.monthly,
+            annual: TIER_PRICING.creator.annualTotal,
+            credits: TIER_LIMITS.creator.monthlyCredits,
+            extraCreditCost: 40,
             popular: true,
-            highlights: [
-              "── INCLUDED IN MEMBERSHIP ──",
-              "AI Script Writer & Screenplay Tools",
-              "Storyboard Generator",
-              "Character Creator & DNA Lock",
-              "Director's AI Assistant",
-              "Location Scout & Mood Board",
-              "Dialogue Editor & Budget Estimator",
-              "Color Grading & LUT Presets",
-              "Shot List & Continuity Check",
-              "Ad & Poster Maker",
-              "Up to 5 team collaborators",
-              "25 projects, 200 AI generations/mo",
-              "── FILM GENERATION (pay per project) ──",
-              "Films up to 90 min (from $40K)",
-              "Scene-by-scene ($10K/scene)",
-              "1080p + 4K UHD Export",
-            ],
+            description: "For professional creators and small studios.",
+          },
+          {
+            id: "studio" as const,
+            name: "Studio",
+            monthly: TIER_PRICING.studio.monthly,
+            annual: TIER_PRICING.studio.annualTotal,
+            credits: TIER_LIMITS.studio.monthlyCredits,
+            extraCreditCost: 30,
+            description: "For production studios with multiple projects.",
           },
           {
             id: "industry" as const,
             name: "Industry",
-            monthlyPrice: TIER_PRICING.industry.monthly,
-            annualPrice: TIER_PRICING.industry.annual,
-            annualTotal: TIER_PRICING.industry.annualTotal,
-            monthlyTotal: TIER_PRICING.industry.monthlyTotal,
-            priceLabel: "$50,000",
-            monthlyPriceLabel: "$4,500",
-            interval: "year",
-            description: "Everything in Independent plus enterprise tools, API access, and unlimited capacity.",
-            limits: TIER_LIMITS.industry,
-            highlights: [
-              "── EVERYTHING IN INDEPENDENT PLUS ──",
-              "VFX Suite (Advanced Effects)",
-              "Multi-Shot Sequencer",
-              "Live Action Plate Compositing",
-              "NLE / DaVinci Resolve Export",
-              "AI Casting Tool",
-              "Bulk / Parallel Generation",
-              "White-Label Exports (no branding)",
-              "API Access & Pipeline Integration",
-              "Custom AI Model Fine-Tuning",
-              "Priority Rendering Queue",
-              "Dedicated Account Manager",
-              "Unlimited projects, team & generations",
-              "── FILM GENERATION (pay per project) ──",
-              "Films up to 180 min (from $40K)",
-              "4K UHD + ProRes Export",
-            ],
+            monthly: TIER_PRICING.industry.monthly,
+            annual: TIER_PRICING.industry.annualTotal,
+            credits: TIER_LIMITS.industry.monthlyCredits,
+            extraCreditCost: 25,
+            description: "For major studios. Full power, no limits.",
           },
         ],
+        creditCosts: CREDIT_COSTS,
         filmPackages: FILM_PACKAGES,
         vfxScenePackages: VFX_SCENE_PACKAGES,
         sceneByScenePricing: SCENE_BY_SCENE_PRICING,

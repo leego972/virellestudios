@@ -389,12 +389,26 @@ export async function runAutoMigration(): Promise<void> {
         updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`,
     },
+    {
+      name: "credit_transactions",
+      createSQL: `CREATE TABLE IF NOT EXISTS credit_transactions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        amount INT NOT NULL,
+        action VARCHAR(128) NOT NULL,
+        description TEXT NULL,
+        balanceAfter INT NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_credit_tx_user (userId),
+        INDEX idx_credit_tx_action (action)
+      )`,
+    },
   ];
 
   // ─── Columns that may be missing from existing tables ───
   const missingColumns: ColumnCheck[] = [
     // Users table - subscription fields
-    { table: "users", column: "subscriptionTier", definition: "ENUM('creator','pro','industry','independent') NOT NULL DEFAULT 'independent'" },
+    { table: "users", column: "subscriptionTier", definition: "ENUM('independent','creator','studio','pro','industry') NOT NULL DEFAULT 'independent'" },
     { table: "users", column: "stripeCustomerId", definition: "VARCHAR(255) NULL" },
     { table: "users", column: "stripeSubscriptionId", definition: "VARCHAR(255) NULL" },
     { table: "users", column: "subscriptionStatus", definition: "ENUM('active','canceled','past_due','unpaid','trialing','none') NOT NULL DEFAULT 'none'" },
@@ -483,6 +497,11 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "isFrozen", definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
     { table: "users", column: "frozenReason", definition: "TEXT NULL" },
     { table: "users", column: "frozenAt", definition: "TIMESTAMP NULL" },
+    // Credits system
+    { table: "users", column: "creditBalance", definition: "INT NOT NULL DEFAULT 0" },
+    { table: "users", column: "totalCreditsEarned", definition: "INT NOT NULL DEFAULT 0" },
+    { table: "users", column: "totalCreditsSpent", definition: "INT NOT NULL DEFAULT 0" },
+    { table: "users", column: "creditsResetAt", definition: "TIMESTAMP NULL" },
     // Projects table - cinema industry
     { table: "projects", column: "cinemaIndustry", definition: "VARCHAR(128) NULL DEFAULT 'Hollywood'" },
     // Scenes table - soundtrack fields

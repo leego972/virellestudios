@@ -1423,3 +1423,96 @@ export async function deleteNotification(id: number, userId: number) {
   await db.delete(notifications)
     .where(and(eq(notifications.id, id), eq(notifications.userId, userId)));
 }
+
+// ============================================================
+// CREDIT SYSTEM
+// ============================================================
+
+/**
+ * Deduct credits from a user's balance. Returns the new balance.
+ * Throws if insufficient credits.
+ */
+export async function deductCredits(userId: number, amount: number, action: string, description?: string): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [user] = await db.select({ creditBalance: users.creditBalance })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  if (!user) throw new Error("User not found");
+
+  const currentBalance = (user.creditBalance as number) || 0;
+  if (currentBalance < amount) {
+    throw new Error(
+      `INSUFFICIENT_CREDITS: This action requires ${amount} credit${amount !== 1 ? "s" : ""}. You have ${currentBalance} credits remaining. Purchase a credit pack to continue.`
+    );
+  }
+
+  const newBalance = currentBalance - amount;
+
+  await db.update(users)
+    .set({ creditBalance: newBalance } as any)
+    .where(eq(users.id, userId));
+
+  // Log the transaction (non-critical)
+  try {
+    await db.execute(sql.raw(
+      `INSERT INTO credit_transactions (userId, amount, action, description, balanceAfter, createdAt) VALUES (${userId}, ${-amount}, '${action.replace(/'/g, "''")}', '${(description || action).replace(/'/g, "''")}', ${newBalance}, NOW())`
+    ));
+  } catch (e) {
+    console.warn("[Credits] Failed to log transaction:", e);
+  }
+
+  console.log(`[Credits] User ${userId}: -${amount} credits for ${action} (balance: ${newBalance})`);
+  return newBalance;
+}
+
+/**
+ * Add credits to a user's balance (from purchase or monthly grant).
+ */
+export async function addCredits(userId: number, amount: number, action: string, description?: string): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const [user] = await db.select({ creditBalance: users.creditBalance })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  if (!user) throw new Error("User not found");
+
+  const currentBalance = (user.creditBalance as number) || 0;
+  const newBalance = currentBalance + amount;
+
+  await db.update(users)
+    .set({ creditBalance: newBalance } as any)
+    .where(eq(users.id, userId));
+
+  try {
+    await db.execute(sql.raw(
+      `INSERT INTO credit_transactions (userId, amount, action, description, balanceAfter, createdAt) VALUES (${userId}, ${amount}, '${action.replace(/'/g, "''")}', '${(description || action).replace(/'/g, "''")}', ${newBalance}, NOW())`
+    ));
+  } catch (e) {
+    console.warn("[Credits] Failed to log transaction:", e);
+  }
+
+  console.log(`[Credits] User ${userId}: +${amount} credits for ${action} (balance: ${newBalance})`);
+  return newBalance;
+}
+
+/**
+ * Get user's current credit balance.
+ */
+export async function getCreditBalance(userId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+
+  const [user] = await db.select({ creditBalance: users.creditBalance })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  return (user?.creditBalance as number) || 0;
+}

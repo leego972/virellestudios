@@ -11,7 +11,7 @@ export const stripe = ENV.stripeSecretKey
 // TIER DEFINITIONS & LIMITS
 // ============================================================
 
-export type SubscriptionTier = "independent" | "industry";
+export type SubscriptionTier = "independent" | "creator" | "studio" | "industry";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -72,29 +72,49 @@ export interface TierLimits {
   quality: ("standard" | "high" | "ultra")[];
   maxDurationMinutes: number;
   maxClipsPerScene: number;
+  monthlyCredits: number;  // Credits granted each month with subscription
 }
 
 /**
- * ENTERPRISE FILM PRODUCTION PRICING MODEL
+ * ENTERPRISE FILM PRODUCTION PRICING MODEL (USD)
  * 
  * Virelle Studios is a premium AI film production platform.
  * BYOK (Bring Your Own Key) — users provide their own API keys for video, voice, and music generation.
- * The platform charges per-film production fees for the orchestration, pipeline, and production tools.
+ * The platform charges membership + credits for every action.
+ * 
+ * NO FREE TIER — This is a professional tool.
  * 
  * MEMBERSHIP TIERS (required to use the platform):
- *   Independent — $10,000/year ($900/month via direct debit) — Films up to 90 min, all core production tools
- *   Industry — $50,000/year ($4,500/month via direct debit) — Unlimited, 180 min, white-label, API, fine-tuning, priority rendering
+ *   Independent — $5,000/month ($50,000/year) — 50 credits/month included
+ *   Creator    — $10,000/month ($100,000/year) — 150 credits/month included
+ *   Studio     — $15,000/month ($150,000/year) — 300 credits/month included
+ *   Industry   — $25,000/month ($250,000/year) — 600 credits/month included
  * 
- * FILM PRODUCTION PACKAGES (one-time per film, members only):
- *   Short Film (up to 30 min):  $80,000   (Launch Special: $40,000)
- *   Feature Film (up to 60 min): $140,000  (Launch Special: $70,000)
- *   Full Feature (up to 90 min): $200,000  (Launch Special: $100,000)
- *   Premium (white-glove, 180 min): $250,000  (Launch Special: $125,000)
- *   Each additional 30 min:      +$60,000  (Launch Special: +$30,000)
+ * CREDITS SYSTEM — Every action costs credits:
+ *   Generate Film (AI scene breakdown):     10 credits
+ *   Generate Scene Video (per minute):       5 credits/min
+ *   Regenerate Scene Video (per minute):     3 credits/min
+ *   Generate Preview Image:                  1 credit
+ *   Bulk Generate All Previews:              2 credits/scene
+ *   Bulk Generate All Videos:                5 credits/min/scene
+ *   Virelle AI Chat (per message):           0.5 credits (rounded up)
+ *   Script Writer AI:                        3 credits
+ *   Storyboard AI Generation:                3 credits
+ *   Dialogue Editor AI Polish:               2 credits
+ *   Continuity Check AI:                     2 credits
+ *   Shot List AI Generation:                 2 credits
+ *   Export Final Film:                       5 credits
+ *   Create New Project:                      1 credit
  * 
- * SCENE-BY-SCENE PRICING (per individual scene, members only):
- *   $10,000 per scene (30-60s cinematic footage)
- *   Priced to incentivize full film packages
+ * CREDIT PACKS (top-ups, USD):
+ *   10 credits  = $500
+ *   50 credits  = $2,000
+ *   100 credits = $3,500
+ *   500 credits = $12,500
+ *   1000 credits = $20,000
+ * 
+ * KEY DESIGN: Included credits are "almost enough" for a typical project,
+ * forcing users to purchase credit packs or upgrade tiers mid-production.
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
@@ -155,8 +175,63 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high"],
     maxDurationMinutes: 90,
     maxClipsPerScene: 8,
+    monthlyCredits: 50,
   },
-  // ─── INDUSTRY ─── Unlimited: 180 min, white-label, API, fine-tuning, priority
+  // ─── CREATOR ─── $10,000/month — 150 credits, 120 min films, pro tools
+  creator: {
+    maxProjects: 50,
+    maxCharactersPerProject: 50,
+    maxScenesPerProject: 120,
+    maxGenerationsPerMonth: 500,
+    maxMovieExports: 50,
+    maxCollaboratorsPerProject: 10,
+    maxScriptsPerProject: 30,
+    maxStorageMB: 100000,
+    canUseQuickGenerate: true, canUseTrailerGeneration: true, canUseDirectorAssistant: true,
+    canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
+    canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
+    canUseLocationScout: true, canUseMoodBoard: true, canUseShotList: true,
+    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true,
+    canUseCollaboration: true, canExportMovies: true, canExportHD: true,
+    canUseAICharacterGen: true, canUseAIScriptGen: true, canUseAIDialogueGen: true,
+    canUseAIBudgetGen: true, canUseAISubtitleGen: true, canUseAILocationSuggest: true,
+    canUseFullFilmGeneration: true, canUseAIVoiceActing: true, canUseAISoundtrack: true,
+    canUseCharacterConsistency: true, canUseSceneContinuity: true, canUseClipChaining: true,
+    canUseVisualEffects: true, canUseBulkGenerate: false, canUseMultiShotSequencer: true,
+    canUseLiveActionPlate: false, canUseNLEExport: true, canUseAICasting: true,
+    canExportUltraHD: true, canUseWhiteLabel: false, canUseAPIAccess: false,
+    canUseCustomFineTuning: false, canUsePriorityRendering: false,
+    resolution: "4k", quality: ["standard", "high"], maxDurationMinutes: 120, maxClipsPerScene: 10,
+    monthlyCredits: 150,
+  },
+  // ─── STUDIO ─── $15,000/month — 300 credits, 150 min films, advanced tools
+  studio: {
+    maxProjects: 100,
+    maxCharactersPerProject: 100,
+    maxScenesPerProject: 150,
+    maxGenerationsPerMonth: 1000,
+    maxMovieExports: 100,
+    maxCollaboratorsPerProject: 25,
+    maxScriptsPerProject: 50,
+    maxStorageMB: 250000,
+    canUseQuickGenerate: true, canUseTrailerGeneration: true, canUseDirectorAssistant: true,
+    canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
+    canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
+    canUseLocationScout: true, canUseMoodBoard: true, canUseShotList: true,
+    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true,
+    canUseCollaboration: true, canExportMovies: true, canExportHD: true,
+    canUseAICharacterGen: true, canUseAIScriptGen: true, canUseAIDialogueGen: true,
+    canUseAIBudgetGen: true, canUseAISubtitleGen: true, canUseAILocationSuggest: true,
+    canUseFullFilmGeneration: true, canUseAIVoiceActing: true, canUseAISoundtrack: true,
+    canUseCharacterConsistency: true, canUseSceneContinuity: true, canUseClipChaining: true,
+    canUseVisualEffects: true, canUseBulkGenerate: true, canUseMultiShotSequencer: true,
+    canUseLiveActionPlate: true, canUseNLEExport: true, canUseAICasting: true,
+    canExportUltraHD: true, canUseWhiteLabel: false, canUseAPIAccess: true,
+    canUseCustomFineTuning: false, canUsePriorityRendering: true,
+    resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 150, maxClipsPerScene: 12,
+    monthlyCredits: 300,
+  },
+  // ─── INDUSTRY ─── $25,000/month — 600 credits, 180 min, white-label, API, fine-tuning, priority
   industry: {
     maxProjects: -1,
     maxCharactersPerProject: -1,
@@ -212,6 +287,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
     maxClipsPerScene: 12,
+    monthlyCredits: 600,
   },
 };
 
@@ -438,16 +514,21 @@ export interface TierPricing {
 }
 
 /**
- * Platform membership pricing.
- * Annual membership is REQUIRED to use the Virelle Studios platform.
- * Film production packages are charged separately as one-time fees.
+ * Platform membership pricing (USD).
+ * Membership is REQUIRED to use the Virelle Studios platform.
+ * Every action costs credits. Included credits are designed to get users
+ * started but not enough for full productions — driving credit pack purchases.
  * 
- * Independent: $10,000/year ($900/month via direct debit) — Films up to 90 min, all core production tools
- * Industry: $50,000/year ($4,500/month via direct debit) — Unlimited, 180 min, white-label, API, fine-tuning
+ * Independent: $5,000/mo ($50,000/yr)  — 50 credits/mo, 90 min films
+ * Creator:     $10,000/mo ($100,000/yr) — 150 credits/mo, 120 min films
+ * Studio:      $15,000/mo ($150,000/yr) — 300 credits/mo, 150 min films
+ * Industry:    $25,000/mo ($250,000/yr) — 600 credits/mo, 180 min films, white-label, API
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
-  independent: { monthly: 900, annual: 833, annualTotal: 10000, monthlyTotal: 10800 },
-  industry: { monthly: 4500, annual: 4167, annualTotal: 50000, monthlyTotal: 54000 },
+  independent: { monthly: 5000, annual: 4167, annualTotal: 50000, monthlyTotal: 60000 },
+  creator:     { monthly: 10000, annual: 8333, annualTotal: 100000, monthlyTotal: 120000 },
+  studio:      { monthly: 15000, annual: 12500, annualTotal: 150000, monthlyTotal: 180000 },
+  industry:    { monthly: 25000, annual: 20833, annualTotal: 250000, monthlyTotal: 300000 },
 };
 
 // Referral Rewards
@@ -457,20 +538,56 @@ export const REFERRAL_REWARDS = {
   maxReferralsPerMonth: 20,
 };
 
-// Generation Top-Up Packs
+// ============================================================
+// CREDIT COSTS PER ACTION
+// Every meaningful action costs credits. Designed so included
+// credits are "almost enough" for a full production but not quite.
+// ============================================================
+
+export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
+  // Core generation
+  generate_film:           { cost: 10, label: "Generate Film (AI scene breakdown)" },
+  generate_scene_video:    { cost: 5,  label: "Generate Scene Video (per minute)" },
+  regenerate_scene_video:  { cost: 3,  label: "Regenerate Scene Video (per minute)" },
+  generate_preview_image:  { cost: 1,  label: "Generate Preview Image" },
+  bulk_generate_previews:  { cost: 2,  label: "Bulk Generate Previews (per scene)" },
+  bulk_generate_videos:    { cost: 5,  label: "Bulk Generate Videos (per minute per scene)" },
+  // AI tools
+  virelle_chat:            { cost: 1,  label: "Virelle AI Chat (per message)" },
+  script_writer_ai:        { cost: 3,  label: "AI Script Writer" },
+  storyboard_ai:           { cost: 3,  label: "AI Storyboard Generation" },
+  dialogue_editor_ai:      { cost: 2,  label: "AI Dialogue Polish" },
+  continuity_check_ai:     { cost: 2,  label: "AI Continuity Check" },
+  shot_list_ai:            { cost: 2,  label: "AI Shot List Generation" },
+  character_gen_ai:        { cost: 2,  label: "AI Character Generation" },
+  location_scout_ai:       { cost: 1,  label: "AI Location Scout" },
+  budget_estimate_ai:      { cost: 1,  label: "AI Budget Estimate" },
+  subtitle_gen_ai:         { cost: 2,  label: "AI Subtitle Generation" },
+  trailer_gen:             { cost: 5,  label: "Trailer Generation" },
+  ad_poster_gen:           { cost: 2,  label: "Ad/Poster Generation" },
+  // Export & project
+  export_final_film:       { cost: 5,  label: "Export Final Film" },
+  create_project:          { cost: 1,  label: "Create New Project" },
+  movie_export:            { cost: 3,  label: "Movie Export" },
+};
+
+// Credit Top-Up Packs (USD)
 export interface TopUpPack {
   id: string;
   name: string;
-  generations: number;
+  credits: number;
   price: number;
-  pricePerGen: number;
+  pricePerCredit: number;
   savings: string;
 }
 
 export const TOP_UP_PACKS: TopUpPack[] = [
-  { id: "topup_10", name: "Starter Pack", generations: 10, price: 499, pricePerGen: 49.90, savings: "" },
-  { id: "topup_30", name: "Production Pack", generations: 30, price: 999, pricePerGen: 33.30, savings: "Save 33%" },
-  { id: "topup_100", name: "Studio Pack", generations: 100, price: 2499, pricePerGen: 24.99, savings: "Save 50%" },
+  { id: "topup_10",   name: "Starter Pack",    credits: 10,   price: 500,    pricePerCredit: 50,  savings: "" },
+  { id: "topup_50",   name: "Production Pack",  credits: 50,   price: 2000,   pricePerCredit: 40,  savings: "Save 20%" },
+  { id: "topup_100",  name: "Director Pack",    credits: 100,  price: 3500,   pricePerCredit: 35,  savings: "Save 30%" },
+  { id: "topup_200",  name: "Studio Pack",      credits: 200,  price: 6000,   pricePerCredit: 30,  savings: "Save 40%" },
+  { id: "topup_500",  name: "Executive Pack",   credits: 500,  price: 12500,  pricePerCredit: 25,  savings: "Save 50%" },
+  { id: "topup_1000", name: "Mogul Pack",       credits: 1000, price: 20000,  pricePerCredit: 20,  savings: "Save 60%" },
 ];
 
 // ============================================================
@@ -482,41 +599,38 @@ export const TOP_UP_PACKS: TopUpPack[] = [
  * Used by the webhook handler to determine which tier a subscription belongs to.
  */
 export function priceIdToTier(priceId: string): SubscriptionTier {
-  // Import resolved price IDs from auto-provisioning
   const { getStripePriceId } = require("./stripeProvisioning");
 
-  // Check auto-provisioned price IDs first
-  const independentPriceIds = [
-    getStripePriceId("independent_monthly"),
-    getStripePriceId("independent_annual"),
-    // Legacy ENV keys for backward compatibility
-    ENV.stripeCreatorMonthlyPriceId,
-    ENV.stripeCreatorAnnualPriceId,
-    ENV.stripeProPriceId,
-    ENV.stripeProMonthlyPriceId,
-    ENV.stripeProAnnualPriceId,
-    (ENV as any).stripeIndependentMonthlyPriceId,
-    (ENV as any).stripeIndependentAnnualPriceId,
-  ].filter(Boolean);
+  // Check all 4 tiers
+  const tierKeys: { tier: SubscriptionTier; keys: string[] }[] = [
+    { tier: "independent", keys: [
+      getStripePriceId("independent_monthly"), getStripePriceId("independent_annual"),
+      (ENV as any).stripeIndependentMonthlyPriceId, (ENV as any).stripeIndependentAnnualPriceId,
+      ENV.stripeCreatorMonthlyPriceId, ENV.stripeCreatorAnnualPriceId, ENV.stripeProPriceId,
+    ]},
+    { tier: "creator", keys: [
+      getStripePriceId("creator_monthly"), getStripePriceId("creator_annual"),
+    ]},
+    { tier: "studio", keys: [
+      getStripePriceId("studio_monthly"), getStripePriceId("studio_annual"),
+    ]},
+    { tier: "industry", keys: [
+      getStripePriceId("industry_monthly"), getStripePriceId("industry_annual"),
+      ENV.stripeIndustryPriceId, ENV.stripeIndustryMonthlyPriceId, ENV.stripeIndustryAnnualPriceId,
+    ]},
+  ];
 
-  const industryPriceIds = [
-    getStripePriceId("industry_monthly"),
-    getStripePriceId("industry_annual"),
-    // Legacy ENV keys for backward compatibility
-    ENV.stripeIndustryPriceId,
-    ENV.stripeIndustryMonthlyPriceId,
-    ENV.stripeIndustryAnnualPriceId,
-  ].filter(Boolean);
+  for (const { tier, keys } of tierKeys) {
+    if (keys.filter(Boolean).includes(priceId)) return tier;
+  }
 
-  if (independentPriceIds.includes(priceId)) return "independent";
-  if (industryPriceIds.includes(priceId)) return "industry";
-
-  // Fallback: try to infer from price metadata or naming convention
+  // Fallback: infer from naming
   const lower = priceId.toLowerCase();
-  if (lower.includes("independent") || lower.includes("creator") || lower.includes("pro")) return "independent";
+  if (lower.includes("studio")) return "studio";
+  if (lower.includes("creator")) return "creator";
   if (lower.includes("industry") || lower.includes("enterprise")) return "industry";
+  if (lower.includes("independent")) return "independent";
 
-  // Default to independent if we can't determine
   console.warn(`[Subscription] Unknown price ID: ${priceId}, defaulting to independent`);
   return "independent";
 }
@@ -531,8 +645,10 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
 // Map old DB tier values to new tier names
 function mapTierName(tier: string | null | undefined): SubscriptionTier {
   if (!tier) return "independent";
-  if (tier === "industry") return "industry";
-  // "creator", "pro", "independent" all map to independent
+  if (tier === "industry" || tier === "enterprise") return "industry";
+  if (tier === "studio") return "studio";
+  if (tier === "creator") return "creator";
+  // "pro", "independent" and anything else map to independent
   return "independent";
 }
 
@@ -788,4 +904,40 @@ export async function createBillingPortalSession(
   });
   
   return session.url;
+}
+
+
+// ============================================================
+// CREDIT SYSTEM HELPERS
+// ============================================================
+
+/**
+ * Check if user has enough credits for an action. Throws if not.
+ */
+export function requireCredits(user: User, action: string, multiplier: number = 1): number {
+  const creditDef = CREDIT_COSTS[action];
+  if (!creditDef) {
+    console.warn(`[Credits] Unknown action: ${action}, allowing through`);
+    return 0;
+  }
+
+  const totalCost = creditDef.cost * multiplier;
+  const balance = (user as any).creditBalance || 0;
+
+  if (balance < totalCost) {
+    throw new Error(
+      `INSUFFICIENT_CREDITS: This action requires ${totalCost} credit${totalCost !== 1 ? "s" : ""} (${creditDef.label}${multiplier > 1 ? ` x${multiplier}` : ""}). You have ${balance} credits remaining. Purchase a credit pack to continue.`
+    );
+  }
+
+  return totalCost;
+}
+
+/**
+ * Get the credit cost for an action without checking balance.
+ */
+export function getCreditCost(action: string, multiplier: number = 1): number {
+  const creditDef = CREDIT_COSTS[action];
+  if (!creditDef) return 0;
+  return creditDef.cost * multiplier;
 }

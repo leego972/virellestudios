@@ -12,7 +12,7 @@ export const users = mysqlTable("users", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
   // Subscription fields
-  subscriptionTier: mysqlEnum("subscriptionTier", ["creator", "pro", "industry", "independent"]).default("independent").notNull(),
+  subscriptionTier: mysqlEnum("subscriptionTier", ["independent", "creator", "studio", "pro", "industry"]).default("independent").notNull(),
   stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
   stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
   subscriptionStatus: mysqlEnum("subscriptionStatus", ["active", "canceled", "past_due", "unpaid", "trialing", "none"]).default("none").notNull(),
@@ -61,6 +61,11 @@ export const users = mysqlTable("users", {
   howDidYouHear: varchar("howDidYouHear", { length: 128 }), // google, social_media, friend, blog, producthunt, reddit, youtube, other
   marketingOptIn: boolean("marketingOptIn").default(false),
   onboardingCompleted: boolean("onboardingCompleted").default(false),
+  // ─── Credits System ───
+  creditBalance: int("creditBalance").default(0).notNull(),       // Current credit balance
+  totalCreditsEarned: int("totalCreditsEarned").default(0).notNull(), // Lifetime credits earned (subscription + purchases)
+  totalCreditsSpent: int("totalCreditsSpent").default(0).notNull(),   // Lifetime credits spent
+  creditsResetAt: timestamp("creditsResetAt"),                       // When monthly credits were last granted
   // ─── Content Moderation ───
   isFrozen: boolean("isFrozen").default(false).notNull(),
   frozenReason: text("frozenReason"),
@@ -700,3 +705,16 @@ export const moderationIncidents = mysqlTable("moderationIncidents", {
 });
 export type ModerationIncident = typeof moderationIncidents.$inferSelect;
 export type InsertModerationIncident = typeof moderationIncidents.$inferInsert;
+
+// ─── Credit Transactions ───
+export const creditTransactions = mysqlTable("credit_transactions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  amount: int("amount").notNull(),           // positive = earned, negative = spent
+  action: varchar("action", { length: 128 }).notNull(),
+  description: text("description"),
+  balanceAfter: int("balanceAfter").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CreditTransaction = typeof creditTransactions.$inferSelect;
+export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
