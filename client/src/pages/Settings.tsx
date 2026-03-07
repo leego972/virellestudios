@@ -18,7 +18,7 @@ import { toast } from "sonner";
 
 const PROVIDER_ICONS: Record<string, string> = {
   runway: "🎬", fal: "⚡", replicate: "🔄", openai: "🤖", luma: "🌙", huggingface: "🤗",
-  elevenlabs: "🎙️", suno: "🎵", seedance: "🌊",
+  elevenlabs: "🎙️", suno: "🎵", seedance: "🌊", google: "🍌",
 };
 const PROVIDER_COLORS: Record<string, string> = {
   runway: "from-purple-500/20 to-purple-600/10 border-purple-500/30",
@@ -30,6 +30,7 @@ const PROVIDER_COLORS: Record<string, string> = {
   elevenlabs: "from-pink-500/20 to-pink-600/10 border-pink-500/30",
   suno: "from-orange-500/20 to-orange-600/10 border-orange-500/30",
   seedance: "from-cyan-500/20 to-cyan-600/10 border-cyan-500/30",
+  google: "from-amber-500/20 to-amber-600/10 border-amber-500/30",
 };
 
 const VOICE_MUSIC_PROVIDERS = [
@@ -636,6 +637,53 @@ export default function Settings() {
                 );
               })}
             </div>
+          </div>
+
+          {/* Nano Banana Image Generation */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <span className="text-xl">🍌</span>
+              Nano Banana Image Generation
+            </h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Google's Nano Banana is the most advanced AI image generation with <strong className="text-foreground">perfect text rendering</strong>. Ideal for logos, titles, posters, and reference frames.
+            </p>
+            <Card className="border from-amber-500/20 to-amber-600/10 border-amber-500/30 bg-gradient-to-br">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <span className="text-xl">🍌</span>
+                    Google Gemini (Nano Banana 2)
+                    {configuredKeys['google' as keyof typeof configuredKeys] && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
+                  </CardTitle>
+                  <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+                    Get API Key <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+                <CardDescription>Nano Banana 2 &amp; Nano Banana Pro — Google's native image generation with accurate text rendering, photorealistic quality, and up to 4K resolution.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Info className="w-3 h-3" />
+                  <span>Models: Nano Banana 2 (Fast), Nano Banana Pro (Highest Quality)</span>
+                  <span className="mx-1">•</span>
+                  <span>Pricing: Free tier available</span>
+                </div>
+                <div className="flex gap-2">
+                  <Input type="password" placeholder={configuredKeys['google' as keyof typeof configuredKeys] ? "••••••••••••••••" : "Paste your Google Gemini API key here..."} value={keyInputs['google'] || ''} onChange={(e) => setKeyInputs((prev) => ({ ...prev, google: e.target.value }))} className="font-mono text-sm" />
+                  <Button size="sm" onClick={() => { if (!(keyInputs['google'] || '').trim()) return; setSavingProvider('google'); saveKeyMutation.mutate({ provider: 'google', key: (keyInputs['google'] || '').trim() }); }} disabled={!(keyInputs['google'] || '').trim() || savingProvider === 'google'}>
+                    {savingProvider === 'google' ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                  </Button>
+                </div>
+                {configuredKeys['google' as keyof typeof configuredKeys] && (
+                  <div className="flex gap-2 pt-1">
+                    <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30" onClick={() => removeKeyMutation.mutate({ provider: 'google' as any })}>
+                      <XCircle className="w-3 h-3 mr-1" />Remove Key
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* How It Works */}

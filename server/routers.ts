@@ -8,6 +8,7 @@ import { sql } from "drizzle-orm";
 import { storagePut } from "./storage";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
+import { generateNanoBananaImage, isNanoBananaAvailable } from "./_core/nanoBananaGeneration";
 import { generateVideo, generateVideoWithFallback, buildVideoPrompt } from "./_core/videoGeneration";
 import { generateUnifiedVideo, generateScenesParallel, buildUnifiedVideoPrompt, getAvailableProviders } from "./_core/unifiedVideoEngine";
 import { generateVideo as generateBYOKVideo, VIDEO_PROVIDERS, validateApiKey, type UserApiKeys, type VideoProvider } from "./_core/byokVideoEngine";
@@ -1132,6 +1133,47 @@ export const appRouter = router({
         await db.updateScene(scene.id, { thumbnailUrl: result.url });
 
         return { url: result.url };
+      }),
+
+    // Generate image using Nano Banana (Google Gemini native image generation)
+    generateNanoBananaImage: protectedProcedure
+      .input(z.object({
+        prompt: z.string(),
+        model: z.enum(["nano-banana-2", "nano-banana-pro"]).optional(),
+        referenceImageUrl: z.string().optional(),
+        aspectRatio: z.enum(["1:1", "16:9", "9:16", "4:3", "3:4"]).optional(),
+        sceneId: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
+        requireGenerationQuota(ctx.user);
+        await db.incrementGenerationCount(ctx.user.id);
+        try { await db.deductCredits(ctx.user.id, 1, "nano_banana_image", `Nano Banana image generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+
+        // Get user's Google API key
+        const user = await db.getUserById(ctx.user.id);
+        const userGoogleKey = (user as any)?.userGoogleAiKey || undefined;
+
+        const result = await generateNanoBananaImage({
+          prompt: input.prompt,
+          model: input.model,
+          referenceImageUrl: input.referenceImageUrl,
+          aspectRatio: input.aspectRatio,
+          userApiKey: userGoogleKey,
+        });
+
+        // If sceneId provided, update scene thumbnail
+        if (input.sceneId && result.url) {
+          await db.updateScene(input.sceneId, { thumbnailUrl: result.url });
+        }
+
+        return { url: result.url, text: result.text };
+      }),
+
+    // Check Nano Banana availability
+    nanoBananaStatus: protectedProcedure
+      .query(async () => {
+        return { available: isNanoBananaAvailable() };
       }),
 
     // Bulk generate preview images for all scenes without thumbnails

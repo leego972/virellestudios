@@ -34,6 +34,8 @@ export const ENV = {
   runwayApiKey: process.env.RUNWAYML_API_SECRET || Buffer.from("eHZTek1Ia1lNRjBDYWNkZ0NzbnFEZ2NMVWprWWlnc3E=", "base64").toString("utf-8"),
   // Pollinations (free video generation)
   pollinationsApiKey: process.env.POLLINATIONS_API_KEY || "sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP",
+  // Google (Nano Banana image generation)
+  googleApiKey: process.env.GOOGLE_API_KEY ?? "",
   // Admin
   adminEmail: process.env.ADMIN_EMAIL ?? "leego972@gmail.com",
 };
