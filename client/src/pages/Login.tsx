@@ -70,7 +70,7 @@ export default function Login() {
             <img
               src="/vs-watermark.png"
               alt="Virelle Studios"
-              className="w-24 h-24 rounded-2xl shadow-lg shadow-amber-500/20"
+              className="w-32 h-32 rounded-2xl shadow-lg shadow-amber-500/20"
               draggable={false}
             />
             <div className="text-center">

@@ -414,7 +414,7 @@ export default function Register() {
           <img
             src="/vs-watermark.png"
             alt="Virelle Studios"
-            className="w-20 h-20 rounded-2xl shadow-lg shadow-amber-500/20"
+            className="w-28 h-28 rounded-2xl shadow-lg shadow-amber-500/20"
             draggable={false}
           />
           <div className="text-center">

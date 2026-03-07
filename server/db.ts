@@ -1436,12 +1436,27 @@ export async function deductCredits(userId: number, amount: number, action: stri
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const [user] = await db.select({ creditBalance: users.creditBalance })
+  const [user] = await db.select({ creditBalance: users.creditBalance, role: users.role })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
 
   if (!user) throw new Error("User not found");
+
+  // Admins have unlimited credits — skip deduction entirely
+  if ((user.role as string) === "admin") {
+    console.log(`[Credits] Admin user ${userId}: skipping ${amount} credit deduction for ${action} (unlimited)`);
+    // Still log the transaction for auditing, but don't deduct
+    try {
+      const currentBalance = (user.creditBalance as number) || 0;
+      await db.execute(sql.raw(
+        `INSERT INTO credit_transactions (userId, amount, action, description, balanceAfter, createdAt) VALUES (${userId}, 0, '${action.replace(/'/g, "''")}', 'ADMIN_UNLIMITED: ${(description || action).replace(/'/g, "''")}', ${currentBalance}, NOW())`
+      ));
+    } catch (e) {
+      console.warn("[Credits] Failed to log admin transaction:", e);
+    }
+    return (user.creditBalance as number) || 999999;
+  }
 
   const currentBalance = (user.creditBalance as number) || 0;
   if (currentBalance < amount) {

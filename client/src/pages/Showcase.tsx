@@ -32,7 +32,7 @@ export default function Showcase() {
             <img
               src="/vs-watermark.png"
               alt="VirElle Studios"
-              className="w-20 h-20 object-contain"
+              className="w-28 h-28 object-contain"
               style={{ filter: "sepia(1) saturate(3) brightness(1.3) hue-rotate(10deg)" }}
             />
           </div>

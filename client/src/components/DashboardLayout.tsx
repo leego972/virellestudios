@@ -42,6 +42,7 @@ import {
   ShoppingBag,
   Wand2,
   Globe,
+  Key,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -60,6 +61,7 @@ const menuItems = [
   { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace" },
   { icon: BookOpen, label: "Blog", path: "/blog" },
   { icon: CreditCard, label: "Subscription", path: "/pricing" },
+  { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
@@ -247,8 +249,8 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed && (
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <img src="/vs-watermark.png" alt="Virelle Studios" className="h-6 w-6 rounded shrink-0" />
-                  <span className="font-semibold tracking-tight truncate text-sm">
+                  <img src="/vs-watermark.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
+                  <span className="font-bold tracking-tight truncate text-base">
                     Virelle Studios
                   </span>
                 </div>
@@ -303,42 +305,44 @@ function DashboardLayoutContent({
           </SidebarContent>
 
           <SidebarFooter className="p-3 space-y-2">
-            {/* Leego branding */}
+            {/* Leego branding — click to grow/shrink */}
             <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0">
               <img
                 src="/leego-logo.png"
                 alt="Created by Leego"
-                className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow"
+                className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow cursor-pointer"
                 draggable={false}
+                style={{ transition: "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)" }}
+                onClick={(e) => {
+                  const img = e.currentTarget;
+                  img.style.transform = "scale(3)";
+                  setTimeout(() => { img.style.transform = "scale(1)"; }, 800);
+                }}
               />
             </div>
             {/* Language Switcher */}
             <DropdownMenu open={langMenuOpen} onOpenChange={setLangMenuOpen}>
               <DropdownMenuTrigger asChild>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      aria-label="Change language"
-                    >
-                      <Globe className="h-4 w-4 text-primary shrink-0" />
-                      <span className="text-sm group-data-[collapsible=icon]:hidden">
-                        {SUPPORTED_LANGUAGES.find(l => l.code === uiLang)?.flag}{" "}
-                        {SUPPORTED_LANGUAGES.find(l => l.code === uiLang)?.name || "Language"}
-                      </span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">Change language</TooltipContent>
-                </Tooltip>
+                <button
+                  className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="Change language"
+                  type="button"
+                >
+                  <Globe className="h-4 w-4 text-primary shrink-0" />
+                  <span className="text-sm group-data-[collapsible=icon]:hidden">
+                    {SUPPORTED_LANGUAGES.find(l => l.code === uiLang)?.flag}{" "}
+                    {SUPPORTED_LANGUAGES.find(l => l.code === uiLang)?.name || "Language"}
+                  </span>
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="right" align="end" className="w-52 max-h-72 overflow-y-auto">
+              <DropdownMenuContent side="right" align="end" className="w-56 max-h-80 overflow-y-auto z-[9999]" sideOffset={8}>
                 {SUPPORTED_LANGUAGES.map(lang => (
                   <DropdownMenuItem
                     key={lang.code}
-                    onClick={() => { setUiLang(lang.code); setLangMenuOpen(false); }}
+                    onSelect={() => { setUiLang(lang.code); setLangMenuOpen(false); }}
                     className={`cursor-pointer gap-2 ${uiLang === lang.code ? "bg-accent font-medium" : ""}`}
                   >
-                    <span>{lang.flag}</span>
+                    <span className="text-base">{lang.flag}</span>
                     <span>{lang.name}</span>
                     {uiLang === lang.code && <span className="ml-auto text-primary text-xs">✓</span>}
                   </DropdownMenuItem>
@@ -388,11 +392,12 @@ function DashboardLayoutContent({
                       {user?.email || ""}
                     </p>
                     <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider mt-1 ${
+                      user?.role === "admin" ? "bg-red-500/15 text-red-400 border border-red-500/30" :
                       tier === "industry" ? "bg-violet-500/10 text-violet-400 border border-violet-500/20" :
                       tier === "independent" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
                       "bg-muted text-muted-foreground border border-border"
                     }`}>
-                      {tier === "industry" ? "Industry" : tier === "independent" ? "Independent" : "Subscribe"}
+                      {user?.role === "admin" ? "\u2B50 Admin" : tier === "industry" ? "Industry" : tier === "independent" ? "Independent" : "Subscribe"}
                     </span>
                   </div>
                 </button>
@@ -424,8 +429,8 @@ function DashboardLayoutContent({
           <div data-mobile-header className="flex border-b h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-11 w-11 rounded-lg" />
-              <img src="/vs-watermark.png" alt="Virelle Studios" className="h-5 w-5 rounded" />
-              <span className="text-sm font-medium">Virelle Studios</span>
+              <img src="/vs-watermark.png" alt="Virelle Studios" className="h-8 w-8 rounded" />
+              <span className="text-base font-bold">Virelle Studios</span>
             </div>
             {switchable && (
               <button
@@ -439,13 +444,22 @@ function DashboardLayoutContent({
           </div>
         )}
         <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
-          {/* Gold VS watermark branding */}
+          {/* Gold VS watermark branding — golden on all pages */}
           <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0" style={{ marginLeft: 'var(--sidebar-width, 0px)' }}>
+            {/* Dark mode: golden logo on dark background */}
             <img
               src="/vs-watermark.png"
               alt=""
-              className="w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.04]"
-              style={{ filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg)" }}
+              className="hidden dark:block w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.07]"
+              style={{ filter: "sepia(1) saturate(4) brightness(1.3) hue-rotate(10deg)" }}
+              draggable={false}
+            />
+            {/* Light mode: golden logo with thin black outline for visibility on white */}
+            <img
+              src="/vs-watermark.png"
+              alt=""
+              className="block dark:hidden w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.08]"
+              style={{ filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg) drop-shadow(0 0 1px rgba(0,0,0,0.6)) drop-shadow(0 0 2px rgba(0,0,0,0.3))" }}
               draggable={false}
             />
           </div>

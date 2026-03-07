@@ -234,7 +234,7 @@ export default function Landing() {
       <nav className={`fixed left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 transition-all ${!bannerDismissed && !offerFull ? "top-[72px]" : "top-0"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-            <img src="/vs-watermark.png" alt="Virelle Studios" className="w-9 h-9 rounded-lg" draggable={false} />
+            <img src="/vs-watermark.png" alt="Virelle Studios" className="w-12 h-12 rounded-lg" draggable={false} />
             <span className="text-lg font-bold tracking-tight hidden sm:inline">Virelle Studios</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
@@ -312,7 +312,7 @@ export default function Landing() {
         <div className="absolute top-40 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-6">
-            <img src="/vs-watermark.png" alt="Virelle Studios" className="h-5 w-5 rounded" />
+            <img src="/vs-watermark.png" alt="Virelle Studios" className="h-8 w-8 rounded" />
             AI Film Production &amp; VFX Scene Studio
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
@@ -994,7 +994,7 @@ export default function Landing() {
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-border/40 gap-4">
             <div className="flex items-center gap-3">
-              <img src="/vs-watermark.png" alt="Virelle Studios" className="w-7 h-7 rounded-lg" draggable={false} />
+              <img src="/vs-watermark.png" alt="Virelle Studios" className="w-10 h-10 rounded-lg" draggable={false} />
               <span className="text-sm font-semibold">Virelle Studios</span>
             </div>
             <p className="text-[10px] text-muted-foreground">

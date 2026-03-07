@@ -943,6 +943,11 @@ export async function createBillingPortalSession(
  * Check if user has enough credits for an action. Throws if not.
  */
 export function requireCredits(user: User, action: string, multiplier: number = 1): number {
+  // Admins have unlimited credits — always pass
+  if ((user as any).role === "admin") {
+    return 0;
+  }
+
   const creditDef = CREDIT_COSTS[action];
   if (!creditDef) {
     console.warn(`[Credits] Unknown action: ${action}, allowing through`);

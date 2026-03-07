@@ -16,6 +16,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+function useQueryParam(key: string) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key);
+}
+
 const PROVIDER_ICONS: Record<string, string> = {
   runway: "🎬", fal: "⚡", replicate: "🔄", openai: "🤖", luma: "🌙", huggingface: "🤗",
   elevenlabs: "🎙️", suno: "🎵", seedance: "🌊", google: "🍌",
@@ -173,7 +178,7 @@ export default function Settings() {
         </p>
       </div>
 
-      <Tabs defaultValue="profile" className="w-full">
+      <Tabs defaultValue={useQueryParam("tab") || "profile"} className="w-full">
         <TabsList className="grid w-full grid-cols-3 max-w-md">
           <TabsTrigger value="profile" className="text-xs gap-1"><User className="h-3 w-3" />Profile</TabsTrigger>
           <TabsTrigger value="security" className="text-xs gap-1"><Lock className="h-3 w-3" />Security</TabsTrigger>

@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Upload, Video, Film, Play, ImagePlus, X } from "lucide-react";
 import VirelleChatBubble from "@/components/VirelleChatBubble";
+import MediaPlayer from "@/components/MediaPlayer";
 import {
   Select,
   SelectContent,
@@ -388,7 +389,29 @@ export default function SceneEditor() {
     onError: (err) => toast.error(err.message),
   });
 
-  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
+  const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
+
+  // Build playlist for MediaPlayer from all scenes with video
+  const scenePlaylist = useMemo(() => {
+    if (!scenes) return [];
+    return scenes
+      .filter((s: any) => s.videoUrl)
+      .map((s: any, idx: number) => ({
+        id: s.id,
+        title: s.title || `Scene ${idx + 1}`,
+        description: s.description || null,
+        type: "scene" as const,
+        fileUrl: s.videoUrl || null,
+        thumbnailUrl: s.thumbnailUrl || null,
+        duration: s.duration || null,
+        fileSize: null,
+        mimeType: "video/mp4",
+        movieTitle: project?.title || null,
+        sceneNumber: idx + 1,
+      }));
+  }, [scenes, project]);
+
+  const activeVideoMovie = scenePlaylist.find((m) => m.id === videoPreviewSceneId) || null;
 
   const openNewScene = () => {
     setSelectedSceneId(null);
@@ -646,6 +669,18 @@ export default function SceneEditor() {
             <span className="hidden sm:inline">Generate Videos</span>
             <span className="sm:hidden">Videos</span>
           </Button>
+          {scenePlaylist.length > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10"
+              onClick={() => setVideoPreviewSceneId(scenePlaylist[0].id)}
+            >
+              <Play className="h-4 w-4 sm:mr-1 fill-current" />
+              <span className="hidden sm:inline">Play All ({scenePlaylist.length})</span>
+              <span className="sm:hidden">Play</span>
+            </Button>
+          )}
           <Button
             size="sm"
             variant="outline"
@@ -679,17 +714,30 @@ export default function SceneEditor() {
                     }`}
                     onClick={() => openEditScene(scene)}
                   >
-                    {scene.thumbnailUrl ? (
-                      <div className="aspect-video rounded overflow-hidden bg-muted mb-1.5">
-                        <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="aspect-video rounded bg-muted/50 flex items-center justify-center mb-1.5">
-                        <ImageIcon className="h-4 w-4 text-muted-foreground/30" />
-                      </div>
-                    )}
+                    <div className="relative">
+                      {scene.thumbnailUrl ? (
+                        <div className="aspect-video rounded overflow-hidden bg-muted mb-1.5">
+                          <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="aspect-video rounded bg-muted/50 flex items-center justify-center mb-1.5">
+                          <ImageIcon className="h-4 w-4 text-muted-foreground/30" />
+                        </div>
+                      )}
+                      {(scene as any).videoUrl && (
+                        <button
+                          className="absolute inset-0 mb-1.5 flex items-center justify-center bg-black/40 rounded opacity-0 hover:opacity-100 transition-opacity"
+                          onClick={(e) => { e.stopPropagation(); setVideoPreviewSceneId(scene.id); }}
+                        >
+                          <Play className="h-5 w-5 text-white fill-white" />
+                        </button>
+                      )}
+                    </div>
                     <p className="text-xs font-medium truncate">{scene.title || `Scene ${idx + 1}`}</p>
-                    <p className="text-[10px] text-muted-foreground">{scene.duration || 30}s</p>
+                    <div className="flex items-center gap-1">
+                      <p className="text-[10px] text-muted-foreground">{scene.duration || 30}s</p>
+                      {(scene as any).videoUrl && <Badge className="text-[7px] h-3 px-0.5 bg-amber-500/80 text-white border-0">VIDEO</Badge>}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -752,7 +800,7 @@ export default function SceneEditor() {
                   {(scene as any).videoUrl && (
                     <button
                       className="absolute inset-0 flex items-center justify-center bg-black/40 rounded sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => { e.stopPropagation(); setVideoPreviewUrl((scene as any).videoUrl); }}
+                      onClick={(e) => { e.stopPropagation(); setVideoPreviewSceneId(scene.id); }}
                     >
                       <Play className="h-6 w-6 text-white fill-white" />
                     </button>
@@ -1710,22 +1758,15 @@ export default function SceneEditor() {
         </DialogContent>
       </Dialog>
 
-      {/* Video Preview Dialog */}
-      <Dialog open={!!videoPreviewUrl} onOpenChange={() => setVideoPreviewUrl(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-base flex items-center gap-2">
-              <Film className="h-4 w-4 text-amber-400" />
-              Scene Video
-            </DialogTitle>
-          </DialogHeader>
-          {videoPreviewUrl && (
-            <div className="aspect-video rounded-md overflow-hidden bg-black">
-              <video src={videoPreviewUrl} controls autoPlay className="w-full h-full object-contain" />
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Professional Media Player */}
+      {activeVideoMovie && (
+        <MediaPlayer
+          movie={activeVideoMovie}
+          playlist={scenePlaylist}
+          onClose={() => setVideoPreviewSceneId(null)}
+          onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
+        />
+      )}
 
       {/* Delete Confirmation */}
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>

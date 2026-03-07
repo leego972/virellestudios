@@ -129,6 +129,7 @@ export default function ProjectDetail() {
   const [uploading, setUploading] = useState(false);
   const [audioUploading, setAudioUploading] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
   const [descForm, setDescForm] = useState({ description: "", plotSummary: "" });
   const fileRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLInputElement>(null);
@@ -310,7 +311,8 @@ export default function ProjectDetail() {
               <span className="capitalize">{project.mode}</span>
               {project.rating && <><span>·</span><span>{project.rating}</span></>}
               {project.genre && <><span>·</span><span>{project.genre}</span></>}
-              {project.duration && <><span>·</span><span>{project.duration} min</span></>}
+              {project.duration && <><span>·</span><span>{project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`}</span></>}
+              {!project.duration && scenes?.length ? <><span>·</span><span>{(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()}</span></> : null}
             </div>
           </div>
         </div>
@@ -360,7 +362,7 @@ export default function ProjectDetail() {
         </Card>
       )}
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-card/50 flex-nowrap sm:flex-wrap h-auto gap-1 p-1 overflow-x-auto w-full justify-start">
           <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
           <TabsTrigger value="characters" className="text-xs">
@@ -469,25 +471,25 @@ export default function ProjectDetail() {
             </Card>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setActiveTab("scenes")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{scenes?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Scenes</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setActiveTab("characters")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{characters?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Characters</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setActiveTab("soundtrack")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{soundtracks?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Tracks</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setActiveTab("export")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{jobs?.filter(j => j.status === "completed").length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Generations</p>
