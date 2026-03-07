@@ -329,6 +329,26 @@ async function startServer() {
     res.json({ status: "ok", results });
   });
 
+  // Admin: Grant credits to a user
+  app.post("/api/admin/grant-credits", express.json(), async (req, res) => {
+    try {
+      const { userId, amount } = req.body;
+      if (!userId || !amount) {
+        res.status(400).json({ error: "userId and amount required" });
+        return;
+      }
+      const { getDb } = await import("../db");
+      const { sql } = await import("drizzle-orm");
+      const db = await getDb();
+      await db.execute(sql.raw(`UPDATE users SET creditBalance = creditBalance + ${parseInt(amount)} WHERE id = ${parseInt(userId)}`));
+      const [rows] = await db.execute(sql.raw(`SELECT creditBalance FROM users WHERE id = ${parseInt(userId)}`));
+      const newBalance = (rows as any)?.[0]?.creditBalance || 0;
+      res.json({ status: "ok", userId: parseInt(userId), creditsAdded: parseInt(amount), newBalance });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
 
   // Rate limiting on auth endpoints (stricter: 10 requests per minute)
   app.use("/api/trpc/auth.login", rateLimit(60_000, 10));
