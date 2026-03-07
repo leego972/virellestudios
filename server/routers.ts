@@ -4358,12 +4358,14 @@ Generate a detailed production budget estimate.`,
       const dbConn = await db.getDb();
       if (!dbConn) return [];
       // Get projects that are marked as featured or have completed generations
+      // Show any project that has at least one completed scene with a video
       const [projects] = await dbConn.execute(
-        sql`SELECT p.id, p.title, p.genre, p.plotSummary, p.duration, p.quality, p.resolution,
+        sql`SELECT DISTINCT p.id, p.title, p.genre, p.plotSummary, p.duration, p.quality, p.resolution,
                    p.status, p.createdAt, u.name as directorName
             FROM projects p
             LEFT JOIN users u ON p.userId = u.id
-            WHERE p.status = 'completed'
+            INNER JOIN scenes s ON s.projectId = p.id AND s.videoUrl IS NOT NULL AND s.status = 'completed'
+            WHERE p.title NOT LIKE '%Opener%'
             ORDER BY p.createdAt DESC
             LIMIT 20`
       );

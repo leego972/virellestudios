@@ -243,6 +243,7 @@ export default function Landing() {
             <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
             <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
+            <button onClick={() => setLocation("/showcase")} className="hover:text-foreground transition-colors font-semibold" style={{ color: '#d4af37' }}>Showcase</button>
             <button onClick={() => setLocation("/blog")} className="hover:text-foreground transition-colors">Blog</button>
           </div>
           <div className="flex items-center gap-2">
@@ -656,6 +657,17 @@ export default function Landing() {
               <p className="text-sm text-muted-foreground leading-relaxed">A character's face, bone structure, skin tone, and physical attributes are locked via a DNA prompt anchor injected into every scene. Your lead actor looks identical in scene 1 and scene 87 — the only thing that changes is their wardrobe and emotional state.</p>
             </div>
           </div>
+          <div className="text-center mt-10">
+            <button
+              onClick={() => setLocation("/showcase")}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-semibold text-black text-lg transition-all hover:scale-105"
+              style={{ background: 'linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)' }}
+            >
+              <Film className="w-5 h-5" />
+              View Our Films
+            </button>
+            <p className="text-xs text-muted-foreground mt-3">See what VirElle Studios AI can create</p>
+          </div>
         </div>
       </section>
 
@@ -948,6 +960,7 @@ export default function Landing() {
                 <li><a href="#features" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Features</a></li>
                 <li><a href="#pricing" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Pricing</a></li>
                 <li><button onClick={() => setLocation("/blog")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Blog</button></li>
+                <li><button onClick={() => setLocation("/showcase")} className="text-xs font-semibold hover:text-foreground transition-colors" style={{ color: '#d4af37' }}>Showcase</button></li>
               </ul>
             </div>
             <div>
