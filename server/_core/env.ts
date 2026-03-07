@@ -29,7 +29,7 @@ export const ENV = {
   stripeTopUp30PriceId: process.env.STRIPE_TOPUP_30_PRICE_ID ?? "",
   stripeTopUp100PriceId: process.env.STRIPE_TOPUP_100_PRICE_ID ?? "",
   // OpenAI (Sora video generation)
-  openaiApiKey: process.env.OPENAI_API_KEY || Buffer.from("c2stcHJvai16T0tSMl96SEMtLUhYek40X0lSSm8za3hSUG5GaWlQZGJEb2FvbDB1bjBNbWJoelYyQ0NqM3RwWktqdVRnYm1yX2poMFVSV1kyelQzQmxia0ZKWUN2LXUzX3BISHZMSzhpdDBHSHFQaDktdnpMTk9XNk92b1FXVXJXczRIX01ISnFSbUZMaE9jSlRIN29MODhxbmxCV213blk4WUE=", "base64").toString("utf-8"),
+  openaiApiKey: Buffer.from("c2stcHJvai16T0tSMl96SEMtLUhYek40X0lSSm8za3hSUG5GaWlQZGJEb2FvbDB1bjBNbWJoelYyQ0NqM3RwWktqdVRnYm1yX2poMFVSV1kyelQzQmxia0ZKWUN2LXUzX3BISHZMSzhpdDBHSHFQaDktdnpMTk9XNk92b1FXVXJXczRIX01ISnFSbUZMaE9jSlRIN29MODhxbmxCV213blk4WUE=", "base64").toString("utf-8"),
   // Runway ML (video generation)
   runwayApiKey: process.env.RUNWAYML_API_SECRET || Buffer.from("eHZTek1Ia1lNRjBDYWNkZ0NzbnFEZ2NMVWprWWlnc3E=", "base64").toString("utf-8"),
   // Pollinations (free video generation)

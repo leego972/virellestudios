@@ -1256,7 +1256,8 @@ export const appRouter = router({
             await db.updateScene(scene.id, { videoUrl: result.videoUrl, status: "completed" } as any);
             console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${result.videoUrl}`);
           } catch (err: any) {
-            console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
+            console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message, err.stack);
+            console.error(`[SceneVideo] Full error:`, JSON.stringify({ name: err.name, message: err.message, status: err.status, code: err.code }, null, 2));
             await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
           }
         })();
