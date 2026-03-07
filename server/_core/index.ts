@@ -8,7 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { logger } from "./logger";
-import { stripe, priceIdToTier } from "./subscription";
+import { stripe, priceIdToTier, TIER_LIMITS } from "./subscription";
 import { ENV } from "./env";
 import * as db from "../db";
 import { trackPaymentFailure } from "./securityEngine";
@@ -144,6 +144,8 @@ async function startServer() {
             };
             const credits = filmPackageCredits[packageId] || 100;
             await db.addBonusGenerations(userId, credits);
+            // Also add to creditBalance so deductCredits() works
+            await db.addCredits(userId, credits, "film_package_purchase", `Film package ${packageId} — ${credits} credits added`);
             logger.info(`Film package ${packageId} (+${credits} credits) applied for user ${userId}`);
             break;
           }
@@ -159,7 +161,9 @@ async function startServer() {
             const generations = packAmounts[packId] || 0;
             if (generations > 0) {
               await db.addBonusGenerations(userId, generations);
-              logger.info(`Top-up pack ${packId} (+${generations} gens) applied for user ${userId}`);
+              // Also add to creditBalance so deductCredits() works
+              await db.addCredits(userId, generations, "credit_pack_purchase", `Top-up pack ${packId} — ${generations} credits added`);
+              logger.info(`Top-up pack ${packId} (+${generations} credits) applied for user ${userId}`);
             }
             break;
           }
@@ -180,6 +184,12 @@ async function startServer() {
             });
             // Reset generation counter on new subscription (fresh quota)
             await db.resetGenerationCounter(userId);
+            // Grant monthly credits to creditBalance based on tier
+            const tierLimits = TIER_LIMITS[tier as keyof typeof TIER_LIMITS];
+            if (tierLimits?.monthlyCredits) {
+              await db.addCredits(userId, tierLimits.monthlyCredits, "subscription_activated", `${tier} subscription activated — ${tierLimits.monthlyCredits} monthly credits granted`);
+              logger.info(`Granted ${tierLimits.monthlyCredits} credits to user ${userId} for ${tier} subscription`);
+            }
             logger.info(`Subscription activated for user ${userId}: ${tier}`);
           }
           break;
@@ -245,6 +255,12 @@ async function startServer() {
               });
               // Reset generation counter on renewal (new billing period = fresh quota)
               await db.resetGenerationCounter(user.id);
+              // Grant monthly credits to creditBalance for the new billing period
+              const renewTierLimits = TIER_LIMITS[tier as keyof typeof TIER_LIMITS];
+              if (renewTierLimits?.monthlyCredits) {
+                await db.addCredits(user.id, renewTierLimits.monthlyCredits, "subscription_renewal", `${tier} subscription renewed — ${renewTierLimits.monthlyCredits} monthly credits granted`);
+                logger.info(`Granted ${renewTierLimits.monthlyCredits} credits to user ${user.id} for ${tier} renewal`);
+              }
               logger.info(`Invoice paid for user ${user.id}: ${tier} renewed`);
             }
           }
