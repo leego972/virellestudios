@@ -1,6 +1,8 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import OnboardingOverlay from "@/components/OnboardingOverlay";
+import StudioOpener from "@/components/StudioOpener";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -44,6 +46,17 @@ function timeAgo(date: string | Date) {
 export default function Home() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const [showOpener, setShowOpener] = useState(false);
+
+  // Check if we should show the opener (OAuth login redirect with ?opener=1)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("opener") === "1") {
+      setShowOpener(true);
+      // Clean the URL
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
   const { data: projects, isLoading } = trpc.project.list.useQuery();
   const { data: characters } = trpc.character.list.useQuery();
 
@@ -75,6 +88,11 @@ export default function Home() {
     }))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 6);
+
+  // Show studio opener if triggered by OAuth login
+  if (showOpener) {
+    return <StudioOpener onComplete={() => setShowOpener(false)} mode="login" skippable />;
+  }
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">

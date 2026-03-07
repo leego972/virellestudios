@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import MediaPlayer from "@/components/MediaPlayer";
+import StudioOpener from "@/components/StudioOpener";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,7 +82,17 @@ type MovieItem = {
 
 export default function Movies() {
   const [showPlayer, setShowPlayer] = useState<number | null>(null);
+  const [showOpenerBefore, setShowOpenerBefore] = useState<number | null>(null); // movie ID to play after opener
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Helper: show opener before playing full films, play scenes/trailers directly
+  const playMovie = useCallback((movieId: number, movieType?: string) => {
+    if (movieType === "film") {
+      setShowOpenerBefore(movieId);
+    } else {
+      setShowPlayer(movieId);
+    }
+  }, []);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
   const [, setLocation] = useLocation();
@@ -159,7 +170,7 @@ export default function Movies() {
     <Card
       key={movie.id}
       className="overflow-hidden group hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer"
-      onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? setShowPlayer(movie.id) : undefined}
+      onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? playMovie(movie.id, movie.type) : undefined}
     >
       <div className="relative aspect-video bg-muted">
         {movie.thumbnailUrl ? (
@@ -187,7 +198,7 @@ export default function Movies() {
             size="sm"
             variant="secondary"
             className="gap-1 h-8"
-            onClick={(e) => { e.stopPropagation(); setShowPlayer(movie.id); }}
+            onClick={(e) => { e.stopPropagation(); playMovie(movie.id, movie.type); }}
           >
             <Play className="h-3 w-3" />
             Watch
@@ -245,7 +256,7 @@ export default function Movies() {
                 className="h-8 w-8 sm:hidden text-primary hover:text-primary"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setShowPlayer(movie.id);
+                  playMovie(movie.id, movie.type);
                 }}
               >
                 <Play className="h-4 w-4" />
@@ -321,7 +332,7 @@ export default function Movies() {
     <Card
       key={movie.id}
       className="hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer"
-      onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? setShowPlayer(movie.id) : undefined}
+      onClick={() => (movie.fileUrl || movie.thumbnailUrl) ? playMovie(movie.id, movie.type) : undefined}
     >
       <CardContent className="p-3 flex items-center gap-4">
         <div className="w-24 h-16 rounded-md overflow-hidden bg-muted shrink-0 relative group">
@@ -369,7 +380,7 @@ export default function Movies() {
             size="icon"
             variant="ghost"
             className="h-9 w-9 sm:h-8 sm:w-8"
-            onClick={(e) => { e.stopPropagation(); setShowPlayer(movie.id); }}
+            onClick={(e) => { e.stopPropagation(); playMovie(movie.id, movie.type); }}
           >
             <Play className="h-4 w-4" />
           </Button>
@@ -760,6 +771,19 @@ export default function Movies() {
             </div>
           )}
         </>
+      )}
+
+      {/* Studio Opener - plays before films */}
+      {showOpenerBefore && (
+        <StudioOpener
+          onComplete={() => {
+            const movieId = showOpenerBefore;
+            setShowOpenerBefore(null);
+            setShowPlayer(movieId);
+          }}
+          mode="film"
+          skippable
+        />
       )}
 
       {/* Full-Featured Media Player */}

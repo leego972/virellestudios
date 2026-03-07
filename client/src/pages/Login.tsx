@@ -8,12 +8,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { Eye, EyeOff, Loader2, ArrowRight, UserPlus } from "lucide-react";
 import GoldWatermark from "@/components/GoldWatermark";
+import StudioOpener from "@/components/StudioOpener";
 
 export default function Login() {
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showOpener, setShowOpener] = useState(false);
 
   // Show OAuth error if redirected back with error param
   useEffect(() => {
@@ -30,7 +32,8 @@ export default function Login() {
     onSuccess: () => {
       utils.auth.me.invalidate();
       toast.success("Welcome back!");
-      navigate("/");
+      // Show the studio opener splash screen
+      setShowOpener(true);
     },
     onError: (err) => {
       toast.error(err.message || "Login failed");
@@ -45,6 +48,16 @@ export default function Login() {
     }
     loginMutation.mutate({ email, password });
   };
+
+  const handleOpenerComplete = () => {
+    setShowOpener(false);
+    navigate("/");
+  };
+
+  // Show the studio opener fullscreen
+  if (showOpener) {
+    return <StudioOpener onComplete={handleOpenerComplete} mode="login" skippable />;
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">

@@ -3976,6 +3976,34 @@ Generate a detailed production budget estimate.`,
           // Check if any scenes have video clips
           const scenesWithVideo = scenes.filter((s: any) => s.videoUrl);
 
+          // Fetch VirElle Studios Opener scenes to prepend as opening credits
+          let openerScenes: any[] = [];
+          try {
+            const dbConn = await db.getDb();
+            if (dbConn) {
+              const [openerRows] = await dbConn.execute(
+                sql`SELECT p.id FROM projects p WHERE p.title LIKE '%Opener%' ORDER BY p.id DESC LIMIT 1`
+              );
+              const openerProj = (openerRows as any[])?.[0];
+              if (openerProj) {
+                const opScenes = await db.getProjectScenes(openerProj.id);
+                openerScenes = opScenes
+                  .filter((s: any) => s.videoUrl && s.status === 'completed')
+                  .sort((a: any, b: any) => (a.orderIndex || 0) - (b.orderIndex || 0))
+                  .map((s: any) => ({
+                    videoUrl: s.videoUrl,
+                    title: s.title || 'VirElle Studios',
+                    duration: s.duration || 5,
+                    orderIndex: -1, // Before all user scenes
+                    transition: 'fade' as const,
+                    transitionDuration: 1.2,
+                  }));
+              }
+            }
+          } catch (err) {
+            console.error('[Export] Failed to fetch opener scenes:', err);
+          }
+
           let fileUrl: string | undefined;
           let fileKey: string | undefined;
           let fileSize: number | undefined;
@@ -4021,8 +4049,8 @@ Generate a detailed production budget estimate.`,
 
             try {
               const { stitchMovie } = await import("./_core/videoStitcher");
-              const result = await stitchMovie({
-                scenes: scenesWithVideo.map((s: any) => {
+              // Build scene list: opener scenes first, then user's film scenes
+              const userScenes = scenesWithVideo.map((s: any) => {
                   const sfxList = sceneSfxMap.get(s.id) || [];
                   const subList = sceneSubMap.get(s.id) || [];
                   return {
@@ -4046,7 +4074,11 @@ Generate a detailed production budget estimate.`,
                     transition: "fade",
                     transitionDuration: 0.8,
                   };
-                }),
+                });
+              // Prepend opener scenes as opening credits
+              const allScenes = [...openerScenes, ...userScenes];
+              const result = await stitchMovie({
+                scenes: allScenes,
                 projectTitle: project.title,
                 userId: ctx.user.id,
                 projectId: project.id,
@@ -4311,6 +4343,34 @@ Generate a detailed production budget estimate.`,
         });
       }
       return results;
+    }),
+
+    // Public: get the VirElle Studios Opener video scenes (Project 15)
+    opener: publicProcedure.query(async () => {
+      const dbConn = await db.getDb();
+      if (!dbConn) return null;
+      // Find the VirElle Studios Opener project (look for project with title containing 'Opener')
+      const [rows] = await dbConn.execute(
+        sql`SELECT p.id, p.title, p.status FROM projects p
+            WHERE p.title LIKE '%Opener%' OR p.title LIKE '%opener%'
+            ORDER BY p.id DESC LIMIT 1`
+      );
+      const proj = (rows as any[])?.[0];
+      if (!proj) return null;
+      const scenes = await db.getProjectScenes(proj.id);
+      const completedScenes = scenes.filter((s: any) => s.videoUrl && s.status === 'completed');
+      return {
+        id: proj.id,
+        title: proj.title,
+        scenes: completedScenes.map((s: any) => ({
+          id: s.id,
+          title: s.title,
+          videoUrl: s.videoUrl,
+          thumbnailUrl: s.thumbnailUrl,
+          duration: s.duration,
+          orderIndex: s.orderIndex,
+        })),
+      };
     }),
 
     // Public: get a single showcase project with all completed scenes
