@@ -338,9 +338,29 @@ export default function SceneEditor() {
   });
 
   const videoMutation = trpc.scene.generateVideo.useMutation({
-    onSuccess: (result) => {
+    onSuccess: (result: any) => {
       utils.scene.listByProject.invalidate({ projectId });
-      toast.success(`Video generated via ${result.provider} (${result.duration}s)`);
+      if (result.status === "generating") {
+        toast.success("Video generation started! This may take 2-5 minutes. The page will auto-refresh.");
+        // Poll every 10 seconds until scene status changes
+        const pollInterval = setInterval(async () => {
+          const data = await utils.scene.listByProject.fetch({ projectId });
+          const scene = data?.find((s: any) => s.id === result.sceneId);
+          if (scene && (scene as any).status === "completed") {
+            clearInterval(pollInterval);
+            utils.scene.listByProject.invalidate({ projectId });
+            toast.success("Video generation complete!");
+          } else if (scene && (scene as any).status === "failed") {
+            clearInterval(pollInterval);
+            utils.scene.listByProject.invalidate({ projectId });
+            toast.error("Video generation failed. Please try again.");
+          }
+        }, 10000);
+        // Stop polling after 10 minutes max
+        setTimeout(() => clearInterval(pollInterval), 600000);
+      } else {
+        toast.success(`Video generated via ${result.provider} (${result.duration}s)`);
+      }
     },
     onError: (err) => toast.error(err.message),
   });

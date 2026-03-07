@@ -1224,24 +1224,32 @@ export const appRouter = router({
         );
         // Use the scene thumbnail as input image for video generation if available
         const inputImageUrl = scene.thumbnailUrl || undefined;
-        try {
-          const result = await generateUnifiedVideo({
-            prompt: `Cinematic video: ${prompt}`,
-            seconds: Math.min(scene.duration || 8, 20),
-            resolution: "720p",
-            inputImageUrl,
-            aspectRatio: "landscape",
-            genre: project.genre || "Drama",
-            cameraMovement: scene.cameraMovement || undefined,
-            mood: scene.mood || undefined,
-            lighting: scene.lighting || undefined,
-          });
-          await db.updateScene(scene.id, { videoUrl: result.videoUrl } as any);
-          return { videoUrl: result.videoUrl, duration: result.duration, provider: result.provider };
-        } catch (err: any) {
-          console.error(`[SceneVideo] Failed for scene ${scene.id}:`, err.message);
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Video generation failed: ${err.message}` });
-        }
+        // Mark scene as generating immediately
+        await db.updateScene(scene.id, { status: "generating" } as any);
+        // Fire-and-forget: run video generation in background to avoid Railway 502 timeout
+        (async () => {
+          try {
+            console.log(`[SceneVideo] Background generation started for scene ${scene.id}`);
+            const result = await generateUnifiedVideo({
+              prompt: `Cinematic video: ${prompt}`,
+              seconds: Math.min(scene.duration || 8, 20),
+              resolution: "720p",
+              inputImageUrl,
+              aspectRatio: "landscape",
+              genre: project.genre || "Drama",
+              cameraMovement: scene.cameraMovement || undefined,
+              mood: scene.mood || undefined,
+              lighting: scene.lighting || undefined,
+            });
+            await db.updateScene(scene.id, { videoUrl: result.videoUrl, status: "completed" } as any);
+            console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${result.videoUrl}`);
+          } catch (err: any) {
+            console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
+            await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+          }
+        })();
+        // Return immediately — frontend will poll scene status
+        return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete." };
       }),
 
     // Bulk generate videos for all scenes without videos
