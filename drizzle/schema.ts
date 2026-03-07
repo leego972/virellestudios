@@ -32,6 +32,9 @@ export const users = mysqlTable("users", {
   userElevenlabsKey: text("userElevenlabsKey"), // ElevenLabs API key (AI voice acting)
   userSunoKey: text("userSunoKey"),             // Suno AI API key (AI soundtrack generation)
   userByteplusKey: text("userByteplusKey"),       // BytePlus ModelArk API key (SeedDance video generation)
+  userAnthropicKey: text("userAnthropicKey"),     // Anthropic API key (Claude for Virelle AI chat)
+  userGoogleAiKey: text("userGoogleAiKey"),       // Google AI API key (Gemini for Virelle AI chat)
+  preferredLlmProvider: varchar("preferredLlmProvider", { length: 32 }), // openai, anthropic, google — for Virelle chat
   preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface, seedance
   apiKeysUpdatedAt: timestamp("apiKeysUpdatedAt"),
   // ─── Profile & Business Details ───

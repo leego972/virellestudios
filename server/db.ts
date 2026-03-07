@@ -1298,7 +1298,10 @@ export async function getUserApiKeys(userId: number): Promise<{
   elevenlabsKey: string | null;
   sunoKey: string | null;
   byteplusKey: string | null;
+  anthropicKey: string | null;
+  googleAiKey: string | null;
   preferredProvider: string | null;
+  preferredLlmProvider: string | null;
 }> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -1325,7 +1328,10 @@ export async function getUserApiKeys(userId: number): Promise<{
     elevenlabsKey: decode((user as any).userElevenlabsKey),
     sunoKey: decode((user as any).userSunoKey),
     byteplusKey: decode((user as any).userByteplusKey),
+    anthropicKey: decode((user as any).userAnthropicKey),
+    googleAiKey: decode((user as any).userGoogleAiKey),
     preferredProvider: (user as any).preferredVideoProvider || null,
+    preferredLlmProvider: (user as any).preferredLlmProvider || null,
   };
 }
 

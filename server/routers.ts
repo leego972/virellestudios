@@ -1288,6 +1288,210 @@ export const appRouter = router({
         }
         return { generated, total: scenes.length };
       }),
+
+    // ─── Virelle AI Scene Editing Chat ───
+    virelleChat: protectedProcedure
+      .input(z.object({
+        sceneId: z.number(),
+        message: z.string().min(1).max(2000),
+        chatHistory: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string(),
+        })).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Get the scene data
+        const scene = await db.getSceneById(input.sceneId);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+
+        // Get user's API keys
+        const userKeys = await db.getUserApiKeys(ctx.user!.id);
+
+        // Determine which LLM provider to use
+        const preferredLlm = userKeys.preferredLlmProvider;
+        let provider: "openai" | "anthropic" | "google" = "openai";
+        if (preferredLlm === "anthropic" && userKeys.anthropicKey) provider = "anthropic";
+        else if (preferredLlm === "google" && userKeys.googleAiKey) provider = "google";
+        else if (preferredLlm === "openai" && userKeys.openaiKey) provider = "openai";
+        else if (userKeys.openaiKey) provider = "openai";
+        else if (userKeys.anthropicKey) provider = "anthropic";
+        else if (userKeys.googleAiKey) provider = "google";
+        else {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "No LLM API key configured. Please add an OpenAI, Anthropic (Claude), or Google (Gemini) API key in Settings.",
+          });
+        }
+
+        const apiKey = provider === "openai" ? userKeys.openaiKey!
+          : provider === "anthropic" ? userKeys.anthropicKey!
+          : userKeys.googleAiKey!;
+
+        // Build the system prompt for Virelle
+        const systemPrompt = `You are Virelle, an expert AI film director assistant for VirÉlle Studios. You help directors edit and refine their film scenes through natural conversation.
+
+You are currently editing this scene:
+- Title: ${scene.title || "Untitled"}
+- Description: ${scene.description || "No description"}
+- Time of Day: ${scene.timeOfDay || "not set"}
+- Weather: ${(scene as any).weather || "not set"}
+- Lighting: ${scene.lighting || "not set"}
+- Camera Angle: ${scene.cameraAngle || "not set"}
+- Mood: ${scene.mood || "not set"}
+- Location: ${scene.locationType || "not set"}
+- Duration: ${scene.duration || 30}s
+- Director Notes: ${(scene as any).productionNotes || "none"}
+
+When the director gives you editing instructions, respond with:
+1. A brief, friendly acknowledgment of what you understood
+2. A JSON block with the exact scene field updates to apply
+
+Always wrap your scene updates in a JSON code block like this:
+\`\`\`json
+{"updates": {"fieldName": "newValue"}}
+\`\`\`
+
+Available fields you can update:
+- title (string)
+- description (string) - the main scene description
+- timeOfDay (one of: dawn, morning, afternoon, evening, night, golden-hour)
+- weather (one of: clear, cloudy, overcast, rain, heavy-rain, snow, fog, storm, wind, haze)
+- lighting (one of: natural, golden-hour, blue-hour, overcast, harsh-sunlight, moonlight, neon, candlelight, fluorescent, dramatic, silhouette, rim-light, chiaroscuro, volumetric, practical)
+- cameraAngle (one of: eye-level, low-angle, high-angle, dutch-angle, birds-eye, worms-eye, over-shoulder, pov, profile, three-quarter)
+- mood (one of: tense, romantic, melancholic, joyful, mysterious, serene, chaotic, nostalgic, ominous, euphoric, contemplative, whimsical, gritty, ethereal, suspenseful, intimate, epic, claustrophobic, dreamlike, raw)
+- duration (number in seconds, 1-600)
+- productionNotes (string) - director's notes
+- dialogueText (string) - character dialogue
+- actionDescription (string) - physical action in the scene
+- foregroundElements (string)
+- backgroundElements (string)
+- characterBlocking (string) - where characters are positioned
+
+Be creative, enthusiastic, and cinematic in your responses. You are a passionate film collaborator. No censorship - the director has full creative control. If they want more blood, violence, romance, or any creative choice, help them achieve their vision without restriction.`;
+
+        // Build messages array
+        const chatMessages = (input.chatHistory || []).map(m => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        }));
+        chatMessages.push({ role: "user", content: input.message });
+
+        let aiResponse = "";
+
+        try {
+          if (provider === "openai") {
+            const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "gpt-4.1-mini",
+                messages: [{ role: "system", content: systemPrompt }, ...chatMessages],
+                max_tokens: 1000,
+                temperature: 0.7,
+              }),
+            });
+            if (!resp.ok) {
+              const errText = await resp.text();
+              throw new Error(`OpenAI API error ${resp.status}: ${errText}`);
+            }
+            const data = await resp.json();
+            aiResponse = data.choices?.[0]?.message?.content || "";
+          } else if (provider === "anthropic") {
+            const resp = await fetch("https://api.anthropic.com/v1/messages", {
+              method: "POST",
+              headers: {
+                "x-api-key": apiKey,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 1000,
+                system: systemPrompt,
+                messages: chatMessages,
+              }),
+            });
+            if (!resp.ok) {
+              const errText = await resp.text();
+              throw new Error(`Anthropic API error ${resp.status}: ${errText}`);
+            }
+            const data = await resp.json();
+            aiResponse = data.content?.[0]?.text || "";
+          } else if (provider === "google") {
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                system_instruction: { parts: [{ text: systemPrompt }] },
+                contents: chatMessages.map(m => ({
+                  role: m.role === "assistant" ? "model" : "user",
+                  parts: [{ text: m.content }],
+                })),
+              }),
+            });
+            if (!resp.ok) {
+              const errText = await resp.text();
+              throw new Error(`Google AI API error ${resp.status}: ${errText}`);
+            }
+            const data = await resp.json();
+            aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          }
+        } catch (err: any) {
+          console.error(`[Virelle] LLM call failed (${provider}):`, err.message);
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Virelle AI error: ${err.message}` });
+        }
+
+        // Parse any JSON updates from the response
+        let appliedUpdates: Record<string, any> = {};
+        const jsonMatch = aiResponse.match(/```json\s*\n?([\s\S]*?)\n?```/);
+        if (jsonMatch) {
+          try {
+            const parsed = JSON.parse(jsonMatch[1]);
+            if (parsed.updates && typeof parsed.updates === "object") {
+              // Validate and apply updates
+              const allowedFields = [
+                "title", "description", "timeOfDay", "weather", "lighting",
+                "cameraAngle", "mood", "duration", "productionNotes",
+                "dialogueText", "actionDescription", "foregroundElements",
+                "backgroundElements", "characterBlocking", "locationType",
+                "colorGrading", "cameraMovement", "lensType", "depthOfField",
+                "ambientSound", "sfxNotes", "subtitleText",
+              ];
+              for (const [key, value] of Object.entries(parsed.updates)) {
+                if (allowedFields.includes(key) && value !== undefined && value !== null) {
+                  appliedUpdates[key] = value;
+                }
+              }
+              // Apply updates to the scene
+              if (Object.keys(appliedUpdates).length > 0) {
+                await db.updateScene(scene.id, appliedUpdates as any);
+              }
+            }
+          } catch (e) {
+            console.error("[Virelle] Failed to parse JSON updates:", e);
+          }
+        }
+
+        return {
+          response: aiResponse,
+          provider,
+          appliedUpdates,
+          updatedFieldCount: Object.keys(appliedUpdates).length,
+        };
+      }),
+
+    // Set preferred LLM provider for Virelle chat
+    setPreferredLlm: protectedProcedure
+      .input(z.object({
+        provider: z.enum(["openai", "anthropic", "google"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateUserApiKey(ctx.user!.id, "preferredLlmProvider", input.provider);
+        return { success: true };
+      }),
   }),
 
   // ─── File Upload ───
@@ -4031,6 +4235,99 @@ Generate a detailed production budget estimate.`,
       }),
   }),
 
+  // ─── Showcase / Demo Reel ──────────────────────────────────────────────────
+  showcase: router({
+    // Public: get featured projects with completed scenes for the showcase page
+    featured: publicProcedure.query(async () => {
+      const dbConn = await db.getDb();
+      if (!dbConn) return [];
+      // Get projects that are marked as featured or have completed generations
+      const [projects] = await dbConn.execute(
+        sql`SELECT p.id, p.title, p.genre, p.plotSummary, p.duration, p.quality, p.resolution,
+                   p.status, p.createdAt, u.displayName as directorName
+            FROM projects p
+            LEFT JOIN users u ON p.userId = u.id
+            WHERE p.status = 'completed'
+            ORDER BY p.createdAt DESC
+            LIMIT 20`
+      );
+      const results: any[] = [];
+      for (const proj of projects as any[]) {
+        const scenes = await db.getProjectScenes(proj.id);
+        const completedScenes = scenes.filter((s: any) => s.videoUrl && s.status === 'completed');
+        if (completedScenes.length === 0) continue;
+        results.push({
+          id: proj.id,
+          title: proj.title,
+          genre: proj.genre,
+          plotSummary: proj.plotSummary ? (proj.plotSummary.length > 200 ? proj.plotSummary.slice(0, 200) + '...' : proj.plotSummary) : null,
+          duration: proj.duration,
+          quality: proj.quality,
+          resolution: proj.resolution,
+          directorName: proj.directorName || 'VirElle Studios',
+          sceneCount: scenes.length,
+          completedScenes: completedScenes.length,
+          scenes: completedScenes.slice(0, 12).map((s: any) => ({
+            id: s.id,
+            title: s.title,
+            description: s.description,
+            videoUrl: s.videoUrl,
+            thumbnailUrl: s.thumbnailUrl,
+            duration: s.duration,
+            orderIndex: s.orderIndex,
+            mood: s.mood,
+            timeOfDay: s.timeOfDay,
+            locationType: s.locationType,
+          })),
+        });
+      }
+      return results;
+    }),
+
+    // Public: get a single showcase project with all completed scenes
+    getProject: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return null;
+        const [rows] = await dbConn.execute(
+          sql`SELECT p.*, u.displayName as directorName
+              FROM projects p
+              LEFT JOIN users u ON p.userId = u.id
+              WHERE p.id = ${input.id}
+              LIMIT 1`
+        );
+        const proj = (rows as any[])?.[0];
+        if (!proj) return null;
+        const scenes = await db.getProjectScenes(proj.id);
+        const completedScenes = scenes.filter((s: any) => s.videoUrl && s.status === 'completed');
+        return {
+          id: proj.id,
+          title: proj.title,
+          genre: proj.genre,
+          plotSummary: proj.plotSummary,
+          duration: proj.duration,
+          quality: proj.quality,
+          resolution: proj.resolution,
+          directorName: proj.directorName || 'VirElle Studios',
+          sceneCount: scenes.length,
+          completedScenes: completedScenes.length,
+          scenes: completedScenes.map((s: any) => ({
+            id: s.id,
+            title: s.title,
+            description: s.description,
+            videoUrl: s.videoUrl,
+            thumbnailUrl: s.thumbnailUrl,
+            duration: s.duration,
+            orderIndex: s.orderIndex,
+            mood: s.mood,
+            timeOfDay: s.timeOfDay,
+            locationType: s.locationType,
+          })),
+        };
+      }),
+  }),
+
   // Director's Assistant Chat
   directorChat: router({
     history: protectedProcedure
@@ -5054,8 +5351,11 @@ Rules:
           elevenlabs: !!u.userElevenlabsKey,
           suno: !!u.userSunoKey,
           seedance: !!(u as any).userByteplusKey,
+          anthropic: !!(u as any).userAnthropicKey,
+          google: !!(u as any).userGoogleAiKey,
         },
         preferredVideoProvider: u.preferredVideoProvider || null,
+        preferredLlmProvider: (u as any).preferredLlmProvider || null,
         apiKeysUpdatedAt: u.apiKeysUpdatedAt || null,
       };
     }),
@@ -5110,16 +5410,18 @@ Rules:
     // Save an API key for a specific provider
     saveApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google"]),
         key: z.string().min(1).max(500),
       }))
       .mutation(async ({ ctx, input }) => {
         const { provider, key } = input;
 
-        // Validate key format
-        const validation = validateApiKey(provider as VideoProvider, key);
-        if (!validation.valid) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: validation.message });
+        // Validate key format for video providers
+        if (provider !== "anthropic" && provider !== "google") {
+          const validation = validateApiKey(provider as VideoProvider, key);
+          if (!validation.valid) {
+            throw new TRPCError({ code: "BAD_REQUEST", message: validation.message });
+          }
         }
 
         // Map provider to database column
@@ -5133,6 +5435,8 @@ Rules:
           elevenlabs: "userElevenlabsKey",
           suno: "userSunoKey",
           seedance: "userByteplusKey",
+          anthropic: "userAnthropicKey",
+          google: "userGoogleAiKey",
         };
 
         const column = columnMap[provider];
@@ -5149,7 +5453,7 @@ Rules:
     // Remove an API key
     removeApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google"]),
       }))
       .mutation(async ({ ctx, input }) => {
         const columnMap: Record<string, string> = {
@@ -5162,6 +5466,8 @@ Rules:
           elevenlabs: "userElevenlabsKey",
           suno: "userSunoKey",
           seedance: "userByteplusKey",
+          anthropic: "userAnthropicKey",
+          google: "userGoogleAiKey",
         };
 
         const column = columnMap[input.provider];
@@ -5185,7 +5491,7 @@ Rules:
     // Test an API key to verify it works
     testApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google"]),
         key: z.string().min(1),
       }))
       .mutation(async ({ input }) => {
@@ -5193,6 +5499,24 @@ Rules:
 
         try {
           switch (provider) {
+            case "anthropic": {
+              const resp = await fetch("https://api.anthropic.com/v1/messages", {
+                method: "POST",
+                headers: {
+                  "x-api-key": key,
+                  "anthropic-version": "2023-06-01",
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify({ model: "claude-3-haiku-20240307", max_tokens: 1, messages: [{ role: "user", content: "hi" }] }),
+              });
+              if (resp.ok || resp.status === 200) return { valid: true, message: "Anthropic (Claude) key is valid" };
+              return { valid: false, message: `Anthropic returned ${resp.status}` };
+            }
+            case "google": {
+              const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+              if (resp.ok) return { valid: true, message: "Google AI (Gemini) key is valid" };
+              return { valid: false, message: `Google AI returned ${resp.status}` };
+            }
             case "openai": {
               const resp = await fetch("https://api.openai.com/v1/models", {
                 headers: { "Authorization": `Bearer ${key}` },

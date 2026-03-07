@@ -1,0 +1,469 @@
+import { useState, useRef } from "react";
+import { trpc } from "@/lib/trpc";
+import GoldWatermark from "@/components/GoldWatermark";
+import { Play, Pause, Volume2, VolumeX, Maximize, Film, Clock, Layers, Eye, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+
+/**
+ * Showcase / Demo Reel — Public page to display VirElle Studios film quality.
+ * Shows completed AI-generated films with cinematic video players.
+ */
+export default function Showcase() {
+  const { data: films, isLoading } = trpc.showcase.featured.useQuery();
+  const [expandedFilm, setExpandedFilm] = useState<number | null>(null);
+  const [activeScene, setActiveScene] = useState<Record<number, number>>({});
+
+  return (
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Golden logo watermark */}
+      <GoldWatermark />
+
+      {/* Cinematic grain overlay */}
+      <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Hero Section */}
+      <header className="relative z-10 pt-8 pb-16 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          {/* Logo */}
+          <div className="flex items-center justify-center mb-6">
+            <img
+              src="/vs-watermark.png"
+              alt="VirElle Studios"
+              className="w-20 h-20 object-contain"
+              style={{ filter: "sepia(1) saturate(3) brightness(1.3) hue-rotate(10deg)" }}
+            />
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4"
+            style={{
+              background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 30%, #d4af37 50%, #b8941f 70%, #d4af37 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+            SHOWCASE
+          </h1>
+          <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto mb-2">
+            AI-Generated Cinema — Every Frame Crafted by Artificial Intelligence
+          </p>
+          <p className="text-sm text-neutral-500 max-w-xl mx-auto">
+            Experience the future of filmmaking. These films were created entirely using VirElle Studios —
+            from script to screen, powered by AI.
+          </p>
+
+          {/* Stats bar */}
+          <div className="flex items-center justify-center gap-8 mt-10">
+            <div className="text-center">
+              <div className="text-2xl font-bold" style={{ color: "#d4af37" }}>
+                {films?.length || 0}
+              </div>
+              <div className="text-xs text-neutral-500 uppercase tracking-wider">Films</div>
+            </div>
+            <div className="w-px h-8 bg-neutral-800" />
+            <div className="text-center">
+              <div className="text-2xl font-bold" style={{ color: "#d4af37" }}>
+                {films?.reduce((acc, f) => acc + f.completedScenes, 0) || 0}
+              </div>
+              <div className="text-xs text-neutral-500 uppercase tracking-wider">Scenes</div>
+            </div>
+            <div className="w-px h-8 bg-neutral-800" />
+            <div className="text-center">
+              <div className="text-2xl font-bold" style={{ color: "#d4af37" }}>1080p</div>
+              <div className="text-xs text-neutral-500 uppercase tracking-wider">Quality</div>
+            </div>
+            <div className="w-px h-8 bg-neutral-800" />
+            <div className="text-center">
+              <div className="text-2xl font-bold" style={{ color: "#d4af37" }}>100%</div>
+              <div className="text-xs text-neutral-500 uppercase tracking-wider">AI Generated</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Film Grid */}
+      <main className="relative z-10 max-w-7xl mx-auto px-4 pb-24">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-32">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-2 border-t-transparent rounded-full animate-spin"
+                style={{ borderColor: "#d4af37", borderTopColor: "transparent" }} />
+              <p className="text-neutral-500">Loading showcase...</p>
+            </div>
+          </div>
+        ) : !films || films.length === 0 ? (
+          <div className="flex items-center justify-center py-32">
+            <div className="text-center">
+              <Film className="w-16 h-16 mx-auto mb-4 text-neutral-700" />
+              <h2 className="text-2xl font-bold text-neutral-400 mb-2">Coming Soon</h2>
+              <p className="text-neutral-600">Our first AI-generated films are currently in production.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {films.map((film) => (
+              <FilmCard
+                key={film.id}
+                film={film}
+                isExpanded={expandedFilm === film.id}
+                onToggle={() => setExpandedFilm(expandedFilm === film.id ? null : film.id)}
+                activeSceneIndex={activeScene[film.id] || 0}
+                onSceneChange={(idx) => setActiveScene(prev => ({ ...prev, [film.id]: idx }))}
+              />
+            ))}
+          </div>
+        )}
+      </main>
+
+      {/* Footer CTA */}
+      <footer className="relative z-10 border-t border-neutral-900 py-16 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <Sparkles className="w-8 h-8 mx-auto mb-4" style={{ color: "#d4af37" }} />
+          <h2 className="text-3xl md:text-4xl font-bold mb-4"
+            style={{
+              background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+            Create Your Own Film
+          </h2>
+          <p className="text-neutral-400 mb-8 max-w-lg mx-auto">
+            Join VirElle Studios and bring your stories to life with AI-powered filmmaking.
+            From concept to cinema in minutes.
+          </p>
+          <a
+            href="/register"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-semibold text-black text-lg transition-all hover:scale-105"
+            style={{
+              background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
+            }}
+          >
+            <Film className="w-5 h-5" />
+            Start Creating — From $5,000/mo
+          </a>
+          <p className="text-xs text-neutral-600 mt-4">All prices in USD. Professional filmmaking tools included.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+/* ─── Film Card Component ─────────────────────────────────────────────────── */
+
+interface FilmScene {
+  id: number;
+  title: string;
+  description: string;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  duration?: number;
+  orderIndex: number;
+  mood?: string;
+  timeOfDay?: string;
+  locationType?: string;
+}
+
+interface FilmData {
+  id: number;
+  title: string;
+  genre?: string;
+  plotSummary?: string;
+  duration?: number;
+  quality?: string;
+  resolution?: string;
+  directorName: string;
+  sceneCount: number;
+  completedScenes: number;
+  scenes: FilmScene[];
+}
+
+function FilmCard({
+  film,
+  isExpanded,
+  onToggle,
+  activeSceneIndex,
+  onSceneChange,
+}: {
+  film: FilmData;
+  isExpanded: boolean;
+  onToggle: () => void;
+  activeSceneIndex: number;
+  onSceneChange: (idx: number) => void;
+}) {
+  const currentScene = film.scenes[activeSceneIndex] || film.scenes[0];
+
+  return (
+    <div className="rounded-2xl overflow-hidden border border-neutral-800/50 bg-neutral-950/80 backdrop-blur-sm">
+      {/* Main Video Player */}
+      <div className="relative aspect-video bg-black">
+        {currentScene?.videoUrl ? (
+          <VideoPlayer
+            key={currentScene.id}
+            src={currentScene.videoUrl}
+            title={currentScene.title}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-neutral-900">
+            <Film className="w-16 h-16 text-neutral-700" />
+          </div>
+        )}
+
+        {/* Film title overlay */}
+        <div className="absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{film.title}</h2>
+              <div className="flex items-center gap-3 mt-1 text-sm text-neutral-400">
+                {film.genre && (
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium border"
+                    style={{ borderColor: "#d4af37", color: "#d4af37" }}>
+                    {film.genre}
+                  </span>
+                )}
+                <span className="flex items-center gap-1">
+                  <Layers className="w-3.5 h-3.5" />
+                  {film.completedScenes} scenes
+                </span>
+                {film.resolution && (
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-3.5 h-3.5" />
+                    {film.resolution}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-neutral-500 uppercase tracking-wider">Directed by</div>
+              <div className="text-sm font-medium" style={{ color: "#d4af37" }}>{film.directorName}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Current scene title overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent pointer-events-none">
+          <div className="text-sm text-neutral-300">
+            <span className="font-medium" style={{ color: "#d4af37" }}>
+              Scene {activeSceneIndex + 1}:
+            </span>{" "}
+            {currentScene?.title}
+          </div>
+          {currentScene?.description && (
+            <p className="text-xs text-neutral-500 mt-1 line-clamp-2">{currentScene.description}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Scene Selector Strip */}
+      <div className="p-4 border-t border-neutral-800/50">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-neutral-800">
+          {film.scenes.map((scene, idx) => (
+            <button
+              key={scene.id}
+              onClick={() => onSceneChange(idx)}
+              className={`flex-shrink-0 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+                idx === activeSceneIndex
+                  ? "text-black"
+                  : "bg-neutral-900 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-300 border border-neutral-800"
+              }`}
+              style={idx === activeSceneIndex ? {
+                background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
+              } : {}}
+            >
+              #{idx + 1} {scene.title}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Expandable Details */}
+      <div className="px-4 pb-2">
+        <button
+          onClick={onToggle}
+          className="flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-300 transition-colors py-2 w-full"
+        >
+          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {isExpanded ? "Hide Details" : "Show Film Details"}
+        </button>
+      </div>
+
+      {isExpanded && (
+        <div className="px-6 pb-6 border-t border-neutral-800/50 pt-4">
+          {film.plotSummary && (
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold uppercase tracking-wider mb-2" style={{ color: "#d4af37" }}>
+                Synopsis
+              </h3>
+              <p className="text-sm text-neutral-400 leading-relaxed">{film.plotSummary}</p>
+            </div>
+          )}
+
+          {/* Scene Grid */}
+          <h3 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: "#d4af37" }}>
+            All Scenes
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {film.scenes.map((scene, idx) => (
+              <button
+                key={scene.id}
+                onClick={() => {
+                  onSceneChange(idx);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className={`group relative rounded-lg overflow-hidden border transition-all hover:scale-[1.02] ${
+                  idx === activeSceneIndex
+                    ? "border-[#d4af37] ring-1 ring-[#d4af37]/30"
+                    : "border-neutral-800 hover:border-neutral-700"
+                }`}
+              >
+                <div className="aspect-video bg-neutral-900 flex items-center justify-center">
+                  {scene.thumbnailUrl ? (
+                    <img src={scene.thumbnailUrl} alt={scene.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <Play className="w-6 h-6 text-neutral-700 group-hover:text-neutral-500 transition-colors" />
+                  )}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Play className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <div className="p-2 bg-neutral-900/80">
+                  <div className="text-xs font-medium truncate">#{idx + 1} {scene.title}</div>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    {scene.mood && <span className="text-[10px] text-neutral-500">{scene.mood}</span>}
+                    {scene.timeOfDay && <span className="text-[10px] text-neutral-600">{scene.timeOfDay}</span>}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Video Player Component ──────────────────────────────────────────────── */
+
+function VideoPlayer({ src, title }: { src: string; title: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [showControls, setShowControls] = useState(true);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
+
+  const handleTimeUpdate = () => {
+    if (!videoRef.current) return;
+    const pct = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+    setProgress(pct || 0);
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!videoRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    videoRef.current.currentTime = pct * videoRef.current.duration;
+  };
+
+  const toggleFullscreen = () => {
+    if (!videoRef.current) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      videoRef.current.requestFullscreen();
+    }
+  };
+
+  return (
+    <div
+      className="relative w-full h-full group cursor-pointer"
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => setShowControls(isPlaying ? false : true)}
+      onClick={togglePlay}
+    >
+      <video
+        ref={videoRef}
+        src={src}
+        className="w-full h-full object-cover"
+        muted={isMuted}
+        loop
+        playsInline
+        onTimeUpdate={handleTimeUpdate}
+        onEnded={() => setIsPlaying(false)}
+      />
+
+      {/* Play button overlay when paused */}
+      {!isPlaying && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+          <div className="w-20 h-20 rounded-full flex items-center justify-center transition-transform hover:scale-110"
+            style={{ background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)" }}>
+            <Play className="w-8 h-8 text-black ml-1" fill="black" />
+          </div>
+        </div>
+      )}
+
+      {/* Controls bar */}
+      <div
+        className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent transition-opacity ${
+          showControls || !isPlaying ? "opacity-100" : "opacity-0"
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Progress bar */}
+        <div
+          className="w-full h-1 bg-neutral-700 rounded-full cursor-pointer mb-3 group/progress"
+          onClick={handleSeek}
+        >
+          <div
+            className="h-full rounded-full transition-all"
+            style={{
+              width: `${progress}%`,
+              background: "linear-gradient(90deg, #d4af37, #f5e6a3)",
+            }}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={togglePlay}
+              className="text-white hover:text-[#d4af37] transition-colors"
+            >
+              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+            </button>
+            <button
+              onClick={toggleMute}
+              className="text-white hover:text-[#d4af37] transition-colors"
+            >
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </button>
+            <span className="text-xs text-neutral-400">{title}</span>
+          </div>
+          <button
+            onClick={toggleFullscreen}
+            className="text-white hover:text-[#d4af37] transition-colors"
+          >
+            <Maximize className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

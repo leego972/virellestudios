@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Upload, Video, Film, Play } from "lucide-react";
+import VirelleChatBubble from "@/components/VirelleChatBubble";
 import {
   Select,
   SelectContent,
@@ -1639,6 +1640,15 @@ export default function SceneEditor() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Virelle AI Director Chat */}
+      {scenes && scenes.length > 0 && (
+        <VirelleChatBubble
+          sceneId={selectedSceneId || scenes[0]?.id || 0}
+          sceneTitle={selectedSceneId ? scenes.find(s => s.id === selectedSceneId)?.title || "Scene" : scenes[0]?.title || "Scene"}
+          onSceneUpdated={() => utils.scene.listByProject.invalidate({ projectId })}
+        />
+      )}
     </div>
   );
 }

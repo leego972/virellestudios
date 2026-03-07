@@ -38,6 +38,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const Contact = lazy(() => import("./pages/Contact"));
+const Showcase = lazy(() => import("./pages/Showcase"));
 
 // Legal pages — lazy loaded
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -137,6 +138,7 @@ function Router() {
       <Route path="/privacy">{() => <LazyPage><PrivacyPolicy /></LazyPage>}</Route>
       <Route path="/acceptable-use">{() => <LazyPage><AcceptableUsePolicy /></LazyPage>}</Route>
       <Route path="/ai-content-policy">{() => <LazyPage><AIContentPolicy /></LazyPage>}</Route>
+      <Route path="/showcase">{() => <LazyPage><Showcase /></LazyPage>}</Route>
 
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />

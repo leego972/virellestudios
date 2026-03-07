@@ -429,6 +429,9 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "userElevenlabsKey", definition: "TEXT NULL" },
     { table: "users", column: "userSunoKey", definition: "TEXT NULL" },
     { table: "users", column: "userByteplusKey", definition: "TEXT NULL" },
+    { table: "users", column: "userAnthropicKey", definition: "TEXT NULL" },
+    { table: "users", column: "userGoogleAiKey", definition: "TEXT NULL" },
+    { table: "users", column: "preferredLlmProvider", definition: "VARCHAR(32) NULL" },
     // Users table - profile/onboarding fields (sign-up flow)
     { table: "users", column: "phone", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "avatarUrl", definition: "TEXT NULL" },
