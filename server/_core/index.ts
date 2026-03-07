@@ -305,6 +305,49 @@ async function startServer() {
     }
   });
 
+  // Force-fix: directly add missing scene columns (bypasses INFORMATION_SCHEMA)
+  app.post("/api/admin/fix-scenes", async (_req, res) => {
+    const { getDb } = await import("../db");
+    const { sql } = await import("drizzle-orm");
+    const db = await getDb();
+    if (!db) return res.status(500).json({ error: "No DB" });
+    const cols: [string, string][] = [
+      ["transitionType", "VARCHAR(64) NULL DEFAULT 'cut'"],
+      ["transitionDuration", "FLOAT NULL DEFAULT 0.5"],
+      ["colorGrading", "VARCHAR(128) NULL"],
+      ["productionNotes", "TEXT NULL"],
+    ];
+    const results: string[] = [];
+    for (const [col, def] of cols) {
+      try {
+        await db.execute(sql.raw(`ALTER TABLE scenes ADD COLUMN \`${col}\` ${def}`));
+        results.push(`Added ${col}`);
+      } catch (e: any) {
+        results.push(`${col}: ${e.message?.slice(0, 100)}`);
+      }
+    }
+    res.json({ status: "ok", results });
+  });
+
+  // Debug: check what INFORMATION_SCHEMA returns for scene columns
+  app.get("/api/admin/check-columns", async (_req, res) => {
+    const { getDb } = await import("../db");
+    const { sql } = await import("drizzle-orm");
+    const db = await getDb();
+    if (!db) return res.status(500).json({ error: "No DB" });
+    try {
+      const [rows] = await db.execute(sql.raw(
+        `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'scenes' ORDER BY ORDINAL_POSITION`
+      ));
+      const [countResult] = await db.execute(sql.raw(
+        `SELECT COUNT(*) as cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'scenes' AND COLUMN_NAME = 'transitionType'`
+      ));
+      res.json({ columns: rows, transitionTypeCheck: countResult });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   // Rate limiting on auth endpoints (stricter: 10 requests per minute)
   app.use("/api/trpc/auth.login", rateLimit(60_000, 10));
   app.use("/api/trpc/auth.register", rateLimit(60_000, 5));
