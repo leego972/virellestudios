@@ -348,23 +348,22 @@ async function startServer() {
     }
   });
 
-  // Test insert: try inserting a test scene to see the exact error
+  // Test insert: try inserting a test scene using mysql2 directly
   app.post("/api/admin/test-insert", async (_req, res) => {
-    const { getDb } = await import("../db");
-    const { sql } = await import("drizzle-orm");
-    const db = await getDb();
-    if (!db) return res.status(500).json({ error: "No DB" });
+    const mysql2 = await import("mysql2/promise");
+    let conn;
     try {
-      // Try the exact same INSERT that quickGenerate does
-      const result = await db.execute(sql.raw(
-        `INSERT INTO scenes (projectId, orderIndex, title, description, timeOfDay, weather, lighting, cameraAngle, locationType, mood, duration, transitionType, productionNotes) VALUES (11, 99, 'TEST', 'test desc', 'day', 'clear', 'natural', 'wide', 'interior', 'neutral', 5, 'cut', 'test notes')`
-      ));
-      // Clean up the test row
-      const insertId = (result as any)[0]?.insertId;
+      conn = await mysql2.createConnection(process.env.DATABASE_URL!);
+      // Test 1: raw mysql2 insert
+      const [result] = await conn.execute(
+        `INSERT INTO scenes (projectId, orderIndex, title, description, timeOfDay, weather, lighting, cameraAngle, locationType, mood, duration, transitionType, productionNotes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [11, 99, 'TEST', 'test desc', 'day', 'clear', 'natural', 'wide', 'interior', 'neutral', 5, 'cut', 'test notes']
+      );
+      const insertId = (result as any).insertId;
       if (insertId) {
-        await db.execute(sql.raw(`DELETE FROM scenes WHERE id = ${insertId}`));
+        await conn.execute(`DELETE FROM scenes WHERE id = ?`, [insertId]);
       }
-      res.json({ status: "ok", message: "INSERT succeeded", insertId });
+      res.json({ status: "ok", message: "mysql2 direct INSERT succeeded", insertId });
     } catch (e: any) {
       res.status(500).json({
         error: e.message,
@@ -372,6 +371,37 @@ async function startServer() {
         errno: e.errno,
         sqlState: e.sqlState,
         sqlMessage: e.sqlMessage,
+        stack: e.stack?.slice(0, 300),
+      });
+    } finally {
+      if (conn) await conn.end();
+    }
+  });
+
+  // Test insert via Drizzle to compare
+  app.post("/api/admin/test-insert-drizzle", async (_req, res) => {
+    const { getDb } = await import("../db");
+    const { sql } = await import("drizzle-orm");
+    const db = await getDb();
+    if (!db) return res.status(500).json({ error: "No DB" });
+    try {
+      // Use sql template tag with parameterized values (not sql.raw)
+      const result = await db.execute(
+        sql`INSERT INTO scenes (projectId, orderIndex, title, description, timeOfDay, weather, lighting, cameraAngle, locationType, mood, duration, transitionType, productionNotes) VALUES (${11}, ${99}, ${'TEST-DRIZZLE'}, ${'test desc'}, ${'day'}, ${'clear'}, ${'natural'}, ${'wide'}, ${'interior'}, ${'neutral'}, ${5}, ${'cut'}, ${'test notes'})`
+      );
+      const insertId = (result as any)[0]?.insertId;
+      if (insertId) {
+        await db.execute(sql`DELETE FROM scenes WHERE id = ${insertId}`);
+      }
+      res.json({ status: "ok", message: "Drizzle parameterized INSERT succeeded", insertId });
+    } catch (e: any) {
+      res.status(500).json({
+        error: e.message,
+        code: e.code,
+        errno: e.errno,
+        sqlState: e.sqlState,
+        sqlMessage: e.sqlMessage,
+        cause: e.cause?.message?.slice(0, 200),
       });
     }
   });
