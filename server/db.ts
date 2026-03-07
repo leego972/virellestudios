@@ -228,13 +228,82 @@ export async function deleteCharacter(id: number) {
 }
 
 // ─── Scenes ───
+// ─── Enum value sanitization for scene columns ───
+const SCENE_ENUM_VALUES: Record<string, { valid: string[]; fallback: string; aliases: Record<string, string> }> = {
+  timeOfDay: {
+    valid: ["dawn", "morning", "afternoon", "evening", "night", "golden-hour"],
+    fallback: "afternoon",
+    aliases: {
+      "day": "afternoon", "daytime": "afternoon", "midday": "afternoon", "noon": "afternoon",
+      "dusk": "evening", "sunset": "golden-hour", "sunrise": "dawn", "twilight": "evening",
+      "late afternoon": "golden-hour", "early morning": "dawn", "late night": "night",
+      "nighttime": "night", "midnight": "night", "golden hour": "golden-hour",
+    },
+  },
+  weather: {
+    valid: ["clear", "cloudy", "rainy", "stormy", "snowy", "foggy", "windy"],
+    fallback: "clear",
+    aliases: {
+      "sunny": "clear", "overcast": "cloudy", "rain": "rainy", "storm": "stormy",
+      "snow": "snowy", "fog": "foggy", "wind": "windy", "partly cloudy": "cloudy",
+      "misty": "foggy", "hazy": "foggy", "drizzle": "rainy", "thunderstorm": "stormy",
+    },
+  },
+  lighting: {
+    valid: ["natural", "dramatic", "soft", "neon", "candlelight", "studio", "backlit", "silhouette"],
+    fallback: "natural",
+    aliases: {
+      "ambient": "natural", "harsh": "dramatic", "warm": "soft", "fluorescent": "studio",
+      "dim": "candlelight", "low": "candlelight", "bright": "natural", "moody": "dramatic",
+      "cinematic": "dramatic", "golden": "natural", "neon-lit": "neon",
+    },
+  },
+  cameraAngle: {
+    valid: ["wide", "medium", "close-up", "extreme-close-up", "birds-eye", "low-angle", "dutch-angle", "over-shoulder", "pov"],
+    fallback: "medium",
+    aliases: {
+      "closeup": "close-up", "close up": "close-up", "extreme close-up": "extreme-close-up",
+      "extreme closeup": "extreme-close-up", "bird's eye": "birds-eye", "bird's-eye": "birds-eye",
+      "aerial": "birds-eye", "overhead": "birds-eye", "low angle": "low-angle",
+      "high angle": "birds-eye", "dutch angle": "dutch-angle", "tilted": "dutch-angle",
+      "over the shoulder": "over-shoulder", "ots": "over-shoulder", "first person": "pov",
+      "establishing": "wide", "full shot": "wide", "medium shot": "medium",
+      "tracking": "medium", "tracking shot": "medium",
+    },
+  },
+};
+
+function sanitizeEnumValue(column: string, value: unknown): unknown {
+  const enumDef = SCENE_ENUM_VALUES[column];
+  if (!enumDef || typeof value !== "string") return value;
+  const lower = value.toLowerCase().trim();
+  // Check if already valid
+  if (enumDef.valid.includes(lower)) return lower;
+  // Check aliases
+  if (enumDef.aliases[lower]) return enumDef.aliases[lower];
+  // Fuzzy match: check if any valid value is contained in the input
+  for (const v of enumDef.valid) {
+    if (lower.includes(v) || v.includes(lower)) return v;
+  }
+  console.warn(`[createScene] Sanitizing ${column}: "${value}" -> "${enumDef.fallback}" (not a valid enum value)`);
+  return enumDef.fallback;
+}
+
 export async function createScene(data: InsertScene) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
+  // Sanitize enum values before building the INSERT
+  const sanitizedData = { ...data } as Record<string, unknown>;
+  for (const col of Object.keys(SCENE_ENUM_VALUES)) {
+    if (col in sanitizedData && sanitizedData[col] !== undefined && sanitizedData[col] !== null) {
+      sanitizedData[col] = sanitizeEnumValue(col, sanitizedData[col]);
+    }
+  }
+  
   // Build a minimal INSERT with only the columns that are explicitly provided.
   // Uses Drizzle's sql template tag for proper parameterization.
-  const entries = Object.entries(data).filter(
+  const entries = Object.entries(sanitizedData).filter(
     ([_, v]) => v !== undefined
   );
   if (entries.length === 0) throw new Error("No data to insert");
