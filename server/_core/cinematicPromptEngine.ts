@@ -780,9 +780,22 @@ export function buildSceneBreakdownSystemPrompt(project: {
   const duration = project.duration || 90;
   const actStructure = project.actStructure || "three-act";
 
-  // Calculate scene count based on duration
-  const scenesPerMinute = 0.15; // roughly 1 scene per 6-7 minutes
-  const targetScenes = Math.max(8, Math.min(50, Math.round(duration * scenesPerMinute)));
+  // Calculate scene count based on duration — be CONSERVATIVE with API credits
+  // Short content (under 5 min): 1-2 scenes max (openers, intros, trailers)
+  // Medium content (5-30 min): scale proportionally
+  // Full films (30+ min): standard ratio
+  let targetScenes: number;
+  if (duration <= 1) {
+    targetScenes = 1; // Openers, logos, intros = 1 scene
+  } else if (duration <= 5) {
+    targetScenes = Math.max(1, Math.min(3, Math.round(duration * 0.5))); // 1-3 scenes for short content
+  } else if (duration <= 15) {
+    targetScenes = Math.max(3, Math.min(8, Math.round(duration * 0.4))); // 3-8 scenes for medium
+  } else if (duration <= 30) {
+    targetScenes = Math.max(5, Math.min(15, Math.round(duration * 0.3))); // 5-15 scenes
+  } else {
+    targetScenes = Math.max(8, Math.min(50, Math.round(duration * 0.15))); // 8-50 for full films
+  }
 
   return `You are an elite Academy Award-winning film director and cinematographer with 30 years of experience directing ${genre} films. You have worked with the world's best directors of photography and understand every aspect of visual storytelling. You are planning the visual storytelling for "${project.title}", a ${duration}-minute ${project.rating || "PG-13"} rated ${genre} film.
 
@@ -801,8 +814,8 @@ ${project.themes ? `- Thematic elements: ${project.themes}` : ""}
 ${project.setting ? `- World/setting: ${project.setting}` : ""}
 
 CRITICAL INSTRUCTIONS:
-1. Structure this as a ${actStructure} narrative with approximately ${targetScenes} scenes for a ${duration}-minute film.
-2. Each scene must be a SPECIFIC, VIVID, PHOTOGRAPHABLE moment — not a summary or montage description.
+1. Structure this with EXACTLY ${targetScenes} scene${targetScenes === 1 ? '' : 's'} for a ${duration}-minute ${duration <= 1 ? 'intro/opener' : 'film'}. Do NOT create more scenes than specified — be efficient with production resources.
+2. Each scene must be a SPECIFIC, VIVID, PHOTOGRAPHABLE moment — not a summary or montage description. ${duration <= 5 ? 'For short content, combine the entire narrative into as few scenes as possible — one continuous shot is ideal.' : ''}
 3. Describe EXACTLY what the camera sees: the environment details, character positions, facial expressions, body language, spatial relationships, and atmospheric elements.
 4. Think like a cinematographer for every single frame:
    - What lens would you choose and why?
