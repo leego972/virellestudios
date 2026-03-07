@@ -151,6 +151,13 @@ export default function Pricing() {
 
   const isLoggedIn = !!currentUser;
 
+  const { data: spotsData } = trpc.subscription.foundingSpots.useQuery(undefined, {
+    refetchInterval: 60_000,
+    staleTime: 30_000,
+  });
+  const spotsRemaining = spotsData?.spotsRemaining ?? 20;
+  const offerFull = spotsData?.isFull ?? false;
+
   const { data: status } = trpc.subscription.status.useQuery(undefined, {
     retry: false,
     enabled: isLoggedIn,
@@ -207,6 +214,19 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-background relative">
       <GoldWatermark />
+      {/* ─── Founding Offer Banner ─── */}
+      {!offerFull && (
+        <div className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-black py-3 px-4">
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-3 flex-wrap">
+            <span className="text-sm font-black uppercase tracking-widest">🎬 FOUNDING OFFER</span>
+            <span className="text-sm font-bold">HALF PRICE on your first year's membership</span>
+            <span className="text-xs font-medium opacity-80">— Limited to first 50 founding directors.</span>
+            <span className="bg-black/20 text-black text-xs font-black px-2 py-0.5 rounded-full">
+              {spotsRemaining} of 50 spots left
+            </span>
+          </div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 relative z-10">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
