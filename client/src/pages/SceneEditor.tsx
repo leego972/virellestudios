@@ -373,6 +373,14 @@ export default function SceneEditor() {
     onError: (err) => toast.error(err.message),
   });
 
+  const resetStatusMutation = trpc.scene.resetStatus.useMutation({
+    onSuccess: () => {
+      utils.scene.listByProject.invalidate({ projectId });
+      toast.success("Scene status reset to draft");
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
   const refImageUploadMutation = trpc.upload.referenceImage.useMutation({
     onError: (err) => toast.error(err.message),
   });
@@ -765,7 +773,10 @@ export default function SceneEditor() {
                     {[scene.timeOfDay, scene.locationType, scene.mood, scene.lighting].filter(Boolean).join(" · ")}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="text-[10px] h-5 capitalize">{scene.status}</Badge>
+                    <Badge variant="outline" className={`text-[10px] h-5 capitalize ${scene.status === 'generating' ? 'text-amber-400 border-amber-500/30 animate-pulse' : scene.status === 'failed' ? 'text-red-400 border-red-500/30' : ''}`}>{scene.status}</Badge>
+                    {(scene.status === 'generating' || scene.status === 'failed') && (
+                      <button className="text-[9px] text-muted-foreground hover:text-amber-400 underline" onClick={(e) => { e.stopPropagation(); resetStatusMutation.mutate({ sceneId: scene.id }); }}>Reset</button>
+                    )}
                     <span className="text-[10px] text-muted-foreground">{scene.duration || 30}s</span>
                     {(scene as any).videoUrl && <Badge variant="outline" className="text-[10px] h-5 text-amber-400 border-amber-500/30"><Video className="h-2.5 w-2.5 mr-0.5" />Video</Badge>}
                   </div>

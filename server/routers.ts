@@ -1194,6 +1194,18 @@ export const appRouter = router({
         return { generated, total: scenes.length };
       }),
 
+    // Reset scene status (for stuck scenes)
+    resetStatus: protectedProcedure
+      .input(z.object({ sceneId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const scene = await db.getSceneById(input.sceneId);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        const project = await db.getProjectById(scene.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        await db.updateScene(scene.id, { status: "draft" } as any);
+        return { success: true, sceneId: scene.id };
+      }),
+
     // Generate video for a single scene
     generateVideo: protectedProcedure
       .input(z.object({ sceneId: z.number() }))

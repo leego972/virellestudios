@@ -16,6 +16,10 @@ const getRunwayClient = (): RunwayML => {
   if (!apiKey) {
     throw new Error("Runway API key not configured");
   }
+  // Runway API keys must start with 'key_' — fail fast if invalid
+  if (!apiKey.startsWith('key_')) {
+    throw new Error(`Runway API key invalid (must start with 'key_'). Got: ${apiKey.substring(0, 8)}...`);
+  }
   return new RunwayML({ apiKey });
 };
 
