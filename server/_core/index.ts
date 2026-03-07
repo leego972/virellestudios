@@ -350,6 +350,25 @@ async function startServer() {
   });
 
 
+  // Admin: Reset project (delete scenes, update duration, reset status)
+  app.post("/api/admin/reset-project", express.json(), async (req, res) => {
+    try {
+      const { projectId, duration } = req.body;
+      if (!projectId) { res.status(400).json({ error: "projectId required" }); return; }
+      const { getDb } = await import("../db");
+      const { sql } = await import("drizzle-orm");
+      const db = await getDb();
+      // Delete all scenes for this project
+      await db.execute(sql.raw(`DELETE FROM scenes WHERE projectId = ${parseInt(projectId)}`));
+      // Update duration and reset status
+      const dur = duration ? parseInt(duration) : 1;
+      await db.execute(sql.raw(`UPDATE projects SET duration = ${dur}, status = 'draft' WHERE id = ${parseInt(projectId)}`));
+      res.json({ status: "ok", projectId: parseInt(projectId), duration: dur, scenesDeleted: true });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   // Rate limiting on auth endpoints (stricter: 10 requests per minute)
   app.use("/api/trpc/auth.login", rateLimit(60_000, 10));
   app.use("/api/trpc/auth.register", rateLimit(60_000, 5));
