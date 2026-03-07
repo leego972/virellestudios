@@ -348,6 +348,34 @@ async function startServer() {
     }
   });
 
+  // Test insert: try inserting a test scene to see the exact error
+  app.post("/api/admin/test-insert", async (_req, res) => {
+    const { getDb } = await import("../db");
+    const { sql } = await import("drizzle-orm");
+    const db = await getDb();
+    if (!db) return res.status(500).json({ error: "No DB" });
+    try {
+      // Try the exact same INSERT that quickGenerate does
+      const result = await db.execute(sql.raw(
+        `INSERT INTO scenes (projectId, orderIndex, title, description, timeOfDay, weather, lighting, cameraAngle, locationType, mood, duration, transitionType, productionNotes) VALUES (11, 99, 'TEST', 'test desc', 'day', 'clear', 'natural', 'wide', 'interior', 'neutral', 5, 'cut', 'test notes')`
+      ));
+      // Clean up the test row
+      const insertId = (result as any)[0]?.insertId;
+      if (insertId) {
+        await db.execute(sql.raw(`DELETE FROM scenes WHERE id = ${insertId}`));
+      }
+      res.json({ status: "ok", message: "INSERT succeeded", insertId });
+    } catch (e: any) {
+      res.status(500).json({
+        error: e.message,
+        code: e.code,
+        errno: e.errno,
+        sqlState: e.sqlState,
+        sqlMessage: e.sqlMessage,
+      });
+    }
+  });
+
   // Rate limiting on auth endpoints (stricter: 10 requests per minute)
   app.use("/api/trpc/auth.login", rateLimit(60_000, 10));
   app.use("/api/trpc/auth.register", rateLimit(60_000, 5));
