@@ -726,7 +726,7 @@ export default function SceneEditor() {
         <div className="space-y-2">
           {scenes.map((scene, idx) => (
             <Card key={scene.id} className="bg-card/50 group">
-              <CardContent className="p-3 flex items-center gap-3">
+              <CardContent className="p-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <div className="flex flex-col gap-0.5 shrink-0">
                   <Button variant="ghost" size="sm" className="h-5 w-5 p-0" disabled={idx === 0}
                     onClick={() => moveScene(scene.id, "up")}>
@@ -739,7 +739,7 @@ export default function SceneEditor() {
                   </Button>
                 </div>
 
-                <div className="relative h-16 w-24 shrink-0">
+                <div className="relative h-16 w-24 shrink-0 hidden sm:block">
                   {scene.thumbnailUrl ? (
                     <div className="h-full w-full rounded overflow-hidden bg-muted">
                       <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
@@ -751,7 +751,7 @@ export default function SceneEditor() {
                   )}
                   {(scene as any).videoUrl && (
                     <button
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute inset-0 flex items-center justify-center bg-black/40 rounded sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       onClick={(e) => { e.stopPropagation(); setVideoPreviewUrl((scene as any).videoUrl); }}
                     >
                       <Play className="h-6 w-6 text-white fill-white" />
@@ -764,7 +764,7 @@ export default function SceneEditor() {
                   )}
                 </div>
 
-                <div className="min-w-0 flex-1 cursor-pointer" onClick={() => openEditScene(scene)}>
+                <div className="min-w-0 flex-1 cursor-pointer overflow-hidden" onClick={() => openEditScene(scene)}>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground font-mono">#{idx + 1}</span>
                     <p className="text-sm font-medium truncate">{scene.title || "Untitled Scene"}</p>
@@ -782,7 +782,7 @@ export default function SceneEditor() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-1 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-wrap justify-end">
                   <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
                     onClick={() => videoMutation.mutate({ sceneId: scene.id })}
                     disabled={videoMutation.isPending}>

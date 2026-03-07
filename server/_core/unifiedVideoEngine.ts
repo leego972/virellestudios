@@ -128,7 +128,7 @@ async function generateWithSora(options: UnifiedVideoOptions): Promise<UnifiedVi
   const soraOpts: VideoGenerationOptions = {
     prompt: options.prompt,
     seconds: options.seconds || 8,
-    resolution: options.resolution || "720p",
+    resolution: options.resolution || "1080p",
     model: "sora-2",
     inputImageUrl: options.inputImageUrl,
     aspectRatio: options.aspectRatio || "landscape",

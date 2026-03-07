@@ -514,6 +514,28 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
     console.log(`[VideoStitcher] Phase 4: Normalizing clips and applying transitions...`);
     const normalizedFiles: string[] = [];
 
+    // ─── MANDATORY: VirElle Studios Opener (cannot be removed) ───
+    // Every film produced on the platform MUST begin with the VirElle Studios opener.
+    // This is a non-negotiable platform standard for branding.
+    const VIRELLE_OPENER_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663313597286/4UdkV6UhRGiWteVbQNziWP/videos/1772900337636-video_69.mp4";
+    try {
+      const openerPath = path.join(tmpDir, "virelle_opener.mp4");
+      await downloadFile(VIRELLE_OPENER_URL, openerPath);
+      const normalizedOpener = path.join(tmpDir, "norm_opener.ts");
+      await execFileAsync("ffmpeg", [
+        "-i", openerPath,
+        "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+        "-vf", `scale=${resolution.width}:${resolution.height}:force_original_aspect_ratio=decrease,pad=${resolution.width}:${resolution.height}:(ow-iw)/2:(oh-ih)/2,setsar=1,fade=t=in:st=0:d=0.5,fade=t=out:st=8:d=1.5`,
+        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "128k",
+        "-f", "mpegts", "-y", normalizedOpener,
+      ], { timeout: 60000 });
+      normalizedFiles.push(normalizedOpener);
+      console.log(`[VideoStitcher] VirElle Studios opener prepended successfully.`);
+    } catch (openerErr: any) {
+      console.error(`[VideoStitcher] WARNING: Failed to prepend VirElle opener: ${openerErr.message}`);
+      // If opener fails to download/process, continue without it rather than failing the entire film
+    }
+
     // Generate title card if requested
     if (input.showTitleCard) {
       const titleDuration = input.titleCardDuration || 5;

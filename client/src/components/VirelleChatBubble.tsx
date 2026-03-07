@@ -114,7 +114,7 @@ export default function VirelleChatBubble({
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 group"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 group"
         title="Open Virelle AI Director Chat"
       >
         <div className="relative">
@@ -140,7 +140,7 @@ export default function VirelleChatBubble({
   // Minimized state
   if (isMinimized) {
     return (
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
         <button
           onClick={() => setIsMinimized(false)}
           className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full px-4 py-2.5 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 transition-all"
@@ -160,8 +160,8 @@ export default function VirelleChatBubble({
 
   // Full chat panel
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)]">
-      <div className="bg-card border border-border rounded-xl shadow-2xl shadow-black/20 overflow-hidden flex flex-col" style={{ maxHeight: "min(600px, calc(100vh - 6rem))" }}>
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)]">
+      <div className="bg-card border border-border rounded-xl shadow-2xl shadow-black/20 overflow-hidden flex flex-col" style={{ maxHeight: "min(600px, calc(100vh - 6rem))", maxHeight: "min(600px, calc(100dvh - 5rem))" }}>
         {/* Header */}
         <div className="bg-gradient-to-r from-amber-500/15 to-amber-600/10 border-b border-border px-4 py-3 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
@@ -314,7 +314,7 @@ export default function VirelleChatBubble({
             </Button>
           </div>
           <p className="text-[9px] text-muted-foreground/50 mt-1 text-center">
-            Powered by your API key · OpenAI / Claude / Gemini
+            Powered by OpenAI / Claude / Gemini
           </p>
         </div>
       </div>

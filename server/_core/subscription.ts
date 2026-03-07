@@ -763,7 +763,8 @@ export async function createCheckoutSession(
   successUrl: string,
   cancelUrl: string,
   billing: "monthly" | "annual" = "annual",
-  trialDays?: number
+  trialDays?: number,
+  applyFoundingDiscount?: boolean
 ): Promise<string> {
   if (!stripe) throw new Error("Stripe is not configured");
 
@@ -773,6 +774,31 @@ export async function createCheckoutSession(
     billing === "monthly"
       ? ["card", "us_bank_account"]
       : ["card"];
+
+  // Auto-create or find the founding member 50% off coupon for annual billing
+  let couponId: string | undefined;
+  if (applyFoundingDiscount && billing === "annual") {
+    try {
+      // Look for existing founding coupon
+      const coupons = await stripe.coupons.list({ limit: 100 });
+      const existing = coupons.data.find(c => c.name === "Founding Director — 50% Off First Year" && c.valid);
+      if (existing) {
+        couponId = existing.id;
+      } else {
+        // Create the coupon: 50% off, first year only (once), limited redemptions
+        const coupon = await stripe.coupons.create({
+          name: "Founding Director — 50% Off First Year",
+          percent_off: 50,
+          duration: "once", // applies to first invoice only
+          max_redemptions: 50, // limited to 50 founding directors
+          metadata: { type: "founding_offer" },
+        });
+        couponId = coupon.id;
+      }
+    } catch (err: any) {
+      console.error(`[Checkout] Failed to create/find founding coupon: ${err.message}`);
+    }
+  }
 
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     customer: customerId,
@@ -784,6 +810,7 @@ export async function createCheckoutSession(
     metadata: {
       userId: String(user.id),
       billing,
+      ...(applyFoundingDiscount ? { foundingOffer: "true" } : {}),
     },
     subscription_data: {
       metadata: {
@@ -791,6 +818,7 @@ export async function createCheckoutSession(
         billing,
       },
       ...(trialDays ? { trial_period_days: trialDays } : {}),
+      ...(couponId ? { coupon: couponId } : {}),
     },
     // For ACH direct debit, allow mandate collection
     ...(billing === "monthly" ? {

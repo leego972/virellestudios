@@ -191,9 +191,9 @@ export default function Landing() {
               <span className="text-sm font-black uppercase tracking-widest shrink-0 hidden sm:inline">🎬 FOUNDING OFFER</span>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm font-bold">
-                  50% OFF your first 60-min feature film
+                  HALF PRICE on your first year's membership
                 </span>
-                <span className="text-xs font-medium opacity-80">— Limited to 50 founding directors.</span>
+                <span className="text-xs font-medium opacity-80">— Limited to first 50 founding directors.</span>
                 <span className="bg-black/20 text-black text-xs font-black px-2 py-0.5 rounded-full">
                   {spotsRemaining} of 50 spots left
                 </span>

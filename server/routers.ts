@@ -1287,7 +1287,7 @@ export const appRouter = router({
             const result = await generateUnifiedVideo({
               prompt: `Cinematic video: ${prompt}`,
               seconds: Math.min(scene.duration || 8, 20),
-              resolution: "720p",
+              resolution: "1080p",
               inputImageUrl,
               aspectRatio: "landscape",
               genre: project.genre || "Drama",
@@ -1346,7 +1346,7 @@ export const appRouter = router({
               const result = await generateUnifiedVideo({
                 prompt: `Cinematic video: ${prompt}`,
                 seconds: Math.min(scene.duration || 8, 20),
-                resolution: "720p",
+                resolution: "1080p",
                 inputImageUrl: scene.thumbnailUrl || undefined,
                 aspectRatio: "landscape",
                 genre: project.genre || "Drama",
@@ -1385,9 +1385,10 @@ export const appRouter = router({
         // Get user's API keys
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
 
-        // Determine which LLM provider to use
+        // Determine which LLM provider to use (with built-in fallback)
         const preferredLlm = userKeys.preferredLlmProvider;
         let provider: "openai" | "anthropic" | "google" = "openai";
+        let useBuiltInKey = false;
         if (preferredLlm === "anthropic" && userKeys.anthropicKey) provider = "anthropic";
         else if (preferredLlm === "google" && userKeys.googleAiKey) provider = "google";
         else if (preferredLlm === "openai" && userKeys.openaiKey) provider = "openai";
@@ -1395,15 +1396,41 @@ export const appRouter = router({
         else if (userKeys.anthropicKey) provider = "anthropic";
         else if (userKeys.googleAiKey) provider = "google";
         else {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "No LLM API key configured. Please add an OpenAI, Anthropic (Claude), or Google (Gemini) API key in Settings.",
-          });
+          // Fallback to built-in platform OpenAI key for Virelle chat
+          provider = "openai";
+          useBuiltInKey = true;
         }
 
-        const apiKey = provider === "openai" ? userKeys.openaiKey!
-          : provider === "anthropic" ? userKeys.anthropicKey!
-          : userKeys.googleAiKey!;
+        // Rate limit users on the built-in key: 15 messages per day (admins exempt)
+        const BUILTIN_KEY_DAILY_LIMIT = 15;
+        if (useBuiltInKey && ctx.user.role !== "admin" && ctx.user.email !== ENV.adminEmail) {
+          try {
+            const dbConn = await db.getDb();
+            if (dbConn) {
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              const result = await dbConn.execute(
+                sql`SELECT COUNT(*) as cnt FROM credit_transactions WHERE userId = ${ctx.user.id} AND action = 'virelle_chat' AND createdAt >= ${today.toISOString()}`
+              );
+              const todayCount = Number((result[0] as any)?.cnt || 0);
+              if (todayCount >= BUILTIN_KEY_DAILY_LIMIT) {
+                throw new TRPCError({
+                  code: "TOO_MANY_REQUESTS",
+                  message: `You've reached the daily limit of ${BUILTIN_KEY_DAILY_LIMIT} AI chat messages. Add your own OpenAI, Claude, or Gemini API key in Settings for unlimited messages.`,
+                });
+              }
+            }
+          } catch (e: any) {
+            if (e.code === "TOO_MANY_REQUESTS") throw e;
+            // If rate limit check fails, allow the message through
+          }
+        }
+
+        const apiKey = useBuiltInKey
+          ? ENV.openaiApiKey
+          : (provider === "openai" ? userKeys.openaiKey!
+            : provider === "anthropic" ? userKeys.anthropicKey!
+            : userKeys.googleAiKey!);
 
         // Build the system prompt for Virelle
         const systemPrompt = `You are Virelle, an expert AI film director assistant for VirÉlle Studios. You help directors edit and refine their film scenes through natural conversation.
@@ -4939,6 +4966,18 @@ Rules:
         const isFirstSub = !ctx.user.subscriptionTier || ctx.user.subscriptionStatus === "none";
         const trialDays = isFirstSub ? 7 : undefined;
 
+        // Check if founding offer applies (first 50 annual subscribers get 50% off first year)
+        const spotsData = await (async () => {
+          try {
+            const dbConn = await db.getDb();
+            if (!dbConn) return { spotsRemaining: 0 };
+            const result = await dbConn.execute(sql`SELECT COUNT(*) as count FROM users WHERE subscriptionTier IN ('independent','creator','studio','industry') AND subscriptionStatus = 'active'`);
+            const realCount = Number((result[0] as any)?.count || 0);
+            return { spotsRemaining: Math.max(50 - realCount, 0) };
+          } catch { return { spotsRemaining: 0 }; }
+        })();
+        const applyFoundingDiscount = isFirstSub && input.billing === "annual" && spotsData.spotsRemaining > 0;
+
         const url = await createCheckoutSession(
           ctx.user,
           customerId,
@@ -4947,6 +4986,7 @@ Rules:
           input.cancelUrl,
           input.billing,  // pass billing type for payment method selection
           trialDays,
+          applyFoundingDiscount,
         );
         return { url };
       }),
