@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Upload, Video, Film, Play, ImagePlus, X, Mic, UserPlus } from "lucide-react";
+import { Upload, Video, Film, Play, ImagePlus, X, Mic, UserPlus, Download, Save } from "lucide-react";
 import VirelleChatBubble from "@/components/VirelleChatBubble";
 import MediaPlayer from "@/components/MediaPlayer";
 import {
@@ -411,6 +411,14 @@ export default function SceneEditor() {
 
   const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
 
+  const exportMutation = trpc.movie.exportFromProject.useMutation({
+    onSuccess: (result, variables) => {
+      const typeLabel = variables.exportType === "film" ? "Full film" : variables.exportType === "scenes" ? `${result.exported} scene(s)` : "Trailer";
+      toast.success(`${typeLabel} saved to My Movies`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
   // Build playlist for MediaPlayer from all scenes with video
   const scenePlaylist = useMemo(() => {
     if (!scenes) return [];
@@ -745,6 +753,26 @@ export default function SceneEditor() {
               <span className="sm:hidden">Play</span>
             </Button>
           )}
+          {scenePlaylist.length > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-blue-500/40 text-blue-400 hover:bg-blue-500/10"
+              onClick={() => {
+                if (!projectId) return;
+                exportMutation.mutate({ projectId: Number(projectId), exportType: "scenes" });
+              }}
+              disabled={exportMutation.isPending}
+            >
+              {exportMutation.isPending ? (
+                <Loader2 className="h-4 w-4 sm:mr-1 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 sm:mr-1" />
+              )}
+              <span className="hidden sm:inline">Save to My Movies</span>
+              <span className="sm:hidden">Save</span>
+            </Button>
+          )}
           <Button
             size="sm"
             variant="outline"
@@ -790,10 +818,12 @@ export default function SceneEditor() {
                       )}
                       {(scene as any).videoUrl && (
                         <button
-                          className="absolute inset-0 mb-1.5 flex items-center justify-center bg-black/40 rounded opacity-0 hover:opacity-100 transition-opacity"
+                          className="absolute inset-0 mb-1.5 flex items-center justify-center bg-black/30 rounded active:bg-black/50 transition-colors"
                           onClick={(e) => { e.stopPropagation(); setVideoPreviewSceneId(scene.id); }}
                         >
-                          <Play className="h-5 w-5 text-white fill-white" />
+                          <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <Play className="h-4 w-4 text-white fill-white ml-0.5" />
+                          </div>
                         </button>
                       )}
                     </div>
@@ -851,7 +881,7 @@ export default function SceneEditor() {
                   </Button>
                 </div>
 
-                <div className="relative h-16 w-24 shrink-0 hidden sm:block">
+                <div className="relative h-16 w-24 shrink-0">
                   {scene.thumbnailUrl ? (
                     <div className="h-full w-full rounded overflow-hidden bg-muted">
                       <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
@@ -863,7 +893,7 @@ export default function SceneEditor() {
                   )}
                   {(scene as any).videoUrl && (
                     <button
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 rounded sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                      className="absolute inset-0 flex items-center justify-center bg-black/40 rounded active:bg-black/60 transition-colors"
                       onClick={(e) => { e.stopPropagation(); setVideoPreviewSceneId(scene.id); }}
                     >
                       <Play className="h-6 w-6 text-white fill-white" />
@@ -907,6 +937,23 @@ export default function SceneEditor() {
                     {previewMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Eye className="h-3 w-3 mr-1" />}
                     Preview
                   </Button>
+                  {(scene as any).videoUrl && (
+                    <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const a = document.createElement("a");
+                        a.href = (scene as any).videoUrl;
+                        a.download = scene.title || `scene_${idx + 1}`;
+                        a.target = "_blank";
+                        a.rel = "noopener noreferrer";
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                      }}>
+                      <Download className="h-3 w-3 mr-1" />
+                      <span className="hidden sm:inline">Save</span>
+                    </Button>
+                  )}
                   <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => openEditScene(scene)}>
                     Edit
                   </Button>

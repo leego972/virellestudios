@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import DirectorChat from "@/components/DirectorChat";
+import MediaPlayer from "@/components/MediaPlayer";
 import ShareButton from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -135,6 +136,7 @@ export default function ProjectDetail() {
   const [descForm, setDescForm] = useState({ description: "", plotSummary: "" });
   const fileRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLInputElement>(null);
+  const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
 
   const { data: project, isLoading } = trpc.project.get.useQuery({ id: projectId });
   const { data: scenes } = trpc.scene.listByProject.useQuery({ projectId });
@@ -142,6 +144,28 @@ export default function ProjectDetail() {
   const { data: jobs } = trpc.generation.listJobs.useQuery({ projectId });
   const { data: soundtracks } = trpc.soundtrack.listByProject.useQuery({ projectId });
   const utils = trpc.useUtils();
+
+  // Build playlist for MediaPlayer from all scenes with video
+  const scenePlaylist = useMemo(() => {
+    if (!scenes) return [];
+    return scenes
+      .filter((s: any) => (s as any).videoUrl)
+      .map((s: any, idx: number) => ({
+        id: s.id,
+        title: s.title || `Scene ${idx + 1}`,
+        description: s.description || null,
+        type: "scene" as const,
+        fileUrl: (s as any).videoUrl || null,
+        thumbnailUrl: s.thumbnailUrl || null,
+        duration: s.duration || null,
+        fileSize: null,
+        mimeType: "video/mp4",
+        movieTitle: project?.title || null,
+        sceneNumber: idx + 1,
+      }));
+  }, [scenes, project]);
+
+  const activeVideoMovie = scenePlaylist.find((m) => m.id === videoPreviewSceneId) || null;
 
   const uploadMutation = trpc.upload.image.useMutation();
   const createCharMutation = trpc.character.create.useMutation({
@@ -440,19 +464,39 @@ export default function ProjectDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <Card className="bg-card/50">
               <CardContent className="p-4">
-                {project.thumbnailUrl ? (
-                  <div className="aspect-video rounded-md overflow-hidden bg-muted">
+                <div className="relative aspect-video rounded-md overflow-hidden bg-muted group cursor-pointer"
+                  onClick={() => {
+                    if (scenePlaylist.length > 0) setVideoPreviewSceneId(scenePlaylist[0].id);
+                  }}
+                >
+                  {project.thumbnailUrl ? (
                     <img src={project.thumbnailUrl} alt={project.title} className="w-full h-full object-cover" />
-                  </div>
-                ) : (
-                  <div className="aspect-video rounded-md bg-muted/50 flex items-center justify-center">
-                    <Film className="h-10 w-10 text-muted-foreground/30" />
-                  </div>
-                )}
-                <div className="mt-3 flex items-center gap-2">
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted/50">
+                      <Film className="h-10 w-10 text-muted-foreground/30" />
+                    </div>
+                  )}
+                  {/* Play button overlay */}
+                  {scenePlaylist.length > 0 && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
+                      <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                        <Play className="h-7 w-7 text-white fill-white ml-0.5" />
+                      </div>
+                      <span className="absolute bottom-2 right-2 text-[10px] text-white/80 bg-black/50 rounded px-1.5 py-0.5">
+                        {scenePlaylist.length} {scenePlaylist.length === 1 ? 'scene' : 'scenes'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="mt-3 flex items-center gap-2 flex-wrap">
                   <Badge variant="outline" className="text-xs capitalize">{project.status}</Badge>
                   <Badge variant="outline" className="text-xs">{project.resolution}</Badge>
                   <Badge variant="outline" className="text-xs capitalize">{project.quality}</Badge>
+                  {scenePlaylist.length > 0 && (
+                    <Badge className="text-xs bg-amber-500/20 text-amber-400 border-amber-500/30 border">
+                      <VideoIcon className="h-3 w-3 mr-1" />{scenePlaylist.length} video{scenePlaylist.length !== 1 ? 's' : ''}
+                    </Badge>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -629,17 +673,27 @@ export default function ProjectDetail() {
           {scenes?.length ? (
             <div className="space-y-2">
               {scenes.map((scene, idx) => (
-                <Card key={scene.id} className="bg-card/50">
+                <Card key={scene.id} className="bg-card/50 group">
                   <CardContent className="p-3 flex items-center gap-3">
-                    {scene.thumbnailUrl ? (
-                      <div className="h-14 w-20 rounded overflow-hidden bg-muted shrink-0">
-                        <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="h-14 w-20 rounded bg-muted/50 flex items-center justify-center shrink-0">
-                        <ImageIcon className="h-5 w-5 text-muted-foreground/30" />
-                      </div>
-                    )}
+                    <div className="relative h-14 w-20 shrink-0">
+                      {scene.thumbnailUrl ? (
+                        <div className="h-full w-full rounded overflow-hidden bg-muted">
+                          <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="h-full w-full rounded bg-muted/50 flex items-center justify-center">
+                          <ImageIcon className="h-5 w-5 text-muted-foreground/30" />
+                        </div>
+                      )}
+                      {(scene as any).videoUrl && (
+                        <button
+                          className="absolute inset-0 flex items-center justify-center bg-black/40 rounded transition-colors active:bg-black/60"
+                          onClick={() => setVideoPreviewSceneId(scene.id)}
+                        >
+                          <Play className="h-6 w-6 text-white fill-white" />
+                        </button>
+                      )}
+                    </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground">#{idx + 1}</span>
@@ -649,7 +703,33 @@ export default function ProjectDetail() {
                         {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" · ")}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-xs capitalize shrink-0">{scene.status}</Badge>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {(scene as any).videoUrl && (
+                        <button
+                          className="h-7 w-7 rounded-md flex items-center justify-center text-blue-400 hover:bg-blue-500/10 active:bg-blue-500/20 transition-colors"
+                          title="Download video"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const a = document.createElement("a");
+                            a.href = (scene as any).videoUrl;
+                            a.download = scene.title || `scene_${idx + 1}`;
+                            a.target = "_blank";
+                            a.rel = "noopener noreferrer";
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                          }}
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                      {(scene as any).videoUrl && (
+                        <Badge className="text-[10px] h-5 bg-amber-500/20 text-amber-400 border-amber-500/30 border">
+                          <VideoIcon className="h-2.5 w-2.5 mr-0.5" />Video
+                        </Badge>
+                      )}
+                      <Badge variant="outline" className="text-xs capitalize">{scene.status}</Badge>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -1774,6 +1854,16 @@ export default function ProjectDetail() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Professional Media Player */}
+      {activeVideoMovie && (
+        <MediaPlayer
+          movie={activeVideoMovie}
+          playlist={scenePlaylist}
+          onClose={() => setVideoPreviewSceneId(null)}
+          onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
+        />
+      )}
 
       {/* Director's Assistant Chat */}
       <DirectorChat projectId={project.id} />

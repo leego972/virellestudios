@@ -25,7 +25,9 @@ import {
   ChevronRight,
   Repeat,
   Download,
+  Save,
   Film,
+  Check,
 } from "lucide-react";
 
 type MovieItem = {
@@ -131,10 +133,12 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
       setHasError(false);
       // Auto-unmute after iOS muted autoplay succeeds
       if (video.muted && isMuted) {
-        setTimeout(() => {
+        try {
           video.muted = false;
           setIsMuted(false);
-        }, 100);
+        } catch {
+          // iOS may block unmute — user will need to tap volume
+        }
       }
     };
     const onError = () => { setIsLoading(false); setHasError(true); };
@@ -387,15 +391,19 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             <Button
               size="icon"
               variant="ghost"
-              className="text-white/70 hover:text-white hover:bg-white/10"
+              className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
               onClick={() => {
                 const a = document.createElement("a");
                 a.href = movie.fileUrl!;
                 a.download = movie.title;
+                a.target = "_blank";
+                a.rel = "noopener noreferrer";
+                document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
               }}
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-5 w-5" />
             </Button>
           )}
         </div>
@@ -608,7 +616,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="text-white/80 hover:text-white hover:bg-white/10 h-8 w-8 sm:h-9 sm:w-9"
+                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-10 w-10 sm:h-9 sm:w-9"
                           disabled={!hasPrev}
                           onClick={() => hasPrev && onNavigate?.(playlist![currentIndex - 1].id)}
                         >
@@ -627,7 +635,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="text-white hover:bg-white/10 h-9 w-9 sm:h-10 sm:w-10"
+                        className="text-white hover:bg-white/10 active:bg-white/20 h-11 w-11 sm:h-10 sm:w-10"
                         onClick={togglePlay}
                       >
                         {isPlaying ? <Pause className="h-5 w-5 fill-white" /> : <Play className="h-5 w-5 fill-white ml-0.5" />}
@@ -645,7 +653,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="text-white/80 hover:text-white hover:bg-white/10 h-8 w-8 sm:h-9 sm:w-9"
+                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-10 w-10 sm:h-9 sm:w-9"
                           disabled={!hasNext}
                           onClick={() => hasNext && onNavigate?.(playlist![currentIndex + 1].id)}
                         >
@@ -772,7 +780,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="text-white/80 hover:text-white hover:bg-white/10 h-8 w-8 sm:h-9 sm:w-9"
+                        className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-10 w-10 sm:h-9 sm:w-9"
                         onClick={toggleFullscreen}
                       >
                         {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}

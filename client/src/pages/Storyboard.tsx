@@ -5,8 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { trpc } from "@/lib/trpc";
 import { useParams, useLocation } from "wouter";
-import { Loader2, ArrowLeft, Grid3X3, List, Printer, Clock, MapPin, Camera, Sun, Cloud, Palette, ArrowRight, Download } from "lucide-react";
-import { useState } from "react";
+import { Loader2, ArrowLeft, Grid3X3, List, Printer, Clock, MapPin, Camera, Sun, Cloud, Palette, ArrowRight, Download, Play, VideoIcon } from "lucide-react";
+import { useState, useMemo } from "react";
+import MediaPlayer from "@/components/MediaPlayer";
 import { getLoginUrl } from "@/const";
 
 const TRANSITION_LABELS: Record<string, string> = {
@@ -21,6 +22,7 @@ export default function Storyboard() {
   const [, navigate] = useLocation();
   const projectId = Number(params.projectId);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
 
   const { data: project, isLoading: projectLoading } = trpc.project.get.useQuery(
     { id: projectId },
@@ -164,6 +166,17 @@ export default function Storyboard() {
                       <Camera className="h-8 w-8 text-muted-foreground/20" />
                     </div>
                   )}
+                  {/* Play button for scenes with video */}
+                  {(scene as any).videoUrl && (
+                    <button
+                      className="absolute inset-0 flex items-center justify-center bg-black/30 active:bg-black/50 transition-colors z-10"
+                      onClick={(e) => { e.stopPropagation(); setVideoPreviewSceneId(scene.id); }}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                        <Play className="h-5 w-5 text-white fill-white ml-0.5" />
+                      </div>
+                    </button>
+                  )}
                   <div className="absolute top-2 left-2">
                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-black/60 text-white border-0">
                       {idx + 1}
@@ -227,13 +240,23 @@ export default function Storyboard() {
                 <div className="flex gap-4 p-3 rounded-lg border bg-card/50 hover:ring-1 hover:ring-primary/30 transition-all cursor-pointer"
                   onClick={() => navigate(`/projects/${projectId}/scenes`)}>
                   {/* Thumbnail */}
-                  <div className="w-40 h-24 rounded-md overflow-hidden bg-muted shrink-0">
+                  <div className="relative w-40 h-24 rounded-md overflow-hidden bg-muted shrink-0">
                     {scene.thumbnailUrl ? (
                       <img src={scene.thumbnailUrl} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <Camera className="h-6 w-6 text-muted-foreground/20" />
                       </div>
+                    )}
+                    {(scene as any).videoUrl && (
+                      <button
+                        className="absolute inset-0 flex items-center justify-center bg-black/30 active:bg-black/50 transition-colors z-10"
+                        onClick={(e) => { e.stopPropagation(); setVideoPreviewSceneId(scene.id); }}
+                      >
+                        <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                          <Play className="h-4 w-4 text-white fill-white ml-0.5" />
+                        </div>
+                      </button>
                     )}
                   </div>
                   {/* Details */}
@@ -280,6 +303,32 @@ export default function Storyboard() {
           </div>
         )}
       </div>
+
+      {/* Professional Media Player */}
+      {(() => {
+        const playlist = (scenes || []).filter((s: any) => (s as any).videoUrl).map((s: any, idx: number) => ({
+          id: s.id,
+          title: s.title || `Scene ${idx + 1}`,
+          description: s.description || null,
+          type: "scene" as const,
+          fileUrl: (s as any).videoUrl || null,
+          thumbnailUrl: s.thumbnailUrl || null,
+          duration: s.duration || null,
+          fileSize: null,
+          mimeType: "video/mp4",
+          movieTitle: project?.title || null,
+          sceneNumber: idx + 1,
+        }));
+        const activeMovie = playlist.find((m) => m.id === videoPreviewSceneId) || null;
+        return activeMovie ? (
+          <MediaPlayer
+            movie={activeMovie}
+            playlist={playlist}
+            onClose={() => setVideoPreviewSceneId(null)}
+            onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
+          />
+        ) : null;
+      })()}
 
       {/* Print styles */}
       <style>{`
