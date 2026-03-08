@@ -271,7 +271,25 @@ export const appRouter = router({
   // ─── Projects ───
   project: router({
     list: protectedProcedure.query(async ({ ctx }) => {
-      return db.getUserProjects(ctx.user.id);
+      const projects = await db.getUserProjects(ctx.user.id);
+      // Auto-populate thumbnailUrl from first scene if project has no thumbnail
+      const projectsWithoutThumbnail = projects.filter((p: any) => !p.thumbnailUrl);
+      if (projectsWithoutThumbnail.length > 0) {
+        await Promise.allSettled(projectsWithoutThumbnail.map(async (p: any) => {
+          try {
+            const scenes = await db.getProjectScenes(p.id);
+            const sceneWithThumb = scenes.find((s: any) => s.thumbnailUrl);
+            if (sceneWithThumb?.thumbnailUrl) {
+              p.thumbnailUrl = sceneWithThumb.thumbnailUrl;
+              // Persist it so we don't have to look it up again
+              await db.updateProject(p.id, ctx.user.id, { thumbnailUrl: sceneWithThumb.thumbnailUrl });
+            }
+          } catch (e) {
+            // Ignore errors — just show placeholder
+          }
+        }));
+      }
+      return projects;
     }),
 
     get: protectedProcedure
@@ -1134,6 +1152,15 @@ export const appRouter = router({
         // Update scene with preview thumbnail
         await db.updateScene(scene.id, { thumbnailUrl: result.url });
 
+        // Auto-set project thumbnail if project doesn't have one yet
+        if (result.url && project && !project.thumbnailUrl) {
+          try {
+            await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: result.url });
+          } catch (e) {
+            console.warn('[Preview] Failed to auto-set project thumbnail:', e);
+          }
+        }
+
         return { url: result.url };
       }),
 
@@ -1145,6 +1172,7 @@ export const appRouter = router({
         referenceImageUrl: z.string().optional(),
         aspectRatio: z.enum(["1:1", "16:9", "9:16", "4:3", "3:4"]).optional(),
         sceneId: z.number().optional(),
+        projectId: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         rateLimitAI(ctx.user.id);
@@ -1167,6 +1195,17 @@ export const appRouter = router({
         // If sceneId provided, update scene thumbnail
         if (input.sceneId && result.url) {
           await db.updateScene(input.sceneId, { thumbnailUrl: result.url });
+          // Auto-set project thumbnail if project doesn't have one yet
+          if (input.projectId) {
+            try {
+              const proj = await db.getProjectById(input.projectId, ctx.user.id);
+              if (proj && !proj.thumbnailUrl) {
+                await db.updateProject(proj.id, ctx.user.id, { thumbnailUrl: result.url });
+              }
+            } catch (e) {
+              console.warn('[NanoBanana] Failed to auto-set project thumbnail:', e);
+            }
+          }
         }
 
         return { url: result.url, text: result.text };
@@ -1229,6 +1268,15 @@ export const appRouter = router({
                 originalImages: characterPhotos.length > 0 ? characterPhotos : undefined,
               });
               await db.updateScene(scene.id, { thumbnailUrl: result.url });
+              // Auto-set project thumbnail from first generated scene
+              if (!project.thumbnailUrl && result.url) {
+                try {
+                  await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: result.url });
+                  (project as any).thumbnailUrl = result.url; // prevent re-setting
+                } catch (e) {
+                  console.warn('[BulkPreview] Failed to auto-set project thumbnail:', e);
+                }
+              }
               generated++;
             } catch (e) {
               console.error(`Bulk gen failed for scene "${scene.title}":`, e);
@@ -1298,6 +1346,12 @@ export const appRouter = router({
               lighting: scene.lighting || undefined,
             });
             await db.updateScene(scene.id, { videoUrl: result.videoUrl, status: "completed" } as any);
+            // Auto-set project thumbnail from video thumbnail if project has none
+            if (result.thumbnailUrl && project && !project.thumbnailUrl) {
+              try {
+                await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: result.thumbnailUrl });
+              } catch (e) { /* ignore */ }
+            }
             console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${result.videoUrl}`);
           } catch (err: any) {
             console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message, err.stack);
@@ -1357,6 +1411,13 @@ export const appRouter = router({
                 lighting: scene.lighting || undefined,
               });
               await db.updateScene(scene.id, { videoUrl: result.videoUrl } as any);
+              // Auto-set project thumbnail from video thumbnail if project has none
+              if (result.thumbnailUrl && !project.thumbnailUrl) {
+                try {
+                  await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: result.thumbnailUrl });
+                  (project as any).thumbnailUrl = result.thumbnailUrl;
+                } catch (e) { /* ignore */ }
+              }
               generated++;
             } catch (e) {
               console.error(`Bulk video gen failed for scene "${scene.title}":`, e);
