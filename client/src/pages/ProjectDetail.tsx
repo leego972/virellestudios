@@ -129,6 +129,8 @@ export default function ProjectDetail() {
   const [uploading, setUploading] = useState(false);
   const [audioUploading, setAudioUploading] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
+  const [editingDuration, setEditingDuration] = useState(false);
+  const [durationInput, setDurationInput] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
   const [descForm, setDescForm] = useState({ description: "", plotSummary: "" });
   const fileRef = useRef<HTMLInputElement>(null);
@@ -311,8 +313,55 @@ export default function ProjectDetail() {
               <span className="capitalize">{project.mode}</span>
               {project.rating && <><span>·</span><span>{project.rating}</span></>}
               {project.genre && <><span>·</span><span>{project.genre}</span></>}
-              {project.duration && <><span>·</span><span>{project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`}</span></>}
-              {!project.duration && scenes?.length ? <><span>·</span><span>{(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()}</span></> : null}
+              {editingDuration ? (
+                <span className="flex items-center gap-1">
+                  <span>·</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={180}
+                    className="w-16 h-5 text-xs bg-background border border-primary rounded px-1 text-foreground"
+                    value={durationInput}
+                    autoFocus
+                    onChange={e => setDurationInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter") {
+                        const val = parseInt(durationInput);
+                        if (val >= 1 && val <= 180) {
+                          updateMutation.mutate({ id: projectId, duration: val });
+                          setEditingDuration(false);
+                        }
+                      }
+                      if (e.key === "Escape") setEditingDuration(false);
+                    }}
+                    onBlur={() => {
+                      const val = parseInt(durationInput);
+                      if (val >= 1 && val <= 180) {
+                        updateMutation.mutate({ id: projectId, duration: val });
+                      }
+                      setEditingDuration(false);
+                    }}
+                  />
+                  <span className="text-[10px]">min</span>
+                </span>
+              ) : (
+                <>
+                  {project.duration && (
+                    <span className="cursor-pointer hover:text-primary transition-colors" title="Click to edit duration" onClick={() => { setDurationInput(String(project.duration)); setEditingDuration(true); }}>
+                      <span>·</span> {project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`} ✎
+                    </span>
+                  )}
+                  {!project.duration && scenes?.length ? (
+                    <span className="cursor-pointer hover:text-primary transition-colors" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
+                      <span>·</span> {(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()} ✎
+                    </span>
+                  ) : !project.duration ? (
+                    <span className="cursor-pointer hover:text-primary transition-colors text-muted-foreground" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
+                      <span>·</span> Set duration ✎
+                    </span>
+                  ) : null}
+                </>
+              )}
             </div>
           </div>
         </div>

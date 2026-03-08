@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Upload, Video, Film, Play, ImagePlus, X } from "lucide-react";
+import { Upload, Video, Film, Play, ImagePlus, X, Mic, UserPlus } from "lucide-react";
 import VirelleChatBubble from "@/components/VirelleChatBubble";
 import MediaPlayer from "@/components/MediaPlayer";
 import {
@@ -61,8 +61,10 @@ import {
   Volume2,
   Palette,
   Scissors,
+  ChevronRight,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { useLocation, useParams } from "wouter";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
@@ -105,6 +107,18 @@ import {
   SPEED_RAMP_OPTIONS, SPEED_RAMP_LABELS,
   LIP_SYNC_OPTIONS, LIP_SYNC_LABELS,
 } from "@shared/types";
+
+type ExtraEntry = {
+  description: string;
+  count: number;
+};
+
+type VoiceRoleEntry = {
+  roleName: string;
+  roleType: string; // "narrator" | "voiceover" | "god" | "inner_thought" | "radio" | "phone" | "custom"
+  dialogueText: string;
+  voiceStyle: string;
+};
 
 type SceneWardrobeEntry = {
   characterId: number;
@@ -163,6 +177,9 @@ type SceneForm = {
   // Characters
   characterIds: number[];
   characterWardrobe: SceneWardrobeEntry[];
+  // Extras & Voice Roles
+  extras: ExtraEntry[];
+  voiceRoles: VoiceRoleEntry[];
   // Dialogue
   dialogueText: string;
   subtitleText: string;
@@ -241,6 +258,9 @@ const defaultScene: SceneForm = {
   // Characters
   characterIds: [],
   characterWardrobe: [],
+  // Extras & Voice Roles
+  extras: [],
+  voiceRoles: [],
   // Dialogue
   dialogueText: "",
   subtitleText: "",
@@ -469,6 +489,9 @@ export default function SceneEditor() {
       // Characters
       characterIds: (scene.characterIds as number[]) || [],
       characterWardrobe: (scene.wardrobe as any[]) || ext.characterWardrobe || [],
+      // Extras & Voice Roles
+      extras: (scene as any).extras || ext.extras || [],
+      voiceRoles: (scene as any).voiceRoles || ext.voiceRoles || [],
       // Dialogue
       dialogueText: scene.dialogueText || "",
       subtitleText: scene.subtitleText || "",
@@ -551,6 +574,9 @@ export default function SceneEditor() {
       // Characters
       characterIds: form.characterIds,
       wardrobe: form.characterWardrobe.length > 0 ? form.characterWardrobe : undefined,
+      // Extras & Voice Roles
+      extras: form.extras.length > 0 ? form.extras : undefined,
+      voiceRoles: form.voiceRoles.length > 0 ? form.voiceRoles : undefined,
       // Dialogue
       dialogueText: form.dialogueText || undefined,
       subtitleText: form.subtitleText || undefined,
@@ -615,6 +641,44 @@ export default function SceneEditor() {
   };
 
   const isSaving = createMutation.isPending || updateMutation.isPending;
+
+  // Collapsible section state
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    atmosphere: false,
+    camera: false,
+    cameraRig: false,
+    visualStyle: false,
+    location: false,
+    characters: true,
+    extras: false,
+    voiceRoles: false,
+    soundtrack: false,
+    vfx: false,
+    dialogue: true,
+    sound: false,
+    production: false,
+    aiOverride: false,
+    director: false,
+    refImages: false,
+    footage: false,
+  });
+  const toggleSection = (key: string) => setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+
+  // Extras helpers
+  const addExtra = () => setForm(prev => ({ ...prev, extras: [...prev.extras, { description: "", count: 1 }] }));
+  const removeExtra = (idx: number) => setForm(prev => ({ ...prev, extras: prev.extras.filter((_, i) => i !== idx) }));
+  const updateExtra = (idx: number, updates: Partial<ExtraEntry>) => setForm(prev => ({
+    ...prev,
+    extras: prev.extras.map((e, i) => i === idx ? { ...e, ...updates } : e),
+  }));
+
+  // Voice role helpers
+  const addVoiceRole = () => setForm(prev => ({ ...prev, voiceRoles: [...prev.voiceRoles, { roleName: "", roleType: "narrator", dialogueText: "", voiceStyle: "" }] }));
+  const removeVoiceRole = (idx: number) => setForm(prev => ({ ...prev, voiceRoles: prev.voiceRoles.filter((_, i) => i !== idx) }));
+  const updateVoiceRole = (idx: number, updates: Partial<VoiceRoleEntry>) => setForm(prev => ({
+    ...prev,
+    voiceRoles: prev.voiceRoles.map((r, i) => i === idx ? { ...r, ...updates } : r),
+  }));
 
   return (
     <div className="max-w-6xl mx-auto space-y-4 md:space-y-6 px-2 md:px-0">
@@ -864,10 +928,11 @@ export default function SceneEditor() {
             <DialogTitle className="text-base">
               {selectedSceneId ? "Edit Scene" : "New Scene"}
             </DialogTitle>
+            <p className="text-xs text-muted-foreground">Click any section header to expand or collapse it.</p>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-5 mt-2">
-            {/* Basic Info */}
-            <div className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-1 mt-2">
+            {/* ═══ Basic Info — always visible ═══ */}
+            <div className="space-y-3 p-3 rounded-lg border border-border/60 bg-card/30">
               <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
                 <Clapperboard className="h-3.5 w-3.5" />
                 Scene Info
@@ -888,807 +953,1005 @@ export default function SceneEditor() {
               </div>
             </div>
 
-            <Separator />
 
-            {/* Time & Atmosphere */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Sun className="h-3.5 w-3.5" />
-                Time, Weather & Atmosphere
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Time of Day</Label>
-                  <Select value={form.timeOfDay} onValueChange={v => setField("timeOfDay", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(TIME_OF_DAY_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Season</Label>
-                  <Select value={form.season} onValueChange={v => setField("season", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Any" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="any_season">Any Season</SelectItem>
-                      {Object.entries(SEASON_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground flex items-center gap-1"><Cloud className="h-3 w-3" />Weather</Label>
-                  <Select value={form.weather} onValueChange={v => setField("weather", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(WEATHER_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                 <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground flex items-center gap-1"><Heart className="h-3 w-3" />Mood</Label>
-                  <Select value={form.mood} onValueChange={v => setField("mood", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select mood" /></SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(MOOD_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Emotional Beat</Label>
-                  <Select value={form.emotionalBeat} onValueChange={v => setField("emotionalBeat", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select beat" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unspecified">Unspecified</SelectItem>
-                      {EMOTIONAL_BEAT_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-            <Separator />
-            {/* Camera & Lighting */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Camera className="h-3.5 w-3.5" />
-                Camera, Lens & Lighting
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Camera Angle / Shot</Label>
-                  <Select value={form.cameraAngle} onValueChange={v => setField("cameraAngle", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(CAMERA_ANGLE_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Camera Movement</Label>
-                  <Select value={form.cameraMovement} onValueChange={v => setField("cameraMovement", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select movement" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="static">No movement (static)</SelectItem>
-                      {Object.entries(CAMERA_MOVEMENT_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Lens Type</Label>
-                  <Select value={form.lensType} onValueChange={v => setField("lensType", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select lens" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto_default">Auto / Default</SelectItem>
-                      {Object.entries(LENS_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Depth of Field</Label>
-                  <Select value={form.depthOfField} onValueChange={v => setField("depthOfField", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select DoF" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto">Auto</SelectItem>
-                      {Object.entries(DEPTH_OF_FIELD_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground flex items-center gap-1"><Lightbulb className="h-3 w-3" />Lighting Setup</Label>
-                  <Select value={form.lighting} onValueChange={v => setField("lighting", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(LIGHTING_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                 <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Color Grade / LUT</Label>
-                  <Select value={form.colorGrade} onValueChange={v => setField("colorGrade", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select grade" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No specific grade</SelectItem>
-                      {Object.entries(COLOR_GRADE_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Focal Length</Label>
-                  <Select value={form.focalLength} onValueChange={v => setField("focalLength", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select focal length" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto_director">Auto / Director's choice</SelectItem>
-                      {FOCAL_LENGTH_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Shot Type</Label>
-                  <Select value={form.shotType} onValueChange={v => setField("shotType", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select shot type" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unspecified">Unspecified</SelectItem>
-                      {SHOT_TYPE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Frame Rate</Label>
-                  <Select value={form.frameRate} onValueChange={v => setField("frameRate", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select frame rate" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="default_24fps">Default (24fps)</SelectItem>
-                      {FRAME_RATE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Aspect Ratio</Label>
-                  <Select value={form.aspectRatio} onValueChange={v => setField("aspectRatio", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select aspect ratio" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="project_default">Project default</SelectItem>
-                      {ASPECT_RATIO_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Color Temperature</Label>
-                  <Select value={form.colorTemperature} onValueChange={v => setField("colorTemperature", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select temperature" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto">Auto</SelectItem>
-                      {COLOR_TEMPERATURE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Color Palette</Label>
-                  <Select value={form.colorPalette} onValueChange={v => setField("colorPalette", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select palette" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto">Auto</SelectItem>
-                      {COLOR_PALETTE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-            <Separator />
-            {/* Camera Rig — Tier 1 */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Camera className="h-3.5 w-3.5 text-amber-400" />
-                <span className="text-amber-400">Camera Rig</span>
-                <Badge className="text-xs h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Camera Body / Sensor</Label>
-                  <Select value={form.cameraBody || ""} onValueChange={v => setField("cameraBody", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select camera body" /></SelectTrigger>
-                    <SelectContent>
-                      {CAMERA_BODY_OPTIONS.map(o => <SelectItem key={o} value={o}>{CAMERA_BODY_LABELS[o] || o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Lens Glass</Label>
-                  <Select value={form.lensBrand || ""} onValueChange={v => setField("lensBrand", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select lens" /></SelectTrigger>
-                    <SelectContent>
-                      {LENS_BRAND_OPTIONS.map(o => <SelectItem key={o} value={o}>{LENS_BRAND_LABELS[o] || o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Aperture / T-Stop</Label>
-                  <Select value={form.aperture || ""} onValueChange={v => setField("aperture", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select aperture" /></SelectTrigger>
-                    <SelectContent>
-                      {APERTURE_OPTIONS.map(o => <SelectItem key={o} value={o}>{APERTURE_LABELS[o] || o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Speed Ramp</Label>
-                  <Select value={form.speedRamp || "normal"} onValueChange={v => setField("speedRamp", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Normal speed" /></SelectTrigger>
-                    <SelectContent>
-                      {SPEED_RAMP_OPTIONS.map(o => <SelectItem key={o} value={o}>{SPEED_RAMP_LABELS[o] || o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-            <Separator />
-            {/* Visual Style & Genre Motion — Tier 2 */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Palette className="h-3.5 w-3.5 text-amber-400" />
-                <span className="text-amber-400">Visual Style & Motion Logic</span>
-                <Badge className="text-xs h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Visual Style</Label>
-                  <Select value={form.visualStyle || "photorealistic"} onValueChange={v => setField("visualStyle", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Photorealistic" /></SelectTrigger>
-                    <SelectContent>
-                      {VISUAL_STYLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{VISUAL_STYLE_LABELS[o] || o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Genre Motion Logic</Label>
-                  <Select value={form.genreMotion || "auto"} onValueChange={v => setField("genreMotion", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto" /></SelectTrigger>
-                    <SelectContent>
-                      {GENRE_MOTION_OPTIONS.map(o => <SelectItem key={o} value={o}>{GENRE_MOTION_LABELS[o] || o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Lip-Sync Mode</Label>
-                  <Select value={form.lipSyncMode || "none"} onValueChange={v => setField("lipSyncMode", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No lip sync" /></SelectTrigger>
-                    <SelectContent>
-                      {LIP_SYNC_OPTIONS.map(o => <SelectItem key={o} value={o}>{LIP_SYNC_LABELS[o] || o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-            <Separator />
-            {/* Location & Setting */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <MapPin className="h-3.5 w-3.5" />
-                Location & Setting
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Location Type</Label>
-                  <Select value={form.locationType} onValueChange={v => setField("locationType", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select location" /></SelectTrigger>
-                    <SelectContent>
-                      {LOCATION_TYPES_EXTENDED.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground flex items-center gap-1"><Home className="h-3 w-3" />Architectural Style</Label>
-                  <Select value={form.realEstateStyle} onValueChange={v => setField("realEstateStyle", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select style" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="any_style">Any style</SelectItem>
-                      {REAL_ESTATE_STYLES.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Country</Label>
-                  <Input placeholder="e.g. United States, France, Japan" value={form.locationCountry} onChange={e => setField("locationCountry", e.target.value)} className="h-9 text-sm bg-background/50" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">City / Region</Label>
-                  <Input placeholder="e.g. New York, Paris, Tokyo" value={form.locationCity} onChange={e => setField("locationCity", e.target.value)} className="h-9 text-sm bg-background/50" />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Location Details</Label>
-                <Input placeholder="e.g. Rooftop of a glass skyscraper, rain-slicked streets below" value={form.locationDetails} onChange={e => setField("locationDetails", e.target.value)} className="h-9 text-sm bg-background/50" />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground flex items-center gap-1"><Car className="h-3 w-3" />Vehicle</Label>
-                  <Select value={form.vehicleType} onValueChange={v => setField("vehicleType", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {VEHICLE_TYPES_EXTENDED.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Crowd Level</Label>
-                  <Select value={form.crowdLevel} onValueChange={v => setField("crowdLevel", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unspecified">Unspecified</SelectItem>
-                      {Object.entries(CROWD_LEVEL_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
+            {/* ═══ COLLAPSIBLE SECTIONS ═══ */}
 
-            <Separator />
-
-            {/* Characters */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Users className="h-3.5 w-3.5" />
-                Characters in Scene
-              </div>
-              {characters && characters.length > 0 ? (
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
-                    {characters.map((char) => (
-                      <button
-                        key={char.id}
-                        type="button"
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs transition-colors ${
-                          form.characterIds.includes(char.id)
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "hover:border-muted-foreground/30"
-                        }`}
-                        onClick={() => toggleCharacter(char.id)}
-                      >
-                        {char.photoUrl ? (
-                          <img src={char.photoUrl} alt="" className="h-5 w-5 rounded-full object-cover" />
-                        ) : (
-                          <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center">
-                            <span className="text-[10px]">{char.name[0]}</span>
-                          </div>
-                        )}
-                        {char.name}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Per-character wardrobe overrides */}
-                  {form.characterIds.length > 0 && (
-                    <div className="space-y-2">
-                      <Label className="text-xs text-muted-foreground font-medium">Scene Wardrobe Overrides</Label>
-                      <p className="text-[11px] text-muted-foreground">Specify what each character wears in this scene. Leave blank to use their default wardrobe.</p>
-                      {form.characterIds.map(charId => {
-                        const char = characters?.find(c => c.id === charId);
-                        if (!char) return null;
-                        const entry = form.characterWardrobe.find(w => w.characterId === charId) || { characterId: charId, characterName: char.name, wardrobeCategory: "", wardrobeDescription: "" };
-                        const updateWardrobe = (updates: Partial<SceneWardrobeEntry>) => {
-                          setForm(prev => {
-                            const existing = prev.characterWardrobe.filter(w => w.characterId !== charId);
-                            const updated = { ...entry, ...updates };
-                            return { ...prev, characterWardrobe: [...existing, updated] };
-                          });
-                        };
-                        return (
-                          <div key={charId} className="border rounded-md p-3 space-y-2 bg-muted/20">
-                            <div className="flex items-center gap-2">
-                              {char.photoUrl ? <img src={char.photoUrl} alt="" className="h-5 w-5 rounded-full object-cover" /> : <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center"><span className="text-[10px]">{char.name[0]}</span></div>}
-                              <span className="text-xs font-medium">{char.name}</span>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              <div className="space-y-1">
-                                <Label className="text-[11px] text-muted-foreground">Wardrobe Category</Label>
-                                <Select value={entry.wardrobeCategory} onValueChange={v => updateWardrobe({ wardrobeCategory: v })}>
-                                  <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue placeholder="Default" /></SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="from_profile">Default (from profile)</SelectItem>
-                                    {WARDROBE_CATEGORIES.map(c => <SelectItem key={c} value={c}>{WARDROBE_CATEGORY_LABELS[c]}</SelectItem>)}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="space-y-1">
-                                <Label className="text-[11px] text-muted-foreground">Hair / Styling</Label>
-                                <Input placeholder="e.g. slicked back, wet" value={entry.hairNotes || ""} onChange={e => updateWardrobe({ hairNotes: e.target.value })} className="h-8 text-xs bg-background/50" />
-                              </div>
-                            </div>
-                            <div className="space-y-1">
-                              <Label className="text-[11px] text-muted-foreground">Outfit Description</Label>
-                              <Input placeholder="e.g. black tuxedo, white dress shirt, no tie" value={entry.wardrobeDescription} onChange={e => updateWardrobe({ wardrobeDescription: e.target.value })} className="h-8 text-xs bg-background/50" />
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              <div className="space-y-1">
-                                <Label className="text-[11px] text-muted-foreground">Makeup / FX</Label>
-                                <Input placeholder="e.g. bruised eye, blood on lip" value={entry.makeupNotes || ""} onChange={e => updateWardrobe({ makeupNotes: e.target.value })} className="h-8 text-xs bg-background/50" />
-                              </div>
-                              <div className="space-y-1">
-                                <Label className="text-[11px] text-muted-foreground">Accessories / Props</Label>
-                                <Input placeholder="e.g. gold watch, briefcase" value={entry.accessories || ""} onChange={e => updateWardrobe({ accessories: e.target.value })} className="h-8 text-xs bg-background/50" />
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  <div className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">Character Blocking / Positions</Label>
-                    <Textarea
-                      placeholder="Describe where each character is positioned and how they move. e.g. 'MARCUS stands at the window, back to camera. ELENA enters from left, stops 3 feet behind him.'"
-                      value={form.characterBlocking}
-                      onChange={e => setField("characterBlocking", e.target.value)}
-                      className="min-h-[60px] text-sm bg-background/50 resize-y"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <p className="text-xs text-muted-foreground">
-                  No characters in this project yet. Add characters from the project page.
-                </p>
-              )}
-            </div>
-
-            <Separator />
-
-            {/* Soundtrack */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Music className="h-3.5 w-3.5" />
-                Scene Soundtrack
-              </div>
-              {soundtracks && soundtracks.length > 0 ? (
-                <div className="space-y-3">
-                  <Select
-                    value={form.soundtrackId ? String(form.soundtrackId) : "none"}
-                    onValueChange={v => setField("soundtrackId", v === "none" ? null : parseInt(v))}
-                  >
-                    <SelectTrigger className="h-9 text-sm bg-background/50">
-                      <SelectValue placeholder="Select soundtrack" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No soundtrack</SelectItem>
-                      {soundtracks.map(st => (
-                        <SelectItem key={st.id} value={String(st.id)}>
-                          <span className="flex items-center gap-2">
-                            <Music className="h-3 w-3" />
-                            {st.title}
-                            {st.genre && <span className="text-muted-foreground">· {st.genre}</span>}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {form.soundtrackId && (
+            {/* ── Time, Weather & Atmosphere ── */}
+            <Collapsible open={openSections.atmosphere} onOpenChange={() => toggleSection("atmosphere")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.atmosphere ? "rotate-90" : ""}`} />
+                  <Sun className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Time, Weather & Atmosphere</span>
+                  <span className="text-[10px] text-muted-foreground/60">{[form.timeOfDay, form.weather, form.mood].filter(Boolean).join(" · ") || "defaults"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Volume2 className="h-3 w-3" />
-                        Volume: {form.soundtrackVolume}%
-                      </Label>
-                      <Slider
-                        value={[form.soundtrackVolume]}
-                        onValueChange={([v]) => setField("soundtrackVolume", v)}
-                        min={0}
-                        max={100}
-                        step={5}
-                        className="w-full"
-                      />
+                      <Label className="text-xs text-muted-foreground">Time of Day</Label>
+                      <Select value={form.timeOfDay} onValueChange={v => setField("timeOfDay", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(TIME_OF_DAY_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
                     </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Season</Label>
+                      <Select value={form.season} onValueChange={v => setField("season", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Any" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="any_season">Any Season</SelectItem>
+                          {Object.entries(SEASON_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground flex items-center gap-1"><Cloud className="h-3 w-3" />Weather</Label>
+                      <Select value={form.weather} onValueChange={v => setField("weather", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(WEATHER_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground flex items-center gap-1"><Heart className="h-3 w-3" />Mood</Label>
+                      <Select value={form.mood} onValueChange={v => setField("mood", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select mood" /></SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(MOOD_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Emotional Beat</Label>
+                      <Select value={form.emotionalBeat} onValueChange={v => setField("emotionalBeat", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select beat" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unspecified">Unspecified</SelectItem>
+                          {EMOTIONAL_BEAT_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Camera, Lens & Lighting ── */}
+            <Collapsible open={openSections.camera} onOpenChange={() => toggleSection("camera")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.camera ? "rotate-90" : ""}`} />
+                  <Camera className="h-3.5 w-3.5 text-blue-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Camera, Lens & Lighting</span>
+                  <span className="text-[10px] text-muted-foreground/60">{[form.cameraAngle, form.lighting].filter(Boolean).join(" · ") || "defaults"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Camera Angle / Shot</Label>
+                      <Select value={form.cameraAngle} onValueChange={v => setField("cameraAngle", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(CAMERA_ANGLE_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Camera Movement</Label>
+                      <Select value={form.cameraMovement} onValueChange={v => setField("cameraMovement", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select movement" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="static">No movement (static)</SelectItem>
+                          {Object.entries(CAMERA_MOVEMENT_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Lens Type</Label>
+                      <Select value={form.lensType} onValueChange={v => setField("lensType", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select lens" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="auto_default">Auto / Default</SelectItem>
+                          {Object.entries(LENS_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Depth of Field</Label>
+                      <Select value={form.depthOfField} onValueChange={v => setField("depthOfField", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select DoF" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="auto">Auto</SelectItem>
+                          {Object.entries(DEPTH_OF_FIELD_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground flex items-center gap-1"><Lightbulb className="h-3 w-3" />Lighting</Label>
+                      <Select value={form.lighting} onValueChange={v => setField("lighting", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(LIGHTING_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Color Grade</Label>
+                      <Select value={form.colorGrade} onValueChange={v => setField("colorGrade", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select grade" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No specific grade</SelectItem>
+                          {Object.entries(COLOR_GRADE_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Focal Length</Label>
+                      <Select value={form.focalLength} onValueChange={v => setField("focalLength", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="auto_director">Auto / Director's choice</SelectItem>
+                          {FOCAL_LENGTH_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Shot Type</Label>
+                      <Select value={form.shotType} onValueChange={v => setField("shotType", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unspecified">Unspecified</SelectItem>
+                          {SHOT_TYPE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Frame Rate</Label>
+                      <Select value={form.frameRate} onValueChange={v => setField("frameRate", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="default_24fps">Default (24fps)</SelectItem>
+                          {FRAME_RATE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Aspect Ratio</Label>
+                      <Select value={form.aspectRatio} onValueChange={v => setField("aspectRatio", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="project_default">Project default</SelectItem>
+                          {ASPECT_RATIO_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Color Temperature</Label>
+                      <Select value={form.colorTemperature} onValueChange={v => setField("colorTemperature", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="auto">Auto</SelectItem>
+                          {COLOR_TEMPERATURE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Color Palette</Label>
+                      <Select value={form.colorPalette} onValueChange={v => setField("colorPalette", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="auto">Auto</SelectItem>
+                          {COLOR_PALETTE_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Camera Rig (Pro) ── */}
+            <Collapsible open={openSections.cameraRig} onOpenChange={() => toggleSection("cameraRig")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-amber-400 transition-transform duration-200 ${openSections.cameraRig ? "rotate-90" : ""}`} />
+                  <Camera className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-amber-400 flex-1">Camera Rig</span>
+                  <Badge className="text-[10px] h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-amber-500/30 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Camera Body / Sensor</Label>
+                      <Select value={form.cameraBody || ""} onValueChange={v => setField("cameraBody", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select camera body" /></SelectTrigger>
+                        <SelectContent>
+                          {CAMERA_BODY_OPTIONS.map(o => <SelectItem key={o} value={o}>{CAMERA_BODY_LABELS[o] || o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Lens Glass</Label>
+                      <Select value={form.lensBrand || ""} onValueChange={v => setField("lensBrand", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select lens" /></SelectTrigger>
+                        <SelectContent>
+                          {LENS_BRAND_OPTIONS.map(o => <SelectItem key={o} value={o}>{LENS_BRAND_LABELS[o] || o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Aperture / T-Stop</Label>
+                      <Select value={form.aperture || ""} onValueChange={v => setField("aperture", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select aperture" /></SelectTrigger>
+                        <SelectContent>
+                          {APERTURE_OPTIONS.map(o => <SelectItem key={o} value={o}>{APERTURE_LABELS[o] || o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Speed Ramp</Label>
+                      <Select value={form.speedRamp || "normal"} onValueChange={v => setField("speedRamp", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Normal speed" /></SelectTrigger>
+                        <SelectContent>
+                          {SPEED_RAMP_OPTIONS.map(o => <SelectItem key={o} value={o}>{SPEED_RAMP_LABELS[o] || o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Visual Style & Motion (Pro) ── */}
+            <Collapsible open={openSections.visualStyle} onOpenChange={() => toggleSection("visualStyle")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-amber-400 transition-transform duration-200 ${openSections.visualStyle ? "rotate-90" : ""}`} />
+                  <Palette className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-amber-400 flex-1">Visual Style & Motion</span>
+                  <Badge className="text-[10px] h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-amber-500/30 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Visual Style</Label>
+                      <Select value={form.visualStyle || "photorealistic"} onValueChange={v => setField("visualStyle", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Photorealistic" /></SelectTrigger>
+                        <SelectContent>
+                          {VISUAL_STYLE_OPTIONS.map(o => <SelectItem key={o} value={o}>{VISUAL_STYLE_LABELS[o] || o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Genre Motion Logic</Label>
+                      <Select value={form.genreMotion || "auto"} onValueChange={v => setField("genreMotion", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto" /></SelectTrigger>
+                        <SelectContent>
+                          {GENRE_MOTION_OPTIONS.map(o => <SelectItem key={o} value={o}>{GENRE_MOTION_LABELS[o] || o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Lip-Sync Mode</Label>
+                      <Select value={form.lipSyncMode || "none"} onValueChange={v => setField("lipSyncMode", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No lip sync" /></SelectTrigger>
+                        <SelectContent>
+                          {LIP_SYNC_OPTIONS.map(o => <SelectItem key={o} value={o}>{LIP_SYNC_LABELS[o] || o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Location & Setting ── */}
+            <Collapsible open={openSections.location} onOpenChange={() => toggleSection("location")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.location ? "rotate-90" : ""}`} />
+                  <MapPin className="h-3.5 w-3.5 text-emerald-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Location & Setting</span>
+                  <span className="text-[10px] text-muted-foreground/60">{[form.locationType, form.locationCity, form.locationCountry].filter(Boolean).join(", ") || "not set"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Location Type</Label>
+                      <Select value={form.locationType} onValueChange={v => setField("locationType", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select location" /></SelectTrigger>
+                        <SelectContent>
+                          {LOCATION_TYPES_EXTENDED.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground flex items-center gap-1"><Home className="h-3 w-3" />Architectural Style</Label>
+                      <Select value={form.realEstateStyle} onValueChange={v => setField("realEstateStyle", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select style" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="any_style">Any style</SelectItem>
+                          {REAL_ESTATE_STYLES.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Country</Label>
+                      <Input placeholder="e.g. United States, France" value={form.locationCountry} onChange={e => setField("locationCountry", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">City / Region</Label>
+                      <Input placeholder="e.g. New York, Paris" value={form.locationCity} onChange={e => setField("locationCity", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Location Details</Label>
+                    <Input placeholder="e.g. Rooftop of a glass skyscraper, rain-slicked streets below" value={form.locationDetails} onChange={e => setField("locationDetails", e.target.value)} className="h-9 text-sm bg-background/50" />
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground flex items-center gap-1"><Car className="h-3 w-3" />Vehicle</Label>
+                      <Select value={form.vehicleType} onValueChange={v => setField("vehicleType", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {VEHICLE_TYPES_EXTENDED.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Crowd Level</Label>
+                      <Select value={form.crowdLevel} onValueChange={v => setField("crowdLevel", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unspecified">Unspecified</SelectItem>
+                          {Object.entries(CROWD_LEVEL_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+
+            {/* ── Characters ── */}
+            <Collapsible open={openSections.characters} onOpenChange={() => toggleSection("characters")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.characters ? "rotate-90" : ""}`} />
+                  <Users className="h-3.5 w-3.5 text-violet-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Characters in Scene</span>
+                  <Badge variant="outline" className="text-[10px] h-5">{form.characterIds.length} selected</Badge>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  {characters && characters.length > 0 ? (
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap gap-2">
+                        {characters.map((char) => (
+                          <button
+                            key={char.id}
+                            type="button"
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs transition-colors ${
+                              form.characterIds.includes(char.id)
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "hover:border-muted-foreground/30"
+                            }`}
+                            onClick={() => toggleCharacter(char.id)}
+                          >
+                            {char.photoUrl ? (
+                              <img src={char.photoUrl} alt="" className="h-5 w-5 rounded-full object-cover" />
+                            ) : (
+                              <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center">
+                                <span className="text-[10px]">{char.name[0]}</span>
+                              </div>
+                            )}
+                            {char.name}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Per-character wardrobe overrides */}
+                      {form.characterIds.length > 0 && (
+                        <div className="space-y-2">
+                          <Label className="text-xs text-muted-foreground font-medium">Scene Wardrobe Overrides</Label>
+                          <p className="text-[11px] text-muted-foreground">Specify what each character wears in this scene. Leave blank to use their default wardrobe.</p>
+                          {form.characterIds.map(charId => {
+                            const char = characters?.find(c => c.id === charId);
+                            if (!char) return null;
+                            const entry = form.characterWardrobe.find(w => w.characterId === charId) || { characterId: charId, characterName: char.name, wardrobeCategory: "", wardrobeDescription: "" };
+                            const updateWardrobe = (updates: Partial<SceneWardrobeEntry>) => {
+                              setForm(prev => {
+                                const existing = prev.characterWardrobe.filter(w => w.characterId !== charId);
+                                const updated = { ...entry, ...updates };
+                                return { ...prev, characterWardrobe: [...existing, updated] };
+                              });
+                            };
+                            return (
+                              <div key={charId} className="border rounded-md p-3 space-y-2 bg-muted/20">
+                                <div className="flex items-center gap-2">
+                                  {char.photoUrl ? <img src={char.photoUrl} alt="" className="h-5 w-5 rounded-full object-cover" /> : <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center"><span className="text-[10px]">{char.name[0]}</span></div>}
+                                  <span className="text-xs font-medium">{char.name}</span>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  <div className="space-y-1">
+                                    <Label className="text-[11px] text-muted-foreground">Wardrobe Category</Label>
+                                    <Select value={entry.wardrobeCategory} onValueChange={v => updateWardrobe({ wardrobeCategory: v })}>
+                                      <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue placeholder="Default" /></SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="from_profile">Default (from profile)</SelectItem>
+                                        {WARDROBE_CATEGORIES.map(c => <SelectItem key={c} value={c}>{WARDROBE_CATEGORY_LABELS[c]}</SelectItem>)}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <Label className="text-[11px] text-muted-foreground">Hair / Styling</Label>
+                                    <Input placeholder="e.g. slicked back, wet" value={entry.hairNotes || ""} onChange={e => updateWardrobe({ hairNotes: e.target.value })} className="h-8 text-xs bg-background/50" />
+                                  </div>
+                                </div>
+                                <div className="space-y-1">
+                                  <Label className="text-[11px] text-muted-foreground">Outfit Description</Label>
+                                  <Input placeholder="e.g. black tuxedo, white dress shirt, no tie" value={entry.wardrobeDescription} onChange={e => updateWardrobe({ wardrobeDescription: e.target.value })} className="h-8 text-xs bg-background/50" />
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  <div className="space-y-1">
+                                    <Label className="text-[11px] text-muted-foreground">Makeup / FX</Label>
+                                    <Input placeholder="e.g. bruised eye, blood on lip" value={entry.makeupNotes || ""} onChange={e => updateWardrobe({ makeupNotes: e.target.value })} className="h-8 text-xs bg-background/50" />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <Label className="text-[11px] text-muted-foreground">Accessories / Props</Label>
+                                    <Input placeholder="e.g. gold watch, briefcase" value={entry.accessories || ""} onChange={e => updateWardrobe({ accessories: e.target.value })} className="h-8 text-xs bg-background/50" />
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">Character Blocking / Positions</Label>
+                        <Textarea
+                          placeholder="Describe where each character is positioned and how they move. e.g. 'MARCUS stands at the window, back to camera. ELENA enters from left.'"
+                          value={form.characterBlocking}
+                          onChange={e => setField("characterBlocking", e.target.value)}
+                          className="min-h-[60px] text-sm bg-background/50 resize-y"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      No characters in this project yet. Add characters from the project page.
+                    </p>
                   )}
                 </div>
-              ) : (
-                <p className="text-xs text-muted-foreground">
-                  No soundtracks uploaded yet. Add soundtracks from the project Soundtrack tab.
-                </p>
-              )}
-            </div>
+              </CollapsibleContent>
+            </Collapsible>
 
-            <Separator />
-
-            <Separator />
-
-            {/* VFX & Post Production */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Sparkles className="h-3.5 w-3.5" />
-                VFX & Post Production
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Visual Effects</Label>
-                  <Select value={form.vfxElements} onValueChange={v => setField("vfxElements", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No VFX" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No VFX</SelectItem>
-                      {Object.entries(VFX_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Scene Transition</Label>
-                  <Select value={form.transition} onValueChange={v => setField("transition", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Cut" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="hard_cut">Hard Cut (default)</SelectItem>
-                      {Object.entries(TRANSITION_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Dialogue */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <MessageSquare className="h-3.5 w-3.5" />
-                Dialogue
-              </div>
-              <Textarea
-                placeholder="Write the dialogue for this scene. Use character names followed by colons to indicate who is speaking..."
-                value={form.dialogueText}
-                onChange={e => setField("dialogueText", e.target.value)}
-                className="min-h-[80px] text-sm bg-background/50 resize-y font-mono"
-              />
-            </div>
-
-            <Separator />
-
-              {/* Sound Design */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Volume2 className="h-3.5 w-3.5" />
-                Sound Design
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Music Mood</Label>
-                  <Select value={form.musicMood} onValueChange={v => setField("musicMood", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select music mood" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="no_preference">No preference</SelectItem>
-                      {MUSIC_MOOD_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Music Tempo</Label>
-                  <Select value={form.musicTempo} onValueChange={v => setField("musicTempo", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select tempo" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="no_preference">No preference</SelectItem>
-                      {MUSIC_TEMPO_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Ambient Sound</Label>
-                  <Select value={form.ambientSound} onValueChange={v => setField("ambientSound", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select ambient" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No specific ambient</SelectItem>
-                      {AMBIENT_SOUND_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">SFX Notes</Label>
-                  <Input placeholder="e.g. glass breaking, gunshot echo, door slam" value={form.sfxNotes} onChange={e => setField("sfxNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Sound Design Notes</Label>
-                <Input placeholder="e.g. reverb-heavy, muffled underwater, hyper-real foley" value={form.soundDesign} onChange={e => setField("soundDesign", e.target.value)} className="h-9 text-sm bg-background/50" />
-              </div>
-            </div>
-            <Separator />
-            {/* Production Details */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Sparkles className="h-3.5 w-3.5" />
-                Production Details
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Action Description</Label>
-                  <Select value={form.actionDescription} onValueChange={v => setField("actionDescription", v)}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select action type" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="custom">Custom (see description)</SelectItem>
-                      {ACTION_PRESETS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">VFX Notes</Label>
-                  <Input placeholder="e.g. practical fire, wire work, CGI crowd" value={form.vfxNotes} onChange={e => setField("vfxNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Props</Label>
-                  <Input placeholder="e.g. briefcase, gun, wedding ring (comma separated)" value={form.props} onChange={e => setField("props", e.target.value)} className="h-9 text-sm bg-background/50" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Makeup / SFX Makeup</Label>
-                  <Input placeholder="e.g. bruised eye, prosthetic scar, ageing makeup" value={form.makeupNotes} onChange={e => setField("makeupNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Stunt Notes</Label>
-                  <Input placeholder="e.g. car flip, rooftop jump, fight choreography" value={form.stuntNotes} onChange={e => setField("stuntNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Est. Budget (USD)</Label>
-                  <Input type="number" placeholder="e.g. 50000" value={form.budgetEstimate ?? ""} onChange={e => setField("budgetEstimate", e.target.value ? Number(e.target.value) : null)} className="h-9 text-sm bg-background/50" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Shooting Days</Label>
-                  <Input type="number" placeholder="e.g. 2" value={form.shootingDays ?? ""} onChange={e => setField("shootingDays", e.target.value ? Number(e.target.value) : null)} className="h-9 text-sm bg-background/50" />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Foreground Elements</Label>
-                <Input placeholder="e.g. broken glass, scattered papers, candles" value={form.foregroundElements} onChange={e => setField("foregroundElements", e.target.value)} className="h-9 text-sm bg-background/50" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Background Elements</Label>
-                <Input placeholder="e.g. city skyline, burning building, crowd of onlookers" value={form.backgroundElements} onChange={e => setField("backgroundElements", e.target.value)} className="h-9 text-sm bg-background/50" />
-              </div>
-            </div>
-            <Separator />
-            {/* AI Prompt Override */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Sparkles className="h-3.5 w-3.5" />
-                AI Prompt Override
-              </div>
-              <Textarea
-                placeholder="Override the AI-generated prompt entirely. Leave blank to let the AI build the prompt from your scene settings. Use this for precise control over the final image/video generation prompt."
-                value={form.aiPromptOverride}
-                onChange={e => setField("aiPromptOverride", e.target.value)}
-                className="min-h-[70px] text-sm bg-background/50 resize-y font-mono"
-              />
-            </div>
-            <Separator />
-            {/* Director's Notes */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Eye className="h-3.5 w-3.5" />
-                Director's Notes
-              </div>
-              <Textarea
-                placeholder="Private notes for this scene — creative intent, references, technical reminders, continuity notes..."
-                value={form.directorNotes}
-                onChange={e => setField("directorNotes", e.target.value)}
-                className="min-h-[60px] text-sm bg-background/50 resize-y"
-              />
-            </div>
-
-            {/* ─── Reference Images ─── */}
-            <Separator />
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <ImagePlus className="h-3.5 w-3.5" />
-                Reference Images
-              </div>
-              <p className="text-xs text-muted-foreground">Upload reference images (logos, concept art, mood boards) to guide AI generation. PNG, JPG, WEBP — max 10MB each.</p>
-              {form.referenceImages.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
-                  {form.referenceImages.map((url: string, idx: number) => (
-                    <div key={idx} className="relative group rounded-lg overflow-hidden border border-border/60 aspect-square">
-                      <img src={url} alt={`Reference ${idx + 1}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          if (selectedSceneId) {
-                            refImageRemoveMutation.mutate({ sceneId: selectedSceneId, imageUrl: url }, {
-                              onSuccess: (result) => setField("referenceImages", result.referenceImages),
-                              onError: () => setField("referenceImages", form.referenceImages.filter((_: string, i: number) => i !== idx)),
-                            });
-                          } else { setField("referenceImages", form.referenceImages.filter((_: string, i: number) => i !== idx)); }
-                        }}
-                        className="absolute top-1 right-1 bg-black/70 rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                      ><X className="h-3 w-3 text-white" /></button>
+            {/* ── Extras / Background Actors (NEW) ── */}
+            <Collapsible open={openSections.extras} onOpenChange={() => toggleSection("extras")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.extras ? "rotate-90" : ""}`} />
+                  <UserPlus className="h-3.5 w-3.5 text-cyan-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Extras / Background Actors</span>
+                  <Badge variant="outline" className="text-[10px] h-5">{form.extras.length} added</Badge>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <p className="text-[11px] text-muted-foreground">Add background characters without creating full character profiles. Great for crowds, passersby, waiters, etc.</p>
+                  {form.extras.map((extra, idx) => (
+                    <div key={idx} className="border rounded-md p-3 space-y-2 bg-muted/20">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-muted-foreground">Extra #{idx + 1}</span>
+                        <button type="button" onClick={() => removeExtra(idx)} className="text-xs text-destructive hover:text-destructive/80"><X className="h-3 w-3" /></button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                        <div className="sm:col-span-3 space-y-1">
+                          <Label className="text-[11px] text-muted-foreground">Description</Label>
+                          <Input placeholder="e.g. Young woman in red dress, walking a dog" value={extra.description} onChange={e => updateExtra(idx, { description: e.target.value })} className="h-8 text-xs bg-background/50" />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-[11px] text-muted-foreground">Count</Label>
+                          <Input type="number" min={1} max={100} value={extra.count} onChange={e => updateExtra(idx, { count: parseInt(e.target.value) || 1 })} className="h-8 text-xs bg-background/50" />
+                        </div>
+                      </div>
                     </div>
                   ))}
+                  <Button type="button" variant="outline" size="sm" className="w-full" onClick={addExtra}>
+                    <Plus className="h-3 w-3 mr-1" /> Add Extra / Background Actor
+                  </Button>
                 </div>
-              )}
-              <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border/60 hover:border-amber-500/50 cursor-pointer transition-colors bg-background/30">
-                <ImagePlus className="h-5 w-5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground text-center">Click to upload reference image<br /><span className="text-[10px]">PNG, JPG, WEBP — max 10MB</span></span>
-                <input
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp,image/*"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    if (file.size > 10 * 1024 * 1024) { alert("File too large. Max 10MB."); return; }
-                    const reader = new FileReader();
-                    reader.onload = async (ev) => {
-                      const base64 = (ev.target?.result as string).split(",")[1];
-                      if (selectedSceneId) {
-                        refImageUploadMutation.mutate({
-                          base64,
-                          filename: file.name,
-                          contentType: file.type,
-                          sceneId: selectedSceneId,
-                        }, {
-                          onSuccess: (result) => setField("referenceImages", result.referenceImages),
-                        });
-                      } else {
-                        // Scene not saved yet — store as data URL temporarily
-                        setField("referenceImages", [...form.referenceImages, ev.target?.result as string]);
-                      }
-                    };
-                    reader.readAsDataURL(file);
-                  }}
-                />
-              </label>
-            </div>
+              </CollapsibleContent>
+            </Collapsible>
 
-            {/* ─── External Footage Upload ─── */}
-            <Separator />
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                <Upload className="h-3.5 w-3.5" />
-                External Footage
-              </div>
-              <p className="text-xs text-muted-foreground">Upload externally shot footage (MP4, MOV, AVI — max 150MB) to attach to this scene.</p>
-              {form.externalFootageUrl ? (
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
-                  <Video className="h-4 w-4 text-amber-400 shrink-0" />
-                  <span className="text-xs text-amber-300 truncate flex-1">{form.externalFootageLabel || "Uploaded footage"}</span>
-                  <button
-                    type="button"
-                    onClick={() => { setField("externalFootageUrl", ""); setField("externalFootageLabel", ""); setField("externalFootageType", "none"); }}
-                    className="text-xs text-muted-foreground hover:text-destructive transition-colors"
-                  >Remove</button>
+            {/* ── Voice-Only Roles (NEW) ── */}
+            <Collapsible open={openSections.voiceRoles} onOpenChange={() => toggleSection("voiceRoles")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.voiceRoles ? "rotate-90" : ""}`} />
+                  <Mic className="h-3.5 w-3.5 text-rose-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Voice-Only Roles</span>
+                  <Badge variant="outline" className="text-[10px] h-5">{form.voiceRoles.length} added</Badge>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <p className="text-[11px] text-muted-foreground">Add voice-only roles for narration, voiceover, god voice, inner thoughts, phone calls, radio, etc. No visual character needed.</p>
+                  {form.voiceRoles.map((role, idx) => (
+                    <div key={idx} className="border rounded-md p-3 space-y-2 bg-muted/20">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-muted-foreground">Voice Role #{idx + 1}</span>
+                        <button type="button" onClick={() => removeVoiceRole(idx)} className="text-xs text-destructive hover:text-destructive/80"><X className="h-3 w-3" /></button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <Label className="text-[11px] text-muted-foreground">Role Name</Label>
+                          <Input placeholder="e.g. Narrator, God, Inner Voice" value={role.roleName} onChange={e => updateVoiceRole(idx, { roleName: e.target.value })} className="h-8 text-xs bg-background/50" />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-[11px] text-muted-foreground">Role Type</Label>
+                          <Select value={role.roleType} onValueChange={v => updateVoiceRole(idx, { roleType: v })}>
+                            <SelectTrigger className="h-8 text-xs bg-background/50"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="narrator">Narrator</SelectItem>
+                              <SelectItem value="voiceover">Voiceover (V.O.)</SelectItem>
+                              <SelectItem value="god">God / Divine Voice</SelectItem>
+                              <SelectItem value="inner_thought">Inner Thought</SelectItem>
+                              <SelectItem value="radio">Radio / Broadcast</SelectItem>
+                              <SelectItem value="phone">Phone Call</SelectItem>
+                              <SelectItem value="intercom">Intercom / PA System</SelectItem>
+                              <SelectItem value="ai_computer">AI / Computer Voice</SelectItem>
+                              <SelectItem value="custom">Custom</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-[11px] text-muted-foreground">Dialogue / Lines</Label>
+                        <Textarea placeholder="Write the lines for this voice role..." value={role.dialogueText} onChange={e => updateVoiceRole(idx, { dialogueText: e.target.value })} className="min-h-[50px] text-xs bg-background/50 resize-y font-mono" />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-[11px] text-muted-foreground">Voice Style</Label>
+                        <Input placeholder="e.g. deep, authoritative, whispered, robotic, warm" value={role.voiceStyle} onChange={e => updateVoiceRole(idx, { voiceStyle: e.target.value })} className="h-8 text-xs bg-background/50" />
+                      </div>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" className="w-full" onClick={addVoiceRole}>
+                    <Plus className="h-3 w-3 mr-1" /> Add Voice-Only Role
+                  </Button>
                 </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border/60 hover:border-amber-500/50 cursor-pointer transition-colors bg-background/30">
-                  <Upload className="h-5 w-5 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground text-center">Click to upload footage<br /><span className="text-[10px]">MP4, MOV, AVI, MKV — max 150MB</span></span>
-                  <input
-                    type="file"
-                    accept="video/mp4,video/quicktime,video/avi,video/x-matroska,video/*"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      if (file.size > 150 * 1024 * 1024) { alert("File too large. Max 150MB."); return; }
-                      const reader = new FileReader();
-                      reader.onload = async (ev) => {
-                        const base64 = (ev.target?.result as string).split(",")[1];
-                        try {
-                          // We'll store it temporarily and upload on save
-                          setField("externalFootageLabel", file.name);
-                          setField("externalFootageType", "replace");
-                          // Store base64 temporarily in a data URL for preview
-                          setField("externalFootageUrl", `data:${file.type};base64,${base64.substring(0, 20)}...pending`);
-                        } catch (err) { console.error(err); }
-                      };
-                      reader.readAsDataURL(file);
-                    }}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Dialogue ── */}
+            <Collapsible open={openSections.dialogue} onOpenChange={() => toggleSection("dialogue")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.dialogue ? "rotate-90" : ""}`} />
+                  <MessageSquare className="h-3.5 w-3.5 text-sky-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Dialogue</span>
+                  <span className="text-[10px] text-muted-foreground/60">{form.dialogueText ? `${form.dialogueText.length} chars` : "empty"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg">
+                  <Textarea
+                    placeholder="Write the dialogue for this scene. Use character names followed by colons to indicate who is speaking..."
+                    value={form.dialogueText}
+                    onChange={e => setField("dialogueText", e.target.value)}
+                    className="min-h-[80px] text-sm bg-background/50 resize-y font-mono"
                   />
-                </label>
-              )}
-              {form.externalFootageUrl && (
-                <div className="space-y-1">
-                  <Label className="text-xs text-muted-foreground">Footage Usage Mode</Label>
-                  <select
-                    value={form.externalFootageType}
-                    onChange={e => setField("externalFootageType", e.target.value)}
-                    className="w-full h-9 text-sm bg-background/50 border border-border rounded-md px-3"
-                  >
-                    <option value="replace">Replace AI generation — use this footage as the scene</option>
-                    <option value="overlay">Overlay — composite AI elements over this footage</option>
-                    <option value="reference">Reference only — use for style/continuity matching</option>
-                  </select>
                 </div>
-              )}
-            </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Soundtrack ── */}
+            <Collapsible open={openSections.soundtrack} onOpenChange={() => toggleSection("soundtrack")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.soundtrack ? "rotate-90" : ""}`} />
+                  <Music className="h-3.5 w-3.5 text-pink-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Soundtrack</span>
+                  <span className="text-[10px] text-muted-foreground/60">{form.soundtrackId ? "selected" : "none"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  {soundtracks && soundtracks.length > 0 ? (
+                    <div className="space-y-3">
+                      <Select
+                        value={form.soundtrackId ? String(form.soundtrackId) : "none"}
+                        onValueChange={v => setField("soundtrackId", v === "none" ? null : parseInt(v))}
+                      >
+                        <SelectTrigger className="h-9 text-sm bg-background/50">
+                          <SelectValue placeholder="Select soundtrack" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No soundtrack</SelectItem>
+                          {soundtracks.map(st => (
+                            <SelectItem key={st.id} value={String(st.id)}>
+                              <span className="flex items-center gap-2">
+                                <Music className="h-3 w-3" />
+                                {st.title}
+                                {st.genre && <span className="text-muted-foreground">· {st.genre}</span>}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {form.soundtrackId && (
+                        <div className="space-y-1.5">
+                          <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Volume2 className="h-3 w-3" />
+                            Volume: {form.soundtrackVolume}%
+                          </Label>
+                          <Slider
+                            value={[form.soundtrackVolume]}
+                            onValueChange={([v]) => setField("soundtrackVolume", v)}
+                            min={0}
+                            max={100}
+                            step={5}
+                            className="w-full"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      No soundtracks uploaded yet. Add soundtracks from the project Soundtrack tab.
+                    </p>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── VFX & Post Production ── */}
+            <Collapsible open={openSections.vfx} onOpenChange={() => toggleSection("vfx")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.vfx ? "rotate-90" : ""}`} />
+                  <Sparkles className="h-3.5 w-3.5 text-yellow-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">VFX & Post Production</span>
+                  <span className="text-[10px] text-muted-foreground/60">{form.vfxElements && form.vfxElements !== "none" ? form.vfxElements : "none"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Visual Effects</Label>
+                      <Select value={form.vfxElements} onValueChange={v => setField("vfxElements", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No VFX" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No VFX</SelectItem>
+                          {Object.entries(VFX_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Scene Transition</Label>
+                      <Select value={form.transition} onValueChange={v => setField("transition", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Cut" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hard_cut">Hard Cut (default)</SelectItem>
+                          {Object.entries(TRANSITION_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Sound Design ── */}
+            <Collapsible open={openSections.sound} onOpenChange={() => toggleSection("sound")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.sound ? "rotate-90" : ""}`} />
+                  <Volume2 className="h-3.5 w-3.5 text-teal-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Sound Design</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Music Mood</Label>
+                      <Select value={form.musicMood} onValueChange={v => setField("musicMood", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="no_preference">No preference</SelectItem>
+                          {MUSIC_MOOD_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Music Tempo</Label>
+                      <Select value={form.musicTempo} onValueChange={v => setField("musicTempo", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="no_preference">No preference</SelectItem>
+                          {MUSIC_TEMPO_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Ambient Sound</Label>
+                      <Select value={form.ambientSound} onValueChange={v => setField("ambientSound", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No specific ambient</SelectItem>
+                          {AMBIENT_SOUND_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">SFX Notes</Label>
+                      <Input placeholder="e.g. glass breaking, gunshot echo" value={form.sfxNotes} onChange={e => setField("sfxNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Sound Design Notes</Label>
+                    <Input placeholder="e.g. reverb-heavy, muffled underwater, hyper-real foley" value={form.soundDesign} onChange={e => setField("soundDesign", e.target.value)} className="h-9 text-sm bg-background/50" />
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Production Details ── */}
+            <Collapsible open={openSections.production} onOpenChange={() => toggleSection("production")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.production ? "rotate-90" : ""}`} />
+                  <Clapperboard className="h-3.5 w-3.5 text-orange-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Production Details</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Action Description</Label>
+                      <Select value={form.actionDescription} onValueChange={v => setField("actionDescription", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="custom">Custom (see description)</SelectItem>
+                          {ACTION_PRESETS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">VFX Notes</Label>
+                      <Input placeholder="e.g. practical fire, wire work" value={form.vfxNotes} onChange={e => setField("vfxNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Props</Label>
+                      <Input placeholder="e.g. briefcase, gun (comma separated)" value={form.props} onChange={e => setField("props", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Makeup / SFX Makeup</Label>
+                      <Input placeholder="e.g. bruised eye, prosthetic scar" value={form.makeupNotes} onChange={e => setField("makeupNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Stunt Notes</Label>
+                      <Input placeholder="e.g. car flip, rooftop jump" value={form.stuntNotes} onChange={e => setField("stuntNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Est. Budget (USD)</Label>
+                      <Input type="number" placeholder="e.g. 50000" value={form.budgetEstimate ?? ""} onChange={e => setField("budgetEstimate", e.target.value ? Number(e.target.value) : null)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Shooting Days</Label>
+                      <Input type="number" placeholder="e.g. 2" value={form.shootingDays ?? ""} onChange={e => setField("shootingDays", e.target.value ? Number(e.target.value) : null)} className="h-9 text-sm bg-background/50" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Foreground Elements</Label>
+                    <Input placeholder="e.g. broken glass, scattered papers, candles" value={form.foregroundElements} onChange={e => setField("foregroundElements", e.target.value)} className="h-9 text-sm bg-background/50" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Background Elements</Label>
+                    <Input placeholder="e.g. city skyline, burning building" value={form.backgroundElements} onChange={e => setField("backgroundElements", e.target.value)} className="h-9 text-sm bg-background/50" />
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── AI Prompt Override ── */}
+            <Collapsible open={openSections.aiOverride} onOpenChange={() => toggleSection("aiOverride")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.aiOverride ? "rotate-90" : ""}`} />
+                  <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">AI Prompt Override</span>
+                  <span className="text-[10px] text-muted-foreground/60">{form.aiPromptOverride ? "custom" : "auto"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg">
+                  <Textarea
+                    placeholder="Override the AI-generated prompt entirely. Leave blank to let the AI build the prompt from your scene settings."
+                    value={form.aiPromptOverride}
+                    onChange={e => setField("aiPromptOverride", e.target.value)}
+                    className="min-h-[70px] text-sm bg-background/50 resize-y font-mono"
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Director's Notes ── */}
+            <Collapsible open={openSections.director} onOpenChange={() => toggleSection("director")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.director ? "rotate-90" : ""}`} />
+                  <Eye className="h-3.5 w-3.5 text-indigo-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Director's Notes</span>
+                  <span className="text-[10px] text-muted-foreground/60">{form.directorNotes ? `${form.directorNotes.length} chars` : "empty"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg">
+                  <Textarea
+                    placeholder="Private notes for this scene — creative intent, references, technical reminders, continuity notes..."
+                    value={form.directorNotes}
+                    onChange={e => setField("directorNotes", e.target.value)}
+                    className="min-h-[60px] text-sm bg-background/50 resize-y"
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Reference Images ── */}
+            <Collapsible open={openSections.refImages} onOpenChange={() => toggleSection("refImages")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.refImages ? "rotate-90" : ""}`} />
+                  <ImagePlus className="h-3.5 w-3.5 text-lime-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Reference Images</span>
+                  <Badge variant="outline" className="text-[10px] h-5">{form.referenceImages.length} uploaded</Badge>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <p className="text-xs text-muted-foreground">Upload reference images (logos, concept art, mood boards) to guide AI generation. PNG, JPG, WEBP — max 10MB each.</p>
+                  {form.referenceImages.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2">
+                      {form.referenceImages.map((url: string, idx: number) => (
+                        <div key={idx} className="relative group rounded-lg overflow-hidden border border-border/60 aspect-square">
+                          <img src={url} alt={`Reference ${idx + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (selectedSceneId) {
+                                refImageRemoveMutation.mutate({ sceneId: selectedSceneId, imageUrl: url }, {
+                                  onSuccess: (result) => setField("referenceImages", result.referenceImages),
+                                  onError: () => setField("referenceImages", form.referenceImages.filter((_: string, i: number) => i !== idx)),
+                                });
+                              } else { setField("referenceImages", form.referenceImages.filter((_: string, i: number) => i !== idx)); }
+                            }}
+                            className="absolute top-1 right-1 bg-black/70 rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                          ><X className="h-3 w-3 text-white" /></button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border/60 hover:border-amber-500/50 cursor-pointer transition-colors bg-background/30">
+                    <ImagePlus className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground text-center">Click to upload reference image<br /><span className="text-[10px]">PNG, JPG, WEBP — max 10MB</span></span>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 10 * 1024 * 1024) { alert("File too large. Max 10MB."); return; }
+                        const reader = new FileReader();
+                        reader.onload = async (ev) => {
+                          const base64 = (ev.target?.result as string).split(",")[1];
+                          if (selectedSceneId) {
+                            refImageUploadMutation.mutate({
+                              base64,
+                              filename: file.name,
+                              contentType: file.type,
+                              sceneId: selectedSceneId,
+                            }, {
+                              onSuccess: (result) => setField("referenceImages", result.referenceImages),
+                            });
+                          } else {
+                            setField("referenceImages", [...form.referenceImages, ev.target?.result as string]);
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      }}
+                    />
+                  </label>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── External Footage ── */}
+            <Collapsible open={openSections.footage} onOpenChange={() => toggleSection("footage")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.footage ? "rotate-90" : ""}`} />
+                  <Upload className="h-3.5 w-3.5 text-gray-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">External Footage</span>
+                  <span className="text-[10px] text-muted-foreground/60">{form.externalFootageUrl ? "attached" : "none"}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <p className="text-xs text-muted-foreground">Upload externally shot footage (MP4, MOV, AVI — max 150MB) to attach to this scene.</p>
+                  {form.externalFootageUrl ? (
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                      <Video className="h-4 w-4 text-amber-400 shrink-0" />
+                      <span className="text-xs text-amber-300 truncate flex-1">{form.externalFootageLabel || "Uploaded footage"}</span>
+                      <button
+                        type="button"
+                        onClick={() => { setField("externalFootageUrl", ""); setField("externalFootageLabel", ""); setField("externalFootageType", "none"); }}
+                        className="text-xs text-muted-foreground hover:text-destructive transition-colors"
+                      >Remove</button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border/60 hover:border-amber-500/50 cursor-pointer transition-colors bg-background/30">
+                      <Upload className="h-5 w-5 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground text-center">Click to upload footage<br /><span className="text-[10px]">MP4, MOV, AVI, MKV — max 150MB</span></span>
+                      <input
+                        type="file"
+                        accept="video/mp4,video/quicktime,video/avi,video/x-matroska,video/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          if (file.size > 150 * 1024 * 1024) { alert("File too large. Max 150MB."); return; }
+                          const reader = new FileReader();
+                          reader.onload = async (ev) => {
+                            const base64 = (ev.target?.result as string).split(",")[1];
+                            try {
+                              setField("externalFootageLabel", file.name);
+                              setField("externalFootageType", "replace");
+                              setField("externalFootageUrl", `data:${file.type};base64,${base64.substring(0, 20)}...pending`);
+                            } catch (err) { console.error(err); }
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                    </label>
+                  )}
+                  {form.externalFootageUrl && (
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Footage Usage Mode</Label>
+                      <select
+                        value={form.externalFootageType}
+                        onChange={e => setField("externalFootageType", e.target.value)}
+                        className="w-full h-9 text-sm bg-background/50 border border-border rounded-md px-3"
+                      >
+                        <option value="replace">Replace AI generation — use this footage as the scene</option>
+                        <option value="overlay">Overlay — composite AI elements over this footage</option>
+                        <option value="reference">Reference only — use for style/continuity matching</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
             {/* Actions */}
             <div className="flex items-center justify-between pt-2 border-t">
               {selectedSceneId && (

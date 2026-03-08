@@ -444,13 +444,13 @@ function DashboardLayoutContent({
           </div>
         )}
         <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
-          {/* Gold VS watermark branding — golden on all pages */}
-          <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0" style={{ marginLeft: 'var(--sidebar-width, 0px)' }}>
+          {/* Gold VS watermark branding — bottom-right corner, never blocks content */}
+          <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: golden logo on dark background */}
             <img
               src="/vs-watermark.png"
               alt=""
-              className="hidden dark:block w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.07]"
+              className="hidden dark:block w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] object-contain opacity-[0.10]"
               style={{ filter: "sepia(1) saturate(4) brightness(1.3) hue-rotate(10deg)" }}
               draggable={false}
             />
@@ -458,7 +458,7 @@ function DashboardLayoutContent({
             <img
               src="/vs-watermark.png"
               alt=""
-              className="block dark:hidden w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.08]"
+              className="block dark:hidden w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] object-contain opacity-[0.12]"
               style={{ filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg) drop-shadow(0 0 1px rgba(0,0,0,0.6)) drop-shadow(0 0 2px rgba(0,0,0,0.3))" }}
               draggable={false}
             />
