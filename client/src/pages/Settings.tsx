@@ -424,7 +424,7 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-amber-400">
                 <Sparkles className="w-5 h-5" />
-                How to Generate Videos
+                Bring Your Own Key (BYOK) Platform
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -432,8 +432,8 @@ export default function Settings() {
                 <div className="flex gap-3">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">1</div>
                   <div>
-                    <p className="font-medium text-foreground">Get an API Key</p>
-                    <p className="text-sm text-muted-foreground">Sign up with one of the video providers below and get your API key.</p>
+                    <p className="font-medium text-foreground">Get Your Own API Key</p>
+                    <p className="text-sm text-muted-foreground">Sign up with a video provider below. Your key is billed directly to you — we never charge for API usage.</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -452,12 +452,12 @@ export default function Settings() {
                 </div>
               </div>
               {!hasAnyKey && (
-                <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 mt-4">
-                  <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/30 mt-4">
+                  <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-amber-400">No API keys configured yet</p>
+                    <p className="text-sm font-medium text-red-400">API key required to generate videos</p>
                     <p className="text-xs text-muted-foreground">
-                      You need at least one video provider API key to generate video clips. Without a key, scenes will only have thumbnail images.
+                      Virelle Studios is a <strong>Bring Your Own Key (BYOK)</strong> platform. You must add your own API key from a video provider below before generating any video clips.
                       We recommend <strong>Runway ML</strong> for the best quality, or <strong>fal.ai</strong> for the best value.
                     </p>
                   </div>

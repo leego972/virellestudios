@@ -1328,35 +1328,58 @@ export const appRouter = router({
         );
         // Use the scene thumbnail as input image for video generation if available
         const inputImageUrl = scene.thumbnailUrl || undefined;
+
+        // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
+        const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
+        const isAdmin = ctx.user.role === "admin" || ctx.user.email === ENV.adminEmail;
+        const byokKeys: UserApiKeys = {
+          openaiKey: rawUserKeys.openaiKey || (isAdmin ? ENV.openaiApiKey : undefined),
+          runwayKey: rawUserKeys.runwayKey || (isAdmin ? ENV.runwayApiKey : undefined),
+          replicateKey: rawUserKeys.replicateKey,
+          falKey: rawUserKeys.falKey,
+          lumaKey: rawUserKeys.lumaKey,
+          hfToken: rawUserKeys.hfToken,
+          byteplusKey: rawUserKeys.byteplusKey,
+          preferredProvider: rawUserKeys.preferredProvider,
+        };
+
+        // Non-admin users without any video key get a clear error pointing to Settings
+        const hasVideoKey = byokKeys.openaiKey || byokKeys.runwayKey || byokKeys.replicateKey ||
+          byokKeys.falKey || byokKeys.lumaKey || byokKeys.hfToken || byokKeys.byteplusKey;
+        if (!hasVideoKey) {
+          await db.updateScene(scene.id, { status: "draft" } as any);
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "No video API key found. Please add your own Runway, OpenAI (Sora), fal.ai, Replicate, or Luma API key in Settings → API Keys to generate videos. Free Pollinations generation is also available without a key.",
+          });
+        }
+
         // Mark scene as generating immediately
         await db.updateScene(scene.id, { status: "generating" } as any);
         // Fire-and-forget: run video generation in background to avoid Railway 502 timeout
         (async () => {
           try {
-            console.log(`[SceneVideo] Background generation started for scene ${scene.id}`);
-            const result = await generateUnifiedVideo({
-              prompt: `Cinematic video: ${prompt}`,
-              // Allow up to 20s per clip for Sora; Runway will snap to 5 or 10s
-              seconds: Math.min(scene.duration || 10, 20),
-              resolution: "1080p",
-              inputImageUrl: inputImageUrl,
-              aspectRatio: "landscape",
-              genre: project.genre || "Drama",
-              cameraMovement: scene.cameraMovement || undefined,
+            console.log(`[SceneVideo] Background generation started for scene ${scene.id} (provider: ${byokKeys.preferredProvider || "auto"})`);
+            const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
+            const extResult = await generateExtendedScene(byokKeys, {
+              sceneId: scene.id,
+              projectId: project.id,
+              description: `Cinematic video: ${prompt}`,
+              targetDurationSeconds: Math.max(10, scene.duration || 45),
               mood: scene.mood || undefined,
               lighting: scene.lighting || undefined,
+              timeOfDay: scene.timeOfDay || undefined,
+              genre: project.genre || undefined,
+              locationDescription: scene.locationType || undefined,
             });
-            await db.updateScene(scene.id, { videoUrl: result.videoUrl, status: "completed" } as any);
-            // Auto-set project thumbnail from video thumbnail if project has none
-            if (result.thumbnailUrl && project && !project.thumbnailUrl) {
-              try {
-                await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: result.thumbnailUrl });
-              } catch (e) { /* ignore */ }
+            await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+            // Auto-set project thumbnail if project has none
+            if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
+              try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
             }
-            console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${result.videoUrl}`);
+            console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration.toFixed(1)}s, ${extResult.subClipCount} clips)`);
           } catch (err: any) {
-            console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message, err.stack);
-            console.error(`[SceneVideo] Full error:`, JSON.stringify({ name: err.name, message: err.message, status: err.status, code: err.code }, null, 2));
+            console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
             await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
           }
         })();
@@ -1382,7 +1405,33 @@ export const appRouter = router({
         const characters = await db.getProjectCharacters(project.id);
         const userTier = getEffectiveTier(ctx.user) as QualityTier;
         const visualDNA = buildVisualDNA(project, characters, userTier);
+
+        // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
+        const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
+        const isAdminBulk = ctx.user.role === "admin" || ctx.user.email === ENV.adminEmail;
+        const bulkByokKeys: UserApiKeys = {
+          openaiKey: rawUserKeys.openaiKey || (isAdminBulk ? ENV.openaiApiKey : undefined),
+          runwayKey: rawUserKeys.runwayKey || (isAdminBulk ? ENV.runwayApiKey : undefined),
+          replicateKey: rawUserKeys.replicateKey,
+          falKey: rawUserKeys.falKey,
+          lumaKey: rawUserKeys.lumaKey,
+          hfToken: rawUserKeys.hfToken,
+          byteplusKey: rawUserKeys.byteplusKey,
+          preferredProvider: rawUserKeys.preferredProvider,
+        };
+
+        // Non-admin users without any video key get a clear error pointing to Settings
+        const hasBulkVideoKey = bulkByokKeys.openaiKey || bulkByokKeys.runwayKey || bulkByokKeys.replicateKey ||
+          bulkByokKeys.falKey || bulkByokKeys.lumaKey || bulkByokKeys.hfToken || bulkByokKeys.byteplusKey;
+        if (!hasBulkVideoKey) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "No video API key found. Please add your own Runway, OpenAI (Sora), fal.ai, Replicate, or Luma API key in Settings → API Keys to generate videos. Free Pollinations generation is also available without a key.",
+          });
+        }
+
         let generated = 0;
+        const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
         // Process 2 at a time to avoid API overload
         const BATCH = 2;
         for (let i = 0; i < scenesNeedingVideo.length; i += BATCH) {
@@ -1400,29 +1449,30 @@ export const appRouter = router({
                   characterNames: characters.map(c => c.name),
                 }
               );
-              const result = await generateUnifiedVideo({
-                prompt: `Cinematic video: ${prompt}`,
-                // Allow up to 20s per clip for Sora; Runway will snap to 5 or 10s
-                seconds: Math.min(scene.duration || 10, 20),
-                resolution: "1080p",
-                inputImageUrl: scene.thumbnailUrl || undefined,
-                aspectRatio: "landscape",
-                genre: project.genre || "Drama",
-                cameraMovement: scene.cameraMovement || undefined,
+              await db.updateScene(scene.id, { status: "generating" } as any);
+              const extResult = await generateExtendedScene(bulkByokKeys, {
+                sceneId: scene.id,
+                projectId: project.id,
+                description: `Cinematic video: ${prompt}`,
+                targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
+                timeOfDay: scene.timeOfDay || undefined,
+                genre: project.genre || undefined,
+                locationDescription: scene.locationType || undefined,
               });
-              await db.updateScene(scene.id, { videoUrl: result.videoUrl } as any);
-              // Auto-set project thumbnail from video thumbnail if project has none
-              if (result.thumbnailUrl && !project.thumbnailUrl) {
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              // Auto-set project thumbnail if project has none
+              if (extResult.thumbnailUrl && !project.thumbnailUrl) {
                 try {
-                  await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: result.thumbnailUrl });
-                  (project as any).thumbnailUrl = result.thumbnailUrl;
+                  await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl });
+                  (project as any).thumbnailUrl = extResult.thumbnailUrl;
                 } catch (e) { /* ignore */ }
               }
               generated++;
             } catch (e) {
               console.error(`Bulk video gen failed for scene "${scene.title}":`, e);
+              await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
             }
           }));
         }
@@ -1450,52 +1500,32 @@ export const appRouter = router({
         // Get user's API keys
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
 
-        // Determine which LLM provider to use (with built-in fallback)
+        // Determine which LLM provider to use
+        // Admins can use platform keys; regular users must provide their own
         const preferredLlm = userKeys.preferredLlmProvider;
+        const isAdminChat = ctx.user.role === "admin" || ctx.user.email === ENV.adminEmail;
         let provider: "openai" | "anthropic" | "google" = "openai";
-        let useBuiltInKey = false;
         if (preferredLlm === "anthropic" && userKeys.anthropicKey) provider = "anthropic";
         else if (preferredLlm === "google" && userKeys.googleAiKey) provider = "google";
         else if (preferredLlm === "openai" && userKeys.openaiKey) provider = "openai";
         else if (userKeys.openaiKey) provider = "openai";
         else if (userKeys.anthropicKey) provider = "anthropic";
         else if (userKeys.googleAiKey) provider = "google";
-        else {
-          // Fallback to built-in platform OpenAI key for Virelle chat
+        else if (isAdminChat && ENV.openaiApiKey) {
+          // Admin fallback: use platform OpenAI key
           provider = "openai";
-          useBuiltInKey = true;
+        } else {
+          // Non-admin without any LLM key — require them to add their own
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "No AI API key found. Please add your own OpenAI, Anthropic (Claude), or Google (Gemini) API key in Settings → API Keys to use Virelle AI chat.",
+          });
         }
 
-        // Rate limit users on the built-in key: 15 messages per day (admins exempt)
-        const BUILTIN_KEY_DAILY_LIMIT = 15;
-        if (useBuiltInKey && ctx.user.role !== "admin" && ctx.user.email !== ENV.adminEmail) {
-          try {
-            const dbConn = await db.getDb();
-            if (dbConn) {
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
-              const result = await dbConn.execute(
-                sql`SELECT COUNT(*) as cnt FROM credit_transactions WHERE userId = ${ctx.user.id} AND action = 'virelle_chat' AND createdAt >= ${today.toISOString()}`
-              );
-              const todayCount = Number((result[0] as any)?.cnt || 0);
-              if (todayCount >= BUILTIN_KEY_DAILY_LIMIT) {
-                throw new TRPCError({
-                  code: "TOO_MANY_REQUESTS",
-                  message: `You've reached the daily limit of ${BUILTIN_KEY_DAILY_LIMIT} AI chat messages. Add your own OpenAI, Claude, or Gemini API key in Settings for unlimited messages.`,
-                });
-              }
-            }
-          } catch (e: any) {
-            if (e.code === "TOO_MANY_REQUESTS") throw e;
-            // If rate limit check fails, allow the message through
-          }
-        }
-
-        const apiKey = useBuiltInKey
-          ? ENV.openaiApiKey
-          : (provider === "openai" ? userKeys.openaiKey!
-            : provider === "anthropic" ? userKeys.anthropicKey!
-            : userKeys.googleAiKey!);
+        const apiKey =
+          provider === "openai" ? (userKeys.openaiKey || (isAdminChat ? ENV.openaiApiKey : ""))
+          : provider === "anthropic" ? userKeys.anthropicKey!
+          : userKeys.googleAiKey!;
 
         // Build the system prompt for Virelle
         const systemPrompt = `You are Virelle, an expert AI film director assistant for VirÉlle Studios. You help directors edit and refine their film scenes through natural conversation.
@@ -1951,15 +1981,17 @@ Break this into 8-15 scenes. For each scene, provide:
             }
 
             // Step 4b: Generate extended video scene using clip chaining (30-60s per scene)
-            // Fetch user's API keys from the database
+            // Fetch user's API keys; admins also get platform keys as fallback
             const userKeys = await db.getUserApiKeys(ctx.user!.id);
+            const isAdminQuick = ctx.user.role === "admin" || ctx.user.email === ENV.adminEmail;
             const byokKeys: UserApiKeys = {
-              openaiKey: userKeys.openaiKey,
-              runwayKey: userKeys.runwayKey,
+              openaiKey: userKeys.openaiKey || (isAdminQuick ? ENV.openaiApiKey : undefined),
+              runwayKey: userKeys.runwayKey || (isAdminQuick ? ENV.runwayApiKey : undefined),
               replicateKey: userKeys.replicateKey,
               falKey: userKeys.falKey,
               lumaKey: userKeys.lumaKey,
               hfToken: userKeys.hfToken,
+              byteplusKey: userKeys.byteplusKey,
               preferredProvider: userKeys.preferredProvider,
             };
 
@@ -2264,17 +2296,29 @@ Break this into 8-15 scenes. For each scene, provide:
           await db.incrementGenerationCount(ctx.user.id);
         }
 
-        // Fetch user API keys
+        // Fetch user API keys; admins also get platform keys as fallback
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
+        const isAdminFilm = ctx.user.role === "admin" || ctx.user.email === ENV.adminEmail;
         const videoKeys: UserApiKeys = {
-          openaiKey: userKeys.openaiKey,
-          runwayKey: userKeys.runwayKey,
+          openaiKey: userKeys.openaiKey || (isAdminFilm ? ENV.openaiApiKey : undefined),
+          runwayKey: userKeys.runwayKey || (isAdminFilm ? ENV.runwayApiKey : undefined),
           replicateKey: userKeys.replicateKey,
           falKey: userKeys.falKey,
           lumaKey: userKeys.lumaKey,
           hfToken: userKeys.hfToken,
+          byteplusKey: userKeys.byteplusKey,
           preferredProvider: userKeys.preferredProvider,
         };
+
+        // Non-admin users without any video key get a clear error pointing to Settings
+        const hasFilmVideoKey = videoKeys.openaiKey || videoKeys.runwayKey || videoKeys.replicateKey ||
+          videoKeys.falKey || videoKeys.lumaKey || videoKeys.hfToken || videoKeys.byteplusKey;
+        if (!hasFilmVideoKey) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "No video API key found. Please add your own Runway, OpenAI (Sora), fal.ai, Replicate, or Luma API key in Settings → API Keys to generate a full film.",
+          });
+        }
         const voiceKeys: VoiceActingKeys = {
           elevenlabsKey: userKeys.elevenlabsKey,
           openaiKey: userKeys.openaiKey,
@@ -4926,7 +4970,18 @@ Rules:
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
 
-        const byokKeys = await db.getUserApiKeys(ctx.user.id);
+        const rawAdKeys = await db.getUserApiKeys(ctx.user.id);
+        const isAdminAd = ctx.user.role === "admin" || ctx.user.email === ENV.adminEmail;
+        const byokKeys: UserApiKeys = {
+          openaiKey: rawAdKeys.openaiKey || (isAdminAd ? ENV.openaiApiKey : undefined),
+          runwayKey: rawAdKeys.runwayKey || (isAdminAd ? ENV.runwayApiKey : undefined),
+          replicateKey: rawAdKeys.replicateKey,
+          falKey: rawAdKeys.falKey,
+          lumaKey: rawAdKeys.lumaKey,
+          hfToken: rawAdKeys.hfToken,
+          byteplusKey: rawAdKeys.byteplusKey,
+          preferredProvider: rawAdKeys.preferredProvider,
+        };
         const aspectRatio = input.platform === "tiktok" ? "9:16" : "16:9";
 
         try {

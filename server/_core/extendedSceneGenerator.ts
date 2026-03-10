@@ -20,7 +20,7 @@
  * Providers internally cap each clip to their own maximum (10-20s).
  */
 
-import { generateVideo as generateBYOKVideo, type UserApiKeys, type VideoGenerationRequest, type VideoGenerationResult } from "./byokVideoEngine";
+import { generateVideo as generateBYOKVideo, selectProvider, type UserApiKeys, type VideoGenerationRequest, type VideoGenerationResult } from "./byokVideoEngine";
 import { storagePut } from "../storage";
 import { execFile } from "child_process";
 import { promisify } from "util";
@@ -93,7 +93,10 @@ const CAMERA_VARIATIONS = [
 
 /**
  * Break a scene into sub-shots based on target duration.
- * Each sub-shot is 5-20 seconds, with varying camera angles for cinematic feel.
+ * Uses provider-appropriate clip durations:
+ * - Runway / SeedDance: 10s (API only accepts 5 or 10)
+ * - Pollinations / HuggingFace: 8s (model limitation)
+ * - Sora / Replicate / fal: 15s (supports up to 20s)
  */
 export function planSubShots(
   sceneDescription: string,
@@ -106,11 +109,18 @@ export function planSubShots(
     genre?: string;
     characterDescriptions?: string[];
     locationDescription?: string;
+    /** Active provider — used to select the correct clip duration */
+    provider?: string;
   }
 ): SubShot[] {
-  // Calculate number of sub-clips needed
-  // Use 15s per clip — most providers support 10-20s, giving richer scenes with fewer API calls
-  const clipDuration = 15;
+  // Select clip duration based on provider capabilities
+  // Runway and SeedDance only accept 5s or 10s; always request 10s for maximum coverage
+  const provider = options?.provider || "pollinations";
+  const clipDuration =
+    provider === "runway" || provider === "seedance" ? 10 :
+    provider === "pollinations" || provider === "huggingface" ? 8 :
+    15; // Sora, Replicate, fal — up to 20s per clip
+
   const numClips = Math.max(2, Math.ceil(targetDurationSeconds / clipDuration));
 
   const subShots: SubShot[] = [];
@@ -282,7 +292,9 @@ async function stitchSubClips(
 ): Promise<{ videoUrl: string; duration: number }> {
   if (clipUrls.length === 0) throw new Error("No clips to stitch");
   if (clipUrls.length === 1) {
-    return { videoUrl: clipUrls[0], duration: 8 };
+    // Single clip — return directly without re-encoding
+    // Duration will be measured by the caller via ffprobe if needed
+    return { videoUrl: clipUrls[0], duration: 10 };
   }
 
   const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "virelle-stitch-sub-"));
@@ -378,13 +390,17 @@ export async function generateExtendedScene(
   request: ExtendedSceneRequest,
   onProgress?: (clipIndex: number, totalClips: number, clipUrl?: string) => void
 ): Promise<ExtendedSceneResult> {
+  // Detect the active provider so planSubShots uses the correct clip duration
+  const activeProvider = selectProvider(keys);
+  console.log(`[ExtendedScene] Active provider: ${activeProvider}`);
+
   // If dialogue audio exists, match video duration to it (with buffer)
   let targetDuration = request.targetDurationSeconds;
   if (request.dialogueAudioDuration && request.dialogueAudioDuration > 0) {
     targetDuration = Math.max(targetDuration, request.dialogueAudioDuration + 2);
   }
 
-  // Plan sub-shots
+  // Plan sub-shots with provider-aware clip durations
   const subShots = planSubShots(
     request.description,
     targetDuration,
@@ -396,6 +412,7 @@ export async function generateExtendedScene(
       genre: request.genre,
       characterDescriptions: request.characterDescriptions,
       locationDescription: request.locationDescription,
+      provider: activeProvider,
     }
   );
 

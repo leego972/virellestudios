@@ -28,11 +28,11 @@ export const ENV = {
   stripeTopUp10PriceId: process.env.STRIPE_TOPUP_10_PRICE_ID ?? "",
   stripeTopUp30PriceId: process.env.STRIPE_TOPUP_30_PRICE_ID ?? "",
   stripeTopUp100PriceId: process.env.STRIPE_TOPUP_100_PRICE_ID ?? "",
-  // OpenAI (Sora video generation)
-  openaiApiKey: process.env.OPENAI_API_KEY || Buffer.from("c2stcHJvai16Q1VLQWJOWFUtZzduYW5MbERuTmx4N1lIRFFPM1JhdlQ5Q3Eta001c085cWhQU3VSdzA2RHF0dXB0bnc5dGNtUnZlMEtRRHZzT1QzQmxia0ZKc1d0YklsTEpwWk1RVkJtZHpTYm5OZlUxR3VrZlBRVjdiNkRBa3Jwd2JGRng2ZFdqdFI5RjZoWVBvMk9WOTZrX09Kd29qU0pMRUE=", "base64").toString("utf-8"),
-  // Runway ML (video generation)
-  runwayApiKey: process.env.RUNWAYML_API_SECRET || Buffer.from("eHZTek1Ia1lNRjBDYWNkZ0NzbnFEZ2NMVWprWWlnc3E=", "base64").toString("utf-8"),
-  // Pollinations (free video generation)
+  // OpenAI — platform key for admin use only; regular users must provide their own key
+  openaiApiKey: process.env.OPENAI_API_KEY ?? "",
+  // Runway ML — platform key for admin use only; regular users must provide their own key
+  runwayApiKey: process.env.RUNWAYML_API_SECRET ?? "",
+  // Pollinations (free video generation — available to all users via key pool)
   pollinationsApiKey: process.env.POLLINATIONS_API_KEY || "sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP",
   // Google (Nano Banana image generation)
   googleApiKey: process.env.GOOGLE_API_KEY ?? "",

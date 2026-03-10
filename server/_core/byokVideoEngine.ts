@@ -98,7 +98,7 @@ function getAvailableProviders(keys: UserApiKeys): VideoProvider[] {
   return providers;
 }
 
-function selectProvider(keys: UserApiKeys): VideoProvider {
+export function selectProvider(keys: UserApiKeys): VideoProvider {
   // If user explicitly set a preferred provider AND provided their own key for it, use it
   if (keys.preferredProvider) {
     const pref = keys.preferredProvider as VideoProvider;
@@ -133,29 +133,23 @@ function selectProvider(keys: UserApiKeys): VideoProvider {
 
 async function generateWithRunway(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   const ratio = req.aspectRatio === "9:16" ? "720:1280" : req.aspectRatio === "1:1" ? "720:720" : "1280:720";
-  // Runway Gen-4 Turbo supports 5s or 10s; Gen-3 Alpha supports up to 10s
-  // Snap to nearest valid value: 5 or 10
-  const rawDuration = req.duration || 5;
-  const duration = rawDuration >= 8 ? 10 : 5;
+  // Runway Gen-4 Turbo only accepts 5 or 10 seconds — always use 10s for maximum clip length
+  const duration = 10;
 
+  // Runway API v1 uses image_to_video for both text-to-video and image-to-video
+  // For text-to-video, promptImage is omitted; for i2v, it's included
   const body: any = {
     model: "gen4_turbo",
     ratio,
     duration,
+    promptText: req.prompt,
   };
 
   if (req.imageUrl) {
     body.promptImage = req.imageUrl;
-    body.promptText = req.prompt;
-  } else {
-    body.promptText = req.prompt;
   }
 
-  const endpoint = req.imageUrl
-    ? "https://api.dev.runwayml.com/v1/image_to_video"
-    : "https://api.dev.runwayml.com/v1/image_to_video";
-
-  const createResp = await fetch(endpoint, {
+  const createResp = await fetch("https://api.dev.runwayml.com/v1/image_to_video", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${key}`,
@@ -172,7 +166,8 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
 
   const createData = await createResp.json() as any;
   const taskId = createData.id;
-  console.log(`[BYOK:Runway] Task created: ${taskId}`);
+  if (!taskId) throw new Error(`Runway: no task ID in response: ${JSON.stringify(createData)}`);
+  console.log(`[BYOK:Runway] Task created: ${taskId} (10s, ratio: ${ratio})`);
 
   const videoUrl = await pollRunwayTask(key, taskId);
   return { provider: "runway", videoUrl, jobId: taskId, durationSeconds: duration };
@@ -257,15 +252,30 @@ async function generateWithOpenAI(key: string, req: VideoGenerationRequest): Pro
 // ─── Replicate ───
 
 async function generateWithReplicate(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
+  // Wan2.1-T2V-14B: best open-source text-to-video model
+  // Supports up to ~20s at 8fps = 161 frames
   const model = "wan-ai/wan2.1-t2v-14b";
-  
+  const numFrames = Math.min(Math.max((req.duration || 5) * 8, 16), 161);
+
   const input: any = {
     prompt: req.prompt,
-    // Wan2.1 supports up to ~20s at 8fps = 161 frames; cap at 161 for ~20s clips
-    num_frames: Math.min((req.duration || 5) * 8, 161),
+    num_frames: numFrames,
     guidance_scale: 5.0,
     num_inference_steps: 30,
+    fps: 8,
   };
+
+  // Aspect ratio
+  if (req.aspectRatio === "9:16") {
+    input.width = 480;
+    input.height = 848;
+  } else if (req.aspectRatio === "1:1") {
+    input.width = 480;
+    input.height = 480;
+  } else {
+    input.width = 848;
+    input.height = 480;
+  }
 
   if (req.imageUrl) {
     input.image = req.imageUrl;
@@ -276,12 +286,9 @@ async function generateWithReplicate(key: string, req: VideoGenerationRequest): 
     headers: {
       "Authorization": `Bearer ${key}`,
       "Content-Type": "application/json",
+      "Prefer": "wait",
     },
-    body: JSON.stringify({
-      version: undefined,
-      model,
-      input,
-    }),
+    body: JSON.stringify({ model, input }),
   });
 
   if (!createResp.ok) {
@@ -290,12 +297,18 @@ async function generateWithReplicate(key: string, req: VideoGenerationRequest): 
   }
 
   const prediction = await createResp.json() as any;
-  console.log(`[BYOK:Replicate] Prediction created: ${prediction.id}`);
+  console.log(`[BYOK:Replicate] Prediction created: ${prediction.id} (${numFrames} frames = ~${Math.round(numFrames / 8)}s)`);
+
+  // If already completed (Prefer: wait response)
+  if (prediction.status === "succeeded") {
+    const videoUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+    if (videoUrl) return { provider: "replicate", videoUrl, jobId: prediction.id, durationSeconds: Math.round(numFrames / 8) };
+  }
 
   const maxWait = 600000;
   const startTime = Date.now();
   while (Date.now() - startTime < maxWait) {
-    await new Promise(r => setTimeout(r, 5000));
+    await new Promise(r => setTimeout(r, 8000));
 
     const pollResp = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
       headers: { "Authorization": `Bearer ${key}` },
@@ -305,25 +318,27 @@ async function generateWithReplicate(key: string, req: VideoGenerationRequest): 
     if (data.status === "succeeded") {
       const videoUrl = Array.isArray(data.output) ? data.output[0] : data.output;
       if (!videoUrl) throw new Error("Replicate succeeded but no output URL");
-      return { provider: "replicate", videoUrl, jobId: prediction.id, durationSeconds: req.duration || 5 };
+      return { provider: "replicate", videoUrl, jobId: prediction.id, durationSeconds: Math.round(numFrames / 8) };
     }
     if (data.status === "failed" || data.status === "canceled") {
       throw new Error(`Replicate failed: ${data.error || "Unknown"}`);
     }
     console.log(`[BYOK:Replicate] Prediction ${prediction.id} status: ${data.status}`);
   }
-  throw new Error("Replicate prediction timed out");
+  throw new Error("Replicate prediction timed out after 10 minutes");
 }
 
 // ─── fal.ai ───
 
 async function generateWithFal(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
+  // HunyuanVideo: supports up to ~16s at 8fps (129 frames)
   const model = req.imageUrl ? "fal-ai/hunyuan-video/image-to-video" : "fal-ai/hunyuan-video";
+  const numFrames = Math.min(Math.max((req.duration || 5) * 8, 16), 129);
+  const actualDuration = Math.round(numFrames / 8);
 
   const input: any = {
     prompt: req.prompt,
-    // HunyuanVideo supports up to ~16s at 8fps = 129 frames; allow up to 129 for ~16s clips
-    num_frames: Math.min((req.duration || 5) * 8, 129),
+    num_frames: numFrames,
     num_inference_steps: 30,
     aspect_ratio: req.aspectRatio === "9:16" ? "9:16" : "16:9",
     resolution: req.resolution === "1080p" ? "1080p" : "720p",
@@ -333,6 +348,8 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
   if (req.imageUrl) {
     input.image_url = req.imageUrl;
   }
+
+  console.log(`[BYOK:fal] Submitting ${model} (${numFrames} frames = ~${actualDuration}s)`);
 
   const submitResp = await fetch(`https://queue.fal.run/${model}`, {
     method: "POST",
@@ -350,16 +367,23 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
 
   const submitData = await submitResp.json() as any;
   const requestId = submitData.request_id;
+  if (!requestId) throw new Error(`fal.ai: no request_id in response: ${JSON.stringify(submitData)}`);
   console.log(`[BYOK:fal] Request submitted: ${requestId}`);
 
   const maxWait = 600000;
   const startTime = Date.now();
   while (Date.now() - startTime < maxWait) {
-    await new Promise(r => setTimeout(r, 5000));
+    await new Promise(r => setTimeout(r, 8000));
 
     const statusResp = await fetch(`https://queue.fal.run/${model}/requests/${requestId}/status`, {
       headers: { "Authorization": `Key ${key}` },
     });
+
+    if (!statusResp.ok) {
+      console.log(`[BYOK:fal] Status check failed (${statusResp.status}), retrying...`);
+      continue;
+    }
+
     const statusData = await statusResp.json() as any;
 
     if (statusData.status === "COMPLETED") {
@@ -367,16 +391,21 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
         headers: { "Authorization": `Key ${key}` },
       });
       const resultData = await resultResp.json() as any;
-      const videoUrl = resultData.video?.url || resultData.output?.url;
-      if (!videoUrl) throw new Error("fal.ai completed but no video URL found");
-      return { provider: "fal", videoUrl, jobId: requestId, durationSeconds: req.duration || 5 };
+      // Try multiple possible video URL locations in response
+      const videoUrl =
+        resultData.video?.url ||
+        resultData.output?.url ||
+        resultData.output?.video?.url ||
+        (Array.isArray(resultData.output) ? resultData.output[0] : null);
+      if (!videoUrl) throw new Error(`fal.ai completed but no video URL found in: ${JSON.stringify(resultData)}`);
+      return { provider: "fal", videoUrl, jobId: requestId, durationSeconds: actualDuration };
     }
     if (statusData.status === "FAILED") {
-      throw new Error(`fal.ai failed: ${statusData.error || "Unknown"}`);
+      throw new Error(`fal.ai failed: ${statusData.error || statusData.detail || "Unknown"}`);
     }
-    console.log(`[BYOK:fal] Request ${requestId} status: ${statusData.status}`);
+    console.log(`[BYOK:fal] Request ${requestId} status: ${statusData.status} (${Math.round((Date.now() - startTime) / 1000)}s elapsed)`);
   }
-  throw new Error("fal.ai request timed out");
+  throw new Error("fal.ai request timed out after 10 minutes");
 }
 
 // ─── Luma AI ───
