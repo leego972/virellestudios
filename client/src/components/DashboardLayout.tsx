@@ -240,7 +240,7 @@ function DashboardLayoutContent({
     <>
       <div className="relative" ref={sidebarRef}>
         <Sidebar collapsible="icon" className="border-r-0" disableTransition={isResizing}>
-          <SidebarHeader className="h-16 justify-center">
+          <SidebarHeader className="h-14 md:h-16 justify-center">
             <div className="flex items-center gap-3 px-2 transition-all w-full">
               <button
                 onClick={toggleSidebar}
@@ -271,7 +271,7 @@ function DashboardLayoutContent({
                       isActive={active}
                       onClick={() => setLocation(item.path)}
                       tooltip={item.label}
-                      className="h-10 transition-all font-normal"
+                      className="h-9 md:h-10 transition-all font-normal"
                     >
                       <item.icon className={`h-4 w-4 ${active ? "text-primary" : ""}`} />
                       <span>{item.label}</span>
@@ -306,9 +306,9 @@ function DashboardLayoutContent({
             )}
           </SidebarContent>
 
-          <SidebarFooter className="p-3 space-y-2">
+          <SidebarFooter className="p-2 md:p-3 space-y-1 md:space-y-2">
             {/* Leego branding — click to grow/shrink */}
-            <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0">
+            <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
               <img
                 src="/leego-logo.png"
                 alt="Created by Leego"
