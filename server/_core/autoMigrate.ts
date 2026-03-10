@@ -403,6 +403,24 @@ export async function runAutoMigration(): Promise<void> {
         INDEX idx_credit_tx_action (action)
       )`,
     },
+    {
+      name: "projectSamples",
+      createSQL: `CREATE TABLE IF NOT EXISTS projectSamples (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT NULL,
+        genre VARCHAR(64) NULL,
+        provider VARCHAR(64) NULL,
+        videoUrl TEXT NOT NULL,
+        thumbnailUrl TEXT NULL,
+        durationSeconds INT NULL,
+        displayOrder INT NOT NULL DEFAULT 0,
+        isPublished BOOLEAN NOT NULL DEFAULT TRUE,
+        uploadedBy INT NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    },
   ];
 
   // ─── Columns that may be missing from existing tables ───
