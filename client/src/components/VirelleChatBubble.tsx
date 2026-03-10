@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   MessageCircle, X, Send, Loader2, Sparkles, CheckCircle2,
-  Bot, User, ChevronDown, Settings2, Minimize2,
+  Bot, User, ChevronDown, Settings2, Minimize2, Volume2, VolumeX,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,8 +30,81 @@ export default function VirelleChatBubble({
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true); // Auto-speak AI responses
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Archibald Titan: ElevenLabs TTS mutation
+  const speakResponseMutation = trpc.directorChat.speakResponse.useMutation();
+
+  /** Play ElevenLabs audio from base64 */
+  const playAudioBase64 = useCallback((base64: string) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+    const audio = new Audio(`data:audio/mpeg;base64,${base64}`);
+    audio.volume = 1.0;
+    audio.onplay = () => setIsSpeaking(true);
+    audio.onended = () => { setIsSpeaking(false); audioRef.current = null; };
+    audio.onerror = () => { setIsSpeaking(false); audioRef.current = null; };
+    audioRef.current = audio;
+    audio.play().catch(() => { setIsSpeaking(false); audioRef.current = null; });
+  }, []);
+
+  /** Browser TTS fallback with deep male voice */
+  const speakWithBrowser = useCallback((text: string) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9;
+    utterance.pitch = 0.85;
+    utterance.volume = 1;
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(
+      (v) => v.name.includes("Daniel") || v.name.includes("Google UK English Male") ||
+             v.name.includes("Alex") || v.name.includes("Google")
+    );
+    if (preferred) utterance.voice = preferred;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  /** Speak AI response using ElevenLabs (Archibald Titan) with browser fallback */
+  const speakResponse = useCallback((text: string) => {
+    if (!voiceEnabled || !text.trim()) return;
+    // Strip JSON code blocks before speaking
+    const cleanText = text.replace(/```json[\s\S]*?```/g, "").trim();
+    if (!cleanText) return;
+    speakResponseMutation.mutate(
+      { text: cleanText.substring(0, 1000) }, // Limit to 1000 chars for TTS
+      {
+        onSuccess: (data) => {
+          if (data.audioBase64) {
+            playAudioBase64(data.audioBase64);
+          } else {
+            speakWithBrowser(cleanText);
+          }
+        },
+        onError: () => speakWithBrowser(cleanText),
+      }
+    );
+  }, [voiceEnabled, speakResponseMutation, playAudioBase64, speakWithBrowser]);
+
+  const stopSpeaking = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+    window.speechSynthesis?.cancel();
+    setIsSpeaking(false);
+  }, []);
 
   const chatMutation = trpc.scene.virelleChat.useMutation({
     onSuccess: (data) => {
@@ -43,6 +116,9 @@ export default function VirelleChatBubble({
       };
       setChatHistory((prev) => [...prev, assistantMsg]);
       setIsTyping(false);
+
+      // Auto-speak the AI response (Archibald Titan voice)
+      speakResponse(data.response);
 
       if (data.updatedFieldCount > 0) {
         toast.success(`Virelle updated ${data.updatedFieldCount} scene field${data.updatedFieldCount > 1 ? "s" : ""}`);
@@ -179,10 +255,31 @@ export default function VirelleChatBubble({
             </div>
           </div>
           <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`h-7 w-7 p-0 ${isSpeaking ? "text-amber-400" : ""}`}
+              onClick={() => {
+                if (isSpeaking) {
+                  stopSpeaking();
+                } else {
+                  setVoiceEnabled((v) => !v);
+                }
+              }}
+              title={isSpeaking ? "Stop speaking" : voiceEnabled ? "Voice on (click to mute)" : "Voice off (click to unmute)"}
+            >
+              {isSpeaking ? (
+                <VolumeX className="h-3.5 w-3.5 text-amber-400 animate-pulse" />
+              ) : voiceEnabled ? (
+                <Volume2 className="h-3.5 w-3.5" />
+              ) : (
+                <VolumeX className="h-3.5 w-3.5 text-muted-foreground/50" />
+              )}
+            </Button>
             <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setIsMinimized(true)} title="Minimize">
               <Minimize2 className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { setIsOpen(false); setIsMinimized(false); }} title="Close">
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => { stopSpeaking(); setIsOpen(false); setIsMinimized(false); }} title="Close">
               <X className="h-3.5 w-3.5" />
             </Button>
           </div>

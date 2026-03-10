@@ -232,6 +232,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   // TTS state
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);  // For ElevenLabs audio playback
 
   // Preset state
   const [showPresets, setShowPresets] = useState(false);
@@ -374,6 +375,12 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
       }
       if (window.speechSynthesis) {
         window.speechSynthesis.cancel();
+      }
+      // Stop ElevenLabs audio on unmount
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+        audioRef.current = null;
       }
     };
   }, []);
@@ -600,50 +607,102 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     }
   }, [editHistory]);
 
+  // ─── Archibald Titan: ElevenLabs TTS with browser fallback ───
+  const speakResponseMutation = trpc.directorChat.speakResponse.useMutation();
+
+  /** Play audio from base64 MP3 data (ElevenLabs response) */
+  const playAudioBase64 = useCallback((base64: string) => {
+    // Stop any existing audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+    const audio = new Audio(`data:audio/mpeg;base64,${base64}`);
+    audio.volume = 1.0;
+    audio.onplay = () => setIsSpeaking(true);
+    audio.onended = () => {
+      setIsSpeaking(false);
+      audioRef.current = null;
+    };
+    audio.onerror = () => {
+      setIsSpeaking(false);
+      audioRef.current = null;
+    };
+    audioRef.current = audio;
+    audio.play().catch(() => {
+      setIsSpeaking(false);
+      audioRef.current = null;
+    });
+  }, []);
+
+  /** Browser TTS fallback with deep male voice preference */
+  const speakWithBrowser = useCallback((text: string) => {
+    if (!window.speechSynthesis) {
+      toast.error("Text-to-speech is not supported in this browser");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9;
+    utterance.pitch = 0.85;  // Lower pitch for deeper voice
+    utterance.volume = 1;
+    // Prefer deep male voices
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(
+      (v) => v.name.includes("Daniel") || v.name.includes("Google UK English Male") ||
+             v.name.includes("Alex") || v.name.includes("Google") ||
+             v.name.includes("Samantha") || v.name.includes("Natural")
+    );
+    if (preferred) utterance.voice = preferred;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => { setIsSpeaking(false); speechSynthRef.current = null; };
+    utterance.onerror = () => { setIsSpeaking(false); speechSynthRef.current = null; };
+    speechSynthRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
   // ─── Text-to-Speech (Read Back) ───
   const speakText = useCallback((text: string) => {
     if (!text.trim()) {
       toast.info("No text to read back");
       return;
     }
-
-    if (!window.speechSynthesis) {
-      toast.error("Text-to-speech is not supported in this browser");
-      return;
-    }
-
     // Stop any current speech
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    // Try to use a natural-sounding voice
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(
-      (v) => v.name.includes("Google") || v.name.includes("Samantha") || v.name.includes("Daniel") || v.name.includes("Natural")
-    );
-    if (preferred) {
-      utterance.voice = preferred;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
     }
+    window.speechSynthesis?.cancel();
+    setIsSpeaking(false);
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      speechSynthRef.current = null;
-    };
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      speechSynthRef.current = null;
-    };
-
-    speechSynthRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
-  }, []);
+    // Try ElevenLabs first (Archibald Titan deep male voice)
+    speakResponseMutation.mutate(
+      { text },
+      {
+        onSuccess: (data) => {
+          if (data.audioBase64) {
+            playAudioBase64(data.audioBase64);
+          } else {
+            // Fallback to browser TTS
+            speakWithBrowser(text);
+          }
+        },
+        onError: () => {
+          // Fallback to browser TTS on error
+          speakWithBrowser(text);
+        },
+      }
+    );
+  }, [speakResponseMutation, playAudioBase64, speakWithBrowser]);
 
   const stopSpeaking = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
     window.speechSynthesis?.cancel();
     setIsSpeaking(false);
     speechSynthRef.current = null;

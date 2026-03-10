@@ -4984,6 +4984,62 @@ Rules:
           applied,
         };
       }),
+
+    // ─── Archibald Titan: AI Voice Response (ElevenLabs deep male voice) ───
+    speakResponse: protectedProcedure
+      .input(z.object({
+        text: z.string().min(1).max(5000),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Get user's ElevenLabs API key
+        const userKeys = await db.getUserApiKeys(ctx.user.id);
+        const elevenlabsKey = userKeys.elevenlabsKey;
+
+        // Archibald Titan voice: "Adam" — deep, authoritative, cinematic male voice
+        // ElevenLabs free library voice ID for Adam
+        const ARCHIBALD_VOICE_ID = "pNInz6obpgDQGcFmaJgB"; // Adam — deep male
+        const ARCHIBALD_VOICE_SETTINGS = {
+          stability: 0.6,
+          similarity_boost: 0.8,
+          style: 0.4,
+          use_speaker_boost: true,
+        };
+
+        if (!elevenlabsKey) {
+          // No ElevenLabs key — client should fall back to browser TTS
+          return { audioBase64: null, provider: "browser" as const };
+        }
+
+        try {
+          const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ARCHIBALD_VOICE_ID}`, {
+            method: "POST",
+            headers: {
+              "xi-api-key": elevenlabsKey,
+              "Content-Type": "application/json",
+              "Accept": "audio/mpeg",
+            },
+            body: JSON.stringify({
+              text: input.text,
+              model_id: "eleven_multilingual_v2",
+              voice_settings: ARCHIBALD_VOICE_SETTINGS,
+            }),
+            signal: AbortSignal.timeout(30000),
+          });
+
+          if (!resp.ok) {
+            const errText = await resp.text().catch(() => "");
+            console.error(`[speakResponse] ElevenLabs error ${resp.status}: ${errText}`);
+            return { audioBase64: null, provider: "browser" as const };
+          }
+
+          const audioBuffer = Buffer.from(await resp.arrayBuffer());
+          const audioBase64 = audioBuffer.toString("base64");
+          return { audioBase64, provider: "elevenlabs" as const };
+        } catch (err) {
+          console.error("[speakResponse] ElevenLabs TTS failed:", err);
+          return { audioBase64: null, provider: "browser" as const };
+        }
+      }),
   }),
 
   // ─── Poster / Ad Maker ─────────────────────────────────────────────────────
