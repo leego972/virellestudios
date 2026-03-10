@@ -137,6 +137,20 @@
   --sidebar-ring: oklch(0.55 0.18 85);
 }
 
+/* ── Dark mode (white bg) text visibility fixes ──────────────────────────────
+   When .dark is active the background is white. Tailwind amber-100/200/300
+   classes are too light to read on white. Override them to darker shades.
+   This applies globally so every component is fixed without touching each file.
+────────────────────────────────────────────────────────────────────────────── */
+.dark .text-amber-100 { color: rgb(146 64 14) !important; }   /* amber-800 */
+.dark .text-amber-200 { color: rgb(146 64 14) !important; }   /* amber-800 */
+.dark .text-amber-300 { color: rgb(120 53 15) !important; }   /* amber-900 */
+.dark [class*="text-amber-200\/"] { color: rgb(120 53 15) !important; }
+.dark [class*="text-amber-100\/"] { color: rgb(146 64 14) !important; }
+.dark [class*="text-amber-300\/"] { color: rgb(120 53 15) !important; }
+/* Muted body text in cards: ensure readable dark grey on white */
+.dark .text-muted-foreground { color: oklch(0.35 0.008 260) !important; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
