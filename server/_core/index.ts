@@ -13,9 +13,12 @@ import { ENV } from "./env";
 import * as db from "../db";
 import { trackPaymentFailure } from "./securityEngine";
 import { startBlogScheduler } from "./blogEngine";
+import { startAutonomousPipelineScheduler } from "../autonomous-pipeline";
 import { startAdScheduler } from "./advertisingEngine";
 import { runAutoMigration } from "./autoMigrate";
 import { runStripeProvisioning } from "./stripeProvisioning";
+import { registerSeoRoutes } from "../seo-engine";
+import { registerSeoV4Routes } from "../seo-engine-v4";
 
 const startedAt = new Date();
 
@@ -402,6 +405,10 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
+  // Register SEO Engine routes (sitemap, robots.txt, etc.)
+  registerSeoRoutes(app);
+  registerSeoV4Routes(app);
+
   // Dynamic blog sitemap — auto-includes all published articles
   app.get("/sitemap-blog.xml", async (_req, res) => {
     try {
@@ -475,6 +482,7 @@ async function startServer() {
 
     // Start autonomous advertising engine - generates text, image, and video ads every 8 hours
     startAdScheduler();
+    startAutonomousPipelineScheduler();
     logger.info("[AdEngine] Autonomous advertising scheduler initialized");
   });
 }

@@ -42,6 +42,9 @@ import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota
 import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, getSchedulerState, runAutonomousAdCycle, generateImageAd, generateVideoAd, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
 import { getSocialCredentialStatus, postToLinkedIn, postToReddit, sendWhatsAppMessage, broadcastWhatsApp } from "./_core/socialPostingEngine";
 import { ENV } from "./_core/env";
+import { seoRouter } from "./seo-router";
+import { autonomousRouter } from "./autonomous-router";
+import { marketingRouter } from "./marketing-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
 import { generateSceneDialogue, TTS_PROVIDERS, type VoiceActingKeys } from "./_core/voiceActingEngine";
@@ -5719,6 +5722,9 @@ Rules:
   }),
 
   // ─── Blog (Public + Admin) ───
+  seo: seoRouter,
+  autonomous: autonomousRouter,
+  marketing: marketingRouter,
   blog: router({
     // Public: list published articles
     list: publicProcedure

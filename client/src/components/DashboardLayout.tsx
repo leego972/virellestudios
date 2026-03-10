@@ -44,6 +44,7 @@ import {
   Globe,
   Key,
   PlaySquare,
+  Zap,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -70,6 +71,7 @@ const menuItems = [
 const adminMenuItems = [
   { icon: Shield, label: "User Management", path: "/admin/users" },
   { icon: ShieldAlert, label: "Security", path: "/admin/security" },
+  { icon: Zap, label: "Autonomous Pipeline", path: "/admin/autonomous" },
   { icon: Megaphone, label: "Campaign Manager", path: "/campaigns" },
 ];
 

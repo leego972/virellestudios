@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, json, float, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, json, float, boolean, serial, decimal, date } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -739,3 +739,80 @@ export const projectSamples = mysqlTable("projectSamples", {
 });
 export type ProjectSample = typeof projectSamples.$inferSelect;
 export type InsertProjectSample = typeof projectSamples.$inferInsert;
+
+// ============================================================================
+// MARKETING ENGINE TABLES
+// ============================================================================
+
+export const marketingSettings = mysqlTable("marketing_settings", {
+  key: varchar("key", { length: 128 }).primaryKey(),
+  value: text("value"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const marketingBudgets = mysqlTable("marketing_budgets", {
+  id: serial("id").primaryKey(),
+  month: varchar("month", { length: 7 }).notNull(), // YYYY-MM
+  channel: varchar("channel", { length: 64 }).notNull(),
+  allocatedAmount: decimal("allocated_amount", { precision: 10, scale: 2 }).notNull(),
+  spentAmount: decimal("spent_amount", { precision: 10, scale: 2 }).default("0").notNull(),
+  roi: decimal("roi", { precision: 10, scale: 2 }).default("0"),
+  reasoning: text("reasoning"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const marketingCampaigns = mysqlTable("marketing_campaigns", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  objective: varchar("objective", { length: 128 }).notNull(),
+  status: varchar("status", { length: 64 }).default("draft").notNull(), // draft, active, paused, completed
+  budget: decimal("budget", { precision: 10, scale: 2 }).notNull(),
+  spend: decimal("spend", { precision: 10, scale: 2 }).default("0").notNull(),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  targetAudiences: json("target_audiences"),
+  metrics: json("metrics"), // clicks, impressions, conversions
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const marketingContent = mysqlTable("marketing_content", {
+  id: serial("id").primaryKey(),
+  campaignId: int("campaign_id"),
+  platform: varchar("platform", { length: 64 }).notNull(),
+  type: varchar("type", { length: 64 }).notNull(), // organic_post, ad_copy, blog_article
+  headline: varchar("headline", { length: 512 }),
+  body: text("body").notNull(),
+  imageUrl: varchar("image_url", { length: 1024 }),
+  videoUrl: varchar("video_url", { length: 1024 }),
+  status: varchar("status", { length: 64 }).default("pending").notNull(), // pending, scheduled, published, failed
+  scheduledFor: timestamp("scheduled_for"),
+  publishedAt: timestamp("published_at"),
+  platformPostId: varchar("platform_post_id", { length: 255 }),
+  metrics: json("metrics"), // likes, shares, comments
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const marketingPerformance = mysqlTable("marketing_performance", {
+  id: serial("id").primaryKey(),
+  date: date("date").notNull(),
+  channel: varchar("channel", { length: 64 }).notNull(),
+  spend: decimal("spend", { precision: 10, scale: 2 }).default("0").notNull(),
+  impressions: int("impressions").default(0).notNull(),
+  clicks: int("clicks").default(0).notNull(),
+  conversions: int("conversions").default(0).notNull(),
+  cpc: decimal("cpc", { precision: 10, scale: 2 }).default("0"),
+  cpa: decimal("cpa", { precision: 10, scale: 2 }).default("0"),
+  roi: decimal("roi", { precision: 10, scale: 2 }).default("0"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const marketingActivityLog = mysqlTable("marketing_activity_log", {
+  id: serial("id").primaryKey(),
+  action: varchar("action", { length: 128 }).notNull(),
+  description: text("description").notNull(),
+  metadata: json("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});

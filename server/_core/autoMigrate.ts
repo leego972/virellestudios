@@ -442,6 +442,124 @@ export async function runAutoMigration(): Promise<void> {
         INDEX idx_adCampaigns_userId (userId)
       )`,
     },
+    {
+      name: "marketing_budgets",
+      createSQL: `CREATE TABLE IF NOT EXISTS marketing_budgets (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        month VARCHAR(7) NOT NULL,
+        channel VARCHAR(64) NOT NULL,
+        allocated_amount DECIMAL(10,2) NOT NULL,
+        spent_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+        roi DECIMAL(10,2) DEFAULT 0,
+        reasoning TEXT,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "marketing_campaigns",
+      createSQL: `CREATE TABLE IF NOT EXISTS marketing_campaigns (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        objective VARCHAR(128) NOT NULL,
+        status VARCHAR(64) NOT NULL DEFAULT 'draft',
+        budget DECIMAL(10,2) NOT NULL,
+        spend DECIMAL(10,2) NOT NULL DEFAULT 0,
+        start_date TIMESTAMP NULL,
+        end_date TIMESTAMP NULL,
+        target_audiences JSON,
+        metrics JSON,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "marketing_content",
+      createSQL: `CREATE TABLE IF NOT EXISTS marketing_content (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        campaign_id INT,
+        platform VARCHAR(64) NOT NULL,
+        type VARCHAR(64) NOT NULL,
+        headline VARCHAR(512),
+        body TEXT NOT NULL,
+        image_url VARCHAR(1024),
+        video_url VARCHAR(1024),
+        status VARCHAR(64) NOT NULL DEFAULT 'pending',
+        scheduled_for TIMESTAMP NULL,
+        published_at TIMESTAMP NULL,
+        platform_post_id VARCHAR(255),
+        metrics JSON,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "marketing_performance",
+      createSQL: `CREATE TABLE IF NOT EXISTS marketing_performance (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        date DATE NOT NULL,
+        channel VARCHAR(64) NOT NULL,
+        spend DECIMAL(10,2) NOT NULL DEFAULT 0,
+        impressions INT NOT NULL DEFAULT 0,
+        clicks INT NOT NULL DEFAULT 0,
+        conversions INT NOT NULL DEFAULT 0,
+        cpc DECIMAL(10,2) DEFAULT 0,
+        cpa DECIMAL(10,2) DEFAULT 0,
+        roi DECIMAL(10,2) DEFAULT 0,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "marketing_activity_log",
+      createSQL: `CREATE TABLE IF NOT EXISTS marketing_activity_log (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        action VARCHAR(128) NOT NULL,
+        description TEXT NOT NULL,
+        metadata JSON,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "marketing_settings",
+      createSQL: `CREATE TABLE IF NOT EXISTS marketing_settings (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        \`key\` VARCHAR(128) NOT NULL UNIQUE,
+        value TEXT,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "content_creator_jobs",
+      createSQL: `CREATE TABLE IF NOT EXISTS content_creator_jobs (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        job_type VARCHAR(64) NOT NULL,
+        status VARCHAR(64) NOT NULL DEFAULT 'pending',
+        platform VARCHAR(64),
+        prompt TEXT,
+        result_image_url VARCHAR(1024),
+        result_video_url VARCHAR(1024),
+        result_caption TEXT,
+        result_hashtags JSON,
+        marketing_content_id INT,
+        error TEXT,
+        started_at TIMESTAMP NULL,
+        completed_at TIMESTAMP NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "autonomous_pipeline_log",
+      createSQL: `CREATE TABLE IF NOT EXISTS autonomous_pipeline_log (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        cycle_id VARCHAR(64) NOT NULL,
+        stage VARCHAR(64) NOT NULL,
+        status VARCHAR(64) NOT NULL DEFAULT 'running',
+        details JSON,
+        started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        completed_at TIMESTAMP NULL
+      )`,
+    },
   ];
 
   // ─── Columns that may be missing from existing tables ───
