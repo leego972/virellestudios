@@ -43,6 +43,7 @@ import {
   Wand2,
   Globe,
   Key,
+  PlaySquare,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -57,6 +58,7 @@ const menuItems = [
   { icon: Clapperboard, label: "My Movies", path: "/movies" },
   { icon: Users, label: "Characters", path: "/characters" },
   { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker" },
+  { icon: PlaySquare, label: "Project Samples", path: "/samples" },
   { icon: Gift, label: "Referrals", path: "/referrals" },
   { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace" },
   { icon: BookOpen, label: "Blog", path: "/blog" },

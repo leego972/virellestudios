@@ -24,6 +24,7 @@ import {
   InsertBlogArticle, blogArticles,
   InsertReferralCode, referralCodes,
   InsertReferralTracking, referralTracking,
+  InsertProjectSample, projectSamples, ProjectSample,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1530,4 +1531,41 @@ export async function getCreditBalance(userId: number): Promise<number> {
     .limit(1);
 
   return (user?.creditBalance as number) || 0;
+}
+
+// ─── Project Samples ───
+export async function createProjectSample(data: InsertProjectSample): Promise<ProjectSample> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(projectSamples).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(projectSamples).where(eq(projectSamples.id, id)))[0];
+}
+
+export async function getPublishedProjectSamples(): Promise<ProjectSample[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projectSamples)
+    .where(eq(projectSamples.isPublished, true))
+    .orderBy(asc(projectSamples.displayOrder), desc(projectSamples.createdAt));
+}
+
+export async function getAllProjectSamples(): Promise<ProjectSample[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projectSamples)
+    .orderBy(asc(projectSamples.displayOrder), desc(projectSamples.createdAt));
+}
+
+export async function updateProjectSample(id: number, data: Partial<InsertProjectSample>): Promise<ProjectSample> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(projectSamples).set(data).where(eq(projectSamples.id, id));
+  return (await db.select().from(projectSamples).where(eq(projectSamples.id, id)))[0];
+}
+
+export async function deleteProjectSample(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(projectSamples).where(eq(projectSamples.id, id));
 }

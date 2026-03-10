@@ -6002,6 +6002,86 @@ Rules:
       }),
   }),
 
+  // ─── Project Samples ───
+  projectSamples: router({
+    // Public (all logged-in users): list published samples
+    list: protectedProcedure.query(async () => {
+      return db.getPublishedProjectSamples();
+    }),
+    // Admin only: list all samples including unpublished
+    listAll: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+      return db.getAllProjectSamples();
+    }),
+    // Admin only: create a new sample (video + optional thumbnail via base64)
+    create: protectedProcedure
+      .input(z.object({
+        title: z.string().min(1).max(255),
+        description: z.string().max(2000).optional(),
+        genre: z.string().max(64).optional(),
+        provider: z.string().max(64).optional(),
+        durationSeconds: z.number().optional(),
+        displayOrder: z.number().default(0),
+        isPublished: z.boolean().default(true),
+        videoBase64: z.string().max(500_000_000, "Video too large. Max 350MB."),
+        videoFilename: z.string(),
+        videoContentType: z.string().default("video/mp4"),
+        thumbnailBase64: z.string().max(10_000_000).optional(),
+        thumbnailFilename: z.string().optional(),
+        thumbnailContentType: z.string().default("image/jpeg"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+        const videoBuffer = Buffer.from(input.videoBase64, "base64");
+        const videoKey = `samples/${nanoid()}-${input.videoFilename}`;
+        const { url: videoUrl } = await storagePut(videoKey, videoBuffer, input.videoContentType);
+        let thumbnailUrl: string | undefined;
+        if (input.thumbnailBase64 && input.thumbnailFilename) {
+          const thumbBuffer = Buffer.from(input.thumbnailBase64, "base64");
+          const thumbKey = `samples/thumbs/${nanoid()}-${input.thumbnailFilename}`;
+          const { url } = await storagePut(thumbKey, thumbBuffer, input.thumbnailContentType);
+          thumbnailUrl = url;
+        }
+        return db.createProjectSample({
+          title: input.title,
+          description: input.description || null,
+          genre: input.genre || null,
+          provider: input.provider || null,
+          videoUrl,
+          thumbnailUrl: thumbnailUrl || null,
+          durationSeconds: input.durationSeconds || null,
+          displayOrder: input.displayOrder,
+          isPublished: input.isPublished,
+          uploadedBy: ctx.user.id,
+        });
+      }),
+    // Admin only: update sample metadata
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().min(1).max(255).optional(),
+        description: z.string().max(2000).optional(),
+        genre: z.string().max(64).optional(),
+        provider: z.string().max(64).optional(),
+        durationSeconds: z.number().optional(),
+        displayOrder: z.number().optional(),
+        isPublished: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+        const { id, ...data } = input;
+        return db.updateProjectSample(id, data);
+      }),
+    // Admin only: delete a sample
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+        await db.deleteProjectSample(input.id);
+        return { success: true };
+      }),
+  }),
+
   // ─── Notifications ───
   notifications: router({
     list: protectedProcedure

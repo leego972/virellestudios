@@ -48,6 +48,7 @@ const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
 
 // Dashboard feature pages — lazy loaded
 const Referrals = lazy(() => import("./pages/Referrals"));
+const ProjectSamples = lazy(() => import("./pages/ProjectSamples"));
 const SettingsPage = lazy(() => import("./pages/Settings"));
 
 // Full-screen tool pages — lazy loaded (Pro features, heavy components)
@@ -182,6 +183,7 @@ function Router() {
               <Route path="/poster-maker">{() => <AdPosterMaker />}</Route>
               <Route path="/characters">{() => <Characters />}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
+              <Route path="/samples">{() => <LazyPage><ProjectSamples /></LazyPage>}</Route>
               <Route path="/referrals">{() => <Referrals />}</Route>
               <Route path="/marketplace">{() => <LazyPage><AssetMarketplace /></LazyPage>}</Route>
               <Route path="/settings">{() => <SettingsPage />}</Route>

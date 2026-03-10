@@ -720,3 +720,22 @@ export const creditTransactions = mysqlTable("credit_transactions", {
 });
 export type CreditTransaction = typeof creditTransactions.$inferSelect;
 export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
+
+// ─── Project Samples (Admin Showcase) ───
+export const projectSamples = mysqlTable("projectSamples", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  genre: varchar("genre", { length: 64 }),
+  provider: varchar("provider", { length: 64 }), // e.g. "Runway Gen-4", "Sora", "fal.ai"
+  videoUrl: text("videoUrl").notNull(),
+  thumbnailUrl: text("thumbnailUrl"),
+  durationSeconds: int("durationSeconds"),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  isPublished: boolean("isPublished").default(true).notNull(),
+  uploadedBy: int("uploadedBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ProjectSample = typeof projectSamples.$inferSelect;
+export type InsertProjectSample = typeof projectSamples.$inferInsert;
