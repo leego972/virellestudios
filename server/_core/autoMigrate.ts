@@ -421,6 +421,27 @@ export async function runAutoMigration(): Promise<void> {
         updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`,
     },
+    {
+      name: "adCampaigns",
+      createSQL: `CREATE TABLE IF NOT EXISTS adCampaigns (
+        id VARCHAR(64) NOT NULL PRIMARY KEY,
+        userId INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        status ENUM('draft','active','paused','completed') NOT NULL DEFAULT 'draft',
+        platforms JSON NOT NULL,
+        contentType VARCHAR(64) NOT NULL DEFAULT 'launch_announcement',
+        schedule ENUM('once','daily','weekly','biweekly','monthly') NOT NULL DEFAULT 'once',
+        generatedContent JSON NOT NULL DEFAULT ('[]'),
+        postHistory JSON NOT NULL DEFAULT ('[]'),
+        customContext TEXT NULL,
+        totalPosts INT NOT NULL DEFAULT 0,
+        successfulPosts INT NOT NULL DEFAULT 0,
+        startDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_adCampaigns_userId (userId)
+      )`,
+    },
   ];
 
   // ─── Columns that may be missing from existing tables ───

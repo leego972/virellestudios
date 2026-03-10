@@ -5463,30 +5463,115 @@ Rules:
         return getRecommendedPlatforms(input.contentType as AdContentType);
       }),
 
-    // List all campaigns
-    listCampaigns: adminProcedure.query(() => {
+    // List all campaigns (DB-backed)
+    listCampaigns: adminProcedure.query(async ({ ctx }) => {
+      const dbConn = await db.getDb();
+      if (!dbConn) return listCampaigns();
+      const [rows] = await dbConn.execute(sql`SELECT * FROM adCampaigns WHERE userId = ${ctx.user!.id} ORDER BY createdAt DESC`);
+      const dbRows = rows as any[];
+      if (dbRows.length > 0) {
+        return dbRows.map((r: any) => ({
+          ...r,
+          platforms: typeof r.platforms === 'string' ? JSON.parse(r.platforms) : r.platforms,
+          generatedContent: typeof r.generatedContent === 'string' ? JSON.parse(r.generatedContent) : (r.generatedContent || []),
+          postHistory: typeof r.postHistory === 'string' ? JSON.parse(r.postHistory) : (r.postHistory || []),
+        }));
+      }
       return listCampaigns();
     }),
 
-    // Get a specific campaign
+    // Get a specific campaign (DB-backed)
     getCampaign: adminProcedure
       .input(z.object({ id: z.string() }))
-      .query(({ input }) => {
+      .query(async ({ input, ctx }) => {
+        const dbConn = await db.getDb();
+        if (dbConn) {
+          const [rows] = await dbConn.execute(sql`SELECT * FROM adCampaigns WHERE id = ${input.id} AND userId = ${ctx.user!.id}`);
+          const dbRows = rows as any[];
+          if (dbRows.length > 0) {
+            const r = dbRows[0];
+            return {
+              ...r,
+              platforms: typeof r.platforms === 'string' ? JSON.parse(r.platforms) : r.platforms,
+              generatedContent: typeof r.generatedContent === 'string' ? JSON.parse(r.generatedContent) : (r.generatedContent || []),
+              postHistory: typeof r.postHistory === 'string' ? JSON.parse(r.postHistory) : (r.postHistory || []),
+            };
+          }
+        }
         const campaign = getCampaign(input.id);
         if (!campaign) throw new TRPCError({ code: "NOT_FOUND", message: "Campaign not found" });
         return campaign;
       }),
 
-    // Create a new campaign
+    // Create a new campaign (DB-backed)
     createCampaign: adminProcedure
       .input(z.object({
         name: z.string().min(1).max(200),
         platforms: z.array(z.string()).min(1),
-        contentType: z.enum(["launch_announcement", "feature_showcase", "behind_the_scenes", "user_testimonial", "comparison", "tutorial_teaser", "milestone"]),
+        contentType: z.enum(["launch_announcement", "feature_showcase", "behind_the_scenes", "user_testimonial", "comparison", "tutorial_teaser", "milestone", "pitch_deck_teaser", "industry_insight", "case_study", "event_promotion", "award_submission", "collaboration_call"]),
         schedule: z.enum(["once", "daily", "weekly", "biweekly", "monthly"]),
+        customContext: z.string().optional(),
       }))
-      .mutation(({ input }) => {
-        return createCampaign(input.name, input.platforms, input.contentType, input.schedule);
+      .mutation(async ({ input, ctx }) => {
+        const campaign = createCampaign(input.name, input.platforms, input.contentType as AdContentType, input.schedule);
+        const dbConn = await db.getDb();
+        if (dbConn) {
+          await dbConn.execute(sql`INSERT INTO adCampaigns (id, userId, name, status, platforms, contentType, schedule, generatedContent, postHistory, customContext, totalPosts, successfulPosts, startDate) VALUES (${campaign.id}, ${ctx.user!.id}, ${campaign.name}, ${campaign.status}, ${JSON.stringify(campaign.platforms)}, ${campaign.contentType}, ${campaign.schedule}, '[]', '[]', ${input.customContext || null}, 0, 0, NOW())`);
+        }
+        return campaign;
+      }),
+
+    // Get campaign analytics
+    analytics: adminProcedure.query(async ({ ctx }) => {
+      const dbConn = await db.getDb();
+      if (!dbConn) return { totalCampaigns: 0, totalPosts: 0, successRate: 0, platformBreakdown: [], contentTypeBreakdown: [], recentActivity: [] };
+      const [campaigns] = await dbConn.execute(sql`SELECT * FROM adCampaigns WHERE userId = ${ctx.user!.id}`);
+      const rows = campaigns as any[];
+      const totalCampaigns = rows.length;
+      let totalPosts = 0;
+      let successfulPosts = 0;
+      const platformCounts: Record<string, number> = {};
+      const contentTypeCounts: Record<string, number> = {};
+      const recentActivity: any[] = [];
+      for (const row of rows) {
+        totalPosts += row.totalPosts || 0;
+        successfulPosts += row.successfulPosts || 0;
+        contentTypeCounts[row.contentType] = (contentTypeCounts[row.contentType] || 0) + 1;
+        const platforms = typeof row.platforms === 'string' ? JSON.parse(row.platforms) : (row.platforms || []);
+        for (const p of platforms) { platformCounts[p] = (platformCounts[p] || 0) + 1; }
+        const history = typeof row.postHistory === 'string' ? JSON.parse(row.postHistory) : (row.postHistory || []);
+        for (const h of history.slice(-3)) { recentActivity.push({ campaign: row.name, ...h }); }
+      }
+      return {
+        totalCampaigns,
+        totalPosts,
+        successRate: totalPosts > 0 ? Math.round((successfulPosts / totalPosts) * 100) : 0,
+        platformBreakdown: Object.entries(platformCounts).map(([platform, count]) => ({ platform, count })).sort((a, b) => b.count - a.count),
+        contentTypeBreakdown: Object.entries(contentTypeCounts).map(([type, count]) => ({ type, count })).sort((a, b) => b.count - a.count),
+        recentActivity: recentActivity.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime()).slice(0, 10),
+      };
+    }),
+
+    // Generate social share URLs for content
+    getSocialShareUrl: adminProcedure
+      .input(z.object({
+        platform: z.enum(["twitter", "linkedin", "reddit", "facebook", "tiktok"]),
+        text: z.string(),
+        url: z.string().optional(),
+        title: z.string().optional(),
+      }))
+      .query(({ input }) => {
+        const encodedText = encodeURIComponent(input.text.slice(0, 280));
+        const encodedUrl = encodeURIComponent(input.url || "https://virelle.life");
+        const encodedTitle = encodeURIComponent(input.title || "Virelle Studios");
+        const shareUrls: Record<string, string> = {
+          twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+          linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&summary=${encodedText}`,
+          reddit: `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+          facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`,
+          tiktok: `https://www.tiktok.com/upload?description=${encodedText}`,
+        };
+        return { shareUrl: shareUrls[input.platform], platform: input.platform };
       }),
 
     // Generate content for a campaign
