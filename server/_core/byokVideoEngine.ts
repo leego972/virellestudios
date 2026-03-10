@@ -133,7 +133,10 @@ function selectProvider(keys: UserApiKeys): VideoProvider {
 
 async function generateWithRunway(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   const ratio = req.aspectRatio === "9:16" ? "720:1280" : req.aspectRatio === "1:1" ? "720:720" : "1280:720";
-  const duration = Math.min(req.duration || 5, 10);
+  // Runway Gen-4 Turbo supports 5s or 10s; Gen-3 Alpha supports up to 10s
+  // Snap to nearest valid value: 5 or 10
+  const rawDuration = req.duration || 5;
+  const duration = rawDuration >= 8 ? 10 : 5;
 
   const body: any = {
     model: "gen4_turbo",
@@ -209,7 +212,8 @@ async function generateWithOpenAI(key: string, req: VideoGenerationRequest): Pro
   const OpenAI = (await import("openai")).default;
   const client = new OpenAI({ apiKey: key, baseURL: "https://api.openai.com/v1" });
 
-  const seconds = String(Math.min(req.duration || 5, 10)) as any;
+  // Sora supports up to 20 seconds per clip
+  const seconds = String(Math.min(req.duration || 5, 20)) as any;
   const size = req.aspectRatio === "9:16" ? "720x1280" as any : "1280x720" as any;
 
   const video = await (client as any).videos.create({
@@ -257,7 +261,8 @@ async function generateWithReplicate(key: string, req: VideoGenerationRequest): 
   
   const input: any = {
     prompt: req.prompt,
-    num_frames: Math.min((req.duration || 5) * 8, 81),
+    // Wan2.1 supports up to ~20s at 8fps = 161 frames; cap at 161 for ~20s clips
+    num_frames: Math.min((req.duration || 5) * 8, 161),
     guidance_scale: 5.0,
     num_inference_steps: 30,
   };
@@ -317,6 +322,7 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
 
   const input: any = {
     prompt: req.prompt,
+    // HunyuanVideo supports up to ~16s at 8fps = 129 frames; allow up to 129 for ~16s clips
     num_frames: Math.min((req.duration || 5) * 8, 129),
     num_inference_steps: 30,
     aspect_ratio: req.aspectRatio === "9:16" ? "9:16" : "16:9",
@@ -481,7 +487,8 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
   // Other models (seedance, wan, veo, ltx-2) are PAID ONLY
   const freeModels = ["grok-video"];
   
-  const duration = Math.min(req.duration || 4, 8); // Pollinations max ~8s per clip
+  // Pollinations grok-video max is ~8s per clip
+  const duration = Math.min(req.duration || 5, 8);
   const encodedPrompt = encodeURIComponent(req.prompt);
   
   // Build query params
@@ -610,7 +617,9 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
  */
 async function generateWithSeedance(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   const BYTEPLUS_API_BASE = "https://ark.ap-southeast.bytepluses.com/api/v3";
-  const duration = Math.min(req.duration || 5, 10);
+  // SeedDance 1.5 Pro supports 5s or 10s; snap to nearest valid value
+  const rawDuration = req.duration || 5;
+  const duration = rawDuration >= 8 ? 10 : 5;
 
   // Select model — Seedance 1.5 Pro is the latest available via API
   // Will be upgraded to seedance-2-0 when BytePlus enables it

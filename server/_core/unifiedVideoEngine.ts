@@ -105,7 +105,8 @@ export async function generateUnifiedVideo(
 async function generateWithRunway(options: UnifiedVideoOptions): Promise<UnifiedVideoResult> {
   const runwayOpts: RunwayVideoOptions = {
     prompt: options.prompt,
-    duration: Math.min(10, Math.max(2, options.seconds || 5)),
+    // Runway Gen-4 Turbo supports 5s or 10s; snap to nearest valid value
+    duration: (options.seconds || 5) >= 8 ? 10 : 5,
     ratio: options.aspectRatio === "portrait" ? "720:1280" : "1280:720",
     model: "gen4.5",
     inputImageUrl: options.inputImageUrl,
@@ -127,7 +128,8 @@ async function generateWithRunway(options: UnifiedVideoOptions): Promise<Unified
 async function generateWithSora(options: UnifiedVideoOptions): Promise<UnifiedVideoResult> {
   const soraOpts: VideoGenerationOptions = {
     prompt: options.prompt,
-    seconds: options.seconds || 8,
+    // Sora supports up to 20 seconds per clip
+    seconds: Math.min(options.seconds || 8, 20),
     resolution: options.resolution || "1080p",
     model: "sora-2",
     inputImageUrl: options.inputImageUrl,

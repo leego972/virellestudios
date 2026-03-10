@@ -1336,9 +1336,10 @@ export const appRouter = router({
             console.log(`[SceneVideo] Background generation started for scene ${scene.id}`);
             const result = await generateUnifiedVideo({
               prompt: `Cinematic video: ${prompt}`,
-              seconds: Math.min(scene.duration || 8, 20),
+              // Allow up to 20s per clip for Sora; Runway will snap to 5 or 10s
+              seconds: Math.min(scene.duration || 10, 20),
               resolution: "1080p",
-              inputImageUrl,
+              inputImageUrl: inputImageUrl,
               aspectRatio: "landscape",
               genre: project.genre || "Drama",
               cameraMovement: scene.cameraMovement || undefined,
@@ -1401,7 +1402,8 @@ export const appRouter = router({
               );
               const result = await generateUnifiedVideo({
                 prompt: `Cinematic video: ${prompt}`,
-                seconds: Math.min(scene.duration || 8, 20),
+                // Allow up to 20s per clip for Sora; Runway will snap to 5 or 10s
+                seconds: Math.min(scene.duration || 10, 20),
                 resolution: "1080p",
                 inputImageUrl: scene.thumbnailUrl || undefined,
                 aspectRatio: "landscape",
@@ -1972,8 +1974,9 @@ Break this into 8-15 scenes. For each scene, provide:
               "Photorealistic, shot on ARRI Alexa, 35mm anamorphic lens, shallow depth of field, natural lighting, film grain.",
             ].filter(Boolean).join(" ");
 
-            // Use extended scene generation for longer scenes (30-60s)
-            const targetSceneDuration = Math.max(20, Math.min(90, scene.duration || 45));
+            // Use extended scene generation — support industry-standard scene lengths (30s–5min)
+            // No artificial cap: providers will handle their own per-clip limits internally
+            const targetSceneDuration = Math.max(10, scene.duration || 45);
 
             try {
               // Import and use extended scene generator for clip chaining
@@ -2007,7 +2010,8 @@ Break this into 8-15 scenes. For each scene, provide:
               
               // Fallback to single clip generation
               try {
-                const sceneDuration = Math.min(10, Math.max(2, Math.round((scene.duration || 10) / 3)));
+                // Use up to 15s for fallback single clip (providers will cap to their own max)
+                const sceneDuration = Math.min(15, Math.max(5, scene.duration || 10));
                 const videoResult = await generateBYOKVideo(byokKeys, {
                   prompt: videoPrompt,
                   imageUrl: scene.thumbnailUrl || undefined,

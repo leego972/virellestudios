@@ -1,22 +1,23 @@
 /**
- * Extended Scene Generator — Clip Chaining for Long Scenes
+ * Extended Scene Generator — Clip Chaining for Industry-Standard Scene Lengths
  * 
- * The core problem: AI video models generate 2-10 second clips.
- * A 90-minute film needs ~5,400 seconds of video.
+ * The core problem: AI video models generate 5-20 second clips per API call.
+ * Industry-standard scenes run 30 seconds to 3+ minutes.
  * 
  * Solution: Chain multiple clips per scene with continuity:
- * 1. Break each scene into sub-shots (2-4 clips per scene)
+ * 1. Break each scene into sub-shots (each ~15s, matching provider maximums)
  * 2. Use the last frame of clip N as the first frame reference for clip N+1
  * 3. Vary camera angles and movements within the scene for cinematic feel
  * 4. Stitch sub-clips into a single scene video
  * 
  * Architecture for a 90-minute film:
  * - 60-90 scenes (avg 60-90 seconds each)
- * - Each scene = 4-8 sub-clips of 8-10 seconds
- * - Total clips: ~400-700 clips
- * - Generation time: depends on provider speed, parallel processing helps
+ * - Each scene = 4-6 sub-clips of 15 seconds (provider-capped to 10-20s)
+ * - Total clips: ~300-540 clips
+ * - Generation time: depends on provider speed
  * 
- * The pipeline generates in batches to manage API limits and costs.
+ * Scene duration is fully user-controlled with no artificial cap.
+ * Providers internally cap each clip to their own maximum (10-20s).
  */
 
 import { generateVideo as generateBYOKVideo, type UserApiKeys, type VideoGenerationRequest, type VideoGenerationResult } from "./byokVideoEngine";
@@ -92,7 +93,7 @@ const CAMERA_VARIATIONS = [
 
 /**
  * Break a scene into sub-shots based on target duration.
- * Each sub-shot is 5-10 seconds, with varying camera angles for cinematic feel.
+ * Each sub-shot is 5-20 seconds, with varying camera angles for cinematic feel.
  */
 export function planSubShots(
   sceneDescription: string,
@@ -108,7 +109,8 @@ export function planSubShots(
   }
 ): SubShot[] {
   // Calculate number of sub-clips needed
-  const clipDuration = 8; // Target 8 seconds per clip (sweet spot for most providers)
+  // Use 15s per clip — most providers support 10-20s, giving richer scenes with fewer API calls
+  const clipDuration = 15;
   const numClips = Math.max(2, Math.ceil(targetDurationSeconds / clipDuration));
 
   const subShots: SubShot[] = [];
@@ -158,7 +160,7 @@ export function planSubShots(
     // Quality reinforcement
     promptParts.push("natural skin texture, photorealistic, real-world physics, shallow depth of field, cinematic color grading, film grain");
 
-    // Duration for this clip
+    // Duration for this clip — allow up to 20s per clip (providers will cap to their own max)
     const thisDuration = isLast
       ? Math.max(5, targetDurationSeconds - (numClips - 1) * clipDuration)
       : clipDuration;
@@ -168,7 +170,7 @@ export function planSubShots(
       prompt: promptParts.join(", "),
       cameraAngle: cameraVar.angle,
       cameraMovement: cameraVar.movement,
-      durationSeconds: Math.min(10, Math.max(2, thisDuration)),
+      durationSeconds: Math.min(20, Math.max(2, thisDuration)),
     });
   }
 
@@ -335,7 +337,7 @@ async function stitchSubClips(
       "-movflags", "+faststart",
       "-y",
       outputPath,
-    ], { timeout: 120000 });
+    ], { timeout: 600000 }); // 10-minute timeout for long scenes with many clips
 
     // Get duration
     let duration = 0;
@@ -367,7 +369,9 @@ async function stitchSubClips(
 
 /**
  * Generate an extended scene video by chaining multiple sub-clips.
- * This produces 30-90 second scenes instead of 5-10 second clips.
+ * Supports industry-standard scene lengths: 30 seconds to 3+ minutes.
+ * Each sub-clip is ~15s (capped by provider to 10-20s).
+ * Clips are stitched together with ffmpeg for seamless playback.
  */
 export async function generateExtendedScene(
   keys: UserApiKeys,
@@ -463,7 +467,7 @@ export async function generateExtendedScene(
 export function estimateFilmGenerationCalls(
   totalDurationMinutes: number,
   avgSceneDurationSeconds: number = 60,
-  clipDurationSeconds: number = 8
+  clipDurationSeconds: number = 15
 ): {
   totalScenes: number;
   clipsPerScene: number;

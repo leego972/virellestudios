@@ -281,8 +281,8 @@ const defaultScene: SceneForm = {
   budgetEstimate: null,
   shootingDays: null,
   aiPromptOverride: "",
-  // Timing
-  duration: 30,
+  // Timing — default 45s (industry-standard for a typical scene)
+  duration: 45,
   transition: "",
   transitionDuration: 0.5,
   // Director
@@ -520,8 +520,8 @@ export default function SceneEditor() {
       budgetEstimate: scene.budgetEstimate || null,
       shootingDays: scene.shootingDays || null,
       aiPromptOverride: scene.aiPromptOverride || "",
-      // Timing
-      duration: scene.duration || 30,
+      // Timing — default 45s if not set
+      duration: scene.duration || 45,
       transition: scene.transitionType || ext.transition || "",
       transitionDuration: scene.transitionDuration ?? 0.5,
       // Director
@@ -991,7 +991,10 @@ export default function SceneEditor() {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" />Duration (seconds)</Label>
-                  <Input type="number" min={1} max={600} value={form.duration} onChange={e => setField("duration", parseInt(e.target.value) || 30)} className="h-9 text-sm bg-background/50" />
+                  <Input type="number" min={5} max={600} value={form.duration} onChange={e => setField("duration", parseInt(e.target.value) || 45)} className="h-9 text-sm bg-background/50" />
+                  <p className="text-[10px] text-muted-foreground/70">
+                    Industry standard: 30–90s dialogue · 45–120s action · up to 3min+ for key scenes
+                  </p>
                 </div>
               </div>
               <div className="space-y-1.5">
