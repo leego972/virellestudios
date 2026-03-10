@@ -5717,8 +5717,9 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         const { provider, key } = input;
 
-        // Validate key format for video providers
-        if (provider !== "anthropic" && provider !== "google") {
+        // Validate key format for video providers only (elevenlabs, suno, anthropic, google have no format validation)
+        const videoOnlyProviders: string[] = ["openai", "runway", "replicate", "fal", "luma", "huggingface", "seedance"];
+        if (videoOnlyProviders.includes(provider)) {
           const validation = validateApiKey(provider as VideoProvider, key);
           if (!validation.valid) {
             throw new TRPCError({ code: "BAD_REQUEST", message: validation.message });
