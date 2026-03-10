@@ -15,6 +15,7 @@
  */
 
 import { ENV } from "./env";
+import RunwayML, { TaskFailedError } from "@runwayml/sdk";
 
 // ─── Types ───
 
@@ -133,72 +134,52 @@ export function selectProvider(keys: UserApiKeys): VideoProvider {
 
 async function generateWithRunway(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
   const ratio = req.aspectRatio === "9:16" ? "720:1280" : req.aspectRatio === "1:1" ? "720:720" : "1280:720";
-  // Runway Gen-4 Turbo only accepts 5 or 10 seconds — always use 10s for maximum clip length
+  // Runway Gen-4 Turbo only accepts 5 or 10 seconds — use 10s for maximum clip length
   const duration = 10;
 
-  // Runway API v1 uses image_to_video for both text-to-video and image-to-video
-  // For text-to-video, promptImage is omitted; for i2v, it's included
-  const body: any = {
-    model: "gen4_turbo",
-    ratio,
-    duration,
-    promptText: req.prompt,
-  };
+  console.log(`[BYOK:Runway] Starting gen4_turbo job: ${duration}s at ${ratio}`);
+  console.log(`[BYOK:Runway] Prompt: ${req.prompt.substring(0, 200)}`);
 
-  if (req.imageUrl) {
-    body.promptImage = req.imageUrl;
-  }
+  // Use the official RunwayML SDK with the user's BYOK key
+  const client = new RunwayML({ apiKey: key });
 
-  const createResp = await fetch("https://api.dev.runwayml.com/v1/image_to_video", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${key}`,
-      "Content-Type": "application/json",
-      "X-Runway-Version": "2024-11-06",
-    },
-    body: JSON.stringify(body),
-  });
+  try {
+    const createParams: any = {
+      model: "gen4_turbo",
+      promptText: req.prompt,
+      ratio: ratio as any,
+      duration,
+    };
 
-  if (!createResp.ok) {
-    const errText = await createResp.text();
-    throw new Error(`Runway API error ${createResp.status}: ${errText}`);
-  }
-
-  const createData = await createResp.json() as any;
-  const taskId = createData.id;
-  if (!taskId) throw new Error(`Runway: no task ID in response: ${JSON.stringify(createData)}`);
-  console.log(`[BYOK:Runway] Task created: ${taskId} (10s, ratio: ${ratio})`);
-
-  const videoUrl = await pollRunwayTask(key, taskId);
-  return { provider: "runway", videoUrl, jobId: taskId, durationSeconds: duration };
-}
-
-async function pollRunwayTask(key: string, taskId: string, maxWaitMs = 600000): Promise<string> {
-  const startTime = Date.now();
-  while (Date.now() - startTime < maxWaitMs) {
-    await new Promise(r => setTimeout(r, 5000));
-
-    const resp = await fetch(`https://api.dev.runwayml.com/v1/tasks/${taskId}`, {
-      headers: {
-        "Authorization": `Bearer ${key}`,
-        "X-Runway-Version": "2024-11-06",
-      },
-    });
-
-    if (!resp.ok) continue;
-    const data = await resp.json() as any;
-
-    if (data.status === "SUCCEEDED") {
-      const videoUrl = data.output?.[0] || data.artifactUrl;
-      if (!videoUrl) throw new Error("Runway task succeeded but no video URL found");
-      return videoUrl;
+    if (req.imageUrl) {
+      createParams.promptImage = req.imageUrl;
+      console.log(`[BYOK:Runway] Mode: image-to-video with ref: ${req.imageUrl.substring(0, 80)}`);
+    } else {
+      console.log(`[BYOK:Runway] Mode: text-to-video`);
     }
-    if (data.status === "FAILED") {
-      throw new Error(`Runway task failed: ${data.failure || "Unknown error"}`);
+
+    const task = await client.imageToVideo
+      .create(createParams)
+      .waitForTaskOutput();
+
+    const taskId = (task as any).id || "unknown";
+    const videoUrl = (task as any).output?.[0] || (task as any).output?.video || (task as any).output;
+
+    if (!videoUrl || typeof videoUrl !== "string") {
+      throw new Error(`Runway task completed but no video URL found: ${JSON.stringify(task).substring(0, 200)}`);
     }
-    console.log(`[BYOK:Runway] Task ${taskId} status: ${data.status} (${data.progress || 0}%)`);
+
+    console.log(`[BYOK:Runway] Task ${taskId} succeeded: ${videoUrl.substring(0, 80)}`);
+    return { provider: "runway", videoUrl, jobId: taskId, durationSeconds: duration };
+
+  } catch (error: any) {
+    if (error instanceof TaskFailedError) {
+      console.error("[BYOK:Runway] Task failed:", error.taskDetails);
+      throw new Error(`Runway video generation failed: ${JSON.stringify(error.taskDetails)}`);
+    }
+    console.error("[BYOK:Runway] Error:", error.message);
+    throw new Error(`Runway video generation error: ${error.message}`);
   }
-  throw new Error("Runway task timed out after 10 minutes");
 }
 
 // ─── OpenAI Sora ───
