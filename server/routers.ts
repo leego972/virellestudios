@@ -1827,6 +1827,98 @@ Be creative, enthusiastic, and cinematic in your responses. You are a passionate
 
         try {
 
+        // ── Step 0: Auto-generate photorealistic characters if none exist ──
+        // This is the key to broadcast-quality output: consistent faces across all scenes
+        let existingCharacters = await db.getProjectCharacters(project.id);
+        if (existingCharacters.length === 0) {
+          try {
+            // Ask LLM to design 2-4 characters (humans + animals if relevant) based on the plot
+            const charDesignResult = await invokeLLM({
+              messages: [
+                {
+                  role: "system",
+                  content: `You are a Hollywood casting director and character designer. Based on the plot summary, design 2-4 main characters for this film. Include humans AND animals if relevant to the story. For each character, provide extremely specific physical descriptions that will be used to generate photorealistic portrait images. Be precise — hair color, eye color, skin tone, age, ethnicity, build, distinguishing features, clothing style. For animals, describe species, breed, coloring, size, and distinctive features.`,
+                },
+                {
+                  role: "user",
+                  content: `Plot: ${project.plotSummary || project.description || "A compelling story"}\nGenre: ${project.genre || "Drama"}\n\nDesign 2-4 main characters. Return JSON with this exact schema:\n{"characters": [{"name": string, "role": string, "isAnimal": boolean, "animalSpecies": string|null, "gender": string, "ageRange": string, "ethnicity": string, "skinTone": string, "build": string, "hairColor": string, "hairStyle": string, "eyeColor": string, "facialFeatures": string, "distinguishingMarks": string, "clothingStyle": string, "expression": string, "description": string}]}`,
+                },
+              ],
+              response_format: { type: "json_object" },
+            });
+
+            const charContent = charDesignResult.choices[0]?.message?.content;
+            let charParsed: any = {};
+            try { charParsed = JSON.parse(typeof charContent === "string" ? charContent : "{}"); } catch {}
+            const charDesigns: any[] = charParsed.characters || [];
+
+            // Generate a photorealistic portrait for each character
+            for (const cd of charDesigns.slice(0, 4)) {
+              try {
+                let portraitPrompt: string;
+                if (cd.isAnimal && cd.animalSpecies) {
+                  // Animal portrait prompt
+                  portraitPrompt = [
+                    `RAW photograph, ultra-photorealistic wildlife/nature photography of a ${cd.animalSpecies},`,
+                    cd.description ? `${cd.description},` : "",
+                    `${cd.hairColor || cd.coloring || "natural"} coloring, ${cd.build || "healthy"} build,`,
+                    cd.distinguishingMarks ? `${cd.distinguishingMarks},` : "",
+                    `shot on Canon EOS R5 with 500mm telephoto lens, shallow depth of field, natural habitat environment,`,
+                    `National Geographic quality, 8K resolution, hyperdetailed, absolutely indistinguishable from a real photograph,`,
+                    `perfect animal anatomy, natural fur/feather/scale texture, authentic animal eyes with natural reflections,`,
+                    `NOT CGI, NOT illustration, NOT cartoon — a REAL PHOTOGRAPH of a REAL ANIMAL`,
+                  ].filter(Boolean).join(" ");
+                } else {
+                  // Human portrait prompt — using the same high-quality prompt as the character generator
+                  portraitPrompt = [
+                    `RAW photograph, ultra-photorealistic Hollywood A-list actor headshot, absolutely indistinguishable from a real photograph of a real human being,`,
+                    `captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lens at f/1.4, shallow cinematic depth of field with natural oval bokeh,`,
+                    `${cd.gender || "person"} in their ${cd.ageRange || "30s"},`,
+                    `${cd.ethnicity || ""} ethnicity,`,
+                    cd.skinTone ? `${cd.skinTone} skin tone — skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers, visible pores, micro-wrinkles, fine peach fuzz hair on skin surface, natural blemishes and freckles, authentic facial asymmetry — no airbrushed or plastic skin,` : "",
+                    cd.build ? `${cd.build} build,` : "",
+                    `${cd.hairColor || "brown"} ${cd.hairStyle || "natural"} hair — individual strand detail visible, natural hair texture with flyaways and imperfections, realistic hair sheen,`,
+                    `${cd.eyeColor || "brown"} eyes — hyper-realistic iris with detailed fiber structure, natural corneal reflections and specular highlights, subtle moisture in waterline, sclera with faint realistic veins, soulful and alive expression,`,
+                    cd.facialFeatures ? `${cd.facialFeatures},` : "",
+                    cd.distinguishingMarks ? `${cd.distinguishingMarks},` : "",
+                    cd.clothingStyle ? `wearing ${cd.clothingStyle} — fabric texture and material weight visible,` : "",
+                    cd.expression ? `${cd.expression} expression with authentic micro-expressions and genuine emotion,` : "",
+                    cd.description ? `Character context: ${cd.description},` : "",
+                    `three-point Rembrandt lighting: warm key light at 45 degrees creating a Rembrandt triangle on the face, soft fill light reducing shadow ratio to 2:1, subtle rim/hair light separating subject from background,`,
+                    `skin pores visible under magnification, micro-wrinkles around eyes and mouth, natural skin oil and moisture, capillaries visible in sclera,`,
+                    `authentic facial bone structure with natural asymmetry — no perfect symmetry, no uncanny valley,`,
+                    `Kodak Vision3 500T film stock color science with organic grain structure and natural highlight rolloff,`,
+                    `8K resolution, hyperdetailed, Academy Award-winning portrait photography,`,
+                    `NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin, NOT doll-like, NOT overly smooth — a REAL PHOTOGRAPH of a REAL PERSON`,
+                  ].filter(Boolean).join(" ");
+                }
+
+                const portraitResult = await generateImage({ prompt: portraitPrompt });
+                if (portraitResult.url) {
+                  await db.createCharacter({
+                    userId: ctx.user.id,
+                    projectId: project.id,
+                    name: cd.name || "Character",
+                    description: cd.description || `${cd.role || "Character"} — ${cd.isAnimal ? cd.animalSpecies : `${cd.gender}, ${cd.ageRange}, ${cd.ethnicity}`}`,
+                    photoUrl: portraitResult.url,
+                    attributes: {
+                      ...cd,
+                      aiGenerated: true,
+                      autoGeneratedForProject: project.id,
+                    },
+                  });
+                  console.log(`[QuickGen] Auto-generated character portrait: ${cd.name}`);
+                }
+              } catch (charErr: any) {
+                console.error(`[QuickGen] Failed to generate character portrait for ${cd.name}:`, charErr.message);
+              }
+            }
+          } catch (charDesignErr: any) {
+            console.error("[QuickGen] Character auto-generation failed:", charDesignErr.message);
+            // Non-fatal — continue with scene generation
+          }
+        }
+
         // ── Step 1: Build Visual DNA for consistent style across all scenes ──
         const characters = await db.getProjectCharacters(project.id);
         const userTier = getEffectiveTier(ctx.user) as QualityTier;
@@ -1995,15 +2087,37 @@ Break this into 8-15 scenes. For each scene, provide:
               preferredProvider: userKeys.preferredProvider,
             };
 
+            // Build rich video prompt including character physical descriptions for consistent faces
+            const charVideoDescriptions = characters.map(c => {
+              const attrs = (c.attributes as any) || {};
+              if (attrs.isAnimal && attrs.animalSpecies) {
+                return `${c.name} (${attrs.animalSpecies}${attrs.hairColor ? `, ${attrs.hairColor} coloring` : ""}${attrs.build ? `, ${attrs.build}` : ""})`.trim();
+              }
+              const parts = [c.name];
+              if (attrs.gender) parts.push(attrs.gender);
+              if (attrs.ageRange) parts.push(`in their ${attrs.ageRange}`);
+              if (attrs.ethnicity) parts.push(attrs.ethnicity);
+              if (attrs.hairColor && attrs.hairStyle) parts.push(`${attrs.hairColor} ${attrs.hairStyle} hair`);
+              else if (attrs.hairColor) parts.push(`${attrs.hairColor} hair`);
+              if (attrs.eyeColor) parts.push(`${attrs.eyeColor} eyes`);
+              if (attrs.build) parts.push(`${attrs.build} build`);
+              if (attrs.clothingStyle) parts.push(`wearing ${attrs.clothingStyle}`);
+              if (attrs.facialFeatures) parts.push(attrs.facialFeatures);
+              if (attrs.distinguishingMarks) parts.push(attrs.distinguishingMarks);
+              return parts.join(", ");
+            }).filter(Boolean);
+
             const videoPrompt = [
               `Cinematic video scene: ${scene.description || scene.title || "A cinematic scene"}.`,
+              charVideoDescriptions.length > 0 ? `Characters in scene: ${charVideoDescriptions.join(" | ")}.` : "",
               scene.mood ? `Mood: ${scene.mood}.` : "",
               scene.lighting ? `Lighting: ${scene.lighting}.` : "",
               scene.timeOfDay ? `Time: ${scene.timeOfDay}.` : "",
               scene.weather ? `Weather: ${scene.weather}.` : "",
               project.genre ? `Genre: ${project.genre}.` : "",
+              scene.locationType ? `Location: ${scene.locationType}.` : "",
               (scene.cameraAngle as string) === "tracking" ? "Smooth tracking camera movement." : "Slow cinematic dolly shot.",
-              "Photorealistic, shot on ARRI Alexa, 35mm anamorphic lens, shallow depth of field, natural lighting, film grain.",
+              "Photorealistic, shot on ARRI Alexa 65, 35mm anamorphic lens, shallow depth of field, natural lighting, film grain, broadcast TV quality.",
             ].filter(Boolean).join(" ");
 
             // Use extended scene generation — support industry-standard scene lengths (30s–5min)
