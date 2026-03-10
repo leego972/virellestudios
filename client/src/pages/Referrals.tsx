@@ -3,7 +3,6 @@ import { Copy, Gift, Users, TrendingUp, Share2, Check, ExternalLink } from "luci
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
-import LeegoFooter from "@/components/LeegoFooter";
 
 export default function Referrals() {
   const [copied, setCopied] = useState(false);
@@ -206,7 +205,6 @@ export default function Referrals() {
         </Card>
       )}
 
-      <LeegoFooter />
     </div>
   );
 }
