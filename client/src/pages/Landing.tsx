@@ -202,32 +202,27 @@ export default function Landing() {
       className="min-h-screen text-foreground overflow-x-hidden relative"
       style={{
         backgroundColor: "var(--background)",
-        backgroundImage: `url('/vs-watermark.png')`,
-        backgroundRepeat: "repeat",
-        backgroundSize: "180px 180px",
-        backgroundAttachment: "fixed",
-        /* Gold tint: sepia → saturate → hue-rotate to amber-gold */
-        filter: "none",
       }}
     >
-      {/* Gold-tinted watermark layer — sits between bg tile and content */}
+      {/* Repeating gold watermark — mix-blend-mode:screen makes black bg invisible,
+          leaving only the gold logo visible on any dark background */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{
           backgroundImage: `url('/vs-watermark.png')`,
           backgroundRepeat: "repeat",
-          backgroundSize: "180px 180px",
+          backgroundSize: "200px 200px",
           backgroundAttachment: "fixed",
-          filter: "sepia(1) saturate(4) brightness(0.9) hue-rotate(5deg)",
-          opacity: 0.18,
+          mixBlendMode: "screen",
+          opacity: 0.45,
           zIndex: 0,
         }}
         aria-hidden
       />
-      {/* Dark overlay — reduced to 0.62 so gold shows through clearly */}
+      {/* Subtle dark overlay so content remains readable */}
       <div
         className="pointer-events-none fixed inset-0"
-        style={{ background: "var(--background)", opacity: 0.62, zIndex: 0 }}
+        style={{ background: "rgba(0,0,0,0.35)", zIndex: 0 }}
         aria-hidden
       />
       {/* All page content sits above the overlay */}

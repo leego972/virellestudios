@@ -23,9 +23,24 @@ import {
 import type { AdPlatform } from "./content-creator-engine";
 import {
   runContentCreatorJob,
-  runContentCreatorBatch,
   getContentCreatorStats,
+  type ContentFormat,
 } from "./content-creator-engine";
+// runContentCreatorBatch was renamed — shim it using runContentCreatorJob per platform
+async function runContentCreatorBatch(
+  platforms: AdPlatform[],
+  opts?: { generateVideo?: boolean; theme?: string }
+) {
+  const results = await Promise.allSettled(
+    platforms.map(p => runContentCreatorJob(p, "image_post" as ContentFormat, opts))
+  );
+  return results.map((r, i) => ({
+    platform: platforms[i],
+    success: r.status === "fulfilled" && (r.value as any)?.success !== false,
+    contentId: r.status === "fulfilled" ? (r.value as any)?.contentId : undefined,
+    error: r.status === "rejected" ? String(r.reason) : undefined,
+  }));
+}
 import { runAutonomousCycle as runMarketingCycle } from "./marketing-engine";
 import { runScheduledSeoOptimization, generateSeoReport } from "./seo-engine";
 import { getDb } from "./db";

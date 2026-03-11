@@ -31,7 +31,22 @@
 import { getDb } from "./db";
 import { logger } from "./_core/logger";
 import { sql } from "drizzle-orm";
-import { runContentCreatorBatch, processDueSchedules, type AdPlatform } from "./content-creator-engine";
+import { runContentCreatorJob, processDueSchedules, type AdPlatform, type ContentFormat } from "./content-creator-engine";
+// runContentCreatorBatch was renamed — shim it using runContentCreatorJob per platform
+async function runContentCreatorBatch(
+  platforms: AdPlatform[],
+  opts?: { generateVideo?: boolean; theme?: string }
+) {
+  const results = await Promise.allSettled(
+    platforms.map(p => runContentCreatorJob(p, "image_post" as ContentFormat, opts))
+  );
+  return results.map((r, i) => ({
+    platform: platforms[i],
+    success: r.status === "fulfilled" && (r.value as any)?.success !== false,
+    contentId: r.status === "fulfilled" ? (r.value as any)?.contentId : undefined,
+    error: r.status === "rejected" ? String(r.reason) : undefined,
+  }));
+}
 import { runAutonomousCycle as runMarketingCycle } from "./marketing-engine";
 import { runScheduledSeoOptimization } from "./seo-engine";
 import { postToAllChannels } from "./marketing-channels";
