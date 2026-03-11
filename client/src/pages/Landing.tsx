@@ -204,14 +204,30 @@ export default function Landing() {
         backgroundColor: "var(--background)",
         backgroundImage: `url('/vs-watermark.png')`,
         backgroundRepeat: "repeat",
-        backgroundSize: "160px 160px",
+        backgroundSize: "180px 180px",
         backgroundAttachment: "fixed",
+        /* Gold tint: sepia → saturate → hue-rotate to amber-gold */
+        filter: "none",
       }}
     >
-      {/* Subtle overlay so text stays readable over the tile pattern */}
+      {/* Gold-tinted watermark layer — sits between bg tile and content */}
       <div
         className="pointer-events-none fixed inset-0"
-        style={{ background: "var(--background)", opacity: 0.80, zIndex: 0 }}
+        style={{
+          backgroundImage: `url('/vs-watermark.png')`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "180px 180px",
+          backgroundAttachment: "fixed",
+          filter: "sepia(1) saturate(4) brightness(0.9) hue-rotate(5deg)",
+          opacity: 0.18,
+          zIndex: 0,
+        }}
+        aria-hidden
+      />
+      {/* Dark overlay — reduced to 0.62 so gold shows through clearly */}
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{ background: "var(--background)", opacity: 0.62, zIndex: 0 }}
         aria-hidden
       />
       {/* All page content sits above the overlay */}
