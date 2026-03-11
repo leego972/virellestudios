@@ -45,6 +45,7 @@ import { ENV } from "./_core/env";
 import { seoRouter } from "./seo-router";
 import { autonomousRouter } from "./autonomous-router";
 import { marketingRouter } from "./marketing-router";
+import { contentCreatorRouter } from "./content-creator-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
 import { generateSceneDialogue, TTS_PROVIDERS, type VoiceActingKeys } from "./_core/voiceActingEngine";
@@ -5725,6 +5726,7 @@ Rules:
   seo: seoRouter,
   autonomous: autonomousRouter,
   marketing: marketingRouter,
+  contentCreator: contentCreatorRouter,
   blog: router({
     // Public: list published articles
     list: publicProcedure

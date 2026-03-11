@@ -816,3 +816,102 @@ export const marketingActivityLog = mysqlTable("marketing_activity_log", {
   metadata: json("metadata"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+
+// ─── Content Creator System ───────────────────────────────────────────────────
+
+export const contentCreatorCampaigns = mysqlTable("content_creator_campaigns", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  objective: varchar("objective", { length: 255 }),
+  targetAudience: varchar("targetAudience", { length: 255 }),
+  platforms: json("platforms"),
+  seoKeywords: json("seoKeywords"),
+  brandVoice: text("brandVoice"),
+  aiStrategy: text("aiStrategy"),
+  status: varchar("status", { length: 32 }).default("draft").notNull(),
+  totalPieces: int("totalPieces").default(0).notNull(),
+  publishedPieces: int("publishedPieces").default(0).notNull(),
+  tiktokLinked: boolean("tiktokLinked").default(false).notNull(),
+  seoLinked: boolean("seoLinked").default(true).notNull(),
+  advertisingLinked: boolean("advertisingLinked").default(false).notNull(),
+  startDate: timestamp("startDate"),
+  endDate: timestamp("endDate"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ContentCreatorCampaign = typeof contentCreatorCampaigns.$inferSelect;
+export type InsertContentCreatorCampaign = typeof contentCreatorCampaigns.$inferInsert;
+
+export const contentCreatorPieces = mysqlTable("content_creator_pieces", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId"),
+  platform: varchar("platform", { length: 64 }).notNull(),
+  contentType: varchar("contentType", { length: 64 }).notNull(),
+  status: varchar("status", { length: 32 }).default("draft").notNull(),
+  title: varchar("title", { length: 512 }),
+  headline: varchar("headline", { length: 512 }),
+  body: text("body").notNull(),
+  callToAction: varchar("callToAction", { length: 255 }),
+  hook: varchar("hook", { length: 512 }),
+  videoScript: text("videoScript"),
+  visualDirections: json("visualDirections"),
+  hashtags: json("hashtags"),
+  seoKeywords: json("seoKeywords"),
+  imagePrompt: text("imagePrompt"),
+  mediaUrl: text("mediaUrl"),
+  tiktokPublishId: varchar("tiktokPublishId", { length: 255 }),
+  externalPostId: varchar("externalPostId", { length: 255 }),
+  seoScore: int("seoScore").default(0).notNull(),
+  qualityScore: int("qualityScore").default(0).notNull(),
+  impressions: int("impressions").default(0).notNull(),
+  clicks: int("clicks").default(0).notNull(),
+  engagements: int("engagements").default(0).notNull(),
+  shares: int("shares").default(0).notNull(),
+  saves: int("saves").default(0).notNull(),
+  videoViews: int("videoViews").default(0).notNull(),
+  aiPrompt: text("aiPrompt"),
+  aiModel: varchar("aiModel", { length: 64 }),
+  generationMs: int("generationMs"),
+  scheduledAt: timestamp("scheduledAt"),
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ContentCreatorPiece = typeof contentCreatorPieces.$inferSelect;
+export type InsertContentCreatorPiece = typeof contentCreatorPieces.$inferInsert;
+
+export const contentCreatorSchedules = mysqlTable("content_creator_schedules", {
+  id: int("id").autoincrement().primaryKey(),
+  pieceId: int("pieceId").notNull(),
+  campaignId: int("campaignId"),
+  platform: varchar("platform", { length: 64 }).notNull(),
+  scheduledAt: timestamp("scheduledAt").notNull(),
+  status: varchar("status", { length: 32 }).default("pending").notNull(),
+  publishedAt: timestamp("publishedAt"),
+  retryCount: int("retryCount").default(0).notNull(),
+  maxRetries: int("maxRetries").default(3).notNull(),
+  failReason: text("failReason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ContentCreatorSchedule = typeof contentCreatorSchedules.$inferSelect;
+export type InsertContentCreatorSchedule = typeof contentCreatorSchedules.$inferInsert;
+
+export const contentCreatorAnalytics = mysqlTable("content_creator_analytics", {
+  id: int("id").autoincrement().primaryKey(),
+  pieceId: int("pieceId").notNull(),
+  campaignId: int("campaignId"),
+  platform: varchar("platform", { length: 64 }).notNull(),
+  impressions: int("impressions").default(0).notNull(),
+  clicks: int("clicks").default(0).notNull(),
+  engagements: int("engagements").default(0).notNull(),
+  shares: int("shares").default(0).notNull(),
+  saves: int("saves").default(0).notNull(),
+  videoViews: int("videoViews").default(0).notNull(),
+  ctr: float("ctr").default(0).notNull(),
+  engagementRate: float("engagementRate").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ContentCreatorAnalytic = typeof contentCreatorAnalytics.$inferSelect;
+export type InsertContentCreatorAnalytic = typeof contentCreatorAnalytics.$inferInsert;

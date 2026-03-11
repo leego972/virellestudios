@@ -26,6 +26,7 @@ const SceneEditor = lazy(() => import("./pages/SceneEditor"));
 const Movies = lazy(() => import("./pages/Movies"));
 const AdPosterMaker = lazy(() => import("./pages/AdPosterMaker"));
 const CampaignManager = lazy(() => import("./pages/CampaignManager"));
+const ContentCreatorPage = lazy(() => import("./pages/ContentCreatorPage"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const SecurityDashboard = lazy(() => import("./pages/SecurityDashboard"));
 const AdminAutonomous = lazy(() => import("./pages/AdminAutonomous"));
@@ -184,6 +185,7 @@ function Router() {
               <Route path="/poster-maker">{() => <AdPosterMaker />}</Route>
               <Route path="/characters">{() => <Characters />}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
+              <Route path="/content-creator">{() => <ContentCreatorPage />}</Route>
               <Route path="/samples">{() => <LazyPage><ProjectSamples /></LazyPage>}</Route>
               <Route path="/referrals">{() => <Referrals />}</Route>
               <Route path="/marketplace">{() => <LazyPage><AssetMarketplace /></LazyPage>}</Route>

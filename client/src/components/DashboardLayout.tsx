@@ -45,6 +45,7 @@ import {
   Key,
   PlaySquare,
   Zap,
+  PenTool,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -73,6 +74,7 @@ const adminMenuItems = [
   { icon: ShieldAlert, label: "Security", path: "/admin/security" },
   { icon: Zap, label: "Autonomous Pipeline", path: "/admin/autonomous" },
   { icon: Megaphone, label: "Campaign Manager", path: "/campaigns" },
+  { icon: PenTool, label: "Content Creator", path: "/content-creator" },
 ];
 
 const SUPPORTED_LANGUAGES = [
