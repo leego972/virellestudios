@@ -170,6 +170,22 @@ export default function Landing() {
   const [, setLocation] = useLocation();
   const { theme, setTheme } = useTheme();
   const [useCase, setUseCase] = useState<"film" | "vfx">("film");
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!langOpen) return;
+    function handleOutside(e: MouseEvent | TouchEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("touchstart", handleOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("touchstart", handleOutside);
+    };
+  }, [langOpen]);
   const [bannerDismissed, setBannerDismissed] = useState(() => {
     try { return localStorage.getItem("virelle_offer_dismissed") === "1"; } catch { return false; }
   });
@@ -251,41 +267,51 @@ export default function Landing() {
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             {/* Language selector */}
-            <div className="relative group">
-              <Button variant="ghost" size="sm" className="text-sm gap-1.5">
+            <div className="relative" ref={langRef}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-sm gap-1.5"
+                onClick={() => setLangOpen(o => !o)}
+                aria-haspopup="listbox"
+                aria-expanded={langOpen}
+              >
                 <Globe className="h-4 w-4" />
                 <span className="hidden md:inline">Language</span>
-                <ChevronDown className="h-3 w-3" />
+                <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
               </Button>
-              <div className="absolute right-0 top-full mt-1 w-52 bg-popover border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 max-h-64 overflow-y-auto">
-                {[
-                  { code: "en", name: "English", flag: "🇺🇸" },
-                  { code: "he", name: "עברית (Hebrew)", flag: "🇮🇱" },
-                  { code: "ar", name: "العربية (Arabic)", flag: "🇸🇦" },
-                  { code: "fr", name: "Français", flag: "🇫🇷" },
-                  { code: "es", name: "Español", flag: "🇪🇸" },
-                  { code: "de", name: "Deutsch", flag: "🇩🇪" },
-                  { code: "zh", name: "中文", flag: "🇨🇳" },
-                  { code: "ja", name: "日本語", flag: "🇯🇵" },
-                  { code: "ko", name: "한국어", flag: "🇰🇷" },
-                  { code: "pt", name: "Português", flag: "🇧🇷" },
-                  { code: "ru", name: "Русский", flag: "🇷🇺" },
-                  { code: "hi", name: "हिन्दी", flag: "🇮🇳" },
-                ].map(lang => (
-                  <button
-                    key={lang.code}
-                    onClick={() => {
-                      document.documentElement.lang = lang.code;
-                      document.documentElement.dir = ["he","ar"].includes(lang.code) ? "rtl" : "ltr";
-                      localStorage.setItem("virelle_ui_lang", lang.code);
-                    }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
-                  >
-                    <span>{lang.flag}</span>
-                    <span>{lang.name}</span>
-                  </button>
-                ))}
-              </div>
+              {langOpen && (
+                <div className="absolute right-0 top-full mt-1 w-52 bg-popover border border-border rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto">
+                  {[
+                    { code: "en", name: "English", flag: "🇺🇸" },
+                    { code: "he", name: "עברית (Hebrew)", flag: "🇮🇱" },
+                    { code: "ar", name: "العربية (Arabic)", flag: "🇸🇦" },
+                    { code: "fr", name: "Français", flag: "🇫🇷" },
+                    { code: "es", name: "Español", flag: "🇪🇸" },
+                    { code: "de", name: "Deutsch", flag: "🇩🇪" },
+                    { code: "zh", name: "中文", flag: "🇨🇳" },
+                    { code: "ja", name: "日本語", flag: "🇯🇵" },
+                    { code: "ko", name: "한국어", flag: "🇰🇷" },
+                    { code: "pt", name: "Português", flag: "🇧🇷" },
+                    { code: "ru", name: "Русский", flag: "🇷🇺" },
+                    { code: "hi", name: "हिन्दी", flag: "🇮🇳" },
+                  ].map(lang => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        document.documentElement.lang = lang.code;
+                        document.documentElement.dir = ["he","ar"].includes(lang.code) ? "rtl" : "ltr";
+                        localStorage.setItem("virelle_ui_lang", lang.code);
+                        setLangOpen(false);
+                      }}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <Button variant="ghost" size="sm" onClick={() => setLocation("/login")} className="text-sm">Sign In</Button>
             <Button size="sm" onClick={() => setLocation("/pricing")} className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium">
