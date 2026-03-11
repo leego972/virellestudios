@@ -198,7 +198,24 @@ export default function Landing() {
   const offerFull = spotsData?.isFull ?? false;
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div
+      className="min-h-screen text-foreground overflow-x-hidden relative"
+      style={{
+        backgroundColor: "var(--background)",
+        backgroundImage: `url('/vs-watermark.png')`,
+        backgroundRepeat: "repeat",
+        backgroundSize: "160px 160px",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      {/* Subtle overlay so text stays readable over the tile pattern */}
+      <div
+        className="pointer-events-none fixed inset-0"
+        style={{ background: "var(--background)", opacity: 0.80, zIndex: 0 }}
+        aria-hidden
+      />
+      {/* All page content sits above the overlay */}
+      <div className="relative" style={{ zIndex: 1 }}>
       {/* ─── Founding Offer Banner ─── */}
       {!bannerDismissed && !offerFull && (
         <div className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-black py-2.5 px-4">
@@ -1031,6 +1048,7 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+      </div>{/* end content wrapper */}
     </div>
   );
 }
