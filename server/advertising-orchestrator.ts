@@ -17,6 +17,7 @@ import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
 import { getDb } from "./db";
 import { generateContent, allocateBudget, runAutonomousCycle as runMarketingCycle } from "./marketing-engine";
+import { runAutonomousContentCycle } from "./content-creator-engine";
 import { runScheduledSeoOptimization, analyzeSeoHealth, analyzeKeywords, generateSeoReport, submitToIndexNow } from "./seo-engine";
 import { getAffiliateRecommendationContext } from "./affiliate-recommendation-engine";
 import {
@@ -2381,6 +2382,27 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
     actions.push(queueAction);
   } catch (err: unknown) {
     errors.push(`Content Queue: ${getErrorMessage(err)}`);
+  }
+
+  // 11b. Autonomous Content Creator Engine (v3.0)
+  try {
+    const contentCycleResult = await runAutonomousContentCycle();
+    actions.push({
+      channel: "content_creator",
+      action: "autonomous_content_cycle",
+      status: "success",
+      details: `Content Creator Engine: ${contentCycleResult.generatedCount} generated, ${contentCycleResult.approvedCount} auto-approved, ${contentCycleResult.scheduledCount} scheduled`,
+      cost: 0,
+    });
+  } catch (err: unknown) {
+    errors.push(`Content Creator Engine: ${getErrorMessage(err)}`);
+    actions.push({
+      channel: "content_creator",
+      action: "autonomous_content_cycle",
+      status: "failed",
+      details: `Content Creator Engine failed: ${getErrorMessage(err)}`,
+      cost: 0,
+    });
   }
 
   // 12. Trigger Marketing Engine cycle (handles paid campaigns + social publishing)

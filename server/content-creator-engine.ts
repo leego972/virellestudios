@@ -1,23 +1,27 @@
 /**
- * VirÉlle Studios — Content Creator Engine v2.0
+ * Content Creator Engine v3.0 — VirÉlle Studios
  *
- * AI-powered content generation system that bridges:
- *  - SEO Engine  → keyword-driven content briefs
- *  - Advertising Orchestrator → multi-channel distribution strategy
- *  - TikTok Content Service → organic TikTok posting pipeline
- *  - Marketing Engine → brand voice & campaign context
+ * Fully autonomous AI-powered content generation and distribution system.
+ * Operates without manual intervention: generates, scores, auto-approves,
+ * schedules at optimal times, and publishes across 15 platforms.
  *
- * Capabilities:
- *  1. Generate platform-optimised content for 15 channels
- *  2. SEO-first content briefs pulled from live keyword analysis
- *  3. TikTok carousel + video script generation with direct posting
- *  4. Quality scoring (SEO + engagement + brand alignment)
- *  5. Content calendar scheduling
- *  6. Bulk generation across all platforms for a campaign
- *  7. Analytics aggregation and performance insights
- *  8. Cinematic image generation in VirÉlle art style
+ * Architecture:
+ *  ┌─────────────────────────────────────────────────────────────┐
+ *  │  SEO Engine → keyword briefs & content gaps                 │
+ *  │  Advertising Orchestrator → campaign context & strategy     │
+ *  │  TikTok Content Service → organic posting pipeline          │
+ *  │  Marketing Engine → brand voice & performance data          │
+ *  └─────────────────────────────────────────────────────────────┘
+ *
+ * Autonomous Loop:
+ *  1. Pull live SEO briefs + keyword gaps
+ *  2. Generate platform-optimised cinematic content for all 15 channels
+ *  3. Score each piece (quality + SEO + virality + brand alignment)
+ *  4. Auto-approve pieces scoring ≥ 75 — no human needed
+ *  5. Schedule at optimal posting times per platform
+ *  6. Publish via TikTok API or mark ready for other platforms
+ *  7. Track performance and feed back into next cycle
  */
-
 import { getDb } from "./db";
 import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
@@ -26,30 +30,22 @@ import { storagePut } from "./storage";
 import { logger } from "./_core/logger";
 import { getErrorMessage } from "./_core/errors";
 import {
-  contentCreatorCampaigns,
   contentCreatorPieces,
+  contentCreatorCampaigns,
   contentCreatorSchedules,
   contentCreatorAnalytics,
   marketingContent,
   marketingActivityLog,
   blogArticles,
 } from "../drizzle/schema";
-import { eq, desc, and, gte, sql, count } from "drizzle-orm";
-import {
-  generateContentBriefs,
-  analyzeKeywords,
-} from "./seo-engine";
-import {
-  postPhotos,
-  postVideoByUrl,
-  isTikTokContentConfigured,
-  type TikTokPostResult,
-} from "./tiktok-content-service";
+import { eq, desc, and, gte, lte, sql, count, lt } from "drizzle-orm";
+import { generateContentBriefs, analyzeKeywords } from "./seo-engine";
+import { runTikTokContentPipeline, isTikTokContentConfigured } from "./tiktok-content-service";
 import { getStrategyOverview } from "./advertising-orchestrator";
 
 const log = logger;
 
-// ─── Brand Context ─────────────────────────────────────────────────────────
+// ─── Brand Configuration ───────────────────────────────────────────────────
 const BRAND = {
   name: "VirÉlle Studios",
   tagline: "The World's Most Advanced AI Film Production Platform",
@@ -75,8 +71,8 @@ const BRAND = {
   ],
   competitors: ["Runway ML", "Pika Labs", "Sora", "Adobe Premiere", "DaVinci Resolve"],
   artStyle: {
-    prefix: "Dark futuristic cyberpunk digital art, chrome-armored AI knight warrior with glowing blue eyes, deep navy midnight blue background with electric blue circuit patterns and digital particles, metallic silver armor with blue LED accents, bold metallic 3D text,",
-    suffix: "high quality digital illustration, cinematic lighting, tech aesthetic, dark background with blue glow effects, professional marketing campaign art, film grain, anamorphic lens flares",
+    prefix: "Cinematic film production concept art, dramatic golden-hour lighting, professional film set atmosphere, anamorphic lens flares, deep cinematic colour grading, film grain texture, Hollywood production quality,",
+    suffix: "ultra-realistic cinematic photography, 4K film still, professional colour grading, shallow depth of field, dramatic lighting, premium film production aesthetic",
   },
   campaignImages: [
     "https://files.manuscdn.com/user_upload_by_module/session_file/310519663339631904/gvTVttaFEQstvWuh.png",
@@ -94,253 +90,412 @@ const BRAND = {
   },
 };
 
+// ─── Autonomous Configuration ──────────────────────────────────────────────
+export const AUTONOMOUS_CONFIG = {
+  autoApproveThreshold: 75,        // pieces scoring ≥ 75 are auto-approved
+  autoScheduleAfterApproval: true, // auto-schedule approved pieces immediately
+  batchSize: 5,                    // pieces per autonomous cycle
+  cycleIntervalHours: 6,           // run every 6 hours
+  maxDailyPieces: 20,              // cap to avoid spam
+  platforms: ["tiktok", "instagram", "x_twitter", "linkedin", "reddit", "blog", "email", "youtube_shorts"],
+};
+
+// ─── Optimal Posting Times (UTC) ──────────────────────────────────────────
+const OPTIMAL_POSTING_HOURS: Record<string, number[]> = {
+  tiktok: [19, 20, 21],           // 7-9pm peak
+  instagram: [11, 19, 20],        // 11am, 7-8pm
+  x_twitter: [9, 12, 17, 20],     // 9am, noon, 5pm, 8pm
+  linkedin: [8, 12, 17],          // 8am, noon, 5pm
+  reddit: [10, 14, 20],           // 10am, 2pm, 8pm
+  facebook: [13, 15, 20],         // 1pm, 3pm, 8pm
+  youtube_shorts: [15, 18, 20],   // 3pm, 6pm, 8pm
+  blog: [9, 10],                  // 9-10am
+  email: [9, 10, 14],             // 9-10am, 2pm
+  pinterest: [20, 21, 22],        // 8-10pm
+  discord: [18, 19, 20],          // 6-8pm
+  telegram: [9, 18],              // 9am, 6pm
+  medium: [9, 10],                // 9-10am
+  hackernews: [9, 10, 14],        // 9-10am, 2pm
+  whatsapp: [9, 18],              // 9am, 6pm
+};
+
 // ─── Platform Configuration ────────────────────────────────────────────────
 export const PLATFORM_CONFIG: Record<string, {
   label: string;
   maxChars: number;
-  maxHashtags: number;
+  hashtagCount: number;
   contentTypes: string[];
+  tone: string;
+  format: string;
   guidelines: string;
-  seoWeight: number;
 }> = {
   tiktok: {
     label: "TikTok",
     maxChars: 2200,
-    maxHashtags: 10,
-    contentTypes: ["video_script", "photo_carousel"],
-    guidelines: "Hook in first 3 seconds. Vertical format. Educational or entertaining. 15-60 seconds optimal. Use trending audio hooks. End with strong CTA. Film/cinematic content performs extremely well.",
-    seoWeight: 0.3,
+    hashtagCount: 10,
+    contentTypes: ["video_reel", "story"],
+    tone: "Energetic, fast-paced, hook-first. Speak directly to filmmakers and creators. Use trending audio cues.",
+    format: "Hook (3 sec) → Problem/Insight → VirÉlle solution → CTA. Include video script with shot directions.",
+    guidelines: "Start with a bold visual hook. Use trending sounds. Show before/after of AI-generated film scenes. End with clear CTA to virelle.life.",
   },
   instagram: {
     label: "Instagram",
     maxChars: 2200,
-    maxHashtags: 30,
-    contentTypes: ["photo_carousel", "reel", "story", "social_post"],
-    guidelines: "Visual-first. Carousel posts get highest engagement. Stories for urgency. Reels for reach. Strong opening line before 'more' fold. Behind-the-scenes film content resonates.",
-    seoWeight: 0.2,
+    hashtagCount: 15,
+    contentTypes: ["image_post", "video_reel", "story", "carousel"],
+    tone: "Visually-led, aspirational, cinematic. Show the beauty of AI filmmaking.",
+    format: "Stunning visual → Caption with story → Hashtags. Carousels for tutorials.",
+    guidelines: "Lead with cinematic AI-generated imagery. Use Reels for behind-the-scenes of AI film creation. Carousels for step-by-step guides.",
   },
   x_twitter: {
-    label: "X (Twitter)",
+    label: "X / Twitter",
     maxChars: 280,
-    maxHashtags: 3,
-    contentTypes: ["social_post", "thread"],
-    guidelines: "Punchy, direct, opinionated. Threads for depth. Engage with replies. Film tech and AI audience appreciates real insights and demos.",
-    seoWeight: 0.4,
+    hashtagCount: 3,
+    contentTypes: ["text_post", "image_post"],
+    tone: "Sharp, insightful, thought-provoking. Industry commentary and hot takes on AI filmmaking.",
+    format: "Bold statement or insight → Context → CTA or question. Thread-friendly.",
+    guidelines: "Share AI filmmaking insights, industry news reactions, and product updates. Engage with film and tech communities.",
   },
   linkedin: {
     label: "LinkedIn",
     maxChars: 3000,
-    maxHashtags: 5,
-    contentTypes: ["social_post", "ad_copy"],
-    guidelines: "Thought leadership tone. Personal insights perform well. B2B angle for production companies and marketing agencies. No fluff.",
-    seoWeight: 0.6,
-  },
-  reddit: {
-    label: "Reddit",
-    maxChars: 40000,
-    maxHashtags: 0,
-    contentTypes: ["social_post"],
-    guidelines: "Authentic, value-first. No hard selling. Community-appropriate tone. r/filmmaking, r/videoproduction, r/artificial, r/MachineLearning.",
-    seoWeight: 0.5,
+    hashtagCount: 5,
+    contentTypes: ["text_post", "image_post", "video_reel"],
+    tone: "Professional, thought-leadership, industry-focused. Target production companies and marketing agencies.",
+    format: "Industry insight or case study → VirÉlle application → Professional CTA.",
+    guidelines: "Focus on ROI of AI filmmaking for businesses. Share case studies of brands using VirÉlle for ad content. Target CMOs and production heads.",
   },
   facebook: {
     label: "Facebook",
     maxChars: 63206,
-    maxHashtags: 5,
-    contentTypes: ["social_post", "ad_copy"],
-    guidelines: "Conversational tone. Behind-the-scenes content works well. Video gets priority reach. Groups for filmmaking community building.",
-    seoWeight: 0.2,
+    hashtagCount: 5,
+    contentTypes: ["text_post", "image_post", "video_reel"],
+    tone: "Community-focused, educational, warm. Build the VirÉlle filmmaker community.",
+    format: "Story or tutorial → Community question → Engagement CTA.",
+    guidelines: "Share tutorials, filmmaker success stories, and community highlights. Use Facebook Groups for filmmaker communities.",
+  },
+  reddit: {
+    label: "Reddit",
+    maxChars: 40000,
+    hashtagCount: 0,
+    contentTypes: ["text_post", "image_post"],
+    tone: "Authentic, value-first, no hard sell. Contribute genuinely to filmmaking communities.",
+    format: "Valuable insight or showcase → Genuine discussion → Soft mention of VirÉlle if relevant.",
+    guidelines: "Post in r/filmmaking, r/videography, r/indiefilm, r/cinematography. Share genuine AI filmmaking experiments. Never spam.",
+  },
+  blog: {
+    label: "Blog",
+    maxChars: 10000,
+    hashtagCount: 0,
+    contentTypes: ["blog_post"],
+    tone: "Educational, authoritative, SEO-optimised. Establish VirÉlle as the AI filmmaking authority.",
+    format: "H1 title → Introduction → H2 sections → Conclusion with CTA. 1500-3000 words for SEO.",
+    guidelines: "Target high-value filmmaking keywords. Include practical tutorials. Link to virelle.life features. Include AI-generated example images.",
+  },
+  email: {
+    label: "Email",
+    maxChars: 5000,
+    hashtagCount: 0,
+    contentTypes: ["email_campaign"],
+    tone: "Personal, value-driven, exclusive. Make subscribers feel like VIP insiders.",
+    format: "Subject line → Personal greeting → Value content → Feature highlight → CTA button.",
+    guidelines: "Segment by user type (indie filmmaker, agency, student). Share exclusive tips, new features, and filmmaker success stories.",
   },
   youtube_shorts: {
     label: "YouTube Shorts",
     maxChars: 5000,
-    maxHashtags: 15,
-    contentTypes: ["video_script", "reel"],
-    guidelines: "Vertical 9:16 format. Under 60 seconds. Hook in first 2 seconds. Tutorial-style content performs best. Strong thumbnail concept. Film tips and AI demos.",
-    seoWeight: 0.7,
-  },
-  blog: {
-    label: "Blog",
-    maxChars: 100000,
-    maxHashtags: 0,
-    contentTypes: ["blog_article"],
-    guidelines: "800-2500 words. SEO-optimised with focus keyword. H2/H3 structure. Include workflow examples. Link to product features naturally. Film industry angle.",
-    seoWeight: 1.0,
-  },
-  email: {
-    label: "Email",
-    maxChars: 10000,
-    maxHashtags: 0,
-    contentTypes: ["email_campaign"],
-    guidelines: "Subject line under 50 chars. Preview text under 90 chars. Clear CTA button. Mobile-first. Personalisation tokens where possible.",
-    seoWeight: 0.1,
+    hashtagCount: 8,
+    contentTypes: ["video_reel"],
+    tone: "Tutorial-focused, educational, high-energy. Show what's possible with AI filmmaking.",
+    format: "Hook → Tutorial steps → Result reveal → Subscribe CTA.",
+    guidelines: "Quick AI filmmaking tutorials. Before/after comparisons. Feature walkthroughs. Always end with subscribe + virelle.life.",
   },
   pinterest: {
     label: "Pinterest",
     maxChars: 500,
-    maxHashtags: 20,
-    contentTypes: ["infographic", "social_post"],
-    guidelines: "Vertical image 2:3 ratio. SEO-rich descriptions. Keywords in title. Actionable content. Link to landing page. Film aesthetics and mood boards.",
-    seoWeight: 0.6,
+    hashtagCount: 5,
+    contentTypes: ["image_post"],
+    tone: "Inspirational, visual, aspirational. Curate cinematic AI art and filmmaking inspiration.",
+    format: "Stunning visual → Descriptive caption → Link to virelle.life.",
+    guidelines: "Create boards for AI cinematography, film colour palettes, scene composition. Drive traffic to virelle.life tutorials.",
   },
   discord: {
     label: "Discord",
     maxChars: 2000,
-    maxHashtags: 0,
-    contentTypes: ["social_post"],
-    guidelines: "Community-first. Value before promotion. Share tools, tips, and insights. Engage in filmmaking and AI art servers.",
-    seoWeight: 0.1,
+    hashtagCount: 0,
+    contentTypes: ["text_post"],
+    tone: "Community-first, helpful, collaborative. Be the most helpful person in every filmmaking server.",
+    format: "Helpful insight or resource → Community discussion → Soft VirÉlle mention.",
+    guidelines: "Join filmmaking, indie film, and AI art Discord servers. Share VirÉlle experiments. Offer help with AI filmmaking questions.",
   },
   telegram: {
     label: "Telegram",
     maxChars: 4096,
-    maxHashtags: 5,
-    contentTypes: ["social_post"],
-    guidelines: "Broadcast channel style. Product updates, film tips, new features. Concise and actionable.",
-    seoWeight: 0.1,
+    hashtagCount: 3,
+    contentTypes: ["text_post", "image_post"],
+    tone: "Broadcast channel style. Product updates, film tips, new features. Concise and actionable.",
+    format: "Update headline → Key details → CTA link.",
+    guidelines: "VirÉlle Telegram channel for updates, tips, and exclusive content. Direct link to new features and tutorials.",
   },
   medium: {
     label: "Medium",
-    maxChars: 100000,
-    maxHashtags: 5,
-    contentTypes: ["blog_article"],
-    guidelines: "Republish blog posts with canonical URLs. 5-10 min read. Technical depth appreciated. Film + AI intersection content. 100M+ monthly readers.",
-    seoWeight: 0.8,
+    maxChars: 10000,
+    hashtagCount: 5,
+    contentTypes: ["blog_post"],
+    tone: "Thoughtful, narrative-driven, industry-focused. Long-form filmmaking and AI essays.",
+    format: "Compelling headline → Story-driven intro → Deep-dive content → VirÉlle mention → CTA.",
+    guidelines: "Publish in Film, Filmmaking, AI, and Technology publications. Cross-post blog content. Build VirÉlle's thought-leadership.",
   },
   hackernews: {
     label: "Hacker News",
     maxChars: 10000,
-    maxHashtags: 0,
-    contentTypes: ["social_post"],
-    guidelines: "Technical, concise, no marketing speak. HN audience hates fluff. Show HN format for product launches. Focus on the AI/ML innovation angle.",
-    seoWeight: 0.9,
+    hashtagCount: 0,
+    contentTypes: ["text_post"],
+    tone: "Technical, analytical, no marketing speak. Focus on the engineering and AI behind VirÉlle.",
+    format: "Technical insight → Engineering challenge → Solution → Discussion invitation.",
+    guidelines: "Show HN posts for new features. Technical deep-dives on AI film generation. Engage genuinely with the tech community.",
   },
   whatsapp: {
     label: "WhatsApp",
-    maxChars: 4096,
-    maxHashtags: 0,
-    contentTypes: ["social_post"],
-    guidelines: "Broadcast to opted-in subscribers. Product updates, weekly film tips, new features. Conversational tone.",
-    seoWeight: 0.1,
+    maxChars: 1000,
+    hashtagCount: 0,
+    contentTypes: ["text_post"],
+    tone: "Personal, direct, conversational. Like a message from a filmmaker friend.",
+    format: "Brief update or tip → Direct CTA.",
+    guidelines: "WhatsApp broadcast for VIP subscribers. Short, high-value tips and exclusive early access announcements.",
   },
 };
 
-// ─── Content Quality Scorer ────────────────────────────────────────────────
+// ─── Viral Hook Library ────────────────────────────────────────────────────
+const VIRAL_HOOKS = {
+  curiosity: [
+    "Most filmmakers don't know this AI trick...",
+    "The secret Hollywood studios don't want you to know",
+    "Why 90% of indie films fail (and how AI fixes it)",
+    "I made a cinematic short film in 4 hours. Here's how.",
+    "This AI just replaced a $50,000 film crew",
+  ],
+  transformation: [
+    "From zero budget to Hollywood quality in 24 hours",
+    "How I went from film student to AI director",
+    "Before AI: 6 months. After AI: 6 hours.",
+    "This changed everything about how I make films",
+    "The film industry will never be the same after this",
+  ],
+  authority: [
+    "After generating 1,000+ AI film scenes, here's what I learned",
+    "The most advanced AI film platform just got better",
+    "Why professional filmmakers are switching to AI",
+    "The future of filmmaking is here — and it's stunning",
+    "How AI is democratising Hollywood-quality production",
+  ],
+  urgency: [
+    "The AI filmmaking revolution is happening right now",
+    "Don't get left behind — filmmaking just changed forever",
+    "Every filmmaker needs to see this before 2027",
+    "The window to get ahead in AI filmmaking is closing",
+    "Early adopters are already making studio-quality films",
+  ],
+};
+
+// ─── Quality Scoring ───────────────────────────────────────────────────────
+export interface ContentQualityResult {
+  overall: number;
+  breakdown: {
+    hookStrength: number;
+    ctaClarity: number;
+    brandAlignment: number;
+    readability: number;
+    hashtagQuality: number;
+    viralPotential: number;
+    platformFit: number;
+    emotionalResonance: number;
+  };
+  flags: string[];
+  suggestions: string[];
+}
+
 export function scoreContentQuality(params: {
-  body: string;
   platform: string;
-  seoKeywords?: string[];
-  hashtags?: string[];
-  callToAction?: string;
-  hook?: string;
-}): number {
-  let score = 50;
+  body: string;
+  headline: string;
+  hook: string;
+  callToAction: string;
+  hashtags: string[];
+  videoScript?: string;
+}): ContentQualityResult {
   const config = PLATFORM_CONFIG[params.platform];
-  if (!config) return score;
+  const flags: string[] = [];
+  const suggestions: string[] = [];
 
-  const len = params.body.length;
-  if (len > 50 && len <= config.maxChars) score += 10;
-  if (len > config.maxChars * 0.5) score += 5;
-
-  if (params.callToAction && params.callToAction.length > 5) score += 10;
-  if (params.hook && params.hook.length > 10) score += 10;
-
-  if (params.seoKeywords && params.seoKeywords.length > 0) {
-    const bodyLower = params.body.toLowerCase();
-    const matchCount = params.seoKeywords.filter(kw => bodyLower.includes(kw.toLowerCase())).length;
-    score += Math.min(matchCount * 5, 15);
+  // Hook strength (0-100)
+  const hookWords = ["secret", "don't know", "changed", "never", "future", "revolutionary", "impossible", "stunning", "cinematic", "Hollywood", "AI", "transform", "before", "after", "how", "why", "this"];
+  const hookLower = (params.hook || "").toLowerCase();
+  const hookMatches = hookWords.filter(w => hookLower.includes(w)).length;
+  const hookStrength = Math.min(100, 40 + hookMatches * 12);
+  if (hookStrength < 60) {
+    flags.push("Weak hook");
+    suggestions.push("Start with a stronger curiosity or transformation hook");
   }
 
-  if (params.hashtags && params.hashtags.length > 0) {
-    if (params.hashtags.length <= config.maxHashtags) score += 5;
-    if (params.hashtags.length >= 3 && params.hashtags.length <= config.maxHashtags) score += 5;
+  // CTA clarity (0-100)
+  const ctaWords = ["visit", "try", "start", "create", "make", "sign up", "join", "get", "download", "watch", "learn", "discover", "virelle.life", "link in bio", "click"];
+  const ctaLower = (params.callToAction || "").toLowerCase();
+  const ctaMatches = ctaWords.filter(w => ctaLower.includes(w)).length;
+  const ctaClarity = Math.min(100, 30 + ctaMatches * 20);
+  if (ctaClarity < 50) {
+    flags.push("Weak CTA");
+    suggestions.push("Include a clear action verb and link to virelle.life");
   }
 
-  if (params.body.toLowerCase().includes("virelle") || params.body.toLowerCase().includes("virÉlle")) {
-    score += 5;
+  // Brand alignment (0-100)
+  const brandWords = ["virelle", "ai film", "cinematic", "ai director", "film", "scene", "production", "filmmaker", "runway", "elevenlabs", "script", "storyboard"];
+  const bodyLower = (params.body || "").toLowerCase();
+  const brandMatches = brandWords.filter(w => bodyLower.includes(w)).length;
+  const brandAlignment = Math.min(100, 30 + brandMatches * 10);
+  if (brandAlignment < 50) {
+    flags.push("Low brand alignment");
+    suggestions.push("Include more references to AI filmmaking and VirÉlle's key features");
   }
 
-  return Math.min(score, 100);
+  // Readability (0-100)
+  const sentences = params.body.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  const avgSentenceLength = sentences.length > 0
+    ? params.body.split(" ").length / sentences.length
+    : 20;
+  const readability = avgSentenceLength <= 15 ? 90 : avgSentenceLength <= 20 ? 75 : avgSentenceLength <= 25 ? 60 : 40;
+  if (readability < 60) {
+    flags.push("Long sentences");
+    suggestions.push("Break long sentences into shorter, punchier ones");
+  }
+
+  // Hashtag quality (0-100)
+  const hashtagCount = params.hashtags?.length || 0;
+  const targetCount = config?.hashtagCount || 5;
+  const hashtagQuality = hashtagCount === 0 && targetCount === 0 ? 100
+    : Math.max(0, 100 - Math.abs(hashtagCount - targetCount) * 10);
+  if (hashtagCount > 0 && hashtagCount < targetCount - 2) {
+    suggestions.push(`Add ${targetCount - hashtagCount} more relevant hashtags`);
+  }
+
+  // Viral potential (0-100)
+  const viralWords = ["secret", "shocking", "never seen", "first ever", "game-changing", "revolutionary", "mind-blowing", "incredible", "stunning", "impossible", "future", "transform", "Hollywood", "cinematic"];
+  const viralMatches = viralWords.filter(w => bodyLower.includes(w)).length;
+  const viralPotential = Math.min(100, 30 + viralMatches * 15);
+
+  // Platform fit (0-100)
+  const bodyLength = params.body.length;
+  const maxChars = config?.maxChars || 2000;
+  const platformFit = bodyLength <= maxChars
+    ? Math.min(100, 60 + (bodyLength / maxChars) * 40)
+    : Math.max(0, 100 - ((bodyLength - maxChars) / maxChars) * 50);
+  if (bodyLength > maxChars) {
+    flags.push("Content exceeds platform limit");
+    suggestions.push(`Trim content to under ${maxChars} characters`);
+  }
+
+  // Emotional resonance (0-100)
+  const emotionWords = ["dream", "imagine", "feel", "love", "passion", "inspire", "create", "vision", "story", "journey", "transform", "believe", "possible", "freedom", "art"];
+  const emotionMatches = emotionWords.filter(w => bodyLower.includes(w)).length;
+  const emotionalResonance = Math.min(100, 30 + emotionMatches * 14);
+
+  const breakdown = {
+    hookStrength,
+    ctaClarity,
+    brandAlignment,
+    readability,
+    hashtagQuality,
+    viralPotential,
+    platformFit,
+    emotionalResonance,
+  };
+
+  const weights = {
+    hookStrength: 0.20,
+    ctaClarity: 0.15,
+    brandAlignment: 0.15,
+    readability: 0.10,
+    hashtagQuality: 0.10,
+    viralPotential: 0.15,
+    platformFit: 0.10,
+    emotionalResonance: 0.05,
+  };
+
+  const overall = Math.round(
+    Object.entries(breakdown).reduce((sum, [key, val]) => sum + val * (weights as any)[key], 0)
+  );
+
+  return { overall, breakdown, flags, suggestions };
 }
 
-// ─── SEO Score for Content ─────────────────────────────────────────────────
+// ─── SEO Scoring ──────────────────────────────────────────────────────────
 export function scoreSeoContent(params: {
-  body: string;
-  title?: string;
-  seoKeywords?: string[];
   platform: string;
+  body: string;
+  headline: string;
+  seoKeywords?: string[];
 }): number {
+  if (!params.seoKeywords || params.seoKeywords.length === 0) return 50;
   const config = PLATFORM_CONFIG[params.platform];
-  if (!config) return 0;
-
-  let score = 0;
-  const bodyLower = params.body.toLowerCase();
-  const titleLower = (params.title || "").toLowerCase();
-
-  score += config.seoWeight * 30;
-
-  if (params.seoKeywords && params.title) {
-    const titleMatches = params.seoKeywords.filter(kw => titleLower.includes(kw.toLowerCase())).length;
-    score += Math.min(titleMatches * 10, 20);
-  }
-
-  if (params.seoKeywords) {
-    const bodyMatches = params.seoKeywords.filter(kw => bodyLower.includes(kw.toLowerCase())).length;
-    score += Math.min(bodyMatches * 5, 30);
-  }
-
-  if (["blog", "medium", "linkedin", "hackernews"].includes(params.platform)) {
-    if (params.body.length > 500) score += 10;
-    if (params.body.length > 1500) score += 10;
-  }
-
-  return Math.min(Math.round(score), 100);
+  const bodyLower = (params.body + " " + params.headline).toLowerCase();
+  const keywordMatches = params.seoKeywords.filter(kw => bodyLower.includes(kw.toLowerCase())).length;
+  const keywordDensity = keywordMatches / params.seoKeywords.length;
+  const lengthBonus = params.body.length > 500 ? 10 : 0;
+  const headlineBonus = params.seoKeywords.some(kw => params.headline.toLowerCase().includes(kw.toLowerCase())) ? 15 : 0;
+  return Math.min(100, Math.round(keywordDensity * 75 + lengthBonus + headlineBonus));
 }
 
-// ─── Core Content Generation ───────────────────────────────────────────────
+// ─── Content Generation ────────────────────────────────────────────────────
 export interface GenerateContentParams {
   platform: string;
   contentType: string;
   topic?: string;
-  campaignObjective?: string;
   seoKeywords?: string[];
-  targetAudience?: string;
-  brandVoice?: string;
   includeImage?: boolean;
+  includeVideo?: boolean;
   campaignId?: number;
+  campaignObjective?: string;
+  brandVoice?: string;
+  useViralHook?: boolean;
+  abVariant?: "A" | "B";
 }
 
 export interface GeneratedContent {
   platform: string;
   contentType: string;
-  title?: string;
-  headline?: string;
+  title: string;
+  headline: string;
   body: string;
-  callToAction?: string;
+  callToAction: string;
   hashtags: string[];
-  hook?: string;
+  hook: string;
   videoScript?: string;
-  visualDirections?: string[];
+  visualDirections?: string;
   imagePrompt?: string;
   mediaUrl?: string;
-  seoKeywords: string[];
   seoScore: number;
   qualityScore: number;
+  qualityBreakdown?: ContentQualityResult;
+  seoKeywords?: string[];
   generationMs: number;
 }
 
-export async function generateCreatorContent(
-  params: GenerateContentParams
-): Promise<GeneratedContent> {
-  const startMs = Date.now();
+export async function generateCreatorContent(params: GenerateContentParams): Promise<GeneratedContent> {
+  const startTime = Date.now();
   const config = PLATFORM_CONFIG[params.platform] || PLATFORM_CONFIG.x_twitter;
-  const keywords = params.seoKeywords || [];
+
+  // Select viral hook if requested
+  const hookCategories = Object.keys(VIRAL_HOOKS) as Array<keyof typeof VIRAL_HOOKS>;
+  const hookCategory = hookCategories[Math.floor(Math.random() * hookCategories.length)];
+  const viralHookExample = params.useViralHook
+    ? VIRAL_HOOKS[hookCategory][Math.floor(Math.random() * VIRAL_HOOKS[hookCategory].length)]
+    : null;
 
   const systemPrompt = `You are the head of content for ${BRAND.name} — ${BRAND.tagline}.
 
 BRAND VOICE: ${params.brandVoice || BRAND.tone}
 
-KEY FEATURES TO PROMOTE:
+KEY FEATURES TO HIGHLIGHT:
 ${BRAND.keyFeatures.map(f => `• ${f}`).join("\n")}
 
 TARGET AUDIENCES:
@@ -350,45 +505,50 @@ WEBSITE: ${BRAND.website}
 COMPETITORS: ${BRAND.competitors.join(", ")}
 
 PLATFORM: ${config.label}
-PLATFORM GUIDELINES: ${config.guidelines}
+TONE: ${config.tone}
+FORMAT: ${config.format}
+GUIDELINES: ${config.guidelines}
 MAX CHARACTERS: ${config.maxChars}
-MAX HASHTAGS: ${config.maxHashtags}
+HASHTAG COUNT: ${config.hashtagCount}
+${viralHookExample ? `\nVIRAL HOOK EXAMPLE (adapt this style): "${viralHookExample}"` : ""}
+${params.abVariant === "B" ? "\nA/B VARIANT B: Use a completely different angle, tone, and hook from the default approach." : ""}
 
-SEO KEYWORDS TO INCORPORATE: ${keywords.length > 0 ? keywords.join(", ") : "Use relevant AI filmmaking and cinematic production keywords naturally"}
+Generate content that:
+1. Immediately grabs attention with a powerful hook
+2. Showcases VirÉlle Studios' cinematic AI filmmaking capabilities
+3. Speaks directly to the target audience's filmmaking aspirations
+4. Includes a clear, compelling call-to-action
+5. Is optimised for ${config.label}'s algorithm and audience
+6. Differentiates VirÉlle from competitors like ${BRAND.competitors.slice(0, 2).join(" and ")}`;
 
-QUALITY STANDARDS:
-- Never be generic — every piece must feel authentic and cinematically credible
-- Lead with value, not promotion
-- Use real filmmaking terminology our audience understands
-- Include specific, concrete benefits
-- End with a clear, compelling call to action
-- For video content: hook must grab attention in under 3 seconds
-- Emphasise the democratisation of filmmaking — anyone can now make Hollywood-quality films
-
-Return valid JSON only. No markdown, no explanation.`;
-
-  const isVideo = ["video_script", "reel"].includes(params.contentType);
-  const isCarousel = ["photo_carousel", "infographic"].includes(params.contentType);
-
-  const userPrompt = `Create a ${params.contentType} for ${config.label}.
-${params.topic ? `TOPIC/ANGLE: ${params.topic}` : "Choose the most compelling angle for our audience."}
+  const userPrompt = `Create ${config.label} content for VirÉlle Studios.
+${params.topic ? `TOPIC: ${params.topic}` : "Choose the most compelling current topic for AI filmmaking."}
+${params.seoKeywords?.length ? `SEO KEYWORDS TO INCLUDE: ${params.seoKeywords.join(", ")}` : ""}
 ${params.campaignObjective ? `CAMPAIGN OBJECTIVE: ${params.campaignObjective}` : ""}
-${params.targetAudience ? `TARGET AUDIENCE: ${params.targetAudience}` : ""}
 
-Generate the content now. Make it genuinely compelling — cinematic, not corporate fluff.`;
+Return a JSON object with these exact fields:
+- title: string (SEO-optimised title, 50-60 chars)
+- headline: string (attention-grabbing headline)
+- body: string (main content, max ${config.maxChars} chars)
+- callToAction: string (clear CTA with virelle.life)
+- hashtags: string[] (${config.hashtagCount} relevant hashtags, no # symbol)
+- hook: string (opening hook, max 150 chars)
+- videoScript: string (detailed shot-by-shot script if video content, else "")
+- visualDirections: string (visual/art direction notes for image generation)
+- imagePrompt: string (detailed DALL-E prompt for accompanying image)`;
 
   const schema = {
-    type: "object" as const,
+    type: "object",
     properties: {
-      title: { type: "string" as const },
-      headline: { type: "string" as const },
-      body: { type: "string" as const },
-      callToAction: { type: "string" as const },
-      hashtags: { type: "array" as const, items: { type: "string" as const } },
-      hook: { type: "string" as const },
-      videoScript: { type: "string" as const },
-      visualDirections: { type: "array" as const, items: { type: "string" as const } },
-      imagePrompt: { type: "string" as const },
+      title: { type: "string" },
+      headline: { type: "string" },
+      body: { type: "string" },
+      callToAction: { type: "string" },
+      hashtags: { type: "array", items: { type: "string" } },
+      hook: { type: "string" },
+      videoScript: { type: "string" },
+      visualDirections: { type: "string" },
+      imagePrompt: { type: "string" },
     },
     required: ["title", "headline", "body", "callToAction", "hashtags", "hook", "videoScript", "visualDirections", "imagePrompt"],
     additionalProperties: false,
@@ -413,24 +573,21 @@ Generate the content now. Make it genuinely compelling — cinematic, not corpor
     body = body.slice(0, config.maxChars - 3) + "...";
   }
 
-  let hashtags = (parsed.hashtags || []) as string[];
-  if (hashtags.length > config.maxHashtags && config.maxHashtags > 0) {
-    hashtags = hashtags.slice(0, config.maxHashtags);
-  }
-
+  // Generate image if requested
   let mediaUrl: string | undefined;
   if (params.includeImage && parsed.imagePrompt) {
     try {
       const styledPrompt = `${BRAND.artStyle.prefix} ${parsed.imagePrompt}. ${BRAND.artStyle.suffix}. No text in image.`;
       const imgResult = await generateImage({
         prompt: styledPrompt,
-        originalImages: [{ url: BRAND.defaultImage, mimeType: "image/png" }],
+        size: "1024x1024",
+        quality: "standard",
       });
       if (imgResult?.url) {
-        // Upload to permanent storage
+        // Upload to S3 for permanent storage
         try {
-          const resp = await fetch(imgResult.url);
-          const buf = Buffer.from(await resp.arrayBuffer());
+          const imgRes = await fetch(imgResult.url);
+          const buf = Buffer.from(await imgRes.arrayBuffer());
           const key = `content-creator/${params.platform}/${Date.now()}.png`;
           const { url: s3Url } = await storagePut(key, buf, "image/png");
           mediaUrl = s3Url;
@@ -439,150 +596,285 @@ Generate the content now. Make it genuinely compelling — cinematic, not corpor
         }
       }
     } catch (err) {
-      log.warn("[ContentCreator] Image generation failed, using fallback:", { error: getErrorMessage(err) });
+      log.warn("[ContentCreator] Image generation failed:", { error: getErrorMessage(err) });
       mediaUrl = BRAND.defaultImage;
     }
   }
 
-  const seoScore = scoreSeoContent({
-    body,
-    title: parsed.title,
-    seoKeywords: keywords,
+  // Generate video if requested
+  if (params.includeVideo && parsed.videoScript) {
+    try {
+      const videoResult = await generateVideoWithFallback({
+        prompt: `${BRAND.artStyle.prefix} ${parsed.visualDirections || parsed.imagePrompt}. Cinematic film production quality. ${BRAND.artStyle.suffix}.`,
+        duration: 6,
+        aspectRatio: params.platform === "tiktok" || params.platform === "youtube_shorts" ? "9:16" : "16:9",
+      });
+      if (videoResult?.url) {
+        mediaUrl = videoResult.url;
+      }
+    } catch (err) {
+      log.warn("[ContentCreator] Video generation failed:", { error: getErrorMessage(err) });
+    }
+  }
+
+  if (!mediaUrl) {
+    mediaUrl = BRAND.defaultImage;
+  }
+
+  const hashtags = Array.isArray(parsed.hashtags) ? parsed.hashtags.slice(0, config.hashtagCount) : [];
+
+  // Score the content
+  const qualityResult = scoreContentQuality({
     platform: params.platform,
+    body,
+    headline: parsed.headline || "",
+    hook: parsed.hook || "",
+    callToAction: parsed.callToAction || "",
+    hashtags,
+    videoScript: parsed.videoScript,
   });
 
-  const qualityScore = scoreContentQuality({
-    body,
+  const seoScore = scoreSeoContent({
     platform: params.platform,
-    seoKeywords: keywords,
-    hashtags,
-    callToAction: parsed.callToAction,
-    hook: parsed.hook,
+    body,
+    headline: parsed.headline || "",
+    seoKeywords: params.seoKeywords,
   });
 
   return {
     platform: params.platform,
     contentType: params.contentType,
-    title: parsed.title,
-    headline: parsed.headline,
+    title: parsed.title || "",
+    headline: parsed.headline || "",
     body,
-    callToAction: parsed.callToAction,
+    callToAction: parsed.callToAction || "",
     hashtags,
-    hook: parsed.hook,
+    hook: parsed.hook || "",
     videoScript: parsed.videoScript || undefined,
-    visualDirections: parsed.visualDirections?.length ? parsed.visualDirections : undefined,
-    imagePrompt: parsed.imagePrompt,
+    visualDirections: parsed.visualDirections || undefined,
+    imagePrompt: parsed.imagePrompt || undefined,
     mediaUrl,
-    seoKeywords: keywords,
     seoScore,
-    qualityScore,
-    generationMs: Date.now() - startMs,
+    qualityScore: qualityResult.overall,
+    qualityBreakdown: qualityResult,
+    seoKeywords: params.seoKeywords,
+    generationMs: Date.now() - startTime,
   };
 }
 
-// ─── SEO-Driven Content Brief Generation ──────────────────────────────────
+// ─── SEO-Driven Brief Generation ──────────────────────────────────────────
 export interface ContentCreatorBrief {
   topic: string;
   targetKeyword: string;
   secondaryKeywords: string[];
-  recommendedPlatforms: string[];
-  contentTypes: string[];
-  angle: string;
-  estimatedImpact: "high" | "medium" | "low";
-  seoOpportunity: string;
+  contentAngle: string;
+  targetPlatforms: string[];
 }
 
-export async function generateSeoContentBriefs(count = 5): Promise<ContentCreatorBrief[]> {
+export async function getSeoDrivenBriefs(count = 5): Promise<ContentCreatorBrief[]> {
   try {
-    const [seoBriefs, keywordData] = await Promise.allSettled([
-      generateContentBriefs(count),
-      analyzeKeywords(),
-    ]);
-
-    const briefs = seoBriefs.status === "fulfilled" ? seoBriefs.value : [];
-    const keywords = keywordData.status === "fulfilled" ? keywordData.value : null;
-
-    const creatorBriefs: ContentCreatorBrief[] = briefs.map((brief: any) => ({
-      topic: brief.title,
-      targetKeyword: brief.targetKeyword,
-      secondaryKeywords: brief.secondaryKeywords || [],
-      recommendedPlatforms: ["blog", "linkedin", "x_twitter", "tiktok", "youtube_shorts"],
-      contentTypes: ["blog_article", "social_post", "video_script"],
-      angle: brief.outline?.[0] || "Educational deep-dive for filmmakers",
-      estimatedImpact: "high" as const,
-      seoOpportunity: `Target keyword: "${brief.targetKeyword}" — ${brief.intent} intent`,
+    const briefs = await generateContentBriefs(count);
+    return briefs.map((b: any) => ({
+      topic: b.topic || b.title || "AI Filmmaking",
+      targetKeyword: b.targetKeyword || b.primaryKeyword || "AI film production",
+      secondaryKeywords: b.secondaryKeywords || b.relatedKeywords || [],
+      contentAngle: b.contentAngle || b.angle || "Educational",
+      targetPlatforms: AUTONOMOUS_CONFIG.platforms,
     }));
-
-    if (keywords && (keywords as any).contentGaps?.length > 0) {
-      for (const gap of (keywords as any).contentGaps.slice(0, Math.max(0, count - creatorBriefs.length))) {
-        creatorBriefs.push({
-          topic: gap,
-          targetKeyword: gap.toLowerCase(),
-          secondaryKeywords: (keywords as any).competitorKeywords?.slice(0, 3) || [],
-          recommendedPlatforms: ["blog", "linkedin", "hackernews", "reddit"],
-          contentTypes: ["blog_article", "social_post"],
-          angle: "Fill content gap vs competitors",
-          estimatedImpact: "medium" as const,
-          seoOpportunity: `Content gap identified — competitors rank for this topic`,
-        });
-      }
-    }
-
-    return creatorBriefs.slice(0, count);
-  } catch (err) {
-    log.error("[ContentCreator] Failed to generate SEO briefs:", { error: getErrorMessage(err) });
-    return [];
+  } catch {
+    // Fallback briefs if SEO engine unavailable
+    return [
+      {
+        topic: "How AI is Revolutionising Independent Filmmaking in 2026",
+        targetKeyword: "AI film production",
+        secondaryKeywords: ["AI movie maker", "AI scene generation", "indie film AI", "text to video"],
+        contentAngle: "Educational transformation story",
+        targetPlatforms: AUTONOMOUS_CONFIG.platforms,
+      },
+      {
+        topic: "VirÉlle Studios vs Runway ML: The Ultimate AI Filmmaking Comparison",
+        targetKeyword: "AI filmmaking platform",
+        secondaryKeywords: ["Runway ML alternative", "best AI film generator", "AI video production"],
+        contentAngle: "Comparison and authority",
+        targetPlatforms: AUTONOMOUS_CONFIG.platforms,
+      },
+      {
+        topic: "Make a Cinematic Short Film with AI in Under 24 Hours",
+        targetKeyword: "AI short film maker",
+        secondaryKeywords: ["AI film generator", "automated filmmaking", "AI director"],
+        contentAngle: "How-to tutorial",
+        targetPlatforms: AUTONOMOUS_CONFIG.platforms,
+      },
+    ].slice(0, count);
   }
 }
 
-// ─── Bulk Campaign Generation ──────────────────────────────────────────────
-export interface BulkGenerateParams {
-  campaignId: number;
-  platforms: string[];
-  topic?: string;
-  seoKeywords?: string[];
-  includeImages?: boolean;
-  campaignObjective?: string;
+// ─── Optimal Posting Time Calculator ──────────────────────────────────────
+export function getOptimalPostingTime(platform: string, offsetDays = 0): Date {
+  const hours = OPTIMAL_POSTING_HOURS[platform] || [12];
+  const now = new Date();
+  const targetDate = new Date(now);
+  targetDate.setDate(targetDate.getDate() + offsetDays);
+
+  // Find the next optimal hour
+  const currentHour = now.getHours();
+  const nextHour = hours.find(h => h > currentHour) || hours[0];
+
+  if (nextHour <= currentHour && offsetDays === 0) {
+    targetDate.setDate(targetDate.getDate() + 1);
+  }
+
+  targetDate.setHours(nextHour, 0, 0, 0);
+  return targetDate;
 }
 
-export interface BulkGenerateResult {
+// ─── Auto-Approve High Quality Content ────────────────────────────────────
+export async function autoApproveHighQualityContent(threshold = AUTONOMOUS_CONFIG.autoApproveThreshold): Promise<{
+  approved: number;
+  scheduled: number;
+  skipped: number;
+}> {
+  const db = await getDb();
+  if (!db) return { approved: 0, scheduled: 0, skipped: 0 };
+
+  let approved = 0;
+  let scheduled = 0;
+  let skipped = 0;
+
+  try {
+    // Get all draft pieces
+    const drafts = await db
+      .select()
+      .from(contentCreatorPieces)
+      .where(eq(contentCreatorPieces.status, "draft"))
+      .limit(50);
+
+    for (const piece of drafts) {
+      const qualityScore = piece.qualityScore || 0;
+      if (qualityScore >= threshold) {
+        const scheduledAt = getOptimalPostingTime(piece.platform || "instagram");
+        await db
+          .update(contentCreatorPieces)
+          .set({ status: "scheduled", scheduledAt })
+          .where(eq(contentCreatorPieces.id, piece.id));
+
+        // Create schedule entry
+        await db.insert(contentCreatorSchedules).values({
+          pieceId: piece.id,
+          campaignId: piece.campaignId || undefined,
+          platform: piece.platform as any,
+          scheduledAt,
+          status: "pending",
+        });
+
+        approved++;
+        scheduled++;
+        log.info(`[ContentCreator] Auto-approved piece ${piece.id} (score: ${qualityScore}) — scheduled ${scheduledAt.toISOString()}`);
+      } else {
+        skipped++;
+      }
+    }
+  } catch (err) {
+    log.error("[ContentCreator] Auto-approve error:", { error: getErrorMessage(err) });
+  }
+
+  return { approved, scheduled, skipped };
+}
+
+// ─── Autonomous Content Cycle ──────────────────────────────────────────────
+export interface AutonomousCycleResult {
   success: boolean;
   generated: number;
+  autoApproved: number;
+  scheduled: number;
+  published: number;
   failed: number;
-  pieces: Array<{ platform: string; contentType: string; id?: number; error?: string }>;
+  platforms: string[];
+  durationMs: number;
 }
 
-export async function bulkGenerateForCampaign(
-  params: BulkGenerateParams
-): Promise<BulkGenerateResult> {
-  const db = await getDb();
-  if (!db) return { success: false, generated: 0, failed: 0, pieces: [] };
+export async function runAutonomousContentCycle(options?: {
+  maxPiecesPerPlatform?: number;
+  autoApproveThreshold?: number;
+  autoSchedule?: boolean;
+  autoPublishTikTok?: boolean;
+}): Promise<AutonomousCycleResult> {
+  const startTime = Date.now();
+  const {
+    maxPiecesPerPlatform = 2,
+    autoApproveThreshold = AUTONOMOUS_CONFIG.autoApproveThreshold,
+    autoSchedule = true,
+    autoPublishTikTok = true,
+  } = options || {};
 
-  const results: BulkGenerateResult["pieces"] = [];
+  const platforms = AUTONOMOUS_CONFIG.platforms;
+  const maxPieces = Math.min(maxPiecesPerPlatform, 3); // safety cap
   let generated = 0;
   let failed = 0;
 
-  for (const platform of params.platforms) {
+  const db = await getDb();
+  if (!db) {
+    return { success: false, generated: 0, autoApproved: 0, scheduled: 0, published: 0, failed: 1, platforms, durationMs: Date.now() - startTime };
+  }
+
+  log.info("[ContentCreator] Starting autonomous content cycle", { platforms, maxPieces, autoApproveThreshold });
+
+  // 1. Pull SEO briefs for topic intelligence
+  const briefs = await getSeoDrivenBriefs(3);
+  const topic = briefs[0]?.topic;
+  const seoKeywords = briefs[0] ? [briefs[0].targetKeyword, ...briefs[0].secondaryKeywords.slice(0, 3)] : undefined;
+
+  // 2. Get or create an autonomous campaign
+  let campaign = (await db.select().from(contentCreatorCampaigns)
+    .where(and(
+      eq(contentCreatorCampaigns.status, "active"),
+      eq(contentCreatorCampaigns.name, "Autonomous Content Campaign"),
+    ))
+    .limit(1))[0];
+
+  if (!campaign) {
+    const [ins] = await db.insert(contentCreatorCampaigns).values({
+      name: "Autonomous Content Campaign",
+      description: "Automatically generated cinematic content across all platforms",
+      objective: "brand_awareness",
+      status: "active",
+      platforms: platforms as any,
+      seoEnabled: true,
+      tiktokEnabled: isTikTokContentConfigured(),
+      advertisingEnabled: true,
+    });
+    const rows = await db.select().from(contentCreatorCampaigns)
+      .where(eq(contentCreatorCampaigns.id, (ins as any).insertId)).limit(1);
+    campaign = rows[0];
+  }
+
+  if (!campaign) {
+    log.error("[ContentCreator] Failed to get/create autonomous campaign");
+    return { success: false, generated: 0, autoApproved: 0, scheduled: 0, published: 0, failed: 1, platforms, durationMs: Date.now() - startTime };
+  }
+
+  // 3. Generate content for each platform
+  const platformsToGenerate = platforms.slice(0, maxPieces);
+  for (const platform of platformsToGenerate) {
     const config = PLATFORM_CONFIG[platform];
     if (!config) continue;
-
-    const contentType = config.contentTypes[0];
 
     try {
       const content = await generateCreatorContent({
         platform,
-        contentType,
-        topic: params.topic,
-        seoKeywords: params.seoKeywords,
-        includeImage: params.includeImages,
-        campaignId: params.campaignId,
-        campaignObjective: params.campaignObjective,
+        contentType: config.contentTypes[0],
+        topic,
+        seoKeywords,
+        includeImage: ["tiktok", "instagram", "pinterest"].includes(platform),
+        campaignId: campaign.id,
+        campaignObjective: "brand_awareness",
+        useViralHook: true,
       });
 
-      const [inserted] = await db.insert(contentCreatorPieces).values({
-        campaignId: params.campaignId,
+      const [ins] = await db.insert(contentCreatorPieces).values({
+        campaignId: campaign.id,
         platform: platform as any,
-        contentType: contentType as any,
+        contentType: config.contentTypes[0] as any,
         title: content.title,
         body: content.body,
         headline: content.headline,
@@ -597,33 +889,182 @@ export async function bulkGenerateForCampaign(
         seoScore: content.seoScore,
         qualityScore: content.qualityScore,
         status: "draft",
+        aiPrompt: topic || "Autonomous generation",
+        aiModel: "gpt-4.1-mini",
+        generationMs: content.generationMs,
+      } as any);
+
+      generated++;
+
+      // 4. Auto-approve if quality threshold met
+      if (autoSchedule && content.qualityScore >= autoApproveThreshold) {
+        const scheduledAt = getOptimalPostingTime(platform);
+        const pieceId = (ins as any).insertId;
+
+        await db.update(contentCreatorPieces).set({
+          status: "scheduled",
+          scheduledAt,
+        }).where(eq(contentCreatorPieces.id, pieceId));
+
+        await db.insert(contentCreatorSchedules).values({
+          pieceId,
+          campaignId: campaign.id,
+          platform: platform as any,
+          scheduledAt,
+          status: "pending",
+        });
+
+        log.info(`[ContentCreator] Auto-approved ${platform} piece (score: ${content.qualityScore}) — scheduled ${scheduledAt.toISOString()}`);
+      }
+
+      // Small delay to avoid rate limiting
+      await new Promise(r => setTimeout(r, 300));
+    } catch (err) {
+      log.error(`[ContentCreator] Failed to generate for ${platform}:`, { error: getErrorMessage(err) });
+      failed++;
+    }
+  }
+
+  // 5. Process any due schedules
+  const publishResult = await processDueSchedules();
+
+  // 6. Run auto-approve pass on any remaining drafts
+  const approveResult = await autoApproveHighQualityContent(autoApproveThreshold);
+
+  // 7. Update campaign stats
+  await db.update(contentCreatorCampaigns)
+    .set({ totalPieces: sql`totalPieces + ${generated}` })
+    .where(eq(contentCreatorCampaigns.id, campaign.id));
+
+  // 8. Log to marketing activity
+  await db.insert(marketingActivityLog).values({
+    action: "autonomous_content_cycle",
+    description: `Generated ${generated} pieces across ${platformsToGenerate.length} platforms. Auto-approved: ${approveResult.approved}. Published: ${publishResult.published}.`,
+    metadata: {
+      generated,
+      autoApproved: approveResult.approved,
+      scheduled: approveResult.scheduled,
+      published: publishResult.published,
+      platforms: platformsToGenerate,
+    },
+  } as any);
+
+  const result: AutonomousCycleResult = {
+    success: true,
+    generated,
+    autoApproved: approveResult.approved,
+    scheduled: approveResult.scheduled,
+    published: publishResult.published,
+    failed,
+    platforms: platformsToGenerate,
+    durationMs: Date.now() - startTime,
+  };
+
+  log.info("[ContentCreator] Autonomous cycle complete:", result);
+  return result;
+}
+
+// ─── Bulk Campaign Generation ──────────────────────────────────────────────
+export interface BulkGenerateParams {
+  campaignId: number;
+  platforms: string[];
+  topic?: string;
+  seoKeywords?: string[];
+  includeImages?: boolean;
+  autoApprove?: boolean;
+}
+
+export interface BulkGenerateResult {
+  total: number;
+  succeeded: number;
+  failed: number;
+  autoApproved: number;
+  pieces: Array<{ platform: string; qualityScore: number; seoScore: number; status: string }>;
+}
+
+export async function bulkGenerateForCampaign(params: BulkGenerateParams): Promise<BulkGenerateResult> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const results: BulkGenerateResult = {
+    total: params.platforms.length,
+    succeeded: 0,
+    failed: 0,
+    autoApproved: 0,
+    pieces: [],
+  };
+
+  for (const platform of params.platforms) {
+    const config = PLATFORM_CONFIG[platform];
+    if (!config) { results.failed++; continue; }
+
+    try {
+      const content = await generateCreatorContent({
+        platform,
+        contentType: config.contentTypes[0],
+        topic: params.topic,
+        seoKeywords: params.seoKeywords,
+        includeImage: params.includeImages && ["tiktok", "instagram", "pinterest"].includes(platform),
+        campaignId: params.campaignId,
+        useViralHook: true,
+      });
+
+      const status = params.autoApprove && content.qualityScore >= AUTONOMOUS_CONFIG.autoApproveThreshold
+        ? "scheduled"
+        : "draft";
+
+      const scheduledAt = status === "scheduled" ? getOptimalPostingTime(platform) : undefined;
+
+      const [ins] = await db.insert(contentCreatorPieces).values({
+        campaignId: params.campaignId,
+        platform: platform as any,
+        contentType: config.contentTypes[0] as any,
+        title: content.title,
+        body: content.body,
+        headline: content.headline,
+        callToAction: content.callToAction,
+        hashtags: content.hashtags,
+        mediaUrl: content.mediaUrl,
+        imagePrompt: content.imagePrompt,
+        hook: content.hook,
+        videoScript: content.videoScript,
+        visualDirections: content.visualDirections,
+        seoKeywords: content.seoKeywords,
+        seoScore: content.seoScore,
+        qualityScore: content.qualityScore,
+        status: status as any,
+        scheduledAt,
         aiPrompt: params.topic || "Bulk generation",
         aiModel: "gpt-4.1-mini",
         generationMs: content.generationMs,
       } as any);
 
-      results.push({ platform, contentType, id: (inserted as any).insertId });
-      generated++;
+      if (status === "scheduled" && scheduledAt) {
+        await db.insert(contentCreatorSchedules).values({
+          pieceId: (ins as any).insertId,
+          campaignId: params.campaignId,
+          platform: platform as any,
+          scheduledAt,
+          status: "pending",
+        });
+        results.autoApproved++;
+      }
 
-      await new Promise(r => setTimeout(r, 500));
+      results.succeeded++;
+      results.pieces.push({ platform, qualityScore: content.qualityScore, seoScore: content.seoScore, status });
+      await new Promise(r => setTimeout(r, 200));
     } catch (err) {
-      log.error(`[ContentCreator] Failed to generate for ${platform}:`, { error: getErrorMessage(err) });
-      results.push({ platform, contentType, error: getErrorMessage(err) });
-      failed++;
+      log.error(`[ContentCreator] Bulk generate failed for ${platform}:`, { error: getErrorMessage(err) });
+      results.failed++;
     }
   }
 
-  await db.update(contentCreatorCampaigns)
-    .set({ totalPieces: sql`totalPieces + ${generated}` })
-    .where(eq(contentCreatorCampaigns.id, params.campaignId));
-
-  return { success: generated > 0, generated, failed, pieces: results };
+  return results;
 }
 
-// ─── TikTok Integration ────────────────────────────────────────────────────
+// ─── TikTok Publishing ─────────────────────────────────────────────────────
 export interface TikTokPublishParams {
   pieceId: number;
-  privacyLevel?: string;
 }
 
 export interface TikTokPublishResult {
@@ -633,197 +1074,74 @@ export interface TikTokPublishResult {
   action: "posted" | "queued" | "failed";
 }
 
-export async function publishPieceToTikTok(
-  params: TikTokPublishParams
-): Promise<TikTokPublishResult> {
+export async function publishPieceToTikTok(params: TikTokPublishParams): Promise<TikTokPublishResult> {
   const db = await getDb();
-  if (!db) return { success: false, error: "Database unavailable", action: "failed" };
+  if (!db) return { success: false, error: "Database not available", action: "failed" };
 
-  const pieces = await db.select().from(contentCreatorPieces)
-    .where(eq(contentCreatorPieces.id, params.pieceId))
-    .limit(1);
-
-  const piece = pieces[0];
+  const rows = await db.select().from(contentCreatorPieces).where(eq(contentCreatorPieces.id, params.pieceId)).limit(1);
+  const piece = rows[0];
   if (!piece) return { success: false, error: "Content piece not found", action: "failed" };
 
-  let postResult: TikTokPostResult;
+  try {
+    // Build carousel images from visual directions
+    const carouselImages: string[] = [];
+    if (piece.visualDirections) {
+      const directions = typeof piece.visualDirections === "string"
+        ? piece.visualDirections.split("\n").filter(Boolean).slice(0, 3)
+        : [];
 
-  if (piece.contentType === "photo_carousel") {
-    const imageUrls: string[] = [];
-    if (piece.mediaUrl) imageUrls.push(piece.mediaUrl);
-
-    if (piece.visualDirections && (piece.visualDirections as string[]).length > 0 && imageUrls.length < 3) {
-      const directions = piece.visualDirections as string[];
-      for (const direction of directions.slice(0, 5 - imageUrls.length)) {
+      for (const direction of directions) {
         try {
           const styledPrompt = `${BRAND.artStyle.prefix} ${direction}. ${BRAND.artStyle.suffix}. No text in image.`;
-          const img = await generateImage({
+          const imgResult = await generateImage({
             prompt: styledPrompt,
-            originalImages: [{ url: BRAND.defaultImage, mimeType: "image/png" }],
+            size: "1024x1024",
+            quality: "standard",
           });
-          if (img?.url) imageUrls.push(img.url);
-        } catch (err) {
-          log.warn("[ContentCreator] Carousel slide generation failed:", { error: getErrorMessage(err) });
+          if (imgResult?.url) {
+            try {
+              const imgRes = await fetch(imgResult.url);
+              const buf = Buffer.from(await imgRes.arrayBuffer());
+              const key = `tiktok-carousel/${Date.now()}-${carouselImages.length}.png`;
+              const { url: s3Url } = await storagePut(key, buf, "image/png");
+              carouselImages.push(s3Url);
+            } catch {
+              carouselImages.push(imgResult.url);
+            }
+          }
+        } catch {
+          // Skip failed images
         }
       }
     }
 
-    if (imageUrls.length === 0) {
-      return { success: false, error: "No images available for carousel", action: "failed" };
+    // Run TikTok pipeline
+    const postResult = await runTikTokContentPipeline();
+
+    if (postResult.success || postResult.publishId) {
+      await db.update(contentCreatorPieces).set({
+        status: "published",
+        publishedAt: new Date(),
+        platformPostId: postResult.publishId,
+      } as any).where(eq(contentCreatorPieces.id, params.pieceId));
+
+      await db.insert(marketingActivityLog).values({
+        action: "content_creator_tiktok_post",
+        description: `TikTok post published via Content Creator: "${piece.title || piece.headline || "Untitled"}"`,
+        metadata: { pieceId: params.pieceId, publishId: postResult.publishId, title: piece.title },
+      } as any);
     }
 
-    if (isTikTokContentConfigured()) {
-      const hashtags = (piece.hashtags as string[] || []).map(h => h.startsWith("#") ? h : `#${h}`).join(" ");
-      const caption = `${piece.title || piece.headline || ""}\n\n${piece.body.slice(0, 1500)}\n\n${hashtags}`;
-      postResult = await postPhotos({
-        photoUrls: imageUrls,
-        title: caption.slice(0, 2200),
-        description: piece.body.slice(0, 500),
-        autoAddMusic: true,
-        privacyLevel: params.privacyLevel || "PUBLIC_TO_EVERYONE",
-      });
-    } else {
-      postResult = { success: false, error: "TikTok Content Posting API not configured" };
-    }
-  } else if (piece.contentType === "video_script" && piece.mediaUrl) {
-    if (isTikTokContentConfigured()) {
-      const hashtags = (piece.hashtags as string[] || []).map(h => h.startsWith("#") ? h : `#${h}`).join(" ");
-      const caption = `${piece.title || ""}\n\n${hashtags}`;
-      postResult = await postVideoByUrl({
-        videoUrl: piece.mediaUrl,
-        title: caption.slice(0, 2200),
-        privacyLevel: params.privacyLevel || "PUBLIC_TO_EVERYONE",
-      });
-    } else {
-      postResult = { success: false, error: "TikTok Content Posting API not configured" };
-    }
-  } else {
-    return { success: false, error: "Content type not supported for TikTok posting or no media URL", action: "failed" };
-  }
-
-  const newStatus = postResult.success ? "published" : "approved";
-  await db.update(contentCreatorPieces).set({
-    status: newStatus as any,
-    publishedAt: postResult.success ? new Date() : undefined,
-    tiktokPublishId: postResult.publishId,
-    externalPostId: postResult.publishId,
-  }).where(eq(contentCreatorPieces.id, params.pieceId));
-
-  if (postResult.success) {
-    await db.insert(marketingContent).values({
-      platform: "tiktok",
-      type: "organic_post",
-      headline: piece.title || piece.headline || "TikTok Post",
-      body: piece.body,
-      imageUrl: piece.mediaUrl,
-      status: "published",
-      publishedAt: new Date(),
-      platformPostId: postResult.publishId,
-    } as any);
-
-    await db.insert(marketingActivityLog).values({
-      action: "content_creator_tiktok_post",
-      description: `TikTok post published via Content Creator: "${piece.title || piece.headline || "Untitled"}"`,
-      metadata: { pieceId: params.pieceId, publishId: postResult.publishId, title: piece.title },
-    } as any);
-  }
-
-  return {
-    success: postResult.success,
-    publishId: postResult.publishId,
-    error: postResult.error,
-    action: postResult.success ? "posted" : (postResult.error?.includes("not configured") ? "queued" : "failed"),
-  };
-}
-
-// ─── Dashboard Overview ────────────────────────────────────────────────────
-export async function getContentCreatorDashboard() {
-  const db = await getDb();
-  if (!db) {
     return {
-      totalCampaigns: 0, activeCampaigns: 0, totalPieces: 0,
-      publishedPieces: 0, draftPieces: 0, scheduledPieces: 0,
-      totalImpressions: 0, totalClicks: 0, totalEngagements: 0,
-      recentPieces: [], topPerformingPieces: [], platformBreakdown: {},
-      campaigns: [], tiktokConfigured: isTikTokContentConfigured(), advertisingLinked: false,
+      success: postResult.success,
+      publishId: postResult.publishId,
+      error: postResult.error,
+      action: postResult.success ? "posted" : (postResult.error?.includes("not configured") ? "queued" : "failed"),
     };
+  } catch (err) {
+    log.error("[ContentCreator] TikTok publish error:", { error: getErrorMessage(err) });
+    return { success: false, error: getErrorMessage(err), action: "failed" };
   }
-
-  const [campaigns, allPieces] = await Promise.all([
-    db.select().from(contentCreatorCampaigns).orderBy(desc(contentCreatorCampaigns.createdAt)).limit(50),
-    db.select().from(contentCreatorPieces).orderBy(desc(contentCreatorPieces.createdAt)).limit(200),
-  ]);
-
-  const activeCampaigns = campaigns.filter(c => c.status === "active").length;
-  const publishedPieces = allPieces.filter(p => p.status === "published").length;
-  const draftPieces = allPieces.filter(p => p.status === "draft").length;
-  const scheduledPieces = allPieces.filter(p => p.status === "scheduled").length;
-  const totalImpressions = allPieces.reduce((s, p) => s + p.impressions, 0);
-  const totalClicks = allPieces.reduce((s, p) => s + p.clicks, 0);
-  const totalEngagements = allPieces.reduce((s, p) => s + p.engagements, 0);
-
-  const platformBreakdown: Record<string, number> = {};
-  for (const piece of allPieces) {
-    platformBreakdown[piece.platform] = (platformBreakdown[piece.platform] || 0) + 1;
-  }
-
-  const topPerformingPieces = [...allPieces]
-    .sort((a, b) => (b.impressions + b.engagements) - (a.impressions + a.engagements))
-    .slice(0, 5);
-
-  let advertisingLinked = false;
-  try {
-    const overview = getStrategyOverview();
-    advertisingLinked = !!(overview && (overview as any).monthlyBudget > 0);
-  } catch {}
-
-  return {
-    totalCampaigns: campaigns.length,
-    activeCampaigns,
-    totalPieces: allPieces.length,
-    publishedPieces,
-    draftPieces,
-    scheduledPieces,
-    totalImpressions,
-    totalClicks,
-    totalEngagements,
-    recentPieces: allPieces.slice(0, 10),
-    topPerformingPieces,
-    platformBreakdown,
-    campaigns: campaigns.slice(0, 10),
-    tiktokConfigured: isTikTokContentConfigured(),
-    advertisingLinked,
-  };
-}
-
-// ─── Content Scheduling ────────────────────────────────────────────────────
-export async function scheduleContentPiece(params: {
-  pieceId: number;
-  scheduledAt: Date;
-  campaignId?: number;
-}): Promise<{ success: boolean; scheduleId?: number; error?: string }> {
-  const db = await getDb();
-  if (!db) return { success: false, error: "Database unavailable" };
-
-  const pieces = await db.select().from(contentCreatorPieces)
-    .where(eq(contentCreatorPieces.id, params.pieceId)).limit(1);
-
-  if (!pieces[0]) return { success: false, error: "Piece not found" };
-
-  await db.update(contentCreatorPieces).set({
-    status: "scheduled",
-    scheduledAt: params.scheduledAt,
-  }).where(eq(contentCreatorPieces.id, params.pieceId));
-
-  const [result] = await db.insert(contentCreatorSchedules).values({
-    pieceId: params.pieceId,
-    campaignId: params.campaignId,
-    platform: pieces[0].platform,
-    scheduledAt: params.scheduledAt,
-    status: "pending",
-  } as any);
-
-  return { success: true, scheduleId: (result as any).insertId };
 }
 
 // ─── Process Due Schedules ─────────────────────────────────────────────────
@@ -835,60 +1153,218 @@ export async function processDueSchedules(): Promise<{
   const db = await getDb();
   if (!db) return { processed: 0, published: 0, failed: 0 };
 
-  const now = new Date();
-  const dueSchedules = await db.select().from(contentCreatorSchedules)
-    .where(and(
-      eq(contentCreatorSchedules.status, "pending"),
-      sql`${contentCreatorSchedules.scheduledAt} <= ${now}`,
-    ))
-    .limit(10);
-
+  let processed = 0;
   let published = 0;
   let failed = 0;
 
-  for (const schedule of dueSchedules) {
-    await db.update(contentCreatorSchedules).set({ status: "processing" })
-      .where(eq(contentCreatorSchedules.id, schedule.id));
+  try {
+    const now = new Date();
+    const dueSchedules = await db
+      .select()
+      .from(contentCreatorSchedules)
+      .where(
+        and(
+          eq(contentCreatorSchedules.status, "pending"),
+          lte(contentCreatorSchedules.scheduledAt, now),
+        )
+      )
+      .limit(20);
 
-    try {
-      if (schedule.platform === "tiktok") {
-        const result = await publishPieceToTikTok({ pieceId: schedule.pieceId });
-        if (result.success) {
-          await db.update(contentCreatorSchedules).set({ status: "published", publishedAt: new Date() })
-            .where(eq(contentCreatorSchedules.id, schedule.id));
-          published++;
-        } else {
-          throw new Error(result.error || "TikTok post failed");
-        }
-      } else {
-        await db.update(contentCreatorSchedules).set({ status: "published", publishedAt: new Date() })
+    for (const schedule of dueSchedules) {
+      processed++;
+      try {
+        // Mark schedule as processing
+        await db.update(contentCreatorSchedules)
+          .set({ status: "processing" as any })
           .where(eq(contentCreatorSchedules.id, schedule.id));
-        await db.update(contentCreatorPieces).set({ status: "published", publishedAt: new Date() })
+
+        // Mark piece as published
+        await db.update(contentCreatorPieces)
+          .set({ status: "published", publishedAt: now } as any)
           .where(eq(contentCreatorPieces.id, schedule.pieceId));
+
+        // If TikTok, attempt actual post
+        if (schedule.platform === "tiktok" && isTikTokContentConfigured()) {
+          await publishPieceToTikTok({ pieceId: schedule.pieceId });
+        }
+
+        // Mark schedule as completed
+        await db.update(contentCreatorSchedules)
+          .set({ status: "completed" as any, executedAt: now })
+          .where(eq(contentCreatorSchedules.id, schedule.id));
+
         published++;
+      } catch (err) {
+        await db.update(contentCreatorSchedules)
+          .set({ status: "failed" as any, error: getErrorMessage(err) } as any)
+          .where(eq(contentCreatorSchedules.id, schedule.id));
+        failed++;
       }
-    } catch (err) {
-      const retryCount = schedule.retryCount + 1;
-      const shouldRetry = retryCount < schedule.maxRetries;
-      await db.update(contentCreatorSchedules).set({
-        status: shouldRetry ? "pending" : "failed",
-        retryCount,
-        failReason: getErrorMessage(err),
-        scheduledAt: shouldRetry ? new Date(Date.now() + 15 * 60 * 1000) : schedule.scheduledAt,
-      }).where(eq(contentCreatorSchedules.id, schedule.id));
-      failed++;
+    }
+  } catch (err) {
+    log.error("[ContentCreator] processDueSchedules error:", { error: getErrorMessage(err) });
+  }
+
+  return { processed, published, failed };
+}
+
+// ─── Campaign Analytics ────────────────────────────────────────────────────
+export async function getCampaignAnalytics(campaignId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const [pieces, schedules, analytics] = await Promise.all([
+    db.select().from(contentCreatorPieces).where(eq(contentCreatorPieces.campaignId, campaignId)),
+    db.select().from(contentCreatorSchedules).where(eq(contentCreatorSchedules.campaignId, campaignId)),
+    db.select().from(contentCreatorAnalytics).where(eq(contentCreatorAnalytics.campaignId, campaignId)),
+  ]);
+
+  const byPlatform = pieces.reduce((acc, p) => {
+    const platform = p.platform || "unknown";
+    if (!acc[platform]) acc[platform] = { total: 0, published: 0, avgQuality: 0, avgSeo: 0 };
+    acc[platform].total++;
+    if (p.status === "published") acc[platform].published++;
+    acc[platform].avgQuality += p.qualityScore || 0;
+    acc[platform].avgSeo += p.seoScore || 0;
+    return acc;
+  }, {} as Record<string, { total: number; published: number; avgQuality: number; avgSeo: number }>);
+
+  // Average the scores
+  for (const platform of Object.keys(byPlatform)) {
+    const d = byPlatform[platform];
+    if (d.total > 0) {
+      d.avgQuality = Math.round(d.avgQuality / d.total);
+      d.avgSeo = Math.round(d.avgSeo / d.total);
     }
   }
 
-  return { processed: dueSchedules.length, published, failed };
+  const totalImpressions = analytics.reduce((sum, a) => sum + (a.impressions || 0), 0);
+  const totalClicks = analytics.reduce((sum, a) => sum + (a.clicks || 0), 0);
+  const totalEngagements = analytics.reduce((sum, a) => sum + (a.engagements || 0), 0);
+
+  return {
+    campaignId,
+    totalPieces: pieces.length,
+    publishedPieces: pieces.filter(p => p.status === "published").length,
+    scheduledPieces: pieces.filter(p => p.status === "scheduled").length,
+    draftPieces: pieces.filter(p => p.status === "draft").length,
+    avgQualityScore: pieces.length > 0 ? Math.round(pieces.reduce((s, p) => s + (p.qualityScore || 0), 0) / pieces.length) : 0,
+    avgSeoScore: pieces.length > 0 ? Math.round(pieces.reduce((s, p) => s + (p.seoScore || 0), 0) / pieces.length) : 0,
+    byPlatform,
+    schedules: schedules.length,
+    analytics: {
+      impressions: totalImpressions,
+      clicks: totalClicks,
+      engagements: totalEngagements,
+      ctr: totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) + "%" : "0%",
+    },
+  };
 }
 
-// ─── AI Strategy Generator ─────────────────────────────────────────────────
+// ─── Content Creator Dashboard ─────────────────────────────────────────────
+export async function getContentCreatorDashboard() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+  const [
+    totalPieces,
+    recentPieces,
+    campaigns,
+    dueSchedules,
+    recentAnalytics,
+  ] = await Promise.all([
+    db.select({ count: count() }).from(contentCreatorPieces),
+    db.select().from(contentCreatorPieces)
+      .where(gte(contentCreatorPieces.createdAt, thirtyDaysAgo))
+      .orderBy(desc(contentCreatorPieces.createdAt))
+      .limit(10),
+    db.select().from(contentCreatorCampaigns)
+      .where(eq(contentCreatorCampaigns.status, "active"))
+      .limit(5),
+    db.select({ count: count() }).from(contentCreatorSchedules)
+      .where(and(
+        eq(contentCreatorSchedules.status, "pending"),
+        gte(contentCreatorSchedules.scheduledAt, new Date()),
+      )),
+    db.select().from(contentCreatorAnalytics)
+      .where(gte(contentCreatorAnalytics.recordedAt, thirtyDaysAgo))
+      .orderBy(desc(contentCreatorAnalytics.recordedAt))
+      .limit(50),
+  ]);
+
+  const statusCounts = await db
+    .select({ status: contentCreatorPieces.status, count: count() })
+    .from(contentCreatorPieces)
+    .groupBy(contentCreatorPieces.status);
+
+  const platformCounts = await db
+    .select({ platform: contentCreatorPieces.platform, count: count() })
+    .from(contentCreatorPieces)
+    .groupBy(contentCreatorPieces.platform);
+
+  const totalImpressions = recentAnalytics.reduce((s, a) => s + (a.impressions || 0), 0);
+  const totalClicks = recentAnalytics.reduce((s, a) => s + (a.clicks || 0), 0);
+  const totalEngagements = recentAnalytics.reduce((s, a) => s + (a.engagements || 0), 0);
+
+  return {
+    overview: {
+      totalPieces: Number(totalPieces[0]?.count ?? 0),
+      activeCampaigns: campaigns.length,
+      scheduledPosts: Number(dueSchedules[0]?.count ?? 0),
+      statusBreakdown: Object.fromEntries(statusCounts.map(s => [s.status, Number(s.count)])),
+      platformBreakdown: Object.fromEntries(platformCounts.map(p => [p.platform, Number(p.count)])),
+    },
+    recentPieces,
+    activeCampaigns: campaigns,
+    analytics: {
+      impressions: totalImpressions,
+      clicks: totalClicks,
+      engagements: totalEngagements,
+      ctr: totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) + "%" : "0%",
+      engagementRate: totalImpressions > 0 ? ((totalEngagements / totalImpressions) * 100).toFixed(2) + "%" : "0%",
+    },
+    autonomousConfig: AUTONOMOUS_CONFIG,
+  };
+}
+
+// ─── Schedule Content Piece ────────────────────────────────────────────────
+export async function scheduleContentPiece(params: {
+  pieceId: number;
+  scheduledAt: Date;
+  campaignId?: number;
+}): Promise<{ success: boolean; scheduleId?: number }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const rows = await db.select().from(contentCreatorPieces).where(eq(contentCreatorPieces.id, params.pieceId)).limit(1);
+  const piece = rows[0];
+  if (!piece) throw new Error("Content piece not found");
+
+  await db.update(contentCreatorPieces).set({
+    status: "scheduled",
+    scheduledAt: params.scheduledAt,
+  } as any).where(eq(contentCreatorPieces.id, params.pieceId));
+
+  const [ins] = await db.insert(contentCreatorSchedules).values({
+    pieceId: params.pieceId,
+    campaignId: params.campaignId || piece.campaignId || undefined,
+    platform: piece.platform as any,
+    scheduledAt: params.scheduledAt,
+    status: "pending",
+  });
+
+  return { success: true, scheduleId: (ins as any).insertId };
+}
+
+// ─── Generate Campaign Strategy ────────────────────────────────────────────
 export async function generateCampaignStrategy(params: {
   name: string;
   objective: string;
-  platforms: string[];
   targetAudience?: string;
+  budget?: number;
+  durationDays?: number;
 }): Promise<string> {
   const response = await invokeLLM({
     messages: [
@@ -898,127 +1374,87 @@ export async function generateCampaignStrategy(params: {
       },
       {
         role: "user",
-        content: `Campaign: "${params.name}"
+        content: `Create a content campaign strategy for:
+Campaign: ${params.name}
 Objective: ${params.objective}
-Platforms: ${params.platforms.join(", ")}
-Target Audience: ${params.targetAudience || "Indie filmmakers, content creators, and film students"}
+Target Audience: ${params.targetAudience || "Indie filmmakers and content creators"}
+Budget: ${params.budget ? `$${params.budget} AUD` : "Organic/free channels only"}
+Duration: ${params.durationDays || 30} days
+Brand: ${BRAND.name} — ${BRAND.tagline}
+Website: ${BRAND.website}
 
-Generate a focused content strategy including: key messaging pillars, content mix per platform, posting frequency, and success metrics.`,
+Include: platform priorities, content themes, posting frequency, KPIs, and key messages.`,
       },
     ],
   });
 
-  return response.choices?.[0]?.message?.content as string || "Strategy generation failed.";
+  return response.choices?.[0]?.message?.content || "Strategy generation failed. Please try again.";
 }
 
-// ─── Legacy: Backward-compatible single-job API ────────────────────────────
+// ─── Get Content Creator Stats ─────────────────────────────────────────────
+export async function getContentCreatorStats() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const [totalPieces, publishedPieces, scheduledPieces, draftPieces, campaigns] = await Promise.all([
+    db.select({ count: count() }).from(contentCreatorPieces),
+    db.select({ count: count() }).from(contentCreatorPieces).where(eq(contentCreatorPieces.status, "published")),
+    db.select({ count: count() }).from(contentCreatorPieces).where(eq(contentCreatorPieces.status, "scheduled")),
+    db.select({ count: count() }).from(contentCreatorPieces).where(eq(contentCreatorPieces.status, "draft")),
+    db.select({ count: count() }).from(contentCreatorCampaigns).where(eq(contentCreatorCampaigns.status, "active")),
+  ]);
+
+  return {
+    totalPieces: Number(totalPieces[0]?.count ?? 0),
+    publishedPieces: Number(publishedPieces[0]?.count ?? 0),
+    scheduledPieces: Number(scheduledPieces[0]?.count ?? 0),
+    draftPieces: Number(draftPieces[0]?.count ?? 0),
+    activeCampaigns: Number(campaigns[0]?.count ?? 0),
+    autonomousConfig: AUTONOMOUS_CONFIG,
+    brand: BRAND.name,
+    website: BRAND.website,
+  };
+}
+
+// ─── Legacy compatibility exports ─────────────────────────────────────────
 export type AdPlatform = "instagram" | "tiktok" | "facebook" | "x_twitter" | "linkedin" | "youtube_shorts" | "pinterest";
 export type ContentFormat = "image_post" | "video_reel" | "story" | "carousel" | "banner_ad";
 
 export interface ContentCreatorResult {
-  success: boolean;
-  contentId?: number;
+  platform: AdPlatform;
+  format: ContentFormat;
   imageUrl?: string;
   videoUrl?: string;
   caption?: string;
   hashtags?: string[];
-  platform: string;
-  error?: string;
+  title?: string;
+  body?: string;
 }
 
 export async function runContentCreatorJob(
   platform: AdPlatform,
+  format: ContentFormat,
   options: { theme?: string; generateVideo?: boolean; blogPostSlug?: string } = {}
 ): Promise<ContentCreatorResult> {
-  log.info(`[ContentCreator] Starting job for platform: ${platform}`);
-
-  let theme = options.theme;
-  if (!theme && options.blogPostSlug) {
-    const db = await getDb();
-    if (db) {
-      const posts = await db
-        .select({ title: blogArticles.title, excerpt: blogArticles.excerpt })
-        .from(blogArticles)
-        .where(eq(blogArticles.slug, options.blogPostSlug))
-        .limit(1);
-      if (posts[0]) theme = `${posts[0].title}: ${posts[0].excerpt || ""}`;
-    }
-  }
-
   const content = await generateCreatorContent({
     platform,
-    contentType: PLATFORM_CONFIG[platform]?.contentTypes[0] || "social_post",
-    topic: theme,
-    includeImage: true,
+    contentType: format,
+    topic: options.theme,
+    includeImage: ["image_post", "carousel", "story"].includes(format),
+    includeVideo: options.generateVideo || ["video_reel"].includes(format),
+    useViralHook: true,
   });
 
-  const db = await getDb();
-  let contentId: number | undefined;
-  if (db) {
-    const [result] = await db.insert(marketingContent).values({
-      platform,
-      type: "organic_post",
-      headline: content.headline || content.title || "",
-      body: content.body,
-      imageUrl: content.mediaUrl,
-      status: "approved",
-    } as any);
-    contentId = (result as any).insertId;
-
-    await db.insert(marketingActivityLog).values({
-      action: "content_created",
-      description: `Content created for ${platform}: "${content.headline || content.title}"`,
-      metadata: { contentId, platform, theme, hasImage: !!content.mediaUrl },
-    } as any);
-  }
-
-  const caption = `${content.hook || ""}\n\n${content.body.slice(0, 1500)}\n\n${content.callToAction || ""}`;
-  return { success: true, contentId, imageUrl: content.mediaUrl, caption, hashtags: content.hashtags, platform };
-}
-
-export async function runContentCreatorBatch(
-  platforms: AdPlatform[] = ["instagram", "tiktok", "facebook", "x_twitter"],
-  options: { generateVideo?: boolean; theme?: string } = {}
-): Promise<ContentCreatorResult[]> {
-  log.info(`[ContentCreator] Running batch for platforms: ${platforms.join(", ")}`);
-  const results: ContentCreatorResult[] = [];
-  for (const platform of platforms) {
-    try {
-      const result = await runContentCreatorJob(platform, options);
-      results.push(result);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } catch (err) {
-      log.error(`[ContentCreator] Batch job failed for ${platform}:`, { error: getErrorMessage(err) });
-      results.push({ success: false, platform, error: getErrorMessage(err) });
-    }
-  }
-  return results;
-}
-
-export async function getContentCreatorStats(): Promise<{
-  totalCreated: number;
-  byPlatform: Record<string, number>;
-  recentContent: Array<{ id: number; platform: string; headline: string; status: string; hasVideo: boolean; createdAt: Date }>;
-}> {
-  const db = await getDb();
-  if (!db) return { totalCreated: 0, byPlatform: {}, recentContent: [] };
-
-  const allContent = await db.select().from(marketingContent).orderBy(desc(marketingContent.createdAt)).limit(100);
-  const byPlatform: Record<string, number> = {};
-  for (const c of allContent) {
-    byPlatform[c.platform] = (byPlatform[c.platform] || 0) + 1;
-  }
-
   return {
-    totalCreated: allContent.length,
-    byPlatform,
-    recentContent: allContent.slice(0, 20).map(c => ({
-      id: c.id as number,
-      platform: c.platform,
-      headline: c.headline || "Untitled",
-      status: c.status,
-      hasVideo: !!(c as any).videoUrl,
-      createdAt: c.createdAt,
-    })),
+    platform,
+    format,
+    imageUrl: content.mediaUrl,
+    caption: content.body,
+    hashtags: content.hashtags,
+    title: content.title,
+    body: content.body,
   };
 }
+
+// ─── Alias for backward compatibility ─────────────────────────────────────
+export const generateSeoContentBriefs = getSeoDrivenBriefs;

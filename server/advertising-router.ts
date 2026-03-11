@@ -488,4 +488,42 @@ export const advertisingRouter = router({
         .orderBy(desc(marketingPerformance.createdAt))
         .limit(100);
     }),
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // AUTONOMOUS CONTENT CONTROL
+  // ══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Manually trigger the full autonomous content generation cycle
+   * (generates cinematic content, scores it, auto-approves ≥ threshold,
+   *  schedules at optimal times, and posts TikTok-ready pieces)
+   */
+  triggerContentCycle: adminProcedure
+    .input(
+      z.object({
+        maxPiecesPerPlatform: z.number().min(1).max(10).default(2),
+        autoApproveThreshold: z.number().min(0).max(100).default(75),
+        autoSchedule: z.boolean().default(true),
+        autoPublishTikTok: z.boolean().default(true),
+      }).optional()
+    )
+    .mutation(async ({ input }) => {
+      const { runAutonomousContentCycle } = await import("./content-creator-engine");
+      return runAutonomousContentCycle(input ?? {
+        maxPiecesPerPlatform: 2,
+        autoApproveThreshold: 75,
+        autoSchedule: true,
+        autoPublishTikTok: true,
+      });
+    }),
+
+  /**
+   * Auto-approve all high-quality draft content pieces (score ≥ threshold)
+   */
+  autoApproveContent: adminProcedure
+    .input(z.object({ threshold: z.number().min(0).max(100).default(75) }).optional())
+    .mutation(async ({ input }) => {
+      const { autoApproveHighQualityContent } = await import("./content-creator-engine");
+      return autoApproveHighQualityContent(input?.threshold ?? 75);
+    }),
 });

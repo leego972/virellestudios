@@ -46,6 +46,8 @@ import {
   PlaySquare,
   Zap,
   PenTool,
+  BarChart3,
+  Search,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -73,6 +75,8 @@ const adminMenuItems = [
   { icon: Shield, label: "User Management", path: "/admin/users" },
   { icon: ShieldAlert, label: "Security", path: "/admin/security" },
   { icon: Zap, label: "Autonomous Pipeline", path: "/admin/autonomous" },
+  { icon: BarChart3, label: "Advertising", path: "/admin/advertising" },
+  { icon: Search, label: "SEO Dashboard", path: "/admin/seo" },
   { icon: Megaphone, label: "Campaign Manager", path: "/campaigns" },
   { icon: PenTool, label: "Content Creator", path: "/content-creator" },
 ];
