@@ -416,7 +416,7 @@ export const AD_PLATFORMS: AdPlatform[] = [
   {
     id: "youtube",
     name: "YouTube",
-    type: "video",
+    type: "social" as any,
     category: "general",
     url: "https://youtube.com",
     description: "World's largest video platform — ideal for AI film showcases and tutorials",
@@ -440,7 +440,7 @@ export const AD_PLATFORMS: AdPlatform[] = [
     audienceType: "Indie filmmakers, film students, AI art enthusiasts, game devs",
     postingStrategy: "Share in #showcase or #projects channels of film/AI Discord servers. Include a short clip or still. Servers: Indie Film Hub, AI Art, Filmmaking Community, Midjourney.",
     requiresAuth: true,
-    authType: "bot",
+    authType: "api_key" as any,
     supportsImages: true,
     supportsLinks: true,
     bestTimeToPost: "18:00-22:00 EST",

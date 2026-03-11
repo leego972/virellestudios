@@ -63,4 +63,18 @@ export const ENV = {
   redditAccessToken: process.env.REDDIT_ACCESS_TOKEN ?? "",
   pinterestAccessToken: process.env.PINTEREST_ACCESS_TOKEN ?? "",
   pinterestAdAccountId: process.env.PINTEREST_AD_ACCOUNT_ID ?? "",
+  // Expanded channels
+  devtoApiKey: process.env.DEVTO_API_KEY ?? "",
+  mediumAccessToken: process.env.MEDIUM_ACCESS_TOKEN ?? "",
+  mediumAuthorId: process.env.MEDIUM_AUTHOR_ID ?? "",
+  hashnodeToken: process.env.HASHNODE_TOKEN ?? "",
+  hashnodePublicationId: process.env.HASHNODE_PUBLICATION_ID ?? "",
+  discordBotToken: process.env.DISCORD_BOT_TOKEN ?? "",
+  discordChannelId: process.env.DISCORD_CHANNEL_ID ?? "",
+  mastodonAccessToken: process.env.MASTODON_ACCESS_TOKEN ?? "",
+  mastodonInstanceUrl: process.env.MASTODON_INSTANCE_URL ?? "https://infosec.exchange",
+  telegramBotToken: process.env.TELEGRAM_BOT_TOKEN ?? "",
+  telegramChannelId: process.env.TELEGRAM_CHANNEL_ID ?? "",
+  whatsappAccessToken: process.env.WHATSAPP_ACCESS_TOKEN ?? "",
+  whatsappPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID ?? "",
 };

@@ -245,7 +245,7 @@ export default function CampaignManager() {
   const platforms = platformsQuery.data?.platforms || [];
   const platformsByCategory = platformsQuery.data?.byCategory || {};
   const campaigns = campaignsQuery.data || [];
-  const selectedCampaign = campaigns.find(c => c.id === selectedCampaignId);
+  const selectedCampaign = campaigns.find((c: any) => c.id === selectedCampaignId);
   const analytics = analyticsQuery.data;
 
   // Select all platforms in a category
@@ -909,7 +909,7 @@ export default function CampaignManager() {
                       <div className="space-y-3">
                         {(analytics?.contentTypeBreakdown || []).map((item: any) => {
                           const maxCount = Math.max(...(analytics?.contentTypeBreakdown || []).map((i: any) => i.count));
-                          const ct = CONTENT_TYPES.find(c => c.value === item.type);
+                          const ct = CONTENT_TYPES.find((c: any) => c.value === item.type);
                           return (
                             <div key={item.type} className="space-y-1">
                               <div className="flex items-center justify-between text-sm">

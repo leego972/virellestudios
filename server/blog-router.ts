@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
-import { blogPosts, blogCategories } from "../drizzle/schema";
+import { blogArticles } from "../drizzle/schema";
 import { eq, desc, sql, like, and, or } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 
@@ -22,30 +22,30 @@ export const blogRouter = router({
       const limit = input?.limit ?? 10;
       const offset = (page - 1) * limit;
 
-      const conditions = [eq(blogPosts.status, "published")];
+      const conditions = [eq(blogArticles.status, "published")];
       if (input?.category) {
-        conditions.push(eq(blogPosts.category, input.category));
+        conditions.push(eq(blogArticles.category, input.category));
       }
       if (input?.search) {
         conditions.push(
           or(
-            like(blogPosts.title, `%${input.search}%`),
-            like(blogPosts.excerpt, `%${input.search}%`)
+            like(blogArticles.title, `%${input.search}%`),
+            like(blogArticles.excerpt, `%${input.search}%`)
           )!
         );
       }
 
       const posts = await db
         .select()
-        .from(blogPosts)
+        .from(blogArticles)
         .where(and(...conditions))
-        .orderBy(desc(blogPosts.publishedAt))
+        .orderBy(desc(blogArticles.publishedAt))
         .limit(limit)
         .offset(offset);
 
       const [{ count }] = await db
         .select({ count: sql<number>`count(*)` })
-        .from(blogPosts)
+        .from(blogArticles)
         .where(and(...conditions));
 
       return { posts, total: count, page, totalPages: Math.ceil(count / limit) };
@@ -59,17 +59,17 @@ export const blogRouter = router({
       if (!db) throw new Error("Database not available");
       const [post] = await db
         .select()
-        .from(blogPosts)
-        .where(eq(blogPosts.slug, input.slug))
+        .from(blogArticles)
+        .where(eq(blogArticles.slug, input.slug))
         .limit(1);
 
       if (!post) return null;
 
       // Increment view count
       await db
-        .update(blogPosts)
-        .set({ viewCount: sql`${blogPosts.viewCount} + 1` })
-        .where(eq(blogPosts.id, post.id));
+        .update(blogArticles)
+        .set({ viewCount: sql`${blogArticles.viewCount} + 1` })
+        .where(eq(blogArticles.id, post.id));
 
       return post;
     }),
@@ -78,7 +78,7 @@ export const blogRouter = router({
   listCategories: publicProcedure.query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
-    return db.select().from(blogCategories).orderBy(blogCategories.name);
+    return db.select().from(blogArticles).orderBy(blogArticles.title);
   }),
 
   // ── Admin: List all posts (including drafts) ──
@@ -97,22 +97,22 @@ export const blogRouter = router({
 
       const conditions = [];
       if (input?.status) {
-        conditions.push(eq(blogPosts.status, input.status));
+        conditions.push(eq(blogArticles.status, input.status));
       }
 
       const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
       const posts = await db
         .select()
-        .from(blogPosts)
+        .from(blogArticles)
         .where(whereClause)
-        .orderBy(desc(blogPosts.createdAt))
+        .orderBy(desc(blogArticles.createdAt))
         .limit(limit)
         .offset(offset);
 
       const [{ count }] = await db
         .select({ count: sql<number>`count(*)` })
-        .from(blogPosts)
+        .from(blogArticles)
         .where(whereClause);
 
       return { posts, total: count, page, totalPages: Math.ceil(count / limit) };
@@ -140,31 +140,31 @@ export const blogRouter = router({
       if (!db) throw new Error("Database not available");
       const seoScore = calculateSeoScore(input);
 
-      await db.insert(blogPosts).values({
+      await db.insert(blogArticles).values({
         ...input,
         seoScore,
         readingTimeMinutes: Math.ceil(input.content.split(/\s+/).length / 200),
         publishedAt: input.status === "published" ? new Date() : null,
-      });
+      } as any);
 
       // Update category post count
       const existing = await db
         .select()
-        .from(blogCategories)
-        .where(eq(blogCategories.slug, input.category))
+        .from(blogArticles)
+        .where(eq(blogArticles.slug, input.category))
         .limit(1);
 
       if (existing.length === 0) {
-        await db.insert(blogCategories).values({
+        await db.insert(blogArticles).values({
           name: input.category.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
           slug: input.category,
-          postCount: 1,
-        });
+          // postCount: 1,
+        } as any);
       } else {
         await db
-          .update(blogCategories)
-          .set({ postCount: sql`${blogCategories.postCount} + 1` })
-          .where(eq(blogCategories.slug, input.category));
+          .update(blogArticles)
+          .set({ updatedAt: new Date() })
+          .where(eq(blogArticles.slug, input.category));
       }
 
       return { success: true };
@@ -213,7 +213,7 @@ export const blogRouter = router({
         updateData.readingTimeMinutes = Math.ceil(updates.content.split(/\s+/).length / 200);
       }
 
-      await db.update(blogPosts).set(updateData).where(eq(blogPosts.id, id));
+      await db.update(blogArticles).set(updateData).where(eq(blogArticles.id, id));
       return { success: true };
     }),
 
@@ -223,7 +223,7 @@ export const blogRouter = router({
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      await db.delete(blogPosts).where(eq(blogPosts.id, input.id));
+      await db.delete(blogArticles).where(eq(blogArticles.id, input.id));
       return { success: true };
     }),
 
@@ -237,8 +237,6 @@ export const blogRouter = router({
     }))
     .mutation(async ({ input }) => {
       const response = await invokeLLM({
-        systemTag: "misc",
-      model: "fast",
         messages: [
           {
             role: "system",
@@ -320,8 +318,6 @@ Tone: ${input.tone}`
       for (const topicConfig of input.topics) {
         try {
           const response = await invokeLLM({
-            systemTag: "misc",
-      model: "fast",
             messages: [
               {
                 role: "system",
@@ -366,7 +362,7 @@ Tone: ${input.tone}`
             excerpt: generated.excerpt,
           });
 
-          await db.insert(blogPosts).values({
+          await db.insert(blogArticles).values({
             title: generated.title,
             slug: generated.slug,
             excerpt: generated.excerpt,
@@ -382,26 +378,26 @@ Tone: ${input.tone}`
             status: "published",
             publishedAt: new Date(),
             aiGenerated: true,
-          });
+          } as any);
 
           // Ensure category exists
           const existing = await db
             .select()
-            .from(blogCategories)
-            .where(eq(blogCategories.slug, topicConfig.category))
+            .from(blogArticles)
+            .where(eq(blogArticles.slug, topicConfig.category))
             .limit(1);
 
           if (existing.length === 0) {
-            await db.insert(blogCategories).values({
+            await db.insert(blogArticles).values({
               name: topicConfig.category.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
               slug: topicConfig.category,
-              postCount: 1,
-            });
+              // postCount: 1,
+            } as any);
           } else {
             await db
-              .update(blogCategories)
-              .set({ postCount: sql`${blogCategories.postCount} + 1` })
-              .where(eq(blogCategories.slug, topicConfig.category));
+              .update(blogArticles)
+              .set({ updatedAt: new Date() })
+              .where(eq(blogArticles.slug, topicConfig.category));
           }
 
           results.push({ title: generated.title, slug: generated.slug, status: "published" });
@@ -417,11 +413,11 @@ Tone: ${input.tone}`
   stats: adminProcedure.query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
-    const [totalResult] = await db.select({ count: sql<number>`count(*)` }).from(blogPosts);
-    const [publishedResult] = await db.select({ count: sql<number>`count(*)` }).from(blogPosts).where(eq(blogPosts.status, "published"));
-    const [draftResult] = await db.select({ count: sql<number>`count(*)` }).from(blogPosts).where(eq(blogPosts.status, "draft"));
-    const [viewsResult] = await db.select({ total: sql<number>`COALESCE(SUM(viewCount), 0)` }).from(blogPosts);
-    const [avgSeoResult] = await db.select({ avg: sql<number>`COALESCE(AVG(seoScore), 0)` }).from(blogPosts);
+    const [totalResult] = await db.select({ count: sql<number>`count(*)` }).from(blogArticles);
+    const [publishedResult] = await db.select({ count: sql<number>`count(*)` }).from(blogArticles).where(eq(blogArticles.status, "published"));
+    const [draftResult] = await db.select({ count: sql<number>`count(*)` }).from(blogArticles).where(eq(blogArticles.status, "draft"));
+    const [viewsResult] = await db.select({ total: sql<number>`COALESCE(SUM(viewCount), 0)` }).from(blogArticles);
+    const [avgSeoResult] = await db.select({ avg: sql<number>`COALESCE(AVG(seoScore), 0)` }).from(blogArticles);
 
     return {
       total: totalResult.count,

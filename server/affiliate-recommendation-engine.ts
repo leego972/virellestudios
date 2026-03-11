@@ -1,3 +1,4 @@
+const KNOWN_AFFILIATE_PROGRAMS: Array<{domain: string; affiliateUrl: string}> = [];
 /**
  * Contextual Affiliate Recommendation Engine
  * 
@@ -15,7 +16,7 @@
  * 4. Inject into system prompt so LLM weaves it in organically
  */
 
-import { KNOWN_AFFILIATE_PROGRAMS, CONTEXTUAL_PLACEMENTS } from "./affiliate-engine";
+
 import type { Message } from "./_core/llm";
 
 // ─── Project Domain Detection ──────────────────────────────────────
@@ -294,8 +295,8 @@ export function generateRecommendationContext(
     if (!affiliateData) continue;
 
     // Get affiliate URLs for the top picks
-    const recommendations = affiliateData.topPicks.map(pick => {
-      const program = KNOWN_AFFILIATE_PROGRAMS.find(p => p.domain === pick.domain);
+    const recommendations = affiliateData.topPicks.map((pick: any) => {
+      const program = KNOWN_AFFILIATE_PROGRAMS.find((p: any) => p.domain === pick.domain);
       const url = program?.affiliateUrl || `https://${pick.domain}`;
       return {
         ...pick,

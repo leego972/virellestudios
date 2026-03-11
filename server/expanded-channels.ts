@@ -165,7 +165,7 @@ export const mediumAdapter = {
 
 export const hashnodeAdapter = {
   get isConfigured() {
-    return !!(ENV.hashnodeApiKey && ENV.hashnodePublicationId);
+    return !!(ENV.hashnodeToken && ENV.hashnodePublicationId);
   },
 
   /**
@@ -216,7 +216,7 @@ export const hashnodeAdapter = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: ENV.hashnodeApiKey,
+          Authorization: ENV.hashnodeToken,
         },
         body: JSON.stringify({ query: mutation, variables }),
       });
@@ -251,7 +251,7 @@ export const hashnodeAdapter = {
 
 export const discordAdapter = {
   get isConfigured() {
-    return !!ENV.discordWebhookUrl;
+    return !!ENV.discordBotToken;
   },
 
   /**
@@ -276,7 +276,7 @@ export const discordAdapter = {
       return { success: false, error: "Discord webhook not configured. Add DISCORD_WEBHOOK_URL in Settings → Secrets." };
     }
     try {
-      const response = await fetch(ENV.discordWebhookUrl, {
+      const response = await fetch(ENV.discordBotToken, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

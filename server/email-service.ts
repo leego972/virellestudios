@@ -7,8 +7,8 @@
  */
 
 import { notifyOwner } from "./_core/notification";
-import { createLogger } from "./_core/logger.js";
-const log = createLogger("EmailService");
+import { logger } from "./_core/logger";
+const log = logger;
 
 export interface EmailOptions {
   to: string;

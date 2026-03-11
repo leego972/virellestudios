@@ -181,7 +181,7 @@ async function startServer() {
             await db.updateUserSubscription(userId, {
               stripeCustomerId: customerId,
               stripeSubscriptionId: subscriptionId,
-              subscriptionTier: tier,
+              subscriptionTier: tier as any,
               subscriptionStatus: "active",
               subscriptionCurrentPeriodEnd: new Date((sub as any).current_period_end * 1000),
             });
@@ -213,7 +213,7 @@ async function startServer() {
             const existingUser = await db.getUserById(userId);
             const isUpgrade = existingUser && existingUser.subscriptionTier !== tier;
             await db.updateUserSubscription(userId, {
-              subscriptionTier: status === "active" || status === "trialing" ? tier : "independent",
+              subscriptionTier: (status === "active" || status === "trialing" ? tier : "independent") as any,
               subscriptionStatus: status,
               subscriptionCurrentPeriodEnd: new Date(sub.current_period_end * 1000),
             });
@@ -252,7 +252,7 @@ async function startServer() {
               const priceId = sub.items.data[0]?.price?.id || "";
               const tier = priceIdToTier(priceId);
               await db.updateUserSubscription(user.id, {
-                subscriptionTier: tier,
+                subscriptionTier: tier as any,
                 subscriptionStatus: "active",
                 subscriptionCurrentPeriodEnd: new Date((sub as any).current_period_end * 1000),
               });
@@ -359,8 +359,8 @@ async function startServer() {
       const { getDb } = await import("../db");
       const { sql } = await import("drizzle-orm");
       const db = await getDb();
-      await db.execute(sql.raw(`UPDATE users SET creditBalance = creditBalance + ${parseInt(amount)} WHERE id = ${parseInt(userId)}`));
-      const [rows] = await db.execute(sql.raw(`SELECT creditBalance FROM users WHERE id = ${parseInt(userId)}`));
+      await db!.execute(sql.raw(`UPDATE users SET creditBalance = creditBalance + ${parseInt(amount)} WHERE id = ${parseInt(userId)}`));
+      const [rows] = await db!.execute(sql.raw(`SELECT creditBalance FROM users WHERE id = ${parseInt(userId)}`));
       const newBalance = (rows as any)?.[0]?.creditBalance || 0;
       res.json({ status: "ok", userId: parseInt(userId), creditsAdded: parseInt(amount), newBalance });
     } catch (e: any) {
@@ -378,10 +378,10 @@ async function startServer() {
       const { sql } = await import("drizzle-orm");
       const db = await getDb();
       // Delete all scenes for this project
-      await db.execute(sql.raw(`DELETE FROM scenes WHERE projectId = ${parseInt(projectId)}`));
+      await db!.execute(sql.raw(`DELETE FROM scenes WHERE projectId = ${parseInt(projectId)}`));
       // Update duration and reset status
       const dur = duration ? parseInt(duration) : 1;
-      await db.execute(sql.raw(`UPDATE projects SET duration = ${dur}, status = 'draft' WHERE id = ${parseInt(projectId)}`));
+      await db!.execute(sql.raw(`UPDATE projects SET duration = ${dur}, status = 'draft' WHERE id = ${parseInt(projectId)}`));
       res.json({ status: "ok", projectId: parseInt(projectId), duration: dur, scenesDeleted: true });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
