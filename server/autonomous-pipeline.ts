@@ -31,7 +31,7 @@
 import { getDb } from "./db";
 import { logger } from "./_core/logger";
 import { sql } from "drizzle-orm";
-import { runContentCreatorBatch, type AdPlatform } from "./content-creator-engine";
+import { runContentCreatorBatch, processDueSchedules, type AdPlatform } from "./content-creator-engine";
 import { runAutonomousCycle as runMarketingCycle } from "./marketing-engine";
 import { runScheduledSeoOptimization } from "./seo-engine";
 import { postToAllChannels } from "./marketing-channels";
@@ -362,6 +362,16 @@ export async function runAutonomousPipeline(
     const distributionStage = await runDistributionStage(config);
     stages.push(distributionStage);
     if (distributionStage.error) errors.push(`Distribution: ${distributionStage.error}`);
+
+    // Stage 2b: Process due scheduled content posts (content calendar)
+    try {
+      const dueResult = await processDueSchedules();
+      if (dueResult.processed > 0) {
+        log.info(`[Pipeline] Processed ${dueResult.processed} scheduled content posts (${dueResult.published} published, ${dueResult.failed} failed)`);
+      }
+    } catch (schedErr) {
+      log.warn("[Pipeline] processDueSchedules failed (non-critical):", { error: String(schedErr) });
+    }
 
     // Stage 3: SEO (optional)
     if (config.runSeoOptimisation) {

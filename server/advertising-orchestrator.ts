@@ -73,42 +73,37 @@ const FREE_CHANNELS = [
   "affiliate_network",
   "email_nurture",
   "product_hunt",
-  "github_presence",
+  "youtube_presence",
   "backlink_outreach",
   "forum_participation",
   "tiktok_organic",
   "pinterest_organic",
   "linkedin_organic",
-  "devto_crosspost",
-  "quora_answers",
   "medium_republish",
+  "quora_answers",
+  "reddit_film",
   "youtube_shorts",
   "discord_community",
   "skool_community",
   "indiehackers",
-  "lobsters",
+  "vimeo_community",
   "hashnode_crosspost",
-  "github_discussions",
-  "mastodon_infosec",
+  "behance_portfolio",
+  "mastodon_creative",
   "telegram_channel",
   "hackernews_submit",
-  "twitch_dev",
+  "twitch_creative",
   "slack_communities",
-  "xda_forums",
-  "spiceworks",
-  "bugcrowd_community",
-  "steam_community",
-  "lemmy_fediverse",
+  "filmfreeway_community",
+  "letterboxd_community",
   "whatsapp_broadcast",
-  "hackforums",
-  "0x00sec",
-  "nullbyte",
-  "hackthebox_community",
-  "tryhackme_community",
-  "owasp_community",
-  "offensive_security",
-  "ctftime",
-  "breachforums_alt",
+  "no_film_school",
+  "cinema5d_community",
+  "indiewire_community",
+  "stage32_community",
+  "mandy_network",
+  "shooting_people",
+  "creative_cow",
 ] as const;
 
 type FreeChannel = (typeof FREE_CHANNELS)[number];
@@ -116,190 +111,182 @@ type FreeChannel = (typeof FREE_CHANNELS)[number];
 // Content topics that drive organic traffic for cybersecurity SaaS
 const CONTENT_PILLARS = [
   {
-    pillar: "API Key Security",
-    keywords: ["api key management", "secure api keys", "api key rotation", "api key vault", "credential management tool"],
+    pillar: "AI Filmmaking & Scene Generation",
+    keywords: ["AI film generator", "AI scene generation", "text to video AI", "AI cinematic production", "AI movie maker"],
     blogTopics: [
-      "How to Securely Store API Keys in 2026",
-      "API Key Rotation Best Practices for DevOps Teams",
-      "The Hidden Cost of Leaked API Keys",
-      "Why Developers Need a Credential Manager",
-      "API Key Security Checklist for Startups",
+      "How to Make a Cinematic Short Film with AI in 2026",
+      "AI Scene Generation: A Complete Beginner's Guide",
+      "The Best AI Film Generators Compared: VirÉlle vs Runway vs Sora",
+      "How Indie Filmmakers Are Using AI to Cut Production Costs by 90%",
+      "From Script to Screen: AI-Powered Film Production Workflow",
     ],
-    socialAngles: ["security tips", "dev productivity", "horror stories of leaked keys"],
+    socialAngles: ["behind-the-scenes AI generation", "before vs after AI", "filmmaker success stories"],
   },
   {
-    pillar: "Cloud Security",
-    keywords: ["cloud credential management", "multi-cloud security", "aws key management", "gcp api keys", "azure secrets"],
+    pillar: "AI Character Creation & Animation",
+    keywords: ["AI character creation", "AI actor generation", "digital human AI", "AI character animation", "virtual actor"],
     blogTopics: [
-      "Managing Credentials Across AWS, GCP, and Azure",
-      "Cloud Security Mistakes That Cost Companies Millions",
-      "How to Audit Your Cloud API Keys in 5 Minutes",
-      "Multi-Cloud Credential Management Made Simple",
-      "Zero Trust Architecture for API Credentials",
+      "How to Create Photorealistic AI Characters for Your Film",
+      "AI Actors vs Real Actors: The Future of Casting",
+      "Building Consistent AI Characters Across Multiple Scenes",
+      "The Ethics of AI Actors in Commercial Production",
+      "AI Character Animation: From Static Image to Cinematic Performance",
     ],
-    socialAngles: ["cloud migration tips", "security audit guides", "cost savings"],
+    socialAngles: ["character creation demos", "AI actor comparisons", "digital human showcases"],
   },
   {
-    pillar: "Developer Tools",
-    keywords: ["developer security tools", "devsecops tools", "credential scanning", "secret detection", "developer productivity"],
+    pillar: "Cinematic Lighting & Visual Effects",
+    keywords: ["AI visual effects", "AI cinematography", "cinematic lighting AI", "AI VFX", "AI colour grading"],
     blogTopics: [
-      "Top 10 Security Tools Every Developer Needs in 2026",
-      "How to Prevent Secret Leaks in Git Repositories",
-      "DevSecOps: Shifting Security Left Without Slowing Down",
-      "Automating Credential Rotation with Archibald Titan",
-      "The Developer's Guide to Secure Coding Practices",
+      "Mastering Cinematic Lighting with AI: A Director's Guide",
+      "AI Visual Effects That Used to Cost $500K — Now Free",
+      "How to Achieve Hollywood-Quality Colour Grading with AI",
+      "AI Cinematography: Recreating Iconic Film Looks with Prompts",
+      "The Future of VFX: How AI is Democratising Visual Effects",
     ],
-    socialAngles: ["tool comparisons", "workflow optimization", "security automation"],
+    socialAngles: ["lighting breakdowns", "VFX before/after", "cinematic style tutorials"],
   },
   {
-    pillar: "Cybersecurity Trends",
-    keywords: ["cybersecurity trends 2026", "api security threats", "credential theft prevention", "zero day exploits", "security automation"],
+    pillar: "AI Video for Advertising & Brand Content",
+    keywords: ["AI video advertising", "AI commercial production", "AI brand video", "AI product visualisation", "AI marketing video"],
     blogTopics: [
-      "Cybersecurity Trends to Watch in 2026",
-      "How AI is Changing Credential Security",
-      "The Rise of Automated Credential Theft",
-      "Why Traditional Password Managers Aren't Enough for Developers",
-      "Building a Security-First Development Culture",
+      "How Brands Are Using AI Video to Cut Ad Production Costs",
+      "AI-Generated Commercials: Case Studies from Leading Brands",
+      "Creating High-Converting Social Media Video Ads with AI",
+      "AI Product Visualisation: Show Your Product Before It Exists",
+      "The ROI of AI Video Production vs Traditional Agency Costs",
     ],
-    socialAngles: ["trend analysis", "threat intelligence", "industry predictions"],
+    socialAngles: ["ad production cost savings", "brand video showcases", "ROI comparisons"],
   },
   {
-    pillar: "Compliance & Governance",
-    keywords: ["api key compliance", "soc2 credential management", "gdpr api security", "security compliance tools", "audit trail credentials"],
+    pillar: "Filmmaking Tools & Workflow",
+    keywords: ["filmmaking software 2026", "AI storyboard generator", "AI script to video", "film production tools", "AI director tools"],
     blogTopics: [
-      "SOC 2 Compliance for API Key Management",
-      "GDPR and API Credentials: What You Need to Know",
-      "How to Build an Audit Trail for Your API Keys",
-      "Compliance Automation for Development Teams",
-      "Security Governance Best Practices for SaaS Companies",
+      "Top 10 AI Tools Every Filmmaker Needs in 2026",
+      "How to Build a Complete AI Film Production Pipeline",
+      "AI Storyboarding: From Script to Visual in Minutes",
+      "The Indie Filmmaker's Complete AI Toolkit",
+      "How AI is Changing the Film Industry: A 2026 Report",
     ],
-    socialAngles: ["compliance guides", "regulatory updates", "audit preparation"],
+    socialAngles: ["tool comparisons", "workflow tutorials", "production speed demos"],
   },
 ];
-
 // Community platforms for free engagement
 const COMMUNITY_TARGETS = {
   reddit: {
     subreddits: [
-      "r/cybersecurity", "r/netsec", "r/devops", "r/programming",
-      "r/webdev", "r/sysadmin", "r/aws", "r/googlecloud",
-      "r/kubernetes", "r/devsecops", "r/selfhosted",
+      "r/filmmaking",
+      "r/videography",
+      "r/cinematography",
+      "r/AIVideo",
+      "r/artificial",
+      "r/StableDiffusion",
+      "r/MediaSynthesis",
+      "r/indiefilm",
+      "r/VideoEditing",
+      "r/MotionDesign",
+      "r/vfx",
+      "r/animation",
+      "r/Screenwriting",
+      "r/shortfilm",
+      "r/contentcreation",
     ],
-    strategy: "Provide genuine value in comments, share expertise, occasionally mention Titan when relevant",
-  },
-  hackernews: {
-    strategy: "Submit blog posts, engage in security discussions, share Show HN when launching features",
+    strategy: "Share genuine filmmaking tips, AI generation tutorials, and behind-the-scenes content. Provide value first, mention VirÉlle only when naturally relevant.",
   },
   devto: {
-    strategy: "Cross-post blog articles, engage with developer community, build following",
+    strategy: "Cross-post technical articles about AI video generation APIs, prompt engineering for film, and building AI production pipelines.",
   },
   producthunt: {
-    strategy: "Launch new features as Product Hunt posts, engage with upvoters",
+    strategy: "Launch new features as Product Hunt posts — new AI models, rendering upgrades, character generation improvements. Engage with upvoters.",
   },
-  github: {
-    strategy: "Open source security tools, contribute to security projects, build stars",
+  youtube: {
+    strategy: "Tutorial videos on AI filmmaking techniques, scene generation walkthroughs, and cinematic prompt engineering. Build a subscriber base of filmmakers.",
   },
   stackoverflow: {
-    strategy: "Answer API key and credential management questions, build reputation",
+    strategy: "Answer questions about AI video generation APIs, video processing pipelines, and creative AI integration.",
   },
   twitter: {
-    strategy: "Daily security tips, thread breakdowns of breaches, engage with infosec community",
+    strategy: "Daily AI film showcases, cinematic prompt tips, filmmaker spotlights, and trending AI video discussions. Engage with the AI art and film community.",
   },
   tiktok: {
-    strategy: "60-second security tip videos, screen recordings of Titan features, trending audio hooks",
+    strategy: "60-second AI film generation demos, before/after comparisons, cinematic prompt tutorials, trending audio hooks with AI visuals.",
   },
   youtube_shorts: {
-    strategy: "Quick security demos, API key horror stories, tool comparisons under 60 seconds",
+    strategy: "Quick AI generation demos, cinematic style tutorials, filmmaker tips under 60 seconds.",
   },
   linkedin: {
-    strategy: "Thought leadership posts, security breach analysis, CTO-level insights on credential management",
+    strategy: "Thought leadership on AI's impact on film production, brand video ROI, and the future of commercial content creation. Target CMOs, creative directors, and studio heads.",
   },
   pinterest: {
-    strategy: "Security infographics, cheat sheets, visual guides on API security best practices",
+    strategy: "Cinematic mood boards, AI film stills, visual style guides, and production design inspiration. High visual impact for the creative audience.",
   },
   medium: {
-    strategy: "Republish blog posts with canonical URLs, reach 100M+ monthly readers",
+    strategy: "Republish in-depth articles about AI filmmaking, cinematic AI techniques, and the business of AI production. Reach 100M+ monthly readers.",
   },
   hashnode: {
-    strategy: "Cross-post developer-focused articles, engage with Hashnode dev community",
+    strategy: "Cross-post technical articles about AI video APIs, generation pipelines, and developer integrations for the creative tech community.",
   },
   discord: {
-    strategy: "Daily security tips, community Q&A, feature announcements in cybersecurity servers",
+    strategy: "Daily AI film showcases, community challenges, generation tips, and feature announcements in filmmaking and AI art Discord servers.",
   },
   mastodon: {
-    strategy: "Infosec community engagement on infosec.exchange, privacy-focused audience",
+    strategy: "Engage with the creative AI and indie film community on mastodon.social and merveilles.town. Privacy-respecting, authentic engagement.",
   },
   telegram: {
-    strategy: "Broadcast security alerts, product updates, and tips to channel subscribers",
+    strategy: "Broadcast new AI film showcases, generation tips, product updates, and exclusive previews to channel subscribers.",
   },
   skool: {
-    strategy: "Free cybersecurity course content, community discussions, funnel to paid tier",
+    strategy: "Free AI filmmaking course content, community challenges, and prompt engineering lessons. Funnel engaged learners to the Pro tier.",
   },
   indiehackers: {
-    strategy: "Building-in-public updates, revenue milestones, growth experiments",
+    strategy: "Building-in-public updates about VirÉlle Studios growth, revenue milestones, AI model improvements, and lessons from building a creative AI SaaS.",
   },
-  lobsters: {
-    strategy: "Technical security articles, tool announcements for invite-only tech community",
+  vimeo: {
+    strategy: "Showcase high-quality AI-generated films and shorts on Vimeo. Engage with the professional filmmaker community. Build a portfolio of AI cinema.",
+  },
+  behance: {
+    strategy: "Portfolio showcases of AI-generated cinematic work. Target visual artists, directors, and creative directors who use Behance for inspiration.",
   },
   quora: {
-    strategy: "Expert answers to API security, credential management, and cybersecurity questions",
+    strategy: "Expert answers to questions about AI filmmaking, video generation, and the future of cinema. Build authority in the AI creative space.",
   },
   twitch: {
-    strategy: "Live coding security tools, bug bounty streams, Titan feature demos",
+    strategy: "Live AI film generation sessions, real-time prompt engineering, and collaborative filmmaking streams. Build an engaged creative audience.",
   },
   slack_communities: {
-    strategy: "Value-first engagement in DevOps, Cloud Security, and OWASP Slack workspaces",
+    strategy: "Value-first engagement in filmmaking, advertising, and creative production Slack workspaces. Share tips, resources, and answer questions.",
   },
-  xda: {
-    strategy: "Mobile security guides, app credential management tutorials",
+  filmfreeway: {
+    strategy: "Engage with the independent film festival community. Share AI-generated short films, participate in discussions, build credibility in indie film.",
   },
-  spiceworks: {
-    strategy: "IT admin security discussions, enterprise credential management advice",
-  },
-  bugcrowd: {
-    strategy: "Security research posts, vulnerability disclosure best practices",
-  },
-  steam: {
-    strategy: "Gaming account security guides, 2FA setup tutorials, anti-phishing tips",
-  },
-  lemmy: {
-    strategy: "Privacy-focused security discussions, open-source security tool recommendations",
-  },
-  github_discussions: {
-    strategy: "Help developers with credential management questions in popular repos",
+  letterboxd: {
+    strategy: "Engage with the cinephile community. Share AI film reviews, cinematic style analyses, and discussions about AI's role in cinema.",
   },
   whatsapp: {
-    strategy: "Broadcast security alerts, weekly tips, and product updates to opted-in subscribers via WhatsApp Business",
+    strategy: "Broadcast weekly AI filmmaking tips, new generation showcases, and product updates to opted-in subscribers via WhatsApp Business.",
   },
-  hackforums: {
-    strategy: "Position Titan as the go-to AI for credential management, automation, and security research. Share tools, scripts, and tutorials that showcase Titan's capabilities",
+  no_film_school: {
+    strategy: "Share practical AI filmmaking tutorials, gear comparisons, and production tips for the No Film School audience of indie filmmakers.",
   },
-  "0x00sec": {
-    strategy: "Share advanced security research, reverse engineering insights, and exploit development tutorials. Position Titan as essential infrastructure for security researchers",
+  cinema5d: {
+    strategy: "Technical articles and discussions about AI camera simulation, virtual cinematography, and AI post-production for the Cinema5D professional audience.",
   },
-  nullbyte: {
-    strategy: "Post beginner-to-intermediate hacking tutorials that naturally integrate Titan for credential management and automation. WonderHowTo/Null Byte audience loves step-by-step guides",
+  indiewire: {
+    strategy: "Thought leadership on AI's impact on independent film, distribution, and the future of cinema for the IndieWire audience of film professionals.",
   },
-  hackthebox: {
-    strategy: "Share CTF writeups, machine walkthroughs, and penetration testing tips. Show how Titan manages API keys and credentials during engagements",
+  stage32: {
+    strategy: "Engage with the Stage 32 community of screenwriters, directors, and producers. Share AI production resources and build industry relationships.",
   },
-  tryhackme: {
-    strategy: "Create learning path content, room walkthroughs, and security tool tutorials. Position Titan as a learning companion for aspiring security professionals",
+  mandy: {
+    strategy: "Connect with the Mandy.com community of film crew and production professionals. Share AI production opportunities and resources.",
   },
-  owasp: {
-    strategy: "Contribute to OWASP projects, share application security research, and participate in chapter meetings. Build credibility through genuine open-source contributions",
+  shooting_people: {
+    strategy: "Engage with the Shooting People indie film community. Share AI filmmaking resources, casting calls for AI productions, and community discussions.",
   },
-  offensive_security: {
-    strategy: "Share OSCP/OSCE prep tips, penetration testing methodologies, and red team tooling. Position Titan as essential for managing engagement credentials",
-  },
-  ctftime: {
-    strategy: "Post CTF event announcements, writeups, and team recruitment. Build presence in the competitive hacking community",
-  },
-  breachforums_alt: {
-    strategy: "Monitor breach notification communities for trending security topics. Generate content addressing current threats and how Titan protects against them",
+  creative_cow: {
+    strategy: "Technical discussions about AI video production, post-production workflows, and AI tool integrations for the Creative COW professional community.",
   },
 };
-
 // ============================================
 // TYPES
 // ============================================
@@ -347,200 +334,192 @@ export interface GrowthStrategy {
 export const GROWTH_STRATEGIES: GrowthStrategy[] = [
   {
     channel: "seo_organic",
-    frequency: "Daily auto-optimization",
-    description: "Automated SEO health checks, keyword tracking, meta tag optimization, sitemap updates, and structured data maintenance via the SEO Engine",
+    frequency: "Daily",
+    description: "AI-powered SEO optimization for filmmaking and AI video keywords. Target high-intent searches from indie filmmakers, agencies, and studios.",
     expectedImpact: "high",
     costPerMonth: 0,
     automatable: true,
   },
   {
     channel: "blog_content",
-    frequency: "3 posts per week",
-    description: "AI-generated long-form SEO blog posts targeting high-intent keywords across 5 content pillars. Each post is optimized for search and includes internal links to product pages",
+    frequency: "3x per week",
+    description: "Generate SEO-optimized blog posts about AI filmmaking, cinematic techniques, AI character creation, and the future of cinema.",
+    expectedImpact: "high",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "tiktok_organic",
+    frequency: "Daily",
+    description: "Post AI-generated film clips, cinematic prompt tutorials, and before/after generation comparisons. TikTok is the #1 discovery channel for AI creative tools.",
+    expectedImpact: "high",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "youtube_shorts",
+    frequency: "Daily",
+    description: "Post 60-second AI film generation demos, cinematic style tutorials, and filmmaker tips. YouTube Shorts drives massive discovery for creative tools.",
     expectedImpact: "high",
     costPerMonth: 0,
     automatable: true,
   },
   {
     channel: "social_organic",
-    frequency: "2x daily across platforms",
-    description: "AI-generated social media posts for X/Twitter, LinkedIn, Reddit — security tips, product updates, industry commentary. Uses Marketing Engine content generation",
-    expectedImpact: "medium",
+    frequency: "Daily",
+    description: "Post AI film showcases, cinematic prompts, and filmmaker spotlights on X/Twitter, Instagram, and LinkedIn to build brand awareness.",
+    expectedImpact: "high",
     costPerMonth: 0,
     automatable: true,
   },
   {
     channel: "community_engagement",
-    frequency: "Daily participation",
-    description: "Automated monitoring and engagement on Reddit (r/cybersecurity, r/devops), HackerNews, Dev.to, StackOverflow — providing genuine value while building brand awareness",
+    frequency: "Daily",
+    description: "Engage authentically in r/filmmaking, r/AIVideo, r/cinematography, and r/indiefilm. Provide genuine value, build trust, earn organic mentions.",
+    expectedImpact: "high",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "email_nurture",
+    frequency: "Weekly",
+    description: "Send personalized email sequences to new signups, free tier users, and inactive users. Focus on showcasing AI generation capabilities and success stories.",
     expectedImpact: "high",
     costPerMonth: 0,
     automatable: true,
   },
   {
     channel: "affiliate_network",
-    frequency: "Twice weekly discovery",
-    description: "Automated affiliate partner discovery and signup via the Affiliate Discovery Engine. Contextual product recommendations woven into Titan chat for non-admin users",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "email_nurture",
-    frequency: "Weekly drip + event-triggered",
-    description: "Welcome sequences for new signups, weekly security tips newsletter, re-engagement campaigns for inactive users, upgrade prompts based on usage patterns",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "google_ads",
-    frequency: "Continuous (budget-controlled)",
-    description: "High-intent search campaigns targeting 'api key manager', 'credential management tool', 'secure api vault'. All $500 AUD/month allocated here for maximum ROI",
+    frequency: "Ongoing",
+    description: "Partner with filmmaking YouTubers, cinematography bloggers, and AI art creators for affiliate revenue sharing. Target creators with 10K–500K audiences.",
     expectedImpact: "high",
-    costPerMonth: MONTHLY_BUDGET_AUD,
-    automatable: true,
+    costPerMonth: 0,
+    automatable: false,
   },
   {
     channel: "product_hunt",
-    frequency: "Monthly feature launches",
-    description: "Launch new features on Product Hunt to drive awareness spikes. Coordinate with blog posts and social media for maximum visibility",
-    expectedImpact: "medium",
+    frequency: "Monthly",
+    description: "Launch new AI models, generation features, and major updates on Product Hunt. Engage with the tech-savvy early adopter community.",
+    expectedImpact: "high",
     costPerMonth: 0,
     automatable: false,
   },
   {
-    channel: "github_presence",
-    frequency: "Weekly contributions",
-    description: "Open source security utilities, contribute to popular security repos, maintain GitHub profile with security-focused projects to build developer trust",
-    expectedImpact: "medium",
+    channel: "youtube_presence",
+    frequency: "2x per week",
+    description: "Post full-length AI filmmaking tutorials, cinematic generation walkthroughs, and filmmaker interviews on YouTube. Build a subscriber base of creators.",
+    expectedImpact: "high",
     costPerMonth: 0,
-    automatable: false,
+    automatable: true,
   },
   {
     channel: "backlink_outreach",
-    frequency: "Weekly outreach",
-    description: "AI-generated outreach emails to security bloggers, tool comparison sites, and developer publications requesting backlinks and reviews",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "forum_participation",
-    frequency: "Daily monitoring",
-    description: "Monitor and respond to questions about API key management, credential security, and related topics on forums, Quora, and community sites",
-    expectedImpact: "low",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "tiktok_organic",
-    frequency: "3x per week",
-    description: "Auto-generate and post TikTok photo carousels from blog content — AI-generated cyberpunk infographics with hooks, hashtags, and CTAs. Direct posting via Content Posting API when configured.",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "devto_crosspost",
-    frequency: "Every blog post",
-    description: "Auto-cross-post blog articles to Dev.to via API with canonical URL back to main site (250K+ daily readers)",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "medium_republish",
-    frequency: "Every blog post",
-    description: "Auto-republish articles on Medium via API with canonical URL (100M+ monthly readers)",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "hashnode_crosspost",
-    frequency: "Every blog post",
-    description: "Auto-cross-post to Hashnode developer blog via GraphQL API",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "discord_community",
-    frequency: "Daily",
-    description: "Auto-post security tips, blog summaries, and product updates to Discord server via webhook",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "mastodon_infosec",
-    frequency: "Daily",
-    description: "Auto-post to infosec.exchange Mastodon instance — privacy-focused developer audience",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "telegram_channel",
-    frequency: "Daily",
-    description: "Auto-broadcast security alerts and tips to Telegram channel subscribers via Bot API",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "whatsapp_broadcast",
     frequency: "Weekly",
-    description: "Broadcast security tips and product updates via WhatsApp Business Cloud API (1000 free conversations/month)",
-    expectedImpact: "medium",
+    description: "Reach out to filmmaking blogs, AI art publications, and creative technology media for backlinks, guest posts, and feature coverage.",
+    expectedImpact: "high",
     costPerMonth: 0,
     automatable: true,
   },
   {
-    channel: "youtube_shorts",
-    frequency: "3x per week",
-    description: "Generate YouTube Shorts scripts — 60-second security demos and API key management tips",
-    expectedImpact: "high",
+    channel: "pinterest_organic",
+    frequency: "Daily",
+    description: "Pin AI-generated film stills, cinematic mood boards, and visual style guides. Pinterest drives significant discovery for visual creative tools.",
+    expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
   },
   {
     channel: "linkedin_organic",
-    frequency: "Daily",
-    description: "Auto-post thought leadership content to LinkedIn — CTO-level security insights",
-    expectedImpact: "high",
+    frequency: "3x per week",
+    description: "Thought leadership posts targeting CMOs, creative directors, and studio executives about AI's ROI in commercial video production.",
+    expectedImpact: "medium",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "medium_republish",
+    frequency: "Weekly",
+    description: "Republish blog posts on Medium with canonical URLs. Reach Medium's 100M+ monthly readers interested in AI, technology, and creative arts.",
+    expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
   },
   {
     channel: "quora_answers",
     frequency: "3x per week",
-    description: "Generate expert answers to cybersecurity and API management questions on Quora",
+    description: "Answer questions about AI filmmaking, video generation, and the future of cinema on Quora. Build authority and drive qualified traffic.",
+    expectedImpact: "medium",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "reddit_film",
+    frequency: "Daily",
+    description: "Provide genuine value in filmmaking, AI art, and cinematography subreddits. Share tutorials, answer questions, and organically showcase VirÉlle capabilities.",
+    expectedImpact: "high",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "discord_community",
+    frequency: "Daily",
+    description: "Engage in AI art, filmmaking, and creative production Discord servers. Share generation tips, community challenges, and feature announcements.",
     expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
   },
   {
     channel: "skool_community",
-    frequency: "2x per week",
-    description: "Generate free cybersecurity course content and discussion posts for Skool community — funnel to paid tier",
-    expectedImpact: "high",
+    frequency: "3x per week",
+    description: "Free AI filmmaking course content, prompt engineering lessons, and community challenges on Skool. Funnel engaged learners to Pro tier.",
+    expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
   },
   {
     channel: "indiehackers",
     frequency: "Weekly",
-    description: "Generate building-in-public updates, revenue milestones, and growth experiments for IndieHackers",
+    description: "Building-in-public updates about VirÉlle Studios growth, AI model improvements, and lessons from building a creative AI SaaS.",
     expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
   },
   {
-    channel: "pinterest_organic",
+    channel: "vimeo_community",
+    frequency: "Weekly",
+    description: "Showcase high-quality AI-generated films on Vimeo. Engage with the professional filmmaker community and build a portfolio of AI cinema.",
+    expectedImpact: "medium",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "hashnode_crosspost",
+    frequency: "Weekly",
+    description: "Cross-post technical articles about AI video generation APIs and creative AI integrations for the Hashnode developer community.",
+    expectedImpact: "low",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "behance_portfolio",
+    frequency: "Weekly",
+    description: "Portfolio showcases of AI-generated cinematic work on Behance. Target visual artists, directors, and creative directors.",
+    expectedImpact: "medium",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "mastodon_creative",
     frequency: "3x per week",
-    description: "Generate security infographic pin descriptions and cheat sheet copy for Pinterest",
+    description: "Engage with the creative AI and indie film community on Mastodon. Privacy-respecting, authentic engagement with the open-source creative community.",
+    expectedImpact: "low",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "telegram_channel",
+    frequency: "Daily",
+    description: "Broadcast new AI film showcases, generation tips, product updates, and exclusive previews to Telegram channel subscribers.",
     expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
@@ -548,31 +527,15 @@ export const GROWTH_STRATEGIES: GrowthStrategy[] = [
   {
     channel: "hackernews_submit",
     frequency: "Weekly",
-    description: "Generate Show HN posts and technical article submissions for Hacker News",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "lobsters",
-    frequency: "Bi-weekly",
-    description: "Generate technical security article submissions for Lobste.rs invite-only community",
+    description: "Submit Show HN posts about new AI generation capabilities, technical breakthroughs, and open-source tools. HN drives high-quality developer traffic.",
     expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
   },
   {
-    channel: "github_discussions",
-    frequency: "3x per week",
-    description: "Generate helpful responses for credential management questions in popular GitHub repos",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "twitch_dev",
+    channel: "twitch_creative",
     frequency: "Weekly",
-    description: "Generate live coding stream outlines for security tool development on Twitch",
+    description: "Live AI film generation sessions and real-time prompt engineering streams on Twitch. Build an engaged creative audience.",
     expectedImpact: "low",
     costPerMonth: 0,
     automatable: true,
@@ -580,125 +543,92 @@ export const GROWTH_STRATEGIES: GrowthStrategy[] = [
   {
     channel: "slack_communities",
     frequency: "Daily",
-    description: "Generate value-first messages for DevOps, OWASP, and Cloud Security Slack workspaces",
+    description: "Value-first engagement in filmmaking, advertising, and creative production Slack workspaces. Share tips and answer questions.",
     expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
   },
   {
-    channel: "xda_forums",
+    channel: "filmfreeway_community",
     frequency: "Weekly",
-    description: "Generate mobile security and app credential management guides for XDA Developers",
+    description: "Engage with the independent film festival community on FilmFreeway. Share AI-generated short films and build credibility in indie film.",
     expectedImpact: "low",
     costPerMonth: 0,
     automatable: true,
   },
   {
-    channel: "spiceworks",
+    channel: "letterboxd_community",
     frequency: "2x per week",
-    description: "Generate IT admin security discussion posts for Spiceworks community",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "bugcrowd_community",
-    frequency: "Weekly",
-    description: "Generate security research and vulnerability disclosure posts for bug bounty communities",
+    description: "Engage with the cinephile community on Letterboxd. Share AI film analyses, cinematic style discussions, and AI cinema reviews.",
     expectedImpact: "low",
     costPerMonth: 0,
     automatable: true,
   },
   {
-    channel: "steam_community",
+    channel: "whatsapp_broadcast",
     frequency: "Weekly",
-    description: "Generate gaming account security guides, 2FA tutorials, and anti-phishing tips for Steam forums",
+    description: "Broadcast weekly AI filmmaking tips, new generation showcases, and product updates to opted-in subscribers via WhatsApp Business.",
+    expectedImpact: "medium",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "no_film_school",
+    frequency: "2x per week",
+    description: "Share practical AI filmmaking tutorials and production tips for the No Film School audience of indie filmmakers and cinematographers.",
+    expectedImpact: "high",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "cinema5d_community",
+    frequency: "2x per week",
+    description: "Technical articles about AI camera simulation, virtual cinematography, and AI post-production for the Cinema5D professional audience.",
+    expectedImpact: "medium",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "indiewire_community",
+    frequency: "Weekly",
+    description: "Thought leadership on AI's impact on independent film and the future of cinema for the IndieWire audience of film professionals.",
+    expectedImpact: "medium",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "stage32_community",
+    frequency: "2x per week",
+    description: "Engage with the Stage 32 community of screenwriters, directors, and producers. Share AI production resources and build industry relationships.",
+    expectedImpact: "medium",
+    costPerMonth: 0,
+    automatable: true,
+  },
+  {
+    channel: "mandy_network",
+    frequency: "Weekly",
+    description: "Connect with the Mandy.com community of film crew and production professionals. Share AI production opportunities and resources.",
     expectedImpact: "low",
     costPerMonth: 0,
     automatable: true,
   },
   {
-    channel: "lemmy_fediverse",
-    frequency: "2x per week",
-    description: "Generate privacy-focused security discussion posts for Lemmy/Fediverse communities",
+    channel: "shooting_people",
+    frequency: "Weekly",
+    description: "Engage with the Shooting People indie film community. Share AI filmmaking resources and community discussions.",
     expectedImpact: "low",
     costPerMonth: 0,
     automatable: true,
   },
   {
-    channel: "hackforums",
-    frequency: "3x per week",
-    description: "Generate tool tutorials, automation scripts, and security research posts for HackForums. Position Titan as the AI hackers need for credential management",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "0x00sec",
+    channel: "creative_cow",
     frequency: "2x per week",
-    description: "Generate advanced security research articles, exploit analysis, and reverse engineering tutorials for 0x00sec community",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "nullbyte",
-    frequency: "2x per week",
-    description: "Generate step-by-step hacking tutorials for Null Byte that naturally showcase Titan's automation and credential management",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "hackthebox_community",
-    frequency: "3x per week",
-    description: "Generate CTF writeups, machine walkthroughs, and penetration testing methodology posts for Hack The Box forums",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "tryhackme_community",
-    frequency: "3x per week",
-    description: "Generate room walkthroughs, learning path guides, and beginner security tutorials for TryHackMe community",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "owasp_community",
-    frequency: "Weekly",
-    description: "Generate OWASP Top 10 analysis, application security guides, and open-source security tool contributions",
-    expectedImpact: "high",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "offensive_security",
-    frequency: "2x per week",
-    description: "Generate OSCP prep guides, red team methodology posts, and penetration testing tool comparisons",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "ctftime",
-    frequency: "Weekly",
-    description: "Generate CTF event writeups, challenge solutions, and competitive hacking team content",
-    expectedImpact: "medium",
-    costPerMonth: 0,
-    automatable: true,
-  },
-  {
-    channel: "breachforums_alt",
-    frequency: "2x per week",
-    description: "Generate threat intelligence summaries, breach analysis posts, and credential security advisories for breach notification communities",
+    description: "Technical discussions about AI video production and post-production workflows for the Creative COW professional community.",
     expectedImpact: "medium",
     costPerMonth: 0,
     automatable: true,
   },
 ];
-
 // ============================================
 // CORE ORCHESTRATOR FUNCTIONS
 // ============================================
@@ -738,17 +668,17 @@ async function generateSeoBlogPost(): Promise<AdvertisingAction> {
       messages: [
         {
           role: "system",
-          content: `You are an expert cybersecurity content writer for Archibald Titan, a credential management platform. Write SEO-optimized blog posts that provide genuine value while naturally positioning Archibald Titan as the solution. 
+          content: `You are an expert content writer for VirÉlle Studios, the world's most advanced AI cinematic production platform. Write SEO-optimized blog posts that provide genuine value to filmmakers and creators while naturally positioning VirÉlle Studios as the solution.
           
 Target keyword: "${targetKeyword}"
 Content pillar: "${pillar.pillar}"
 
-Write in a professional but approachable tone. Include:
+Write in a cinematic, inspiring, and professional tone. Include:
 - Compelling headline (60 chars max for SEO)
 - Meta description (155 chars max)
 - 1500-2000 word article with H2/H3 subheadings
 - Natural keyword placement (2-3% density)
-- Internal link suggestion to Titan features
+- Internal link suggestion to VirÉlle Studios features
 - Call to action at the end
 
 Return as JSON: { "title": "...", "metaDescription": "...", "content": "...(markdown)...", "tags": ["..."], "category": "..." }`,
@@ -837,7 +767,7 @@ Return as JSON: { "title": "...", "metaDescription": "...", "content": "...(mark
 
     // Notify search engines of the new blog post via IndexNow
     try {
-      await submitToIndexNow([`https://www.archibaldtitan.com/blog/${slug}`]);
+      await submitToIndexNow([`https://virelle.life/blog/${slug}`]);
     } catch { /* non-critical */ }
 
     return {
@@ -875,7 +805,7 @@ async function generateSocialContent(): Promise<AdvertisingAction[]> {
       const content = await generateContent({
         platform: "x_twitter",
         contentType: "organic_post",
-        topic: `${pillar.pillar} - ${angle}`,
+        topic: `${pillar.pillar} - ${angle} for filmmakers and creators`,
         includeImage: false,
       });
 
@@ -913,7 +843,7 @@ async function generateSocialContent(): Promise<AdvertisingAction[]> {
       const content = await generateContent({
         platform: "reddit",
         contentType: "organic_post",
-        topic: `${pillar.pillar} - educational content for ${subreddit}`,
+        topic: `${pillar.pillar} - educational filmmaking content for ${subreddit}`,
         includeImage: false,
       });
 
@@ -948,7 +878,7 @@ async function generateSocialContent(): Promise<AdvertisingAction[]> {
       const content = await generateContent({
         platform: "linkedin",
         contentType: "organic_post",
-        topic: "Cybersecurity thought leadership and developer security",
+        topic: "AI filmmaking thought leadership and the future of cinematic production",
         includeImage: false,
       });
 
@@ -1018,16 +948,14 @@ async function generateBacklinkOutreach(): Promise<AdvertisingAction> {
       messages: [
         {
           role: "system",
-          content: `You are a professional outreach specialist for Archibald Titan, a cybersecurity credential management platform. Generate a personalized outreach email template for requesting backlinks from security bloggers and developer tool review sites.
-
+          content: `You are a professional outreach specialist for VirÉlle Studios, the world's most advanced AI cinematic production platform. Generate a personalized outreach email template for requesting backlinks from filmmaking bloggers, AI art publications, and creative technology media.
 The email should:
 - Be concise (under 150 words)
-- Offer genuine value (guest post, data, exclusive access)
+- Offer genuine value (guest post, exclusive AI film showcase, data, early access)
 - Not be pushy or spammy
 - Include a clear but soft call to action
 - Feel personal, not templated
-
-Return as JSON: { "subject": "...", "body": "...", "targetType": "security_blog|dev_tools_review|tech_publication" }`,
+Return as JSON: { "subject": "...", "body": "...", "targetType": "filmmaking_blog|ai_art_publication|creative_tech_media" }`,
         },
         {
           role: "user",
@@ -1091,10 +1019,10 @@ Return as JSON: { "subject": "...", "body": "...", "targetType": "security_blog|
 async function generateEmailNurture(): Promise<AdvertisingAction> {
   try {
     const segments = [
-      { name: "new_signup", description: "Users who signed up in the last 7 days", goal: "Onboard and activate" },
-      { name: "free_tier", description: "Active free users who haven't upgraded", goal: "Demonstrate Pro value" },
-      { name: "inactive", description: "Users who haven't logged in for 14+ days", goal: "Re-engage with security tips" },
-      { name: "power_user", description: "Users with 10+ credentials stored", goal: "Upsell Enterprise features" },
+      { name: "new_signup", description: "Users who signed up in the last 7 days", goal: "Onboard and inspire with first generation" },
+      { name: "free_tier", description: "Active free users who haven't upgraded", goal: "Demonstrate Pro generation quality" },
+      { name: "inactive", description: "Users who haven't logged in for 14+ days", goal: "Re-engage with new AI model showcases" },
+      { name: "power_user", description: "Users with 10+ projects created", goal: "Upsell Enterprise studio collaboration" },
     ];
 
     const segment = segments[Math.floor(Math.random() * segments.length)];
@@ -1105,18 +1033,15 @@ async function generateEmailNurture(): Promise<AdvertisingAction> {
       messages: [
         {
           role: "system",
-          content: `You are an email marketing specialist for Archibald Titan, a cybersecurity credential management platform. Write a nurture email for the "${segment.name}" segment.
-
+          content: `You are an email marketing specialist for VirÉlle Studios, the world's most advanced AI cinematic production platform. Write a nurture email for the "${segment.name}" segment.
 Segment: ${segment.description}
 Goal: ${segment.goal}
-
 The email should:
 - Have a compelling subject line (under 50 chars)
 - Be concise (under 200 words)
-- Provide genuine security value (not just a sales pitch)
+- Provide genuine creative value and inspiration (not just a sales pitch)
 - Include one clear CTA
-- Feel personal and helpful
-
+- Feel personal, cinematic, and inspiring
 Return as JSON: { "subject": "...", "preheader": "...", "body": "...(html)...", "cta": { "text": "...", "url": "..." } }`,
         },
         {
@@ -1239,15 +1164,13 @@ async function generateCommunityContent(): Promise<AdvertisingAction> {
       messages: [
         {
           role: "system",
-          content: `You are a cybersecurity expert who participates in online communities. Generate a helpful, value-first response for ${platform} about "${pillar.pillar}".
-
+          content: `You are an AI filmmaking expert who participates in online creative communities. Generate a helpful, value-first response for ${platform} about "${pillar.pillar}".
 Rules:
-- Provide genuine technical value (not marketing fluff)
-- Be helpful and educational
-- Only mention Archibald Titan if it naturally fits (max 1 subtle mention)
-- Match the tone of ${platform} (technical for HN/SO, casual for Reddit)
+- Provide genuine creative and technical value (not marketing fluff)
+- Be helpful, inspiring, and educational for filmmakers and creators
+- Only mention VirÉlle Studios if it naturally fits (max 1 subtle mention)
+- Match the tone of ${platform} (technical for HN/Cinema5D, casual for Reddit/TikTok)
 - Keep it concise (under 200 words)
-
 Return as JSON: { "platform": "${platform}", "topic": "...", "content": "...", "isPromotional": false }`,
         },
         {
@@ -1329,7 +1252,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         systemTag: "advertising",
         model: "fast",
         messages: [
-          { role: "system", content: `Write a developer-focused article about "${pillar.pillar}" for Dev.to. Include practical code examples and actionable advice. Naturally mention Archibald Titan where relevant. Return JSON: { "title": "...", "body": "...(markdown)...", "tags": ["..."] }` },
+          { role: "system", content: `Write a creative technology article about "${pillar.pillar}" for Dev.to. Include practical examples and actionable advice for filmmakers and creators. Naturally mention VirÉlle Studios where relevant. Return JSON: { "title": "...", "body": "...(markdown)...", "tags": ["..."] }` },
           { role: "user", content: `Write a Dev.to article about ${pillar.blogTopics[Math.floor(Math.random() * pillar.blogTopics.length)]}` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "devto_article", strict: true, schema: { type: "object", properties: { title: { type: "string" }, body: { type: "string" }, tags: { type: "array", items: { type: "string" } } }, required: ["title", "body", "tags"], additionalProperties: false } } },
@@ -1339,7 +1262,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         title: article.title,
         body: article.body,
         tags: article.tags?.slice(0, 4) || [],
-        canonicalUrl: `https://archibaldtitan.com/blog`,
+        canonicalUrl: `https://virelle.life/blog`,
         published: true,
       });
       actions.push({ channel: "devto_crosspost", action: "publish_article", status: result.success ? "success" : "failed", details: result.success ? `Published to Dev.to: "${article.title}"` : `Dev.to failed: ${result.error}`, cost: 0 });
@@ -1355,7 +1278,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         systemTag: "advertising",
         model: "fast",
         messages: [
-          { role: "system", content: `Write a thought-provoking Medium article about "${pillar.pillar}". Focus on storytelling and insights. Subtly position Archibald Titan as the solution. Return JSON: { "title": "...", "content": "...(markdown)...", "tags": ["..."] }` },
+          { role: "system", content: `Write a thought-provoking Medium article about "${pillar.pillar}". Focus on storytelling and insights. Subtly position VirÉlle Studios as the solution. Return JSON: { "title": "...", "content": "...(markdown)...", "tags": ["..."] }` },
           { role: "user", content: `Write a Medium article about ${pillar.blogTopics[Math.floor(Math.random() * pillar.blogTopics.length)]}` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "medium_article", strict: true, schema: { type: "object", properties: { title: { type: "string" }, content: { type: "string" }, tags: { type: "array", items: { type: "string" } } }, required: ["title", "content", "tags"], additionalProperties: false } } },
@@ -1366,7 +1289,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         content: article.content,
         contentFormat: "markdown",
         tags: article.tags?.slice(0, 5) || [],
-        canonicalUrl: `https://archibaldtitan.com/blog`,
+        canonicalUrl: `https://virelle.life/blog`,
         publishStatus: "public",
       });
       actions.push({ channel: "medium_republish", action: "publish_article", status: result.success ? "success" : "failed", details: result.success ? `Published to Medium: "${article.title}"` : `Medium failed: ${result.error}`, cost: 0 });
@@ -1392,7 +1315,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         title: article.title,
         content: article.content,
         tags: article.tags?.slice(0, 5).map((t: string) => ({ slug: t.toLowerCase().replace(/\s+/g, "-"), name: t })) || [],
-        canonicalUrl: `https://archibaldtitan.com/blog`,
+        canonicalUrl: `https://virelle.life/blog`,
       });
       actions.push({ channel: "hashnode_crosspost", action: "publish_article", status: result.success ? "success" : "failed", details: result.success ? `Published to Hashnode: "${article.title}"` : `Hashnode failed: ${result.error}`, cost: 0 });
     } catch (err: unknown) {
@@ -1407,7 +1330,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         systemTag: "advertising",
         model: "fast",
         messages: [
-          { role: "system", content: `Generate a short, engaging Discord message about cybersecurity. Include an emoji, a security tip, and a link to https://archibaldtitan.com. Keep it under 200 words. Return JSON: { "content": "..." }` },
+          { role: "system", content: `Generate a short, engaging Discord message about AI filmmaking or cinematic AI generation. Include an emoji, a creative tip or showcase, and a link to https://virelle.life. Keep it under 200 words. Return JSON: { "content": "..." }` },
           { role: "user", content: `Generate a Discord security tip about ${pillar.pillar}` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "discord_msg", strict: true, schema: { type: "object", properties: { content: { type: "string" } }, required: ["content"], additionalProperties: false } } },
@@ -1427,16 +1350,16 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         systemTag: "advertising",
         model: "fast",
         messages: [
-          { role: "system", content: `Generate a Mastodon toot about cybersecurity for the infosec community. Include relevant hashtags (#infosec #cybersecurity #appsec). Keep under 500 chars. Return JSON: { "status": "..." }` },
-          { role: "user", content: `Generate a Mastodon toot about ${pillar.pillar}` },
+          { role: "system", content: `Generate a Mastodon toot about AI filmmaking or cinematic production for the creative community. Include relevant hashtags (#AIFilm #Filmmaking #CinematicAI #VirElleStudios). Keep under 500 chars. Return JSON: { "status": "..." }` },
+          { role: "user", content: `Generate a Mastodon toot about ${pillar.pillar} for filmmakers and creators` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "mastodon_toot", strict: true, schema: { type: "object", properties: { status: { type: "string" } }, required: ["status"], additionalProperties: false } } },
       });
       const toot = JSON.parse((response.choices[0].message.content as string) || "{}");
       const result = await mastodonAdapter.postStatus({ status: toot.status });
-      actions.push({ channel: "mastodon_infosec", action: "post_status", status: result.success ? "success" : "failed", details: result.success ? `Posted to Mastodon` : `Mastodon failed: ${result.error}`, cost: 0 });
+      actions.push({ channel: "mastodon_creative", action: "post_status", status: result.success ? "success" : "failed", details: result.success ? `Posted to Mastodon` : `Mastodon failed: ${result.error}`, cost: 0 });
     } catch (err: unknown) {
-      actions.push({ channel: "mastodon_infosec", action: "post_status", status: "failed", details: `Mastodon: ${getErrorMessage(err)}`, cost: 0 });
+      actions.push({ channel: "mastodon_creative", action: "post_status", status: "failed", details: `Mastodon: ${getErrorMessage(err)}`, cost: 0 });
     }
   }
 
@@ -1447,7 +1370,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         systemTag: "advertising",
         model: "fast",
         messages: [
-          { role: "system", content: `Generate a Telegram channel broadcast about cybersecurity. Include a security alert or tip, and a CTA to visit https://archibaldtitan.com. Use Telegram markdown formatting. Keep under 300 words. Return JSON: { "text": "..." }` },
+          { role: "system", content: `Generate a Telegram channel broadcast about AI filmmaking or a new VirÉlle Studios feature. Include an inspiring showcase or tip, and a CTA to visit https://virelle.life. Use Telegram markdown formatting. Keep under 300 words. Return JSON: { "text": "..." }` },
           { role: "user", content: `Generate a Telegram broadcast about ${pillar.pillar}` },
         ],
         response_format: { type: "json_schema", json_schema: { name: "telegram_msg", strict: true, schema: { type: "object", properties: { text: { type: "string" } }, required: ["text"], additionalProperties: false } } },
@@ -1501,15 +1424,15 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
 async function generateHackerForumContent(): Promise<AdvertisingAction> {
   try {
     const forums = [
-      { name: "HackForums", channel: "hackforums" as FreeChannel, tone: "casual hacker", focus: "tools, scripts, automation" },
-      { name: "0x00sec", channel: "0x00sec" as FreeChannel, tone: "advanced researcher", focus: "exploit development, reverse engineering, malware analysis" },
-      { name: "Null Byte", channel: "nullbyte" as FreeChannel, tone: "tutorial/educational", focus: "step-by-step hacking guides, beginner-friendly" },
-      { name: "Hack The Box", channel: "hackthebox_community" as FreeChannel, tone: "CTF player", focus: "machine writeups, penetration testing methodology" },
-      { name: "TryHackMe", channel: "tryhackme_community" as FreeChannel, tone: "learning-focused", focus: "room walkthroughs, learning paths, beginner security" },
-      { name: "OWASP", channel: "owasp_community" as FreeChannel, tone: "professional appsec", focus: "OWASP Top 10, secure coding, application security" },
-      { name: "Offensive Security", channel: "offensive_security" as FreeChannel, tone: "red team professional", focus: "OSCP prep, penetration testing, red team ops" },
-      { name: "CTFtime", channel: "ctftime" as FreeChannel, tone: "competitive hacker", focus: "CTF writeups, challenge solutions, team strategies" },
-      { name: "Breach Communities", channel: "breachforums_alt" as FreeChannel, tone: "threat intelligence", focus: "breach analysis, threat intel, credential security" },
+      { name: "No Film School", channel: "no_film_school" as FreeChannel, tone: "practical filmmaker", focus: "production techniques, gear, AI tools, workflow" },
+      { name: "Cinema5D", channel: "cinema5d_community" as FreeChannel, tone: "technical cinematographer", focus: "camera technology, AI cinematography, virtual production" },
+      { name: "IndieWire", channel: "indiewire_community" as FreeChannel, tone: "industry professional", focus: "AI in cinema, distribution, indie film trends" },
+      { name: "Stage 32", channel: "stage32_community" as FreeChannel, tone: "collaborative filmmaker", focus: "screenwriting, directing, AI production tools" },
+      { name: "Creative COW", channel: "creative_cow" as FreeChannel, tone: "post-production expert", focus: "AI editing, colour grading, VFX, pipeline integration" },
+      { name: "FilmFreeway", channel: "filmfreeway_community" as FreeChannel, tone: "festival filmmaker", focus: "AI short films, festival strategy, distribution" },
+      { name: "Letterboxd", channel: "letterboxd_community" as FreeChannel, tone: "cinephile", focus: "AI cinema analysis, film aesthetics, cinematic AI" },
+      { name: "Shooting People", channel: "shooting_people" as FreeChannel, tone: "indie filmmaker", focus: "low-budget production, AI tools, crowdfunding" },
+      { name: "Mandy Network", channel: "mandy_network" as FreeChannel, tone: "production professional", focus: "AI crew tools, virtual production, film technology" },
     ];
 
     const forum = forums[Math.floor(Math.random() * forums.length)];
@@ -1530,7 +1453,7 @@ Topic area: ${pillar.pillar}
 Rules:
 - Provide REAL technical value — code snippets, methodology, analysis
 - Write in the authentic voice of the ${forum.name} community
-- Only mention Archibald Titan if it naturally fits as a tool recommendation (max 1 subtle mention)
+- Only mention VirÉlle Studios if it naturally fits as a tool recommendation (max 1 subtle mention)
 - Include actionable takeaways
 - 300-600 words
 
@@ -1538,7 +1461,7 @@ Return JSON: { "title": "...", "content": "...(markdown)...", "forum": "${forum.
         },
         {
           role: "user",
-          content: `Generate a ${forum.name} post about ${pillar.pillar} focusing on ${forum.focus}`,
+          content: `Generate a ${forum.name} post about ${pillar.pillar} for filmmakers focusing on ${forum.focus}`,
         },
       ],
       response_format: {
@@ -1586,10 +1509,10 @@ Return JSON: { "title": "...", "content": "...(markdown)...", "forum": "${forum.
     };
   } catch (err: unknown) {
     return {
-      channel: "hackforums",
+      channel: "no_film_school",
       action: "generate_forum_post",
       status: "failed",
-      details: `Hacker forum content generation failed: ${getErrorMessage(err)}`,
+      details: `Film community content generation failed: ${getErrorMessage(err)}`,
       cost: 0,
     };
   }
@@ -1615,13 +1538,13 @@ async function generateVideoScripts(): Promise<AdvertisingAction> {
       messages: [
         {
           role: "system",
-          content: `You are a viral ${platform} content creator specializing in cybersecurity. Generate a 60-second video script.
+          content: `You are a viral ${platform} content creator specializing in AI filmmaking and cinematic production. Generate a 60-second video script.
 
 Rules:
 - Start with a HOOK in the first 3 seconds (pattern interrupt, shocking stat, or question)
 - Include visual directions in [brackets]
 - Keep it fast-paced and engaging
-- End with a strong CTA to visit archibaldtitan.com
+- End with a strong CTA to visit virelle.life
 - Use trending ${platform} formats (storytime, "things you didn't know", "stop scrolling if...")
 - Include suggested hashtags and audio/music suggestions
 
@@ -1808,13 +1731,13 @@ async function generateVideoAd(): Promise<AdvertisingAction> {
 async function generateContentQueueItems(): Promise<AdvertisingAction> {
   try {
     const manualChannels = [
-      { name: "Quora", platform: "quora", type: "answer", prompt: "Generate an expert Quora answer about API security or credential management. Be genuinely helpful. Include a subtle mention of Archibald Titan only if natural. 200-400 words." },
-      { name: "Skool", platform: "skool", type: "community_post", prompt: "Generate a Skool community post for a cybersecurity learning group. Share a free lesson or tip that provides value and encourages discussion. Subtly funnel to Titan. 200-300 words." },
-      { name: "IndieHackers", platform: "indiehackers", type: "update", prompt: "Generate an IndieHackers building-in-public update about Archibald Titan. Share a growth metric, lesson learned, or technical challenge. Be authentic and transparent. 150-300 words." },
-      { name: "Pinterest", platform: "pinterest", type: "pin_description", prompt: "Generate a Pinterest pin description for a cybersecurity infographic. Include keywords for Pinterest SEO. Describe what the infographic should show. 100-200 words." },
-      { name: "Hacker News", platform: "hackernews", type: "submission", prompt: "Generate a Hacker News Show HN submission about a security tool or technique. Be technical and concise. HN audience hates marketing. 50-100 words." },
-      { name: "LinkedIn", platform: "linkedin", type: "thought_leadership", prompt: "Generate a LinkedIn thought leadership post about cybersecurity trends. Write as a CTO/security leader. Include a personal insight. 200-400 words." },
-      { name: "Slack Communities", platform: "slack", type: "community_message", prompt: "Generate a helpful message for a DevOps/Security Slack workspace. Share a tip, resource, or answer a common question. No self-promotion. 50-150 words." },
+      { name: "Quora", platform: "quora", type: "answer", prompt: "Generate an expert Quora answer about AI filmmaking, AI video generation, or the future of cinema. Be genuinely helpful. Include a subtle mention of VirÉlle Studios only if natural. 200-400 words." },
+      { name: "Skool", platform: "skool", type: "community_post", prompt: "Generate a Skool community post for an AI filmmaking learning group. Share a free lesson or cinematic prompt tip that provides value and encourages discussion. Subtly funnel to VirÉlle Studios. 200-300 words." },
+      { name: "IndieHackers", platform: "indiehackers", type: "update", prompt: "Generate an IndieHackers building-in-public update about VirÉlle Studios. Share a growth metric, AI model improvement, lesson learned, or technical challenge. Be authentic and transparent. 150-300 words." },
+      { name: "Pinterest", platform: "pinterest", type: "pin_description", prompt: "Generate a Pinterest pin description for an AI filmmaking mood board or cinematic style guide. Include keywords for Pinterest SEO. Describe what the visual should show. 100-200 words." },
+      { name: "Hacker News", platform: "hackernews", type: "submission", prompt: "Generate a Hacker News Show HN submission about VirÉlle Studios AI film generation technology. Be technical and concise. HN audience hates marketing — focus on the technical innovation. 50-100 words." },
+      { name: "LinkedIn", platform: "linkedin", type: "thought_leadership", prompt: "Generate a LinkedIn thought leadership post about AI's impact on film production and commercial content creation. Write as a creative director or studio head. Include a personal insight. 200-400 words." },
+      { name: "Slack Communities", platform: "slack", type: "community_message", prompt: "Generate a helpful message for a filmmaking or creative production Slack workspace. Share a tip, resource, or answer a common question about AI video generation. No self-promotion. 50-150 words." },
     ];
 
     // Pick 2-3 random channels to generate for today
@@ -2407,16 +2330,16 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
     errors.push(`Expanded Channels: ${getErrorMessage(err)}`);
   }
 
-  // 9. Hacker Forum & Infosec Community Content (every cycle, with throttling)
-  if (!shouldSkipChannel("hackforums")) {
+  // 9. Film Community Content (every cycle, with throttling)
+  if (!shouldSkipChannel("no_film_school")) {
     const t0 = Date.now();
     try {
       const hackerAction = await generateHackerForumContent();
       actions.push(hackerAction);
       recordChannelPerformance(hackerAction.channel, hackerAction.status === "success", Date.now() - t0);
     } catch (err: unknown) {
-      errors.push(`Hacker Forums: ${getErrorMessage(err)}`);
-      recordChannelPerformance("hackforums", false, Date.now() - t0);
+      errors.push(`Film Community: ${getErrorMessage(err)}`);
+      recordChannelPerformance("no_film_school", false, Date.now() - t0);
     }
   }
 
@@ -2503,8 +2426,8 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
   }
 
   // Calculate metrics
-  const hackerForumChannels = ["hackforums", "0x00sec", "nullbyte", "hackthebox_community", "tryhackme_community", "owasp_community", "offensive_security", "ctftime", "breachforums_alt"];
-  const expandedApiChannels = ["devto_crosspost", "medium_republish", "hashnode_crosspost", "discord_community", "mastodon_infosec", "telegram_channel", "whatsapp_broadcast"];
+  const filmCommunityChannels = ["no_film_school", "cinema5d_community", "indiewire_community", "stage32_community", "mandy_network", "shooting_people", "creative_cow", "filmfreeway_community", "letterboxd_community"];
+  const expandedApiChannels = ["medium_republish", "hashnode_crosspost", "discord_community", "mastodon_creative", "telegram_channel", "whatsapp_broadcast", "behance_portfolio"];
   const videoChannels = ["tiktok_organic", "youtube_shorts"];
 
   const metrics = {
@@ -2516,7 +2439,7 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
     emailCampaignsSent: actions.filter((a) => a.channel === "email_nurture" && a.status === "success").length,
     affiliateActionsTriggered: actions.filter((a) => a.channel === "affiliate_network" && a.status === "success").length,
     expandedChannelPosts: actions.filter((a) => expandedApiChannels.includes(a.channel) && a.status === "success").length,
-    hackerForumPosts: actions.filter((a) => hackerForumChannels.includes(a.channel) && a.status === "success").length,
+    filmCommunityPosts: actions.filter((a) => filmCommunityChannels.includes(a.channel) && a.status === "success").length,
     tiktokContentPosts: actions.filter((a) => a.channel === "tiktok_organic" && a.action === "tiktok_content_post" && a.status === "success").length,
     videoScriptsGenerated: actions.filter((a) => videoChannels.includes(a.channel) && a.status === "success").length,
     contentQueueItems: actions.filter((a) => a.action === "content_queue_generation" && a.status === "success").length,

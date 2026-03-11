@@ -230,7 +230,7 @@ const PUBLIC_PAGES: PageSeoConfig[] = [
     path: "/login",
     title: "Sign In — VirÉlle Studios",
     description:
-      "Sign in to your VirÉlle Studios account. Access your dashboard, credentials vault, and AI agent.",
+      "Sign in to your VirÉlle Studios account. Access your dashboard, AI film studio, and production tools.",
     keywords: ["login", "sign in", "account"],
     priority: 0.4,
     changefreq: "monthly",
@@ -250,7 +250,7 @@ const PUBLIC_PAGES: PageSeoConfig[] = [
     path: "/privacy",
     title: "Privacy Policy — VirÉlle Studios",
     description:
-      "Learn how VirÉlle Studios protects your data. AES-256 encryption, local-first architecture, zero-knowledge design, and GDPR compliance.",
+      "Learn how VirÉlle Studios protects your data and creative work. End-to-end encryption, secure cloud storage, and GDPR compliance.",
     keywords: ["privacy policy", "data protection", "GDPR", "encryption", "security"],
     priority: 0.3,
     changefreq: "yearly",
@@ -672,8 +672,8 @@ export function generateStructuredData(): Record<string, any>[] {
     logo: SITE_LOGO,
     description: SITE_DESCRIPTION,
     sameAs: [
-      "https://github.com/ArchibaldTitan",
-      "https://twitter.com/ArchibaldTitan",
+      "https://github.com/VirElleStudios",
+      "https://twitter.com/VirelleStudios",
     ],
     contactPoint: {
       "@type": "ContactPoint",
@@ -696,8 +696,8 @@ export function generateStructuredData(): Record<string, any>[] {
     name: SITE_NAME,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
-    applicationCategory: "DeveloperApplication",
-    applicationSubCategory: "Security",
+    applicationCategory: "MultimediaApplication",
+    applicationSubCategory: "VideoProduction",
     operatingSystem: "Windows, macOS, Linux",
     softwareVersion: "3.0",
     releaseNotes: `${SITE_URL}/blog/release-notes`,
@@ -709,7 +709,7 @@ export function generateStructuredData(): Record<string, any>[] {
         name: "Free Plan",
         price: "0",
         priceCurrency: "USD",
-        description: "5 fetches/month, basic providers, community support",
+        description: "5 AI scene generations/month, basic characters, community support",
         availability: "https://schema.org/InStock",
         url: `${SITE_URL}/pricing`,
       },
@@ -719,7 +719,7 @@ export function generateStructuredData(): Record<string, any>[] {
         price: "29",
         priceCurrency: "USD",
         priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-        description: "Unlimited fetches, all providers, CAPTCHA solving, priority support",
+        description: "Unlimited scene generation, 4K rendering, all AI models, priority support",
         availability: "https://schema.org/InStock",
         url: `${SITE_URL}/pricing`,
       },
@@ -729,7 +729,7 @@ export function generateStructuredData(): Record<string, any>[] {
         price: "99",
         priceCurrency: "USD",
         priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-        description: "Everything in Pro plus team management, API access, dedicated support",
+        description: "Everything in Pro plus studio collaboration, API access, dedicated support",
         availability: "https://schema.org/InStock",
         url: `${SITE_URL}/pricing`,
       },
@@ -742,17 +742,17 @@ export function generateStructuredData(): Record<string, any>[] {
       worstRating: "1",
     },
     featureList: [
-      "Autonomous credential retrieval from 50+ providers",
-      "AES-256 encrypted vault",
-      "Stealth browser with anti-detection",
-      "CAPTCHA solving (reCAPTCHA, hCaptcha, Turnstile)",
-      "Residential proxy support",
-      "REST API and webhooks",
-      "Team management and collaboration",
-      "Cross-platform (Windows, Mac, Linux)",
-      "Self-improving AI engine",
+      "AI-powered cinematic scene generation",
+      "4K ultra-high-definition rendering",
+      "AI character creation and animation",
+      "Cinematic lighting and visual effects",
+      "Multi-scene storyboard generation",
+      "REST API and webhooks for pipeline integration",
+      "Studio collaboration and team projects",
+      "Cross-platform (Windows, Mac, Linux, Web)",
+      "Self-improving AI film director engine",
       "12-language internationalization",
-      "Voice-powered AI chat",
+      "Voice-directed scene generation",
       "Advertising automation across 15+ platforms",
     ],
   });
@@ -785,7 +785,7 @@ export function generateStructuredData(): Record<string, any>[] {
         name: "What is VirÉlle Studios?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "VirÉlle Studios is the world's most advanced local AI agent that autonomously retrieves API keys and credentials from 50+ providers. It features AES-256 encryption, stealth browser technology, CAPTCHA solving, and residential proxy support.",
+          text: "VirÉlle Studios is the world's most advanced AI cinematic production platform. It enables filmmakers, creators, and studios to generate photorealistic scenes, AI characters, and full short films using natural language prompts — no camera or crew required.",
         },
       },
       {
@@ -793,31 +793,31 @@ export function generateStructuredData(): Record<string, any>[] {
         name: "Is VirÉlle Studios free?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, VirÉlle Studios offers a free plan with 5 fetches per month and access to basic providers. Pro ($29/mo) and Enterprise ($99/mo) plans are available for power users and teams.",
+          text: "Yes, VirÉlle Studios offers a free plan with 5 AI scene generations per month. Pro ($29/mo) unlocks unlimited generation, 4K rendering, and all AI models. Enterprise ($99/mo) adds studio collaboration, API access, and dedicated support.",
         },
       },
       {
         "@type": "Question",
-        name: "What platforms does VirÉlle Studios support?",
+        name: "What can I create with VirÉlle Studios?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "VirÉlle Studios is available for Windows (.exe), macOS (.dmg), and Linux (.AppImage). It also runs as a web app at virellestudios.com.",
+          text: "With VirÉlle Studios you can create cinematic short films, AI-generated commercials, music videos, social media content, product visualisations, and full narrative films — all from text prompts. The platform supports 4K rendering, custom AI characters, multi-scene storyboards, and voice direction.",
         },
       },
       {
         "@type": "Question",
-        name: "How does VirÉlle Studios protect my credentials?",
+        name: "How does VirÉlle Studios protect my creative work?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "All credentials are encrypted with AES-256 encryption and stored in a local vault. The system uses a zero-knowledge architecture — your master password never leaves your device.",
+          text: "All your projects, generated scenes, and creative assets are stored with end-to-end encryption. VirÉlle Studios uses secure cloud storage with automatic backups, and you retain full ownership and copyright of all content you generate.",
         },
       },
       {
         "@type": "Question",
-        name: "How is VirÉlle Studios different from 1Password or HashiCorp Vault?",
+        name: "How is VirÉlle Studios different from Runway or Sora?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Unlike traditional password managers, VirÉlle Studios autonomously retrieves and manages API keys using AI-powered browser automation. It actively fetches credentials from provider dashboards, solves CAPTCHAs, and handles bot detection — no manual copy-paste needed.",
+          text: "Unlike Runway or Sora, VirÉlle Studios is built for full cinematic production — not just short clips. It offers multi-scene storyboarding, persistent AI characters across scenes, cinematic lighting control, voice direction, and a complete post-production pipeline. It's the difference between a clip generator and a full film studio.",
         },
       },
       {
@@ -825,7 +825,7 @@ export function generateStructuredData(): Record<string, any>[] {
         name: "Does VirÉlle Studios support team collaboration?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, the Enterprise plan includes team management, shared credential vaults, role-based access control, and audit logging for compliance.",
+          text: "Yes, the Enterprise plan includes studio collaboration, shared project libraries, role-based access control, brand asset management, and priority rendering queues — everything a professional production studio needs.",
         },
       },
     ],
@@ -836,29 +836,29 @@ export function generateStructuredData(): Record<string, any>[] {
     "@context": "https://schema.org",
     "@type": "HowTo",
     name: "How to Get Started with VirÉlle Studios",
-    description: "Set up VirÉlle Studios in 3 easy steps to automate your credential management.",
+    description: "Create your first AI-generated cinematic scene in 3 easy steps with VirÉlle Studios.",
     totalTime: "PT5M",
     estimatedCost: { "@type": "MonetaryAmount", currency: "USD", value: "0" },
     step: [
       {
         "@type": "HowToStep",
         position: 1,
-        name: "Create an Account",
+        name: "Create Your Free Account",
         text: "Sign up for a free account at virellestudios.com/register. No credit card required.",
         url: `${SITE_URL}/register`,
       },
       {
         "@type": "HowToStep",
         position: 2,
-        name: "Add Your Provider Credentials",
-        text: "Enter your email and password for providers like OpenAI, AWS, GitHub, etc. in the Fetcher dashboard.",
+        name: "Write Your Scene Prompt",
+        text: "Describe your scene in natural language — characters, setting, lighting, mood, and action. Use the AI director assistant to refine your vision. No technical skills required.",
         url: `${SITE_URL}/dashboard`,
       },
       {
         "@type": "HowToStep",
         position: 3,
-        name: "Run Your First Fetch",
-        text: "Click 'Start Fetch' and Titan will autonomously log in, navigate to API key pages, and extract your credentials into the encrypted vault.",
+        name: "Generate and Export Your Scene",
+        text: "Click 'Generate Scene' and VirÉlle Studios will render your cinematic scene in seconds. Download in up to 4K resolution, share directly to social media, or continue building your full film in the storyboard editor.",
         url: `${SITE_URL}/dashboard`,
       },
     ],
@@ -928,10 +928,10 @@ export async function optimizeBlogPostSeo(
     "API reference": "/docs",
     contact: "/contact",
     compare: "/compare",
-    "credential management": "/",
+    "AI film generation": "/",
     "AI agent": "/",
     "browser automation": "/",
-    "CAPTCHA solving": "/pricing",
+    "4K rendering": "/pricing",
     blog: "/blog",
   };
 
@@ -1209,9 +1209,9 @@ export async function analyzeCompetitors(): Promise<CompetitorAnalysis> {
           role: "user",
           content: `Product: ${SITE_NAME}
 Description: ${SITE_DESCRIPTION}
-Category: AI-powered credential management, browser automation, developer security
+Category: AI cinematic production, AI video generation, AI filmmaking platform
 Pricing: Free ($0), Pro ($29/mo), Enterprise ($99/mo)
-Key competitors: 1Password, HashiCorp Vault, Selenium, Puppeteer, Doppler, Infisical
+Key competitors: Runway ML, Sora (OpenAI), Midjourney, Pika Labs, Kling AI, HeyGen
 
 Analyze the competitive landscape and identify SEO opportunities.`,
         },
@@ -1257,17 +1257,17 @@ Analyze the competitive landscape and identify SEO opportunities.`,
     return {
       competitors: [
         {
-          name: "1Password",
+          name: "Runway ML",
           url: "https://1password.com",
           strengths: ["Brand recognition", "Enterprise trust"],
           weaknesses: ["No autonomous retrieval", "Manual-only"],
           keywordsToTarget: [
             "1password alternative for developers",
-            "1password API key management",
+            "runway ml alternative",
           ],
         },
         {
-          name: "HashiCorp Vault",
+          name: "Sora OpenAI",
           url: "https://www.vaultproject.io",
           strengths: ["Enterprise standard", "Open source"],
           weaknesses: ["Complex setup", "No browser automation"],
@@ -1282,7 +1282,7 @@ Analyze the competitive landscape and identify SEO opportunities.`,
         },
       ],
       opportunities: [
-        "AI-powered credential management is a new category",
+        "AI cinematic production is a rapidly growing category",
         "Comparison content for each competitor",
       ],
       threats: [
@@ -1325,7 +1325,7 @@ export async function generateContentBriefs(count = 5): Promise<ContentBrief[]> 
           content: `Generate ${count} content briefs for ${SITE_NAME} (${SITE_DESCRIPTION}).
 Focus on topics that:
 1. Target high-intent developer keywords
-2. Address credential security pain points
+2. Address filmmakers' production cost and access pain points
 3. Compare with competitors
 4. Provide actionable tutorials
 5. Cover industry trends in AI and automation`,
@@ -1348,10 +1348,10 @@ Focus on topics that:
   return [
     {
       title: "How to Automate API Key Management in 2026",
-      targetKeyword: "automate API key management",
+      targetKeyword: "AI film generation platform",
       secondaryKeywords: [
-        "API key automation",
-        "credential management tool",
+        "AI video generation",
+        "AI filmmaking tool",
         "developer security",
       ],
       outline: [
@@ -1368,12 +1368,12 @@ Focus on topics that:
       generatedAt: Date.now(),
     },
     {
-      title: "VirÉlle Studios vs 1Password: Which is Better for Developers?",
-      targetKeyword: "archibald titan vs 1password",
+      title: "VirÉlle Studios vs Runway ML: Which AI Film Platform is Better?",
+      targetKeyword: "virelle studios vs runway ml",
       secondaryKeywords: [
         "1password alternative",
         "developer password manager",
-        "API key manager",
+        "AI video creator",
       ],
       outline: ["Overview", "Feature Comparison", "Pricing Comparison", "Use Cases", "Verdict"],
       wordCountTarget: 2500,
@@ -1730,8 +1730,8 @@ Return JSON with this exact structure:
 Description: ${SITE_DESCRIPTION}
 Category: Developer Tools, Cybersecurity, AI Agent, Credential Management
 Pricing: Free ($0), Pro ($29/mo), Enterprise ($99/mo)
-Features: Browser automation, CAPTCHA solving, credential vault, API access, team management, voice AI chat
-Target audience: Developers, DevOps engineers, security professionals, IT administrators
+Features: AI scene generation, 4K rendering, AI character creation, cinematic lighting, storyboard editor, voice direction, API access, studio collaboration
+Target audience: Independent filmmakers, content creators, advertising agencies, studios, social media creators, game developers
 
 Analyze and provide keyword recommendations for SEO optimization.`,
         },
@@ -1799,36 +1799,36 @@ Analyze and provide keyword recommendations for SEO optimization.`,
     log.error("[SEO] Keyword analysis failed:", { error: String(err instanceof Error ? err.message : String(err)) });
     return {
       primaryKeywords: [
-        { keyword: "AI credential manager", volume: "medium", difficulty: "low", opportunity: "high" },
-        { keyword: "browser automation tool", volume: "high", difficulty: "high", opportunity: "medium" },
-        { keyword: "API key management", volume: "medium", difficulty: "medium", opportunity: "high" },
-        { keyword: "CAPTCHA solver", volume: "high", difficulty: "medium", opportunity: "medium" },
-        { keyword: "developer security tools", volume: "medium", difficulty: "low", opportunity: "high" },
-        { keyword: "autonomous AI agent", volume: "medium", difficulty: "low", opportunity: "high" },
-        { keyword: "credential vault", volume: "low", difficulty: "low", opportunity: "high" },
-        { keyword: "secret management tool", volume: "medium", difficulty: "medium", opportunity: "high" },
+        { keyword: "AI film generator", volume: "high", difficulty: "medium", opportunity: "high" },
+        { keyword: "AI video generation platform", volume: "high", difficulty: "high", opportunity: "high" },
+        { keyword: "AI cinematic production", volume: "medium", difficulty: "low", opportunity: "high" },
+        { keyword: "AI character animation", volume: "medium", difficulty: "medium", opportunity: "high" },
+        { keyword: "text to video AI", volume: "high", difficulty: "high", opportunity: "high" },
+        { keyword: "AI movie maker", volume: "medium", difficulty: "medium", opportunity: "high" },
+        { keyword: "AI short film creator", volume: "medium", difficulty: "low", opportunity: "high" },
+        { keyword: "AI visual effects generator", volume: "medium", difficulty: "medium", opportunity: "high" },
       ],
       longTailKeywords: [
-        { keyword: "how to automate API key retrieval", intent: "informational", suggestedPage: "/blog" },
-        { keyword: "best credential management tool for developers", intent: "transactional", suggestedPage: "/pricing" },
-        { keyword: "automated browser with CAPTCHA solving", intent: "transactional", suggestedPage: "/" },
-        { keyword: "1password alternative for API keys", intent: "transactional", suggestedPage: "/compare" },
-        { keyword: "hashicorp vault vs archibald titan", intent: "informational", suggestedPage: "/compare" },
-        { keyword: "free API key manager 2026", intent: "transactional", suggestedPage: "/register" },
+        { keyword: "how to make an AI film", intent: "informational", suggestedPage: "/blog" },
+        { keyword: "best AI video generation platform 2026", intent: "transactional", suggestedPage: "/pricing" },
+        { keyword: "AI cinematic scene generator online", intent: "transactional", suggestedPage: "/" },
+        { keyword: "runway ml alternative for filmmakers", intent: "transactional", suggestedPage: "/compare" },
+        { keyword: "sora vs virelle studios AI film", intent: "informational", suggestedPage: "/compare" },
+        { keyword: "free AI film generator 2026", intent: "transactional", suggestedPage: "/register" },
       ],
       contentGaps: [
-        "Blog posts about credential security best practices",
-        "Comparison pages with competitors",
-        "Tutorial content for each provider integration",
-        "Case studies from real users",
-        "Industry reports on developer security trends",
+        "Blog posts about AI filmmaking techniques and workflows",
+        "Comparison pages with Runway, Sora, Pika, and Kling AI",
+        "Tutorial content for each generation style and genre",
+        "Case studies from filmmakers and creators using VirÉlle",
+        "Industry reports on AI video generation and the future of filmmaking",
       ],
       competitorKeywords: [
-        "1Password developer tools",
-        "HashiCorp Vault alternative",
-        "Selenium alternative",
-        "Doppler secrets manager",
-        "Infisical vs Vault",
+        "Runway ML pricing and features",
+        "Sora OpenAI alternative",
+        "Pika Labs alternative",
+        "Kling AI alternative",
+        "HeyGen vs VirÉlle Studios",
       ],
       generatedAt: Date.now(),
     };

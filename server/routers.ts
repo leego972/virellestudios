@@ -46,6 +46,7 @@ import { seoRouter } from "./seo-router";
 import { autonomousRouter } from "./autonomous-router";
 import { marketingRouter } from "./marketing-router";
 import { contentCreatorRouter } from "./content-creator-router";
+import { advertisingRouter } from "./advertising-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
 import { generateSceneDialogue, TTS_PROVIDERS, type VoiceActingKeys } from "./_core/voiceActingEngine";
@@ -397,9 +398,69 @@ export const appRouter = router({
         await db.deleteProject(input.id, ctx.user.id);
         return { success: true };
       }),
+    // Admin only: list all projects across all users
+    adminListAll: adminProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(200).default(100),
+        offset: z.number().default(0),
+        search: z.string().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const limit = input?.limit ?? 100;
+        const offset = input?.offset ?? 0;
+        const search = input?.search ? `%${input.search}%` : null;
+        let query: string;
+        if (search) {
+          query = `SELECT p.id, p.title, p.genre, p.status, p.quality, p.createdAt,
+                     u.id as userId, u.name as userName, u.email as userEmail,
+                     (SELECT COUNT(*) FROM scenes s WHERE s.projectId = p.id) as sceneCount,
+                     (SELECT COUNT(*) FROM scenes s WHERE s.projectId = p.id AND s.videoUrl IS NOT NULL) as completedScenes
+              FROM projects p LEFT JOIN users u ON p.userId = u.id
+              WHERE p.title LIKE ? OR u.email LIKE ?
+              ORDER BY p.createdAt DESC LIMIT ? OFFSET ?`;
+          const [rows] = await dbConn.execute(query, [search, search, limit, offset]);
+          return rows as any[];
+        } else {
+          query = `SELECT p.id, p.title, p.genre, p.status, p.quality, p.createdAt,
+                     u.id as userId, u.name as userName, u.email as userEmail,
+                     (SELECT COUNT(*) FROM scenes s WHERE s.projectId = p.id) as sceneCount,
+                     (SELECT COUNT(*) FROM scenes s WHERE s.projectId = p.id AND s.videoUrl IS NOT NULL) as completedScenes
+              FROM projects p LEFT JOIN users u ON p.userId = u.id
+              ORDER BY p.createdAt DESC LIMIT ? OFFSET ?`;
+          const [rows] = await dbConn.execute(query, [limit, offset]);
+          return rows as any[];
+        }
+      }),
+    // Admin only: force-delete any project by ID regardless of owner
+    adminDelete: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        await dbConn.execute(sql`DELETE FROM scenes WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM characters WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM generation_jobs WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM scripts WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM soundtracks WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM credits WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM locations WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM mood_board_items WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM subtitles WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM dialogues WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM budgets WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM sound_effects WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM collaborators WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM visual_effects WHERE projectId = ${input.id}`);
+        await dbConn.execute(sql`DELETE FROM projects WHERE id = ${input.id}`);
+        return { success: true, deletedProjectId: input.id };
+      }),
   }),
-
-  // ─── Characters ───
+  // ─── Characters ────
   character: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       return db.getUserLibraryCharacters(ctx.user.id);
@@ -4678,6 +4739,7 @@ Generate a detailed production budget estimate.`,
             LEFT JOIN users u ON p.userId = u.id
             INNER JOIN scenes s ON s.projectId = p.id AND s.videoUrl IS NOT NULL AND s.status = 'completed'
             WHERE p.title NOT LIKE '%Opener%'
+              AND p.title NOT LIKE '%Blood Money%'
             ORDER BY p.createdAt DESC
             LIMIT 20`
       );
@@ -5451,276 +5513,7 @@ Rules:
   // ============================================================
   // ADVERTISING SYSTEM
   // ============================================================
-  advertising: router({
-    // List all available platforms
-    platforms: adminProcedure.query(() => {
-      return {
-        platforms: AD_PLATFORMS,
-        byCategory: getPlatformsByCategory(),
-      };
-    }),
-
-    // Get recommended platforms for a content type
-    recommendedPlatforms: adminProcedure
-      .input(z.object({ contentType: z.string() }))
-      .query(({ input }) => {
-        return getRecommendedPlatforms(input.contentType as AdContentType);
-      }),
-
-    // List all campaigns (DB-backed)
-    listCampaigns: adminProcedure.query(async ({ ctx }) => {
-      const dbConn = await db.getDb();
-      if (!dbConn) return listCampaigns();
-      const [rows] = await dbConn.execute(sql`SELECT * FROM adCampaigns WHERE userId = ${ctx.user!.id} ORDER BY createdAt DESC`);
-      const dbRows = rows as any[];
-      if (dbRows.length > 0) {
-        return dbRows.map((r: any) => ({
-          ...r,
-          platforms: typeof r.platforms === 'string' ? JSON.parse(r.platforms) : r.platforms,
-          generatedContent: typeof r.generatedContent === 'string' ? JSON.parse(r.generatedContent) : (r.generatedContent || []),
-          postHistory: typeof r.postHistory === 'string' ? JSON.parse(r.postHistory) : (r.postHistory || []),
-        }));
-      }
-      return listCampaigns();
-    }),
-
-    // Get a specific campaign (DB-backed)
-    getCampaign: adminProcedure
-      .input(z.object({ id: z.string() }))
-      .query(async ({ input, ctx }) => {
-        const dbConn = await db.getDb();
-        if (dbConn) {
-          const [rows] = await dbConn.execute(sql`SELECT * FROM adCampaigns WHERE id = ${input.id} AND userId = ${ctx.user!.id}`);
-          const dbRows = rows as any[];
-          if (dbRows.length > 0) {
-            const r = dbRows[0];
-            return {
-              ...r,
-              platforms: typeof r.platforms === 'string' ? JSON.parse(r.platforms) : r.platforms,
-              generatedContent: typeof r.generatedContent === 'string' ? JSON.parse(r.generatedContent) : (r.generatedContent || []),
-              postHistory: typeof r.postHistory === 'string' ? JSON.parse(r.postHistory) : (r.postHistory || []),
-            };
-          }
-        }
-        const campaign = getCampaign(input.id);
-        if (!campaign) throw new TRPCError({ code: "NOT_FOUND", message: "Campaign not found" });
-        return campaign;
-      }),
-
-    // Create a new campaign (DB-backed)
-    createCampaign: adminProcedure
-      .input(z.object({
-        name: z.string().min(1).max(200),
-        platforms: z.array(z.string()).min(1),
-        contentType: z.enum(["launch_announcement", "feature_showcase", "behind_the_scenes", "user_testimonial", "comparison", "tutorial_teaser", "milestone", "pitch_deck_teaser", "industry_insight", "case_study", "event_promotion", "award_submission", "collaboration_call"]),
-        schedule: z.enum(["once", "daily", "weekly", "biweekly", "monthly"]),
-        customContext: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        const campaign = createCampaign(input.name, input.platforms, input.contentType as AdContentType, input.schedule);
-        const dbConn = await db.getDb();
-        if (dbConn) {
-          await dbConn.execute(sql`INSERT INTO adCampaigns (id, userId, name, status, platforms, contentType, schedule, generatedContent, postHistory, customContext, totalPosts, successfulPosts, startDate) VALUES (${campaign.id}, ${ctx.user!.id}, ${campaign.name}, ${campaign.status}, ${JSON.stringify(campaign.platforms)}, ${campaign.contentType}, ${campaign.schedule}, '[]', '[]', ${input.customContext || null}, 0, 0, NOW())`);
-        }
-        return campaign;
-      }),
-
-    // Get campaign analytics
-    analytics: adminProcedure.query(async ({ ctx }) => {
-      const dbConn = await db.getDb();
-      if (!dbConn) return { totalCampaigns: 0, totalPosts: 0, successRate: 0, platformBreakdown: [], contentTypeBreakdown: [], recentActivity: [] };
-      const [campaigns] = await dbConn.execute(sql`SELECT * FROM adCampaigns WHERE userId = ${ctx.user!.id}`);
-      const rows = campaigns as any[];
-      const totalCampaigns = rows.length;
-      let totalPosts = 0;
-      let successfulPosts = 0;
-      const platformCounts: Record<string, number> = {};
-      const contentTypeCounts: Record<string, number> = {};
-      const recentActivity: any[] = [];
-      for (const row of rows) {
-        totalPosts += row.totalPosts || 0;
-        successfulPosts += row.successfulPosts || 0;
-        contentTypeCounts[row.contentType] = (contentTypeCounts[row.contentType] || 0) + 1;
-        const platforms = typeof row.platforms === 'string' ? JSON.parse(row.platforms) : (row.platforms || []);
-        for (const p of platforms) { platformCounts[p] = (platformCounts[p] || 0) + 1; }
-        const history = typeof row.postHistory === 'string' ? JSON.parse(row.postHistory) : (row.postHistory || []);
-        for (const h of history.slice(-3)) { recentActivity.push({ campaign: row.name, ...h }); }
-      }
-      return {
-        totalCampaigns,
-        totalPosts,
-        successRate: totalPosts > 0 ? Math.round((successfulPosts / totalPosts) * 100) : 0,
-        platformBreakdown: Object.entries(platformCounts).map(([platform, count]) => ({ platform, count })).sort((a, b) => b.count - a.count),
-        contentTypeBreakdown: Object.entries(contentTypeCounts).map(([type, count]) => ({ type, count })).sort((a, b) => b.count - a.count),
-        recentActivity: recentActivity.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime()).slice(0, 10),
-      };
-    }),
-
-    // Generate social share URLs for content
-    getSocialShareUrl: adminProcedure
-      .input(z.object({
-        platform: z.enum(["twitter", "linkedin", "reddit", "facebook", "tiktok"]),
-        text: z.string(),
-        url: z.string().optional(),
-        title: z.string().optional(),
-      }))
-      .query(({ input }) => {
-        const encodedText = encodeURIComponent(input.text.slice(0, 280));
-        const encodedUrl = encodeURIComponent(input.url || "https://virelle.life");
-        const encodedTitle = encodeURIComponent(input.title || "Virelle Studios");
-        const shareUrls: Record<string, string> = {
-          twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
-          linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&summary=${encodedText}`,
-          reddit: `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
-          facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`,
-          tiktok: `https://www.tiktok.com/upload?description=${encodedText}`,
-        };
-        return { shareUrl: shareUrls[input.platform], platform: input.platform };
-      }),
-
-    // Generate content for a campaign
-    generateContent: adminProcedure
-      .input(z.object({
-        campaignId: z.string(),
-        customContext: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        await rateLimitHeavyAI(ctx.user!.id);
-        logger.info("advertising.generateContent", { campaignId: input.campaignId, userId: ctx.user!.id });
-        return generateCampaignContent(input.campaignId, input.customContext);
-      }),
-
-    // Generate content for a single platform (preview)
-    generateSingleContent: adminProcedure
-      .input(z.object({
-        platformId: z.string(),
-        contentType: z.enum(["launch_announcement", "feature_showcase", "behind_the_scenes", "user_testimonial", "comparison", "tutorial_teaser", "milestone"]),
-        customContext: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        await rateLimitAI(ctx.user!.id);
-        try { await db.deductCredits(ctx.user!.id, CREDIT_COSTS.ad_poster_gen.cost, "ad_poster_gen", `Campaign content: ${input.contentType}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
-        return generateAdContent(input.platformId, input.contentType, input.customContext);
-      }),
-
-    // Update campaign status
-    updateStatus: adminProcedure
-      .input(z.object({
-        id: z.string(),
-        status: z.enum(["draft", "active", "paused", "completed"]),
-      }))
-      .mutation(({ input }) => {
-        updateCampaignStatus(input.id, input.status);
-        return { success: true };
-      }),
-
-    // Record a post to a platform
-    recordPost: adminProcedure
-      .input(z.object({
-        campaignId: z.string(),
-        platformId: z.string(),
-        status: z.enum(["success", "failed", "pending", "scheduled"]),
-        postUrl: z.string().optional(),
-        error: z.string().optional(),
-        contentPreview: z.string(),
-      }))
-      .mutation(({ input }) => {
-        const platform = AD_PLATFORMS.find(p => p.id === input.platformId);
-        addPostRecord(input.campaignId, {
-          platformId: input.platformId,
-          platformName: platform?.name || input.platformId,
-          postedAt: new Date().toISOString(),
-          status: input.status,
-          postUrl: input.postUrl,
-          error: input.error,
-          contentPreview: input.contentPreview,
-        });
-        return { success: true };
-      }),
-
-    // Delete a campaign
-    deleteCampaign: adminProcedure
-      .input(z.object({ id: z.string() }))
-      .mutation(({ input }) => {
-        const deleted = deleteCampaign(input.id);
-        if (!deleted) throw new TRPCError({ code: "NOT_FOUND", message: "Campaign not found" });
-        return { success: true };
-      }),
-
-    // Get autonomous scheduler status + credential status
-    schedulerStatus: adminProcedure.query(() => {
-      return {
-        ...getSchedulerState(),
-        credentialStatus: getSocialCredentialStatus(),
-      };
-    }),
-
-    // Manually trigger one full advertising cycle
-    triggerCycle: adminProcedure.mutation(async ({ ctx }) => {
-      await rateLimitHeavyAI(ctx.user!.id);
-      logger.info("advertising.triggerCycle", { userId: ctx.user!.id });
-      const results = await runAutonomousAdCycle();
-      return results;
-    }),
-
-    // Get social credential status
-    credentialStatus: adminProcedure.query(() => {
-      return getSocialCredentialStatus();
-    }),
-
-    // Manually post to LinkedIn
-    postLinkedIn: adminProcedure
-      .input(z.object({
-        text: z.string().min(1).max(3000),
-        imageUrl: z.string().url().optional(),
-        title: z.string().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        await rateLimitAI(ctx.user!.id);
-        logger.info("advertising.postLinkedIn", { userId: ctx.user!.id });
-        return postToLinkedIn(input);
-      }),
-
-    // Manually post to a specific subreddit
-    postReddit: adminProcedure
-      .input(z.object({
-        subreddit: z.string().min(1),
-        title: z.string().min(1).max(300),
-        text: z.string().optional(),
-        url: z.string().url().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        await rateLimitAI(ctx.user!.id);
-        logger.info("advertising.postReddit", { userId: ctx.user!.id, subreddit: input.subreddit });
-        return postToReddit(input);
-      }),
-
-    // Send WhatsApp broadcast to subscriber list
-    broadcastWhatsApp: adminProcedure
-      .input(z.object({
-        text: z.string().min(1).max(1600),
-        mediaUrl: z.string().url().optional(),
-      }))
-      .mutation(async ({ input, ctx }) => {
-        await rateLimitAI(ctx.user!.id);
-        logger.info("advertising.broadcastWhatsApp", { userId: ctx.user!.id });
-        return broadcastWhatsApp(input.text, input.mediaUrl);
-      }),
-
-    // Generate image ad on demand
-    generateImageAd: adminProcedure.mutation(async ({ ctx }) => {
-      await rateLimitHeavyAI(ctx.user!.id);
-      logger.info("advertising.generateImageAd", { userId: ctx.user!.id });
-      return generateImageAd();
-    }),
-
-    // Generate video ad on demand
-    generateVideoAd: adminProcedure.mutation(async ({ ctx }) => {
-      await rateLimitHeavyAI(ctx.user!.id);
-      logger.info("advertising.generateVideoAd", { userId: ctx.user!.id });
-      return generateVideoAd();
-    }),
-  }),
+  advertising: advertisingRouter,
 
   // ─── Blog (Public + Admin) ───
   seo: seoRouter,
@@ -6272,12 +6065,11 @@ Rules:
       return db.getPublishedProjectSamples();
     }),
     // Admin only: list all samples including unpublished
-    listAll: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+    listAll: adminProcedure.query(async () => {
       return db.getAllProjectSamples();
     }),
     // Admin only: create a new sample (video + optional thumbnail via base64)
-    create: protectedProcedure
+    create: adminProcedure
       .input(z.object({
         title: z.string().min(1).max(255),
         description: z.string().max(2000).optional(),
@@ -6294,7 +6086,6 @@ Rules:
         thumbnailContentType: z.string().default("image/jpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
         const videoBuffer = Buffer.from(input.videoBase64, "base64");
         const videoKey = `samples/${nanoid()}-${input.videoFilename}`;
         const { url: videoUrl } = await storagePut(videoKey, videoBuffer, input.videoContentType);
@@ -6319,7 +6110,7 @@ Rules:
         });
       }),
     // Admin only: update sample metadata
-    update: protectedProcedure
+    update: adminProcedure
       .input(z.object({
         id: z.number(),
         title: z.string().min(1).max(255).optional(),
@@ -6330,16 +6121,14 @@ Rules:
         displayOrder: z.number().optional(),
         isPublished: z.boolean().optional(),
       }))
-      .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+      .mutation(async ({ input }) => {
         const { id, ...data } = input;
         return db.updateProjectSample(id, data);
       }),
     // Admin only: delete a sample
-    delete: protectedProcedure
+    delete: adminProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+      .mutation(async ({ input }) => {
         await db.deleteProjectSample(input.id);
         return { success: true };
       }),
