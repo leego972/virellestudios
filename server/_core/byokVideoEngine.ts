@@ -172,19 +172,21 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
       console.log(`[BYOK:Runway] Seed: ${req.seed}`);
     }
 
-    const task = await client.imageToVideo
-      .create(createParams)
-      .waitForTaskOutput();
+    // IMPORTANT: Use create() only (non-blocking) — do NOT use waitForTaskOutput().
+    // The task ID is returned to the caller, stored in the DB, and polled by
+    // videoJobWorker.ts which survives Railway restarts.
+    const task = await client.imageToVideo.create(createParams);
+    const taskId = (task as any).id;
 
-    const taskId = (task as any).id || "unknown";
-    const videoUrl = (task as any).output?.[0] || (task as any).output?.video || (task as any).output;
-
-    if (!videoUrl || typeof videoUrl !== "string") {
-      throw new Error(`Runway task completed but no video URL found: ${JSON.stringify(task).substring(0, 200)}`);
+    if (!taskId) {
+      throw new Error(`Runway task creation returned no task ID: ${JSON.stringify(task).substring(0, 200)}`);
     }
 
-    console.log(`[BYOK:Runway] Task ${taskId} succeeded: ${videoUrl.substring(0, 80)}`);
-    return { provider: "runway", videoUrl, jobId: taskId, durationSeconds: duration };
+    console.log(`[BYOK:Runway] Task submitted: ${taskId} — worker will poll for completion`);
+
+    // Return a special sentinel URL — the worker will replace this with the real URL
+    // The caller (generateVideo route) stores the taskId in the DB job metadata
+    return { provider: "runway", videoUrl: `runway-pending:${taskId}`, jobId: taskId, durationSeconds: duration };
 
   } catch (error: any) {
     if (error instanceof TaskFailedError) {

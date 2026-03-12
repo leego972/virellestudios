@@ -1425,37 +1425,96 @@ export const appRouter = router({
 
         // Mark scene as generating immediately
         await db.updateScene(scene.id, { status: "generating" } as any);
-        // Fire-and-forget: run video generation in background to avoid Railway 502 timeout
-        (async () => {
+
+        // Determine provider
+        const { selectProvider } = await import("./_core/byokVideoEngine");
+        const activeProvider = selectProvider(byokKeys);
+
+        if (activeProvider === "runway" && byokKeys.runwayKey) {
+          // ─── RUNWAY: Persistent job queue approach ───
+          // Submit the Runway task immediately (non-blocking), store task ID in DB,
+          // and let videoJobWorker.ts poll for completion — survives Railway restarts.
           try {
-            console.log(`[SceneVideo] Background generation started for scene ${scene.id} (provider: ${byokKeys.preferredProvider || "auto"})`);
-            const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
-            const extResult = await generateExtendedScene(byokKeys, {
-              sceneId: scene.id,
-              projectId: project.id,
-              description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
-              targetDurationSeconds: Math.max(10, scene.duration || 45),
-              mood: scene.mood || undefined,
-              lighting: scene.lighting || undefined,
-              timeOfDay: scene.timeOfDay || undefined,
-              genre: project.genre || undefined,
-              locationDescription: scene.locationType || undefined,
-              referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
-              aiPromptOverride: sceneAiPromptOverride,
+            const effectivePrompt = sceneAiPromptOverride ||
+              `Cinematic video: ${prompt}`;
+            const effectiveImageUrl = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
+
+            const { submitRunwayJob } = await import("./_core/videoJobWorker");
+            const taskId = await submitRunwayJob(byokKeys.runwayKey, {
+              prompt: effectivePrompt,
+              imageUrl: effectiveImageUrl,
               negativePrompt: sceneNegativePrompt,
               seed: sceneSeed,
+              aspectRatio: "16:9",
             });
-            await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
-            // Auto-set project thumbnail if project has none
-            if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
-              try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
-            }
-            console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration.toFixed(1)}s, ${extResult.subClipCount} clips)`);
+
+            // Store job in DB with Runway task ID — worker will poll and complete it
+            const jobMeta = {
+              runwayTaskId: taskId,
+              runwayApiKey: byokKeys.runwayKey,
+              sceneId: scene.id,
+              projectId: project.id,
+              userId: ctx.user.id,
+              prompt: effectivePrompt,
+              imageUrl: effectiveImageUrl,
+              negativePrompt: sceneNegativePrompt,
+              seed: sceneSeed,
+              ratio: "1280:720",
+              duration: 10,
+              referenceImages: sceneRefImages,
+              aiPromptOverride: sceneAiPromptOverride,
+            };
+
+            await db.createGenerationJob({
+              projectId: project.id,
+              sceneId: scene.id,
+              type: "scene",
+              status: "processing",
+              progress: 0,
+              estimatedSeconds: 600,
+              metadata: jobMeta,
+            });
+
+            console.log(`[SceneVideo] Runway task ${taskId} submitted for scene ${scene.id} — worker will poll for completion`);
           } catch (err: any) {
-            console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
+            console.error(`[SceneVideo] Failed to submit Runway job for scene ${scene.id}:`, err.message);
             await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
           }
-        })();
+        } else {
+          // ─── OTHER PROVIDERS: Fire-and-forget background task ───
+          // Non-Runway providers (Pollinations, fal, Replicate, Luma) are fast enough
+          // that Railway restarts are unlikely to interrupt them.
+          (async () => {
+            try {
+              console.log(`[SceneVideo] Background generation started for scene ${scene.id} (provider: ${activeProvider})`);
+              const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
+              const extResult = await generateExtendedScene(byokKeys, {
+                sceneId: scene.id,
+                projectId: project.id,
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                targetDurationSeconds: Math.max(10, scene.duration || 45),
+                mood: scene.mood || undefined,
+                lighting: scene.lighting || undefined,
+                timeOfDay: scene.timeOfDay || undefined,
+                genre: project.genre || undefined,
+                locationDescription: scene.locationType || undefined,
+                referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                aiPromptOverride: sceneAiPromptOverride,
+                negativePrompt: sceneNegativePrompt,
+                seed: sceneSeed,
+              });
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
+                try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
+              }
+              console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${extResult.videoUrl}`);
+            } catch (err: any) {
+              console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
+              await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+            }
+          })();
+        }
+
         // Return immediately — frontend will poll scene status
         return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete." };
       }),

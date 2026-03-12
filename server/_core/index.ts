@@ -15,6 +15,7 @@ import { trackPaymentFailure } from "./securityEngine";
 import { startBlogScheduler } from "./blogEngine";
 import { startAutonomousPipelineScheduler } from "../autonomous-pipeline";
 import { startAdScheduler } from "./advertisingEngine";
+import { startVideoJobWorker } from "./videoJobWorker";
 import { runAutoMigration } from "./autoMigrate";
 import { runStripeProvisioning } from "./stripeProvisioning";
 import { registerSeoRoutes } from "../seo-engine";
@@ -484,6 +485,10 @@ async function startServer() {
     startAdScheduler();
     startAutonomousPipelineScheduler();
     logger.info("[AdEngine] Autonomous advertising scheduler initialized");
+
+    // Start persistent video job worker — polls Runway for pending tasks, survives restarts
+    startVideoJobWorker();
+    logger.info("[VideoWorker] Persistent video job worker started");
   });
 }
 
