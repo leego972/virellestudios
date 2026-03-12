@@ -4362,6 +4362,89 @@ Generate a detailed production budget estimate.`,
         { name: "Clock Ticking", category: "musical", tags: ["time", "countdown", "tension"] },
       ];
     }),
+
+    // Generate angelic choir or bird wing sounds using ElevenLabs TTS voices
+    // Uses the /v1/text-to-speech endpoint (not sound-generation) to avoid IP blocks
+    generateVoiceChoir: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().optional(),
+        type: z.enum(["angelic_choir", "dove_wings"]),
+        name: z.string().optional(),
+        startTime: z.number().optional(),
+        volume: z.number().min(0).max(1).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const userKeys = await db.getUserApiKeys(ctx.user!.id);
+        const elevenlabsKey = userKeys.elevenlabsKey;
+        if (!elevenlabsKey) {
+          throw new Error("ElevenLabs API key not configured.");
+        }
+
+        // For angelic choir: use Rachel voice (ethereal female soprano)
+        // For dove wings: use a breathy, soft voice with specific settings
+        const RACHEL_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Rachel — clear, ethereal female
+        const ARIA_VOICE_ID = "9BWtsMINqrJLrRacOk9x"; // Aria — warm, expressive female
+
+        let voiceId: string;
+        let text: string;
+        let voiceSettings: Record<string, unknown>;
+        let sfxName: string;
+
+        if (input.type === "angelic_choir") {
+          voiceId = RACHEL_VOICE_ID;
+          text = "Aaaaaah... Aaaaaah... Aaaaaah... Aaaaaah...";
+          voiceSettings = { stability: 0.3, similarity_boost: 0.6, style: 0.8, use_speaker_boost: true };
+          sfxName = input.name || "Angelic Choir - Golden Transformation";
+        } else {
+          // dove_wings: use a very breathy, airy voice for wing-like sound
+          voiceId = ARIA_VOICE_ID;
+          text = "Fwwwwsh... fwwwwsh... fwwwwsh... fwwwwsh...";
+          voiceSettings = { stability: 0.8, similarity_boost: 0.3, style: 0.1, use_speaker_boost: false };
+          sfxName = input.name || "Dove Wing Flap - Landing";
+        }
+
+        const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+          method: "POST",
+          headers: {
+            "xi-api-key": elevenlabsKey,
+            "Content-Type": "application/json",
+            "Accept": "audio/mpeg",
+          },
+          body: JSON.stringify({
+            text,
+            model_id: "eleven_multilingual_v2",
+            voice_settings: voiceSettings,
+          }),
+          signal: AbortSignal.timeout(30000),
+        });
+
+        if (!resp.ok) {
+          const errText = await resp.text().catch(() => "");
+          throw new Error(`ElevenLabs TTS failed: ${resp.status} ${errText}`);
+        }
+
+        const audioBuffer = Buffer.from(await resp.arrayBuffer());
+        const safeName = sfxName.replace(/[^a-zA-Z0-9-_]/g, "-");
+        const key = `sfx/${ctx.user!.id}/${input.projectId}/${nanoid()}-${safeName}.mp3`;
+        const { url } = await storagePut(key, audioBuffer, "audio/mpeg");
+
+        const sfx = await db.createSoundEffect({
+          projectId: input.projectId,
+          sceneId: input.sceneId,
+          userId: ctx.user!.id,
+          name: sfxName,
+          category: input.type === "angelic_choir" ? "Musical" : "Nature",
+          fileUrl: url,
+          fileKey: key,
+          duration: 10,
+          isCustom: 1,
+          volume: input.volume ?? 0.9,
+          startTime: input.startTime ?? 0,
+        });
+
+        return { sfx, url };
+      }),
   }),
   // ─── Visual Effects (VFX) Database ───
   visualEffect: router({
