@@ -353,20 +353,20 @@ export default function Landing() {
                 <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
               </Button>
               {langOpen && (
-                <div className="absolute right-0 top-full mt-1 w-52 bg-popover border border-border rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto">
+                <div className="absolute top-full mt-1 w-52 bg-popover border border-border rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto" style={{ right: 0, left: 'auto', maxWidth: 'min(13rem, calc(100vw - 1rem))' }}>
                   {[
-                    { code: "en", name: "English", flag: "🇺🇸" },
-                    { code: "he", name: "עברית (Hebrew)", flag: "🇮🇱" },
-                    { code: "ar", name: "العربية (Arabic)", flag: "🇸🇦" },
-                    { code: "fr", name: "Français", flag: "🇫🇷" },
-                    { code: "es", name: "Español", flag: "🇪🇸" },
+                    { code: "ar", name: "Arabic (العربية)", flag: "🇸🇦" },
+                    { code: "zh", name: "Chinese (中文)", flag: "🇨🇳" },
                     { code: "de", name: "Deutsch", flag: "🇩🇪" },
-                    { code: "zh", name: "中文", flag: "🇨🇳" },
-                    { code: "ja", name: "日本語", flag: "🇯🇵" },
-                    { code: "ko", name: "한국어", flag: "🇰🇷" },
+                    { code: "en", name: "English", flag: "🇺🇸" },
+                    { code: "es", name: "Español", flag: "🇪🇸" },
+                    { code: "fr", name: "Français", flag: "🇫🇷" },
+                    { code: "he", name: "Hebrew (עברית)", flag: "🇮🇱" },
+                    { code: "hi", name: "Hindi (हिन्दी)", flag: "🇮🇳" },
+                    { code: "ja", name: "Japanese (日本語)", flag: "🇯🇵" },
+                    { code: "ko", name: "Korean (한국어)", flag: "🇰🇷" },
                     { code: "pt", name: "Português", flag: "🇧🇷" },
-                    { code: "ru", name: "Русский", flag: "🇷🇺" },
-                    { code: "hi", name: "हिन्दी", flag: "🇮🇳" },
+                    { code: "ru", name: "Russian (Русский)", flag: "🇷🇺" },
                   ].map(lang => (
                     <button
                       key={lang.code}
