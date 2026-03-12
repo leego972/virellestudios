@@ -54,6 +54,28 @@ interface PriceDefinition {
 }
 
 const SUBSCRIPTION_PRICES: PriceDefinition[] = [
+  // ─── Amateur Filmmaker tier ($500/mo, $5,000/yr) ───
+  {
+    key: "amateur_monthly",
+    envKey: "stripeAmateurMonthlyPriceId",
+    productName: "Virelle Studios — Amateur Filmmaker (Monthly)",
+    productDesc: "AI film production platform — Amateur Filmmaker tier, $500/month, 15 credits/mo",
+    unitAmount: 50000, // $500
+    currency: "usd",
+    recurring: { interval: "month" },
+    metadata: { tier: "amateur", billing: "monthly", credits: "15" },
+    paymentMethodTypes: ["us_bank_account", "card"],
+  },
+  {
+    key: "amateur_annual",
+    envKey: "stripeAmateurAnnualPriceId",
+    productName: "Virelle Studios — Amateur Filmmaker (Annual)",
+    productDesc: "AI film production platform — Amateur Filmmaker tier, $5,000/year, 15 credits/mo",
+    unitAmount: 500000, // $5,000
+    currency: "usd",
+    recurring: { interval: "year" },
+    metadata: { tier: "amateur", billing: "annual", credits: "15" },
+  },
   // ─── Independent tier ($5,000/mo, $50,000/yr) ───
   {
     key: "independent_monthly",

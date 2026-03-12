@@ -193,8 +193,8 @@ export default function Landing() {
     refetchInterval: 60_000, // refresh every minute
     staleTime: 30_000,
   });
-  const spotsRemaining = spotsData?.spotsRemaining ?? 20;
-  const displayCount = spotsData?.displayCount ?? 30;
+  const spotsRemaining = spotsData?.spotsRemaining ?? 19;
+  const displayCount = spotsData?.displayCount ?? 31;
   const offerFull = spotsData?.isFull ?? false;
 
   return (

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer, Coins, ShoppingCart } from "lucide-react";
+import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer, Coins, ShoppingCart, Camera } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 import { useLocation } from "wouter";
@@ -9,6 +9,32 @@ import LeegoFooter from "@/components/LeegoFooter";
 import GoldWatermark from "@/components/GoldWatermark";
 
 const TIERS = [
+  {
+    id: "amateur",
+    name: "Amateur Filmmaker",
+    icon: Camera,
+    color: "border-emerald-500 ring-2 ring-emerald-500/20",
+    buttonColor: "bg-emerald-600 hover:bg-emerald-500",
+    accentColor: "text-emerald-400",
+    monthly: 50000,
+    annual: 500000,
+    credits: 15,
+    extraCreditCost: 50,
+    description: "Dip your toes in AI filmmaking. Write, plan, and start your first project.",
+    highlights: [
+      "15 credits/month — enough to start",
+      "AI Script Writer",
+      "AI Director Chat (Virelle)",
+      "Character Creator",
+      "Shot List Generator",
+      "Mood Board",
+      "Location Scout AI",
+      "AI Dialogue Editor",
+      "Up to 2 projects, 5 scenes each",
+      "Upgrade anytime to unlock video & export",
+    ],
+    hookBadge: "Try It Out",
+  },
   {
     id: "independent",
     name: "Independent",
@@ -155,7 +181,7 @@ export default function Pricing() {
     refetchInterval: 60_000,
     staleTime: 30_000,
   });
-  const spotsRemaining = spotsData?.spotsRemaining ?? 20;
+  const spotsRemaining = spotsData?.spotsRemaining ?? 19;
   const offerFull = spotsData?.isFull ?? false;
 
   const { data: status } = trpc.subscription.status.useQuery(undefined, {
@@ -296,7 +322,7 @@ export default function Pricing() {
           </div>
 
           {/* Pricing cards - 4 tiers */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
             {TIERS.map((tier) => {
               const Icon = tier.icon;
               const isCurrentTier = currentTier === tier.id;
@@ -312,6 +338,11 @@ export default function Pricing() {
                       <Badge className="bg-cyan-600 text-white px-4 py-1">Most Popular</Badge>
                     </div>
                   )}
+                  {(tier as any).hookBadge && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <Badge className="bg-emerald-600 text-white px-4 py-1">{(tier as any).hookBadge}</Badge>
+                    </div>
+                  )}
 
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2 mb-2">
@@ -320,12 +351,27 @@ export default function Pricing() {
                     </div>
                     <CardDescription className="min-h-[2.5rem]">{tier.description}</CardDescription>
                     <div className="mt-4">
-                      <span className="text-3xl font-bold">{formatPrice(price)}</span>
-                      <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
-                      {billingCycle === "annual" && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          ({formatPrice(Math.round(tier.annual / 12))}/mo effective)
-                        </p>
+                      {billingCycle === "annual" && !offerFull && tier.id !== "amateur" ? (
+                        <>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-3xl font-bold text-amber-400">{formatPrice(Math.round(price / 2))}</span>
+                            <span className="text-lg line-through text-muted-foreground">{formatPrice(price)}</span>
+                          </div>
+                          <p className="text-xs text-amber-400/80 font-semibold mt-0.5">50% off first year — founding member</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            ({formatPrice(Math.round(price / 2 / 12))}/mo effective)
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-3xl font-bold">{formatPrice(price)}</span>
+                          <span className="text-muted-foreground ml-1">/{billingCycle === "annual" ? "year" : "month"}</span>
+                          {billingCycle === "annual" && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              ({formatPrice(Math.round(tier.annual / 12))}/mo effective)
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
                     <div className="mt-3 flex items-center gap-2">
@@ -531,6 +577,7 @@ export default function Pricing() {
               <thead>
                 <tr className="border-b border-zinc-700">
                   <th className="text-left py-3 px-4 font-medium">Feature</th>
+                  <th className="text-center py-3 px-4 font-medium text-emerald-400">Amateur</th>
                   <th className="text-center py-3 px-4 font-medium text-amber-400">Independent</th>
                   <th className="text-center py-3 px-4 font-medium text-cyan-400">Creator</th>
                   <th className="text-center py-3 px-4 font-medium text-violet-400">Studio</th>
@@ -540,38 +587,40 @@ export default function Pricing() {
               <tbody className="divide-y divide-zinc-800">
                 {[
                   { feature: "PRICING", section: "header" },
-                  { feature: "Monthly Price", independent: "$5,000", creator: "$10,000", studio: "$15,000", industry: "$25,000" },
-                  { feature: "Annual Price", independent: "$50,000", creator: "$100,000", studio: "$150,000", industry: "$250,000" },
-                  { feature: "Monthly Credits", independent: "50", creator: "150", studio: "300", industry: "600" },
-                  { feature: "Extra Credit Cost", independent: "$50", creator: "$40", studio: "$30", industry: "$25" },
+                  { feature: "Monthly Price", amateur: "$500", independent: "$5,000", creator: "$10,000", studio: "$15,000", industry: "$25,000" },
+                  { feature: "Annual Price", amateur: "$5,000", independent: "$50,000", creator: "$100,000", studio: "$150,000", industry: "$250,000" },
+                  { feature: "Monthly Credits", amateur: "15", independent: "50", creator: "150", studio: "300", industry: "600" },
+                  { feature: "Extra Credit Cost", amateur: "$50", independent: "$50", creator: "$40", studio: "$30", industry: "$25" },
                   { feature: "CREATIVE TOOLS (INCLUDED)", section: "header" },
-                  { feature: "AI Script Writer", independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Storyboard Generator", independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Character Creator & DNA Lock", independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Virelle AI Director Chat", independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Dialogue Editor", independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Shot List & Continuity Check", independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Color Grading & LUT Presets", independent: true, creator: true, studio: true, industry: true },
+                  { feature: "AI Script Writer", amateur: true, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Storyboard Generator", amateur: false, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Character Creator & DNA Lock", amateur: true, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Virelle AI Director Chat", amateur: true, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Dialogue Editor", amateur: true, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Shot List & Continuity Check", amateur: false, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Color Grading & LUT Presets", amateur: false, independent: true, creator: true, studio: true, industry: true },
                   { feature: "ADVANCED TOOLS", section: "header" },
-                  { feature: "Bulk Generation", independent: false, creator: true, studio: true, industry: true },
-                  { feature: "VFX Suite", independent: false, creator: false, studio: true, industry: true },
-                  { feature: "Multi-Shot Sequencer", independent: false, creator: false, studio: true, industry: true },
-                  { feature: "NLE / DaVinci Export", independent: false, creator: false, studio: true, industry: true },
-                  { feature: "AI Casting Tool", independent: false, creator: false, studio: true, industry: true },
-                  { feature: "White-Label Exports", independent: false, creator: false, studio: true, industry: true },
-                  { feature: "Custom AI Fine-Tuning", independent: false, creator: false, studio: false, industry: true },
-                  { feature: "API Access", independent: false, creator: false, studio: false, industry: true },
-                  { feature: "Dedicated Account Manager", independent: false, creator: false, studio: false, industry: true },
+                  { feature: "Video Generation", amateur: false, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Film Export", amateur: false, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Bulk Generation", amateur: false, independent: false, creator: true, studio: true, industry: true },
+                  { feature: "VFX Suite", amateur: false, independent: false, creator: false, studio: true, industry: true },
+                  { feature: "Multi-Shot Sequencer", amateur: false, independent: false, creator: false, studio: true, industry: true },
+                  { feature: "NLE / DaVinci Export", amateur: false, independent: false, creator: false, studio: true, industry: true },
+                  { feature: "AI Casting Tool", amateur: false, independent: false, creator: false, studio: true, industry: true },
+                  { feature: "White-Label Exports", amateur: false, independent: false, creator: false, studio: true, industry: true },
+                  { feature: "Custom AI Fine-Tuning", amateur: false, independent: false, creator: false, studio: false, industry: true },
+                  { feature: "API Access", amateur: false, independent: false, creator: false, studio: false, industry: true },
+                  { feature: "Dedicated Account Manager", amateur: false, independent: false, creator: false, studio: false, industry: true },
                   { feature: "LIMITS", section: "header" },
-                  { feature: "Projects", independent: "25", creator: "50", studio: "100", industry: "Unlimited" },
-                  { feature: "Max Film Duration", independent: "90 min", creator: "120 min", studio: "150 min", industry: "180 min" },
-                  { feature: "Max Resolution", independent: "1080p + 4K", creator: "1080p + 4K", studio: "4K + ProRes", industry: "4K + ProRes" },
-                  { feature: "Team Members", independent: "5", creator: "10", studio: "25", industry: "Unlimited" },
+                  { feature: "Projects", amateur: "2", independent: "25", creator: "50", studio: "100", industry: "Unlimited" },
+                  { feature: "Max Film Duration", amateur: "5 min", independent: "90 min", creator: "120 min", studio: "150 min", industry: "180 min" },
+                  { feature: "Max Resolution", amateur: "720p", independent: "1080p + 4K", creator: "1080p + 4K", studio: "4K + ProRes", industry: "4K + ProRes" },
+                  { feature: "Team Members", amateur: "1", independent: "5", creator: "10", studio: "25", industry: "Unlimited" },
                 ].map((row: any, i: number) => {
                   if (row.section === "header") {
                     return (
                       <tr key={i} className="bg-zinc-900/80">
-                        <td colSpan={5} className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-amber-400/80">
+                        <td colSpan={6} className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-amber-400/80">
                           {row.feature}
                         </td>
                       </tr>
@@ -580,9 +629,10 @@ export default function Pricing() {
                   return (
                     <tr key={i} className="hover:bg-zinc-900/50">
                       <td className="py-3 px-4 font-medium">{row.feature}</td>
-                      {(["independent", "creator", "studio", "industry"] as const).map((tier) => {
+                      {(["amateur", "independent", "creator", "studio", "industry"] as const).map((tier) => {
                         const val = row[tier];
                         const colors: Record<string, string> = {
+                          amateur: "text-emerald-400",
                           independent: "text-amber-400",
                           creator: "text-cyan-400",
                           studio: "text-violet-400",

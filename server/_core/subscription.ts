@@ -11,7 +11,7 @@ export const stripe = ENV.stripeSecretKey
 // TIER DEFINITIONS & LIMITS
 // ============================================================
 
-export type SubscriptionTier = "independent" | "creator" | "studio" | "industry";
+export type SubscriptionTier = "amateur" | "independent" | "creator" | "studio" | "industry";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -128,6 +128,66 @@ export interface TierLimits {
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
+  // ─── AMATEUR FILMMAKER ─── $500/month — 15 credits, hook tier to drive upgrades
+  // Deliberately limited: enough to start a project but NOT finish it.
+  // No video generation, no export, no advanced tools — just enough to get invested.
+  amateur: {
+    maxProjects: 2,
+    maxCharactersPerProject: 5,
+    maxScenesPerProject: 5,
+    maxGenerationsPerMonth: 20,
+    maxMovieExports: 0,
+    maxCollaboratorsPerProject: 1,
+    maxScriptsPerProject: 1,
+    maxStorageMB: 1000, // 1GB
+    // Core creative tools — limited set to show value without enabling completion
+    canUseQuickGenerate: true,
+    canUseTrailerGeneration: false,
+    canUseDirectorAssistant: true,
+    canUseAdPosterMaker: false,
+    canUseBudgetEstimator: true,
+    canUseColorGrading: false,
+    canUseSoundEffects: false,
+    canUseSubtitles: false,
+    canUseDialogueEditor: true,
+    canUseLocationScout: true,
+    canUseMoodBoard: true,
+    canUseShotList: true,
+    canUseContinuityCheck: false,
+    canUseScriptWriter: true,
+    canUseStoryboard: false,
+    canUseCollaboration: false,
+    canExportMovies: false,       // Cannot export — must upgrade to get their film
+    canExportHD: false,
+    canUseAICharacterGen: true,
+    canUseAIScriptGen: true,
+    canUseAIDialogueGen: true,
+    canUseAIBudgetGen: false,
+    canUseAISubtitleGen: false,
+    canUseAILocationSuggest: true,
+    canUseFullFilmGeneration: false, // No full film pipeline — must upgrade
+    canUseAIVoiceActing: false,
+    canUseAISoundtrack: false,
+    canUseCharacterConsistency: false,
+    canUseSceneContinuity: false,
+    canUseClipChaining: false,
+    canUseVisualEffects: false,
+    canUseBulkGenerate: false,
+    canUseMultiShotSequencer: false,
+    canUseLiveActionPlate: false,
+    canUseNLEExport: false,
+    canUseAICasting: false,
+    canExportUltraHD: false,
+    canUseWhiteLabel: false,
+    canUseAPIAccess: false,
+    canUseCustomFineTuning: false,
+    canUsePriorityRendering: false,
+    resolution: "720p",
+    quality: ["standard"],
+    maxDurationMinutes: 5,        // Max 5 min total — not enough for a real film
+    maxClipsPerScene: 2,
+    monthlyCredits: 15,           // 15 credits: enough to write a script + a few previews, not enough to finish
+  },
   // ─── INDEPENDENT ─── Full production pipeline: 90 min films, 4K, all core tools
   independent: {
     maxProjects: 25,
@@ -510,7 +570,7 @@ export const SCENE_BY_SCENE_PRICING: SceneByScenePricing = {
 
 // Launch special flag — set to false to disable 50% off
 export const LAUNCH_SPECIAL_ACTIVE = true;
-export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first film
+export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first year of yearly subscription
 
 // ============================================================
 // PLATFORM MEMBERSHIP — Annual access to tools (required)
@@ -535,6 +595,7 @@ export interface TierPricing {
  * Industry:    $25,000/mo ($250,000/yr) — 600 credits/mo, 180 min films, white-label, API
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
+  amateur:     { monthly: 50000, annual: 41667, annualTotal: 500000, monthlyTotal: 600000 },
   independent: { monthly: 5000, annual: 4167, annualTotal: 50000, monthlyTotal: 60000 },
   creator:     { monthly: 10000, annual: 8333, annualTotal: 100000, monthlyTotal: 120000 },
   studio:      { monthly: 15000, annual: 12500, annualTotal: 150000, monthlyTotal: 180000 },
@@ -662,6 +723,9 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
 
   // Check all 4 tiers
   const tierKeys: { tier: SubscriptionTier; keys: string[] }[] = [
+    { tier: "amateur", keys: [
+      getStripePriceId("amateur_monthly"), getStripePriceId("amateur_annual"),
+    ]},
     { tier: "independent", keys: [
       getStripePriceId("independent_monthly"), getStripePriceId("independent_annual"),
       (ENV as any).stripeIndependentMonthlyPriceId, (ENV as any).stripeIndependentAnnualPriceId,
@@ -689,6 +753,7 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
   if (lower.includes("creator")) return "creator";
   if (lower.includes("industry") || lower.includes("enterprise")) return "industry";
   if (lower.includes("independent")) return "independent";
+  if (lower.includes("amateur")) return "amateur";
 
   console.warn(`[Subscription] Unknown price ID: ${priceId}, defaulting to independent`);
   return "independent";
@@ -707,6 +772,7 @@ function mapTierName(tier: string | null | undefined): SubscriptionTier {
   if (tier === "industry" || tier === "enterprise") return "industry";
   if (tier === "studio") return "studio";
   if (tier === "creator") return "creator";
+  if (tier === "amateur") return "amateur";
   // "pro", "independent" and anything else map to independent
   return "independent";
 }
@@ -849,7 +915,7 @@ export async function createCheckoutSession(
           name: "Founding Director — 50% Off First Year",
           percent_off: 50,
           duration: "once", // applies to first invoice only
-          max_redemptions: 50, // limited to 50 founding directors
+          max_redemptions: 50, // limited to 50 founding directors (19 spots still available)
           metadata: { type: "founding_offer" },
         });
         couponId = coupon.id;

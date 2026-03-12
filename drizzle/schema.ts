@@ -12,7 +12,7 @@ export const users = mysqlTable("users", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
   // Subscription fields
-  subscriptionTier: mysqlEnum("subscriptionTier", ["independent", "creator", "studio", "pro", "industry"]).default("independent").notNull(),
+  subscriptionTier: mysqlEnum("subscriptionTier", ["amateur", "independent", "creator", "studio", "pro", "industry"]).default("independent").notNull(),
   stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
   stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
   subscriptionStatus: mysqlEnum("subscriptionStatus", ["active", "canceled", "past_due", "unpaid", "trialing", "none"]).default("none").notNull(),

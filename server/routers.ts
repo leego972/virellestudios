@@ -2472,9 +2472,15 @@ Break this into 8-15 scenes. For each scene, provide:
           }
         }
 
-        // Pre-deduct all credits for the film upfront
+        // Pre-deduct all credits for the film upfront (generation counter + creditBalance)
         for (let i = 0; i < totalCreditsNeeded; i++) {
           await db.incrementGenerationCount(ctx.user.id);
+        }
+        // Deduct from creditBalance so the credit system stays in sync
+        try {
+          await db.deductCredits(ctx.user.id, totalCreditsNeeded, "generate_film", `Full film generation: ${allScenes.length} scenes × ${creditsPerScene} credits/scene`);
+        } catch (e: any) {
+          if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message });
         }
 
         // Fetch user API keys; admins also get platform keys as fallback
@@ -3445,7 +3451,9 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
 
     generateImage: protectedProcedure
       .input(z.object({ prompt: z.string().min(1) }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        // Deduct 1 credit for mood board image generation (same as preview image)
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_preview_image.cost, "generate_preview_image", `Mood board image: ${input.prompt.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const { url } = await generateImage({
           prompt: `Cinematic mood board reference: ${input.prompt}. Artistic, atmospheric, film production quality.`,
         });
@@ -5059,6 +5067,8 @@ Rules:
         text: z.string().min(1).max(5000),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Deduct 1 credit for AI voice synthesis (same cost as a chat message)
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_speak", `AI voice synthesis: ${input.text.substring(0, 40)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // Get user's ElevenLabs API key
         const userKeys = await db.getUserApiKeys(ctx.user.id);
         const elevenlabsKey = userKeys.elevenlabsKey;
@@ -5207,6 +5217,8 @@ Rules:
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
+        // Deduct credits for video ad generation (5s video = standard scene cost)
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_scene_video.cost, "generate_scene_video", `Video ad generation for ${input.platform}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
 
         const rawAdKeys = await db.getUserApiKeys(ctx.user.id);
         const isAdminAd = ctx.user.role === "admin" || ctx.user.email === ENV.adminEmail;
@@ -5308,7 +5320,7 @@ Rules:
     // Create a Stripe checkout session for subscription
     createCheckout: protectedProcedure
       .input(z.object({
-        tier: z.enum(["independent", "creator", "studio", "industry"]),
+        tier: z.enum(["amateur", "independent", "creator", "studio", "industry"]),
         billing: z.enum(["monthly", "annual"]).default("annual"),
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
@@ -5317,6 +5329,10 @@ Rules:
         // Resolve the correct Stripe price ID — check auto-provisioned first, then ENV fallbacks
         const { getStripePriceId } = await import("./_core/stripeProvisioning");
         const priceMap: Record<string, Record<string, string>> = {
+          amateur: {
+            monthly: getStripePriceId("amateur_monthly") || "",
+            annual: getStripePriceId("amateur_annual") || "",
+          },
           independent: {
             monthly: getStripePriceId("independent_monthly") || (ENV as any).stripeIndependentMonthlyPriceId || "",
             annual: getStripePriceId("independent_annual") || (ENV as any).stripeIndependentAnnualPriceId || "",
@@ -5354,7 +5370,8 @@ Rules:
             return { spotsRemaining: Math.max(50 - realCount, 0) };
           } catch { return { spotsRemaining: 0 }; }
         })();
-        const applyFoundingDiscount = isFirstSub && input.billing === "annual" && spotsData.spotsRemaining > 0;
+        // Founding offer only applies to Independent+ tiers (not Amateur — it's a hook tier, not a founding member)
+        const applyFoundingDiscount = isFirstSub && input.billing === "annual" && spotsData.spotsRemaining > 0 && input.tier !== "amateur";
 
         const url = await createCheckoutSession(
           ctx.user,
@@ -5427,11 +5444,11 @@ Rules:
         if (!dbConn) throw new Error("DB not available");
         const result = await dbConn.execute(sql`SELECT COUNT(*) as count FROM users WHERE subscriptionTier IN ('independent','creator','studio','industry') AND subscriptionStatus = 'active'`);
         const realCount = Number((result[0] as any)?.count || 0);
-        const displayCount = Math.min(realCount + 30, 50); // offset by 30, cap at 50
+        const displayCount = Math.min(realCount + 31, 50); // offset by 31 (31 spots already claimed), cap at 50
         const spotsRemaining = Math.max(50 - displayCount, 0);
         return { displayCount, spotsRemaining, isFull: spotsRemaining === 0 };
       } catch {
-        return { displayCount: 30, spotsRemaining: 20, isFull: false };
+        return { displayCount: 31, spotsRemaining: 19, isFull: false };
       }
     }),
 
