@@ -357,7 +357,7 @@ export default function Pricing() {
                             <span className="text-3xl font-bold text-amber-400">{formatPrice(Math.round(price / 2))}</span>
                             <span className="text-lg line-through text-muted-foreground">{formatPrice(price)}</span>
                           </div>
-                          <p className="text-xs text-amber-400/80 font-semibold mt-0.5">50% off first year — founding member</p>
+                          <p className="text-xs text-amber-400/80 font-semibold mt-0.5">50% off first year — founding member*</p>
                           <p className="text-xs text-muted-foreground mt-0.5">
                             ({formatPrice(Math.round(price / 2 / 12))}/mo effective)
                           </p>
@@ -416,6 +416,11 @@ export default function Pricing() {
               );
             })}
           </div>
+          {!offerFull && billingCycle === "annual" && (
+            <p className="text-center text-xs text-muted-foreground mt-3">
+              * 50% founding discount applied automatically at checkout for Independent, Creator, Studio, and Industry annual memberships. Valid for first {spotsRemaining} founding directors only. Discount applies to first year; renews at full price.
+            </p>
+          )}
           <p className="text-center text-xs text-muted-foreground mt-6">
             All prices in USD. {billingCycle === "annual" ? "Billed annually." : "Billed monthly."} A paid membership is required to access the platform. No free tier.
           </p>
