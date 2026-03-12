@@ -1569,3 +1569,73 @@ export async function deleteProjectSample(id: number): Promise<void> {
   if (!db) throw new Error("Database not available");
   await db.delete(projectSamples).where(eq(projectSamples.id, id));
 }
+
+// ─── User Social Platform Credentials ────────────────────────────────────────
+import { userSocialCredentials, InsertUserSocialCredential, UserSocialCredential } from "../drizzle/schema";
+
+export async function getUserSocialCredentials(userId: number): Promise<UserSocialCredential[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(userSocialCredentials)
+    .where(eq(userSocialCredentials.userId, userId))
+    .orderBy(asc(userSocialCredentials.platform));
+}
+
+export async function getUserSocialCredentialByPlatform(userId: number, platform: string): Promise<UserSocialCredential | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(userSocialCredentials)
+    .where(and(eq(userSocialCredentials.userId, userId), eq(userSocialCredentials.platform, platform)));
+  return rows[0];
+}
+
+export async function upsertUserSocialCredential(userId: number, platform: string, data: {
+  displayName?: string;
+  credentials: string;
+  isActive?: boolean;
+}): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const existing = await getUserSocialCredentialByPlatform(userId, platform);
+  if (existing) {
+    await db.update(userSocialCredentials)
+      .set({ ...data, updatedAt: new Date() })
+      .where(and(eq(userSocialCredentials.userId, userId), eq(userSocialCredentials.platform, platform)));
+  } else {
+    await db.insert(userSocialCredentials).values({
+      userId,
+      platform,
+      displayName: data.displayName,
+      credentials: data.credentials,
+      isActive: data.isActive ?? true,
+    });
+  }
+}
+
+export async function updateSocialCredentialTestResult(userId: number, platform: string, success: boolean, error?: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(userSocialCredentials)
+    .set({
+      lastTestedAt: new Date(),
+      lastError: success ? null : (error || "Connection failed"),
+      isActive: success,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(userSocialCredentials.userId, userId), eq(userSocialCredentials.platform, platform)));
+}
+
+export async function updateSocialCredentialPublished(userId: number, platform: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(userSocialCredentials)
+    .set({ lastPublishedAt: new Date(), lastError: null, updatedAt: new Date() })
+    .where(and(eq(userSocialCredentials.userId, userId), eq(userSocialCredentials.platform, platform)));
+}
+
+export async function deleteUserSocialCredential(userId: number, platform: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(userSocialCredentials)
+    .where(and(eq(userSocialCredentials.userId, userId), eq(userSocialCredentials.platform, platform)));
+}

@@ -1319,14 +1319,16 @@ const PLATFORM_META: Record<string, { name: string; icon: string; color: string;
   youtube:   { name: "YouTube",   icon: "🎥", color: "border-red-500/40 bg-red-500/5",      maxFileSizeMB: 2,   formats: "JPG, PNG", notes: "Thumbnails: max 2 MB, 1280×720. Channel art: 2560×1440." },
 };
 
-function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
+function PublishTab({ currentTemplate, posterRef }: { currentTemplate: TemplateType; posterRef?: React.RefObject<HTMLDivElement> }) {
   const { data: connectedList } = trpc.socialCredentials.list.useQuery();
+  const uploadMutation = trpc.upload.image.useMutation();
   const publishMutation = trpc.socialCredentials.publish.useMutation({
     onSuccess: (data) => {
       if (data.success) toast.success(`Published to ${data.platform} successfully!`);
       else toast.error(`Publish failed: ${data.error}`);
+      setPublishingPlatform(null);
     },
-    onError: (e) => toast.error(e.message),
+    onError: (e) => { toast.error(e.message); setPublishingPlatform(null); },
   });
 
   const [publishCaption, setPublishCaption] = useState("");
@@ -1334,9 +1336,28 @@ function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
 
   const getConnected = (platformId: string) => connectedList?.find((c) => c.platform === platformId && c.hasCredentials && c.isActive);
 
-  const handlePublish = (platformId: string) => {
+  const handlePublish = async (platformId: string) => {
     setPublishingPlatform(platformId);
-    publishMutation.mutate({ platform: platformId, caption: publishCaption, templateType: currentTemplate });
+    try {
+      // Export the canvas to a PNG data URL, then upload to S3
+      const canvas = document.querySelector("canvas") as HTMLCanvasElement | null;
+      let mediaUrl: string;
+      if (canvas) {
+        const dataUrl = canvas.toDataURL("image/png");
+        const base64 = dataUrl.split(",")[1];
+        const uploaded = await uploadMutation.mutateAsync({ base64, filename: `ad-${Date.now()}.png`, contentType: "image/png" });
+        mediaUrl = uploaded.url;
+      } else {
+        // Fallback: use a screenshot of the preview div
+        toast.error("Could not capture canvas. Please export the image first and use the URL.");
+        setPublishingPlatform(null);
+        return;
+      }
+      publishMutation.mutate({ platform: platformId as any, mediaUrl, mediaType: "image", caption: publishCaption });
+    } catch (e: any) {
+      toast.error(e.message || "Upload failed");
+      setPublishingPlatform(null);
+    }
   };
 
   return (

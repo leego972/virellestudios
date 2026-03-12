@@ -5328,6 +5328,276 @@ Rules:
       }),
   }),
 
+  // ─── Social Platform Credentials ─────────────────────────────────────────────
+  // Per-user credentials for Instagram, TikTok, Facebook, Discord, YouTube
+  // Credentials are stored per-user and never shared between accounts.
+  socialCredentials: router({
+    // List all connected platforms (metadata only — no raw tokens returned)
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const creds = await db.getUserSocialCredentials(ctx.user.id);
+      return creds.map((c) => ({
+        platform: c.platform,
+        displayName: c.displayName,
+        isActive: c.isActive,
+        lastTestedAt: c.lastTestedAt,
+        lastPublishedAt: c.lastPublishedAt,
+        lastError: c.lastError,
+        createdAt: c.createdAt,
+        hasCredentials: !!c.credentials,
+      }));
+    }),
+
+    // Save or update credentials for a platform
+    save: protectedProcedure
+      .input(z.object({
+        platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]),
+        displayName: z.string().max(255).optional(),
+        accessToken: z.string().optional(),
+        refreshToken: z.string().optional(),
+        pageId: z.string().optional(),
+        pageAccessToken: z.string().optional(),
+        userId: z.string().optional(),
+        openId: z.string().optional(),
+        channelId: z.string().optional(),
+        botToken: z.string().optional(),
+        guildId: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { platform, displayName, ...fields } = input;
+        const credObj: Record<string, string> = {};
+        if (fields.accessToken) credObj.accessToken = fields.accessToken;
+        if (fields.refreshToken) credObj.refreshToken = fields.refreshToken;
+        if (fields.pageId) credObj.pageId = fields.pageId;
+        if (fields.pageAccessToken) credObj.pageAccessToken = fields.pageAccessToken;
+        if (fields.userId) credObj.userId = fields.userId;
+        if (fields.openId) credObj.openId = fields.openId;
+        if (fields.channelId) credObj.channelId = fields.channelId;
+        if (fields.botToken) credObj.botToken = fields.botToken;
+        if (fields.guildId) credObj.guildId = fields.guildId;
+        if (Object.keys(credObj).length === 0) throw new TRPCError({ code: "BAD_REQUEST", message: "No credentials provided" });
+        await db.upsertUserSocialCredential(ctx.user.id, platform, {
+          displayName,
+          credentials: JSON.stringify(credObj),
+          isActive: true,
+        });
+        return { success: true };
+      }),
+
+    // Test a platform connection using stored credentials
+    test: protectedProcedure
+      .input(z.object({ platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]) }))
+      .mutation(async ({ ctx, input }) => {
+        const cred = await db.getUserSocialCredentialByPlatform(ctx.user.id, input.platform);
+        if (!cred) throw new TRPCError({ code: "NOT_FOUND", message: "No credentials saved for this platform" });
+        let credObj: Record<string, string> = {};
+        try { credObj = JSON.parse(cred.credentials); } catch { throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Corrupted credentials" }); }
+        let success = false;
+        let error: string | undefined;
+        try {
+          if (input.platform === "instagram" || input.platform === "facebook") {
+            const token = credObj.pageAccessToken || credObj.accessToken;
+            if (!token) throw new Error("No access token provided");
+            const res = await fetch(`https://graph.facebook.com/v19.0/me?access_token=${token}`);
+            const data = await res.json();
+            if (data.error) throw new Error(data.error.message);
+            success = true;
+          } else if (input.platform === "tiktok") {
+            const token = credObj.accessToken;
+            if (!token) throw new Error("No access token provided");
+            const res = await fetch("https://open.tiktokapis.com/v2/user/info/?fields=open_id,display_name", {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.error?.code && data.error.code !== "ok") throw new Error(data.error.message || "TikTok API error");
+            success = true;
+          } else if (input.platform === "discord") {
+            const token = credObj.botToken;
+            if (!token) throw new Error("No bot token provided");
+            const res = await fetch("https://discord.com/api/v10/users/@me", {
+              headers: { Authorization: `Bot ${token}` },
+            });
+            const data = await res.json();
+            if (data.code) throw new Error(data.message || "Discord API error");
+            success = true;
+          } else if (input.platform === "youtube") {
+            const token = credObj.accessToken;
+            if (!token) throw new Error("No access token provided");
+            const res = await fetch("https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true", {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error.message);
+            success = true;
+          }
+        } catch (e: any) {
+          error = e.message || "Connection failed";
+        }
+        await db.updateSocialCredentialTestResult(ctx.user.id, input.platform, success, error);
+        return { success, error };
+      }),
+
+    // Remove credentials for a platform
+    remove: protectedProcedure
+      .input(z.object({ platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]) }))
+      .mutation(async ({ ctx, input }) => {
+        await db.deleteUserSocialCredential(ctx.user.id, input.platform);
+        return { success: true };
+      }),
+
+    // Publish an image or video to a connected platform
+    publish: protectedProcedure
+      .input(z.object({
+        platform: z.enum(["instagram", "tiktok", "facebook", "discord", "youtube"]),
+        mediaUrl: z.string().url(),
+        mediaType: z.enum(["image", "video"]),
+        caption: z.string().max(2200).optional(),
+        discordMessage: z.string().max(2000).optional(),
+        videoTitle: z.string().max(100).optional(),
+        videoDescription: z.string().max(5000).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const cred = await db.getUserSocialCredentialByPlatform(ctx.user.id, input.platform);
+        if (!cred || !cred.isActive) throw new TRPCError({ code: "PRECONDITION_FAILED", message: `${input.platform} is not connected. Go to Settings > Connected Platforms.` });
+        let credObj: Record<string, string> = {};
+        try { credObj = JSON.parse(cred.credentials); } catch { throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Corrupted credentials" }); }
+        let postUrl: string | undefined;
+        let postId: string | undefined;
+        try {
+          if (input.platform === "instagram") {
+            const token = credObj.pageAccessToken || credObj.accessToken;
+            const igUserId = credObj.pageId || credObj.userId;
+            if (!token || !igUserId) throw new Error("Instagram credentials incomplete: need accessToken and pageId");
+            if (input.mediaType === "image") {
+              const containerRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image_url: input.mediaUrl, caption: input.caption || "", access_token: token }),
+              });
+              const container = await containerRes.json();
+              if (!container.id) throw new Error(container.error?.message || "Failed to create Instagram media container");
+              const publishRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media_publish`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ creation_id: container.id, access_token: token }),
+              });
+              const published = await publishRes.json();
+              if (!published.id) throw new Error(published.error?.message || "Failed to publish to Instagram");
+              postId = published.id;
+              postUrl = `https://www.instagram.com/p/${published.id}/`;
+            } else {
+              const containerRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ media_type: "REELS", video_url: input.mediaUrl, caption: input.caption || "", access_token: token }),
+              });
+              const container = await containerRes.json();
+              if (!container.id) throw new Error(container.error?.message || "Failed to create Instagram Reels container");
+              let ready = false;
+              for (let i = 0; i < 12; i++) {
+                await new Promise((r) => setTimeout(r, 5000));
+                const statusRes = await fetch(`https://graph.facebook.com/v19.0/${container.id}?fields=status_code&access_token=${token}`);
+                const status = await statusRes.json();
+                if (status.status_code === "FINISHED") { ready = true; break; }
+                if (status.status_code === "ERROR") throw new Error("Instagram video processing failed");
+              }
+              if (!ready) throw new Error("Instagram video processing timed out — try again");
+              const publishRes = await fetch(`https://graph.facebook.com/v19.0/${igUserId}/media_publish`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ creation_id: container.id, access_token: token }),
+              });
+              const published = await publishRes.json();
+              if (!published.id) throw new Error(published.error?.message || "Failed to publish Reels");
+              postId = published.id;
+              postUrl = `https://www.instagram.com/reel/${published.id}/`;
+            }
+          } else if (input.platform === "facebook") {
+            const token = credObj.pageAccessToken || credObj.accessToken;
+            const pageId = credObj.pageId;
+            if (!token || !pageId) throw new Error("Facebook credentials incomplete: need pageAccessToken and pageId");
+            if (input.mediaType === "image") {
+              const res = await fetch(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: input.mediaUrl, caption: input.caption || "", access_token: token }),
+              });
+              const data = await res.json();
+              if (!data.id) throw new Error(data.error?.message || "Failed to post to Facebook");
+              postId = data.id;
+              postUrl = `https://www.facebook.com/${pageId}/posts/${data.id}`;
+            } else {
+              const res = await fetch(`https://graph.facebook.com/v19.0/${pageId}/videos`, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ file_url: input.mediaUrl, description: input.caption || "", access_token: token }),
+              });
+              const data = await res.json();
+              if (!data.id) throw new Error(data.error?.message || "Failed to post video to Facebook");
+              postId = data.id;
+              postUrl = `https://www.facebook.com/video/${data.id}`;
+            }
+          } else if (input.platform === "tiktok") {
+            const token = credObj.accessToken;
+            if (!token) throw new Error("TikTok credentials incomplete: need accessToken");
+            const initRes = await fetch("https://open.tiktokapis.com/v2/post/publish/video/init/", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json; charset=UTF-8" },
+              body: JSON.stringify({
+                post_info: { title: input.caption || "Film Ad", privacy_level: "PUBLIC_TO_EVERYONE", disable_duet: false, disable_comment: false, disable_stitch: false },
+                source_info: { source: "PULL_FROM_URL", video_url: input.mediaUrl },
+              }),
+            });
+            const initData = await initRes.json();
+            if (initData.error?.code && initData.error.code !== "ok") throw new Error(initData.error.message || "TikTok post init failed");
+            postId = initData.data?.publish_id;
+            postUrl = postId ? `https://www.tiktok.com/@me/video/${postId}` : undefined;
+          } else if (input.platform === "discord") {
+            const token = credObj.botToken;
+            const channelId = credObj.channelId;
+            if (!token || !channelId) throw new Error("Discord credentials incomplete: need botToken and channelId");
+            const message = input.discordMessage || input.caption || "New film content from VirElle Studios";
+            const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+              method: "POST",
+              headers: { Authorization: `Bot ${token}`, "Content-Type": "application/json" },
+              body: JSON.stringify({
+                content: message,
+                embeds: input.mediaType === "image" ? [{ image: { url: input.mediaUrl } }] : undefined,
+              }),
+            });
+            const data = await res.json();
+            if (data.code) throw new Error(data.message || "Discord API error");
+            postId = data.id;
+            postUrl = `https://discord.com/channels/${credObj.guildId || "@me"}/${channelId}/${data.id}`;
+          } else if (input.platform === "youtube") {
+            const token = credObj.accessToken;
+            if (!token) throw new Error("YouTube credentials incomplete: need accessToken");
+            const initRes = await fetch("https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", "X-Upload-Content-Type": "video/*" },
+              body: JSON.stringify({
+                snippet: { title: input.videoTitle || input.caption || "Film Ad", description: input.videoDescription || input.caption || "", categoryId: "1" },
+                status: { privacyStatus: "public", selfDeclaredMadeForKids: false },
+              }),
+            });
+            if (!initRes.ok) { const err = await initRes.json(); throw new Error(err.error?.message || "YouTube upload init failed"); }
+            const uploadUrl = initRes.headers.get("location");
+            if (!uploadUrl) throw new Error("YouTube did not return an upload URL");
+            const videoRes = await fetch(input.mediaUrl);
+            if (!videoRes.ok) throw new Error("Could not fetch video from provided URL");
+            const videoBuffer = await videoRes.arrayBuffer();
+            const uploadRes = await fetch(uploadUrl, {
+              method: "PUT",
+              headers: { "Content-Type": "video/*", "Content-Length": videoBuffer.byteLength.toString() },
+              body: videoBuffer,
+            });
+            const uploadData = await uploadRes.json();
+            if (!uploadData.id) throw new Error(uploadData.error?.message || "YouTube upload failed");
+            postId = uploadData.id;
+            postUrl = `https://www.youtube.com/watch?v=${uploadData.id}`;
+          }
+        } catch (e: any) {
+          await db.updateSocialCredentialTestResult(ctx.user.id, input.platform, false, e.message);
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: e.message || "Publish failed" });
+        }
+        await db.updateSocialCredentialPublished(ctx.user.id, input.platform);
+        return { success: true, postUrl, postId };
+      }),
+  }),
+
   // ─── Subscription / Billing ─────────────────────────────────────────────────
   subscription: router({
     // Get current user's subscription status and limits (with live Stripe sync)
@@ -5727,20 +5997,40 @@ Rules:
 
     // Get referral stats for the current user
     myStats: protectedProcedure.query(async ({ ctx }) => {
+      const { REFERRAL_REWARDS } = await import("./_core/subscription");
       const code = await db.getReferralCodeByUserId(ctx.user.id);
-      if (!code) return { totalReferrals: 0, successfulReferrals: 0, bonusGenerationsEarned: 0, referrals: [] };
+      if (!code) return {
+        totalReferrals: 0, successfulReferrals: 0, bonusCreditsEarned: 0, referrals: [],
+        nextMilestone: REFERRAL_REWARDS.milestones[0], milestoneProgress: 0,
+        completedMilestones: [],
+      };
       const referrals = await db.getReferralTrackingByCode(code.id);
+      const successful = code.successfulReferrals || 0;
+      // Calculate milestone progress
+      const completedMilestones = REFERRAL_REWARDS.milestones.filter(m => successful >= m.count);
+      const nextMilestone = REFERRAL_REWARDS.milestones.find(m => successful < m.count) || null;
+      const prevMilestoneCount = completedMilestones.length > 0
+        ? completedMilestones[completedMilestones.length - 1].count
+        : 0;
+      const milestoneProgress = nextMilestone
+        ? Math.round(((successful - prevMilestoneCount) / (nextMilestone.count - prevMilestoneCount)) * 100)
+        : 100;
       return {
         code: code.code,
         totalReferrals: code.totalReferrals,
-        successfulReferrals: code.successfulReferrals,
-        bonusGenerationsEarned: code.bonusGenerationsEarned,
-        referrals: referrals.map(r => ({
-          status: r.status,
-          rewardType: r.rewardType,
-          rewardAmount: r.rewardAmount,
-          createdAt: r.createdAt,
-        })),
+        successfulReferrals: successful,
+        bonusCreditsEarned: code.bonusGenerationsEarned,
+        nextMilestone,
+        milestoneProgress,
+        completedMilestones,
+        referrals: referrals
+          .filter(r => r.referredUserId)
+          .map(r => ({
+            status: r.status,
+            rewardType: r.rewardType,
+            rewardAmount: r.rewardAmount,
+            createdAt: r.createdAt,
+          })),
       };
     }),
 
@@ -5789,8 +6079,12 @@ Rules:
           return { success: false, message: "User already referred" };
         }
 
+        // Import reward config
+        const { REFERRAL_REWARDS } = await import("./_core/subscription");
+        const BASE_REWARD = REFERRAL_REWARDS.referrerCredits; // 7,000
+        const NEW_USER_REWARD = REFERRAL_REWARDS.newUserCredits; // 7,000
+
         // Create tracking record
-        const REWARD_GENERATIONS = 7000;
         await db.createReferralTracking({
           referralCodeId: refCode.id,
           referrerId: refCode.userId,
@@ -5798,23 +6092,57 @@ Rules:
           referredEmail: input.referredEmail || null,
           status: "rewarded",
           rewardType: "bonus_generations",
-          rewardAmount: REWARD_GENERATIONS,
+          rewardAmount: BASE_REWARD,
           rewardedAt: new Date(),
         });
 
+        const newSuccessfulCount = (refCode.successfulReferrals || 0) + 1;
+
         // Update referral code stats
         await db.updateReferralCode(refCode.id, {
-          successfulReferrals: (refCode.successfulReferrals || 0) + 1,
-          bonusGenerationsEarned: (refCode.bonusGenerationsEarned || 0) + REWARD_GENERATIONS,
+          successfulReferrals: newSuccessfulCount,
+          bonusGenerationsEarned: (refCode.bonusGenerationsEarned || 0) + BASE_REWARD,
         });
 
-        // Award bonus generations to the referrer
-        await db.addBonusGenerations(refCode.userId, REWARD_GENERATIONS);
+        // Award base credits to both parties
+        await db.addBonusGenerations(refCode.userId, BASE_REWARD);
+        await db.addBonusGenerations(input.referredUserId, NEW_USER_REWARD);
 
-        // Also give the new user 7000 bonus credits as a welcome gift
-        await db.addBonusGenerations(input.referredUserId, 7000);
+        // Check for milestone bonuses
+        let milestoneBonus = 0;
+        let milestoneLabel = "";
+        const hitMilestone = REFERRAL_REWARDS.milestones.find(m => m.count === newSuccessfulCount);
+        if (hitMilestone) {
+          milestoneBonus = hitMilestone.bonus;
+          milestoneLabel = hitMilestone.label;
+          await db.addBonusGenerations(refCode.userId, milestoneBonus);
+          await db.updateReferralCode(refCode.id, {
+            bonusGenerationsEarned: (refCode.bonusGenerationsEarned || 0) + BASE_REWARD + milestoneBonus,
+          });
+          // Notify referrer of milestone
+          try {
+            await db.createNotification({
+              userId: refCode.userId,
+              type: "referral_reward",
+              title: `🌟 Referral Milestone: ${milestoneLabel}!`,
+              message: `You've referred ${newSuccessfulCount} members! You've earned a bonus of ${milestoneBonus.toLocaleString()} credits. Keep going!`,
+              link: "/referrals",
+            });
+          } catch (_) { /* non-critical */ }
+        }
 
-        return { success: true, referrerReward: REWARD_GENERATIONS, newUserReward: 7000 };
+        // Notify referrer of new signup
+        try {
+          await db.createNotification({
+            userId: refCode.userId,
+            type: "referral_reward",
+            title: "New Referral Signup!",
+            message: `Someone joined using your referral link. You earned ${BASE_REWARD.toLocaleString()} credits!${milestoneBonus ? ` Plus a ${milestoneLabel} milestone bonus of ${milestoneBonus.toLocaleString()} credits!` : ""}`,
+            link: "/referrals",
+          });
+        } catch (_) { /* non-critical */ }
+
+        return { success: true, referrerReward: BASE_REWARD, newUserReward: NEW_USER_REWARD, milestoneBonus, milestoneLabel };
       }),
 
     // Validate a referral code (public - for registration form)

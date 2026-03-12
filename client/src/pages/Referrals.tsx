@@ -1,35 +1,61 @@
 import { trpc } from "@/lib/trpc";
-import { Copy, Gift, Users, TrendingUp, Share2, Check, ExternalLink } from "lucide-react";
+import {
+  Copy, Gift, Users, TrendingUp, Share2, Check,
+  Trophy, Zap, ChevronRight, Linkedin,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 
+const MILESTONES = [
+  { count: 3,  bonus: 25000,   label: "Rising Star",  icon: "STAR" },
+  { count: 5,  bonus: 50000,   label: "Connector",    icon: "LINK" },
+  { count: 10, bonus: 150000,  label: "Ambassador",   icon: "TROPHY" },
+  { count: 25, bonus: 500000,  label: "Legend",       icon: "CROWN" },
+];
+
+function formatCredits(n: number) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
+  if (n >= 1000) return (n / 1000).toFixed(0) + "K";
+  return n.toLocaleString();
+}
+
+function MilestoneIcon({ icon }: { icon: string }) {
+  if (icon === "STAR") return <span className="text-2xl">&#11088;</span>;
+  if (icon === "LINK") return <span className="text-2xl">&#128279;</span>;
+  if (icon === "TROPHY") return <span className="text-2xl">&#127942;</span>;
+  if (icon === "CROWN") return <span className="text-2xl">&#128081;</span>;
+  return null;
+}
+
 export default function Referrals() {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<"link" | "code" | null>(null);
   const { data: code, isLoading: codeLoading } = trpc.referral.getMyCode.useQuery();
   const { data: stats, isLoading: statsLoading } = trpc.referral.myStats.useQuery();
 
-  const referralLink = code ? `${window.location.origin}/register?ref=${code.code}` : "";
+  const referralLink = code ? window.location.origin + "/register?ref=" + code.code : "";
+  const isLoading = codeLoading || statsLoading;
 
   const copyLink = () => {
     navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopied("link");
+    setTimeout(() => setCopied(null), 2000);
   };
 
   const copyCode = () => {
     if (code) {
       navigator.clipboard.writeText(code.code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopied("code");
+      setTimeout(() => setCopied(null), 2000);
     }
   };
 
-  const shareReferral = () => {
+  const shareNative = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Join VirÉlle Studios",
-        text: "Create Hollywood-quality AI films for free! Use my referral link to get 3 bonus generations.",
+        title: "Join VirElle Studios",
+        text: "Create Hollywood-quality AI films. Use my referral link and we both get 7,000 bonus credits!",
         url: referralLink,
       }).catch(() => {});
     } else {
@@ -37,10 +63,24 @@ export default function Referrals() {
     }
   };
 
-  const isLoading = codeLoading || statsLoading;
+  const shareLinkedIn = () => {
+    const url = encodeURIComponent(referralLink);
+    const summary = encodeURIComponent(
+      "I have been using VirElle Studios to create Hollywood-quality AI films. Join with my referral link and we both get 7,000 bonus credits."
+    );
+    window.open(
+      "https://www.linkedin.com/sharing/share-offsite/?url=" + url + "&summary=" + summary,
+      "_blank"
+    );
+  };
+
+  const successful = stats?.successfulReferrals || 0;
+  const nextMilestone = stats?.nextMilestone || MILESTONES[0];
+  const milestoneProgress = stats?.milestoneProgress || 0;
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
@@ -48,8 +88,21 @@ export default function Referrals() {
           Referral Program
         </h1>
         <p className="text-muted-foreground mt-1">
-          Invite friends and earn bonus AI generations. They get 3 free generations too!
+          Refer production studios and filmmakers &mdash; earn{" "}
+          <span className="text-amber-400 font-semibold">7,000 credits</span> for every successful signup, plus massive milestone bonuses.
         </p>
+      </div>
+
+      {/* Reward Banner */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/10 border border-amber-500/20 p-4 text-center">
+          <div className="text-3xl font-black text-amber-400">+7,000</div>
+          <div className="text-sm text-muted-foreground mt-1">credits you earn</div>
+        </div>
+        <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-violet-600/10 border border-purple-500/20 p-4 text-center">
+          <div className="text-3xl font-black text-purple-400">+7,000</div>
+          <div className="text-sm text-muted-foreground mt-1">credits they get</div>
+        </div>
       </div>
 
       {/* Referral Link Card */}
@@ -66,26 +119,37 @@ export default function Referrals() {
                 <div className="flex-1 bg-black/30 rounded-lg px-4 py-3 text-sm font-mono text-white/80 truncate border border-white/10">
                   {referralLink}
                 </div>
-                <div className="flex gap-2">
-                  <Button onClick={copyLink} variant="outline" className="border-amber-500/30 hover:bg-amber-600/20">
-                    {copied ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                    {copied ? "Copied!" : "Copy"}
-                  </Button>
-                  <Button onClick={shareReferral} className="bg-amber-600 hover:bg-amber-700">
-                    <Share2 className="h-4 w-4 mr-1" />
-                    Share
-                  </Button>
-                </div>
+                <Button onClick={copyLink} variant="outline" className="border-amber-500/30 hover:bg-amber-600/20 shrink-0">
+                  {copied === "link" ? <Check className="h-4 w-4 mr-1 text-green-400" /> : <Copy className="h-4 w-4 mr-1" />}
+                  {copied === "link" ? "Copied!" : "Copy Link"}
+                </Button>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>Your code:</span>
+              {/* Code row */}
+              <div className="flex items-center gap-3 text-sm">
+                <span className="text-muted-foreground">Your code:</span>
                 <button
                   onClick={copyCode}
-                  className="font-mono font-bold text-amber-400 bg-amber-600/10 px-2 py-0.5 rounded hover:bg-amber-600/20 transition-colors"
+                  className="font-mono font-bold text-amber-400 bg-amber-600/10 px-3 py-1 rounded-lg hover:bg-amber-600/20 transition-colors flex items-center gap-1.5"
                 >
                   {code?.code}
+                  {copied === "code" ? <Check className="h-3.5 w-3.5 text-green-400" /> : <Copy className="h-3.5 w-3.5 opacity-60" />}
                 </button>
+              </div>
+
+              {/* Share buttons */}
+              <div className="pt-1">
+                <p className="text-xs text-muted-foreground mb-2">Share via:</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={shareNative} size="sm" className="bg-amber-600 hover:bg-amber-700">
+                    <Share2 className="h-3.5 w-3.5 mr-1.5" />
+                    Share
+                  </Button>
+                  <Button onClick={shareLinkedIn} size="sm" variant="outline" className="border-blue-500/30 hover:bg-blue-600/20 text-blue-400">
+                    <Linkedin className="h-3.5 w-3.5 mr-1.5" />
+                    LinkedIn
+                  </Button>
+                </div>
               </div>
             </>
           )}
@@ -107,7 +171,6 @@ export default function Referrals() {
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -115,27 +178,98 @@ export default function Referrals() {
                 <TrendingUp className="h-5 w-5 text-green-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats?.successfulReferrals || 0}</p>
+                <p className="text-2xl font-bold">{successful}</p>
                 <p className="text-sm text-muted-foreground">Successful Signups</p>
               </div>
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-500/10">
-                <Gift className="h-5 w-5 text-amber-400" />
+                <Zap className="h-5 w-5 text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats?.bonusGenerationsEarned || 0}</p>
-                <p className="text-sm text-muted-foreground">Bonus Generations</p>
+                <p className="text-2xl font-bold">{formatCredits(stats?.bonusCreditsEarned || 0)}</p>
+                <p className="text-sm text-muted-foreground">Credits Earned</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Milestone Progress */}
+      <Card className="border-amber-500/20">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-amber-400" />
+            Milestone Rewards
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {nextMilestone && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">
+                  Progress to{" "}
+                  <span className="text-amber-400 font-semibold">{nextMilestone.label}</span>
+                </span>
+                <span className="font-semibold">{successful} / {nextMilestone.count} referrals</span>
+              </div>
+              <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-700"
+                  style={{ width: milestoneProgress + "%" }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {nextMilestone.count - successful} more referral{nextMilestone.count - successful !== 1 ? "s" : ""} to unlock{" "}
+                <span className="text-amber-400 font-semibold">{formatCredits(nextMilestone.bonus)} bonus credits</span>
+              </p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {MILESTONES.map((m) => {
+              const isCompleted = successful >= m.count;
+              const isNext = !isCompleted && nextMilestone?.count === m.count;
+              return (
+                <div
+                  key={m.count}
+                  className={
+                    "rounded-xl p-4 border flex items-center gap-3 transition-all " +
+                    (isCompleted
+                      ? "border-amber-500/40 bg-amber-500/10"
+                      : isNext
+                      ? "border-amber-500/20 ring-1 ring-amber-500/30"
+                      : "border-white/5 opacity-50")
+                  }
+                >
+                  <MilestoneIcon icon={m.icon} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm">{m.label}</span>
+                      {isCompleted && (
+                        <Badge className="bg-green-600/20 text-green-400 border-green-500/30 text-xs">Earned</Badge>
+                      )}
+                      {isNext && (
+                        <Badge className="bg-amber-600/20 text-amber-400 border-amber-500/30 text-xs">Next</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {m.count} referrals &rarr;{" "}
+                      <span className="text-amber-400 font-semibold">{formatCredits(m.bonus)} bonus credits</span>
+                    </p>
+                  </div>
+                  {isCompleted && <Check className="h-4 w-4 text-green-400 shrink-0" />}
+                  {isNext && <ChevronRight className="h-4 w-4 text-amber-400 shrink-0" />}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* How It Works */}
       <Card>
@@ -145,30 +279,26 @@ export default function Referrals() {
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3">
-                1
-              </div>
+              <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3 text-lg">1</div>
               <h4 className="font-semibold mb-1">Share Your Link</h4>
               <p className="text-sm text-muted-foreground">
-                Send your unique referral link to friends, post it on social media, or share it in communities.
+                Send your unique referral link to filmmakers and studios, or share it on LinkedIn.
               </p>
             </div>
             <div className="text-center">
-              <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3">
-                2
-              </div>
+              <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3 text-lg">2</div>
               <h4 className="font-semibold mb-1">They Sign Up</h4>
               <p className="text-sm text-muted-foreground">
-                When someone registers using your link, they automatically get 3 bonus AI generations as a welcome gift.
+                When they register using your link, they automatically receive{" "}
+                <span className="text-purple-400 font-semibold">7,000 bonus credits</span>.
               </p>
             </div>
             <div className="text-center">
-              <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3">
-                3
-              </div>
-              <h4 className="font-semibold mb-1">You Earn Rewards</h4>
+              <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3 text-lg">3</div>
+              <h4 className="font-semibold mb-1">You Earn Credits</h4>
               <p className="text-sm text-muted-foreground">
-                You receive 5 bonus AI generations for every successful referral. No limits — keep referring!
+                You get <span className="text-amber-400 font-semibold">7,000 credits</span> per signup, plus milestone bonuses up to{" "}
+                <span className="text-amber-400 font-semibold">500K credits</span>.
               </p>
             </div>
           </div>
@@ -182,21 +312,22 @@ export default function Referrals() {
             <CardTitle className="text-lg">Referral History</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {stats.referrals.map((ref, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+            <div className="space-y-2">
+              {stats.referrals.map((ref: any, i: number) => (
+                <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-white/3 border border-white/5">
                   <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      ref.status === "rewarded" ? "bg-green-400" :
-                      ref.status === "registered" ? "bg-blue-400" : "bg-white/30"
-                    }`} />
-                    <span className="text-sm capitalize">{ref.status}</span>
+                    <div className={
+                      "w-2 h-2 rounded-full shrink-0 " +
+                      (ref.status === "rewarded" ? "bg-green-400" :
+                      ref.status === "registered" ? "bg-blue-400" : "bg-white/30")
+                    } />
+                    <span className="text-sm capitalize font-medium">{ref.status}</span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-4 text-sm">
                     {ref.rewardAmount && (
-                      <span className="text-amber-400">+{ref.rewardAmount} generations</span>
+                      <span className="text-amber-400 font-semibold">+{ref.rewardAmount.toLocaleString()} credits</span>
                     )}
-                    <span>{new Date(ref.createdAt).toLocaleDateString()}</span>
+                    <span className="text-muted-foreground">{new Date(ref.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))}

@@ -604,9 +604,17 @@ export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
 
 // Referral Rewards
 export const REFERRAL_REWARDS = {
-  referrerGenerations: 7000,
-  newUserGenerations: 7000,
-  maxReferralsPerMonth: 20,
+  // Base reward per successful referral (both parties)
+  referrerCredits: 7000,
+  newUserCredits: 7000,
+  maxReferralsPerMonth: 50,
+  // Milestone bonuses — triggered when referrer hits these totals
+  milestones: [
+    { count: 3,  bonus: 25000,   label: "Rising Star" },
+    { count: 5,  bonus: 50000,   label: "Connector" },
+    { count: 10, bonus: 150000,  label: "Ambassador" },
+    { count: 25, bonus: 500000,  label: "Legend" },
+  ],
 };
 
 // ============================================================

@@ -915,3 +915,30 @@ export const contentCreatorAnalytics = mysqlTable("content_creator_analytics", {
 });
 export type ContentCreatorAnalytic = typeof contentCreatorAnalytics.$inferSelect;
 export type InsertContentCreatorAnalytic = typeof contentCreatorAnalytics.$inferInsert;
+
+// ─── User Social Platform Credentials ────────────────────────────────────────
+// Stores per-user credentials for each social platform they want to publish to.
+// Credentials are stored as encrypted JSON and are never shared between users.
+export const userSocialCredentials = mysqlTable("user_social_credentials", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  // Platform: instagram | tiktok | facebook | discord | youtube
+  platform: varchar("platform", { length: 64 }).notNull(),
+  // Display label for this connection (e.g. "@mystudiopage")
+  displayName: varchar("displayName", { length: 255 }),
+  // Encrypted JSON blob of credentials:
+  //   Instagram: { accessToken, userId, pageId }
+  //   TikTok:    { accessToken, openId, refreshToken }
+  //   Facebook:  { accessToken, pageId, pageAccessToken }
+  //   Discord:   { botToken, guildId, channelId }
+  //   YouTube:   { accessToken, refreshToken, channelId }
+  credentials: text("credentials").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  lastTestedAt: timestamp("lastTestedAt"),
+  lastPublishedAt: timestamp("lastPublishedAt"),
+  lastError: text("lastError"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type UserSocialCredential = typeof userSocialCredentials.$inferSelect;
+export type InsertUserSocialCredential = typeof userSocialCredentials.$inferInsert;
