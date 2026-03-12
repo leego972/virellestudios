@@ -4215,6 +4215,68 @@ Generate a detailed production budget estimate.`,
         await db.deleteSoundEffect(input.id);
         return { success: true };
       }),
+    // Generate a sound effect from a text description using ElevenLabs Sound Effects API
+    generateFromText: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().optional(),
+        prompt: z.string().min(1).max(500),
+        durationSeconds: z.number().min(1).max(30).optional(),
+        name: z.string().optional(),
+        category: z.string().optional(),
+        startTime: z.number().optional(),
+        volume: z.number().min(0).max(1).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const userKeys = await db.getUserApiKeys(ctx.user!.id);
+        const elevenlabsKey = userKeys.elevenlabsKey;
+        if (!elevenlabsKey) {
+          throw new Error("ElevenLabs API key not configured. Please add your ElevenLabs key in API Keys settings.");
+        }
+
+        // Call ElevenLabs Sound Effects Generation API
+        const sfxResp = await fetch("https://api.elevenlabs.io/v1/sound-generation", {
+          method: "POST",
+          headers: {
+            "xi-api-key": elevenlabsKey,
+            "Content-Type": "application/json",
+            "Accept": "audio/mpeg",
+          },
+          body: JSON.stringify({
+            text: input.prompt,
+            duration_seconds: input.durationSeconds ?? 10.0,
+            prompt_influence: 0.3,
+          }),
+        });
+
+        if (!sfxResp.ok) {
+          const errText = await sfxResp.text();
+          throw new Error(`ElevenLabs sound generation failed: ${sfxResp.status} ${errText}`);
+        }
+
+        const audioBuffer = Buffer.from(await sfxResp.arrayBuffer());
+        const safeName = (input.name || input.prompt.slice(0, 30)).replace(/[^a-zA-Z0-9-_]/g, "-");
+        const key = `sfx/${ctx.user!.id}/${input.projectId}/${nanoid()}-${safeName}.mp3`;
+        const { url } = await storagePut(key, audioBuffer, "audio/mpeg");
+
+        // Save to DB
+        const sfx = await db.createSoundEffect({
+          projectId: input.projectId,
+          sceneId: input.sceneId,
+          userId: ctx.user!.id,
+          name: input.name || input.prompt.slice(0, 80),
+          category: input.category || "Generated",
+          fileUrl: url,
+          fileKey: key,
+          duration: input.durationSeconds ?? 10,
+          isCustom: 1,
+          volume: input.volume ?? 0.9,
+          startTime: input.startTime ?? 0,
+        });
+
+        return { sfx, url };
+      }),
+
     // Standard preset library
     presets: publicProcedure.query(() => {
       return [

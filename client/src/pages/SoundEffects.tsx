@@ -616,6 +616,101 @@ export default function SoundEffects() {
       </div>
 
       {/* Upload Custom Sound Dialog */}
+      {/* AI Generate Sound Dialog */}
+      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-purple-500" />
+              AI Sound Generation
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <p className="text-sm text-muted-foreground">
+              Describe the sound you want. ElevenLabs AI will generate it for you.
+            </p>
+            <div className="space-y-2">
+              <Label>Sound Description *</Label>
+              <Textarea
+                placeholder="e.g. White dove wings flapping rapidly as it lands, feathers rustling, gentle whoosh of air"
+                value={generatePrompt}
+                onChange={(e) => setGeneratePrompt(e.target.value)}
+                rows={3}
+                className="resize-none"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Sound Name</Label>
+              <Input
+                placeholder="e.g. Dove Wing Flap"
+                value={generateName}
+                onChange={(e) => setGenerateName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Duration: {generateDuration}s</Label>
+              <Slider
+                min={1}
+                max={22}
+                step={1}
+                value={[generateDuration]}
+                onValueChange={([v]) => setGenerateDuration(v)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Assign to Scene (optional)</Label>
+              <Select
+                value={generateSceneId?.toString() ?? ""}
+                onValueChange={(v) => setGenerateSceneId(v ? Number(v) : undefined)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="No scene assignment" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No scene assignment</SelectItem>
+                  {scenes.data?.map((s) => (
+                    <SelectItem key={s.id} value={s.id.toString()}>
+                      {s.title || `Scene ${s.orderIndex + 1}`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                onClick={() => {
+                  if (!generatePrompt.trim()) {
+                    toast.error("Please enter a sound description");
+                    return;
+                  }
+                  generateMutation.mutate({
+                    projectId,
+                    sceneId: generateSceneId,
+                    prompt: generatePrompt.trim(),
+                    name: generateName.trim() || undefined,
+                    durationSeconds: generateDuration,
+                    category: "Generated",
+                    volume: 0.9,
+                    startTime: 0,
+                  });
+                }}
+                disabled={generateMutation.isPending || !generatePrompt.trim()}
+              >
+                {generateMutation.isPending ? (
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating...</>
+                ) : (
+                  <><Sparkles className="h-4 w-4 mr-2" />Generate Sound</>
+                )}
+              </Button>
+              <Button variant="outline" onClick={() => setShowGenerateDialog(false)} disabled={generateMutation.isPending}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
