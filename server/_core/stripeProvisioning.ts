@@ -14,12 +14,12 @@
  *   Industry    — $25,000/month or $250,000/year  (10,000 credits/mo)
  * 
  * CREDIT PACKS:
- *   Starter Pack     — 10 credits   $500
- *   Production Pack  — 50 credits   $2,000
- *   Director Pack    — 100 credits  $3,500
- *   Studio Pack      — 200 credits  $6,000
- *   Executive Pack   — 500 credits  $12,500
- *   Mogul Pack       — 1000 credits $20,000
+ *   Starter Pack     — 500 credits   $2,500
+ *   Producer Pack    — 1,500 credits $6,000
+ *   Director Pack    — 3,000 credits $10,500
+ *   Studio Pack      — 6,000 credits $18,000
+ *   Blockbuster Pack — 12,000 credits $30,000
+ *   Mogul Pack       — 25,000 credits $50,000
  */
 
 import Stripe from "stripe";
@@ -171,56 +171,56 @@ const TOPUP_PRICES: PriceDefinition[] = [
   {
     key: "topup_10",
     envKey: "stripeTopUp10PriceId",
-    productName: "Virelle Studios — 10 Credits (Starter Pack)",
-    productDesc: "One-time pack of 10 production credits — $500",
-    unitAmount: 50000, // $500
-    currency: "usd",
-    metadata: { type: "topup", credits: "10" },
-  },
-  {
-    key: "topup_50",
-    envKey: "stripeTopUp50PriceId",
-    productName: "Virelle Studios — 50 Credits (Production Pack)",
-    productDesc: "One-time pack of 50 production credits — $2,000",
-    unitAmount: 200000, // $2,000
-    currency: "usd",
-    metadata: { type: "topup", credits: "50" },
-  },
-  {
-    key: "topup_100",
-    envKey: "stripeTopUp100PriceId",
-    productName: "Virelle Studios — 100 Credits (Director Pack)",
-    productDesc: "One-time pack of 100 production credits — $3,500",
-    unitAmount: 350000, // $3,500
-    currency: "usd",
-    metadata: { type: "topup", credits: "100" },
-  },
-  {
-    key: "topup_200",
-    envKey: "stripeTopUp200PriceId",
-    productName: "Virelle Studios — 200 Credits (Studio Pack)",
-    productDesc: "One-time pack of 200 production credits — $6,000",
-    unitAmount: 600000, // $6,000
-    currency: "usd",
-    metadata: { type: "topup", credits: "200" },
-  },
-  {
-    key: "topup_500",
-    envKey: "stripeTopUp500PriceId",
-    productName: "Virelle Studios — 500 Credits (Executive Pack)",
-    productDesc: "One-time pack of 500 production credits — $12,500",
-    unitAmount: 1250000, // $12,500
+    productName: "Virelle Studios — 500 Credits (Starter Pack)",
+    productDesc: "One-time pack of 500 production credits — $2,500",
+    unitAmount: 250000, // $2,500
     currency: "usd",
     metadata: { type: "topup", credits: "500" },
   },
   {
+    key: "topup_50",
+    envKey: "stripeTopUp50PriceId",
+    productName: "Virelle Studios — 1,500 Credits (Producer Pack)",
+    productDesc: "One-time pack of 1,500 production credits — $6,000",
+    unitAmount: 600000, // $6,000
+    currency: "usd",
+    metadata: { type: "topup", credits: "1500" },
+  },
+  {
+    key: "topup_100",
+    envKey: "stripeTopUp100PriceId",
+    productName: "Virelle Studios — 3,000 Credits (Director Pack)",
+    productDesc: "One-time pack of 3,000 production credits — $10,500",
+    unitAmount: 1050000, // $10,500
+    currency: "usd",
+    metadata: { type: "topup", credits: "3000" },
+  },
+  {
+    key: "topup_200",
+    envKey: "stripeTopUp200PriceId",
+    productName: "Virelle Studios — 6,000 Credits (Studio Pack)",
+    productDesc: "One-time pack of 6,000 production credits — $18,000",
+    unitAmount: 1800000, // $18,000
+    currency: "usd",
+    metadata: { type: "topup", credits: "6000" },
+  },
+  {
+    key: "topup_500",
+    envKey: "stripeTopUp500PriceId",
+    productName: "Virelle Studios — 12,000 Credits (Blockbuster Pack)",
+    productDesc: "One-time pack of 12,000 production credits — $30,000",
+    unitAmount: 3000000, // $30,000
+    currency: "usd",
+    metadata: { type: "topup", credits: "12000" },
+  },
+  {
     key: "topup_1000",
     envKey: "stripeTopUp1000PriceId",
-    productName: "Virelle Studios — 1000 Credits (Mogul Pack)",
-    productDesc: "One-time pack of 1000 production credits — $20,000",
-    unitAmount: 2000000, // $20,000
+    productName: "Virelle Studios — 25,000 Credits (Mogul Pack)",
+    productDesc: "One-time pack of 25,000 production credits — $50,000",
+    unitAmount: 5000000, // $50,000
     currency: "usd",
-    metadata: { type: "topup", credits: "1000" },
+    metadata: { type: "topup", credits: "25000" },
   },
 ];
 

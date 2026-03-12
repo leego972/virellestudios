@@ -702,12 +702,12 @@ export interface TopUpPack {
 }
 
 export const TOP_UP_PACKS: TopUpPack[] = [
-  { id: "topup_10",   name: "Starter Pack",    credits: 10,   price: 500,    pricePerCredit: 50,  savings: "" },
-  { id: "topup_50",   name: "Production Pack",  credits: 50,   price: 2000,   pricePerCredit: 40,  savings: "Save 20%" },
-  { id: "topup_100",  name: "Director Pack",    credits: 100,  price: 3500,   pricePerCredit: 35,  savings: "Save 30%" },
-  { id: "topup_200",  name: "Studio Pack",      credits: 200,  price: 6000,   pricePerCredit: 30,  savings: "Save 40%" },
-  { id: "topup_500",  name: "Executive Pack",   credits: 500,  price: 12500,  pricePerCredit: 25,  savings: "Save 50%" },
-  { id: "topup_1000", name: "Mogul Pack",       credits: 1000, price: 20000,  pricePerCredit: 20,  savings: "Save 60%" },
+  { id: "topup_10",   name: "Starter Pack",     credits: 500,   price: 2500,   pricePerCredit: 5,   savings: "" },
+  { id: "topup_50",   name: "Producer Pack",    credits: 1500,  price: 6000,   pricePerCredit: 4,   savings: "Save 20%" },
+  { id: "topup_100",  name: "Director Pack",    credits: 3000,  price: 10500,  pricePerCredit: 3.5, savings: "Save 30%" },
+  { id: "topup_200",  name: "Studio Pack",      credits: 6000,  price: 18000,  pricePerCredit: 3,   savings: "Save 40%" },
+  { id: "topup_500",  name: "Blockbuster Pack", credits: 12000, price: 30000,  pricePerCredit: 2.5, savings: "Save 50%" },
+  { id: "topup_1000", name: "Mogul Pack",       credits: 25000, price: 50000,  pricePerCredit: 2,   savings: "Save 60%" },
 ];
 
 // ============================================================

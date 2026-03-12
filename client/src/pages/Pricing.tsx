@@ -107,7 +107,7 @@ const TIERS = [
       "Multi-Shot Sequencer",
       "NLE / DaVinci Resolve Export",
       "AI Casting Tool",
-      "White-Label Exports",
+      "API Access & Pipeline Integration",
       "25 team members",
     ],
   },
@@ -139,12 +139,12 @@ const TIERS = [
 ];
 
 const CREDIT_PACKS = [
-  { id: "pack_10", credits: 50, price: 500, perCredit: 10, label: "Starter" },
-  { id: "pack_50", credits: 250, price: 2000, perCredit: 8, label: "Producer" },
-  { id: "pack_100", credits: 500, price: 3500, perCredit: 7, label: "Director" },
-  { id: "pack_250", credits: 1250, price: 7500, perCredit: 6, label: "Studio" },
-  { id: "pack_500", credits: 2500, price: 12500, perCredit: 5, label: "Blockbuster", popular: true },
-  { id: "pack_1000", credits: 5000, price: 20000, perCredit: 4, label: "Mogul" },
+  { id: "topup_10",   credits: 500,   price: 2500,  perCredit: 5,   label: "Starter" },
+  { id: "topup_50",   credits: 1500,  price: 6000,  perCredit: 4,   label: "Producer" },
+  { id: "topup_100",  credits: 3000,  price: 10500, perCredit: 3.5, label: "Director" },
+  { id: "topup_200",  credits: 6000,  price: 18000, perCredit: 3,   label: "Studio" },
+  { id: "topup_500",  credits: 12000, price: 30000, perCredit: 2.5, label: "Blockbuster", popular: true },
+  { id: "topup_1000", credits: 25000, price: 50000, perCredit: 2,   label: "Mogul" },
 ];
 
 const CREDIT_COSTS = [
@@ -623,7 +623,7 @@ export default function Pricing() {
                   { feature: "AI Casting Tool", amateur: false, independent: false, creator: false, studio: true, industry: true },
                   { feature: "White-Label Exports", amateur: false, independent: false, creator: false, studio: true, industry: true },
                   { feature: "Custom AI Fine-Tuning", amateur: false, independent: false, creator: false, studio: false, industry: true },
-                  { feature: "API Access", amateur: false, independent: false, creator: false, studio: false, industry: true },
+                  { feature: "API Access", amateur: false, independent: false, creator: false, studio: true, industry: true },
                   { feature: "Dedicated Account Manager", amateur: false, independent: false, creator: false, studio: false, industry: true },
                   { feature: "LIMITS", section: "header" },
                   { feature: "Projects", amateur: "2", independent: "25", creator: "50", studio: "100", industry: "Unlimited" },
