@@ -129,7 +129,8 @@ export function planSubShots(
     provider === "pollinations" || provider === "huggingface" ? 8 :
     15; // Sora, Replicate, fal — up to 20s per clip
 
-  const numClips = Math.max(2, Math.ceil(targetDurationSeconds / clipDuration));
+  // Allow 1 clip when the scene fits within a single clip duration — no need to chain
+  const numClips = Math.max(1, Math.ceil(targetDurationSeconds / clipDuration));
 
   const subShots: SubShot[] = [];
 
