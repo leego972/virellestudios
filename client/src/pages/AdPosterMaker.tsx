@@ -64,6 +64,9 @@ import {
   Copy,
   Trash2,
   GripVertical,
+  CheckCircle2,
+  ExternalLink,
+  Share2,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -74,7 +77,13 @@ import { FeatureGate } from "@/components/UpgradePrompt";
 type TemplateType =
   | "poster" | "social-square" | "social-story" | "banner" | "billboard"
   | "dvd-cover" | "press-kit" | "trailer-card" | "event-flyer" | "album-art"
-  | "social-ad" | "letterbox";
+  | "social-ad" | "letterbox"
+  | "ig-feed" | "ig-square" | "ig-story" | "ig-reels"
+  | "tiktok-vertical" | "tiktok-thumbnail"
+  | "fb-feed" | "fb-story" | "fb-cover"
+  | "discord-banner" | "discord-card"
+  | "yt-thumbnail" | "yt-shorts" | "yt-channel-art"
+  | "withoutabox-poster" | "influencer-kit";
 
 type TextElement = {
   id: string;
@@ -125,18 +134,42 @@ type PosterState = {
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const TEMPLATE_CONFIG: Record<TemplateType, { label: string; icon: React.ElementType; width: number; height: number; description: string; category: string }> = {
-  "poster":        { label: "Movie Poster",    icon: RectangleHorizontal, width: 675, height: 1000, description: "Classic 27x40 portrait poster", category: "Film" },
-  "trailer-card":  { label: "Trailer Card",    icon: Clapperboard,        width: 1280, height: 720, description: "YouTube/Vimeo trailer thumbnail", category: "Film" },
-  "dvd-cover":     { label: "DVD/Blu-ray",     icon: Disc3,               width: 780, height: 1050, description: "Front cover with spine area", category: "Film" },
-  "letterbox":     { label: "Letterbox",        icon: Film,                width: 1200, height: 500, description: "Cinematic widescreen banner", category: "Film" },
-  "social-square": { label: "Social (Square)",  icon: Square,              width: 800, height: 800,  description: "Instagram post, Facebook ad", category: "Social" },
-  "social-story":  { label: "Social (Story)",   icon: Smartphone,          width: 540, height: 960,  description: "Instagram/TikTok story, Reels", category: "Social" },
-  "social-ad":     { label: "Social Ad",        icon: Megaphone,           width: 1080, height: 1080, description: "High-res social media ad", category: "Social" },
-  "banner":        { label: "Banner",           icon: Monitor,             width: 1280, height: 720, description: "YouTube thumbnail, website header", category: "Marketing" },
-  "billboard":     { label: "Billboard",        icon: Megaphone,           width: 1200, height: 400, description: "Ultra-wide outdoor advertising", category: "Marketing" },
-  "event-flyer":   { label: "Event Flyer",      icon: Ticket,              width: 600, height: 900,  description: "Premiere, screening, festival", category: "Marketing" },
-  "album-art":     { label: "Soundtrack Art",    icon: Music,               width: 800, height: 800,  description: "Soundtrack or score album cover", category: "Other" },
-  "press-kit":     { label: "Press Kit",        icon: FileText,            width: 900, height: 1200, description: "Professional media press layout", category: "Other" },
+  // ─ Film
+  "poster":             { label: "Movie Poster",      icon: RectangleHorizontal, width: 675,  height: 1000, description: "Classic 27×40 portrait poster",            category: "Film" },
+  "trailer-card":       { label: "Trailer Card",       icon: Clapperboard,        width: 1280, height: 720,  description: "YouTube/Vimeo trailer thumbnail",          category: "Film" },
+  "dvd-cover":          { label: "DVD/Blu-ray",        icon: Disc3,               width: 780,  height: 1050, description: "Front cover with spine area",              category: "Film" },
+  "letterbox":          { label: "Letterbox",          icon: Film,                width: 1200, height: 500,  description: "Cinematic widescreen banner",              category: "Film" },
+  "press-kit":          { label: "Press Kit",          icon: FileText,            width: 900,  height: 1200, description: "Professional media press layout",          category: "Film" },
+  "withoutabox-poster": { label: "Festival Poster",    icon: Ticket,              width: 675,  height: 1000, description: "FilmFreeway / WithoutABox submission",     category: "Film" },
+  // ─ Instagram
+  "ig-feed":            { label: "IG Feed (4:5)",      icon: Square,              width: 1080, height: 1350, description: "Instagram feed post — optimal 4:5 ratio",   category: "Instagram" },
+  "ig-square":          { label: "IG Square (1:1)",    icon: Square,              width: 1080, height: 1080, description: "Instagram square post",                   category: "Instagram" },
+  "ig-story":           { label: "IG Story",           icon: Smartphone,          width: 1080, height: 1920, description: "Instagram Story — 9:16 vertical",           category: "Instagram" },
+  "ig-reels":           { label: "IG Reels Cover",     icon: Smartphone,          width: 1080, height: 1920, description: "Reels cover thumbnail — 9:16",            category: "Instagram" },
+  // ─ TikTok
+  "tiktok-vertical":    { label: "TikTok Video",       icon: Smartphone,          width: 1080, height: 1920, description: "TikTok video ad — 9:16 vertical",         category: "TikTok" },
+  "tiktok-thumbnail":   { label: "TikTok Thumbnail",   icon: Square,              width: 1080, height: 1080, description: "TikTok profile/cover thumbnail",           category: "TikTok" },
+  // ─ Facebook
+  "fb-feed":            { label: "FB Feed Ad",         icon: Monitor,             width: 1200, height: 628,  description: "Facebook feed image ad — 1.91:1",        category: "Facebook" },
+  "fb-story":           { label: "FB Story",           icon: Smartphone,          width: 1080, height: 1920, description: "Facebook Story — 9:16 vertical",          category: "Facebook" },
+  "fb-cover":           { label: "FB Page Cover",      icon: Monitor,             width: 1640, height: 624,  description: "Facebook Page cover photo",               category: "Facebook" },
+  // ─ Discord
+  "discord-banner":     { label: "Discord Banner",     icon: Monitor,             width: 960,  height: 540,  description: "Discord server banner — 16:9",           category: "Discord" },
+  "discord-card":       { label: "Discord Card",       icon: Square,              width: 800,  height: 450,  description: "Discord announcement embed card",         category: "Discord" },
+  // ─ YouTube
+  "yt-thumbnail":       { label: "YT Thumbnail",       icon: Monitor,             width: 1280, height: 720,  description: "YouTube video thumbnail — 16:9",         category: "YouTube" },
+  "yt-shorts":          { label: "YT Shorts",          icon: Smartphone,          width: 1080, height: 1920, description: "YouTube Shorts — 9:16 vertical",          category: "YouTube" },
+  "yt-channel-art":     { label: "YT Channel Art",     icon: Monitor,             width: 2560, height: 1440, description: "YouTube channel banner art",               category: "YouTube" },
+  // ─ Marketing
+  "social-square":      { label: "Social Square",      icon: Square,              width: 800,  height: 800,  description: "Generic square social post",              category: "Marketing" },
+  "social-story":       { label: "Social Story",       icon: Smartphone,          width: 540,  height: 960,  description: "Generic story format",                   category: "Marketing" },
+  "social-ad":          { label: "Social Ad",          icon: Megaphone,           width: 1080, height: 1080, description: "High-res social media ad",                category: "Marketing" },
+  "banner":             { label: "Banner",             icon: Monitor,             width: 1280, height: 720,  description: "YouTube thumbnail, website header",       category: "Marketing" },
+  "billboard":          { label: "Billboard",          icon: Megaphone,           width: 1200, height: 400,  description: "Ultra-wide outdoor advertising",          category: "Marketing" },
+  "event-flyer":        { label: "Event Flyer",        icon: Ticket,              width: 600,  height: 900,  description: "Premiere, screening, festival",           category: "Marketing" },
+  "influencer-kit":     { label: "Influencer Kit",     icon: Sparkles,            width: 1080, height: 1080, description: "Influencer outreach square card",         category: "Marketing" },
+  // ─ Other
+  "album-art":          { label: "Soundtrack Art",     icon: Music,               width: 800,  height: 800,  description: "Soundtrack or score album cover",         category: "Other" },
 };
 
 const FONT_FAMILIES = [
@@ -850,6 +883,9 @@ export default function AdPosterMaker() {
               <TabsTrigger value="text" className="flex-1 text-xs gap-1"><Type className="h-3 w-3" /> Text</TabsTrigger>
               <TabsTrigger value="style" className="flex-1 text-xs gap-1"><Palette className="h-3 w-3" /> Style</TabsTrigger>
               <TabsTrigger value="filters" className="flex-1 text-xs gap-1"><SunMedium className="h-3 w-3" /> Filters</TabsTrigger>
+              <TabsTrigger value="publish" className="flex-1 text-xs gap-1"><Megaphone className="h-3 w-3" /> Publish</TabsTrigger>
+              <TabsTrigger value="festival" className="flex-1 text-xs gap-1"><Ticket className="h-3 w-3" /> Festival</TabsTrigger>
+              <TabsTrigger value="influencer" className="flex-1 text-xs gap-1"><Sparkles className="h-3 w-3" /> Influencer</TabsTrigger>
             </TabsList>
 
             {/* Template Tab */}
@@ -1215,6 +1251,21 @@ export default function AdPosterMaker() {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* Publish Tab */}
+            <TabsContent value="publish" className="space-y-4 mt-4">
+              <PublishTab currentTemplate={poster.templateType} />
+            </TabsContent>
+
+            {/* Festival & Distribution Tab */}
+            <TabsContent value="festival" className="space-y-4 mt-4">
+              <FestivalTab />
+            </TabsContent>
+
+            {/* Influencer Kit Tab */}
+            <TabsContent value="influencer" className="space-y-4 mt-4">
+              <InfluencerKitTab />
+            </TabsContent>
           </Tabs>
         </div>
       </div>
@@ -1246,6 +1297,333 @@ export default function AdPosterMaker() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+// ─── Publish Tab ─────────────────────────────────────────────────────────────
+
+const PLATFORM_TEMPLATES: Record<string, TemplateType[]> = {
+  instagram: ["ig-feed", "ig-square", "ig-story", "ig-reels"],
+  tiktok:    ["tiktok-vertical", "tiktok-thumbnail"],
+  facebook:  ["fb-feed", "fb-story", "fb-cover"],
+  discord:   ["discord-banner", "discord-card"],
+  youtube:   ["yt-thumbnail", "yt-shorts", "yt-channel-art"],
+};
+
+const PLATFORM_META: Record<string, { name: string; icon: string; color: string; maxFileSizeMB: number; formats: string; notes: string }> = {
+  instagram: { name: "Instagram", icon: "📸", color: "border-pink-500/40 bg-pink-500/5",    maxFileSizeMB: 8,   formats: "JPG, PNG", notes: "Max 8 MB. Recommended: 1080px wide. Aspect ratios: 1:1, 4:5, 9:16." },
+  tiktok:    { name: "TikTok",    icon: "🎵", color: "border-cyan-500/40 bg-cyan-500/5",    maxFileSizeMB: 20,  formats: "JPG, PNG, MP4", notes: "Max 20 MB for images. Videos: 9:16, up to 60s. Min 720p." },
+  facebook:  { name: "Facebook",  icon: "📱", color: "border-blue-500/40 bg-blue-500/5",    maxFileSizeMB: 30,  formats: "JPG, PNG", notes: "Max 30 MB. Feed ads: 1.91:1. Stories: 9:16. Cover: 820×312 min." },
+  discord:   { name: "Discord",   icon: "💬", color: "border-indigo-500/40 bg-indigo-500/5", maxFileSizeMB: 8,   formats: "JPG, PNG, GIF", notes: "Max 8 MB. Server banner: 960×540. Embed images: 16:9 preferred." },
+  youtube:   { name: "YouTube",   icon: "🎥", color: "border-red-500/40 bg-red-500/5",      maxFileSizeMB: 2,   formats: "JPG, PNG", notes: "Thumbnails: max 2 MB, 1280×720. Channel art: 2560×1440." },
+};
+
+function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
+  const { data: connectedList } = trpc.socialCredentials.list.useQuery();
+  const publishMutation = trpc.socialCredentials.publish.useMutation({
+    onSuccess: (data) => {
+      if (data.success) toast.success(`Published to ${data.platform} successfully!`);
+      else toast.error(`Publish failed: ${data.error}`);
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const [publishCaption, setPublishCaption] = useState("");
+  const [publishingPlatform, setPublishingPlatform] = useState<string | null>(null);
+
+  const getConnected = (platformId: string) => connectedList?.find((c) => c.platform === platformId && c.hasCredentials && c.isActive);
+
+  const handlePublish = (platformId: string) => {
+    setPublishingPlatform(platformId);
+    publishMutation.mutate({ platform: platformId, caption: publishCaption, templateType: currentTemplate });
+  };
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2"><Megaphone className="h-4 w-4 text-amber-400" /> Publish to Platform</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label className="text-xs">Caption / Post Text</Label>
+            <Textarea
+              className="mt-1 text-xs resize-none"
+              rows={3}
+              placeholder="Write your post caption here..."
+              value={publishCaption}
+              onChange={(e) => setPublishCaption(e.target.value)}
+            />
+          </div>
+          <div className="space-y-3">
+            {Object.entries(PLATFORM_META).map(([platformId, meta]) => {
+              const connected = getConnected(platformId);
+              const suggestedTemplates = PLATFORM_TEMPLATES[platformId] || [];
+              const isCurrentOptimal = suggestedTemplates.includes(currentTemplate);
+              return (
+                <div key={platformId} className={`rounded-lg border p-3 ${meta.color}`}>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{meta.icon}</span>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">{meta.name}</span>
+                          {connected ? (
+                            <Badge className="text-xs bg-green-500/20 text-green-400 border-green-500/30">
+                              <CheckCircle2 className="h-3 w-3 mr-1" />Connected
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-xs text-muted-foreground">Not connected</Badge>
+                          )}
+                          {isCurrentOptimal && (
+                            <Badge className="text-xs bg-amber-500/20 text-amber-400 border-amber-500/30">Optimal size</Badge>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{meta.notes}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {!connected && (
+                        <a href="/settings?tab=connected-platforms">
+                          <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
+                            <ExternalLink className="h-3 w-3" />Connect
+                          </Button>
+                        </a>
+                      )}
+                      {connected && (
+                        <Button
+                          size="sm" className="h-7 text-xs gap-1 bg-amber-500 hover:bg-amber-600 text-black"
+                          onClick={() => handlePublish(platformId)}
+                          disabled={publishMutation.isPending}
+                        >
+                          {publishMutation.isPending && publishingPlatform === platformId ? <Loader2 className="h-3 w-3 animate-spin" /> : <Megaphone className="h-3 w-3" />}
+                          Publish
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  {!isCurrentOptimal && suggestedTemplates.length > 0 && (
+                    <p className="text-[10px] text-amber-400/80 mt-2">
+                      ⚠️ Recommended templates for {meta.name}: {suggestedTemplates.map((t) => TEMPLATE_CONFIG[t]?.label).join(", ")}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ─── Festival & Distribution Tab ─────────────────────────────────────────────
+
+const FESTIVAL_PLATFORMS = [
+  {
+    name: "FilmFreeway",
+    icon: "🏆",
+    description: "The world’s leading film festival submission platform. Submit to 10,000+ festivals.",
+    url: "https://filmfreeway.com",
+    type: "submission",
+  },
+  {
+    name: "WithoutABox",
+    icon: "🎥",
+    description: "IMDb’s festival submission service. Reach Academy Award-qualifying festivals.",
+    url: "https://www.withoutabox.com",
+    type: "submission",
+  },
+  {
+    name: "Short-Filmz.com",
+    icon: "📽️",
+    description: "Showcase your short film to a global audience. Easy submission and viewer engagement.",
+    url: "https://www.short-filmz.com",
+    type: "distribution",
+  },
+  {
+    name: "Vimeo On Demand",
+    icon: "📡",
+    description: "Self-distribute your film directly to audiences. Set your own price.",
+    url: "https://vimeo.com/ondemand",
+    type: "distribution",
+  },
+  {
+    name: "Festhome",
+    icon: "🌟",
+    description: "Festival submission platform with 5,000+ festivals worldwide.",
+    url: "https://festhome.com",
+    type: "submission",
+  },
+  {
+    name: "Reelport",
+    icon: "📦",
+    description: "European film distribution and festival submission platform.",
+    url: "https://www.reelport.com",
+    type: "distribution",
+  },
+];
+
+function FestivalTab() {
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2"><Ticket className="h-4 w-4 text-amber-400" /> Festival & Distribution Platforms</CardTitle>
+          <p className="text-xs text-muted-foreground">Submit your film to festivals and self-distribution platforms. Use the Festival Poster template for optimal submission assets.</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {["submission", "distribution"].map((type) => (
+            <div key={type}>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{type === "submission" ? "🏆 Festival Submissions" : "📡 Self-Distribution"}</p>
+              <div className="space-y-2">
+                {FESTIVAL_PLATFORMS.filter((p) => p.type === type).map((platform) => (
+                  <div key={platform.name} className="flex items-start justify-between gap-3 rounded-lg border border-border/50 bg-card/30 p-3">
+                    <div className="flex items-start gap-2">
+                      <span className="text-xl mt-0.5">{platform.icon}</span>
+                      <div>
+                        <p className="font-medium text-sm">{platform.name}</p>
+                        <p className="text-xs text-muted-foreground">{platform.description}</p>
+                      </div>
+                    </div>
+                    <a href={platform.url} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                      <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
+                        <ExternalLink className="h-3 w-3" />Visit
+                      </Button>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2"><FileText className="h-4 w-4 text-amber-400" /> Press Kit Checklist</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {[
+              { item: "Movie Poster (27×40)", template: "poster", done: true },
+              { item: "Festival Submission Poster", template: "withoutabox-poster", done: true },
+              { item: "Press Kit Layout", template: "press-kit", done: true },
+              { item: "Trailer Card / Thumbnail", template: "trailer-card", done: true },
+              { item: "Event Flyer (Premiere)", template: "event-flyer", done: true },
+              { item: "Letterbox Banner", template: "letterbox", done: true },
+            ].map((row) => (
+              <div key={row.item} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-400" />
+                  <span>{row.item}</span>
+                </div>
+                <Badge variant="outline" className="text-[10px]">{TEMPLATE_CONFIG[row.template as TemplateType]?.label}</Badge>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ─── Influencer Kit Tab ───────────────────────────────────────────────────────
+
+function InfluencerKitTab() {
+  const [filmTitle, setFilmTitle] = useState("");
+  const [genre, setGenre] = useState("");
+  const [logline, setLogline] = useState("");
+  const [generatedKit, setGeneratedKit] = useState<{ caption: string; hashtags: string; emailPitch: string; linkedinPost: string } | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const generateKit = async () => {
+    if (!filmTitle) { toast.error("Please enter a film title"); return; }
+    setIsGenerating(true);
+    try {
+      const res = await fetch("/api/trpc/poster.generateInfluencerKit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { title: filmTitle, genre, logline } }),
+      });
+      const data = await res.json();
+      if (data?.result?.data?.json) {
+        setGeneratedKit(data.result.data.json);
+        toast.success("Influencer kit generated!");
+      } else {
+        // Fallback: generate locally
+        const hashtags = `#${filmTitle.replace(/\s+/g, "")} #IndieFilm #${genre || "Film"} #FilmMaker #NewFilm #CinematicStorytelling #FilmProduction #WatchNow`;
+        setGeneratedKit({
+          caption: `🎥 Introducing ${filmTitle}${genre ? ` — a ${genre} film` : ""}.${logline ? " " + logline : ""} Now available. Link in bio.`,
+          hashtags,
+          emailPitch: `Hi [Name],\n\nI’m reaching out about ${filmTitle}${genre ? `, a ${genre} film` : ""} that I think your audience would love.${logline ? " " + logline : ""}\n\nI’d love to explore a collaboration — whether that’s a review, a feature post, or a behind-the-scenes exclusive.\n\nWould you be open to a quick call?\n\nBest,\n[Your Name]`,
+          linkedinPost: `Excited to announce ${filmTitle}${genre ? ` — a ${genre} film` : ""}.${logline ? " " + logline : ""} We’re now seeking distribution partners, press coverage, and influencer collaborations. Reach out if you’d like to be part of this journey. #FilmIndustry #IndieFilm #${genre || "Cinema"}`,
+        });
+        toast.success("Influencer kit generated!");
+      }
+    } catch {
+      toast.error("Generation failed. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text).then(() => toast.success(`${label} copied to clipboard`));
+  };
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2"><Sparkles className="h-4 w-4 text-amber-400" /> Influencer Outreach Kit</CardTitle>
+          <p className="text-xs text-muted-foreground">Generate professional outreach copy for LinkedIn influencers, film critics, and industry contacts.</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div>
+            <Label className="text-xs">Film Title</Label>
+            <Input className="mt-1 h-8 text-xs" placeholder="e.g. The Last Signal" value={filmTitle} onChange={(e) => setFilmTitle(e.target.value)} />
+          </div>
+          <div>
+            <Label className="text-xs">Genre</Label>
+            <Input className="mt-1 h-8 text-xs" placeholder="e.g. Sci-Fi Thriller" value={genre} onChange={(e) => setGenre(e.target.value)} />
+          </div>
+          <div>
+            <Label className="text-xs">Logline (optional)</Label>
+            <Textarea className="mt-1 text-xs resize-none" rows={2} placeholder="One-sentence pitch..." value={logline} onChange={(e) => setLogline(e.target.value)} />
+          </div>
+          <Button size="sm" className="gap-1 bg-amber-500 hover:bg-amber-600 text-black text-xs" onClick={generateKit} disabled={isGenerating}>
+            {isGenerating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+            Generate Kit
+          </Button>
+        </CardContent>
+      </Card>
+
+      {generatedKit && (
+        <>
+          {([
+            { label: "Social Caption", key: "caption" as const, icon: "📸" },
+            { label: "Hashtags", key: "hashtags" as const, icon: "#" },
+            { label: "Email Pitch", key: "emailPitch" as const, icon: "✉️" },
+            { label: "LinkedIn Post", key: "linkedinPost" as const, icon: "💼" },
+          ] as { label: string; key: keyof typeof generatedKit; icon: string }[]).map(({ label, key, icon }) => (
+            <Card key={key}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm">{icon} {label}</CardTitle>
+                  <Button variant="ghost" size="sm" className="h-7 text-xs gap-1" onClick={() => copyToClipboard(generatedKit[key], label)}>
+                    <Copy className="h-3 w-3" />Copy
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">{generatedKit[key]}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </>
+      )}
     </div>
   );
 }

@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   Key, CheckCircle2, XCircle, ExternalLink, Loader2, Shield, Video,
   Sparkles, AlertTriangle, Info, Star, Zap, Film, User, Lock, Globe,
-  Briefcase, MapPin, Phone, Mail, Building2, Save,
+  Briefcase, MapPin, Phone, Mail, Building2, Save, Share2, Trash2, RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -179,10 +179,11 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue={useQueryParam("tab") || "profile"} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 max-w-md">
+        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
           <TabsTrigger value="profile" className="text-xs gap-1"><User className="h-3 w-3" />Profile</TabsTrigger>
           <TabsTrigger value="security" className="text-xs gap-1"><Lock className="h-3 w-3" />Security</TabsTrigger>
           <TabsTrigger value="api-keys" className="text-xs gap-1"><Key className="h-3 w-3" />API Keys</TabsTrigger>
+          <TabsTrigger value="connected-platforms" className="text-xs gap-1"><Share2 className="h-3 w-3" />Platforms</TabsTrigger>
         </TabsList>
 
         {/* ─── Profile Tab ─── */}
@@ -717,7 +718,235 @@ export default function Settings() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* ─── Connected Platforms Tab ─── */}
+        <TabsContent value="connected-platforms" className="space-y-6 mt-6">
+          <ConnectedPlatformsTab />
+        </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+// ─── Connected Platforms Tab ───
+const SOCIAL_PLATFORMS = [
+  {
+    id: "instagram" as const,
+    name: "Instagram",
+    icon: "📸",
+    color: "from-pink-500/20 to-purple-600/10 border-pink-500/30",
+    description: "Publish film posters and Reels directly to your Instagram Business account.",
+    docsUrl: "https://developers.facebook.com/docs/instagram-api/",
+    fields: [
+      { key: "accessToken", label: "User Access Token", placeholder: "EAAxxxxxx...", secret: true },
+      { key: "pageId", label: "Instagram Business Account ID", placeholder: "17841400000000000", secret: false },
+      { key: "pageAccessToken", label: "Page Access Token (optional)", placeholder: "EAAxxxxxx...", secret: true },
+    ],
+  },
+  {
+    id: "tiktok" as const,
+    name: "TikTok",
+    icon: "🎵",
+    color: "from-cyan-500/20 to-teal-600/10 border-cyan-500/30",
+    description: "Post short video ads and film trailers to your TikTok creator account.",
+    docsUrl: "https://developers.tiktok.com/doc/content-posting-api-get-started/",
+    fields: [
+      { key: "accessToken", label: "Access Token", placeholder: "act.xxxxxx...", secret: true },
+      { key: "openId", label: "Open ID (optional)", placeholder: "xxxxxx", secret: false },
+      { key: "refreshToken", label: "Refresh Token (optional)", placeholder: "rft.xxxxxx...", secret: true },
+    ],
+  },
+  {
+    id: "facebook" as const,
+    name: "Facebook",
+    icon: "📱",
+    color: "from-blue-500/20 to-blue-700/10 border-blue-500/30",
+    description: "Share film posters and video ads to your Facebook Page.",
+    docsUrl: "https://developers.facebook.com/docs/pages-api/",
+    fields: [
+      { key: "pageId", label: "Facebook Page ID", placeholder: "123456789", secret: false },
+      { key: "pageAccessToken", label: "Page Access Token", placeholder: "EAAxxxxxx...", secret: true },
+    ],
+  },
+  {
+    id: "discord" as const,
+    name: "Discord",
+    icon: "💬",
+    color: "from-indigo-500/20 to-indigo-700/10 border-indigo-500/30",
+    description: "Post film announcements and media to your Discord server channel.",
+    docsUrl: "https://discord.com/developers/docs/intro",
+    fields: [
+      { key: "botToken", label: "Bot Token", placeholder: "MTxxxxxx.xxxxxx.xxxxxx", secret: true },
+      { key: "guildId", label: "Server (Guild) ID", placeholder: "1234567890", secret: false },
+      { key: "channelId", label: "Channel ID", placeholder: "9876543210", secret: false },
+    ],
+  },
+  {
+    id: "youtube" as const,
+    name: "YouTube",
+    icon: "🎥",
+    color: "from-red-500/20 to-red-700/10 border-red-500/30",
+    description: "Upload film trailers and video ads directly to your YouTube channel.",
+    docsUrl: "https://developers.google.com/youtube/v3/guides/uploading_a_video",
+    fields: [
+      { key: "accessToken", label: "OAuth Access Token", placeholder: "ya29.xxxxxx", secret: true },
+      { key: "refreshToken", label: "OAuth Refresh Token (optional)", placeholder: "1//xxxxxx", secret: true },
+      { key: "channelId", label: "Channel ID (optional)", placeholder: "UCxxxxxx", secret: false },
+    ],
+  },
+];
+
+function ConnectedPlatformsTab() {
+  const { data: connectedList, refetch } = trpc.socialCredentials.list.useQuery();
+  const saveMutation = trpc.socialCredentials.save.useMutation({
+    onSuccess: () => { toast.success("Platform credentials saved"); refetch(); setEditingPlatform(null); },
+    onError: (e) => toast.error(e.message),
+  });
+  const testMutation = trpc.socialCredentials.test.useMutation({
+    onSuccess: (data) => {
+      if (data.success) toast.success("Connection successful!");
+      else toast.error(`Connection failed: ${data.error}`);
+      refetch();
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const removeMutation = trpc.socialCredentials.remove.useMutation({
+    onSuccess: () => { toast.success("Platform disconnected"); refetch(); },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const [editingPlatform, setEditingPlatform] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+
+  const getStatus = (platformId: string) => connectedList?.find((c) => c.platform === platformId);
+
+  const handleSave = (platformId: string) => {
+    const platform = SOCIAL_PLATFORMS.find((p) => p.id === platformId);
+    if (!platform) return;
+    const payload: any = { platform: platformId };
+    platform.fields.forEach((f) => { if (formValues[f.key]) payload[f.key] = formValues[f.key]; });
+    if (formValues.displayName) payload.displayName = formValues.displayName;
+    saveMutation.mutate(payload);
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card className="bg-card/50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Share2 className="h-4 w-4 text-amber-400" />
+            Connected Platforms
+          </CardTitle>
+          <CardDescription className="text-xs">
+            Connect your own social media accounts to publish film posters and video ads directly from the Ad Maker.
+            Your credentials are stored securely and are never shared with other users.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {SOCIAL_PLATFORMS.map((platform) => {
+            const status = getStatus(platform.id);
+            const isConnected = status?.hasCredentials && status?.isActive;
+            const isEditing = editingPlatform === platform.id;
+            return (
+              <div key={platform.id} className={`rounded-lg border bg-gradient-to-r p-4 ${platform.color}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{platform.icon}</span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{platform.name}</span>
+                        {isConnected ? (
+                          <Badge className="text-xs bg-green-500/20 text-green-400 border-green-500/30">
+                            <CheckCircle2 className="h-3 w-3 mr-1" />Connected
+                          </Badge>
+                        ) : status?.hasCredentials ? (
+                          <Badge className="text-xs bg-red-500/20 text-red-400 border-red-500/30">
+                            <XCircle className="h-3 w-3 mr-1" />Disconnected
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-xs text-muted-foreground">Not connected</Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{platform.description}</p>
+                      {status?.lastError && (
+                        <p className="text-xs text-red-400 mt-1">⚠️ {status.lastError}</p>
+                      )}
+                      {status?.lastPublishedAt && (
+                        <p className="text-xs text-muted-foreground mt-1">Last published: {new Date(status.lastPublishedAt).toLocaleDateString()}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                    <a href={platform.docsUrl} target="_blank" rel="noopener noreferrer">
+                      <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
+                        <ExternalLink className="h-3 w-3" />Docs
+                      </Button>
+                    </a>
+                    {status?.hasCredentials && (
+                      <>
+                        <Button
+                          variant="ghost" size="sm" className="h-7 text-xs gap-1"
+                          onClick={() => testMutation.mutate({ platform: platform.id })}
+                          disabled={testMutation.isPending}
+                        >
+                          {testMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                          Test
+                        </Button>
+                        <Button
+                          variant="ghost" size="sm" className="h-7 text-xs gap-1 text-red-400 hover:text-red-300"
+                          onClick={() => removeMutation.mutate({ platform: platform.id })}
+                          disabled={removeMutation.isPending}
+                        >
+                          <Trash2 className="h-3 w-3" />Remove
+                        </Button>
+                      </>
+                    )}
+                    <Button
+                      variant="outline" size="sm" className="h-7 text-xs gap-1"
+                      onClick={() => { if (isEditing) { setEditingPlatform(null); setFormValues({}); } else { setEditingPlatform(platform.id); setFormValues({}); } }}
+                    >
+                      {isEditing ? "Cancel" : status?.hasCredentials ? "Update" : "Connect"}
+                    </Button>
+                  </div>
+                </div>
+                {isEditing && (
+                  <div className="mt-4 space-y-3 border-t border-white/10 pt-4">
+                    <div>
+                      <Label className="text-xs">Display Name (optional)</Label>
+                      <Input
+                        className="mt-1 h-8 text-xs"
+                        placeholder={`e.g. @${platform.name.toLowerCase()}page`}
+                        value={formValues.displayName || ""}
+                        onChange={(e) => setFormValues((v) => ({ ...v, displayName: e.target.value }))}
+                      />
+                    </div>
+                    {platform.fields.map((field) => (
+                      <div key={field.key}>
+                        <Label className="text-xs">{field.label}</Label>
+                        <Input
+                          className="mt-1 h-8 text-xs font-mono"
+                          type={field.secret ? "password" : "text"}
+                          placeholder={field.placeholder}
+                          value={formValues[field.key] || ""}
+                          onChange={(e) => setFormValues((v) => ({ ...v, [field.key]: e.target.value }))}
+                        />
+                      </div>
+                    ))}
+                    <Button
+                      size="sm" className="h-8 text-xs gap-1 bg-amber-500 hover:bg-amber-600 text-black"
+                      onClick={() => handleSave(platform.id)}
+                      disabled={saveMutation.isPending}
+                    >
+                      {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                      Save Credentials
+                    </Button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
     </div>
   );
 }
