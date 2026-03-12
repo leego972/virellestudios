@@ -44,11 +44,11 @@ const TIERS = [
     accentColor: "text-amber-400",
     monthly: 5000,
     annual: 50000,
-    credits: 50,
-    extraCreditCost: 50,
+    credits: 250,
+    extraCreditCost: 250,
     description: "For independent filmmakers and solo creators building their vision.",
     highlights: [
-      "50 credits/month included",
+      "250 credits/month included",
       "All creative & pre-production tools",
       "AI Script Writer & Storyboard",
       "Character Creator & DNA Lock",
@@ -69,12 +69,12 @@ const TIERS = [
     accentColor: "text-cyan-400",
     monthly: 10000,
     annual: 100000,
-    credits: 150,
-    extraCreditCost: 40,
+    credits: 750,
+    extraCreditCost: 200,
     popular: true,
     description: "For professional creators and small studios scaling their output.",
     highlights: [
-      "150 credits/month included",
+      "750 credits/month included",
       "Everything in Independent, plus:",
       "Up to 50 projects",
       "Up to 120 min per film",
@@ -95,11 +95,11 @@ const TIERS = [
     accentColor: "text-violet-400",
     monthly: 15000,
     annual: 150000,
-    credits: 300,
-    extraCreditCost: 30,
+    credits: 1500,
+    extraCreditCost: 150,
     description: "For production studios with multiple projects and larger teams.",
     highlights: [
-      "300 credits/month included",
+      "1,500 credits/month included",
       "Everything in Creator, plus:",
       "Up to 100 projects",
       "Up to 150 min per film",
@@ -120,11 +120,11 @@ const TIERS = [
     accentColor: "text-yellow-400",
     monthly: 25000,
     annual: 250000,
-    credits: 600,
-    extraCreditCost: 25,
+    credits: 3000,
+    extraCreditCost: 125,
     description: "For major studios and enterprise productions. Full power, no limits.",
     highlights: [
-      "600 credits/month included",
+      "3,000 credits/month included",
       "Everything in Studio, plus:",
       "Unlimited projects",
       "Up to 180 min per film",
@@ -139,30 +139,30 @@ const TIERS = [
 ];
 
 const CREDIT_PACKS = [
-  { id: "pack_10", credits: 10, price: 500, perCredit: 50, label: "Starter" },
-  { id: "pack_50", credits: 50, price: 2000, perCredit: 40, label: "Producer" },
-  { id: "pack_100", credits: 100, price: 3500, perCredit: 35, label: "Director" },
-  { id: "pack_250", credits: 250, price: 7500, perCredit: 30, label: "Studio" },
-  { id: "pack_500", credits: 500, price: 12500, perCredit: 25, label: "Blockbuster", popular: true },
-  { id: "pack_1000", credits: 1000, price: 20000, perCredit: 20, label: "Mogul" },
+  { id: "pack_10", credits: 50, price: 500, perCredit: 10, label: "Starter" },
+  { id: "pack_50", credits: 250, price: 2000, perCredit: 8, label: "Producer" },
+  { id: "pack_100", credits: 500, price: 3500, perCredit: 7, label: "Director" },
+  { id: "pack_250", credits: 1250, price: 7500, perCredit: 6, label: "Studio" },
+  { id: "pack_500", credits: 2500, price: 12500, perCredit: 5, label: "Blockbuster", popular: true },
+  { id: "pack_1000", credits: 5000, price: 20000, perCredit: 4, label: "Mogul" },
 ];
 
 const CREDIT_COSTS = [
-  { action: "Create New Project", cost: 1, icon: "📁" },
-  { action: "Generate Film (AI Scene Breakdown)", cost: 10, icon: "🎬" },
-  { action: "Generate Scene Video (per scene)", cost: 5, icon: "🎥" },
-  { action: "Regenerate Scene Video", cost: 3, icon: "🔄" },
-  { action: "Generate Preview Image", cost: 1, icon: "🖼️" },
-  { action: "Bulk Generate All Previews (per scene)", cost: 2, icon: "📸" },
-  { action: "Bulk Generate All Videos (per scene)", cost: 5, icon: "📹" },
-  { action: "Virelle AI Chat (per message)", cost: 1, icon: "💬" },
-  { action: "AI Script Writer", cost: 3, icon: "📝" },
-  { action: "AI Storyboard Generation", cost: 3, icon: "🎨" },
-  { action: "AI Dialogue Polish", cost: 2, icon: "🗣️" },
-  { action: "AI Continuity Check", cost: 2, icon: "🔍" },
-  { action: "AI Shot List Generation", cost: 2, icon: "📋" },
-  { action: "Export Final Film", cost: 5, icon: "💾" },
-  { action: "Export Scenes / Trailer", cost: 3, icon: "📤" },
+  { action: "Create New Project", cost: 5, icon: "📁" },
+  { action: "Generate Film (AI Scene Breakdown)", cost: 50, icon: "🎬" },
+  { action: "Generate Scene Video (per scene)", cost: 25, icon: "🎥" },
+  { action: "Regenerate Scene Video", cost: 15, icon: "🔄" },
+  { action: "Generate Preview Image", cost: 5, icon: "🖼️" },
+  { action: "Bulk Generate All Previews (per scene)", cost: 10, icon: "📸" },
+  { action: "Bulk Generate All Videos (per scene)", cost: 25, icon: "📹" },
+  { action: "Virelle AI Chat (per message)", cost: 5, icon: "💬" },
+  { action: "AI Script Writer", cost: 15, icon: "📝" },
+  { action: "AI Storyboard Generation", cost: 15, icon: "🎨" },
+  { action: "AI Dialogue Polish", cost: 10, icon: "🗣️" },
+  { action: "AI Continuity Check", cost: 10, icon: "🔍" },
+  { action: "AI Shot List Generation", cost: 10, icon: "📋" },
+  { action: "Export Final Film", cost: 25, icon: "💾" },
+  { action: "Export Scenes / Trailer", cost: 15, icon: "📤" },
 ];
 
 export default function Pricing() {
@@ -489,35 +489,35 @@ export default function Pricing() {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between p-2 rounded bg-zinc-900/50">
                     <span>Create project</span>
-                    <span className="text-amber-400 font-bold">1 credit</span>
+                    <span className="text-amber-400 font-bold">5 credits</span>
                   </div>
                   <div className="flex justify-between p-2 rounded bg-zinc-900/50">
                     <span>Generate Film (AI scene breakdown)</span>
-                    <span className="text-amber-400 font-bold">10 credits</span>
+                    <span className="text-amber-400 font-bold">50 credits</span>
                   </div>
                   <div className="flex justify-between p-2 rounded bg-zinc-900/50">
                     <span>Preview images (12 scenes)</span>
-                    <span className="text-amber-400 font-bold">12 credits</span>
-                  </div>
-                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
-                    <span>Virelle AI chat (10 editing messages)</span>
-                    <span className="text-amber-400 font-bold">10 credits</span>
-                  </div>
-                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
-                    <span>Generate scene videos (12 scenes)</span>
                     <span className="text-amber-400 font-bold">60 credits</span>
                   </div>
                   <div className="flex justify-between p-2 rounded bg-zinc-900/50">
+                    <span>Virelle AI chat (10 editing messages)</span>
+                    <span className="text-amber-400 font-bold">50 credits</span>
+                  </div>
+                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
+                    <span>Generate scene videos (12 scenes)</span>
+                    <span className="text-amber-400 font-bold">300 credits</span>
+                  </div>
+                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
                     <span>Export final film</span>
-                    <span className="text-amber-400 font-bold">5 credits</span>
+                    <span className="text-amber-400 font-bold">25 credits</span>
                   </div>
                   <div className="border-t border-amber-500/30 pt-3 mt-3">
                     <div className="flex justify-between font-bold text-lg">
                       <span>Total</span>
-                      <span className="text-amber-400">~98 credits</span>
+                      <span className="text-amber-400">~490 credits</span>
                     </div>
                     <p className="text-xs text-muted-foreground mt-2 text-center">
-                      Independent members get 50 credits/month — you'd need a credit pack top-up to complete this production.
+                      Independent members get 250 credits/month — you'd need a credit pack top-up to complete this production.
                     </p>
                   </div>
                 </div>
@@ -603,10 +603,10 @@ export default function Pricing() {
               <tbody className="divide-y divide-zinc-800">
                 {[
                   { feature: "PRICING", section: "header" },
-                  { feature: "Monthly Price", amateur: "$500", independent: "$5,000", creator: "$10,000", studio: "$15,000", industry: "$25,000" },
-                  { feature: "Annual Price", amateur: "$5,000", independent: "$50,000", creator: "$100,000", studio: "$150,000", industry: "$250,000" },
-                  { feature: "Monthly Credits", amateur: "15", independent: "50", creator: "150", studio: "300", industry: "600" },
-                  { feature: "Extra Credit Cost", amateur: "$50", independent: "$50", creator: "$40", studio: "$30", industry: "$25" },
+                  { feature: "Monthly Price", independent: "$5,000", creator: "$10,000", studio: "$15,000", industry: "$25,000" },
+                  { feature: "Annual Price", independent: "$50,000", creator: "$100,000", studio: "$150,000", industry: "$250,000" },
+                  { feature: "Monthly Credits", independent: "250", creator: "750", studio: "1,500", industry: "3,000" },
+                  { feature: "Extra Credit Cost", independent: "$10/credit", creator: "$8/credit", studio: "$6/credit", industry: "$4/credit" },
                   { feature: "CREATIVE TOOLS (INCLUDED)", section: "header" },
                   { feature: "AI Script Writer", amateur: true, independent: true, creator: true, studio: true, industry: true },
                   { feature: "Storyboard Generator", amateur: false, independent: true, creator: true, studio: true, industry: true },
@@ -704,11 +704,11 @@ export default function Pricing() {
             <CardContent>
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div className="p-4 rounded-lg bg-purple-500/10">
-                  <div className="text-2xl font-bold text-purple-400">+50 credits</div>
+                  <div className="text-2xl font-bold text-purple-400">+250 credits</div>
                   <div className="text-sm text-muted-foreground mt-1">You get</div>
                 </div>
                 <div className="p-4 rounded-lg bg-purple-500/10">
-                  <div className="text-2xl font-bold text-purple-400">+50 credits</div>
+                  <div className="text-2xl font-bold text-purple-400">+250 credits</div>
                   <div className="text-sm text-muted-foreground mt-1">They get</div>
                 </div>
               </div>
