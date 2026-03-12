@@ -353,7 +353,7 @@ export default function Landing() {
                 <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
               </Button>
               {langOpen && (
-                <div className="absolute top-full mt-1 w-52 bg-popover border border-border rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto" style={{ right: 0, left: 'auto', maxWidth: 'min(13rem, calc(100vw - 1rem))' }}>
+                <div className="fixed w-52 bg-popover border border-border rounded-xl shadow-2xl z-[200] max-h-64 overflow-y-auto" style={{ top: '64px', right: '8px' }}>
                   {[
                     { code: "ar", name: "Arabic (العربية)", flag: "🇸🇦" },
                     { code: "zh", name: "Chinese (中文)", flag: "🇨🇳" },
