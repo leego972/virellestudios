@@ -200,6 +200,8 @@ type SceneForm = {
   budgetEstimate: number | null;
   shootingDays: number | null;
   aiPromptOverride: string;
+  negativePrompt: string;
+  seed: number | null;
   // Timing
   duration: number;
   transition: string;
@@ -281,6 +283,8 @@ const defaultScene: SceneForm = {
   budgetEstimate: null,
   shootingDays: null,
   aiPromptOverride: "",
+  negativePrompt: "",
+  seed: null,
   // Timing — default 45s (industry-standard for a typical scene)
   duration: 45,
   transition: "",
@@ -520,6 +524,8 @@ export default function SceneEditor() {
       budgetEstimate: scene.budgetEstimate || null,
       shootingDays: scene.shootingDays || null,
       aiPromptOverride: scene.aiPromptOverride || "",
+      negativePrompt: (scene as any).negativePrompt || "",
+      seed: (scene as any).seed ?? null,
       // Timing — default 45s if not set
       duration: scene.duration || 45,
       transition: scene.transitionType || ext.transition || "",
@@ -609,6 +615,8 @@ export default function SceneEditor() {
       budgetEstimate: form.budgetEstimate || undefined,
       shootingDays: form.shootingDays || undefined,
       aiPromptOverride: form.aiPromptOverride || undefined,
+      negativePrompt: form.negativePrompt || undefined,
+      seed: form.seed ?? undefined,
       // Timing
       duration: form.duration,
       transitionType: form.transition || undefined,
@@ -666,6 +674,7 @@ export default function SceneEditor() {
     sound: false,
     production: false,
     aiOverride: false,
+    negativePromptSeed: false,
     director: false,
     refImages: false,
     footage: false,
@@ -1841,6 +1850,41 @@ export default function SceneEditor() {
                     onChange={e => setField("aiPromptOverride", e.target.value)}
                     className="min-h-[70px] text-sm bg-background/50 resize-y font-mono"
                   />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Negative Prompt & Seed ── */}
+            <Collapsible open={openSections.negativePromptSeed} onOpenChange={() => toggleSection("negativePromptSeed")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-border/60 bg-card/30 hover:bg-card/50 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${openSections.negativePromptSeed ? "rotate-90" : ""}`} />
+                  <Scissors className="h-3.5 w-3.5 text-red-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-muted-foreground flex-1">Negative Prompt & Seed</span>
+                  <span className="text-[10px] text-muted-foreground/60">{form.negativePrompt ? "custom" : "default"}{form.seed !== null ? ` · seed ${form.seed}` : ""}</span>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <div>
+                    <Label className="text-xs text-muted-foreground mb-1 block">Negative Prompt</Label>
+                    <Textarea
+                      placeholder="What to exclude from the video: blur, grain, watermark, text overlay, low quality, distorted faces..."
+                      value={form.negativePrompt}
+                      onChange={e => setField("negativePrompt", e.target.value)}
+                      className="min-h-[60px] text-sm bg-background/50 resize-y font-mono"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground mb-1 block">Seed (for reproducibility)</Label>
+                    <Input
+                      type="number"
+                      placeholder="Leave blank for random seed"
+                      value={form.seed ?? ""}
+                      onChange={e => setField("seed", e.target.value ? parseInt(e.target.value) : null)}
+                      className="text-sm bg-background/50"
+                    />
+                  </div>
                 </div>
               </CollapsibleContent>
             </Collapsible>

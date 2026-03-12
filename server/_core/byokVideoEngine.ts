@@ -38,6 +38,8 @@ export interface VideoGenerationRequest {
   duration?: number;       // Duration in seconds (default 5)
   aspectRatio?: string;    // "16:9", "9:16", "1:1" (default "16:9")
   resolution?: string;     // "720p", "1080p" (default "720p")
+  negativePrompt?: string; // What NOT to generate (blur, grain, watermark, etc.)
+  seed?: number;           // Seed for reproducible generations
 }
 
 export interface VideoGenerationResult {
@@ -156,6 +158,18 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
       console.log(`[BYOK:Runway] Mode: image-to-video with ref: ${req.imageUrl.substring(0, 80)}`);
     } else {
       console.log(`[BYOK:Runway] Mode: text-to-video`);
+    }
+
+    // Add negative prompt if provided (Runway supports this)
+    if (req.negativePrompt) {
+      createParams.negativePrompt = req.negativePrompt;
+      console.log(`[BYOK:Runway] Negative prompt: ${req.negativePrompt.substring(0, 100)}`);
+    }
+
+    // Add seed for reproducibility if provided
+    if (req.seed !== undefined && req.seed !== null) {
+      createParams.seed = req.seed;
+      console.log(`[BYOK:Runway] Seed: ${req.seed}`);
     }
 
     const task = await client.imageToVideo

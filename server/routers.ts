@@ -1392,8 +1392,11 @@ export const appRouter = router({
             characterNames: characters.map(c => c.name),
           }
         );
-        // Use the scene thumbnail as input image for video generation if available
-        const inputImageUrl = scene.thumbnailUrl || undefined;
+        // Use reference images from scene editor (first = promptImage for image-to-video)
+        const sceneRefImages = (scene as any).referenceImages as string[] || [];
+        const sceneAiPromptOverride = (scene as any).aiPromptOverride as string | undefined;
+        const sceneNegativePrompt = (scene as any).negativePrompt as string | undefined;
+        const sceneSeed = (scene as any).seed as number | undefined;
 
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
         const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
@@ -1430,13 +1433,17 @@ export const appRouter = router({
             const extResult = await generateExtendedScene(byokKeys, {
               sceneId: scene.id,
               projectId: project.id,
-              description: `Cinematic video: ${prompt}`,
+              description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
               targetDurationSeconds: Math.max(10, scene.duration || 45),
               mood: scene.mood || undefined,
               lighting: scene.lighting || undefined,
               timeOfDay: scene.timeOfDay || undefined,
               genre: project.genre || undefined,
               locationDescription: scene.locationType || undefined,
+              referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+              aiPromptOverride: sceneAiPromptOverride,
+              negativePrompt: sceneNegativePrompt,
+              seed: sceneSeed,
             });
             await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
             // Auto-set project thumbnail if project has none

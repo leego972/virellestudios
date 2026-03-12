@@ -200,10 +200,10 @@ async function generateTitleCard(
     "-f", "lavfi",
     "-i", `anullsrc=channel_layout=stereo:sample_rate=44100`,
     "-c:v", "libx264",
-    "-preset", "fast",
-    "-crf", "23",
+    "-preset", "slow",
+    "-crf", "18",
     "-c:a", "aac",
-    "-b:a", "128k",
+    "-b:a", "320k",
     "-t", String(duration),
     "-pix_fmt", "yuv420p",
     "-y",
@@ -248,10 +248,10 @@ async function generateEndCredits(
     "-f", "lavfi",
     "-i", `anullsrc=channel_layout=stereo:sample_rate=44100`,
     "-c:v", "libx264",
-    "-preset", "fast",
-    "-crf", "23",
+    "-preset", "slow",
+    "-crf", "18",
     "-c:a", "aac",
-    "-b:a", "128k",
+    "-b:a", "320k",
     "-t", String(duration),
     "-pix_fmt", "yuv420p",
     "-y",
@@ -342,7 +342,7 @@ async function processSceneAudio(
     "-map", "[aout]",
     "-c:v", "copy",
     "-c:a", "aac",
-    "-b:a", "192k",
+    "-b:a", "320k",
     "-shortest",
     "-y",
     outputPath,
@@ -403,8 +403,8 @@ async function burnSubtitlesIntoScene(
       "-i", sceneVideoPath,
       "-vf", `subtitles='${escapedSrtPath}':force_style='FontSize=${fontSize},PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,Shadow=1,MarginV=40'`,
       "-c:v", "libx264",
-      "-preset", "fast",
-      "-crf", "23",
+      "-preset", "slow",
+      "-crf", "18",
       "-c:a", "copy",
       "-y",
       outputPath,
@@ -524,9 +524,9 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       const normalizedOpener = path.join(tmpDir, "norm_opener.ts");
       await execFileAsync("ffmpeg", [
         "-i", openerPath,
-        "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+        "-c:v", "libx264", "-preset", "slow", "-crf", "18",
         "-vf", `scale=${resolution.width}:${resolution.height}:force_original_aspect_ratio=decrease,pad=${resolution.width}:${resolution.height}:(ow-iw)/2:(oh-ih)/2,setsar=1,fade=t=in:st=0:d=0.5,fade=t=out:st=8:d=1.5`,
-        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "128k",
+        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",
         "-f", "mpegts", "-y", normalizedOpener,
       ], { timeout: 60000 });
       normalizedFiles.push(normalizedOpener);
@@ -550,9 +550,9 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       const normalizedTitle = path.join(tmpDir, "norm_title.ts");
       await execFileAsync("ffmpeg", [
         "-i", titleCard,
-        "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+        "-c:v", "libx264", "-preset", "slow", "-crf", "18",
         "-vf", `scale=${resolution.width}:${resolution.height}:force_original_aspect_ratio=decrease,pad=${resolution.width}:${resolution.height}:(ow-iw)/2:(oh-ih)/2,setsar=1,fade=t=in:st=0:d=1.5,fade=t=out:st=${(titleDuration - 1.5).toFixed(1)}:d=1.5`,
-        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "128k",
+        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",
         "-f", "mpegts", "-y", normalizedTitle,
       ], { timeout: 60000 });
       normalizedFiles.push(normalizedTitle);
@@ -581,9 +581,9 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
 
       await execFileAsync("ffmpeg", [
         "-i", subtitledFiles[i],
-        "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+        "-c:v", "libx264", "-preset", "slow", "-crf", "18",
         "-vf", vf,
-        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "128k",
+        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",
         "-f", "mpegts", "-y", normalized,
       ], { timeout: 120000 });
       normalizedFiles.push(normalized);
@@ -602,9 +602,9 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       const normalizedCredits = path.join(tmpDir, "norm_credits.ts");
       await execFileAsync("ffmpeg", [
         "-i", creditsVideo,
-        "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+        "-c:v", "libx264", "-preset", "slow", "-crf", "18",
         "-vf", `scale=${resolution.width}:${resolution.height}:force_original_aspect_ratio=decrease,pad=${resolution.width}:${resolution.height}:(ow-iw)/2:(oh-ih)/2,setsar=1,fade=t=in:st=0:d=1.5`,
-        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "128k",
+        "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",
         "-f", "mpegts", "-y", normalizedCredits,
       ], { timeout: 60000 });
       normalizedFiles.push(normalizedCredits);
@@ -619,8 +619,8 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
 
     await execFileAsync("ffmpeg", [
       "-i", `concat:${concatInput}`,
-      "-c:v", "libx264", "-preset", "fast", "-crf", "22",
-      "-c:a", "aac", "-b:a", "192k",
+      "-c:v", "libx264", "-preset", "slow", "-crf", "18",
+      "-c:a", "aac", "-b:a", "320k",
       "-movflags", "+faststart",
       "-y", outputPath,
     ], { timeout: 600000 }); // 10 min timeout for long films
@@ -644,7 +644,7 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
         "-map", "[aout]",
         "-c:v", "copy",
         "-c:a", "aac",
-        "-b:a", "192k",
+        "-b:a", "320k",
         "-movflags", "+faststart",
         "-shortest",
         "-y",

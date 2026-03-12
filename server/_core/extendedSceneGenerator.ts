@@ -64,6 +64,14 @@ export interface ExtendedSceneRequest {
   /** Dialogue audio URL to sync video duration with */
   dialogueAudioUrl?: string;
   dialogueAudioDuration?: number;
+  /** Reference images from the scene editor — first image used as Runway promptImage */
+  referenceImages?: string[];
+  /** Director's exact AI prompt override — replaces the auto-generated prompt when set */
+  aiPromptOverride?: string;
+  /** Negative prompt — what NOT to generate (no CGI, no cartoon, etc.) */
+  negativePrompt?: string;
+  /** Seed for reproducible generations */
+  seed?: number;
 }
 
 export interface ExtendedSceneResult {
@@ -320,14 +328,14 @@ async function stitchSubClips(
       await execFileAsync("ffmpeg", [
         "-i", localFiles[i],
         "-c:v", "libx264",
-        "-preset", "fast",
-        "-crf", "23",
+        "-preset", "slow",
+        "-crf", "18",
         "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1",
         "-r", "24",
         "-c:a", "aac",
         "-ar", "44100",
         "-ac", "2",
-        "-b:a", "128k",
+        "-b:a", "320k",
         "-f", "mpegts",
         "-y",
         normalized,
@@ -342,10 +350,10 @@ async function stitchSubClips(
     await execFileAsync("ffmpeg", [
       "-i", `concat:${concatInput}`,
       "-c:v", "libx264",
-      "-preset", "fast",
-      "-crf", "22",
+      "-preset", "slow",
+      "-crf", "18",
       "-c:a", "aac",
-      "-b:a", "192k",
+      "-b:a", "320k",
       "-movflags", "+faststart",
       "-y",
       outputPath,
@@ -433,12 +441,19 @@ export async function generateExtendedScene(
     try {
       console.log(`[ExtendedScene] Generating sub-clip ${i + 1}/${subShots.length} (${subShot.durationSeconds}s, ${subShot.cameraAngle})`);
 
+      // Use director's prompt override for first sub-shot if set; otherwise use auto-generated prompt
+      const effectivePrompt = (i === 0 && request.aiPromptOverride) ? request.aiPromptOverride : subShot.prompt;
+      // Use first reference image as promptImage for first sub-shot (image-to-video); subsequent clips use last frame
+      const effectiveImageUrl = subShot.referenceFrameUrl ||
+        (i === 0 && request.referenceImages && request.referenceImages.length > 0 ? request.referenceImages[0] : undefined);
       const videoResult = await generateBYOKVideo(keys, {
-        prompt: subShot.prompt,
-        imageUrl: subShot.referenceFrameUrl,
+        prompt: effectivePrompt,
+        imageUrl: effectiveImageUrl,
         duration: subShot.durationSeconds,
         aspectRatio: "16:9",
-        resolution: "720p",
+        resolution: "1080p",
+        negativePrompt: request.negativePrompt,
+        seed: request.seed,
       });
 
       generatedClipUrls.push(videoResult.videoUrl);

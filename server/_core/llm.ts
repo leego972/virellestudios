@@ -220,7 +220,7 @@ const resolveProvider = (): { url: string; apiKey: string; model: string } => {
     return {
       url: "https://api.openai.com/v1/chat/completions",
       apiKey: ENV.openaiApiKey,
-      model: "gpt-4.1-mini",  // Fast, cheap, and very capable
+      model: "gpt-4.1",  // Full GPT-4.1 for maximum quality generation
     };
   }
 
@@ -365,7 +365,7 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
       return invokeLLMWithProvider(params, {
         url: "https://api.openai.com/v1/chat/completions",
         apiKey: ENV.openaiApiKey,
-        model: "gpt-4.1-mini",
+        model: "gpt-4.1",
       });
     }
 
