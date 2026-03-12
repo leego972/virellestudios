@@ -186,7 +186,7 @@ function UseCaseToggle({ active, onChange }: { active: "film" | "vfx"; onChange:
         className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
           active === "film"
             ? "bg-amber-500 text-black shadow-lg"
-            : "text-muted-foreground hover:text-foreground"
+            : "text-foreground/80 hover:text-foreground"
         }`}
       >
         <Film className="h-4 w-4 inline mr-2" />
@@ -197,7 +197,7 @@ function UseCaseToggle({ active, onChange }: { active: "film" | "vfx"; onChange:
         className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
           active === "vfx"
             ? "bg-purple-500 text-white shadow-lg"
-            : "text-muted-foreground hover:text-foreground"
+            : "text-foreground/80 hover:text-foreground"
         }`}
       >
         <Sparkles className="h-4 w-4 inline mr-2" />
@@ -325,7 +325,7 @@ export default function Landing() {
             <img src="/vs-watermark.png" alt="Virelle Studios" className="w-12 h-12 rounded-lg" draggable={false} />
             <span className="text-lg font-bold tracking-tight hidden sm:inline">Virelle Studios</span>
           </div>
-          <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
+          <div className="hidden md:flex items-center gap-6 text-sm text-foreground/80">
             <a href="#use-cases" className="hover:text-foreground transition-colors">Use Cases</a>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
@@ -426,7 +426,7 @@ export default function Landing() {
               </span>
             </span>
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-lg sm:text-xl text-foreground/80 max-w-2xl mx-auto leading-relaxed">
             The world's first AI film production platform. Generate complete feature-length films from a concept — or create individual VFX scenes to composite into your live-action production. Voice acting, soundtrack, and visual continuity included.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -442,7 +442,7 @@ export default function Landing() {
               See Use Cases
             </Button>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">BYOK — bring your own API keys. Membership starts at $5,000/year.</p>
+          <p className="mt-4 text-xs text-foreground/80">BYOK — bring your own API keys. Membership starts at $5,000/year.</p>
         </div>
       </section>
 
@@ -452,7 +452,7 @@ export default function Landing() {
           {STATS.map((stat) => (
             <div key={stat.label} className="text-center">
               <p className="text-3xl font-bold text-amber-400">{stat.value}</p>
-              <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
+              <p className="text-sm text-foreground/80 mt-1">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -466,7 +466,7 @@ export default function Landing() {
               Two Ways to Use{" "}
               <span className="text-amber-400">Virelle Studios</span>
             </h2>
-            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+            <p className="mt-4 text-foreground/80 max-w-2xl mx-auto">
               Whether you're generating an entire film from scratch or creating impossible scenes for your live-action production — Virelle has you covered.
             </p>
           </div>
@@ -479,7 +479,7 @@ export default function Landing() {
                   <Film className="h-7 w-7 text-amber-400" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Full AI Film Generation</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                <p className="text-sm text-foreground/80 leading-relaxed mb-5">
                   Describe your movie concept and Virelle generates the entire film — screenplay, 60-90 cinematic scenes with clip chaining, AI voice-acted dialogue, original soundtrack, character consistency, and scene-to-scene continuity. Export as a complete feature-length film.
                 </p>
                 <div className="space-y-2.5 mb-6">
@@ -492,7 +492,7 @@ export default function Landing() {
                   ].map((f) => (
                     <div key={f} className="flex items-start gap-2 text-sm">
                       <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{f}</span>
+                      <span className="text-foreground/80">{f}</span>
                     </div>
                   ))}
                 </div>
@@ -508,7 +508,7 @@ export default function Landing() {
                   <Sparkles className="h-7 w-7 text-purple-400" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">VFX Scene Studio</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                <p className="text-sm text-foreground/80 leading-relaxed mb-5">
                   Shooting a live-action film with a real cast? Use Virelle to generate the scenes that would be too expensive or physically impossible to shoot — alien worlds, historical recreations, space battles, underwater sequences, natural disasters. Export individual scenes to composite into your production.
                 </p>
                 <div className="space-y-2.5 mb-6">
@@ -521,7 +521,7 @@ export default function Landing() {
                   ].map((f) => (
                     <div key={f} className="flex items-start gap-2 text-sm">
                       <CheckCircle2 className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{f}</span>
+                      <span className="text-foreground/80">{f}</span>
                     </div>
                   ))}
                 </div>
@@ -543,7 +543,7 @@ export default function Landing() {
                 <>VFX Scene <span className="text-purple-400">Studio</span></>
               )}
             </h2>
-            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto mb-8">
+            <p className="mt-4 text-foreground/80 max-w-2xl mx-auto mb-8">
               {useCase === "film"
                 ? "Every capability needed to generate a complete feature-length film from a single concept."
                 : "Professional-grade tools for generating impossible scenes that integrate into your live-action production."
@@ -565,7 +565,7 @@ export default function Landing() {
                     <f.icon className={`h-5 w-5 ${useCase === "film" ? "text-amber-400" : "text-purple-400"}`} />
                   </div>
                   <h3 className="font-semibold text-sm mb-2">{f.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+                  <p className="text-xs text-foreground/80 leading-relaxed">{f.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -581,7 +581,7 @@ export default function Landing() {
               Complete Production{" "}
               <span className="text-amber-400">Toolkit</span>
             </h2>
-            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+            <p className="mt-4 text-foreground/80 max-w-2xl mx-auto">
               Every tool a filmmaker needs — from screenplay to final cut. All powered by AI.
             </p>
           </div>
@@ -593,7 +593,7 @@ export default function Landing() {
                     <f.icon className="h-5 w-5 text-amber-400" />
                   </div>
                   <h3 className="font-semibold text-sm mb-2">{f.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+                  <p className="text-xs text-foreground/80 leading-relaxed">{f.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -609,7 +609,7 @@ export default function Landing() {
               From Concept to{" "}
               <span className="text-amber-400">Finished Film</span>
             </h2>
-            <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+            <p className="mt-4 text-foreground/80 max-w-xl mx-auto">
               Whether it's a full film or a single VFX scene, the pipeline is the same.
             </p>
           </div>
@@ -625,7 +625,7 @@ export default function Landing() {
                   <span className="text-xl font-bold text-amber-400">{s.step}</span>
                 </div>
                 <h3 className="font-semibold text-sm mb-2">{s.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
+                <p className="text-xs text-foreground/80 leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -645,11 +645,11 @@ export default function Landing() {
                 Your API Keys.{" "}
                 <span className="text-purple-400">Your Budget.</span>
               </h2>
-              <p className="text-muted-foreground leading-relaxed mb-6">
+              <p className="text-foreground/80 leading-relaxed mb-6">
                 Virelle orchestrates the pipeline — you control the AI providers. Plug in your own API keys for video generation, voice acting, and music. Choose the best provider for each task. Pay only for what you use.
               </p>
               <div className="space-y-3">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Video Generation</p>
+                <p className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2">Video Generation</p>
                 {[
                   "Runway ML — Best quality (Gen-4 Turbo)",
                   "OpenAI Sora — Cinematic realism",
@@ -659,10 +659,10 @@ export default function Landing() {
                 ].map((provider) => (
                   <div key={provider} className="flex items-center gap-2 text-sm">
                     <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
-                    <span className="text-muted-foreground">{provider}</span>
+                    <span className="text-foreground/80">{provider}</span>
                   </div>
                 ))}
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-4">Voice Acting &amp; Music</p>
+                <p className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2 mt-4">Voice Acting &amp; Music</p>
                 {[
                   "ElevenLabs — Premium AI voice acting",
                   "OpenAI TTS — Reliable voice generation",
@@ -671,13 +671,13 @@ export default function Landing() {
                 ].map((provider) => (
                   <div key={provider} className="flex items-center gap-2 text-sm">
                     <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
-                    <span className="text-muted-foreground">{provider}</span>
+                    <span className="text-foreground/80">{provider}</span>
                   </div>
                 ))}
               </div>
             </div>
             <div className="bg-card/50 border border-border/50 rounded-xl p-6 space-y-3">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Connected Providers</p>
+              <p className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-3">Connected Providers</p>
               {[
                 { emoji: "🎬", name: "Runway ML", detail: "Gen-4 Turbo · Video", color: "amber" },
                 { emoji: "🎤", name: "ElevenLabs", detail: "Turbo v2.5 · Voice Acting", color: "purple" },
@@ -689,12 +689,12 @@ export default function Landing() {
                   <div className={`h-8 w-8 rounded bg-${p.color}-500/10 flex items-center justify-center text-lg`}>{p.emoji}</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium">{p.name}</p>
-                    <p className="text-[10px] text-muted-foreground">{p.detail}</p>
+                    <p className="text-[10px] text-foreground/80">{p.detail}</p>
                   </div>
                   <div className="h-2 w-2 rounded-full bg-green-400" />
                 </div>
               ))}
-              <p className="text-[10px] text-muted-foreground text-center pt-2">Keys are encrypted and never exposed to the frontend.</p>
+              <p className="text-[10px] text-foreground/80 text-center pt-2">Keys are encrypted and never exposed to the frontend.</p>
             </div>
           </div>
         </div>
@@ -712,7 +712,7 @@ export default function Landing() {
               Characters{" "}
               <span className="text-amber-400">Indistinguishable</span>{" "}from Real People
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-foreground/80 max-w-2xl mx-auto leading-relaxed">
               Virelle's photorealism engine generates characters that cannot be told apart from real human beings on film. Every frame is engineered at the level of a $200M Hollywood production.
             </p>
           </div>
@@ -722,7 +722,7 @@ export default function Landing() {
                 <Eye className="h-5 w-5 text-amber-400" />
               </div>
               <h3 className="font-semibold mb-2">Hyper-Realistic Skin</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/80 leading-relaxed">
                 Subsurface scattering shows blood flow beneath translucent skin layers. Visible pores, micro-wrinkles, fine peach fuzz, natural blemishes, and authentic facial asymmetry. No airbrushed, plastic, or porcelain skin — ever.
               </p>
             </div>
@@ -731,7 +731,7 @@ export default function Landing() {
                 <Camera className="h-5 w-5 text-amber-400" />
               </div>
               <h3 className="font-semibold mb-2">Soulful, Living Eyes</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/80 leading-relaxed">
                 Iris fibers rendered in full detail. Natural corneal reflections, subtle moisture in the waterline, and faint sclera veins. Eyes that convey genuine emotion and thought — not the dead, glassy look of AI.
               </p>
             </div>
@@ -740,7 +740,7 @@ export default function Landing() {
                 <Film className="h-5 w-5 text-amber-400" />
               </div>
               <h3 className="font-semibold mb-2">Hollywood Cinematography</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/80 leading-relaxed">
                 Every scene is generated as if captured on an ARRI ALEXA 65 with Zeiss Supreme Prime Radiance lenses. Kodak Vision3 500T film stock color science, anamorphic bokeh, and physically accurate light falloff.
               </p>
             </div>
@@ -748,11 +748,11 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-card/50 border border-border/50 rounded-xl p-6">
               <h3 className="font-semibold mb-3 flex items-center gap-2"><Sparkles className="h-4 w-4 text-amber-400" /> Micro-Expression Engine</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">Characters don't just look real — they feel real. The prompt engine injects authentic micro-expression directives so every face conveys genuine emotion: the slight tension around the eyes before a lie, the involuntary lip compression of grief, the asymmetric smile of real joy.</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">Characters don't just look real — they feel real. The prompt engine injects authentic micro-expression directives so every face conveys genuine emotion: the slight tension around the eyes before a lie, the involuntary lip compression of grief, the asymmetric smile of real joy.</p>
             </div>
             <div className="bg-card/50 border border-border/50 rounded-xl p-6">
               <h3 className="font-semibold mb-3 flex items-center gap-2"><Layers className="h-4 w-4 text-amber-400" /> Character DNA Lock</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">A character's face, bone structure, skin tone, and physical attributes are locked via a DNA prompt anchor injected into every scene. Your lead actor looks identical in scene 1 and scene 87 — the only thing that changes is their wardrobe and emotional state.</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">A character's face, bone structure, skin tone, and physical attributes are locked via a DNA prompt anchor injected into every scene. Your lead actor looks identical in scene 1 and scene 87 — the only thing that changes is their wardrobe and emotional state.</p>
             </div>
           </div>
           <div className="text-center mt-10">
@@ -764,7 +764,7 @@ export default function Landing() {
               <Film className="w-5 h-5" />
               View Our Films
             </button>
-            <p className="text-xs text-muted-foreground mt-3">See what VirElle Studios AI can create</p>
+            <p className="text-xs text-foreground/80 mt-3">See what VirElle Studios AI can create</p>
           </div>
         </div>
       </section>
@@ -781,7 +781,7 @@ export default function Landing() {
               Built for{" "}
               <span className="text-green-400">Responsible</span>{" "}Creators
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-foreground/80 max-w-2xl mx-auto leading-relaxed">
               Virelle Studios is the only AI film platform with built-in child protection, content moderation, and industry-leading safeguards — so you can create freely without legal risk.
             </p>
           </div>
@@ -791,7 +791,7 @@ export default function Landing() {
                 <ShieldCheck className="h-5 w-5 text-green-400" />
               </div>
               <h3 className="font-semibold mb-2">AI Minor Protection</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/80 leading-relaxed">
                 When a minor character appears in a sensitive scene — shower, beach, changing — our AI automatically applies cinematic modesty: heavy steam, fog, tasteful camera angles, and appropriate framing. No nudity, ever. Automatically.
               </p>
             </div>
@@ -800,7 +800,7 @@ export default function Landing() {
                 <Lock className="h-5 w-5 text-blue-400" />
               </div>
               <h3 className="font-semibold mb-2">Face & Likeness Consent</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/80 leading-relaxed">
                 Directors are legally responsible for obtaining consent from living individuals whose likeness they use. Our platform requires acknowledgment of consent obligations at upload. Historical public figures (pre-1900) are exempt with quality source images.
               </p>
             </div>
@@ -809,7 +809,7 @@ export default function Landing() {
                 <AlertTriangle className="h-5 w-5 text-amber-400" />
               </div>
               <h3 className="font-semibold mb-2">Instant Misuse Alerts</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-foreground/80 leading-relaxed">
                 Our content moderation engine scans every generation in real time. Suspected policy violations trigger an immediate account freeze and alert to our safety team — reviewed within 24 hours. Zero tolerance for CSAM.
               </p>
             </div>
@@ -818,7 +818,7 @@ export default function Landing() {
             <ShieldCheck className="h-8 w-8 text-green-400 shrink-0" />
             <div>
               <p className="font-semibold text-sm mb-1">Zero Tolerance for Child Sexual Abuse Material (CSAM)</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-foreground/80">
                 Any attempt to generate CSAM results in immediate permanent account termination, IP ban, and mandatory reporting to NCMEC and law enforcement. This is non-negotiable and fully automated.
               </p>
             </div>
@@ -834,7 +834,7 @@ export default function Landing() {
               Transparent{" "}
               <span className="text-amber-400">Pricing</span>
             </h2>
-            <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+            <p className="mt-4 text-foreground/80 max-w-xl mx-auto">
               A paid membership is required to use the platform. Choose your tier and start creating immediately.
             </p>
           </div>
@@ -858,9 +858,9 @@ export default function Landing() {
                   <h3 className="text-xl font-bold">{plan.tier}</h3>
                   <div className="mt-1 mb-2">
                     <span className="text-3xl font-bold">{plan.price}</span>
-                    <span className="text-sm text-muted-foreground">{plan.period}</span>
+                    <span className="text-sm text-foreground/80">{plan.period}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mb-4">{plan.desc}</p>
+                  <p className="text-xs text-foreground/80 mb-4">{plan.desc}</p>
                   <Button
                     className={`w-full mb-4 ${plan.highlight ? "bg-amber-500 hover:bg-amber-600 text-black font-semibold" : "bg-purple-600 hover:bg-purple-700 text-white font-semibold"}`}
                     size="sm"
@@ -882,7 +882,7 @@ export default function Landing() {
                       return (
                         <li key={f} className="flex items-start gap-2 text-xs">
                           <CheckCircle2 className="h-3.5 w-3.5 text-green-400 shrink-0 mt-0.5" />
-                          <span className="text-muted-foreground">{f}</span>
+                          <span className="text-foreground/80">{f}</span>
                         </li>
                       );
                     })}
@@ -892,7 +892,7 @@ export default function Landing() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <p className="text-xs text-muted-foreground mb-3">All prices in USD. Billed annually. Monthly billing available at a slight premium.</p>
+            <p className="text-xs text-foreground/80 mb-3">All prices in USD. Billed annually. Monthly billing available at a slight premium.</p>
             <button
               onClick={() => setLocation("/pricing")}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-semibold hover:bg-amber-500/20 transition-all"
@@ -910,7 +910,7 @@ export default function Landing() {
               Trusted by{" "}
               <span className="text-amber-400">Filmmakers &amp; Studios</span>
             </h2>
-            <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+            <p className="mt-4 text-foreground/80 max-w-xl mx-auto">
               From indie creators to production companies — Virelle Studios is changing how films get made.
             </p>
           </div>
@@ -923,10 +923,10 @@ export default function Landing() {
                       <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed mb-4">"{t.text}"</p>
+                  <p className="text-xs text-foreground/80 leading-relaxed mb-4">"{t.text}"</p>
                   <div>
                     <p className="text-xs font-medium">{t.name}</p>
-                    <p className="text-[10px] text-muted-foreground">{t.role}</p>
+                    <p className="text-[10px] text-foreground/80">{t.role}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -942,7 +942,7 @@ export default function Landing() {
             Ready to Create Your{" "}
             <span className="text-amber-400">First Film?</span>
           </h2>
-          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+          <p className="mt-4 text-foreground/80 max-w-xl mx-auto">
             Generate a complete feature-length film or create impossible VFX scenes for your production. Bring your own API keys.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -963,41 +963,41 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Product</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-3">Product</h4>
               <ul className="space-y-2">
-                <li><a href="#use-cases" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Use Cases</a></li>
-                <li><a href="#features" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Features</a></li>
-                <li><a href="#pricing" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Pricing</a></li>
-                <li><button onClick={() => setLocation("/blog")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Blog</button></li>
+                <li><a href="#use-cases" className="text-xs text-foreground/80 hover:text-foreground transition-colors">Use Cases</a></li>
+                <li><a href="#features" className="text-xs text-foreground/80 hover:text-foreground transition-colors">Features</a></li>
+                <li><a href="#pricing" className="text-xs text-foreground/80 hover:text-foreground transition-colors">Pricing</a></li>
+                <li><button onClick={() => setLocation("/blog")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Blog</button></li>
                 <li><button onClick={() => setLocation("/showcase")} className="text-xs font-semibold hover:text-foreground transition-colors" style={{ color: '#d4af37' }}>Showcase</button></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Use Cases</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-3">Use Cases</h4>
               <ul className="space-y-2">
-                <li><span className="text-xs text-muted-foreground">Full AI Films</span></li>
-                <li><span className="text-xs text-muted-foreground">VFX Scene Studio</span></li>
-                <li><span className="text-xs text-muted-foreground">Music Videos</span></li>
-                <li><span className="text-xs text-muted-foreground">Commercials</span></li>
+                <li><span className="text-xs text-foreground/80">Full AI Films</span></li>
+                <li><span className="text-xs text-foreground/80">VFX Scene Studio</span></li>
+                <li><span className="text-xs text-foreground/80">Music Videos</span></li>
+                <li><span className="text-xs text-foreground/80">Commercials</span></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Company</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-3">Company</h4>
               <ul className="space-y-2">
-                <li><button onClick={() => setLocation("/contact")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">About</button></li>
-                <li><button onClick={() => setLocation("/contact")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Contact</button></li>
-                <li><button onClick={() => setLocation("/terms")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms of Service</button></li>
-                <li><button onClick={() => setLocation("/privacy")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</button></li>
-                <li><button onClick={() => setLocation("/acceptable-use")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Acceptable Use</button></li>
-                <li><button onClick={() => setLocation("/ai-content-policy")} className="text-xs text-muted-foreground hover:text-foreground transition-colors">AI Content Policy</button></li>
+                <li><button onClick={() => setLocation("/contact")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">About</button></li>
+                <li><button onClick={() => setLocation("/contact")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Contact</button></li>
+                <li><button onClick={() => setLocation("/terms")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Terms of Service</button></li>
+                <li><button onClick={() => setLocation("/privacy")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Privacy Policy</button></li>
+                <li><button onClick={() => setLocation("/acceptable-use")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Acceptable Use</button></li>
+                <li><button onClick={() => setLocation("/ai-content-policy")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">AI Content Policy</button></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Connect</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-3">Connect</h4>
               <ul className="space-y-2">
-                <li><span className="text-xs text-muted-foreground">Twitter / X</span></li>
-                <li><span className="text-xs text-muted-foreground">Discord</span></li>
-                <li><span className="text-xs text-muted-foreground">YouTube</span></li>
+                <li><span className="text-xs text-foreground/80">Twitter / X</span></li>
+                <li><span className="text-xs text-foreground/80">Discord</span></li>
+                <li><span className="text-xs text-foreground/80">YouTube</span></li>
               </ul>
             </div>
           </div>
@@ -1006,7 +1006,7 @@ export default function Landing() {
               <img src="/vs-watermark.png" alt="Virelle Studios" className="w-10 h-10 rounded-lg" draggable={false} />
               <span className="text-sm font-semibold">Virelle Studios</span>
             </div>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-[10px] text-foreground/80">
               &copy; {new Date().getFullYear()} Virelle Studios. All rights reserved. Powered by{" "}
               <img src="/leego-logo.png" alt="Leego" className="inline h-4 w-4 align-middle" style={{ filter: "drop-shadow(0 0 4px #22c55e)" }} />{" "}
               Leego
