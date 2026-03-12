@@ -85,10 +85,11 @@ export interface TierLimits {
  * NO FREE TIER — This is a professional tool.
  * 
  * MEMBERSHIP TIERS (required to use the platform):
- *   Independent — $5,000/month ($50,000/year) — 50 credits/month included
- *   Creator    — $10,000/month ($100,000/year) — 150 credits/month included
- *   Studio     — $15,000/month ($150,000/year) — 300 credits/month included
- *   Industry   — $25,000/month ($250,000/year) — 600 credits/month included
+ *   Amateur     — $500/month    ($5,000/year)    — 250 credits/month included
+ *   Independent — $5,000/month  ($50,000/year)   — 500 credits/month included
+ *   Creator     — $10,000/month ($100,000/year)  — 1,500 credits/month included
+ *   Studio      — $15,000/month ($150,000/year)  — 4,000 credits/month included
+ *   Industry    — $25,000/month ($250,000/year)  — 10,000 credits/month included
  * 
  * CREDITS SYSTEM — Every action costs credits:
  *   Create New Project:                      FREE (zero friction)
@@ -128,9 +129,7 @@ export interface TierLimits {
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
-  // ─── AMATEUR FILMMAKER ─── $500/month — 15 credits, hook tier to drive upgrades
-  // Deliberately limited: enough to start a project but NOT finish it.
-  // No video generation, no export, no advanced tools — just enough to get invested.
+  // ─── AMATEUR FILMMAKER ─── $500/month — 250 credits/month
   amateur: {
     maxProjects: 2,
     maxCharactersPerProject: 5,
@@ -186,9 +185,9 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard"],
     maxDurationMinutes: 5,        // Max 5 min total — not enough for a real film
     maxClipsPerScene: 2,
-    monthlyCredits: 15,           // 15 credits: enough to write a script + a few previews, not enough to finish
+    monthlyCredits: 250,
   },
-  // ─── INDEPENDENT ─── Full production pipeline: 90 min films, 4K, all core tools
+  // ─── INDEPENDENT ─── $5,000/month — 500 credits/month, 90 min films, 4K, all core tools
   independent: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -245,9 +244,9 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high"],
     maxDurationMinutes: 90,
     maxClipsPerScene: 8,
-    monthlyCredits: 50,
+    monthlyCredits: 500,
   },
-  // ─── CREATOR ─── $10,000/month — 150 credits, 120 min films, pro tools
+  // ─── CREATOR ─── $10,000/month — 1,500 credits, 120 min films, pro tools
   creator: {
     maxProjects: 50,
     maxCharactersPerProject: 50,
@@ -272,9 +271,9 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canExportUltraHD: true, canUseWhiteLabel: false, canUseAPIAccess: false,
     canUseCustomFineTuning: false, canUsePriorityRendering: false,
     resolution: "4k", quality: ["standard", "high"], maxDurationMinutes: 120, maxClipsPerScene: 10,
-    monthlyCredits: 150,
+    monthlyCredits: 1500,
   },
-  // ─── STUDIO ─── $15,000/month — 300 credits, 150 min films, advanced tools
+  // ─── STUDIO ─── $15,000/month — 4,000 credits, 150 min films, advanced tools
   studio: {
     maxProjects: 100,
     maxCharactersPerProject: 100,
@@ -299,9 +298,9 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canExportUltraHD: true, canUseWhiteLabel: false, canUseAPIAccess: true,
     canUseCustomFineTuning: false, canUsePriorityRendering: true,
     resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 150, maxClipsPerScene: 12,
-    monthlyCredits: 300,
+    monthlyCredits: 4000,
   },
-  // ─── INDUSTRY ─── $25,000/month — 600 credits, 180 min, white-label, API, fine-tuning, priority
+  // ─── INDUSTRY ─── $25,000/month — 10,000 credits, 180 min, white-label, API, fine-tuning, priority
   industry: {
     maxProjects: -1,
     maxCharactersPerProject: -1,
@@ -357,7 +356,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
     maxClipsPerScene: 12,
-    monthlyCredits: 600,
+    monthlyCredits: 10000,
   },
 };
 
@@ -589,10 +588,11 @@ export interface TierPricing {
  * Every action costs credits. Included credits are designed to get users
  * started but not enough for full productions — driving credit pack purchases.
  * 
- * Independent: $5,000/mo ($50,000/yr)  — 50 credits/mo, 90 min films
- * Creator:     $10,000/mo ($100,000/yr) — 150 credits/mo, 120 min films
- * Studio:      $15,000/mo ($150,000/yr) — 300 credits/mo, 150 min films
- * Industry:    $25,000/mo ($250,000/yr) — 600 credits/mo, 180 min films, white-label, API
+ * Amateur:     $500/mo    ($5,000/yr)    — 250 credits/mo
+ * Independent: $5,000/mo  ($50,000/yr)   — 500 credits/mo, 90 min films
+ * Creator:     $10,000/mo ($100,000/yr)  — 1,500 credits/mo, 120 min films
+ * Studio:      $15,000/mo ($150,000/yr)  — 4,000 credits/mo, 150 min films
+ * Industry:    $25,000/mo ($250,000/yr)  — 10,000 credits/mo, 180 min films, white-label, API
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
   amateur:     { monthly: 50000, annual: 41667, annualTotal: 500000, monthlyTotal: 600000 },

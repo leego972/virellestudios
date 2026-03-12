@@ -7,10 +7,11 @@
  * This ensures the enterprise pricing model is always in sync with Stripe.
  * 
  * MEMBERSHIP TIERS (USD):
- *   Independent — $5,000/month  or $50,000/year   (50 credits/mo)
- *   Creator     — $10,000/month or $100,000/year  (150 credits/mo)
- *   Studio      — $15,000/month or $150,000/year  (300 credits/mo)
- *   Industry    — $25,000/month or $250,000/year  (600 credits/mo)
+ *   Amateur     — $500/month    or $5,000/year    (250 credits/mo)
+ *   Independent — $5,000/month  or $50,000/year   (500 credits/mo)
+ *   Creator     — $10,000/month or $100,000/year  (1,500 credits/mo)
+ *   Studio      — $15,000/month or $150,000/year  (4,000 credits/mo)
+ *   Industry    — $25,000/month or $250,000/year  (10,000 credits/mo)
  * 
  * CREDIT PACKS:
  *   Starter Pack     — 10 credits   $500
@@ -59,110 +60,110 @@ const SUBSCRIPTION_PRICES: PriceDefinition[] = [
     key: "amateur_monthly",
     envKey: "stripeAmateurMonthlyPriceId",
     productName: "Virelle Studios — Amateur Filmmaker (Monthly)",
-    productDesc: "AI film production platform — Amateur Filmmaker tier, $500/month, 15 credits/mo",
+    productDesc: "AI film production platform — Amateur Filmmaker tier, $500/month, 250 credits/mo",
     unitAmount: 50000, // $500
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "amateur", billing: "monthly", credits: "15" },
+    metadata: { tier: "amateur", billing: "monthly", credits: "250" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "amateur_annual",
     envKey: "stripeAmateurAnnualPriceId",
     productName: "Virelle Studios — Amateur Filmmaker (Annual)",
-    productDesc: "AI film production platform — Amateur Filmmaker tier, $5,000/year, 15 credits/mo",
+    productDesc: "AI film production platform — Amateur Filmmaker tier, $5,000/year, 250 credits/mo",
     unitAmount: 500000, // $5,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "amateur", billing: "annual", credits: "15" },
+    metadata: { tier: "amateur", billing: "annual", credits: "250" },
   },
   // ─── Independent tier ($5,000/mo, $50,000/yr) ───
   {
     key: "independent_monthly",
     envKey: "stripeIndependentMonthlyPriceId",
     productName: "Virelle Studios — Independent (Monthly)",
-    productDesc: "AI film production platform — Independent tier, $5,000/month, 50 credits/mo",
+    productDesc: "AI film production platform — Independent tier, $5,000/month, 500 credits/mo",
     unitAmount: 500000, // $5,000
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "independent", billing: "monthly", credits: "50" },
+    metadata: { tier: "independent", billing: "monthly", credits: "500" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "independent_annual",
     envKey: "stripeIndependentAnnualPriceId",
     productName: "Virelle Studios — Independent (Annual)",
-    productDesc: "AI film production platform — Independent tier, $50,000/year, 50 credits/mo",
+    productDesc: "AI film production platform — Independent tier, $50,000/year, 500 credits/mo",
     unitAmount: 5000000, // $50,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "independent", billing: "annual", credits: "50" },
+    metadata: { tier: "independent", billing: "annual", credits: "500" },
   },
   // ─── Creator tier ($10,000/mo, $100,000/yr) ───
   {
     key: "creator_monthly",
     envKey: "stripeCreatorMonthlyPriceId",
     productName: "Virelle Studios — Creator (Monthly)",
-    productDesc: "AI film production platform — Creator tier, $10,000/month, 150 credits/mo",
+    productDesc: "AI film production platform — Creator tier, $10,000/month, 1500 credits/mo",
     unitAmount: 1000000, // $10,000
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "creator", billing: "monthly", credits: "150" },
+    metadata: { tier: "creator", billing: "monthly", credits: "1500" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "creator_annual",
     envKey: "stripeCreatorAnnualPriceId",
     productName: "Virelle Studios — Creator (Annual)",
-    productDesc: "AI film production platform — Creator tier, $100,000/year, 150 credits/mo",
+    productDesc: "AI film production platform — Creator tier, $100,000/year, 1500 credits/mo",
     unitAmount: 10000000, // $100,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "creator", billing: "annual", credits: "150" },
+    metadata: { tier: "creator", billing: "annual", credits: "1500" },
   },
   // ─── Studio tier ($15,000/mo, $150,000/yr) ───
   {
     key: "studio_monthly",
     envKey: "stripeStudioMonthlyPriceId",
     productName: "Virelle Studios — Studio (Monthly)",
-    productDesc: "AI film production platform — Studio tier, $15,000/month, 300 credits/mo",
+    productDesc: "AI film production platform — Studio tier, $15,000/month, 4000 credits/mo",
     unitAmount: 1500000, // $15,000
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "studio", billing: "monthly", credits: "300" },
+    metadata: { tier: "studio", billing: "monthly", credits: "4000" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "studio_annual",
     envKey: "stripeStudioAnnualPriceId",
     productName: "Virelle Studios — Studio (Annual)",
-    productDesc: "AI film production platform — Studio tier, $150,000/year, 300 credits/mo",
+    productDesc: "AI film production platform — Studio tier, $150,000/year, 4000 credits/mo",
     unitAmount: 15000000, // $150,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "studio", billing: "annual", credits: "300" },
+    metadata: { tier: "studio", billing: "annual", credits: "4000" },
   },
   // ─── Industry tier ($25,000/mo, $250,000/yr) ───
   {
     key: "industry_monthly",
     envKey: "stripeIndustryMonthlyPriceId",
     productName: "Virelle Studios — Industry (Monthly)",
-    productDesc: "AI film production platform — Industry tier, $25,000/month, 600 credits/mo",
+    productDesc: "AI film production platform — Industry tier, $25,000/month, 10000 credits/mo",
     unitAmount: 2500000, // $25,000
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "industry", billing: "monthly", credits: "600" },
+    metadata: { tier: "industry", billing: "monthly", credits: "10000" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "industry_annual",
     envKey: "stripeIndustryAnnualPriceId",
     productName: "Virelle Studios — Industry (Annual)",
-    productDesc: "AI film production platform — Industry tier, $250,000/year, 600 credits/mo",
+    productDesc: "AI film production platform — Industry tier, $250,000/year, 10000 credits/mo",
     unitAmount: 25000000, // $250,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "industry", billing: "annual", credits: "600" },
+    metadata: { tier: "industry", billing: "annual", credits: "10000" },
   },
 ];
 

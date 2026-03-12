@@ -18,11 +18,11 @@ const TIERS = [
     accentColor: "text-emerald-400",
     monthly: 500,
     annual: 5000,
-    credits: 75,
-    extraCreditCost: 50,
+    credits: 250,
+    extraCreditCost: 10,
     description: "Dip your toes in AI filmmaking. Write, plan, and start your first project.",
     highlights: [
-      "75 credits/month — enough to start",
+      "250 credits/month included",
       "AI Script Writer",
       "AI Director Chat (Virelle)",
       "Character Creator",
@@ -44,11 +44,11 @@ const TIERS = [
     accentColor: "text-amber-400",
     monthly: 5000,
     annual: 50000,
-    credits: 250,
-    extraCreditCost: 50,
+    credits: 500,
+    extraCreditCost: 10,
     description: "For independent filmmakers and solo creators building their vision.",
     highlights: [
-      "250 credits/month included",
+      "500 credits/month included",
       "All creative & pre-production tools",
       "AI Script Writer & Storyboard",
       "Character Creator & DNA Lock",
@@ -69,12 +69,12 @@ const TIERS = [
     accentColor: "text-cyan-400",
     monthly: 10000,
     annual: 100000,
-    credits: 750,
-    extraCreditCost: 40,
+    credits: 1500,
+    extraCreditCost: 8,
     popular: true,
     description: "For professional creators and small studios scaling their output.",
     highlights: [
-      "750 credits/month included",
+      "1,500 credits/month included",
       "Everything in Independent, plus:",
       "Up to 50 projects",
       "Up to 120 min per film",
@@ -95,11 +95,11 @@ const TIERS = [
     accentColor: "text-violet-400",
     monthly: 15000,
     annual: 150000,
-    credits: 1500,
-    extraCreditCost: 30,
+    credits: 4000,
+    extraCreditCost: 6,
     description: "For production studios with multiple projects and larger teams.",
     highlights: [
-      "1,500 credits/month included",
+      "4,000 credits/month included",
       "Everything in Creator, plus:",
       "Up to 100 projects",
       "Up to 150 min per film",
@@ -120,11 +120,11 @@ const TIERS = [
     accentColor: "text-yellow-400",
     monthly: 25000,
     annual: 250000,
-    credits: 3000,
-    extraCreditCost: 25,
+    credits: 10000,
+    extraCreditCost: 4,
     description: "For major studios and enterprise productions. Full power, no limits.",
     highlights: [
-      "3,000 credits/month included",
+      "10,000 credits/month included",
       "Everything in Studio, plus:",
       "Unlimited projects",
       "Up to 180 min per film",
@@ -516,9 +516,7 @@ export default function Pricing() {
                       <span>Total</span>
                       <span className="text-amber-400">~2,450 credits</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2 text-center">
-                      Independent members get 250 credits/month — you'd need a credit pack top-up to complete this production.
-                    </p>
+
                   </div>
                 </div>
               </CardContent>
@@ -605,8 +603,8 @@ export default function Pricing() {
                   { feature: "PRICING", section: "header" },
                   { feature: "Monthly Price", independent: "$5,000", creator: "$10,000", studio: "$15,000", industry: "$25,000" },
                   { feature: "Annual Price", independent: "$50,000", creator: "$100,000", studio: "$150,000", industry: "$250,000" },
-                  { feature: "Monthly Credits", independent: "250", creator: "750", studio: "1,500", industry: "3,000" },
-                  { feature: "Extra Credit Cost", independent: "$10/credit", creator: "$8/credit", studio: "$6/credit", industry: "$4/credit" },
+                  { feature: "Monthly Credits", amateur: "250", independent: "500", creator: "1,500", studio: "4,000", industry: "10,000" },
+                  { feature: "Extra Credit Cost", amateur: "$10/credit", independent: "$10/credit", creator: "$8/credit", studio: "$6/credit", industry: "$4/credit" },
                   { feature: "CREATIVE TOOLS (INCLUDED)", section: "header" },
                   { feature: "AI Script Writer", amateur: true, independent: true, creator: true, studio: true, industry: true },
                   { feature: "Storyboard Generator", amateur: false, independent: true, creator: true, studio: true, industry: true },
