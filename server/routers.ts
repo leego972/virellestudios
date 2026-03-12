@@ -2793,7 +2793,10 @@ Break this into 8-15 scenes. For each scene, provide:
           `Scene ${i + 1}: "${s.title || "Untitled"}" — ${s.description || ""} (${s.locationType || ""}, ${s.timeOfDay || ""}, ${s.mood || ""})`
         ).join("\n");
 
-        const llmResult = await invokeLLM({
+        let _llmRefundAmount_script_writer_ai = 3;
+        let llmResult: any;
+        try {
+        llmResult = await invokeLLM({
           messages: [
             {
               role: "system",
@@ -2910,6 +2913,11 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
             },
           ],
         });
+        } catch (_llmErr_script_writer_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_script_writer_ai, "script_writer_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
+        }
 
         const scriptContent = llmResult.choices[0]?.message?.content || "";
         const pageEstimate = Math.max(1, Math.round((typeof scriptContent === "string" ? scriptContent : "").length / 3000));
@@ -2956,7 +2964,10 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
           transition: `Suggest an appropriate scene transition for:\n\n${input.selectedText || input.instructions || "Moving to the next scene."}`,
         };
 
-        const llmResult = await invokeLLM({
+        let _llmRefundAmount_dialogue_editor_ai = 2;
+        let llmResult: any;
+        try {
+        llmResult = await invokeLLM({
           messages: [
             {
               role: "system",
@@ -2968,6 +2979,11 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
             },
           ],
         });
+        } catch (_llmErr_dialogue_editor_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
+        }
 
         const result = llmResult.choices[0]?.message?.content || "";
         return { text: typeof result === "string" ? result : "" };
@@ -3133,7 +3149,10 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
 
         const charList = characters.map(c => `${c.name}: ${c.description || 'no description'}`).join("\n");
 
-        const llmResult = await invokeLLM({
+        let _llmRefundAmount_shot_list_ai = 2;
+        let llmResult: any;
+        try {
+        llmResult = await invokeLLM({
           messages: [
             {
               role: "system",
@@ -3181,6 +3200,11 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
             },
           },
         });
+        } catch (_llmErr_shot_list_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_shot_list_ai, "shot_list_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
+        }
 
         const content = llmResult.choices[0]?.message?.content;
         try {
@@ -3215,7 +3239,10 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
           return `${c.name}: ${c.description || ''} | Hair: ${attrs.hairColor || 'unknown'} | Build: ${attrs.build || 'unknown'} | Clothing: ${attrs.clothingStyle || 'unknown'}`;
         }).join("\n");
 
-        const llmResult = await invokeLLM({
+        let _llmRefundAmount_continuity_check_ai = 2;
+        let llmResult: any;
+        try {
+        llmResult = await invokeLLM({
           messages: [
             {
               role: "system",
@@ -3257,6 +3284,11 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
             },
           },
         });
+        } catch (_llmErr_continuity_check_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_continuity_check_ai, "continuity_check_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
+        }
 
         const content = llmResult.choices[0]?.message?.content;
         try {
@@ -3340,7 +3372,10 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         const scenes = await db.getProjectScenes(input.projectId);
         const sceneContext = input.sceneDescription || scenes.map((s, i) => `Scene ${i+1}: ${s.description || s.title} (${s.locationType || 'unspecified'})`).join("\n");
 
-        const llmResult = await invokeLLM({
+        let _llmRefundAmount_location_scout_ai = 1;
+        let llmResult: any;
+        try {
+        llmResult = await invokeLLM({
           messages: [
             { role: "system", content: "You are a professional film location scout. Suggest ideal filming locations based on the scene descriptions. For each location, provide a name, type, description of the setting, visual characteristics, practical notes for filming, and relevant tags. Return as JSON." },
             { role: "user", content: `Film: ${project.title} (${project.genre || 'Drama'})\n\nScenes:\n${sceneContext}\n\nSuggest 5-8 ideal filming locations.` },
@@ -3376,6 +3411,11 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
             },
           },
         });
+        } catch (_llmErr_location_scout_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_location_scout_ai, "location_scout_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 1 credit have been refunded." });
+        }
         const content = llmResult.choices[0]?.message?.content;
         try {
           return JSON.parse(typeof content === "string" ? content : "");
@@ -3537,7 +3577,10 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
           return `Scene ${i+1} "${s.title}" (${s.duration || 30}s): ${s.description || 'No description'} | Characters: ${charNames} | Dialogue: ${s.dialogueText || 'none'}`;
         }).join("\n");
 
-        const llmResult = await invokeLLM({
+        let _llmRefundAmount_subtitle_gen_ai = 3;
+        let llmResult: any;
+        try {
+        llmResult = await invokeLLM({
           messages: [
             { role: "system", content: `You are a professional subtitle writer for films. Generate accurate, well-timed subtitles in ${input.languageName} for the given scenes. Each subtitle entry should have a scene reference, start time (seconds from film start), end time, and the subtitle text. Keep subtitles concise (max 2 lines, 42 chars per line). Include both dialogue and important sound descriptions [in brackets]. Return as JSON.` },
             { role: "user", content: `Film: ${project.title} (${project.genre || 'Drama'}, ${project.rating || 'PG-13'})\nTotal Duration: ${project.duration || 90} minutes\n\nScenes:\n${sceneContext}\n\nGenerate subtitles in ${input.languageName} for the entire film.` },
@@ -3570,6 +3613,11 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
             },
           },
         });
+        } catch (_llmErr_subtitle_gen_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_subtitle_gen_ai, "subtitle_gen_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
+        }
 
         const content = llmResult.choices[0]?.message?.content;
         let parsed: any;
@@ -3606,7 +3654,10 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         const entries = source.entries as any[] || [];
         const subtitleText = entries.map((e: any) => `[${e.startTime}-${e.endTime}] ${e.text}`).join("\n");
 
-        const llmResult = await invokeLLM({
+        let _llmRefundAmount_subtitle_gen_ai = 3;
+        let llmResult: any;
+        try {
+        llmResult = await invokeLLM({
           messages: [
             { role: "system", content: `You are a professional film subtitle translator. Translate the following subtitles from ${source.languageName} to ${input.targetLanguageName}. Maintain the exact same timing. Keep translations natural and culturally appropriate. Preserve [sound descriptions] in brackets but translate them. Return as JSON with the same structure.` },
             { role: "user", content: `Translate these subtitles to ${input.targetLanguageName}:\n\n${subtitleText}` },
@@ -3639,6 +3690,11 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
             },
           },
         });
+        } catch (_llmErr_subtitle_gen_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_subtitle_gen_ai, "subtitle_gen_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
+        }
 
         const content = llmResult.choices[0]?.message?.content;
         let parsed: any;
@@ -3723,7 +3779,10 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.dialogue_editor_ai.cost, "dialogue_editor_ai", `Dialogue suggestion for ${input.characterName}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         await db.incrementGenerationCount(ctx.user.id);
         const project = await db.getProjectById(input.projectId, 0).catch(() => null);
-        const response = await invokeLLM({
+        let _llmRefundAmount_dialogue_editor_ai = 2;
+        let response: any;
+        try {
+        response = await invokeLLM({
           messages: [
             {
               role: "system",
@@ -3778,6 +3837,11 @@ Generate 3 dialogue line options for this character.`,
             },
           },
         });
+        } catch (_llmErr_dialogue_editor_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
+        }
         try {
           return JSON.parse(response.choices[0].message.content as string || "{}");
         } catch {
@@ -3802,7 +3866,10 @@ Generate 3 dialogue line options for this character.`,
         const chars = await db.getProjectCharacters(input.projectId);
         const charNames = chars.map(c => c.name).join(", ");
 
-        const response = await invokeLLM({
+        let _llmRefundAmount_dialogue_editor_ai = 2;
+        let response: any;
+        try {
+        response = await invokeLLM({
           messages: [
             {
               role: "system",
@@ -3856,6 +3923,11 @@ Generate the full dialogue for this scene.`,
             },
           },
         });
+        } catch (_llmErr_dialogue_editor_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_dialogue_editor_ai, "dialogue_editor_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
+        }
         try {
           return JSON.parse(response.choices[0].message.content as string || "{}");
         } catch {
@@ -3895,7 +3967,10 @@ Generate the full dialogue for this scene.`,
 
         const sceneDetails = scenes.map(s => `Scene "${s.title}": ${s.locationType || "studio"}, ${s.weather}, ${s.lighting}, vehicles: ${s.vehicleType || "none"}, ${s.duration}s`).join("\n");
 
-        const response = await invokeLLM({
+        let _llmRefundAmount_budget_estimate_ai = 2;
+        let response: any;
+        try {
+        response = await invokeLLM({
           messages: [
             {
               role: "system",
@@ -3978,6 +4053,11 @@ Generate a detailed production budget estimate.`,
             },
           },
         });
+        } catch (_llmErr_budget_estimate_ai: any) {
+          // Refund credits — LLM call failed before generating any content
+          try { await db.addCredits(ctx.user.id, _llmRefundAmount_budget_estimate_ai, "budget_estimate_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 2 credits have been refunded." });
+        }
 
         let parsed: any;
         try {

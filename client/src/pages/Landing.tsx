@@ -190,8 +190,10 @@ export default function Landing() {
     try { return localStorage.getItem("virelle_offer_dismissed") === "1"; } catch { return false; }
   });
   const { data: spotsData } = trpc.subscription.foundingSpots.useQuery(undefined, {
-    refetchInterval: 60_000, // refresh every minute
-    staleTime: 30_000,
+    refetchInterval: 30_000, // refresh every 30 seconds
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
   const spotsRemaining = spotsData?.spotsRemaining ?? 19;
   const displayCount = spotsData?.displayCount ?? 31;

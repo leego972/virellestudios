@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer, Coins, ShoppingCart, Camera } from "lucide-react";
 import { trpc } from "@/lib/trpc";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import LeegoFooter from "@/components/LeegoFooter";
 import GoldWatermark from "@/components/GoldWatermark";
@@ -177,12 +177,23 @@ export default function Pricing() {
 
   const isLoggedIn = !!currentUser;
 
-  const { data: spotsData } = trpc.subscription.foundingSpots.useQuery(undefined, {
-    refetchInterval: 60_000,
-    staleTime: 30_000,
+  const { data: spotsData, refetch: refetchSpots } = trpc.subscription.foundingSpots.useQuery(undefined, {
+    refetchInterval: 30_000,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
   const spotsRemaining = spotsData?.spotsRemaining ?? 19;
   const offerFull = spotsData?.isFull ?? false;
+
+  // Immediately refetch spots when returning from a successful Stripe checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("subscription") === "success") {
+      refetchSpots();
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [refetchSpots]);
 
   const { data: status } = trpc.subscription.status.useQuery(undefined, {
     retry: false,
