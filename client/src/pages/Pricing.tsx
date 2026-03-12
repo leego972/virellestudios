@@ -418,7 +418,7 @@ export default function Pricing() {
           </div>
           {!offerFull && billingCycle === "annual" && (
             <p className="text-center text-xs text-muted-foreground mt-3">
-              * 50% founding discount applied automatically at checkout for Independent, Creator, Studio, and Industry annual memberships. Valid for first {spotsRemaining} founding directors only. Discount applies to first year; renews at full price.
+              * 50% founding discount applied automatically at checkout for Independent, Creator, Studio, and Industry annual memberships. Valid for founding directors only. Discount applies to first year; renews at full price.
             </p>
           )}
           <p className="text-center text-xs text-muted-foreground mt-6">
