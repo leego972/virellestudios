@@ -23,7 +23,7 @@ function useQueryParam(key: string) {
 
 const PROVIDER_ICONS: Record<string, string> = {
   runway: "🎬", fal: "⚡", replicate: "🔄", openai: "🤖", luma: "🌙", huggingface: "🤗",
-  elevenlabs: "🎙️", suno: "🎵", seedance: "🌊", google: "🍌",
+  elevenlabs: "🎙️", suno: "🎵", seedance: "🌊", google: "🍌", veo3: "🎥",
 };
 const PROVIDER_COLORS: Record<string, string> = {
   runway: "from-purple-500/20 to-purple-600/10 border-purple-500/30",
@@ -36,6 +36,7 @@ const PROVIDER_COLORS: Record<string, string> = {
   suno: "from-orange-500/20 to-orange-600/10 border-orange-500/30",
   seedance: "from-cyan-500/20 to-cyan-600/10 border-cyan-500/30",
   google: "from-amber-500/20 to-amber-600/10 border-amber-500/30",
+  veo3: "from-red-500/20 to-red-600/10 border-red-500/30",
 };
 
 const VOICE_MUSIC_PROVIDERS = [

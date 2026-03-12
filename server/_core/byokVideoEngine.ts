@@ -19,7 +19,7 @@ import RunwayML, { TaskFailedError } from "@runwayml/sdk";
 
 // ─── Types ───
 
-export type VideoProvider = "runway" | "openai" | "replicate" | "fal" | "luma" | "huggingface" | "pollinations" | "seedance";
+export type VideoProvider = "runway" | "openai" | "replicate" | "fal" | "luma" | "huggingface" | "pollinations" | "seedance" | "veo3";
 
 export interface UserApiKeys {
   openaiKey?: string | null;
@@ -29,6 +29,7 @@ export interface UserApiKeys {
   lumaKey?: string | null;
   hfToken?: string | null;
   byteplusKey?: string | null;  // BytePlus ModelArk key for SeedDance
+  googleAiKey?: string | null;   // Google AI key for Veo 3 video generation
   preferredProvider?: string | null;
 }
 
@@ -96,6 +97,7 @@ function getAvailableProviders(keys: UserApiKeys): VideoProvider[] {
   if (keys.lumaKey) providers.push("luma");
   if (keys.hfToken) providers.push("huggingface");
   if (keys.byteplusKey) providers.push("seedance");
+  if (keys.googleAiKey) providers.push("veo3");
   // Pollinations is ALWAYS available as the primary free provider
   providers.push("pollinations");
   return providers;
@@ -114,20 +116,21 @@ export function selectProvider(keys: UserApiKeys): VideoProvider {
       (pref === "fal" && keys.falKey) ||
       (pref === "luma" && keys.lumaKey) ||
       (pref === "huggingface" && keys.hfToken) ||
-      (pref === "seedance" && keys.byteplusKey)
+      (pref === "seedance" && keys.byteplusKey) ||
+      (pref === "veo3" && keys.googleAiKey)
     );
     if (hasOwnKey) return pref;
   }
 
   // Check if user provided ANY of their own paid keys (in priority order)
-  if (keys.runwayKey) return "runway";
+   if (keys.runwayKey) return "runway";
   if (keys.openaiKey) return "openai";
+  if (keys.googleAiKey) return "veo3";
   if (keys.falKey) return "fal";
   if (keys.byteplusKey) return "seedance";
   if (keys.replicateKey) return "replicate";
   if (keys.lumaKey) return "luma";
   if (keys.hfToken) return "huggingface";
-
   // DEFAULT: Always use Pollinations (free) when user has no keys
   return "pollinations";
 }
@@ -743,6 +746,60 @@ async function pollSeedanceTask(key: string, taskId: string, apiBase: string, ma
   throw new Error("SeedDance task timed out after 10 minutes");
 }
 
+// ─── Google Veo 3 (via Gemini API) ───
+/**
+ * Generate video using Google Veo 3.1 via the Gemini API.
+ * Uses the generativelanguage.googleapis.com REST endpoint.
+ * Returns a pending sentinel — the videoJobWorker polls the operation name.
+ */
+export async function generateWithVeo3(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
+  const aspectRatio = req.aspectRatio === "9:16" ? "9:16" : "16:9";
+  const model = "veo-3.1-generate-preview";
+  const baseUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predictLongRunning?key=${key}`;
+
+  const body: any = {
+    instances: [{ prompt: req.prompt }],
+    parameters: {
+      aspectRatio,
+      durationSeconds: "8",
+      personGeneration: "allow_all",
+    },
+  };
+
+  // Image-to-video: include the reference image as base64 or URL
+  if (req.imageUrl) {
+    body.instances[0].image = { url: req.imageUrl };
+    console.log(`[BYOK:Veo3] Mode: image-to-video with ref: ${req.imageUrl.substring(0, 80)}`);
+  } else {
+    console.log(`[BYOK:Veo3] Mode: text-to-video`);
+  }
+
+  console.log(`[BYOK:Veo3] Submitting Veo 3.1 job: "${req.prompt.substring(0, 100)}..."`);
+
+  const resp = await fetch(baseUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(30000),
+  });
+
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error(`Veo 3 API error ${resp.status}: ${errText}`);
+  }
+
+  const data = await resp.json() as any;
+  const operationName = data.name;
+  if (!operationName) {
+    throw new Error(`Veo 3: no operation name in response: ${JSON.stringify(data).substring(0, 200)}`);
+  }
+
+  console.log(`[BYOK:Veo3] Operation submitted: ${operationName} — worker will poll for completion`);
+
+  // Return a sentinel URL — the job worker will replace this with the real video URL
+  return { provider: "veo3", videoUrl: `veo3-pending:${operationName}`, jobId: operationName, durationSeconds: 8 };
+}
+
 // ─── Main Entry Point ───
 
 export async function generateVideo(
@@ -763,6 +820,7 @@ export async function generateVideo(
     luma: keys.lumaKey || null,
     huggingface: keys.hfToken || "free",
     seedance: keys.byteplusKey || null,   // BytePlus ModelArk key for SeedDance
+    veo3: keys.googleAiKey || null,        // Gemini API key for Veo 3
     pollinations: getNextPollinationsKey(),
   };
 
@@ -774,6 +832,7 @@ export async function generateVideo(
     luma: generateWithLuma,
     huggingface: generateWithHuggingFace,
     seedance: generateWithSeedance,
+    veo3: generateWithVeo3,
     pollinations: generateWithPollinations,
   };
 
@@ -896,6 +955,15 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
     pricing: "Pay-per-use via BytePlus ModelArk. ~$0.10-0.30 per video clip.",
     models: "Seedance 1.5 Pro (API available now) · Seedance 2.0 (coming soon — will auto-upgrade)",
   },
+  {
+    id: "veo3",
+    name: "Google Veo 3 (Gemini API)",
+    description: "Google's state-of-the-art video model with native audio. Generates 8-second 720p–4K videos with stunning realism. Bring your own Gemini API key.",
+    keyPrefix: "AIza",
+    signupUrl: "https://aistudio.google.com/apikey",
+    pricing: "Pay-per-use via Google AI Studio. ~$0.35 per video (720p 8s).",
+    models: "Veo 3.1 Preview — text-to-video, image-to-video, native audio",
+  },
 ];
 
 export function getProviderInfo(id: VideoProvider): ProviderInfo | undefined {
@@ -926,6 +994,9 @@ export function validateApiKey(provider: VideoProvider, key: string): { valid: b
       break;
     case "huggingface":
       if (!key.startsWith("hf_")) return { valid: false, message: "Hugging Face tokens must start with 'hf_'" };
+      break;
+    case "veo3":
+      if (!key.startsWith("AIza")) return { valid: false, message: "Gemini API keys must start with 'AIza'" };
       break;
     case "seedance":
       // BytePlus API keys don't have a fixed prefix — just check it's non-empty

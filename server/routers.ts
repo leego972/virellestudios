@@ -1409,17 +1409,18 @@ export const appRouter = router({
           lumaKey: rawUserKeys.lumaKey,
           hfToken: rawUserKeys.hfToken,
           byteplusKey: rawUserKeys.byteplusKey,
+          googleAiKey: rawUserKeys.googleAiKey || (isAdmin ? ENV.googleApiKey : undefined),
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
         // Non-admin users without any video key get a clear error pointing to Settings
         const hasVideoKey = byokKeys.openaiKey || byokKeys.runwayKey || byokKeys.replicateKey ||
-          byokKeys.falKey || byokKeys.lumaKey || byokKeys.hfToken || byokKeys.byteplusKey;
+          byokKeys.falKey || byokKeys.lumaKey || byokKeys.hfToken || byokKeys.byteplusKey || byokKeys.googleAiKey;
         if (!hasVideoKey) {
           await db.updateScene(scene.id, { status: "draft" } as any);
           throw new TRPCError({
             code: "FORBIDDEN",
-            message: "No video API key found. Please add your own Runway, OpenAI (Sora), fal.ai, Replicate, or Luma API key in Settings → API Keys to generate videos. Free Pollinations generation is also available without a key.",
+            message: "No video API key found. Please add your own Runway, OpenAI (Sora), fal.ai, Replicate, Luma, or Google Gemini (Veo 3) API key in Settings → API Keys to generate videos. Free Pollinations generation is also available without a key.",
           });
         }
 
@@ -1430,7 +1431,45 @@ export const appRouter = router({
         const { selectProvider } = await import("./_core/byokVideoEngine");
         const activeProvider = selectProvider(byokKeys);
 
-        if (activeProvider === "runway" && byokKeys.runwayKey) {
+        if (activeProvider === "veo3" && byokKeys.googleAiKey) {
+          // ─── VEO 3: Persistent job queue approach ───
+          // Submit the Veo 3 operation immediately (non-blocking), store operation name in DB,
+          // and let videoJobWorker.ts poll for completion — survives Railway restarts.
+          try {
+            const effectivePrompt = sceneAiPromptOverride || `Cinematic video: ${prompt}`;
+            const effectiveImageUrl = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
+            const { generateWithVeo3 } = await import("./_core/byokVideoEngine");
+            const veo3Result = await generateWithVeo3(byokKeys.googleAiKey, {
+              prompt: effectivePrompt,
+              imageUrl: effectiveImageUrl,
+              aspectRatio: "16:9",
+            });
+            // Extract the operation name from the sentinel URL
+            const operationName = veo3Result.jobId!;
+            const jobMeta = {
+              veo3OperationName: operationName,
+              veo3ApiKey: byokKeys.googleAiKey,
+              sceneId: scene.id,
+              projectId: project.id,
+              userId: ctx.user.id,
+              prompt: effectivePrompt,
+              imageUrl: effectiveImageUrl,
+            };
+            await db.createGenerationJob({
+              projectId: project.id,
+              sceneId: scene.id,
+              type: "scene",
+              status: "processing",
+              progress: 0,
+              estimatedSeconds: 600,
+              metadata: jobMeta,
+            });
+            console.log(`[SceneVideo] Veo 3 operation ${operationName} submitted for scene ${scene.id} — worker will poll for completion`);
+          } catch (err: any) {
+            console.error(`[SceneVideo] Failed to submit Veo 3 job for scene ${scene.id}:`, err.message);
+            await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+          }
+        } else if (activeProvider === "runway" && byokKeys.runwayKey) {
           // ─── RUNWAY: Persistent job queue approach ───
           // Submit the Runway task immediately (non-blocking), store task ID in DB,
           // and let videoJobWorker.ts poll for completion — survives Railway restarts.
@@ -1550,12 +1589,13 @@ export const appRouter = router({
           lumaKey: rawUserKeys.lumaKey,
           hfToken: rawUserKeys.hfToken,
           byteplusKey: rawUserKeys.byteplusKey,
+          googleAiKey: rawUserKeys.googleAiKey || (isAdminBulk ? ENV.googleApiKey : undefined),
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
         // Non-admin users without any video key get a clear error pointing to Settings
         const hasBulkVideoKey = bulkByokKeys.openaiKey || bulkByokKeys.runwayKey || bulkByokKeys.replicateKey ||
-          bulkByokKeys.falKey || bulkByokKeys.lumaKey || bulkByokKeys.hfToken || bulkByokKeys.byteplusKey;
+          bulkByokKeys.falKey || bulkByokKeys.lumaKey || bulkByokKeys.hfToken || bulkByokKeys.byteplusKey || bulkByokKeys.googleAiKey;
         if (!hasBulkVideoKey) {
           throw new TRPCError({
             code: "FORBIDDEN",
@@ -2217,6 +2257,7 @@ Break this into 8-15 scenes. For each scene, provide:
               lumaKey: userKeys.lumaKey,
               hfToken: userKeys.hfToken,
               byteplusKey: userKeys.byteplusKey,
+              googleAiKey: userKeys.googleAiKey || (isAdminQuick ? ENV.googleApiKey : undefined),
               preferredProvider: userKeys.preferredProvider,
             };
 
@@ -2560,12 +2601,13 @@ Break this into 8-15 scenes. For each scene, provide:
           lumaKey: userKeys.lumaKey,
           hfToken: userKeys.hfToken,
           byteplusKey: userKeys.byteplusKey,
+          googleAiKey: userKeys.googleAiKey || (isAdminFilm ? ENV.googleApiKey : undefined),
           preferredProvider: userKeys.preferredProvider,
         };
 
         // Non-admin users without any video key get a clear error pointing to Settings
         const hasFilmVideoKey = videoKeys.openaiKey || videoKeys.runwayKey || videoKeys.replicateKey ||
-          videoKeys.falKey || videoKeys.lumaKey || videoKeys.hfToken || videoKeys.byteplusKey;
+          videoKeys.falKey || videoKeys.lumaKey || videoKeys.hfToken || videoKeys.byteplusKey || videoKeys.googleAiKey;
         if (!hasFilmVideoKey) {
           throw new TRPCError({
             code: "FORBIDDEN",
@@ -5521,6 +5563,7 @@ Rules:
           lumaKey: rawAdKeys.lumaKey,
           hfToken: rawAdKeys.hfToken,
           byteplusKey: rawAdKeys.byteplusKey,
+          googleAiKey: rawAdKeys.googleAiKey || (isAdminAd ? ENV.googleApiKey : undefined),
           preferredProvider: rawAdKeys.preferredProvider,
         };
         const aspectRatio = input.platform === "tiktok" ? "9:16" : "16:9";
@@ -6407,6 +6450,7 @@ Rules:
           seedance: !!(u as any).userByteplusKey,
           anthropic: !!(u as any).userAnthropicKey,
           google: !!(u as any).userGoogleAiKey,
+          veo3: !!(u as any).userGoogleAiKey,  // veo3 uses the same Gemini key
         },
         preferredVideoProvider: u.preferredVideoProvider || null,
         preferredLlmProvider: (u as any).preferredLlmProvider || null,
@@ -6464,14 +6508,14 @@ Rules:
     // Save an API key for a specific provider
     saveApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3"]),
         key: z.string().min(1).max(500),
       }))
       .mutation(async ({ ctx, input }) => {
         const { provider, key } = input;
 
         // Validate key format for video providers only (elevenlabs, suno, anthropic, google have no format validation)
-        const videoOnlyProviders: string[] = ["openai", "runway", "replicate", "fal", "luma", "huggingface", "seedance"];
+        const videoOnlyProviders: string[] = ["openai", "runway", "replicate", "fal", "luma", "huggingface", "seedance", "veo3"];
         if (videoOnlyProviders.includes(provider)) {
           const validation = validateApiKey(provider as VideoProvider, key);
           if (!validation.valid) {
@@ -6492,6 +6536,7 @@ Rules:
           seedance: "userByteplusKey",
           anthropic: "userAnthropicKey",
           google: "userGoogleAiKey",
+          veo3: "userGoogleAiKey",  // veo3 uses the same Gemini key column
         };
 
         const column = columnMap[provider];
@@ -6508,7 +6553,7 @@ Rules:
     // Remove an API key
     removeApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3"]),
       }))
       .mutation(async ({ ctx, input }) => {
         const columnMap: Record<string, string> = {
@@ -6523,6 +6568,7 @@ Rules:
           seedance: "userByteplusKey",
           anthropic: "userAnthropicKey",
           google: "userGoogleAiKey",
+          veo3: "userGoogleAiKey",
         };
 
         const column = columnMap[input.provider];
@@ -6536,7 +6582,7 @@ Rules:
     // Set preferred video provider
     setPreferredProvider: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "seedance"]).nullable(),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "seedance", "veo3"]).nullable(),
       }))
       .mutation(async ({ ctx, input }) => {
         await db.updateUserPreferredProvider(ctx.user!.id, input.provider);

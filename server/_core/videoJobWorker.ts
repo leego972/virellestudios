@@ -45,6 +45,77 @@ export interface RunwayJobMetadata {
   aiPromptOverride?: string;
 }
 
+// ─── Veo 3 Job Metadata ───
+
+export interface Veo3JobMetadata {
+  veo3OperationName: string;
+  veo3ApiKey: string;
+  sceneId: number;
+  projectId: number;
+  userId: number;
+  prompt: string;
+  imageUrl?: string;
+}
+
+// ─── Poll a single Veo 3 operation ───
+
+async function pollVeo3Operation(apiKey: string, operationName: string): Promise<{
+  status: "running" | "succeeded" | "failed";
+  videoUrl?: string;
+  error?: string;
+}> {
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${apiKey}`;
+    const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    if (!resp.ok) {
+      const errText = await resp.text();
+      console.warn(`[VideoWorker:Veo3] Poll returned ${resp.status}: ${errText.substring(0, 200)}`);
+      return { status: "running" }; // Treat HTTP errors as still running
+    }
+    const data = await resp.json() as any;
+    if (!data.done) return { status: "running" };
+    if (data.error) {
+      return { status: "failed", error: data.error?.message || JSON.stringify(data.error) };
+    }
+    // Extract video URI from response
+    const generatedVideos = data.response?.generateVideoResponse?.generatedSamples
+      || data.response?.videos
+      || data.response?.generatedVideos
+      || [];
+    const videoUri = generatedVideos[0]?.video?.uri
+      || generatedVideos[0]?.uri
+      || generatedVideos[0]?.videoUri;
+    if (!videoUri) {
+      return { status: "failed", error: `No video URI in response: ${JSON.stringify(data.response).substring(0, 300)}` };
+    }
+    return { status: "succeeded", videoUrl: videoUri };
+  } catch (err: any) {
+    console.warn(`[VideoWorker:Veo3] Poll error (treating as running):`, err.message);
+    return { status: "running" };
+  }
+}
+
+// ─── Download and store a completed Veo 3 video ───
+
+async function processCompletedVeo3Video(
+  veoVideoUri: string,
+  apiKey: string,
+  meta: Veo3JobMetadata
+): Promise<string> {
+  console.log(`[VideoWorker:Veo3] Downloading video for scene ${meta.sceneId}...`);
+  // Veo 3 videos are served from Google's Files API — append key for auth
+  const downloadUrl = veoVideoUri.includes("?")
+    ? `${veoVideoUri}&key=${apiKey}`
+    : `${veoVideoUri}?key=${apiKey}`;
+  const resp = await fetch(downloadUrl, { signal: AbortSignal.timeout(120000) });
+  if (!resp.ok) throw new Error(`Failed to download Veo 3 video: ${resp.status}`);
+  const buffer = Buffer.from(await resp.arrayBuffer());
+  const s3Key = `scenes/${meta.projectId}/scene-${meta.sceneId}-veo3-${Date.now()}.mp4`;
+  const { url } = await storagePut(s3Key, buffer, "video/mp4");
+  console.log(`[VideoWorker:Veo3] Video uploaded to S3: ${url}`);
+  return url;
+}
+
 // ─── Submit a Runway job (non-blocking) ───
 
 /**
@@ -208,11 +279,61 @@ async function runWorkerCycle() {
     const jobs = (pendingJobs as any)[0] as any[];
     if (!jobs || jobs.length === 0) return;
 
-    console.log(`[VideoWorker] Found ${jobs.length} pending Runway job(s) to poll`);
+    console.log(`[VideoWorker] Found ${jobs.length} pending job(s) to poll (Runway + Veo 3)`);
 
     for (const job of jobs) {
       try {
-        const meta = job.metadata as RunwayJobMetadata;
+        const meta = job.metadata as any;
+
+        // ─── Veo 3 Job ───
+        if (meta?.veo3OperationName) {
+          if (!meta.veo3ApiKey) {
+            console.warn(`[VideoWorker:Veo3] Job ${job.id} missing API key — marking failed`);
+            await db.updateJob(job.id, { status: "failed", errorMessage: "Missing Veo 3 API key" });
+            await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            continue;
+          }
+          const veo3Result = await pollVeo3Operation(meta.veo3ApiKey, meta.veo3OperationName);
+          if (veo3Result.status === "running") {
+            const createdAt = new Date(job.createdAt).getTime();
+            const ageMs = Date.now() - createdAt;
+            if (ageMs > 20 * 60 * 1000) {
+              console.warn(`[VideoWorker:Veo3] Job ${job.id} timed out after ${Math.round(ageMs / 60000)}min`);
+              await db.updateJob(job.id, { status: "failed", errorMessage: "Veo 3 operation timed out after 20 minutes" });
+              await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            }
+            continue;
+          }
+          if (veo3Result.status === "failed") {
+            console.error(`[VideoWorker:Veo3] Operation ${meta.veo3OperationName} failed: ${veo3Result.error}`);
+            await db.updateJob(job.id, { status: "failed", errorMessage: veo3Result.error });
+            await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            continue;
+          }
+          // Succeeded!
+          console.log(`[VideoWorker:Veo3] Operation ${meta.veo3OperationName} succeeded! Processing video...`);
+          const veo3FinalUrl = await processCompletedVeo3Video(veo3Result.videoUrl!, meta.veo3ApiKey, meta as Veo3JobMetadata);
+          const veo3Thumbnail = await extractLastFrame(veo3FinalUrl, meta.projectId, meta.sceneId);
+          await db.updateScene(meta.sceneId, {
+            videoUrl: veo3FinalUrl,
+            status: "completed",
+            ...(veo3Thumbnail ? { thumbnailUrl: veo3Thumbnail } : {}),
+          } as any);
+          await db.updateJob(job.id, { status: "completed", resultUrl: veo3FinalUrl, progress: 100 });
+          try {
+            await db.createNotification({
+              userId: meta.userId,
+              type: "generation_complete",
+              title: "Veo 3 video ready!",
+              message: `Your Veo 3 scene video is ready.`,
+              link: `/projects/${meta.projectId}/scenes`,
+            });
+          } catch { /* ignore */ }
+          console.log(`[VideoWorker:Veo3] Scene ${meta.sceneId} completed: ${veo3FinalUrl}`);
+          continue;
+        }
+
+        // ─── Runway Job ───
         if (!meta?.runwayTaskId || !meta?.runwayApiKey) {
           console.warn(`[VideoWorker] Job ${job.id} missing Runway task ID or API key — marking failed`);
           await db.updateJob(job.id, { status: "failed", errorMessage: "Missing Runway task ID" });
