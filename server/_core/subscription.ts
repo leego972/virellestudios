@@ -604,8 +604,8 @@ export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
 
 // Referral Rewards
 export const REFERRAL_REWARDS = {
-  referrerGenerations: 15,
-  newUserGenerations: 10,
+  referrerGenerations: 7000,
+  newUserGenerations: 7000,
   maxReferralsPerMonth: 20,
 };
 

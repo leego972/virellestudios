@@ -702,11 +702,11 @@ export default function Pricing() {
             <CardContent>
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div className="p-4 rounded-lg bg-purple-500/10">
-                  <div className="text-2xl font-bold text-purple-400">+1,250 credits</div>
+                  <div className="text-2xl font-bold text-purple-400">+7,000 credits</div>
                   <div className="text-sm text-muted-foreground mt-1">You get</div>
                 </div>
                 <div className="p-4 rounded-lg bg-purple-500/10">
-                  <div className="text-2xl font-bold text-purple-400">+1,250 credits</div>
+                  <div className="text-2xl font-bold text-purple-400">+7,000 credits</div>
                   <div className="text-sm text-muted-foreground mt-1">They get</div>
                 </div>
               </div>

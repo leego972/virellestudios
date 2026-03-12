@@ -127,8 +127,8 @@ export const appRouter = router({
             if (refCode && refCode.isActive && refCode.userId !== user.id) {
               const existingRef = await db.getReferralTrackingByReferredUser(user.id);
               if (!existingRef) {
-                const REFERRER_REWARD = 15;  // 3x increase to drive referrals
-                const NEW_USER_REWARD = 10;  // Generous welcome bonus
+                const REFERRER_REWARD = 7000;
+                const NEW_USER_REWARD = 7000;
                 await db.createReferralTracking({
                   referralCodeId: refCode.id,
                   referrerId: refCode.userId,
@@ -5790,7 +5790,7 @@ Rules:
         }
 
         // Create tracking record
-        const REWARD_GENERATIONS = 5;
+        const REWARD_GENERATIONS = 7000;
         await db.createReferralTracking({
           referralCodeId: refCode.id,
           referrerId: refCode.userId,
@@ -5811,10 +5811,10 @@ Rules:
         // Award bonus generations to the referrer
         await db.addBonusGenerations(refCode.userId, REWARD_GENERATIONS);
 
-        // Also give the new user 3 bonus generations as a welcome gift
-        await db.addBonusGenerations(input.referredUserId, 3);
+        // Also give the new user 7000 bonus credits as a welcome gift
+        await db.addBonusGenerations(input.referredUserId, 7000);
 
-        return { success: true, referrerReward: REWARD_GENERATIONS, newUserReward: 3 };
+        return { success: true, referrerReward: REWARD_GENERATIONS, newUserReward: 7000 };
       }),
 
     // Validate a referral code (public - for registration form)
