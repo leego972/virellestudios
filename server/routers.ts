@@ -38,7 +38,7 @@ import {
 import { logger } from "./_core/logger";
 import { createSessionToken } from "./_core/context";
 import { notifyOwner } from "./_core/notification";
-import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota, requireResourceQuota, getOrCreateStripeCustomer, createCheckoutSession, createBillingPortalSession, TIER_LIMITS, CREDIT_COSTS, type SubscriptionTier } from "./_core/subscription";
+import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota, requireResourceQuota, getOrCreateStripeCustomer, createCheckoutSession, createBillingPortalSession, TIER_LIMITS, CREDIT_COSTS, getVideoCredits, type SubscriptionTier } from "./_core/subscription";
 import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, getSchedulerState, runAutonomousAdCycle, generateImageAd, generateVideoAd, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
 import { getSocialCredentialStatus, postToLinkedIn, postToReddit, sendWhatsAppMessage, broadcastWhatsApp } from "./_core/socialPostingEngine";
 import { ENV } from "./_core/env";
@@ -331,7 +331,7 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         // Credits: deduct for creating a project
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.create_project.cost, "create_project", `Create project: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        // create_project is FREE — no credit deduction (zero friction on project creation)
         // Subscription: check project quota
         const projectCount = await db.getUserProjectCount(ctx.user.id);
         requireResourceQuota(ctx.user, "maxProjects", projectCount, "projects");
@@ -1370,10 +1370,11 @@ export const appRouter = router({
         rateLimitHeavyAI(ctx.user.id);
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
-        // Credits: deduct for scene video generation
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_scene_video.cost, "generate_scene_video", `Video for scene ${input.sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const scene = await db.getSceneById(input.sceneId);
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        // Credits: duration-scaled deduction (≤15s=3cr, 16-45s=5cr, 46-90s=7cr, >90s=10cr)
+        const videoCredits = getVideoCredits(Math.max(10, scene.duration || 45), false);
+        try { await db.deductCredits(ctx.user.id, videoCredits, "generate_scene_video", `Video for scene ${input.sceneId} (${scene.duration || 45}s)`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const project = await db.getProjectById(scene.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         const characters = await db.getProjectCharacters(project.id);
@@ -1465,8 +1466,9 @@ export const appRouter = router({
         const scenes = await db.getProjectScenes(project.id);
         const scenesNeedingVideo = scenes.filter(s => !(s as any).videoUrl);
         if (scenesNeedingVideo.length === 0) return { generated: 0, total: scenes.length };
-        // Credits: deduct per scene for bulk video generation
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.bulk_generate_videos.cost * scenesNeedingVideo.length, "bulk_generate_videos", `Bulk videos for ${scenesNeedingVideo.length} scenes`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        // Credits: duration-scaled per scene (≤15s=3cr, 16-45s=5cr, 46-90s=7cr, >90s=10cr)
+        const bulkVideoCredits = scenesNeedingVideo.reduce((sum: number, s: any) => sum + getVideoCredits(Math.max(10, s.duration || 45), false), 0);
+        try { await db.deductCredits(ctx.user.id, bulkVideoCredits, "bulk_generate_videos", `Bulk videos for ${scenesNeedingVideo.length} scenes (duration-scaled)`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const characters = await db.getProjectCharacters(project.id);
         const userTier = getEffectiveTier(ctx.user) as QualityTier;
         const visualDNA = buildVisualDNA(project, characters, userTier);
@@ -4950,7 +4952,7 @@ Generate a detailed production budget estimate.`,
         mimeType: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "virelle_chat", `Voice transcription`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_transcription", `Voice transcription`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // Upload audio to S3 first
         const buffer = Buffer.from(input.audioData, "base64");
         const ext = input.mimeType.includes("webm") ? "webm" : input.mimeType.includes("mp4") ? "m4a" : "wav";
@@ -4985,7 +4987,7 @@ Generate a detailed production budget estimate.`,
         editCommand: z.string().min(1).max(2000),
       }))
       .mutation(async ({ ctx, input }) => {
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "virelle_chat", `Voice edit text`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_edit_text", `Voice edit text`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({
           messages: [
             {
@@ -5561,7 +5563,7 @@ Rules:
 
     // Admin: generate a new article on demand
     generate: adminProcedure.mutation(async ({ ctx }) => {
-      try { await db.deductCredits(ctx.user!.id, CREDIT_COSTS.virelle_chat.cost, "virelle_chat", `Blog article generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+      try { await db.deductCredits(ctx.user!.id, CREDIT_COSTS.blog_article_gen.cost, "blog_article_gen", `Blog article generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
       const article = await generateBlogArticle();
       const saved = await db.createBlogArticle({
         slug: article.slug,

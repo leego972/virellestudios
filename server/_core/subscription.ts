@@ -91,20 +91,30 @@ export interface TierLimits {
  *   Industry   — $25,000/month ($250,000/year) — 600 credits/month included
  * 
  * CREDITS SYSTEM — Every action costs credits:
- *   Generate Film (AI scene breakdown):     10 credits
- *   Generate Scene Video (per minute):       5 credits/min
- *   Regenerate Scene Video (per minute):     3 credits/min
+ *   Create New Project:                      FREE (zero friction)
+ *   Generate Film (AI scene breakdown):       5 credits
+ *   Generate Scene Video (duration-scaled):
+ *     ≤15s                                   3 credits
+ *     16–45s                                 5 credits
+ *     46–90s                                 7 credits
+ *     >90s                                  10 credits
+ *   Regenerate Scene Video:                  80% of generate cost (min 2)
  *   Generate Preview Image:                  1 credit
- *   Bulk Generate All Previews:              2 credits/scene
- *   Bulk Generate All Videos:                5 credits/min/scene
- *   Virelle AI Chat (per message):           0.5 credits (rounded up)
+ *   Bulk Generate Previews:                  1 credit/scene
+ *   Bulk Generate Videos:                    duration-scaled per scene
+ *   Virelle AI Chat (per message):           1 credit
  *   Script Writer AI:                        3 credits
  *   Storyboard AI Generation:                3 credits
  *   Dialogue Editor AI Polish:               2 credits
  *   Continuity Check AI:                     2 credits
  *   Shot List AI Generation:                 2 credits
- *   Export Final Film:                       5 credits
- *   Create New Project:                      1 credit
+ *   Subtitle Generation:                     3 credits (large context)
+ *   Budget Estimate AI:                      2 credits
+ *   Trailer Generation:                      8 credits (4–6 clips)
+ *   Ad/Poster Generation:                    2 credits
+ *   Blog Article Generation:                 2 credits
+ *   Export Final Film:                       3 credits (no AI cost)
+ *   Movie Export:                            2 credits
  * 
  * CREDIT PACKS (top-ups, USD):
  *   10 credits  = $500
@@ -542,34 +552,83 @@ export const REFERRAL_REWARDS = {
 // CREDIT COSTS PER ACTION
 // Every meaningful action costs credits. Designed so included
 // credits are "almost enough" for a full production but not quite.
+//
+// Pricing philosophy:
+//   1 credit ≈ $35–50 in customer value (blended across pack sizes).
+//   Actual API costs are a small fraction of credit value — the margin
+//   funds platform infrastructure, support, and R&D.
+//
+// Video generation is the highest real API cost (~$0.10/s for Runway
+//   Gen-4 / Sora). A 45s scene costs ~$4.50 in API fees.
+//   Duration-scaled credits are applied at the call site in routers.ts
+//   using getVideoCredits(durationSeconds) below.
+//
+// LLM calls (GPT-4o) cost ~$0.03–0.20 per call depending on context.
+// Image generation (DALL-E 3 HD) costs ~$0.08 per image.
+// Voice transcription (Whisper) costs ~$0.006/min.
 // ============================================================
 
 export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
-  // Core generation
-  generate_film:           { cost: 10, label: "Generate Film (AI scene breakdown)" },
-  generate_scene_video:    { cost: 5,  label: "Generate Scene Video (per minute)" },
-  regenerate_scene_video:  { cost: 3,  label: "Regenerate Scene Video (per minute)" },
-  generate_preview_image:  { cost: 1,  label: "Generate Preview Image" },
-  bulk_generate_previews:  { cost: 2,  label: "Bulk Generate Previews (per scene)" },
-  bulk_generate_videos:    { cost: 5,  label: "Bulk Generate Videos (per minute per scene)" },
-  // AI tools
-  virelle_chat:            { cost: 1,  label: "Virelle AI Chat (per message)" },
-  script_writer_ai:        { cost: 3,  label: "AI Script Writer" },
+  // ── Core video generation ──────────────────────────────────
+  // Flat cost is the MINIMUM — actual cost scales with scene duration
+  // via getVideoCredits(durationSeconds) in routers.ts
+  generate_film:           { cost: 5,  label: "Generate Film (AI scene breakdown + script)" },
+  generate_scene_video:    { cost: 5,  label: "Generate Scene Video (≤45s; longer scenes cost more)" },
+  regenerate_scene_video:  { cost: 4,  label: "Regenerate Scene Video (≤45s; same API cost as generate)" },
+  generate_preview_image:  { cost: 1,  label: "Generate Preview Image (DALL-E 3 HD)" },
+  bulk_generate_previews:  { cost: 1,  label: "Bulk Generate Previews (per scene — image only)" },
+  bulk_generate_videos:    { cost: 5,  label: "Bulk Generate Videos (per scene — duration-scaled)" },
+  // ── AI writing & production tools ─────────────────────────
+  virelle_chat:            { cost: 1,  label: "Virelle AI Chat / Director Assistant (per message)" },
+  script_writer_ai:        { cost: 3,  label: "AI Script Writer (full screenplay generation)" },
   storyboard_ai:           { cost: 3,  label: "AI Storyboard Generation" },
   dialogue_editor_ai:      { cost: 2,  label: "AI Dialogue Polish" },
   continuity_check_ai:     { cost: 2,  label: "AI Continuity Check" },
   shot_list_ai:            { cost: 2,  label: "AI Shot List Generation" },
   character_gen_ai:        { cost: 2,  label: "AI Character Generation" },
-  location_scout_ai:       { cost: 1,  label: "AI Location Scout" },
-  budget_estimate_ai:      { cost: 1,  label: "AI Budget Estimate" },
-  subtitle_gen_ai:         { cost: 2,  label: "AI Subtitle Generation" },
-  trailer_gen:             { cost: 5,  label: "Trailer Generation" },
-  ad_poster_gen:           { cost: 2,  label: "Ad/Poster Generation" },
-  // Export & project
-  export_final_film:       { cost: 5,  label: "Export Final Film" },
-  create_project:          { cost: 1,  label: "Create New Project" },
-  movie_export:            { cost: 3,  label: "Movie Export" },
+  location_scout_ai:       { cost: 1,  label: "AI Location Scout (suggestions + image)" },
+  budget_estimate_ai:      { cost: 2,  label: "AI Budget Estimate (multi-scene analysis)" },
+  subtitle_gen_ai:         { cost: 3,  label: "AI Subtitle Generation (full film, large context)" },
+  trailer_gen:             { cost: 8,  label: "Trailer Generation (4–6 video clips, ~2 min)" },
+  ad_poster_gen:           { cost: 2,  label: "Ad/Poster Generation (DALL-E 3 HD)" },
+  blog_article_gen:        { cost: 2,  label: "Blog Article Generation (full article, ~1500 words)" },
+  // ── Export & project management ───────────────────────────
+  export_final_film:       { cost: 3,  label: "Export Final Film (assembly, no AI cost)" },
+  create_project:          { cost: 0,  label: "Create New Project (FREE — no friction on start)" },
+  movie_export:            { cost: 2,  label: "Movie Export (scenes/trailer export)" },
 };
+
+/**
+ * Duration-scaled video credit cost.
+ * Runway Gen-4 / Sora charge ~$0.10/s. A 45s scene costs ~$4.50 in API fees.
+ * We scale credits with duration to ensure profitability on long scenes
+ * while keeping short scenes affordable.
+ *
+ * Tiers:
+ *   ≤15s   → 3 credits  (short clip, ~$1.50 API cost)
+ *   16–45s → 5 credits  (standard scene, ~$4.50 API cost)
+ *   46–90s → 7 credits  (long scene, ~$9 API cost)
+ *   >90s   → 10 credits (extended scene, ~$12+ API cost)
+ *
+ * For regeneration, apply a 20% discount (same API cost, but customer
+ * is retrying — reward persistence without giving it away free).
+ */
+export function getVideoCredits(durationSeconds: number, isRegenerate = false): number {
+  let credits: number;
+  if (durationSeconds <= 15) {
+    credits = 3;
+  } else if (durationSeconds <= 45) {
+    credits = 5;
+  } else if (durationSeconds <= 90) {
+    credits = 7;
+  } else {
+    credits = 10;
+  }
+  if (isRegenerate) {
+    credits = Math.max(2, Math.round(credits * 0.8));
+  }
+  return credits;
+}
 
 // Credit Top-Up Packs (USD)
 export interface TopUpPack {
