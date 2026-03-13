@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
-import { ArrowLeft, Zap, Layers, Loader2, BookOpen, Film, Sparkles, Lock } from "lucide-react";
+import { ArrowLeft, Zap, Layers, Loader2, BookOpen, Film, Sparkles, Lock, Clapperboard } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useLocation, useSearch } from "wouter";
 import { useState } from "react";
@@ -30,15 +30,18 @@ import {
   CINEMA_INDUSTRY_PROFILES,
 } from "@shared/types";
 
+type ProjectMode = "quick" | "manual" | "trailer";
+
 export default function NewProject() {
   const [, setLocation] = useLocation();
   const searchString = useSearch();
   const params = new URLSearchParams(searchString);
-  const initialMode = params.get("mode") === "manual" ? "manual" : "quick";
+  const rawMode = params.get("mode");
+  const initialMode: ProjectMode = rawMode === "manual" ? "manual" : rawMode === "trailer" ? "trailer" : "quick";
 
-  const { limits, tier } = useSubscription();
+  const { limits } = useSubscription();
   const maxDuration = (limits as any)?.maxDurationMinutes || 180;
-  const [mode, setMode] = useState<"quick" | "manual">(initialMode as "quick" | "manual");
+  const [mode, setMode] = useState<ProjectMode>(initialMode);
   // Basic Info
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -63,16 +66,36 @@ export default function NewProject() {
   const [climax, setClimax] = useState("");
   const [storyResolution, setStoryResolution] = useState("");
 
+  // Trailer generation mutation — called after project is created in trailer mode
+  const trailerMutation = trpc.generation.generateTrailer.useMutation({
+    onSuccess: () => {
+      toast.success("Trailer generation started");
+    },
+    onError: (err) => toast.error(`Trailer: ${err.message}`),
+  });
+
   const createMutation = trpc.project.create.useMutation({
     onSuccess: (project) => {
       toast.success("Project created");
       if (mode === "manual") {
         setLocation(`/projects/${project.id}/scenes`);
+      } else if (mode === "trailer") {
+        // Auto-kick off quick generate then trailer
+        quickGenMutation.mutate({ projectId: project.id });
+        setLocation(`/projects/${project.id}`);
       } else {
         setLocation(`/projects/${project.id}`);
       }
     },
     onError: (err) => toast.error(err.message),
+  });
+
+  const quickGenMutation = trpc.generation.quickGenerate.useMutation({
+    onSuccess: (_, variables) => {
+      // After quick gen completes, kick off trailer generation
+      trailerMutation.mutate({ projectId: variables.projectId });
+    },
+    onError: (err) => toast.error(`Generation: ${err.message}`),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -81,10 +104,14 @@ export default function NewProject() {
       toast.error("Please enter a project title");
       return;
     }
+    if (mode === "trailer" && !plotSummary.trim()) {
+      toast.error("Please describe your film so the AI can generate scenes for the trailer");
+      return;
+    }
     createMutation.mutate({
       title: title.trim(),
       description: description.trim() || undefined,
-      mode,
+      mode: mode === "trailer" ? "quick" : mode,
       genre: genre || undefined,
       cinemaIndustry: cinemaIndustry || undefined,
       rating: rating as any,
@@ -105,6 +132,15 @@ export default function NewProject() {
       climax: climax.trim() || undefined,
       storyResolution: storyResolution.trim() || undefined,
     });
+  };
+
+  const isSubmitting = createMutation.isPending || quickGenMutation.isPending;
+
+  const submitLabel = () => {
+    if (createMutation.isPending) return mode === "trailer" ? "Creating project..." : "Creating...";
+    if (quickGenMutation.isPending) return "Generating scenes...";
+    if (mode === "trailer") return "Generate Trailer";
+    return "Create Project";
   };
 
   return (
@@ -130,7 +166,8 @@ export default function NewProject() {
         {/* Production Mode */}
         <div className="space-y-2">
           <Label className="text-sm">Production Mode</Label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Quick Generate */}
             <Card
               className={`cursor-pointer transition-colors ${
                 mode === "quick"
@@ -149,6 +186,8 @@ export default function NewProject() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Scene-by-Scene */}
             <Card
               className={`cursor-pointer transition-colors ${
                 mode === "manual"
@@ -167,10 +206,30 @@ export default function NewProject() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Generate Trailer */}
+            <Card
+              className={`cursor-pointer transition-colors ${
+                mode === "trailer"
+                  ? "border-amber-500 bg-amber-500/5"
+                  : "bg-card/50 hover:border-muted-foreground/30"
+              }`}
+              onClick={() => setMode("trailer")}
+            >
+              <CardContent className="p-4 flex items-start gap-3">
+                <Clapperboard className={`h-5 w-5 mt-0.5 shrink-0 ${mode === "trailer" ? "text-amber-400" : "text-muted-foreground"}`} />
+                <div>
+                  <p className="text-sm font-medium">Generate Trailer</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    AI builds scenes then creates a cinematic trailer
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
-        {/* Quick Generate simplified form — only show when mode is quick */}
+        {/* Quick Generate form */}
         {mode === "quick" && (
           <Card className="bg-card/50 border-primary/20">
             <CardHeader className="pb-3">
@@ -234,10 +293,133 @@ export default function NewProject() {
                   </Select>
                 </div>
               </div>
+
+              {/* Duration — now editable in Quick Generate */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs text-muted-foreground">Film Duration</Label>
+                  <span className="text-xs font-medium text-foreground">
+                    {duration >= 60 ? `${Math.floor(duration / 60)}h ${duration % 60 > 0 ? `${duration % 60}m` : ''}` : `${duration}m`}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Slider
+                    value={[duration]}
+                    onValueChange={(v) => setDuration(v[0])}
+                    min={1}
+                    max={maxDuration}
+                    step={1}
+                    className="flex-1"
+                  />
+                  <Input
+                    type="number"
+                    min={1}
+                    max={maxDuration}
+                    value={duration}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val >= 1 && val <= maxDuration) setDuration(val);
+                    }}
+                    className="bg-background/50 h-9 text-sm w-16 text-center"
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] text-muted-foreground/60">
+                  <span>1 min</span>
+                  <span>{maxDuration >= 60 ? `${Math.floor(maxDuration / 60)}h${maxDuration % 60 > 0 ? ` ${maxDuration % 60}m` : ''}` : `${maxDuration}m`}</span>
+                </div>
+                {maxDuration < 180 && (
+                  <p className="text-[10px] text-amber-500 flex items-center gap-1 mt-1">
+                    <Lock className="h-3 w-3" />
+                    Upgrade to unlock up to 3 hours
+                  </p>
+                )}
+              </div>
+
               <p className="text-[10px] text-muted-foreground/40 flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
                 Want full creative control? Switch to Scene-by-Scene mode above.
               </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Generate Trailer form */}
+        {mode === "trailer" && (
+          <Card className="bg-card/50 border-amber-500/20">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Clapperboard className="h-4 w-4 text-amber-400" />
+                <CardTitle className="text-sm font-medium">Generate Trailer — AI Cinematic Preview</CardTitle>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Virelle will generate your film's scenes, then automatically produce a cinematic trailer with key shots, tagline, and beat structure. No editing required.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="title-trailer" className="text-xs text-muted-foreground">
+                  Project Title <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="title-trailer"
+                  placeholder="e.g. The Last Horizon"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="bg-background/50 h-9 text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="plotSummary-trailer" className="text-xs text-muted-foreground">
+                  Describe your film <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  id="plotSummary-trailer"
+                  placeholder="e.g. A retired detective is pulled back into a case from 20 years ago when a copycat killer resurfaces in Los Angeles. Noir thriller, gritty and tense, set in 1990s LA."
+                  value={plotSummary}
+                  onChange={(e) => setPlotSummary(e.target.value)}
+                  className="bg-background/50 min-h-[110px] text-sm resize-y"
+                />
+                <p className="text-[10px] text-muted-foreground/60">Include genre, tone, setting, and key characters for the best trailer.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Genre</Label>
+                  <Select value={genre} onValueChange={setGenre}>
+                    <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectValue placeholder="Select genre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GENRE_OPTIONS.map((g) => (
+                        <SelectItem key={g} value={g}>{g}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Rating</Label>
+                  <Select value={rating} onValueChange={setRating}>
+                    <SelectTrigger className="bg-background/50 h-9 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {RATING_OPTIONS.map((r) => (
+                        <SelectItem key={r} value={r}>{r}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* How it works */}
+              <div className="rounded-lg bg-amber-500/5 border border-amber-500/20 p-3 space-y-1.5">
+                <p className="text-xs font-medium text-amber-400">How it works</p>
+                <ol className="text-[11px] text-muted-foreground space-y-1 list-decimal list-inside">
+                  <li>AI generates your full scene breakdown from your description</li>
+                  <li>AI selects the most cinematic moments for the trailer</li>
+                  <li>Trailer is assembled with tagline, beat structure, and key shots</li>
+                  <li>You can refine it in Trailer Studio afterwards</li>
+                </ol>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -251,7 +433,7 @@ export default function NewProject() {
             </TabsTrigger>
             <TabsTrigger value="story" className="gap-1.5">
               <BookOpen className="h-3.5 w-3.5" />
-              Story & Plot
+              Story &amp; Plot
             </TabsTrigger>
             <TabsTrigger value="narrative" className="gap-1.5">
               <Sparkles className="h-3.5 w-3.5" />
@@ -511,7 +693,7 @@ export default function NewProject() {
 
                 <div className="space-y-1.5">
                   <Label htmlFor="plotTwists" className="text-xs text-muted-foreground">
-                    Plot Twists & Surprises
+                    Plot Twists &amp; Surprises
                   </Label>
                   <Textarea
                     id="plotTwists"
@@ -524,7 +706,7 @@ export default function NewProject() {
 
                 <div className="space-y-1.5">
                   <Label htmlFor="characterArcs" className="text-xs text-muted-foreground">
-                    Character Arcs & Development
+                    Character Arcs &amp; Development
                   </Label>
                   <Textarea
                     id="characterArcs"
@@ -648,14 +830,22 @@ export default function NewProject() {
           >
             Cancel
           </Button>
-          <Button type="submit" size="sm" disabled={createMutation.isPending}>
-            {createMutation.isPending ? (
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isSubmitting}
+            className={mode === "trailer" ? "bg-amber-500 hover:bg-amber-600 text-black" : ""}
+          >
+            {isSubmitting ? (
               <>
                 <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                Creating...
+                {submitLabel()}
               </>
             ) : (
-              <>Create Project</>
+              <>
+                {mode === "trailer" && <Clapperboard className="h-4 w-4 mr-1" />}
+                {submitLabel()}
+              </>
             )}
           </Button>
         </div>

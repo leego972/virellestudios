@@ -307,9 +307,9 @@ export const appRouter = router({
       .input(z.object({
         title: z.string().min(1).max(255),
         description: z.string().optional(),
-        mode: z.enum(["quick", "manual"]),
+        mode: z.enum(["quick", "manual", "trailer"]),
         rating: z.enum(["G", "PG", "PG-13", "R"]).optional(),
-        duration: z.number().min(1).max(180).optional(),
+        duration: z.number().min(1).max(360).optional(),
         genre: z.string().optional(),
         plotSummary: z.string().optional(),
         resolution: z.string().optional(),
