@@ -4270,6 +4270,14 @@ Generate a detailed production budget estimate.`,
         volume: z.number().min(0).max(1).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Credits: deduct for AI sound effect generation
+        requireFeature(ctx.user, "canUseSoundEffects", "AI Sound Effect Generation");
+        requireGenerationQuota(ctx.user);
+        try {
+          await db.deductCredits(ctx.user!.id, CREDIT_COSTS.sfx_generate_from_text.cost, "sfx_generate_from_text", `AI SFX: ${input.prompt.slice(0, 60)}`);
+        } catch (e: any) {
+          if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message });
+        }
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
         const elevenlabsKey = userKeys.elevenlabsKey;
         if (!elevenlabsKey) {
@@ -4417,6 +4425,14 @@ Generate a detailed production budget estimate.`,
         volume: z.number().min(0).max(1).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Credits: deduct for AI voice choir generation
+        requireFeature(ctx.user, "canUseSoundEffects", "AI Voice Choir Generation");
+        requireGenerationQuota(ctx.user);
+        try {
+          await db.deductCredits(ctx.user!.id, CREDIT_COSTS.sfx_voice_choir.cost, "sfx_voice_choir", `Voice choir: ${input.type}`);
+        } catch (e: any) {
+          if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message });
+        }
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
         const elevenlabsKey = userKeys.elevenlabsKey;
         if (!elevenlabsKey) {
@@ -5483,7 +5499,7 @@ Rules:
         rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         requireGenerationQuota(ctx.user);
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_gen.cost, "ad_poster_gen", `Ad/poster copy generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_copy_gen.cost, "ad_poster_copy_gen", `Ad/poster copy: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         await db.incrementGenerationCount(ctx.user.id);
         const templateDescriptions: Record<string, string> = {
           "poster": "classic movie poster",
@@ -5550,8 +5566,8 @@ Rules:
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
-        // Deduct credits for video ad generation (5s video = standard scene cost)
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_scene_video.cost, "generate_scene_video", `Video ad generation for ${input.platform}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        // Deduct credits for video ad generation
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_video_gen.cost, "ad_poster_video_gen", `Video ad for ${input.platform}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
 
         const rawAdKeys = await db.getUserApiKeys(ctx.user.id);
         const isAdminAd = ctx.user.role === "admin" || ctx.user.email === ENV.adminEmail;
@@ -5591,7 +5607,7 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
-        try { await db.deductCredits(ctx.user.id, 1, "ad_poster_gen", `Tagline variants`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.tagline_variants_gen.cost, "tagline_variants_gen", `Tagline variants for: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({
           messages: [
             { role: "system", content: "You are a world-class film marketing copywriter. Generate 5 distinct, compelling taglines for a film. Each should have a different emotional angle. Return valid JSON only." },
@@ -5618,7 +5634,7 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
-        try { await db.deductCredits(ctx.user.id, 2, "ad_poster_gen", `Brand kit generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.brand_kit_gen.cost, "brand_kit_gen", `Brand kit for: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({
           messages: [
             { role: "system", content: "You are a professional film brand designer. Generate a complete visual brand kit for a film. Return valid JSON only." },
@@ -5641,7 +5657,7 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
-        try { await db.deductCredits(ctx.user.id, 2, "ad_poster_gen", `Influencer kit generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.influencer_kit_gen.cost, "influencer_kit_gen", `Influencer kit for: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({
           messages: [
             { role: "system", content: "You are a professional film PR specialist. Generate a complete influencer outreach kit. Return valid JSON only." },

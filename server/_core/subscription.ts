@@ -660,6 +660,15 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   subtitle_gen_ai:         { cost: 3,  label: "AI Subtitle Generation (full film, large context)" },
   trailer_gen:             { cost: 8,  label: "Trailer Generation (4–6 video clips, ~2 min)" },
   ad_poster_gen:           { cost: 2,  label: "Ad/Poster Generation (DALL-E 3 HD)" },
+  ad_poster_copy_gen:      { cost: 1,  label: "Ad/Poster Copy Generation (AI tagline + description)" },
+  ad_poster_video_gen:     { cost: 4,  label: "Ad/Poster Video Ad Generation (Runway video clip)" },
+  tagline_variants_gen:    { cost: 1,  label: "AI Tagline Variants (5 tagline options)" },
+  brand_kit_gen:           { cost: 2,  label: "AI Brand Kit Generation (palette + fonts + logo concept)" },
+  influencer_kit_gen:      { cost: 2,  label: "AI Influencer Kit Generation (press release + social copy)" },
+  // ── Sound & voice generation ──────────────────────────────
+  sfx_generate_from_text:  { cost: 2,  label: "AI Sound Effect Generation (ElevenLabs text-to-SFX)" },
+  sfx_voice_choir:         { cost: 2,  label: "AI Voice Choir Generation (ElevenLabs TTS choir/wings)" },
+  // ── Blog & content ────────────────────────────────────────
   blog_article_gen:        { cost: 2,  label: "Blog Article Generation (full article, ~1500 words)" },
   // ── Export & project management ───────────────────────────
   export_final_film:       { cost: 3,  label: "Export Final Film (assembly, no AI cost)" },
