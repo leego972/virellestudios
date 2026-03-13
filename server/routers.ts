@@ -5580,6 +5580,79 @@ Rules:
           return { videoUrl: null };
         }
       }),
+
+    // Generate 5 tagline variants for a film
+    generateTaglineVariants: protectedProcedure
+      .input(z.object({
+        title: z.string(),
+        genre: z.string(),
+        description: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
+        try { await db.deductCredits(ctx.user.id, 1, "ad_poster_gen", `Tagline variants`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a world-class film marketing copywriter. Generate 5 distinct, compelling taglines for a film. Each should have a different emotional angle. Return valid JSON only." },
+            { role: "user", content: `Generate 5 taglines for:\nTitle: ${input.title}\nGenre: ${input.genre}\nDescription: ${input.description}\n\nReturn JSON: { "taglines": ["tagline1", "tagline2", "tagline3", "tagline4", "tagline5"] }` },
+          ],
+          response_format: { type: "json_schema", json_schema: { name: "taglines", schema: { type: "object", properties: { taglines: { type: "array", items: { type: "string" } } }, required: ["taglines"], additionalProperties: false }, strict: true } },
+        });
+        const raw = response.choices?.[0]?.message?.content;
+        const content = typeof raw === "string" ? raw : Array.isArray(raw) ? raw.map((p: any) => typeof p === "string" ? p : p.text || "").join("") : "";
+        try {
+          const parsed = JSON.parse(content);
+          return { taglines: parsed.taglines || [] };
+        } catch { return { taglines: [] }; }
+      }),
+
+    // Generate a brand kit (colours, fonts, mood) for a film
+    generateBrandKit: protectedProcedure
+      .input(z.object({
+        title: z.string(),
+        genre: z.string(),
+        description: z.string(),
+        mood: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
+        try { await db.deductCredits(ctx.user.id, 2, "ad_poster_gen", `Brand kit generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a professional film brand designer. Generate a complete visual brand kit for a film. Return valid JSON only." },
+            { role: "user", content: `Create a brand kit for:\nTitle: ${input.title}\nGenre: ${input.genre}\nMood: ${input.mood || "cinematic"}\nDescription: ${input.description}\n\nReturn JSON with:\n- primaryColor: hex color (main brand color)\n- secondaryColor: hex color (accent)\n- backgroundColor: hex color (dark background)\n- textColor: hex color (main text)\n- accentColor: hex color (highlight)\n- titleFont: font name from ["Inter", "Georgia", "Playfair Display", "Oswald", "Bebas Neue", "Cinzel", "Raleway", "Montserrat", "Lato", "Merriweather"]\n- bodyFont: font name from same list\n- moodDescription: 1-sentence mood description\n- logoConceptDescription: brief description of a logo concept\n- colorPaletteName: creative name for this palette` },
+          ],
+          response_format: { type: "json_schema", json_schema: { name: "brand_kit", schema: { type: "object", properties: { primaryColor: { type: "string" }, secondaryColor: { type: "string" }, backgroundColor: { type: "string" }, textColor: { type: "string" }, accentColor: { type: "string" }, titleFont: { type: "string" }, bodyFont: { type: "string" }, moodDescription: { type: "string" }, logoConceptDescription: { type: "string" }, colorPaletteName: { type: "string" } }, required: ["primaryColor", "secondaryColor", "backgroundColor", "textColor", "accentColor", "titleFont", "bodyFont", "moodDescription", "logoConceptDescription", "colorPaletteName"], additionalProperties: false }, strict: true } },
+        });
+        const raw = response.choices?.[0]?.message?.content;
+        const content = typeof raw === "string" ? raw : Array.isArray(raw) ? raw.map((p: any) => typeof p === "string" ? p : p.text || "").join("") : "";
+        try { return JSON.parse(content); } catch { return null; }
+      }),
+
+    // Generate influencer outreach kit
+    generateInfluencerKit: protectedProcedure
+      .input(z.object({
+        title: z.string(),
+        genre: z.string(),
+        logline: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
+        try { await db.deductCredits(ctx.user.id, 2, "ad_poster_gen", `Influencer kit generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        const response = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a professional film PR specialist. Generate a complete influencer outreach kit. Return valid JSON only." },
+            { role: "user", content: `Create an influencer kit for:\nTitle: ${input.title}\nGenre: ${input.genre}\nLogline: ${input.logline || "N/A"}\n\nReturn JSON:\n- caption: Instagram/TikTok caption with emojis (max 200 chars)\n- hashtags: 10-15 relevant hashtags as a single string\n- emailPitch: professional email pitch (3 paragraphs)\n- linkedinPost: LinkedIn announcement post\n- pressRelease: short press release (2 paragraphs)` },
+          ],
+          response_format: { type: "json_schema", json_schema: { name: "influencer_kit", schema: { type: "object", properties: { caption: { type: "string" }, hashtags: { type: "string" }, emailPitch: { type: "string" }, linkedinPost: { type: "string" }, pressRelease: { type: "string" } }, required: ["caption", "hashtags", "emailPitch", "linkedinPost", "pressRelease"], additionalProperties: false }, strict: true } },
+        });
+        const raw = response.choices?.[0]?.message?.content;
+        const content = typeof raw === "string" ? raw : Array.isArray(raw) ? raw.map((p: any) => typeof p === "string" ? p : p.text || "").join("") : "";
+        try { return JSON.parse(content); } catch { return null; }
+      }),
   }),
 
   // ─── Social Platform Credentials ─────────────────────────────────────────────
