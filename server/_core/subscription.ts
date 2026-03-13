@@ -641,52 +641,54 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   // ── Core video generation ──────────────────────────────────
   // Flat cost is the MINIMUM — actual cost scales with scene duration
   // via getVideoCredits(durationSeconds) in routers.ts
-  generate_film:           { cost: 5,  label: "Generate Film (AI scene breakdown + script)" },
-  generate_scene_video:    { cost: 5,  label: "Generate Scene Video (≤45s; longer scenes cost more)" },
-  regenerate_scene_video:  { cost: 4,  label: "Regenerate Scene Video (≤45s; same API cost as generate)" },
-  generate_preview_image:  { cost: 1,  label: "Generate Preview Image (DALL-E 3 HD)" },
-  bulk_generate_previews:  { cost: 1,  label: "Bulk Generate Previews (per scene — image only)" },
-  bulk_generate_videos:    { cost: 5,  label: "Bulk Generate Videos (per scene — duration-scaled)" },
+  // Scale reference: Amateur = 250 credits/$500/mo → 1 credit ≈ $2
+  generate_film:           { cost: 10,  label: "Generate Film (AI scene breakdown + script, full pipeline)" },
+  generate_scene_video:    { cost: 10,  label: "Generate Scene Video (≤45s; longer scenes cost more)" },
+  regenerate_scene_video:  { cost: 8,   label: "Regenerate Scene Video (≤45s; 80% of generate cost)" },
+  generate_preview_image:  { cost: 3,   label: "Generate Preview Image (DALL-E 3 HD)" },
+  bulk_generate_previews:  { cost: 3,   label: "Bulk Generate Previews (per scene — image only)" },
+  bulk_generate_videos:    { cost: 10,  label: "Bulk Generate Videos (per scene — duration-scaled)" },
   // ── AI writing & production tools ─────────────────────────
-  virelle_chat:            { cost: 1,  label: "Virelle AI Chat / Director Assistant (per message)" },
-  script_writer_ai:        { cost: 3,  label: "AI Script Writer (full screenplay generation)" },
-  storyboard_ai:           { cost: 3,  label: "AI Storyboard Generation" },
-  dialogue_editor_ai:      { cost: 2,  label: "AI Dialogue Polish" },
-  continuity_check_ai:     { cost: 2,  label: "AI Continuity Check" },
-  shot_list_ai:            { cost: 2,  label: "AI Shot List Generation" },
-  character_gen_ai:        { cost: 2,  label: "AI Character Generation" },
-  location_scout_ai:       { cost: 1,  label: "AI Location Scout (suggestions + image)" },
-  budget_estimate_ai:      { cost: 2,  label: "AI Budget Estimate (multi-scene analysis)" },
-  subtitle_gen_ai:         { cost: 3,  label: "AI Subtitle Generation (full film, large context)" },
-  trailer_gen:             { cost: 8,  label: "Trailer Generation (4–6 video clips, ~2 min)" },
-  ad_poster_gen:           { cost: 2,  label: "Ad/Poster Generation (DALL-E 3 HD)" },
-  ad_poster_copy_gen:      { cost: 1,  label: "Ad/Poster Copy Generation (AI tagline + description)" },
-  ad_poster_video_gen:     { cost: 4,  label: "Ad/Poster Video Ad Generation (Runway video clip)" },
-  tagline_variants_gen:    { cost: 1,  label: "AI Tagline Variants (5 tagline options)" },
-  brand_kit_gen:           { cost: 2,  label: "AI Brand Kit Generation (palette + fonts + logo concept)" },
-  influencer_kit_gen:      { cost: 2,  label: "AI Influencer Kit Generation (press release + social copy)" },
+  virelle_chat:            { cost: 2,   label: "Virelle AI Chat / Director Assistant (per message)" },
+  script_writer_ai:        { cost: 8,   label: "AI Script Writer (full screenplay generation)" },
+  storyboard_ai:           { cost: 8,   label: "AI Storyboard Generation (full visual breakdown)" },
+  dialogue_editor_ai:      { cost: 5,   label: "AI Dialogue Polish (scene-level rewrite)" },
+  continuity_check_ai:     { cost: 5,   label: "AI Continuity Check (full film analysis)" },
+  shot_list_ai:            { cost: 5,   label: "AI Shot List Generation (per scene)" },
+  character_gen_ai:        { cost: 5,   label: "AI Character Generation (image + bio)" },
+  location_scout_ai:       { cost: 3,   label: "AI Location Scout (suggestions + reference image)" },
+  budget_estimate_ai:      { cost: 5,   label: "AI Budget Estimate (multi-scene analysis)" },
+  subtitle_gen_ai:         { cost: 8,   label: "AI Subtitle Generation (full film, large context)" },
+  trailer_gen:             { cost: 20,  label: "Trailer Generation (4–6 video clips, ~2 min cinematic)" },
+  ad_poster_gen:           { cost: 5,   label: "Ad/Poster Image Generation (DALL-E 3 HD)" },
+  ad_poster_copy_gen:      { cost: 3,   label: "Ad/Poster Copy Generation (AI tagline + description)" },
+  ad_poster_video_gen:     { cost: 10,  label: "Ad/Poster Video Ad Generation (video clip via BYOK)" },
+  tagline_variants_gen:    { cost: 3,   label: "AI Tagline Variants (5 distinct tagline options)" },
+  brand_kit_gen:           { cost: 5,   label: "AI Brand Kit Generation (palette + fonts + logo concept)" },
+  influencer_kit_gen:      { cost: 5,   label: "AI Influencer Kit Generation (press release + social copy)" },
   // ── Sound & voice generation ──────────────────────────────
-  sfx_generate_from_text:  { cost: 2,  label: "AI Sound Effect Generation (ElevenLabs text-to-SFX)" },
-  sfx_voice_choir:         { cost: 2,  label: "AI Voice Choir Generation (ElevenLabs TTS choir/wings)" },
+  sfx_generate_from_text:  { cost: 5,   label: "AI Sound Effect Generation (ElevenLabs text-to-SFX)" },
+  sfx_voice_choir:         { cost: 5,   label: "AI Voice Choir Generation (ElevenLabs TTS choir/wings)" },
   // ── Blog & content ────────────────────────────────────────
-  blog_article_gen:        { cost: 2,  label: "Blog Article Generation (full article, ~1500 words)" },
+  blog_article_gen:        { cost: 5,   label: "Blog Article Generation (full article, ~1500 words)" },
   // ── Export & project management ───────────────────────────
-  export_final_film:       { cost: 3,  label: "Export Final Film (assembly, no AI cost)" },
-  create_project:          { cost: 0,  label: "Create New Project (FREE — no friction on start)" },
-  movie_export:            { cost: 2,  label: "Movie Export (scenes/trailer export)" },
+  export_final_film:       { cost: 8,   label: "Export Final Film (full assembly + render)" },
+  create_project:          { cost: 0,   label: "Create New Project (FREE — no friction on start)" },
+  movie_export:            { cost: 5,   label: "Movie Export (scenes/trailer export)" },
 };
 
 /**
  * Duration-scaled video credit cost.
- * Runway Gen-4 / Sora charge ~$0.10/s. A 45s scene costs ~$4.50 in API fees.
+ * Scale reference: Amateur = 250 credits / $500/mo → 1 credit ≈ $2.
+ * Runway Gen-4 / Sora / Veo 3 charge ~$0.10/s. A 45s scene costs ~$4.50 in API fees.
  * We scale credits with duration to ensure profitability on long scenes
  * while keeping short scenes affordable.
  *
  * Tiers:
- *   ≤15s   → 3 credits  (short clip, ~$1.50 API cost)
- *   16–45s → 5 credits  (standard scene, ~$4.50 API cost)
- *   46–90s → 7 credits  (long scene, ~$9 API cost)
- *   >90s   → 10 credits (extended scene, ~$12+ API cost)
+ *   ≤15s   → 5 credits   (short clip, ~$1.50 API cost)
+ *   16–45s → 10 credits  (standard scene, ~$4.50 API cost)
+ *   46–90s → 15 credits  (long scene, ~$9 API cost)
+ *   >90s   → 20 credits  (extended scene, ~$12+ API cost)
  *
  * For regeneration, apply a 20% discount (same API cost, but customer
  * is retrying — reward persistence without giving it away free).
@@ -694,16 +696,16 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
 export function getVideoCredits(durationSeconds: number, isRegenerate = false): number {
   let credits: number;
   if (durationSeconds <= 15) {
-    credits = 3;
-  } else if (durationSeconds <= 45) {
     credits = 5;
-  } else if (durationSeconds <= 90) {
-    credits = 7;
-  } else {
+  } else if (durationSeconds <= 45) {
     credits = 10;
+  } else if (durationSeconds <= 90) {
+    credits = 15;
+  } else {
+    credits = 20;
   }
   if (isRegenerate) {
-    credits = Math.max(2, Math.round(credits * 0.8));
+    credits = Math.max(4, Math.round(credits * 0.8));
   }
   return credits;
 }
