@@ -183,11 +183,19 @@ export const appRouter = router({
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
         }
 
-        // Security: Check for brute force / lockout before password check
-        const loginPreCheck = trackLoginAttempt(user.id, clientIP, false);
-        if (!loginPreCheck.allowed) {
-          logAuditEvent(user.id, "login_blocked_lockout", clientIP, false);
-          throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: loginPreCheck.reason || "Account locked" });
+        // Admin accounts bypass brute-force lockout
+        const adminEmailsList = [(ENV.adminEmail || "leego972@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
+        const isAdminAccount = adminEmailsList.includes(user.email?.toLowerCase() || "");
+        if (!isAdminAccount) {
+          // Security: Check for brute force / lockout before password check
+          const loginPreCheck = trackLoginAttempt(user.id, clientIP, false);
+          if (!loginPreCheck.allowed) {
+            logAuditEvent(user.id, "login_blocked_lockout", clientIP, false);
+            throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: loginPreCheck.reason || "Account locked" });
+          }
+        } else {
+          // For admin accounts, still track but never block
+          unflagUser(user.id);
         }
 
         const valid = await bcrypt.compare(input.password, user.passwordHash);
