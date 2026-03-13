@@ -774,33 +774,32 @@ export function buildSceneBreakdownSystemPrompt(project: {
   actStructure?: string | null;
   themes?: string | null;
   setting?: string | null;
+  creativeLeeway?: boolean;
 }): string {
   const genre = project.genre || "Drama";
   const profile = GENRE_PROFILES[genre] || DEFAULT_PROFILE;
   const duration = project.duration || 90;
   const actStructure = project.actStructure || "three-act";
+  const creativeLeeway = project.creativeLeeway ?? false;
 
   // Calculate scene count based on duration — be CONSERVATIVE with API credits
-  // Short content (under 5 min): 1-2 scenes max (openers, intros, trailers)
-  // Medium content (5-30 min): scale proportionally
-  // Full films (30+ min): standard ratio
   let targetScenes: number;
   if (duration <= 1) {
-    targetScenes = 1; // Openers, logos, intros = 1 scene
+    targetScenes = 1;
   } else if (duration <= 5) {
-    targetScenes = Math.max(1, Math.min(3, Math.round(duration * 0.5))); // 1-3 scenes for short content
+    targetScenes = Math.max(1, Math.min(3, Math.round(duration * 0.5)));
   } else if (duration <= 15) {
-    targetScenes = Math.max(3, Math.min(8, Math.round(duration * 0.4))); // 3-8 scenes for medium
+    targetScenes = Math.max(3, Math.min(8, Math.round(duration * 0.4)));
   } else if (duration <= 30) {
-    targetScenes = Math.max(5, Math.min(15, Math.round(duration * 0.3))); // 5-15 scenes
+    targetScenes = Math.max(5, Math.min(15, Math.round(duration * 0.3)));
   } else {
-    targetScenes = Math.max(8, Math.min(50, Math.round(duration * 0.15))); // 8-50 for full films
+    targetScenes = Math.max(8, Math.min(50, Math.round(duration * 0.15)));
   }
 
-  return `You are an elite Academy Award-winning film director and cinematographer with 30 years of experience directing ${genre} films. You have worked with the world's best directors of photography and understand every aspect of visual storytelling. You are planning the visual storytelling for "${project.title}", a ${duration}-minute ${project.rating || "PG-13"} rated ${genre} film.
-
-Your visual signature for this film draws from the masters:
-- Reference cinematographers: ${profile.referenceFilms}
+  const creativeGuidance = creativeLeeway
+    ? `
+You have been granted creative freedom by the director. Apply your full cinematic expertise:
+- Visual signature draws from: ${profile.referenceFilms}
 - Color palette: ${profile.colorPalette}
 - Lighting approach: ${profile.lightingStyle}
 - Lens choices: ${profile.lensPreference}
@@ -809,31 +808,29 @@ Your visual signature for this film draws from the masters:
 - Texture and grain: ${profile.textureNotes}
 - Skin rendering: ${profile.skinRendering}
 - Emotional keywords: ${profile.moodKeywords}
-${project.tone ? `- Director's tone: ${project.tone}` : ""}
-${project.themes ? `- Thematic elements: ${project.themes}` : ""}
-${project.setting ? `- World/setting: ${project.setting}` : ""}
+- Vary shot types — never repeat the same camera angle twice in a row.
+- Build visual tension through the narrative arc — escalate intensity toward the climax.
+- Consider background population: describe extras and ambient life in every scene.`
+    : `
+DIRECTOR-FIRST RULES (non-negotiable):
+- Faithfully adapt the director's plot, characters, setting, tone, and themes EXACTLY as described. Do NOT add, remove, or change story elements.
+- Do NOT invent new characters, locations, plot points, or themes that are not in the director's description.
+- Do NOT override the director's genre, tone, rating, or setting choices.
+- Use the genre visual profile below ONLY as a technical reference for filling in unspecified technical fields (lighting, lens, etc.) — never to override the director's story.
+- Genre visual reference (use only for unspecified technical fields): ${profile.referenceFilms}, ${profile.colorPalette}, ${profile.lightingStyle}`;
 
-CRITICAL INSTRUCTIONS:
-1. Structure this with EXACTLY ${targetScenes} scene${targetScenes === 1 ? '' : 's'} for a ${duration}-minute ${duration <= 1 ? 'intro/opener' : 'film'}. Do NOT create more scenes than specified — be efficient with production resources.
-2. Each scene must be a SPECIFIC, VIVID, PHOTOGRAPHABLE moment — not a summary or montage description. ${duration <= 5 ? 'For short content, combine the entire narrative into as few scenes as possible — one continuous shot is ideal.' : ''}
-3. Describe EXACTLY what the camera sees: the environment details, character positions, facial expressions, body language, spatial relationships, and atmospheric elements.
-4. Think like a cinematographer for every single frame:
-   - What lens would you choose and why?
-   - Where is the key light coming from? What color temperature?
-   - What's in the foreground, midground, and background?
-   - What colors dominate this frame?
-   - What emotion should the audience feel?
-   - How does this scene's visual language connect to the scenes before and after it?
-5. The visualDescription must be so detailed that a photographer could recreate the exact frame.
-6. Vary your shot types — don't use the same camera angle twice in a row.
-7. Build visual tension through the narrative arc — the visual intensity should escalate toward the climax.
-8. Every scene must serve both the narrative AND the visual storytelling.
-9. ALWAYS consider the background population for every scene:
-   - Is this location empty, sparse, moderate, crowded, or packed with people?
-   - What are the background extras doing? (walking, sitting, dancing, working, running, etc.)
-   - Describe specific background activity that adds life and realism to the scene.
-   - Street scenes should have pedestrians, restaurants should have diners, offices should have workers, clubs should have dancers.
-   - The extrasDescription should paint a vivid picture of the ambient life in the scene.
+  return `You are a professional film production AI breaking down a director's film concept into individual scenes. Your primary obligation is to faithfully serve the director's vision for "${project.title}", a ${duration}-minute ${project.rating || "PG-13"} rated ${genre} film.
+${project.tone ? `Director's tone: ${project.tone}` : ""}
+${project.themes ? `Director's themes: ${project.themes}` : ""}
+${project.setting ? `Director's setting: ${project.setting}` : ""}
+${creativeGuidance}
+
+INSTRUCTIONS:
+1. Structure this with EXACTLY ${targetScenes} scene${targetScenes === 1 ? '' : 's'} for a ${duration}-minute ${duration <= 1 ? 'intro/opener' : 'film'}. Do NOT create more or fewer scenes than specified.
+2. Each scene must be a SPECIFIC, PHOTOGRAPHABLE moment — not a summary. Describe exactly what the camera sees.
+3. Every scene must directly serve the director's stated plot, characters, and themes.
+4. The visualDescription must be specific enough that a camera operator could execute it.
+5. For any technical field the director did not specify (lens, depth of field, extras), use a sensible neutral default consistent with the genre.
 
 Return JSON with an array of scenes.`;
 }
