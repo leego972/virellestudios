@@ -50,6 +50,12 @@ const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const AcceptableUsePolicy = lazy(() => import("./pages/legal/AcceptableUsePolicy"));
 const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
 
+// New public pages — lazy loaded
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const About = lazy(() => import("./pages/About"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Solutions = lazy(() => import("./pages/Solutions"));
+
 // Dashboard feature pages — lazy loaded
 const Referrals = lazy(() => import("./pages/Referrals"));
 const ProjectSamples = lazy(() => import("./pages/ProjectSamples"));
@@ -144,6 +150,10 @@ function Router() {
       <Route path="/acceptable-use">{() => <LazyPage><AcceptableUsePolicy /></LazyPage>}</Route>
       <Route path="/ai-content-policy">{() => <LazyPage><AIContentPolicy /></LazyPage>}</Route>
       <Route path="/showcase">{() => <LazyPage><Showcase /></LazyPage>}</Route>
+      <Route path="/how-it-works">{() => <LazyPage><HowItWorks /></LazyPage>}</Route>
+      <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
+      <Route path="/faq">{() => <LazyPage><FAQ /></LazyPage>}</Route>
+      <Route path="/solutions">{() => <LazyPage><Solutions /></LazyPage>}</Route>
 
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />

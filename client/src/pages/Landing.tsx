@@ -326,12 +326,12 @@ export default function Landing() {
             <span className="text-lg font-bold tracking-tight hidden sm:inline">Virelle Studios</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-foreground/80">
-            <a href="#use-cases" className="hover:text-foreground transition-colors">Use Cases</a>
+            <button onClick={() => setLocation("/solutions")} className="hover:text-foreground transition-colors">Solutions</button>
+            <button onClick={() => setLocation("/how-it-works")} className="hover:text-foreground transition-colors">How It Works</button>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
-            <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
             <button onClick={() => setLocation("/showcase")} className="hover:text-foreground transition-colors font-semibold" style={{ color: '#d4af37' }}>Showcase</button>
+            <button onClick={() => setLocation("/faq")} className="hover:text-foreground transition-colors">FAQ</button>
             <button onClick={() => setLocation("/blog")} className="hover:text-foreground transition-colors">Blog</button>
           </div>
           <div className="flex items-center gap-2">
@@ -427,22 +427,23 @@ export default function Landing() {
             </span>
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-foreground/80 max-w-2xl mx-auto leading-relaxed">
-            The world's first AI film production platform. Generate complete feature-length films from a concept — or create individual VFX scenes to composite into your live-action production. Voice acting, soundtrack, and visual continuity included.
+            The professional AI film production platform. Write a concept — Virelle generates the screenplay, scenes, voice acting, soundtrack, and final cut. Or generate individual VFX scenes to composite into your live-action production.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12 text-base">
-              Start Creating Now
+              Start Your First Film
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => {
-              const el = document.getElementById("use-cases");
-              el?.scrollIntoView({ behavior: "smooth" });
-            }} className="h-12 text-base px-8">
+            <Button size="lg" variant="outline" onClick={() => setLocation("/how-it-works")} className="h-12 text-base px-8">
               <Play className="h-4 w-4 mr-2" />
-              See Use Cases
+              How It Works
             </Button>
           </div>
-          <p className="mt-4 text-xs text-foreground/80">BYOK — bring your own API keys. Membership starts at $5,000/year.</p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-foreground/55">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> BYOK — no video generation markup</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> You own all outputs commercially</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> Founding offer: 50% off first year</span>
+          </div>
         </div>
       </section>
 
@@ -965,26 +966,28 @@ export default function Landing() {
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-3">Product</h4>
               <ul className="space-y-2">
-                <li><a href="#use-cases" className="text-xs text-foreground/80 hover:text-foreground transition-colors">Use Cases</a></li>
+                <li><button onClick={() => setLocation("/how-it-works")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">How It Works</button></li>
                 <li><a href="#features" className="text-xs text-foreground/80 hover:text-foreground transition-colors">Features</a></li>
                 <li><a href="#pricing" className="text-xs text-foreground/80 hover:text-foreground transition-colors">Pricing</a></li>
+                <li><button onClick={() => setLocation("/faq")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">FAQ</button></li>
                 <li><button onClick={() => setLocation("/blog")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Blog</button></li>
                 <li><button onClick={() => setLocation("/showcase")} className="text-xs font-semibold hover:text-foreground transition-colors" style={{ color: '#d4af37' }}>Showcase</button></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-3">Use Cases</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-3">Solutions</h4>
               <ul className="space-y-2">
-                <li><span className="text-xs text-foreground/80">Full AI Films</span></li>
-                <li><span className="text-xs text-foreground/80">VFX Scene Studio</span></li>
-                <li><span className="text-xs text-foreground/80">Music Videos</span></li>
-                <li><span className="text-xs text-foreground/80">Commercials</span></li>
+                <li><button onClick={() => setLocation("/solutions#indie-filmmakers")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Independent Filmmakers</button></li>
+                <li><button onClick={() => setLocation("/solutions#vfx-production")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">VFX &amp; Production</button></li>
+                <li><button onClick={() => setLocation("/solutions#music-artists")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Music Artists</button></li>
+                <li><button onClick={() => setLocation("/solutions#brands-agencies")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Brands &amp; Agencies</button></li>
+                <li><button onClick={() => setLocation("/solutions#enterprise")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Studios &amp; Enterprise</button></li>
               </ul>
             </div>
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/80 mb-3">Company</h4>
               <ul className="space-y-2">
-                <li><button onClick={() => setLocation("/contact")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">About</button></li>
+                <li><button onClick={() => setLocation("/about")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">About Virelle</button></li>
                 <li><button onClick={() => setLocation("/contact")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Contact</button></li>
                 <li><button onClick={() => setLocation("/terms")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Terms of Service</button></li>
                 <li><button onClick={() => setLocation("/privacy")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Privacy Policy</button></li>

@@ -481,46 +481,89 @@ export default function Pricing() {
             </Card>
           </div>
 
-          {/* Example production cost */}
-          <div className="max-w-3xl mx-auto mb-12">
-            <Card className="border-zinc-700">
-              <CardContent className="p-8">
-                <h3 className="text-xl font-bold mb-4 text-center">Example: 10-Minute Short Film</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
-                    <span>Create project</span>
-                    <span className="text-amber-400 font-bold">5 credits</span>
+          {/* Example production costs */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <h3 className="text-xl font-bold mb-6 text-center">How many credits does a real project use?</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Short Film */}
+              <Card className="border-zinc-700">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2"><span>🎬</span> 10-Min Short Film</CardTitle>
+                  <CardDescription className="text-xs">12 scenes, AI voice, soundtrack, export</CardDescription>
+                </CardHeader>
+                <CardContent className="text-xs space-y-2">
+                  <div className="flex justify-between"><span className="text-muted-foreground">AI scene breakdown</span><span className="text-amber-400 font-bold">10 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Preview images × 12</span><span className="text-amber-400 font-bold">36 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Scene videos × 12</span><span className="text-amber-400 font-bold">120 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Script + storyboard</span><span className="text-amber-400 font-bold">16 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Export film</span><span className="text-amber-400 font-bold">8 cr</span></div>
+                  <div className="border-t border-amber-500/30 pt-2 mt-2 flex justify-between font-bold">
+                    <span>Total</span><span className="text-amber-400">~190 credits</span>
                   </div>
-                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
-                    <span>Generate Film (AI scene breakdown)</span>
-                    <span className="text-amber-400 font-bold">250 credits</span>
-                  </div>
-                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
-                    <span>Preview images (12 scenes)</span>
-                    <span className="text-amber-400 font-bold">300 credits</span>
-                  </div>
-                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
-                    <span>Virelle AI chat (10 editing messages)</span>
-                    <span className="text-amber-400 font-bold">250 credits</span>
-                  </div>
-                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
-                    <span>Generate scene videos (12 scenes)</span>
-                    <span className="text-amber-400 font-bold">1,500 credits</span>
-                  </div>
-                  <div className="flex justify-between p-2 rounded bg-zinc-900/50">
-                    <span>Export final film</span>
-                    <span className="text-amber-400 font-bold">125 credits</span>
-                  </div>
-                  <div className="border-t border-amber-500/30 pt-3 mt-3">
-                    <div className="flex justify-between font-bold text-lg">
-                      <span>Total</span>
-                      <span className="text-amber-400">~2,450 credits</span>
-                    </div>
+                  <p className="text-muted-foreground pt-1">Fits within the <span className="text-emerald-400 font-semibold">Amateur</span> monthly allowance (250 cr)</p>
+                </CardContent>
+              </Card>
 
+              {/* Feature Film */}
+              <Card className="border-amber-500/30 ring-1 ring-amber-500/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2"><span>🎥</span> 90-Min Feature Film</CardTitle>
+                  <CardDescription className="text-xs">60 scenes, full pipeline, trailer</CardDescription>
+                </CardHeader>
+                <CardContent className="text-xs space-y-2">
+                  <div className="flex justify-between"><span className="text-muted-foreground">AI scene breakdown</span><span className="text-amber-400 font-bold">10 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Preview images × 60</span><span className="text-amber-400 font-bold">180 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Scene videos × 60</span><span className="text-amber-400 font-bold">600 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Script + storyboard</span><span className="text-amber-400 font-bold">16 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Trailer generation</span><span className="text-amber-400 font-bold">20 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Export + subtitles</span><span className="text-amber-400 font-bold">16 cr</span></div>
+                  <div className="border-t border-amber-500/30 pt-2 mt-2 flex justify-between font-bold">
+                    <span>Total</span><span className="text-amber-400">~842 credits</span>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                  <p className="text-muted-foreground pt-1">Fits within the <span className="text-amber-400 font-semibold">Independent</span> monthly allowance (500 cr) + 1 credit pack</p>
+                </CardContent>
+              </Card>
+
+              {/* Music Video + Ad Campaign */}
+              <Card className="border-zinc-700">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2"><span>🎵</span> Music Video + Ad Campaign</CardTitle>
+                  <CardDescription className="text-xs">8 scenes, poster, social assets</CardDescription>
+                </CardHeader>
+                <CardContent className="text-xs space-y-2">
+                  <div className="flex justify-between"><span className="text-muted-foreground">Scene videos × 8</span><span className="text-amber-400 font-bold">80 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Poster image</span><span className="text-amber-400 font-bold">5 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">AI taglines + brand kit</span><span className="text-amber-400 font-bold">8 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Video ad</span><span className="text-amber-400 font-bold">10 cr</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Influencer kit</span><span className="text-amber-400 font-bold">5 cr</span></div>
+                  <div className="border-t border-amber-500/30 pt-2 mt-2 flex justify-between font-bold">
+                    <span>Total</span><span className="text-amber-400">~108 credits</span>
+                  </div>
+                  <p className="text-muted-foreground pt-1">Well within the <span className="text-emerald-400 font-semibold">Amateur</span> monthly allowance (250 cr)</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Credit to dollar translation */}
+            <div className="mt-8 p-5 rounded-xl border border-border/50 bg-card/40">
+              <h4 className="text-sm font-semibold mb-3 text-center">What does a credit cost in real terms?</h4>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+                {[
+                  { tier: "Amateur", credits: 250, monthly: 500, perCredit: 2.0, color: "text-emerald-400" },
+                  { tier: "Independent", credits: 500, monthly: 5000, perCredit: 10.0, color: "text-amber-400" },
+                  { tier: "Creator", credits: 1500, monthly: 10000, perCredit: 6.67, color: "text-cyan-400" },
+                  { tier: "Studio", credits: 4000, monthly: 15000, perCredit: 3.75, color: "text-violet-400" },
+                  { tier: "Industry", credits: 10000, monthly: 25000, perCredit: 2.5, color: "text-yellow-400" },
+                ].map((t) => (
+                  <div key={t.tier} className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                    <p className={`text-xs font-bold ${t.color}`}>{t.tier}</p>
+                    <p className="text-lg font-bold mt-1">${t.perCredit.toFixed(2)}</p>
+                    <p className="text-[10px] text-muted-foreground">per credit</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground text-center mt-3">Higher tiers = lower cost per credit. A 90-min feature film at Creator tier costs ~$5,600 in credits.</p>
+            </div>
           </div>
         </div>
 
