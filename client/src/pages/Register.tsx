@@ -16,6 +16,7 @@ import GoldWatermark from "@/components/GoldWatermark";
 // ─── Country Codes ───
 
 const COUNTRY_CODES = [
+  { code: "+972", country: "IL", flag: "🇮🇱", label: "Israel" },
   { code: "+1", country: "US", flag: "🇺🇸", label: "United States" },
   { code: "+1", country: "CA", flag: "🇨🇦", label: "Canada" },
   { code: "+44", country: "GB", flag: "🇬🇧", label: "United Kingdom" },
@@ -44,7 +45,6 @@ const COUNTRY_CODES = [
   { code: "+90", country: "TR", flag: "🇹🇷", label: "Turkey" },
   { code: "+966", country: "SA", flag: "🇸🇦", label: "Saudi Arabia" },
   { code: "+971", country: "AE", flag: "🇦🇪", label: "UAE" },
-  { code: "+972", country: "IL", flag: "🇮🇱", label: "Israel" },
   { code: "+27", country: "ZA", flag: "🇿🇦", label: "South Africa" },
   { code: "+234", country: "NG", flag: "🇳🇬", label: "Nigeria" },
   { code: "+254", country: "KE", flag: "🇰🇪", label: "Kenya" },
@@ -247,6 +247,7 @@ export default function Register() {
   const [phone, setPhone] = useState("");
   const [countryCode, setCountryCode] = useState("+1");
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
   const [referralCode, setReferralCode] = useState("");
 
   // Step 2: Professional
@@ -473,21 +474,37 @@ export default function Register() {
                           <ChevronDown className="w-3 h-3 text-muted-foreground" />
                         </button>
                         {countryDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-1 w-64 max-h-60 overflow-y-auto rounded-md border border-input bg-background shadow-lg z-50">
-                            {COUNTRY_CODES.map((c) => (
-                              <button
-                                key={`${c.country}-${c.code}`}
-                                type="button"
-                                onClick={() => { setCountryCode(c.code); setCountryDropdownOpen(false); }}
-                                className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-accent transition-colors text-left ${
-                                  countryCode === c.code ? "bg-amber-500/10 text-amber-400" : "text-foreground"
-                                }`}
-                              >
-                                <span className="text-base leading-none">{c.flag}</span>
-                                <span className="flex-1 truncate">{c.label}</span>
-                                <span className="text-xs text-muted-foreground">{c.code}</span>
-                              </button>
-                            ))}
+                          <div className="absolute top-full left-0 mt-1 w-72 rounded-md border border-input bg-background shadow-lg z-50">
+                            <div className="p-2 border-b border-input">
+                              <input
+                                autoFocus
+                                type="text"
+                                placeholder="Search country..."
+                                value={countrySearch}
+                                onChange={(e) => setCountrySearch(e.target.value)}
+                                className="w-full px-2 py-1.5 text-sm bg-background border border-input rounded outline-none focus:border-amber-500/50"
+                              />
+                            </div>
+                            <div className="max-h-56 overflow-y-auto">
+                              {COUNTRY_CODES.filter(c =>
+                                c.label.toLowerCase().includes(countrySearch.toLowerCase()) ||
+                                c.code.includes(countrySearch)
+                              ).map((c) => (
+                                <button
+                                  key={`${c.country}-${c.code}`}
+                                  type="button"
+                                  onClick={() => { setCountryCode(c.code); setCountryDropdownOpen(false); setCountrySearch(""); }}
+                                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-accent transition-colors text-left ${
+                                    countryCode === c.code && c.country === "IL" ? "bg-amber-500/10 text-amber-400" :
+                                    countryCode === c.code ? "bg-amber-500/10 text-amber-400" : "text-foreground"
+                                  }`}
+                                >
+                                  <span className="text-base leading-none">{c.flag}</span>
+                                  <span className="flex-1 truncate">{c.label}</span>
+                                  <span className="text-xs text-muted-foreground">{c.code}</span>
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
