@@ -56,20 +56,39 @@ import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import NotificationBell from "./NotificationBell";
 
-const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: Film, label: "Projects", path: "/projects" },
-  { icon: Clapperboard, label: "My Movies", path: "/movies" },
-  { icon: Users, label: "Characters", path: "/characters" },
-  { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker" },
-  { icon: PlaySquare, label: "Project Samples", path: "/samples" },
-  { icon: Gift, label: "Referrals", path: "/referrals" },
-  { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace" },
-  { icon: BookOpen, label: "Blog", path: "/blog" },
-  { icon: CreditCard, label: "Subscription", path: "/pricing" },
-  { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+// Navigation grouped by production pipeline logic
+const menuGroups = [
+  {
+    label: "Studio",
+    items: [
+      { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+      { icon: Film, label: "Projects", path: "/projects" },
+      { icon: Users, label: "Characters", path: "/characters" },
+      { icon: Clapperboard, label: "My Movies", path: "/movies" },
+    ],
+  },
+  {
+    label: "Create",
+    items: [
+      { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker" },
+      { icon: PlaySquare, label: "Project Samples", path: "/samples" },
+      { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace" },
+    ],
+  },
+  {
+    label: "Account",
+    items: [
+      { icon: CreditCard, label: "Subscription", path: "/pricing" },
+      { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
+      { icon: Gift, label: "Referrals", path: "/referrals" },
+      { icon: BookOpen, label: "Blog", path: "/blog" },
+      { icon: Settings, label: "Settings", path: "/settings" },
+    ],
+  },
 ];
+
+// Flat list for backward compatibility
+const menuItems = menuGroups.flatMap((g) => g.items);
 
 const adminMenuItems = [
   { icon: Shield, label: "User Management", path: "/admin/users" },
@@ -270,24 +289,29 @@ function DashboardLayoutContent({
           </SidebarHeader>
 
           <SidebarContent className="gap-0">
-            <SidebarMenu className="px-2 py-1">
-              {menuItems.map((item) => {
-                const active = isActive(item.path);
-                return (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton
-                      isActive={active}
-                      onClick={() => setLocation(item.path)}
-                      tooltip={item.label}
-                      className="h-9 md:h-10 transition-all font-normal"
-                    >
-                      <item.icon className={`h-4 w-4 ${active ? "text-primary" : ""}`} />
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
+            {menuGroups.map((group) => (
+              <SidebarMenu key={group.label} className="px-2 py-1">
+                <div className="px-2 mb-1 mt-2 group-data-[collapsible=icon]:hidden">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">{group.label}</span>
+                </div>
+                {group.items.map((item) => {
+                  const active = isActive(item.path);
+                  return (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        isActive={active}
+                        onClick={() => setLocation(item.path)}
+                        tooltip={item.label}
+                        className="h-9 md:h-10 transition-all font-normal"
+                      >
+                        <item.icon className={`h-4 w-4 ${active ? "text-primary" : ""}`} />
+                        <span>{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            ))}
             {/* Admin section - only visible to admins */}
             {user?.role === "admin" && (
               <SidebarMenu className="px-2 py-1 mt-4">

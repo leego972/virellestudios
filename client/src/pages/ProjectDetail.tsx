@@ -466,7 +466,11 @@ export default function ProjectDetail() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-card/50 flex-nowrap sm:flex-wrap h-auto gap-1 p-1 overflow-x-auto w-full justify-start">
+          {/* Pipeline order: Overview → Story → Characters → Scenes → Soundtrack → Trailer → Export → Tools */}
           <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
+          <TabsTrigger value="story" className="text-xs">
+            <BookOpen className="h-3 w-3 mr-1" />Story
+          </TabsTrigger>
           <TabsTrigger value="characters" className="text-xs">
             Characters {characters?.length ? `(${characters.length})` : ""}
           </TabsTrigger>
@@ -475,9 +479,6 @@ export default function ProjectDetail() {
           </TabsTrigger>
           <TabsTrigger value="soundtrack" className="text-xs">
             <Music className="h-3 w-3 mr-1" />Soundtrack {soundtracks?.length ? `(${soundtracks.length})` : ""}
-          </TabsTrigger>
-          <TabsTrigger value="story" className="text-xs">
-            <BookOpen className="h-3 w-3 mr-1" />Story
           </TabsTrigger>
           <TabsTrigger value="trailer" className="text-xs">Trailer</TabsTrigger>
           <TabsTrigger value="export" className="text-xs">
