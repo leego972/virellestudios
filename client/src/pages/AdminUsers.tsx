@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import {
   Shield, Users, Loader2, Crown, User, Film, Trash2, Search,
   AlertTriangle, CheckCircle2, Clock, XCircle, RefreshCw,
+  Zap, Calendar, UserX, UserCheck, Gift,
 } from "lucide-react";
 
 // ─── Status badge for project status ───────────────────────────────────────
@@ -44,6 +45,23 @@ export default function AdminUsers() {
     onSuccess: () => { utils.admin.listUsers.invalidate(); toast.success("User role updated"); },
     onError: (err) => toast.error(err.message || "Failed to update role"),
   });
+  const [betaDays, setBetaDays] = useState<Record<number, number>>({});
+  const assignBetaMutation = trpc.admin.assignBetaTier.useMutation({
+    onSuccess: (_, vars) => {
+      utils.admin.listUsers.invalidate();
+      toast.success(`Beta tier assigned — expires in ${betaDays[vars.userId] || 90} days`);
+    },
+    onError: (err) => toast.error(err.message || "Failed to assign beta tier"),
+  });
+  const revokeBetaMutation = trpc.admin.revokeBetaTier.useMutation({
+    onSuccess: () => { utils.admin.listUsers.invalidate(); toast.success("Beta tier revoked"); },
+    onError: (err) => toast.error(err.message || "Failed to revoke beta tier"),
+  });
+  const grantCreditsMutation = trpc.admin.grantCredits.useMutation({
+    onSuccess: () => { utils.admin.listUsers.invalidate(); toast.success("Credits granted"); },
+    onError: (err) => toast.error(err.message || "Failed to grant credits"),
+  });
+  const [grantAmount, setGrantAmount] = useState<Record<number, number>>({});
 
   // ─── Projects state ────────────────────────────────────────────────────────
   const [projectSearch, setProjectSearch] = useState("");
@@ -162,6 +180,9 @@ export default function AdminUsers() {
           </TabsTrigger>
           <TabsTrigger value="projects" className="gap-2">
             <Film className="w-4 h-4" /> Projects
+          </TabsTrigger>
+          <TabsTrigger value="beta" className="gap-2">
+            <Zap className="w-4 h-4 text-amber-400" /> Beta Testers
           </TabsTrigger>
         </TabsList>
 
@@ -364,6 +385,157 @@ export default function AdminUsers() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+        {/* ─── Beta Testers Tab ───────────────────────────────────────────── */}
+        <TabsContent value="beta" className="mt-4">
+          <Card className="border-amber-500/30 bg-card/80">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg text-amber-400">Beta Tester Management</CardTitle>
+                  <CardDescription>Assign, revoke, and manage temporary beta access. Beta users get full Industry-tier access + 5,000 credits.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Beta stats */}
+              <div className="flex items-center gap-4 mb-6 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="text-sm text-amber-300">
+                  <strong>{users.filter((u: any) => u.subscriptionTier === "beta").length}</strong> active beta testers
+                </span>
+                <span className="text-xs text-muted-foreground ml-auto">Beta tier = full Industry access, temporary, revocable</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/50">
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">User</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Beta Expires</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Assign Beta (days)</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Grant Credits</th>
+                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((u: any) => {
+                      const isBeta = u.subscriptionTier === "beta";
+                      const expiresAt = u.betaExpiresAt ? new Date(u.betaExpiresAt) : null;
+                      const isExpired = expiresAt ? expiresAt < new Date() : false;
+                      const daysLeft = expiresAt ? Math.ceil((expiresAt.getTime() - Date.now()) / 86400000) : null;
+                      return (
+                        <tr key={u.id} className={`border-b border-border/30 hover:bg-muted/30 transition-colors ${isBeta ? "bg-amber-500/5" : ""}`}>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${isBeta ? "bg-amber-500/20 text-amber-400" : "bg-muted text-muted-foreground"}`}>
+                                {(u.name || "?").charAt(0).toUpperCase()}
+                              </div>
+                              <span className="font-medium text-foreground text-sm">{u.name || "Unnamed"}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-sm text-muted-foreground">{u.email || "—"}</td>
+                          <td className="py-3 px-4">
+                            {isBeta ? (
+                              <Badge variant="outline" className={`text-xs ${isExpired ? "bg-red-500/10 text-red-400 border-red-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"}`}>
+                                <Zap className="w-3 h-3 mr-1" />
+                                {isExpired ? "Beta Expired" : "Beta Active"}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-xs text-muted-foreground">
+                                <User className="w-3 h-3 mr-1" />
+                                {u.subscriptionTier || "independent"}
+                              </Badge>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 text-sm">
+                            {expiresAt ? (
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3 text-muted-foreground" />
+                                <span className={isExpired ? "text-red-400" : daysLeft && daysLeft <= 7 ? "text-amber-400" : "text-muted-foreground"}>
+                                  {isExpired ? "Expired" : `${daysLeft}d left`}
+                                  <span className="text-xs text-muted-foreground ml-1">({expiresAt.toLocaleDateString()})</span>
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">—</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                min={1}
+                                max={365}
+                                value={betaDays[u.id] ?? 90}
+                                onChange={(e) => setBetaDays(prev => ({ ...prev, [u.id]: parseInt(e.target.value) || 90 }))}
+                                className="w-16 h-8 text-xs px-2 rounded-md border border-border/50 bg-muted/50 text-foreground"
+                              />
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 text-xs border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                                disabled={assignBetaMutation.isPending}
+                                onClick={() => assignBetaMutation.mutate({ userId: u.id, expiresInDays: betaDays[u.id] ?? 90 })}
+                              >
+                                <UserCheck className="w-3 h-3 mr-1" />
+                                {isBeta ? "Extend" : "Assign"}
+                              </Button>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                min={1}
+                                max={100000}
+                                value={grantAmount[u.id] ?? 1000}
+                                onChange={(e) => setGrantAmount(prev => ({ ...prev, [u.id]: parseInt(e.target.value) || 1000 }))}
+                                className="w-20 h-8 text-xs px-2 rounded-md border border-border/50 bg-muted/50 text-foreground"
+                              />
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 text-xs border-green-500/30 text-green-400 hover:bg-green-500/10"
+                                disabled={grantCreditsMutation.isPending}
+                                onClick={() => grantCreditsMutation.mutate({ userId: u.id, amount: grantAmount[u.id] ?? 1000, reason: "Admin grant" })}
+                              >
+                                <Gift className="w-3 h-3 mr-1" />
+                                Grant
+                              </Button>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            {isBeta && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                disabled={revokeBetaMutation.isPending}
+                                onClick={() => revokeBetaMutation.mutate({ userId: u.id })}
+                              >
+                                <UserX className="w-3 h-3 mr-1" />
+                                Revoke Beta
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {users.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="text-center py-8 text-muted-foreground">No users found</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 
