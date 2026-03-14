@@ -153,12 +153,36 @@ export default function StudioOpener({ onComplete, mode = "login", skippable = t
   const audioFiredRef = useRef({ whoosh: false, metal: false, boom: false, shimmer: false, sustain: false });
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const { data: opener, isLoading } = trpc.showcase.opener.useQuery(undefined, {
+   const { data: opener, isLoading } = trpc.showcase.opener.useQuery(undefined, {
     retry: false,
     refetchOnWindowFocus: false,
   });
-
   const hasVideoScenes = opener?.scenes && opener.scenes.length > 0;
+
+  // ── Official opener video state ──────────────────────────────────────────
+  const [openerVideoReady, setOpenerVideoReady] = useState(false);
+  const [openerVideoFailed, setOpenerVideoFailed] = useState(false);
+  const openerVideoRef = useRef<HTMLVideoElement>(null);
+
+  const handleOpenerVideoCanPlay = useCallback(() => {
+    setOpenerVideoReady(true);
+    setPhase("playing");
+    openerVideoRef.current?.play().catch(() => {});
+  }, []);
+
+  const handleOpenerVideoEnded = useCallback(() => {
+    setPhase("fadeout");
+    setTimeout(onComplete, 800);
+  }, [onComplete]);
+
+  const handleOpenerVideoError = useCallback(() => {
+    setOpenerVideoFailed(true);
+  }, []);
+
+  // Use official video unless it fails to load
+  const useOfficialVideo = !openerVideoFailed;
+  // Only fall through to SVG animation if official video failed AND no showcase scenes
+  const useSVGAnimation = openerVideoFailed && !hasVideoScenes;
 
   useEffect(() => {
     if (!skippable) return;
@@ -185,7 +209,8 @@ export default function StudioOpener({ onComplete, mode = "login", skippable = t
 
   // rAF animation loop
   useEffect(() => {
-    if (isLoading || hasVideoScenes) return;
+    // Only run SVG animation if official video failed AND no showcase scenes
+    if (!openerVideoFailed || isLoading || hasVideoScenes) return;
     setPhase("playing");
     startTimeRef.current = performance.now();
     audioCtxRef.current = createAudioContext();
@@ -326,8 +351,23 @@ export default function StudioOpener({ onComplete, mode = "login", skippable = t
       onClick={skippable ? handleSkip : undefined}
       style={{ cursor: skippable ? "pointer" : "default" }}
     >
-      {/* ── Video mode ── */}
-      {hasVideoScenes && currentScene && (
+      {/* ── Official opener video (primary) ── */}
+      {useOfficialVideo && (
+        <video
+          ref={openerVideoRef}
+          src="/virelle-opener.mp4"
+          className="w-full h-full object-cover"
+          playsInline
+          preload="auto"
+          muted={false}
+          onCanPlay={handleOpenerVideoCanPlay}
+          onEnded={handleOpenerVideoEnded}
+          onError={handleOpenerVideoError}
+          style={{ display: openerVideoReady ? "block" : "none" }}
+        />
+      )}
+      {/* ── Showcase scene video mode (secondary) ── */}
+      {openerVideoFailed && hasVideoScenes && currentScene && (
         <video
           ref={videoRef}
           key={currentScene.id}
@@ -340,9 +380,8 @@ export default function StudioOpener({ onComplete, mode = "login", skippable = t
           onError={handleSkip}
         />
       )}
-
-      {/* ── Animated fallback mode ── */}
-      {!hasVideoScenes && phase === "playing" && (
+      {/* ── SVG animated fallback (tertiary — only if both videos fail) ── */}
+      {useSVGAnimation && phase === "playing" && ((
         <div className="relative w-full h-full flex items-center justify-center select-none">
 
           {/* Letterbox bars */}

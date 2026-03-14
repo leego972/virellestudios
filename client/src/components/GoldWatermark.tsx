@@ -10,7 +10,7 @@ export default function GoldWatermark({ className = "" }: { className?: string }
     <div className={`fixed inset-0 flex items-center justify-center pointer-events-none z-0 ${className}`}>
       {/* Dark mode: golden logo on dark background — no outline needed */}
       <img
-        src="/vs-watermark.png"
+        src="/virelle-logo-square.png"
         alt=""
         className="hidden dark:block w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.07]"
         style={{
@@ -20,7 +20,7 @@ export default function GoldWatermark({ className = "" }: { className?: string }
       />
       {/* Light mode: golden logo with thin black outline for visibility on white */}
       <img
-        src="/vs-watermark.png"
+        src="/virelle-logo-square.png"
         alt=""
         className="block dark:hidden w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.08]"
         style={{

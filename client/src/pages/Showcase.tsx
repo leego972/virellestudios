@@ -30,7 +30,7 @@ export default function Showcase() {
           {/* Logo */}
           <div className="flex items-center justify-center mb-6">
             <img
-              src="/vs-watermark.png"
+              src="/virelle-logo-square.png"
               alt="VirElle Studios"
               className="w-28 h-28 object-contain"
               style={{ filter: "sepia(1) saturate(3) brightness(1.3) hue-rotate(10deg)" }}

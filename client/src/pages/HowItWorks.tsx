@@ -159,7 +159,7 @@ export default function HowItWorks() {
       <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <button onClick={() => setLocation("/welcome")} className="flex items-center gap-2">
-            <img src="/vs-watermark.png" alt="Virelle Studios" className="h-8 w-8 rounded" />
+            <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-8 w-8 rounded" />
             <span className="font-bold text-sm">Virelle Studios</span>
           </button>
           <div className="flex items-center gap-3">

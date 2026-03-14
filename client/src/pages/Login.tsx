@@ -68,7 +68,7 @@ export default function Login() {
           {/* Virelle Studios Logo */}
           <div className="flex flex-col items-center gap-4">
             <img
-              src="/vs-watermark.png"
+              src="/virelle-logo-square.png"
               alt="Virelle Studios"
               className="w-32 h-32 rounded-2xl shadow-lg shadow-amber-500/20"
               draggable={false}
