@@ -355,7 +355,7 @@ export default function StudioOpener({ onComplete, mode = "login", skippable = t
       {useOfficialVideo && (
         <video
           ref={openerVideoRef}
-          src="/virelle-opener.mp4"
+          src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/IVZBIEWXryDGoWdT.mp4"
           className="w-full h-full object-cover"
           playsInline
           preload="auto"
