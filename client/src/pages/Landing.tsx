@@ -53,8 +53,8 @@ const TESTIMONIALS = [
 const PRICING = [
   {
     tier: "Independent",
-    price: "$5,000",
-    monthlyPrice: "$450",
+    price: "$990",
+    monthlyPrice: "$99",
     period: "/year",
     highlight: false,
     badge: "For Creators",
@@ -79,8 +79,8 @@ const PRICING = [
   },
   {
     tier: "Creator",
-    price: "$10,000",
-    monthlyPrice: "$900",
+    price: "$2,490",
+    monthlyPrice: "$249",
     period: "/year",
     highlight: true,
     badge: "Most Popular",
@@ -103,8 +103,8 @@ const PRICING = [
   },
   {
     tier: "Studio",
-    price: "$25,000",
-    monthlyPrice: "$2,200",
+    price: "$4,990",
+    monthlyPrice: "$499",
     period: "/year",
     highlight: false,
     badge: "For Studios",
@@ -127,16 +127,16 @@ const PRICING = [
   },
   {
     tier: "Industry",
-    price: "$50,000",
-    monthlyPrice: "$4,500",
+    price: "$9,990",
+    monthlyPrice: "$999",
     period: "/year",
     highlight: false,
     badge: "For Major Studios",
     accentColor: "yellow",
     audience: "Major studios, broadcasters, enterprise brands, and agencies with high-volume production pipelines.",
-    desc: "For major studios and enterprise productions. Full power, no limits. 10,000 credits/month included.",
+    desc: "For major studios and enterprise productions. Full power, no limits. 12,000 credits/month included.",
     features: [
-      "10,000 credits/month included",
+      "12,000 credits/month included",
       "Everything in Studio, plus:",
       "Unlimited projects",
       "Up to 180 min per film",
