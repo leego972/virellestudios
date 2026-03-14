@@ -85,11 +85,11 @@ export interface TierLimits {
  * NO FREE TIER — This is a professional tool.
  * 
  * MEMBERSHIP TIERS (required to use the platform):
- *   Amateur     — $29/month     ($290/year)      — 100 credits/month included
- *   Independent — $99/month     ($990/year)      — 500 credits/month included
- *   Creator     — $249/month    ($2,490/year)    — 1,500 credits/month included
- *   Studio      — $499/month    ($4,990/year)    — 4,000 credits/month included
- *   Industry    — $999/month    ($9,990/year)    — 12,000 credits/month included
+ *   Amateur     — $500/month    ($5,000/year)    — 250 credits/month included
+ *   Independent — $5,000/month  ($50,000/year)   — 500 credits/month included
+ *   Creator     — $10,000/month ($100,000/year)  — 1,500 credits/month included
+ *   Studio      — $15,000/month ($150,000/year)  — 4,000 credits/month included
+ *   Industry    — $25,000/month ($250,000/year)  — 10,000 credits/month included
  * 
  * CREDITS SYSTEM — Every action costs credits:
  *   Create New Project:                      FREE (zero friction)
@@ -118,19 +118,18 @@ export interface TierLimits {
  *   Movie Export:                            2 credits
  * 
  * CREDIT PACKS (top-ups, USD):
- *   100 credits   = $9
- *   500 credits   = $39
- *   1,500 credits = $99
- *   5,000 credits = $299
- *   15,000 credits = $799
- *   50,000 credits = $1,999
+ *   10 credits  = $500
+ *   50 credits  = $2,000
+ *   100 credits = $3,500
+ *   500 credits = $12,500
+ *   1000 credits = $20,000
  * 
  * KEY DESIGN: Included credits are "almost enough" for a typical project,
  * forcing users to purchase credit packs or upgrade tiers mid-production.
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
-  // ─── AMATEUR FILMMAKER ─── $29/month — 100 credits/month
+  // ─── AMATEUR FILMMAKER ─── $500/month — 250 credits/month
   amateur: {
     maxProjects: 2,
     maxCharactersPerProject: 5,
@@ -186,9 +185,9 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard"],
     maxDurationMinutes: 5,        // Max 5 min total — not enough for a real film
     maxClipsPerScene: 2,
-    monthlyCredits: 100,
+    monthlyCredits: 250,
   },
-  // ─── INDEPENDENT ─── $99/month — 500 credits/month, 90 min films, 4K, all core tools
+  // ─── INDEPENDENT ─── $5,000/month — 500 credits/month, 90 min films, 4K, all core tools
   independent: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -247,7 +246,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     maxClipsPerScene: 8,
     monthlyCredits: 500,
   },
-  // ─── CREATOR ─── $249/month — 1,500 credits, 120 min films, pro tools
+  // ─── CREATOR ─── $10,000/month — 1,500 credits, 120 min films, pro tools
   creator: {
     maxProjects: 50,
     maxCharactersPerProject: 50,
@@ -274,7 +273,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     resolution: "4k", quality: ["standard", "high"], maxDurationMinutes: 120, maxClipsPerScene: 10,
     monthlyCredits: 1500,
   },
-  // ─── STUDIO ─── $499/month — 4,000 credits, 150 min films, advanced tools
+  // ─── STUDIO ─── $15,000/month — 4,000 credits, 150 min films, advanced tools
   studio: {
     maxProjects: 100,
     maxCharactersPerProject: 100,
@@ -301,7 +300,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 150, maxClipsPerScene: 12,
     monthlyCredits: 4000,
   },
-  // ─── INDUSTRY ─── $999/month — 12,000 credits, 180 min, white-label, API, fine-tuning, priority
+  // ─── INDUSTRY ─── $25,000/month — 10,000 credits, 180 min, white-label, API, fine-tuning, priority
   industry: {
     maxProjects: -1,
     maxCharactersPerProject: -1,
@@ -357,7 +356,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
     maxClipsPerScene: 12,
-    monthlyCredits: 12000,
+    monthlyCredits: 10000,
   },
 };
 
@@ -589,33 +588,32 @@ export interface TierPricing {
  * Every action costs credits. Included credits are designed to get users
  * started but not enough for full productions — driving credit pack purchases.
  * 
- * Amateur:     $29/mo     ($290/yr)       — 100 credits/mo
- * Independent: $99/mo     ($990/yr)       — 500 credits/mo, 90 min films
- * Creator:     $249/mo    ($2,490/yr)     — 1,500 credits/mo, 120 min films
- * Studio:      $499/mo    ($4,990/yr)     — 4,000 credits/mo, 150 min films
- * Industry:    $999/mo    ($9,990/yr)     — 12,000 credits/mo, 180 min films, white-label, API
+ * Amateur:     $500/mo    ($5,000/yr)    — 250 credits/mo
+ * Independent: $5,000/mo  ($50,000/yr)   — 500 credits/mo, 90 min films
+ * Creator:     $10,000/mo ($100,000/yr)  — 1,500 credits/mo, 120 min films
+ * Studio:      $15,000/mo ($150,000/yr)  — 4,000 credits/mo, 150 min films
+ * Industry:    $25,000/mo ($250,000/yr)  — 10,000 credits/mo, 180 min films, white-label, API
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
-  // Prices in cents (USD)
-  amateur:     { monthly: 2900,  annual: 2417,  annualTotal: 29000,  monthlyTotal: 34800  },
-  independent: { monthly: 9900,  annual: 8250,  annualTotal: 99000,  monthlyTotal: 118800 },
-  creator:     { monthly: 24900, annual: 20750, annualTotal: 249000, monthlyTotal: 298800 },
-  studio:      { monthly: 49900, annual: 41583, annualTotal: 499000, monthlyTotal: 598800 },
-  industry:    { monthly: 99900, annual: 83250, annualTotal: 999000, monthlyTotal: 1198800 },
+  amateur:     { monthly: 50000, annual: 41667, annualTotal: 500000, monthlyTotal: 600000 },
+  independent: { monthly: 5000, annual: 4167, annualTotal: 50000, monthlyTotal: 60000 },
+  creator:     { monthly: 10000, annual: 8333, annualTotal: 100000, monthlyTotal: 120000 },
+  studio:      { monthly: 15000, annual: 12500, annualTotal: 150000, monthlyTotal: 180000 },
+  industry:    { monthly: 25000, annual: 20833, annualTotal: 250000, monthlyTotal: 300000 },
 };
 
 // Referral Rewards
 export const REFERRAL_REWARDS = {
   // Base reward per successful referral (both parties)
-  referrerCredits: 50,
-  newUserCredits: 50,
+  referrerCredits: 7000,
+  newUserCredits: 7000,
   maxReferralsPerMonth: 50,
   // Milestone bonuses — triggered when referrer hits these totals
   milestones: [
-    { count: 3,  bonus: 150,   label: "Rising Star" },
-    { count: 5,  bonus: 300,   label: "Connector" },
-    { count: 10, bonus: 750,   label: "Ambassador" },
-    { count: 25, bonus: 2000,  label: "Legend" },
+    { count: 3,  bonus: 25000,   label: "Rising Star" },
+    { count: 5,  bonus: 50000,   label: "Connector" },
+    { count: 10, bonus: 150000,  label: "Ambassador" },
+    { count: 25, bonus: 500000,  label: "Legend" },
   ],
 };
 
@@ -625,77 +623,72 @@ export const REFERRAL_REWARDS = {
 // credits are "almost enough" for a full production but not quite.
 //
 // Pricing philosophy:
-//   1 credit ≈ $0.08–0.18 in customer value (blended across pack sizes).
-//   Starter Pack: 100 credits / $9 → 1 credit = $0.09
-//   Mogul Pack:  50,000 credits / $1,999 → 1 credit = $0.04
-//   Blended average: ~$0.06–0.09 per credit.
+//   1 credit ≈ $35–50 in customer value (blended across pack sizes).
+//   Actual API costs are a small fraction of credit value — the margin
+//   funds platform infrastructure, support, and R&D.
 //
-//   Actual API costs per action:
-//   - Video generation (Runway/Sora): ~$0.10/s → 45s scene = ~$4.50 API cost
-//   - LLM calls (GPT-4o): ~$0.03–0.20 per call
-//   - Image generation (DALL-E 3 HD): ~$0.08 per image
-//   - Voice/SFX (ElevenLabs): ~$0.10–0.30 per generation
+// Video generation is the highest real API cost (~$0.10/s for Runway
+//   Gen-4 / Sora). A 45s scene costs ~$4.50 in API fees.
+//   Duration-scaled credits are applied at the call site in routers.ts
+//   using getVideoCredits(durationSeconds) below.
 //
-//   Credit costs are set so that at the Starter Pack rate ($0.09/credit),
-//   we cover API costs + ~40–60% gross margin on every action.
-//   At bulk pack rates ($0.04/credit), margin is tighter (~15–25%) but
-//   volume compensates. Subscription credits are pre-paid at ~$0.05/credit
-//   blended, ensuring profitability at scale.
+// LLM calls (GPT-4o) cost ~$0.03–0.20 per call depending on context.
+// Image generation (DALL-E 3 HD) costs ~$0.08 per image.
+// Voice transcription (Whisper) costs ~$0.006/min.
 // ============================================================
 
 export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   // ── Core video generation ──────────────────────────────────
   // Flat cost is the MINIMUM — actual cost scales with scene duration
   // via getVideoCredits(durationSeconds) in routers.ts
-  // Scale reference: Starter Pack = 100 credits / $9 → 1 credit ≈ $0.09
-  // API cost coverage: video gen ~$4.50/scene → 50 credits covers cost + margin
-  generate_film:           { cost: 5,   label: "Generate Film (AI scene breakdown + script, full pipeline)" },
-  generate_scene_video:    { cost: 50,  label: "Generate Scene Video (≤45s; longer scenes cost more)" },
-  regenerate_scene_video:  { cost: 40,  label: "Regenerate Scene Video (≤45s; 80% of generate cost)" },
-  generate_preview_image:  { cost: 2,   label: "Generate Preview Image (DALL-E 3 HD)" },
-  bulk_generate_previews:  { cost: 2,   label: "Bulk Generate Previews (per scene — image only)" },
-  bulk_generate_videos:    { cost: 50,  label: "Bulk Generate Videos (per scene — duration-scaled)" },
+  // Scale reference: Amateur = 250 credits/$500/mo → 1 credit ≈ $2
+  generate_film:           { cost: 10,  label: "Generate Film (AI scene breakdown + script, full pipeline)" },
+  generate_scene_video:    { cost: 10,  label: "Generate Scene Video (≤45s; longer scenes cost more)" },
+  regenerate_scene_video:  { cost: 8,   label: "Regenerate Scene Video (≤45s; 80% of generate cost)" },
+  generate_preview_image:  { cost: 3,   label: "Generate Preview Image (DALL-E 3 HD)" },
+  bulk_generate_previews:  { cost: 3,   label: "Bulk Generate Previews (per scene — image only)" },
+  bulk_generate_videos:    { cost: 10,  label: "Bulk Generate Videos (per scene — duration-scaled)" },
   // ── AI writing & production tools ─────────────────────────
-  virelle_chat:            { cost: 1,   label: "Virelle AI Chat / Director Assistant (per message)" },
-  script_writer_ai:        { cost: 10,  label: "AI Script Writer (full screenplay generation)" },
-  storyboard_ai:           { cost: 10,  label: "AI Storyboard Generation (full visual breakdown)" },
-  dialogue_editor_ai:      { cost: 3,   label: "AI Dialogue Polish (scene-level rewrite)" },
-  continuity_check_ai:     { cost: 3,   label: "AI Continuity Check (full film analysis)" },
-  shot_list_ai:            { cost: 3,   label: "AI Shot List Generation (per scene)" },
+  virelle_chat:            { cost: 2,   label: "Virelle AI Chat / Director Assistant (per message)" },
+  script_writer_ai:        { cost: 8,   label: "AI Script Writer (full screenplay generation)" },
+  storyboard_ai:           { cost: 8,   label: "AI Storyboard Generation (full visual breakdown)" },
+  dialogue_editor_ai:      { cost: 5,   label: "AI Dialogue Polish (scene-level rewrite)" },
+  continuity_check_ai:     { cost: 5,   label: "AI Continuity Check (full film analysis)" },
+  shot_list_ai:            { cost: 5,   label: "AI Shot List Generation (per scene)" },
   character_gen_ai:        { cost: 5,   label: "AI Character Generation (image + bio)" },
-  location_scout_ai:       { cost: 2,   label: "AI Location Scout (suggestions + reference image)" },
-  budget_estimate_ai:      { cost: 3,   label: "AI Budget Estimate (multi-scene analysis)" },
-  subtitle_gen_ai:         { cost: 5,   label: "AI Subtitle Generation (full film, large context)" },
-  trailer_gen:             { cost: 80,  label: "Trailer Generation (4–6 video clips, ~2 min cinematic)" },
-  ad_poster_gen:           { cost: 3,   label: "Ad/Poster Image Generation (DALL-E 3 HD)" },
-  ad_poster_copy_gen:      { cost: 2,   label: "Ad/Poster Copy Generation (AI tagline + description)" },
-  ad_poster_video_gen:     { cost: 50,  label: "Ad/Poster Video Ad Generation (video clip via BYOK)" },
-  tagline_variants_gen:    { cost: 2,   label: "AI Tagline Variants (5 distinct tagline options)" },
+  location_scout_ai:       { cost: 3,   label: "AI Location Scout (suggestions + reference image)" },
+  budget_estimate_ai:      { cost: 5,   label: "AI Budget Estimate (multi-scene analysis)" },
+  subtitle_gen_ai:         { cost: 8,   label: "AI Subtitle Generation (full film, large context)" },
+  trailer_gen:             { cost: 20,  label: "Trailer Generation (4–6 video clips, ~2 min cinematic)" },
+  ad_poster_gen:           { cost: 5,   label: "Ad/Poster Image Generation (DALL-E 3 HD)" },
+  ad_poster_copy_gen:      { cost: 3,   label: "Ad/Poster Copy Generation (AI tagline + description)" },
+  ad_poster_video_gen:     { cost: 10,  label: "Ad/Poster Video Ad Generation (video clip via BYOK)" },
+  tagline_variants_gen:    { cost: 3,   label: "AI Tagline Variants (5 distinct tagline options)" },
   brand_kit_gen:           { cost: 5,   label: "AI Brand Kit Generation (palette + fonts + logo concept)" },
   influencer_kit_gen:      { cost: 5,   label: "AI Influencer Kit Generation (press release + social copy)" },
   // ── Sound & voice generation ──────────────────────────────
   sfx_generate_from_text:  { cost: 5,   label: "AI Sound Effect Generation (ElevenLabs text-to-SFX)" },
   sfx_voice_choir:         { cost: 5,   label: "AI Voice Choir Generation (ElevenLabs TTS choir/wings)" },
   // ── Blog & content ────────────────────────────────────────
-  blog_article_gen:        { cost: 3,   label: "Blog Article Generation (full article, ~1500 words)" },
+  blog_article_gen:        { cost: 5,   label: "Blog Article Generation (full article, ~1500 words)" },
   // ── Export & project management ───────────────────────────
-  export_final_film:       { cost: 10,  label: "Export Final Film (full assembly + render)" },
+  export_final_film:       { cost: 8,   label: "Export Final Film (full assembly + render)" },
   create_project:          { cost: 0,   label: "Create New Project (FREE — no friction on start)" },
   movie_export:            { cost: 5,   label: "Movie Export (scenes/trailer export)" },
 };
 
 /**
  * Duration-scaled video credit cost.
- * Scale reference: Starter Pack = 100 credits / $9 → 1 credit ≈ $0.09.
+ * Scale reference: Amateur = 250 credits / $500/mo → 1 credit ≈ $2.
  * Runway Gen-4 / Sora / Veo 3 charge ~$0.10/s. A 45s scene costs ~$4.50 in API fees.
- * At $0.09/credit, 50 credits = $4.50 → covers API cost exactly at Starter Pack rate.
- * Bulk pack buyers ($0.04/credit) get a better deal but generate more volume.
+ * We scale credits with duration to ensure profitability on long scenes
+ * while keeping short scenes affordable.
  *
  * Tiers:
- *   ≤15s   → 20 credits  (short clip, ~$1.50 API cost → $1.80 at Starter rate)
- *   16–45s → 50 credits  (standard scene, ~$4.50 API cost → $4.50 at Starter rate)
- *   46–90s → 80 credits  (long scene, ~$9 API cost → $7.20 at Starter rate)
- *   >90s   → 120 credits (extended scene, ~$12+ API cost → $10.80 at Starter rate)
+ *   ≤15s   → 5 credits   (short clip, ~$1.50 API cost)
+ *   16–45s → 10 credits  (standard scene, ~$4.50 API cost)
+ *   46–90s → 15 credits  (long scene, ~$9 API cost)
+ *   >90s   → 20 credits  (extended scene, ~$12+ API cost)
  *
  * For regeneration, apply a 20% discount (same API cost, but customer
  * is retrying — reward persistence without giving it away free).
@@ -703,16 +696,16 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
 export function getVideoCredits(durationSeconds: number, isRegenerate = false): number {
   let credits: number;
   if (durationSeconds <= 15) {
-    credits = 20;
+    credits = 5;
   } else if (durationSeconds <= 45) {
-    credits = 50;
+    credits = 10;
   } else if (durationSeconds <= 90) {
-    credits = 80;
+    credits = 15;
   } else {
-    credits = 120;
+    credits = 20;
   }
   if (isRegenerate) {
-    credits = Math.max(15, Math.round(credits * 0.8));
+    credits = Math.max(4, Math.round(credits * 0.8));
   }
   return credits;
 }
@@ -728,14 +721,12 @@ export interface TopUpPack {
 }
 
 export const TOP_UP_PACKS: TopUpPack[] = [
-  // Prices in cents (USD). 1 credit ≈ $0.09 at Starter, $0.04 at Mogul.
-  // Designed so every pack is clearly better value than the one before it.
-  { id: "topup_10",   name: "Starter Pack",     credits: 100,   price: 900,    pricePerCredit: 0.09, savings: "" },
-  { id: "topup_50",   name: "Producer Pack",    credits: 500,   price: 3900,   pricePerCredit: 0.078, savings: "Save 13%" },
-  { id: "topup_100",  name: "Director Pack",    credits: 1500,  price: 9900,   pricePerCredit: 0.066, savings: "Save 27%" },
-  { id: "topup_200",  name: "Studio Pack",      credits: 5000,  price: 29900,  pricePerCredit: 0.060, savings: "Save 33%" },
-  { id: "topup_500",  name: "Blockbuster Pack", credits: 15000, price: 79900,  pricePerCredit: 0.053, savings: "Save 41%" },
-  { id: "topup_1000", name: "Mogul Pack",       credits: 50000, price: 199900, pricePerCredit: 0.040, savings: "Save 56%" },
+  { id: "topup_10",   name: "Starter Pack",     credits: 500,   price: 2500,   pricePerCredit: 5,   savings: "" },
+  { id: "topup_50",   name: "Producer Pack",    credits: 1500,  price: 6000,   pricePerCredit: 4,   savings: "Save 20%" },
+  { id: "topup_100",  name: "Director Pack",    credits: 3000,  price: 10500,  pricePerCredit: 3.5, savings: "Save 30%" },
+  { id: "topup_200",  name: "Studio Pack",      credits: 6000,  price: 18000,  pricePerCredit: 3,   savings: "Save 40%" },
+  { id: "topup_500",  name: "Blockbuster Pack", credits: 12000, price: 30000,  pricePerCredit: 2.5, savings: "Save 50%" },
+  { id: "topup_1000", name: "Mogul Pack",       credits: 25000, price: 50000,  pricePerCredit: 2,   savings: "Save 60%" },
 ];
 
 // ============================================================
