@@ -381,7 +381,7 @@ export default function StudioOpener({ onComplete, mode = "login", skippable = t
         />
       )}
       {/* ── SVG animated fallback (tertiary — only if both videos fail) ── */}
-      {useSVGAnimation && phase === "playing" && ((
+      {useSVGAnimation && phase === "playing" && (
         <div className="relative w-full h-full flex items-center justify-center select-none">
 
           {/* Letterbox bars */}
