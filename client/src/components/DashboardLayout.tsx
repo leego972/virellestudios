@@ -278,7 +278,7 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed && (
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
+                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-9 w-9 rounded shrink-0" />
                   <span className="font-bold tracking-tight truncate text-base">
                     Virelle Studios
                   </span>
@@ -463,7 +463,7 @@ function DashboardLayoutContent({
           <div data-mobile-header className="flex border-b h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-11 w-11 rounded-lg" />
-              <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-8 w-8 rounded" />
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-8 w-8 rounded" />
               <span className="text-base font-bold">Virelle Studios</span>
             </div>
             {switchable && (
@@ -482,7 +482,7 @@ function DashboardLayoutContent({
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: golden logo on dark background */}
             <img
-              src="/virelle-logo-square.png"
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
               alt=""
               className="hidden dark:block w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] object-contain opacity-[0.10]"
               style={{ filter: "sepia(1) saturate(4) brightness(1.3) hue-rotate(10deg)" }}
@@ -490,7 +490,7 @@ function DashboardLayoutContent({
             />
             {/* Light mode: golden logo with thin black outline for visibility on white */}
             <img
-              src="/virelle-logo-square.png"
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
               alt=""
               className="block dark:hidden w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] object-contain opacity-[0.12]"
               style={{ filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg) drop-shadow(0 0 1px rgba(0,0,0,0.6)) drop-shadow(0 0 2px rgba(0,0,0,0.3))" }}

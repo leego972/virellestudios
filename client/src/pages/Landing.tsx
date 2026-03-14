@@ -259,7 +259,7 @@ export default function Landing() {
       <div
         className="pointer-events-none fixed inset-0"
         style={{
-          backgroundImage: `url('/virelle-logo-square.png')`,
+          backgroundImage: `url('https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png')`,
           backgroundRepeat: "repeat",
           backgroundSize: "200px 200px",
           backgroundAttachment: "fixed",
@@ -328,7 +328,7 @@ export default function Landing() {
       <nav className={`fixed left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 transition-all ${!bannerDismissed && !offerFull ? "top-[72px]" : "top-0"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-            <img src="/virelle-logo-square.png" alt="Virelle Studios" className="w-12 h-12 rounded-lg" draggable={false} />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="w-12 h-12 rounded-lg" draggable={false} />
             <span className="text-lg font-bold tracking-tight hidden sm:inline">Virelle Studios</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-foreground/80">
@@ -446,7 +446,7 @@ export default function Landing() {
         {/* VS Logo watermark background */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <img
-            src="/virelle-logo-square.png"
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
             alt=""
             className="w-[500px] h-[500px] sm:w-[600px] sm:h-[600px] lg:w-[700px] lg:h-[700px] object-contain opacity-[0.06]"
             style={{ filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg)" }}
@@ -459,7 +459,7 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto text-center relative z-10">
           {/* Audience targeting pill */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-4">
-            <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-6 w-6 rounded" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-6 w-6 rounded" />
             For indie filmmakers, content creators, agencies &amp; studios
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
@@ -529,7 +529,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div className="relative group rounded-xl overflow-hidden border border-border/40 hover:border-amber-500/40 transition-all duration-300">
               <img
-                src="/virelle-logo-full.png"
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/RLvvvpXSGBeZEIWZ.png"
                 alt="Virelle Studios cinematic opener — golden transformation"
                 className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -541,8 +541,8 @@ export default function Landing() {
             </div>
             <div className="relative group rounded-xl overflow-hidden border border-border/40 hover:border-amber-500/40 transition-all duration-300">
               <img
-                src="/virelle-logo-square.png"
-                alt="Virelle Studios golden emblem — AI generated logo"
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/nJwlbUoAaOvtGnki.png"
+                alt="Virelle Studios cinematic opener — dove approaching the shield"
                 className="w-full aspect-video object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 style={{ background: '#0a0a0a' }}
               />
@@ -1219,7 +1219,7 @@ export default function Landing() {
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-border/40 gap-4">
             <div className="flex items-center gap-3">
-              <img src="/virelle-logo-square.png" alt="Virelle Studios" className="w-10 h-10 rounded-lg" draggable={false} />
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="w-10 h-10 rounded-lg" draggable={false} />
               <span className="text-sm font-semibold">Virelle Studios</span>
             </div>
             <p className="text-[10px] text-foreground/80">

@@ -268,7 +268,7 @@ export default function Pricing() {
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-14 w-14 rounded-lg" />
+            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-14 w-14 rounded-lg" />
             <h1 className="text-3xl sm:text-5xl font-bold tracking-tight">Pricing</h1>
           </div>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
