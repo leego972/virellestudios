@@ -661,7 +661,7 @@ export async function runAutoMigration(): Promise<void> {
   // ─── Columns that may be missing from existing tables ───
   const missingColumns: ColumnCheck[] = [
     // Users table - subscription fields
-    { table: "users", column: "subscriptionTier", definition: "ENUM('independent','creator','studio','pro','industry') NOT NULL DEFAULT 'independent'" },
+    { table: "users", column: "subscriptionTier", definition: "ENUM('independent','creator','studio','pro','industry','beta','amateur') NOT NULL DEFAULT 'independent'" },
     { table: "users", column: "stripeCustomerId", definition: "VARCHAR(255) NULL" },
     { table: "users", column: "stripeSubscriptionId", definition: "VARCHAR(255) NULL" },
     { table: "users", column: "subscriptionStatus", definition: "ENUM('active','canceled','past_due','unpaid','trialing','none') NOT NULL DEFAULT 'none'" },
@@ -752,6 +752,7 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "frozenAt", definition: "TIMESTAMP NULL" },
     // Credits system
     { table: "users", column: "creditBalance", definition: "INT NOT NULL DEFAULT 0" },
+    { table: "users", column: "betaExpiresAt", definition: "TIMESTAMP NULL" },
     { table: "users", column: "totalCreditsEarned", definition: "INT NOT NULL DEFAULT 0" },
     { table: "users", column: "totalCreditsSpent", definition: "INT NOT NULL DEFAULT 0" },
     { table: "users", column: "creditsResetAt", definition: "TIMESTAMP NULL" },

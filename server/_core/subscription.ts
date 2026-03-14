@@ -11,7 +11,7 @@ export const stripe = ENV.stripeSecretKey
 // TIER DEFINITIONS & LIMITS
 // ============================================================
 
-export type SubscriptionTier = "amateur" | "independent" | "creator" | "studio" | "industry";
+export type SubscriptionTier = "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -357,6 +357,36 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     maxDurationMinutes: 180,
     maxClipsPerScene: 12,
     monthlyCredits: 10000,
+  },
+  // ─── BETA ─── FREE — Invite-only, temporary, full Industry-level access
+  beta: {
+    maxProjects: -1,
+    maxCharactersPerProject: -1,
+    maxScenesPerProject: -1,
+    maxGenerationsPerMonth: -1,
+    maxMovieExports: -1,
+    maxCollaboratorsPerProject: -1,
+    maxScriptsPerProject: -1,
+    maxStorageMB: -1,
+    canUseQuickGenerate: true, canUseTrailerGeneration: true, canUseDirectorAssistant: true,
+    canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
+    canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
+    canUseLocationScout: true, canUseMoodBoard: true, canUseShotList: true,
+    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true,
+    canUseCollaboration: true, canExportMovies: true, canExportHD: true,
+    canUseAICharacterGen: true, canUseAIScriptGen: true, canUseAIDialogueGen: true,
+    canUseAIBudgetGen: true, canUseAISubtitleGen: true, canUseAILocationSuggest: true,
+    canUseFullFilmGeneration: true, canUseAIVoiceActing: true, canUseAISoundtrack: true,
+    canUseCharacterConsistency: true, canUseSceneContinuity: true, canUseClipChaining: true,
+    canUseVisualEffects: true, canUseBulkGenerate: true, canUseMultiShotSequencer: true,
+    canUseLiveActionPlate: true, canUseNLEExport: true, canUseAICasting: true,
+    canExportUltraHD: true, canUseWhiteLabel: true, canUseAPIAccess: true,
+    canUseCustomFineTuning: true, canUsePriorityRendering: true,
+    resolution: "4k",
+    quality: ["standard", "high", "ultra"],
+    maxDurationMinutes: 180,
+    maxClipsPerScene: 12,
+    monthlyCredits: 5000,  // 5,000 credits/month for beta testers
   },
 };
 
@@ -799,6 +829,14 @@ function mapTierName(tier: string | null | undefined): SubscriptionTier {
 export function getEffectiveTier(user: User): SubscriptionTier {
   if (user.email === ENV.adminEmail || user.role === "admin") {
     return "industry";
+  }
+  // Beta tier: check if user has beta subscription and it hasn't expired
+  if ((user as any).subscriptionTier === "beta") {
+    const betaExpiry = (user as any).betaExpiresAt;
+    if (!betaExpiry || new Date(betaExpiry) > new Date()) {
+      return "beta";
+    }
+    // Beta expired — fall through to default
   }
   if (user.subscriptionStatus === "active" || user.subscriptionStatus === "trialing") {
     return mapTierName(user.subscriptionTier);

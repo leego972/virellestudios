@@ -279,6 +279,34 @@ export const appRouter = router({
         await db.updateUserRole(input.userId, input.role);
         return { success: true };
       }),
+    assignBetaTier: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        expiresInDays: z.number().min(1).max(365).default(90),
+      }))
+      .mutation(async ({ input }) => {
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + input.expiresInDays);
+        await db.assignBetaTier(input.userId, expiresAt);
+        await db.addCredits(input.userId, 5000, "beta_welcome", "Beta tester welcome credits — 5,000 credits included");
+        return { success: true, expiresAt };
+      }),
+    revokeBetaTier: adminProcedure
+      .input(z.object({ userId: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.revokeBetaTier(input.userId);
+        return { success: true };
+      }),
+    grantCredits: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        amount: z.number().min(1).max(100000),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.addCredits(input.userId, input.amount, "admin_grant", input.reason || "Admin credit grant");
+        return { success: true };
+      }),
   }),
 
   // ─── Projects ───
