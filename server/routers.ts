@@ -2844,9 +2844,34 @@ Break this into 8-15 scenes. For each scene, provide:
       .mutation(async ({ input }) => {
         return db.updateJob(input.id, { status: "processing" });
       }),
-  }),
 
-  // ─── Scripts ───
+    // ── Cancel Film Generation ──
+    cancelGeneration: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        // Only allow cancellation if generation is in progress
+        if (project.status !== "generating") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Project is not currently generating" });
+        }
+        // Set project status back to draft
+        await db.updateProject(input.projectId, ctx.user.id, { status: "draft", progress: 0 });
+        // Cancel all pending/processing jobs for this project
+        const jobs = await db.getProjectJobs(input.projectId);
+        let cancelledCount = 0;
+        for (const job of jobs) {
+          if (job.status === "processing" || job.status === "pending") {
+            await db.updateJob(job.id, { status: "failed", error: "Cancelled by director" });
+            cancelledCount++;
+          }
+        }
+        logAuditEvent(ctx.user.id, "cancelGeneration", "system", true, { projectId: input.projectId, cancelledJobs: cancelledCount });
+        logger.info("Generation cancelled", { userId: ctx.user.id, projectId: input.projectId, cancelledJobs: cancelledCount });
+        return { success: true, cancelledJobs: cancelledCount };
+      }),
+  }),
+  // ─── Scripts ────
   script: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -5088,16 +5113,113 @@ Generate a detailed production budget estimate.`,
         const { id, ...data } = input;
         return db.updateMovie(id, ctx.user.id, data);
       }),
-
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteMovie(input.id, ctx.user.id);
         return { success: true };
       }),
+
+    // ─── Real NLE Export ──────────────────────────────────────────────────────
+    exportNLE: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        format: z.enum(["fcpxml", "edl", "csv", "premiere_xml", "resolve_xml"]),
+        includeOptions: z.object({
+          videoClips: z.boolean().default(true),
+          audioTracks: z.boolean().default(true),
+          subtitles: z.boolean().default(false),
+          markers: z.boolean().default(false),
+          colorMetadata: z.boolean().default(false),
+        }).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProject(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const scenes = await db.getProjectScenes(input.projectId);
+        const completedScenes = scenes.filter((s: any) => s.videoUrl && s.status === "completed");
+        if (completedScenes.length === 0) throw new TRPCError({ code: "BAD_REQUEST", message: "No completed scenes to export. Generate video for at least one scene first." });
+
+        const fps = 24;
+        const opts = input.includeOptions ?? { videoClips: true, audioTracks: true, subtitles: false, markers: false, colorMetadata: false };
+        let content = "";
+        let mimeType = "text/plain";
+        let filename = `${project.title.replace(/[^a-zA-Z0-9]/g, "_")}`;
+
+        if (input.format === "fcpxml" || input.format === "resolve_xml") {
+          let offset = 0;
+          const assetDefs = completedScenes.map((scene: any, i: number) => {
+            const durationFrames = Math.round((scene.duration ?? 30) * fps);
+            const src = (scene.videoUrl ?? "").replace(/&/g, "&amp;");
+            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+            return `  <asset id="r${i + 2}" name="${title}" uid="${nanoid(16)}" src="${src}" start="0s" duration="${durationFrames}/${fps}s" hasVideo="1" hasAudio="1" />`;
+          }).join("\n");
+          const clipElements = completedScenes.map((scene: any, i: number) => {
+            const durationFrames = Math.round((scene.duration ?? 30) * fps);
+            const offsetFrames = offset;
+            offset += durationFrames;
+            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+            return `        <asset-clip name="${title}" offset="${offsetFrames}/${fps}s" duration="${durationFrames}/${fps}s" start="0s" tcFormat="NDF">
+          <video ref="r${i + 2}" offset="0s" duration="${durationFrames}/${fps}s" />
+          ${opts.audioTracks ? `<audio ref="r${i + 2}" offset="0s" duration="${durationFrames}/${fps}s" role="dialogue" />` : ""}
+          ${opts.markers ? `<marker start="0s" duration="1/${fps}s" value="Scene ${i + 1}" />` : ""}
+        </asset-clip>`;
+          }).join("\n");
+          const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 30) * fps), 0);
+          const projTitle = project.title.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n<fcpxml version="1.10">\n  <resources>\n    <format id="r1" name="FFVideoFormat1080p24" frameDuration="1/${fps}s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)" />\n${assetDefs}\n  </resources>\n  <library>\n    <event name="${projTitle}">\n      <project name="${projTitle} — Virelle Export">\n        <sequence format="r1" duration="${totalFrames}/${fps}s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">\n          <spine>\n${clipElements}\n          </spine>\n        </sequence>\n      </project>\n    </event>\n  </library>\n</fcpxml>`;
+          mimeType = "application/xml";
+          filename += ".fcpxml";
+
+        } else if (input.format === "edl") {
+          const toTC = (frames: number) => { const f=frames%fps,s=Math.floor(frames/fps)%60,m=Math.floor(frames/(fps*60))%60,h=Math.floor(frames/(fps*3600)); return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}:${String(f).padStart(2,"0")}`; };
+          const lines = [`TITLE: ${project.title}`, "FCM: NON-DROP FRAME", ""];
+          let editNum = 1; let recIn = 0;
+          completedScenes.forEach((scene: any, i: number) => {
+            const df = Math.round((scene.duration ?? 30) * fps);
+            const recOut = recIn + df;
+            lines.push(`${String(editNum).padStart(3,"0")}  AX       V     C        ${toTC(0)} ${toTC(df)} ${toTC(recIn)} ${toTC(recOut)}`);
+            lines.push(`* FROM CLIP NAME: ${scene.title ?? `Scene ${i + 1}`}`);
+            if (scene.videoUrl) lines.push(`* SOURCE FILE: ${scene.videoUrl}`);
+            lines.push("");
+            editNum++; recIn = recOut;
+          });
+          content = lines.join("\n");
+          mimeType = "text/plain";
+          filename += ".edl";
+
+        } else if (input.format === "premiere_xml") {
+          let offset = 0;
+          const clipItems = completedScenes.map((scene: any, i: number) => {
+            const df = Math.round((scene.duration ?? 30) * fps);
+            const start = offset; const end = offset + df; offset = end;
+            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+            const src = (scene.videoUrl ?? "").replace(/&/g, "&amp;");
+            return `        <clipitem id="clipitem-${i+1}"><name>${title}</name><duration>${df}</duration><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate><start>${start}</start><end>${end}</end><in>0</in><out>${df}</out><file id="file-${i+1}"><name>${title}</name><pathurl>${src}</pathurl><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate><duration>${df}</duration></file></clipitem>`;
+          }).join("\n");
+          const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 30) * fps), 0);
+          const projTitle = project.title.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE xmeml>\n<xmeml version="4">\n  <sequence>\n    <name>${projTitle}</name>\n    <duration>${totalFrames}</duration>\n    <rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate>\n    <media><video><track>\n${clipItems}\n    </track></video></media>\n  </sequence>\n</xmeml>`;
+          mimeType = "application/xml";
+          filename += "_premiere.xml";
+
+        } else {
+          // CSV
+          const rows = [["Scene #","Title","Duration (s)","Video URL","Mood","Time of Day","Location","Status"]];
+          completedScenes.forEach((scene: any, i: number) => {
+            rows.push([String(i+1), scene.title??`Scene ${i+1}`, String(scene.duration??30), scene.videoUrl??"", scene.mood??"", scene.timeOfDay??"", scene.location??"", scene.status??"completed"]);
+          });
+          content = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+          mimeType = "text/csv";
+          filename += "_scenes.csv";
+        }
+
+        const base64 = Buffer.from(content, "utf-8").toString("base64");
+        return { filename, mimeType, base64, sceneCount: completedScenes.length };
+      }),
   }),
 
-  // ─── Showcase / Demo Reel ──────────────────────────────────────────────────
+  // ─── Showcase / Demo Reel──────────────────────────────────────────────────
   showcase: router({
     // Public: get featured projects with completed scenes for the showcase page
     featured: publicProcedure.query(async () => {
@@ -6917,6 +7039,46 @@ Rules:
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         await db.deleteProjectSample(input.id);
+        return { success: true };
+      }),
+  }),
+
+  // ─── Contact Form ───
+  contact: router({
+    submit: publicProcedure
+      .input(z.object({
+        name: z.string().min(1).max(255),
+        email: z.string().email().max(320),
+        company: z.string().max(255).optional(),
+        subject: z.string().max(128).default("general"),
+        message: z.string().min(10).max(5000),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const clientIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
+        // Notify the owner via the notification system
+        try {
+          await notifyOwner({
+            title: `[Contact] ${input.subject.toUpperCase()} — ${input.name}`,
+            content: `From: ${input.name} <${input.email}>\nCompany: ${input.company || "N/A"}\nSubject: ${input.subject}\nIP: ${clientIP}\n\n${input.message}`,
+          });
+        } catch (notifyErr) {
+          // Non-critical — still succeed even if notification fails
+          logger.warn("Contact form owner notification failed:", notifyErr);
+        }
+        // Also create an in-app notification for admin users
+        try {
+          const adminUser = await db.getUserByEmail((ENV.adminEmail || "leego972@gmail.com").toLowerCase());
+          if (adminUser) {
+            await db.createNotification({
+              userId: adminUser.id,
+              type: "system",
+              title: `New contact: ${input.name}`,
+              message: `${input.email} — ${input.subject}: ${input.message.slice(0, 120)}${input.message.length > 120 ? "..." : ""}`,
+              link: "/admin",
+            });
+          }
+        } catch (_) { /* non-critical */ }
+        logAuditEvent(0, "contact_form_submitted", clientIP, true, { email: input.email, subject: input.subject });
         return { success: true };
       }),
   }),

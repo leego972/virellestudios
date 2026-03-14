@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import { VFX_SUITE_OPTIONS, VFX_SUITE_LABELS } from "@shared/types";
 
 const VFX_ICONS: Record<string, React.ReactNode> = {
@@ -44,6 +45,10 @@ export default function VFXSuite() {
   const [, navigate] = useLocation();
   const params = useParams<{ projectId: string; sceneId: string }>();
   const projectId = parseInt(params.projectId || "0");
+  const sceneId = parseInt(params.sceneId || "0");
+
+  const updateSceneMutation = trpc.scene.update.useMutation();
+  const generateVideoMutation = trpc.generation.generateVideo.useMutation();
 
   const [selectedOps, setSelectedOps] = useState<string[]>([]);
   const [intensity, setIntensity] = useState(75);
@@ -66,14 +71,27 @@ export default function VFXSuite() {
       toast.error("Select at least one VFX operation");
       return;
     }
+    if (!sceneId) {
+      toast.error("No scene found. Navigate here from a specific scene.");
+      return;
+    }
     setIsProcessing(true);
     setProcessComplete(false);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      // Persist VFX operations and instructions to the scene record
+      const vfxPrompt = retakeInstructions ||
+        `Apply post-processing VFX at ${intensity}% intensity: ${selectedOps.map(op => VFX_SUITE_LABELS[op] || op).join(", ")}. Preserve all original scene elements, characters, and composition.`;
+      await updateSceneMutation.mutateAsync({
+        id: sceneId,
+        vfxSuiteOperations: { operations: selectedOps, intensity },
+        retakeInstructions: vfxPrompt,
+      });
+      // Trigger video regeneration with VFX parameters embedded in the prompt
+      await generateVideoMutation.mutateAsync({ sceneId });
       setProcessComplete(true);
-      toast.success(`${selectedOps.length} VFX operation${selectedOps.length > 1 ? "s" : ""} applied successfully`);
-    } catch (err) {
-      toast.error("VFX processing failed. Please try again.");
+      toast.success(`${selectedOps.length} VFX operation${selectedOps.length > 1 ? "s" : ""} saved — video regeneration queued`);
+    } catch (err: any) {
+      toast.error(err?.message || "VFX processing failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }

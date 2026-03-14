@@ -1,33 +1,105 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  ArrowLeft, Search, Star, Download, ShoppingCart, Filter,
-  Music, Palette, Users, MapPin, Shirt, Sparkles, Lock, CheckCircle2,
+  ArrowLeft, Search, Star, Download, ShoppingCart,
+  Music, Palette, Users, MapPin, Shirt, Sparkles, Lock, CheckCircle2, Loader2,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 
 type AssetCategory = "all" | "characters" | "locations" | "music" | "vfx-packs" | "wardrobes" | "color-grades";
 
+// Asset library — free assets are saved to the user's local asset library for use in scenes.
+// Premium assets will be purchasable in a future update.
 const ASSETS = [
-  { id: "a001", name: "Neo-Tokyo Street Market", category: "locations", price: 0, isPremium: false, rating: 4.9, downloads: 8420, tags: ["sci-fi", "night", "urban", "neon"], author: "Virelle Studios" },
-  { id: "a002", name: "Orchestral Drama Suite Vol. 1", category: "music", price: 0, isPremium: false, rating: 4.8, downloads: 12300, tags: ["drama", "emotional", "strings", "orchestral"], author: "Virelle Studios" },
-  { id: "a003", name: "Blade Runner Color Grade Pack", category: "color-grades", price: 4.99, isPremium: true, rating: 4.9, downloads: 6780, tags: ["sci-fi", "neon", "noir", "cyberpunk"], author: "CinematicLUTs" },
-  { id: "a004", name: "Victorian London Mansion", category: "locations", price: 0, isPremium: false, rating: 4.7, downloads: 5230, tags: ["period", "gothic", "interior", "drama"], author: "Virelle Studios" },
-  { id: "a005", name: "Action Hero Wardrobe Pack", category: "wardrobes", price: 2.99, isPremium: true, rating: 4.6, downloads: 3890, tags: ["action", "tactical", "military", "modern"], author: "CostumePro" },
-  { id: "a006", name: "Horror Atmosphere SFX Pack", category: "vfx-packs", price: 0, isPremium: false, rating: 4.8, downloads: 9100, tags: ["horror", "suspense", "atmosphere", "sound"], author: "Virelle Studios" },
-  { id: "a007", name: "Deakins Desert Landscape", category: "locations", price: 0, isPremium: false, rating: 4.9, downloads: 7650, tags: ["western", "epic", "outdoor", "golden-hour"], author: "Virelle Studios" },
-  { id: "a008", name: "Noir Detective Wardrobe Pack", category: "wardrobes", price: 0, isPremium: false, rating: 4.7, downloads: 4320, tags: ["noir", "1940s", "detective", "period"], author: "Virelle Studios" },
-  { id: "a009", name: "Sci-Fi VFX Particle Pack", category: "vfx-packs", price: 7.99, isPremium: true, rating: 4.9, downloads: 5670, tags: ["sci-fi", "particles", "energy", "hologram"], author: "VFXPro" },
-  { id: "a010", name: "Romance Drama Color Grades", category: "color-grades", price: 0, isPremium: false, rating: 4.6, downloads: 3210, tags: ["romance", "warm", "soft", "golden"], author: "Virelle Studios" },
-  { id: "a011", name: "Jazz Club Interior — 1950s", category: "locations", price: 0, isPremium: false, rating: 4.8, downloads: 6890, tags: ["jazz", "1950s", "interior", "night"], author: "Virelle Studios" },
-  { id: "a012", name: "Epic Action Score Vol. 2", category: "music", price: 3.99, isPremium: true, rating: 4.9, downloads: 8900, tags: ["action", "epic", "percussion", "orchestral"], author: "FilmScore Pro" },
+  {
+    id: "a001", name: "Neo-Tokyo Street Market", category: "locations" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.9, downloads: 8420,
+    tags: ["sci-fi", "night", "urban", "neon"], author: "Virelle Studios",
+    description: "Crowded night market with neon signs, street food stalls, and rain-slicked pavement. Ideal for cyberpunk and sci-fi scenes.",
+    applyHint: "Use as a location reference in your scene's Location field.",
+  },
+  {
+    id: "a002", name: "Orchestral Drama Suite Vol. 1", category: "music" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.8, downloads: 12300,
+    tags: ["drama", "emotional", "strings", "orchestral"], author: "Virelle Studios",
+    description: "Full orchestral suite with 8 cues: tension build, emotional reveal, quiet grief, triumphant resolution, and more.",
+    applyHint: "Added to your Sound Library. Apply it to any scene's background music.",
+  },
+  {
+    id: "a003", name: "Blade Runner Color Grade Pack", category: "color-grades" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.9, downloads: 6780,
+    tags: ["sci-fi", "neon", "noir", "cyberpunk"], author: "CinematicLUTs",
+    description: "6 LUT presets inspired by neo-noir cinematography. Deep teals, amber highlights, crushed blacks.",
+    applyHint: "Apply in Color Grading Studio.",
+  },
+  {
+    id: "a004", name: "Victorian London Mansion", category: "locations" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.7, downloads: 5230,
+    tags: ["period", "gothic", "interior", "drama"], author: "Virelle Studios",
+    description: "Grand Victorian interior with dark wood panelling, candlelit chandeliers, and heavy drapes. Perfect for period drama and gothic horror.",
+    applyHint: "Use as a location reference in your scene's Location field.",
+  },
+  {
+    id: "a005", name: "Action Hero Wardrobe Pack", category: "wardrobes" as AssetCategory,
+    price: 2.99, isPremium: true, rating: 4.6, downloads: 3890,
+    tags: ["action", "tactical", "military", "modern"], author: "CostumePro",
+    description: "12 wardrobe descriptions for action protagonists: tactical gear, undercover civilian, formal infiltration, and field medic variants.",
+    applyHint: "Apply wardrobe descriptions to your characters.",
+  },
+  {
+    id: "a006", name: "Horror Atmosphere SFX Pack", category: "vfx-packs" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.8, downloads: 9100,
+    tags: ["horror", "suspense", "atmosphere", "sound"], author: "Virelle Studios",
+    description: "20 atmospheric sound prompts: distant footsteps, creaking floorboards, low drones, sudden silence, and jump-scare stingers.",
+    applyHint: "Added to your Sound Library. Apply to scenes in the Sound Effects tab.",
+  },
+  {
+    id: "a007", name: "Deakins Desert Landscape", category: "locations" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.9, downloads: 7650,
+    tags: ["western", "epic", "outdoor", "golden-hour"], author: "Virelle Studios",
+    description: "Vast desert plateau at golden hour. Sparse scrub brush, red rock formations, and a horizon that stretches forever.",
+    applyHint: "Use as a location reference in your scene's Location field.",
+  },
+  {
+    id: "a008", name: "Noir Detective Wardrobe Pack", category: "wardrobes" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.7, downloads: 4320,
+    tags: ["noir", "1940s", "detective", "period"], author: "Virelle Studios",
+    description: "8 wardrobe descriptions for 1940s noir characters: trench coat detective, femme fatale, corrupt cop, and newspaper editor.",
+    applyHint: "Apply wardrobe descriptions to your characters.",
+  },
+  {
+    id: "a009", name: "Sci-Fi VFX Particle Pack", category: "vfx-packs" as AssetCategory,
+    price: 7.99, isPremium: true, rating: 4.9, downloads: 5670,
+    tags: ["sci-fi", "particles", "energy", "hologram"], author: "VFXPro",
+    description: "15 VFX prompt templates: holographic displays, energy shields, teleportation effects, laser fire, and plasma explosions.",
+    applyHint: "Apply in VFX Suite.",
+  },
+  {
+    id: "a010", name: "Romance Drama Color Grades", category: "color-grades" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.6, downloads: 3210,
+    tags: ["romance", "warm", "soft", "golden"], author: "Virelle Studios",
+    description: "4 color grade presets for romantic drama: golden afternoon, soft morning, twilight warmth, and candlelit evening.",
+    applyHint: "Apply in Color Grading Studio.",
+  },
+  {
+    id: "a011", name: "Jazz Club Interior — 1950s", category: "locations" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.8, downloads: 6890,
+    tags: ["jazz", "1950s", "interior", "night"], author: "Virelle Studios",
+    description: "Intimate jazz club with low lighting, a small stage, smoke haze, and round tables with candles. Perfect for crime drama and period romance.",
+    applyHint: "Use as a location reference in your scene's Location field.",
+  },
+  {
+    id: "a012", name: "Epic Action Score Vol. 2", category: "music" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.9, downloads: 8900,
+    tags: ["action", "epic", "percussion", "orchestral"], author: "FilmScore Pro",
+    description: "10 action cues: chase sequence, final battle, hero theme, villain reveal, and victory fanfare. Full orchestral with heavy percussion.",
+    applyHint: "Added to your Sound Library.",
+  },
 ];
 
 const CATEGORY_ICONS: Record<AssetCategory, React.ReactNode> = {
@@ -55,7 +127,13 @@ export default function AssetMarketplace() {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState<AssetCategory>("all");
   const [sortBy, setSortBy] = useState("popular");
-  const [cart, setCart] = useState<string[]>([]);
+  const [downloading, setDownloading] = useState<string | null>(null);
+  const [savedIds, setSavedIds] = useState<string[]>(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("virelle_marketplace_assets") || "[]");
+      return saved.map((a: any) => a.id);
+    } catch { return []; }
+  });
 
   const filteredAssets = ASSETS.filter((asset) => {
     const matchesSearch =
@@ -71,16 +149,36 @@ export default function AssetMarketplace() {
     return 0;
   });
 
-  const toggleCart = (id: string) => {
-    setCart((prev) => prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]);
-  };
-
-  const handleDownload = (asset: typeof ASSETS[0]) => {
-    if (asset.isPremium && !cart.includes(asset.id)) {
-      toast.info("Add to cart to purchase this premium asset");
+  const handleSave = async (asset: typeof ASSETS[0]) => {
+    if (asset.isPremium) {
+      toast.info("Premium asset purchases are coming soon. This asset will be available for purchase in the next update.");
       return;
     }
-    toast.success(`"${asset.name}" added to your project library`);
+    if (savedIds.includes(asset.id)) {
+      toast.info(`"${asset.name}" is already in your asset library.`);
+      return;
+    }
+    setDownloading(asset.id);
+    try {
+      // Save asset reference to localStorage — used by Scene Editor and Sound Library
+      const saved = JSON.parse(localStorage.getItem("virelle_marketplace_assets") || "[]");
+      saved.push({
+        id: asset.id,
+        name: asset.name,
+        category: asset.category,
+        tags: asset.tags,
+        description: asset.description,
+        applyHint: asset.applyHint,
+        savedAt: new Date().toISOString(),
+      });
+      localStorage.setItem("virelle_marketplace_assets", JSON.stringify(saved));
+      setSavedIds((prev) => [...prev, asset.id]);
+      toast.success(`"${asset.name}" saved to your library. ${asset.applyHint}`);
+    } catch (err) {
+      toast.error("Failed to save asset. Please try again.");
+    } finally {
+      setDownloading(null);
+    }
   };
 
   return (
@@ -97,16 +195,10 @@ export default function AssetMarketplace() {
                 Asset Marketplace
               </h1>
               <p className="text-xs text-muted-foreground">
-                {ASSETS.length} assets available · {ASSETS.filter((a) => !a.isPremium).length} free
+                {ASSETS.length} assets available · {ASSETS.filter((a) => !a.isPremium).length} free · {savedIds.length} saved
               </p>
             </div>
           </div>
-          {cart.length > 0 && (
-            <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black">
-              <ShoppingCart className="w-4 h-4 mr-1" />
-              Cart ({cart.length})
-            </Button>
-          )}
         </div>
       </div>
 
@@ -154,67 +246,72 @@ export default function AssetMarketplace() {
 
         {/* Asset Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {filteredAssets.map((asset) => (
-            <Card key={asset.id} className="border-border/40 bg-black/20 hover:border-amber-500/40 transition-all">
-              <CardContent className="pt-4 space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium leading-tight">{asset.name}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{asset.author}</p>
-                  </div>
-                  {asset.isPremium ? (
-                    <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 text-xs ml-2 flex-shrink-0">
-                      ${asset.price}
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-green-400 border-green-500/40 text-xs ml-2 flex-shrink-0">
-                      Free
-                    </Badge>
-                  )}
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {asset.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="text-xs bg-muted/40 px-1.5 py-0.5 rounded text-muted-foreground">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-0.5">
-                      <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                      <span className="text-xs text-amber-400">{asset.rating}</span>
+          {filteredAssets.map((asset) => {
+            const isSaved = savedIds.includes(asset.id);
+            const isDownloading = downloading === asset.id;
+            return (
+              <Card key={asset.id} className="border-border/40 bg-black/20 hover:border-amber-500/40 transition-all">
+                <CardContent className="pt-4 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium leading-tight">{asset.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{asset.author}</p>
                     </div>
-                    <span className="text-xs text-muted-foreground">
-                      {(asset.downloads / 1000).toFixed(1)}k
-                    </span>
-                  </div>
-                  <div className="flex gap-1">
-                    {asset.isPremium && (
-                      <Button
-                        variant="outline" size="sm"
-                        className={`h-7 text-xs ${cart.includes(asset.id) ? "border-amber-500 text-amber-400" : "border-border/40"}`}
-                        onClick={() => toggleCart(asset.id)}
-                      >
-                        {cart.includes(asset.id) ? <CheckCircle2 className="w-3 h-3" /> : <ShoppingCart className="w-3 h-3" />}
-                      </Button>
+                    {asset.isPremium ? (
+                      <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 text-xs ml-2 flex-shrink-0">
+                        ${asset.price}
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-green-400 border-green-500/40 text-xs ml-2 flex-shrink-0">
+                        Free
+                      </Badge>
                     )}
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{asset.description}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {asset.tags.slice(0, 3).map((tag) => (
+                      <span key={tag} className="text-xs bg-muted/40 px-1.5 py-0.5 rounded text-muted-foreground">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-0.5">
+                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                        <span className="text-xs text-amber-400">{asset.rating}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {(asset.downloads / 1000).toFixed(1)}k
+                      </span>
+                    </div>
                     <Button
                       size="sm"
-                      className="h-7 text-xs bg-amber-500 hover:bg-amber-600 text-black"
-                      onClick={() => handleDownload(asset)}
+                      className={`h-7 text-xs ${
+                        isSaved
+                          ? "bg-green-600 hover:bg-green-700 text-white"
+                          : asset.isPremium
+                          ? "bg-muted hover:bg-muted text-muted-foreground border border-border/40"
+                          : "bg-amber-500 hover:bg-amber-600 text-black"
+                      }`}
+                      onClick={() => handleSave(asset)}
+                      disabled={isDownloading || isSaved}
                     >
-                      {asset.isPremium && !cart.includes(asset.id) ? (
-                        <Lock className="w-3 h-3" />
+                      {isDownloading ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : isSaved ? (
+                        <><CheckCircle2 className="w-3 h-3 mr-1" /> Saved</>
+                      ) : asset.isPremium ? (
+                        <><Lock className="w-3 h-3 mr-1" /> Coming Soon</>
                       ) : (
-                        <Download className="w-3 h-3" />
+                        <><Download className="w-3 h-3 mr-1" /> Save</>
                       )}
                     </Button>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -4,13 +4,30 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Download, FileCode, FileText, Film, Table, Loader2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Download, FileCode, FileText, Film, Table, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
-import { NLE_EXPORT_OPTIONS, NLE_EXPORT_LABELS } from "@shared/types";
 import { trpc } from "@/lib/trpc";
+
+// Map old format keys to new backend format values
+const FORMAT_MAP: Record<string, "fcpxml" | "edl" | "csv" | "premiere_xml" | "resolve_xml"> = {
+  "xml-premiere-pro": "premiere_xml",
+  "xml-final-cut-pro-x": "fcpxml",
+  "edl-davinci-resolve": "resolve_xml",
+  "aaf-avid-media-composer": "edl",
+  "csv-shot-list": "csv",
+  "pdf-production-report": "csv",
+};
+
+const FORMAT_FILENAMES: Record<string, string> = {
+  "xml-premiere-pro": "_premiere.xml",
+  "xml-final-cut-pro-x": ".fcpxml",
+  "edl-davinci-resolve": ".fcpxml",
+  "aaf-avid-media-composer": ".edl",
+  "csv-shot-list": "_scenes.csv",
+  "pdf-production-report": "_scenes.csv",
+};
 
 const FORMAT_ICONS: Record<string, React.ReactNode> = {
   "xml-premiere-pro": <FileCode className="w-5 h-5 text-blue-400" />,
@@ -50,17 +67,40 @@ export default function NLEExport() {
   const [exportComplete, setExportComplete] = useState(false);
 
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
+  const exportNLEMutation = trpc.movie.exportNLE.useMutation();
 
   const handleExport = async () => {
+    const backendFormat = FORMAT_MAP[selectedFormat];
+    if (!backendFormat) return;
     setIsExporting(true);
     setExportComplete(false);
     try {
-      // Simulate export generation
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const result = await exportNLEMutation.mutateAsync({
+        projectId,
+        format: backendFormat,
+        includeOptions: {
+          videoClips: includeOptions.sceneMetadata,
+          audioTracks: includeOptions.soundtrackRefs,
+          subtitles: false,
+          markers: includeOptions.productionNotes,
+          colorMetadata: includeOptions.cameraSettings,
+        },
+      });
+      // Decode base64 and trigger browser file download
+      const bytes = Uint8Array.from(atob(result.base64), c => c.charCodeAt(0));
+      const blob = new Blob([bytes], { type: result.mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = result.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
       setExportComplete(true);
-      toast.success(`${NLE_EXPORT_LABELS[selectedFormat]} exported successfully`);
-    } catch (err) {
-      toast.error("Export failed. Please try again.");
+      toast.success(`Export downloaded — ${result.sceneCount} scene${result.sceneCount !== 1 ? "s" : ""} included`);
+    } catch (err: any) {
+      toast.error(err?.message || "Export failed. Please try again.");
     } finally {
       setIsExporting(false);
     }

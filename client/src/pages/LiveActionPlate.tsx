@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import { LIVE_ACTION_COMPOSITE_OPTIONS, LIVE_ACTION_COMPOSITE_LABELS } from "@shared/types";
 
 const COMPOSITE_ICONS: Record<string, React.ReactNode> = {
@@ -28,8 +29,10 @@ const COMPOSITE_ICONS: Record<string, React.ReactNode> = {
 
 export default function LiveActionPlate() {
   const [, navigate] = useLocation();
-  const params = useParams<{ projectId: string }>();
+  const params = useParams<{ projectId: string; sceneId: string }>();
   const projectId = parseInt(params.projectId || "0");
+  const sceneId = parseInt(params.sceneId || "0");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [compositeMode, setCompositeMode] = useState("background-replacement");
   const [blendStrength, setBlendStrength] = useState(85);
@@ -38,20 +41,71 @@ export default function LiveActionPlate() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processComplete, setProcessComplete] = useState(false);
   const [plateUploaded, setPlateUploaded] = useState(false);
+  const [plateUrl, setPlateUrl] = useState("");
+  const [uploadingPlate, setUploadingPlate] = useState(false);
+
+  const updateSceneMutation = trpc.scene.update.useMutation();
+  const generateVideoMutation = trpc.generation.generateVideo.useMutation();
+  const uploadFootageMutation = trpc.upload.footage.useMutation();
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 150 * 1024 * 1024) {
+      toast.error("File too large. Maximum size is 150MB.");
+      return;
+    }
+    setUploadingPlate(true);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const result = await uploadFootageMutation.mutateAsync({
+        base64,
+        filename: file.name,
+        contentType: file.type,
+        sceneId: sceneId || undefined,
+        footageType: "reference",
+        label: "Live Action Plate",
+      });
+      setPlateUrl(result.url);
+      setPlateUploaded(true);
+      toast.success("Live action plate uploaded successfully");
+    } catch (err: any) {
+      toast.error(err?.message || "Upload failed. Please try again.");
+    } finally {
+      setUploadingPlate(false);
+    }
+  };
 
   const handleProcess = async () => {
-    if (!plateUploaded) {
+    if (!plateUploaded || !plateUrl) {
       toast.error("Please upload a live action plate first");
+      return;
+    }
+    if (!sceneId) {
+      toast.error("No scene found. Navigate here from a specific scene.");
       return;
     }
     setIsProcessing(true);
     setProcessComplete(false);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 4000));
+      const compositePrompt = compositeInstructions ||
+        `${LIVE_ACTION_COMPOSITE_LABELS[compositeMode] || compositeMode} with ${blendStrength}% blend strength and ${colorMatchStrength}% color match. Seamlessly integrate AI-generated content with the live action plate.`;
+      await updateSceneMutation.mutateAsync({
+        id: sceneId,
+        liveActionPlateUrl: plateUrl,
+        liveActionCompositeMode: compositeMode,
+        retakeInstructions: compositePrompt,
+      });
+      await generateVideoMutation.mutateAsync({ sceneId });
       setProcessComplete(true);
-      toast.success("Live action composite generated successfully");
-    } catch (err) {
-      toast.error("Composite generation failed. Please try again.");
+      toast.success("Live action composite saved — video regeneration queued");
+    } catch (err: any) {
+      toast.error(err?.message || "Composite generation failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -103,15 +157,28 @@ export default function LiveActionPlate() {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="video/mp4,video/quicktime,image/png,image/jpeg,image/webp"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
               <button
-                onClick={() => setPlateUploaded(true)}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingPlate}
                 className={`w-full border border-dashed rounded-lg p-8 text-sm transition-colors flex flex-col items-center gap-2 ${
                   plateUploaded
                     ? "border-green-500/60 bg-green-500/5 text-green-400"
                     : "border-amber-500/30 text-muted-foreground hover:border-amber-500/60 hover:text-amber-400"
                 }`}
               >
-                {plateUploaded ? (
+                {uploadingPlate ? (
+                  <>
+                    <Loader2 className="w-8 h-8 animate-spin" />
+                    <span>Uploading plate...</span>
+                  </>
+                ) : plateUploaded ? (
                   <>
                     <CheckCircle2 className="w-8 h-8" />
                     <span>Plate uploaded successfully</span>

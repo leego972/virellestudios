@@ -70,6 +70,7 @@ import {
   Tv,
   Megaphone,
   Pencil,
+  StopCircle,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -225,6 +226,14 @@ export default function ProjectDetail() {
     onError: (err) => toast.error(err.message),
   });
 
+  const cancelGenerationMutation = trpc.generation.cancelGeneration.useMutation({
+    onSuccess: (result) => {
+      utils.project.get.invalidate({ id: projectId });
+      utils.generation.listJobs.invalidate({ projectId });
+      toast.success(`Generation cancelled. ${result.cancelledJobs > 0 ? `${result.cancelledJobs} job(s) stopped.` : ""}`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
   const duplicateMutation = trpc.projectDuplicate.duplicate.useMutation({
     onSuccess: (newProject: any) => {
       utils.project.list.invalidate();
@@ -423,13 +432,33 @@ export default function ProjectDetail() {
       {(project.status === "generating" || quickGenMutation.isPending) && (
         <Card className="bg-primary/5 border-primary/20">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              <span className="text-sm font-medium">Generating your film...</span>
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <div className="flex items-center gap-3">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <span className="text-sm font-medium">Generating your film...</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs border-red-500/40 text-red-400 hover:bg-red-500/10 hover:border-red-500 hover:text-red-300 gap-1.5 shrink-0"
+                onClick={() => {
+                  if (confirm("Stop generation? Scenes created so far will be kept, but the AI will stop generating new ones.")) {
+                    cancelGenerationMutation.mutate({ projectId });
+                  }
+                }}
+                disabled={cancelGenerationMutation.isPending}
+              >
+                {cancelGenerationMutation.isPending ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <StopCircle className="h-3 w-3" />
+                )}
+                Stop Generating
+              </Button>
             </div>
             <Progress value={project.progress || 10} className="h-1.5" />
             <p className="text-xs text-muted-foreground mt-2">
-              AI is creating scenes based on your plot and characters
+              AI is creating scenes based on your plot and characters. Scenes generated so far will be kept if you stop.
             </p>
           </CardContent>
         </Card>

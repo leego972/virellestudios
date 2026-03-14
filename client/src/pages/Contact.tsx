@@ -8,6 +8,7 @@ import { ArrowLeft, Mail, MessageSquare, Building2, Phone, MapPin, Send, Loader2
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import LeegoFooter from "@/components/LeegoFooter";
 
 export default function Contact() {
@@ -22,6 +23,8 @@ export default function Contact() {
     message: "",
   });
 
+  const contactMutation = trpc.contact.submit.useMutation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
@@ -29,11 +32,21 @@ export default function Contact() {
       return;
     }
     setLoading(true);
-    // Simulate submission
-    await new Promise(r => setTimeout(r, 1500));
-    setLoading(false);
-    setSubmitted(true);
-    toast.success("Message sent! We'll get back to you within 24 hours.");
+    try {
+      await contactMutation.mutateAsync({
+        name: form.name,
+        email: form.email,
+        company: form.company || undefined,
+        subject: form.subject,
+        message: form.message,
+      });
+      setSubmitted(true);
+      toast.success("Message sent! We'll get back to you within 24 hours.");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {

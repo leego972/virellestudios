@@ -7,6 +7,7 @@ import {
   Globe, Clock, ChevronDown, Sun, Moon, BookOpen, CreditCard,
   MessageSquare, Clapperboard, Monitor, Scissors, MapPin,
   Mic, Sparkles, Video, Eye, Cpu, Building2, Rocket, Lock, AlertTriangle,
+  Menu, X as XIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -214,6 +215,7 @@ export default function Landing() {
   const [useCase, setUseCase] = useState<"film" | "vfx">("film");
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   useEffect(() => {
     if (!langOpen) return;
     function handleOutside(e: MouseEvent | TouchEvent) {
@@ -385,12 +387,54 @@ export default function Landing() {
                 </div>
               )}
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setLocation("/login")} className="text-sm">Sign In</Button>
-            <Button size="sm" onClick={() => setLocation("/pricing")} className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium">
+            <Button variant="ghost" size="sm" onClick={() => setLocation("/login")} className="text-sm hidden sm:inline-flex">Sign In</Button>
+            <Button size="sm" onClick={() => setLocation("/pricing")} className="text-sm bg-amber-500 hover:bg-amber-600 text-black font-medium hidden sm:inline-flex">
               View Plans
+            </Button>
+            {/* Mobile hamburger */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 md:hidden"
+              onClick={() => setMobileMenuOpen(o => !o)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <XIcon className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
+        {/* Mobile drawer */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur-xl">
+            <div className="px-4 py-4 space-y-1">
+              {[
+                { label: "Solutions", path: "/solutions" },
+                { label: "How It Works", path: "/how-it-works" },
+                { label: "Features", path: "#features" },
+                { label: "Pricing", path: "#pricing" },
+                { label: "Showcase", path: "/showcase", gold: true },
+                { label: "FAQ", path: "/faq" },
+                { label: "Blog", path: "/blog" },
+                { label: "About", path: "/about" },
+                { label: "Contact", path: "/contact" },
+              ].map(item => (
+                <button
+                  key={item.path}
+                  onClick={() => { setMobileMenuOpen(false); if (item.path.startsWith("#")) { document.querySelector(item.path)?.scrollIntoView({ behavior: "smooth" }); } else { setLocation(item.path); } }}
+                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-accent ${
+                    item.gold ? "text-amber-400" : "text-foreground/80 hover:text-foreground"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+              <div className="pt-3 border-t border-border/40 flex flex-col gap-2">
+                <Button variant="outline" className="w-full" onClick={() => { setMobileMenuOpen(false); setLocation("/login"); }}>Sign In</Button>
+                <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-medium" onClick={() => { setMobileMenuOpen(false); setLocation("/pricing"); }}>View Plans</Button>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ─── Hero ─── */}
