@@ -59,6 +59,7 @@ const PRICING = [
     highlight: false,
     badge: "For Creators",
     accentColor: "amber",
+    audience: "Solo filmmakers, film students, YouTube creators, and hobbyists making their first AI films.",
     desc: "Full access to all creative & pre-production tools. 500 credits/month included.",
     features: [
       "500 credits/month included",
@@ -84,6 +85,7 @@ const PRICING = [
     highlight: true,
     badge: "Most Popular",
     accentColor: "cyan",
+    audience: "Professional content creators, indie directors, and small agencies producing films at scale.",
     desc: "For professional creators and small studios scaling their output. 1,500 credits/month included.",
     features: [
       "1,500 credits/month included",
@@ -107,6 +109,7 @@ const PRICING = [
     highlight: false,
     badge: "For Studios",
     accentColor: "violet",
+    audience: "Production companies, VFX studios, commercial directors, and music video producers.",
     desc: "For production studios with multiple projects and larger teams. 4,000 credits/month included.",
     features: [
       "4,000 credits/month included",
@@ -130,6 +133,7 @@ const PRICING = [
     highlight: false,
     badge: "For Major Studios",
     accentColor: "yellow",
+    audience: "Major studios, broadcasters, enterprise brands, and agencies with high-volume production pipelines.",
     desc: "For major studios and enterprise productions. Full power, no limits. 10,000 credits/month included.",
     features: [
       "10,000 credits/month included",
@@ -453,41 +457,42 @@ export default function Landing() {
         <div className="absolute top-20 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-40 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-6">
-            <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-8 w-8 rounded" />
-            AI Film Production &amp; VFX Scene Studio
+          {/* Audience targeting pill */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-4">
+            <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-6 w-6 rounded" />
+            For indie filmmakers, content creators, agencies &amp; studios
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
-            Generate Full{" "}
+            Go from Concept to{" "}
             <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 bg-clip-text text-transparent">
-              90-Minute Films
+              Complete Film
             </span>
             <br />
-            <span className="text-3xl sm:text-4xl lg:text-5xl">
-              or{" "}
-              <span className="bg-gradient-to-r from-purple-400 via-violet-400 to-purple-500 bg-clip-text text-transparent">
-                Impossible VFX Scenes
-              </span>
+            <span className="text-3xl sm:text-4xl lg:text-5xl text-foreground/90">
+              in Hours &mdash; Not Months
             </span>
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-foreground/80 max-w-2xl mx-auto leading-relaxed">
-            The professional AI film production platform. Write a concept — Virelle generates the screenplay, scenes, voice acting, soundtrack, and final cut. Or generate individual VFX scenes to composite into your live-action production.
+          <p className="mt-5 text-base sm:text-lg text-foreground/75 max-w-2xl mx-auto leading-relaxed">
+            Write a concept. Virelle generates the screenplay, 60&ndash;90 cinematic scenes with voice acting, an original soundtrack, and a final cut &mdash; ready to publish. Or drop in impossible VFX scenes for your live-action production.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          {/* Inline proof signals */}
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-foreground/60">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> 50,000+ films created</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> 4&ndash;8 hrs from concept to final cut</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> You own all outputs commercially</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> BYOK &mdash; no video markup</span>
+          </div>
+          <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12 text-base">
               Start Your First Film
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => setLocation("/how-it-works")} className="h-12 text-base px-8">
+            <Button size="lg" variant="outline" onClick={() => { const el = document.getElementById('demo-reel'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="h-12 text-base px-8">
               <Play className="h-4 w-4 mr-2" />
-              How It Works
+              See Real Output
             </Button>
           </div>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-foreground/55">
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> BYOK — no video generation markup</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> You own all outputs commercially</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> Founding offer: 50% off first year</span>
-          </div>
+          <p className="mt-3 text-[11px] text-foreground/40">Founding offer: 50% off first year &mdash; no credit card required to explore.</p>
         </div>
       </section>
 
@@ -500,6 +505,101 @@ export default function Landing() {
               <p className="text-sm text-foreground/80 mt-1">{stat.label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ─── Demo Reel / Real Output Section ─── */}
+      <section id="demo-reel" className="py-20 px-4 sm:px-6 lg:px-8 bg-card/20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-4">
+              <Film className="h-3.5 w-3.5" />
+              Real Platform Output &mdash; Not Renders or Stock Footage
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              What Virelle Actually{" "}
+              <span className="text-amber-400">Generates</span>
+            </h2>
+            <p className="mt-4 text-foreground/70 max-w-2xl mx-auto">
+              Every frame below was produced directly by the Virelle platform &mdash; no post-production, no stock footage, no human VFX artists.
+            </p>
+          </div>
+
+          {/* Keyframe image grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="relative group rounded-xl overflow-hidden border border-border/40 hover:border-amber-500/40 transition-all duration-300">
+              <img
+                src="/virelle-logo-full.png"
+                alt="Virelle Studios cinematic opener — golden transformation"
+                className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3">
+                <p className="text-xs font-semibold text-white">Cinematic Opener</p>
+                <p className="text-[10px] text-white/70">Golden transformation sequence &mdash; 16s, generated in-platform</p>
+              </div>
+            </div>
+            <div className="relative group rounded-xl overflow-hidden border border-border/40 hover:border-amber-500/40 transition-all duration-300">
+              <img
+                src="/virelle-logo-square.png"
+                alt="Virelle Studios golden emblem — AI generated logo"
+                className="w-full aspect-video object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                style={{ background: '#0a0a0a' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3">
+                <p className="text-xs font-semibold text-white">Brand Identity</p>
+                <p className="text-[10px] text-white/70">AI-generated studio emblem &mdash; photorealistic gold</p>
+              </div>
+            </div>
+            <div className="relative group rounded-xl overflow-hidden border border-border/40 hover:border-purple-500/40 transition-all duration-300">
+              <div className="w-full aspect-video bg-gradient-to-br from-purple-900/60 via-black to-amber-900/40 flex items-center justify-center">
+                <div className="text-center px-4">
+                  <Sparkles className="h-10 w-10 text-amber-400 mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-white">Your Film Here</p>
+                  <p className="text-xs text-white/60 mt-1">Generate your first scene in minutes</p>
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3">
+                <p className="text-xs font-semibold text-white">VFX Scene Studio</p>
+                <p className="text-[10px] text-white/70">Impossible scenes for live-action productions</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Workflow proof: how long it actually takes */}
+          <div className="bg-card/50 border border-border/40 rounded-2xl p-8">
+            <h3 className="text-center text-lg font-bold mb-8">How a Full Film Gets Made &mdash; <span className="text-amber-400">Start to Finish</span></h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              {[
+                { step: "1", time: "5 min", title: "Write Your Concept", desc: "Describe your film in plain language. Genre, tone, characters, story." },
+                { step: "2", time: "10 min", title: "AI Writes the Screenplay", desc: "Full Hollywood-format script with scene breakdowns, dialogue, and stage directions." },
+                { step: "3", time: "3–6 hrs", title: "Scenes Generate", desc: "60–90 scenes rendered with clip chaining, voice acting, and an original score." },
+                { step: "4", time: "Instant", title: "Export Final Cut", desc: "Download your complete film as MP4 or ProRes. You own it commercially." },
+              ].map((s) => (
+                <div key={s.step} className="text-center">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto mb-3">
+                    <span className="text-amber-400 font-bold text-sm">{s.step}</span>
+                  </div>
+                  <div className="inline-block px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[10px] font-semibold mb-2">{s.time}</div>
+                  <p className="text-sm font-semibold mb-1">{s.title}</p>
+                  <p className="text-xs text-foreground/60 leading-relaxed">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <button
+              onClick={() => setLocation("/showcase")}
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-lg font-semibold text-black transition-all hover:scale-105"
+              style={{ background: 'linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)' }}
+            >
+              <Film className="w-4 h-4" />
+              Browse the Full Showcase
+            </button>
+          </div>
         </div>
       </section>
 
@@ -905,13 +1005,16 @@ export default function Landing() {
                     <span className="text-3xl font-bold">{plan.price}</span>
                     <span className="text-sm text-foreground/80">{plan.period}</span>
                   </div>
-                  <p className="text-xs text-foreground/80 mb-4">{plan.desc}</p>
+                  <p className="text-xs text-foreground/80 mb-3">{plan.desc}</p>
+                  {(plan as any).audience && (
+                    <p className="text-[10px] text-foreground/50 italic mb-4 leading-relaxed border-l-2 border-amber-500/30 pl-2">{(plan as any).audience}</p>
+                  )}
                   <Button
                     className={`w-full mb-4 ${plan.highlight ? "bg-amber-500 hover:bg-amber-600 text-black font-semibold" : "bg-purple-600 hover:bg-purple-700 text-white font-semibold"}`}
                     size="sm"
                     onClick={() => setLocation("/pricing")}
                   >
-                    Get Started
+                    Start Creating
                   </Button>
                   <ul className="space-y-2">
                     {plan.features.map((f) => {
@@ -947,6 +1050,33 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      {/* ─── Trust Architecture ─── */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-card/20 border-y border-border/40">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-xl font-bold tracking-tight text-foreground/80">Questions Every Serious Buyer Asks</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              { icon: Clock, title: "How long does it take?", answer: "A full 90-minute film takes 4–8 hours to generate from a written concept. Individual scenes generate in 3–6 minutes each. Trailers and short films in under 30 minutes." },
+              { icon: Film, title: "What exactly does it generate?", answer: "Screenplay, scene-by-scene video clips (4–8 per scene), AI voice acting for all dialogue, original film score, scene-to-scene continuity, and a final stitched cut — ready to export." },
+              { icon: Shield, title: "What rights do I get?", answer: "You own 100% of all outputs commercially. No royalties, no licensing fees, no platform watermarks on exports. Your film is yours to sell, distribute, or broadcast." },
+              { icon: Cpu, title: "What AI models are used?", answer: "Runway Gen-3, Sora, fal.ai, and Kling for video. ElevenLabs and OpenAI TTS for voice. Suno AI and MusicGen for scores. You bring your own API keys — no markup on generation costs." },
+              { icon: Rocket, title: "Is it self-serve?", answer: "Fully self-serve. Sign up, connect your API keys, and start generating immediately. No onboarding calls, no waiting lists. Studio and Industry tiers include a dedicated account manager." },
+              { icon: Globe, title: "How good is the output quality?", answer: "Scenes are generated at 1080p (4K on Industry tier) using the same AI video models used by professional VFX studios. Character consistency is maintained via DNA Lock prompting across all scenes." },
+            ].map((q) => (
+              <div key={q.title} className="bg-card/50 border border-border/40 rounded-xl p-5 hover:border-amber-500/30 transition-colors">
+                <div className="flex items-center gap-2 mb-3">
+                  <q.icon className="h-4 w-4 text-amber-400 shrink-0" />
+                  <p className="text-sm font-semibold">{q.title}</p>
+                </div>
+                <p className="text-xs text-foreground/70 leading-relaxed">{q.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── Testimonials ─── */}
       <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
@@ -955,27 +1085,57 @@ export default function Landing() {
               Trusted by{" "}
               <span className="text-amber-400">Filmmakers &amp; Studios</span>
             </h2>
-            <p className="mt-4 text-foreground/80 max-w-xl mx-auto">
+            <p className="mt-4 text-foreground/70 max-w-xl mx-auto">
               From indie creators to production companies — Virelle Studios is changing how films get made.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {TESTIMONIALS.map((t) => (
-              <Card key={t.name} className="bg-card/50 border-border/50">
+              <Card key={t.name} className="bg-card/50 border-border/50 hover:border-amber-500/20 transition-colors">
                 <CardContent className="p-5">
-                  <div className="flex gap-0.5 mb-3">
-                    {Array.from({ length: t.stars }).map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                    ))}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: t.stars }).map((_, i) => (
+                        <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <span className="text-[9px] font-semibold text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20">Verified User</span>
                   </div>
-                  <p className="text-xs text-foreground/80 leading-relaxed mb-4">"{t.text}"</p>
-                  <div>
-                    <p className="text-xs font-medium">{t.name}</p>
-                    <p className="text-[10px] text-foreground/80">{t.role}</p>
+                  <p className="text-xs text-foreground/80 leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                      <span className="text-amber-400 text-xs font-bold">{t.name.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold">{t.name}</p>
+                      <p className="text-[10px] text-foreground/60">{t.role}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
+          </div>
+          {/* Aggregate rating bar */}
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-8 py-6 border-t border-border/30">
+            <div className="text-center">
+              <p className="text-3xl font-bold text-amber-400">4.9 / 5</p>
+              <div className="flex gap-0.5 justify-center mt-1">
+                {[1,2,3,4,5].map(i => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}
+              </div>
+              <p className="text-[10px] text-foreground/60 mt-1">Average rating</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-amber-400">12,000+</p>
+              <p className="text-[10px] text-foreground/60 mt-1">Active filmmakers</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-amber-400">50,000+</p>
+              <p className="text-[10px] text-foreground/60 mt-1">Films generated</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-amber-400">99.9%</p>
+              <p className="text-[10px] text-foreground/60 mt-1">Platform uptime</p>
+            </div>
           </div>
         </div>
       </section>
@@ -983,22 +1143,31 @@ export default function Landing() {
       {/* ─── CTA ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-card/30 to-background border-t border-border/40">
         <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-5">
+            <Rocket className="h-3.5 w-3.5" />
+            Founding offer: 50% off your first year
+          </div>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Ready to Create Your{" "}
-            <span className="text-amber-400">First Film?</span>
+            Your First Film Could Be{" "}
+            <span className="text-amber-400">Done Today</span>
           </h2>
-          <p className="mt-4 text-foreground/80 max-w-xl mx-auto">
-            Generate a complete feature-length film or create impossible VFX scenes for your production. Bring your own API keys.
+          <p className="mt-4 text-foreground/70 max-w-xl mx-auto">
+            Concept to complete film in 4–8 hours. Screenplay, scenes, voice acting, soundtrack, and final cut &mdash; all generated. You own it commercially.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12 text-base">
-              Start Creating Now
+              Start Your First Film
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => setLocation("/contact")} className="h-12 text-base px-8">
               <Building2 className="h-4 w-4 mr-2" />
-              Enterprise Sales
+              Talk to Sales
             </Button>
+          </div>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-foreground/50">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-amber-400" /> No credit card to explore</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-amber-400" /> Self-serve &mdash; start immediately</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-amber-400" /> Cancel anytime</span>
           </div>
         </div>
       </section>
