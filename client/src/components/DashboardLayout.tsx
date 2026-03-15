@@ -48,6 +48,7 @@ import {
   PenTool,
   BarChart3,
   Search,
+  Coins,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -79,6 +80,7 @@ const menuGroups = [
     label: "Account",
     items: [
       { icon: CreditCard, label: "Subscription", path: "/pricing" },
+      { icon: Coins, label: "Credits & History", path: "/credits" },
       { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
       { icon: Gift, label: "Referrals", path: "/referrals" },
       { icon: BookOpen, label: "Blog", path: "/blog" },

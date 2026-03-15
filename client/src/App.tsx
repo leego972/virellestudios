@@ -58,6 +58,7 @@ const Solutions = lazy(() => import("./pages/Solutions"));
 
 // Dashboard feature pages — lazy loaded
 const Referrals = lazy(() => import("./pages/Referrals"));
+const CreditsPage = lazy(() => import("./pages/Credits"));
 const ProjectSamples = lazy(() => import("./pages/ProjectSamples"));
 const SettingsPage = lazy(() => import("./pages/Settings"));
 
@@ -200,6 +201,7 @@ function Router() {
               <Route path="/content-creator">{() => <ContentCreatorPage />}</Route>
               <Route path="/samples">{() => <LazyPage><ProjectSamples /></LazyPage>}</Route>
               <Route path="/referrals">{() => <Referrals />}</Route>
+              <Route path="/credits">{() => <LazyPage><CreditsPage /></LazyPage>}</Route>
               <Route path="/marketplace">{() => <LazyPage><AssetMarketplace /></LazyPage>}</Route>
               <Route path="/settings">{() => <SettingsPage />}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>

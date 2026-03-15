@@ -1716,3 +1716,30 @@ export async function seedPromoCodes(codes: Array<{ code: string; description: s
     } catch { /* already exists */ }
   }
 }
+
+// ─── Credit Transaction History ─────────────────────────────────────────────
+export async function getCreditHistory(
+  userId: number,
+  limit: number = 50,
+  offset: number = 0
+): Promise<{ transactions: any[]; total: number }> {
+  const db = await getDb();
+  if (!db) return { transactions: [], total: 0 };
+  try {
+    const rows = await db.execute(
+      sql`SELECT id, amount, action, description, balanceAfter, createdAt
+          FROM credit_transactions
+          WHERE userId = ${userId}
+          ORDER BY createdAt DESC
+          LIMIT ${limit} OFFSET ${offset}`
+    );
+    const countRows = await db.execute(
+      sql`SELECT COUNT(*) as total FROM credit_transactions WHERE userId = ${userId}`
+    );
+    const total = Number((countRows[0] as any)?.[0]?.total || 0);
+    const transactions = (Array.isArray(rows[0]) ? rows[0] : []) as any[];
+    return { transactions, total };
+  } catch {
+    return { transactions: [], total: 0 };
+  }
+}

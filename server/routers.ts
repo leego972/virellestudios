@@ -7197,5 +7197,36 @@ Rules:
         return { success: true };
       }),
   }),
+  // ─── Credit History ───────────────────────────────────────────────────────
+  credits: router({
+    // Paginated credit transaction history for the current user
+    getHistory: protectedProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(200).default(50),
+        offset: z.number().min(0).default(0),
+      }))
+      .query(async ({ ctx, input }) => {
+        return await db.getCreditHistory(ctx.user.id, input.limit, input.offset);
+      }),
+    // Credit balance summary (balance, tier, monthly allocation, period end)
+    getSummary: protectedProcedure.query(async ({ ctx }) => {
+      const user = ctx.user as any;
+      const tierAllocation: Record<string, number> = {
+        independent: 10000,
+        creator: 35000,
+        studio: 100000,
+        industry: 300000,
+        amateur: 2500,
+      };
+      const tier = user.subscriptionTier || "independent";
+      return {
+        balance: user.creditBalance || 0,
+        tier,
+        monthlyAllocation: tierAllocation[tier] ?? 10000,
+        subscriptionStatus: user.subscriptionStatus || "none",
+        subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd || null,
+      };
+    }),
+  }),
 });
 export type AppRouter = typeof appRouter;
