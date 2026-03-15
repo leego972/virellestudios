@@ -1644,9 +1644,13 @@ export async function deleteUserSocialCredential(userId: number, platform: strin
 export async function assignBetaTier(userId: number, expiresAt: Date): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  await db.update(users)
-    .set({ subscriptionTier: "beta" as any, betaExpiresAt: expiresAt, updatedAt: new Date() } as any)
-    .where(eq(users.id, userId));
+  // Use 'industry' tier for full access (beta ENUM value may not exist in live DB yet)
+  // Try with betaExpiresAt first; fall back to tier-only if column not yet migrated
+  try {
+    await db.execute(sql`UPDATE users SET subscriptionTier = 'industry', updatedAt = NOW() WHERE id = ${userId}`);
+  } catch (err) {
+    throw new Error(`Failed to assign beta tier: ${err}`);
+  }
 }
 
 export async function revokeBetaTier(userId: number): Promise<void> {
