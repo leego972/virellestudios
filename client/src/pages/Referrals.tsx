@@ -1,11 +1,12 @@
 import { trpc } from "@/lib/trpc";
 import {
   Copy, Gift, Users, TrendingUp, Share2, Check,
-  Trophy, Zap, ChevronRight, Linkedin,
+  Trophy, Zap, ChevronRight, Linkedin, MessageCircle, Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
 
 const MILESTONES = [
@@ -33,6 +34,7 @@ export default function Referrals() {
   const [copied, setCopied] = useState<"link" | "code" | null>(null);
   const { data: code, isLoading: codeLoading } = trpc.referral.getMyCode.useQuery();
   const { data: stats, isLoading: statsLoading } = trpc.referral.myStats.useQuery();
+  const { data: promoStatus } = trpc.promo.myStatus.useQuery();
 
   const referralLink = code ? window.location.origin + "/register?ref=" + code.code : "";
   const isLoading = codeLoading || statsLoading;
@@ -40,22 +42,22 @@ export default function Referrals() {
   const copyLink = () => {
     navigator.clipboard.writeText(referralLink);
     setCopied("link");
-    setTimeout(() => setCopied(null), 2000);
+    setTimeout(() => setCopied(null), 2500);
   };
 
   const copyCode = () => {
     if (code) {
       navigator.clipboard.writeText(code.code);
       setCopied("code");
-      setTimeout(() => setCopied(null), 2000);
+      setTimeout(() => setCopied(null), 2500);
     }
   };
 
   const shareNative = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Join VirElle Studios",
-        text: "Create Hollywood-quality AI films. Use my referral link and we both get 7,000 bonus credits!",
+        title: "Join Virelle Studios — AI Film Production",
+        text: "I've been using Virelle Studios to create Hollywood-quality AI films. Sign up with my link and we both get 7,000 bonus credits!",
         url: referralLink,
       }).catch(() => {});
     } else {
@@ -66,7 +68,7 @@ export default function Referrals() {
   const shareLinkedIn = () => {
     const url = encodeURIComponent(referralLink);
     const summary = encodeURIComponent(
-      "I have been using VirElle Studios to create Hollywood-quality AI films. Join with my referral link and we both get 7,000 bonus credits."
+      "I've been using Virelle Studios to create Hollywood-quality AI films. Join with my referral link and we both get 7,000 bonus credits."
     );
     window.open(
       "https://www.linkedin.com/sharing/share-offsite/?url=" + url + "&summary=" + summary,
@@ -74,9 +76,22 @@ export default function Referrals() {
     );
   };
 
+  const shareWhatsApp = () => {
+    const text = encodeURIComponent(
+      `🎬 Join me on Virelle Studios — the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
+    );
+    window.open("https://wa.me/?text=" + text, "_blank");
+  };
+
   const successful = stats?.successfulReferrals || 0;
-  const nextMilestone = stats?.nextMilestone || MILESTONES[0];
-  const milestoneProgress = stats?.milestoneProgress || 0;
+  const nextMilestone = MILESTONES.find(m => m.count > successful) || MILESTONES[MILESTONES.length - 1];
+  const prevMilestoneCount = (() => {
+    const idx = MILESTONES.findIndex(m => m.count > successful);
+    return idx > 0 ? MILESTONES[idx - 1].count : 0;
+  })();
+  const milestoneProgress = nextMilestone
+    ? Math.min(100, Math.round(((successful - prevMilestoneCount) / (nextMilestone.count - prevMilestoneCount)) * 100))
+    : 100;
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
@@ -85,11 +100,10 @@ export default function Referrals() {
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
           <Gift className="h-7 w-7 text-amber-400" />
-          Referral Program
+          Refer &amp; Earn
         </h1>
         <p className="text-muted-foreground mt-1">
-          Refer production studios and filmmakers &mdash; earn{" "}
-          <span className="text-amber-400 font-semibold">7,000 credits</span> for every successful signup, plus massive milestone bonuses.
+          Share your link. When a filmmaker signs up, <strong className="text-foreground">you both get 7,000 credits</strong> &mdash; automatically, no action needed.
         </p>
       </div>
 
@@ -98,10 +112,12 @@ export default function Referrals() {
         <div className="rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/10 border border-amber-500/20 p-4 text-center">
           <div className="text-3xl font-black text-amber-400">+7,000</div>
           <div className="text-sm text-muted-foreground mt-1">credits you earn</div>
+          <div className="text-xs text-amber-400/60 mt-0.5">per successful signup</div>
         </div>
         <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-violet-600/10 border border-purple-500/20 p-4 text-center">
           <div className="text-3xl font-black text-purple-400">+7,000</div>
           <div className="text-sm text-muted-foreground mt-1">credits they get</div>
+          <div className="text-xs text-purple-400/60 mt-0.5">instant on signup</div>
         </div>
       </div>
 
@@ -126,7 +142,7 @@ export default function Referrals() {
               </div>
 
               {/* Code row */}
-              <div className="flex items-center gap-3 text-sm">
+              <div className="flex items-center gap-3 text-sm flex-wrap">
                 <span className="text-muted-foreground">Your code:</span>
                 <button
                   onClick={copyCode}
@@ -135,6 +151,7 @@ export default function Referrals() {
                   {code?.code}
                   {copied === "code" ? <Check className="h-3.5 w-3.5 text-green-400" /> : <Copy className="h-3.5 w-3.5 opacity-60" />}
                 </button>
+                <span className="text-xs text-muted-foreground">(friends can enter this at signup)</span>
               </div>
 
               {/* Share buttons */}
@@ -149,12 +166,58 @@ export default function Referrals() {
                     <Linkedin className="h-3.5 w-3.5 mr-1.5" />
                     LinkedIn
                   </Button>
+                  <Button onClick={shareWhatsApp} size="sm" variant="outline" className="border-green-500/30 hover:bg-green-600/20 text-green-400">
+                    <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+                    WhatsApp
+                  </Button>
                 </div>
               </div>
             </>
           )}
         </CardContent>
       </Card>
+
+      {/* Promo Code Status */}
+      {promoStatus && (
+        <Card className={promoStatus.appliedPromoCode && !promoStatus.promoDiscountUsed
+          ? "border-green-500/20 bg-green-600/5"
+          : "border-border/50"
+        }>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Tag className="h-4 w-4 text-green-400" />
+              Your Promo Code
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {promoStatus.appliedPromoCode ? (
+              promoStatus.promoDiscountUsed ? (
+                <div className="flex items-center gap-3 text-sm">
+                  <Check className="h-4 w-4 text-green-400 shrink-0" />
+                  <div>
+                    <span className="font-semibold text-foreground">{promoStatus.appliedPromoCode}</span>
+                    <span className="text-muted-foreground ml-2">&mdash; discount applied to your first payment</span>
+                    <Badge className="ml-2 bg-green-600/20 text-green-400 border-green-500/30 text-xs">Used</Badge>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0" />
+                  <div>
+                    <span className="font-semibold text-green-400">{promoStatus.appliedPromoCode}</span>
+                    <span className="text-muted-foreground ml-2">&mdash; 50% off your first subscription payment</span>
+                    <Badge className="ml-2 bg-amber-600/20 text-amber-400 border-amber-500/30 text-xs">Ready to use</Badge>
+                  </div>
+                </div>
+              )
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No promo code applied. Promo codes can be entered during signup for 50% off your first payment.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -208,23 +271,17 @@ export default function Referrals() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
-          {nextMilestone && (
+          {successful < MILESTONES[MILESTONES.length - 1].count && (
             <div className="space-y-2">
-              <div className="flex justify-between text-sm">
+              <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">
-                  Progress to{" "}
-                  <span className="text-amber-400 font-semibold">{nextMilestone.label}</span>
+                  Progress to <strong className="text-foreground">{nextMilestone.label}</strong>
                 </span>
-                <span className="font-semibold">{successful} / {nextMilestone.count} referrals</span>
+                <span className="text-amber-400 font-semibold">{successful} / {nextMilestone.count} referrals</span>
               </div>
-              <div className="h-3 bg-white/5 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-700"
-                  style={{ width: milestoneProgress + "%" }}
-                />
-              </div>
+              <Progress value={milestoneProgress} className="h-2" />
               <p className="text-xs text-muted-foreground">
-                {nextMilestone.count - successful} more referral{nextMilestone.count - successful !== 1 ? "s" : ""} to unlock{" "}
+                {nextMilestone.count - successful} more signup{nextMilestone.count - successful !== 1 ? "s" : ""} to unlock{" "}
                 <span className="text-amber-400 font-semibold">{formatCredits(nextMilestone.bonus)} bonus credits</span>
               </p>
             </div>
@@ -280,9 +337,9 @@ export default function Referrals() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3 text-lg">1</div>
-              <h4 className="font-semibold mb-1">Share Your Link</h4>
+              <h4 className="font-semibold mb-1">Copy Your Link</h4>
               <p className="text-sm text-muted-foreground">
-                Send your unique referral link to filmmakers and studios, or share it on LinkedIn.
+                Tap &ldquo;Copy Link&rdquo; above and send it to any filmmaker, studio, or content creator.
               </p>
             </div>
             <div className="text-center">

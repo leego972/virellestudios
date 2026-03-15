@@ -68,6 +68,7 @@ export const appRouter = router({
         password: z.string().min(8).max(128),
         name: z.string().min(1).max(255),
         referralCode: z.string().optional(),
+        promoCode: z.string().optional(),
         // Profile & Business
         phone: z.string().max(32).optional(),
         companyName: z.string().max(255).optional(),
@@ -157,6 +158,27 @@ export const appRouter = router({
         const cookieOptions = getSessionCookieOptions(ctx.req);
         ctx.res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
 
+        // Apply promo code if provided (stores on user for auto-apply at checkout)
+        if (input.promoCode) {
+          try {
+            const promoValidation = await db.validatePromoCode(input.promoCode.trim().toUpperCase());
+            if (promoValidation.valid) {
+              await db.applyPromoCodeToUser(user.id, input.promoCode.trim().toUpperCase());
+            }
+          } catch (err) {
+            console.error("Promo code application error:", err);
+          }
+        }
+        // Auto-create referral code for new user (so it's ready to share immediately)
+        try {
+          const existingCode = await db.getReferralCodeByUserId(user.id);
+          if (!existingCode) {
+            const newCode = `VS${user.id}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+            await db.createReferralCode({ userId: user.id, code: newCode, isActive: true });
+          }
+        } catch (err) {
+          console.error("Auto-create referral code error:", err);
+        }
         // Send welcome notification
         try {
           await db.createNotification({
@@ -167,7 +189,6 @@ export const appRouter = router({
             link: "/",
           });
         } catch (_) { /* non-critical */ }
-
         return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     login: publicProcedure
@@ -6227,19 +6248,27 @@ Rules:
             return { spotsRemaining: Math.max(50 - realCount, 0) };
           } catch { return { spotsRemaining: 0 }; }
         })();
-        // Founding offer only applies to Independent+ tiers (not Amateur — it's a hook tier, not a founding member)
+         // Founding offer only applies to Independent+ tiers (not Amateur — it's a hook tier, not a founding member)
         const applyFoundingDiscount = isFirstSub && input.billing === "annual" && spotsData.spotsRemaining > 0 && input.tier !== "amateur";
-
+        // Check if user has an unused promo code (50% off first payment, any billing cycle)
+        const promoStatus = await db.getUserPromoStatus(ctx.user.id);
+        const hasUnusedPromo = !!(promoStatus.appliedPromoCode && !promoStatus.promoDiscountUsed && isFirstSub);
+        // Promo code discount takes priority over founding discount (both are 50% but promo works on monthly too)
         const url = await createCheckoutSession(
           ctx.user,
           customerId,
           priceId,
           input.successUrl,
           input.cancelUrl,
-          input.billing,  // pass billing type for payment method selection
+          input.billing,
           trialDays,
-          applyFoundingDiscount,
+          hasUnusedPromo ? false : applyFoundingDiscount, // use promo path instead if promo active
+          hasUnusedPromo ? promoStatus.appliedPromoCode! : undefined,
         );
+        // Mark promo as used after checkout session created
+        if (hasUnusedPromo) {
+          try { await db.markPromoDiscountUsed(ctx.user.id); } catch { /* non-critical */ }
+        }
         return { url };
       }),
 
@@ -6663,8 +6692,38 @@ Rules:
         return { valid: true, referrerName: "A VirÉlle Studios user" };
       }),
   }),
-
-  // ─── User Settings & API Key Management ───
+  // ─── Promo Codes (50% discount on first subscription payment) ───
+  promo: router({
+    // Validate a promo code (public — called live as user types)
+    validate: publicProcedure
+      .input(z.object({ code: z.string() }))
+      .query(async ({ input }) => {
+        return await db.validatePromoCode(input.code.trim().toUpperCase());
+      }),
+    // Apply a promo code to the current user's account (stores it for checkout)
+    apply: protectedProcedure
+      .input(z.object({ code: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const code = input.code.trim().toUpperCase();
+        const validation = await db.validatePromoCode(code);
+        if (!validation.valid) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: validation.message || "Invalid promo code" });
+        }
+        // Check if user already has a promo code applied
+        const existing = await db.getUserPromoStatus(ctx.user.id);
+        if (existing.appliedPromoCode) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "You already have a promo code applied to your account" });
+        }
+        const success = await db.applyPromoCodeToUser(ctx.user.id, code);
+        if (!success) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to apply promo code" });
+        return { success: true, discountPercent: validation.discountPercent, message: `Promo code applied! You'll get ${validation.discountPercent}% off your first payment.` };
+      }),
+    // Get the current user's promo status
+    myStatus: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserPromoStatus(ctx.user.id);
+    }),
+  }),
+  // ─── User Settings & API Key Management ────
   settings: router({
     // Get current user profile and API key status
     getProfile: protectedProcedure.query(async ({ ctx }) => {

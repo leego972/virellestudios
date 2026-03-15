@@ -639,6 +639,19 @@ export async function runAutoMigration(): Promise<void> {
       )`,
     },
     {
+      name: "promo_codes",
+      createSQL: `CREATE TABLE IF NOT EXISTS promo_codes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        code VARCHAR(32) NOT NULL UNIQUE,
+        discountPercent INT NOT NULL DEFAULT 50,
+        maxUses INT NOT NULL DEFAULT 1,
+        usedCount INT NOT NULL DEFAULT 0,
+        isActive BOOLEAN NOT NULL DEFAULT TRUE,
+        description VARCHAR(255) NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`,
+    },
+    {
       name: "content_creator_analytics",
       createSQL: `CREATE TABLE IF NOT EXISTS content_creator_analytics (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -720,6 +733,9 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "howDidYouHear", definition: "VARCHAR(128) NULL" },
     { table: "users", column: "marketingOptIn", definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
     { table: "users", column: "onboardingCompleted", definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
+    // Users table - promo code tracking
+    { table: "users", column: "appliedPromoCode", definition: "VARCHAR(32) NULL" },
+    { table: "users", column: "promoDiscountUsed", definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
     // Projects table - story & narrative fields
     { table: "projects", column: "mainPlot", definition: "TEXT NULL" },
     { table: "projects", column: "sidePlots", definition: "TEXT NULL" },
@@ -955,5 +971,28 @@ export async function runAutoMigration(): Promise<void> {
     }
   } catch (err: any) {
     console.error(`[AutoMigrate] Failed to check/promote admin account:`, err.message);
+  }
+  // ─── Step 4: Seed promo codes (INSERT IGNORE — safe to run repeatedly) ───
+  const PROMO_CODES = [
+    { code: "VIRELLE50",   description: "50% off — General launch promo" },
+    { code: "DIRECTOR50",  description: "50% off — Founding director offer" },
+    { code: "STUDIO50",    description: "50% off — Studio partner code" },
+    { code: "FILM2025",    description: "50% off — 2025 launch special" },
+    { code: "SCENE50",     description: "50% off — Scene builder promo" },
+    { code: "CINEMATIC",   description: "50% off — Cinematic creator code" },
+    { code: "BETA50",      description: "50% off — Beta tester appreciation" },
+    { code: "PREMIERE50",  description: "50% off — Premiere partner code" },
+    { code: "REEL50",      description: "50% off — Demo reel promo" },
+    { code: "LAUNCH50",    description: "50% off — Platform launch code" },
+  ];
+  try {
+    for (const c of PROMO_CODES) {
+      await db.execute(sql.raw(
+        `INSERT IGNORE INTO promo_codes (code, discountPercent, maxUses, description) VALUES ('${c.code}', 50, 1, '${c.description}')`
+      ));
+    }
+    console.log(`[AutoMigrate] Promo codes seeded (${PROMO_CODES.length} codes, INSERT IGNORE)`);
+  } catch (err: any) {
+    console.error(`[AutoMigrate] Failed to seed promo codes:`, err.message);
   }
 }

@@ -249,6 +249,9 @@ export default function Register() {
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [promoCodeInput, setPromoCodeInput] = useState("");
+  const [promoCode, setPromoCode] = useState("");
+  const [promoStatus, setPromoStatus] = useState<{ valid?: boolean; message?: string; discountPercent?: number } | null>(null);
 
   // Step 2: Professional
   const [companyName, setCompanyName] = useState("");
@@ -266,12 +269,32 @@ export default function Register() {
   const [howDidYouHear, setHowDidYouHear] = useState("");
   const [marketingOptIn, setMarketingOptIn] = useState(false);
 
-  // Extract referral code from URL query params
+  // Extract referral code and promo code from URL query params
   useEffect(() => {
     const params = new URLSearchParams(searchString);
     const ref = params.get("ref");
     if (ref) setReferralCode(ref);
+    const promo = params.get("promo");
+    if (promo) setPromoCodeInput(promo.toUpperCase());
   }, [searchString]);
+
+  // Live promo code validation (debounced via react-query staleTime)
+  const promoValidateQuery = trpc.promo.validate.useQuery(
+    { code: promoCodeInput.trim().toUpperCase() },
+    { enabled: promoCodeInput.trim().length >= 4, staleTime: 3000 }
+  );
+  useEffect(() => {
+    if (!promoCodeInput.trim() || promoCodeInput.trim().length < 4) {
+      setPromoStatus(null);
+      setPromoCode("");
+      return;
+    }
+    if (promoValidateQuery.data) {
+      setPromoStatus(promoValidateQuery.data);
+      if (promoValidateQuery.data.valid) setPromoCode(promoCodeInput.trim().toUpperCase());
+      else setPromoCode("");
+    }
+  }, [promoValidateQuery.data, promoCodeInput]);
 
   const utils = trpc.useUtils();
   const [showWelcome, setShowWelcome] = useState(false);
@@ -341,6 +364,7 @@ export default function Register() {
       email: email.trim().toLowerCase(),
       password,
       referralCode: referralCode.trim() || undefined,
+      promoCode: promoCode.trim() || undefined,
       phone: phone.trim() ? `${countryCode} ${phone.trim()}` : undefined,
       companyName: companyName.trim() || undefined,
       companyWebsite: companyWebsite.trim() || undefined,
@@ -429,7 +453,16 @@ export default function Register() {
           <div className="flex items-center gap-2 bg-amber-600/10 border border-amber-500/20 rounded-lg px-4 py-3 text-sm">
             <Gift className="h-4 w-4 text-amber-400 shrink-0" />
             <span className="text-amber-400">
-              You've been referred! Sign up to get <strong>3 bonus AI generations</strong> free.
+              You've been referred! Sign up to receive <strong>7,000 bonus credits</strong> — both you and your referrer get rewarded.
+            </span>
+          </div>
+        )}
+        {/* Promo Code Banner (when valid promo in URL) */}
+        {promoStatus?.valid && step === 1 && (
+          <div className="flex items-center gap-2 bg-green-600/10 border border-green-500/20 rounded-lg px-4 py-3 text-sm">
+            <Check className="h-4 w-4 text-green-400 shrink-0" />
+            <span className="text-green-400">
+              Promo code <strong>{promoCode}</strong> applied — you'll get <strong>50% off your first payment</strong>.
             </span>
           </div>
         )}
@@ -585,6 +618,7 @@ export default function Register() {
                     <p className="text-xs text-red-400">Passwords do not match</p>
                   )}
                 </div>
+                {/* Referral Code */}
                 <div className="space-y-1.5">
                   <Label htmlFor="referralCode" className="flex items-center gap-1.5">
                     <Gift className="h-3.5 w-3.5 text-amber-400" />
@@ -594,10 +628,42 @@ export default function Register() {
                   <Input
                     id="referralCode"
                     type="text"
-                    placeholder="Enter referral code"
+                    placeholder="Enter a friend's referral code"
                     value={referralCode}
-                    onChange={(e) => setReferralCode(e.target.value)}
+                    onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
                   />
+                  {referralCode && (
+                    <p className="text-xs text-amber-400">You and your referrer will each receive 7,000 bonus credits when you sign up.</p>
+                  )}
+                </div>
+                {/* Promo Code — 50% off first payment */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="promoCode" className="flex items-center gap-1.5">
+                    <Check className="h-3.5 w-3.5 text-green-400" />
+                    Promo Code
+                    <span className="text-muted-foreground font-normal">(optional — 50% off first payment)</span>
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="promoCode"
+                      type="text"
+                      placeholder="e.g. VIRELLE50"
+                      value={promoCodeInput}
+                      onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                      className={promoStatus?.valid ? "border-green-500/50 pr-8" : promoStatus?.valid === false ? "border-red-500/50 pr-8" : ""}
+                    />
+                    {promoValidateQuery.isFetching && (
+                      <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+                    )}
+                    {!promoValidateQuery.isFetching && promoStatus?.valid === true && (
+                      <Check className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-green-400" />
+                    )}
+                  </div>
+                  {promoStatus && (
+                    <p className={`text-xs ${promoStatus.valid ? "text-green-400" : "text-red-400"}`}>
+                      {promoStatus.valid ? `Valid! 50% off your first subscription payment.` : promoStatus.message}
+                    </p>
+                  )}
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col gap-3 pt-2">

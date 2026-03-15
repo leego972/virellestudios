@@ -1660,3 +1660,59 @@ export async function revokeBetaTier(userId: number): Promise<void> {
     .set({ subscriptionTier: "free" as any, betaExpiresAt: null, updatedAt: new Date() } as any)
     .where(eq(users.id, userId));
 }
+
+// ─── Promo Codes ───
+export async function validatePromoCode(code: string): Promise<{ valid: boolean; discountPercent?: number; message?: string }> {
+  const db = await getDb();
+  if (!db) return { valid: false, message: "Database unavailable" };
+  try {
+    const rows = await db.execute(sql`SELECT * FROM promo_codes WHERE code = ${code.toUpperCase()} LIMIT 1`);
+    const promo = (rows[0] as any)?.[0];
+    if (!promo) return { valid: false, message: "Invalid promo code" };
+    if (!promo.isActive) return { valid: false, message: "This promo code has expired" };
+    if (promo.usedCount >= promo.maxUses) return { valid: false, message: "This promo code has already been used" };
+    return { valid: true, discountPercent: promo.discountPercent };
+  } catch {
+    return { valid: false, message: "Could not validate code" };
+  }
+}
+
+export async function applyPromoCodeToUser(userId: number, code: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  try {
+    await db.execute(sql`UPDATE promo_codes SET usedCount = usedCount + 1 WHERE code = ${code.toUpperCase()} AND usedCount < maxUses AND isActive = TRUE`);
+    await db.execute(sql`UPDATE users SET appliedPromoCode = ${code.toUpperCase()}, promoDiscountUsed = FALSE WHERE id = ${userId}`);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function markPromoDiscountUsed(userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.execute(sql`UPDATE users SET promoDiscountUsed = TRUE WHERE id = ${userId}`);
+}
+
+export async function getUserPromoStatus(userId: number): Promise<{ appliedPromoCode: string | null; promoDiscountUsed: boolean }> {
+  const db = await getDb();
+  if (!db) return { appliedPromoCode: null, promoDiscountUsed: false };
+  try {
+    const rows = await db.execute(sql`SELECT appliedPromoCode, promoDiscountUsed FROM users WHERE id = ${userId} LIMIT 1`);
+    const row = (rows[0] as any)?.[0];
+    return { appliedPromoCode: row?.appliedPromoCode || null, promoDiscountUsed: !!row?.promoDiscountUsed };
+  } catch {
+    return { appliedPromoCode: null, promoDiscountUsed: false };
+  }
+}
+
+export async function seedPromoCodes(codes: Array<{ code: string; description: string; maxUses?: number }>): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  for (const c of codes) {
+    try {
+      await db.execute(sql`INSERT IGNORE INTO promo_codes (code, discountPercent, maxUses, description) VALUES (${c.code.toUpperCase()}, 50, ${c.maxUses ?? 1}, ${c.description})`);
+    } catch { /* already exists */ }
+  }
+}

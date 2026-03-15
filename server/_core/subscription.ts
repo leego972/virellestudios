@@ -946,7 +946,8 @@ export async function createCheckoutSession(
   cancelUrl: string,
   billing: "monthly" | "annual" = "annual",
   trialDays?: number,
-  applyFoundingDiscount?: boolean
+  applyFoundingDiscount?: boolean,
+  promoCode?: string
 ): Promise<string> {
   if (!stripe) throw new Error("Stripe is not configured");
 
@@ -956,6 +957,53 @@ export async function createCheckoutSession(
     billing === "monthly"
       ? ["card", "us_bank_account"]
       : ["card"];
+
+  // If a promo code is provided, create/find a 50% off once coupon and apply it
+  if (promoCode) {
+    try {
+      const promoCoupons = await stripe.coupons.list({ limit: 100 });
+      const existingPromo = promoCoupons.data.find(c => c.name === `Promo: ${promoCode}` && c.valid);
+      let promoCouponId: string;
+      if (existingPromo) {
+        promoCouponId = existingPromo.id;
+      } else {
+        const newCoupon = await stripe.coupons.create({
+          name: `Promo: ${promoCode}`,
+          percent_off: 50,
+          duration: "once",
+          metadata: { type: "promo_code", code: promoCode },
+        });
+        promoCouponId = newCoupon.id;
+      }
+      const promoSessionParams: Stripe.Checkout.SessionCreateParams = {
+        customer: customerId,
+        mode: "subscription",
+        payment_method_types: paymentMethodTypes,
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: { userId: String(user.id), billing, promoCode },
+        subscription_data: {
+          metadata: { userId: String(user.id), billing, promoCode },
+          ...(trialDays ? { trial_period_days: trialDays } : {}),
+          coupon: promoCouponId,
+        },
+        ...(billing === "monthly" ? {
+          payment_method_options: {
+            us_bank_account: {
+              financial_connections: { permissions: ["payment_method" as any] },
+              verification_method: "instant" as any,
+            },
+          },
+        } : {}),
+      };
+      const promoSession = await stripe.checkout.sessions.create(promoSessionParams);
+      return promoSession.url!;
+    } catch (err: any) {
+      console.error(`[Checkout] Failed to apply promo code coupon: ${err.message}`);
+      // Fall through to standard checkout without discount
+    }
+  }
 
   // Auto-create or find the founding member 50% off coupon for annual billing
   let couponId: string | undefined;
