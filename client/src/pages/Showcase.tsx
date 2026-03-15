@@ -94,12 +94,58 @@ export default function Showcase() {
             </div>
           </div>
         ) : !films || films.length === 0 ? (
-          <div className="flex items-center justify-center py-32">
-            <div className="text-center">
-              <Film className="w-16 h-16 mx-auto mb-4 text-neutral-700" />
-              <h2 className="text-2xl font-bold text-neutral-400 mb-2">Coming Soon</h2>
-              <p className="text-neutral-600">Our first AI-generated films are currently in production.</p>
-            </div>
+          // Static sample showcase — displayed when no user films are published yet
+          <div className="space-y-12">
+            {[
+              {
+                id: "sample-opener",
+                title: "Virelle Studios — Cinematic Opener",
+                genre: "Brand Film",
+                directorName: "VirElle Studios",
+                plotSummary: "The official Virelle Studios brand opener — a white dove descends through god rays, lands on a polished silver shield, and triggers a breathtaking golden transformation as the VS emblem is revealed. Wings flapping, angelic choir, 16 seconds of pure cinematic identity. Generated entirely within the Virelle platform.",
+                completedScenes: 3,
+                resolution: "1080p",
+                quality: "Cinematic",
+                scenes: [
+                  {
+                    id: 1,
+                    title: "Dove Approach",
+                    description: "A majestic white dove descends through dramatic god rays toward an ancient silver crest.",
+                    videoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/virelle_studios_opener_final.mp4",
+                    thumbnailUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png",
+                    duration: 6,
+                    orderIndex: 0,
+                  },
+                  {
+                    id: 2,
+                    title: "The Golden Transformation",
+                    description: "The dove lands and everything it touches turns to pure 24k gold — shield, branches, emblem.",
+                    videoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/virelle_studios_opener_final.mp4",
+                    thumbnailUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png",
+                    duration: 6,
+                    orderIndex: 1,
+                  },
+                  {
+                    id: 3,
+                    title: "Revelation",
+                    description: "The complete golden Virelle Studios emblem holds as the angelic choir sustains and fades.",
+                    videoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/virelle_studios_opener_final.mp4",
+                    thumbnailUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png",
+                    duration: 4,
+                    orderIndex: 2,
+                  },
+                ],
+              },
+            ].map((sample) => (
+              <FilmCard
+                key={sample.id}
+                film={sample as any}
+                isExpanded={expandedFilm === (sample.id as any)}
+                onToggle={() => setExpandedFilm(expandedFilm === (sample.id as any) ? null : (sample.id as any))}
+                activeSceneIndex={activeScene[sample.id as any] || 0}
+                onSceneChange={(idx) => setActiveScene(prev => ({ ...prev, [sample.id as any]: idx }))}
+              />
+            ))}
           </div>
         ) : (
           <div className="space-y-12">

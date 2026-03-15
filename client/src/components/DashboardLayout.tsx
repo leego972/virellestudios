@@ -339,6 +339,38 @@ function DashboardLayoutContent({
           </SidebarContent>
 
           <SidebarFooter className="p-2 md:p-3 space-y-1 md:space-y-2">
+            {/* Credit Balance Display */}
+            {user && (
+              <a
+                href="/pricing"
+                className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors group-data-[collapsible=icon]:justify-center"
+                title={`${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining — click to top up`}
+              >
+                <div
+                  className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 text-black font-bold text-xs"
+                  style={{ background: "linear-gradient(135deg, #d4af37 0%, #b8941f 100%)" }}
+                >
+                  C
+                </div>
+                <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold" style={{ color: "#d4af37" }}>
+                      {((user as any).creditBalance ?? 0).toLocaleString()} credits
+                    </span>
+                    <span className="text-[9px] text-muted-foreground hover:text-primary transition-colors">Top up →</span>
+                  </div>
+                  <div className="mt-1 h-1 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        background: "linear-gradient(90deg, #d4af37, #f5e6a3)",
+                        width: `${Math.min(100, Math.max(2, (((user as any).creditBalance ?? 0) / 5000) * 100))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </a>
+            )}
             {/* Leego branding — click to grow/shrink */}
             <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
               <img
