@@ -1,14 +1,18 @@
 /**
  * seed-tester.mjs
  * ─────────────────────────────────────────────────────────────────────────────
- * Creates a temporary tester account that expires automatically after 48 hours.
+ * Creates a temporary tester account.
  *
  * Account setup:
  *   Email    : tester555@gmail.com
  *   Password : Hello123123
- *   Tier     : creator  (enough to explore all core features)
+ *   Tier     : creator  (access to all core features)
  *   Credits  : 75       (enough to get hooked — not enough to stay free)
- *   Expires  : NOW() + 48 hours
+ *   Expires  : 48 hours from FIRST LOGIN (not from when this script runs)
+ *
+ * The 48-hour clock is started automatically by the server the moment
+ * tester555@gmail.com logs in for the first time. Once started, the clock
+ * does not reset on subsequent logins.
  *
  * Usage (from project root, with DATABASE_URL set):
  *   node seed-tester.mjs
@@ -33,11 +37,8 @@ async function main() {
   const email        = 'tester555@gmail.com';
   const password     = 'Hello123123';
   const name         = 'Tester Account';
-  const openId       = `email_${email}`;
+  const openId       = `email_tester555`; // prefixed with "email_tester" for server-side detection
   const passwordHash = await bcrypt.hash(password, 12);
-
-  // 48 hours from now
-  const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000);
 
   // Safely add accountExpiresAt column if it doesn't already exist
   try {
@@ -61,23 +62,24 @@ async function main() {
   );
 
   if (rows.length > 0) {
-    // Reset password, credits, tier and extend expiry
+    // Reset password, credits, tier — and clear expiry so clock restarts on next login
     await connection.execute(
       `UPDATE users
-          SET passwordHash        = ?,
-              subscriptionTier    = 'creator',
-              subscriptionStatus  = 'active',
-              creditBalance       = 75,
-              totalCreditsEarned  = 75,
+          SET passwordHash           = ?,
+              subscriptionTier       = 'creator',
+              subscriptionStatus     = 'active',
+              creditBalance          = 75,
+              totalCreditsEarned     = 75,
               monthlyGenerationsUsed = 0,
-              accountExpiresAt    = ?,
-              updatedAt           = NOW()
+              accountExpiresAt       = NULL,
+              updatedAt              = NOW()
         WHERE email = ?`,
-      [passwordHash, expiresAt, email]
+      [passwordHash, email]
     );
-    console.log('✅  Tester account reset — credits refreshed, expiry extended.');
+    console.log('✅  Tester account reset — expiry clock will restart on next login.');
   } else {
-    // Create fresh tester account
+    // Create fresh tester account — accountExpiresAt left NULL intentionally
+    // The server sets it to NOW()+48h on the tester's first login
     await connection.execute(
       `INSERT INTO users
          (openId, name, email, passwordHash, loginMethod, role,
@@ -90,8 +92,8 @@ async function main() {
           'creator', 'active',
           75, 75, 0,
           0, 0,
-          ?, NOW(), NOW(), NOW())`,
-      [openId, name, email, passwordHash, expiresAt]
+          NULL, NOW(), NOW(), NOW())`,
+      [openId, name, email, passwordHash]
     );
     console.log('✅  Tester account created.');
   }
@@ -103,14 +105,14 @@ async function main() {
   );
   const user = verify[0];
 
-  console.log('\n── Tester Account Details ──────────────────────────────');
+  console.log('\n── Tester Account Details ──────────────────────────────────');
   console.log(`   Email         : ${user.email}`);
   console.log(`   Password      : Hello123123`);
   console.log(`   Role          : ${user.role}`);
   console.log(`   Tier          : ${user.subscriptionTier}`);
   console.log(`   Credits       : ${user.creditBalance}`);
-  console.log(`   Expires (UTC) : ${user.accountExpiresAt}`);
-  console.log('────────────────────────────────────────────────────────\n');
+  console.log(`   Expires       : 48 hours from first login (not yet started)`);
+  console.log('────────────────────────────────────────────────────────────\n');
   console.log('ℹ️   Run  node revoke-tester.mjs  to remove this account early.\n');
 
   await connection.end();

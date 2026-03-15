@@ -1743,3 +1743,31 @@ export async function getCreditHistory(
     return { transactions: [], total: 0 };
   }
 }
+
+// ─── Temporary Account Expiry ────────────────────────────────────────────────
+/**
+ * If the user has a temporary tester account (accountExpiresAt IS NULL),
+ * set accountExpiresAt to NOW() + 48 hours on their very first login.
+ * Subsequent logins leave the expiry unchanged so the clock never resets.
+ *
+ * Detection: tester accounts are identified by openId starting with
+ * "email_tester" — matching accounts seeded via seed-tester.mjs.
+ */
+export async function setFirstLoginExpiry(userId: number, openId: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  // Only applies to tester-seeded accounts
+  if (!openId.startsWith("email_tester")) return;
+  try {
+    // Only set if not already set (first login only)
+    await db.execute(
+      sql`UPDATE users
+             SET accountExpiresAt = DATE_ADD(NOW(), INTERVAL 48 HOUR),
+                 updatedAt        = NOW()
+           WHERE id               = ${userId}
+             AND accountExpiresAt IS NULL`
+    );
+  } catch (err) {
+    console.warn("[DB] setFirstLoginExpiry failed (non-critical):", err);
+  }
+}

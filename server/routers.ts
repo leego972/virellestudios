@@ -237,6 +237,8 @@ export const appRouter = router({
         }
         // Update last signed in
         await db.upsertUser({ openId: user.openId, lastSignedIn: new Date() });
+        // Start 48-hour expiry clock on first login for temporary tester accounts
+        await db.setFirstLoginExpiry(user.id, user.openId);
         // Create session
         const token = await createSessionToken(user.id, user.name ?? "");
         const cookieOptions = getSessionCookieOptions(ctx.req);
