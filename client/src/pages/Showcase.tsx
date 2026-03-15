@@ -37,7 +37,7 @@ export default function Showcase() {
             />
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4"
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4"
             style={{
               background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 30%, #d4af37 50%, #b8941f 70%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
@@ -55,7 +55,7 @@ export default function Showcase() {
           </p>
 
           {/* Stats bar */}
-          <div className="flex items-center justify-center gap-8 mt-10">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mt-10">
             <div className="text-center">
               <div className="text-2xl font-bold" style={{ color: "#d4af37" }}>
                 {films?.length || 0}
@@ -188,7 +188,7 @@ export default function Showcase() {
             }}
           >
             <Film className="w-5 h-5" />
-            Start Creating — From $5,000/mo
+            Start Creating Free
           </a>
           <p className="text-xs text-neutral-600 mt-4">All prices in USD. Professional filmmaking tools included.</p>
         </div>
