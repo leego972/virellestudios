@@ -1639,3 +1639,20 @@ export async function deleteUserSocialCredential(userId: number, platform: strin
   await db.delete(userSocialCredentials)
     .where(and(eq(userSocialCredentials.userId, userId), eq(userSocialCredentials.platform, platform)));
 }
+
+// ─── Beta Tier Management ───
+export async function assignBetaTier(userId: number, expiresAt: Date): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users)
+    .set({ subscriptionTier: "beta" as any, betaExpiresAt: expiresAt, updatedAt: new Date() } as any)
+    .where(eq(users.id, userId));
+}
+
+export async function revokeBetaTier(userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users)
+    .set({ subscriptionTier: "free" as any, betaExpiresAt: null, updatedAt: new Date() } as any)
+    .where(eq(users.id, userId));
+}
