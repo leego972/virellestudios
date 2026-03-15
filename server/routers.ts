@@ -6703,7 +6703,7 @@ Rules:
         return await db.validatePromoCode(input.code.trim().toUpperCase());
       }),
     // Apply a promo code to the current user's account (stores it for checkout)
-    apply: protectedProcedure
+    applyCode: protectedProcedure
       .input(z.object({ code: z.string() }))
       .mutation(async ({ ctx, input }) => {
         const code = input.code.trim().toUpperCase();
