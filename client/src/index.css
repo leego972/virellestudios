@@ -189,6 +189,11 @@
   /* Prevent pull-to-refresh on mobile */
   body {
     overscroll-behavior-y: contain;
+    /* iOS safe-area insets — avoids notch and home indicator overlap */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 }
 

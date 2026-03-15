@@ -100,7 +100,7 @@ export default function MoodBoard() {
                   </TabsList>
 
                   <TabsContent value="text" className="space-y-3">
-                    <div><Label>Note</Label><Textarea value={text} onChange={e => setText(e.target.value)} placeholder="Style notes, visual direction, typography ideas..." rows={4} /></div>
+                    <div><Label>Note</Label><Textarea value={text} onChange={e => setText(e.target.value)} placeholder="Style notes, visual direction, typography ideas..." rows={4} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" /></div>
                     <div><Label>Category</Label>
                       <Select value={category} onValueChange={setCategory}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
@@ -114,15 +114,15 @@ export default function MoodBoard() {
                     <div><Label>Color</Label>
                       <div className="flex gap-3 items-center">
                         <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-16 h-12 rounded border cursor-pointer" />
-                        <Input value={color} onChange={e => setColor(e.target.value)} className="flex-1 font-mono" />
+                        <Input value={color} onChange={e => setColor(e.target.value)} className="flex-1 font-mono" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                       </div>
                     </div>
-                    <div><Label>Description</Label><Input value={text} onChange={e => setText(e.target.value)} placeholder="e.g., Primary accent, warm sunset tone..." /></div>
+                    <div><Label>Description</Label><Input value={text} onChange={e => setText(e.target.value)} placeholder="e.g., Primary accent, warm sunset tone..." autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" /></div>
                     <Button className="w-full" onClick={() => createMutation.mutate({ projectId, type: "color", color, text: text || undefined, category: "Colors" })} disabled={createMutation.isPending}>Add Color</Button>
                   </TabsContent>
 
                   <TabsContent value="image" className="space-y-3">
-                    <div><Label>Describe the image</Label><Textarea value={imagePrompt} onChange={e => setImagePrompt(e.target.value)} placeholder="Moody noir alleyway with rain-slicked streets and neon reflections..." rows={3} /></div>
+                    <div><Label>Describe the image</Label><Textarea value={imagePrompt} onChange={e => setImagePrompt(e.target.value)} placeholder="Moody noir alleyway with rain-slicked streets and neon reflections..." rows={3} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" /></div>
                     <Button className="w-full" onClick={() => generateImageMutation.mutate({ prompt: imagePrompt })} disabled={!imagePrompt || generateImageMutation.isPending || createMutation.isPending}>
                       {generateImageMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
                       Generate & Add
@@ -130,7 +130,7 @@ export default function MoodBoard() {
                   </TabsContent>
 
                   <TabsContent value="reference" className="space-y-3">
-                    <div><Label>Reference URL</Label><Input value={text} onChange={e => setText(e.target.value)} placeholder="https://example.com/reference-image.jpg" /></div>
+                    <div><Label>Reference URL</Label><Input value={text} onChange={e => setText(e.target.value)} placeholder="https://example.com/reference-image.jpg" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" /></div>
                     <div><Label>Category</Label>
                       <Select value={category} onValueChange={setCategory}>
                         <SelectTrigger><SelectValue /></SelectTrigger>

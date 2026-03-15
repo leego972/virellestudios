@@ -463,8 +463,7 @@ export default function SoundEffects() {
                 placeholder="Search sounds by name or tag..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+                className="pl-10" inputMode="search" autoCapitalize="off" enterKeyHint="search" />
             </div>
 
             {/* Added to Project */}
@@ -636,16 +635,14 @@ export default function SoundEffects() {
                 value={generatePrompt}
                 onChange={(e) => setGeneratePrompt(e.target.value)}
                 rows={3}
-                className="resize-none"
-              />
+                className="resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
             <div className="space-y-2">
               <Label>Sound Name</Label>
               <Input
                 placeholder="e.g. Dove Wing Flap"
                 value={generateName}
-                onChange={(e) => setGenerateName(e.target.value)}
-              />
+                onChange={(e) => setGenerateName(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div className="space-y-2">
               <Label>Duration: {generateDuration}s</Label>
@@ -723,8 +720,7 @@ export default function SoundEffects() {
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
                 placeholder="e.g., Custom Explosion"
-                required
-              />
+                required autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div>
               <Label className="text-xs text-muted-foreground">Category</Label>
@@ -742,12 +738,11 @@ export default function SoundEffects() {
               <Input
                 value={customTags}
                 onChange={(e) => setCustomTags(e.target.value)}
-                placeholder="e.g., explosion, blast, custom"
-              />
+                placeholder="e.g., explosion, blast, custom" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div>
               <Label className="text-xs text-muted-foreground">Audio File</Label>
-              <Input id="sfx-upload" type="file" accept="audio/*" required className="mt-1" />
+              <Input id="sfx-upload" type="file" accept="audio/*" required className="mt-1" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               <p className="text-[10px] text-muted-foreground mt-1">
                 Supports MP3, WAV, OGG, M4A. Max 16MB.
               </p>

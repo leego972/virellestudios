@@ -525,8 +525,7 @@ export default function TVCommercial() {
                           value={shot.voiceoverText}
                           onChange={e => updateShot(shot.id, { voiceoverText: e.target.value })}
                           placeholder="What the narrator says during this shot..."
-                          className="mt-0.5 text-sm min-h-[40px]"
-                        />
+                          className="mt-0.5 text-sm min-h-[40px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                       </div>
                       <div>
                         <label className="text-[10px] text-muted-foreground">On-Screen Text</label>
@@ -534,8 +533,7 @@ export default function TVCommercial() {
                           value={shot.onScreenText}
                           onChange={e => updateShot(shot.id, { onScreenText: e.target.value })}
                           placeholder="Text overlay (supers, titles, prices...)"
-                          className="mt-0.5 h-7 text-sm"
-                        />
+                          className="mt-0.5 h-7 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                       </div>
                     </div>
                   </div>
@@ -551,17 +549,17 @@ export default function TVCommercial() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs text-muted-foreground">Brand Name</label>
-                  <Input value={brandName} onChange={e => setBrandName(e.target.value)} className="mt-1 h-8 text-sm" />
+                  <Input value={brandName} onChange={e => setBrandName(e.target.value)} className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground">Commercial Title</label>
-                  <Input value={commercialTitle} onChange={e => setCommercialTitle(e.target.value)} className="mt-1 h-8 text-sm" />
+                  <Input value={commercialTitle} onChange={e => setCommercialTitle(e.target.value)} className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground">Tagline / Slogan</label>
-                <Input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="e.g. Just Do It, Think Different" className="mt-1 h-8 text-sm" />
+                <Input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="e.g. Just Do It, Think Different" className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
 
               {/* Brand Colors */}
@@ -603,12 +601,12 @@ export default function TVCommercial() {
 
               <div>
                 <label className="text-xs text-muted-foreground">CTA Text</label>
-                <Input value={ctaText} onChange={e => setCtaText(e.target.value)} placeholder="e.g. Watch Now, Book Tickets" className="mt-1 h-8 text-sm" />
+                <Input value={ctaText} onChange={e => setCtaText(e.target.value)} placeholder="e.g. Watch Now, Book Tickets" className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground">CTA URL / Info</label>
-                <Input value={ctaUrl} onChange={e => setCtaUrl(e.target.value)} placeholder="e.g. www.example.com, 1-800-FILM" className="mt-1 h-8 text-sm" />
+                <Input value={ctaUrl} onChange={e => setCtaUrl(e.target.value)} placeholder="e.g. www.example.com, 1-800-FILM" className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
 
               {/* Music */}
@@ -635,22 +633,22 @@ export default function TVCommercial() {
 
               <div>
                 <label className="text-xs text-muted-foreground">Shot Name</label>
-                <Input value={selectedShot.label} onChange={e => updateShot(selectedShot.id, { label: e.target.value })} className="mt-1 h-8 text-sm" />
+                <Input value={selectedShot.label} onChange={e => updateShot(selectedShot.id, { label: e.target.value })} className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground">Description</label>
-                <Textarea value={selectedShot.description} onChange={e => updateShot(selectedShot.id, { description: e.target.value })} className="mt-1 text-sm min-h-[50px]" />
+                <Textarea value={selectedShot.description} onChange={e => updateShot(selectedShot.id, { description: e.target.value })} className="mt-1 text-sm min-h-[50px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground">Visual Description (for AI)</label>
-                <Textarea value={selectedShot.visualDescription} onChange={e => updateShot(selectedShot.id, { visualDescription: e.target.value })} placeholder="Detailed visual description for image generation..." className="mt-1 text-sm min-h-[60px]" />
+                <Textarea value={selectedShot.visualDescription} onChange={e => updateShot(selectedShot.id, { visualDescription: e.target.value })} placeholder="Detailed visual description for image generation..." className="mt-1 text-sm min-h-[60px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground">Duration (seconds)</label>
-                <Input type="number" min={1} max={120} value={selectedShot.durationSec} onChange={e => updateShot(selectedShot.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" />
+                <Input type="number" min={1} max={120} value={selectedShot.durationSec} onChange={e => updateShot(selectedShot.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" inputMode="numeric" enterKeyHint="done" />
               </div>
 
               <div>
@@ -669,12 +667,12 @@ export default function TVCommercial() {
 
               <div>
                 <label className="text-xs text-muted-foreground">Voiceover Text</label>
-                <Textarea value={selectedShot.voiceoverText} onChange={e => updateShot(selectedShot.id, { voiceoverText: e.target.value })} placeholder="Narrator says..." className="mt-1 text-sm min-h-[50px]" />
+                <Textarea value={selectedShot.voiceoverText} onChange={e => updateShot(selectedShot.id, { voiceoverText: e.target.value })} placeholder="Narrator says..." className="mt-1 text-sm min-h-[50px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground">On-Screen Text</label>
-                <Input value={selectedShot.onScreenText} onChange={e => updateShot(selectedShot.id, { onScreenText: e.target.value })} placeholder="Text overlay..." className="mt-1 h-8 text-sm" />
+                <Input value={selectedShot.onScreenText} onChange={e => updateShot(selectedShot.id, { onScreenText: e.target.value })} placeholder="Text overlay..." className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
 
               <div>
@@ -779,27 +777,27 @@ export default function TVCommercial() {
                 <>
                   <div>
                     <label className="text-xs text-muted-foreground">Shot Name</label>
-                    <Input value={selectedShot.label} onChange={e => updateShot(selectedShot.id, { label: e.target.value })} className="mt-1 h-8 text-sm" />
+                    <Input value={selectedShot.label} onChange={e => updateShot(selectedShot.id, { label: e.target.value })} className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">Description</label>
-                    <Textarea value={selectedShot.description} onChange={e => updateShot(selectedShot.id, { description: e.target.value })} className="mt-1 text-sm min-h-[50px]" />
+                    <Textarea value={selectedShot.description} onChange={e => updateShot(selectedShot.id, { description: e.target.value })} className="mt-1 text-sm min-h-[50px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">Visual Description (for AI)</label>
-                    <Textarea value={selectedShot.visualDescription} onChange={e => updateShot(selectedShot.id, { visualDescription: e.target.value })} placeholder="Detailed visual description..." className="mt-1 text-sm min-h-[60px]" />
+                    <Textarea value={selectedShot.visualDescription} onChange={e => updateShot(selectedShot.id, { visualDescription: e.target.value })} placeholder="Detailed visual description..." className="mt-1 text-sm min-h-[60px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">Duration (seconds)</label>
-                    <Input type="number" min={1} max={120} value={selectedShot.durationSec} onChange={e => updateShot(selectedShot.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" />
+                    <Input type="number" min={1} max={120} value={selectedShot.durationSec} onChange={e => updateShot(selectedShot.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" inputMode="numeric" enterKeyHint="done" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">Voiceover Text</label>
-                    <Textarea value={selectedShot.voiceoverText} onChange={e => updateShot(selectedShot.id, { voiceoverText: e.target.value })} placeholder="Narrator says..." className="mt-1 text-sm min-h-[50px]" />
+                    <Textarea value={selectedShot.voiceoverText} onChange={e => updateShot(selectedShot.id, { voiceoverText: e.target.value })} placeholder="Narrator says..." className="mt-1 text-sm min-h-[50px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">On-Screen Text</label>
-                    <Input value={selectedShot.onScreenText} onChange={e => updateShot(selectedShot.id, { onScreenText: e.target.value })} placeholder="Text overlay..." className="mt-1 h-8 text-sm" />
+                    <Input value={selectedShot.onScreenText} onChange={e => updateShot(selectedShot.id, { onScreenText: e.target.value })} placeholder="Text overlay..." className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">Transition Out</label>

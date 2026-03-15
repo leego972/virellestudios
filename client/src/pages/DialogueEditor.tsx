@@ -292,7 +292,7 @@ export default function DialogueEditor() {
                   </SelectContent>
                 </Select>
               ) : (
-                <Input value={characterName} onChange={(e) => setCharacterName(e.target.value)} placeholder="Character name" />
+                <Input value={characterName} onChange={(e) => setCharacterName(e.target.value)} placeholder="Character name" autoCapitalize="words" autoCorrect="off" enterKeyHint="next" />
               )}
               {characterName === "__custom__" && (
                 <Input className="mt-2" value="" onChange={(e) => setCharacterName(e.target.value)} placeholder="Enter character name" />
@@ -300,7 +300,7 @@ export default function DialogueEditor() {
             </div>
             <div>
               <Label>Dialogue Line</Label>
-              <Textarea value={line} onChange={(e) => setLine(e.target.value)} placeholder="What does the character say?" rows={3} />
+              <Textarea value={line} onChange={(e) => setLine(e.target.value)} placeholder="What does the character say?" rows={3} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -316,7 +316,7 @@ export default function DialogueEditor() {
               </div>
               <div>
                 <Label>Direction</Label>
-                <Input value={direction} onChange={(e) => setDirection(e.target.value)} placeholder="e.g. turns away slowly" />
+                <Input value={direction} onChange={(e) => setDirection(e.target.value)} placeholder="e.g. turns away slowly" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
             </div>
             <Button

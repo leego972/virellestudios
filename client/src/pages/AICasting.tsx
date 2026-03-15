@@ -172,8 +172,7 @@ export default function AICasting() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search actors by name or archetype..."
-                className="pl-8 h-9 text-sm"
-              />
+                className="pl-8 h-9 text-sm" inputMode="search" autoCapitalize="off" enterKeyHint="search" />
             </div>
             <Select value={filterSpecialty} onValueChange={setFilterSpecialty}>
               <SelectTrigger className="w-40 h-9 text-sm">
@@ -265,8 +264,7 @@ export default function AICasting() {
                   value={castingNotes}
                   onChange={(e) => setCastingNotes(e.target.value)}
                   placeholder="Director's notes for this actor's performance (e.g., 'Plays a corrupt detective who hides his guilt behind charm and authority')..."
-                  className="text-xs min-h-[80px] resize-none"
-                />
+                  className="text-xs min-h-[80px] resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground mb-1 block flex items-center gap-1">
@@ -276,8 +274,7 @@ export default function AICasting() {
                   value={voiceDescription}
                   onChange={(e) => setVoiceDescription(e.target.value)}
                   placeholder="Describe the character's voice (e.g., 'Deep, gravelly baritone with a slight Southern drawl. Speaks slowly and deliberately')..."
-                  className="text-xs min-h-[60px] resize-none"
-                />
+                  className="text-xs min-h-[60px] resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
               <p className="text-xs text-muted-foreground pt-1">
                 These settings apply to all selected actors when cast. You can edit each character individually after casting.

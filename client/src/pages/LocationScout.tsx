@@ -114,20 +114,20 @@ export default function LocationScout() {
             <DialogContent className="max-w-lg">
               <DialogHeader><DialogTitle>Add Location</DialogTitle></DialogHeader>
               <div className="space-y-4 mt-2">
-                <div><Label>Name</Label><Input value={name} onChange={e => setName(e.target.value)} placeholder="Central Park, NYC" /></div>
+                <div><Label>Name</Label><Input value={name} onChange={e => setName(e.target.value)} placeholder="Central Park, NYC" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" /></div>
                 <div><Label>Type</Label>
                   <Select value={locationType} onValueChange={setLocationType}>
                     <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                     <SelectContent>{LOCATION_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div><Label>Address</Label><Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Optional address" /></div>
-                <div><Label>Description</Label><Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the location and its visual characteristics..." rows={3} /></div>
-                <div><Label>Notes</Label><Textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Filming notes, access info, permits needed..." rows={2} /></div>
+                <div><Label>Address</Label><Input value={address} onChange={e => setAddress(e.target.value)} placeholder="Optional address" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" /></div>
+                <div><Label>Description</Label><Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the location and its visual characteristics..." rows={3} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" /></div>
+                <div><Label>Notes</Label><Textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Filming notes, access info, permits needed..." rows={2} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" /></div>
                 <div>
                   <Label>Tags</Label>
                   <div className="flex gap-2">
-                    <Input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="Add tag" onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())} />
+                    <Input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="Add tag" onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     <Button variant="outline" size="sm" onClick={addTag}>Add</Button>
                   </div>
                   {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} ×</Badge>)}</div>}

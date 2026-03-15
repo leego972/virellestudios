@@ -137,8 +137,7 @@ function ShotCard({
             value={shot.description}
             onChange={(e) => onUpdate(shot.id, { description: e.target.value })}
             placeholder="Describe what happens in this shot..."
-            className="text-xs min-h-[60px] resize-none"
-          />
+            className="text-xs min-h-[60px] resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
@@ -147,8 +146,7 @@ function ShotCard({
               value={shot.startFrameUrl || ""}
               onChange={(e) => onUpdate(shot.id, { startFrameUrl: e.target.value })}
               placeholder="https://..."
-              className="h-7 text-xs"
-            />
+              className="h-7 text-xs" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
           </div>
           <div>
             <Label className="text-xs text-muted-foreground mb-1 block">End Frame URL</Label>
@@ -156,8 +154,7 @@ function ShotCard({
               value={shot.endFrameUrl || ""}
               onChange={(e) => onUpdate(shot.id, { endFrameUrl: e.target.value })}
               placeholder="https://..."
-              className="h-7 text-xs"
-            />
+              className="h-7 text-xs" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
           </div>
         </div>
       </CardContent>

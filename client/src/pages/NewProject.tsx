@@ -250,6 +250,9 @@ export default function NewProject() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="bg-background/50 h-9 text-sm"
+                  autoCapitalize="words"
+                  autoCorrect="off"
+                  enterKeyHint="next"
                 />
               </div>
               <div className="space-y-1.5">
@@ -262,6 +265,9 @@ export default function NewProject() {
                   value={plotSummary}
                   onChange={(e) => setPlotSummary(e.target.value)}
                   className="bg-background/50 min-h-[110px] text-sm resize-y"
+                  autoCapitalize="sentences"
+                  autoCorrect="on"
+                  enterKeyHint="done"
                 />
                 <p className="text-[10px] text-muted-foreground/60">Include genre, tone, setting, and key characters for the best results.</p>
               </div>

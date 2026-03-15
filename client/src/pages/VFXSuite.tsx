@@ -199,8 +199,7 @@ export default function VFXSuite() {
                   value={retakeInstructions}
                   onChange={(e) => setRetakeInstructions(e.target.value)}
                   placeholder="Describe what to change in this scene (e.g., 'Remove the lamp in the background', 'Extend the sky upward', 'Add lens flare on the window')..."
-                  className="text-xs min-h-[100px] resize-none"
-                />
+                  className="text-xs min-h-[100px] resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
               <Separator />
               <div>

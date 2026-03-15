@@ -1524,6 +1524,11 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                   : "border-border/50 focus-visible:ring-amber-500/30"
               )}
               rows={1}
+              inputMode="text"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="sentences"
+              enterKeyHint="send"
               disabled={sendMutation.isPending || voiceState === "transcribing" || voiceState === "applying_edit" || showEditPreview}
             />
 

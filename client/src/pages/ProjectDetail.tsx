@@ -560,8 +560,7 @@ export default function ProjectDetail() {
                         placeholder="Brief project description..."
                         value={descForm.description}
                         onChange={e => setDescForm(f => ({ ...f, description: e.target.value }))}
-                        className="min-h-[60px] text-sm bg-background/50 resize-y"
-                      />
+                        className="min-h-[60px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Plot Summary</Label>
@@ -569,8 +568,7 @@ export default function ProjectDetail() {
                         placeholder="Full plot summary..."
                         value={descForm.plotSummary}
                         onChange={e => setDescForm(f => ({ ...f, plotSummary: e.target.value }))}
-                        className="min-h-[100px] text-sm bg-background/50 resize-y"
-                      />
+                        className="min-h-[100px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                     </div>
                   </>
                 ) : (
@@ -1409,7 +1407,7 @@ export default function ProjectDetail() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Name <span className="text-destructive">*</span></Label>
-              <Input placeholder="Character name" value={charForm.name} onChange={e => setCharForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="Character name" value={charForm.name} onChange={e => setCharForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Role in Story</Label>
@@ -1427,7 +1425,7 @@ export default function ProjectDetail() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Age</Label>
-                <Input placeholder="e.g. 35" value={charForm.age} onChange={e => setCharForm(p => ({ ...p, age: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. 35" value={charForm.age} onChange={e => setCharForm(p => ({ ...p, age: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Gender</Label>
@@ -1444,7 +1442,7 @@ export default function ProjectDetail() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Ethnicity</Label>
-                <Input placeholder="e.g. Caucasian" value={charForm.ethnicity} onChange={e => setCharForm(p => ({ ...p, ethnicity: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. Caucasian" value={charForm.ethnicity} onChange={e => setCharForm(p => ({ ...p, ethnicity: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Build</Label>
@@ -1462,11 +1460,11 @@ export default function ProjectDetail() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Hair Color</Label>
-              <Input placeholder="e.g. Black, Blonde" value={charForm.hairColor} onChange={e => setCharForm(p => ({ ...p, hairColor: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. Black, Blonde" value={charForm.hairColor} onChange={e => setCharForm(p => ({ ...p, hairColor: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Full Description</Label>
-              <Textarea placeholder="Personality, background, motivations, distinctive features, wardrobe style..." value={charForm.description} onChange={e => setCharForm(p => ({ ...p, description: e.target.value }))} className="min-h-[80px] text-sm bg-background/50 resize-y" />
+              <Textarea placeholder="Personality, background, motivations, distinctive features, wardrobe style..." value={charForm.description} onChange={e => setCharForm(p => ({ ...p, description: e.target.value }))} className="min-h-[80px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="ghost" size="sm" onClick={() => setCharDialogOpen(false)}>Cancel</Button>
@@ -1527,7 +1525,7 @@ export default function ProjectDetail() {
           >
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Character Name <span className="text-destructive">*</span></Label>
-              <Input placeholder="e.g. Detective Marcus Cole" value={aiCharForm.name} onChange={e => setAiCharForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. Detective Marcus Cole" value={aiCharForm.name} onChange={e => setAiCharForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1691,7 +1689,7 @@ export default function ProjectDetail() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Facial Features</Label>
-                <Input placeholder="e.g. sharp jawline, high cheekbones" value={aiCharForm.facialFeatures} onChange={e => setAiCharForm(p => ({ ...p, facialFeatures: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. sharp jawline, high cheekbones" value={aiCharForm.facialFeatures} onChange={e => setAiCharForm(p => ({ ...p, facialFeatures: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Facial Hair</Label>
@@ -1715,7 +1713,7 @@ export default function ProjectDetail() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Distinguishing Marks</Label>
-                <Input placeholder="e.g. scar on left cheek, freckles, tattoo on neck" value={aiCharForm.distinguishingMarks} onChange={e => setAiCharForm(p => ({ ...p, distinguishingMarks: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. scar on left cheek, freckles, tattoo on neck" value={aiCharForm.distinguishingMarks} onChange={e => setAiCharForm(p => ({ ...p, distinguishingMarks: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Expression</Label>
@@ -1739,12 +1737,12 @@ export default function ProjectDetail() {
 
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Clothing Style</Label>
-              <Input placeholder="e.g. tailored black suit, leather jacket, military uniform" value={aiCharForm.clothingStyle} onChange={e => setAiCharForm(p => ({ ...p, clothingStyle: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. tailored black suit, leather jacket, military uniform" value={aiCharForm.clothingStyle} onChange={e => setAiCharForm(p => ({ ...p, clothingStyle: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
 
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Additional Notes</Label>
-              <Textarea placeholder="Any other details about this character's appearance..." value={aiCharForm.additionalNotes} onChange={e => setAiCharForm(p => ({ ...p, additionalNotes: e.target.value }))} className="min-h-[60px] text-sm bg-background/50 resize-y" />
+              <Textarea placeholder="Any other details about this character's appearance..." value={aiCharForm.additionalNotes} onChange={e => setAiCharForm(p => ({ ...p, additionalNotes: e.target.value }))} className="min-h-[60px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
@@ -1809,12 +1807,12 @@ export default function ProjectDetail() {
 
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Track Title <span className="text-destructive">*</span></Label>
-              <Input placeholder="e.g. Main Theme" value={soundtrackForm.title} onChange={e => setSoundtrackForm(p => ({ ...p, title: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. Main Theme" value={soundtrackForm.title} onChange={e => setSoundtrackForm(p => ({ ...p, title: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
 
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Artist / Composer</Label>
-              <Input placeholder="e.g. Hans Zimmer" value={soundtrackForm.artist} onChange={e => setSoundtrackForm(p => ({ ...p, artist: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. Hans Zimmer" value={soundtrackForm.artist} onChange={e => setSoundtrackForm(p => ({ ...p, artist: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -1851,11 +1849,11 @@ export default function ProjectDetail() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Fade In (sec)</Label>
-                <Input type="number" min={0} max={30} value={soundtrackForm.fadeIn} onChange={e => setSoundtrackForm(p => ({ ...p, fadeIn: Number(e.target.value) }))} className="h-9 text-sm bg-background/50" />
+                <Input type="number" min={0} max={30} value={soundtrackForm.fadeIn} onChange={e => setSoundtrackForm(p => ({ ...p, fadeIn: Number(e.target.value) }))} className="h-9 text-sm bg-background/50" inputMode="numeric" enterKeyHint="done" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Fade Out (sec)</Label>
-                <Input type="number" min={0} max={30} value={soundtrackForm.fadeOut} onChange={e => setSoundtrackForm(p => ({ ...p, fadeOut: Number(e.target.value) }))} className="h-9 text-sm bg-background/50" />
+                <Input type="number" min={0} max={30} value={soundtrackForm.fadeOut} onChange={e => setSoundtrackForm(p => ({ ...p, fadeOut: Number(e.target.value) }))} className="h-9 text-sm bg-background/50" inputMode="numeric" enterKeyHint="done" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Loop</Label>
@@ -1871,7 +1869,7 @@ export default function ProjectDetail() {
 
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Director Notes</Label>
-              <Textarea placeholder="Notes about when and how to use this track..." value={soundtrackForm.notes} onChange={e => setSoundtrackForm(p => ({ ...p, notes: e.target.value }))} className="min-h-[60px] text-sm bg-background/50 resize-y" />
+              <Textarea placeholder="Notes about when and how to use this track..." value={soundtrackForm.notes} onChange={e => setSoundtrackForm(p => ({ ...p, notes: e.target.value }))} className="min-h-[60px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
@@ -2003,8 +2001,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="e.g. Redemption, Love, Betrayal, Identity, Power"
               value={themes}
               onChange={(e) => mark(setThemes)(e.target.value)}
-              className="bg-background/50 h-8 text-xs"
-            />
+              className="bg-background/50 h-8 text-xs" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
           </div>
         </CardContent>
       </Card>
@@ -2021,8 +2018,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="Describe the main storyline in detail — the central conflict, protagonist's journey, and how events unfold..."
               value={mainPlot}
               onChange={(e) => mark(setMainPlot)(e.target.value)}
-              className="bg-background/50 min-h-[120px] text-xs resize-y"
-            />
+              className="bg-background/50 min-h-[120px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
           </div>
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Side Plots / Subplots</Label>
@@ -2030,8 +2026,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="Secondary storylines — romance, rivalry, mystery, parallel journeys..."
               value={sidePlots}
               onChange={(e) => mark(setSidePlots)(e.target.value)}
-              className="bg-background/50 min-h-[100px] text-xs resize-y"
-            />
+              className="bg-background/50 min-h-[100px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
           </div>
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Plot Twists & Surprises</Label>
@@ -2039,8 +2034,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="Key twists, betrayals, revelations, unexpected turns and when they occur..."
               value={plotTwists}
               onChange={(e) => mark(setPlotTwists)(e.target.value)}
-              className="bg-background/50 min-h-[100px] text-xs resize-y"
-            />
+              className="bg-background/50 min-h-[100px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
           </div>
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Character Arcs & Development</Label>
@@ -2048,8 +2042,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="How do your main characters change? What lessons do they learn? What flaws do they overcome?"
               value={characterArcs}
               onChange={(e) => mark(setCharacterArcs)(e.target.value)}
-              className="bg-background/50 min-h-[100px] text-xs resize-y"
-            />
+              className="bg-background/50 min-h-[100px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
           </div>
         </CardContent>
       </Card>
@@ -2066,8 +2059,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="Time period, location, culture, technology, rules of the universe..."
               value={setting}
               onChange={(e) => mark(setSetting)(e.target.value)}
-              className="bg-background/50 min-h-[100px] text-xs resize-y"
-            />
+              className="bg-background/50 min-h-[100px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
           </div>
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Opening Scene</Label>
@@ -2075,8 +2067,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="How does the film begin? The first thing the audience sees — set the tone, introduce the world..."
               value={openingScene}
               onChange={(e) => mark(setOpeningScene)(e.target.value)}
-              className="bg-background/50 min-h-[80px] text-xs resize-y"
-            />
+              className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
           </div>
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Climax</Label>
@@ -2084,8 +2075,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="The peak of tension — the central conflict comes to a head. What happens? Who is involved?"
               value={climax}
               onChange={(e) => mark(setClimax)(e.target.value)}
-              className="bg-background/50 min-h-[80px] text-xs resize-y"
-            />
+              className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
           </div>
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Resolution / Ending</Label>
@@ -2093,8 +2083,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
               placeholder="How does the story end? Happy, bittersweet, tragic, open-ended? What is the audience left feeling?"
               value={storyResolution}
               onChange={(e) => mark(setStoryResolution)(e.target.value)}
-              className="bg-background/50 min-h-[80px] text-xs resize-y"
-            />
+              className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
           </div>
         </CardContent>
       </Card>

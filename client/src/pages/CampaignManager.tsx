@@ -294,8 +294,7 @@ export default function CampaignManager() {
                   <Input
                     value={campaignName}
                     onChange={e => setCampaignName(e.target.value)}
-                    placeholder="e.g., Launch Week Campaign"
-                  />
+                    placeholder="e.g., Launch Week Campaign" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
 
                 {/* Content Type */}
@@ -394,8 +393,7 @@ export default function CampaignManager() {
                     value={customContext}
                     onChange={e => setCustomContext(e.target.value)}
                     placeholder="Any additional context for the AI to use when generating ad copy..."
-                    rows={3}
-                  />
+                    rows={3} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                 </div>
 
                 <Button
@@ -716,8 +714,7 @@ export default function CampaignManager() {
                   value={quickContext}
                   onChange={e => setQuickContext(e.target.value)}
                   placeholder="Any specific angle, feature, or message to focus on..."
-                  rows={2}
-                />
+                  rows={2} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
               <Button
                 onClick={() => generateSingleMut.mutate({

@@ -332,8 +332,7 @@ export default function Characters() {
             placeholder="Search characters..."
             value={charSearch}
             onChange={(e) => setCharSearch(e.target.value)}
-            className="pl-9 h-9 text-sm bg-card/50"
-          />
+            className="pl-9 h-9 text-sm bg-card/50" inputMode="search" autoCapitalize="off" enterKeyHint="search" />
         </div>
       )}
 
@@ -506,8 +505,7 @@ export default function Characters() {
                 placeholder="e.g. Detective Sarah Chen"
                 value={photoForm.name}
                 onChange={(e) => setPhotoForm(p => ({ ...p, name: e.target.value }))}
-                className="h-10 bg-background/50"
-              />
+                className="h-10 bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
 
             {/* Style & Role */}
@@ -554,8 +552,7 @@ export default function Characters() {
                 placeholder="e.g. 'Make them look battle-worn with a scar across the left cheek' or 'Dressed in a futuristic military uniform'"
                 value={photoForm.additionalNotes}
                 onChange={(e) => setPhotoForm(p => ({ ...p, additionalNotes: e.target.value }))}
-                className="min-h-[70px] text-sm bg-background/50 resize-y"
-              />
+                className="min-h-[70px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
 
             {/* Actions */}
@@ -724,8 +721,7 @@ export default function Characters() {
                 placeholder="Character name"
                 value={form.name}
                 onChange={(e) => setField("name", e.target.value)}
-                className="h-9 text-sm bg-background/50"
-              />
+                className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
 
             {/* Role */}
@@ -749,7 +745,7 @@ export default function Characters() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Age</Label>
-                <Input placeholder="e.g. 35" value={form.age} onChange={(e) => setField("age", e.target.value)} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. 35" value={form.age} onChange={(e) => setField("age", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Gender</Label>
@@ -767,7 +763,7 @@ export default function Characters() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Ethnicity</Label>
-                <Input placeholder="e.g. Caucasian, Asian" value={form.ethnicity} onChange={(e) => setField("ethnicity", e.target.value)} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. Caucasian, Asian" value={form.ethnicity} onChange={(e) => setField("ethnicity", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Build</Label>
@@ -785,11 +781,11 @@ export default function Characters() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Hair Color</Label>
-              <Input placeholder="e.g. Black, Blonde, Red" value={form.hairColor} onChange={(e) => setField("hairColor", e.target.value)} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. Black, Blonde, Red" value={form.hairColor} onChange={(e) => setField("hairColor", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Full Description</Label>
-              <Textarea placeholder="Personality, background, motivations, wardrobe..." value={form.description} onChange={(e) => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" />
+              <Textarea placeholder="Personality, background, motivations, wardrobe..." value={form.description} onChange={(e) => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
 
             <Separator />
@@ -872,7 +868,7 @@ export default function Characters() {
           >
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Character Name <span className="text-destructive">*</span></Label>
-              <Input placeholder="e.g. Detective Marcus Cole" value={aiForm.name} onChange={e => setAiForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. Detective Marcus Cole" value={aiForm.name} onChange={e => setAiForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
@@ -1029,7 +1025,7 @@ export default function Characters() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Facial Features</Label>
-                <Input placeholder="e.g. sharp jawline, high cheekbones" value={aiForm.facialFeatures} onChange={e => setAiForm(p => ({ ...p, facialFeatures: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. sharp jawline, high cheekbones" value={aiForm.facialFeatures} onChange={e => setAiForm(p => ({ ...p, facialFeatures: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Facial Hair</Label>
@@ -1050,7 +1046,7 @@ export default function Characters() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Distinguishing Marks</Label>
-                <Input placeholder="e.g. scar, freckles, tattoo" value={aiForm.distinguishingMarks} onChange={e => setAiForm(p => ({ ...p, distinguishingMarks: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. scar, freckles, tattoo" value={aiForm.distinguishingMarks} onChange={e => setAiForm(p => ({ ...p, distinguishingMarks: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Expression</Label>
@@ -1071,11 +1067,11 @@ export default function Characters() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Clothing Style</Label>
-              <Input placeholder="e.g. tailored suit, leather jacket" value={aiForm.clothingStyle} onChange={e => setAiForm(p => ({ ...p, clothingStyle: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. tailored suit, leather jacket" value={aiForm.clothingStyle} onChange={e => setAiForm(p => ({ ...p, clothingStyle: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Additional Notes</Label>
-              <Textarea placeholder="Any other details..." value={aiForm.additionalNotes} onChange={e => setAiForm(p => ({ ...p, additionalNotes: e.target.value }))} className="min-h-[60px] text-sm bg-background/50 resize-y" />
+              <Textarea placeholder="Any other details..." value={aiForm.additionalNotes} onChange={e => setAiForm(p => ({ ...p, additionalNotes: e.target.value }))} className="min-h-[60px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="ghost" size="sm" onClick={() => setAiDialogOpen(false)}>Cancel</Button>

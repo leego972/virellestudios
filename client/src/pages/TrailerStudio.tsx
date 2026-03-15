@@ -345,15 +345,15 @@ export default function TrailerStudio() {
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Details</h3>
             <div>
               <label className="text-xs text-muted-foreground">Trailer Title</label>
-              <Input value={trailerTitle} onChange={e => setTrailerTitle(e.target.value)} placeholder="e.g. Official Theatrical Trailer" className="mt-1 h-8 text-sm" />
+              <Input value={trailerTitle} onChange={e => setTrailerTitle(e.target.value)} placeholder="e.g. Official Theatrical Trailer" className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground">Tagline</label>
-              <Input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="e.g. Every legend has a beginning" className="mt-1 h-8 text-sm" />
+              <Input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="e.g. Every legend has a beginning" className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground">Release Date</label>
-              <Input value={releaseDate} onChange={e => setReleaseDate(e.target.value)} placeholder="e.g. Summer 2026" className="mt-1 h-8 text-sm" />
+              <Input value={releaseDate} onChange={e => setReleaseDate(e.target.value)} placeholder="e.g. Summer 2026" className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
           </div>
 
@@ -588,17 +588,17 @@ export default function TrailerStudio() {
 
               <div>
                 <label className="text-xs text-muted-foreground">Beat Name</label>
-                <Input value={selectedBeat.label} onChange={e => updateBeat(selectedBeat.id, { label: e.target.value })} className="mt-1 h-8 text-sm" />
+                <Input value={selectedBeat.label} onChange={e => updateBeat(selectedBeat.id, { label: e.target.value })} className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground">Description</label>
-                <Textarea value={selectedBeat.description} onChange={e => updateBeat(selectedBeat.id, { description: e.target.value })} className="mt-1 text-sm min-h-[60px]" />
+                <Textarea value={selectedBeat.description} onChange={e => updateBeat(selectedBeat.id, { description: e.target.value })} className="mt-1 text-sm min-h-[60px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground">Duration (seconds)</label>
-                <Input type="number" min={1} max={120} value={selectedBeat.durationSec} onChange={e => updateBeat(selectedBeat.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" />
+                <Input type="number" min={1} max={120} value={selectedBeat.durationSec} onChange={e => updateBeat(selectedBeat.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" inputMode="numeric" enterKeyHint="done" />
               </div>
 
               {/* Scene Assignment */}
@@ -624,7 +624,7 @@ export default function TrailerStudio() {
                 </label>
                 {selectedBeat.titleCard && (
                   <div className="mt-2 space-y-2 pl-4 border-l-2 border-amber-500/30">
-                    <Input value={selectedBeat.titleCardText} onChange={e => updateBeat(selectedBeat.id, { titleCardText: e.target.value })} placeholder="Title card text..." className="h-8 text-sm" />
+                    <Input value={selectedBeat.titleCardText} onChange={e => updateBeat(selectedBeat.id, { titleCardText: e.target.value })} placeholder="Title card text..." className="h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     <div className="flex gap-1 flex-wrap">
                       {TITLE_CARD_STYLES.map(s => (
                         <button key={s.id} onClick={() => updateBeat(selectedBeat.id, { titleCardStyle: s.id })} className={`text-[10px] py-1 px-2 rounded border transition-all ${selectedBeat.titleCardStyle === s.id ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-border/50 text-muted-foreground"}`}>
@@ -687,7 +687,7 @@ export default function TrailerStudio() {
               {/* Custom Director Notes */}
               <div>
                 <label className="text-xs text-muted-foreground">Director Notes</label>
-                <Textarea value={selectedBeat.customText} onChange={e => updateBeat(selectedBeat.id, { customText: e.target.value })} placeholder="Notes for this beat..." className="mt-1 text-sm min-h-[50px]" />
+                <Textarea value={selectedBeat.customText} onChange={e => updateBeat(selectedBeat.id, { customText: e.target.value })} placeholder="Notes for this beat..." className="mt-1 text-sm min-h-[50px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
             </>
           ) : (
@@ -764,15 +764,15 @@ export default function TrailerStudio() {
                 <>
                   <div>
                     <label className="text-xs text-muted-foreground">Beat Name</label>
-                    <Input value={selectedBeat.label} onChange={e => updateBeat(selectedBeat.id, { label: e.target.value })} className="mt-1 h-8 text-sm" />
+                    <Input value={selectedBeat.label} onChange={e => updateBeat(selectedBeat.id, { label: e.target.value })} className="mt-1 h-8 text-sm" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">Description</label>
-                    <Textarea value={selectedBeat.description} onChange={e => updateBeat(selectedBeat.id, { description: e.target.value })} className="mt-1 text-sm min-h-[60px]" />
+                    <Textarea value={selectedBeat.description} onChange={e => updateBeat(selectedBeat.id, { description: e.target.value })} className="mt-1 text-sm min-h-[60px]" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">Duration (seconds)</label>
-                    <Input type="number" min={1} max={120} value={selectedBeat.durationSec} onChange={e => updateBeat(selectedBeat.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" />
+                    <Input type="number" min={1} max={120} value={selectedBeat.durationSec} onChange={e => updateBeat(selectedBeat.id, { durationSec: Number(e.target.value) })} className="mt-1 h-8 text-sm" inputMode="numeric" enterKeyHint="done" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">Assign Scene</label>

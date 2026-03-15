@@ -996,11 +996,11 @@ export default function SceneEditor() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Scene Title</Label>
-                  <Input placeholder="e.g. The Chase Begins" value={form.title} onChange={e => setField("title", e.target.value)} className="h-9 text-sm bg-background/50" />
+                  <Input placeholder="e.g. The Chase Begins" value={form.title} onChange={e => setField("title", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" />Duration (seconds)</Label>
-                  <Input type="number" min={5} max={600} value={form.duration} onChange={e => setField("duration", parseInt(e.target.value) || 45)} className="h-9 text-sm bg-background/50" />
+                  <Input type="number" min={5} max={600} value={form.duration} onChange={e => setField("duration", parseInt(e.target.value) || 45)} className="h-9 text-sm bg-background/50" inputMode="numeric" enterKeyHint="done" />
                   <p className="text-[10px] text-muted-foreground/70">
                     Industry standard: 30–90s dialogue · 45–120s action · up to 3min+ for key scenes
                   </p>
@@ -1008,7 +1008,7 @@ export default function SceneEditor() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Scene Description</Label>
-                <Textarea placeholder="Describe what happens in this scene in detail — actions, emotions, key moments..." value={form.description} onChange={e => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" />
+                <Textarea placeholder="Describe what happens in this scene in detail — actions, emotions, key moments..." value={form.description} onChange={e => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
             </div>
 
@@ -1349,16 +1349,16 @@ export default function SceneEditor() {
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Country</Label>
-                      <Input placeholder="e.g. United States, France" value={form.locationCountry} onChange={e => setField("locationCountry", e.target.value)} className="h-9 text-sm bg-background/50" />
+                      <Input placeholder="e.g. United States, France" value={form.locationCountry} onChange={e => setField("locationCountry", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">City / Region</Label>
-                      <Input placeholder="e.g. New York, Paris" value={form.locationCity} onChange={e => setField("locationCity", e.target.value)} className="h-9 text-sm bg-background/50" />
+                      <Input placeholder="e.g. New York, Paris" value={form.locationCity} onChange={e => setField("locationCity", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Location Details</Label>
-                    <Input placeholder="e.g. Rooftop of a glass skyscraper, rain-slicked streets below" value={form.locationDetails} onChange={e => setField("locationDetails", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    <Input placeholder="e.g. Rooftop of a glass skyscraper, rain-slicked streets below" value={form.locationDetails} onChange={e => setField("locationDetails", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
                     <div className="space-y-1.5">
@@ -1459,21 +1459,21 @@ export default function SceneEditor() {
                                   </div>
                                   <div className="space-y-1">
                                     <Label className="text-[11px] text-muted-foreground">Hair / Styling</Label>
-                                    <Input placeholder="e.g. slicked back, wet" value={entry.hairNotes || ""} onChange={e => updateWardrobe({ hairNotes: e.target.value })} className="h-8 text-xs bg-background/50" />
+                                    <Input placeholder="e.g. slicked back, wet" value={entry.hairNotes || ""} onChange={e => updateWardrobe({ hairNotes: e.target.value })} className="h-8 text-xs bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                                   </div>
                                 </div>
                                 <div className="space-y-1">
                                   <Label className="text-[11px] text-muted-foreground">Outfit Description</Label>
-                                  <Input placeholder="e.g. black tuxedo, white dress shirt, no tie" value={entry.wardrobeDescription} onChange={e => updateWardrobe({ wardrobeDescription: e.target.value })} className="h-8 text-xs bg-background/50" />
+                                  <Input placeholder="e.g. black tuxedo, white dress shirt, no tie" value={entry.wardrobeDescription} onChange={e => updateWardrobe({ wardrobeDescription: e.target.value })} className="h-8 text-xs bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                   <div className="space-y-1">
                                     <Label className="text-[11px] text-muted-foreground">Makeup / FX</Label>
-                                    <Input placeholder="e.g. bruised eye, blood on lip" value={entry.makeupNotes || ""} onChange={e => updateWardrobe({ makeupNotes: e.target.value })} className="h-8 text-xs bg-background/50" />
+                                    <Input placeholder="e.g. bruised eye, blood on lip" value={entry.makeupNotes || ""} onChange={e => updateWardrobe({ makeupNotes: e.target.value })} className="h-8 text-xs bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                                   </div>
                                   <div className="space-y-1">
                                     <Label className="text-[11px] text-muted-foreground">Accessories / Props</Label>
-                                    <Input placeholder="e.g. gold watch, briefcase" value={entry.accessories || ""} onChange={e => updateWardrobe({ accessories: e.target.value })} className="h-8 text-xs bg-background/50" />
+                                    <Input placeholder="e.g. gold watch, briefcase" value={entry.accessories || ""} onChange={e => updateWardrobe({ accessories: e.target.value })} className="h-8 text-xs bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                                   </div>
                                 </div>
                               </div>
@@ -1488,8 +1488,7 @@ export default function SceneEditor() {
                           placeholder="Describe where each character is positioned and how they move. e.g. 'MARCUS stands at the window, back to camera. ELENA enters from left.'"
                           value={form.characterBlocking}
                           onChange={e => setField("characterBlocking", e.target.value)}
-                          className="min-h-[60px] text-sm bg-background/50 resize-y"
-                        />
+                          className="min-h-[60px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                       </div>
                     </div>
                   ) : (
@@ -1523,11 +1522,11 @@ export default function SceneEditor() {
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                         <div className="sm:col-span-3 space-y-1">
                           <Label className="text-[11px] text-muted-foreground">Description</Label>
-                          <Input placeholder="e.g. Young woman in red dress, walking a dog" value={extra.description} onChange={e => updateExtra(idx, { description: e.target.value })} className="h-8 text-xs bg-background/50" />
+                          <Input placeholder="e.g. Young woman in red dress, walking a dog" value={extra.description} onChange={e => updateExtra(idx, { description: e.target.value })} className="h-8 text-xs bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                         </div>
                         <div className="space-y-1">
                           <Label className="text-[11px] text-muted-foreground">Count</Label>
-                          <Input type="number" min={1} max={100} value={extra.count} onChange={e => updateExtra(idx, { count: parseInt(e.target.value) || 1 })} className="h-8 text-xs bg-background/50" />
+                          <Input type="number" min={1} max={100} value={extra.count} onChange={e => updateExtra(idx, { count: parseInt(e.target.value) || 1 })} className="h-8 text-xs bg-background/50" inputMode="numeric" enterKeyHint="done" />
                         </div>
                       </div>
                     </div>
@@ -1561,7 +1560,7 @@ export default function SceneEditor() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div className="space-y-1">
                           <Label className="text-[11px] text-muted-foreground">Role Name</Label>
-                          <Input placeholder="e.g. Narrator, God, Inner Voice" value={role.roleName} onChange={e => updateVoiceRole(idx, { roleName: e.target.value })} className="h-8 text-xs bg-background/50" />
+                          <Input placeholder="e.g. Narrator, God, Inner Voice" value={role.roleName} onChange={e => updateVoiceRole(idx, { roleName: e.target.value })} className="h-8 text-xs bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                         </div>
                         <div className="space-y-1">
                           <Label className="text-[11px] text-muted-foreground">Role Type</Label>
@@ -1583,11 +1582,11 @@ export default function SceneEditor() {
                       </div>
                       <div className="space-y-1">
                         <Label className="text-[11px] text-muted-foreground">Dialogue / Lines</Label>
-                        <Textarea placeholder="Write the lines for this voice role..." value={role.dialogueText} onChange={e => updateVoiceRole(idx, { dialogueText: e.target.value })} className="min-h-[50px] text-xs bg-background/50 resize-y font-mono" />
+                        <Textarea placeholder="Write the lines for this voice role..." value={role.dialogueText} onChange={e => updateVoiceRole(idx, { dialogueText: e.target.value })} className="min-h-[50px] text-xs bg-background/50 resize-y font-mono" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                       </div>
                       <div className="space-y-1">
                         <Label className="text-[11px] text-muted-foreground">Voice Style</Label>
-                        <Input placeholder="e.g. deep, authoritative, whispered, robotic, warm" value={role.voiceStyle} onChange={e => updateVoiceRole(idx, { voiceStyle: e.target.value })} className="h-8 text-xs bg-background/50" />
+                        <Input placeholder="e.g. deep, authoritative, whispered, robotic, warm" value={role.voiceStyle} onChange={e => updateVoiceRole(idx, { voiceStyle: e.target.value })} className="h-8 text-xs bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                       </div>
                     </div>
                   ))}
@@ -1614,8 +1613,7 @@ export default function SceneEditor() {
                     placeholder="Write the dialogue for this scene. Use character names followed by colons to indicate who is speaking..."
                     value={form.dialogueText}
                     onChange={e => setField("dialogueText", e.target.value)}
-                    className="min-h-[80px] text-sm bg-background/50 resize-y font-mono"
-                  />
+                    className="min-h-[80px] text-sm bg-background/50 resize-y font-mono" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                 </div>
               </CollapsibleContent>
             </Collapsible>
@@ -1762,12 +1760,12 @@ export default function SceneEditor() {
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">SFX Notes</Label>
-                      <Input placeholder="e.g. glass breaking, gunshot echo" value={form.sfxNotes} onChange={e => setField("sfxNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
+                      <Input placeholder="e.g. glass breaking, gunshot echo" value={form.sfxNotes} onChange={e => setField("sfxNotes", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Sound Design Notes</Label>
-                    <Input placeholder="e.g. reverb-heavy, muffled underwater, hyper-real foley" value={form.soundDesign} onChange={e => setField("soundDesign", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    <Input placeholder="e.g. reverb-heavy, muffled underwater, hyper-real foley" value={form.soundDesign} onChange={e => setField("soundDesign", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   </div>
                 </div>
               </CollapsibleContent>
@@ -1797,36 +1795,36 @@ export default function SceneEditor() {
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">VFX Notes</Label>
-                      <Input placeholder="e.g. practical fire, wire work" value={form.vfxNotes} onChange={e => setField("vfxNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
+                      <Input placeholder="e.g. practical fire, wire work" value={form.vfxNotes} onChange={e => setField("vfxNotes", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Props</Label>
-                      <Input placeholder="e.g. briefcase, gun (comma separated)" value={form.props} onChange={e => setField("props", e.target.value)} className="h-9 text-sm bg-background/50" />
+                      <Input placeholder="e.g. briefcase, gun (comma separated)" value={form.props} onChange={e => setField("props", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Makeup / SFX Makeup</Label>
-                      <Input placeholder="e.g. bruised eye, prosthetic scar" value={form.makeupNotes} onChange={e => setField("makeupNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
+                      <Input placeholder="e.g. bruised eye, prosthetic scar" value={form.makeupNotes} onChange={e => setField("makeupNotes", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Stunt Notes</Label>
-                      <Input placeholder="e.g. car flip, rooftop jump" value={form.stuntNotes} onChange={e => setField("stuntNotes", e.target.value)} className="h-9 text-sm bg-background/50" />
+                      <Input placeholder="e.g. car flip, rooftop jump" value={form.stuntNotes} onChange={e => setField("stuntNotes", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Est. Budget (USD)</Label>
-                      <Input type="number" placeholder="e.g. 50000" value={form.budgetEstimate ?? ""} onChange={e => setField("budgetEstimate", e.target.value ? Number(e.target.value) : null)} className="h-9 text-sm bg-background/50" />
+                      <Input type="number" placeholder="e.g. 50000" value={form.budgetEstimate ?? ""} onChange={e => setField("budgetEstimate", e.target.value ? Number(e.target.value) : null)} className="h-9 text-sm bg-background/50" inputMode="numeric" enterKeyHint="done" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Shooting Days</Label>
-                      <Input type="number" placeholder="e.g. 2" value={form.shootingDays ?? ""} onChange={e => setField("shootingDays", e.target.value ? Number(e.target.value) : null)} className="h-9 text-sm bg-background/50" />
+                      <Input type="number" placeholder="e.g. 2" value={form.shootingDays ?? ""} onChange={e => setField("shootingDays", e.target.value ? Number(e.target.value) : null)} className="h-9 text-sm bg-background/50" inputMode="numeric" enterKeyHint="done" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Foreground Elements</Label>
-                    <Input placeholder="e.g. broken glass, scattered papers, candles" value={form.foregroundElements} onChange={e => setField("foregroundElements", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    <Input placeholder="e.g. broken glass, scattered papers, candles" value={form.foregroundElements} onChange={e => setField("foregroundElements", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">Background Elements</Label>
-                    <Input placeholder="e.g. city skyline, burning building" value={form.backgroundElements} onChange={e => setField("backgroundElements", e.target.value)} className="h-9 text-sm bg-background/50" />
+                    <Input placeholder="e.g. city skyline, burning building" value={form.backgroundElements} onChange={e => setField("backgroundElements", e.target.value)} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   </div>
                 </div>
               </CollapsibleContent>
@@ -1848,8 +1846,7 @@ export default function SceneEditor() {
                     placeholder="Override the AI-generated prompt entirely. Leave blank to let the AI build the prompt from your scene settings."
                     value={form.aiPromptOverride}
                     onChange={e => setField("aiPromptOverride", e.target.value)}
-                    className="min-h-[70px] text-sm bg-background/50 resize-y font-mono"
-                  />
+                    className="min-h-[70px] text-sm bg-background/50 resize-y font-mono" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                 </div>
               </CollapsibleContent>
             </Collapsible>
@@ -1872,8 +1869,7 @@ export default function SceneEditor() {
                       placeholder="What to exclude from the video: blur, grain, watermark, text overlay, low quality, distorted faces..."
                       value={form.negativePrompt}
                       onChange={e => setField("negativePrompt", e.target.value)}
-                      className="min-h-[60px] text-sm bg-background/50 resize-y font-mono"
-                    />
+                      className="min-h-[60px] text-sm bg-background/50 resize-y font-mono" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground mb-1 block">Seed (for reproducibility)</Label>
@@ -1882,8 +1878,7 @@ export default function SceneEditor() {
                       placeholder="Leave blank for random seed"
                       value={form.seed ?? ""}
                       onChange={e => setField("seed", e.target.value ? parseInt(e.target.value) : null)}
-                      className="text-sm bg-background/50"
-                    />
+                      className="text-sm bg-background/50" inputMode="numeric" enterKeyHint="done" />
                   </div>
                 </div>
               </CollapsibleContent>
@@ -1905,8 +1900,7 @@ export default function SceneEditor() {
                     placeholder="Private notes for this scene — creative intent, references, technical reminders, continuity notes..."
                     value={form.directorNotes}
                     onChange={e => setField("directorNotes", e.target.value)}
-                    className="min-h-[60px] text-sm bg-background/50 resize-y"
-                  />
+                    className="min-h-[60px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                 </div>
               </CollapsibleContent>
             </Collapsible>

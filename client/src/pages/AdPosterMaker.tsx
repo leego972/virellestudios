@@ -1185,8 +1185,7 @@ export default function AdPosterMaker() {
                     value={poster.backgroundImageUrl || ""}
                     onChange={(e) => pushPoster({ ...poster, backgroundImageUrl: e.target.value || null })}
                     placeholder="Paste image URL..."
-                    className="text-xs"
-                  />
+                    className="text-xs" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" className="gap-1.5 text-xs flex-1" onClick={handleGenerateImage} disabled={isGeneratingImage}>
                       {isGeneratingImage ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
@@ -1238,7 +1237,7 @@ export default function AdPosterMaker() {
                   <CardContent className="space-y-3 px-3 pb-3">
                     <div>
                       <Label className="text-xs">Content</Label>
-                      <Textarea value={selectedElement.text} onChange={(e) => updateTextElement(selectedElement.id, { text: e.target.value })} rows={2} className="text-sm mt-1" />
+                      <Textarea value={selectedElement.text} onChange={(e) => updateTextElement(selectedElement.id, { text: e.target.value })} rows={2} className="text-sm mt-1" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
@@ -1250,14 +1249,14 @@ export default function AdPosterMaker() {
                       </div>
                       <div>
                         <Label className="text-xs">Size (px)</Label>
-                        <Input type="number" value={selectedElement.fontSize} onChange={(e) => updateTextElement(selectedElement.id, { fontSize: Number(e.target.value) })} className="h-8 text-xs mt-1" min={8} max={200} />
+                        <Input type="number" value={selectedElement.fontSize} onChange={(e) => updateTextElement(selectedElement.id, { fontSize: Number(e.target.value) })} className="h-8 text-xs mt-1" min={8} max={200} inputMode="numeric" enterKeyHint="done" />
                       </div>
                     </div>
                     <div>
                       <Label className="text-xs">Color</Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input type="color" value={selectedElement.color} onChange={(e) => updateTextElement(selectedElement.id, { color: e.target.value })} className="h-8 w-8 rounded-lg border cursor-pointer" />
-                        <Input value={selectedElement.color} onChange={(e) => updateTextElement(selectedElement.id, { color: e.target.value })} className="h-8 text-xs flex-1" />
+                        <Input value={selectedElement.color} onChange={(e) => updateTextElement(selectedElement.id, { color: e.target.value })} className="h-8 text-xs flex-1" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                       </div>
                     </div>
                     <div className="flex items-center gap-1 flex-wrap">
@@ -1308,11 +1307,11 @@ export default function AdPosterMaker() {
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <Label className="text-xs">X Position</Label>
-                        <Input type="number" value={Math.round(selectedElement.x)} onChange={(e) => updateTextElement(selectedElement.id, { x: Number(e.target.value) })} className="h-8 text-xs mt-1" />
+                        <Input type="number" value={Math.round(selectedElement.x)} onChange={(e) => updateTextElement(selectedElement.id, { x: Number(e.target.value) })} className="h-8 text-xs mt-1" inputMode="numeric" enterKeyHint="done" />
                       </div>
                       <div>
                         <Label className="text-xs">Y Position</Label>
-                        <Input type="number" value={Math.round(selectedElement.y)} onChange={(e) => updateTextElement(selectedElement.id, { y: Number(e.target.value) })} className="h-8 text-xs mt-1" />
+                        <Input type="number" value={Math.round(selectedElement.y)} onChange={(e) => updateTextElement(selectedElement.id, { y: Number(e.target.value) })} className="h-8 text-xs mt-1" inputMode="numeric" enterKeyHint="done" />
                       </div>
                     </div>
                   </CardContent>
@@ -1353,7 +1352,7 @@ export default function AdPosterMaker() {
                     <Label className="text-xs">Background</Label>
                     <div className="flex items-center gap-2 mt-1">
                       <input type="color" value={poster.backgroundColor} onChange={(e) => pushPoster({ ...poster, backgroundColor: e.target.value })} className="h-8 w-8 rounded-lg border cursor-pointer" />
-                      <Input value={poster.backgroundColor} onChange={(e) => pushPoster({ ...poster, backgroundColor: e.target.value })} className="h-8 text-xs flex-1" />
+                      <Input value={poster.backgroundColor} onChange={(e) => pushPoster({ ...poster, backgroundColor: e.target.value })} className="h-8 text-xs flex-1" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                   </div>
                   <div>
@@ -1508,7 +1507,7 @@ export default function AdPosterMaker() {
           <div className="space-y-4">
             <div>
               <Label>URL to encode</Label>
-              <Input className="mt-1" placeholder="https://yourfilm.com" value={qrUrl} onChange={(e) => setQrUrl(e.target.value)} />
+              <Input className="mt-1" placeholder="https://yourfilm.com" value={qrUrl} onChange={(e) => setQrUrl(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             {qrUrl && (
               <div className="flex flex-col items-center gap-3">
@@ -1680,8 +1679,7 @@ function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
           rows={3}
           placeholder="Write your post caption here..."
           value={publishCaption}
-          onChange={(e) => setPublishCaption(e.target.value)}
-        />
+          onChange={(e) => setPublishCaption(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
       </div>
       <div className="space-y-2">
         {Object.entries(PLATFORM_META).map(([platformId, meta]) => {
@@ -1850,15 +1848,15 @@ function InfluencerKitTab({ projectTitle, projectGenre, projectLogline }: { proj
       <div className="space-y-2">
         <div>
           <Label className="text-xs">Film Title</Label>
-          <Input className="mt-1 h-8 text-xs" placeholder="e.g. The Last Signal" value={filmTitle} onChange={(e) => setFilmTitle(e.target.value)} />
+          <Input className="mt-1 h-8 text-xs" placeholder="e.g. The Last Signal" value={filmTitle} onChange={(e) => setFilmTitle(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
         </div>
         <div>
           <Label className="text-xs">Genre</Label>
-          <Input className="mt-1 h-8 text-xs" placeholder="e.g. Sci-Fi Thriller" value={genre} onChange={(e) => setGenre(e.target.value)} />
+          <Input className="mt-1 h-8 text-xs" placeholder="e.g. Sci-Fi Thriller" value={genre} onChange={(e) => setGenre(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
         </div>
         <div>
           <Label className="text-xs">Logline (optional)</Label>
-          <Textarea className="mt-1 text-xs resize-none" rows={2} placeholder="One-sentence pitch..." value={logline} onChange={(e) => setLogline(e.target.value)} />
+          <Textarea className="mt-1 text-xs resize-none" rows={2} placeholder="One-sentence pitch..." value={logline} onChange={(e) => setLogline(e.target.value)} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
         </div>
         <Button
           size="sm"

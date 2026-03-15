@@ -167,6 +167,9 @@ export default function Contact() {
                         value={form.name}
                         onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                         required
+                        autoCapitalize="words"
+                        autoCorrect="off"
+                        enterKeyHint="next"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -177,6 +180,10 @@ export default function Contact() {
                         value={form.email}
                         onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                         required
+                        inputMode="email"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        enterKeyHint="next"
                       />
                     </div>
                   </div>
@@ -216,6 +223,9 @@ export default function Contact() {
                       value={form.message}
                       onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
                       required
+                      autoCapitalize="sentences"
+                      autoCorrect="on"
+                      enterKeyHint="done"
                     />
                   </div>
 

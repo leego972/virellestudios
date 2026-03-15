@@ -633,6 +633,10 @@ export default function ScriptWriter() {
                       rows={1}
                       className={`w-full bg-transparent border-none resize-none focus:outline-none focus:ring-0 py-0.5 px-1 placeholder:text-muted-foreground/30 ${ELEMENT_STYLES[element.type]}`}
                       style={{ overflow: "hidden" }}
+                      inputMode="text"
+                      autoCapitalize="sentences"
+                      autoCorrect="on"
+                      enterKeyHint="done"
                     />
                   </div>
                 ))}

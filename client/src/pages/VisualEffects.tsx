@@ -290,8 +290,7 @@ export default function VisualEffects() {
             placeholder="Search effects..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 h-9 bg-background/50"
-          />
+            className="pl-10 h-9 bg-background/50" inputMode="search" autoCapitalize="off" enterKeyHint="search" />
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
           <SelectTrigger className="w-full sm:w-[200px] h-9 bg-background/50">
@@ -462,7 +461,7 @@ export default function VisualEffects() {
           <form onSubmit={handleSubmit} className="space-y-4 mt-2">
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Effect Name <span className="text-destructive">*</span></Label>
-              <Input placeholder="e.g. Magical Portal Swirl" value={form.name} onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" />
+              <Input placeholder="e.g. Magical Portal Swirl" value={form.name} onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
@@ -478,12 +477,12 @@ export default function VisualEffects() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Subcategory</Label>
-                <Input placeholder="e.g. elemental, ambient" value={form.subcategory} onChange={(e) => setForm(p => ({ ...p, subcategory: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. elemental, ambient" value={form.subcategory} onChange={(e) => setForm(p => ({ ...p, subcategory: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Description</Label>
-              <Textarea placeholder="Describe the visual effect..." value={form.description} onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))} className="min-h-[60px] text-sm bg-background/50 resize-y" />
+              <Textarea placeholder="Describe the visual effect..." value={form.description} onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))} className="min-h-[60px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Intensity: {Math.round(form.intensity * 100)}%</Label>
@@ -492,7 +491,7 @@ export default function VisualEffects() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Duration (sec)</Label>
-                <Input placeholder="e.g. 3.5" value={form.duration} onChange={(e) => setForm(p => ({ ...p, duration: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. 3.5" value={form.duration} onChange={(e) => setForm(p => ({ ...p, duration: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Layer</Label>
@@ -523,16 +522,16 @@ export default function VisualEffects() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Color Tint</Label>
-                <Input type="color" value={form.colorTint || "#ffffff"} onChange={(e) => setForm(p => ({ ...p, colorTint: e.target.value }))} className="h-9 bg-background/50" />
+                <Input type="color" value={form.colorTint || "#ffffff"} onChange={(e) => setForm(p => ({ ...p, colorTint: e.target.value }))} className="h-9 bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Tags (comma-separated)</Label>
-                <Input placeholder="e.g. fire, magic, glow" value={form.tags} onChange={(e) => setForm(p => ({ ...p, tags: e.target.value }))} className="h-9 text-sm bg-background/50" />
+                <Input placeholder="e.g. fire, magic, glow" value={form.tags} onChange={(e) => setForm(p => ({ ...p, tags: e.target.value }))} className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               </div>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Notes</Label>
-              <Textarea placeholder="Production notes..." value={form.notes} onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))} className="min-h-[50px] text-sm bg-background/50 resize-y" />
+              <Textarea placeholder="Production notes..." value={form.notes} onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))} className="min-h-[50px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="ghost" size="sm" onClick={closeDialog}>Cancel</Button>

@@ -267,8 +267,7 @@ export default function LiveActionPlate() {
                   value={compositeInstructions}
                   onChange={(e) => setCompositeInstructions(e.target.value)}
                   placeholder="Describe how to blend the AI content with the live footage (e.g., 'Replace the sky with a stormy AI sky', 'Insert the AI character into the left side of frame', 'Extend the background environment beyond the set walls')..."
-                  className="text-xs min-h-[120px] resize-none"
-                />
+                  className="text-xs min-h-[120px] resize-none" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
             </CardContent>
           </Card>

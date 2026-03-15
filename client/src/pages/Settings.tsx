@@ -202,22 +202,22 @@ export default function Settings() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Display Name</Label>
-                  <Input value={profileForm.name} onChange={(e) => setProfileForm((p) => ({ ...p, name: e.target.value }))} placeholder="Your name" className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.name} onChange={(e) => setProfileForm((p) => ({ ...p, name: e.target.value }))} placeholder="Your name" className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Email</Label>
-                  <Input value={profile?.email || ""} disabled className="h-9 text-sm bg-background/30 opacity-60" />
+                  <Input value={profile?.email || ""} disabled className="h-9 text-sm bg-background/30 opacity-60" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                   <p className="text-[10px] text-muted-foreground">Email cannot be changed</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground flex items-center gap-1"><Phone className="h-3 w-3" />Phone</Label>
-                  <Input value={profileForm.phone} onChange={(e) => setProfileForm((p) => ({ ...p, phone: e.target.value }))} placeholder="+1 (555) 000-0000" className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.phone} onChange={(e) => setProfileForm((p) => ({ ...p, phone: e.target.value }))} placeholder="+1 (555) 000-0000" className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground flex items-center gap-1"><Globe className="h-3 w-3" />Timezone</Label>
-                  <Input value={profileForm.timezone} onChange={(e) => setProfileForm((p) => ({ ...p, timezone: e.target.value }))} placeholder="e.g. America/New_York" className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.timezone} onChange={(e) => setProfileForm((p) => ({ ...p, timezone: e.target.value }))} placeholder="e.g. America/New_York" className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -258,7 +258,7 @@ export default function Settings() {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Bio</Label>
-                <Textarea value={profileForm.bio} onChange={(e) => setProfileForm((p) => ({ ...p, bio: e.target.value }))} placeholder="Tell us about yourself..." className="min-h-[80px] text-sm bg-background/50 resize-y" maxLength={1000} />
+                <Textarea value={profileForm.bio} onChange={(e) => setProfileForm((p) => ({ ...p, bio: e.target.value }))} placeholder="Tell us about yourself..." className="min-h-[80px] text-sm bg-background/50 resize-y" maxLength={1000} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
               </div>
             </CardContent>
           </Card>
@@ -275,11 +275,11 @@ export default function Settings() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Country</Label>
-                  <Input value={profileForm.country} onChange={(e) => setProfileForm((p) => ({ ...p, country: e.target.value }))} placeholder="e.g. United States" className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.country} onChange={(e) => setProfileForm((p) => ({ ...p, country: e.target.value }))} placeholder="e.g. United States" className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">City</Label>
-                  <Input value={profileForm.city} onChange={(e) => setProfileForm((p) => ({ ...p, city: e.target.value }))} placeholder="e.g. Los Angeles" className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.city} onChange={(e) => setProfileForm((p) => ({ ...p, city: e.target.value }))} placeholder="e.g. Los Angeles" className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
               </div>
             </CardContent>
@@ -297,7 +297,7 @@ export default function Settings() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Job Title</Label>
-                  <Input value={profileForm.jobTitle} onChange={(e) => setProfileForm((p) => ({ ...p, jobTitle: e.target.value }))} placeholder="e.g. Film Director" className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.jobTitle} onChange={(e) => setProfileForm((p) => ({ ...p, jobTitle: e.target.value }))} placeholder="e.g. Film Director" className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Professional Role</Label>
@@ -325,17 +325,17 @@ export default function Settings() {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground flex items-center gap-1"><Building2 className="h-3 w-3" />Company</Label>
-                  <Input value={profileForm.companyName} onChange={(e) => setProfileForm((p) => ({ ...p, companyName: e.target.value }))} placeholder="Company name" className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.companyName} onChange={(e) => setProfileForm((p) => ({ ...p, companyName: e.target.value }))} placeholder="Company name" className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Company Website</Label>
-                  <Input value={profileForm.companyWebsite} onChange={(e) => setProfileForm((p) => ({ ...p, companyWebsite: e.target.value }))} placeholder="https://..." className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.companyWebsite} onChange={(e) => setProfileForm((p) => ({ ...p, companyWebsite: e.target.value }))} placeholder="https://..." className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Portfolio URL</Label>
-                  <Input value={profileForm.portfolioUrl} onChange={(e) => setProfileForm((p) => ({ ...p, portfolioUrl: e.target.value }))} placeholder="https://..." className="h-9 text-sm bg-background/50" />
+                  <Input value={profileForm.portfolioUrl} onChange={(e) => setProfileForm((p) => ({ ...p, portfolioUrl: e.target.value }))} placeholder="https://..." className="h-9 text-sm bg-background/50" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                 </div>
               </div>
             </CardContent>
@@ -918,8 +918,7 @@ function ConnectedPlatformsTab() {
                         className="mt-1 h-8 text-xs"
                         placeholder={`e.g. @${platform.name.toLowerCase()}page`}
                         value={formValues.displayName || ""}
-                        onChange={(e) => setFormValues((v) => ({ ...v, displayName: e.target.value }))}
-                      />
+                        onChange={(e) => setFormValues((v) => ({ ...v, displayName: e.target.value }))} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     </div>
                     {platform.fields.map((field) => (
                       <div key={field.key}>
@@ -929,8 +928,7 @@ function ConnectedPlatformsTab() {
                           type={field.secret ? "password" : "text"}
                           placeholder={field.placeholder}
                           value={formValues[field.key] || ""}
-                          onChange={(e) => setFormValues((v) => ({ ...v, [field.key]: e.target.value }))}
-                        />
+                          onChange={(e) => setFormValues((v) => ({ ...v, [field.key]: e.target.value }))} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                       </div>
                     ))}
                     <Button

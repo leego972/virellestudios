@@ -484,8 +484,7 @@ export default function Collaboration() {
               <Input
                 value={generatedLink}
                 readOnly
-                className="text-xs font-mono"
-              />
+                className="text-xs font-mono" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
               <Button variant="outline" size="icon" onClick={copyLink}>
                 <Copy className="h-4 w-4" />
               </Button>
