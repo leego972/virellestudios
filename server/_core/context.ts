@@ -103,6 +103,15 @@ export async function createContext(
     user = null;
   }
 
+  // Enforce temporary account expiry (e.g. tester accounts)
+  if (user && (user as any).accountExpiresAt) {
+    const expiry = new Date((user as any).accountExpiresAt);
+    if (expiry < new Date()) {
+      console.log(`[Auth] Temporary account ${user.email} has expired — access revoked.`);
+      user = null;
+    }
+  }
+
   // Register admin users for rate limit bypass
   if (user && user.role === "admin") {
     registerAdminForRateLimit(user.id);
