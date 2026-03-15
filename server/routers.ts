@@ -1,7 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, creationProcedure, adminProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import { sql } from "drizzle-orm";
@@ -362,7 +362,7 @@ export const appRouter = router({
         return db.getProjectById(input.id, ctx.user.id);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         title: z.string().min(1).max(255),
         description: z.string().optional(),
@@ -416,7 +416,7 @@ export const appRouter = router({
         return db.createProject(sanitized);
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         title: z.string().min(1).max(255).optional(),
@@ -451,7 +451,7 @@ export const appRouter = router({
         return db.updateProject(id, ctx.user.id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteProject(input.id, ctx.user.id);
@@ -541,7 +541,7 @@ export const appRouter = router({
         return db.getCharacterById(input.id);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number().nullable().optional(),
         name: z.string().min(1).max(128),
@@ -615,7 +615,7 @@ export const appRouter = router({
         return db.createCharacter({ ...input, userId: ctx.user.id });
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         name: z.string().min(1).max(128).optional(),
@@ -674,7 +674,7 @@ export const appRouter = router({
         return db.updateCharacter(id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         const char = await db.getCharacterById(input.id);
@@ -941,7 +941,7 @@ export const appRouter = router({
         return db.getSceneById(input.id);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         orderIndex: z.number().optional(),
@@ -1063,7 +1063,7 @@ export const appRouter = router({
         }
         return db.createScene(input as any);
       }),
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         title: z.string().optional(),
@@ -1190,7 +1190,7 @@ export const appRouter = router({
         const { id, ...data } = input;
         return db.updateScene(id, data as any);
       }),
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         const scene = await db.getSceneById(input.id);
@@ -1214,7 +1214,7 @@ export const appRouter = router({
       }),
 
     // Generate a preview image for a single scene
-    generatePreview: protectedProcedure
+    generatePreview: creationProcedure
       .input(z.object({ sceneId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         rateLimitAI(ctx.user.id);
@@ -1342,7 +1342,7 @@ export const appRouter = router({
       }),
 
     // Bulk generate preview images for all scenes without thumbnails
-    bulkGeneratePreviews: protectedProcedure
+    bulkGeneratePreviews: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         rateLimitHeavyAI(ctx.user.id);
@@ -1423,7 +1423,7 @@ export const appRouter = router({
       }),
 
     // Generate video for a single scene
-    generateVideo: protectedProcedure
+    generateVideo: creationProcedure
       .input(z.object({ sceneId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         rateLimitHeavyAI(ctx.user.id);
@@ -1618,7 +1618,7 @@ export const appRouter = router({
       }),
 
     // Bulk generate videos for all scenes without videos
-    bulkGenerateVideos: protectedProcedure
+    bulkGenerateVideos: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         rateLimitHeavyAI(ctx.user.id);
@@ -2450,7 +2450,7 @@ Break this into 8-15 scenes. For each scene, provide:
       }),
 
     // Generate trailer from existing scenes
-    generateTrailer: protectedProcedure
+    generateTrailer: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         rateLimitHeavyAI(ctx.user.id);
@@ -2936,7 +2936,7 @@ Break this into 8-15 scenes. For each scene, provide:
         return db.getScriptById(input.id);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         title: z.string().min(1).max(255).optional(),
@@ -2947,7 +2947,7 @@ Break this into 8-15 scenes. For each scene, provide:
         return db.createScript({ ...input, userId: ctx.user.id });
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         title: z.string().min(1).max(255).optional(),
@@ -2960,7 +2960,7 @@ Break this into 8-15 scenes. For each scene, provide:
         return db.updateScript(id, ctx.user.id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteScript(input.id, ctx.user.id);
@@ -3206,7 +3206,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.getSoundtrackById(input.id);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().nullable().optional(),
@@ -3228,7 +3228,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.createSoundtrack({ ...input, userId: ctx.user.id });
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         title: z.string().min(1).max(255).optional(),
@@ -3250,7 +3250,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.updateSoundtrack(id, ctx.user.id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteSoundtrack(input.id, ctx.user.id);
@@ -3280,7 +3280,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.getProjectCredits(input.projectId);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         role: z.string().min(1).max(128),
@@ -3293,7 +3293,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.createCredit({ ...input, userId: ctx.user.id });
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         role: z.string().min(1).max(128).optional(),
@@ -3307,7 +3307,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.updateCredit(id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         await db.deleteCredit(input.id);
@@ -3326,7 +3326,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
 
   // ─── Shot List Generator ───
   shotList: router({
-    generate: protectedProcedure
+    generate: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         rateLimitAI(ctx.user.id);
@@ -3509,7 +3509,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.getLocationById(input.id);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().nullable().optional(),
@@ -3531,7 +3531,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         });
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         name: z.string().min(1).max(255).optional(),
@@ -3548,7 +3548,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.updateLocation(id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         await db.deleteLocation(input.id);
@@ -3639,7 +3639,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.getProjectMoodBoard(input.projectId);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         type: z.enum(["image", "color", "text", "reference"]),
@@ -3661,7 +3661,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         });
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         text: z.string().optional(),
@@ -3678,7 +3678,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.updateMoodBoardItem(id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         await db.deleteMoodBoardItem(input.id);
@@ -3711,7 +3711,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.getSubtitleById(input.id);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         language: z.string().min(1).max(32),
@@ -3731,7 +3731,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         });
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         entries: z.array(z.object({
@@ -3748,7 +3748,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.updateSubtitle(id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         await db.deleteSubtitle(input.id);
@@ -3922,7 +3922,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.getProjectDialogues(input.projectId);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().optional(),
@@ -3937,7 +3937,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.createDialogue({ ...input, userId: ctx.user.id });
       }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         characterName: z.string().optional(),
@@ -3951,7 +3951,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         return db.updateDialogue(id, data);
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         await db.deleteDialogue(input.id);
@@ -4148,7 +4148,7 @@ Generate the full dialogue for this scene.`,
         return db.getBudgetById(input.id);
       }),
 
-    generate: protectedProcedure
+    generate: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         rateLimitAI(ctx.user.id);
@@ -4273,7 +4273,7 @@ Generate a detailed production budget estimate.`,
         });
       }),
 
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         const budget = await db.getBudgetById(input.id);
@@ -4295,7 +4295,7 @@ Generate a detailed production budget estimate.`,
       .query(async ({ input }) => {
         return db.listSoundEffectsByScene(input.sceneId);
       }),
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().optional(),
@@ -4327,7 +4327,7 @@ Generate a detailed production budget estimate.`,
         const { url } = await storagePut(key, buffer, input.contentType);
         return { url, key };
       }),
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         sceneId: z.number().optional().nullable(),
@@ -4341,7 +4341,7 @@ Generate a detailed production budget estimate.`,
         const { id, ...data } = input;
         return db.updateScene(id, data as any);
       }),
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteSoundEffect(input.id);
@@ -4505,7 +4505,7 @@ Generate a detailed production budget estimate.`,
 
     // Generate angelic choir or bird wing sounds using ElevenLabs TTS voices
     // Uses the /v1/text-to-speech endpoint (not sound-generation) to avoid IP blocks
-    generateVoiceChoir: protectedProcedure
+    generateVoiceChoir: creationProcedure
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().optional(),
@@ -4606,7 +4606,7 @@ Generate a detailed production budget estimate.`,
       .query(async ({ input }) => {
         return db.listVisualEffectsByScene(input.sceneId);
       }),
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().optional(),
@@ -4634,7 +4634,7 @@ Generate a detailed production budget estimate.`,
           userId: ctx.user.id,
         });
       }),
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         name: z.string().min(1).max(255).optional(),
@@ -4657,7 +4657,7 @@ Generate a detailed production budget estimate.`,
         const { id, ...data } = input;
         return db.updateVisualEffect(id, data);
       }),
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteVisualEffect(input.id);
@@ -4807,7 +4807,7 @@ Generate a detailed production budget estimate.`,
         return db.getMovieById(input.id, ctx.user.id);
       }),
 
-    create: protectedProcedure
+    create: creationProcedure
       .input(z.object({
         title: z.string().min(1).max(255),
         description: z.string().optional(),
@@ -5149,7 +5149,7 @@ Generate a detailed production budget estimate.`,
       return { folders, topLevel };
     }),
 
-    update: protectedProcedure
+    update: creationProcedure
       .input(z.object({
         id: z.number(),
         title: z.string().min(1).max(255).optional(),
@@ -5164,7 +5164,7 @@ Generate a detailed production budget estimate.`,
         const { id, ...data } = input;
         return db.updateMovie(id, ctx.user.id, data);
       }),
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteMovie(input.id, ctx.user.id);
@@ -5743,7 +5743,7 @@ Rules:
         }
       }),
 
-    generateVideoAd: protectedProcedure
+    generateVideoAd: creationProcedure
       .input(z.object({
         prompt: z.string().min(1).max(2000),
         platform: z.string().default("youtube"),
@@ -6198,7 +6198,7 @@ Rules:
     }),
 
     // Create a Stripe checkout session for subscription
-    createCheckout: protectedProcedure
+    createCheckout: creationProcedure
       .input(z.object({
         tier: z.enum(["amateur", "independent", "creator", "studio", "industry"]),
         billing: z.enum(["monthly", "annual"]).default("annual"),
@@ -6313,7 +6313,7 @@ Rules:
       }),
 
     // Create a Stripe billing portal session
-    createBillingPortal: protectedProcedure
+    createBillingPortal: creationProcedure
       .input(z.object({ returnUrl: z.string().url() }))
       .mutation(async ({ ctx, input }) => {
         if (!ctx.user.stripeCustomerId) {
@@ -7192,7 +7192,7 @@ Rules:
       await db.markAllNotificationsRead(ctx.user.id);
       return { success: true };
     }),
-    delete: protectedProcedure
+    delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await db.deleteNotification(input.id, ctx.user.id);

@@ -96,6 +96,11 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    inputMode="email"
+                    enterKeyHint="next"
                     autoFocus
                     disabled={loginMutation.isPending}
                   />
@@ -110,6 +115,7 @@ export default function Login() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       autoComplete="current-password"
+                      enterKeyHint="done"
                       disabled={loginMutation.isPending}
                       className="pr-10"
                     />

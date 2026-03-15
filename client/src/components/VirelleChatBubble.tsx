@@ -236,8 +236,8 @@ export default function VirelleChatBubble({
 
   // Full chat panel
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)]">
-      <div className="bg-card border border-border rounded-xl shadow-2xl shadow-black/20 overflow-hidden flex flex-col" style={{ maxHeight: "min(600px, calc(100dvh - 5rem))" }}>
+    <div className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 w-full sm:w-[380px] sm:max-w-[calc(100vw-2rem)]">
+      <div className="bg-card border border-border sm:rounded-xl shadow-2xl shadow-black/20 overflow-hidden flex flex-col" style={{ maxHeight: "min(600px, calc(100dvh - env(safe-area-inset-top, 0px) - 1rem))" }}>
         {/* Header */}
         <div className="bg-gradient-to-r from-amber-500/15 to-amber-600/10 border-b border-border px-4 py-3 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
@@ -396,6 +396,11 @@ export default function VirelleChatBubble({
               placeholder="Tell Virelle what to change..."
               className="h-9 text-sm bg-background/50 border-muted-foreground/20 focus:border-amber-500/50"
               disabled={isTyping}
+              inputMode="text"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="sentences"
+              enterKeyHint="send"
             />
             <Button
               size="sm"

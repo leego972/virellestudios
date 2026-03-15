@@ -27,6 +27,7 @@ import {
   Mic2,
 } from "lucide-react";
 import { useLocation } from "wouter";
+import { toast } from "sonner";
 
 function timeAgo(date: string | Date) {
   const now = new Date();
@@ -114,6 +115,11 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("opener") === "1") {
       setShowOpener(true);
+      window.history.replaceState({}, "", "/");
+    }
+    // Handle Stripe subscription success redirect
+    if (params.get("subscription") === "success") {
+      toast.success("🎉 Welcome to Virelle Studios! Your membership is now active.");
       window.history.replaceState({}, "", "/");
     }
   }, []);

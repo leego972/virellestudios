@@ -187,6 +187,7 @@ export default function ResetPassword() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="new-password"
+                    enterKeyHint="next"
                     autoFocus
                     disabled={resetMutation.isPending}
                     className="pr-10"
@@ -211,6 +212,7 @@ export default function ResetPassword() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   autoComplete="new-password"
+                  enterKeyHint="done"
                   disabled={resetMutation.isPending}
                 />
               </div>

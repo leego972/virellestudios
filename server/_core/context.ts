@@ -18,6 +18,10 @@ export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
   res: CreateExpressContextOptions["res"];
   user: User | null;
+  /** True when the user is a tester whose 48-hour window has expired.
+   *  They can still read projects and download content, but all
+   *  creation / generation / payment mutations are blocked. */
+  isExpiredTester: boolean;
 };
 
 // Try Manus SDK auth first (for dev environment), then fall back to standalone JWT
@@ -104,11 +108,14 @@ export async function createContext(
   }
 
   // Enforce temporary account expiry (e.g. tester accounts)
+  // Expired testers keep their user object so they can read/download,
+  // but isExpiredTester=true lets individual procedures block creation.
+  let isExpiredTester = false;
   if (user && (user as any).accountExpiresAt) {
     const expiry = new Date((user as any).accountExpiresAt);
     if (expiry < new Date()) {
-      console.log(`[Auth] Temporary account ${user.email} has expired — access revoked.`);
-      user = null;
+      console.log(`[Auth] Tester account ${user.email} has expired — entering read-only grace mode.`);
+      isExpiredTester = true;
     }
   }
 
@@ -121,5 +128,6 @@ export async function createContext(
     req: opts.req,
     res: opts.res,
     user,
+    isExpiredTester,
   };
 }

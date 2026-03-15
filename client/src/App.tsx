@@ -16,6 +16,7 @@ import Register from "./pages/Register";
 import Landing from "./pages/Landing";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
+import { useContentProtection } from "./components/ContentProtection";
 
 // Dashboard pages — lazy loaded
 const Projects = lazy(() => import("./pages/Projects"));
@@ -49,6 +50,7 @@ const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const AcceptableUsePolicy = lazy(() => import("./pages/legal/AcceptableUsePolicy"));
 const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
+const IPPolicy = lazy(() => import("./pages/legal/IPPolicy"));
 
 // New public pages — lazy loaded
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
@@ -150,6 +152,8 @@ function Router() {
       <Route path="/privacy">{() => <LazyPage><PrivacyPolicy /></LazyPage>}</Route>
       <Route path="/acceptable-use">{() => <LazyPage><AcceptableUsePolicy /></LazyPage>}</Route>
       <Route path="/ai-content-policy">{() => <LazyPage><AIContentPolicy /></LazyPage>}</Route>
+      <Route path="/ip-policy">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
+      <Route path="/dmca">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
       <Route path="/showcase">{() => <LazyPage><Showcase /></LazyPage>}</Route>
       <Route path="/how-it-works">{() => <LazyPage><HowItWorks /></LazyPage>}</Route>
       <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
@@ -220,6 +224,8 @@ function Router() {
 }
 
 function App() {
+  // Global IP protection — disables right-click on media, drag-save, and screenshot shortcuts
+  useContentProtection();
   return (
     <ErrorBoundary>
       <ThemeProvider

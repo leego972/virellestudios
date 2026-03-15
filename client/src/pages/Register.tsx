@@ -268,6 +268,7 @@ export default function Register() {
   const [portfolioUrl, setPortfolioUrl] = useState("");
   const [howDidYouHear, setHowDidYouHear] = useState("");
   const [marketingOptIn, setMarketingOptIn] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   // Extract referral code and promo code from URL query params
   useEffect(() => {
@@ -490,6 +491,8 @@ export default function Register() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       autoComplete="name"
+                      autoCapitalize="words"
+                      enterKeyHint="next"
                       autoFocus
                     />
                   </div>
@@ -562,6 +565,11 @@ export default function Register() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    inputMode="email"
+                    enterKeyHint="next"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -574,6 +582,7 @@ export default function Register() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       autoComplete="new-password"
+                      enterKeyHint="next"
                       className="pr-10"
                     />
                     <button
@@ -613,6 +622,7 @@ export default function Register() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     autoComplete="new-password"
+                    enterKeyHint="done"
                   />
                   {confirmPassword && password !== confirmPassword && (
                     <p className="text-xs text-red-400">Passwords do not match</p>
@@ -836,6 +846,26 @@ export default function Register() {
                   options={HOW_HEARD}
                   placeholder="Select..."
                 />
+                {/* Mandatory Terms Agreement */}
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-amber-500 text-amber-600 focus:ring-amber-500"
+                    required
+                  />
+                  <span className={`text-sm transition-colors ${agreedToTerms ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}>
+                    <span className="text-red-400 font-semibold">*</span>{" "}
+                    I have read and agree to the{" "}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300 underline font-medium" onClick={(e) => e.stopPropagation()}>Terms of Service</a>,{" "}
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300 underline font-medium" onClick={(e) => e.stopPropagation()}>Privacy Policy</a>, and{" "}
+                    <a href="/ip-policy" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300 underline font-medium" onClick={(e) => e.stopPropagation()}>IP &amp; Copyright Policy</a>.
+                    I understand that I, as Director, bear full legal responsibility for all content I create on this platform.
+                  </span>
+                </label>
+
+                {/* Optional Marketing Opt-In */}
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <input
                     type="checkbox"
@@ -854,9 +884,16 @@ export default function Register() {
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back
                   </Button>
                   <Button
-                    onClick={handleSubmit}
-                    disabled={registerMutation.isPending}
-                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
+                    onClick={() => {
+                      if (!agreedToTerms) {
+                        toast.error("You must agree to the Terms of Service before creating an account.");
+                        return;
+                      }
+                      handleSubmit();
+                    }}
+                    disabled={registerMutation.isPending || !agreedToTerms}
+                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
+                    title={!agreedToTerms ? "Please agree to the Terms of Service to continue" : undefined}
                   >
                     {registerMutation.isPending ? (
                       <>
@@ -870,9 +907,11 @@ export default function Register() {
                     )}
                   </Button>
                 </div>
-                <Button variant="ghost" onClick={skipToEnd} className="w-full text-muted-foreground hover:text-foreground text-sm">
-                  Skip for now — complete profile later
-                </Button>
+                {agreedToTerms && (
+                  <Button variant="ghost" onClick={skipToEnd} className="w-full text-muted-foreground hover:text-foreground text-sm">
+                    Skip for now — complete profile later
+                  </Button>
+                )}
               </CardFooter>
             </>
           )}
@@ -880,10 +919,11 @@ export default function Register() {
 
         {/* Terms */}
         <p className="text-xs text-muted-foreground text-center px-4">
-          By creating an account, you agree to our{" "}
-          <a href="/terms" className="text-amber-500 hover:text-amber-400">Terms of Service</a>{" "}
-          and{" "}
-          <a href="/privacy" className="text-amber-500 hover:text-amber-400">Privacy Policy</a>.
+          By creating an account you confirm you have read and agreed to our{" "}
+          <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-400">Terms of Service</a>,{" "}
+          <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-400">Privacy Policy</a>, and{" "}
+          <a href="/ip-policy" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-amber-400">IP &amp; Copyright Policy</a>.
+          You accept full responsibility as Director for all content you create.
         </p>
       </div>
 

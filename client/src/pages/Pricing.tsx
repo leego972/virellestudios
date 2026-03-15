@@ -5,6 +5,7 @@ import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, C
 import { trpc } from "@/lib/trpc";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { toast } from "sonner";
 import LeegoFooter from "@/components/LeegoFooter";
 import GoldWatermark from "@/components/GoldWatermark";
 
@@ -186,11 +187,15 @@ export default function Pricing() {
   const spotsRemaining = spotsData?.spotsRemaining ?? 19;
   const offerFull = spotsData?.isFull ?? false;
 
-  // Immediately refetch spots when returning from a successful Stripe checkout
+  // Handle Stripe return params — show success/canceled toasts and clean URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("subscription") === "success") {
+      toast.success("You're now a member! Welcome to Virelle Studios.");
       refetchSpots();
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (params.get("subscription") === "canceled") {
+      toast.info("Checkout was canceled. You can subscribe anytime.");
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, [refetchSpots]);
@@ -227,7 +232,7 @@ export default function Pricing() {
       if (result.url) window.location.href = result.url;
     } catch (err: any) {
       console.error("Checkout error:", err);
-      alert(err.message || "Failed to start checkout");
+      toast.error(err.message || "Failed to start checkout. Please try again.");
     } finally {
       setLoadingTier(null);
     }
@@ -239,7 +244,7 @@ export default function Pricing() {
       const result = await portalMutation.mutateAsync({ returnUrl: window.location.href });
       window.location.href = result.url;
     } catch (err: any) {
-      alert(err.message || "Failed to open billing portal");
+      toast.error(err.message || "Failed to open billing portal. Please try again.");
     } finally {
       setLoadingTier(null);
     }

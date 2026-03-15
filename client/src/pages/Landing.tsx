@@ -1206,6 +1206,8 @@ export default function Landing() {
                 <li><button onClick={() => setLocation("/privacy")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Privacy Policy</button></li>
                 <li><button onClick={() => setLocation("/acceptable-use")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Acceptable Use</button></li>
                 <li><button onClick={() => setLocation("/ai-content-policy")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">AI Content Policy</button></li>
+                <li><button onClick={() => setLocation("/ip-policy")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">IP &amp; Copyright Policy</button></li>
+                <li><button onClick={() => setLocation("/dmca")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">DMCA Takedowns</button></li>
               </ul>
             </div>
             <div>

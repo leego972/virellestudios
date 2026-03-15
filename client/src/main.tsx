@@ -4,10 +4,28 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
+import { toast } from "sonner";
 import App from "./App";
 import "./index.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error) => {
+        // Never retry on auth/permission errors
+        if (error instanceof TRPCClientError) {
+          const code = error.data?.code;
+          if (code === "UNAUTHORIZED" || code === "FORBIDDEN" || code === "NOT_FOUND") return false;
+        }
+        return failureCount < 2;
+      },
+      staleTime: 30_000,
+    },
+    mutations: {
+      retry: false,
+    },
+  },
+});
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
@@ -35,6 +53,20 @@ queryClient.getMutationCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.mutation.state.error;
     redirectToLoginIfUnauthorized(error);
+    // Show a friendly toast for FORBIDDEN (e.g. expired tester, subscription gate)
+    if (error instanceof TRPCClientError && error.data?.code === "FORBIDDEN") {
+      // Only show if the error message is the expired tester message (not subscription gate)
+      const msg = error.message;
+      if (msg && msg.includes("trial has ended")) {
+        toast.error(msg, {
+          duration: 8000,
+          action: {
+            label: "Upgrade",
+            onClick: () => { window.location.href = "/pricing"; },
+          },
+        });
+      }
+    }
     console.error("[API Mutation Error]", error);
   }
 });

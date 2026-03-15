@@ -180,11 +180,11 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue={useQueryParam("tab") || "profile"} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
-          <TabsTrigger value="profile" className="text-xs gap-1"><User className="h-3 w-3" />Profile</TabsTrigger>
-          <TabsTrigger value="security" className="text-xs gap-1"><Lock className="h-3 w-3" />Security</TabsTrigger>
-          <TabsTrigger value="api-keys" className="text-xs gap-1"><Key className="h-3 w-3" />API Keys</TabsTrigger>
-          <TabsTrigger value="connected-platforms" className="text-xs gap-1"><Share2 className="h-3 w-3" />Platforms</TabsTrigger>
+        <TabsList className="flex w-full max-w-2xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-4 h-auto">
+          <TabsTrigger value="profile" className="text-xs gap-1 flex-shrink-0 py-2"><User className="h-3 w-3" />Profile</TabsTrigger>
+          <TabsTrigger value="security" className="text-xs gap-1 flex-shrink-0 py-2"><Lock className="h-3 w-3" />Security</TabsTrigger>
+          <TabsTrigger value="api-keys" className="text-xs gap-1 flex-shrink-0 py-2"><Key className="h-3 w-3" />API Keys</TabsTrigger>
+          <TabsTrigger value="connected-platforms" className="text-xs gap-1 flex-shrink-0 py-2"><Share2 className="h-3 w-3" />Platforms</TabsTrigger>
         </TabsList>
 
         {/* ─── Profile Tab ─── */}
