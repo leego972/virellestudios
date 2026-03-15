@@ -5185,7 +5185,7 @@ Generate a detailed production budget estimate.`,
         }).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        const project = await db.getProject(input.projectId, ctx.user.id);
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         const scenes = await db.getProjectScenes(input.projectId);
         const completedScenes = scenes.filter((s: any) => s.videoUrl && s.status === "completed");
