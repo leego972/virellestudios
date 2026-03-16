@@ -1605,8 +1605,8 @@ Return JSON: { "hook": "...", "script": "...", "visualDirections": ["..."], "has
           video.hook,
           video.script?.substring(0, 200) || video.hook
         );
-        videoUrl = videoResult.url;
-        log.info(`Video generated: ${videoUrl} (${videoResult.model}, ${videoResult.duration}s)`);
+        videoUrl = (videoResult as any).url ?? videoResult.videoUrl ?? null;
+        log.info(`Video generated: ${videoUrl} (${(videoResult as any).model ?? 'unknown'}, ${videoResult.duration}s)`);
 
         // Store video reference alongside the script
         if (db) {
@@ -1620,9 +1620,9 @@ Return JSON: { "hook": "...", "script": "...", "visualDirections": ["..."], "has
             metadata: { 
               platform: video.platform, 
               hashtags: video.hashtags, 
-              model: videoResult.model,
+              model: (videoResult as any).model,
               duration: videoResult.duration,
-              aspectRatio: videoResult.aspectRatio,
+              aspectRatio: (videoResult as any).aspectRatio,
               scriptId: video.hook,
             },
           } as any);
@@ -1690,14 +1690,14 @@ async function generateVideoAd(): Promise<AdvertisingAction> {
         channel: "content_seo" as any,
         contentType: "video" as any,
         title: `[AD] ${topic}`,
-        body: videoResult.url,
+        body: (videoResult as any).url ?? videoResult.videoUrl,
         platform,
         status: "approved",
         metadata: {
-          pillar: pillar.pillar,
-          model: videoResult.model,
+          pillar: (pillar as any).pillar,
+          model: (videoResult as any).model,
           duration: videoResult.duration,
-          aspectRatio: videoResult.aspectRatio,
+          aspectRatio: (videoResult as any).aspectRatio,
           type: "video_ad",
         },
       } as any);
@@ -1707,7 +1707,7 @@ async function generateVideoAd(): Promise<AdvertisingAction> {
       channel: (platform === "tiktok" ? "tiktok_organic" : platform === "youtube" ? "youtube_shorts" : "social_organic") as FreeChannel,
       action: "generate_video_ad",
       status: "success",
-      details: `Generated ${platform} video ad: "${topic}" (${videoResult.model}, ${videoResult.duration}s) → ${videoResult.url}`,
+      details: `Generated ${platform} video ad: "${topic}" (${(videoResult as any).model ?? 'unknown'}, ${videoResult.duration}s) → ${(videoResult as any).url ?? videoResult.videoUrl}`,
       cost: 0,
     };
   } catch (err: unknown) {
@@ -2099,8 +2099,8 @@ async function monitorCampaignHealth(): Promise<AdvertisingAction> {
       const details = activity.details as any;
       if (!details) continue;
 
-      const channel = activity.channel || "unknown";
-      if (activity.status === "failed") {
+      const channel = (activity as any).channel || "unknown";
+      if ((activity as any).status === "failed") {
         channelFailures.set(channel, (channelFailures.get(channel) || 0) + 1);
       } else {
         channelSuccesses.set(channel, (channelSuccesses.get(channel) || 0) + 1);
@@ -2389,16 +2389,16 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
   try {
     const contentCycleResult = await runAutonomousContentCycle();
     actions.push({
-      channel: "content_creator",
+      channel: "blog_content" as any,
       action: "autonomous_content_cycle",
       status: "success",
-      details: `Content Creator Engine: ${contentCycleResult.generatedCount} generated, ${contentCycleResult.approvedCount} auto-approved, ${contentCycleResult.scheduledCount} scheduled`,
+      details: `Content Creator Engine: ${contentCycleResult.generated} generated, ${contentCycleResult.autoApproved} auto-approved, ${contentCycleResult.scheduled} scheduled`,
       cost: 0,
     });
   } catch (err: unknown) {
     errors.push(`Content Creator Engine: ${getErrorMessage(err)}`);
     actions.push({
-      channel: "content_creator",
+      channel: "blog_content" as any,
       action: "autonomous_content_cycle",
       status: "failed",
       details: `Content Creator Engine failed: ${getErrorMessage(err)}`,

@@ -45,8 +45,10 @@ import {
   TreePine,
   DoorOpen,
   Clock,
+  Sparkles,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { Textarea } from "@/components/ui/textarea";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
@@ -213,6 +215,11 @@ export default function SoundEffects() {
   const [assignSceneId, setAssignSceneId] = useState<number | null>(null);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [selectedSoundForAssign, setSelectedSoundForAssign] = useState<string>("");
+  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
+  const [generatePrompt, setGeneratePrompt] = useState("");
+  const [generateName, setGenerateName] = useState("");
+  const [generateDuration, setGenerateDuration] = useState(10);
+  const [generateSceneId, setGenerateSceneId] = useState<number | undefined>(undefined);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const project = trpc.project.get.useQuery({ id: projectId }, { enabled: !!user });
@@ -232,6 +239,18 @@ export default function SoundEffects() {
   });
   const updateMutation = trpc.soundEffect.update.useMutation({
     onSuccess: () => soundEffects.refetch(),
+  });
+  const generateMutation = trpc.soundEffect.generateFromText.useMutation({
+    onSuccess: () => {
+      soundEffects.refetch();
+      setShowGenerateDialog(false);
+      setGeneratePrompt("");
+      setGenerateName("");
+      setGenerateDuration(10);
+      setGenerateSceneId(undefined);
+      toast.success("Sound effect generated successfully");
+    },
+    onError: (err) => toast.error(err.message || "Failed to generate sound effect"),
   });
   const uploadMutation = trpc.soundEffect.upload.useMutation({
     onSuccess: () => {

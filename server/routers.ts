@@ -413,7 +413,7 @@ export const appRouter = router({
           userId: ctx.user.id,
         };
         logger.info("Project created", { userId: ctx.user.id, title: sanitized.title });
-        return db.createProject(sanitized);
+        return db.createProject(sanitized as any);
       }),
 
     update: creationProcedure
@@ -479,7 +479,7 @@ export const appRouter = router({
               FROM projects p LEFT JOIN users u ON p.userId = u.id
               WHERE p.title LIKE ? OR u.email LIKE ?
               ORDER BY p.createdAt DESC LIMIT ? OFFSET ?`;
-          const [rows] = await dbConn.execute(query, [search, search, limit, offset]);
+          const [rows] = await (dbConn as any).execute(query, [search, search, limit, offset]);
           return rows as any[];
         } else {
           query = `SELECT p.id, p.title, p.genre, p.status, p.quality, p.createdAt,
@@ -488,7 +488,7 @@ export const appRouter = router({
                      (SELECT COUNT(*) FROM scenes s WHERE s.projectId = p.id AND s.videoUrl IS NOT NULL) as completedScenes
               FROM projects p LEFT JOIN users u ON p.userId = u.id
               ORDER BY p.createdAt DESC LIMIT ? OFFSET ?`;
-          const [rows] = await dbConn.execute(query, [limit, offset]);
+          const [rows] = await (dbConn as any).execute(query, [limit, offset]);
           return rows as any[];
         }
       }),
@@ -2277,8 +2277,8 @@ Break this into 8-15 scenes. For each scene, provide:
         }
 
         // Determine video settings based on subscription tier
-        const videoModel = (userTier === "industry" || userTier === "studio") ? "sora-2-pro" : "sora-2";
-        const videoResolution = (userTier === "industry" || userTier === "studio") ? "1080p" : "720p";
+        const videoModel = (userTier === "industry" || (userTier as string) === "studio") ? "sora-2-pro" : "sora-2";
+        const videoResolution = (userTier === "industry" || (userTier as string) === "studio") ? "1080p" : "720p";
 
         // Generate videos sequentially (Sora is async and rate-limited)
         for (let sceneIdx = 0; sceneIdx < allScenes.length; sceneIdx++) {
@@ -2912,8 +2912,8 @@ Break this into 8-15 scenes. For each scene, provide:
         const jobs = await db.getProjectJobs(input.projectId);
         let cancelledCount = 0;
         for (const job of jobs) {
-          if (job.status === "processing" || job.status === "pending") {
-            await db.updateJob(job.id, { status: "failed", error: "Cancelled by director" });
+          if (job.status === "processing" || (job.status as string) === "pending") {
+            await db.updateJob(job.id, { status: "failed", errorMessage: "Cancelled by director" });
             cancelledCount++;
           }
         }
@@ -4857,10 +4857,10 @@ Generate a detailed production budget estimate.`,
           try {
             const dbConn = await db.getDb();
             if (dbConn) {
-              const [openerRows] = await dbConn.execute(
+              const openerRows = await dbConn.execute(
                 sql`SELECT p.id FROM projects p WHERE p.title LIKE '%Opener%' ORDER BY p.id DESC LIMIT 1`
               );
-              const openerProj = (openerRows as any[])?.[0];
+              const openerProj = (Array.isArray(openerRows[0]) ? openerRows[0] : openerRows as any[])?.[0];
               if (openerProj) {
                 const opScenes = await db.getProjectScenes(openerProj.id);
                 openerScenes = opScenes
@@ -5202,14 +5202,14 @@ Generate a detailed production budget estimate.`,
           const assetDefs = completedScenes.map((scene: any, i: number) => {
             const durationFrames = Math.round((scene.duration ?? 30) * fps);
             const src = (scene.videoUrl ?? "").replace(/&/g, "&amp;");
-            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
             return `  <asset id="r${i + 2}" name="${title}" uid="${nanoid(16)}" src="${src}" start="0s" duration="${durationFrames}/${fps}s" hasVideo="1" hasAudio="1" />`;
           }).join("\n");
           const clipElements = completedScenes.map((scene: any, i: number) => {
             const durationFrames = Math.round((scene.duration ?? 30) * fps);
             const offsetFrames = offset;
             offset += durationFrames;
-            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
             return `        <asset-clip name="${title}" offset="${offsetFrames}/${fps}s" duration="${durationFrames}/${fps}s" start="0s" tcFormat="NDF">
           <video ref="r${i + 2}" offset="0s" duration="${durationFrames}/${fps}s" />
           ${opts.audioTracks ? `<audio ref="r${i + 2}" offset="0s" duration="${durationFrames}/${fps}s" role="dialogue" />` : ""}
@@ -5217,7 +5217,7 @@ Generate a detailed production budget estimate.`,
         </asset-clip>`;
           }).join("\n");
           const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 30) * fps), 0);
-          const projTitle = project.title.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+          const projTitle = project.title.replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
           content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n<fcpxml version="1.10">\n  <resources>\n    <format id="r1" name="FFVideoFormat1080p24" frameDuration="1/${fps}s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)" />\n${assetDefs}\n  </resources>\n  <library>\n    <event name="${projTitle}">\n      <project name="${projTitle} — Virelle Export">\n        <sequence format="r1" duration="${totalFrames}/${fps}s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">\n          <spine>\n${clipElements}\n          </spine>\n        </sequence>\n      </project>\n    </event>\n  </library>\n</fcpxml>`;
           mimeType = "application/xml";
           filename += ".fcpxml";
@@ -5244,12 +5244,12 @@ Generate a detailed production budget estimate.`,
           const clipItems = completedScenes.map((scene: any, i: number) => {
             const df = Math.round((scene.duration ?? 30) * fps);
             const start = offset; const end = offset + df; offset = end;
-            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+            const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
             const src = (scene.videoUrl ?? "").replace(/&/g, "&amp;");
             return `        <clipitem id="clipitem-${i+1}"><name>${title}</name><duration>${df}</duration><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate><start>${start}</start><end>${end}</end><in>0</in><out>${df}</out><file id="file-${i+1}"><name>${title}</name><pathurl>${src}</pathurl><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate><duration>${df}</duration></file></clipitem>`;
           }).join("\n");
           const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 30) * fps), 0);
-          const projTitle = project.title.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]!));
+          const projTitle = project.title.replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
           content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE xmeml>\n<xmeml version="4">\n  <sequence>\n    <name>${projTitle}</name>\n    <duration>${totalFrames}</duration>\n    <rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate>\n    <media><video><track>\n${clipItems}\n    </track></video></media>\n  </sequence>\n</xmeml>`;
           mimeType = "application/xml";
           filename += "_premiere.xml";
@@ -5278,7 +5278,7 @@ Generate a detailed production budget estimate.`,
       if (!dbConn) return [];
       // Get projects that are marked as featured or have completed generations
       // Show any project that has at least one completed scene with a video
-      const [projects] = await dbConn.execute(
+      const projectsResult = await dbConn.execute(
         sql`SELECT DISTINCT p.id, p.title, p.genre, p.plotSummary, p.duration, p.quality, p.resolution,
                    p.status, p.createdAt, u.name as directorName
             FROM projects p
@@ -5289,8 +5289,9 @@ Generate a detailed production budget estimate.`,
             ORDER BY p.createdAt DESC
             LIMIT 20`
       );
+      const projectsList = Array.isArray(projectsResult[0]) ? projectsResult[0] : projectsResult as any[];
       const results: any[] = [];
-      for (const proj of projects as any[]) {
+      for (const proj of projectsList as any[]) {
         const scenes = await db.getProjectScenes(proj.id);
         const completedScenes = scenes.filter((s: any) => s.videoUrl && s.status === 'completed');
         if (completedScenes.length === 0) continue;
@@ -5327,12 +5328,12 @@ Generate a detailed production budget estimate.`,
       const dbConn = await db.getDb();
       if (!dbConn) return null;
       // Find the VirElle Studios Opener project (look for project with title containing 'Opener')
-      const [rows] = await dbConn.execute(
+      const rowsResult = await dbConn.execute(
         sql`SELECT p.id, p.title, p.status FROM projects p
             WHERE p.title LIKE '%Opener%' OR p.title LIKE '%opener%'
             ORDER BY p.id DESC LIMIT 1`
       );
-      const proj = (rows as any[])?.[0];
+      const proj = (Array.isArray(rowsResult[0]) ? rowsResult[0] : rowsResult as any[])?.[0];
       if (!proj) return null;
       const scenes = await db.getProjectScenes(proj.id);
       const completedScenes = scenes.filter((s: any) => s.videoUrl && s.status === 'completed');
@@ -5356,14 +5357,14 @@ Generate a detailed production budget estimate.`,
       .query(async ({ input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) return null;
-        const [rows] = await dbConn.execute(
+        const rowsResult2 = await dbConn.execute(
           sql`SELECT p.*, u.name as directorName
               FROM projects p
               LEFT JOIN users u ON p.userId = u.id
               WHERE p.id = ${input.id}
               LIMIT 1`
         );
-        const proj = (rows as any[])?.[0];
+        const proj = (Array.isArray(rowsResult2[0]) ? rowsResult2[0] : rowsResult2 as any[])?.[0];
         if (!proj) return null;
         const scenes = await db.getProjectScenes(proj.id);
         const completedScenes = scenes.filter((s: any) => s.videoUrl && s.status === 'completed');
@@ -6158,7 +6159,7 @@ Rules:
 
             if (tierChanged || statusChanged || periodChanged) {
               await db.updateUserSubscription(user.id, {
-                subscriptionTier: liveStatus === "active" || liveStatus === "trialing" ? liveTier : "independent",
+                subscriptionTier: (liveStatus === "active" || liveStatus === "trialing" ? liveTier : "independent") as any,
                 subscriptionStatus: liveStatus as any,
                 subscriptionCurrentPeriodEnd: livePeriodEnd,
               });
@@ -7152,7 +7153,7 @@ Rules:
           });
         } catch (notifyErr) {
           // Non-critical — still succeed even if notification fails
-          logger.warn("Contact form owner notification failed:", notifyErr);
+          logger.warn(`Contact form owner notification failed: ${notifyErr}`);
         }
         // Also create an in-app notification for admin users
         try {

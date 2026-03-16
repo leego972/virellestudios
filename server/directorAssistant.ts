@@ -370,7 +370,7 @@ async function executeAction(
 
       case "create_scene_from_vision": {
         // Use LLM to build the scene from the director's exact vision
-        const hasCreativeLeeway = /be creative|use your judgment|surprise me|you decide|fill it in|add what you think|make it cinematic|your choice|go wild|improvise/i.test(args.vision || "");
+        const hasCreativeLeeway = /be creative|use your judgment|surprise me|you decide|fill it in|add what you think|make it cinematic|your choice|go wild|improvise/i.test((args.vision as string) || "");
         const visionPrompt = hasCreativeLeeway
           ? `You are a film production AI. The director has granted you creative freedom. Expand their vision into a COMPLETE, DETAILED scene specification using your film expertise to fill in all missing production details.
 
