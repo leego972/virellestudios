@@ -955,7 +955,7 @@ export async function runAutoMigration(): Promise<void> {
   }
 
   // ─── Step 3: Ensure admin account has admin role ───
-  const adminEmail = process.env.ADMIN_EMAIL || "leego972@gmail.com";
+  const adminEmail = process.env.ADMIN_EMAIL || "Studiosvirelle@gmail.com";
   try {
     const [adminRows] = await db.execute(sql.raw(
       `SELECT id, role FROM users WHERE email = '${adminEmail}' LIMIT 1`

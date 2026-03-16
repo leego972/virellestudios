@@ -16,7 +16,7 @@ const FROM = `Virelle Studios <${ENV.emailFromAddress}>`;
  * Studio notification email — always BCC'd on all transactional emails
  * so the studio owner gets a copy of every signup, subscription, etc.
  */
-const STUDIO_BCC = ENV.adminEmail || "leego972@gmail.com";
+const STUDIO_BCC = ENV.adminEmail || "Studiosvirelle@gmail.com";
 
 // ─── Password Reset ───────────────────────────────────────────────────────────
 

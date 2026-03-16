@@ -116,7 +116,7 @@ export async function createEmailUser(data: {
   if (!db) throw new Error("Database not available");
   const openId = `email_${data.email}`; // generate a stable openId from email
   // Auto-assign admin role for the owner account
-  const adminEmails = [(ENV.adminEmail || "leego972@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
+  const adminEmails = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
   const isOwner = adminEmails.includes(data.email.toLowerCase());
   await db.insert(users).values({
     openId,

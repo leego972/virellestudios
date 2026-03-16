@@ -212,7 +212,7 @@ export const appRouter = router({
         }
 
         // Admin accounts bypass brute-force lockout
-        const adminEmailsList = [(ENV.adminEmail || "leego972@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
+        const adminEmailsList = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
         const isAdminAccount = adminEmailsList.includes(user.email?.toLowerCase() || "");
         if (!isAdminAccount) {
           // Security: Check for brute force / lockout before password check
@@ -236,7 +236,7 @@ export const appRouter = router({
         trackLoginAttempt(user.id, clientIP, true);
         logAuditEvent(user.id, "login_success", clientIP, true);
         // Auto-promote admin account if not already admin
-        const adminEmails = [(ENV.adminEmail || "leego972@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
+        const adminEmails = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
         const isAdminEmail = adminEmails.includes(user.email?.toLowerCase() || "");
         if (isAdminEmail && user.role !== "admin") {
           await db.updateUserRole(user.id, "admin");
@@ -7164,7 +7164,7 @@ Rules:
         }
         // Also create an in-app notification for admin users
         try {
-          const adminUser = await db.getUserByEmail((ENV.adminEmail || "leego972@gmail.com").toLowerCase());
+          const adminUser = await db.getUserByEmail((ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase());
           if (adminUser) {
             await db.createNotification({
               userId: adminUser.id,

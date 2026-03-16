@@ -39,7 +39,7 @@ export const ENV = {
   // Google (Nano Banana image generation)
   googleApiKey: process.env.GOOGLE_API_KEY ?? "",
   // Admin
-  adminEmail: process.env.ADMIN_EMAIL ?? "leego972@gmail.com",
+  adminEmail: process.env.ADMIN_EMAIL ?? "Studiosvirelle@gmail.com",
   // TikTok Content Posting API
   tiktokCreatorToken: process.env.TIKTOK_CREATOR_TOKEN ?? "",
   tiktokAccessToken: process.env.TIKTOK_ACCESS_TOKEN ?? "",
