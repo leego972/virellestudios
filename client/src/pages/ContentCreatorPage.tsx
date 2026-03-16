@@ -350,7 +350,7 @@ export default function ContentCreatorPage() {
 
   const bulkGenerateMutation = trpc.contentCreator.bulkGenerate.useMutation({
     onSuccess: (data) => {
-      toast.success(`Bulk generation complete: ${data.generated} pieces created, ${data.failed} failed`);
+      toast.success(`Bulk generation complete: ${data.succeeded} pieces created, ${data.failed} failed`);
       piecesQuery.refetch();
       dashboardQuery.refetch();
     },

@@ -675,7 +675,7 @@ export default function SeoDashboard() {
                 </div>
               ) : (keywordsQuery.data as any)?.primaryKeywords && (keywordsQuery.data as any)?.primaryKeywords.length > 0 ? (
                 <div className="space-y-2">
-                  {eventLogQuery.data.map((event: any, i: number) => (
+                  {(eventLogQuery.data ?? []).map((event: any, i: number) => (
                     <div key={i} className="flex items-start gap-3 py-2 border-b border-border/30 last:border-0">
                       <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
                         event.type === "error" ? "bg-red-400" :

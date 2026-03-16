@@ -327,22 +327,22 @@ export default function AdvertisingDashboard() {
         <MetricCard
           icon={<BarChart3 className="w-4 h-4" />}
           label="Total Impressions"
-          value={performance?.totalImpressions?.toLocaleString() ?? dashboard?.performance?.impressions?.toLocaleString() ?? "—"}
+          value={performance?.paid?.totalImpressions?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalImpressions?.toLocaleString() ?? "—"}
           sub="Last 30 days"
           color="text-amber-400"
         />
         <MetricCard
           icon={<MousePointer className="w-4 h-4" />}
           label="Total Clicks"
-          value={performance?.totalClicks?.toLocaleString() ?? dashboard?.performance?.clicks?.toLocaleString() ?? "—"}
-          sub={`CTR: ${performance?.ctr ?? dashboard?.performance?.ctr ?? "—"}`}
+          value={performance?.paid?.totalClicks?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalClicks?.toLocaleString() ?? "—"}
+          sub={`CTR: ${performance?.paid?.ctr ?? (dashboard?.performance as any)?.paid?.ctr ?? "—"}`}
           color="text-blue-400"
         />
         <MetricCard
           icon={<Activity className="w-4 h-4" />}
           label="Engagements"
-          value={performance?.totalEngagements?.toLocaleString() ?? "—"}
-          sub={`Rate: ${performance?.engagementRate ?? "—"}`}
+          value={performance?.paid?.totalConversions?.toLocaleString() ?? "—"}
+          sub={`Conv. Rate: ${performance?.paid?.conversionRate ?? "—"}`}
           color="text-purple-400"
         />
         <MetricCard
