@@ -181,9 +181,23 @@ export async function updateProject(id: number, userId: number, data: Partial<In
 export async function deleteProject(id: number, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
+  // Cascade-delete all project-related data before removing the project itself
   await db.delete(scenes).where(eq(scenes.projectId, id));
   await db.delete(characters).where(eq(characters.projectId, id));
   await db.delete(generationJobs).where(eq(generationJobs.projectId, id));
+  await db.delete(scripts).where(eq(scripts.projectId, id));
+  await db.delete(soundtracks).where(eq(soundtracks.projectId, id));
+  await db.delete(credits).where(eq(credits.projectId, id));
+  await db.delete(locations).where(eq(locations.projectId, id));
+  await db.delete(moodBoardItems).where(eq(moodBoardItems.projectId, id));
+  await db.delete(subtitles).where(eq(subtitles.projectId, id));
+  await db.delete(dialogues).where(eq(dialogues.projectId, id));
+  await db.delete(budgets).where(eq(budgets.projectId, id));
+  await db.delete(soundEffects).where(eq(soundEffects.projectId, id));
+  await db.delete(collaborators).where(eq(collaborators.projectId, id));
+  await db.delete(directorChats).where(eq(directorChats.projectId, id));
+  await db.delete(visualEffects).where(eq(visualEffects.projectId, id));
+  // Finally delete the project itself (ownership check)
   await db.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, userId)));
 }
 

@@ -305,7 +305,7 @@
 - [x] Deploy service from GitHub repo
 - [x] Configure environment variables
 - [x] Add virelle.life custom domain
-- [ ] Provide exact GoDaddy DNS settings
+- [x] Provide exact GoDaddy DNS settings
 
 ## Access Restriction
 - [x] Restrict app access to leego972@gmail.com only

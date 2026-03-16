@@ -48,9 +48,10 @@ import {
   Pencil,
   Eye,
   X,
+  ArrowLeft,
 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 
 const CATEGORY_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
@@ -95,6 +96,7 @@ const emptyForm: VFXForm = {
 export default function VisualEffects() {
   const { id: projectIdStr } = useParams<{ id: string }>();
   const projectId = projectIdStr ? parseInt(projectIdStr) : null;
+  const [, navigate] = useLocation();
 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -260,14 +262,19 @@ export default function VisualEffects() {
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-purple-400" />
-            Visual Effects
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1 hidden sm:block">
-            Browse the VFX library or create custom effects for your scenes
-          </p>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight flex items-center gap-2">
+              <Sparkles className="h-6 w-6 text-purple-400" />
+              Visual Effects
+            </h1>
+            <p className="text-muted-foreground text-sm mt-1 hidden sm:block">
+              Browse the VFX library or create custom effects for your scenes
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <Button size="sm" variant={showPresets ? "default" : "outline"} onClick={() => setShowPresets(true)}>

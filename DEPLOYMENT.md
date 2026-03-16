@@ -52,33 +52,66 @@
 4. Railway will show you a **CNAME target** (e.g., `cname.railway.app` or similar).
 5. Optionally, also add `www.virelle.life` as a second custom domain.
 
-### In GoDaddy
+### In GoDaddy — Exact DNS Settings
 
-1. Log in to [GoDaddy](https://www.godaddy.com) and go to **My Products** → **DNS** for `Virelle.life`.
-2. Add or edit the following DNS records:
+1. Log in to [GoDaddy](https://www.godaddy.com) → **My Products** → **DNS** for `Virelle.life`.
+2. Click **Manage DNS** (or **DNS Management**).
+3. Delete any existing **A** or **CNAME** records for `@` and `www` that point elsewhere.
 
-#### For the root domain (`virelle.life`):
+> **Important:** GoDaddy does **NOT** support CNAME records on the root domain (`@`). Use one of the three options below.
+
+---
+
+**Option A — Recommended: Cloudflare free DNS proxy (supports root CNAME)**
+
+1. Create a free [Cloudflare](https://cloudflare.com) account and add `virelle.life`.
+2. In Cloudflare DNS, add these records:
+
+| Type | Name | Content | Proxy | TTL |
+|---|---|---|---|---|
+| CNAME | `@` | `<Railway CNAME target>` | Proxied ☁️ | Auto |
+| CNAME | `www` | `<Railway CNAME target>` | Proxied ☁️ | Auto |
+
+3. In GoDaddy → **DNS** → **Nameservers** → **Change** → **Enter my own nameservers**.
+4. Enter the two Cloudflare nameservers shown in your Cloudflare dashboard (e.g., `ada.ns.cloudflare.com`, `bob.ns.cloudflare.com`).
+5. Save. Propagation typically takes 5–30 minutes.
+
+---
+
+**Option B — GoDaddy only, using A records**
+
+Add these exact records in GoDaddy DNS:
 
 | Type | Name | Value | TTL |
 |---|---|---|---|
-| CNAME | @ | `<Railway CNAME target>` | 600 |
+| A | `@` | `66.33.27.47` | 600 |
+| A | `@` | `66.33.27.48` | 600 |
+| CNAME | `www` | `<Railway CNAME target>` | 600 |
 
-> **Note:** Some DNS providers don't allow CNAME on the root domain. If GoDaddy doesn't support this, use an **A record** instead. Railway's documentation provides the IP addresses for A records. Alternatively, you can use Cloudflare as a proxy (free tier) which supports CNAME flattening on root domains.
+> Check [docs.railway.app](https://docs.railway.app/deploy/exposing-your-app#custom-domains) for the latest Railway IP addresses as they may change.
 
-#### For `www.virelle.life`:
+---
+
+**Option C — GoDaddy Domain Forwarding (simplest)**
+
+1. In GoDaddy DNS → **Forwarding** → add a **Domain** forward: `virelle.life` → `https://www.virelle.life` (301 Permanent).
+2. Add a CNAME for `www`:
 
 | Type | Name | Value | TTL |
 |---|---|---|---|
-| CNAME | www | `<Railway CNAME target>` | 600 |
+| CNAME | `www` | `<Railway CNAME target>` | 600 |
 
-3. Save the DNS records.
-4. Wait 5–30 minutes for DNS propagation.
+---
 
 ### Verify in Railway
 
 5. Go back to Railway → **Settings** → **Custom Domain**.
-6. Railway will show a green checkmark once DNS is verified.
-7. Railway automatically provisions an SSL certificate (HTTPS) for your domain.
+6. Railway will show a **green checkmark** once DNS is verified.
+7. Railway automatically provisions an SSL/HTTPS certificate — this takes 2–5 minutes after DNS verification.
+
+### Troubleshooting GoDaddy DNS
+- "CNAME records cannot be created for the root domain" — expected on GoDaddy; use Option A or B above.
+- Use [dnschecker.org](https://dnschecker.org) or [whatsmydns.net](https://www.whatsmydns.net) to check propagation globally.
 
 ---
 

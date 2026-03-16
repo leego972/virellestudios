@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
   Film, Plus, Trash2, GripVertical, ChevronUp, ChevronDown,
-  Camera, Clock, Zap, Play, ArrowLeft, Layers, Eye, Settings2,
+  Camera, Clock, Zap, Play, ArrowLeft, Layers, Eye, Settings2, Loader2,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
@@ -225,8 +225,23 @@ export default function MultiShotSequencer() {
     setShots(newShots);
   };
 
+  const updateSceneMutation = trpc.scene.update.useMutation({
+    onSuccess: () => toast.success(`Multi-shot sequence saved — ${shots.length} shots, ${totalDuration}s total`),
+    onError: (err) => toast.error(err.message || "Failed to save sequence"),
+  });
+
   const handleSave = () => {
-    toast.success(`Multi-shot sequence saved — ${shots.length} shots, ${totalDuration}s total`);
+    if (!sceneId) { toast.error("No scene selected"); return; }
+    updateSceneMutation.mutate({
+      id: sceneId,
+      multiShotEnabled: true,
+      multiShotCount: shots.length,
+      multiShotData: shots,
+      genreMotion,
+      cameraBody,
+      lensBrand,
+      aperture,
+    });
   };
 
   return (
@@ -252,9 +267,9 @@ export default function MultiShotSequencer() {
               <Settings2 className="w-4 h-4 mr-1" />
               {sequenceMode === "auto" ? "Switch to Manual" : "Switch to Auto"}
             </Button>
-            <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black" onClick={handleSave}>
-              <Play className="w-4 h-4 mr-1" />
-              Generate Sequence
+            <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black" onClick={handleSave} disabled={updateSceneMutation.isPending}>
+              {updateSceneMutation.isPending ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Play className="w-4 h-4 mr-1" />}
+              {updateSceneMutation.isPending ? "Saving..." : "Generate Sequence"}
             </Button>
           </div>
         </div>
