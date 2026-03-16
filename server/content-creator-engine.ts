@@ -580,8 +580,6 @@ Return a JSON object with these exact fields:
       const styledPrompt = `${BRAND.artStyle.prefix} ${parsed.imagePrompt}. ${BRAND.artStyle.suffix}. No text in image.`;
       const imgResult = await generateImage({
         prompt: styledPrompt,
-        size: "1024x1024",
-        quality: "standard",
       });
       if (imgResult?.url) {
         // Upload to S3 for permanent storage
@@ -607,10 +605,10 @@ Return a JSON object with these exact fields:
       const videoResult = await generateVideoWithFallback({
         prompt: `${BRAND.artStyle.prefix} ${parsed.visualDirections || parsed.imagePrompt}. Cinematic film production quality. ${BRAND.artStyle.suffix}.`,
         duration: 6,
-        aspectRatio: params.platform === "tiktok" || params.platform === "youtube_shorts" ? "9:16" : "16:9",
+        aspectRatio: (params.platform === "tiktok" || params.platform === "youtube_shorts" ? "portrait" : "landscape") as "portrait" | "landscape",
       });
-      if (videoResult?.url) {
-        mediaUrl = videoResult.url;
+      if (videoResult?.videoUrl) {
+        mediaUrl = videoResult.videoUrl;
       }
     } catch (err) {
       log.warn("[ContentCreator] Video generation failed:", { error: getErrorMessage(err) });
@@ -842,7 +840,7 @@ export async function runAutonomousContentCycle(options?: {
       seoEnabled: true,
       tiktokEnabled: isTikTokContentConfigured(),
       advertisingEnabled: true,
-    });
+    } as any);
     const rows = await db.select().from(contentCreatorCampaigns)
       .where(eq(contentCreatorCampaigns.id, (ins as any).insertId)).limit(1);
     campaign = rows[0];
@@ -960,7 +958,7 @@ export async function runAutonomousContentCycle(options?: {
     durationMs: Date.now() - startTime,
   };
 
-  log.info("[ContentCreator] Autonomous cycle complete:", result);
+  log.info("[ContentCreator] Autonomous cycle complete:", result as unknown as Record<string, unknown>);
   return result;
 }
 
@@ -1095,8 +1093,6 @@ export async function publishPieceToTikTok(params: TikTokPublishParams): Promise
           const styledPrompt = `${BRAND.artStyle.prefix} ${direction}. ${BRAND.artStyle.suffix}. No text in image.`;
           const imgResult = await generateImage({
             prompt: styledPrompt,
-            size: "1024x1024",
-            quality: "standard",
           });
           if (imgResult?.url) {
             try {
@@ -1135,8 +1131,7 @@ export async function publishPieceToTikTok(params: TikTokPublishParams): Promise
     return {
       success: postResult.success,
       publishId: postResult.publishId,
-      error: postResult.error,
-      action: postResult.success ? "posted" : (postResult.error?.includes("not configured") ? "queued" : "failed"),
+      action: postResult.success ? "posted" : "failed",
     };
   } catch (err) {
     log.error("[ContentCreator] TikTok publish error:", { error: getErrorMessage(err) });
@@ -1190,7 +1185,7 @@ export async function processDueSchedules(): Promise<{
 
         // Mark schedule as completed
         await db.update(contentCreatorSchedules)
-          .set({ status: "completed" as any, executedAt: now })
+          .set({ status: "completed" as any, executedAt: now } as any)
           .where(eq(contentCreatorSchedules.id, schedule.id));
 
         published++;
@@ -1289,8 +1284,8 @@ export async function getContentCreatorDashboard() {
         gte(contentCreatorSchedules.scheduledAt, new Date()),
       )),
     db.select().from(contentCreatorAnalytics)
-      .where(gte(contentCreatorAnalytics.recordedAt, thirtyDaysAgo))
-      .orderBy(desc(contentCreatorAnalytics.recordedAt))
+      .where(gte(contentCreatorAnalytics.createdAt, thirtyDaysAgo))
+      .orderBy(desc(contentCreatorAnalytics.createdAt))
       .limit(50),
   ]);
 
@@ -1388,7 +1383,8 @@ Include: platform priorities, content themes, posting frequency, KPIs, and key m
     ],
   });
 
-  return response.choices?.[0]?.message?.content || "Strategy generation failed. Please try again.";
+  const rawContent = response.choices?.[0]?.message?.content;
+  return (typeof rawContent === "string" ? rawContent : rawContent?.[0] && typeof rawContent[0] === "object" && "text" in rawContent[0] ? (rawContent[0] as any).text : null) || "Strategy generation failed. Please try again.";
 }
 
 // ─── Get Content Creator Stats ─────────────────────────────────────────────

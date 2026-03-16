@@ -76,9 +76,8 @@ export const contentCreatorRouter = router({
       key,
       label: cfg.label,
       maxChars: cfg.maxChars,
-      maxHashtags: cfg.maxHashtags,
+      maxHashtags: cfg.hashtagCount,
       contentTypes: cfg.contentTypes,
-      seoWeight: cfg.seoWeight,
     }));
   }),
 
@@ -158,11 +157,10 @@ export const contentCreatorRouter = router({
           aiStrategy = await generateCampaignStrategy({
             name: input.name,
             objective: input.objective,
-            platforms: input.platforms,
             targetAudience: input.targetAudience,
           });
         } catch (err) {
-          log.warn("[ContentCreatorRouter] Strategy generation failed:", err);
+          log.warn("[ContentCreatorRouter] Strategy generation failed:", { error: String(err) });
         }
       }
 
@@ -248,7 +246,6 @@ export const contentCreatorRouter = router({
       const strategy = await generateCampaignStrategy({
         name: input.name,
         objective: input.objective,
-        platforms: input.platforms,
         targetAudience: input.targetAudience,
       });
 
@@ -281,7 +278,6 @@ export const contentCreatorRouter = router({
           topic: input.topic,
           campaignObjective: input.campaignObjective,
           seoKeywords: input.seoKeywords,
-          targetAudience: input.targetAudience,
           brandVoice: input.brandVoice,
           includeImage: input.includeImage,
           campaignId: input.campaignId,
@@ -347,7 +343,6 @@ export const contentCreatorRouter = router({
           topic: input.topic,
           seoKeywords: input.seoKeywords,
           includeImages: input.includeImages,
-          campaignObjective: input.campaignObjective,
         });
       } catch (err: any) {
         log.error("[ContentCreatorRouter] bulkGenerate error:", err);
@@ -561,7 +556,6 @@ export const contentCreatorRouter = router({
       try {
         return await publishPieceToTikTok({
           pieceId: input.pieceId,
-          privacyLevel: input.privacyLevel,
         });
       } catch (err: any) {
         log.error("[ContentCreatorRouter] publishToTikTok error:", err);

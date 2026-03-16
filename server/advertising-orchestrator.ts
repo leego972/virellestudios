@@ -2433,16 +2433,15 @@ export async function runAdvertisingCycle(): Promise<AdvertisingCycleResult> {
     if (db) {
       await db.insert(marketingActivityLog).values({
         action: "advertising_cycle",
-        channel: "orchestrator",
-        details: {
+        description: `Cycle: ${actions.length} actions, ${errors.length} errors`,
+        metadata: {
           totalActions: actions.length,
           successful: actions.filter((a) => a.status === "success").length,
           failed: actions.filter((a) => a.status === "failed").length,
           skipped: actions.filter((a) => a.status === "skipped").length,
           errors,
         },
-        status: errors.length === 0 ? "success" : "failed",
-      });
+      } as any);
     }
   } catch (err: unknown) {
     log.error("[AdvertisingOrchestrator] Failed to log cycle:", { error: String(getErrorMessage(err)) });
@@ -2679,20 +2678,18 @@ export async function getPerformanceMetrics(days = 30) {
     // Marketing content stats
     const contentStats = await db
       .select({
-        platform: marketingContent.channel,
+        platform: marketingContent.platform,
         count: count(),
       })
       .from(marketingContent)
       .where(gte(marketingContent.createdAt, new Date(startDate)))
-      .groupBy(marketingContent.channel);
+      .groupBy(marketingContent.platform);
 
     // Affiliate stats
     const affiliateClickCount: { count: number }[] = [{ count: 0 }]; // affiliateClicks table not in schema
 
     // Campaign performance
-    const campaignPerf = await (db as any).query.marketingPerformance.findMany({
-      where: gte(marketingPerformance.date, startDate),
-    });
+    const campaignPerf = await db.select().from(marketingPerformance).where(gte(marketingPerformance.date, startDate as any));
 
     const totalImpressions = campaignPerf.reduce((sum: number, p: any) => sum + (p.impressions || 0), 0);
     const totalClicks = campaignPerf.reduce((sum: number, p: any) => sum + (p.clicks || 0), 0);
