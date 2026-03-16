@@ -158,10 +158,10 @@ export async function createProject(data: InsertProject) {
   return (await db.select().from(projects).where(eq(projects.id, id)))[0];
 }
 
-export async function getUserProjects(userId: number) {
+export async function getUserProjects(userId: number, limit = 200) {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(projects).where(eq(projects.userId, userId)).orderBy(desc(projects.updatedAt));
+  return db.select().from(projects).where(eq(projects.userId, userId)).orderBy(desc(projects.updatedAt)).limit(limit);
 }
 
 export async function getProjectById(id: number, userId: number) {

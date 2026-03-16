@@ -36,6 +36,8 @@ import {
   generateCampaignStrategy,
   PLATFORM_CONFIG,
 } from "./content-creator-engine";
+import { generatePictureAd, autoGeneratePictureAd } from "./_core/pictureAdEngine";
+import { postToLinkedIn } from "./_core/socialPostingEngine";
 
 const log = logger;
 
@@ -657,6 +659,67 @@ export const contentCreatorRouter = router({
       }).where(eq(contentCreatorPieces.id, input.pieceId));
 
       return { success: true, ctr, engagementRate };
+    }),
+
+  // ─── Picture Ad Generation ─────────────────────────────────────────────────
+  generatePictureAd: adminProcedure
+    .input(z.object({
+      headline: z.string().min(1).max(200),
+      subtext: z.string().max(300).optional(),
+      cta: z.string().max(50).optional(),
+      brand: z.string().max(100).optional(),
+      backgroundImageUrl: z.string().url().optional(),
+      backgroundTopic: z.string().max(300).optional(),
+      style: z.enum(["minimal", "bold", "cinematic", "gradient", "dark", "light"]).default("cinematic"),
+      format: z.enum(["square", "portrait", "story", "landscape", "banner"]).default("square"),
+      brandColor: z.string().max(20).optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const result = await generatePictureAd(input);
+      if (!result.success) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: result.error || "Failed to generate picture ad" });
+      }
+      return result;
+    }),
+
+  autoGeneratePictureAd: adminProcedure
+    .input(z.object({
+      topic: z.string().min(1).max(300),
+      platform: z.string().min(1).max(50),
+      brandName: z.string().max(100).optional(),
+      brandColor: z.string().max(20).optional(),
+      style: z.enum(["minimal", "bold", "cinematic", "gradient", "dark", "light"]).optional(),
+    }))
+    .mutation(async ({ input }) => {
+      return await autoGeneratePictureAd(input);
+    }),
+
+  // ─── LinkedIn Publishing ───────────────────────────────────────────────────
+  publishToLinkedIn: adminProcedure
+    .input(z.object({
+      text: z.string().min(1).max(3000),
+      imageUrl: z.string().url().optional(),
+      title: z.string().max(200).optional(),
+      pieceId: z.number().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const result = await postToLinkedIn({
+        text: input.text,
+        imageUrl: input.imageUrl,
+        title: input.title,
+      });
+      // Update piece status if pieceId provided
+      if (input.pieceId && result.success) {
+        try {
+          const db = await getDb();
+          if (db) {
+            await db.update(contentCreatorPieces)
+              .set({ status: "published", publishedAt: new Date() } as any)
+              .where(eq(contentCreatorPieces.id, input.pieceId));
+          }
+        } catch (_) { /* non-critical */ }
+      }
+      return result;
     }),
 
   // ─── Content Calendar ───────────────────────────────────────────────────────

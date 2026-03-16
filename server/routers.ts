@@ -189,6 +189,13 @@ export const appRouter = router({
             link: "/",
           });
         } catch (_) { /* non-critical */ }
+        // Send welcome email + studio notification via Resend (non-blocking, fire-and-forget)
+        if (user.email) {
+          import("./email").then(({ sendWelcomeEmail, sendNewSignupNotification }) => {
+            sendWelcomeEmail(user!.email!, user!.name || "Filmmaker").catch(() => {});
+            sendNewSignupNotification(user!.email!, user!.name || "Unknown", user!.role || "user").catch(() => {});
+          }).catch(() => {});
+        }
         return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     login: publicProcedure

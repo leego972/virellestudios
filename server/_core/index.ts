@@ -195,6 +195,17 @@ async function startServer() {
               logger.info(`Granted ${tierLimits.monthlyCredits} credits to user ${userId} for ${tier} subscription`);
             }
             logger.info(`Subscription activated for user ${userId}: ${tier}`);
+            // Send subscription confirmation email to user + studio notification
+            try {
+              const newSubUser = await db.getUserById(userId);
+              if (newSubUser?.email) {
+                const { sendSubscriptionConfirmationEmail, sendNewSubscriptionNotification } = await import("../email");
+                const planLabel = tier === "creator" ? "Creator" : tier === "studio" ? "Studio" : tier === "industry" ? "Industry" : tier === "independent" ? "Independent" : String(tier);
+                const tierPrice = tier === "creator" ? "$2,500/mo" : tier === "studio" ? "$5,000/mo" : tier === "industry" ? "$10,000/mo" : "";
+                sendSubscriptionConfirmationEmail(newSubUser.email, newSubUser.name || "Filmmaker", planLabel).catch(() => {});
+                sendNewSubscriptionNotification(newSubUser.email, newSubUser.name || "Unknown", planLabel, tierPrice).catch(() => {});
+              }
+            } catch (_emailErr) { /* non-critical */ }
           }
           break;
         }
