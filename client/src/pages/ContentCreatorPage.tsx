@@ -440,7 +440,21 @@ export default function ContentCreatorPage() {
     setNewCampaignPlatforms(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]);
   };
 
-  const dashboard = dashboardQuery.data;
+  const dashboardRaw = dashboardQuery.data;
+  const dashboard = dashboardRaw ? {
+    totalCampaigns: dashboardRaw.activeCampaigns?.length ?? 0,
+    activeCampaigns: dashboardRaw.overview?.activeCampaigns ?? 0,
+    totalPieces: dashboardRaw.overview?.totalPieces ?? 0,
+    publishedPieces: dashboardRaw.overview?.statusBreakdown?.published ?? 0,
+    scheduledPieces: dashboardRaw.overview?.scheduledPosts ?? 0,
+    totalImpressions: dashboardRaw.analytics?.impressions ?? 0,
+    totalEngagements: dashboardRaw.analytics?.engagements ?? 0,
+    platformBreakdown: dashboardRaw.overview?.platformBreakdown ?? {},
+    tiktokConfigured: false,
+    advertisingLinked: false,
+    topPerformingPieces: [] as any[],
+    autonomousConfig: dashboardRaw.autonomousConfig,
+  } : null;
   const campaigns = campaignsQuery.data?.campaigns || [];
   const pieces = piecesQuery.data?.pieces || [];
   const analytics = analyticsQuery.data;

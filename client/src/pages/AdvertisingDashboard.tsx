@@ -376,11 +376,11 @@ export default function AdvertisingDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {performance?.byPlatform && Object.entries(performance.byPlatform).length > 0 ? (
-                  Object.entries(performance.byPlatform).map(([platform, data]: [string, any]) => {
+                {performance?.organic?.contentByPlatform && Object.entries(performance.organic.contentByPlatform).length > 0 ? (
+                  Object.entries(performance.organic.contentByPlatform).map(([platform, data]: [string, any]) => {
                     const meta = PLATFORM_META[platform] || { label: platform, color: "text-zinc-400", icon: <Share2 className="w-4 h-4" /> };
-                    const maxImpressions = Math.max(...Object.values(performance.byPlatform).map((d: any) => d.impressions || 0), 1);
-                    const pct = Math.round(((data.impressions || 0) / maxImpressions) * 100);
+                    const maxImpressions = Math.max(...Object.values(performance.organic.contentByPlatform).map((d: any) => (typeof d === 'number' ? d : d.impressions) || 0), 1);
+                    const pct = Math.round(((typeof data === 'number' ? data : data.impressions || 0) / maxImpressions) * 100);
                     return (
                       <div key={platform}>
                         <div className="flex items-center justify-between mb-1">
@@ -556,11 +556,11 @@ export default function AdvertisingDashboard() {
                   <>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Account</span>
-                      <span className="text-sm font-medium">@{tiktok.creatorInfo.username || "—"}</span>
+                      <span className="text-sm font-medium">@{tiktok.creatorInfo.creatorNickname || "—"}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Followers</span>
-                      <span className="text-sm font-medium">{tiktok.creatorInfo.followerCount?.toLocaleString() ?? "—"}</span>
+                      <span className="text-sm font-medium">{(tiktok.creatorInfo as any).followerCount?.toLocaleString() ?? "—"}</span>
                     </div>
                   </>
                 )}
@@ -570,7 +570,7 @@ export default function AdvertisingDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Total Views</span>
-                  <span className="text-sm font-medium">{tiktok?.totalViews?.toLocaleString() ?? 0}</span>
+                  <span className="text-sm font-medium">{(tiktok as any)?.totalViews?.toLocaleString() ?? 0}</span>
                 </div>
                 <Button
                   className="w-full bg-pink-600 hover:bg-pink-700 text-white"
@@ -612,7 +612,7 @@ export default function AdvertisingDashboard() {
                       key={topic}
                       variant="outline"
                       className="w-full justify-start border-border/50 hover:bg-amber-500/10 hover:border-amber-500/30 text-sm h-9"
-                      onClick={() => generateVideoMutation.mutate({ topic })}
+                      onClick={() => generateVideoMutation.mutate({ topic, cta: "Try VirÉlle Studios free" })}
                       disabled={generateVideoMutation.isPending}
                     >
                       {generateVideoMutation.isPending ? (

@@ -170,13 +170,13 @@ export default function CampaignManager() {
   const [quickContext, setQuickContext] = useState("");
 
   // Queries
-  const platformsQuery = trpc.advertising.platforms.useQuery();
-  const campaignsQuery = trpc.advertising.listCampaigns.useQuery();
-  const analyticsQuery = trpc.advertising.analytics.useQuery();
+  const platformsQuery = trpc.advertising.getChannelStatuses.useQuery();
+  const campaignsQuery = trpc.contentCreator.listCampaigns.useQuery({ limit: 50 });
+  const analyticsQuery = trpc.contentCreator.getAnalytics.useQuery({});
 
   // Mutations
-  const createCampaignMut = trpc.advertising.createCampaign.useMutation({
-    onSuccess: (campaign) => {
+  const createCampaignMut = trpc.contentCreator.createCampaign.useMutation({
+    onSuccess: (campaign: any) => {
       toast.success("Campaign created!");
       setShowCreateDialog(false);
       setCampaignName("");
@@ -184,51 +184,51 @@ export default function CampaignManager() {
       campaignsQuery.refetch();
       setSelectedCampaignId(campaign.id);
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: any) => toast.error(err.message),
   });
 
-  const generateContentMut = trpc.advertising.generateContent.useMutation({
-    onSuccess: (contents) => {
-      toast.success(`Generated ${contents.length} ad variations!`);
+  const generateContentMut = trpc.contentCreator.bulkGenerate.useMutation({
+    onSuccess: (_contents: any) => {
+      toast.success(`Generated content!`);
       campaignsQuery.refetch();
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: any) => toast.error(err.message),
   });
 
-  const generateSingleMut = trpc.advertising.generateSingleContent.useMutation({
-    onSuccess: (content) => {
+  const generateSingleMut = trpc.contentCreator.generatePiece.useMutation({
+    onSuccess: (content: any) => {
       setPreviewContent(content);
       setShowContentDialog(true);
       toast.success("Content generated!");
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: any) => toast.error(err.message),
   });
 
-  const updateStatusMut = trpc.advertising.updateStatus.useMutation({
+  const updateStatusMut = trpc.contentCreator.updateCampaign.useMutation({
     onSuccess: () => {
       toast.success("Campaign status updated");
       campaignsQuery.refetch();
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: any) => toast.error(err.message),
   });
 
-  const recordPostMut = trpc.advertising.recordPost.useMutation({
+  const recordPostMut = trpc.contentCreator.updatePiece.useMutation({
     onSuccess: () => {
       toast.success("Post recorded!");
       campaignsQuery.refetch();
       analyticsQuery.refetch();
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: any) => toast.error(err.message),
   });
 
-  const deleteCampaignMut = trpc.advertising.deleteCampaign.useMutation({
+  const deleteCampaignMut = trpc.contentCreator.deleteCampaign.useMutation({
     onSuccess: () => {
       toast.success("Campaign deleted");
       setSelectedCampaignId(null);
       campaignsQuery.refetch();
       analyticsQuery.refetch();
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: any) => toast.error(err.message),
   });
 
   const togglePlatform = (id: string) => {

@@ -76,7 +76,7 @@ import {
   Zap,
   Globe,
   LayoutTemplate,
-  Swatch,
+  Palette as Swatch,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -1461,7 +1461,7 @@ export default function AdPosterMaker() {
             {/* ── More Tab ── */}
             <TabsContent value="more" className="p-4 space-y-4 mt-0">
               <FestivalTab />
-              <InfluencerKitTab projectTitle={projectDetail?.title} projectGenre={projectDetail?.genre} projectLogline={projectDetail?.plotSummary} />
+              <InfluencerKitTab projectTitle={projectDetail?.title ?? undefined} projectGenre={projectDetail?.genre ?? undefined} projectLogline={projectDetail?.plotSummary ?? undefined} />
             </TabsContent>
           </Tabs>
         </div>
@@ -1636,8 +1636,8 @@ function PublishTab({ currentTemplate }: { currentTemplate: TemplateType }) {
   const uploadMutation = trpc.upload.image.useMutation();
   const publishMutation = trpc.socialCredentials.publish.useMutation({
     onSuccess: (data) => {
-      if (data.success) toast.success(`Published to ${data.platform} successfully!`);
-      else toast.error(`Publish failed: ${data.error}`);
+      if (data.success) toast.success(`Published successfully!`);
+      else toast.error(`Publish failed: ${(data as any).error ?? 'Unknown error'}`);
       setPublishingPlatform(null);
     },
     onError: (e) => { toast.error(e.message); setPublishingPlatform(null); },
