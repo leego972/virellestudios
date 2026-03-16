@@ -20,6 +20,8 @@ export type VideoGenerationOptions = {
   prompt: string;
   /** Duration in seconds — will be mapped to nearest Sora value: "4", "8", or "12" */
   seconds?: number;
+  /** Alias for seconds */
+  duration?: number;
   /** Resolution — mapped to Sora sizes */
   resolution?: "1080p" | "720p" | "480p";
   /** Model: "sora-2" (fast) or "sora-2-pro" (production quality) */

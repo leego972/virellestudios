@@ -630,6 +630,7 @@ export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
   creator:     { monthly: 10000, annual: 8333, annualTotal: 100000, monthlyTotal: 120000 },
   studio:      { monthly: 15000, annual: 12500, annualTotal: 150000, monthlyTotal: 180000 },
   industry:    { monthly: 25000, annual: 20833, annualTotal: 250000, monthlyTotal: 300000 },
+  beta:        { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0 },
 };
 
 // Referral Rewards
@@ -986,7 +987,7 @@ export async function createCheckoutSession(
         subscription_data: {
           metadata: { userId: String(user.id), billing, promoCode },
           ...(trialDays ? { trial_period_days: trialDays } : {}),
-          coupon: promoCouponId,
+          ...(promoCouponId ? { discounts: [{ coupon: promoCouponId }] } : {}),
         },
         ...(billing === "monthly" ? {
           payment_method_options: {

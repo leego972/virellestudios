@@ -274,8 +274,8 @@ export const advertisingRouter = router({
     .mutation(async ({ input }) => {
       return generateVideo({
         prompt: input.prompt,
-        duration: input.duration,
-        aspectRatio: input.aspectRatio,
+        seconds: input.duration,
+        aspectRatio: (input.aspectRatio === "1:1" ? "landscape" : input.aspectRatio === "9:16" ? "portrait" : "landscape") as "landscape" | "portrait",
       });
     }),
 
@@ -291,8 +291,8 @@ export const advertisingRouter = router({
     .mutation(async ({ input }) => {
       return generateVideoWithFallback({
         prompt: input.prompt,
-        duration: 6,
-        aspectRatio: "9:16",
+        seconds: 6,
+        aspectRatio: "portrait",
       });
     }),
 
@@ -309,8 +309,8 @@ export const advertisingRouter = router({
     .mutation(async ({ input }) => {
       return generateVideoWithFallback({
         prompt: `Cinematic promotional video for VirÉlle Studios. Topic: ${input.topic}. Call to action: ${input.cta}. Visually stunning, AI-generated cinematography, professional film quality.`,
-        duration: 8,
-        aspectRatio: "16:9",
+        seconds: 8,
+        aspectRatio: "landscape",
       });
     }),
 

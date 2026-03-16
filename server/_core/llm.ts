@@ -67,6 +67,7 @@ export type InvokeParams = {
   responseFormat?: ResponseFormat;
   response_format?: ResponseFormat;
   systemTag?: string;
+  model?: string;
 };
 
 export type ToolCall = {

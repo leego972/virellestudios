@@ -65,9 +65,9 @@ import { getErrorMessage } from "./_core/errors.js";
 import { generateVideo, generateVideoWithFallback } from "./_core/videoGeneration";
 // Compatibility shims for missing exports
 const isVideoGenerationAvailable = () => !!(process.env.FAL_KEY || process.env.REPLICATE_API_TOKEN || process.env.RUNWAY_API_KEY);
-const generateShortFormVideo = async (hook: string, script: string) => generateVideoWithFallback({ prompt: `${hook}\n${script}`, duration: 15 });
-const generateSocialClip = async (topic: string, _platform: string) => generateVideoWithFallback({ prompt: topic, duration: 30 });
-const generateMarketingVideo = async (prompt: string) => generateVideoWithFallback({ prompt, duration: 30 });
+const generateShortFormVideo = async (hook: string, script: string) => generateVideoWithFallback({ prompt: `${hook}\n${script}`, seconds: 15 });
+const generateSocialClip = async (topic: string, _platform: string) => generateVideoWithFallback({ prompt: topic, seconds: 30 });
+const generateMarketingVideo = async (prompt: string) => generateVideoWithFallback({ prompt, seconds: 30 });
 const log = createLogger("AdvertisingOrchestrator");
 
 // ============================================
@@ -1267,9 +1267,9 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         canonicalUrl: `https://virelle.life/blog`,
         published: true,
       });
-      actions.push({ channel: "devto_crosspost", action: "publish_article", status: result.success ? "success" : "failed", details: result.success ? `Published to Dev.to: "${article.title}"` : `Dev.to failed: ${result.error}`, cost: 0 });
+      actions.push({ channel: "devto_crosspost" as any, action: "publish_article", status: result.success ? "success" : "failed", details: result.success ? `Published to Dev.to: "${article.title}"` : `Dev.to failed: ${result.error}`, cost: 0 });
     } catch (err: unknown) {
-      actions.push({ channel: "devto_crosspost", action: "publish_article", status: "failed", details: `Dev.to: ${getErrorMessage(err)}`, cost: 0 });
+      actions.push({ channel: "devto_crosspost" as any, action: "publish_article", status: "failed", details: `Dev.to: ${getErrorMessage(err)}`, cost: 0 });
     }
   }
 
@@ -2096,7 +2096,7 @@ async function monitorCampaignHealth(): Promise<AdvertisingAction> {
     const channelSuccesses = new Map<string, number>();
 
     for (const activity of recentActivity) {
-      const details = activity.details as any;
+      const details = (activity as any).details ?? activity.metadata;
       if (!details) continue;
 
       const channel = (activity as any).channel || "unknown";

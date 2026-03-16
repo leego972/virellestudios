@@ -174,10 +174,11 @@ export const autonomousRouter = router({
     }))
     .mutation(async ({ input }) => {
       log.info(`[AutonomousRouter] Single platform content creation: ${input.platform}`);
-      const result = await runContentCreatorJob(input.platform as AdPlatform, {
-        generateVideo: input.generateVideo,
-        theme: input.theme,
-      });
+      const result = await runContentCreatorJob(
+        input.platform as AdPlatform,
+        "image_post" as ContentFormat,
+        { generateVideo: input.generateVideo, theme: input.theme }
+      );
       return result;
     }),
 

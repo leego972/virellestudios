@@ -604,7 +604,7 @@ Return a JSON object with these exact fields:
     try {
       const videoResult = await generateVideoWithFallback({
         prompt: `${BRAND.artStyle.prefix} ${parsed.visualDirections || parsed.imagePrompt}. Cinematic film production quality. ${BRAND.artStyle.suffix}.`,
-        duration: 6,
+        seconds: 6,
         aspectRatio: (params.platform === "tiktok" || params.platform === "youtube_shorts" ? "portrait" : "landscape") as "portrait" | "landscape",
       });
       if (videoResult?.videoUrl) {
