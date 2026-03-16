@@ -38,6 +38,16 @@ const FORMAT_ICONS: Record<string, React.ReactNode> = {
   "pdf-production-report": <FileText className="w-5 h-5 text-red-400" />,
 };
 
+const NLE_EXPORT_OPTIONS = Object.keys(FORMAT_MAP);
+const NLE_EXPORT_LABELS: Record<string, string> = {
+  "xml-premiere-pro": "Adobe Premiere Pro (XML)",
+  "xml-final-cut-pro-x": "Final Cut Pro X (FCPXML)",
+  "edl-davinci-resolve": "DaVinci Resolve (EDL)",
+  "aaf-avid-media-composer": "Avid Media Composer (AAF)",
+  "csv-shot-list": "Shot List (CSV)",
+  "pdf-production-report": "Production Report (PDF)",
+};
+
 const FORMAT_DESCRIPTIONS: Record<string, string> = {
   "xml-premiere-pro": "Import your entire project timeline directly into Adobe Premiere Pro. Includes all scene metadata, cuts, and transitions.",
   "xml-final-cut-pro-x": "FCPXML format compatible with Final Cut Pro X and later. Preserves timeline structure, clips, and markers.",

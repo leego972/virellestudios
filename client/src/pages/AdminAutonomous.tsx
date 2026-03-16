@@ -271,7 +271,7 @@ export default function AdminAutonomous() {
               <Image className="w-4 h-4 text-amber-400" />
               <span className="text-xs text-muted-foreground">Total Content</span>
             </div>
-            <p className="text-2xl font-bold">{stats?.totalCreated || 0}</p>
+            <p className="text-2xl font-bold">{stats?.totalPieces || 0}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-card/80">
@@ -280,7 +280,7 @@ export default function AdminAutonomous() {
               <Share2 className="w-4 h-4 text-blue-400" />
               <span className="text-xs text-muted-foreground">Platforms</span>
             </div>
-            <p className="text-2xl font-bold">{Object.keys(stats?.byPlatform || {}).length}</p>
+            <p className="text-2xl font-bold">{Object.keys((stats as any)?.byPlatform || {}).length}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-card/80">
@@ -388,14 +388,14 @@ export default function AdminAutonomous() {
           )}
 
           {/* Platform breakdown */}
-          {stats && Object.keys(stats.byPlatform).length > 0 && (
+          {stats && Object.keys((stats as any)?.byPlatform || {}).length > 0 && (
             <Card className="border-border/50 bg-card/80">
               <CardHeader>
                 <CardTitle className="text-base">Content by Platform</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {Object.entries(stats.byPlatform).map(([platform, count]) => (
+                  {Object.entries((stats as any)?.byPlatform || {}).map(([platform, count]) => (
                     <div key={platform} className="flex items-center gap-2 p-3 rounded-lg border border-border/50 bg-card/50">
                       <span className="text-amber-400">{PLATFORM_ICONS[platform] || <Share2 className="w-4 h-4" />}</span>
                       <div>

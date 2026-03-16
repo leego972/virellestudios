@@ -45,7 +45,7 @@ export default function LiveActionPlate() {
   const [uploadingPlate, setUploadingPlate] = useState(false);
 
   const updateSceneMutation = trpc.scene.update.useMutation();
-  const generateVideoMutation = trpc.generation.generateVideo.useMutation();
+  const generateVideoMutation = trpc.scene.generateVideo.useMutation();
   const uploadFootageMutation = trpc.upload.footage.useMutation();
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {

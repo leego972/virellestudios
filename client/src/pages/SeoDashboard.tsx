@@ -235,13 +235,13 @@ export default function SeoDashboard() {
         {/* Health Score */}
         <Card className="border-border/50 bg-card/80">
           <CardContent className="p-4 flex items-center gap-4">
-            <ScoreRing score={health?.score ?? report?.overallScore ?? 0} />
+            <ScoreRing score={health?.overall ?? (report?.score as any)?.overall ?? 0} />
             <div>
               <p className="text-xs text-muted-foreground">SEO Health</p>
               <p className="text-sm font-medium mt-0.5">
-                {(health?.score ?? report?.overallScore ?? 0) >= 80 ? "Excellent" :
-                 (health?.score ?? report?.overallScore ?? 0) >= 60 ? "Good" :
-                 (health?.score ?? report?.overallScore ?? 0) >= 40 ? "Needs Work" : "Poor"}
+                {((health?.overall ?? (report?.score as any)?.overall ?? 0)) >= 80 ? "Excellent" :
+                 ((health?.overall ?? (report?.score as any)?.overall ?? 0)) >= 60 ? "Good" :
+                 ((health?.overall ?? (report?.score as any)?.overall ?? 0)) >= 40 ? "Needs Work" : "Poor"}
               </p>
             </div>
           </CardContent>
@@ -250,8 +250,8 @@ export default function SeoDashboard() {
         <MetricCard
           icon={<Hash className="w-4 h-4" />}
           label="Keywords Tracked"
-          value={keywordsQuery.data?.length ?? 0}
-          sub={`${keywordsQuery.data?.filter((k: any) => k.currentRank && k.currentRank <= 10).length ?? 0} in top 10`}
+          value={(keywordsQuery.data as any)?.primaryKeywords?.length ?? 0}
+          sub={`${(keywordsQuery.data as any)?.primaryKeywords?.filter((k: any) => k.currentRank && k.currentRank <= 10).length ?? 0} in top 10`}
           color="text-blue-400"
         />
         <MetricCard
@@ -264,7 +264,7 @@ export default function SeoDashboard() {
         <MetricCard
           icon={<Link className="w-4 h-4" />}
           label="Internal Links"
-          value={internalLinksQuery.data?.length ?? 0}
+          value={(internalLinksQuery.data as any)?.totalInternalLinks ?? 0}
           sub="Link graph entries"
           color="text-purple-400"
         />
@@ -299,7 +299,7 @@ export default function SeoDashboard() {
               <CardContent className="space-y-3">
                 {report ? (
                   <>
-                    {report.categories && Object.entries(report.categories).map(([cat, data]: [string, any]) => (
+                    {(report?.score as any)?.categories && Object.entries((report?.score as any)?.categories).map(([cat, data]: [string, any]) => (
                       <div key={cat}>
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-sm capitalize">{cat.replace(/_/g, " ")}</span>
@@ -310,10 +310,10 @@ export default function SeoDashboard() {
                         <Progress value={data.score} className="h-1.5" />
                       </div>
                     ))}
-                    {report.issues && report.issues.length > 0 && (
+                    {(report?.score as any)?.issues && (report?.score as any)?.issues.length > 0 && (
                       <div className="mt-3 pt-3 border-t border-border/30">
                         <p className="text-xs text-muted-foreground mb-2">Issues to Address</p>
-                        {report.issues.slice(0, 3).map((issue: any, i: number) => (
+                        {(report?.score as any)?.issues.slice(0, 3).map((issue: any, i: number) => (
                           <div key={i} className="flex items-start gap-2 text-xs mb-1">
                             <AlertCircle className="w-3 h-3 text-yellow-400 mt-0.5 flex-shrink-0" />
                             <span className="text-foreground/70">{issue.message || issue}</span>
@@ -460,9 +460,9 @@ export default function SeoDashboard() {
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
                 </div>
-              ) : keywordsQuery.data && keywordsQuery.data.length > 0 ? (
+              ) : (keywordsQuery.data as any)?.primaryKeywords && (keywordsQuery.data as any)?.primaryKeywords.length > 0 ? (
                 <div className="space-y-0">
-                  {keywordsQuery.data.map((keyword: any, i: number) => (
+                  {(keywordsQuery.data as any)?.primaryKeywords.map((keyword: any, i: number) => (
                     <KeywordRow key={i} keyword={keyword} />
                   ))}
                 </div>
@@ -607,9 +607,9 @@ export default function SeoDashboard() {
                 <div className="flex items-center justify-center py-6">
                   <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
                 </div>
-              ) : internalLinksQuery.data && internalLinksQuery.data.length > 0 ? (
+              ) : internalLinksQuery.data && (internalLinksQuery.data as any)?.suggestedLinks?.length > 0 ? (
                 <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {internalLinksQuery.data.map((link: any, i: number) => (
+                  {(internalLinksQuery.data as any)?.suggestedLinks?.map((link: any, i: number) => (
                     <div key={i} className="flex items-center gap-2 text-xs py-1 border-b border-border/20 last:border-0">
                       <span className="text-blue-400 truncate flex-1">{link.from || link.source}</span>
                       <span className="text-muted-foreground">→</span>
@@ -673,7 +673,7 @@ export default function SeoDashboard() {
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
                 </div>
-              ) : eventLogQuery.data && eventLogQuery.data.length > 0 ? (
+              ) : (keywordsQuery.data as any)?.primaryKeywords && (keywordsQuery.data as any)?.primaryKeywords.length > 0 ? (
                 <div className="space-y-2">
                   {eventLogQuery.data.map((event: any, i: number) => (
                     <div key={i} className="flex items-start gap-3 py-2 border-b border-border/30 last:border-0">
@@ -823,7 +823,7 @@ export default function SeoDashboard() {
                 <Switch
                   checked={!isKilled}
                   onCheckedChange={(checked) => {
-                    killSwitchMutation.mutate({ enable: !checked });
+                    killSwitchMutation.mutate({ action: checked ? "activate" : "deactivate" });
                   }}
                   disabled={killSwitchMutation.isPending}
                   className="data-[state=checked]:bg-emerald-600"

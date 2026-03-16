@@ -48,7 +48,7 @@ export default function VFXSuite() {
   const sceneId = parseInt(params.sceneId || "0");
 
   const updateSceneMutation = trpc.scene.update.useMutation();
-  const generateVideoMutation = trpc.generation.generateVideo.useMutation();
+  const generateVideoMutation = trpc.scene.generateVideo.useMutation();
 
   const [selectedOps, setSelectedOps] = useState<string[]>([]);
   const [intensity, setIntensity] = useState(75);
