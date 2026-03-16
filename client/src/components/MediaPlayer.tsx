@@ -588,7 +588,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                 />
                 {/* Thumb */}
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-4 h-4 sm:w-3 sm:h-3 bg-primary rounded-full sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-lg"
+                  className="absolute top-1/2 -translate-y-1/2 w-4 h-4 sm:w-3 sm:h-3 bg-primary rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-lg"
                   style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, transform: "translate(-50%, -50%)" }}
                 />
               </div>
@@ -687,7 +687,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                       <TooltipContent side="top"><p>Mute (M)</p></TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <div className="hidden sm:block w-0 overflow-hidden group-hover/vol:w-20 transition-all duration-200">
+                  <div className="hidden sm:flex w-0 overflow-hidden group-hover/vol:w-20 transition-all duration-200">
                     <Slider
                       value={[isMuted ? 0 : volume]}
                       min={0}
