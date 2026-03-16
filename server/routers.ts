@@ -212,7 +212,7 @@ export const appRouter = router({
         }
 
         // Admin accounts bypass brute-force lockout
-        const adminEmailsList = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
+        const adminEmailsList = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "leego972@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
         const isAdminAccount = adminEmailsList.includes(user.email?.toLowerCase() || "");
         if (!isAdminAccount) {
           // Security: Check for brute force / lockout before password check
@@ -236,7 +236,7 @@ export const appRouter = router({
         trackLoginAttempt(user.id, clientIP, true);
         logAuditEvent(user.id, "login_success", clientIP, true);
         // Auto-promote admin account if not already admin
-        const adminEmails = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "brobroplzcheck@gmail.com"];
+        const adminEmails = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "leego972@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
         const isAdminEmail = adminEmails.includes(user.email?.toLowerCase() || "");
         if (isAdminEmail && user.role !== "admin") {
           await db.updateUserRole(user.id, "admin");
@@ -6200,7 +6200,7 @@ Rules:
         generationsRemaining: remaining,
         resetDate: user.monthlyGenerationsResetAt || null,
         limits,
-        isAdmin: user.email === ENV.adminEmail || user.email === "brobroplzcheck@gmail.com" || user.role === "admin",
+        isAdmin: user.role === "admin" || user.email === ENV.adminEmail || user.email === "leego972@gmail.com" || user.email === "brobroplzcheck@gmail.com" || user.email === "sisteror555@gmail.com",
         stripePublishableKey: ENV.stripePublishableKey,
       };
     }),
