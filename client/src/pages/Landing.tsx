@@ -7,7 +7,7 @@ import {
   Globe, Clock, ChevronDown, Sun, Moon, BookOpen, CreditCard,
   MessageSquare, Clapperboard, Monitor, Scissors, MapPin,
   Mic, Sparkles, Video, Eye, Cpu, Building2, Rocket, Lock, AlertTriangle,
-  Menu, X as XIcon,
+  Menu, X as XIcon, Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -1172,6 +1172,42 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ─── Mobile App Download Banner ─── */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8" style={{ background: "linear-gradient(135deg, rgba(120,53,15,0.25) 0%, rgba(0,0,0,0.95) 50%, rgba(88,28,135,0.25) 100%)" }}>
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-4">
+              <Smartphone className="h-3.5 w-3.5" />
+              Now on iOS &amp; Android
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+              Take Virelle Studios <span className="text-amber-400">Everywhere</span>
+            </h2>
+            <p className="text-foreground/60 max-w-md text-sm leading-relaxed">
+              Every AI filmmaking tool — Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more — now in your pocket. New features sync automatically.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+            <Button
+              size="lg"
+              onClick={() => setLocation("/download")}
+              className="bg-white text-black hover:bg-gray-100 font-semibold px-6 h-12 gap-3"
+            >
+              <Smartphone className="h-5 w-5" />
+              Download the App
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => setLocation("/download")}
+              className="h-12 px-6 gap-3 border-white/20 hover:bg-white/5"
+            >
+              Learn More →
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* ─── Footer ─── */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-border/40">
         <div className="max-w-6xl mx-auto">
@@ -1185,6 +1221,7 @@ export default function Landing() {
                 <li><button onClick={() => setLocation("/faq")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">FAQ</button></li>
                 <li><button onClick={() => setLocation("/blog")} className="text-xs text-foreground/80 hover:text-foreground transition-colors">Blog</button></li>
                 <li><button onClick={() => setLocation("/showcase")} className="text-xs font-semibold hover:text-foreground transition-colors" style={{ color: '#d4af37' }}>Showcase</button></li>
+                <li><button onClick={() => setLocation("/download")} className="text-xs text-amber-400 hover:text-amber-300 transition-colors font-medium">📱 Download App</button></li>
               </ul>
             </div>
             <div>

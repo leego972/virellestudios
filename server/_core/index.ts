@@ -345,6 +345,41 @@ async function startServer() {
     });
   });
 
+  // ── MOBILE APP: Feature Registry ─────────────────────────────────────────
+  // The mobile app polls this endpoint to discover all available features.
+  // To add a new feature: edit shared/feature-registry.ts — it auto-appears in the app.
+  app.get("/api/mobile/features", async (_req, res) => {
+    try {
+      const { FEATURE_REGISTRY, getFeaturesByCategory } = await import("../../shared/feature-registry");
+      res.json({
+        version: 1,
+        updatedAt: new Date().toISOString(),
+        features: FEATURE_REGISTRY,
+        byCategory: getFeaturesByCategory(),
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // ── MOBILE APP: App Download Links ─────────────────────────────────────────
+  // Returns the latest iOS/Android download URLs. Set IOS_DOWNLOAD_URL and
+  // ANDROID_DOWNLOAD_URL env vars after each Expo EAS build.
+  app.get("/api/mobile/downloads", (_req, res) => {
+    res.json({
+      ios: {
+        url: process.env.IOS_DOWNLOAD_URL || null,
+        version: process.env.APP_VERSION || "1.0.0",
+        available: !!process.env.IOS_DOWNLOAD_URL,
+      },
+      android: {
+        url: process.env.ANDROID_DOWNLOAD_URL || null,
+        version: process.env.APP_VERSION || "1.0.0",
+        available: !!process.env.ANDROID_DOWNLOAD_URL,
+      },
+    });
+  });
+
   // Manual migration trigger (admin only)
   app.post("/api/admin/migrate", async (_req, res) => {
     try {

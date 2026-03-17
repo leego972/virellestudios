@@ -49,6 +49,7 @@ import {
   BarChart3,
   Search,
   Coins,
+  Smartphone,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -83,6 +84,7 @@ const menuGroups = [
       { icon: Coins, label: "Credits & History", path: "/credits" },
       { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
       { icon: Gift, label: "Referrals", path: "/referrals" },
+      { icon: Smartphone, label: "Download App", path: "/download" },
       { icon: BookOpen, label: "Blog", path: "/blog" },
       { icon: Settings, label: "Settings", path: "/settings" },
     ],

@@ -53,6 +53,7 @@ const AIContentPolicy = lazy(() => import("./pages/legal/AIContentPolicy"));
 const IPPolicy = lazy(() => import("./pages/legal/IPPolicy"));
 
 // New public pages — lazy loaded
+const DownloadApp = lazy(() => import("./pages/DownloadApp"));
 const HowItWorks = lazy(() => import("./pages/HowItWorks"));
 const About = lazy(() => import("./pages/About"));
 const FAQ = lazy(() => import("./pages/FAQ"));
@@ -159,6 +160,8 @@ function Router() {
       <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
       <Route path="/faq">{() => <LazyPage><FAQ /></LazyPage>}</Route>
       <Route path="/solutions">{() => <LazyPage><Solutions /></LazyPage>}</Route>
+      <Route path="/download">{() => <LazyPage><DownloadApp /></LazyPage>}</Route>
+      <Route path="/app">{() => <LazyPage><DownloadApp /></LazyPage>}</Route>
 
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />
