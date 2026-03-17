@@ -79,6 +79,24 @@ async function startServer() {
     // Continue starting — the server may still work with existing schema
   }
 
+  // Ensure all admin-email users have role='admin' in the database
+  try {
+    const adminDb = await db.getDb();
+    if (adminDb) {
+      const { users: usersTable } = await import("../../drizzle/schema");
+      const { inArray } = await import("drizzle-orm");
+      const { ADMIN_EMAILS } = await import("../db");
+      await adminDb
+        .update(usersTable)
+        .set({ role: 'admin' })
+        .where(inArray(usersTable.email, ADMIN_EMAILS));
+      console.log(`[AdminMigration] Ensured admin role for: ${ADMIN_EMAILS.join(", ")}`);
+    }
+  } catch (err: any) {
+    console.error("[AdminMigration] Failed to set admin roles:", err.message);
+    // Non-fatal — continue startup
+  }
+
   // Auto-provision Stripe products and prices on startup
   try {
     await runStripeProvisioning();

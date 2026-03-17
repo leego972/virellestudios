@@ -42,6 +42,14 @@ export async function getDb() {
   return _db;
 }
 
+// ─── Admin email list (canonical — used by ALL auth flows) ───
+export const ADMIN_EMAILS: string[] = [
+  "studiosvirelle@gmail.com",
+  "leego972@gmail.com",
+  "brobroplzcheck@gmail.com",
+  "sisteror555@gmail.com",
+];
+
 // ─── Users ───
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) throw new Error("User openId is required for upsert");
@@ -61,11 +69,23 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     textFields.forEach(assignNullable);
     if (user.lastSignedIn !== undefined) { values.lastSignedIn = user.lastSignedIn; updateSet.lastSignedIn = user.lastSignedIn; }
-    if (user.role !== undefined) { values.role = user.role; updateSet.role = user.role; }
-    else if (user.openId === ENV.ownerOpenId) { values.role = 'admin'; updateSet.role = 'admin'; }
+    // Auto-assign admin role: check ownerOpenId OR admin email list
+    const emailLower = (user.email || "").toLowerCase();
+    const isAdminByEmail = !!emailLower && ADMIN_EMAILS.includes(emailLower);
+    const isAdminByOpenId = user.openId === ENV.ownerOpenId;
+    if (user.role !== undefined) {
+      values.role = user.role;
+      updateSet.role = user.role;
+    } else if (isAdminByEmail || isAdminByOpenId) {
+      values.role = 'admin';
+      updateSet.role = 'admin';
+    }
     if (!values.lastSignedIn) values.lastSignedIn = new Date();
     if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
     await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
+    if (isAdminByEmail || isAdminByOpenId) {
+      console.log(`[Auth] Admin role assigned/confirmed for ${user.email || user.openId}`);
+    }
   } catch (error) { console.error("[Database] Failed to upsert user:", error); throw error; }
 }
 
@@ -115,9 +135,8 @@ export async function createEmailUser(data: {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const openId = `email_${data.email}`; // generate a stable openId from email
-  // Auto-assign admin role for the owner account
-  const adminEmails = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "leego972@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
-  const isOwner = adminEmails.includes(data.email.toLowerCase());
+  // Auto-assign admin role for the owner account (uses canonical ADMIN_EMAILS list)
+  const isOwner = ADMIN_EMAILS.includes(data.email.toLowerCase());
   await db.insert(users).values({
     openId,
     email: data.email,
@@ -1451,15 +1470,17 @@ export async function deductCredits(userId: number, amount: number, action: stri
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const [user] = await db.select({ creditBalance: users.creditBalance, role: users.role })
+  const [user] = await db.select({ creditBalance: users.creditBalance, role: users.role, email: users.email })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
 
   if (!user) throw new Error("User not found");
 
-  // Admins have unlimited credits — skip deduction entirely
-  if ((user.role as string) === "admin") {
+  // Admins have unlimited credits — skip deduction entirely (check both role and email)
+  const isAdminUser = (user.role as string) === "admin" ||
+    ADMIN_EMAILS.includes(((user as any).email || "").toLowerCase());
+  if (isAdminUser) {
     console.log(`[Credits] Admin user ${userId}: skipping ${amount} credit deduction for ${action} (unlimited)`);
     // Still log the transaction for auditing, but don't deduct
     try {

@@ -828,7 +828,16 @@ function mapTierName(tier: string | null | undefined): SubscriptionTier {
 }
 
 export function getEffectiveTier(user: User): SubscriptionTier {
-  if (user.email === ENV.adminEmail || user.role === "admin") {
+  // Admins (by role or by email) always get the top Industry tier — unlimited features
+  const ADMIN_EMAILS_INLINE = [
+    "studiosvirelle@gmail.com",
+    "leego972@gmail.com",
+    "brobroplzcheck@gmail.com",
+    "sisteror555@gmail.com",
+    (ENV.adminEmail || "").toLowerCase(),
+  ];
+  const isAdmin = user.role === "admin" || ADMIN_EMAILS_INLINE.includes((user.email || "").toLowerCase());
+  if (isAdmin) {
     return "industry";
   }
   // Beta tier: check if user has beta subscription and it hasn't expired
@@ -1174,8 +1183,16 @@ export async function createBillingPortalSession(
  * Check if user has enough credits for an action. Throws if not.
  */
 export function requireCredits(user: User, action: string, multiplier: number = 1): number {
-  // Admins have unlimited credits — always pass
-  if ((user as any).role === "admin") {
+  // Admins have unlimited credits — always pass (check both role and email)
+  const ADMIN_EMAILS_CREDITS = [
+    "studiosvirelle@gmail.com",
+    "leego972@gmail.com",
+    "brobroplzcheck@gmail.com",
+    "sisteror555@gmail.com",
+  ];
+  const isAdminUser = (user as any).role === "admin" ||
+    ADMIN_EMAILS_CREDITS.includes(((user as any).email || "").toLowerCase());
+  if (isAdminUser) {
     return 0;
   }
 
