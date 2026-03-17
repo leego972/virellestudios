@@ -155,6 +155,18 @@ const DIRECTOR_TOOLS: Tool[] = [
   {
     type: "function",
     function: {
+      name: "get_project_script",
+      description: "Fetch the project's screenplay/script content. Use this PROACTIVELY whenever a scene involves human characters — search the script for matching dialogue for that scene and pre-populate it. Always call this before creating or modifying scenes that have named characters.",
+      parameters: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "get_project_summary",
       description: "Get a summary of the current project state including all scenes, characters, sound effects, and visual effects. Use this to understand the project before making suggestions.",
       parameters: {

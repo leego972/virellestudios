@@ -113,6 +113,26 @@ function getVoiceForCharacter(
   // If explicit voice ID provided, use it
   if (characterVoice?.voiceId) return characterVoice.voiceId;
 
+  // Detect narrator / V.O. / god voice / off-screen by character name
+  const nameLower = characterName.toLowerCase();
+  const isNarratorType =
+    nameLower === "narrator" ||
+    nameLower === "narration" ||
+    nameLower.includes("narrator") ||
+    nameLower.includes("god voice") ||
+    nameLower.includes("omniscient") ||
+    nameLower.includes("storyteller") ||
+    nameLower.endsWith("(v.o.)") ||
+    nameLower.endsWith("(o.s.)") ||
+    nameLower.endsWith("v.o.") ||
+    nameLower.endsWith("o.s.");
+
+  if (isNarratorType) {
+    if (provider === "elevenlabs") return ELEVENLABS_VOICE_PRESETS["narrator"];
+    if (provider === "openai") return OPENAI_VOICE_PRESETS["male_adult"]; // deep, authoritative
+    return "male-adult";
+  }
+
   // Auto-assign based on gender/age
   const gender = characterVoice?.gender || (characterIndex % 2 === 0 ? "male" : "female");
   const age = characterVoice?.age || "adult";

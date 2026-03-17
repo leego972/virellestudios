@@ -2783,6 +2783,13 @@ Break this into 8-15 scenes. For each scene, provide:
                 bodyDnaPrompt: c.bodyDnaPrompt || null,
                 consistencyNotes: c.consistencyNotes || null,
                 deepProfile: c.deepProfile || null,
+                // Voice & speech fields for TTS matching
+                voiceId: c.voiceId || null,
+                voiceType: c.voiceType || null,
+                voiceDescription: c.voiceDescription || null,
+                speechPattern: c.speechPattern || null,
+                accent: c.accent || null,
+                role: c.role || c.attributes?.role || null,
               })),
               scenes: scenesWithDialogue,
             },
@@ -2994,8 +3001,48 @@ Break this into 8-15 scenes. For each scene, provide:
 
         const charBlock = characters.map(c => {
           const attrs = c.attributes as any;
-          return `${c.name.toUpperCase()} — ${c.description || ""} ${attrs?.age ? `Age: ${attrs.age}` : ""} ${attrs?.gender || ""} ${attrs?.role || ""}`;
-        }).join("\n");
+          const lines: string[] = [];
+          // Header line
+          const headerParts = [c.name.toUpperCase()];
+          if (c.role) headerParts.push(`(${c.role})`);
+          if (c.storyImportance) headerParts.push(`[${c.storyImportance}]`);
+          lines.push(headerParts.join(" "));
+          // Physical identity
+          const identityParts = [
+            c.description || "",
+            attrs?.age ? `Age: ${attrs.age}` : "",
+            attrs?.gender ? `Gender: ${attrs.gender}` : "",
+            c.nationality ? `Nationality: ${c.nationality}` : "",
+            c.occupation ? `Occupation: ${c.occupation}` : "",
+          ].filter(Boolean);
+          if (identityParts.length) lines.push(`  Identity: ${identityParts.join(" | ")}`);
+          // Voice & Speech — critical for authentic dialogue
+          const voiceParts = [
+            c.voiceType ? `Voice type: ${c.voiceType}` : "",
+            c.voiceDescription ? `Voice: ${c.voiceDescription}` : "",
+            c.speechPattern ? `Speech pattern: ${c.speechPattern}` : "",
+            c.accent ? `Accent: ${c.accent}` : "",
+            c.catchphrase ? `Catchphrase: "${c.catchphrase}"` : "",
+            c.signatureMannerisms ? `Mannerisms: ${c.signatureMannerisms}` : "",
+          ].filter(Boolean);
+          if (voiceParts.length) lines.push(`  Voice/Speech: ${voiceParts.join(" | ")}`);
+          // Psychology & Character Arc
+          if (c.backstory) lines.push(`  Backstory: ${c.backstory.slice(0, 300)}`);
+          if (c.motivations) lines.push(`  Motivation: ${c.motivations.slice(0, 200)}`);
+          if (c.arcType) lines.push(`  Character arc: ${c.arcType}`);
+          if (c.moralAlignment) lines.push(`  Moral alignment: ${c.moralAlignment}`);
+          const personality = c.personality as any;
+          if (personality?.mbti) lines.push(`  MBTI: ${personality.mbti}`);
+          if (c.fears) lines.push(`  Fears: ${c.fears.slice(0, 150)}`);
+          if (c.secrets) lines.push(`  Secrets: ${c.secrets.slice(0, 150)}`);
+          // Relationships
+          const rels = c.relationships as any[];
+          if (Array.isArray(rels) && rels.length > 0) {
+            const relStr = rels.slice(0, 3).map((r: any) => `${r.type || "connected"} with ${r.name || r.characterId}`).join(", ");
+            lines.push(`  Relationships: ${relStr}`);
+          }
+          return lines.join("\n");
+        }).join("\n\n");
 
         const sceneBlock = scenes.map((s, i) =>
           `Scene ${i + 1}: "${s.title || "Untitled"}" — ${s.description || ""} (${s.locationType || ""}, ${s.timeOfDay || ""}, ${s.mood || ""})`
@@ -3008,72 +3055,104 @@ Break this into 8-15 scenes. For each scene, provide:
           messages: [
             {
               role: "system",
-                    content: `You are a professional screenwriter. Your job is to faithfully adapt the director's exact story, characters, plot, and scenes into a properly formatted screenplay. You do NOT add new characters, subplots, themes, or story elements that the director did not provide.
+                    content: `You are an award-winning Hollywood screenwriter with credits on major studio productions. Your job is to faithfully adapt the director's exact story, characters, plot, and scenes into a production-ready screenplay. You do NOT invent new characters, subplots, or story elements the director did not provide — unless the director explicitly grants creative freedom.
 
-DIRECTOR-FIRST RULES:
-- Write ONLY what the director's scenes and story describe. Do not invent new plot points, characters, or dialogue topics.
-- Character dialogue must reflect the characters and situations the director defined — not your own creative interpretation.
-- If the director did not specify dialogue for a scene, write minimal, neutral dialogue that serves the scene's stated purpose only.
-- Do NOT add subtext, themes, or character arcs that the director did not describe.
-- ONLY apply creative interpretation if the director explicitly says "be creative", "add your own flair", or "use your judgment".
+=== DIRECTOR-FIRST RULES (NON-NEGOTIABLE) ===
+- Write ONLY what the director's scenes and story describe. Every scene, character, and plot point must trace back to the director's input.
+- Dialogue must reflect the characters and situations the director defined. Do not impose your own thematic interpretation.
+- If the director did not specify dialogue for a scene, write purposeful, minimal dialogue that serves only the scene's stated function.
+- Do NOT add subtext, themes, or character arcs the director did not describe.
+- ONLY apply creative interpretation if the director explicitly says "be creative", "add your own flair", "use your judgment", or similar.
 
-You MUST follow industry-standard screenplay format EXACTLY:
-=== FORMATTING RULES ===
-1. FADE IN: — Always the first line of the screenplay.
-2. SCENE HEADINGS (Sluglines) — ALL CAPS. Format: INT./EXT. LOCATION - TIME OF DAY
-   Examples:
-   INT. DETECTIVE'S OFFICE - NIGHT
-   EXT. MANHATTAN SKYLINE - DAWN
-   INT./EXT. MOVING CAR - CONTINUOUS
-   Always specify: Interior/Exterior, specific location name, time of day.
-3. ACTION LINES — Present tense. Describe exactly what the camera sees based on the director's scene descriptions.
-   - Introduce characters in ALL CAPS on first appearance.
-   - Use short paragraphs (3-4 lines max).
-4. CHARACTER NAME — ALL CAPS, centered above dialogue. Add (V.O.) for voice-over, (O.S.) for off-screen, (CONT'D) for continued.
-5. DIALOGUE — Below character name, indented. Write dialogue that serves the director's described scene purpose.
-6. PARENTHETICALS — (in parentheses) between character name and dialogue. Use SPARINGLY.
-   Examples: (whispering), (to Sarah), (beat), (sotto voce), (re: the photo)
+=== INDUSTRY-STANDARD FORMAT (EXACT) ===
 
-7. TRANSITIONS — Right-aligned. Use sparingly for emphasis:
-   CUT TO:
-   SMASH CUT TO:
-   MATCH CUT TO:
-   DISSOLVE TO:
-   FADE TO BLACK.
-   FADE OUT.
+1. FADE IN: — Always the very first line. Never omit.
 
-8. STRUCTURE — Follow three-act structure with clear:
-   - ACT ONE (Setup, ~25%): Establish world, characters, inciting incident
-   - ACT TWO (Confrontation, ~50%): Rising stakes, complications, midpoint reversal, dark night of the soul
-   - ACT THREE (Resolution, ~25%): Climax, resolution, denouement
+2. SCENE HEADINGS (Sluglines) — ALL CAPS only.
+   Format: INT./EXT. SPECIFIC LOCATION NAME - TIME OF DAY
+   - INT. = interior, EXT. = exterior, INT./EXT. = both (e.g. car window scene)
+   - Time of day: DAY, NIGHT, DAWN, DUSK, CONTINUOUS, MOMENTS LATER, LATER, SAME TIME
+   - Be specific: not "HOUSE" but "MARCUS'S KITCHEN" or "ABANDONED WAREHOUSE - LOWER EAST SIDE"
+   - Every location change = new slugline, always
 
-9. ADVANCED ELEMENTS:
-   - INTERCUT — INTERCUT BETWEEN: for parallel action
-   - MONTAGE — clearly labeled with individual shots
-   - FLASHBACK — FLASHBACK: and END FLASHBACK.
-   - SUPER: "Title cards or on-screen text"
-   - SERIES OF SHOTS — for rapid sequences
-   - BEGIN/END for dream sequences, fantasies
+3. ACTION LINES — Present tense. Describe only what the camera sees and hears. No internal thoughts.
+   - First appearance of each character: ALL CAPS their name, followed by brief description in parentheses
+     Example: DETECTIVE SARAH COLE (40s, sharp eyes, perpetually coffee-stained blazer) enters.
+   - Keep paragraphs to 3-4 lines maximum. White space is your friend.
+   - Use active verbs: "He SLAMS the door" not "He closes the door loudly."
+   - Avoid directing the reader's emotions. Show the action; let the emotion emerge.
+   - Camera directions (CLOSE ON:, WIDE SHOT:, POV:) only when essential to story meaning.
 
-10. PACING:
-    - 1 page ≈ 1 minute of screen time
-    - Vary scene length: short punchy scenes build tension, longer scenes allow character depth
-    - End scenes on a hook — cut out before the scene feels "done"
-    - Use "beat" in action lines for dramatic pauses
+4. CHARACTER NAME — ALL CAPS, on its own line, above dialogue.
+   - (V.O.) = voice-over (character narrating, not physically present)
+   - (O.S.) = off-screen (character in scene but not visible)
+   - (CONT'D) = character continues after an action line interruption
+   - (PRE-LAP) = character's voice heard before their scene begins
 
-=== WRITING QUALITY ===
+5. DIALOGUE — Below character name. Conversational, not literary.
+   - Each character must have a DISTINCT VOICE. A reader should know who's speaking without seeing the name.
+   - Subtext over text: characters rarely say exactly what they mean.
+   - Avoid on-the-nose exposition. No character explains what both already know.
+   - Read every line aloud mentally. If it sounds like a speech, cut it in half.
+   - Use interruptions (--) and trailing off (...) for natural rhythm.
 
-- Every scene must ADVANCE PLOT or REVEAL CHARACTER (ideally both)
-- Show, don't tell — use visual storytelling
-- Create memorable, quotable dialogue
-- Build tension through escalating stakes and ticking clocks
-- Plant setups early that pay off later (Chekhov's gun)
-- Give antagonists compelling motivations — no one is evil for evil's sake
-- Use dramatic irony — let the audience know things characters don't
-- Create emotional contrast — humor before tragedy, calm before storm
-- End the screenplay with an image that resonates and lingers
+6. PARENTHETICALS — (in parentheses) between character name and dialogue.
+   - Use SPARINGLY. Only when delivery is genuinely ambiguous without it.
+   - Good: (whispering), (to Marcus), (beat), (re: the gun), (sotto voce)
+   - Bad: (angrily), (sadly) — these should be evident from context.
 
-FADE OUT. — Always the last line of the screenplay.`,
+7. TRANSITIONS — Right-aligned. Use sparingly — only for deliberate effect.
+   CUT TO: (standard edit, rarely written out)
+   SMASH CUT TO: (jarring, abrupt cut for shock)
+   MATCH CUT TO: (visual or audio match between scenes)
+   DISSOLVE TO: (passage of time, dreamlike quality)
+   FADE TO BLACK. (end of act or major sequence)
+   FADE OUT. (end of screenplay — ALWAYS the final line)
+   INTERCUT WITH: (parallel action in two locations)
+
+8. ADVANCED ELEMENTS:
+   MONTAGE — Label clearly:
+     MONTAGE — SARAH'S INVESTIGATION
+     - Shot description.
+     - Shot description.
+     END MONTAGE.
+   FLASHBACK:
+     FLASHBACK — CHICAGO, 1987
+     [scene content]
+     END FLASHBACK.
+   SUPER: "On-screen text or title cards" (right after slugline)
+   SERIES OF SHOTS:
+     A) Shot description.
+     B) Shot description.
+   INSERT — CLOSE ON: [specific object/detail]
+   BACK TO SCENE (after insert)
+
+9. THREE-ACT STRUCTURE — Every screenplay must have:
+   ACT ONE (~25%): Establish the world, introduce protagonist with a clear want and need, inciting incident that disrupts the status quo, end-of-act-one turning point that locks the protagonist into the story.
+   ACT TWO (~50%): Rising stakes and escalating obstacles, midpoint reversal that changes the story's direction, dark night of the soul (protagonist at their lowest), end-of-act-two turning point that propels into the climax.
+   ACT THREE (~25%): Climax where the protagonist confronts the central conflict with everything at stake, resolution that pays off all setups, final image that mirrors or contrasts the opening image.
+
+10. PACING RULES:
+    - 1 page = approximately 1 minute of screen time
+    - Short scenes (half a page) build tension and momentum
+    - Long scenes (2+ pages) allow character depth — use sparingly
+    - End every scene on a hook: cut out one beat before the scene feels "done"
+    - Use "beat" in action lines for deliberate dramatic pauses
+    - Scene transitions should create narrative momentum
+
+=== CRAFT PRINCIPLES ===
+- EVERY scene must do at least two of: advance plot, reveal character, raise stakes, deliver necessary information
+- Show don't tell: a character's fear is shown by their hands shaking, not by writing "she was afraid"
+- Dialogue subtext: what characters DON'T say is as important as what they do say
+- Plant and payoff (Chekhov's Gun): every significant detail introduced must pay off later
+- Antagonist motivation: every antagonist believes they are the hero of their own story
+- Dramatic irony: the audience knowing something characters don't creates unbearable tension
+- Emotional contrast: place humor immediately before tragedy; calm before violence
+- The opening image and closing image should rhyme thematically
+- Character want vs. need: what a character wants (external goal) and what they need (internal truth) should be in conflict
+- The protagonist must CHANGE by the end — or deliberately refuse to change, which is itself a statement
+
+FADE OUT. — Always the absolute last line of the screenplay.`,
             },
             {
               role: "user",
@@ -3146,7 +3225,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
     aiAssist: protectedProcedure
       .input(z.object({
         scriptId: z.number(),
-        action: z.enum(["continue", "rewrite", "dialogue", "action-line", "transition"]),
+        action: z.enum(["continue", "rewrite", "dialogue", "action-line", "transition", "scene-expand", "polish", "character-voice", "scene-beat"]),
         selectedText: z.string().optional(),
         instructions: z.string().optional(),
       }))
@@ -3159,12 +3238,138 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         const script = await db.getScriptById(input.scriptId);
         if (!script) throw new Error("Script not found");
 
+        const contextWindow = (script.content || "").slice(-3000);
+        const selectedOrContext = input.selectedText || contextWindow.slice(-800);
+
         const actionPrompts: Record<string, string> = {
-          continue: "Continue writing the screenplay from where it left off. Maintain the same tone, style, and formatting. Write the next 2-3 scenes.",
-          rewrite: `Rewrite the following section while maintaining proper screenplay format and improving the quality:\n\n${input.selectedText || ""}`,
-          dialogue: `Write compelling dialogue for this section. The dialogue should feel natural and cinematic:\n\n${input.selectedText || input.instructions || "Write a dialogue exchange between the main characters."}`,
-          "action-line": `Write vivid, cinematic action lines for this moment:\n\n${input.selectedText || input.instructions || "Describe the scene action."}`,
-          transition: `Suggest an appropriate scene transition for:\n\n${input.selectedText || input.instructions || "Moving to the next scene."}`,
+          continue: `You are continuing this screenplay. Study the tone, character voices, pacing, and story momentum carefully from the context provided. Then write the NEXT 3-4 complete scenes with:
+- Proper sluglines for every location
+- Full dialogue exchanges with distinct character voices and subtext
+- Vivid action lines in present tense
+- Scenes that escalate tension or deepen character
+- Each scene ending on a hook
+Do NOT summarise or explain. Write screenplay content only.`,
+
+          rewrite: `You are rewriting the following screenplay section. Improve it by:
+- Sharpening dialogue so each character has a distinct voice and speaks with subtext
+- Tightening action lines to be more visual and active (present tense, active verbs)
+- Removing on-the-nose exposition or over-explanation
+- Ensuring proper format (sluglines, character names in ALL CAPS on first appearance)
+- Cutting anything that doesn't advance plot or reveal character
+
+SECTION TO REWRITE:
+${selectedOrContext}
+
+${input.instructions ? `Director's notes: ${input.instructions}` : ""}
+
+Output the rewritten section only. No commentary.`,
+
+          dialogue: `You are writing a dialogue exchange for this screenplay. The dialogue must:
+- Feel completely natural when spoken aloud — no speeches, no on-the-nose lines
+- Give each character a DISTINCT VOICE (different vocabulary, rhythm, sentence length)
+- Carry subtext: what characters want vs. what they say should differ
+- Use interruptions (--) and trailing off (...) for realism
+- Include brief action lines between lines where characters react physically
+- Use parentheticals ONLY when delivery is genuinely ambiguous
+
+Context / scene being written:
+${selectedOrContext}
+
+${input.instructions ? `Director's notes: ${input.instructions}` : ""}
+
+Write the complete dialogue exchange in proper screenplay format. No commentary.`,
+
+          "action-line": `You are writing cinematic action lines for this screenplay moment. The action lines must:
+- Be in present tense only
+- Describe exactly what the camera sees and hears — no internal thoughts
+- Use active, specific verbs (SLAMS, PIVOTS, FREEZES — not "moves" or "goes")
+- Keep paragraphs to 3-4 lines maximum
+- Create visual tension through specific physical detail
+- Introduce characters in ALL CAPS on first appearance with brief description
+- Use CLOSE ON:, INSERT, or WIDE SHOT: only when essential to story meaning
+
+Scene context:
+${selectedOrContext}
+
+${input.instructions ? `Director's notes: ${input.instructions}` : ""}
+
+Write the action lines only. No commentary.`,
+
+          transition: `You are writing a scene transition for this screenplay. Choose the transition type that best serves the story:
+- CUT TO: (standard edit — rarely written, use for emphasis only)
+- SMASH CUT TO: (jarring, abrupt — shock or comedy)
+- MATCH CUT TO: (visual or audio match between scenes — elegant, thematic)
+- DISSOLVE TO: (passage of time, memory, dreamlike quality)
+- FADE TO BLACK. (end of act, major emotional beat)
+- INTERCUT WITH: (parallel action in two locations)
+- CONTINUOUS (no time has passed — same scene, new location)
+
+Context before transition:
+${selectedOrContext}
+
+${input.instructions ? `Director's notes on what comes next: ${input.instructions}` : ""}
+
+Write only the transition line and a brief (1-2 line) new slugline/opening for the next scene.`,
+
+          "scene-expand": `You are expanding a brief scene outline or summary into a fully written screenplay scene. Take the provided content and develop it into a complete scene with:
+- A proper slugline (INT./EXT. SPECIFIC LOCATION - TIME OF DAY)
+- Opening action lines that establish the space and mood
+- Full dialogue with distinct character voices and subtext
+- Physical action and reaction woven between dialogue
+- A clear scene purpose (what changes from the start to the end of this scene?)
+- An ending that hooks into the next scene
+
+Scene to expand:
+${selectedOrContext}
+
+${input.instructions ? `Director's notes: ${input.instructions}` : ""}
+
+Write the complete scene in proper screenplay format. No commentary.`,
+
+          polish: `You are polishing this screenplay section to professional production-ready quality. Improve it by:
+- Sharpening every line of dialogue — cut anything that can be cut, add subtext where it's missing
+- Strengthening action lines: more specific, more visual, more active verbs
+- Fixing any formatting issues (sluglines, character names, parentheticals)
+- Removing redundant description (if we can see it, we don't need to say it twice)
+- Ensuring consistent character voice throughout
+- Improving pacing: scenes should end one beat earlier than they currently do
+- Adding a single strong visual detail per scene that carries thematic weight
+
+SECTION TO POLISH:
+${selectedOrContext}
+
+${input.instructions ? `Director's notes: ${input.instructions}` : ""}
+
+Output the polished version only. No commentary.`,
+
+          "character-voice": `You are rewriting the dialogue in this section to give each character a more distinct, authentic voice. For each character:
+- Identify their background, education level, emotional state, and relationship to the other characters from context
+- Assign them a specific speech pattern: short/long sentences, formal/informal, direct/evasive, uses questions/statements
+- Ensure their word choices reflect who they are, not who the writer is
+- Add subtext: what they want vs. what they say should be in tension
+- Use interruptions, hesitations, and physical reactions to break up speeches
+
+SECTION TO REWRITE:
+${selectedOrContext}
+
+${input.instructions ? `Director's notes on characters: ${input.instructions}` : ""}
+
+Output the rewritten dialogue section only. No commentary.`,
+
+          "scene-beat": `You are writing a detailed scene beat breakdown for the following scene or story moment. For each beat:
+- State what HAPPENS (the external action)
+- State what CHANGES (the emotional or power shift)
+- Note the SUBTEXT (what's really being communicated)
+- Suggest the VISUAL (what the camera should show)
+
+Then write the scene in full screenplay format based on these beats.
+
+Scene or story moment:
+${selectedOrContext}
+
+${input.instructions ? `Director's notes: ${input.instructions}` : ""}
+
+First list the beats (3-6 beats), then write the full scene below.`,
         };
 
         let _llmRefundAmount_dialogue_editor_ai = 2;
@@ -3174,11 +3379,20 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
           messages: [
             {
               role: "system",
-              content: "You are a professional Hollywood screenwriter. Write in proper industry-standard screenplay format. Be vivid, concise, and cinematic.",
+              content: `You are an award-winning Hollywood screenwriter. You write in strict industry-standard screenplay format. Your work is production-ready: vivid, economical, and emotionally precise. You never write prose summaries or commentary — only screenplay content.
+
+FORMAT RULES (always apply):
+- FADE IN: opens every screenplay
+- Sluglines: INT./EXT. SPECIFIC LOCATION - TIME OF DAY (ALL CAPS)
+- Action lines: present tense, 3-4 lines max per paragraph, active verbs
+- Character names: ALL CAPS above dialogue; ALL CAPS on first appearance in action
+- Parentheticals: use sparingly, only when delivery is genuinely ambiguous
+- FADE OUT. closes every screenplay
+- Output screenplay content only. No meta-commentary, no explanations.`,
             },
             {
               role: "user",
-              content: `Current script context (last 2000 chars):\n${(script.content || "").slice(-2000)}\n\n${actionPrompts[input.action]}\n\n${input.instructions ? `Director notes: ${input.instructions}` : ""}`,
+              content: `SCRIPT CONTEXT (most recent content):\n${contextWindow}\n\n---\n\n${actionPrompts[input.action]}`,
             },
           ],
         });

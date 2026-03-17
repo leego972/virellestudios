@@ -455,6 +455,15 @@ export default function Characters() {
             <DialogDescription className="text-sm">
               Upload a reference photo and AI will analyze every detail — facial structure, skin tone, hair, eyes — then generate a super-realistic cinematic character portrait.
             </DialogDescription>
+            <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs space-y-1.5">
+              <p className="font-semibold text-amber-600 dark:text-amber-400">Photo Requirements for Best Results</p>
+              <ul className="space-y-1 text-muted-foreground list-none">
+                <li><span className="text-foreground font-medium">✓ Face photo (required):</span> Clear frontal or 3/4 shot, well-lit, no heavy shadows. The AI reads facial structure, skin tone, hair, and eyes from this.</li>
+                <li><span className="text-foreground font-medium">✓ Full body photo (optional):</span> Helps with wardrobe and posture. Body shape is captured via the form fields.</li>
+                <li><span className="text-foreground font-medium">✓ Resolution:</span> At least 512×512px. Higher is better. JPG, PNG, or WebP.</li>
+                <li><span className="text-muted-foreground">✗ Avoid:</span> Heavy filters, sunglasses, extreme angles, group photos, or very dark images.</li>
+              </ul>
+            </div>
           </DialogHeader>
           <form onSubmit={handlePhotoSubmit} className="space-y-5 mt-3">
             {/* Photo Upload Area */}
@@ -540,6 +549,13 @@ export default function Characters() {
                     <SelectItem value="mysterious stranger">Mysterious Stranger</SelectItem>
                     <SelectItem value="comic relief">Comic Relief</SelectItem>
                     <SelectItem value="authority figure">Authority Figure</SelectItem>
+                    <SelectItem value="narrator">Narrator (V.O.)</SelectItem>
+                    <SelectItem value="god voice">God Voice / Omniscient</SelectItem>
+                    <SelectItem value="storyteller">Storyteller / Framing Device</SelectItem>
+                    <SelectItem value="off-screen voice">Off-Screen Voice (O.S.)</SelectItem>
+                    <SelectItem value="inner monologue">Inner Monologue (Character V.O.)</SelectItem>
+                    <SelectItem value="ensemble">Ensemble / Supporting</SelectItem>
+                    <SelectItem value="cameo">Cameo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

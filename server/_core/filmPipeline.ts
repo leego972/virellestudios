@@ -139,6 +139,13 @@ export interface FilmGenerationInput {
     bodyDnaPrompt?: string | null;
     consistencyNotes?: string | null;
     deepProfile?: string | null;
+    // Voice & speech fields for TTS matching
+    voiceId?: string | null;
+    voiceType?: string | null;
+    voiceDescription?: string | null;
+    speechPattern?: string | null;
+    accent?: string | null;
+    role?: string | null;
   }>;
   /** Scenes from the project (already broken down) */
   scenes: Array<{
@@ -608,10 +615,33 @@ export async function generateFullFilm(
           onProgress?.(progress);
 
           try {
+            // Build character voice map from project character profiles
+            const characterVoices: Record<string, import('./voiceActingEngine').CharacterVoice> = {};
+            for (const c of characters) {
+              const genderRaw = (c.gender || "").toLowerCase();
+              const gender: "male" | "female" | "neutral" =
+                genderRaw.includes("male") ? "male" :
+                genderRaw.includes("female") ? "female" : "neutral";
+              const ageRaw = (c.ageRange || "").toLowerCase();
+              const age: "young" | "adult" | "elderly" =
+                ageRaw.includes("young") || ageRaw.includes("teen") || ageRaw.includes("child") ? "young" :
+                ageRaw.includes("elder") || ageRaw.includes("old") || ageRaw.includes("senior") ? "elderly" : "adult";
+              // Special narrator/V.O. roles get the narrator preset
+              const isNarrator = (c.role || "").toLowerCase().includes("narrator") ||
+                (c.role || "").toLowerCase().includes("god voice") ||
+                (c.role || "").toLowerCase().includes("storyteller");
+              characterVoices[c.name] = {
+                voiceId: c.voiceId || (isNarrator ? "ErXwobaYiN019PkySvjV" : undefined),
+                gender,
+                age,
+                accent: c.accent || undefined,
+              };
+            }
             const dialogueResult = await generateSceneDialogue(voiceKeys, {
               sceneId: scene.id,
               projectId: project.id,
               dialogueLines: scene.dialogueLines,
+              characterVoices,
             });
             dialogueAudioUrl = dialogueResult.audioUrl;
             progress.dialogueLinesGenerated += dialogueResult.lineCount;
@@ -804,10 +834,32 @@ export async function generateSingleScene(
   let dialogueAudioUrl: string | undefined;
   if (input.generateDialogue && scene.dialogueLines && scene.dialogueLines.length > 0) {
     try {
+      // Build character voice map from project character profiles
+      const characterVoices: Record<string, import('./voiceActingEngine').CharacterVoice> = {};
+      for (const c of input.characters) {
+        const genderRaw = (c.gender || "").toLowerCase();
+        const gender: "male" | "female" | "neutral" =
+          genderRaw.includes("male") ? "male" :
+          genderRaw.includes("female") ? "female" : "neutral";
+        const ageRaw = (c.ageRange || "").toLowerCase();
+        const age: "young" | "adult" | "elderly" =
+          ageRaw.includes("young") || ageRaw.includes("teen") || ageRaw.includes("child") ? "young" :
+          ageRaw.includes("elder") || ageRaw.includes("old") || ageRaw.includes("senior") ? "elderly" : "adult";
+        const isNarrator = (c.role || "").toLowerCase().includes("narrator") ||
+          (c.role || "").toLowerCase().includes("god voice") ||
+          (c.role || "").toLowerCase().includes("storyteller");
+        characterVoices[c.name] = {
+          voiceId: c.voiceId || (isNarrator ? "ErXwobaYiN019PkySvjV" : undefined),
+          gender,
+          age,
+          accent: c.accent || undefined,
+        };
+      }
       const dialogueResult = await generateSceneDialogue(voiceKeys, {
         sceneId: scene.id,
         projectId: input.projectId,
         dialogueLines: scene.dialogueLines,
+        characterVoices,
       });
       dialogueAudioUrl = dialogueResult.audioUrl;
     } catch (err: any) {
