@@ -901,14 +901,23 @@ export default function Landing() {
             </div>
           </div>
           <div className="text-center mt-10">
-            <button
-              onClick={() => setLocation("/showcase")}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-semibold text-black text-lg transition-all hover:scale-105"
-              style={{ background: 'linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)' }}
-            >
-              <Film className="w-5 h-5" />
-              View Our Films
-            </button>
+            <div className="relative inline-block">
+              <button
+                onClick={() => setLocation("/showcase")}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-lg font-semibold text-black text-lg transition-all hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)' }}
+              >
+                <Film className="w-5 h-5" />
+                View Our Films
+              </button>
+              {/* Coming Soon badge */}
+              <span
+                className="absolute -top-3 -right-3 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase text-black"
+                style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)', boxShadow: '0 0 8px rgba(251,191,36,0.7)' }}
+              >
+                Coming Soon
+              </span>
+            </div>
             <p className="text-xs text-foreground/80 mt-3">See what VirElle Studios AI can create</p>
           </div>
         </div>
