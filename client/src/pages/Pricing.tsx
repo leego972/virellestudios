@@ -17,13 +17,13 @@ const TIERS = [
     color: "border-emerald-500 ring-2 ring-emerald-500/20",
     buttonColor: "bg-emerald-600 hover:bg-emerald-500",
     accentColor: "text-emerald-400",
-    monthly: 500,
-    annual: 5000,
-    credits: 250,
-    extraCreditCost: 10,
+    monthly: 10000,
+    annual: 100000,
+    credits: 500,
+    extraCreditCost: 15,
     description: "Dip your toes in AI filmmaking. Write, plan, and start your first project.",
     highlights: [
-      "250 credits/month included",
+      "500 credits/month included",
       "AI Script Writer",
       "AI Director Chat (Virelle)",
       "Character Creator",
@@ -43,13 +43,13 @@ const TIERS = [
     color: "border-amber-500 ring-2 ring-amber-500/20",
     buttonColor: "bg-amber-600 hover:bg-amber-500",
     accentColor: "text-amber-400",
-    monthly: 5000,
-    annual: 50000,
-    credits: 500,
-    extraCreditCost: 10,
+    monthly: 25000,
+    annual: 250000,
+    credits: 1500,
+    extraCreditCost: 12,
     description: "For independent filmmakers and solo creators building their vision.",
     highlights: [
-      "500 credits/month included",
+      "1,500 credits/month included",
       "All creative & pre-production tools",
       "AI Script Writer & Storyboard",
       "Character Creator & DNA Lock",
@@ -62,46 +62,21 @@ const TIERS = [
     ],
   },
   {
-    id: "creator",
-    name: "Creator",
-    icon: Clapperboard,
-    color: "border-cyan-500 ring-2 ring-cyan-500/20",
-    buttonColor: "bg-cyan-600 hover:bg-cyan-500",
-    accentColor: "text-cyan-400",
-    monthly: 10000,
-    annual: 100000,
-    credits: 1500,
-    extraCreditCost: 8,
-    popular: true,
-    description: "For professional creators and small studios scaling their output.",
-    highlights: [
-      "1,500 credits/month included",
-      "Everything in Independent, plus:",
-      "Up to 50 projects",
-      "Up to 120 min per film",
-      "Priority rendering queue",
-      "Bulk generation tools",
-      "Advanced color grading",
-      "Sound effects library",
-      "Subtitle generator",
-      "10 team members",
-    ],
-  },
-  {
     id: "studio",
     name: "Studio",
     icon: Building2,
     color: "border-violet-500 ring-2 ring-violet-500/20",
     buttonColor: "bg-violet-600 hover:bg-violet-500",
     accentColor: "text-violet-400",
-    monthly: 15000,
-    annual: 150000,
-    credits: 4000,
-    extraCreditCost: 6,
+    monthly: 35000,
+    annual: 350000,
+    credits: 5000,
+    extraCreditCost: 10,
+    popular: true,
     description: "For production studios with multiple projects and larger teams.",
     highlights: [
-      "4,000 credits/month included",
-      "Everything in Creator, plus:",
+      "5,000 credits/month included",
+      "Everything in Independent, plus:",
       "Up to 100 projects",
       "Up to 150 min per film",
       "VFX Suite (Advanced Effects)",
@@ -109,6 +84,7 @@ const TIERS = [
       "NLE / DaVinci Resolve Export",
       "AI Casting Tool",
       "API Access & Pipeline Integration",
+      "Priority rendering queue",
       "25 team members",
     ],
   },
@@ -119,13 +95,13 @@ const TIERS = [
     color: "border-yellow-500 ring-2 ring-yellow-500/30 bg-yellow-500/5",
     buttonColor: "bg-yellow-600 hover:bg-yellow-500",
     accentColor: "text-yellow-400",
-    monthly: 25000,
-    annual: 250000,
-    credits: 10000,
-    extraCreditCost: 4,
+    monthly: 50000,
+    annual: 500000,
+    credits: 15000,
+    extraCreditCost: 8,
     description: "For major studios and enterprise productions. Full power, no limits.",
     highlights: [
-      "10,000 credits/month included",
+      "15,000 credits/month included",
       "Everything in Studio, plus:",
       "Unlimited projects",
       "Up to 180 min per film",
@@ -140,12 +116,11 @@ const TIERS = [
 ];
 
 const CREDIT_PACKS = [
-  { id: "topup_10",   credits: 500,   price: 2500,  perCredit: 5,   label: "Starter" },
-  { id: "topup_50",   credits: 1500,  price: 6000,  perCredit: 4,   label: "Producer" },
-  { id: "topup_100",  credits: 3000,  price: 10500, perCredit: 3.5, label: "Director" },
-  { id: "topup_200",  credits: 6000,  price: 18000, perCredit: 3,   label: "Studio" },
-  { id: "topup_500",  credits: 12000, price: 30000, perCredit: 2.5, label: "Blockbuster", popular: true },
-  { id: "topup_1000", credits: 25000, price: 50000, perCredit: 2,   label: "Mogul" },
+  { id: "topup_10",  credits: 500,   price: 7500,   perCredit: 15,  label: "Starter",  saving: "25% off" },
+  { id: "topup_50",  credits: 1500,  price: 18000,  perCredit: 12,  label: "Producer", saving: "40% off" },
+  { id: "topup_100", credits: 3000,  price: 33000,  perCredit: 11,  label: "Director", saving: "45% off" },
+  { id: "topup_200", credits: 6000,  price: 60000,  perCredit: 10,  label: "Studio",   saving: "50% off", popular: true },
+  { id: "topup_500", credits: 15000, price: 120000, perCredit: 8,   label: "Mogul",    saving: "60% off" },
 ];
 
 const CREDIT_COSTS = [
@@ -434,7 +409,7 @@ export default function Pricing() {
           </div>
           {!offerFull && billingCycle === "annual" && (
             <p className="text-center text-xs text-muted-foreground mt-3">
-              * 50% founding discount applied automatically at checkout for Independent, Creator, Studio, and Industry annual memberships. Valid for founding directors only. Discount applies to first year; renews at full price.
+              * 50% founding discount applied automatically at checkout for all annual memberships. Valid for founding directors only. Discount applies to first year; renews at full price.
             </p>
           )}
           <p className="text-center text-xs text-muted-foreground mt-6">
@@ -505,7 +480,7 @@ export default function Pricing() {
                   <div className="border-t border-amber-500/30 pt-2 mt-2 flex justify-between font-bold">
                     <span>Total</span><span className="text-amber-400">~190 credits</span>
                   </div>
-                  <p className="text-muted-foreground pt-1">Fits within the <span className="text-emerald-400 font-semibold">Amateur</span> monthly allowance (250 cr)</p>
+                  <p className="text-muted-foreground pt-1">Fits within the <span className="text-emerald-400 font-semibold">Amateur</span> monthly allowance (500 cr)</p>
                 </CardContent>
               </Card>
 
@@ -525,7 +500,7 @@ export default function Pricing() {
                   <div className="border-t border-amber-500/30 pt-2 mt-2 flex justify-between font-bold">
                     <span>Total</span><span className="text-amber-400">~842 credits</span>
                   </div>
-                  <p className="text-muted-foreground pt-1">Fits within the <span className="text-amber-400 font-semibold">Independent</span> monthly allowance (500 cr) + 1 credit pack</p>
+                  <p className="text-muted-foreground pt-1">Fits within the <span className="text-amber-400 font-semibold">Independent</span> monthly allowance (1,500 cr) with credits to spare</p>
                 </CardContent>
               </Card>
 
@@ -544,7 +519,7 @@ export default function Pricing() {
                   <div className="border-t border-amber-500/30 pt-2 mt-2 flex justify-between font-bold">
                     <span>Total</span><span className="text-amber-400">~108 credits</span>
                   </div>
-                  <p className="text-muted-foreground pt-1">Well within the <span className="text-emerald-400 font-semibold">Amateur</span> monthly allowance (250 cr)</p>
+                  <p className="text-muted-foreground pt-1">Well within the <span className="text-emerald-400 font-semibold">Amateur</span> monthly allowance (500 cr)</p>
                 </CardContent>
               </Card>
             </div>
@@ -554,11 +529,10 @@ export default function Pricing() {
               <h4 className="text-sm font-semibold mb-3 text-center">What does a credit cost in real terms?</h4>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
                 {[
-                  { tier: "Amateur", credits: 250, monthly: 500, perCredit: 2.0, color: "text-emerald-400" },
-                  { tier: "Independent", credits: 500, monthly: 5000, perCredit: 10.0, color: "text-amber-400" },
-                  { tier: "Creator", credits: 1500, monthly: 10000, perCredit: 6.67, color: "text-cyan-400" },
-                  { tier: "Studio", credits: 4000, monthly: 15000, perCredit: 3.75, color: "text-violet-400" },
-                  { tier: "Industry", credits: 10000, monthly: 25000, perCredit: 2.5, color: "text-yellow-400" },
+                  { tier: "Amateur", credits: 500, monthly: 10000, perCredit: 20.0, color: "text-emerald-400" },
+                  { tier: "Independent", credits: 1500, monthly: 25000, perCredit: 16.67, color: "text-amber-400" },
+                  { tier: "Studio", credits: 5000, monthly: 35000, perCredit: 7.0, color: "text-violet-400" },
+                  { tier: "Industry", credits: 15000, monthly: 50000, perCredit: 3.33, color: "text-yellow-400" },
                 ].map((t) => (
                   <div key={t.tier} className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800">
                     <p className={`text-xs font-bold ${t.color}`}>{t.tier}</p>
@@ -567,7 +541,7 @@ export default function Pricing() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground text-center mt-3">Higher tiers = lower cost per credit. A 90-min feature film at Creator tier costs ~$5,600 in credits.</p>
+              <p className="text-xs text-muted-foreground text-center mt-3">Higher tiers = lower cost per credit. A 90-min feature film at Studio tier costs ~$5,880 in credits.</p>
             </div>
           </div>
         </div>
@@ -641,7 +615,6 @@ export default function Pricing() {
                   <th className="text-left py-3 px-4 font-medium">Feature</th>
                   <th className="text-center py-3 px-4 font-medium text-emerald-400">Amateur</th>
                   <th className="text-center py-3 px-4 font-medium text-amber-400">Independent</th>
-                  <th className="text-center py-3 px-4 font-medium text-cyan-400">Creator</th>
                   <th className="text-center py-3 px-4 font-medium text-violet-400">Studio</th>
                   <th className="text-center py-3 px-4 font-medium text-yellow-400">Industry</th>
                 </tr>
@@ -649,45 +622,46 @@ export default function Pricing() {
               <tbody className="divide-y divide-zinc-800">
                 {[
                   { feature: "PRICING", section: "header" },
-                  { feature: "Monthly Price", independent: "$5,000", creator: "$10,000", studio: "$15,000", industry: "$25,000" },
-                  { feature: "Annual Price", independent: "$50,000", creator: "$100,000", studio: "$150,000", industry: "$250,000" },
-                  { feature: "Monthly Credits", amateur: "250", independent: "500", creator: "1,500", studio: "4,000", industry: "10,000" },
-                  { feature: "Extra Credit Cost", amateur: "$10/credit", independent: "$10/credit", creator: "$8/credit", studio: "$6/credit", industry: "$4/credit" },
+                  { feature: "Monthly Price", amateur: "$10,000", independent: "$25,000", studio: "$35,000", industry: "$50,000" },
+                  { feature: "Annual Price", amateur: "$100,000", independent: "$250,000", studio: "$350,000", industry: "$500,000" },
+                  { feature: "Founder Annual (50% off yr 1)", amateur: "$50,000", independent: "$125,000", studio: "$175,000", industry: "$250,000" },
+                  { feature: "Monthly Credits", amateur: "500", independent: "1,500", studio: "5,000", industry: "15,000" },
+                  { feature: "Extra Credit Cost", amateur: "$15/credit", independent: "$12/credit", studio: "$10/credit", industry: "$8/credit" },
                   { feature: "CREATIVE TOOLS (INCLUDED)", section: "header" },
-                  { feature: "AI Script Writer", amateur: true, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Storyboard Generator", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Character Creator & DNA Lock", amateur: true, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Virelle AI Director Chat", amateur: true, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Dialogue Editor", amateur: true, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Shot List & Continuity Check", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Color Grading & LUT Presets", amateur: false, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "AI Script Writer", amateur: true, independent: true, studio: true, industry: true },
+                  { feature: "Storyboard Generator", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Character Creator & DNA Lock", amateur: true, independent: true, studio: true, industry: true },
+                  { feature: "Virelle AI Director Chat", amateur: true, independent: true, studio: true, industry: true },
+                  { feature: "Dialogue Editor", amateur: true, independent: true, studio: true, industry: true },
+                  { feature: "Shot List & Continuity Check", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Color Grading & LUT Presets", amateur: false, independent: true, studio: true, industry: true },
                   { feature: "ADVANCED TOOLS", section: "header" },
-                  { feature: "Video Generation", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Film Export", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Bulk Generation", amateur: false, independent: false, creator: true, studio: true, industry: true },
-                  { feature: "VFX Suite", amateur: false, independent: false, creator: false, studio: true, industry: true },
-                  { feature: "Multi-Shot Sequencer", amateur: false, independent: false, creator: false, studio: true, industry: true },
-                  { feature: "NLE / DaVinci Export", amateur: false, independent: false, creator: false, studio: true, industry: true },
-                  { feature: "AI Casting Tool", amateur: false, independent: false, creator: false, studio: true, industry: true },
-                  { feature: "White-Label Exports", amateur: false, independent: false, creator: false, studio: true, industry: true },
-                  { feature: "Custom AI Fine-Tuning", amateur: false, independent: false, creator: false, studio: false, industry: true },
-                  { feature: "API Access", amateur: false, independent: false, creator: false, studio: true, industry: true },
-                  { feature: "Dedicated Account Manager", amateur: false, independent: false, creator: false, studio: false, industry: true },
+                  { feature: "Video Generation", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Film Export", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Bulk Generation", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "VFX Suite", amateur: false, independent: false, studio: true, industry: true },
+                  { feature: "Multi-Shot Sequencer", amateur: false, independent: false, studio: true, industry: true },
+                  { feature: "NLE / DaVinci Export", amateur: false, independent: false, studio: true, industry: true },
+                  { feature: "AI Casting Tool", amateur: false, independent: false, studio: true, industry: true },
+                  { feature: "White-Label Exports", amateur: false, independent: false, studio: true, industry: true },
+                  { feature: "Custom AI Fine-Tuning", amateur: false, independent: false, studio: false, industry: true },
+                  { feature: "API Access", amateur: false, independent: false, studio: true, industry: true },
+                  { feature: "Dedicated Account Manager", amateur: false, independent: false, studio: false, industry: true },
                   { feature: "AD MAKER & DISTRIBUTION", section: "header" },
-                  { feature: "Ad & Poster Maker", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Platform Templates (Instagram, TikTok, Facebook, Discord, YouTube)", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Direct Publish to Social Platforms", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Connected Platform Accounts", amateur: false, independent: "2 platforms", creator: "3 platforms", studio: "5 platforms", industry: "Unlimited" },
-                  { feature: "AI Video Ad Generation", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Press Kit Builder", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Billboard & Outdoor Ad Templates", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Festival & Distribution Hub (FilmFreeway, WithoutABox)", amateur: false, independent: true, creator: true, studio: true, industry: true },
-                  { feature: "Influencer Outreach Kit Generator", amateur: false, independent: true, creator: true, studio: true, industry: true },
+                  { feature: "Ad & Poster Maker", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Platform Templates (Instagram, TikTok, Facebook, Discord, YouTube)", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Direct Publish to Social Platforms", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Connected Platform Accounts", amateur: false, independent: "2 platforms", studio: "5 platforms", industry: "Unlimited" },
+                  { feature: "AI Video Ad Generation", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Press Kit Builder", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Billboard & Outdoor Ad Templates", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Festival & Distribution Hub (FilmFreeway, WithoutABox)", amateur: false, independent: true, studio: true, industry: true },
+                  { feature: "Influencer Outreach Kit Generator", amateur: false, independent: true, studio: true, industry: true },
                   { feature: "LIMITS", section: "header" },
-                  { feature: "Projects", amateur: "2", independent: "25", creator: "50", studio: "100", industry: "Unlimited" },
-                  { feature: "Max Film Duration", amateur: "5 min", independent: "90 min", creator: "120 min", studio: "150 min", industry: "180 min" },
-                  { feature: "Max Resolution", amateur: "720p", independent: "1080p + 4K", creator: "1080p + 4K", studio: "4K + ProRes", industry: "4K + ProRes" },
-                  { feature: "Team Members", amateur: "1", independent: "5", creator: "10", studio: "25", industry: "Unlimited" },
+                  { feature: "Projects", amateur: "2", independent: "25", studio: "100", industry: "Unlimited" },
+                  { feature: "Max Film Duration", amateur: "5 min", independent: "90 min", studio: "150 min", industry: "180 min" },
+                  { feature: "Max Resolution", amateur: "720p", independent: "1080p + 4K", studio: "4K + ProRes", industry: "4K + ProRes" },
+                  { feature: "Team Members", amateur: "1", independent: "5", studio: "25", industry: "Unlimited" },
                 ].map((row: any, i: number) => {
                   if (row.section === "header") {
                     return (
@@ -701,12 +675,11 @@ export default function Pricing() {
                   return (
                     <tr key={i} className="hover:bg-zinc-900/50">
                       <td className="py-3 px-4 font-medium">{row.feature}</td>
-                      {(["amateur", "independent", "creator", "studio", "industry"] as const).map((tier) => {
+                  {(["amateur", "independent", "studio", "industry"] as const).map((tier) => {
                         const val = row[tier];
                         const colors: Record<string, string> = {
                           amateur: "text-emerald-400",
                           independent: "text-amber-400",
-                          creator: "text-cyan-400",
                           studio: "text-violet-400",
                           industry: "text-yellow-400",
                         };

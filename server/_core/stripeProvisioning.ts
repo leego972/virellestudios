@@ -1,25 +1,27 @@
 /**
  * Stripe Auto-Provisioning
- * 
+ *
  * Automatically creates Stripe products and prices on server startup
  * if they don't already exist. Uses the STRIPE_SECRET_KEY from env vars.
- * 
- * This ensures the enterprise pricing model is always in sync with Stripe.
- * 
+ *
  * MEMBERSHIP TIERS (USD):
- *   Amateur     — $500/month    or $5,000/year    (250 credits/mo)
- *   Independent — $5,000/month  or $50,000/year   (500 credits/mo)
- *   Creator     — $10,000/month or $100,000/year  (1,500 credits/mo)
- *   Studio      — $15,000/month or $150,000/year  (4,000 credits/mo)
- *   Industry    — $25,000/month or $250,000/year  (10,000 credits/mo)
- * 
- * CREDIT PACKS:
- *   Starter Pack     — 500 credits   $2,500
- *   Producer Pack    — 1,500 credits $6,000
- *   Director Pack    — 3,000 credits $10,500
- *   Studio Pack      — 6,000 credits $18,000
- *   Blockbuster Pack — 12,000 credits $30,000
- *   Mogul Pack       — 25,000 credits $50,000
+ *   Amateur     — $10,000/month  or $100,000/year  (500 credits/mo)
+ *   Independent — $25,000/month  or $250,000/year  (1,500 credits/mo)
+ *   Studio      — $35,000/month  or $350,000/year  (5,000 credits/mo)
+ *   Industry    — $50,000/month  or $500,000/year  (15,000 credits/mo)
+ *
+ * FOUNDER SPECIAL: 50% off first year on annual billing (applied via Stripe coupon)
+ *   Amateur     — $50,000  first year (then $100,000/yr)
+ *   Independent — $125,000 first year (then $250,000/yr)
+ *   Studio      — $175,000 first year (then $350,000/yr)
+ *   Industry    — $250,000 first year (then $500,000/yr)
+ *
+ * CREDIT PACKS (one-time top-ups, discounted vs subscription rate):
+ *   Starter Pack     — 500 credits    $7,500   ($15/credit)
+ *   Producer Pack    — 1,500 credits  $18,000  ($12/credit)
+ *   Director Pack    — 3,000 credits  $33,000  ($11/credit)
+ *   Studio Pack      — 6,000 credits  $60,000  ($10/credit)
+ *   Mogul Pack       — 15,000 credits $120,000 ($8/credit)
  */
 
 import Stripe from "stripe";
@@ -55,115 +57,97 @@ interface PriceDefinition {
 }
 
 const SUBSCRIPTION_PRICES: PriceDefinition[] = [
-  // ─── Amateur Filmmaker tier ($500/mo, $5,000/yr) ───
+  // ─── Amateur Filmmaker tier ($10,000/mo, $100,000/yr) ───
   {
     key: "amateur_monthly",
     envKey: "stripeAmateurMonthlyPriceId",
     productName: "Virelle Studios — Amateur Filmmaker (Monthly)",
-    productDesc: "AI film production platform — Amateur Filmmaker tier, $500/month, 250 credits/mo",
-    unitAmount: 50000, // $500
+    productDesc: "AI film production platform — Amateur Filmmaker tier, $10,000/month, 500 credits/mo",
+    unitAmount: 1000000, // $10,000
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "amateur", billing: "monthly", credits: "250" },
+    metadata: { tier: "amateur", billing: "monthly", credits: "500" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "amateur_annual",
     envKey: "stripeAmateurAnnualPriceId",
     productName: "Virelle Studios — Amateur Filmmaker (Annual)",
-    productDesc: "AI film production platform — Amateur Filmmaker tier, $5,000/year, 250 credits/mo",
-    unitAmount: 500000, // $5,000
+    productDesc: "AI film production platform — Amateur Filmmaker tier, $100,000/year, 500 credits/mo",
+    unitAmount: 10000000, // $100,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "amateur", billing: "annual", credits: "250" },
+    metadata: { tier: "amateur", billing: "annual", credits: "500" },
+    paymentMethodTypes: ["us_bank_account", "card"],
   },
-  // ─── Independent tier ($5,000/mo, $50,000/yr) ───
+  // ─── Independent tier ($25,000/mo, $250,000/yr) ───
   {
     key: "independent_monthly",
     envKey: "stripeIndependentMonthlyPriceId",
     productName: "Virelle Studios — Independent (Monthly)",
-    productDesc: "AI film production platform — Independent tier, $5,000/month, 500 credits/mo",
-    unitAmount: 500000, // $5,000
+    productDesc: "AI film production platform — Independent tier, $25,000/month, 1500 credits/mo",
+    unitAmount: 2500000, // $25,000
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "independent", billing: "monthly", credits: "500" },
+    metadata: { tier: "independent", billing: "monthly", credits: "1500" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "independent_annual",
     envKey: "stripeIndependentAnnualPriceId",
     productName: "Virelle Studios — Independent (Annual)",
-    productDesc: "AI film production platform — Independent tier, $50,000/year, 500 credits/mo",
-    unitAmount: 5000000, // $50,000
+    productDesc: "AI film production platform — Independent tier, $250,000/year, 1500 credits/mo",
+    unitAmount: 25000000, // $250,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "independent", billing: "annual", credits: "500" },
-  },
-  // ─── Creator tier ($10,000/mo, $100,000/yr) ───
-  {
-    key: "creator_monthly",
-    envKey: "stripeCreatorMonthlyPriceId",
-    productName: "Virelle Studios — Creator (Monthly)",
-    productDesc: "AI film production platform — Creator tier, $10,000/month, 1500 credits/mo",
-    unitAmount: 1000000, // $10,000
-    currency: "usd",
-    recurring: { interval: "month" },
-    metadata: { tier: "creator", billing: "monthly", credits: "1500" },
+    metadata: { tier: "independent", billing: "annual", credits: "1500" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
-  {
-    key: "creator_annual",
-    envKey: "stripeCreatorAnnualPriceId",
-    productName: "Virelle Studios — Creator (Annual)",
-    productDesc: "AI film production platform — Creator tier, $100,000/year, 1500 credits/mo",
-    unitAmount: 10000000, // $100,000
-    currency: "usd",
-    recurring: { interval: "year" },
-    metadata: { tier: "creator", billing: "annual", credits: "1500" },
-  },
-  // ─── Studio tier ($15,000/mo, $150,000/yr) ───
+  // ─── Studio tier ($35,000/mo, $350,000/yr) ───
   {
     key: "studio_monthly",
     envKey: "stripeStudioMonthlyPriceId",
     productName: "Virelle Studios — Studio (Monthly)",
-    productDesc: "AI film production platform — Studio tier, $15,000/month, 4000 credits/mo",
-    unitAmount: 1500000, // $15,000
+    productDesc: "AI film production platform — Studio tier, $35,000/month, 5000 credits/mo",
+    unitAmount: 3500000, // $35,000
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "studio", billing: "monthly", credits: "4000" },
+    metadata: { tier: "studio", billing: "monthly", credits: "5000" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "studio_annual",
     envKey: "stripeStudioAnnualPriceId",
     productName: "Virelle Studios — Studio (Annual)",
-    productDesc: "AI film production platform — Studio tier, $150,000/year, 4000 credits/mo",
-    unitAmount: 15000000, // $150,000
+    productDesc: "AI film production platform — Studio tier, $350,000/year, 5000 credits/mo",
+    unitAmount: 35000000, // $350,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "studio", billing: "annual", credits: "4000" },
+    metadata: { tier: "studio", billing: "annual", credits: "5000" },
+    paymentMethodTypes: ["us_bank_account", "card"],
   },
-  // ─── Industry tier ($25,000/mo, $250,000/yr) ───
+  // ─── Industry tier ($50,000/mo, $500,000/yr) ───
   {
     key: "industry_monthly",
     envKey: "stripeIndustryMonthlyPriceId",
     productName: "Virelle Studios — Industry (Monthly)",
-    productDesc: "AI film production platform — Industry tier, $25,000/month, 10000 credits/mo",
-    unitAmount: 2500000, // $25,000
+    productDesc: "AI film production platform — Industry tier, $50,000/month, 15000 credits/mo",
+    unitAmount: 5000000, // $50,000
     currency: "usd",
     recurring: { interval: "month" },
-    metadata: { tier: "industry", billing: "monthly", credits: "10000" },
+    metadata: { tier: "industry", billing: "monthly", credits: "15000" },
     paymentMethodTypes: ["us_bank_account", "card"],
   },
   {
     key: "industry_annual",
     envKey: "stripeIndustryAnnualPriceId",
     productName: "Virelle Studios — Industry (Annual)",
-    productDesc: "AI film production platform — Industry tier, $250,000/year, 10000 credits/mo",
-    unitAmount: 25000000, // $250,000
+    productDesc: "AI film production platform — Industry tier, $500,000/year, 15000 credits/mo",
+    unitAmount: 50000000, // $500,000
     currency: "usd",
     recurring: { interval: "year" },
-    metadata: { tier: "industry", billing: "annual", credits: "10000" },
+    metadata: { tier: "industry", billing: "annual", credits: "15000" },
+    paymentMethodTypes: ["us_bank_account", "card"],
   },
 ];
 
@@ -172,8 +156,8 @@ const TOPUP_PRICES: PriceDefinition[] = [
     key: "topup_10",
     envKey: "stripeTopUp10PriceId",
     productName: "Virelle Studios — 500 Credits (Starter Pack)",
-    productDesc: "One-time pack of 500 production credits — $2,500",
-    unitAmount: 250000, // $2,500
+    productDesc: "One-time pack of 500 production credits — $7,500 ($15/credit)",
+    unitAmount: 750000, // $7,500
     currency: "usd",
     metadata: { type: "topup", credits: "500" },
   },
@@ -181,8 +165,8 @@ const TOPUP_PRICES: PriceDefinition[] = [
     key: "topup_50",
     envKey: "stripeTopUp50PriceId",
     productName: "Virelle Studios — 1,500 Credits (Producer Pack)",
-    productDesc: "One-time pack of 1,500 production credits — $6,000",
-    unitAmount: 600000, // $6,000
+    productDesc: "One-time pack of 1,500 production credits — $18,000 ($12/credit)",
+    unitAmount: 1800000, // $18,000
     currency: "usd",
     metadata: { type: "topup", credits: "1500" },
   },
@@ -190,8 +174,8 @@ const TOPUP_PRICES: PriceDefinition[] = [
     key: "topup_100",
     envKey: "stripeTopUp100PriceId",
     productName: "Virelle Studios — 3,000 Credits (Director Pack)",
-    productDesc: "One-time pack of 3,000 production credits — $10,500",
-    unitAmount: 1050000, // $10,500
+    productDesc: "One-time pack of 3,000 production credits — $33,000 ($11/credit)",
+    unitAmount: 3300000, // $33,000
     currency: "usd",
     metadata: { type: "topup", credits: "3000" },
   },
@@ -199,28 +183,19 @@ const TOPUP_PRICES: PriceDefinition[] = [
     key: "topup_200",
     envKey: "stripeTopUp200PriceId",
     productName: "Virelle Studios — 6,000 Credits (Studio Pack)",
-    productDesc: "One-time pack of 6,000 production credits — $18,000",
-    unitAmount: 1800000, // $18,000
+    productDesc: "One-time pack of 6,000 production credits — $60,000 ($10/credit)",
+    unitAmount: 6000000, // $60,000
     currency: "usd",
     metadata: { type: "topup", credits: "6000" },
   },
   {
     key: "topup_500",
     envKey: "stripeTopUp500PriceId",
-    productName: "Virelle Studios — 12,000 Credits (Blockbuster Pack)",
-    productDesc: "One-time pack of 12,000 production credits — $30,000",
-    unitAmount: 3000000, // $30,000
+    productName: "Virelle Studios — 15,000 Credits (Mogul Pack)",
+    productDesc: "One-time pack of 15,000 production credits — $120,000 ($8/credit)",
+    unitAmount: 12000000, // $120,000
     currency: "usd",
-    metadata: { type: "topup", credits: "12000" },
-  },
-  {
-    key: "topup_1000",
-    envKey: "stripeTopUp1000PriceId",
-    productName: "Virelle Studios — 25,000 Credits (Mogul Pack)",
-    productDesc: "One-time pack of 25,000 production credits — $50,000",
-    unitAmount: 5000000, // $50,000
-    currency: "usd",
-    metadata: { type: "topup", credits: "25000" },
+    metadata: { type: "topup", credits: "15000" },
   },
 ];
 
@@ -228,22 +203,18 @@ const TOPUP_PRICES: PriceDefinition[] = [
 
 async function findOrCreateProduct(name: string, description: string): Promise<string> {
   if (!stripe) throw new Error("Stripe not configured");
-
   const existing = await stripe.products.search({
     query: `name:"${name}"`,
     limit: 1,
   });
-
   if (existing.data.length > 0 && existing.data[0].active) {
     return existing.data[0].id;
   }
-
   const product = await stripe.products.create({
     name,
     description,
     metadata: { platform: "virelle_studios" },
   });
-
   return product.id;
 }
 
@@ -255,13 +226,11 @@ async function findOrCreatePrice(
   metadata?: Record<string, string>,
 ): Promise<string> {
   if (!stripe) throw new Error("Stripe not configured");
-
   const existingPrices = await stripe.prices.list({
     product: productId,
     active: true,
     limit: 10,
   });
-
   for (const price of existingPrices.data) {
     if (
       price.unit_amount === unitAmount &&
@@ -272,42 +241,45 @@ async function findOrCreatePrice(
       return price.id;
     }
   }
-
   const priceParams: Stripe.PriceCreateParams = {
     product: productId,
     unit_amount: unitAmount,
     currency,
     metadata: metadata || {},
   };
-
   if (recurring) {
     priceParams.recurring = { interval: recurring.interval };
   }
-
   const price = await stripe.prices.create(priceParams);
   return price.id;
 }
 
-async function provisionPrice(def: PriceDefinition): Promise<void> {
-  const envValue = (ENV as any)[def.envKey];
-  if (envValue && envValue.startsWith("price_")) {
-    resolvedPriceIds[def.key] = envValue;
-    return;
-  }
-
+/**
+ * Ensure the Founder Special coupon exists in Stripe.
+ * 50% off for the first year on annual subscriptions.
+ */
+export async function ensureFounderCoupon(): Promise<string | null> {
+  if (!stripe) return null;
+  const COUPON_ID = "VIRELLE_FOUNDER_50";
   try {
-    const productId = await findOrCreateProduct(def.productName, def.productDesc);
-    const priceId = await findOrCreatePrice(
-      productId,
-      def.unitAmount,
-      def.currency,
-      def.recurring,
-      def.metadata,
-    );
-    resolvedPriceIds[def.key] = priceId;
-    console.log(`[StripeProvisioning] ${def.key} → ${priceId}`);
+    const existing = await stripe.coupons.retrieve(COUPON_ID);
+    if (existing && !existing.deleted) return COUPON_ID;
+  } catch {
+    // doesn't exist yet — create it
+  }
+  try {
+    await stripe.coupons.create({
+      id: COUPON_ID,
+      name: "Virelle Studios — Founding Member (50% off first year)",
+      percent_off: 50,
+      duration: "once",
+      metadata: { type: "founder_special", platform: "virelle_studios" },
+    });
+    console.log("[StripeProvisioning] Created VIRELLE_FOUNDER_50 coupon");
+    return COUPON_ID;
   } catch (err: any) {
-    console.error(`[StripeProvisioning] Failed to provision ${def.key}:`, err.message);
+    console.error("[StripeProvisioning] Failed to create founder coupon:", err.message);
+    return null;
   }
 }
 
@@ -319,8 +291,10 @@ export async function runStripeProvisioning(): Promise<void> {
     console.log("[StripeProvisioning] Stripe not configured — skipping provisioning");
     return;
   }
-
   console.log("[StripeProvisioning] Starting auto-provisioning of Stripe products and prices...");
+
+  // Ensure the founder coupon exists
+  await ensureFounderCoupon();
 
   const allPrices = [...SUBSCRIPTION_PRICES, ...TOPUP_PRICES];
   let created = 0;
@@ -333,7 +307,6 @@ export async function runStripeProvisioning(): Promise<void> {
       existing++;
       continue;
     }
-
     try {
       const productId = await findOrCreateProduct(def.productName, def.productDesc);
       const priceId = await findOrCreatePrice(
