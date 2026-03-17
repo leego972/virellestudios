@@ -14,7 +14,7 @@
 
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
-import { db } from "./_core/db";
+import { getDb } from "./db";
 import {
   mailingContacts,
   emailCampaigns,
@@ -115,9 +115,12 @@ export const mailingListRouter = router({
       limit: z.number().min(1).max(500).default(100),
       offset: z.number().min(0).default(0),
       status: z.enum(["active", "unsubscribed", "bounced", "invalid"]).optional(),
+      search: z.string().optional(),
     }))
     .query(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       const where = input.status
         ? eq(mailingContacts.status, input.status)
         : undefined;
@@ -142,6 +145,8 @@ export const mailingListRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       const token = generateUnsubToken();
       await db.insert(mailingContacts).values({
         email: input.email.toLowerCase(),
@@ -173,6 +178,8 @@ export const mailingListRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       const parsed = parseContactsText(input.raw);
       if (parsed.length === 0) return { imported: 0, skipped: 0 };
 
@@ -216,6 +223,8 @@ export const mailingListRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       const { id, ...fields } = input;
       await db.update(mailingContacts).set({ ...fields, updatedAt: new Date() }).where(eq(mailingContacts.id, id));
       return { success: true };
@@ -226,6 +235,8 @@ export const mailingListRouter = router({
     .input(z.object({ ids: z.array(z.number()).min(1) }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       await db.delete(mailingContacts).where(inArray(mailingContacts.id, input.ids));
       return { deleted: input.ids.length };
     }),
@@ -241,6 +252,8 @@ export const mailingListRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       const buffer = Buffer.from(input.imageBase64, "base64");
       const key = `outreach/ads/${Date.now()}-${input.fileName}`;
       const { url } = await storagePut(key, buffer, input.contentType);
@@ -253,6 +266,8 @@ export const mailingListRouter = router({
   listCampaigns: protectedProcedure
     .query(async ({ ctx }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       return db.select().from(emailCampaigns).orderBy(emailCampaigns.createdAt);
     }),
 
@@ -262,16 +277,38 @@ export const mailingListRouter = router({
       id: z.number().optional(),
       name: z.string().min(1).max(255),
       subject: z.string().min(1).max(512),
-      htmlBody: z.string().min(1),
+      htmlBody: z.string().optional(),
+      template: z.enum(["intro", "custom"]).optional(),
+      customHtml: z.string().optional(),
       adImageUrl: z.string().url().optional().nullable(),
     }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      // Resolve htmlBody from template or custom HTML
+      let htmlBody = input.htmlBody;
+      if (!htmlBody) {
+        if (input.template === "custom" && input.customHtml) {
+          htmlBody = input.customHtml;
+        } else {
+          // Default: load the intro email template from disk
+          const fs = await import("fs");
+          const path = await import("path");
+          const templatePath = path.join(process.cwd(), "server", "templates", "intro-email.html");
+          try {
+            htmlBody = fs.readFileSync(templatePath, "utf-8");
+          } catch {
+            htmlBody = "<p>Hello {{name}},</p><p>We are excited to share Virelle Studios with you.</p>";
+          }
+        }
+      }
+      if (!htmlBody) throw new Error("htmlBody is required");
       if (input.id) {
         await db.update(emailCampaigns).set({
           name: input.name,
           subject: input.subject,
-          htmlBody: input.htmlBody,
+          htmlBody,
           adImageUrl: input.adImageUrl,
           updatedAt: new Date(),
         }).where(eq(emailCampaigns.id, input.id));
@@ -280,7 +317,7 @@ export const mailingListRouter = router({
         const [result] = await db.insert(emailCampaigns).values({
           name: input.name,
           subject: input.subject,
-          htmlBody: input.htmlBody,
+          htmlBody,
           adImageUrl: input.adImageUrl,
           status: "draft",
         });
@@ -297,6 +334,8 @@ export const mailingListRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
 
       // Load campaign
       const [campaign] = await db.select().from(emailCampaigns)
@@ -384,6 +423,8 @@ export const mailingListRouter = router({
     .input(z.object({ campaignId: z.number() }))
     .query(async ({ ctx, input }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       return db.select().from(campaignSendLog)
         .where(eq(campaignSendLog.campaignId, input.campaignId))
         .orderBy(campaignSendLog.sentAt);
@@ -395,6 +436,8 @@ export const mailingListRouter = router({
   unsubscribe: publicProcedure
     .input(z.object({ token: z.string() }))
     .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { success: false, message: "Database not available" };
       const [contact] = await db.select().from(mailingContacts)
         .where(eq(mailingContacts.unsubscribeToken, input.token));
       if (!contact) return { success: false, message: "Invalid unsubscribe link" };
@@ -409,6 +452,8 @@ export const mailingListRouter = router({
   stats: protectedProcedure
     .query(async ({ ctx }) => {
       if (ctx.user.role !== "admin") throw new Error("Admin only");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       const [{ total }] = await db.select({ total: sql<number>`count(*)` }).from(mailingContacts);
       const [{ active }] = await db.select({ active: sql<number>`count(*)` }).from(mailingContacts).where(eq(mailingContacts.status, "active"));
       const [{ unsub }] = await db.select({ unsub: sql<number>`count(*)` }).from(mailingContacts).where(eq(mailingContacts.status, "unsubscribed"));

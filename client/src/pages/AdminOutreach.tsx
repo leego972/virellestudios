@@ -72,22 +72,22 @@ export default function AdminOutreach() {
 
   const addContactMutation = trpc.mailingList.addContact.useMutation({
     onSuccess: () => { utils.mailingList.listContacts.invalidate(); toast.success("Contact added"); setAddOpen(false); resetAddForm(); },
-    onError: (err) => toast.error(err.message || "Failed to add contact"),
+    onError: (err: any) => toast.error(err.message || "Failed to add contact"),
   });
 
-  const bulkImportMutation = trpc.mailingList.bulkImport.useMutation({
+  const bulkImportMutation = trpc.mailingList.importContacts.useMutation({
     onSuccess: (data: any) => {
       utils.mailingList.listContacts.invalidate();
       toast.success(`Imported ${data.imported} contacts${data.skipped > 0 ? `, skipped ${data.skipped} duplicates` : ""}`);
       setBulkOpen(false);
       setBulkText("");
     },
-    onError: (err) => toast.error(err.message || "Failed to import contacts"),
+    onError: (err: any) => toast.error(err.message || "Failed to import contacts"),
   });
 
-  const deleteContactMutation = trpc.mailingList.deleteContact.useMutation({
+  const deleteContactMutation = trpc.mailingList.deleteContacts.useMutation({
     onSuccess: () => { utils.mailingList.listContacts.invalidate(); toast.success("Contact removed"); },
-    onError: (err) => toast.error(err.message || "Failed to delete contact"),
+    onError: (err: any) => toast.error(err.message || "Failed to delete contact"),
   });
 
   // ─── Add contact form ────────────────────────────────────────────────────────
@@ -119,16 +119,16 @@ export default function AdminOutreach() {
 
   function handleBulkImport() {
     if (!bulkText.trim()) { toast.error("No data to import"); return; }
-    bulkImportMutation.mutate({ data: bulkText });
+    bulkImportMutation.mutate({ raw: bulkText });
   }
 
   // ─── Campaigns ───────────────────────────────────────────────────────────────
   const campaignsQuery = trpc.mailingList.listCampaigns.useQuery(undefined, { retry: false });
   const campaigns: Campaign[] = (campaignsQuery.data as any) ?? [];
 
-  const createCampaignMutation = trpc.mailingList.createCampaign.useMutation({
+  const createCampaignMutation = trpc.mailingList.saveCampaign.useMutation({
     onSuccess: () => { utils.mailingList.listCampaigns.invalidate(); toast.success("Campaign created"); setCampaignOpen(false); resetCampaignForm(); },
-    onError: (err) => toast.error(err.message || "Failed to create campaign"),
+    onError: (err: any) => toast.error(err.message || "Failed to create campaign"),
   });
 
   const sendCampaignMutation = trpc.mailingList.sendCampaign.useMutation({
@@ -137,7 +137,7 @@ export default function AdminOutreach() {
       toast.success(`Campaign sent to ${data.sent} contacts`);
       setConfirmSendId(null);
     },
-    onError: (err) => toast.error(err.message || "Failed to send campaign"),
+    onError: (err: any) => toast.error(err.message || "Failed to send campaign"),
   });
 
   // ─── Campaign form ────────────────────────────────────────────────────────────
@@ -167,7 +167,7 @@ export default function AdminOutreach() {
       setUploadingAd(false);
       toast.success("Ad image uploaded");
     },
-    onError: (err) => { setUploadingAd(false); toast.error(err.message || "Failed to upload ad"); },
+    onError: (err: any) => { setUploadingAd(false); toast.error(err.message || "Failed to upload ad"); },
   });
 
   async function handleAdFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -180,7 +180,7 @@ export default function AdminOutreach() {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const base64 = (ev.target?.result as string).split(",")[1];
-      uploadAdMutation.mutate({ base64, filename: file.name, mimeType: file.type });
+      uploadAdMutation.mutate({ imageBase64: base64, fileName: file.name, contentType: file.type });
     };
     reader.readAsDataURL(file);
     e.target.value = "";
@@ -319,7 +319,7 @@ export default function AdminOutreach() {
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 text-muted-foreground hover:text-red-400"
-                          onClick={() => deleteContactMutation.mutate({ id: c.id })}
+                          onClick={() => deleteContactMutation.mutate({ ids: [c.id] })}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
@@ -429,7 +429,7 @@ export default function AdminOutreach() {
           <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
             <Button
-              onClick={() => addContactMutation.mutate({ email: addEmail, name: addName || undefined, company: addCompany || undefined, role: addRole || undefined, tags: addTags || undefined })}
+              onClick={() => addContactMutation.mutate({ email: addEmail, name: addName || undefined, company: addCompany || undefined, role: addRole || undefined, tags: addTags ? addTags.split(",").map(t => t.trim()).filter(Boolean) : undefined })}
               disabled={!addEmail || addContactMutation.isPending}
               className="bg-amber-500 hover:bg-amber-600 text-black font-medium"
             >
@@ -545,7 +545,7 @@ export default function AdminOutreach() {
               onClick={() => createCampaignMutation.mutate({
                 name: campaignName,
                 subject: campaignSubject,
-                template: campaignTemplate,
+                template: campaignTemplate as "intro" | "custom",
                 adImageUrl: campaignAdUrl || undefined,
                 customHtml: campaignTemplate === "custom" ? campaignCustomHtml : undefined,
               })}
