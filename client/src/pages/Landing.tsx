@@ -234,6 +234,13 @@ export default function Landing() {
       document.removeEventListener("touchstart", handleOutside);
     };
   }, [langOpen]);
+  const [leegoEnlarged, setLeegoEnlarged] = useState(false);
+  const handleLeegoClick = () => {
+    if (leegoEnlarged) return;
+    setLeegoEnlarged(true);
+    setTimeout(() => setLeegoEnlarged(false), 3000);
+  };
+
   const [bannerDismissed, setBannerDismissed] = useState(() => {
     try { return localStorage.getItem("virelle_offer_dismissed") === "1"; } catch { return false; }
   });
@@ -1272,7 +1279,23 @@ export default function Landing() {
             </div>
             <p className="text-[10px] text-foreground/80">
               &copy; {new Date().getFullYear()} Virelle Studios. All rights reserved. Powered by{" "}
-              <img src="/leego-logo.png" alt="Leego" className="inline h-4 w-4 align-middle" style={{ filter: "drop-shadow(0 0 4px #22c55e)" }} />{" "}
+              <img
+                src="/leego-logo.png"
+                alt="Leego"
+                onClick={handleLeegoClick}
+                className="inline align-middle cursor-pointer"
+                style={{
+                  filter: "drop-shadow(0 0 4px #22c55e)",
+                  height: leegoEnlarged ? "64px" : "16px",
+                  width: leegoEnlarged ? "64px" : "16px",
+                  transition: leegoEnlarged
+                    ? "height 0.4s cubic-bezier(0.34,1.56,0.64,1), width 0.4s cubic-bezier(0.34,1.56,0.64,1)"
+                    : "height 0.6s ease-in-out, width 0.6s ease-in-out",
+                  verticalAlign: "middle",
+                  zIndex: leegoEnlarged ? 50 : "auto",
+                  position: leegoEnlarged ? "relative" : "static",
+                }}
+              />{" "}
               Leego
             </p>
           </div>
