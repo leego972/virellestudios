@@ -404,10 +404,15 @@ Director's vision: "${args.vision}"
 
 RULES:
 - Use ONLY the details the director provided. Do not add characters, dialogue, sound effects, weather, mood, or any other element they did not mention.
-- For any field the director did NOT specify, use the most neutral, minimal default (e.g. timeOfDay: "afternoon", weather: "clear", lighting: "natural", cameraAngle: "medium", transitionType: "cut", transitionDuration: 0.5, duration: 30).
+- For any field the director did NOT specify, FIRST try to INFER it from real-world logic before falling back to a neutral default:
+  * Time of day: breakfast/morning coffee/waking up → morning | school/class/office meeting → daytime | lunch → afternoon | dinner/restaurant date → evening | bar/nightclub/party → night | sleeping/bedtime → night | sunrise/dawn run → dawn | sunset walk → golden-hour
+  * Weather: beach/tropical → clear | mountain cabin/ski resort → overcast or snowy | graveyard/funeral → overcast or foggy
+  * Mood: funeral/memorial → somber | wedding/celebration → joyful | chase/fight → urgent | interrogation/confrontation → tense | first date → nervous/warm
+  * If you infer a value, note it in productionNotes as "[inferred from context: X]"
+- If you genuinely cannot infer a field, use the neutral default (timeOfDay: "afternoon", weather: "clear", lighting: "natural", cameraAngle: "medium", transitionType: "cut", transitionDuration: 0.5, duration: 30).
 - dialogueLines: [] unless the director wrote specific dialogue.
 - soundEffects: [] unless the director specified sounds.
-- productionNotes: repeat back only what the director described, do not add crew instructions.
+- productionNotes: repeat back only what the director described plus any inference notes, do not add crew instructions.
 
 Return a JSON object with these exact fields:
 {
@@ -940,6 +945,48 @@ CONTEXTUAL AWARENESS:
 - Example: If the project is a noir thriller and the director says "add a confrontation scene", default to low-key lighting, high contrast, and a tense mood — because that fits the established project tone.
 - If the director asks to "add another scene like the last one", call get_project_summary first to understand the existing scenes before creating.
 - Track character names mentioned in the conversation — if the director says "put Sarah in this scene", remember who Sarah is from context.
+
+LOGIC-AWARE SCENE CONTEXT INFERENCE:
+Before asking the director for missing details, first attempt to INFER them from real-world logic — the same reasoning a human would apply. If you can confidently infer a missing field, fill it in and proceed without asking. State your inference briefly in the confirmation (e.g. "Set at morning — inferred from breakfast context.").
+
+Time of day inference rules:
+- Breakfast / morning coffee / waking up / alarm → morning
+- School / class / office meeting / commute (arriving) → morning or daytime (default daytime)
+- Lunch / midday sun / noon → afternoon
+- After-school / rush hour (leaving) / happy hour → evening
+- Dinner / family meal / restaurant date → evening
+- Bar / nightclub / party / late-night diner → night
+- Sleeping / bedtime / insomnia → late night
+- Sunrise / dawn run / early fishing → dawn
+- Sunset walk / golden hour picnic → golden-hour
+- Hospital rounds / doctor's appointment → morning or daytime
+- Church / Sunday service → morning
+- Empty streets / deserted city → night or early morning
+- Busy market / crowded plaza → daytime
+
+Weather inference rules:
+- Beach / tropical / summer vacation → clear/sunny
+- Mountain cabin / ski resort → overcast or snowy
+- Graveyard / funeral / abandoned building → overcast or foggy
+- Chase through city streets → clear or rainy (default clear)
+- Romantic rooftop → clear with stars (night) or golden-hour
+
+Mood inference rules:
+- Funeral / memorial → somber
+- Wedding / celebration / reunion → joyful or bittersweet
+- Chase / escape / fight → urgent/tense
+- First date / confession → nervous/warm
+- Interrogation / confrontation → tense/claustrophobic
+- Childhood flashback → nostalgic/warm
+- Horror discovery → dread/suspense
+
+Season inference rules:
+- Back to school / first day of school → autumn
+- Christmas / holiday dinner / snow → winter
+- Summer camp / beach vacation / heat wave → summer
+- Spring wedding / cherry blossoms / new beginnings → spring
+
+Only ask the director if the inference is genuinely ambiguous (e.g. "a meeting" could be morning or afternoon — ask). Never ask about something you can logically infer.
 
 SMART DEFAULTS BY GENRE (use when director hasn't specified):
 - Noir/Thriller: Low-key lighting, high contrast, night/dusk, tense mood, urban setting
