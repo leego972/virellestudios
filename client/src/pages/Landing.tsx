@@ -152,8 +152,8 @@ const PRICING = [
 ];
 
 const STATS = [
-  { value: "50K+", label: "Films Created" },
-  { value: "12K+", label: "Filmmakers" },
+  { value: "100's", label: "Films Created" },
+  { value: "100+", label: "Filmmakers" },
   { value: "99.9%", label: "Uptime" },
   { value: "4.9/5", label: "User Rating" },
 ];
@@ -477,8 +477,8 @@ export default function Landing() {
           </p>
           {/* Inline proof signals */}
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-foreground/60">
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> 50,000+ films created</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> 4&ndash;8 hrs from concept to final cut</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> Hundreds of films are already being created</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> A movie can be generated in hours</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> You own all outputs commercially</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> BYOK &mdash; no video markup</span>
           </div>
@@ -1125,11 +1125,11 @@ export default function Landing() {
               <p className="text-[10px] text-foreground/60 mt-1">Average rating</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-amber-400">12,000+</p>
+              <p className="text-3xl font-bold text-amber-400">100+</p>
               <p className="text-[10px] text-foreground/60 mt-1">Active filmmakers</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-amber-400">50,000+</p>
+              <p className="text-3xl font-bold text-amber-400">100's</p>
               <p className="text-[10px] text-foreground/60 mt-1">Films generated</p>
             </div>
             <div className="text-center">
