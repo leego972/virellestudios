@@ -17,6 +17,7 @@ import { startAutonomousPipelineScheduler } from "../autonomous-pipeline";
 import { startAdScheduler } from "./advertisingEngine";
 import { startVideoJobWorker } from "./videoJobWorker";
 import { runAutoMigration } from "./autoMigrate";
+import { invokeLLMStream } from "./llm";
 import { runStripeProvisioning } from "./stripeProvisioning";
 import { registerSeoRoutes } from "../seo-engine";
 import { registerSeoV4Routes } from "../seo-engine-v4";
@@ -456,6 +457,54 @@ async function startServer() {
     } catch (_err) {
       res.status(500).send('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
     }
+  });
+
+  // ── SSE Streaming Director Chat ─────────────────────────────────────────
+  // Maps sessionId -> SSE Response so the POST handler can write to it
+  const activeDirectorStreams = new Map<string, import('express').Response>();
+
+  app.get("/api/director/stream/:sessionId", (_req, res) => {
+    const { sessionId } = _req.params;
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+    res.flushHeaders();
+    activeDirectorStreams.set(sessionId, res);
+    _req.on("close", () => activeDirectorStreams.delete(sessionId));
+    res.write(`data: ${JSON.stringify({ type: "connected" })}\n\n`);
+  });
+
+  app.post("/api/director/stream/:sessionId/send", async (req, res) => {
+    const { sessionId } = req.params;
+    const { messages, projectContext } = req.body as {
+      messages: Array<{ role: string; content: string }>;
+      projectContext?: string;
+    };
+    const sseRes = activeDirectorStreams.get(sessionId);
+    if (!sseRes) { res.status(404).json({ error: "No active stream" }); return; }
+
+    const SYSTEM = `You are the Virelle AI Director — a world-class cinematic AI assistant for Virelle Studios. You help filmmakers, directors, and creators develop their vision into detailed, production-ready scene descriptions, shot lists, dialogue, and storyboards.\n\nYour role:\n- Ask targeted clarifying questions when the request is vague (genre, tone, setting, characters, mood)\n- Never ask more than 2 questions at a time\n- When you have enough context, provide rich, detailed cinematic descriptions\n- Use proper film terminology (mise-en-scène, blocking, lens choices, colour grading, etc.)\n- Think like a director: consider pacing, tension, visual storytelling\n- Be enthusiastic and collaborative — this is a creative partnership\n${projectContext ? `\nProject context: ${projectContext}` : ""}`;
+
+    const llmMessages = [
+      { role: "system" as const, content: SYSTEM },
+      ...messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+    ];
+
+    sseRes.write(`data: ${JSON.stringify({ type: "thinking", message: "Director is thinking..." })}\n\n`);
+
+    await invokeLLMStream(
+      { messages: llmMessages, maxTokens: 1200 },
+      (token) => {
+        sseRes.write(`data: ${JSON.stringify({ type: "token", token })}\n\n`);
+      },
+      (full) => {
+        sseRes.write(`data: ${JSON.stringify({ type: "done", text: full })}\n\n`);
+      },
+      (err) => sseRes.write(`data: ${JSON.stringify({ type: "error", message: err.message })}\n\n`)
+    );
+
+    res.json({ ok: true });
   });
 
   // tRPC API

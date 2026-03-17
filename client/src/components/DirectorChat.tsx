@@ -241,6 +241,10 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   // Keyboard shortcut hint
   const [showShortcutHint, setShowShortcutHint] = useState(false);
 
+  // Streaming animation state
+  const [streamingText, setStreamingText] = useState<string | null>(null);
+  const streamingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -257,18 +261,44 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   // Send message mutation
   const sendMutation = trpc.directorChat.send.useMutation({
     onSuccess: (data) => {
-      setLocalMessages((prev) => {
-        const withoutLoading = prev.filter((m) => m.content !== "__loading__");
-        return [
-          ...withoutLoading,
-          {
-            role: "assistant",
-            content: data.response,
-            actions: data.actions,
-          },
-        ];
-      });
-      utils.directorChat.history.invalidate({ projectId });
+      // Animate the response text character-by-character for a streaming feel
+      const fullText = data.response;
+      const actions = data.actions;
+      // First remove the loading placeholder and add an empty assistant message
+      setLocalMessages((prev) => [
+        ...prev.filter((m) => m.content !== "__loading__"),
+        { role: "assistant", content: "", actions },
+      ]);
+      setStreamingText(fullText);
+      let i = 0;
+      const charsPerTick = Math.max(1, Math.ceil(fullText.length / 120)); // ~120 ticks total
+      if (streamingIntervalRef.current) clearInterval(streamingIntervalRef.current);
+      streamingIntervalRef.current = setInterval(() => {
+        i += charsPerTick;
+        const partial = fullText.slice(0, i);
+        setLocalMessages((prev) => {
+          const updated = [...prev];
+          const lastIdx = updated.length - 1;
+          if (lastIdx >= 0 && updated[lastIdx].role === "assistant") {
+            updated[lastIdx] = { ...updated[lastIdx], content: partial };
+          }
+          return updated;
+        });
+        if (i >= fullText.length) {
+          clearInterval(streamingIntervalRef.current!);
+          streamingIntervalRef.current = null;
+          setStreamingText(null);
+          setLocalMessages((prev) => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (lastIdx >= 0 && updated[lastIdx].role === "assistant") {
+              updated[lastIdx] = { ...updated[lastIdx], content: fullText, actions };
+            }
+            return updated;
+          });
+          utils.directorChat.history.invalidate({ projectId });
+        }
+      }, 16); // ~60fps
     },
     onError: (error) => {
       setLocalMessages((prev) =>
@@ -381,6 +411,11 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         audioRef.current.pause();
         audioRef.current.src = "";
         audioRef.current = null;
+      }
+      // Clear streaming animation interval
+      if (streamingIntervalRef.current) {
+        clearInterval(streamingIntervalRef.current);
+        streamingIntervalRef.current = null;
       }
     };
   }, []);

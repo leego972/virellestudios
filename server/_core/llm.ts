@@ -451,3 +451,69 @@ async function invokeLLMWithProvider(
 
   return (await response.json()) as InvokeResult;
 }
+
+/**
+ * Streaming LLM invocation — yields tokens via onToken callback, calls onDone with full text.
+ * Uses the same provider resolution as invokeLLM.
+ */
+export async function invokeLLMStream(
+  params: { messages: Array<{ role: "system" | "user" | "assistant"; content: string }>; maxTokens?: number },
+  onToken: (token: string) => void,
+  onDone: (fullText: string) => void,
+  onError: (err: Error) => void
+): Promise<void> {
+  const provider = resolveProvider();
+  const payload = {
+    model: provider.model,
+    messages: params.messages,
+    max_tokens: params.maxTokens ?? 800,
+    stream: true,
+  };
+
+  try {
+    const response = await fetch(provider.url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${provider.apiKey}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok || !response.body) {
+      const errText = await response.text().catch(() => response.statusText);
+      throw new Error(`LLM stream failed: ${response.status} – ${errText}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = "";
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed === "data: [DONE]") continue;
+        if (!trimmed.startsWith("data: ")) continue;
+        try {
+          const json = JSON.parse(trimmed.slice(6));
+          const token: string = json?.choices?.[0]?.delta?.content ?? "";
+          if (token) {
+            fullText += token;
+            onToken(token);
+          }
+        } catch {
+          // ignore malformed SSE lines
+        }
+      }
+    }
+    onDone(fullText);
+  } catch (err) {
+    onError(err instanceof Error ? err : new Error(String(err)));
+  }
+}
