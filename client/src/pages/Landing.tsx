@@ -485,10 +485,13 @@ export default function Landing() {
           {/* Inline proof signals */}
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-foreground/60">
             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> Hundreds of films are already being created</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> A movie can be generated in hours</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> A movie can be generated in hours*</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> You own all outputs commercially</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-amber-400" /> BYOK &mdash; no video markup</span>
           </div>
+          <p className="mt-4 text-[10px] text-foreground/40 max-w-lg mx-auto leading-relaxed">
+            * Generation time estimates apply to amateur-level productions with a completed script and defined character list. We recognise that a professional film — regardless of AI involvement — can require weeks or months of creative development. Virelle Studios is designed to eliminate technical barriers and reduce production costs to the maximum extent possible, without compromising on output quality.
+          </p>
           <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12 text-base">
               Start Your First Film
