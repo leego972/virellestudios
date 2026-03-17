@@ -462,7 +462,7 @@ export default function Landing() {
           {/* Audience targeting pill */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-4">
             <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Virelle Studios" className="h-6 w-6 rounded" />
-            For indie filmmakers, content creators, agencies &amp; studios
+            Hollywood-Style Realistic AI Film Production
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
             Go from Concept to{" "}
@@ -475,7 +475,7 @@ export default function Landing() {
             </span>
           </h1>
           <p className="mt-5 text-base sm:text-lg text-foreground/75 max-w-2xl mx-auto leading-relaxed">
-            Write a concept. Virelle generates the screenplay, 60&ndash;90 cinematic scenes with voice acting, an original soundtrack, and a final cut &mdash; ready to publish. Or drop in impossible VFX scenes for your live-action production.
+            We specialise in <strong className="text-amber-400 font-semibold">Hollywood-style, photorealistic AI film production</strong> &mdash; not generic AI video clips. Write a concept and Virelle generates a complete feature: screenplay, 60&ndash;90 cinematic scenes, AI voice acting, original soundtrack, and a final cut ready to publish. Or import your own footage and let AI extend it seamlessly.
           </p>
           {/* Inline proof signals */}
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-foreground/60">
@@ -847,6 +847,84 @@ export default function Landing() {
               <p className="text-[10px] text-foreground/80 text-center pt-2">Keys are encrypted and never exposed to the frontend.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ─── Social Proof + Cost Savings Section ─── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-indigo-950/10">
+        <div className="max-w-5xl mx-auto">
+          {/* Social proof banner */}
+          <div className="flex flex-col md:flex-row items-center gap-6 bg-indigo-950/30 border border-indigo-500/20 rounded-2xl p-8 mb-10">
+            <div className="flex-shrink-0 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-3xl">
+              🌍
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <p className="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-1">Already Live &amp; Growing</p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">100+ Studios &amp; Artists Are Already Making the Future</h2>
+              <p className="text-sm text-foreground/70 leading-relaxed max-w-2xl">
+                From solo filmmakers telling deeply personal stories to commercial production companies building content at scale — creators across the globe are already producing on Virelle Studios. This is not a beta. This is the industry in motion. We would love you to join us.
+              </p>
+            </div>
+            <div className="flex md:flex-col gap-4 flex-shrink-0">
+              <div className="text-center">
+                <p className="text-3xl font-black text-indigo-400">100+</p>
+                <p className="text-[10px] uppercase tracking-widest text-foreground/40">Studios</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-black text-green-400">$0</p>
+                <p className="text-[10px] uppercase tracking-widest text-foreground/40">Logistics</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Cost savings section */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium mb-4">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              The Real Numbers
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight mb-3">
+              What You <span className="text-green-400">Stop Paying For</span>
+            </h2>
+            <p className="text-foreground/70 max-w-2xl mx-auto text-sm leading-relaxed">
+              Every line item below is a real cost that traditional productions pay — and that Virelle Studios eliminates entirely. These are published industry-standard figures.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-border/50 overflow-hidden mb-4">
+            <div className="grid grid-cols-3 bg-green-950/30 border-b border-border/50 px-4 py-3">
+              <p className="text-xs font-bold uppercase tracking-widest text-green-400">Production Cost</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-red-400 text-right">Traditional</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-green-400 text-right">Virelle</p>
+            </div>
+            {[
+              { icon: "📍", label: "Location rental & permits", note: "5–15% of BTL budget. Street permits, site fees, police officers.", trad: "$15k–$80k+" },
+              { icon: "🏨", label: "Hotels & crew accommodation", note: "60-person crew × 40 days at $150–$300/night per person.", trad: "$360k–$720k" },
+              { icon: "🚐", label: "Vehicles, trucks & transport", note: "Camera trucks, grip trucks, crew vans, fuel, Teamster drivers.", trad: "$25k–$120k" },
+              { icon: "👗", label: "Costumes, wardrobe & continuity", note: "Rental, dry cleaning, multiples of hero costumes, alterations.", trad: "$8k–$60k" },
+              { icon: "💄", label: "Hair, make-up & prosthetics", note: "Special effects makeup alone can reach $50k–$500k per film.", trad: "$5k–$500k" },
+              { icon: "🍽️", label: "Catering & craft services", note: "$35–$75/person per meal × 60 crew × 40 days.", trad: "$84k–$180k" },
+              { icon: "🌧️", label: "Weather delays & reshoot days", note: "A single lost shoot day: $50k–$250k+ in crew & location fees.", trad: "$50k–$250k" },
+              { icon: "🎵", label: "Music licensing", note: "Sync license per track: $5k–$50k. Score composition: $20k–$200k+.", trad: "$25k–$250k" },
+            ].map((row, i) => (
+              <div key={i} className={`grid grid-cols-3 px-4 py-3 border-b border-border/30 items-start ${i % 2 === 1 ? 'bg-card/30' : ''}`}>
+                <div>
+                  <p className="text-sm font-medium text-foreground">{row.icon} {row.label}</p>
+                  <p className="text-[11px] text-foreground/40 leading-relaxed mt-0.5">{row.note}</p>
+                </div>
+                <p className="text-sm font-semibold text-red-400 text-right pt-0.5">{row.trad}</p>
+                <p className="text-sm font-bold text-green-400 text-right pt-0.5">$0</p>
+              </div>
+            ))}
+            <div className="grid grid-cols-3 bg-green-950/30 px-4 py-4">
+              <p className="text-sm font-bold text-foreground">Conservative total (indie feature)</p>
+              <p className="text-base font-bold text-red-400 text-right">$571k–$2.1M+</p>
+              <p className="text-lg font-black text-green-400 text-right">$0</p>
+            </div>
+          </div>
+          <p className="text-[11px] text-foreground/30 text-center leading-relaxed">
+            Based on published industry-standard rates (IATSE, SAG-AFTRA, Saturation.io 2026 Film Budget Breakdown). Results vary by production scale and geography. Virelle Studios does not eliminate above-the-line talent, development, or distribution costs.
+          </p>
         </div>
       </section>
 

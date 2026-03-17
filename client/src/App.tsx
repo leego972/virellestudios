@@ -29,6 +29,7 @@ const AdPosterMaker = lazy(() => import("./pages/AdPosterMaker"));
 const CampaignManager = lazy(() => import("./pages/CampaignManager"));
 const ContentCreatorPage = lazy(() => import("./pages/ContentCreatorPage"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
+const AdminOutreach = lazy(() => import("./pages/AdminOutreach"));
 const SecurityDashboard = lazy(() => import("./pages/SecurityDashboard"));
 const AdminAutonomous = lazy(() => import("./pages/AdminAutonomous"));
 const AdvertisingDashboard = lazy(() => import("./pages/AdvertisingDashboard"));
@@ -216,6 +217,7 @@ function Router() {
               <Route path="/admin/autonomous">{() => <LazyPage><AdminAutonomous /></LazyPage>}</Route>
               <Route path="/admin/advertising">{() => <LazyPage><AdvertisingDashboard /></LazyPage>}</Route>
               <Route path="/admin/seo">{() => <LazyPage><SeoDashboard /></LazyPage>}</Route>
+              <Route path="/admin/outreach">{() => <LazyPage><AdminOutreach /></LazyPage>}</Route>
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>

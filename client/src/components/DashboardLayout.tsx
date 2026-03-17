@@ -50,6 +50,7 @@ import {
   Search,
   Coins,
   Smartphone,
+  Mail,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -100,6 +101,7 @@ const adminMenuItems = [
   { icon: Zap, label: "Autonomous Pipeline", path: "/admin/autonomous" },
   { icon: BarChart3, label: "Advertising", path: "/admin/advertising" },
   { icon: Search, label: "SEO Dashboard", path: "/admin/seo" },
+  { icon: Mail, label: "Outreach & Email", path: "/admin/outreach" },
   { icon: Megaphone, label: "Campaign Manager", path: "/campaigns" },
   { icon: PenTool, label: "Content Creator", path: "/content-creator" },
 ];

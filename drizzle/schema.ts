@@ -942,3 +942,53 @@ export const userSocialCredentials = mysqlTable("user_social_credentials", {
 });
 export type UserSocialCredential = typeof userSocialCredentials.$inferSelect;
 export type InsertUserSocialCredential = typeof userSocialCredentials.$inferInsert;
+
+// ─── Outreach Mailing List ────────────────────────────────────────────────────
+// Stores contacts for the admin outreach email campaigns.
+export const mailingContacts = mysqlTable("mailing_contacts", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: varchar("name", { length: 255 }),
+  company: varchar("company", { length: 255 }),
+  role: varchar("role", { length: 255 }),
+  notes: text("notes"),
+  tags: json("tags").$type<string[]>().default([]),
+  status: mysqlEnum("status", ["active", "unsubscribed", "bounced", "invalid"]).default("active").notNull(),
+  source: varchar("source", { length: 64 }).default("manual").notNull(),
+  unsubscribeToken: varchar("unsubscribeToken", { length: 128 }),
+  lastEmailedAt: timestamp("lastEmailedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type MailingContact = typeof mailingContacts.$inferSelect;
+export type InsertMailingContact = typeof mailingContacts.$inferInsert;
+
+// ─── Email Campaigns ─────────────────────────────────────────────────────────
+export const emailCampaigns = mysqlTable("email_campaigns", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  subject: varchar("subject", { length: 512 }).notNull(),
+  htmlBody: text("htmlBody").notNull(),
+  adImageUrl: varchar("adImageUrl", { length: 1024 }),
+  status: mysqlEnum("status", ["draft", "sending", "sent", "failed"]).default("draft").notNull(),
+  sentCount: int("sentCount").default(0).notNull(),
+  failedCount: int("failedCount").default(0).notNull(),
+  openCount: int("openCount").default(0).notNull(),
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type EmailCampaign = typeof emailCampaigns.$inferSelect;
+export type InsertEmailCampaign = typeof emailCampaigns.$inferInsert;
+
+// ─── Campaign Send Log ────────────────────────────────────────────────────────
+export const campaignSendLog = mysqlTable("campaign_send_log", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  contactId: int("contactId").notNull(),
+  status: mysqlEnum("status", ["sent", "failed", "bounced"]).default("sent").notNull(),
+  error: text("error"),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+});
+export type CampaignSendLog = typeof campaignSendLog.$inferSelect;
+export type InsertCampaignSendLog = typeof campaignSendLog.$inferInsert;

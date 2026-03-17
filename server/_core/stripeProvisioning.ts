@@ -270,7 +270,7 @@ export async function ensureFounderCoupon(): Promise<string | null> {
   try {
     await stripe.coupons.create({
       id: COUPON_ID,
-      name: "Virelle Studios — Founding Member (50% off first year)",
+      name: "Virelle Founding Member 50% Off",
       percent_off: 50,
       duration: "once",
       metadata: { type: "founder_special", platform: "virelle_studios" },

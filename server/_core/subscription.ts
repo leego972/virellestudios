@@ -1022,16 +1022,16 @@ export async function createCheckoutSession(
     try {
       // Look for existing founding coupon
       const coupons = await stripe.coupons.list({ limit: 100 });
-      const existing = coupons.data.find(c => c.name === "Founding Director — 50% Off First Year" && c.valid);
+      const existing = coupons.data.find(c => c.name === "Founding Director 50% Off" && c.valid);
       if (existing) {
         couponId = existing.id;
       } else {
         // Create the coupon: 50% off, first year only (once), limited redemptions
         const coupon = await stripe.coupons.create({
-          name: "Founding Director — 50% Off First Year",
+          name: "Founding Director 50% Off",
           percent_off: 50,
           duration: "once", // applies to first invoice only
-          max_redemptions: 50, // limited to 50 founding directors (19 spots still available)
+          max_redemptions: 150, // limited to 150 founding directors (19 spots still available)
           metadata: { type: "founding_offer" },
         });
         couponId = coupon.id;
