@@ -19,11 +19,11 @@ const TIERS = [
     accentColor: "text-emerald-400",
     monthly: 10000,
     annual: 100000,
-    credits: 500,
+    credits: 2000,
     extraCreditCost: 15,
     description: "Dip your toes in AI filmmaking. Write, plan, and start your first project.",
     highlights: [
-      "500 credits/month included",
+      "2,000 credits/month included",
       "AI Script Writer",
       "AI Director Chat (Virelle)",
       "Character Creator",
@@ -45,11 +45,11 @@ const TIERS = [
     accentColor: "text-amber-400",
     monthly: 25000,
     annual: 250000,
-    credits: 1500,
+    credits: 5500,
     extraCreditCost: 12,
     description: "For independent filmmakers and solo creators building their vision.",
     highlights: [
-      "1,500 credits/month included",
+      "5,500 credits/month included",
       "All creative & pre-production tools",
       "AI Script Writer & Storyboard",
       "Character Creator & DNA Lock",
@@ -70,12 +70,12 @@ const TIERS = [
     accentColor: "text-violet-400",
     monthly: 35000,
     annual: 350000,
-    credits: 5000,
+    credits: 15500,
     extraCreditCost: 10,
     popular: true,
     description: "For production studios with multiple projects and larger teams.",
     highlights: [
-      "5,000 credits/month included",
+      "15,500 credits/month included",
       "Everything in Independent, plus:",
       "Up to 100 projects",
       "Up to 150 min per film",
@@ -97,11 +97,11 @@ const TIERS = [
     accentColor: "text-yellow-400",
     monthly: 50000,
     annual: 500000,
-    credits: 15000,
+    credits: 50500,
     extraCreditCost: 8,
     description: "For major studios and enterprise productions. Full power, no limits.",
     highlights: [
-      "15,000 credits/month included",
+      "50,500 credits/month included",
       "Everything in Studio, plus:",
       "Unlimited projects",
       "Up to 180 min per film",
@@ -529,10 +529,10 @@ export default function Pricing() {
               <h4 className="text-sm font-semibold mb-3 text-center">What does a credit cost in real terms?</h4>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
                 {[
-                  { tier: "Amateur", credits: 500, monthly: 10000, perCredit: 20.0, color: "text-emerald-400" },
-                  { tier: "Independent", credits: 1500, monthly: 25000, perCredit: 16.67, color: "text-amber-400" },
-                  { tier: "Studio", credits: 5000, monthly: 35000, perCredit: 7.0, color: "text-violet-400" },
-                  { tier: "Industry", credits: 15000, monthly: 50000, perCredit: 3.33, color: "text-yellow-400" },
+                  { tier: "Amateur", credits: 2000, monthly: 10000, perCredit: 5.0, color: "text-emerald-400" },
+                  { tier: "Independent", credits: 5500, monthly: 25000, perCredit: 4.55, color: "text-amber-400" },
+                  { tier: "Studio", credits: 15500, monthly: 35000, perCredit: 2.26, color: "text-violet-400" },
+                  { tier: "Industry", credits: 50500, monthly: 50000, perCredit: 0.99, color: "text-yellow-400" },
                 ].map((t) => (
                   <div key={t.tier} className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800">
                     <p className={`text-xs font-bold ${t.color}`}>{t.tier}</p>
