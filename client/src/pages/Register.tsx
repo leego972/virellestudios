@@ -437,12 +437,34 @@ export default function Register() {
       <div className="w-full max-w-md space-y-5 relative z-10">
         {/* Virelle Studios Logo */}
         <div className="flex flex-col items-center gap-3">
-          <img
-            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
-            alt="Virelle Studios"
-            className="w-28 h-28 rounded-2xl shadow-lg shadow-amber-500/20"
-            draggable={false}
-          />
+          {/* Radial glow wrapper — extends the logo's warm amber light into the page */}
+          <div className="relative flex items-center justify-center">
+            {/* Outer ambient glow — large, very soft */}
+            <div
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                width: 280,
+                height: 280,
+                background: "radial-gradient(ellipse at center, rgba(180,100,10,0.35) 0%, rgba(120,60,5,0.18) 35%, transparent 70%)",
+              }}
+            />
+            {/* Inner glow ring — tighter, warmer */}
+            <div
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                width: 160,
+                height: 160,
+                background: "radial-gradient(ellipse at center, rgba(210,130,20,0.28) 0%, transparent 70%)",
+              }}
+            />
+            <img
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+              alt="Virelle Studios"
+              className="relative z-10 w-28 h-28 rounded-2xl"
+              style={{ boxShadow: "0 0 40px 8px rgba(180,100,10,0.45), 0 0 80px 20px rgba(120,60,5,0.25)" }}
+              draggable={false}
+            />
+          </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Join Virelle Studios</h1>
             <p className="text-sm text-muted-foreground mt-1">Create AI-powered films in minutes</p>

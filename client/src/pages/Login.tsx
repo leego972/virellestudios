@@ -67,12 +67,33 @@ export default function Login() {
         <div className="w-full max-w-sm space-y-6">
           {/* Virelle Studios Logo */}
           <div className="flex flex-col items-center gap-4">
-            <img
-              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
-              alt="Virelle Studios"
-              className="w-32 h-32 rounded-2xl shadow-lg shadow-amber-500/20"
-              draggable={false}
-            />
+            <div className="relative flex items-center justify-center">
+              {/* Outer ambient glow */}
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: 300,
+                  height: 300,
+                  background: "radial-gradient(ellipse at center, rgba(180,100,10,0.35) 0%, rgba(120,60,5,0.18) 35%, transparent 70%)",
+                }}
+              />
+              {/* Inner glow ring */}
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: 170,
+                  height: 170,
+                  background: "radial-gradient(ellipse at center, rgba(210,130,20,0.28) 0%, transparent 70%)",
+                }}
+              />
+              <img
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
+                alt="Virelle Studios"
+                className="relative z-10 w-32 h-32 rounded-2xl"
+                style={{ boxShadow: "0 0 40px 8px rgba(180,100,10,0.45), 0 0 80px 20px rgba(120,60,5,0.25)" }}
+                draggable={false}
+              />
+            </div>
             <div className="text-center">
               <h1 className="text-2xl font-bold text-foreground tracking-tight">Virelle Studios</h1>
               <p className="text-sm text-muted-foreground mt-1">AI-powered film production</p>
