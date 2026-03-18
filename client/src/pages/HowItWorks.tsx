@@ -87,7 +87,7 @@ const STEPS = [
       "Full film playback in the Virelle Studio player",
       "Regenerate individual scenes without redoing the whole film",
       "Export to MP4, ProRes, or DaVinci Resolve timeline",
-      "Subtitle generation in 40+ languages",
+      "Subtitle generation in 130+ languages with context-aware AI translation",
     ],
     icon: Download,
     color: "amber",
@@ -101,8 +101,9 @@ const DELIVERABLES = [
   { icon: Video, label: "Scene Video Clips", desc: "Individual MP4 clips for every scene at your chosen resolution" },
   { icon: Film, label: "Assembled Film", desc: "Complete film with all scenes stitched, audio mixed, and titles applied" },
   { icon: Music, label: "Original Soundtrack", desc: "AI-composed score matched to your film's emotional arc" },
-  { icon: Mic, label: "Voice Acting Tracks", desc: "Individual character audio files for all dialogue" },
+  { icon: Mic, label: "Voice Acting Tracks", desc: "Individual character audio files — 35 emotion states, per-emotion ElevenLabs tuning" },
   { icon: Clapperboard, label: "Trailer", desc: "Cinematic trailer cut from your best scenes with title cards" },
+  { icon: Layers, label: "Post-Production Mix", desc: "ADR, Foley, Score Cues, and three-bus audio mix (Dialogue / Music / Effects)" },
   { icon: Layers, label: "Shot List & Credits", desc: "Production-ready shot list and formatted credits roll" },
 ];
 

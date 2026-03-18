@@ -281,7 +281,11 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
   </div>` : ""}
 
   <div class="notice">
-    ℹ️ <strong>Manual submission required.</strong> This document is your compiled application package. Each funding body has its own portal, page limits, and upload rules. Review all sections, tailor to the fund's requirements, then submit directly to the funder. Virelle Studios does not submit on your behalf.
+    <strong>Professional Working Pack — Important Notice.</strong> This framework is structured around recurring requirements published by representative official bodies, including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute — covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required by the target fund.
+    <br><br>
+    <strong>Legal declarations, exact upload wording, and submission requirements must be verified against the target fund's live portal before final submission.</strong> The native-language localisation layer is provided as a working framework only — official terminology should be cross-checked against the fund's published guidelines.
+    <br><br>
+    This document is for manual submission only. Virelle Studios compiles and organises your application package; it does not submit on your behalf. Each funding body has its own portal, page limits, and upload rules.
   </div>
 
   <div class="body">
@@ -697,6 +701,11 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
             </DialogDescription>
           </DialogHeader>
 
+          {/* Professional working-pack notice */}
+          <div className="mt-3 rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2 text-[11px] text-blue-300/80 leading-relaxed">
+            <strong className="text-blue-300">Professional Working Pack.</strong> This framework is structured around recurring requirements published by representative official bodies — including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute — covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required.
+            {" "}<strong className="text-blue-300">Legal declarations, exact upload wording, and submission requirements must be verified against the target fund's live portal before final submission.</strong> The native-language localisation layer is provided as a working framework only.
+          </div>
           {/* Step progress */}
           <div className="flex items-center gap-1 mt-4 overflow-x-auto pb-1">
             {STEPS.map((s, i) => (

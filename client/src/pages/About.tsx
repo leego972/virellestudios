@@ -72,10 +72,12 @@ const CAPABILITIES = [
   { label: "AI Video Providers", value: "Runway, fal.ai, Google Veo 3" },
   { label: "AI Language Models", value: "GPT-4.1, Gemini 2.5 Flash" },
   { label: "Image Generation", value: "DALL-E 3 HD" },
-  { label: "Voice Acting", value: "ElevenLabs (30+ voices)" },
+  { label: "Voice Acting", value: "ElevenLabs — 35 emotion states, per-emotion tuning" },
   { label: "Export Formats", value: "MP4, ProRes, DaVinci Resolve" },
-  { label: "Supported Languages", value: "40+ for subtitles" },
+  { label: "Subtitle Languages", value: "130+ languages, context-aware AI translation" },
   { label: "Max Film Duration", value: "Up to 180 minutes (Industry tier)" },
+  { label: "Film Post-Production", value: "ADR, Foley, Score Cues, 3-Bus Mix" },
+  { label: "Funding Directory", value: "94 global funders across 73 countries" },
   { label: "Max Resolution", value: "4K (Industry tier)" },
 ];
 

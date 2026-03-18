@@ -209,7 +209,11 @@ function buildHtmlEmail(input: z.infer<typeof applicationInputSchema>, userName:
   </div>
   <div class="body">
     <div class="notice">
-      ℹ️ This document is your compiled application package. Review all sections carefully, then submit it directly to the funder${input.officialSite ? ` at <a href="${input.officialSite}" style="color:#1d4ed8">${input.officialSite}</a>` : ""}. Virelle Studios does not submit on your behalf.
+      <strong>Professional Working Pack — Important Notice.</strong> This framework is structured around recurring requirements published by representative official bodies, including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute — covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required by the target fund.
+      <br><br>
+      <strong>Legal declarations, exact upload wording, and submission requirements must be verified against the target fund's live portal before final submission.</strong> The native-language localisation layer is provided as a working framework only — official terminology should be cross-checked against the fund's published guidelines.
+      <br><br>
+      This document is for manual submission only. Virelle Studios compiles and organises your application package; it does not submit on your behalf. Submit directly to the funder${input.officialSite ? ` at <a href="${input.officialSite}" style="color:#1d4ed8">${input.officialSite}</a>` : ""}.
     </div>
 
     <div class="funding-target">

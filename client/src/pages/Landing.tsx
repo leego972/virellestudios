@@ -17,7 +17,7 @@ import { useState, useEffect, useRef } from "react";
 const FULL_FILM_FEATURES = [
   { icon: Zap, title: "Full Film Generation", desc: "Describe your concept and AI generates a complete 90-minute film — screenplay, scenes, dialogue, soundtrack, and final cut." },
   { icon: Layers, title: "Clip Chaining", desc: "Each scene is built from 4-8 AI video clips stitched seamlessly. 30-60 seconds per scene, 60-90 scenes per film." },
-  { icon: Mic, title: "AI Voice Acting", desc: "Every line of dialogue is spoken by AI voices with emotion, pacing, and character. ElevenLabs, OpenAI TTS, and more." },
+  { icon: Mic, title: "AI Voice Acting", desc: "35 emotion states with per-emotion ElevenLabs tuning — surprised, aggressive, cheerful, grumpy, exhausted, and more. AI auto-detects the right emotion from screenplay context." },
   { icon: Music, title: "AI Film Score", desc: "Original soundtracks generated for every scene. Suno AI, MusicGen, and more — matched to mood and genre." },
   { icon: Eye, title: "Hyper-Realistic Characters", desc: "Characters are indistinguishable from real people. Subsurface skin scattering, iris fiber detail, authentic facial asymmetry, and micro-expressions — not CGI, not illustration: a real photograph." },
   { icon: Camera, title: "Scene Continuity", desc: "Last frame of each scene feeds into the next. Smooth visual flow across your entire film — no jarring cuts." },
@@ -39,6 +39,9 @@ const ALL_TOOLS = [
   { icon: MapPin, title: "Location Scout", desc: "AI-generated location suggestions with reference images for every scene." },
   { icon: Palette, title: "Color Grading", desc: "Cinematic LUT presets inspired by iconic films. One-click looks from Blade Runner to Moonlight." },
   { icon: Clapperboard, title: "Movie Export", desc: "Export full films, individual scenes, or trailers. MP4, ProRes, or direct to your editing timeline." },
+  { icon: Music, title: "Film Post-Production", desc: "ADR, Foley, Score Cues, and a three-bus audio mix (Dialogue / Music / Effects) — professional film post workflow." },
+  { icon: Globe, title: "Subtitles in 130+ Languages", desc: "Context-aware AI translation using screenplay context — character names, genre, tone — for professional, natural-sounding output." },
+  { icon: Mic, title: "Global Funding Directory", desc: "94 funders across 73 countries. Search by country, apply with a Hollywood-standard 13-section application package." },
 ];
 
 const TESTIMONIALS = [
