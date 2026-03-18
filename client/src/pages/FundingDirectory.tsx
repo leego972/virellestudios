@@ -259,16 +259,26 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
 <body>
 <div class="page">
   <div class="header">
-    <h1>Global Film Funding Application</h1>
-    <div class="sub">Professional submission package compiled via Virelle Studios</div>
+    <h1>${source.packTitle || "Global Film Funding Application"}</h1>
+    <div class="sub">Professional submission package compiled via Virelle Studios${source.packType ? " · " + source.packType : ""}</div>
     <div class="badge">Virelle Studios — Film Funding Portal</div>
   </div>
 
   <div class="target-box">
     <div class="org">Applying to: ${source.organization}</div>
-    <div class="country">${source.country}${source.type ? " · " + source.type : ""}</div>
+    <div class="country">${source.country}${source.type ? " · " + source.type : ""}${source.primaryLanguage ? " · Application language: " + source.primaryLanguage : ""}</div>
     ${source.officialSite ? `<div class="site">Official site: <a href="${source.officialSite}" style="color:#d97706">${source.officialSite}</a></div>` : ""}
   </div>
+
+  ${source.tailoringNotes ? `<div style="margin:16px 48px 0;background:#faf5ff;border:1px solid #c4b5fd;border-radius:8px;padding:14px 18px;font-size:12px;color:#5b21b6">
+    <strong style="display:block;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:0.07em;">Fund-Specific Tailoring Notes</strong>
+    ${source.tailoringNotes}
+  </div>` : ""}
+
+  ${source.recommendedAttachments ? `<div style="margin:12px 48px 0;background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:14px 18px;font-size:12px;color:#92400e">
+    <strong style="display:block;margin-bottom:4px;font-size:11px;text-transform:uppercase;letter-spacing:0.07em;">Recommended Attachments for ${source.organization}</strong>
+    ${source.recommendedAttachments}
+  </div>` : ""}
 
   <div class="notice">
     ℹ️ <strong>Manual submission required.</strong> This document is your compiled application package. Each funding body has its own portal, page limits, and upload rules. Review all sections, tailor to the fund's requirements, then submit directly to the funder. Virelle Studios does not submit on your behalf.
@@ -674,11 +684,12 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
               <FileText className="h-5 w-5 text-amber-500" />
-              Global Film Funding Application
+              {source.packTitle || "Global Film Funding Application"}
             </DialogTitle>
             <DialogDescription className="text-xs">
               Applying to <strong>{source.organization}</strong> · {source.country}
-              {source.supports && <> · {source.supports}</>}
+              {source.packType && <> · <span className="text-amber-400">{source.packType}</span></>}
+              {source.primaryLanguage && <> · Application language: {source.primaryLanguage}</>}
             </DialogDescription>
           </DialogHeader>
 
@@ -1206,6 +1217,18 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                 <Textarea value={form.additionalNotes} onChange={(e) => set("additionalNotes", e.target.value)} placeholder="Any other information relevant to your application..." rows={2} className="text-sm resize-none" />
               </div>
 
+{source.recommendedAttachments && (
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-3 text-xs">
+                  <p className="font-semibold text-amber-400 mb-1.5">Recommended Attachments for {source.organization}</p>
+                  <p className="text-amber-300/80 leading-relaxed">{source.recommendedAttachments}</p>
+                </div>
+              )}
+              {source.tailoringNotes && (
+                <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg px-4 py-3 text-xs">
+                  <p className="font-semibold text-purple-400 mb-1.5">Tailoring Notes</p>
+                  <p className="text-purple-300/80 leading-relaxed">{source.tailoringNotes}</p>
+                </div>
+              )}
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg px-4 py-3 text-xs text-blue-300 flex items-start gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                 <div className="space-y-1">
@@ -1334,6 +1357,18 @@ function FundingCard({ source, onApply }: { source: FundingSource; onApply: () =
           <div className="flex items-center gap-1.5">
             <Globe className="h-3 w-3 text-muted-foreground shrink-0" />
             <p className="text-xs text-muted-foreground">Eligible: {source.eligibility}</p>
+          </div>
+        )}
+        {source.packType && (
+          <div className="flex items-center gap-1.5">
+            <FileText className="h-3 w-3 text-amber-500/70 shrink-0" />
+            <p className="text-xs text-amber-400/70">{source.packType}</p>
+          </div>
+        )}
+        {source.primaryLanguage && (
+          <div className="flex items-center gap-1.5">
+            <Globe className="h-3 w-3 text-blue-400/70 shrink-0" />
+            <p className="text-xs text-blue-400/70">Application language: {source.primaryLanguage}</p>
           </div>
         )}
       </div>

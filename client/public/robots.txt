@@ -5,6 +5,8 @@ Allow: /register
 Allow: /sign-in
 Allow: /blog
 Allow: /blog/
+Allow: /features/
+Allow: /use-cases/
 Disallow: /api/
 Disallow: /api/trpc/
 Disallow: /dashboard
