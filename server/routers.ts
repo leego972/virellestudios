@@ -49,6 +49,7 @@ import { contentCreatorRouter } from "./content-creator-router";
 import { advertisingRouter } from "./advertising-router";
 import { mailingListRouter } from "./mailing-list-router";
 import { fundingRouter } from "./funding-router";
+import { filmPostRouter } from "./film-post-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
 import { generateSceneDialogue, TTS_PROVIDERS, type VoiceActingKeys } from "./_core/voiceActingEngine";
@@ -6653,6 +6654,7 @@ Rules:
   contentCreator: contentCreatorRouter,
   mailingList: mailingListRouter,
   funding: fundingRouter,
+  filmPost: filmPostRouter,
   blog: router({
     // Public: list published articles
     list: publicProcedure

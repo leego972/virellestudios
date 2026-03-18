@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import {
   ArrowLeft,
   Plus,
@@ -46,12 +48,55 @@ import {
   DoorOpen,
   Clock,
   Sparkles,
+  Mic,
+  Headphones,
+  Sliders,
+  Film,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  RotateCcw,
+  Save,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocation, useParams } from "wouter";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
+
+const ADR_STATUS_ICONS: Record<string, React.ReactNode> = {
+  pending: <AlertCircle className="h-3.5 w-3.5 text-yellow-500" />,
+  recorded: <CheckCircle className="h-3.5 w-3.5 text-blue-500" />,
+  approved: <CheckCircle className="h-3.5 w-3.5 text-green-500" />,
+  rejected: <XCircle className="h-3.5 w-3.5 text-red-500" />,
+};
+
+const FOLEY_TYPE_LABELS: Record<string, string> = {
+  footsteps: "Footsteps",
+  cloth: "Cloth / Costume",
+  props: "Props",
+  impacts: "Impacts",
+  environmental: "Environmental",
+  custom: "Custom",
+};
+
+const CUE_TYPE_LABELS: Record<string, string> = {
+  underscore: "Underscore",
+  source_music: "Source Music",
+  sting: "Sting",
+  theme: "Theme",
+  transition: "Transition",
+  silence: "Silence / Pause",
+};
+
+const REVERB_LABELS: Record<string, string> = {
+  none: "No Reverb (Dry)",
+  small: "Small Room",
+  medium: "Medium Room",
+  large: "Large Room / Stage",
+  hall: "Concert Hall",
+  cathedral: "Cathedral",
+};
 
 // Standard preset sound effects library
 const PRESET_SOUNDS = [
@@ -222,6 +267,37 @@ export default function SoundEffects() {
   const [generateSceneId, setGenerateSceneId] = useState<number | undefined>(undefined);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Post-production state
+  const [showAdrDialog, setShowAdrDialog] = useState(false);
+  const [showFoleyDialog, setShowFoleyDialog] = useState(false);
+  const [showScoreCueDialog, setShowScoreCueDialog] = useState(false);
+  const [adrCharacter, setAdrCharacter] = useState("");
+  const [adrLine, setAdrLine] = useState("");
+  const [adrType, setAdrType] = useState<"adr" | "wild_track" | "loop_group" | "walla">("adr");
+  const [adrSceneId, setAdrSceneId] = useState<number | undefined>(undefined);
+  const [adrNotes, setAdrNotes] = useState("");
+  const [foleyName, setFoleyName] = useState("");
+  const [foleyType, setFoleyType] = useState<"footsteps" | "cloth" | "props" | "impacts" | "environmental" | "custom">("custom");
+  const [foleyDesc, setFoleyDesc] = useState("");
+  const [foleySceneId, setFoleySceneId] = useState<number | undefined>(undefined);
+  const [cueNumber, setCueNumber] = useState("");
+  const [cueTitle, setCueTitle] = useState("");
+  const [cueType, setCueType] = useState<"underscore" | "source_music" | "sting" | "theme" | "transition" | "silence">("underscore");
+  const [cueDesc, setCueDesc] = useState("");
+  const [cueSceneId, setCueSceneId] = useState<number | undefined>(undefined);
+  const [cueFadeIn, setCueFadeIn] = useState(0);
+  const [cueFadeOut, setCueFadeOut] = useState(0);
+  const [mixSaving, setMixSaving] = useState(false);
+  const [mix, setMix] = useState({
+    dialogueBus: 0.85, musicBus: 0.70, effectsBus: 0.75, masterVolume: 1.0,
+    dialogueEqLow: 0, dialogueEqMid: 0, dialogueEqHigh: 0,
+    musicEqLow: 0, musicEqMid: 0, musicEqHigh: 0,
+    sfxEqLow: 0, sfxEqMid: 0, sfxEqHigh: 0,
+    reverbRoom: "none" as const, reverbAmount: 0,
+    compressionRatio: 1.0, noiseReduction: false, notes: "",
+  });
+  const mixInitialized = useRef(false);
+
   const project = trpc.project.get.useQuery({ id: projectId }, { enabled: !!user });
   const soundEffects = trpc.soundEffect.list.useQuery({ projectId }, { enabled: !!user });
   const scenes = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!user });
@@ -261,6 +337,77 @@ export default function SoundEffects() {
       toast.success("Custom sound uploaded");
     },
   });
+
+  // Post-production queries
+  const adrTracks = trpc.filmPost.listAdrTracks.useQuery({ projectId }, { enabled: !!user });
+  const foleyTracks = trpc.filmPost.listFoleyTracks.useQuery({ projectId }, { enabled: !!user });
+  const scoreCues = trpc.filmPost.listScoreCues.useQuery({ projectId }, { enabled: !!user });
+  const mixSettings = trpc.filmPost.getMixSettings.useQuery({ projectId }, { enabled: !!user });
+
+  // Sync mix from DB
+  const mixLoaded = mixSettings.data;
+  if (mixLoaded && !mixInitialized.current) {
+    mixInitialized.current = true;
+    setMix({
+      dialogueBus: mixLoaded.dialogueBus ?? 0.85,
+      musicBus: mixLoaded.musicBus ?? 0.70,
+      effectsBus: mixLoaded.effectsBus ?? 0.75,
+      masterVolume: mixLoaded.masterVolume ?? 1.0,
+      dialogueEqLow: mixLoaded.dialogueEqLow ?? 0,
+      dialogueEqMid: mixLoaded.dialogueEqMid ?? 0,
+      dialogueEqHigh: mixLoaded.dialogueEqHigh ?? 0,
+      musicEqLow: mixLoaded.musicEqLow ?? 0,
+      musicEqMid: mixLoaded.musicEqMid ?? 0,
+      musicEqHigh: mixLoaded.musicEqHigh ?? 0,
+      sfxEqLow: mixLoaded.sfxEqLow ?? 0,
+      sfxEqMid: mixLoaded.sfxEqMid ?? 0,
+      sfxEqHigh: mixLoaded.sfxEqHigh ?? 0,
+      reverbRoom: (mixLoaded.reverbRoom as any) ?? "none",
+      reverbAmount: mixLoaded.reverbAmount ?? 0,
+      compressionRatio: mixLoaded.compressionRatio ?? 1.0,
+      noiseReduction: mixLoaded.noiseReduction ?? false,
+      notes: mixLoaded.notes ?? "",
+    });
+  }
+
+  // Post-production mutations
+  const createAdr = trpc.filmPost.createAdrTrack.useMutation({
+    onSuccess: () => { adrTracks.refetch(); setShowAdrDialog(false); setAdrCharacter(""); setAdrLine(""); setAdrNotes(""); toast.success("ADR track added"); },
+    onError: (e) => toast.error(e.message),
+  });
+  const deleteAdr = trpc.filmPost.deleteAdrTrack.useMutation({ onSuccess: () => { adrTracks.refetch(); toast.success("ADR track removed"); } });
+  const updateAdr = trpc.filmPost.updateAdrTrack.useMutation({ onSuccess: () => adrTracks.refetch() });
+  const createFoley = trpc.filmPost.createFoleyTrack.useMutation({
+    onSuccess: () => { foleyTracks.refetch(); setShowFoleyDialog(false); setFoleyName(""); setFoleyDesc(""); toast.success("Foley track added"); },
+    onError: (e) => toast.error(e.message),
+  });
+  const deleteFoley = trpc.filmPost.deleteFoleyTrack.useMutation({ onSuccess: () => { foleyTracks.refetch(); toast.success("Foley track removed"); } });
+  const updateFoley = trpc.filmPost.updateFoleyTrack.useMutation({ onSuccess: () => foleyTracks.refetch() });
+  const createCue = trpc.filmPost.createScoreCue.useMutation({
+    onSuccess: () => { scoreCues.refetch(); setShowScoreCueDialog(false); setCueNumber(""); setCueTitle(""); setCueDesc(""); toast.success("Score cue added"); },
+    onError: (e) => toast.error(e.message),
+  });
+  const deleteCue = trpc.filmPost.deleteScoreCue.useMutation({ onSuccess: () => { scoreCues.refetch(); toast.success("Score cue removed"); } });
+  const saveMixMutation = trpc.filmPost.saveMixSettings.useMutation({
+    onSuccess: () => { mixSettings.refetch(); toast.success("Mix settings saved"); },
+    onError: (e) => toast.error(e.message),
+  });
+  const resetMixMutation = trpc.filmPost.resetMixSettings.useMutation({
+    onSuccess: () => {
+      mixInitialized.current = false;
+      mixSettings.refetch();
+      setMix({ dialogueBus: 0.85, musicBus: 0.70, effectsBus: 0.75, masterVolume: 1.0, dialogueEqLow: 0, dialogueEqMid: 0, dialogueEqHigh: 0, musicEqLow: 0, musicEqMid: 0, musicEqHigh: 0, sfxEqLow: 0, sfxEqMid: 0, sfxEqHigh: 0, reverbRoom: "none", reverbAmount: 0, compressionRatio: 1.0, noiseReduction: false, notes: "" });
+      toast.success("Mix reset to defaults");
+    },
+  });
+
+  const handleSaveMix = async () => {
+    setMixSaving(true);
+    try { await saveMixMutation.mutateAsync({ projectId, ...mix }); }
+    finally { setMixSaving(false); }
+  };
+
+  const sceneList = scenes.data || [];
 
   const filteredPresets = PRESET_SOUNDS.filter((s) => {
     const matchesCategory = selectedCategory === "All" || s.category === selectedCategory;
@@ -424,6 +571,20 @@ export default function SoundEffects() {
       </div>
 
       <div className="container py-6">
+        <Tabs defaultValue="library">
+          <TabsList className="mb-6">
+            <TabsTrigger value="library" className="flex items-center gap-2">
+              <Music className="h-4 w-4" />
+              Sound Library
+            </TabsTrigger>
+            <TabsTrigger value="postpro" className="flex items-center gap-2">
+              <Film className="h-4 w-4" />
+              Film Post-Production
+            </TabsTrigger>
+          </TabsList>
+
+          {/* ── SOUND LIBRARY TAB ── */}
+          <TabsContent value="library">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar - Categories */}
           <div className="lg:col-span-1">
@@ -631,6 +792,346 @@ export default function SoundEffects() {
             )}
           </div>
         </div>
+          </TabsContent>
+
+          {/* ── FILM POST-PRODUCTION TAB ── */}
+          <TabsContent value="postpro">
+            <div className="space-y-8">
+
+              {/* ── ADR / DIALOGUE ── */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Mic className="h-5 w-5 text-blue-500" />
+                      ADR &amp; Dialogue
+                    </CardTitle>
+                    <Button size="sm" onClick={() => setShowAdrDialog(true)}>
+                      <Plus className="h-4 w-4 mr-1" /> Add ADR Track
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Automated Dialogue Replacement, wild tracks, loop group, and walla sessions.</p>
+                </CardHeader>
+                <CardContent>
+                  {(adrTracks.data || []).length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground text-sm">
+                      <Mic className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                      No ADR tracks yet. Add tracks that need replacement or wild recording.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {(adrTracks.data || []).map((track: any) => (
+                        <div key={track.id} className="flex items-start gap-3 p-3 rounded-lg border bg-muted/30">
+                          <div className="mt-0.5">{ADR_STATUS_ICONS[track.status] ?? ADR_STATUS_ICONS.pending}</div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-medium text-sm">{track.characterName}</span>
+                              <Badge variant="outline" className="text-[10px]">{track.trackType?.replace("_", " ").toUpperCase()}</Badge>
+                              <Badge variant="secondary" className="text-[10px] capitalize">{track.status}</Badge>
+                              {track.sceneId && <span className="text-[10px] text-muted-foreground">Scene #{track.sceneId}</span>}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{track.dialogueLine}</p>
+                            {track.notes && <p className="text-[10px] text-muted-foreground mt-0.5 italic">{track.notes}</p>}
+                          </div>
+                          <div className="flex gap-1 shrink-0">
+                            <Select
+                              value={track.status}
+                              onValueChange={(v) => updateAdr.mutate({ id: track.id, status: v as any })}
+                            >
+                              <SelectTrigger className="h-7 text-xs w-28"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="recorded">Recorded</SelectItem>
+                                <SelectItem value="approved">Approved</SelectItem>
+                                <SelectItem value="rejected">Rejected</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteAdr.mutate({ id: track.id })}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* ── FOLEY ── */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Footprints className="h-5 w-5 text-amber-500" />
+                      Foley
+                    </CardTitle>
+                    <Button size="sm" onClick={() => setShowFoleyDialog(true)}>
+                      <Plus className="h-4 w-4 mr-1" /> Add Foley Track
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Footsteps, cloth, props, impacts, and environmental sounds recorded in sync with picture.</p>
+                </CardHeader>
+                <CardContent>
+                  {(foleyTracks.data || []).length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground text-sm">
+                      <Footprints className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                      No Foley tracks yet. Add sounds that need to be recorded in sync with picture.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {(foleyTracks.data || []).map((track: any) => (
+                        <div key={track.id} className="flex items-start gap-3 p-3 rounded-lg border bg-muted/30">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-medium text-sm">{track.name}</span>
+                              <Badge variant="outline" className="text-[10px]">{FOLEY_TYPE_LABELS[track.foleyType] ?? track.foleyType}</Badge>
+                              <Badge variant="secondary" className="text-[10px] capitalize">{track.status}</Badge>
+                              {track.sceneId && <span className="text-[10px] text-muted-foreground">Scene #{track.sceneId}</span>}
+                            </div>
+                            {track.description && <p className="text-xs text-muted-foreground mt-1">{track.description}</p>}
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className="text-[10px] text-muted-foreground">Volume:</span>
+                              <Slider
+                                value={[Math.round((track.volume ?? 0.8) * 100)]}
+                                min={0} max={100} step={1}
+                                onValueChange={([v]) => updateFoley.mutate({ id: track.id, volume: v / 100 })}
+                                className="w-32"
+                              />
+                              <span className="text-[10px] text-muted-foreground w-8">{Math.round((track.volume ?? 0.8) * 100)}%</span>
+                            </div>
+                          </div>
+                          <div className="flex gap-1 shrink-0">
+                            <Select
+                              value={track.status}
+                              onValueChange={(v) => updateFoley.mutate({ id: track.id, status: v as any })}
+                            >
+                              <SelectTrigger className="h-7 text-xs w-28"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="recorded">Recorded</SelectItem>
+                                <SelectItem value="approved">Approved</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteFoley.mutate({ id: track.id })}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* ── SCORE / MUSIC CUES ── */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Music className="h-5 w-5 text-purple-500" />
+                      Score &amp; Music Cues
+                    </CardTitle>
+                    <Button size="sm" onClick={() => setShowScoreCueDialog(true)}>
+                      <Plus className="h-4 w-4 mr-1" /> Add Cue
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Underscore, source music, stings, and thematic cues assigned to scenes.</p>
+                </CardHeader>
+                <CardContent>
+                  {(scoreCues.data || []).length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground text-sm">
+                      <Music className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                      No score cues yet. Map your music cues to scenes.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {(scoreCues.data || []).map((cue: any) => (
+                        <div key={cue.id} className="flex items-start gap-3 p-3 rounded-lg border bg-muted/30">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {cue.cueNumber && <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{cue.cueNumber}</span>}
+                              <span className="font-medium text-sm">{cue.title}</span>
+                              <Badge variant="outline" className="text-[10px]">{CUE_TYPE_LABELS[cue.cueType] ?? cue.cueType}</Badge>
+                              {cue.sceneId && <span className="text-[10px] text-muted-foreground">Scene #{cue.sceneId}</span>}
+                            </div>
+                            {cue.description && <p className="text-xs text-muted-foreground mt-1">{cue.description}</p>}
+                            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground">
+                              {cue.fadeInSeconds > 0 && <span>Fade in: {cue.fadeInSeconds}s</span>}
+                              {cue.fadeOutSeconds > 0 && <span>Fade out: {cue.fadeOutSeconds}s</span>}
+                              {cue.durationSeconds > 0 && <span>Duration: {cue.durationSeconds}s</span>}
+                            </div>
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className="text-[10px] text-muted-foreground">Level:</span>
+                              <Slider
+                                value={[Math.round((cue.volume ?? 0.7) * 100)]}
+                                min={0} max={100} step={1}
+                                className="w-32"
+                                onValueChange={() => {}}
+                              />
+                              <span className="text-[10px] text-muted-foreground w-8">{Math.round((cue.volume ?? 0.7) * 100)}%</span>
+                            </div>
+                          </div>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive shrink-0" onClick={() => deleteCue.mutate({ id: cue.id })}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* ── FILM MIX PANEL ── */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Sliders className="h-5 w-5 text-green-500" />
+                      Film Mix Panel
+                    </CardTitle>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => resetMixMutation.mutate({ projectId })} disabled={resetMixMutation.isPending}>
+                        <RotateCcw className="h-3.5 w-3.5 mr-1" /> Reset
+                      </Button>
+                      <Button size="sm" onClick={handleSaveMix} disabled={mixSaving}>
+                        {mixSaving ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}
+                        Save Mix
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Three-bus film mix: Dialogue, Music, and Effects levels with EQ, reverb, and compression settings.</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+
+                  {/* Master */}
+                  <div className="p-3 rounded-lg bg-muted/40 border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-semibold flex items-center gap-2"><Headphones className="h-4 w-4" /> Master Output</h4>
+                      <span className="text-sm font-mono">{Math.round(mix.masterVolume * 100)}%</span>
+                    </div>
+                    <Slider value={[Math.round(mix.masterVolume * 100)]} min={0} max={100} step={1}
+                      onValueChange={([v]) => setMix(m => ({ ...m, masterVolume: v / 100 }))} />
+                  </div>
+
+                  {/* Three buses */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Dialogue Bus */}
+                    <div className="p-3 rounded-lg border space-y-3">
+                      <h4 className="text-sm font-semibold text-blue-600 dark:text-blue-400">Dialogue Bus</h4>
+                      <div>
+                        <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Level</span><span>{Math.round(mix.dialogueBus * 100)}%</span></div>
+                        <Slider value={[Math.round(mix.dialogueBus * 100)]} min={0} max={100} step={1}
+                          onValueChange={([v]) => setMix(m => ({ ...m, dialogueBus: v / 100 }))} />
+                      </div>
+                      <Separator />
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">EQ</p>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>Low (80Hz)</span><span>{mix.dialogueEqLow > 0 ? "+" : ""}{mix.dialogueEqLow}dB</span></div>
+                          <Slider value={[mix.dialogueEqLow]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, dialogueEqLow: v }))} /></div>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>Mid (1kHz)</span><span>{mix.dialogueEqMid > 0 ? "+" : ""}{mix.dialogueEqMid}dB</span></div>
+                          <Slider value={[mix.dialogueEqMid]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, dialogueEqMid: v }))} /></div>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>High (8kHz)</span><span>{mix.dialogueEqHigh > 0 ? "+" : ""}{mix.dialogueEqHigh}dB</span></div>
+                          <Slider value={[mix.dialogueEqHigh]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, dialogueEqHigh: v }))} /></div>
+                      </div>
+                    </div>
+
+                    {/* Music Bus */}
+                    <div className="p-3 rounded-lg border space-y-3">
+                      <h4 className="text-sm font-semibold text-purple-600 dark:text-purple-400">Music Bus</h4>
+                      <div>
+                        <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Level</span><span>{Math.round(mix.musicBus * 100)}%</span></div>
+                        <Slider value={[Math.round(mix.musicBus * 100)]} min={0} max={100} step={1}
+                          onValueChange={([v]) => setMix(m => ({ ...m, musicBus: v / 100 }))} />
+                      </div>
+                      <Separator />
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">EQ</p>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>Low (80Hz)</span><span>{mix.musicEqLow > 0 ? "+" : ""}{mix.musicEqLow}dB</span></div>
+                          <Slider value={[mix.musicEqLow]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, musicEqLow: v }))} /></div>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>Mid (1kHz)</span><span>{mix.musicEqMid > 0 ? "+" : ""}{mix.musicEqMid}dB</span></div>
+                          <Slider value={[mix.musicEqMid]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, musicEqMid: v }))} /></div>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>High (8kHz)</span><span>{mix.musicEqHigh > 0 ? "+" : ""}{mix.musicEqHigh}dB</span></div>
+                          <Slider value={[mix.musicEqHigh]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, musicEqHigh: v }))} /></div>
+                      </div>
+                    </div>
+
+                    {/* Effects Bus */}
+                    <div className="p-3 rounded-lg border space-y-3">
+                      <h4 className="text-sm font-semibold text-amber-600 dark:text-amber-400">Effects Bus</h4>
+                      <div>
+                        <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Level</span><span>{Math.round(mix.effectsBus * 100)}%</span></div>
+                        <Slider value={[Math.round(mix.effectsBus * 100)]} min={0} max={100} step={1}
+                          onValueChange={([v]) => setMix(m => ({ ...m, effectsBus: v / 100 }))} />
+                      </div>
+                      <Separator />
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">EQ</p>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>Low (80Hz)</span><span>{mix.sfxEqLow > 0 ? "+" : ""}{mix.sfxEqLow}dB</span></div>
+                          <Slider value={[mix.sfxEqLow]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, sfxEqLow: v }))} /></div>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>Mid (1kHz)</span><span>{mix.sfxEqMid > 0 ? "+" : ""}{mix.sfxEqMid}dB</span></div>
+                          <Slider value={[mix.sfxEqMid]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, sfxEqMid: v }))} /></div>
+                        <div><div className="flex justify-between text-[10px] text-muted-foreground mb-1"><span>High (8kHz)</span><span>{mix.sfxEqHigh > 0 ? "+" : ""}{mix.sfxEqHigh}dB</span></div>
+                          <Slider value={[mix.sfxEqHigh]} min={-12} max={12} step={1} onValueChange={([v]) => setMix(m => ({ ...m, sfxEqHigh: v }))} /></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Reverb + Compression + Noise Reduction */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-3 rounded-lg border space-y-3">
+                      <h4 className="text-sm font-semibold">Room Reverb</h4>
+                      <Select value={mix.reverbRoom} onValueChange={(v) => setMix(m => ({ ...m, reverbRoom: v as any }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(REVERB_LABELS).map(([k, v]) => (
+                            <SelectItem key={k} value={k}>{v}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {mix.reverbRoom !== "none" && (
+                        <div>
+                          <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Reverb Amount</span><span>{Math.round(mix.reverbAmount * 100)}%</span></div>
+                          <Slider value={[Math.round(mix.reverbAmount * 100)]} min={0} max={100} step={1}
+                            onValueChange={([v]) => setMix(m => ({ ...m, reverbAmount: v / 100 }))} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3 rounded-lg border space-y-3">
+                      <h4 className="text-sm font-semibold">Dynamics</h4>
+                      <div>
+                        <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Compression Ratio</span><span>{mix.compressionRatio.toFixed(1)}:1</span></div>
+                        <Slider value={[Math.round(mix.compressionRatio * 10)]} min={10} max={80} step={5}
+                          onValueChange={([v]) => setMix(m => ({ ...m, compressionRatio: v / 10 }))} />
+                        <p className="text-[10px] text-muted-foreground mt-1">1:1 = no compression · 8:1 = heavy limiting</p>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium">Dialogue Noise Reduction</p>
+                          <p className="text-[10px] text-muted-foreground">Apply AI noise reduction to dialogue tracks</p>
+                        </div>
+                        <Switch checked={mix.noiseReduction} onCheckedChange={(v) => setMix(m => ({ ...m, noiseReduction: v }))} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mix Notes */}
+                  <div>
+                    <Label className="text-sm font-medium">Mix Notes / Instructions for Re-recording Mixer</Label>
+                    <Textarea
+                      className="mt-2 resize-none"
+                      rows={3}
+                      placeholder="e.g. Dialogue should be centred and clear. Music should sit under dialogue at -6dB. SFX at -3dB for action sequences..."
+                      value={mix.notes}
+                      onChange={(e) => setMix(m => ({ ...m, notes: e.target.value }))}
+                    />
+                  </div>
+
+                </CardContent>
+              </Card>
+
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Upload Custom Sound Dialog */}
@@ -780,6 +1281,158 @@ export default function SoundEffects() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* ADR Track Dialog */}
+      <Dialog open={showAdrDialog} onOpenChange={setShowAdrDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle className="flex items-center gap-2"><Mic className="h-5 w-5 text-blue-500" />Add ADR Track</DialogTitle></DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label>Character Name *</Label>
+              <Input placeholder="e.g. DETECTIVE HAYES" value={adrCharacter} onChange={(e) => setAdrCharacter(e.target.value)} autoCapitalize="words" enterKeyHint="next" />
+            </div>
+            <div className="space-y-2">
+              <Label>Original Dialogue Line *</Label>
+              <Textarea placeholder="The exact line of dialogue that needs to be replaced or recorded" value={adrLine} onChange={(e) => setAdrLine(e.target.value)} rows={3} className="resize-none" autoCapitalize="sentences" enterKeyHint="done" />
+            </div>
+            <div className="space-y-2">
+              <Label>Track Type</Label>
+              <Select value={adrType} onValueChange={(v) => setAdrType(v as any)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="adr">ADR (Automated Dialogue Replacement)</SelectItem>
+                  <SelectItem value="wild_track">Wild Track</SelectItem>
+                  <SelectItem value="loop_group">Loop Group</SelectItem>
+                  <SelectItem value="walla">Walla / Background Voices</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Assign to Scene (optional)</Label>
+              <Select value={adrSceneId?.toString() ?? ""} onValueChange={(v) => setAdrSceneId(v ? Number(v) : undefined)}>
+                <SelectTrigger><SelectValue placeholder="No scene" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No scene assignment</SelectItem>
+                  {sceneList.map((s: any) => <SelectItem key={s.id} value={s.id.toString()}>{s.title || `Scene ${s.orderIndex + 1}`}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Notes (optional)</Label>
+              <Textarea placeholder="e.g. Needs to match lip movement at 01:23:45. Tone: urgent." value={adrNotes} onChange={(e) => setAdrNotes(e.target.value)} rows={2} className="resize-none" autoCapitalize="sentences" enterKeyHint="done" />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button className="flex-1" onClick={() => createAdr.mutate({ projectId, characterName: adrCharacter, dialogueLine: adrLine, trackType: adrType, sceneId: adrSceneId, notes: adrNotes })} disabled={createAdr.isPending || !adrCharacter.trim() || !adrLine.trim()}>
+                {createAdr.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+                Add ADR Track
+              </Button>
+              <Button variant="outline" onClick={() => setShowAdrDialog(false)}>Cancel</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Foley Track Dialog */}
+      <Dialog open={showFoleyDialog} onOpenChange={setShowFoleyDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle className="flex items-center gap-2"><Footprints className="h-5 w-5 text-amber-500" />Add Foley Track</DialogTitle></DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label>Track Name *</Label>
+              <Input placeholder="e.g. Leather shoes on marble — INT. LOBBY" value={foleyName} onChange={(e) => setFoleyName(e.target.value)} autoCapitalize="sentences" enterKeyHint="next" />
+            </div>
+            <div className="space-y-2">
+              <Label>Foley Type</Label>
+              <Select value={foleyType} onValueChange={(v) => setFoleyType(v as any)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {Object.entries(FOLEY_TYPE_LABELS).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Description / Recording Notes</Label>
+              <Textarea placeholder="e.g. Character walks briskly across marble floor. Heels. Medium pace." value={foleyDesc} onChange={(e) => setFoleyDesc(e.target.value)} rows={2} className="resize-none" autoCapitalize="sentences" enterKeyHint="done" />
+            </div>
+            <div className="space-y-2">
+              <Label>Assign to Scene (optional)</Label>
+              <Select value={foleySceneId?.toString() ?? ""} onValueChange={(v) => setFoleySceneId(v ? Number(v) : undefined)}>
+                <SelectTrigger><SelectValue placeholder="No scene" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No scene assignment</SelectItem>
+                  {sceneList.map((s: any) => <SelectItem key={s.id} value={s.id.toString()}>{s.title || `Scene ${s.orderIndex + 1}`}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button className="flex-1" onClick={() => createFoley.mutate({ projectId, name: foleyName, foleyType, description: foleyDesc, sceneId: foleySceneId })} disabled={createFoley.isPending || !foleyName.trim()}>
+                {createFoley.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+                Add Foley Track
+              </Button>
+              <Button variant="outline" onClick={() => setShowFoleyDialog(false)}>Cancel</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Score Cue Dialog */}
+      <Dialog open={showScoreCueDialog} onOpenChange={setShowScoreCueDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle className="flex items-center gap-2"><Music className="h-5 w-5 text-purple-500" />Add Score Cue</DialogTitle></DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Cue Number</Label>
+                <Input placeholder="e.g. 1M1" value={cueNumber} onChange={(e) => setCueNumber(e.target.value)} autoCapitalize="characters" enterKeyHint="next" />
+              </div>
+              <div className="space-y-2">
+                <Label>Cue Title *</Label>
+                <Input placeholder="e.g. Opening Theme" value={cueTitle} onChange={(e) => setCueTitle(e.target.value)} autoCapitalize="words" enterKeyHint="next" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Cue Type</Label>
+              <Select value={cueType} onValueChange={(v) => setCueType(v as any)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {Object.entries(CUE_TYPE_LABELS).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Description / Composer Notes</Label>
+              <Textarea placeholder="e.g. Slow build from strings, full orchestra at climax. Underscore dialogue." value={cueDesc} onChange={(e) => setCueDesc(e.target.value)} rows={2} className="resize-none" autoCapitalize="sentences" enterKeyHint="done" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Fade In: {cueFadeIn}s</Label>
+                <Slider value={[cueFadeIn]} min={0} max={10} step={0.5} onValueChange={([v]) => setCueFadeIn(v)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Fade Out: {cueFadeOut}s</Label>
+                <Slider value={[cueFadeOut]} min={0} max={10} step={0.5} onValueChange={([v]) => setCueFadeOut(v)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Assign to Scene (optional)</Label>
+              <Select value={cueSceneId?.toString() ?? ""} onValueChange={(v) => setCueSceneId(v ? Number(v) : undefined)}>
+                <SelectTrigger><SelectValue placeholder="No scene" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No scene assignment</SelectItem>
+                  {sceneList.map((s: any) => <SelectItem key={s.id} value={s.id.toString()}>{s.title || `Scene ${s.orderIndex + 1}`}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button className="flex-1" onClick={() => createCue.mutate({ projectId, cueNumber: cueNumber || "TBD", title: cueTitle, cueType, description: cueDesc, sceneId: cueSceneId, fadeIn: cueFadeIn, fadeOut: cueFadeOut })} disabled={createCue.isPending || !cueTitle.trim()}>
+                {createCue.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
+                Add Score Cue
+              </Button>
+              <Button variant="outline" onClick={() => setShowScoreCueDialog(false)}>Cancel</Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 

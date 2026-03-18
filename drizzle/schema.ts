@@ -1009,3 +1009,94 @@ export const fundingSources = mysqlTable("funding_sources", {
 });
 export type FundingSource = typeof fundingSources.$inferSelect;
 export type InsertFundingSource = typeof fundingSources.$inferInsert;
+
+// ─── Film Post-Production Mix Settings ───────────────────────────────────────
+export const filmMixSettings = mysqlTable("film_mix_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  dialogueBus: float("dialogueBus").notNull().default(0.85),
+  musicBus: float("musicBus").notNull().default(0.70),
+  effectsBus: float("effectsBus").notNull().default(0.75),
+  masterVolume: float("masterVolume").notNull().default(1.0),
+  dialogueEqLow: float("dialogueEqLow").notNull().default(0.0),
+  dialogueEqMid: float("dialogueEqMid").notNull().default(0.0),
+  dialogueEqHigh: float("dialogueEqHigh").notNull().default(0.0),
+  musicEqLow: float("musicEqLow").notNull().default(0.0),
+  musicEqMid: float("musicEqMid").notNull().default(0.0),
+  musicEqHigh: float("musicEqHigh").notNull().default(0.0),
+  sfxEqLow: float("sfxEqLow").notNull().default(0.0),
+  sfxEqMid: float("sfxEqMid").notNull().default(0.0),
+  sfxEqHigh: float("sfxEqHigh").notNull().default(0.0),
+  reverbRoom: mysqlEnum("reverbRoom", ["none", "small", "medium", "large", "hall", "cathedral"]).notNull().default("none"),
+  reverbAmount: float("reverbAmount").notNull().default(0.0),
+  compressionRatio: float("compressionRatio").notNull().default(1.0),
+  noiseReduction: boolean("noiseReduction").notNull().default(false),
+  notes: text("notes"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FilmMixSettings = typeof filmMixSettings.$inferSelect;
+export type InsertFilmMixSettings = typeof filmMixSettings.$inferInsert;
+
+// ─── Film ADR Tracks ──────────────────────────────────────────────────────────
+export const filmAdrTracks = mysqlTable("film_adr_tracks", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  sceneId: int("sceneId"),
+  userId: int("userId").notNull(),
+  characterName: varchar("characterName", { length: 255 }).notNull(),
+  dialogueLine: text("dialogueLine").notNull(),
+  trackType: mysqlEnum("trackType", ["adr", "wild_track", "loop_group", "walla"]).notNull().default("adr"),
+  status: mysqlEnum("status", ["pending", "recorded", "approved", "rejected"]).notNull().default("pending"),
+  fileUrl: text("fileUrl"),
+  fileKey: varchar("fileKey", { length: 512 }),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FilmAdrTrack = typeof filmAdrTracks.$inferSelect;
+export type InsertFilmAdrTrack = typeof filmAdrTracks.$inferInsert;
+
+// ─── Film Foley Tracks ────────────────────────────────────────────────────────
+export const filmFoleyTracks = mysqlTable("film_foley_tracks", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  sceneId: int("sceneId"),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  foleyType: mysqlEnum("foleyType", ["footsteps", "cloth", "props", "impacts", "environmental", "custom"]).notNull().default("custom"),
+  description: text("description"),
+  fileUrl: text("fileUrl"),
+  fileKey: varchar("fileKey", { length: 512 }),
+  volume: float("volume").notNull().default(0.8),
+  startTime: float("startTime").notNull().default(0),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FilmFoleyTrack = typeof filmFoleyTracks.$inferSelect;
+export type InsertFilmFoleyTrack = typeof filmFoleyTracks.$inferInsert;
+
+// ─── Film Score Cues ──────────────────────────────────────────────────────────
+export const filmScoreCues = mysqlTable("film_score_cues", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  sceneId: int("sceneId"),
+  userId: int("userId").notNull(),
+  cueNumber: varchar("cueNumber", { length: 32 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  cueType: mysqlEnum("cueType", ["underscore", "source_music", "sting", "theme", "transition", "silence"]).notNull().default("underscore"),
+  description: text("description"),
+  fileUrl: text("fileUrl"),
+  fileKey: varchar("fileKey", { length: 512 }),
+  volume: float("volume").notNull().default(0.7),
+  fadeIn: float("fadeIn").notNull().default(0.0),
+  fadeOut: float("fadeOut").notNull().default(0.0),
+  startTime: float("startTime").notNull().default(0),
+  duration: float("duration"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FilmScoreCue = typeof filmScoreCues.$inferSelect;
+export type InsertFilmScoreCue = typeof filmScoreCues.$inferInsert;
