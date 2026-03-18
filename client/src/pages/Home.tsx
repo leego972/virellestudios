@@ -25,6 +25,7 @@ import {
   Layers,
   Download,
   Mic2,
+  DollarSign,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -182,14 +183,39 @@ export default function Home() {
             Your AI film production studio — let's make something great.
           </p>
         </div>
-        <Button
-          onClick={() => setLocation("/projects")}
-          className="shrink-0 gap-2"
-          size="sm"
-        >
-          <Plus className="h-4 w-4" />
-          New Film
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Funding button — paid users only */}
+          {user && ["independent", "creator", "studio", "pro", "industry", "beta"].includes((user as any).subscriptionTier || "") && (
+            <Button
+              variant="outline"
+              onClick={() => setLocation("/funding")}
+              className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400"
+              size="sm"
+            >
+              <DollarSign className="h-4 w-4" />
+              Funding
+            </Button>
+          )}
+          {user && (user as any).role === "admin" && (
+            <Button
+              variant="outline"
+              onClick={() => setLocation("/funding")}
+              className="gap-2 border-amber-500/40 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400"
+              size="sm"
+            >
+              <DollarSign className="h-4 w-4" />
+              Funding
+            </Button>
+          )}
+          <Button
+            onClick={() => setLocation("/projects")}
+            className="gap-2"
+            size="sm"
+          >
+            <Plus className="h-4 w-4" />
+            New Film
+          </Button>
+        </div>
       </div>
 
       {/* API Key Setup Banner */}

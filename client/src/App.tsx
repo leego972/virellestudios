@@ -90,6 +90,7 @@ const AssetMarketplace = lazy(() => import("./pages/AssetMarketplace"));
 const DirectorCut = lazy(() => import("./pages/DirectorCut"));
 const TrailerStudio = lazy(() => import("./pages/TrailerStudio"));
 const TVCommercial = lazy(() => import("./pages/TVCommercial"));
+const FundingDirectory = lazy(() => import("./pages/FundingDirectory"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -212,6 +213,7 @@ function Router() {
               <Route path="/credits">{() => <LazyPage><CreditsPage /></LazyPage>}</Route>
               <Route path="/marketplace">{() => <LazyPage><AssetMarketplace /></LazyPage>}</Route>
               <Route path="/settings">{() => <SettingsPage />}</Route>
+              <Route path="/funding">{() => <LazyPage><FundingDirectory /></LazyPage>}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/admin/security">{() => <SecurityDashboard />}</Route>
               <Route path="/admin/autonomous">{() => <LazyPage><AdminAutonomous /></LazyPage>}</Route>

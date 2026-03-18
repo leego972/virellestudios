@@ -992,3 +992,20 @@ export const campaignSendLog = mysqlTable("campaign_send_log", {
 });
 export type CampaignSendLog = typeof campaignSendLog.$inferSelect;
 export type InsertCampaignSendLog = typeof campaignSendLog.$inferInsert;
+// ─── Funding Sources ─────────────────────────────────────────────────────────
+export const fundingSources = mysqlTable("funding_sources", {
+  id: int("id").autoincrement().primaryKey(),
+  country: varchar("country", { length: 128 }).notNull(),
+  organization: varchar("organization", { length: 255 }).notNull(),
+  type: varchar("type", { length: 128 }),
+  supports: text("supports"),
+  stage: varchar("stage", { length: 255 }),
+  fundingForm: varchar("fundingForm", { length: 255 }),
+  eligibility: text("eligibility"),
+  officialSite: varchar("officialSite", { length: 512 }),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FundingSource = typeof fundingSources.$inferSelect;
+export type InsertFundingSource = typeof fundingSources.$inferInsert;
