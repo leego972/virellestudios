@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { X, ChevronRight, ChevronLeft, CheckCircle2 } from "lucide-react";
-import { useLocation } from "wouter";
 
-const ONBOARDING_KEY = "virelle-onboarding-v3-completed";
+const STORAGE_KEY = "virelle_onboarding_dismissed";
 
 const STEPS = [
   {
@@ -10,92 +9,83 @@ const STEPS = [
     title: "Create Your Project",
     description:
       "Start by creating a new project. Give it a title, genre, and logline. Your project is the container for your entire film — script, storyboard, characters, sound, and more.",
-    tip: "A strong logline (one sentence that captures your story) helps the AI generate better content throughout your project.",
+    tip: "Tip: A strong logline (one sentence that captures your story) helps the AI generate better content throughout your project.",
     color: "#b45309",
-    action: { label: "Create a Project →", path: "/projects/new" },
   },
   {
     icon: "📝",
     title: "Write Your Script",
     description:
       "Use the AI Script Writer to generate a full screenplay from your premise. Choose your genre and tone, then let the AI draft your script — or write it yourself. Edit freely in the built-in editor.",
-    tip: "Script generation costs 10 credits. You can regenerate as many times as you like to find the right voice.",
+    tip: "Tip: Script generation costs 10 credits. You can regenerate as many times as you like to find the right voice.",
     color: "#0a7ea4",
-    action: null,
   },
   {
     icon: "🎨",
     title: "Build Your Storyboard",
     description:
       "Visualise your film panel by panel. Describe each scene and camera angle, and the AI generates a storyboard description. Add as many panels as you need to map out your entire film.",
-    tip: "Each panel costs 5 credits. Use the Shot List tool to plan camera angles before storyboarding.",
+    tip: "Tip: Each panel costs 5 credits. Use the Shot List tool to plan camera angles before storyboarding.",
     color: "#7c3aed",
-    action: null,
   },
   {
     icon: "🎭",
     title: "Develop Your Characters",
     description:
       "Add your cast with names, roles, and descriptions. The Dialogue Editor lets you write and refine character dialogue scene by scene, with AI assistance to match each character's voice.",
-    tip: "The more detail you give each character, the more consistent the AI-generated dialogue will be.",
+    tip: "Tip: The more detail you give each character, the more consistent the AI-generated dialogue will be.",
     color: "#059669",
-    action: { label: "Manage Characters →", path: "/characters" },
   },
   {
     icon: "🎵",
     title: "Post-Production Sound",
     description:
       "Add professional sound to your film. Use the Film Post-Production tool to layer ADR (re-recorded dialogue), Foley (ambient sounds), and a Score (AI-generated music cues). Mix all tracks in the Mix Panel.",
-    tip: "AI suggestions for ADR, Foley, and Score are available inside each project — each costs a small number of credits.",
+    tip: "Tip: AI suggestions for ADR, Foley, and Score are available — each costs a small number of credits.",
     color: "#dc2626",
-    action: null,
   },
   {
     icon: "🌍",
     title: "Subtitles & Funding",
     description:
       "Export your film with subtitles in 130+ languages using the Subtitles tool. When you're ready to fund your project, browse 94 international film funds in the Funding Directory and generate a professional application package.",
-    tip: "The Funding Directory application is a working pack — always verify exact requirements on each fund's live portal before submitting.",
+    tip: "Tip: The Funding Directory application is a working pack — always verify exact requirements on each fund's live portal before submitting.",
     color: "#d97706",
-    action: { label: "Browse Funding Directory →", path: "/funding" },
   },
 ];
 
-interface OnboardingOverlayProps {
+interface OnboardingModalProps {
+  /** Force show (e.g. from a Help menu) regardless of localStorage */
   forceShow?: boolean;
   onClose?: () => void;
 }
 
-export default function OnboardingOverlay({ forceShow = false, onClose }: OnboardingOverlayProps = {}) {
-  const [step, setStep] = useState(0);
+export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalProps) {
   const [visible, setVisible] = useState(false);
+  const [step, setStep] = useState(0);
   const [doNotShow, setDoNotShow] = useState(false);
-  const [, setLocation] = useLocation();
 
   useEffect(() => {
-    if (forceShow) { setVisible(true); return; }
-    const completed = localStorage.getItem(ONBOARDING_KEY);
-    if (!completed) {
-      const timer = setTimeout(() => setVisible(true), 800);
-      return () => clearTimeout(timer);
+    if (forceShow) {
+      setVisible(true);
+      return;
     }
+    const dismissed = localStorage.getItem(STORAGE_KEY);
+    if (!dismissed) setVisible(true);
   }, [forceShow]);
 
   const handleClose = () => {
-    if (doNotShow) localStorage.setItem(ONBOARDING_KEY, "true");
+    if (doNotShow) {
+      localStorage.setItem(STORAGE_KEY, "true");
+    }
     setVisible(false);
     onClose?.();
   };
 
   const handleFinish = () => {
-    localStorage.setItem(ONBOARDING_KEY, "true");
+    localStorage.setItem(STORAGE_KEY, "true");
     setVisible(false);
     onClose?.();
-  };
-
-  const goToAction = (path: string) => {
-    handleFinish();
-    setLocation(path);
   };
 
   if (!visible) return null;
@@ -105,10 +95,13 @@ export default function OnboardingOverlay({ forceShow = false, onClose }: Onboar
   const isFirst = step === 0;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-      <div className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
-        {/* Top accent bar */}
-        <div className="h-1 w-full transition-colors duration-300" style={{ backgroundColor: current.color }} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+      <div
+        className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+        style={{ maxHeight: "90vh" }}
+      >
+        {/* Coloured top accent bar */}
+        <div className="h-1 w-full" style={{ backgroundColor: current.color }} />
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-3">
@@ -122,68 +115,56 @@ export default function OnboardingOverlay({ forceShow = false, onClose }: Onboar
           </div>
           <button
             onClick={handleClose}
-            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-surface"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Close"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Step progress dots */}
+        {/* Step indicators */}
         <div className="flex items-center gap-1.5 px-6 pb-4">
           {STEPS.map((_, i) => (
             <button
               key={i}
               onClick={() => setStep(i)}
-              className="h-1.5 rounded-full transition-all duration-300"
+              className="h-1.5 rounded-full transition-all"
               style={{
                 width: i === step ? 24 : 8,
-                backgroundColor: i === step ? current.color : i < step ? current.color + "70" : "#334155",
+                backgroundColor: i === step ? current.color : i < step ? current.color + "80" : "#334155",
               }}
             />
           ))}
         </div>
 
         {/* Content */}
-        <div className="px-6 pb-2">
+        <div className="px-6 pb-2 overflow-y-auto" style={{ maxHeight: "50vh" }}>
           <div className="flex flex-col items-center text-center gap-4">
             <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shadow-lg"
-              style={{ backgroundColor: current.color + "18", border: `1px solid ${current.color}35` }}
+              style={{ backgroundColor: current.color + "20", border: `1px solid ${current.color}40` }}
             >
               {current.icon}
             </div>
-            <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: current.color }}>
+            <div>
+              <p className="text-xs font-medium uppercase tracking-widest mb-1" style={{ color: current.color }}>
                 Step {step + 1} of {STEPS.length}
               </p>
-              <h2 className="text-xl font-bold text-foreground">{current.title}</h2>
+              <h2 className="text-xl font-bold text-foreground mb-3">{current.title}</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">{current.description}</p>
             </div>
             <div
-              className="w-full rounded-xl p-3.5 text-left"
-              style={{ backgroundColor: current.color + "0d", border: `1px solid ${current.color}22` }}
+              className="w-full rounded-xl p-4 text-left"
+              style={{ backgroundColor: current.color + "10", border: `1px solid ${current.color}25` }}
             >
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                <span className="font-semibold" style={{ color: current.color }}>Tip: </span>
-                {current.tip}
-              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">{current.tip}</p>
             </div>
-            {current.action && (
-              <button
-                onClick={() => goToAction(current.action!.path)}
-                className="text-xs font-medium underline underline-offset-2 transition-colors"
-                style={{ color: current.color }}
-              >
-                {current.action.label}
-              </button>
-            )}
           </div>
         </div>
 
         {/* Footer */}
         <div className="px-6 pt-4 pb-6 space-y-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {!isFirst && (
               <button
                 onClick={() => setStep((s) => s - 1)}
@@ -195,28 +176,35 @@ export default function OnboardingOverlay({ forceShow = false, onClose }: Onboar
             )}
             <button
               onClick={isLast ? handleFinish : () => setStep((s) => s + 1)}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors"
               style={{ backgroundColor: current.color }}
             >
               {isLast ? (
-                <><CheckCircle2 className="h-4 w-4" />Start Creating</>
+                <>
+                  <CheckCircle2 className="h-4 w-4" />
+                  Start Creating
+                </>
               ) : (
-                <>Next<ChevronRight className="h-4 w-4" /></>
+                <>
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </>
               )}
             </button>
           </div>
-          <label className="flex items-center justify-center gap-2 cursor-pointer select-none">
+
+          {/* Do not show again */}
+          <label className="flex items-center gap-2 cursor-pointer justify-center">
             <input
               type="checkbox"
               checked={doNotShow}
               onChange={(e) => setDoNotShow(e.target.checked)}
-              className="w-3.5 h-3.5 rounded accent-amber-500 cursor-pointer"
+              className="w-3.5 h-3.5 rounded accent-amber-500"
             />
-            <span className="text-xs text-muted-foreground">Do not show this again</span>
+            <span className="text-xs text-muted-foreground">Do not show again</span>
           </label>
         </div>
       </div>
     </div>
   );
 }
-
