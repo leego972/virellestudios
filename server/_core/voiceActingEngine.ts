@@ -38,8 +38,9 @@ export interface VoiceActingKeys {
 export interface DialogueLine {
   characterName: string;
   line: string;
-  emotion?: string;       // "angry", "whispered", "sarcastic", "sad", "excited", etc.
-  direction?: string;     // Stage direction for delivery
+  emotion?: string;       // One of EMOTION_PROFILES keys
+  direction?: string;     // Free-text acting direction, e.g. "jaw tight, eyes not leaving the door"
+  pacing?: string;        // "slow" | "normal" | "fast" | "staccato" | "trailing"
   pauseAfterMs?: number;  // Pause after this line in ms (default 800ms)
 }
 
@@ -47,8 +48,9 @@ export interface SceneDialogueRequest {
   sceneId: number;
   projectId: number;
   dialogueLines: DialogueLine[];
-  /** Map character names to voice configurations */
   characterVoices?: Record<string, CharacterVoice>;
+  sceneDescription?: string;
+  genre?: string;
 }
 
 export interface CharacterVoice {
@@ -58,10 +60,9 @@ export interface CharacterVoice {
   gender?: "male" | "female" | "neutral";
   age?: "young" | "adult" | "elderly";
   accent?: string;
-  /** ElevenLabs voice settings */
-  stability?: number;      // 0-1 (default 0.5)
-  similarityBoost?: number; // 0-1 (default 0.75)
-  style?: number;          // 0-1 (default 0.5, ElevenLabs v2 only)
+  stability?: number;
+  similarityBoost?: number;
+  style?: number;
 }
 
 export interface VoiceActingResult {
@@ -71,7 +72,68 @@ export interface VoiceActingResult {
   lineCount: number;
 }
 
-// ─── Voice Presets ───
+// ─── Emotion Profile Registry ─────────────────────────────────────────────────
+
+export interface EmotionProfile {
+  prefix: string;
+  stability: number;
+  similarity: number;
+  style: number;
+  speedHint: string;
+  deliveryNote: string;
+}
+
+export const EMOTION_PROFILES: Record<string, EmotionProfile> = {
+  neutral:      { prefix: "", stability: 0.55, similarity: 0.75, style: 0.35, speedHint: "natural conversational pace", deliveryNote: "Neutral, natural delivery" },
+  happy:        { prefix: "*with genuine warmth and happiness*", stability: 0.45, similarity: 0.75, style: 0.65, speedHint: "slightly upbeat, warm", deliveryNote: "Warm and upbeat — smile in the voice" },
+  cheerful:     { prefix: "*brightly, with infectious cheerfulness*", stability: 0.40, similarity: 0.70, style: 0.75, speedHint: "bright, energetic, slightly faster", deliveryNote: "Bright and energetic — light, bouncy delivery" },
+  excited:      { prefix: "*with breathless excitement, barely containing it*", stability: 0.30, similarity: 0.70, style: 0.85, speedHint: "fast, breathless, forward-leaning", deliveryNote: "Fast and breathless — energy spilling over" },
+  loving:       { prefix: "*softly, with deep tenderness and love*", stability: 0.65, similarity: 0.80, style: 0.55, speedHint: "slow, gentle, intimate", deliveryNote: "Slow and tender — intimate, close delivery" },
+  hopeful:      { prefix: "*with quiet, fragile hope*", stability: 0.55, similarity: 0.75, style: 0.50, speedHint: "measured, slightly tentative", deliveryNote: "Measured and earnest — vulnerability beneath the hope" },
+  confident:    { prefix: "*speaking with calm, unshakeable authority*", stability: 0.70, similarity: 0.80, style: 0.45, speedHint: "deliberate, unhurried, commanding", deliveryNote: "Deliberate and commanding — no hesitation" },
+  proud:        { prefix: "*with unmistakable pride, chin up*", stability: 0.65, similarity: 0.78, style: 0.55, speedHint: "measured, slightly elevated", deliveryNote: "Elevated and self-assured" },
+  sad:          { prefix: "*voice heavy with sadness, barely holding together*", stability: 0.60, similarity: 0.80, style: 0.60, speedHint: "slow, heavy, trailing off at ends", deliveryNote: "Heavy and slow — words cost something to say" },
+  crying:       { prefix: "*through tears, voice breaking*", stability: 0.35, similarity: 0.75, style: 0.70, speedHint: "halting, broken, uneven rhythm", deliveryNote: "Broken and halting — voice cracks on key words" },
+  grief:        { prefix: "*devastated, hollow with grief*", stability: 0.40, similarity: 0.75, style: 0.65, speedHint: "very slow, hollow, almost inward", deliveryNote: "Hollow and devastated — barely audible at times" },
+  angry:        { prefix: "*with barely controlled fury, jaw tight*", stability: 0.25, similarity: 0.70, style: 0.90, speedHint: "clipped, tense, each word deliberate and hard", deliveryNote: "Clipped and tense — controlled rage is more frightening than shouting" },
+  aggressive:   { prefix: "*aggressively, leaning in, voice raised*", stability: 0.20, similarity: 0.68, style: 0.95, speedHint: "loud, fast, forward-driving, no pauses", deliveryNote: "Loud and driving — physical aggression in the voice" },
+  shouting:     { prefix: "*SHOUTING at full volume*", stability: 0.15, similarity: 0.65, style: 1.0, speedHint: "full volume, fast, no restraint", deliveryNote: "Full-volume shout — raw and uncontrolled" },
+  bitter:       { prefix: "*with cold, quiet bitterness*", stability: 0.50, similarity: 0.75, style: 0.70, speedHint: "slow and deliberate, each word chosen to wound", deliveryNote: "Cold and deliberate — every word chosen to sting" },
+  contemptuous: { prefix: "*dripping with contempt, barely deigning to speak*", stability: 0.55, similarity: 0.75, style: 0.75, speedHint: "slow, dismissive, slightly clipped", deliveryNote: "Dismissive and slow — the other person isn't worth full effort" },
+  disgusted:    { prefix: "*with visible disgust, recoiling slightly*", stability: 0.45, similarity: 0.72, style: 0.72, speedHint: "clipped, slightly rushed, pulling away", deliveryNote: "Clipped and recoiling — physical revulsion in the voice" },
+  threatening:  { prefix: "*in a low, dangerous tone — a promise, not a warning*", stability: 0.60, similarity: 0.78, style: 0.80, speedHint: "very slow, very quiet, each word landing like a stone", deliveryNote: "Quiet and slow — the quieter the voice, the more dangerous" },
+  fearful:      { prefix: "*trembling with fear, voice barely steady*", stability: 0.30, similarity: 0.72, style: 0.75, speedHint: "uneven, slightly fast, voice catching", deliveryNote: "Uneven and catching — fear makes the voice unreliable" },
+  panicked:     { prefix: "*in a panicked rush, words tumbling out*", stability: 0.20, similarity: 0.68, style: 0.88, speedHint: "very fast, breathless, no pauses, running together", deliveryNote: "Very fast and breathless — words trip over each other" },
+  nervous:      { prefix: "*nervously, with small hesitations*", stability: 0.40, similarity: 0.73, style: 0.55, speedHint: "slightly halting, small pauses mid-sentence", deliveryNote: "Halting with small pauses — the mind working faster than the mouth" },
+  surprised:    { prefix: "*genuinely caught off guard, voice jumping slightly*", stability: 0.30, similarity: 0.72, style: 0.78, speedHint: "starts fast then slows as it registers", deliveryNote: "Starts fast then slows — the brain catching up to the mouth" },
+  shocked:      { prefix: "*stunned into near-silence, barely able to form words*", stability: 0.35, similarity: 0.73, style: 0.72, speedHint: "very slow, halting, words don't quite form", deliveryNote: "Slow and halting — the mind has gone blank" },
+  cold:         { prefix: "*in a cold, detached, clinical tone*", stability: 0.75, similarity: 0.80, style: 0.25, speedHint: "flat, even, no emotional variation", deliveryNote: "Flat and even — emotion has been deliberately removed" },
+  resigned:     { prefix: "*with quiet resignation, the fight gone out of them*", stability: 0.65, similarity: 0.78, style: 0.45, speedHint: "slow, flat, trailing off", deliveryNote: "Slow and flat — they've stopped fighting" },
+  grumpy:       { prefix: "*grumpily, with low-level irritation*", stability: 0.45, similarity: 0.73, style: 0.60, speedHint: "slightly clipped, low energy, muttering quality", deliveryNote: "Clipped and muttered — low-level irritation throughout" },
+  tired:        { prefix: "*exhausted, running on empty*", stability: 0.60, similarity: 0.78, style: 0.40, speedHint: "slow, low energy, slightly slurred at ends of words", deliveryNote: "Slow and low — every word is an effort" },
+  bored:        { prefix: "*with flat, undisguised boredom*", stability: 0.70, similarity: 0.78, style: 0.20, speedHint: "monotone, slow, trailing off, barely engaged", deliveryNote: "Monotone and trailing — they'd rather be anywhere else" },
+  confused:     { prefix: "*genuinely confused, working it out as they speak*", stability: 0.40, similarity: 0.73, style: 0.50, speedHint: "halting, rising intonation mid-sentence, questioning", deliveryNote: "Halting with rising intonation — thinking out loud" },
+  sarcastic:    { prefix: "*with dripping sarcasm, every word a small performance*", stability: 0.45, similarity: 0.73, style: 0.80, speedHint: "slightly slow and deliberate, exaggerated emphasis", deliveryNote: "Deliberate and exaggerated — the performance is the point" },
+  mocking:      { prefix: "*mockingly, mimicking or belittling*", stability: 0.40, similarity: 0.70, style: 0.82, speedHint: "exaggerated, slightly sing-song, drawn out", deliveryNote: "Exaggerated and sing-song — cruelty dressed as humour" },
+  pleading:     { prefix: "*pleading desperately, voice raw with need*", stability: 0.35, similarity: 0.73, style: 0.72, speedHint: "fast at first, slowing as desperation deepens", deliveryNote: "Raw and urgent — dignity abandoned" },
+  desperate:    { prefix: "*with raw, unguarded desperation*", stability: 0.28, similarity: 0.70, style: 0.85, speedHint: "fast and uneven, voice cracking under pressure", deliveryNote: "Fast and cracking — nothing held back" },
+  whisper:      { prefix: "*whispering softly, barely above breath*", stability: 0.70, similarity: 0.82, style: 0.30, speedHint: "very slow, intimate, barely audible", deliveryNote: "Barely above breath — intimate and close" },
+  seductive:    { prefix: "*in a low, deliberate, alluring voice*", stability: 0.65, similarity: 0.80, style: 0.60, speedHint: "slow, low, each word drawn out slightly", deliveryNote: "Slow and low — every word chosen for effect" },
+};
+
+export const EMOTION_STATES = Object.keys(EMOTION_PROFILES);
+
+export const EMOTION_GROUPS: Record<string, string[]> = {
+  "Neutral":          ["neutral"],
+  "Positive":         ["happy", "cheerful", "excited", "loving", "hopeful", "confident", "proud"],
+  "Anger & Tension":  ["angry", "aggressive", "shouting", "bitter", "contemptuous", "disgusted", "threatening"],
+  "Sadness & Loss":   ["sad", "crying", "grief", "resigned"],
+  "Fear & Anxiety":   ["fearful", "panicked", "nervous", "surprised", "shocked"],
+  "Detached":         ["cold", "grumpy", "tired", "bored", "confused"],
+  "Performative":     ["sarcastic", "mocking", "pleading", "desperate", "whisper", "seductive"],
+};
+
+// ─── Voice Presets ────────────────────────────────────────────────────────────
 
 /** Default voice assignments for OpenAI TTS */
 const OPENAI_VOICE_PRESETS: Record<string, string> = {
@@ -154,31 +216,24 @@ async function generateElevenLabsAudio(
   text: string,
   voiceId: string,
   emotion?: string,
+  direction?: string,
+  pacing?: string,
   settings?: { stability?: number; similarityBoost?: number; style?: number }
 ): Promise<Buffer> {
-  // Prepend emotion direction to text for better expressiveness
-  let processedText = text;
-  if (emotion) {
-    // ElevenLabs responds well to SSML-like emotion cues in the text
-    const emotionMap: Record<string, string> = {
-      "angry": "*speaking with intense anger*",
-      "whispered": "*whispering softly*",
-      "sarcastic": "*with dripping sarcasm*",
-      "sad": "*voice breaking with sadness*",
-      "excited": "*with breathless excitement*",
-      "scared": "*trembling with fear*",
-      "confident": "*speaking with authority*",
-      "tender": "*gently, with warmth*",
-      "shouting": "*SHOUTING*",
-      "laughing": "*laughing*",
-      "crying": "*through tears*",
-      "cold": "*in a cold, detached tone*",
-      "seductive": "*in a low, alluring voice*",
-      "panicked": "*in a panicked rush*",
+  const profile = EMOTION_PROFILES[emotion?.toLowerCase() ?? "neutral"] ?? EMOTION_PROFILES["neutral"];
+  const cues: string[] = [];
+  if (profile.prefix) cues.push(profile.prefix);
+  if (direction) cues.push(`*${direction}*`);
+  if (pacing && pacing !== "normal") {
+    const pacingCues: Record<string, string> = {
+      slow: "*speaking slowly and deliberately*",
+      fast: "*speaking quickly*",
+      staccato: "*each word clipped and separate*",
+      trailing: "*voice trailing off at the end*",
     };
-    const prefix = emotionMap[emotion.toLowerCase()] || `*${emotion}*`;
-    processedText = `${prefix} ${text}`;
+    if (pacingCues[pacing]) cues.push(pacingCues[pacing]);
   }
+  const processedText = cues.length > 0 ? `${cues.join(" ")} ${text}` : text;
 
   const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
     method: "POST",
@@ -191,9 +246,9 @@ async function generateElevenLabsAudio(
       text: processedText,
       model_id: "eleven_multilingual_v2",
       voice_settings: {
-        stability: settings?.stability ?? 0.5,
-        similarity_boost: settings?.similarityBoost ?? 0.75,
-        style: settings?.style ?? 0.5,
+        stability:        settings?.stability        ?? profile.stability,
+        similarity_boost: settings?.similarityBoost ?? profile.similarity,
+        style:            settings?.style            ?? profile.style,
         use_speaker_boost: true,
       },
     }),
@@ -214,13 +269,16 @@ async function generateOpenAIAudio(
   apiKey: string,
   text: string,
   voice: string,
-  emotion?: string
+  emotion?: string,
+  direction?: string,
+  pacing?: string
 ): Promise<Buffer> {
-  // OpenAI TTS doesn't have explicit emotion control, but responds to text cues
-  let processedText = text;
-  if (emotion) {
-    processedText = `[${emotion}] ${text}`;
-  }
+  const profile = EMOTION_PROFILES[emotion?.toLowerCase() ?? "neutral"] ?? EMOTION_PROFILES["neutral"];
+  const cues: string[] = [];
+  if (emotion && emotion !== "neutral") cues.push(`[${emotion}: ${profile.deliveryNote}]`);
+  if (direction) cues.push(`[direction: ${direction}]`);
+  if (pacing && pacing !== "normal") cues.push(`[pacing: ${pacing} — ${profile.speedHint}]`);
+  const processedText = cues.length > 0 ? `${cues.join(" ")} ${text}` : text;
 
   const resp = await fetch("https://api.openai.com/v1/audio/speech", {
     method: "POST",
@@ -409,6 +467,8 @@ export async function generateSceneDialogue(
             line.line,
             voiceId,
             line.emotion,
+            line.direction,
+            line.pacing,
             {
               stability: charVoice?.stability,
               similarityBoost: charVoice?.similarityBoost,
@@ -422,7 +482,9 @@ export async function generateSceneDialogue(
             keys.openaiKey!,
             line.line,
             voiceId,
-            line.emotion
+            line.emotion,
+            line.direction,
+            line.pacing
           );
           break;
 
@@ -472,6 +534,59 @@ export async function generateSceneDialogue(
 }
 
 /**
+ * Infer emotion, pacing, and acting direction from screenplay context using AI.
+ * Call this before generating audio to get professional delivery guidance.
+ */
+export async function inferEmotionFromContext(params: {
+  line: string;
+  characterName: string;
+  characterDescription?: string;
+  sceneDescription?: string;
+  previousLines?: Array<{ characterName: string; line: string; emotion?: string }>;
+  genre?: string;
+  invokeLLM: (args: any) => Promise<any>;
+}): Promise<{ emotion: string; pacing: string; direction: string; reasoning: string }> {
+  const { line, characterName, characterDescription, sceneDescription, previousLines, genre, invokeLLM } = params;
+  const contextBlock = previousLines && previousLines.length > 0
+    ? previousLines.slice(-4).map(l => `${l.characterName.toUpperCase()}: "${l.line}"${l.emotion ? ` [${l.emotion}]` : ""}`).join("\n")
+    : "No prior context";
+  const response = await invokeLLM({
+    messages: [
+      {
+        role: "system",
+        content: `You are a professional film director and voice director with 30 years of Hollywood experience. Analyse a dialogue line in its full dramatic context and determine the precise emotional delivery.\n\nReturn JSON with:\n- emotion: one of: ${EMOTION_STATES.join(", ")}\n- pacing: one of: slow | normal | fast | staccato | trailing\n- direction: concise acting direction (max 12 words) — physical, specific, actable. e.g. "jaw tight, eyes not leaving the door"\n- reasoning: one sentence explaining why this delivery serves the scene\n\nRules:\n- Choose the emotion that serves the SCENE, not just the surface meaning of the words\n- Consider subtext — "I'm fine" after a loss is not "happy"\n- Pacing must reflect the emotional state: panic = fast, grief = slow, cold = flat/normal\n- Direction must be physical and specific, never vague ("with emotion" is not acceptable)\n- Genre matters: a thriller "angry" is colder and more controlled than a melodrama "angry"`,
+      },
+      {
+        role: "user",
+        content: `Film genre: ${genre || "Drama"}\nScene: ${sceneDescription || "Not specified"}\nCharacter: ${characterName}${characterDescription ? ` — ${characterDescription}` : ""}\n\nPrevious dialogue:\n${contextBlock}\n\nLine to analyse:\n${characterName.toUpperCase()}: "${line}"`,
+      },
+    ],
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "emotion_inference",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            emotion: { type: "string" },
+            pacing: { type: "string" },
+            direction: { type: "string" },
+            reasoning: { type: "string" },
+          },
+          required: ["emotion", "pacing", "direction", "reasoning"],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+  const result = JSON.parse(response.choices[0].message.content || "{}");
+  if (!EMOTION_PROFILES[result.emotion]) result.emotion = "neutral";
+  if (!["slow", "normal", "fast", "staccato", "trailing"].includes(result.pacing)) result.pacing = "normal";
+  return result;
+}
+
+/**
  * Generate narration audio (single voice, for voiceover/intro/outro).
  */
 export async function generateNarration(
@@ -480,6 +595,8 @@ export async function generateNarration(
   options?: {
     voice?: string;
     emotion?: string;
+    direction?: string;
+    pacing?: string;
     projectId?: number;
   }
 ): Promise<{ audioUrl: string; durationSeconds: number; provider: TTSProvider }> {
@@ -493,7 +610,9 @@ export async function generateNarration(
         keys.elevenlabsKey!,
         text,
         options?.voice || ELEVENLABS_VOICE_PRESETS["narrator"],
-        options?.emotion
+        options?.emotion,
+        options?.direction,
+        options?.pacing
       );
       break;
 
@@ -502,7 +621,9 @@ export async function generateNarration(
         keys.openaiKey!,
         text,
         options?.voice || "onyx",
-        options?.emotion
+        options?.emotion,
+        options?.direction,
+        options?.pacing
       );
       break;
 

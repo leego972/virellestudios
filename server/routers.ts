@@ -52,7 +52,7 @@ import { fundingRouter } from "./funding-router";
 import { filmPostRouter } from "./film-post-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
-import { generateSceneDialogue, TTS_PROVIDERS, type VoiceActingKeys } from "./_core/voiceActingEngine";
+import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_STATES, type VoiceActingKeys } from "./_core/voiceActingEngine";
 import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 
@@ -4146,7 +4146,7 @@ FORMAT RULES (always apply):
         return db.getProjectDialogues(input.projectId);
       }),
 
-    create: creationProcedure
+     create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().optional(),
@@ -4155,12 +4155,12 @@ FORMAT RULES (always apply):
         line: z.string().min(1),
         emotion: z.string().optional(),
         direction: z.string().optional(),
+        pacing: z.string().optional(),
         orderIndex: z.number().default(0),
       }))
       .mutation(async ({ ctx, input }) => {
         return db.createDialogue({ ...input, userId: ctx.user.id });
       }),
-
     update: creationProcedure
       .input(z.object({
         id: z.number(),
@@ -4168,6 +4168,7 @@ FORMAT RULES (always apply):
         line: z.string().optional(),
         emotion: z.string().optional(),
         direction: z.string().optional(),
+        pacing: z.string().optional(),
         orderIndex: z.number().optional(),
       }))
       .mutation(async ({ input }) => {
@@ -4356,9 +4357,38 @@ Generate the full dialogue for this scene.`,
           throw new Error("AI returned invalid scene dialogue. Please try again.");
         }
       }),
+    inferEmotion: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().optional(),
+        characterName: z.string(),
+        line: z.string(),
+        previousLines: z.array(z.object({
+          characterName: z.string(),
+          line: z.string(),
+          emotion: z.string().optional(),
+        })).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const scene = input.sceneId ? await db.getSceneById(input.sceneId) : null;
+        const project = await db.getProjectById(input.projectId, 0).catch(() => null);
+        const characters = await db.getProjectCharacters(input.projectId).catch(() => []);
+        const character = characters.find(
+          (c: { name: string; description?: string | null }) =>
+            c.name.toLowerCase() === input.characterName.toLowerCase()
+        );
+        return inferEmotionFromContext({
+          line: input.line,
+          characterName: input.characterName,
+          characterDescription: character?.description || undefined,
+          sceneDescription: scene?.description || undefined,
+          previousLines: input.previousLines,
+          genre: (project as any)?.genre || undefined,
+          invokeLLM: (args) => invokeLLM(args),
+        });
+      }),
   }),
-
-  // ─── Budget Estimator ───
+  // ─── Budget Estimator ────
   budget: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))

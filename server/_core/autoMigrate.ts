@@ -268,6 +268,7 @@ export async function runAutoMigration(): Promise<void> {
         line TEXT NOT NULL,
         emotion VARCHAR(128) NULL,
         direction TEXT NULL,
+        pacing VARCHAR(32) NULL,
         orderIndex INT NOT NULL DEFAULT 0,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -1070,6 +1071,7 @@ export async function runAutoMigration(): Promise<void> {
     { table: "funding_sources", column: "recommendedAttachments", definition: "TEXT NULL" },
     { table: "funding_sources", column: "tailoringNotes", definition: "TEXT NULL" },
     { table: "film_foley_tracks", column: "status", definition: "ENUM('pending','recorded','approved') NOT NULL DEFAULT 'pending'" },
+    { table: "dialogues", column: "pacing", definition: "VARCHAR(32) NULL" },
   ];
 
   let tablesCreated = 0;

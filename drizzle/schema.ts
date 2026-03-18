@@ -454,6 +454,7 @@ export const dialogues = mysqlTable("dialogues", {
   line: text("line").notNull(),
   emotion: varchar("emotion", { length: 128 }), // angry, sad, happy, whisper, sarcastic, etc.
   direction: text("direction"), // parenthetical acting direction
+  pacing: varchar("pacing", { length: 32 }), // slow | normal | fast | staccato | trailing
   orderIndex: int("orderIndex").notNull().default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -1076,7 +1077,7 @@ export const filmFoleyTracks = mysqlTable("film_foley_tracks", {
   fileKey: varchar("fileKey", { length: 512 }),
   volume: float("volume").notNull().default(0.8),
   startTime: float("startTime").notNull().default(0),
-  status: mysqlEnum("foleyStatus", ["pending", "recorded", "approved"]).notNull().default("pending"),
+  status: mysqlEnum("status", ["pending", "recorded", "approved"]).notNull().default("pending"),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

@@ -10,17 +10,71 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Plus, Trash2, Sparkles, MessageSquare, User, Loader2, Wand2, Download } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Sparkles, MessageSquare, User, Loader2, Wand2, Download, Zap } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState, useMemo } from "react";
 import { useLocation, useParams } from "wouter";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 
-const EMOTIONS = [
-  "neutral", "happy", "sad", "angry", "fearful", "surprised", "disgusted",
-  "contemptuous", "excited", "nervous", "whisper", "shouting", "sarcastic",
-  "pleading", "confident", "confused", "loving", "bitter", "resigned", "hopeful",
+// 35 emotion states grouped by dramatic category
+const EMOTION_GROUPS: Record<string, string[]> = {
+  "Neutral":          ["neutral"],
+  "Positive":         ["happy", "cheerful", "excited", "loving", "hopeful", "confident", "proud"],
+  "Anger & Tension":  ["angry", "aggressive", "shouting", "bitter", "contemptuous", "disgusted", "threatening"],
+  "Sadness & Loss":   ["sad", "crying", "grief", "resigned"],
+  "Fear & Anxiety":   ["fearful", "panicked", "nervous", "surprised", "shocked"],
+  "Detached":         ["cold", "grumpy", "tired", "bored", "confused"],
+  "Performative":     ["sarcastic", "mocking", "pleading", "desperate", "whisper", "seductive"],
+};
+
+const EMOTION_DELIVERY_NOTES: Record<string, string> = {
+  neutral: "Natural, conversational delivery",
+  happy: "Warm and upbeat — smile in the voice",
+  cheerful: "Bright and energetic — light, bouncy delivery",
+  excited: "Fast and breathless — energy spilling over",
+  loving: "Slow and tender — intimate, close delivery",
+  hopeful: "Measured and earnest — vulnerability beneath the hope",
+  confident: "Deliberate and commanding — no hesitation",
+  proud: "Elevated and self-assured",
+  sad: "Heavy and slow — words cost something to say",
+  crying: "Broken and halting — voice cracks on key words",
+  grief: "Hollow and devastated — barely audible at times",
+  angry: "Clipped and tense — controlled rage is more frightening than shouting",
+  aggressive: "Loud and driving — physical aggression in the voice",
+  shouting: "Full-volume shout — raw and uncontrolled",
+  bitter: "Cold and deliberate — every word chosen to sting",
+  contemptuous: "Dismissive and slow — the other person isn't worth full effort",
+  disgusted: "Clipped and recoiling — physical revulsion in the voice",
+  threatening: "Quiet and slow — the quieter the voice, the more dangerous",
+  fearful: "Uneven and catching — fear makes the voice unreliable",
+  panicked: "Very fast and breathless — words trip over each other",
+  nervous: "Halting with small pauses — the mind working faster than the mouth",
+  surprised: "Starts fast then slows — the brain catching up to the mouth",
+  shocked: "Slow and halting — the mind has gone blank",
+  cold: "Flat and even — emotion has been deliberately removed",
+  resigned: "Slow and flat — they've stopped fighting",
+  grumpy: "Clipped and muttered — low-level irritation throughout",
+  tired: "Slow and low — every word is an effort",
+  bored: "Monotone and trailing — they'd rather be anywhere else",
+  confused: "Halting with rising intonation — thinking out loud",
+  sarcastic: "Deliberate and exaggerated — the performance is the point",
+  mocking: "Exaggerated and sing-song — cruelty dressed as humour",
+  pleading: "Raw and urgent — dignity abandoned",
+  desperate: "Fast and cracking — nothing held back",
+  whisper: "Barely above breath — intimate and close",
+  seductive: "Slow and low — every word chosen for effect",
+};
+
+const PACING_OPTIONS = [
+  { value: "normal", label: "Normal", hint: "Natural conversational pace" },
+  { value: "slow", label: "Slow", hint: "Deliberate, heavy, or grief-stricken" },
+  { value: "fast", label: "Fast", hint: "Excited, panicked, or urgent" },
+  { value: "staccato", label: "Staccato", hint: "Each word clipped and separate — anger, emphasis" },
+  { value: "trailing", label: "Trailing off", hint: "Voice fades at the end — resignation, exhaustion" },
 ];
+
+const EMOTIONS = Object.values(EMOTION_GROUPS).flat();
 
 export default function DialogueEditor() {
   const { user, loading: authLoading } = useAuth();
@@ -38,6 +92,8 @@ export default function DialogueEditor() {
   const [line, setLine] = useState("");
   const [emotion, setEmotion] = useState("neutral");
   const [direction, setDirection] = useState("");
+  const [pacing, setPacing] = useState("normal");
+  const [inferringEmotion, setInferringEmotion] = useState(false);
 
   // AI suggest state
   const [aiCharName, setAiCharName] = useState("");
@@ -68,6 +124,7 @@ export default function DialogueEditor() {
     onSuccess: (data) => { setAiSuggestions(data.lines || []); },
     onError: () => toast.error("AI suggestion failed"),
   });
+  const inferEmotionMutation = trpc.dialogue.inferEmotion.useMutation();
   const aiSceneMutation = trpc.dialogue.aiGenerateScene.useMutation({
     onSuccess: async (data) => {
       if (data.dialogues) {
@@ -302,22 +359,86 @@ export default function DialogueEditor() {
               <Label>Dialogue Line</Label>
               <Textarea value={line} onChange={(e) => setLine(e.target.value)} placeholder="What does the character say?" rows={3} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
+            {/* Emotion + AI Auto-Detect */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
                 <Label>Emotion</Label>
-                <Select value={emotion} onValueChange={setEmotion}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {EMOTIONS.map((e) => (
-                      <SelectItem key={e} value={e}>{e.charAt(0).toUpperCase() + e.slice(1)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 px-2 text-xs text-primary"
+                        disabled={!line || inferringEmotion}
+                        onClick={async () => {
+                          if (!line) return;
+                          setInferringEmotion(true);
+                          try {
+                            const result = await inferEmotionMutation.mutateAsync({
+                              projectId,
+                              sceneId: selectedSceneId,
+                              characterName: characterName || "Character",
+                              line,
+                              previousLines: dialogueList.slice(-4).map(d => ({ characterName: d.characterName, line: d.line, emotion: d.emotion || undefined })),
+                            });
+                            setEmotion(result.emotion);
+                            setPacing(result.pacing);
+                            setDirection(result.direction);
+                            toast.success(`AI detected: ${result.emotion} — ${result.reasoning}`);
+                          } catch { toast.error("Could not infer emotion"); }
+                          finally { setInferringEmotion(false); }
+                        }}
+                      >
+                        {inferringEmotion ? <Loader2 className="h-3 w-3 animate-spin" /> : <Zap className="h-3 w-3" />}
+                        <span className="ml-1">{inferringEmotion ? "Detecting..." : "AI Detect"}</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>AI analyses the line in context and suggests the best emotion, pacing, and direction</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-              <div>
-                <Label>Direction</Label>
-                <Input value={direction} onChange={(e) => setDirection(e.target.value)} placeholder="e.g. turns away slowly" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
-              </div>
+              <Select value={emotion} onValueChange={setEmotion}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(EMOTION_GROUPS).map(([group, emotions]) => (
+                    <>
+                      <div key={group} className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{group}</div>
+                      {emotions.map((e) => (
+                        <SelectItem key={e} value={e}>
+                          <span>{e.charAt(0).toUpperCase() + e.slice(1)}</span>
+                        </SelectItem>
+                      ))}
+                    </>
+                  ))}
+                </SelectContent>
+              </Select>
+              {EMOTION_DELIVERY_NOTES[emotion] && (
+                <p className="text-xs text-muted-foreground mt-1 italic">{EMOTION_DELIVERY_NOTES[emotion]}</p>
+              )}
+            </div>
+            {/* Pacing */}
+            <div>
+              <Label>Pacing</Label>
+              <Select value={pacing} onValueChange={setPacing}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {PACING_OPTIONS.map((p) => (
+                    <SelectItem key={p.value} value={p.value}>
+                      <span className="font-medium">{p.label}</span>
+                      <span className="ml-2 text-xs text-muted-foreground">{p.hint}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {/* Acting Direction */}
+            <div>
+              <Label>Acting Direction</Label>
+              <Input value={direction} onChange={(e) => setDirection(e.target.value)} placeholder="e.g. jaw tight, eyes not leaving the door" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+              <p className="text-xs text-muted-foreground mt-1">Physical, specific, actable — this guides the voice performance</p>
             </div>
             <Button
               className="w-full"
