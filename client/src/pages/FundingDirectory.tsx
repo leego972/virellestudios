@@ -451,6 +451,10 @@ function buildDownloadHtml(form: AppForm, source: FundingSource): string {
     ${form.additionalNotes ? sec("Additional Notes", h("", form.additionalNotes)) : ""}
 
   </div>
+  <div style="margin:0 48px 32px;background:#fffbeb;border:1px solid #f59e0b;border-radius:10px;padding:16px 22px;font-size:12px;color:#92400e">
+    <strong style="display:block;margin-bottom:4px;">Represent a funding body, screen agency, or incentive programme?</strong>
+    Virelle Studios maintains an independently curated global directory of public and private film finance vehicles &mdash; covering grants, soft money, co-production treaties, tax incentives, and broadcaster-backed funds. If your organisation is not yet listed, or if your fund&apos;s eligibility criteria, funding rounds, or submission windows have changed, we invite you to submit your details for consideration. Contact us at <a href="mailto:studiosvirelle@gmail.com?subject=Fund Listing Submission" style="color:#d97706">studiosvirelle@gmail.com</a> with the subject line <strong>&ldquo;Fund Listing Submission&rdquo;</strong>. Accepted entries are reviewed by our editorial team and published to the directory upon verification.
+  </div>
   <div class="footer">
     Compiled by Virelle Studios Film Funding Portal &middot; ${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}
     &middot; This document is for manual submission only. Virelle Studios does not submit on your behalf.
@@ -1545,6 +1549,26 @@ export default function FundingDirectory() {
           ))}
         </div>
       )}
+
+      {/* Global Database Outreach Note */}
+      <div className="mt-8 rounded-xl border border-amber-500/20 bg-amber-500/5 px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="h-10 w-10 rounded-full bg-amber-500/15 flex items-center justify-center shrink-0">
+          <Globe className="h-5 w-5 text-amber-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground">Represent a funding body, screen agency, or incentive programme?</p>
+          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+            Virelle Studios maintains an independently curated global directory of public and private film finance vehicles — covering grants, soft money, co-production treaties, tax incentives, and broadcaster-backed funds. If your organisation is not yet listed, or if your fund's eligibility criteria, funding rounds, or submission windows have changed, we invite you to submit your details for consideration. Send your fund profile, official mandate, and any relevant programme documentation to{" "}
+            <a
+              href="mailto:studiosvirelle@gmail.com?subject=Fund%20Listing%20Submission%20—%20Virelle%20Studios%20Global%20Directory"
+              className="text-amber-400 hover:text-amber-300 underline underline-offset-2 font-medium"
+            >
+              studiosvirelle@gmail.com
+            </a>
+            {" "}with the subject line <span className="font-medium text-foreground">"Fund Listing Submission"</span>. Accepted entries are reviewed by our editorial team and published to the directory upon verification.
+          </p>
+        </div>
+      </div>
 
       {/* Application Modal */}
       {applyingTo && (
