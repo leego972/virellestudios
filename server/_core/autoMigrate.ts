@@ -1038,4 +1038,51 @@ export async function runAutoMigration(): Promise<void> {
   } catch (err: any) {
     console.error(`[AutoMigrate] Failed to seed beta accounts:`, err.message);
   }
+
+  // ─── Step 6: Seed film industry outreach contacts (INSERT IGNORE — safe to run repeatedly) ───
+  // 30 public contacts from the film outreach database (Sony, Keshet, HanWay, mk2, LevelK, etc.)
+  // Source: film_outreach_database_with_israel.xlsx — public-facing emails only
+  const FILM_OUTREACH_CONTACTS = [
+    { email: 'laura_stclair@spe.sony.com', name: 'Laura St Clair', company: 'Sony Pictures Television Formats', role: 'Vice President TV Sales & Intl Production Consultancy' },
+    { email: 'stacy_weitz@spe.sony.com', name: 'Stacy Weitz', company: 'Sony Pictures Television Formats', role: 'SVP Communications' },
+    { email: 'adam_lubner@spe.sony.com', name: 'Adam Lubner', company: 'Sony Pictures Television Formats', role: 'Executive Director Development Global Scripted Formats' },
+    { email: 'sptb2b@spe.sony.com', name: 'SPT Marketing', company: 'Sony Pictures Television', role: 'B2B marketing contact' },
+    { email: 'rebecca.e@keshet-tv.com', name: 'Rebecca Duddridge', company: 'Keshet International', role: 'SVP Marketing & Communications' },
+    { email: 'maya.klein@keshet-tv.com', name: 'Maya Klein', company: 'Keshet International', role: 'Head of Marketing' },
+    { email: 'anke.stoll@keshet-tv.com', name: 'Anke Stoll', company: 'Keshet International', role: 'Sales / market meetings' },
+    { email: 'info@keshetinternational.com', name: 'General contact', company: 'Keshet International', role: 'Corporate' },
+    { email: 'info@hanwayfilms.com', name: 'Management team', company: 'HanWay Films', role: 'General office' },
+    { email: 'films@bankside-films.com', name: 'Stephen Kelliher', company: 'Bankside Films', role: 'Managing Director' },
+    { email: 'info@visitfilms.com', name: 'Ryan Kampe', company: 'Visit Films', role: 'President' },
+    { email: 'intlsales@mk2.com', name: 'International Sales', company: 'mk2 Films', role: 'Sales team' },
+    { email: 'intlmarketing@mk2.com', name: 'International Marketing', company: 'mk2 Films', role: 'Marketing' },
+    { email: 'tine.klint@levelk.dk', name: 'Tine Klint', company: 'LevelK', role: 'Founder & CEO' },
+    { email: 'debra@levelk.dk', name: 'Debra Liang', company: 'LevelK', role: 'Head of Sales' },
+    { email: 'niklas@levelk.dk', name: 'Niklas Teng', company: 'LevelK', role: 'Head of Partnerships / Festivals' },
+    { email: 'natascha@levelk.dk', name: 'Natascha Degnova', company: 'LevelK', role: 'Head of PR & Marketing' },
+    { email: 'sales@yellowaffair.com', name: 'Sales team', company: 'The Yellow Affair', role: 'Sales' },
+    { email: 'contact@yellowaffair.com', name: 'General contact', company: 'The Yellow Affair', role: 'Corporate' },
+    { email: 'contact@dogwoof.com', name: 'Anna Godas / Oli Harbottle', company: 'Dogwoof', role: 'CEO / Chief Content Officer' },
+    { email: 'office@greenproductions.co.il', name: 'Israel office', company: 'Green Productions', role: 'Production office' },
+    { email: 'info@gumfilms.com', name: 'Yoav Roeh / Aurit Zamir', company: 'Gum Films', role: 'Founders' },
+    { email: 'office@2-team.com', name: 'Office', company: '2-Team Productions', role: 'Production office' },
+    { email: 'mail@jap.co.il', name: 'Office', company: 'July August Productions', role: 'Production office' },
+    { email: 'team@myteam.co.il', name: 'Office', company: 'TEAM Productions', role: 'Production office' },
+    { email: 'avitalr@unitedking.co.il', name: 'Avital R.', company: 'United King Films', role: 'Distribution contact' },
+    { email: 'marek@transfax.co.il', name: 'Marek Rozenbaum', company: 'Transfax Film Productions', role: 'Producer' },
+    { email: 'orel@nfct.org.il', name: 'Orel Turner', company: 'New Fund for Cinema and Television', role: 'Executive Director' },
+    { email: 'irit@nfct.org.il', name: 'Irit Shimrat', company: 'New Fund for Cinema and Television', role: 'Artistic Director / Intl Relations' },
+    { email: 'info@nfct.org.il', name: 'General contact', company: 'New Fund for Cinema and Television', role: 'Office' },
+  ];
+  try {
+    for (const c of FILM_OUTREACH_CONTACTS) {
+      const token = require('crypto').randomBytes(32).toString('hex');
+      await db.execute(sql.raw(
+        `INSERT IGNORE INTO mailing_contacts (email, name, company, role, status, source, unsubscribeToken, createdAt, updatedAt) VALUES ('${c.email}', '${c.name.replace(/'/g, "''")}', '${c.company.replace(/'/g, "''")}', '${c.role.replace(/'/g, "''")}', 'active', 'import', '${token}', NOW(), NOW())`
+      ));
+    }
+    console.log(`[AutoMigrate] Film outreach contacts seeded (${FILM_OUTREACH_CONTACTS.length} contacts, INSERT IGNORE)`);
+  } catch (err: any) {
+    console.error(`[AutoMigrate] Failed to seed film outreach contacts:`, err.message);
+  }
 }
