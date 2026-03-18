@@ -288,6 +288,14 @@ export default function SoundEffects() {
   const [cueFadeIn, setCueFadeIn] = useState(0);
   const [cueFadeOut, setCueFadeOut] = useState(0);
   const [mixSaving, setMixSaving] = useState(false);
+  // AI generation state
+  const [aiAdrLoading, setAiAdrLoading] = useState(false);
+  const [aiFoleyLoading, setAiFoleyLoading] = useState(false);
+  const [aiScoreLoading, setAiScoreLoading] = useState(false);
+  const [aiScoreStyle, setAiScoreStyle] = useState("");
+  const [exportingMix, setExportingMix] = useState(false);
+  const [showMixExport, setShowMixExport] = useState(false);
+  const [mixExportData, setMixExportData] = useState<any>(null);
   const [mix, setMix] = useState({
     dialogueBus: 0.85, musicBus: 0.70, effectsBus: 0.75, masterVolume: 1.0,
     dialogueEqLow: 0, dialogueEqMid: 0, dialogueEqHigh: 0,
@@ -392,6 +400,45 @@ export default function SoundEffects() {
     onSuccess: () => { mixSettings.refetch(); toast.success("Mix settings saved"); },
     onError: (e) => toast.error(e.message),
   });
+  // AI generation mutations
+  const generateAdrMutation = trpc.filmPost.generateAdrSuggestions.useMutation({
+    onSuccess: async (data) => {
+      if (!data.suggestions?.length) { toast.info("No ADR suggestions generated"); return; }
+      for (const s of data.suggestions) {
+        await createAdr.mutateAsync({ projectId, characterName: s.characterName, dialogueLine: s.dialogueLine, trackType: s.trackType as any, notes: s.notes });
+      }
+      adrTracks.refetch();
+      toast.success(`${data.suggestions.length} ADR tracks added by AI`);
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const generateFoleyMutation = trpc.filmPost.generateFoleySuggestions.useMutation({
+    onSuccess: async (data) => {
+      if (!data.suggestions?.length) { toast.info("No Foley suggestions generated"); return; }
+      for (const s of data.suggestions) {
+        await createFoley.mutateAsync({ projectId, name: s.name, foleyType: s.foleyType as any, description: s.description, notes: s.notes });
+      }
+      foleyTracks.refetch();
+      toast.success(`${data.suggestions.length} Foley tracks added by AI`);
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const generateScoreMutation = trpc.filmPost.generateScoreCues.useMutation({
+    onSuccess: async (data) => {
+      if (!data.cues?.length) { toast.info("No score cues generated"); return; }
+      for (const c of data.cues) {
+        await createCue.mutateAsync({ projectId, cueNumber: c.cueNumber, title: c.title, cueType: c.cueType as any, description: c.description, duration: c.duration, notes: c.notes });
+      }
+      scoreCues.refetch();
+      toast.success(`${data.cues.length} score cues added by AI`);
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const exportMixMutation = trpc.filmPost.exportMixSummary.useMutation({
+    onSuccess: (data) => { setMixExportData(data); setShowMixExport(true); },
+    onError: (e) => toast.error(e.message),
+  });
+
   const resetMixMutation = trpc.filmPost.resetMixSettings.useMutation({
     onSuccess: () => {
       mixInitialized.current = false;
@@ -806,9 +853,14 @@ export default function SoundEffects() {
                       <Mic className="h-5 w-5 text-blue-500" />
                       ADR &amp; Dialogue
                     </CardTitle>
-                    <Button size="sm" onClick={() => setShowAdrDialog(true)}>
-                      <Plus className="h-4 w-4 mr-1" /> Add ADR Track
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" disabled={generateAdrMutation.isPending} onClick={async () => { setAiAdrLoading(true); try { await generateAdrMutation.mutateAsync({ projectId }); } finally { setAiAdrLoading(false); } }}>
+                        {aiAdrLoading ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 mr-1" />} AI Suggest
+                      </Button>
+                      <Button size="sm" onClick={() => setShowAdrDialog(true)}>
+                        <Plus className="h-4 w-4 mr-1" /> Add ADR Track
+                      </Button>
+                    </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">Automated Dialogue Replacement, wild tracks, loop group, and walla sessions.</p>
                 </CardHeader>
@@ -865,9 +917,14 @@ export default function SoundEffects() {
                       <Footprints className="h-5 w-5 text-amber-500" />
                       Foley
                     </CardTitle>
-                    <Button size="sm" onClick={() => setShowFoleyDialog(true)}>
-                      <Plus className="h-4 w-4 mr-1" /> Add Foley Track
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" disabled={generateFoleyMutation.isPending} onClick={async () => { setAiFoleyLoading(true); try { await generateFoleyMutation.mutateAsync({ projectId }); } finally { setAiFoleyLoading(false); } }}>
+                        {aiFoleyLoading ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 mr-1" />} AI Suggest
+                      </Button>
+                      <Button size="sm" onClick={() => setShowFoleyDialog(true)}>
+                        <Plus className="h-4 w-4 mr-1" /> Add Foley Track
+                      </Button>
+                    </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">Footsteps, cloth, props, impacts, and environmental sounds recorded in sync with picture.</p>
                 </CardHeader>
@@ -931,9 +988,14 @@ export default function SoundEffects() {
                       <Music className="h-5 w-5 text-purple-500" />
                       Score &amp; Music Cues
                     </CardTitle>
-                    <Button size="sm" onClick={() => setShowScoreCueDialog(true)}>
-                      <Plus className="h-4 w-4 mr-1" /> Add Cue
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" disabled={generateScoreMutation.isPending} onClick={async () => { setAiScoreLoading(true); try { await generateScoreMutation.mutateAsync({ projectId, style: aiScoreStyle || undefined }); } finally { setAiScoreLoading(false); } }}>
+                        {aiScoreLoading ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 mr-1" />} AI Generate
+                      </Button>
+                      <Button size="sm" onClick={() => setShowScoreCueDialog(true)}>
+                        <Plus className="h-4 w-4 mr-1" /> Add Cue
+                      </Button>
+                    </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">Underscore, source music, stings, and thematic cues assigned to scenes.</p>
                 </CardHeader>
@@ -992,6 +1054,9 @@ export default function SoundEffects() {
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" onClick={() => resetMixMutation.mutate({ projectId })} disabled={resetMixMutation.isPending}>
                         <RotateCcw className="h-3.5 w-3.5 mr-1" /> Reset
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => exportMixMutation.mutate({ projectId })} disabled={exportMixMutation.isPending}>
+                        {exportMixMutation.isPending ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Film className="h-3.5 w-3.5 mr-1" />} Export Summary
                       </Button>
                       <Button size="sm" onClick={handleSaveMix} disabled={mixSaving}>
                         {mixSaving ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}
@@ -1433,6 +1498,84 @@ export default function SoundEffects() {
               <Button variant="outline" onClick={() => setShowScoreCueDialog(false)}>Cancel</Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mix Export Summary Dialog */}
+      <Dialog open={showMixExport} onOpenChange={setShowMixExport}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Film className="h-5 w-5" />
+              Mix Summary — {mixExportData?.projectTitle}
+            </DialogTitle>
+          </DialogHeader>
+          {mixExportData && (
+            <div className="space-y-4 text-sm">
+              <p className="text-xs text-muted-foreground">Exported {new Date(mixExportData.exportedAt).toLocaleString()}</p>
+
+              {mixExportData.mix && (
+                <div className="rounded-lg border p-4 space-y-2">
+                  <h4 className="font-semibold text-sm">Mix Settings</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                    <div><span className="text-muted-foreground">Master:</span> {mixExportData.mix.masterVolume}</div>
+                    <div><span className="text-muted-foreground">Dialogue Bus:</span> {mixExportData.mix.dialogueBus}</div>
+                    <div><span className="text-muted-foreground">Music Bus:</span> {mixExportData.mix.musicBus}</div>
+                    <div><span className="text-muted-foreground">Effects Bus:</span> {mixExportData.mix.effectsBus}</div>
+                    <div><span className="text-muted-foreground">Reverb:</span> {mixExportData.mix.reverbRoom}</div>
+                    <div><span className="text-muted-foreground">Compression:</span> {mixExportData.mix.compressionRatio}</div>
+                    <div><span className="text-muted-foreground">Noise Reduction:</span> {mixExportData.mix.noiseReduction ? "On" : "Off"}</div>
+                  </div>
+                  {mixExportData.mix.notes && <p className="text-xs text-muted-foreground italic mt-2">{mixExportData.mix.notes}</p>}
+                </div>
+              )}
+
+              <div className="rounded-lg border p-4 space-y-2">
+                <h4 className="font-semibold text-sm">ADR ({mixExportData.adr.total} tracks — {mixExportData.adr.pending} pending, {mixExportData.adr.approved} approved)</h4>
+                {mixExportData.adr.tracks.map((t: any, i: number) => (
+                  <div key={i} className="text-xs flex gap-2 items-start">
+                    <Badge variant="outline" className="text-[10px] shrink-0">{t.status}</Badge>
+                    <span className="font-medium">{t.character}:</span>
+                    <span className="text-muted-foreground">{t.line}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-lg border p-4 space-y-2">
+                <h4 className="font-semibold text-sm">Foley ({mixExportData.foley.total} tracks — {mixExportData.foley.pending} pending, {mixExportData.foley.approved} approved)</h4>
+                {mixExportData.foley.tracks.map((t: any, i: number) => (
+                  <div key={i} className="text-xs flex gap-2 items-center">
+                    <Badge variant="outline" className="text-[10px] shrink-0">{t.type}</Badge>
+                    <span>{t.name}</span>
+                    <Badge variant="secondary" className="text-[10px]">{t.status}</Badge>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-lg border p-4 space-y-2">
+                <h4 className="font-semibold text-sm">Score ({mixExportData.score.total} cues)</h4>
+                {mixExportData.score.cues.map((c: any, i: number) => (
+                  <div key={i} className="text-xs flex gap-2 items-center">
+                    <span className="font-mono bg-muted px-1.5 py-0.5 rounded text-[10px]">{c.number}</span>
+                    <span className="font-medium">{c.title}</span>
+                    <Badge variant="outline" className="text-[10px]">{c.type}</Badge>
+                    {c.duration > 0 && <span className="text-muted-foreground">{c.duration}s</span>}
+                  </div>
+                ))}
+              </div>
+
+              <Button className="w-full" variant="outline" onClick={() => {
+                const text = JSON.stringify(mixExportData, null, 2);
+                const blob = new Blob([text], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url; a.download = `${mixExportData.projectTitle}-mix-summary.json`; a.click();
+                URL.revokeObjectURL(url);
+              }}>
+                Download JSON
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

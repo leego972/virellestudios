@@ -14,8 +14,13 @@ import {
   filmAdrTracks,
   filmFoleyTracks,
   filmScoreCues,
+  projects,
+  scenes,
 } from "../drizzle/schema";
 import { eq, and, asc } from "drizzle-orm";
+import { invokeLLM } from "./_core/llm";
+import { CREDIT_COSTS } from "./_core/subscription";
+import { deductCredits } from "./db";
 
 // ─── Mix Settings ─────────────────────────────────────────────────────────────
 
@@ -304,5 +309,225 @@ export const filmPostRouter = router({
       if (!db) throw new Error("Database not available");
       await db.delete(filmScoreCues).where(eq(filmScoreCues.id, input.id));
       return { success: true };
+    }),
+
+  // ─── AI Generation ──────────────────────────────────────────────────────────
+
+  generateAdrSuggestions: protectedProcedure
+    .input(z.object({
+      projectId: z.number(),
+      context: z.string().optional(), // extra context from user
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Deduct credits before generation
+      await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_adr_suggest.cost, "film_post_adr_suggest", `AI ADR suggestions for project ${input.projectId}`);
+
+      // Fetch project + scenes for context
+      const [project] = await db.select().from(projects).where(eq(projects.id, input.projectId));
+      const projectScenes = await db.select().from(scenes).where(eq(scenes.projectId, input.projectId)).orderBy(asc(scenes.orderIndex));
+
+      const scenesSummary = projectScenes.slice(0, 10).map((s, i) =>
+        `Scene ${i + 1}: ${s.title || "Untitled"} — ${s.description?.slice(0, 120) || ""} [Dialogue: ${s.dialogueText?.slice(0, 80) || "none"}]`
+      ).join("\n");
+
+      const systemPrompt = `You are a professional ADR (Automated Dialogue Replacement) supervisor with 20+ years of Hollywood experience. You analyze film scenes and identify dialogue that needs ADR recording — lines that were poorly recorded on set, contain background noise, need re-performance, or require wild track coverage.`;
+
+      const userPrompt = `Film: "${project?.title || "Untitled"}" — Genre: ${project?.genre || "Drama"}
+
+Scenes:
+${scenesSummary}
+
+${input.context ? `Additional context: ${input.context}\n\n` : ""}Identify 4–6 specific ADR needs for this film. For each, provide:
+- characterName: the character speaking
+- dialogueLine: the specific line or description of what needs recording
+- trackType: one of [adr, wild_track, loop_group, walla]
+- notes: brief technical note for the recording session
+
+Return JSON: { "suggestions": [ { "characterName": "...", "dialogueLine": "...", "trackType": "...", "notes": "..." } ] }`;
+
+      const result = await invokeLLM({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        responseFormat: { type: "json_object" },
+        maxTokens: 1200,
+      });
+
+      const content = typeof result.choices[0]?.message?.content === "string"
+        ? result.choices[0].message.content
+        : Array.isArray(result.choices[0]?.message?.content)
+          ? result.choices[0].message.content.map((p: any) => p.text || "").join("")
+          : "{}";
+
+      const parsed = JSON.parse(content);
+      return { suggestions: (parsed.suggestions || []) as Array<{ characterName: string; dialogueLine: string; trackType: string; notes: string }> };
+    }),
+
+  generateFoleySuggestions: protectedProcedure
+    .input(z.object({
+      projectId: z.number(),
+      context: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Deduct credits before generation
+      await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_foley_suggest.cost, "film_post_foley_suggest", `AI Foley suggestions for project ${input.projectId}`);
+
+      const [project] = await db.select().from(projects).where(eq(projects.id, input.projectId));
+      const projectScenes = await db.select().from(scenes).where(eq(scenes.projectId, input.projectId)).orderBy(asc(scenes.orderIndex));
+
+      const scenesSummary = projectScenes.slice(0, 10).map((s, i) =>
+        `Scene ${i + 1}: ${s.title || "Untitled"} — ${s.description?.slice(0, 150) || ""} [Location: ${s.locationType || ""}, Weather: ${s.weather || ""}, Mood: ${s.mood || ""}]`
+      ).join("\n");
+
+      const systemPrompt = `You are a professional Foley artist and supervisor with 20+ years of Hollywood feature film experience. You analyze film scenes and create detailed Foley recording plans — identifying every sound that needs to be recorded in sync with picture to create a rich, immersive soundscape.`;
+
+      const userPrompt = `Film: "${project?.title || "Untitled"}" — Genre: ${project?.genre || "Drama"}
+
+Scenes:
+${scenesSummary}
+
+${input.context ? `Additional context: ${input.context}\n\n` : ""}Identify 5–8 essential Foley tracks for this film. For each, provide:
+- name: descriptive name of the sound (e.g. "Hero's leather boots on marble")
+- foleyType: one of [footsteps, cloth, props, impacts, environmental, custom]
+- description: what the sound is and when it occurs in the film
+- notes: recording technique or props needed
+
+Return JSON: { "suggestions": [ { "name": "...", "foleyType": "...", "description": "...", "notes": "..." } ] }`;
+
+      const result = await invokeLLM({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        responseFormat: { type: "json_object" },
+        maxTokens: 1200,
+      });
+
+      const content = typeof result.choices[0]?.message?.content === "string"
+        ? result.choices[0].message.content
+        : Array.isArray(result.choices[0]?.message?.content)
+          ? result.choices[0].message.content.map((p: any) => p.text || "").join("")
+          : "{}";
+
+      const parsed = JSON.parse(content);
+      return { suggestions: (parsed.suggestions || []) as Array<{ name: string; foleyType: string; description: string; notes: string }> };
+    }),
+
+  generateScoreCues: protectedProcedure
+    .input(z.object({
+      projectId: z.number(),
+      style: z.string().optional(), // e.g. "orchestral", "electronic", "minimal piano"
+      context: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Deduct credits before generation
+      await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_score_gen.cost, "film_post_score_gen", `AI Score cues for project ${input.projectId}`);
+
+      const [project] = await db.select().from(projects).where(eq(projects.id, input.projectId));
+      const projectScenes = await db.select().from(scenes).where(eq(scenes.projectId, input.projectId)).orderBy(asc(scenes.orderIndex));
+
+      const scenesSummary = projectScenes.slice(0, 12).map((s, i) =>
+        `Scene ${i + 1} (${s.title || "Untitled"}): ${s.description?.slice(0, 120) || ""} [Mood: ${s.mood || ""}, Lighting: ${s.lighting || ""}, Duration: ${s.duration || 30}s]`
+      ).join("\n");
+
+      const systemPrompt = `You are a professional film composer and music editor with 20+ years of Hollywood experience. You create detailed score cue sheets — mapping music cues to scenes with precise emotional and technical direction for the composer and music editor.`;
+
+      const userPrompt = `Film: "${project?.title || "Untitled"}" — Genre: ${project?.genre || "Drama"}
+${input.style ? `Desired score style: ${input.style}` : ""}
+
+Scenes:
+${scenesSummary}
+
+${input.context ? `Additional context: ${input.context}\n\n` : ""}Create a score cue sheet with 5–8 music cues for this film. For each cue, provide:
+- cueNumber: standard cue number (e.g. "1M1", "2M3")
+- title: descriptive cue title (e.g. "The Arrival", "Chase Through the Market")
+- cueType: one of [underscore, source_music, sting, theme, transition, silence]
+- description: emotional direction and what the music should achieve
+- duration: estimated duration in seconds
+- notes: instrumentation, tempo, or technical notes for the composer
+
+Return JSON: { "cues": [ { "cueNumber": "...", "title": "...", "cueType": "...", "description": "...", "duration": 0, "notes": "..." } ] }`;
+
+      const result = await invokeLLM({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        responseFormat: { type: "json_object" },
+        maxTokens: 1500,
+      });
+
+      const content = typeof result.choices[0]?.message?.content === "string"
+        ? result.choices[0].message.content
+        : Array.isArray(result.choices[0]?.message?.content)
+          ? result.choices[0].message.content.map((p: any) => p.text || "").join("")
+          : "{}";
+
+      const parsed = JSON.parse(content);
+      return { cues: (parsed.cues || []) as Array<{ cueNumber: string; title: string; cueType: string; description: string; duration: number; notes: string }> };
+    }),
+
+  exportMixSummary: protectedProcedure
+    .input(z.object({ projectId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      // Deduct credits for export
+      await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_mix_export.cost, "film_post_mix_export", `Mix summary export for project ${input.projectId}`);
+
+      const [project] = await db.select().from(projects).where(eq(projects.id, input.projectId));
+      const [mixSettings] = await db.select().from(filmMixSettings).where(eq(filmMixSettings.projectId, input.projectId));
+      const adrList = await db.select().from(filmAdrTracks).where(eq(filmAdrTracks.projectId, input.projectId));
+      const foleyList = await db.select().from(filmFoleyTracks).where(eq(filmFoleyTracks.projectId, input.projectId));
+      const cueList = await db.select().from(filmScoreCues).where(eq(filmScoreCues.projectId, input.projectId));
+
+      const adrPending = adrList.filter((t: any) => t.status === "pending").length;
+      const adrApproved = adrList.filter((t: any) => t.status === "approved").length;
+      const foleyPending = foleyList.filter((t: any) => t.status === "pending").length;
+      const foleyApproved = foleyList.filter((t: any) => t.status === "approved").length;
+
+      const summary = {
+        projectTitle: project?.title || "Untitled",
+        exportedAt: new Date().toISOString(),
+        mix: mixSettings ? {
+          masterVolume: `${Math.round((mixSettings.masterVolume ?? 0.85) * 100)}%`,
+          dialogueBus: `${Math.round((mixSettings.dialogueBus ?? 0.9) * 100)}%`,
+          musicBus: `${Math.round((mixSettings.musicBus ?? 0.7) * 100)}%`,
+          effectsBus: `${Math.round((mixSettings.effectsBus ?? 0.75) * 100)}%`,
+          reverbRoom: mixSettings.reverbRoom ?? "none",
+          compressionRatio: `${mixSettings.compressionRatio ?? 2}:1`,
+          noiseReduction: mixSettings.noiseReduction ?? false,
+          notes: mixSettings.notes || "",
+        } : null,
+        adr: {
+          total: adrList.length,
+          pending: adrPending,
+          approved: adrApproved,
+          tracks: adrList.map((t: any) => ({ character: t.characterName, line: t.dialogueLine?.slice(0, 80), status: t.status, type: t.trackType })),
+        },
+        foley: {
+          total: foleyList.length,
+          pending: foleyPending,
+          approved: foleyApproved,
+          tracks: foleyList.map((t: any) => ({ name: t.name, type: t.foleyType, status: t.status })),
+        },
+        score: {
+          total: cueList.length,
+          cues: cueList.map((c: any) => ({ number: c.cueNumber, title: c.title, type: c.cueType, duration: c.durationSeconds })),
+        },
+      };
+
+      return summary;
     }),
 });

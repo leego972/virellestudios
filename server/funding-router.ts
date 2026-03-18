@@ -1,10 +1,11 @@
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
-import { getDb } from "./db";
+import { getDb, deductCredits } from "./db";
 import { fundingSources } from "../drizzle/schema";
 import { eq, asc } from "drizzle-orm";
 import { Resend } from "resend";
 import { ENV } from "./_core/env";
+import { CREDIT_COSTS } from "./_core/subscription";
 
 let _resend: Resend | null = null;
 function getResend(): Resend {
@@ -452,6 +453,10 @@ export const fundingRouter = router({
     .input(applicationInputSchema)
     .mutation(async ({ input, ctx }) => {
       const user = ctx.user;
+
+      // Deduct credits before compiling and sending the application
+      await deductCredits(user.id, CREDIT_COSTS.funding_app_submit.cost, "funding_app_submit", `Funding application: ${input.projectTitle} → ${input.fundingOrganization}`);
+
       const htmlBody = buildHtmlEmail(input, user.name ?? user.email, user.id);
 
       try {

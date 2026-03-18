@@ -434,3 +434,19 @@
 - [x] Update requestPasswordReset endpoint to send email via Gmail SMTP
 - [x] Write tests for email integration
 - [x] Push to GitHub for Railway deployment
+
+## Funding Directory — Email Delivery
+- [ ] Wire submitApplication tRPC endpoint to send compiled application HTML to user's email via Nodemailer/Gmail SMTP
+- [ ] Send confirmation email with application summary and link to funder's official site
+- [ ] Test email delivery end-to-end
+
+## Film Post-Production — Full Feature Wiring
+- [ ] ADR tab: record/upload dialogue takes, AI noise reduction, sync to scene timecode
+- [ ] Foley tab: layer ambient/footstep/prop sounds from SFX library onto timeline
+- [ ] Score tab: AI music generation prompt → generate cue → attach to scene
+- [ ] Mix tab: per-track volume/pan controls, master export (WAV/MP3)
+- [ ] Wire all tabs to server AI endpoints
+- [ ] Tests for all Post-Production endpoints
+
+## Onboarding Induction Flow
+- [ ] Web: Post-login onboarding modal (movie pipeline walkthrough, 6 steps, do-not-show-again)

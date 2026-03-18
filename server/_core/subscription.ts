@@ -701,6 +701,13 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   // ── Sound & voice generation ──────────────────────────────
   sfx_generate_from_text:  { cost: 5,   label: "AI Sound Effect Generation (ElevenLabs text-to-SFX)" },
   sfx_voice_choir:         { cost: 5,   label: "AI Voice Choir Generation (ElevenLabs TTS choir/wings)" },
+  // ── Film Post-Production AI ──────────────────────────────
+  film_post_adr_suggest:   { cost: 5,   label: "AI ADR Suggestions (dialogue replacement analysis per project)" },
+  film_post_foley_suggest: { cost: 5,   label: "AI Foley Suggestions (sound design analysis per project)" },
+  film_post_score_gen:     { cost: 8,   label: "AI Score Cue Generation (music cue breakdown per project)" },
+  film_post_mix_export:    { cost: 2,   label: "Mix Summary Export (structured post-production report)" },
+  // ── Funding Directory ─────────────────────────────────────
+  funding_app_submit:      { cost: 10,  label: "Funding Application Submit (compiled pack + email delivery)" },
   // ── Blog & content ────────────────────────────────────────
   blog_article_gen:        { cost: 5,   label: "Blog Article Generation (full article, ~1500 words)" },
   // ── Export & project management ───────────────────────────
