@@ -1210,8 +1210,8 @@ export default function ProjectDetail() {
                   <Languages className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">Subtitles</p>
-                  <p className="text-xs text-muted-foreground">Multi-language subtitle management</p>
+                  <p className="text-sm font-medium">Subtitles & Translation</p>
+                  <p className="text-xs text-muted-foreground">130+ languages · AI generation & translation</p>
                 </div>
               </CardContent>
             </Card>
@@ -1221,8 +1221,8 @@ export default function ProjectDetail() {
                   <Volume2 className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">Sound Effects</p>
-                  <p className="text-xs text-muted-foreground">Standard & custom SFX library</p>
+                  <p className="text-sm font-medium">Film Post-Production</p>
+                  <p className="text-xs text-muted-foreground">ADR · Foley · Score · Mix · SFX library</p>
                 </div>
               </CardContent>
             </Card>

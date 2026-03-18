@@ -1494,6 +1494,12 @@ export default function FundingDirectory() {
         </Badge>
       </div>
 
+      {/* Professional Working-Pack Notice */}
+      <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 px-4 py-3 text-xs text-blue-300/80 leading-relaxed">
+        <strong className="text-blue-300">Professional Working Pack.</strong> This directory and application framework is structured around recurring requirements published by representative official bodies — including BFI, Telefilm Canada, Screen Australia, IDFA Bertha Fund, and Doha Film Institute — covering budget, finance plan, rights / chain of title, schedules, and supporting materials. For international co-productions and documentary programmes, additional items such as co-production agreements and registration extracts may be required.
+        {" "}<strong className="text-blue-300">Legal declarations, exact upload wording, and submission requirements must be verified against the target fund's live portal before final submission.</strong> The native-language localisation layer is provided as a working framework only.
+      </div>
+
       {/* Filters */}
       <div className="flex flex-wrap gap-3 items-center">
         <div className="relative flex-1 min-w-[200px] max-w-sm">

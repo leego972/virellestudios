@@ -558,8 +558,8 @@ export default function SoundEffects() {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="min-w-0">
-                <h1 className="text-base sm:text-lg font-semibold truncate">Sound Effects Library</h1>
-                <p className="text-xs text-muted-foreground truncate">{project.data?.title}</p>
+                <h1 className="text-base sm:text-lg font-semibold truncate">Film Post-Production</h1>
+                <p className="text-xs text-muted-foreground truncate">{project.data?.title} — ADR · Foley · Score · Mix</p>
               </div>
             </div>
             <Button onClick={() => setShowUploadDialog(true)} size="sm" className="shrink-0">

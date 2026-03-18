@@ -51,6 +51,9 @@ import {
   Coins,
   Smartphone,
   Mail,
+  DollarSign,
+  Headphones,
+  Languages,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -76,6 +79,12 @@ const menuGroups = [
       { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker" },
       { icon: PlaySquare, label: "Project Samples", path: "/samples" },
       { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace" },
+    ],
+  },
+  {
+    label: "Tools",
+    items: [
+      { icon: DollarSign, label: "Funding Directory", path: "/funding" },
     ],
   },
   {
@@ -295,7 +304,7 @@ function DashboardLayoutContent({
           </SidebarHeader>
 
           <SidebarContent className="gap-0">
-            {menuGroups.map((group) => (
+            {menuGroups.filter(group => group.label !== "Tools" || isCreator).map((group) => (
               <SidebarMenu key={group.label} className="px-2 py-1">
                 <div className="px-2 mb-1 mt-2 group-data-[collapsible=icon]:hidden">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">{group.label}</span>
