@@ -1002,4 +1002,40 @@ export async function runAutoMigration(): Promise<void> {
   } catch (err: any) {
     console.error(`[AutoMigrate] Failed to seed promo codes:`, err.message);
   }
+
+  // ─── Step 5: Seed beta tester accounts (INSERT IGNORE — safe to run repeatedly) ───
+  // Pre-created accounts with industry-tier (full) access for beta testing.
+  // Credentials to hand out:
+  //   beta01@virellestudios.com / VirelleBeta01!
+  //   beta02@virellestudios.com / VirelleBeta02!
+  //   beta03@virellestudios.com / VirelleBeta03!
+  //   beta04@virellestudios.com / VirelleBeta04!
+  //   beta05@virellestudios.com / VirelleBeta05!
+  //   beta06@virellestudios.com / VirelleBeta06!
+  //   beta07@virellestudios.com / VirelleBeta07!
+  //   beta08@virellestudios.com / VirelleBeta08!
+  //   beta09@virellestudios.com / VirelleBeta09!
+  //   beta10@virellestudios.com / VirelleBeta10!
+  const BETA_ACCOUNTS = [
+    { email: 'beta01@virellestudios.com', name: 'Beta Tester 01', hash: '$2b$12$kPcp3jQv.2xeT30d3piIKew0I51ENu9IQia9KsTrDAWb3FZWI.YtW' },
+    { email: 'beta02@virellestudios.com', name: 'Beta Tester 02', hash: '$2b$12$OfsynB96qWPpeGC.nEaAL.QYMvFFzgzeTndnTJQ4i7wEmEg4mLhmi' },
+    { email: 'beta03@virellestudios.com', name: 'Beta Tester 03', hash: '$2b$12$1bhSGVJqrEgdQ72rireGp.gStOEPrYx8srWCquhbUpSonJ/wRvo3i' },
+    { email: 'beta04@virellestudios.com', name: 'Beta Tester 04', hash: '$2b$12$IlaXZw8SIWT5cr3DPLtwnO3WzGW/mClrk8yGvhGtkQ6lxFEHVgKWq' },
+    { email: 'beta05@virellestudios.com', name: 'Beta Tester 05', hash: '$2b$12$MtkiCrPMSnJ3vnmpI6f12umwGADADPdVIKK4/9/M/GjOGAfw5Tusi' },
+    { email: 'beta06@virellestudios.com', name: 'Beta Tester 06', hash: '$2b$12$zTfZfdCAYcYkiVZjZ5r7JeB38QsDTSwoubffp.ZK9oF1TqIWAZdEO' },
+    { email: 'beta07@virellestudios.com', name: 'Beta Tester 07', hash: '$2b$12$jTRem0RgWS7WHJPfEyuh4OwUkXO.jIwNSAPYva.LsBQPIrbJOAoFS' },
+    { email: 'beta08@virellestudios.com', name: 'Beta Tester 08', hash: '$2b$12$nUqVX2xYN0V5SRez6rWT/eSSNwQR/BqpKNMSfIHL6UoxJxOhfRxjq' },
+    { email: 'beta09@virellestudios.com', name: 'Beta Tester 09', hash: '$2b$12$UqgWEDWiJzhr2eeqOyk5defWvokvWBT.BzCtpqTuMOPw9S2o6xWwu' },
+    { email: 'beta10@virellestudios.com', name: 'Beta Tester 10', hash: '$2b$12$Bnw/0cXNuWO6qYNAeBJguelpY6/jldZjYxFN0XtkLUmM/FV3uk0rG' },
+  ];
+  try {
+    for (const u of BETA_ACCOUNTS) {
+      await db.execute(sql.raw(
+        `INSERT IGNORE INTO users (openId, email, name, passwordHash, loginMethod, role, subscriptionTier, subscriptionStatus, monthlyGenerationsUsed, onboardingCompleted, lastSignedIn, createdAt, updatedAt) VALUES ('email_${u.email}', '${u.email}', '${u.name}', '${u.hash}', 'email', 'user', 'industry', 'active', 0, 1, NOW(), NOW(), NOW())`
+      ));
+    }
+    console.log(`[AutoMigrate] Beta tester accounts seeded (${BETA_ACCOUNTS.length} accounts, INSERT IGNORE)`);
+  } catch (err: any) {
+    console.error(`[AutoMigrate] Failed to seed beta accounts:`, err.message);
+  }
 }
