@@ -450,3 +450,11 @@
 
 ## Onboarding Induction Flow
 - [ ] Web: Post-login onboarding modal (movie pipeline walkthrough, 6 steps, do-not-show-again)
+
+## Next Steps (Mar 2026)
+- [ ] Set RESEND_API_KEY in Railway environment
+- [ ] Add Getting Started replay button to dashboard header
+
+## Next Steps (Mar 2026)
+- [x] Set RESEND_API_KEY in Railway environment (set in mobile; add to web Railway env)
+- [x] Add Getting Started replay button to dashboard header

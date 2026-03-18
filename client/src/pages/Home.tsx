@@ -111,6 +111,7 @@ export default function Home() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [showOpener, setShowOpener] = useState(false);
+  const [forceOnboarding, setForceOnboarding] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -171,7 +172,7 @@ export default function Home() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <OnboardingOverlay />
+      <OnboardingOverlay forceShow={forceOnboarding} onClose={() => setForceOnboarding(false)} />
 
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -207,6 +208,16 @@ export default function Home() {
               Funding
             </Button>
           )}
+          <Button
+            variant="ghost"
+            onClick={() => setForceOnboarding(true)}
+            className="gap-2 text-muted-foreground hover:text-foreground"
+            size="sm"
+            title="Getting Started guide"
+          >
+            <PlayCircle className="h-4 w-4" />
+            <span className="hidden sm:inline">Getting Started</span>
+          </Button>
           <Button
             onClick={() => setLocation("/projects")}
             className="gap-2"
