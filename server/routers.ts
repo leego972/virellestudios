@@ -776,8 +776,9 @@ export const appRouter = router({
       .input(z.object({
         name: z.string().min(1).max(128),
         projectId: z.number().nullable().optional(),
-        photoBase64: z.string().max(14_000_000, "File too large. Max 10MB."), // base64 encoded reference photo
+        photoBase64: z.string().max(14_000_000, "File too large. Max 10MB.").optional().default(""), // base64 encoded reference photo
         photoMimeType: z.string().default("image/jpeg"),
+        referenceImageUrl: z.string().url().optional(), // URL from Wikimedia Commons search
         characterRole: z.string().optional(), // hero, villain, mentor, etc.
         style: z.string().optional(), // cinematic, noir, sci-fi, fantasy, etc.
         additionalNotes: z.string().optional(),
@@ -788,10 +789,33 @@ export const appRouter = router({
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character from photo: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         await db.incrementGenerationCount(ctx.user.id);
-        // Step 1: Upload the reference photo to S3
-        const photoBuffer = Buffer.from(input.photoBase64, "base64");
-        const photoKey = `uploads/${ctx.user.id}/ref-${nanoid()}.jpg`;
-        const { url: refPhotoUrl } = await storagePut(photoKey, photoBuffer, input.photoMimeType);
+
+        // Step 1: Resolve the reference photo — either from uploaded base64 or from a URL
+        let resolvedBase64 = input.photoBase64 ?? "";
+        let resolvedMimeType = input.photoMimeType;
+        let refPhotoUrl: string;
+
+        if (input.referenceImageUrl) {
+          // Fetch image from Wikimedia Commons URL
+          const imgRes = await fetch(input.referenceImageUrl, {
+            headers: { "User-Agent": "VirellStudios/1.0 (https://virelle.life)" },
+          });
+          if (!imgRes.ok) throw new TRPCError({ code: "BAD_REQUEST", message: "Failed to fetch reference image from URL" });
+          const imgBuffer = Buffer.from(await imgRes.arrayBuffer());
+          const contentType = imgRes.headers.get("content-type") || "image/jpeg";
+          resolvedMimeType = contentType.split(";")[0].trim();
+          resolvedBase64 = imgBuffer.toString("base64");
+          // Upload to S3
+          const photoKey = `uploads/${ctx.user.id}/ref-${nanoid()}.jpg`;
+          const stored = await storagePut(photoKey, imgBuffer, resolvedMimeType);
+          refPhotoUrl = stored.url;
+        } else {
+          if (!resolvedBase64) throw new TRPCError({ code: "BAD_REQUEST", message: "Either photoBase64 or referenceImageUrl is required" });
+          const photoBuffer = Buffer.from(resolvedBase64, "base64");
+          const photoKey = `uploads/${ctx.user.id}/ref-${nanoid()}.jpg`;
+          const stored = await storagePut(photoKey, photoBuffer, resolvedMimeType);
+          refPhotoUrl = stored.url;
+        }
 
         // Step 2: Use LLM with vision to analyze the photo and extract detailed features
         const analysisResult = await invokeLLM({
@@ -805,7 +829,7 @@ export const appRouter = router({
               content: [
                 {
                   type: "image_url",
-                  image_url: { url: `data:${input.photoMimeType};base64,${input.photoBase64}` },
+                  image_url: { url: `data:${resolvedMimeType};base64,${resolvedBase64}` },
                 },
                 {
                   type: "text",
@@ -912,7 +936,7 @@ export const appRouter = router({
           prompt: promptParts.join(" "),
           originalImages: [{
             url: refPhotoUrl,
-            mimeType: input.photoMimeType,
+            mimeType: resolvedMimeType,
           }],
         });
 
@@ -934,6 +958,86 @@ export const appRouter = router({
         });
 
         return character;
+      }),
+
+    // Search for public figure / celebrity reference images via Wikimedia Commons
+    searchPersonImages: protectedProcedure
+      .input(z.object({
+        query: z.string().min(1).max(200),
+      }))
+      .query(async ({ input }) => {
+        const encoded = encodeURIComponent(input.query);
+
+        // Step 1: Search Wikipedia for the best matching article
+        const searchRes = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encoded}&srnamespace=0&srlimit=5&format=json&origin=*`,
+          { headers: { "User-Agent": "VirellStudios/1.0 (https://virelle.life)" } }
+        );
+        const searchData = await searchRes.json() as any;
+        const searchResults: Array<{ title: string; snippet: string }> = (searchData?.query?.search ?? []).map((r: any) => ({
+          title: r.title,
+          snippet: r.snippet?.replace(/<[^>]+>/g, "") ?? "",
+        }));
+
+        if (!searchResults.length) return { images: [], suggestions: [] };
+
+        // Step 2: Get the main article image for the top result
+        const topTitle = encodeURIComponent(searchResults[0].title);
+        const pageImgRes = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&titles=${topTitle}&prop=pageimages&pithumbsize=600&piprop=thumbnail&format=json&origin=*`,
+          { headers: { "User-Agent": "VirellStudios/1.0 (https://virelle.life)" } }
+        );
+        const pageImgData = await pageImgRes.json() as any;
+        const pages = Object.values((pageImgData?.query?.pages ?? {})) as any[];
+        const mainThumb = pages[0]?.thumbnail?.source ?? null;
+
+        // Step 3: Search Wikimedia Commons for portrait images
+        const commonsRes = await fetch(
+          `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encoded}+portrait&srnamespace=6&srlimit=12&format=json&origin=*`,
+          { headers: { "User-Agent": "VirellStudios/1.0 (https://virelle.life)" } }
+        );
+        const commonsData = await commonsRes.json() as any;
+        const fileTitles: string[] = (commonsData?.query?.search ?? []).map((r: any) => r.title);
+
+        // Step 4: Get thumbnail URLs for each Commons file
+        const images: Array<{ title: string; thumbUrl: string; fullUrl: string }> = [];
+
+        if (mainThumb) {
+          images.push({ title: searchResults[0].title, thumbUrl: mainThumb, fullUrl: mainThumb.replace(/\/\d+px-/, "/800px-") });
+        }
+
+        if (fileTitles.length > 0) {
+          const titlesParam = fileTitles.slice(0, 10).map(encodeURIComponent).join("|");
+          const thumbRes = await fetch(
+            `https://commons.wikimedia.org/w/api.php?action=query&titles=${titlesParam}&prop=imageinfo&iiprop=url&iiurlwidth=400&format=json&origin=*`,
+            { headers: { "User-Agent": "VirellStudios/1.0 (https://virelle.life)" } }
+          );
+          const thumbData = await thumbRes.json() as any;
+          const thumbPages = Object.values((thumbData?.query?.pages ?? {})) as any[];
+          for (const p of thumbPages) {
+            const ii = p?.imageinfo?.[0];
+            if (ii?.thumburl) {
+              images.push({
+                title: p.title?.replace(/^File:/, "") ?? "",
+                thumbUrl: ii.thumburl,
+                fullUrl: ii.url ?? ii.thumburl,
+              });
+            }
+          }
+        }
+
+        // Deduplicate by thumbUrl
+        const seen = new Set<string>();
+        const unique = images.filter(img => {
+          if (seen.has(img.thumbUrl)) return false;
+          seen.add(img.thumbUrl);
+          return true;
+        });
+
+        return {
+          images: unique.slice(0, 9),
+          suggestions: searchResults.slice(0, 5).map(r => r.title),
+        };
       }),
   }),
 
@@ -4999,6 +5103,7 @@ Generate a detailed production budget estimate.`,
         projectId: z.number(),
         email: z.string().email().optional(),
         role: z.enum(["viewer", "editor", "producer", "director"]).default("editor"),
+        origin: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         requireFeature(ctx.user, "canUseCollaboration", "Collaboration");
@@ -5011,6 +5116,21 @@ Generate a detailed production budget estimate.`,
           role: input.role,
           status: "pending",
         });
+        // Send invite email if an email address was provided
+        if (input.email) {
+          try {
+            const project = await db.getProjectById(input.projectId, ctx.user!.id);
+            const origin = input.origin || "https://www.virelle.life";
+            const inviteUrl = `${origin}/collaboration?token=${token}`;
+            const inviterName = ctx.user!.name || ctx.user!.email || "A collaborator";
+            const projectTitle = project?.title || "Untitled Project";
+            const { sendCollaborationInviteEmail } = await import("./email");
+            await sendCollaborationInviteEmail(input.email, inviterName, projectTitle, input.role, inviteUrl);
+          } catch (emailErr) {
+            console.error("Failed to send collaboration invite email:", emailErr);
+            // Non-fatal — invite was created, email failure shouldn't block the response
+          }
+        }
         return { collaborator: collab, inviteToken: token };
       }),
     accept: protectedProcedure

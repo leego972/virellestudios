@@ -47,6 +47,10 @@ import {
   Sparkles,
   Eye,
   Search,
+  Globe,
+  CheckSquare,
+  Square,
+  ChevronRight,
 } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
@@ -110,6 +114,12 @@ export default function Characters() {
   const [charSearch, setCharSearch] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const photoFileRef = useRef<HTMLInputElement>(null);
+  // Celebrity / public figure image search
+  const [photoInputMode, setPhotoInputMode] = useState<"upload" | "search">("upload");
+  const [personSearchQuery, setPersonSearchQuery] = useState("");
+  const [personSearchActive, setPersonSearchActive] = useState("");
+  const [selectedSearchImage, setSelectedSearchImage] = useState<string | null>(null);
+  const [consentAcknowledged, setConsentAcknowledged] = useState(false);
 
   const { data: characters, isLoading } = trpc.character.listLibrary.useQuery();
   const utils = trpc.useUtils();
@@ -161,9 +171,18 @@ export default function Characters() {
       setPhotoForm(emptyPhotoForm);
       setPhotoPreview(null);
       setPhotoBase64(null);
+      setSelectedSearchImage(null);
+      setConsentAcknowledged(false);
+      setPhotoInputMode("upload");
     },
     onError: (err) => toast.error(err.message),
   });
+
+  const personImageSearch = trpc.character.searchPersonImages.useQuery(
+    { query: personSearchActive },
+    { enabled: personSearchActive.length > 0 }
+  );
+  const personImages = personImageSearch.data?.images ?? [];
 
   const closeDialog = () => {
     setDialogOpen(false);
@@ -247,16 +266,32 @@ export default function Characters() {
   const handlePhotoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!photoForm.name.trim()) { toast.error("Character name is required"); return; }
-    if (!photoBase64) { toast.error("Please upload a reference photo"); return; }
-    aiPhotoMutation.mutate({
-      name: photoForm.name.trim(),
-      projectId: null,
-      photoBase64,
-      photoMimeType,
-      characterRole: photoForm.characterRole || undefined,
-      style: photoForm.style || "cinematic",
-      additionalNotes: photoForm.additionalNotes || undefined,
-    });
+    if (photoInputMode === "search") {
+      if (!selectedSearchImage) { toast.error("Please select a reference image from the search results"); return; }
+      if (!consentAcknowledged) { toast.error("Please acknowledge the consent disclaimer before proceeding"); return; }
+      // Fetch the image as base64 via server proxy
+      aiPhotoMutation.mutate({
+        name: photoForm.name.trim(),
+        projectId: null,
+        photoBase64: "",
+        photoMimeType: "image/jpeg",
+        referenceImageUrl: selectedSearchImage,
+        characterRole: photoForm.characterRole || undefined,
+        style: photoForm.style || "cinematic",
+        additionalNotes: photoForm.additionalNotes || undefined,
+      });
+    } else {
+      if (!photoBase64) { toast.error("Please upload a reference photo"); return; }
+      aiPhotoMutation.mutate({
+        name: photoForm.name.trim(),
+        projectId: null,
+        photoBase64,
+        photoMimeType,
+        characterRole: photoForm.characterRole || undefined,
+        style: photoForm.style || "cinematic",
+        additionalNotes: photoForm.additionalNotes || undefined,
+      });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -466,45 +501,209 @@ export default function Characters() {
             </div>
           </DialogHeader>
           <form onSubmit={handlePhotoSubmit} className="space-y-5 mt-3">
-            {/* Photo Upload Area */}
+            {/* Reference Photo — Upload or Search tabs */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">Reference Photo <span className="text-destructive">*</span></Label>
-              {photoPreview ? (
-                <div className="relative rounded-lg overflow-hidden bg-muted border border-border">
-                  <img src={photoPreview} alt="Reference" className="w-full max-h-[300px] object-contain" />
-                  <button
-                    type="button"
-                    className="absolute top-2 right-2 h-7 w-7 bg-black/70 hover:bg-black/90 rounded-full flex items-center justify-center transition-colors"
-                    onClick={() => { setPhotoPreview(null); setPhotoBase64(null); }}
-                  >
-                    <X className="h-4 w-4 text-white" />
-                  </button>
-                  <div className="absolute bottom-2 left-2">
-                    <Badge variant="secondary" className="bg-green-600/90 text-white text-xs border-0">
-                      Photo loaded
-                    </Badge>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  className="h-48 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-violet-500/50 flex flex-col items-center justify-center cursor-pointer transition-colors bg-muted/20"
-                  onClick={() => photoFileRef.current?.click()}
+
+              {/* Mode toggle */}
+              <div className="flex gap-1 p-1 bg-muted rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => { setPhotoInputMode("upload"); setSelectedSearchImage(null); }}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md text-xs font-medium transition-all ${
+                    photoInputMode === "upload"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  <div className="h-12 w-12 rounded-full bg-violet-500/10 flex items-center justify-center mb-3">
-                    <Upload className="h-6 w-6 text-violet-400" />
+                  <Upload className="h-3.5 w-3.5" />
+                  Upload Photo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setPhotoInputMode("search"); setPhotoPreview(null); setPhotoBase64(null); }}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md text-xs font-medium transition-all ${
+                    photoInputMode === "search"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Globe className="h-3.5 w-3.5" />
+                  Search Public Figures
+                </button>
+              </div>
+
+              {/* Upload mode */}
+              {photoInputMode === "upload" && (
+                <>
+                  {photoPreview ? (
+                    <div className="relative rounded-lg overflow-hidden bg-muted border border-border">
+                      <img src={photoPreview} alt="Reference" className="w-full max-h-[300px] object-contain" />
+                      <button
+                        type="button"
+                        className="absolute top-2 right-2 h-7 w-7 bg-black/70 hover:bg-black/90 rounded-full flex items-center justify-center transition-colors"
+                        onClick={() => { setPhotoPreview(null); setPhotoBase64(null); }}
+                      >
+                        <X className="h-4 w-4 text-white" />
+                      </button>
+                      <div className="absolute bottom-2 left-2">
+                        <Badge variant="secondary" className="bg-green-600/90 text-white text-xs border-0">
+                          Photo loaded
+                        </Badge>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className="h-48 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-violet-500/50 flex flex-col items-center justify-center cursor-pointer transition-colors bg-muted/20"
+                      onClick={() => photoFileRef.current?.click()}
+                    >
+                      <div className="h-12 w-12 rounded-full bg-violet-500/10 flex items-center justify-center mb-3">
+                        <Upload className="h-6 w-6 text-violet-400" />
+                      </div>
+                      <p className="text-sm font-medium">Click to upload a photo</p>
+                      <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP — up to 10MB</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Best results with clear, well-lit face photos</p>
+                    </div>
+                  )}
+                  <input
+                    ref={photoFileRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handlePhotoSelect}
+                  />
+                </>
+              )}
+
+              {/* Search mode */}
+              {photoInputMode === "search" && (
+                <div className="space-y-3">
+                  {/* Search bar */}
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="e.g. Napoleon Bonaparte, Audrey Hepburn, Elon Musk…"
+                        value={personSearchQuery}
+                        onChange={(e) => setPersonSearchQuery(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); setPersonSearchActive(personSearchQuery.trim()); } }}
+                        className="pl-9 h-10 bg-background/50"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-10 px-4"
+                      onClick={() => setPersonSearchActive(personSearchQuery.trim())}
+                      disabled={!personSearchQuery.trim()}
+                    >
+                      Search
+                    </Button>
                   </div>
-                  <p className="text-sm font-medium">Click to upload a photo</p>
-                  <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP — up to 10MB</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Best results with clear, well-lit face photos</p>
+
+                  {/* Results grid */}
+                  {personImageSearch.isLoading && (
+                    <div className="flex items-center justify-center h-32 text-muted-foreground">
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      <span className="text-sm">Searching Wikimedia Commons…</span>
+                    </div>
+                  )}
+
+                  {personImageSearch.data && personImages.length === 0 && (
+                    <div className="flex flex-col items-center justify-center h-24 text-muted-foreground">
+                      <ImageIcon className="h-8 w-8 mb-2 opacity-40" />
+                      <p className="text-sm">No images found for "{personSearchActive}"</p>
+                      <p className="text-xs mt-1">Try a different spelling or full name</p>
+                    </div>
+                  )}
+
+                  {personImages.length > 0 && (
+                    <ScrollArea className="h-[220px] rounded-lg border border-border">
+                      <div className="grid grid-cols-3 gap-2 p-2">
+                        {personImages.map((img) => (
+                          <button
+                            key={img.thumbUrl}
+                            type="button"
+                            onClick={() => setSelectedSearchImage(selectedSearchImage === img.fullUrl ? null : img.fullUrl)}
+                            className={`relative rounded-lg overflow-hidden border-2 transition-all aspect-square ${
+                              selectedSearchImage === img.fullUrl
+                                ? "border-violet-500 ring-2 ring-violet-500/30"
+                                : "border-transparent hover:border-violet-500/40"
+                            }`}
+                          >
+                            <img
+                              src={img.thumbUrl}
+                              alt={img.title}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            {selectedSearchImage === img.fullUrl && (
+                              <div className="absolute inset-0 bg-violet-600/20 flex items-center justify-center">
+                                <CheckSquare className="h-6 w-6 text-white drop-shadow" />
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  )}
+
+                  {/* Selected image preview */}
+                  {selectedSearchImage && (
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                      <img
+                        src={selectedSearchImage}
+                        alt="Selected reference"
+                        className="h-16 w-16 rounded-md object-cover flex-shrink-0 border border-violet-500/30"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-violet-300">Reference image selected</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 truncate">{selectedSearchImage}</p>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSearchImage(null)}
+                          className="text-xs text-muted-foreground hover:text-foreground mt-1 underline"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Consent disclaimer */}
+                  {selectedSearchImage && (
+                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 space-y-2">
+                      <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">Consent & Usage Disclaimer</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Images sourced from Wikimedia Commons are publicly available under their respective licences.
+                        You are responsible for ensuring you have the right to use a person's likeness for your production.
+                        Virelle Studios provides this tool for creative reference only — always obtain appropriate consent
+                        before using a real person's likeness in a commercial project.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setConsentAcknowledged(!consentAcknowledged)}
+                        className="flex items-center gap-2 text-xs font-medium mt-1"
+                      >
+                        {consentAcknowledged
+                          ? <CheckSquare className="h-4 w-4 text-violet-400 flex-shrink-0" />
+                          : <Square className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        }
+                        <span className={consentAcknowledged ? "text-violet-300" : "text-muted-foreground"}>
+                          I understand and accept responsibility for the use of this likeness
+                        </span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Attribution note */}
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Globe className="h-3 w-3" />
+                    Images sourced from Wikimedia Commons — free, openly licensed media repository
+                  </p>
                 </div>
               )}
-              <input
-                ref={photoFileRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={handlePhotoSelect}
-              />
             </div>
 
             {/* Character Name */}
@@ -576,7 +775,7 @@ export default function Characters() {
               <Button type="button" variant="ghost" onClick={() => setPhotoDialogOpen(false)}>Cancel</Button>
               <Button
                 type="submit"
-                disabled={aiPhotoMutation.isPending || !photoBase64}
+                disabled={aiPhotoMutation.isPending || (photoInputMode === "upload" ? !photoBase64 : (!selectedSearchImage || !consentAcknowledged))}
                 className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white min-w-[180px]"
               >
                 {aiPhotoMutation.isPending ? (

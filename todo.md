@@ -458,3 +458,11 @@
 ## Next Steps (Mar 2026)
 - [x] Set RESEND_API_KEY in Railway environment (set in mobile; add to web Railway env)
 - [x] Add Getting Started replay button to dashboard header
+- [ ] Web: Project collaboration invite by email from Project Detail page
+
+## Celebrity / Public Figure Image Search (Characters Tool)
+- [ ] Server: image search endpoint (Bing Image Search API or Wikimedia Commons)
+- [ ] Characters tool: "Search for person" panel with name input and image grid results
+- [ ] Consent disclaimer before generating likeness
+- [ ] Wire selected reference image into character generation
+- [ ] Credits deduction for celebrity likeness generation

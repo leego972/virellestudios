@@ -96,7 +96,7 @@ export default function Login() {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-bold text-foreground tracking-tight">Virelle Studios</h1>
-              <p className="text-sm text-muted-foreground mt-1">AI-powered film production</p>
+              <p className="text-sm text-muted-foreground mt-1">Create Hollywood grade productions with AI</p>
             </div>
           </div>
 

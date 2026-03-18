@@ -406,3 +406,88 @@ export async function verifyEmailConnection(): Promise<boolean> {
   }
   return true;
 }
+
+// ─── Collaboration Invite ─────────────────────────────────────────────────────
+export async function sendCollaborationInviteEmail(
+  to: string,
+  inviterName: string,
+  projectTitle: string,
+  role: string,
+  inviteUrl: string
+): Promise<boolean> {
+  const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background-color:#141414;border-radius:12px;border:1px solid #262626;overflow:hidden;">
+          <tr>
+            <td style="padding:32px 32px 24px;text-align:center;border-bottom:1px solid #262626;">
+              <h1 style="margin:0;font-size:22px;font-weight:700;color:#d4a843;letter-spacing:0.5px;">Virelle Studios</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px;">
+              <h2 style="margin:0 0 16px;font-size:18px;font-weight:600;color:#f5f5f5;">You've been invited to collaborate</h2>
+              <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#a3a3a3;">
+                <strong style="color:#f5f5f5;">${inviterName}</strong> has invited you to join the project
+                <strong style="color:#d4a843;">${projectTitle}</strong> on Virelle Studios as a <strong style="color:#f5f5f5;">${roleLabel}</strong>.
+              </p>
+              <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#a3a3a3;">
+                Click the button below to accept the invitation and start collaborating on this film project.
+              </p>
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:8px 0 24px;">
+                    <a href="${inviteUrl}" style="display:inline-block;padding:12px 32px;background-color:#d4a843;color:#0a0a0a;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;letter-spacing:0.3px;">
+                      Accept Invitation
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:#737373;">
+                Or copy and paste this link into your browser:
+              </p>
+              <p style="margin:0 0 24px;font-size:12px;line-height:1.5;color:#d4a843;word-break:break-all;">${inviteUrl}</p>
+              <div style="border-top:1px solid #262626;padding-top:20px;">
+                <p style="margin:0;font-size:12px;line-height:1.5;color:#525252;">
+                  If you weren't expecting this invitation, you can safely ignore this email.
+                </p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 32px;background-color:#0d0d0d;text-align:center;border-top:1px solid #262626;">
+              <p style="margin:0;font-size:11px;color:#525252;">&copy; ${new Date().getFullYear()} Virelle Studios. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+  try {
+    const { error } = await getResend().emails.send({
+      from: FROM,
+      to,
+      subject: `${inviterName} invited you to collaborate on "${projectTitle}" — Virelle Studios`,
+      html,
+    });
+    if (error) {
+      console.error("Resend: failed to send collaboration invite email:", error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Resend: unexpected error sending collaboration invite email:", err);
+    return false;
+  }
+}

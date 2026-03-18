@@ -531,9 +531,6 @@ export default function Landing() {
               What Virelle Actually{" "}
               <span className="text-amber-400">Generates</span>
             </h2>
-            <p className="mt-4 text-foreground/70 max-w-2xl mx-auto">
-              Every frame below was produced directly by the Virelle platform &mdash; no post-production, no stock footage, no human VFX artists.
-            </p>
           </div>
 
           {/* Keyframe image grid */}

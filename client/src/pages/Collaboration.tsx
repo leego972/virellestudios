@@ -43,16 +43,16 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const ROLE_CONFIG = {
-  director: { label: "Director", icon: Crown, color: "text-amber-500", description: "Full creative control and project management" },
-  producer: { label: "Producer", icon: Clapperboard, color: "text-blue-500", description: "Oversee production, budgets, and scheduling" },
-  editor: { label: "Editor", icon: Pencil, color: "text-green-500", description: "Edit scenes, scripts, and project content" },
+  director: { label: "Director", icon: Crown, color: "text-amber-600 dark:text-amber-400", description: "Full creative control and project management" },
+  producer: { label: "Producer", icon: Clapperboard, color: "text-blue-600 dark:text-blue-400", description: "Oversee production, budgets, and scheduling" },
+  editor: { label: "Editor", icon: Pencil, color: "text-green-600 dark:text-green-400", description: "Edit scenes, scripts, and project content" },
   viewer: { label: "Viewer", icon: Eye, color: "text-muted-foreground", description: "View-only access to the project" },
 } as const;
 
 const STATUS_CONFIG = {
-  pending: { label: "Pending", icon: Clock, color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
-  accepted: { label: "Active", icon: CheckCircle, color: "bg-green-500/10 text-green-600 border-green-500/20" },
-  declined: { label: "Declined", icon: XCircle, color: "bg-red-500/10 text-red-600 border-red-500/20" },
+  pending: { label: "Pending", icon: Clock, color: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30" },
+  accepted: { label: "Active", icon: CheckCircle, color: "bg-green-500/15 text-green-700 dark:text-green-400 border-green-500/30" },
+  declined: { label: "Declined", icon: XCircle, color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30" },
 } as const;
 
 export default function Collaboration() {
@@ -103,6 +103,7 @@ export default function Collaboration() {
       projectId,
       email: inviteEmail || undefined,
       role: inviteRole,
+      origin: window.location.origin,
     });
   };
 
@@ -110,6 +111,7 @@ export default function Collaboration() {
     inviteMutation.mutate({
       projectId,
       role: inviteRole,
+      origin: window.location.origin,
     });
   };
 
@@ -256,7 +258,7 @@ export default function Collaboration() {
                             <Badge variant="secondary" className="text-[10px]">
                               {roleConfig?.label || member.role}
                             </Badge>
-                            <Badge variant="outline" className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20">
+                            <Badge variant="outline" className="text-[10px] bg-green-500/15 text-green-700 dark:text-green-400 border-green-500/30">
                               Active
                             </Badge>
                           </div>
@@ -321,7 +323,7 @@ export default function Collaboration() {
                             <Badge variant="secondary" className="text-[10px]">
                               {roleConfig?.label || invite.role}
                             </Badge>
-                            <Badge variant="outline" className="text-[10px] bg-yellow-500/10 text-yellow-600 border-yellow-500/20">
+                            <Badge variant="outline" className="text-[10px] bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30">
                               Pending
                             </Badge>
                             <span className="text-[10px] text-muted-foreground">
@@ -378,7 +380,7 @@ export default function Collaboration() {
                       </div>
                       <div>
                         <p className="text-sm font-medium">{invite.email || "Link Invitation"}</p>
-                        <Badge variant="outline" className="text-[10px] bg-red-500/10 text-red-600 border-red-500/20">
+                        <Badge variant="outline" className="text-[10px] bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30">
                           Declined
                         </Badge>
                       </div>
