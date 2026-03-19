@@ -1,20 +1,16 @@
 /**
  * Image generation helper with fallback chain:
- *   1. Forge ImageService (primary)
- *   2. OpenAI DALL-E 3 (fallback)
+ *   1. RunwayML (primary — user BYOK via RUNWAYML_API_SECRET)
+ *   2. Google Veo 3 / Gemini Imagen (GOOGLE_API_KEY)
+ *   3. Hugging Face Inference API (HUGGING_FACE_API_KEY)
+ *   4. OpenAI DALL-E 3 (final fallback — OPENAI_API_KEY)
+ *
+ * Each provider is skipped automatically if its API key is not configured,
+ * allowing users to bring their own keys (BYOK) and get the best available provider.
  *
  * Example usage:
  *   const { url: imageUrl } = await generateImage({
- *     prompt: "A serene landscape with mountains"
- *   });
- *
- * For editing:
- *   const { url: imageUrl } = await generateImage({
- *     prompt: "Add a rainbow to this landscape",
- *     originalImages: [{
- *       url: "https://example.com/original.jpg",
- *       mimeType: "image/jpeg"
- *     }]
+ *     prompt: "A cinematic wide shot of a detective in a rain-soaked city"
  *   });
  */
 import { storagePut } from "server/storage";
@@ -31,58 +27,179 @@ export type GenerateImageOptions = {
 
 export type GenerateImageResponse = {
   url?: string;
+  provider?: string;
 };
 
-/* ─── Forge (primary) ─── */
-async function generateWithForge(
+/* ─── 1. RunwayML (primary) ─── */
+async function generateWithRunway(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
-  if (!ENV.forgeApiUrl || !ENV.forgeApiKey) {
-    throw new Error("Forge API not configured");
+  if (!ENV.runwayApiKey) {
+    throw new Error("RunwayML API key not configured");
   }
 
-  const baseUrl = ENV.forgeApiUrl.endsWith("/")
-    ? ENV.forgeApiUrl
-    : `${ENV.forgeApiUrl}/`;
-  const fullUrl = new URL(
-    "images.v1.ImageService/GenerateImage",
-    baseUrl
-  ).toString();
-
-  const response = await fetch(fullUrl, {
+  // Runway Gen-3 Alpha image generation endpoint
+  const response = await fetch("https://api.dev.runwayml.com/v1/image_to_image", {
     method: "POST",
     headers: {
-      accept: "application/json",
-      "content-type": "application/json",
-      "connect-protocol-version": "1",
-      authorization: `Bearer ${ENV.forgeApiKey}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${ENV.runwayApiKey}`,
+      "X-Runway-Version": "2024-11-06",
     },
     body: JSON.stringify({
-      prompt: options.prompt,
-      original_images: options.originalImages || [],
+      promptText: options.prompt.slice(0, 1000),
+      model: "gen3a_turbo",
+      ratio: "1280:768",
     }),
   });
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
     throw new Error(
-      `Forge image generation failed (${response.status} ${response.statusText})${detail ? `: ${detail}` : ""}`
+      `RunwayML image generation failed (${response.status} ${response.statusText})${detail ? `: ${detail}` : ""}`
     );
   }
 
   const result = (await response.json()) as {
-    image: { b64Json: string; mimeType: string };
+    artifacts?: Array<{ url: string }>;
+    output?: Array<string>;
   };
-  const buffer = Buffer.from(result.image.b64Json, "base64");
+
+  // Handle both response formats
+  const imageUrl =
+    result.artifacts?.[0]?.url ||
+    result.output?.[0];
+
+  if (!imageUrl) {
+    throw new Error("RunwayML returned no image data");
+  }
+
+  // Download and re-upload to our S3 storage
+  const imgResponse = await fetch(imageUrl);
+  if (!imgResponse.ok) {
+    throw new Error("Failed to download RunwayML image");
+  }
+  const buffer = Buffer.from(await imgResponse.arrayBuffer());
   const { url } = await storagePut(
     `generated/${Date.now()}.png`,
     buffer,
-    result.image.mimeType
+    "image/png"
   );
-  return { url };
+  return { url, provider: "runway" };
 }
 
-/* ─── OpenAI DALL-E 3 (fallback) ─── */
+/* ─── 2. Google Veo 3 / Gemini Imagen ─── */
+async function generateWithGoogle(
+  options: GenerateImageOptions
+): Promise<GenerateImageResponse> {
+  if (!ENV.googleApiKey) {
+    throw new Error("Google API key not configured");
+  }
+
+  // Use Gemini Imagen 3 for high-quality image generation
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${ENV.googleApiKey}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        instances: [
+          {
+            prompt: options.prompt.slice(0, 2000),
+          },
+        ],
+        parameters: {
+          sampleCount: 1,
+          aspectRatio: "16:9",
+          safetyFilterLevel: "block_some",
+          personGeneration: "allow_adult",
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(
+      `Google Imagen generation failed (${response.status} ${response.statusText})${detail ? `: ${detail}` : ""}`
+    );
+  }
+
+  const result = (await response.json()) as {
+    predictions?: Array<{ bytesBase64Encoded: string; mimeType: string }>;
+  };
+
+  if (!result.predictions?.[0]?.bytesBase64Encoded) {
+    throw new Error("Google Imagen returned no image data");
+  }
+
+  const buffer = Buffer.from(result.predictions[0].bytesBase64Encoded, "base64");
+  const mimeType = result.predictions[0].mimeType || "image/png";
+  const ext = mimeType.split("/")[1] || "png";
+  const { url } = await storagePut(
+    `generated/${Date.now()}.${ext}`,
+    buffer,
+    mimeType
+  );
+  return { url, provider: "google-imagen" };
+}
+
+/* ─── 3. Hugging Face Inference API ─── */
+async function generateWithHuggingFace(
+  options: GenerateImageOptions
+): Promise<GenerateImageResponse> {
+  if (!ENV.huggingFaceApiKey) {
+    throw new Error("Hugging Face API key not configured");
+  }
+
+  // Use FLUX.1-dev — best open-source cinematic image model
+  const model = "black-forest-labs/FLUX.1-dev";
+  const response = await fetch(
+    `https://api-inference.huggingface.co/models/${model}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${ENV.huggingFaceApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inputs: options.prompt.slice(0, 2000),
+        parameters: {
+          width: 1280,
+          height: 720,
+          num_inference_steps: 28,
+          guidance_scale: 3.5,
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(
+      `Hugging Face generation failed (${response.status} ${response.statusText})${detail ? `: ${detail}` : ""}`
+    );
+  }
+
+  // HF returns raw image bytes
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  // Detect content type from response headers
+  const contentType = response.headers.get("content-type") || "image/jpeg";
+  const ext = contentType.split("/")[1]?.split(";")[0] || "jpg";
+
+  const { url } = await storagePut(
+    `generated/${Date.now()}.${ext}`,
+    buffer,
+    contentType
+  );
+  return { url, provider: "huggingface" };
+}
+
+/* ─── 4. OpenAI DALL-E 3 (final fallback) ─── */
 async function generateWithOpenAI(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
@@ -131,30 +248,57 @@ async function generateWithOpenAI(
     buffer,
     "image/png"
   );
-  return { url };
+  return { url, provider: "dalle3" };
 }
 
-/* ─── Main entry point with fallback ─── */
+/* ─── Main entry point with fallback chain ─── */
 export async function generateImage(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
   const errors: string[] = [];
 
-  // 1. Try Forge first
-  if (ENV.forgeApiUrl && ENV.forgeApiKey) {
+  // 1. Try RunwayML first (primary)
+  if (ENV.runwayApiKey) {
     try {
-      return await generateWithForge(options);
+      const result = await generateWithRunway(options);
+      console.log("[ImageGen] Generated with RunwayML");
+      return result;
     } catch (err: any) {
-      console.warn(`[ImageGen] Forge failed: ${err.message}`);
-      errors.push(`Forge: ${err.message}`);
+      console.warn(`[ImageGen] RunwayML failed: ${err.message}`);
+      errors.push(`RunwayML: ${err.message}`);
     }
   }
 
-  // 2. Fallback to OpenAI DALL-E 3
+  // 2. Try Google Veo 3 / Gemini Imagen
+  if (ENV.googleApiKey) {
+    try {
+      console.log("[ImageGen] Falling back to Google Imagen (Veo 3)");
+      const result = await generateWithGoogle(options);
+      return result;
+    } catch (err: any) {
+      console.warn(`[ImageGen] Google Imagen failed: ${err.message}`);
+      errors.push(`Google: ${err.message}`);
+    }
+  }
+
+  // 3. Try Hugging Face (FLUX.1-dev)
+  if (ENV.huggingFaceApiKey) {
+    try {
+      console.log("[ImageGen] Falling back to Hugging Face (FLUX.1-dev)");
+      const result = await generateWithHuggingFace(options);
+      return result;
+    } catch (err: any) {
+      console.warn(`[ImageGen] Hugging Face failed: ${err.message}`);
+      errors.push(`HuggingFace: ${err.message}`);
+    }
+  }
+
+  // 4. Final fallback: OpenAI DALL-E 3
   if (ENV.openaiApiKey) {
     try {
       console.log("[ImageGen] Falling back to OpenAI DALL-E 3");
-      return await generateWithOpenAI(options);
+      const result = await generateWithOpenAI(options);
+      return result;
     } catch (err: any) {
       console.warn(`[ImageGen] OpenAI failed: ${err.message}`);
       errors.push(`OpenAI: ${err.message}`);
