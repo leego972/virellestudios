@@ -12,10 +12,10 @@ export const stripe = ENV.stripeSecretKey
 // ============================================================
 
 // Internal DB tier keys — display names are mapped in the frontend:
-//   "amateur"     → "Auteur"
-//   "independent" → "Production Pro"
-//   "studio"      → "Studio"
-//   "industry"    → "Industry Enterprise"
+//   "amateur"     → "Creator"
+//   "independent" → "Studio"
+//   "studio"      → "Production"
+//   "industry"    → "Enterprise"
 export type SubscriptionTier = "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
 export type BillingInterval = "monthly" | "annual";
 
@@ -86,15 +86,15 @@ export interface TierLimits {
  * Pricing architecture (AUD):
  *
  * MEMBERSHIP TIERS (required to use the platform):
- *   Auteur (DB: "amateur")            — A$1,250/month  or A$12,000/year  — 2,000 credits/month
- *   Production Pro (DB: "independent")— A$3,900/month  or A$36,000/year  — 5,500 credits/month
- *   Studio (DB: "studio")             — From A$150,000/year (consultative) — 15,500 credits/month
- *   Industry Enterprise (DB: "industry") — Custom pricing (sales-led)    — 50,500 credits/month
+ *   Creator (DB: "amateur")            — A$1,250/month  or A$12,000/year  — 2,000 credits/month
+ *   Studio (DB: "independent")— A$3,900/month  or A$36,000/year  — 5,500 credits/month
+ *   Production (DB: "studio")             — From A$150,000/year (consultative) — 15,500 credits/month
+ *   Enterprise (DB: "industry") — Custom pricing (sales-led)    — 50,500 credits/month
  *
  * FOUNDING MEMBER OFFER: 50% off first year on annual billing (VIRELLE_FOUNDER_50 coupon)
- *   Applies to Auteur and Production Pro annual plans only.
- *   Auteur founder price: A$6,000 first year (then A$12,000/yr)
- *   Production Pro founder price: A$18,000 first year (then A$36,000/yr)
+ *   Applies to Creator and Studio annual plans only.
+ *   Creator founder price: A$6,000 first year (then A$12,000/yr)
+ *   Studio founder price: A$18,000 first year (then A$36,000/yr)
  *
  * CREDITS SYSTEM — Every action costs credits:
  *   Create New Project:                      FREE
@@ -128,7 +128,7 @@ export interface TierLimits {
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
 
-  // ─── AUTEUR (DB: "amateur") ─── A$1,250/month — 2,000 credits/month ───────
+  // ─── CREATOR (DB: "amateur") ─── A$1,250/month — 2,000 credits/month ───────
   amateur: {
     maxProjects: 2,
     maxCharactersPerProject: 5,
@@ -186,7 +186,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 2000,
   },
 
-  // ─── PRODUCTION PRO (DB: "independent") ─── A$3,900/month — 5,500 credits/month ───
+  // ─── STUDIO (DB: "independent") ─── A$3,900/month — 5,500 credits/month ───
   independent: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -244,7 +244,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 5500,
   },
 
-  // ─── PRODUCTION PRO alias (DB: "creator") ─── same limits as independent ───
+  // ─── STUDIO alias (DB: "creator") ─── same limits as independent ───
   creator: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -272,7 +272,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 5500,
   },
 
-  // ─── STUDIO (DB: "studio") ─── From A$150,000/year — 15,500 credits/month ───
+  // ─── PRODUCTION (DB: "studio") ─── From A$150,000/year — 15,500 credits/month ───
   studio: {
     maxProjects: 100,
     maxCharactersPerProject: 100,
@@ -300,7 +300,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 15500,
   },
 
-  // ─── INDUSTRY ENTERPRISE (DB: "industry") ─── Custom pricing — 50,500 credits/month ───
+  // ─── ENTERPRISE (DB: "industry") ─── Custom pricing — 50,500 credits/month ───
   industry: {
     maxProjects: -1,
     maxCharactersPerProject: -1,
@@ -464,27 +464,27 @@ export interface TierPricing {
  * Industry Enterprise:        Custom pricing (sales-led)  — 50,500 credits/mo
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
-  amateur:     { monthly: 125000, annual: 100000, annualTotal: 1200000, monthlyTotal: 1500000, displayName: "Auteur" },
-  independent: { monthly: 390000, annual: 300000, annualTotal: 3600000, monthlyTotal: 4680000, displayName: "Production Pro" },
-  creator:     { monthly: 390000, annual: 300000, annualTotal: 3600000, monthlyTotal: 4680000, displayName: "Production Pro" },
-  studio:      { monthly: 0, annual: 0, annualTotal: 15000000, monthlyTotal: 0, displayName: "Studio" }, // From A$150,000/yr — consultative
-  industry:    { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Industry Enterprise" }, // Custom
+  amateur:     { monthly: 125000, annual: 100000, annualTotal: 1200000, monthlyTotal: 1500000, displayName: "Creator" },
+  independent: { monthly: 390000, annual: 300000, annualTotal: 3600000, monthlyTotal: 4680000, displayName: "Studio" },
+  creator:     { monthly: 390000, annual: 300000, annualTotal: 3600000, monthlyTotal: 4680000, displayName: "Studio" },
+  studio:      { monthly: 0, annual: 0, annualTotal: 15000000, monthlyTotal: 0, displayName: "Production" }, // From A$150,000/yr — consultative
+  industry:    { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Enterprise" }, // Custom
   beta:        { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Beta" },
 };
 
 // Display name lookup (for use in emails, UI labels, etc.)
 export const TIER_DISPLAY_NAMES: Record<string, string> = {
-  amateur: "Auteur",
-  independent: "Production Pro",
-  creator: "Production Pro",
-  studio: "Studio",
-  industry: "Industry Enterprise",
+  amateur: "Creator",
+  independent: "Studio",
+  creator: "Studio",
+  studio: "Production",
+  industry: "Enterprise",
   beta: "Beta",
 };
 
 // Launch special flag — set to false to disable 50% off
 export const LAUNCH_SPECIAL_ACTIVE = true;
-export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first year of annual Auteur / Production Pro
+export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first year of annual Creator / Studio
 
 // ============================================================
 // CREDIT COSTS PER ACTION
@@ -690,8 +690,8 @@ export function getTierDisplayName(tier: string | null | undefined): string {
 }
 
 /**
- * Check whether a tier is self-serve (Auteur / Production Pro)
- * or consultative (Studio / Industry Enterprise).
+ * Check whether a tier is self-serve (Creator / Studio)
+ * or consultative (Production / Enterprise).
  */
 export function isSelfServeTier(tier: SubscriptionTier): boolean {
   return tier === "amateur" || tier === "independent" || tier === "creator";
