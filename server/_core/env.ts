@@ -36,8 +36,6 @@ export const ENV = {
   // ─── Backward-compat aliases (old USD keys — kept so existing webhooks work) ─
   stripeProPriceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
   stripeIndustryPriceId: process.env.STRIPE_INDUSTRY_PRICE_ID ?? "",
-  stripeCreatorMonthlyPriceId: process.env.STRIPE_CREATOR_MONTHLY_PRICE_ID ?? "",
-  stripeCreatorAnnualPriceId: process.env.STRIPE_CREATOR_ANNUAL_PRICE_ID ?? "",
   stripeProMonthlyPriceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID ?? process.env.STRIPE_PRO_PRICE_ID ?? "",
   stripeIndustryMonthlyPriceId: process.env.STRIPE_INDUSTRY_MONTHLY_PRICE_ID ?? process.env.STRIPE_INDUSTRY_PRICE_ID ?? "",
   stripeProAnnualPriceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID ?? "",
