@@ -914,3 +914,141 @@ export async function createBillingPortalSession(
   
   return session.url;
 }
+
+
+// ============================================================
+// VFX / EXTENSION / SCENE-BY-SCENE PRICING
+// (referenced by the pricing tRPC query in routers.ts)
+// ============================================================
+
+export interface VfxScenePackage {
+  id: string;
+  name: string;
+  description: string;
+  scenes: number;
+  price: number; // AUD cents
+  pricePerScene: number;
+}
+
+export const VFX_SCENE_PACKAGES: VfxScenePackage[] = [
+  { id: "vfx_5",   name: "VFX Starter",     description: "5 VFX-enhanced scenes",   scenes: 5,   price: 25000,  pricePerScene: 5000 },
+  { id: "vfx_15",  name: "VFX Producer",    description: "15 VFX-enhanced scenes",  scenes: 15,  price: 60000,  pricePerScene: 4000 },
+  { id: "vfx_50",  name: "VFX Director",    description: "50 VFX-enhanced scenes",  scenes: 50,  price: 150000, pricePerScene: 3000 },
+  { id: "vfx_100", name: "VFX Studio",      description: "100 VFX-enhanced scenes", scenes: 100, price: 250000, pricePerScene: 2500 },
+];
+
+export interface ExtensionPricingItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number; // AUD cents
+}
+
+export const EXTENSION_PRICING: ExtensionPricingItem[] = [
+  { id: "ext_4k",        name: "4K Export Upgrade",         description: "Upgrade any project to 4K resolution export",   price: 15000 },
+  { id: "ext_prores",    name: "ProRes Export",              description: "ProRes 422 / 4444 export for post-production",  price: 20000 },
+  { id: "ext_subtitles", name: "Subtitle Pack (130+ langs)", description: "Auto-generated subtitles in 130+ languages",    price: 8000  },
+  { id: "ext_soundtrack","name": "AI Soundtrack Pack",       description: "Original AI-composed score for your film",      price: 12000 },
+];
+
+export interface SceneByScenePricingItem {
+  id: string;
+  name: string;
+  description: string;
+  creditsPerScene: number;
+  price: number; // AUD cents per scene
+}
+
+export const SCENE_BY_SCENE_PRICING: SceneByScenePricingItem[] = [
+  { id: "scene_standard", name: "Standard Scene",  description: "AI-generated scene at standard quality",  creditsPerScene: 50,  price: 500  },
+  { id: "scene_hd",       name: "HD Scene",        description: "AI-generated scene at HD quality",        creditsPerScene: 100, price: 1000 },
+  { id: "scene_4k",       name: "4K Scene",        description: "AI-generated scene at 4K quality",        creditsPerScene: 200, price: 2000 },
+  { id: "scene_vfx",      name: "VFX Scene",       description: "AI-generated scene with VFX enhancement", creditsPerScene: 300, price: 3000 },
+];
+
+// ============================================================
+// TOP-UP CHECKOUT SESSION
+// ============================================================
+
+/**
+ * Create a Stripe Checkout session for a one-off credit top-up pack.
+ */
+export async function createTopUpCheckoutSession(
+  user: User,
+  customerId: string,
+  packId: string,
+  priceId: string,
+  successUrl: string,
+  cancelUrl: string,
+): Promise<string> {
+  if (!stripe) throw new Error("Stripe is not configured");
+
+  const session = await stripe.checkout.sessions.create({
+    customer: customerId,
+    mode: "payment",
+    payment_method_types: ["card"],
+    line_items: [{ price: priceId, quantity: 1 }],
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    metadata: {
+      userId: String(user.id),
+      packId,
+      type: "topup",
+    },
+  });
+
+  return session.url!;
+}
+
+// ============================================================
+// FILM PACKAGE CHECKOUT SESSION
+// ============================================================
+
+/**
+ * Create a Stripe Checkout session for a one-off film production package.
+ */
+export async function createFilmPackageCheckoutSession(
+  user: User,
+  customerId: string,
+  packageId: string,
+  useLaunchPrice: boolean,
+  successUrl: string,
+  cancelUrl: string,
+): Promise<string> {
+  if (!stripe) throw new Error("Stripe is not configured");
+
+  const pkg = FILM_PACKAGES.find(p => p.id === packageId);
+  if (!pkg) throw new Error(`Unknown film package: ${packageId}`);
+
+  const unitAmount = useLaunchPrice ? pkg.launchPrice : pkg.fullPrice;
+
+  // Create an ad-hoc price on the fly (no recurring Stripe product needed for one-off packages)
+  const session = await stripe.checkout.sessions.create({
+    customer: customerId,
+    mode: "payment",
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price_data: {
+          currency: "aud",
+          unit_amount: unitAmount,
+          product_data: {
+            name: pkg.name,
+            description: pkg.description,
+          },
+        },
+        quantity: 1,
+      },
+    ],
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    metadata: {
+      userId: String(user.id),
+      packageId,
+      useLaunchPrice: String(useLaunchPrice),
+      type: "film_package",
+    },
+  });
+
+  return session.url!;
+}
