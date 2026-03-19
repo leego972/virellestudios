@@ -359,7 +359,7 @@ function DashboardLayoutContent({
               <a
                 href="/pricing"
                 className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors group-data-[collapsible=icon]:justify-center"
-                title={`${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining — click to top up`}
+                title={(user as any).isAdmin ? "Admin — Unlimited credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining — click to top up`}
               >
                 <div
                   className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 text-black font-bold text-xs"
@@ -370,16 +370,18 @@ function DashboardLayoutContent({
                 <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold" style={{ color: "#d4af37" }}>
-                      {((user as any).creditBalance ?? 0).toLocaleString()} credits
+                      {(user as any).isAdmin ? "∞ credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits`}
                     </span>
-                    <span className="text-[9px] text-muted-foreground hover:text-primary transition-colors">Top up →</span>
+                    {!(user as any).isAdmin && (
+                      <span className="text-[9px] text-muted-foreground hover:text-primary transition-colors">Top up →</span>
+                    )}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-muted overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all"
                       style={{
                         background: "linear-gradient(90deg, #d4af37, #f5e6a3)",
-                        width: `${Math.min(100, Math.max(2, (((user as any).creditBalance ?? 0) / 5000) * 100))}%`,
+                        width: (user as any).isAdmin ? "100%" : `${Math.min(100, Math.max(2, (((user as any).creditBalance ?? 0) / 5000) * 100))}%`,
                       }}
                     />
                   </div>
@@ -416,7 +418,15 @@ function DashboardLayoutContent({
                   </span>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="right" align="end" className="w-56 max-h-80 overflow-y-auto z-[9999]" sideOffset={8}>
+              <DropdownMenuContent
+                side="top"
+                align="start"
+                avoidCollisions={true}
+                collisionPadding={12}
+                className="w-64 z-[9999]"
+                sideOffset={8}
+                style={{ maxHeight: "min(70vh, 400px)", overflowY: "auto", WebkitOverflowScrolling: "touch" }}
+              >
                 {SUPPORTED_LANGUAGES.map(lang => (
                   <DropdownMenuItem
                     key={lang.code}
