@@ -55,15 +55,15 @@ const TESTIMONIALS = [
 
 const PRICING = [
   {
-    tier: "Amateur",
-    price: "$100,000",
-    monthlyPrice: "$10,000",
+    tier: "Auteur",
+    price: "A$12,000",
+    monthlyPrice: "A$1,250",
     period: "/year",
     highlight: false,
-    badge: "Get Started",
+    badge: "Entry Tier",
     accentColor: "emerald",
-    audience: "Solo filmmakers, film students, YouTube creators, and hobbyists making their first AI films.",
-    desc: "Full access to all creative & pre-production tools. 2,000 credits/month included.",
+    audience: "Serious solo filmmakers, creator-directors, paid students, and boutique creators developing proof-of-concept films, trailers, and high-end creator projects.",
+    desc: "Premium creative development for serious solo filmmakers. 2,000 credits/month included.",
     features: [
       "2,000 credits/month included",
       "AI Script Writer & Screenplay Tools",
@@ -75,17 +75,19 @@ const PRICING = [
       "720p export",
     ],
     limitations: [],
+    primaryCTA: "Start Creating",
+    secondaryCTA: "View Feature Breakdown",
   },
   {
-    tier: "Independent",
-    price: "$250,000",
-    monthlyPrice: "$25,000",
+    tier: "Production Pro",
+    price: "A$36,000",
+    monthlyPrice: "A$3,900",
     period: "/year",
     highlight: false,
-    badge: "For Creators",
+    badge: "Commercial Tier",
     accentColor: "amber",
-    audience: "Independent filmmakers, indie directors, and content creators building their vision.",
-    desc: "Full production pipeline with video generation. 5,500 credits/month included.",
+    audience: "Indie producers, boutique studios, agencies, and commercial directors building repeat-output pipelines and paid client work.",
+    desc: "Commercial production workflow with full video pipeline. 5,500 credits/month included.",
     features: [
       "5,500 credits/month included",
       "All creative & pre-production tools",
@@ -101,20 +103,22 @@ const PRICING = [
       "1080p + 4K export",
     ],
     limitations: [],
+    primaryCTA: "Start Producing",
+    secondaryCTA: "See Workflow Features",
   },
   {
     tier: "Studio",
-    price: "$350,000",
-    monthlyPrice: "$35,000",
+    price: "From A$150,000",
+    monthlyPrice: "Contact Sales",
     period: "/year",
     highlight: true,
     badge: "Most Popular",
     accentColor: "violet",
-    audience: "Production companies, VFX studios, commercial directors, and music video producers.",
-    desc: "Advanced production suite with VFX and API access. 15,500 credits/month included.",
+    audience: "Production companies, VFX teams, and repeat-output studios operating multiple active projects and client pipelines.",
+    desc: "Production infrastructure with VFX, API access, and pipeline integration. 15,500 credits/month included.",
     features: [
       "15,500 credits/month included",
-      "Everything in Independent, plus:",
+      "Everything in Production Pro, plus:",
       "Up to 100 projects, 150 min per film",
       "VFX Suite (Advanced Effects)",
       "Multi-Shot Sequencer",
@@ -126,19 +130,21 @@ const PRICING = [
       "API Access & Pipeline Integration",
     ],
     limitations: [],
+    primaryCTA: "Book a Private Demo",
+    secondaryCTA: "Request Studio Pricing",
   },
   {
-    tier: "Industry",
-    price: "$500,000",
-    monthlyPrice: "$50,000",
-    period: "/year",
+    tier: "Industry Enterprise",
+    price: "Custom Pricing",
+    monthlyPrice: "Contact Sales",
+    period: "",
     highlight: false,
-    badge: "For Major Studios",
+    badge: "Enterprise",
     accentColor: "yellow",
-    audience: "Major studios, broadcasters, enterprise brands, and agencies with high-volume production pipelines.",
-    desc: "Full enterprise power with no limits. 50,500 credits/month included.",
+    audience: "Major studios, broadcasters, enterprise brands, and agencies with high-volume production pipelines requiring bespoke commercial terms.",
+    desc: "Contract-led deployment for enterprise production at scale. Credits and scope tailored to your pipeline.",
     features: [
-      "50,500 credits/month included",
+      "Credits tailored to deployment scope",
       "Everything in Studio, plus:",
       "Unlimited projects, 180 min per film",
       "4K + ProRes export",
@@ -147,8 +153,11 @@ const PRICING = [
       "Global Funding Directory (94 funders, 73 countries)",
       "Dedicated Account Manager",
       "Unlimited team members",
+      "Custom onboarding & workflow design",
     ],
     limitations: [],
+    primaryCTA: "Discuss Enterprise Workflow",
+    secondaryCTA: "Contact Sales",
   },
 ];
 
@@ -1109,7 +1118,7 @@ export default function Landing() {
                     size="sm"
                     onClick={() => setLocation("/pricing")}
                   >
-                    Start Creating
+                    {(plan as any).primaryCTA || "View Plans"}
                   </Button>
                   <ul className="space-y-2">
                     {plan.features.map((f) => {
@@ -1135,7 +1144,7 @@ export default function Landing() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <p className="text-xs text-foreground/80 mb-3">All prices in USD. Billed annually. Monthly billing available at a slight premium.</p>
+            <p className="text-xs text-foreground/80 mb-3">All prices in AUD. Auteur and Production Pro billed annually or monthly. Studio and Industry Enterprise priced by consultation.</p>
             <button
               onClick={() => setLocation("/pricing")}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-semibold hover:bg-amber-500/20 transition-all"
@@ -1384,3 +1393,4 @@ export default function Landing() {
     </div>
   );
 }
+
