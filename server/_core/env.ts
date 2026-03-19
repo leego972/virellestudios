@@ -17,21 +17,21 @@ export const ENV = {
   stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
 
-  // ─── Auteur tier (DB: "amateur") — AUD ────────────────────────────────────
-  stripeAuteurMonthlyPriceId: process.env.STRIPE_AUTEUR_MONTHLY_PRICE_ID ?? "",
-  stripeAuteurAnnualPriceId: process.env.STRIPE_AUTEUR_ANNUAL_PRICE_ID ?? "",
+  // ─── Creator tier (DB: "amateur") — AUD ────────────────────────────────────
+  stripeCreatorMonthlyPriceId: process.env.STRIPE_CREATOR_MONTHLY_PRICE_ID ?? "",
+  stripeCreatorAnnualPriceId: process.env.STRIPE_CREATOR_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Production Pro tier (DB: "independent") — AUD ────────────────────────
-  stripeProductionProMonthlyPriceId: process.env.STRIPE_PRODUCTION_PRO_MONTHLY_PRICE_ID ?? "",
-  stripeProductionProAnnualPriceId: process.env.STRIPE_PRODUCTION_PRO_ANNUAL_PRICE_ID ?? "",
-
-  // ─── Studio tier — AUD (consultative; base price only) ────────────────────
+  // ─── Studio tier (DB: "independent") — AUD ──────────────────────
   stripeStudioMonthlyPriceId: process.env.STRIPE_STUDIO_MONTHLY_PRICE_ID ?? "",
   stripeStudioAnnualPriceId: process.env.STRIPE_STUDIO_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Industry Enterprise tier — AUD (custom; base price only) ─────────────
-  stripeIndustryEnterpriseMonthlyPriceId: process.env.STRIPE_INDUSTRY_ENTERPRISE_MONTHLY_PRICE_ID ?? "",
-  stripeIndustryEnterpriseAnnualPriceId: process.env.STRIPE_INDUSTRY_ENTERPRISE_ANNUAL_PRICE_ID ?? "",
+  // ─── Production tier (DB: "studio") — AUD (consultative; base price only) ────────
+  stripeProductionMonthlyPriceId: process.env.STRIPE_PRODUCTION_MONTHLY_PRICE_ID ?? "",
+  stripeProductionAnnualPriceId: process.env.STRIPE_PRODUCTION_ANNUAL_PRICE_ID ?? "",
+
+  // ─── Enterprise tier (DB: "industry") — AUD (custom; base price only) ─────────────
+  stripeEnterpriseMonthlyPriceId: process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID ?? "",
+  stripeEnterpriseAnnualPriceId: process.env.STRIPE_ENTERPRISE_ANNUAL_PRICE_ID ?? "",
 
   // ─── Backward-compat aliases (old USD keys — kept so existing webhooks work) ─
   stripeProPriceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
