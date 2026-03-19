@@ -6,7 +6,9 @@ import { useLocation } from "wouter";
 
 interface UpgradePromptProps {
   feature?: string;
-  requiredTier?: "amateur" | "independent" | "studio" | "industry";
+  // Accepts both DB keys (amateur/independent/studio/industry) and backward-compat names (creator/pro)
+  requiredTier?: "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
+  currentTier?: string;
   className?: string;
   compact?: boolean;
 }
@@ -28,7 +30,7 @@ const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; colo
     credits: "5,500 credits/month included",
   },
   studio: {
-    name: "Studio",
+    name: "Production",
     icon: Building2,
     color: "text-violet-400",
     price: "From A$150,000/year",
@@ -187,5 +189,47 @@ export function UpgradePrompt({
     </Card>
   );
 }
+
+interface FeatureGateProps {
+  children: React.ReactNode;
+  feature: string;
+  requiredTier: "independent" | "industry" | "creator" | "pro"; // backward compat
+  currentTier?: string;
+  hasAccess: boolean;
+}
+
+export function FeatureGate({ children, feature, requiredTier, currentTier, hasAccess }: FeatureGateProps) {
+  if (hasAccess) return <>{children}</>;
+  return <UpgradePrompt feature={feature} requiredTier={requiredTier} currentTier={currentTier} />;
+}
+
+/**
+ * Small inline badge showing membership tier.
+ */
+export function IndependentBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-500 border border-amber-500/20">
+      <Film className="w-2.5 h-2.5" /> INDEPENDENT
+    </span>
+  );
+}
+
+// Backward compat aliases
+export function CreatorBadge() {
+  return <IndependentBadge />;
+}
+
+export function ProBadge() {
+  return <IndustryBadge />;
+}
+
+export function IndustryBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-500/10 text-violet-500 border border-violet-500/20">
+      <Zap className="w-2.5 h-2.5" /> INDUSTRY
+    </span>
+  );
+}
+
 
 export default UpgradePrompt;
