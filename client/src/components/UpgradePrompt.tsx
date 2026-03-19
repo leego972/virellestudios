@@ -43,7 +43,7 @@ const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; colo
   },
 };
 
-export default function UpgradePrompt({
+export function UpgradePrompt({
   feature,
   requiredTier = "independent",
   className = "",
@@ -187,3 +187,5 @@ export default function UpgradePrompt({
     </Card>
   );
 }
+
+export default UpgradePrompt;
