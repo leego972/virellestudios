@@ -304,9 +304,9 @@ export default function Landing() {
                 <span className="text-sm font-bold">
                   HALF PRICE on your first year's membership
                 </span>
-                <span className="text-xs font-medium opacity-80">— Limited to first 50 founding directors.</span>
+                <span className="text-xs font-medium opacity-80">— Limited to first 150 founding directors.</span>
                 <span className="bg-black/20 text-black text-xs font-black px-2 py-0.5 rounded-full">
-                  {spotsRemaining} of 50 spots left
+                  {spotsRemaining} of 150 spots left
                 </span>
               </div>
             </div>
