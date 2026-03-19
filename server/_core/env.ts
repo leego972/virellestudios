@@ -62,8 +62,11 @@ export const ENV = {
   // ─── Pollinations (free video generation — available to all users via key pool) ─
   pollinationsApiKey: process.env.POLLINATIONS_API_KEY || "sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP",
 
-  // ─── Google (Nano Banana image generation) ─────────────────────────────────
+  // ─── Google (Nano Banana image generation + Veo 3 / Gemini Imagen) ──────────
   googleApiKey: process.env.GOOGLE_API_KEY ?? "",
+
+  // ─── Hugging Face (FLUX.1-dev image generation fallback) ──────────────────────
+  huggingFaceApiKey: process.env.HUGGING_FACE_API_KEY ?? "",
 
   // ─── Admin ─────────────────────────────────────────────────────────────────
   adminEmail: process.env.ADMIN_EMAIL ?? "Studiosvirelle@gmail.com",
