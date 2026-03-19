@@ -696,3 +696,221 @@ export function getTierDisplayName(tier: string | null | undefined): string {
 export function isSelfServeTier(tier: SubscriptionTier): boolean {
   return tier === "amateur" || tier === "independent" || tier === "creator";
 }
+
+
+// ============================================================
+// QUOTA & FEATURE GUARDS (restored)
+// ============================================================
+export function requireFeature(user: User, feature: keyof TierLimits, featureName: string): void {
+  const limits = getUserLimits(user);
+  const value = limits[feature];
+  if (value === false || value === 0) {
+    const tier = getEffectiveTier(user);
+    throw new Error(
+      `SUBSCRIPTION_REQUIRED: ${featureName} is not available on the ${tier} plan. Please upgrade to access this feature.`
+    );
+  }
+}
+
+export function requireGenerationQuota(user: User): void {
+  const limits = getUserLimits(user);
+  if (limits.maxGenerationsPerMonth === -1) return;
+  
+  const used = user.monthlyGenerationsUsed || 0;
+  const bonus = user.bonusGenerations || 0;
+  const resetAt = user.monthlyGenerationsResetAt;
+  
+  if (resetAt && new Date() > new Date(resetAt)) {
+    return;
+  }
+  
+  const totalAvailable = limits.maxGenerationsPerMonth + bonus;
+  
+  if (used >= totalAvailable) {
+    throw new Error(
+      `GENERATION_LIMIT: You've used all ${limits.maxGenerationsPerMonth} plan generations${bonus > 0 ? ` + ${bonus} bonus` : ""} for this month. Purchase a top-up pack or upgrade your plan for more.`
+    );
+  }
+}
+
+export function requireResourceQuota(
+  user: User,
+  limitKey: "maxProjects" | "maxCharactersPerProject" | "maxScenesPerProject" | "maxScriptsPerProject" | "maxCollaboratorsPerProject" | "maxMovieExports",
+  currentCount: number,
+  resourceName: string
+): void {
+  const limits = getUserLimits(user);
+  const max = limits[limitKey];
+  if (max === -1) return;
+  if (currentCount >= max) {
+    const tier = getEffectiveTier(user);
+    throw new Error(
+      `RESOURCE_LIMIT: You've reached the maximum of ${max} ${resourceName} on the ${tier} plan. Please upgrade for more.`
+    );
+  }
+}
+
+
+// ============================================================
+// STRIPE HELPERS (restored)
+// ============================================================
+export async function getOrCreateStripeCustomer(user: User): Promise<string> {
+  if (!stripe) throw new Error("Stripe is not configured");
+  
+  if (user.stripeCustomerId) {
+    return user.stripeCustomerId;
+  }
+  
+  const customer = await stripe.customers.create({
+    email: user.email || undefined,
+    name: user.name || undefined,
+    metadata: {
+      userId: String(user.id),
+    },
+  });
+  
+  return customer.id;
+}
+
+export async function createCheckoutSession(
+  user: User,
+  customerId: string,
+  priceId: string,
+  successUrl: string,
+  cancelUrl: string,
+  billing: "monthly" | "annual" = "annual",
+  trialDays?: number,
+  applyFoundingDiscount?: boolean,
+  promoCode?: string
+): Promise<string> {
+  if (!stripe) throw new Error("Stripe is not configured");
+
+  // Monthly billing supports direct debit (ACH bank transfer) + card
+  // Annual billing is card-only
+  const paymentMethodTypes: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] =
+    billing === "monthly"
+      ? ["card", "us_bank_account"]
+      : ["card"];
+
+  // If a promo code is provided, create/find a 50% off once coupon and apply it
+  if (promoCode) {
+    try {
+      const promoCoupons = await stripe.coupons.list({ limit: 100 });
+      const existingPromo = promoCoupons.data.find(c => c.name === `Promo: ${promoCode}` && c.valid);
+      let promoCouponId: string;
+      if (existingPromo) {
+        promoCouponId = existingPromo.id;
+      } else {
+        const newCoupon = await stripe.coupons.create({
+          name: `Promo: ${promoCode}`,
+          percent_off: 50,
+          duration: "once",
+          metadata: { type: "promo_code", code: promoCode },
+        });
+        promoCouponId = newCoupon.id;
+      }
+      const promoSessionParams: Stripe.Checkout.SessionCreateParams = {
+        customer: customerId,
+        mode: "subscription",
+        payment_method_types: paymentMethodTypes,
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: { userId: String(user.id), billing, promoCode },
+        subscription_data: {
+          metadata: { userId: String(user.id), billing, promoCode },
+          ...(trialDays ? { trial_period_days: trialDays } : {}),
+          ...(promoCouponId ? { discounts: [{ coupon: promoCouponId }] } : {}),
+        },
+        ...(billing === "monthly" ? {
+          payment_method_options: {
+            us_bank_account: {
+              financial_connections: { permissions: ["payment_method" as any] },
+              verification_method: "instant" as any,
+            },
+          },
+        } : {}),
+      };
+      const promoSession = await stripe.checkout.sessions.create(promoSessionParams);
+      return promoSession.url!;
+    } catch (err: any) {
+      console.error(`[Checkout] Failed to apply promo code coupon: ${err.message}`);
+      // Fall through to standard checkout without discount
+    }
+  }
+
+  // Auto-create or find the founding member 50% off coupon for annual billing
+  let couponId: string | undefined;
+  if (applyFoundingDiscount && billing === "annual") {
+    try {
+      // Look for existing founding coupon
+      const coupons = await stripe.coupons.list({ limit: 100 });
+      const existing = coupons.data.find(c => c.name === "Founding Director 50% Off" && c.valid);
+      if (existing) {
+        couponId = existing.id;
+      } else {
+        // Create the coupon: 50% off, first year only (once), limited redemptions
+        const coupon = await stripe.coupons.create({
+          name: "Founding Director 50% Off",
+          percent_off: 50,
+          duration: "once", // applies to first invoice only
+          max_redemptions: 150, // limited to 150 founding directors (19 spots still available)
+          metadata: { type: "founding_offer" },
+        });
+        couponId = coupon.id;
+      }
+    } catch (err: any) {
+      console.error(`[Checkout] Failed to create/find founding coupon: ${err.message}`);
+    }
+  }
+
+  const sessionParams: Stripe.Checkout.SessionCreateParams = {
+    customer: customerId,
+    mode: "subscription",
+    payment_method_types: paymentMethodTypes,
+    line_items: [{ price: priceId, quantity: 1 }],
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    metadata: {
+      userId: String(user.id),
+      billing,
+      ...(applyFoundingDiscount ? { foundingOffer: "true" } : {}),
+    },
+    subscription_data: {
+      metadata: {
+        userId: String(user.id),
+        billing,
+      },
+      ...(trialDays ? { trial_period_days: trialDays } : {}),
+      ...(couponId ? { coupon: couponId } : {}),
+    },
+    // For ACH direct debit, allow mandate collection
+    ...(billing === "monthly" ? {
+      payment_method_options: {
+        us_bank_account: {
+          financial_connections: {
+            permissions: ["payment_method" as any],
+          },
+          verification_method: "instant" as any,
+        },
+      },
+    } : {}),
+  };
+  
+  const session = await stripe.checkout.sessions.create(sessionParams);
+  return session.url!;
+}
+
+export async function createBillingPortalSession(
+  customerId: string,
+  returnUrl: string
+): Promise<string> {
+  if (!stripe) throw new Error("Stripe is not configured");
+  
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: returnUrl,
+  });
+  
+  return session.url;
+}
