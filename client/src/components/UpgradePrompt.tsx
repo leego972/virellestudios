@@ -14,14 +14,14 @@ interface UpgradePromptProps {
 // Tier display names — internal DB keys map to public-facing names
 const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; color: string; price: string; credits: string }> = {
   amateur: {
-    name: "Auteur",
+    name: "Creator",
     icon: Camera,
     color: "text-emerald-400",
     price: "A$1,250/month or A$12,000/year",
     credits: "2,000 credits/month included",
   },
   independent: {
-    name: "Production Pro",
+    name: "Studio",
     icon: Film,
     color: "text-amber-400",
     price: "A$3,900/month or A$36,000/year",
@@ -35,7 +35,7 @@ const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; colo
     credits: "15,500 credits/month included",
   },
   industry: {
-    name: "Industry Enterprise",
+    name: "Enterprise",
     icon: Crown,
     color: "text-yellow-400",
     price: "Custom pricing",
@@ -131,7 +131,7 @@ export default function UpgradePrompt({
         {/* Tier progression */}
         <div className="grid grid-cols-4 gap-1 text-center">
           {[
-            { key: "amateur",     label: "Auteur",      color: "text-emerald-400", bg: "bg-emerald-500/10" },
+            { key: "amateur",     label: "Creator",      color: "text-emerald-400", bg: "bg-emerald-500/10" },
             { key: "independent", label: "Prod. Pro",   color: "text-amber-400",   bg: "bg-amber-500/10" },
             { key: "studio",      label: "Studio",      color: "text-violet-400",  bg: "bg-violet-500/10" },
             { key: "industry",    label: "Enterprise",  color: "text-yellow-400",  bg: "bg-yellow-500/10" },
