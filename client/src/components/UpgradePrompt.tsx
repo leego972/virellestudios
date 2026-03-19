@@ -1,135 +1,189 @@
 import { Button } from "@/components/ui/button";
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Crown, Lock, Zap, Film } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Crown, Zap, Lock, ArrowRight, Camera, Film, Building2, CalendarDays } from "lucide-react";
 import { useLocation } from "wouter";
 
 interface UpgradePromptProps {
-  feature: string;
-  requiredTier: "independent" | "industry" | "creator" | "pro"; // backward compat
-  currentTier?: string;
+  feature?: string;
+  requiredTier?: "amateur" | "independent" | "studio" | "industry";
+  className?: string;
   compact?: boolean;
 }
 
-const tierPricing: Record<string, string> = {
-  independent: "$10,000/year",
-  industry: "$50,000/year",
-  creator: "$10,000/year",
-  pro: "$50,000/year",
+// Tier display names — internal DB keys map to public-facing names
+const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; color: string; price: string; credits: string }> = {
+  amateur: {
+    name: "Auteur",
+    icon: Camera,
+    color: "text-emerald-400",
+    price: "A$1,250/month or A$12,000/year",
+    credits: "2,000 credits/month included",
+  },
+  independent: {
+    name: "Production Pro",
+    icon: Film,
+    color: "text-amber-400",
+    price: "A$3,900/month or A$36,000/year",
+    credits: "5,500 credits/month included",
+  },
+  studio: {
+    name: "Studio",
+    icon: Building2,
+    color: "text-violet-400",
+    price: "From A$150,000/year",
+    credits: "15,500 credits/month included",
+  },
+  industry: {
+    name: "Industry Enterprise",
+    icon: Crown,
+    color: "text-yellow-400",
+    price: "Custom pricing",
+    credits: "50,500+ credits/month",
+  },
 };
 
-const tierLabels: Record<string, string> = {
-  independent: "Independent",
-  industry: "Industry",
-  creator: "Independent",
-  pro: "Industry",
-};
-
-export function UpgradePrompt({ feature, requiredTier, currentTier = "independent", compact = false }: UpgradePromptProps) {
+export default function UpgradePrompt({
+  feature,
+  requiredTier = "independent",
+  className = "",
+  compact = false,
+}: UpgradePromptProps) {
   const [, setLocation] = useLocation();
 
-  // Map old tier names
-  const mappedTier = requiredTier === "creator" ? "independent" : requiredTier === "pro" ? "industry" : requiredTier;
-  const mappedCurrent = currentTier === "creator" ? "independent" : currentTier === "pro" ? "industry" : currentTier;
+  const tier = TIER_DISPLAY[requiredTier] || TIER_DISPLAY.independent;
+  const Icon = tier.icon;
+  const isEnterprise = requiredTier === "studio" || requiredTier === "industry";
 
   if (compact) {
     return (
-      <div className="flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5">
-        <Lock className="w-4 h-4 text-amber-500 shrink-0" />
-        <span className="text-sm text-amber-400">
-          {feature} requires <strong>{tierLabels[mappedTier]}</strong> membership
-        </span>
-        <Button
-          size="sm"
-          variant="outline"
-          className="ml-auto border-amber-500/50 text-amber-500 hover:bg-amber-500/10"
-          onClick={() => setLocation("/pricing")}
-        >
-          Upgrade
-        </Button>
+      <div className={`flex items-center gap-3 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5 ${className}`}>
+        <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate">
+            {feature ? `${feature} requires ` : "Requires "}
+            <span className={tier.color}>{tier.name}</span>
+          </p>
+          <p className="text-xs text-muted-foreground">{tier.price}</p>
+        </div>
+        {isEnterprise ? (
+          <Button
+            size="sm"
+            className="bg-amber-600 hover:bg-amber-500 text-white shrink-0"
+            onClick={() => {
+              window.location.href = `mailto:Studiosvirelle@gmail.com?subject=${encodeURIComponent(
+                `Virelle Studios — ${tier.name} Enquiry`
+              )}`;
+            }}
+          >
+            <CalendarDays className="w-3 h-3 mr-1" />
+            Contact Sales
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            className="bg-amber-600 hover:bg-amber-500 text-white shrink-0"
+            onClick={() => setLocation("/pricing")}
+          >
+            <ArrowRight className="w-3 h-3 mr-1" />
+            Upgrade
+          </Button>
+        )}
       </div>
     );
   }
 
-  const iconMap: Record<string, React.ReactNode> = {
-    independent: <Film className="w-8 h-8 text-amber-500" />,
-    industry: <Zap className="w-8 h-8 text-violet-500" />,
-  };
-
-  const buttonColorMap: Record<string, string> = {
-    independent: "bg-amber-600 hover:bg-amber-500",
-    industry: "bg-violet-600 hover:bg-violet-500",
-  };
-
   return (
-    <Card className="border-amber-500/30 bg-amber-500/5">
-      <CardContent className="flex flex-col items-center justify-center py-12 sm:py-16 text-center px-6">
-        <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
-          {iconMap[mappedTier] || <Crown className="w-8 h-8 text-amber-500" />}
+    <Card className={`border-amber-500/30 bg-amber-500/5 ${className}`}>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-amber-500/10">
+            <Lock className="w-5 h-5 text-amber-400" />
+          </div>
+          <div>
+            <CardTitle className="text-base">
+              {feature ? `${feature} is locked` : "Feature locked"}
+            </CardTitle>
+            <CardDescription className="text-xs mt-0.5">
+              {isEnterprise
+                ? `Available on ${tier.name} — contact sales for pricing`
+                : `Available from ${tier.name} — ${tier.price}`}
+            </CardDescription>
+          </div>
         </div>
-        <h3 className="text-xl font-bold mb-2">{feature}</h3>
-        <p className="text-muted-foreground mb-6 max-w-md">
-          This feature is available on the{" "}
-          <strong className="text-foreground">{tierLabels[mappedTier]}</strong> membership
-          {" "}({tierPricing[mappedTier]}).
-          Upgrade to unlock {feature.toLowerCase()} and take your filmmaking to the next level.
-        </p>
-        <Button
-          size="lg"
-          className={`${buttonColorMap[mappedTier] || "bg-amber-600 hover:bg-amber-500"} text-white`}
-          onClick={() => setLocation("/pricing")}
-        >
-          <Crown className="w-4 h-4 mr-2" />
-          Upgrade to {tierLabels[mappedTier]}
-        </Button>
-        <p className="text-xs text-muted-foreground mt-3">
-          You're currently on the <span className="capitalize">{mappedCurrent}</span> membership
-        </p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Tier info */}
+        <div className={`flex items-center gap-3 p-3 rounded-lg border ${
+          requiredTier === "amateur" ? "border-emerald-500/30 bg-emerald-500/5" :
+          requiredTier === "independent" ? "border-amber-500/30 bg-amber-500/5" :
+          requiredTier === "studio" ? "border-violet-500/30 bg-violet-500/5" :
+          "border-yellow-500/30 bg-yellow-500/5"
+        }`}>
+          <Icon className={`w-5 h-5 ${tier.color} shrink-0`} />
+          <div>
+            <p className={`text-sm font-semibold ${tier.color}`}>{tier.name}</p>
+            <p className="text-xs text-muted-foreground">{tier.price}</p>
+            <p className="text-xs text-muted-foreground">{tier.credits}</p>
+          </div>
+        </div>
+
+        {/* Tier progression */}
+        <div className="grid grid-cols-4 gap-1 text-center">
+          {[
+            { key: "amateur",     label: "Auteur",      color: "text-emerald-400", bg: "bg-emerald-500/10" },
+            { key: "independent", label: "Prod. Pro",   color: "text-amber-400",   bg: "bg-amber-500/10" },
+            { key: "studio",      label: "Studio",      color: "text-violet-400",  bg: "bg-violet-500/10" },
+            { key: "industry",    label: "Enterprise",  color: "text-yellow-400",  bg: "bg-yellow-500/10" },
+          ].map((t) => (
+            <div
+              key={t.key}
+              className={`p-1.5 rounded text-[10px] font-medium ${
+                t.key === requiredTier ? `${t.bg} ${t.color} ring-1 ring-current` : "text-muted-foreground"
+              }`}
+            >
+              {t.label}
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        {isEnterprise ? (
+          <div className="space-y-2">
+            <Button
+              className="w-full bg-amber-600 hover:bg-amber-500 text-white"
+              onClick={() => {
+                window.location.href = `mailto:Studiosvirelle@gmail.com?subject=${encodeURIComponent(
+                  `Virelle Studios — ${tier.name} Enquiry`
+                )}`;
+              }}
+            >
+              <CalendarDays className="w-4 h-4 mr-2" />
+              {requiredTier === "studio" ? "Book a Private Demo" : "Discuss Enterprise Workflow"}
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full text-xs text-muted-foreground"
+              onClick={() => setLocation("/pricing")}
+            >
+              View all plans
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <Button
+              className="w-full bg-amber-600 hover:bg-amber-500 text-white"
+              onClick={() => setLocation("/pricing")}
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              Upgrade to {tier.name}
+            </Button>
+            <p className="text-[10px] text-muted-foreground text-center">
+              Annual plans save ~20% · Founding members save 50% off first year
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
-  );
-}
-
-/**
- * Hook-style component that wraps children and shows upgrade prompt if feature is locked.
- */
-interface FeatureGateProps {
-  children: React.ReactNode;
-  feature: string;
-  requiredTier: "independent" | "industry" | "creator" | "pro"; // backward compat
-  currentTier?: string;
-  hasAccess: boolean;
-}
-
-export function FeatureGate({ children, feature, requiredTier, currentTier, hasAccess }: FeatureGateProps) {
-  if (hasAccess) return <>{children}</>;
-  return <UpgradePrompt feature={feature} requiredTier={requiredTier} currentTier={currentTier} />;
-}
-
-/**
- * Small inline badge showing membership tier.
- */
-export function IndependentBadge() {
-  return (
-    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-500 border border-amber-500/20">
-      <Film className="w-2.5 h-2.5" /> INDEPENDENT
-    </span>
-  );
-}
-
-// Backward compat aliases
-export function CreatorBadge() {
-  return <IndependentBadge />;
-}
-
-export function ProBadge() {
-  return <IndustryBadge />;
-}
-
-export function IndustryBadge() {
-  return (
-    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-500/10 text-violet-500 border border-violet-500/20">
-      <Zap className="w-2.5 h-2.5" /> INDUSTRY
-    </span>
   );
 }
