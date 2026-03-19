@@ -10,13 +10,13 @@ import LeegoFooter from "@/components/LeegoFooter";
 import GoldWatermark from "@/components/GoldWatermark";
 
 // ─── Tier Definitions ────────────────────────────────────────────────────────
-// All prices in AUD. Auteur and Production Pro support monthly/annual toggle.
-// Studio and Industry Enterprise are consultative — no toggle, no self-checkout.
+// All prices in AUD. Creator and Studio support monthly/annual toggle.
+// Production and Enterprise are consultative — no toggle, no self-checkout.
 
 const SELF_SERVE_TIERS = [
   {
-    id: "amateur",         // Internal DB key — maps to "Auteur" display name
-    displayName: "Auteur",
+    id: "amateur",         // Internal DB key — maps to "Creator" display name
+    displayName: "Creator",
     icon: Camera,
     color: "border-emerald-500 ring-2 ring-emerald-500/20",
     buttonColor: "bg-emerald-600 hover:bg-emerald-500",
@@ -45,8 +45,8 @@ const SELF_SERVE_TIERS = [
     selfServe: true,
   },
   {
-    id: "independent",     // Internal DB key — maps to "Production Pro" display name
-    displayName: "Production Pro",
+    id: "independent",     // Internal DB key — maps to "Studio" display name
+    displayName: "Studio",
     icon: Film,
     color: "border-amber-500 ring-2 ring-amber-500/20",
     buttonColor: "bg-amber-600 hover:bg-amber-500",
@@ -82,7 +82,7 @@ const SELF_SERVE_TIERS = [
 const ENTERPRISE_TIERS = [
   {
     id: "studio",
-    displayName: "Studio",
+    displayName: "Production",
     icon: Building2,
     color: "border-violet-500 ring-2 ring-violet-500/20 bg-violet-500/5",
     buttonColor: "bg-violet-600 hover:bg-violet-500",
@@ -97,7 +97,7 @@ const ENTERPRISE_TIERS = [
     description: "Production infrastructure for companies operating multiple active projects and client pipelines. Adds VFX workflow, sequencing, white-label exports, API access, pipeline integration, and priority rendering. Route all high-intent buyers into a private demo.",
     highlights: [
       "15,500 credits/month included",
-      "Everything in Production Pro, plus:",
+      "Everything in Studio, plus:",
       "Up to 100 projects, 150 min per film",
       "VFX Suite (Advanced Effects)",
       "Multi-Shot Sequencer",
@@ -110,12 +110,12 @@ const ENTERPRISE_TIERS = [
       "Global Funding Directory (94 funders, 73 countries)",
     ],
     primaryCTA: "Book a Private Demo",
-    secondaryCTA: "Request Studio Pricing",
+    secondaryCTA: "Request Production Pricing",
     selfServe: false,
   },
   {
     id: "industry",
-    displayName: "Industry Enterprise",
+    displayName: "Enterprise",
     icon: Crown,
     color: "border-yellow-500 ring-2 ring-yellow-500/30 bg-yellow-500/5",
     buttonColor: "bg-yellow-600 hover:bg-yellow-500",
@@ -181,7 +181,7 @@ const CREDIT_COSTS = [
 // ─── FAQ ──────────────────────────────────────────────────────────────────────
 const FAQ = [
   {
-    q: "Why are Studio and Industry Enterprise plans custom-priced?",
+    q: "Why are Studio and Enterprise plans custom-priced?",
     a: "Because production volume, credits, support scope, onboarding, integrations, and deployment terms vary significantly across professional teams. We tailor the commercial structure to your pipeline rather than forcing enterprise production into a consumer subscription model.",
   },
   {
@@ -190,7 +190,7 @@ const FAQ = [
   },
   {
     q: "Can I start smaller and scale later?",
-    a: "Yes. Teams can begin on Auteur or Production Pro and expand into Studio or Industry Enterprise contracts as throughput and workflow complexity increase. Your credits and project history carry forward.",
+    a: "Yes. Teams can begin on Creator or Studio and expand into Production or Enterprise contracts as throughput and workflow complexity increase. Your credits and project history carry forward.",
   },
   {
     q: "Do enterprise plans include credits and support?",
@@ -257,11 +257,11 @@ export default function Pricing() {
 
   // Map DB tier IDs to display names
   const tierDisplayNames: Record<string, string> = {
-    amateur: "Auteur",
-    independent: "Production Pro",
-    studio: "Studio",
-    industry: "Industry Enterprise",
-    creator: "Production Pro",
+    amateur: "Creator",
+    independent: "Studio",
+    studio: "Production",
+    industry: "Enterprise",
+    creator: "Studio",
     beta: "Beta",
   };
 
@@ -309,7 +309,7 @@ export default function Pricing() {
       ? "Virelle Studios — Book a Private Demo"
       : type === "studio"
       ? "Virelle Studios — Studio Pricing Enquiry"
-      : "Virelle Studios — Industry Enterprise Enquiry";
+      : "Virelle Studios — Enterprise Enquiry";
     window.location.href = `mailto:Studiosvirelle@gmail.com?subject=${encodeURIComponent(subject)}`;
   };
 
@@ -397,7 +397,7 @@ export default function Pricing() {
             </p>
           </div>
 
-          {/* ─── Billing Toggle — Auteur & Production Pro only ─── */}
+          {/* ─── Billing Toggle — Creator & Studio only ─── */}
           <div className="flex flex-col items-center gap-2 mb-8">
             <div className="flex items-center gap-3">
               <button
@@ -423,11 +423,11 @@ export default function Pricing() {
               </button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Billing toggle applies to Auteur and Production Pro. Studio and Industry Enterprise are priced by consultation.
+              Billing toggle applies to Creator and Studio. Production and Enterprise are priced by consultation.
             </p>
           </div>
 
-          {/* ─── Self-Serve Tier Cards (Auteur + Production Pro) ─── */}
+          {/* ─── Self-Serve Tier Cards (Creator + Studio) ─── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-8">
             {SELF_SERVE_TIERS.map((tier) => {
               const Icon = tier.icon;
@@ -534,7 +534,7 @@ export default function Pricing() {
             })}
           </div>
 
-          {/* ─── Enterprise Tier Cards (Studio + Industry Enterprise) ─── */}
+          {/* ─── Enterprise Tier Cards (Studio + Enterprise) ─── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto mb-8">
             {ENTERPRISE_TIERS.map((tier) => {
               const Icon = tier.icon;
@@ -624,11 +624,11 @@ export default function Pricing() {
           <div className="max-w-3xl mx-auto mt-6 space-y-2 text-center">
             {!offerFull && billingCycle === "annual" && (
               <p className="text-xs text-muted-foreground">
-                * 50% founding discount applied automatically at checkout for annual Auteur and Production Pro memberships. Valid for the first 50 founding directors only. Applies to the first year; renews at the standard annual rate.
+                * 50% founding discount applied automatically at checkout for annual Creator and Studio memberships. Valid for the first 50 founding directors only. Applies to the first year; renews at the standard annual rate.
               </p>
             )}
             <p className="text-xs text-muted-foreground">
-              All prices in AUD. Auteur and Production Pro billed monthly or annually. Studio and Industry Enterprise priced by consultation.
+              All prices in AUD. Creator and Studio billed monthly or annually. Production and Enterprise priced by consultation.
             </p>
             <p className="text-xs text-amber-400/80 font-medium">
               Enterprise plans include onboarding, workflow design, custom credits, support scope, and deployment terms tailored to production volume.
@@ -707,7 +707,7 @@ export default function Pricing() {
                     <span>Total</span><span className="text-amber-400">~190 credits</span>
                   </div>
                   <p className="text-muted-foreground pt-1">
-                    Fits within the <span className="text-emerald-400 font-semibold">Auteur</span> monthly allowance (2,000 cr)
+                    Fits within the <span className="text-emerald-400 font-semibold">Creator</span> monthly allowance (2,000 cr)
                   </p>
                 </CardContent>
               </Card>
@@ -730,7 +730,7 @@ export default function Pricing() {
                     <span>Total</span><span className="text-amber-400">~842 credits</span>
                   </div>
                   <p className="text-muted-foreground pt-1">
-                    Fits within the <span className="text-amber-400 font-semibold">Production Pro</span> monthly allowance (5,500 cr) with credits to spare
+                    Fits within the <span className="text-amber-400 font-semibold">Studio</span> monthly allowance (5,500 cr) with credits to spare
                   </p>
                 </CardContent>
               </Card>
@@ -752,7 +752,7 @@ export default function Pricing() {
                     <span>Total</span><span className="text-amber-400">~108 credits</span>
                   </div>
                   <p className="text-muted-foreground pt-1">
-                    Well within the <span className="text-emerald-400 font-semibold">Auteur</span> monthly allowance (2,000 cr)
+                    Well within the <span className="text-emerald-400 font-semibold">Creator</span> monthly allowance (2,000 cr)
                   </p>
                 </CardContent>
               </Card>
@@ -763,10 +763,10 @@ export default function Pricing() {
               <h4 className="text-sm font-semibold mb-3 text-center">Included credit value by tier</h4>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                 {[
-                  { tier: "Auteur",           credits: 2000,  monthly: 1250,  perCredit: 0.63, color: "text-emerald-400" },
-                  { tier: "Production Pro",   credits: 5500,  monthly: 3900,  perCredit: 0.71, color: "text-amber-400" },
-                  { tier: "Studio",           credits: 15500, monthly: null,  perCredit: null, color: "text-violet-400" },
-                  { tier: "Industry Ent.",    credits: 50500, monthly: null,  perCredit: null, color: "text-yellow-400" },
+                  { tier: "Creator",           credits: 2000,  monthly: 1250,  perCredit: 0.63, color: "text-emerald-400" },
+                  { tier: "Studio",      credits: 5500,  monthly: 3900,  perCredit: 0.71, color: "text-amber-400" },
+                  { tier: "Production",       credits: 15500, monthly: null,  perCredit: null, color: "text-violet-400" },
+                  { tier: "Enterprise",       credits: 50500, monthly: null,  perCredit: null, color: "text-yellow-400" },
                 ].map((t) => (
                   <div key={t.tier} className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800">
                     <p className={`text-xs font-bold ${t.color}`}>{t.tier}</p>
@@ -857,10 +857,10 @@ export default function Pricing() {
               <thead>
                 <tr className="border-b border-zinc-700">
                   <th className="text-left py-3 px-4 font-medium">Feature</th>
-                  <th className="text-center py-3 px-4 font-medium text-emerald-400">Auteur</th>
-                  <th className="text-center py-3 px-4 font-medium text-amber-400">Production Pro</th>
+                  <th className="text-center py-3 px-4 font-medium text-emerald-400">Creator</th>
+                  <th className="text-center py-3 px-4 font-medium text-amber-400">Studio</th>
                   <th className="text-center py-3 px-4 font-medium text-violet-400">Studio</th>
-                  <th className="text-center py-3 px-4 font-medium text-yellow-400">Industry Enterprise</th>
+                  <th className="text-center py-3 px-4 font-medium text-yellow-400">Enterprise</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800">
