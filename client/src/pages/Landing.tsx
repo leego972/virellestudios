@@ -55,7 +55,7 @@ const TESTIMONIALS = [
 
 const PRICING = [
   {
-    tier: "Auteur",
+    tier: "Creator",
     price: "A$12,000",
     monthlyPrice: "A$1,250",
     period: "/year",
@@ -79,7 +79,7 @@ const PRICING = [
     secondaryCTA: "View Feature Breakdown",
   },
   {
-    tier: "Production Pro",
+    tier: "Studio",
     price: "A$36,000",
     monthlyPrice: "A$3,900",
     period: "/year",
@@ -107,7 +107,7 @@ const PRICING = [
     secondaryCTA: "See Workflow Features",
   },
   {
-    tier: "Studio",
+    tier: "Production",
     price: "From A$150,000",
     monthlyPrice: "Contact Sales",
     period: "/year",
@@ -118,7 +118,7 @@ const PRICING = [
     desc: "Production infrastructure with VFX, API access, and pipeline integration. 15,500 credits/month included.",
     features: [
       "15,500 credits/month included",
-      "Everything in Production Pro, plus:",
+      "Everything in Studio, plus:",
       "Up to 100 projects, 150 min per film",
       "VFX Suite (Advanced Effects)",
       "Multi-Shot Sequencer",
@@ -131,10 +131,10 @@ const PRICING = [
     ],
     limitations: [],
     primaryCTA: "Book a Private Demo",
-    secondaryCTA: "Request Studio Pricing",
+    secondaryCTA: "Request Production Pricing",
   },
   {
-    tier: "Industry Enterprise",
+    tier: "Enterprise",
     price: "Custom Pricing",
     monthlyPrice: "Contact Sales",
     period: "",
@@ -1144,7 +1144,7 @@ export default function Landing() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <p className="text-xs text-foreground/80 mb-3">All prices in AUD. Auteur and Production Pro billed annually or monthly. Studio and Industry Enterprise priced by consultation.</p>
+            <p className="text-xs text-foreground/80 mb-3">All prices in AUD. Creator and Studio billed annually or monthly. Studio and Enterprise priced by consultation.</p>
             <button
               onClick={() => setLocation("/pricing")}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-semibold hover:bg-amber-500/20 transition-all"
