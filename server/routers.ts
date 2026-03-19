@@ -5559,6 +5559,7 @@ Generate a detailed production budget estimate.`,
         }).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        requireFeature(ctx.user, "canUseNLEExport", "NLE Export");
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         const scenes = await db.getProjectScenes(input.projectId);

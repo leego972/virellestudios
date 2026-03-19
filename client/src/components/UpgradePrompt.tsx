@@ -133,9 +133,9 @@ export function UpgradePrompt({
         {/* Tier progression */}
         <div className="grid grid-cols-4 gap-1 text-center">
           {[
-            { key: "amateur",     label: "Creator",      color: "text-emerald-400", bg: "bg-emerald-500/10" },
-            { key: "independent", label: "Prod. Pro",   color: "text-amber-400",   bg: "bg-amber-500/10" },
-            { key: "studio",      label: "Studio",      color: "text-violet-400",  bg: "bg-violet-500/10" },
+            { key: "amateur",     label: "Creator",     color: "text-emerald-400", bg: "bg-emerald-500/10" },
+            { key: "independent", label: "Studio",      color: "text-amber-400",   bg: "bg-amber-500/10" },
+            { key: "studio",      label: "Production",  color: "text-violet-400",  bg: "bg-violet-500/10" },
             { key: "industry",    label: "Enterprise",  color: "text-yellow-400",  bg: "bg-yellow-500/10" },
           ].map((t) => (
             <div
@@ -193,7 +193,7 @@ export function UpgradePrompt({
 interface FeatureGateProps {
   children: React.ReactNode;
   feature: string;
-  requiredTier: "independent" | "industry" | "creator" | "pro"; // backward compat
+  requiredTier: "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
   currentTier?: string;
   hasAccess: boolean;
 }
