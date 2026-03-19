@@ -1,3 +1,40 @@
+# Virelle Studios — Stripe AUD Price IDs
+# Updated: Pricing Reset — Auteur / Production Pro / Studio / Industry Enterprise
+# Currency: AUD (Australian Dollar)
+# Created via Stripe API on pricing reset deployment
+
+# ─── Products ────────────────────────────────────────────────────────────────
+STRIPE_AUTEUR_PRODUCT_ID=prod_UB2tnZnW87g6zd
+STRIPE_PRODUCTION_PRO_PRODUCT_ID=prod_UB2tjdbX3REiIO
+STRIPE_STUDIO_PRODUCT_ID=prod_UB2tfudYTWWBpl
+STRIPE_INDUSTRY_ENTERPRISE_PRODUCT_ID=prod_UB2tZWnvrBzdeU
+STRIPE_CREDIT_PACK_PRODUCT_ID=prod_UB2ttz4fatg1qi
+
+# ─── Auteur (DB: amateur) — A$1,250/mo | A$12,000/yr ────────────────────────
+STRIPE_AUTEUR_MONTHLY_PRICE_ID=price_1TCgnR8YRB7s7dJHSlU07VtB
+STRIPE_AUTEUR_ANNUAL_PRICE_ID=price_1TCgnS8YRB7s7dJHV7Xz5J1I
+
+# ─── Production Pro (DB: independent) — A$3,900/mo | A$36,000/yr ────────────
+STRIPE_PRODUCTION_PRO_MONTHLY_PRICE_ID=price_1TCgnT8YRB7s7dJHMgkJkusf
+STRIPE_PRODUCTION_PRO_ANNUAL_PRICE_ID=price_1TCgnT8YRB7s7dJHxgn3Fs52
+
+# ─── Studio — From A$150,000/yr (contact sales) ─────────────────────────────
+STRIPE_STUDIO_ANNUAL_PRICE_ID=price_1TCgnU8YRB7s7dJHNceRGLxv
+
+# ─── Industry Enterprise — Custom pricing (sales-led) ───────────────────────
+STRIPE_INDUSTRY_ENTERPRISE_ANNUAL_PRICE_ID=price_1TCgnV8YRB7s7dJHjHTsbO89
+
+# ─── Credit Packs (one-time AUD purchases) ───────────────────────────────────
+STRIPE_CREDIT_PACK_STARTER_PRICE_ID=price_1TCgnW8YRB7s7dJHJPQOYQwA
+STRIPE_CREDIT_PACK_CREATOR_PRICE_ID=price_1TCgnW8YRB7s7dJHcFZpn30u
+STRIPE_CREDIT_PACK_PRO_PRICE_ID=price_1TCgnW8YRB7s7dJHx0fcqeQT
+STRIPE_CREDIT_PACK_STUDIO_PRICE_ID=price_1TCgnX8YRB7s7dJHNpbBy2Al
+
+# ─── Coupon ──────────────────────────────────────────────────────────────────
+VIRELLE_FOUNDER_50=VIRELLE_FOUNDER_50
+
+# ─── Legacy IDs (kept for backward compatibility with existing subscriptions) ─
+# Old product (USD, pre-reset):
 STRIPE_PRODUCT_ID=prod_U3ktStUS9V8YAm
 STRIPE_PRO_PRICE_ID=price_1T5dO9CZdXS1BlcXotyjYN76
 STRIPE_INDUSTRY_PRICE_ID=price_1T5dOACZdXS1BlcXvlOmG7o9
