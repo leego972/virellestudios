@@ -95,10 +95,10 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
   const isFirst = step === 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/70 backdrop-blur-sm">
       <div
-        className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
-        style={{ maxHeight: "90vh" }}
+        className="relative w-full sm:max-w-lg bg-card border border-border sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col"
+        style={{ maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 8px)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         {/* Coloured top accent bar */}
         <div className="h-1 w-full" style={{ backgroundColor: current.color }} />
@@ -137,8 +137,8 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
           ))}
         </div>
 
-        {/* Content */}
-        <div className="px-6 pb-2 overflow-y-auto" style={{ maxHeight: "50vh" }}>
+        {/* Content — scrollable so all text is reachable on small screens */}
+        <div className="px-6 pb-2 overflow-y-auto flex-1" style={{ minHeight: 0 }}>
           <div className="flex flex-col items-center text-center gap-4">
             <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shadow-lg"
