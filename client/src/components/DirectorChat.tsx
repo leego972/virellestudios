@@ -301,6 +301,15 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const chatPanelRef = useRef<HTMLDivElement>(null);
 
+  // ─── Floating window state ───
+  // isMinimized: collapses to a pill but stays active in background
+  const [isMinimized, setIsMinimized] = useState(false);
+  // dragPos: absolute {left, top} position; null = default bottom-right corner
+  const [dragPos, setDragPos] = useState<{ left: number; top: number } | null>(null);
+  const dragStateRef = useRef<{ dragging: boolean; startX: number; startY: number; origLeft: number; origTop: number }>(
+    { dragging: false, startX: 0, startY: 0, origLeft: 0, origTop: 0 }
+  );
+
   // ─── tRPC mutations ───
   const utils = trpc.useUtils();
 
@@ -606,6 +615,59 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     return () => {
       vv.removeEventListener("resize", applyViewport);
       vv.removeEventListener("scroll", applyViewport);
+    };
+  }, []);
+
+  // ─── Draggable window: mouse + touch drag on the header ───
+  const startDrag = useCallback((clientX: number, clientY: number) => {
+    if (window.innerWidth < 640) return; // no drag on mobile
+    const panel = chatPanelRef.current;
+    if (!panel) return;
+    const rect = panel.getBoundingClientRect();
+    dragStateRef.current = {
+      dragging: true,
+      startX: clientX,
+      startY: clientY,
+      origLeft: rect.left,
+      origTop: rect.top,
+    };
+  }, []);
+
+  useEffect(() => {
+    const clampPos = (left: number, top: number) => {
+      const panel = chatPanelRef.current;
+      if (!panel) return { left, top };
+      const pw = panel.offsetWidth;
+      const ph = panel.offsetHeight;
+      return {
+        left: Math.max(8, Math.min(window.innerWidth - pw - 8, left)),
+        top: Math.max(8, Math.min(window.innerHeight - ph - 8, top)),
+      };
+    };
+    const onMouseMove = (e: MouseEvent) => {
+      if (!dragStateRef.current.dragging) return;
+      const dx = e.clientX - dragStateRef.current.startX;
+      const dy = e.clientY - dragStateRef.current.startY;
+      setDragPos(clampPos(dragStateRef.current.origLeft + dx, dragStateRef.current.origTop + dy));
+    };
+    const onMouseUp = () => { dragStateRef.current.dragging = false; };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!dragStateRef.current.dragging) return;
+      const t = e.touches[0];
+      const dx = t.clientX - dragStateRef.current.startX;
+      const dy = t.clientY - dragStateRef.current.startY;
+      setDragPos(clampPos(dragStateRef.current.origLeft + dx, dragStateRef.current.origTop + dy));
+    };
+    const onTouchEnd = () => { dragStateRef.current.dragging = false; };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
     };
   }, []);
 
@@ -916,9 +978,19 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     vadAnalyserRef.current = null;
     if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
     if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
+    if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
+    setVmRecordingDuration(0);
     if (voiceModeRef.current) { setVoiceModeState("thinking"); voiceModeStateRef.current = "thinking"; }
-    if (voiceModeRecorderRef.current && voiceModeRecorderRef.current.state !== "inactive") {
-      voiceModeRecorderRef.current.stop();
+    const recorder = voiceModeRecorderRef.current;
+    if (recorder && recorder.state !== "inactive") {
+      // iOS Safari sometimes doesn't fire onstop if stop() is called too quickly.
+      // Request a final data chunk first, then stop after a short delay.
+      try { recorder.requestData(); } catch (_) {}
+      setTimeout(() => {
+        try {
+          if (recorder.state !== "inactive") recorder.stop();
+        } catch (_) {}
+      }, 80);
     }
   }, []);
 
@@ -1259,166 +1331,54 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
   return (
     <>
-      {/* Floating chat button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full px-4 py-3 shadow-2xl transition-all duration-300",
-          "bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:from-amber-400 hover:to-amber-500",
-          "hover:scale-105 active:scale-95",
-          isOpen && "scale-0 opacity-0 pointer-events-none"
-        )}
-      >
-        <Sparkles className="size-5" />
-        <span className="font-semibold text-sm hidden sm:inline">Director's Assistant</span>
-        <span className="font-semibold text-sm sm:hidden">Assistant</span>
-      </button>
-
-      {/* ─── Full-screen Voice Mode Overlay (Titan-style) ─── */}
-      {voiceModeActive && (
-        <div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
-          style={{ background: "linear-gradient(to bottom, hsl(var(--background)), hsl(var(--background)/0.98))", backdropFilter: "blur(20px)" }}
+      {/* ─── Floating trigger pill — only visible when chat is fully closed ─── */}
+      {!isOpen && (
+        <button
+          onClick={() => { setIsOpen(true); setIsMinimized(false); }}
+          className={cn(
+            "fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full px-4 py-3 shadow-2xl transition-all duration-300",
+            "bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:from-amber-400 hover:to-amber-500",
+            "hover:scale-105 active:scale-95"
+          )}
+          style={{ touchAction: "manipulation" }}
         >
-          {/* Top bar: label + hang-up */}
-          <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-4" style={{ zIndex: 110 }}>
-            <span className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Voice Mode</span>
-            <button
-              onClick={closeVoiceMode}
-              className="p-3 rounded-full bg-muted/50 hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-all active:scale-95"
-              style={{ touchAction: "manipulation", minWidth: 48, minHeight: 48 }}
-              aria-label="Hang up and return to chat"
-            >
-              <PhoneCall className="size-5" />
-            </button>
-          </div>
-
-          {/* Animated orb with Virelle branding */}
-          <div className={cn("relative mb-8", voiceModeState === "listening" && "animate-pulse")}>
-            {/* Outer glow ring */}
-            <div className={cn(
-              "absolute inset-0 rounded-full transition-all duration-700",
-              voiceModeState === "listening" ? "bg-amber-500/20 scale-150 animate-ping"
-              : voiceModeState === "speaking" ? "bg-emerald-500/20 scale-150 animate-pulse"
-              : voiceModeState === "thinking" ? "bg-blue-500/20 scale-125 animate-pulse"
-              : "bg-transparent scale-100"
-            )} />
-            {/* Inner glow ring */}
-            <div className={cn(
-              "absolute inset-0 rounded-full transition-all duration-500",
-              voiceModeState === "listening" ? "bg-amber-500/10 scale-125"
-              : voiceModeState === "speaking" ? "bg-emerald-500/10 scale-125"
-              : voiceModeState === "thinking" ? "bg-blue-500/10 scale-110"
-              : "bg-transparent scale-100"
-            )} />
-            {/* Logo container */}
-            <div className={cn(
-              "relative size-40 sm:size-48 rounded-full flex items-center justify-center transition-all duration-500 bg-gradient-to-br from-amber-500/20 to-amber-600/10",
-              voiceModeState === "listening" ? "ring-4 ring-amber-500/60 shadow-[0_0_60px_rgba(245,158,11,0.3)]"
-              : voiceModeState === "speaking" ? "ring-4 ring-emerald-500/60 shadow-[0_0_60px_rgba(52,211,153,0.3)]"
-              : voiceModeState === "thinking" ? "ring-4 ring-blue-500/60 shadow-[0_0_60px_rgba(96,165,250,0.3)]"
-              : "ring-2 ring-border/50"
-            )}>
-              <Sparkles className={cn(
-                "size-16 sm:size-20 transition-all duration-500",
-                voiceModeState === "listening" ? "text-amber-400"
-                : voiceModeState === "speaking" ? "text-emerald-400"
-                : voiceModeState === "thinking" ? "text-blue-400"
-                : "text-muted-foreground"
-              )} />
-            </div>
-          </div>
-
-          {/* Status indicator */}
-          <div className="flex items-center gap-3 mb-6 h-8">
-            {voiceModeState === "listening" && (
-              <>
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-1 bg-amber-500 rounded-full animate-pulse"
-                      style={{ height: `${12 + Math.random() * 20}px`, animationDelay: `${i * 0.15}s`, animationDuration: "0.6s" }}
-                    />
-                  ))}
-                </div>
-                <span className="text-lg font-medium text-amber-400">Listening...</span>
-              </>
-            )}
-            {voiceModeState === "thinking" && (
-              <>
-                <Loader2 className="size-5 animate-spin text-blue-400" />
-                <span className="text-lg font-medium text-blue-400">Thinking...</span>
-              </>
-            )}
-            {voiceModeState === "speaking" && (
-              <>
-                <Volume2 className="size-5 text-emerald-400 animate-pulse" />
-                <span className="text-lg font-medium text-emerald-400">Speaking...</span>
-              </>
-            )}
-            {voiceModeState === "inactive" && null}
-          </div>
-
-          {/* Transcript */}
-          {voiceModeTranscript && voiceModeTranscript !== "Transcribing..." && (
-            <div className="max-w-xs sm:max-w-sm text-center px-6 mb-6">
-              <p className="text-muted-foreground text-sm leading-relaxed italic">“{voiceModeTranscript}”</p>
-            </div>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex gap-4">
-            {voiceModeState === "inactive" && (
-              <button
-                onClick={() => { startVoiceModeRecording(); setVoiceModeState("listening"); }}
-                className="px-8 py-4 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 transition-all text-base font-medium flex items-center gap-3"
-                style={{ touchAction: "manipulation", minHeight: 56 }}
-              >
-                <Mic className="size-5" />
-                Start Talking
-              </button>
-            )}
-            {voiceModeState === "listening" && (
-              <button
-                onClick={stopVoiceModeRecording}
-                className="px-8 py-4 rounded-2xl bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 active:bg-red-500/50 transition-all text-base font-medium flex items-center gap-3"
-                style={{ touchAction: "manipulation", minHeight: 56 }}
-                aria-label="Stop recording"
-              >
-                <Square className="size-5 fill-current" />
-                Stop
-              </button>
-            )}
-            {voiceModeState === "thinking" && (
-              <div className="px-8 py-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-base font-medium flex items-center gap-3">
-                <span className="animate-spin inline-block size-5 border-2 border-blue-400 border-t-transparent rounded-full" />
-                Processing...
-              </div>
-            )}
-            {voiceModeState === "speaking" && (
-              <button
-                onClick={() => { stopSpeaking(); setVoiceModeState("inactive"); }}
-                className="px-8 py-4 rounded-2xl bg-muted/50 border border-border/50 text-muted-foreground hover:bg-muted transition-all text-base font-medium flex items-center gap-3"
-                style={{ touchAction: "manipulation", minHeight: 56 }}
-              >
-                <VolumeX className="size-5" />
-                Stop Speaking
-              </button>
-            )}
-          </div>
-
-          {/* Recording duration */}
-          {voiceModeState === "listening" && vmRecordingDuration > 0 && (
-            <div className="mt-4 text-sm text-muted-foreground">{formatDuration(vmRecordingDuration)}</div>
-          )}
-
-          {/* Bottom hint */}
-          <div className="absolute bottom-8 left-0 right-0 text-center">
-            <p className="text-xs text-muted-foreground/50">Voice conversations are saved to your chat history · Esc to exit</p>
-          </div>
-        </div>
+          <Sparkles className="size-5" />
+          <span className="font-semibold text-sm hidden sm:inline">Director's Assistant</span>
+          <span className="font-semibold text-sm sm:hidden">Assistant</span>
+        </button>
       )}
+
+      {/* ─── Minimized pill — visible when open but minimized ─── */}
+      {isOpen && isMinimized && (
+        <button
+          onClick={() => setIsMinimized(false)}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full pl-3 pr-4 py-2.5 shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 bg-background border border-amber-500/40"
+          style={{ touchAction: "manipulation" }}
+        >
+          {/* Animated dot shows voice/activity state */}
+          <div className={cn(
+            "size-2.5 rounded-full transition-colors",
+            voiceModeActive && voiceModeState === "listening" ? "bg-amber-500 animate-pulse"
+            : voiceModeActive && voiceModeState === "speaking" ? "bg-emerald-500 animate-pulse"
+            : voiceModeActive && voiceModeState === "thinking" ? "bg-blue-500 animate-pulse"
+            : isSending ? "bg-amber-500 animate-pulse"
+            : "bg-amber-500/60"
+          )} />
+          <Sparkles className="size-4 text-amber-500" />
+          <span className="text-xs font-semibold text-foreground">Director</span>
+          {/* Unread indicator */}
+          {isSending && <Loader2 className="size-3 text-amber-500 animate-spin" />}
+          <button
+            onClick={(e) => { e.stopPropagation(); setIsOpen(false); setIsMinimized(false); }}
+            className="ml-1 text-muted-foreground hover:text-foreground"
+            style={{ touchAction: "manipulation" }}
+          >
+            <X className="size-3" />
+          </button>
+        </button>
+      )}
+
+
 
       {/* ─── Chat panel ─── */}
       <div
@@ -1427,42 +1387,44 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           "fixed z-50 flex flex-col bg-background border border-border shadow-2xl transition-all duration-300 ease-out",
           // Mobile: full screen anchored to visual viewport (iOS keyboard stability)
           "inset-x-0 bottom-0 top-0 sm:inset-auto",
-          // Desktop: wider panel (500px) for comfortable reading
-          "sm:bottom-6 sm:right-6 sm:w-[500px] sm:h-[640px] sm:max-h-[85dvh] sm:rounded-2xl",
-          isOpen
+          // Desktop: floating window
+          "sm:w-[420px] sm:rounded-2xl",
+          isOpen && !isMinimized
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 translate-y-4 scale-95 pointer-events-none"
         )}
         style={{
-          // iOS Safari: paddingBottom accounts for home indicator
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
-          // Prevent iOS overscroll bounce on the panel itself
           WebkitOverflowScrolling: "touch" as any,
           overscrollBehavior: "contain",
+          // Desktop: use drag position if set, otherwise default bottom-right
+          ...(dragPos
+            ? { left: dragPos.left, top: dragPos.top, bottom: "auto", right: "auto", height: 580 }
+            : { bottom: 24, right: 24, height: 580 }
+          ),
         }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-amber-500/10 to-amber-600/5 sm:rounded-t-2xl shrink-0">
+        {/* Header — draggable on desktop */}
+        <div
+          className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-amber-500/10 to-amber-600/5 sm:rounded-t-2xl shrink-0 sm:cursor-grab sm:active:cursor-grabbing select-none"
+          onMouseDown={(e) => { if (e.button === 0) startDrag(e.clientX, e.clientY); }}
+          onTouchStart={(e) => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); }}
+        >
           <div className="flex items-center gap-2.5">
             <div className="size-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
               <Sparkles className="size-4 text-black" />
             </div>
             <div>
               <h3 className="font-semibold text-sm">Director's Assistant</h3>
-              <p className="text-xs text-muted-foreground">AI co-director for your film</p>
+              <p className="text-xs text-muted-foreground">
+                {voiceModeActive && voiceModeState === "listening" && <span className="text-amber-400">Listening…</span>}
+                {voiceModeActive && voiceModeState === "thinking" && <span className="text-blue-400">Thinking…</span>}
+                {voiceModeActive && voiceModeState === "speaking" && <span className="text-emerald-400">Speaking…</span>}
+                {(!voiceModeActive || voiceModeState === "inactive") && "AI co-director for your film"}
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            {/* Voice Mode button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-8 text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
-              onClick={openVoiceMode}
-              title="Voice mode — hands-free conversation"
-            >
-              <PhoneCall className="size-4" />
-            </Button>
+          <div className="flex items-center gap-1" onMouseDown={(e) => e.stopPropagation()} onTouchStart={(e) => e.stopPropagation()}>
             <Button
               variant="ghost"
               size="icon"
@@ -1490,11 +1452,22 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
             >
               <Trash2 className="size-4 text-muted-foreground" />
             </Button>
+            {/* Minimize — collapses to pill, stays active */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8"
+              onClick={() => setIsMinimized(true)}
+              title="Minimize (stays active in background)"
+            >
+              <ChevronDown className="size-4 text-muted-foreground" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
               className="size-8"
               onClick={() => setIsOpen(false)}
+              title="Close"
             >
               <X className="size-4" />
             </Button>
@@ -2008,26 +1981,46 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 </button>
               )}
 
-              {/* Mic / dictate */}
+              {/* ─── Talk button — tap to speak, AI speaks back ─── */}
               <button
                 className={cn(
-                  "p-2 rounded-xl transition-all active:scale-95 disabled:opacity-40",
-                  isRecording && voiceState === "recording" ? "text-red-500 bg-red-500/10"
-                  : isRecording && voiceState === "recording_edit" ? "text-violet-500 bg-violet-500/10"
-                  : voiceState === "transcribing" ? "text-amber-500 bg-amber-500/10"
-                  : voiceState === "applying_edit" ? "text-violet-500 bg-violet-500/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  "p-2 rounded-xl transition-all active:scale-95 disabled:opacity-40 relative",
+                  voiceModeActive && voiceModeState === "listening" ? "text-red-500 bg-red-500/10"
+                  : voiceModeActive && voiceModeState === "thinking" ? "text-blue-400 bg-blue-500/10"
+                  : voiceModeActive && voiceModeState === "speaking" ? "text-emerald-400 bg-emerald-500/10"
+                  : "text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
                 )}
-                onClick={voiceState === "idle" ? startRecording : isRecording ? stopRecording : undefined}
-                disabled={voiceState === "transcribing" || voiceState === "applying_edit" || isSending || showEditPreview}
-                title={voiceState === "idle" ? "Dictate (V)" : isRecording ? "Stop recording (S)" : "Processing..."}
+                onClick={() => {
+                  if (!voiceModeActive) {
+                    openVoiceMode();
+                  } else if (voiceModeState === "listening") {
+                    stopVoiceModeRecording();
+                  } else if (voiceModeState === "speaking") {
+                    stopSpeaking();
+                    setVoiceModeState("inactive");
+                    voiceModeStateRef.current = "inactive";
+                  }
+                }}
+                disabled={voiceModeActive && voiceModeState === "thinking"}
+                title={
+                  !voiceModeActive ? "Talk to Director (tap to speak)"
+                  : voiceModeState === "listening" ? "Stop recording"
+                  : voiceModeState === "speaking" ? "Stop speaking"
+                  : "Processing..."
+                }
                 style={{ touchAction: "manipulation", minWidth: 40, minHeight: 40 }}
               >
-                {voiceState === "transcribing" || voiceState === "applying_edit"
+                {voiceModeActive && voiceModeState === "thinking"
                   ? <Loader2 className="size-4 animate-spin" />
-                  : isRecording
-                  ? <Square className={cn("size-3.5 fill-current", voiceState === "recording_edit" ? "text-violet-500" : "text-red-500")} />
+                  : voiceModeActive && voiceModeState === "listening"
+                  ? <Square className="size-3.5 fill-current text-red-500" />
+                  : voiceModeActive && voiceModeState === "speaking"
+                  ? <VolumeX className="size-4" />
                   : <Mic className="size-4" />}
+                {/* Pulse ring when listening */}
+                {voiceModeActive && voiceModeState === "listening" && (
+                  <span className="absolute inset-0 rounded-xl animate-ping bg-red-500/20" />
+                )}
               </button>
 
               {/* Read back */}
