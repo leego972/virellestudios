@@ -241,6 +241,16 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const voiceModeStreamRef = useRef<MediaStream | null>(null);
   const voiceModeRecorderRef = useRef<MediaRecorder | null>(null);
   const voiceModeChunksRef = useRef<Blob[]>([]);
+  // Non-reactive ref for use inside async callbacks (avoids stale closure)
+  const voiceModeRef = useRef(false);
+  const voiceModeStateRef = useRef<VoiceModeState>("inactive");
+  // VAD (Voice Activity Detection) refs — Titan-style auto-stop on silence
+  const vadAnalyserRef = useRef<AnalyserNode | null>(null);
+  const vadRafRef = useRef<number | null>(null);
+  const vadSilenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const vadHasSpokenRef = useRef(false);
+  const [vmRecordingDuration, setVmRecordingDuration] = useState(0);
+  const vmRecordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Voice edit state
   const [editHistory, setEditHistory] = useState<EditHistoryEntry[]>([]);
@@ -255,6 +265,8 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  // Ref to speakTextViaHttp so it can be called from sendViaSSE without forward reference
+  const speakTextViaHttpRef = useRef<(text: string) => Promise<void>>(() => Promise.resolve());
 
   // Preset state
   const [showPresets, setShowPresets] = useState(false);
@@ -438,15 +450,15 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         setIsSending(false);
         es.close();
         sseRef.current = null;
-        // In voice mode — auto-speak the response
-        if (voiceModeActive) {
-          setVoiceModeState("speaking");
-          speakTextViaHttp(finalText).then(() => {
-            setVoiceModeState("listening");
-            startVoiceModeRecording();
-          }).catch(() => {
-            setVoiceModeState("listening");
-            startVoiceModeRecording();
+        // In voice mode — auto-speak the response (use ref to avoid stale closure)
+        if (voiceModeRef.current) {
+          // Use ref to avoid forward-reference issue; speakTextViaHttp handles listen-again loop
+          speakTextViaHttpRef.current(finalText).catch(() => {
+            if (voiceModeRef.current) {
+              setVoiceModeState("listening");
+              voiceModeStateRef.current = "listening";
+              startVoiceModeRecordingRef.current();
+            }
           });
         }
       } catch {}
@@ -461,7 +473,11 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
       setIsSending(false);
       es.close();
       sseRef.current = null;
-      if (voiceModeActive) setVoiceModeState("listening");
+      if (voiceModeRef.current) {
+        setVoiceModeState("listening");
+        voiceModeStateRef.current = "listening";
+        setTimeout(() => { if (voiceModeRef.current) startVoiceModeRecordingRef.current(); }, 600);
+      }
     });
 
     es.onerror = () => {
@@ -469,9 +485,14 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
       setIsSending(false);
       es.close();
       sseRef.current = null;
-      if (voiceModeActive) setVoiceModeState("listening");
+      if (voiceModeRef.current) {
+        setVoiceModeState("listening");
+        voiceModeStateRef.current = "listening";
+        setTimeout(() => { if (voiceModeRef.current) startVoiceModeRecordingRef.current(); }, 600);
+      }
     };
-  }, [isSending, sseSessionId, instructionsText, projectId, utils, voiceModeActive, setLocation]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSending, sseSessionId, instructionsText, projectId, utils, setLocation]);
 
   const uploadMutation = trpc.directorChat.uploadAttachment.useMutation();
 
@@ -554,6 +575,40 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
   useEffect(() => { scrollToBottom(); }, [localMessages, scrollToBottom]);
 
+  // Keep non-reactive refs in sync with state (Titan pattern)
+  useEffect(() => { voiceModeRef.current = voiceModeActive; }, [voiceModeActive]);
+  useEffect(() => { voiceModeStateRef.current = voiceModeState; }, [voiceModeState]);
+
+  // ─── iOS Safari: lock panel to visual viewport so keyboard doesn't jump the UI ───
+  // When the iOS soft keyboard opens, window.innerHeight stays the same but
+  // visualViewport.height shrinks. We drive the panel height from the visual viewport
+  // so the chat panel compresses naturally rather than being pushed off-screen.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv || !chatPanelRef.current) return;
+    // Only apply on mobile (sm breakpoint = 640px)
+    const applyViewport = () => {
+      if (!chatPanelRef.current) return;
+      if (window.innerWidth >= 640) {
+        // Desktop: reset any inline styles
+        chatPanelRef.current.style.height = "";
+        chatPanelRef.current.style.top = "";
+        return;
+      }
+      // Mobile: pin to visual viewport top/height so keyboard shrinks the panel
+      const top = vv.offsetTop ?? 0;
+      chatPanelRef.current.style.top = `${top}px`;
+      chatPanelRef.current.style.height = `${vv.height}px`;
+    };
+    vv.addEventListener("resize", applyViewport, { passive: true });
+    vv.addEventListener("scroll", applyViewport, { passive: true });
+    applyViewport();
+    return () => {
+      vv.removeEventListener("resize", applyViewport);
+      vv.removeEventListener("scroll", applyViewport);
+    };
+  }, []);
+
   // ─── Sync history to local messages ───
   useEffect(() => {
     if (history && localMessages.length === 0) {
@@ -569,6 +624,9 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   useEffect(() => {
     return () => {
       if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+      if (vmRecordingTimerRef.current) clearInterval(vmRecordingTimerRef.current);
+      if (vadRafRef.current) cancelAnimationFrame(vadRafRef.current);
+      if (vadSilenceTimerRef.current) clearTimeout(vadSilenceTimerRef.current);
       if (streamRef.current) streamRef.current.getTracks().forEach((t) => t.stop());
       if (voiceModeStreamRef.current) voiceModeStreamRef.current.getTracks().forEach((t) => t.stop());
       if (audioSourceRef.current) { try { audioSourceRef.current.stop(); } catch (_) {} }
@@ -577,37 +635,54 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     };
   }, []);
 
-  // ─── AudioContext TTS (Safari iOS safe) ───
-  const getAudioContext = useCallback(() => {
-    if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
-      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    return audioCtxRef.current;
+  // ─── Strip markdown for TTS (Titan-style) ───
+  const stripMarkdown = useCallback((text: string): string => {
+    return text
+      .replace(/```[\s\S]*?```/g, '') // code blocks
+      .replace(/`[^`]+`/g, '') // inline code
+      .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // links/images
+      .replace(/#{1,6}\s/g, '') // headers
+      .replace(/\*\*([^*]+)\*\*/g, '$1') // bold
+      .replace(/\*([^*]+)\*/g, '$1') // italic
+      .replace(/~~([^~]+)~~/g, '$1') // strikethrough
+      .replace(/^[\s]*[-*+]\s/gm, '') // list markers
+      .replace(/^[\s]*\d+\.\s/gm, '') // numbered lists
+      .replace(/^>\s?/gm, '') // blockquotes
+      .replace(/\|[^\n]+\|/g, '') // tables
+      .replace(/---+/g, '') // horizontal rules
+      .replace(/\n{3,}/g, '\n\n') // excessive newlines
+      .trim();
   }, []);
 
+  // ─── AudioContext TTS (Safari iOS safe — Titan pattern) ───
   const stopSpeaking = useCallback(() => {
-    if (audioSourceRef.current) {
-      try { audioSourceRef.current.stop(); } catch (_) {}
-      audioSourceRef.current = null;
-    }
+    try { audioSourceRef.current?.stop(); } catch (_) {}
+    audioSourceRef.current = null;
     setIsSpeaking(false);
   }, []);
 
-  /** Fetch audio from /api/voice/tts and play via AudioContext (Safari safe) */
+  /** Speak text aloud via /api/voice/tts using AudioContext (Safari safe).
+   *  After speaking in voice mode, auto-restarts listening (Titan loop). */
   const speakTextViaHttp = useCallback(async (text: string): Promise<void> => {
-    if (!text.trim()) return;
+    const cleanText = stripMarkdown(text).slice(0, 4096);
+    if (!cleanText) return;
     stopSpeaking();
     setIsSpeaking(true);
+    setVoiceModeState("speaking");
+    voiceModeStateRef.current = "speaking";
     try {
       const resp = await fetch("/api/voice/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ text: text.slice(0, 1000) }),
+        body: JSON.stringify({ text: cleanText, voice: "onyx", speed: 0.95 }),
       });
       if (!resp.ok) throw new Error(`TTS HTTP ${resp.status}`);
       const arrayBuf = await resp.arrayBuffer();
-      const ctx = getAudioContext();
+      if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
       if (ctx.state === "suspended") await ctx.resume();
       const audioBuf = await ctx.decodeAudioData(arrayBuf);
       const source = ctx.createBufferSource();
@@ -618,15 +693,28 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         source.onended = () => {
           audioSourceRef.current = null;
           setIsSpeaking(false);
+          // Titan loop: after speaking, auto-restart listening
+          if (voiceModeRef.current) {
+            setVoiceModeState("listening");
+            voiceModeStateRef.current = "listening";
+            setTimeout(() => {
+              if (voiceModeRef.current) startVoiceModeRecordingRef.current();
+            }, 600);
+          }
           resolve();
         };
         source.start(0);
       });
     } catch (err) {
       setIsSpeaking(false);
+      if (voiceModeRef.current) {
+        setVoiceModeState("listening");
+        voiceModeStateRef.current = "listening";
+        setTimeout(() => { if (voiceModeRef.current) startVoiceModeRecordingRef.current(); }, 600);
+      }
       // Fallback to browser TTS
       if (window.speechSynthesis) {
-        const utterance = new SpeechSynthesisUtterance(text.slice(0, 500));
+        const utterance = new SpeechSynthesisUtterance(cleanText.slice(0, 500));
         utterance.rate = 0.9;
         utterance.pitch = 0.9;
         return new Promise((resolve) => {
@@ -636,7 +724,10 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         });
       }
     }
-  }, [stopSpeaking, getAudioContext]);
+  }, [stopSpeaking, stripMarkdown]);
+
+  // Keep speakTextViaHttpRef in sync so sendViaSSE can call it without forward reference
+  useEffect(() => { speakTextViaHttpRef.current = speakTextViaHttp; }, [speakTextViaHttp]);
 
   const speakText = useCallback((text: string) => {
     if (!text.trim()) { toast.info("No text to read back"); return; }
@@ -644,8 +735,8 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     speakTextViaHttp(text).catch(() => {});
   }, [isSpeaking, stopSpeaking, speakTextViaHttp]);
 
-  // ─── Full-screen Voice Mode (Titan-style) ───
-  // Use a ref to allow the function to call itself recursively without circular deps
+  // ─── Full-screen Voice Mode — Titan-style with VAD ───
+  // Use a ref so the function can call itself recursively without stale closures
   const startVoiceModeRecordingRef = useRef<() => Promise<void>>(() => Promise.resolve());
   const startVoiceModeRecording = useCallback(async () => {
     return startVoiceModeRecordingRef.current();
@@ -653,101 +744,202 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
   useEffect(() => {
     startVoiceModeRecordingRef.current = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 44100 },
-      });
-      voiceModeStreamRef.current = stream;
-      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-        ? "audio/webm;codecs=opus"
-        : MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4" : "audio/webm";
-      const recorder = new MediaRecorder(stream, { mimeType });
-      voiceModeRecorderRef.current = recorder;
-      voiceModeChunksRef.current = [];
-      recorder.ondataavailable = (e) => { if (e.data.size > 0) voiceModeChunksRef.current.push(e.data); };
-      recorder.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        voiceModeStreamRef.current = null;
-        const blob = new Blob(voiceModeChunksRef.current, { type: mimeType });
-        if (blob.size < 500) { setVoiceModeState("listening"); startVoiceModeRecording(); return; }
-        setVoiceModeState("thinking");
-        setVoiceModeTranscript("Transcribing...");
-        try {
-          // Convert to base64 for the tRPC transcription endpoint
-          const base64 = await new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve((reader.result as string).split(",")[1]);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          });
-          const baseMime = mimeType.split(";")[0];
-          transcribeMutation.mutate(
-            { projectId: projectId ?? 0, audioData: base64, mimeType: baseMime },
-            {
-              onSuccess: (data) => {
-                if (data.text?.trim()) {
-                  setVoiceModeTranscript(data.text.trim());
-                  setVoiceModeState("thinking");
-                  // Auto-send via SSE
-                  setLocalMessages((prev) => {
-                    const newMsgs = [
-                      ...prev,
-                      { role: "user", content: data.text.trim() },
-                      { role: "assistant", content: "__loading__" },
-                    ];
-                    const allMsgs = newMsgs
-                      .filter((m) => m.content !== "__loading__")
-                      .map((m) => ({ role: m.role, content: m.content }));
-                    void sendViaSSE(allMsgs);
-                    return newMsgs;
-                  });
-                } else {
-                  setVoiceModeTranscript("Didn't catch that — try again");
+      if (!voiceModeRef.current) return; // guard: don't start if mode was closed
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 44100 },
+        });
+        voiceModeStreamRef.current = stream;
+        const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+          ? "audio/webm;codecs=opus"
+          : MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4" : "audio/webm";
+        const recorder = new MediaRecorder(stream, { mimeType });
+        voiceModeRecorderRef.current = recorder;
+        voiceModeChunksRef.current = [];
+
+        recorder.ondataavailable = (e) => { if (e.data.size > 0) voiceModeChunksRef.current.push(e.data); };
+
+        recorder.onstop = async () => {
+          // Clean up VAD
+          vadAnalyserRef.current = null;
+          if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
+          if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
+          if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
+          setVmRecordingDuration(0);
+          stream.getTracks().forEach((t) => t.stop());
+          voiceModeStreamRef.current = null;
+
+          if (!voiceModeRef.current) return; // closed while recording
+
+          const blob = new Blob(voiceModeChunksRef.current, { type: mimeType });
+          if (blob.size < 500) {
+            // Too short — restart listening
+            setVoiceModeState("listening");
+            voiceModeStateRef.current = "listening";
+            startVoiceModeRecordingRef.current();
+            return;
+          }
+
+          setVoiceModeState("thinking");
+          voiceModeStateRef.current = "thinking";
+          setVoiceModeTranscript("Transcribing...");
+
+          try {
+            const base64 = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve((reader.result as string).split(",")[1]);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+            const baseMime = mimeType.split(";")[0];
+            transcribeMutation.mutate(
+              { projectId: projectId ?? 0, audioData: base64, mimeType: baseMime },
+              {
+                onSuccess: (data) => {
+                  if (!voiceModeRef.current) return;
+                  if (data.text?.trim()) {
+                    setVoiceModeTranscript(data.text.trim());
+                    setVoiceModeState("thinking");
+                    voiceModeStateRef.current = "thinking";
+                    setLocalMessages((prev) => {
+                      const newMsgs = [
+                        ...prev,
+                        { role: "user", content: data.text.trim() },
+                        { role: "assistant", content: "__loading__" },
+                      ];
+                      const allMsgs = newMsgs
+                        .filter((m) => m.content !== "__loading__")
+                        .map((m) => ({ role: m.role, content: m.content }));
+                      void sendViaSSE(allMsgs);
+                      return newMsgs;
+                    });
+                  } else {
+                    setVoiceModeTranscript("Didn't catch that — try again");
+                    setVoiceModeState("listening");
+                    voiceModeStateRef.current = "listening";
+                    startVoiceModeRecordingRef.current();
+                  }
+                },
+                onError: () => {
+                  if (!voiceModeRef.current) return;
+                  setVoiceModeTranscript("Transcription failed — try again");
                   setVoiceModeState("listening");
-                  startVoiceModeRecording();
-                }
-              },
-              onError: () => {
-                setVoiceModeTranscript("Transcription failed — try again");
-                setVoiceModeState("listening");
-                startVoiceModeRecording();
-              },
+                  voiceModeStateRef.current = "listening";
+                  startVoiceModeRecordingRef.current();
+                },
+              }
+            );
+          } catch {
+            if (!voiceModeRef.current) return;
+            setVoiceModeTranscript("Transcription failed — try again");
+            setVoiceModeState("listening");
+            voiceModeStateRef.current = "listening";
+            startVoiceModeRecordingRef.current();
+          }
+        };
+
+        recorder.start(250);
+        setVoiceModeState("listening");
+        voiceModeStateRef.current = "listening";
+        setVmRecordingDuration(0);
+        vmRecordingTimerRef.current = setInterval(() => setVmRecordingDuration((p) => p + 1), 1000);
+
+        // ─── VAD: Titan-style auto-stop on silence ───
+        vadHasSpokenRef.current = false;
+        try {
+          if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
+            audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+          }
+          const vadCtx = audioCtxRef.current;
+          if (vadCtx.state === "suspended") await vadCtx.resume();
+          const src = vadCtx.createMediaStreamSource(stream);
+          const analyser = vadCtx.createAnalyser();
+          analyser.fftSize = 512;
+          analyser.smoothingTimeConstant = 0.3;
+          src.connect(analyser);
+          vadAnalyserRef.current = analyser;
+          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+          const SILENCE_THRESHOLD = 12;  // RMS below this = silence
+          const SILENCE_DURATION = 1500; // ms of silence before auto-stop
+          const MIN_SPEECH_MS = 400;     // must have spoken for at least this long
+          let speechStartTime = 0;
+          const checkVad = () => {
+            if (!vadAnalyserRef.current) return;
+            analyser.getByteTimeDomainData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+              const v = (dataArray[i] - 128) / 128;
+              sum += v * v;
             }
-          );
-        } catch {
-          setVoiceModeTranscript("Transcription failed — try again");
-          setVoiceModeState("listening");
-          startVoiceModeRecording();
+            const rms = Math.sqrt(sum / dataArray.length) * 100;
+            if (rms > SILENCE_THRESHOLD) {
+              if (!vadHasSpokenRef.current) {
+                vadHasSpokenRef.current = true;
+                speechStartTime = Date.now();
+              }
+              if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
+            } else if (vadHasSpokenRef.current && !vadSilenceTimerRef.current) {
+              const spokenMs = Date.now() - speechStartTime;
+              if (spokenMs >= MIN_SPEECH_MS) {
+                vadSilenceTimerRef.current = setTimeout(() => {
+                  vadSilenceTimerRef.current = null;
+                  vadAnalyserRef.current = null;
+                  if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
+                  if (voiceModeRecorderRef.current && voiceModeRecorderRef.current.state !== "inactive") {
+                    if (voiceModeRef.current) setVoiceModeState("thinking");
+                    voiceModeRecorderRef.current.stop();
+                  }
+                }, SILENCE_DURATION);
+              }
+            }
+            vadRafRef.current = requestAnimationFrame(checkVad);
+          };
+          vadRafRef.current = requestAnimationFrame(checkVad);
+        } catch (vadErr) {
+          console.warn("[VAD] Could not start voice activity detection:", vadErr);
         }
-      };
-      recorder.start(250);
-      setVoiceModeState("listening");
-      // VAD: auto-stop after 4 seconds of silence (simple timeout approach)
-      // User can also tap the screen to stop manually
-    } catch (err) {
-      toast.error("Microphone access denied");
-      setVoiceModeActive(false);
-      setVoiceModeState("inactive");
-    }
-  };
+      } catch (err: any) {
+        if (err?.name === "NotAllowedError") {
+          toast.error("Microphone access denied. Please allow microphone access in your browser settings.");
+        } else {
+          toast.error("Could not access microphone.");
+        }
+        setVoiceModeActive(false);
+        voiceModeRef.current = false;
+        setVoiceModeState("inactive");
+      }
+    };
   }, [projectId, transcribeMutation, sendViaSSE]);
 
   const stopVoiceModeRecording = useCallback(() => {
-    if (voiceModeRecorderRef.current && voiceModeRecorderRef.current.state === "recording") {
+    // Cancel VAD before stopping
+    vadAnalyserRef.current = null;
+    if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
+    if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
+    if (voiceModeRef.current) { setVoiceModeState("thinking"); voiceModeStateRef.current = "thinking"; }
+    if (voiceModeRecorderRef.current && voiceModeRecorderRef.current.state !== "inactive") {
       voiceModeRecorderRef.current.stop();
     }
   }, []);
 
   const openVoiceMode = useCallback(async () => {
+    voiceModeRef.current = true;
     setVoiceModeActive(true);
     setVoiceModeTranscript("");
     setVoiceModeState("listening");
-    await startVoiceModeRecording();
-  }, [startVoiceModeRecording]);
+    voiceModeStateRef.current = "listening";
+    setTimeout(() => startVoiceModeRecordingRef.current(), 300);
+  }, []);
 
   const closeVoiceMode = useCallback(() => {
-    if (voiceModeRecorderRef.current && voiceModeRecorderRef.current.state === "recording") {
-      voiceModeRecorderRef.current.onstop = null;
+    // Cancel VAD
+    vadAnalyserRef.current = null;
+    if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
+    if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
+    if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
+    // Stop recording
+    if (voiceModeRecorderRef.current && voiceModeRecorderRef.current.state !== "inactive") {
+      voiceModeRecorderRef.current.onstop = null; // prevent onstop from restarting
       voiceModeRecorderRef.current.stop();
     }
     if (voiceModeStreamRef.current) {
@@ -755,9 +947,12 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
       voiceModeStreamRef.current = null;
     }
     stopSpeaking();
+    voiceModeRef.current = false;
     setVoiceModeActive(false);
     setVoiceModeState("inactive");
+    voiceModeStateRef.current = "inactive";
     setVoiceModeTranscript("");
+    setVmRecordingDuration(0);
   }, [stopSpeaking]);
 
   // ─── Standard voice recording (inline, for dictation/edit) ───
@@ -1081,68 +1276,147 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
       {/* ─── Full-screen Voice Mode Overlay (Titan-style) ─── */}
       {voiceModeActive && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 backdrop-blur-xl">
-          {/* Close button */}
-          <button
-            onClick={closeVoiceMode}
-            className="absolute top-6 right-6 size-10 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-all"
-          >
-            <X className="size-5" />
-          </button>
-
-          {/* Virelle branding */}
-          <div className="flex flex-col items-center gap-2 mb-10">
-            <div className="size-16 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-2xl shadow-amber-500/30">
-              <Sparkles className="size-8 text-black" />
-            </div>
-            <p className="text-white/50 text-sm font-medium tracking-widest uppercase">Director's Assistant</p>
+        <div
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
+          style={{ background: "linear-gradient(to bottom, hsl(var(--background)), hsl(var(--background)/0.98))", backdropFilter: "blur(20px)" }}
+        >
+          {/* Top bar: label + hang-up */}
+          <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-4" style={{ zIndex: 110 }}>
+            <span className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Voice Mode</span>
+            <button
+              onClick={closeVoiceMode}
+              className="p-3 rounded-full bg-muted/50 hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-all active:scale-95"
+              style={{ touchAction: "manipulation", minWidth: 48, minHeight: 48 }}
+              aria-label="Hang up and return to chat"
+            >
+              <PhoneCall className="size-5" />
+            </button>
           </div>
 
-          {/* State label */}
-          <div className="mb-6 text-center">
+          {/* Animated orb with Virelle branding */}
+          <div className={cn("relative mb-8", voiceModeState === "listening" && "animate-pulse")}>
+            {/* Outer glow ring */}
+            <div className={cn(
+              "absolute inset-0 rounded-full transition-all duration-700",
+              voiceModeState === "listening" ? "bg-amber-500/20 scale-150 animate-ping"
+              : voiceModeState === "speaking" ? "bg-emerald-500/20 scale-150 animate-pulse"
+              : voiceModeState === "thinking" ? "bg-blue-500/20 scale-125 animate-pulse"
+              : "bg-transparent scale-100"
+            )} />
+            {/* Inner glow ring */}
+            <div className={cn(
+              "absolute inset-0 rounded-full transition-all duration-500",
+              voiceModeState === "listening" ? "bg-amber-500/10 scale-125"
+              : voiceModeState === "speaking" ? "bg-emerald-500/10 scale-125"
+              : voiceModeState === "thinking" ? "bg-blue-500/10 scale-110"
+              : "bg-transparent scale-100"
+            )} />
+            {/* Logo container */}
+            <div className={cn(
+              "relative size-40 sm:size-48 rounded-full flex items-center justify-center transition-all duration-500 bg-gradient-to-br from-amber-500/20 to-amber-600/10",
+              voiceModeState === "listening" ? "ring-4 ring-amber-500/60 shadow-[0_0_60px_rgba(245,158,11,0.3)]"
+              : voiceModeState === "speaking" ? "ring-4 ring-emerald-500/60 shadow-[0_0_60px_rgba(52,211,153,0.3)]"
+              : voiceModeState === "thinking" ? "ring-4 ring-blue-500/60 shadow-[0_0_60px_rgba(96,165,250,0.3)]"
+              : "ring-2 ring-border/50"
+            )}>
+              <Sparkles className={cn(
+                "size-16 sm:size-20 transition-all duration-500",
+                voiceModeState === "listening" ? "text-amber-400"
+                : voiceModeState === "speaking" ? "text-emerald-400"
+                : voiceModeState === "thinking" ? "text-blue-400"
+                : "text-muted-foreground"
+              )} />
+            </div>
+          </div>
+
+          {/* Status indicator */}
+          <div className="flex items-center gap-3 mb-6 h-8">
             {voiceModeState === "listening" && (
-              <p className="text-amber-400 text-lg font-medium animate-pulse">Listening...</p>
+              <>
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-1 bg-amber-500 rounded-full animate-pulse"
+                      style={{ height: `${12 + Math.random() * 20}px`, animationDelay: `${i * 0.15}s`, animationDuration: "0.6s" }}
+                    />
+                  ))}
+                </div>
+                <span className="text-lg font-medium text-amber-400">Listening...</span>
+              </>
             )}
             {voiceModeState === "thinking" && (
-              <p className="text-blue-400 text-lg font-medium">Thinking...</p>
+              <>
+                <Loader2 className="size-5 animate-spin text-blue-400" />
+                <span className="text-lg font-medium text-blue-400">Thinking...</span>
+              </>
             )}
             {voiceModeState === "speaking" && (
-              <p className="text-emerald-400 text-lg font-medium">Speaking...</p>
+              <>
+                <Volume2 className="size-5 text-emerald-400 animate-pulse" />
+                <span className="text-lg font-medium text-emerald-400">Speaking...</span>
+              </>
             )}
-          </div>
-
-          {/* Waveform */}
-          <div className="mb-8">
-            <VoiceWaveform
-              active={voiceModeState === "listening" || voiceModeState === "speaking"}
-              color={voiceModeState === "speaking" ? "#34d399" : voiceModeState === "thinking" ? "#60a5fa" : "#f59e0b"}
-            />
+            {voiceModeState === "inactive" && null}
           </div>
 
           {/* Transcript */}
-          {voiceModeTranscript && (
-            <div className="max-w-sm text-center px-6 mb-8">
-              <p className="text-white/70 text-sm leading-relaxed">{voiceModeTranscript}</p>
+          {voiceModeTranscript && voiceModeTranscript !== "Transcribing..." && (
+            <div className="max-w-xs sm:max-w-sm text-center px-6 mb-6">
+              <p className="text-muted-foreground text-sm leading-relaxed italic">“{voiceModeTranscript}”</p>
             </div>
           )}
 
-          {/* Tap to stop / send */}
-          {voiceModeState === "listening" && (
-            <button
-              onClick={stopVoiceModeRecording}
-              className="mt-2 px-6 py-3 rounded-full bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400 active:scale-95 transition-all shadow-lg shadow-amber-500/30"
-            >
-              <Square className="size-4 fill-current inline mr-2" />
-              Send
-            </button>
+          {/* Action buttons */}
+          <div className="flex gap-4">
+            {voiceModeState === "inactive" && (
+              <button
+                onClick={() => { startVoiceModeRecording(); setVoiceModeState("listening"); }}
+                className="px-8 py-4 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 transition-all text-base font-medium flex items-center gap-3"
+                style={{ touchAction: "manipulation", minHeight: 56 }}
+              >
+                <Mic className="size-5" />
+                Start Talking
+              </button>
+            )}
+            {voiceModeState === "listening" && (
+              <button
+                onClick={stopVoiceModeRecording}
+                className="px-8 py-4 rounded-2xl bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 active:bg-red-500/50 transition-all text-base font-medium flex items-center gap-3"
+                style={{ touchAction: "manipulation", minHeight: 56 }}
+                aria-label="Stop recording"
+              >
+                <Square className="size-5 fill-current" />
+                Stop
+              </button>
+            )}
+            {voiceModeState === "thinking" && (
+              <div className="px-8 py-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-base font-medium flex items-center gap-3">
+                <span className="animate-spin inline-block size-5 border-2 border-blue-400 border-t-transparent rounded-full" />
+                Processing...
+              </div>
+            )}
+            {voiceModeState === "speaking" && (
+              <button
+                onClick={() => { stopSpeaking(); setVoiceModeState("inactive"); }}
+                className="px-8 py-4 rounded-2xl bg-muted/50 border border-border/50 text-muted-foreground hover:bg-muted transition-all text-base font-medium flex items-center gap-3"
+                style={{ touchAction: "manipulation", minHeight: 56 }}
+              >
+                <VolumeX className="size-5" />
+                Stop Speaking
+              </button>
+            )}
+          </div>
+
+          {/* Recording duration */}
+          {voiceModeState === "listening" && vmRecordingDuration > 0 && (
+            <div className="mt-4 text-sm text-muted-foreground">{formatDuration(vmRecordingDuration)}</div>
           )}
 
-          {/* Loading spinner for thinking */}
-          {voiceModeState === "thinking" && (
-            <Loader2 className="size-8 animate-spin text-blue-400 mt-2" />
-          )}
-
-          <p className="absolute bottom-8 text-white/30 text-xs">Press Esc to exit voice mode</p>
+          {/* Bottom hint */}
+          <div className="absolute bottom-8 left-0 right-0 text-center">
+            <p className="text-xs text-muted-foreground/50">Voice conversations are saved to your chat history · Esc to exit</p>
+          </div>
         </div>
       )}
 
@@ -1151,13 +1425,21 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         ref={chatPanelRef}
         className={cn(
           "fixed z-50 flex flex-col bg-background border border-border shadow-2xl transition-all duration-300 ease-out",
-          "inset-0 sm:inset-auto",
-          "sm:bottom-6 sm:right-6 sm:w-[420px] sm:h-[600px] sm:max-h-[80dvh] sm:rounded-2xl",
+          // Mobile: full screen anchored to visual viewport (iOS keyboard stability)
+          "inset-x-0 bottom-0 top-0 sm:inset-auto",
+          // Desktop: wider panel (500px) for comfortable reading
+          "sm:bottom-6 sm:right-6 sm:w-[500px] sm:h-[640px] sm:max-h-[85dvh] sm:rounded-2xl",
           isOpen
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 translate-y-4 scale-95 pointer-events-none"
         )}
-        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+        style={{
+          // iOS Safari: paddingBottom accounts for home indicator
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          // Prevent iOS overscroll bounce on the panel itself
+          WebkitOverflowScrolling: "touch" as any,
+          overscrollBehavior: "contain",
+        }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-amber-500/10 to-amber-600/5 sm:rounded-t-2xl shrink-0">
@@ -1272,7 +1554,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         )}
 
         {/* Messages area */}
-        <div className="flex-1 overflow-y-auto min-h-0" ref={scrollRef}>
+        <div className="flex-1 overflow-y-auto min-h-0" ref={scrollRef} style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" as any }}>
           {displayMessages.length === 0 && !historyLoading ? (
             <div className="flex flex-col items-center justify-center h-full p-6 text-center gap-4">
               <div className="size-16 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center">
@@ -1644,96 +1926,22 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           </div>
         )}
 
-        {/* Input area */}
-        <div className="border-t bg-background/80 backdrop-blur-sm p-3 sm:rounded-b-2xl shrink-0">
-          <div className="flex items-end gap-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="hidden"
-              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.csv,.json"
-              multiple
-              onChange={handleFileSelect}
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-9 shrink-0"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading || isBusy}
-              title="Attach files"
-            >
-              {isUploading ? <Loader2 className="size-4 animate-spin" /> : <Paperclip className="size-4 text-muted-foreground" />}
-            </Button>
+        {/* Input area — wide, comfortable, Titan-style */}
+        <div className="border-t bg-background/80 backdrop-blur-sm px-3 pt-3 pb-2 sm:rounded-b-2xl shrink-0">
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.csv,.json"
+            multiple
+            onChange={handleFileSelect}
+          />
 
-            {/* Voice edit button */}
-            {hasInputText && voiceState === "idle" ? (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-9 shrink-0 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 transition-all"
-                onClick={startEditRecording}
-                disabled={isSending || showEditPreview}
-                title="Voice edit — speak commands to edit your text (V)"
-              >
-                <Pencil className="size-4" />
-              </Button>
-            ) : null}
-
-            {/* Mic button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "size-9 shrink-0 transition-all",
-                isRecording && voiceState === "recording" && "text-red-500 bg-red-500/10 hover:bg-red-500/20",
-                isRecording && voiceState === "recording_edit" && "text-violet-500 bg-violet-500/10 hover:bg-violet-500/20",
-                voiceState === "transcribing" && "text-amber-500 bg-amber-500/10",
-                voiceState === "applying_edit" && "text-violet-500 bg-violet-500/10",
-              )}
-              onClick={voiceState === "idle" ? startRecording : isRecording ? stopRecording : undefined}
-              disabled={voiceState === "transcribing" || voiceState === "applying_edit" || isSending || showEditPreview}
-              title={voiceState === "idle" ? "Dictate (V)" : isRecording ? "Stop recording (S)" : "Processing..."}
-            >
-              {voiceState === "transcribing" || voiceState === "applying_edit"
-                ? <Loader2 className="size-4 animate-spin" />
-                : isRecording
-                ? <Square className={cn("size-3.5 fill-current", voiceState === "recording_edit" ? "text-violet-500" : "text-red-500")} />
-                : <Mic className="size-4 text-muted-foreground" />}
-            </Button>
-
-            {/* Read back button */}
-            {hasInputText && voiceState === "idle" && !showEditPreview && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "size-9 shrink-0 transition-all",
-                  isSpeaking ? "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20" : "text-muted-foreground hover:text-foreground"
-                )}
-                onClick={() => speakText(input)}
-                disabled={isSending}
-                title={isSpeaking ? "Stop reading (Esc)" : "Read back text (R)"}
-              >
-                {isSpeaking ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
-              </Button>
-            )}
-
-            {/* Undo button */}
-            {editHistory.length > 0 && voiceState === "idle" && !showEditPreview && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-9 shrink-0 text-muted-foreground hover:text-foreground"
-                onClick={undoLastEdit}
-                disabled={isSending}
-                title="Undo last voice edit (Z)"
-              >
-                <Undo2 className="size-4" />
-              </Button>
-            )}
-
-            {/* Text input */}
+          {/* Wide text input — full width */}
+          <div className={cn(
+            "relative rounded-2xl border transition-all",
+            showEditPreview ? "border-violet-500/40 bg-violet-500/5" : "border-border/60 bg-background focus-within:border-amber-500/50"
+          )}>
             <Textarea
               ref={textareaRef}
               value={input}
@@ -1744,13 +1952,10 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 : voiceState === "applying_edit" ? "Applying your edit..."
                 : showEditPreview ? "Review the edit above..."
                 : hasInputText ? "Edit text or press V to voice-edit..."
-                : "Type, press V to speak, or / for commands..."
+                : "Message Director's Assistant... (/ for commands)"
               }
               className={cn(
-                "flex-1 min-h-[42px] max-h-[160px] resize-none text-sm rounded-xl py-2.5 px-3",
-                showEditPreview
-                  ? "border-violet-500/30 focus-visible:ring-violet-500/30"
-                  : "border-border/50 focus-visible:ring-amber-500/30"
+                "w-full min-h-[52px] max-h-[200px] resize-none text-[15px] leading-relaxed rounded-2xl border-0 bg-transparent py-3.5 px-4 pr-14 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
               )}
               rows={1}
               inputMode="text"
@@ -1760,22 +1965,112 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
               enterKeyHint="send"
               disabled={isSending || voiceState === "transcribing" || voiceState === "applying_edit" || showEditPreview}
             />
-
-            {/* Send button */}
-            <Button
-              size="icon"
-              className="size-9 shrink-0 bg-amber-500 hover:bg-amber-400 text-black"
+            {/* Send button — inside the textarea, bottom-right */}
+            <button
+              className={cn(
+                "absolute bottom-2.5 right-2.5 size-9 rounded-xl flex items-center justify-center transition-all",
+                (!input.trim() && attachments.length === 0) || isSending || voiceState !== "idle" || showEditPreview
+                  ? "bg-muted text-muted-foreground cursor-not-allowed"
+                  : "bg-amber-500 hover:bg-amber-400 text-black active:scale-95 shadow-sm"
+              )}
               onClick={() => handleSend()}
               disabled={(!input.trim() && attachments.length === 0) || isSending || voiceState !== "idle" || showEditPreview}
+              style={{ touchAction: "manipulation" }}
             >
               {isSending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
-            </Button>
+            </button>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
-            {hasInputText && voiceState === "idle"
-              ? "V to voice-edit · R to read back · Quick edits above"
-              : "Type, press V to speak, / for commands, or tap the phone icon for voice mode"}
-          </p>
+
+          {/* Action icon row — below the textarea */}
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center gap-0.5">
+              {/* Attach */}
+              <button
+                className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all active:scale-95 disabled:opacity-40"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading || isBusy}
+                title="Attach files"
+                style={{ touchAction: "manipulation", minWidth: 40, minHeight: 40 }}
+              >
+                {isUploading ? <Loader2 className="size-4 animate-spin" /> : <Paperclip className="size-4" />}
+              </button>
+
+              {/* Voice edit (pencil) — only when there's text */}
+              {hasInputText && voiceState === "idle" && (
+                <button
+                  className="p-2 rounded-xl text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 transition-all active:scale-95 disabled:opacity-40"
+                  onClick={startEditRecording}
+                  disabled={isSending || showEditPreview}
+                  title="Voice edit — speak to edit (V)"
+                  style={{ touchAction: "manipulation", minWidth: 40, minHeight: 40 }}
+                >
+                  <Pencil className="size-4" />
+                </button>
+              )}
+
+              {/* Mic / dictate */}
+              <button
+                className={cn(
+                  "p-2 rounded-xl transition-all active:scale-95 disabled:opacity-40",
+                  isRecording && voiceState === "recording" ? "text-red-500 bg-red-500/10"
+                  : isRecording && voiceState === "recording_edit" ? "text-violet-500 bg-violet-500/10"
+                  : voiceState === "transcribing" ? "text-amber-500 bg-amber-500/10"
+                  : voiceState === "applying_edit" ? "text-violet-500 bg-violet-500/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                )}
+                onClick={voiceState === "idle" ? startRecording : isRecording ? stopRecording : undefined}
+                disabled={voiceState === "transcribing" || voiceState === "applying_edit" || isSending || showEditPreview}
+                title={voiceState === "idle" ? "Dictate (V)" : isRecording ? "Stop recording (S)" : "Processing..."}
+                style={{ touchAction: "manipulation", minWidth: 40, minHeight: 40 }}
+              >
+                {voiceState === "transcribing" || voiceState === "applying_edit"
+                  ? <Loader2 className="size-4 animate-spin" />
+                  : isRecording
+                  ? <Square className={cn("size-3.5 fill-current", voiceState === "recording_edit" ? "text-violet-500" : "text-red-500")} />
+                  : <Mic className="size-4" />}
+              </button>
+
+              {/* Read back */}
+              {hasInputText && voiceState === "idle" && !showEditPreview && (
+                <button
+                  className={cn(
+                    "p-2 rounded-xl transition-all active:scale-95 disabled:opacity-40",
+                    isSpeaking ? "text-amber-500 bg-amber-500/10" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  )}
+                  onClick={() => speakText(input)}
+                  disabled={isSending}
+                  title={isSpeaking ? "Stop reading (Esc)" : "Read back text (R)"}
+                  style={{ touchAction: "manipulation", minWidth: 40, minHeight: 40 }}
+                >
+                  {isSpeaking ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                </button>
+              )}
+
+              {/* Undo last edit */}
+              {editHistory.length > 0 && voiceState === "idle" && !showEditPreview && (
+                <button
+                  className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all active:scale-95 disabled:opacity-40"
+                  onClick={undoLastEdit}
+                  disabled={isSending}
+                  title="Undo last voice edit (Z)"
+                  style={{ touchAction: "manipulation", minWidth: 40, minHeight: 40 }}
+                >
+                  <Undo2 className="size-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Right side: hint text */}
+            <p className="text-[10px] text-muted-foreground/60 pr-1 hidden sm:block">
+              {hasInputText && voiceState === "idle"
+                ? "V voice-edit · R read back"
+                : "V to speak · / commands"}
+            </p>
+            {/* Mobile: recording duration */}
+            {isRecording && recordingDuration > 0 && (
+              <span className="text-[10px] text-red-400 font-mono">{formatDuration(recordingDuration)}</span>
+            )}
+          </div>
         </div>
       </div>
     </>
