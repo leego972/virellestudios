@@ -19,7 +19,7 @@ import { startAdScheduler } from "./advertisingEngine";
 import { startVideoJobWorker } from "./videoJobWorker";
 import { runAutoMigration } from "./autoMigrate";
 import { invokeLLMStream, invokeLLM } from "./llm";
-import { DIRECTOR_TOOLS, getDirectorToolDescription } from "../director-tools";
+import { DIRECTOR_TOOLS, getDirectorToolDescription, buildDirectorSystemPrompt } from "../director-tools";
 import { executeDirectorTool } from "../director-executor";
 import { runStripeProvisioning } from "./stripeProvisioning";
 import { registerSeoRoutes } from "../seo-engine";
@@ -632,7 +632,7 @@ async function startServer() {
     const toolCtx = await createContext({ req, res, info: {} } as any);
     if (!toolCtx.user) { res.status(401).json({ error: "Unauthorized" }); return; }
 
-    const SYSTEM = `You are the Virelle AI Director — a world-class cinematic AI assistant built into Virelle Studios. You help filmmakers, directors, and creators develop their vision into production-ready films.\n\nYou have access to tools that let you take real actions inside the app on behalf of the user — creating projects, writing scenes, generating screenplays, building shot lists, scouting locations, generating dialogue, checking continuity, and more.\n\nCore principles:\n- When the user asks you to DO something (create, generate, write, add, update, delete), USE THE APPROPRIATE TOOL — don't just describe what you would do.\n- When the user asks a question or wants advice, answer conversationally without using tools.\n- Always confirm what you did after using a tool, and offer the next logical step.\n- Use proper film terminology (mise-en-scène, blocking, lens choices, colour grading, etc.).\n- Be enthusiastic and collaborative — this is a creative partnership.\n- Never ask more than 2 clarifying questions at a time.\n${projectContext ? `\nCurrent project context: ${projectContext}` : ""}\n${directorInstructions ? `\nDirector's custom instructions (always follow these): ${directorInstructions}` : ""}`;
+    const SYSTEM = buildDirectorSystemPrompt(projectContext || "", directorInstructions || "");
 
     type LLMMessage = { role: "system" | "user" | "assistant" | "tool"; content: string; tool_call_id?: string; tool_calls?: any[] };
     const llmMessages: LLMMessage[] = [

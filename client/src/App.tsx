@@ -25,6 +25,7 @@ const NewProject = lazy(() => import("./pages/NewProject"));
 const Characters = lazy(() => import("./pages/Characters"));
 const SceneEditor = lazy(() => import("./pages/SceneEditor"));
 const Movies = lazy(() => import("./pages/Movies"));
+const AssistantPage = lazy(() => import("./pages/AssistantPage"));
 const AdPosterMaker = lazy(() => import("./pages/AdPosterMaker"));
 const CampaignManager = lazy(() => import("./pages/CampaignManager"));
 const ContentCreatorPage = lazy(() => import("./pages/ContentCreatorPage"));
@@ -209,6 +210,7 @@ function Router() {
               <Route path="/projects/:id">{() => <ProjectDetail />}</Route>
               <Route path="/projects/:id/scenes">{() => <SceneEditor />}</Route>
               <Route path="/movies">{() => <Movies />}</Route>
+              <Route path="/assistant">{() => <LazyPage><AssistantPage /></LazyPage>}</Route>
               <Route path="/poster-maker">{() => <AdPosterMaker />}</Route>
               <Route path="/characters">{() => <Characters />}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>

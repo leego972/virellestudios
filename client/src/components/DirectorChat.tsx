@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { skipToken } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -41,7 +42,7 @@ import {
 } from "lucide-react";
 
 interface DirectorChatProps {
-  projectId: number;
+  projectId?: number;
 }
 interface ActionBadge {
   type: string;
@@ -292,8 +293,8 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const utils = trpc.useUtils();
 
   const { data: history, isLoading: historyLoading } = trpc.directorChat.history.useQuery(
-    { projectId },
-    { enabled: isOpen }
+    projectId ? { projectId } : skipToken,
+    { enabled: isOpen && !!projectId }
   );
 
   const { data: instructionsData } = trpc.directorChat.getInstructions.useQuery(undefined, {
@@ -681,7 +682,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           });
           const baseMime = mimeType.split(";")[0];
           transcribeMutation.mutate(
-            { projectId, audioData: base64, mimeType: baseMime },
+            { projectId: projectId ?? 0, audioData: base64, mimeType: baseMime },
             {
               onSuccess: (data) => {
                 if (data.text?.trim()) {
@@ -788,7 +789,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64 = (reader.result as string).split(",")[1];
-          transcribeMutation.mutate({ projectId, audioData: base64, mimeType: baseMime });
+          transcribeMutation.mutate({ projectId: projectId ?? 0, audioData: base64, mimeType: baseMime });
         };
         reader.readAsDataURL(audioBlob);
       };
@@ -948,7 +949,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
           reader.onerror = reject;
           reader.readAsDataURL(file);
         });
-        const result = await uploadMutation.mutateAsync({ projectId, fileName: file.name, fileData: base64, mimeType: file.type });
+        const result = await uploadMutation.mutateAsync({ projectId: projectId ?? 0, fileName: file.name, fileData: base64, mimeType: file.type });
         setAttachments((prev) => [...prev, { url: result.url, name: result.fileName, mimeType: file.type }]);
         toast.success(`Attached: ${file.name}`);
       }
@@ -965,7 +966,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
 
     // Handle slash commands
     if (trimmed === "/new" || trimmed === "/clear") {
-      clearMutation.mutate({ projectId });
+      clearMutation.mutate({ projectId: projectId ?? 0 });
       setInput("");
       return;
     }
@@ -1202,7 +1203,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
               variant="ghost"
               size="icon"
               className="size-8"
-              onClick={() => clearMutation.mutate({ projectId })}
+              onClick={() => clearMutation.mutate({ projectId: projectId ?? 0 })}
               title="Clear chat"
             >
               <Trash2 className="size-4 text-muted-foreground" />

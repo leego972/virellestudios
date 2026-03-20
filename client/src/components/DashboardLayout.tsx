@@ -54,6 +54,7 @@ import {
   DollarSign,
   Headphones,
   Languages,
+  MessageSquare,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -71,6 +72,7 @@ const menuGroups = [
       { icon: Film, label: "Projects", path: "/projects" },
       { icon: Users, label: "Characters", path: "/characters" },
       { icon: Clapperboard, label: "My Movies", path: "/movies" },
+      { icon: MessageSquare, label: "Director's Assistant", path: "/assistant" },
     ],
   },
   {
