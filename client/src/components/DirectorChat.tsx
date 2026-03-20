@@ -267,6 +267,8 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
   // Ref to speakTextViaHttp so it can be called from sendViaSSE without forward reference
   const speakTextViaHttpRef = useRef<(text: string) => Promise<void>>(() => Promise.resolve());
+  // Ref to handleSend so the voice path can call it without forward reference
+  const handleSendRef = useRef<(overrideText?: string) => void>(() => {});
 
   // Preset state
   const [showPresets, setShowPresets] = useState(false);
@@ -863,18 +865,9 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                     setVoiceModeTranscript(data.text.trim());
                     setVoiceModeState("thinking");
                     voiceModeStateRef.current = "thinking";
-                    setLocalMessages((prev) => {
-                      const newMsgs = [
-                        ...prev,
-                        { role: "user", content: data.text.trim() },
-                        { role: "assistant", content: "__loading__" },
-                      ];
-                      const allMsgs = newMsgs
-                        .filter((m) => m.content !== "__loading__")
-                        .map((m) => ({ role: m.role, content: m.content }));
-                      void sendViaSSE(allMsgs);
-                      return newMsgs;
-                    });
+                    // Route through handleSend for full parity with written chat:
+                    // slash commands, attachments, state cleanup, isSpeaking stop, etc.
+                    handleSendRef.current(data.text.trim());
                   } else {
                     setVoiceModeTranscript("Didn't catch that — try again");
                     setVoiceModeState("listening");
@@ -1263,6 +1256,9 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     setShowPresets(false);
     if (textareaRef.current) textareaRef.current.style.height = "auto";
   }, [input, attachments, localMessages, sendViaSSE, isSpeaking, stopSpeaking, clearMutation]);
+
+  // Keep handleSendRef in sync so voice path can call it without forward reference
+  useEffect(() => { handleSendRef.current = handleSend; }, [handleSend]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
