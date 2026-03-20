@@ -1391,6 +1391,15 @@ export async function updateUserProfile(userId: number, data: {
     .where(eq(users.id, userId));
 }
 
+// ─── Director Instructions ───
+export async function saveDirectorInstructions(userId: number, instructions: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(users)
+    .set({ directorInstructions: instructions, updatedAt: new Date() } as any)
+    .where(eq(users.id, userId));
+}
+
 // ─── Notifications ───
 export async function createNotification(data: {
   userId: number;

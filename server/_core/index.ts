@@ -1,4 +1,5 @@
 import "dotenv/config";
+import crypto from "crypto";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
@@ -491,6 +492,111 @@ async function startServer() {
       res.send(xml);
     } catch (_err) {
       res.status(500).send('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
+    }
+  });
+
+  // ── Voice Upload & TTS HTTP Routes (Safari iOS safe — no base64 overhead) ────
+  // In-memory temp store for voice recordings (id -> { buffer, mimeType, expires })
+  const voiceTempStore = new Map<string, { buffer: Buffer; mimeType: string; expires: number }>();
+  setInterval(() => {
+    const now = Date.now();
+    for (const [id, entry] of voiceTempStore.entries()) {
+      if (entry.expires < now) voiceTempStore.delete(id);
+    }
+  }, 5 * 60 * 1000);
+
+  // POST /api/voice/upload — accepts multipart audio, returns temp URL
+  app.post("/api/voice/upload", async (req, res) => {
+    try {
+      const ctx = await createContext({ req, res, info: {} } as any);
+      if (!ctx.user) return res.status(401).json({ error: "Authentication required" });
+      const MAX_SIZE = 16 * 1024 * 1024;
+      const contentType = req.headers["content-type"] || "";
+      const saveTemp = (buf: Buffer, mime: string) => {
+        const id = crypto.randomBytes(16).toString('hex');
+        voiceTempStore.set(id, { buffer: buf, mimeType: mime, expires: Date.now() + 10 * 60 * 1000 });
+        return `/api/voice/temp/${id}`;
+      };
+      // Parse raw body (works for both multipart and raw binary)
+      // We read the raw body and extract the audio blob from the multipart boundary
+      {
+        const chunks: Buffer[] = [];
+        let total = 0;
+        req.on("data", (c: Buffer) => { total += c.length; if (total <= MAX_SIZE) chunks.push(c); });
+        req.on("end", () => {
+          if (res.headersSent) return;
+          const buf = Buffer.concat(chunks);
+          if (!buf.length) return res.status(400).json({ error: "No audio data" });
+          const mime = contentType.split(";")[0].trim() || "audio/webm";
+          res.json({ url: saveTemp(buf, mime), mimeType: mime });
+        });
+      }
+    } catch (err) {
+      if (!res.headersSent) res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // GET /api/voice/temp/:id — serve temp audio for transcription
+  app.get("/api/voice/temp/:id", (req, res) => {
+    const entry = voiceTempStore.get(req.params.id);
+    if (!entry) return res.status(404).json({ error: "Not found" });
+    res.setHeader("Content-Type", entry.mimeType);
+    res.end(entry.buffer);
+  });
+
+  // POST /api/voice/tts — ElevenLabs (user key) → OpenAI TTS fallback, returns audio/mpeg
+  app.post("/api/voice/tts", async (req, res) => {
+    try {
+      const ctx = await createContext({ req, res, info: {} } as any);
+      if (!ctx.user) return res.status(401).json({ error: "Authentication required" });
+      const { text } = req.body || {};
+      if (!text || typeof text !== "string") return res.status(400).json({ error: "Missing text" });
+      const trimmed = text.slice(0, 4096);
+      // Try user's ElevenLabs key first, then system key
+      const userKeys = await db.getUserApiKeys(ctx.user.id);
+      const elKey = userKeys.elevenlabsKey || process.env.ELEVENLABS_API_KEY || null;
+      if (elKey) {
+        try {
+          // Virelle Director voice: "Rachel" — warm, cinematic female voice
+          const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Rachel — warm American female
+          const elRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+            method: "POST",
+            headers: { "xi-api-key": elKey, "Content-Type": "application/json", "Accept": "audio/mpeg" },
+            body: JSON.stringify({
+              text: trimmed,
+              model_id: "eleven_turbo_v2_5",
+              voice_settings: { stability: 0.55, similarity_boost: 0.85, style: 0.35, use_speaker_boost: true },
+            }),
+            signal: AbortSignal.timeout(30000),
+          });
+          if (elRes.ok) {
+            const buf = Buffer.from(await elRes.arrayBuffer());
+            res.setHeader("Content-Type", "audio/mpeg");
+            res.setHeader("Content-Length", buf.length.toString());
+            res.setHeader("Cache-Control", "no-cache");
+            res.setHeader("X-TTS-Provider", "elevenlabs");
+            return res.end(buf);
+          }
+        } catch (_) { /* fall through */ }
+      }
+      // OpenAI TTS fallback
+      const openAiKey = process.env.OPENAI_API_KEY || "";
+      if (!openAiKey) return res.status(503).json({ error: "TTS not configured" });
+      const ttsRes = await fetch("https://api.openai.com/v1/audio/speech", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${openAiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "tts-1-hd", input: trimmed, voice: "nova", speed: 0.95, response_format: "mp3" }),
+        signal: AbortSignal.timeout(30000),
+      });
+      if (!ttsRes.ok) return res.status(502).json({ error: "TTS generation failed" });
+      const buf = Buffer.from(await ttsRes.arrayBuffer());
+      res.setHeader("Content-Type", "audio/mpeg");
+      res.setHeader("Content-Length", buf.length.toString());
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("X-TTS-Provider", "openai-fallback");
+      res.end(buf);
+    } catch (err) {
+      if (!res.headersSent) res.status(500).json({ error: "Internal server error" });
     }
   });
 

@@ -5973,7 +5973,21 @@ Rules:
         };
       }),
 
-    // ─── Archibald Titan: AI Voice Response (ElevenLabs deep male voice) ───
+    // ─── Director Instructions (custom AI persona rules) ───
+    getInstructions: protectedProcedure
+      .query(async ({ ctx }) => {
+        const user = await db.getUserById(ctx.user.id);
+        return { instructions: user?.directorInstructions ?? "" };
+      }),
+
+    saveInstructions: protectedProcedure
+      .input(z.object({ instructions: z.string().max(2000) }))
+      .mutation(async ({ ctx, input }) => {
+        await db.saveDirectorInstructions(ctx.user.id, input.instructions);
+        return { success: true };
+      }),
+
+    // ─── AI Voice Response (ElevenLabs → OpenAI TTS fallback) ───
     speakResponse: protectedProcedure
       .input(z.object({
         text: z.string().min(1).max(5000),

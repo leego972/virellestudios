@@ -865,6 +865,7 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "userAnthropicKey", definition: "TEXT NULL" },
     { table: "users", column: "userGoogleAiKey", definition: "TEXT NULL" },
     { table: "users", column: "preferredLlmProvider", definition: "VARCHAR(32) NULL" },
+    { table: "users", column: "directorInstructions", definition: "TEXT NULL" }, // Custom instructions for the Director's Assistant AI
     // Users table - profile/onboarding fields (sign-up flow)
     { table: "users", column: "phone", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "avatarUrl", definition: "TEXT NULL" },
