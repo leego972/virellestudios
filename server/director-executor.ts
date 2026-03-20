@@ -623,9 +623,10 @@ export async function executeDirectorTool(
           data: {
             items: items.map((m) => ({
               id: m.id,
-              title: m.title,
-              description: m.description,
+              type: m.type,
+              text: m.text,
               imageUrl: m.imageUrl,
+              color: m.color,
               category: m.category,
             })),
             total: items.length,
@@ -646,7 +647,7 @@ export async function executeDirectorTool(
               status: j.status,
               progress: j.progress,
               createdAt: j.createdAt,
-              videoUrl: j.videoUrl,
+              resultUrl: j.resultUrl,
             })),
             total: jobs.length,
           },
