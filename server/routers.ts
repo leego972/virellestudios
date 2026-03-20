@@ -1595,16 +1595,8 @@ export const appRouter = router({
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
-        // Non-admin users without any video key get a clear error pointing to Settings
-        const hasVideoKey = byokKeys.openaiKey || byokKeys.runwayKey || byokKeys.replicateKey ||
-          byokKeys.falKey || byokKeys.lumaKey || byokKeys.hfToken || byokKeys.byteplusKey || byokKeys.googleAiKey;
-        if (!hasVideoKey) {
-          await db.updateScene(scene.id, { status: "draft" } as any);
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "No video API key found. Please add your own Runway, OpenAI (Sora), fal.ai, Replicate, Luma, or Google Gemini (Veo 3) API key in Settings → API Keys to generate videos. Free Pollinations generation is also available without a key.",
-          });
-        }
+        // Pollinations is always available as a free fallback — no key required.
+        // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
 
         // Mark scene as generating immediately
         await db.updateScene(scene.id, { status: "generating" } as any);
@@ -1775,15 +1767,8 @@ export const appRouter = router({
           preferredProvider: rawUserKeys.preferredProvider,
         };
 
-        // Non-admin users without any video key get a clear error pointing to Settings
-        const hasBulkVideoKey = bulkByokKeys.openaiKey || bulkByokKeys.runwayKey || bulkByokKeys.replicateKey ||
-          bulkByokKeys.falKey || bulkByokKeys.lumaKey || bulkByokKeys.hfToken || bulkByokKeys.byteplusKey || bulkByokKeys.googleAiKey;
-        if (!hasBulkVideoKey) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "No video API key found. Please add your own Runway, OpenAI (Sora), fal.ai, Replicate, or Luma API key in Settings → API Keys to generate videos. Free Pollinations generation is also available without a key.",
-          });
-        }
+        // Pollinations is always available as a free fallback — no key required.
+        // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
 
         let generated = 0;
         const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
@@ -2530,13 +2515,44 @@ Break this into 8-15 scenes. For each scene, provide:
                   aspectRatio: "16:9",
                   resolution: "720p",
                 });
-                await db.updateScene(scene.id, {
-                  videoUrl: videoResult.videoUrl,
-                  videoJobId: videoResult.jobId || null,
-                  status: "completed",
-                });
-                generatedCount++;
-                console.log(`[QuickGen] Scene ${sceneIdx + 1} fallback single-clip generated via ${videoResult.provider}`);
+                // Resolve Runway/Veo3 async sentinels inline
+                let finalVideoUrl = videoResult.videoUrl;
+                if (finalVideoUrl.startsWith("runway-pending:") && byokKeys.runwayKey) {
+                  const { submitRunwayJob } = await import("./_core/videoJobWorker");
+                  const taskId = finalVideoUrl.replace("runway-pending:", "");
+                  // Store as a proper job for the worker to complete asynchronously
+                  await db.createGenerationJob({
+                    projectId: project.id,
+                    sceneId: scene.id,
+                    type: "scene",
+                    status: "processing",
+                    progress: 0,
+                    estimatedSeconds: 600,
+                    metadata: {
+                      runwayTaskId: taskId,
+                      runwayApiKey: byokKeys.runwayKey,
+                      sceneId: scene.id,
+                      projectId: project.id,
+                      userId: ctx.user.id,
+                      prompt: videoPrompt,
+                      imageUrl: scene.thumbnailUrl || undefined,
+                      ratio: "1280:720",
+                      duration: sceneDuration,
+                    },
+                  });
+                  // Leave scene in generating state — worker will complete it
+                  await db.updateScene(scene.id, { status: "generating" } as any);
+                  generatedCount++;
+                  console.log(`[QuickGen] Scene ${sceneIdx + 1} Runway job ${taskId} queued for worker`);
+                } else {
+                  await db.updateScene(scene.id, {
+                    videoUrl: finalVideoUrl,
+                    videoJobId: videoResult.jobId || null,
+                    status: "completed",
+                  });
+                  generatedCount++;
+                  console.log(`[QuickGen] Scene ${sceneIdx + 1} fallback single-clip generated via ${videoResult.provider}`);
+                }
               } catch (fallbackErr: any) {
                 console.error(`[QuickGen] All video generation failed for scene "${scene.title}":`, fallbackErr.message);
                 await db.updateScene(scene.id, { status: "completed" });
@@ -2796,15 +2812,8 @@ Break this into 8-15 scenes. For each scene, provide:
           preferredProvider: userKeys.preferredProvider,
         };
 
-        // Non-admin users without any video key get a clear error pointing to Settings
-        const hasFilmVideoKey = videoKeys.openaiKey || videoKeys.runwayKey || videoKeys.replicateKey ||
-          videoKeys.falKey || videoKeys.lumaKey || videoKeys.hfToken || videoKeys.byteplusKey || videoKeys.googleAiKey;
-        if (!hasFilmVideoKey) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "No video API key found. Please add your own Runway, OpenAI (Sora), fal.ai, Replicate, or Luma API key in Settings → API Keys to generate a full film.",
-          });
-        }
+        // Pollinations is always available as a free fallback — all users can generate films.
+        // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
         const voiceKeys: VoiceActingKeys = {
           elevenlabsKey: userKeys.elevenlabsKey,
           openaiKey: userKeys.openaiKey,

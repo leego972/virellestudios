@@ -70,15 +70,17 @@ function getNextPollinationsKey(): string {
 // Check pollen balance for a given key
 async function checkPollenBalance(apiKey: string): Promise<{ balance: number; sufficient: boolean }> {
   try {
-    const resp = await fetch("https://api.pollinations.ai/v1/profile", {
+    // Use the correct gen.pollinations.ai balance endpoint
+    const resp = await fetch("https://gen.pollinations.ai/account/balance", {
       headers: { "Authorization": `Bearer ${apiKey}` },
       signal: AbortSignal.timeout(10000),
     });
     if (!resp.ok) return { balance: 0, sufficient: false };
     const data = await resp.json() as any;
-    const balance = data.pollen?.total ?? data.balance ?? 0;
-    // grok-video costs roughly 0.5 pollen per generation
-    return { balance, sufficient: balance >= 0.3 };
+    // Response format: { balance: number }
+    const balance = data.balance ?? data.pollen?.total ?? 0;
+    // grok-video costs ~0.0146 pollen per generation
+    return { balance, sufficient: balance >= 0.015 };
   } catch {
     // If we can't check, assume it's fine and let the generation attempt handle errors
     return { balance: -1, sufficient: true };
@@ -512,32 +514,25 @@ async function generateWithHuggingFace(token: string, req: VideoGenerationReques
 // ─── Pollinations.ai (FREE — Primary Provider for All Users) ───
 
 async function generateWithPollinations(apiKey: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
-  // grok-video is the ONLY free video model on Pollinations (available with daily pollen grant)
-  // Other models (seedance, wan, veo, ltx-2) are PAID ONLY
-  const freeModels = ["grok-video"];
+  // Video models on Pollinations (in order of preference):
+  // - grok-video: free with pollen balance
+  // - wan: requires pollen balance
+  // - ltx-2: requires pollen balance
+  const videoModels = ["grok-video", "wan", "ltx-2"];
   
-  // Pollinations grok-video max is ~8s per clip
+  // Pollinations video max is ~8-10s per clip
   const duration = Math.min(req.duration || 5, 8);
   const encodedPrompt = encodeURIComponent(req.prompt);
   
-  // Build query params
+  // Build query params — use aspectRatio parameter directly (Pollinations supports it)
   const params = new URLSearchParams();
   params.set("duration", String(duration));
-  if (req.aspectRatio === "9:16") {
-    params.set("width", "480");
-    params.set("height", "848");
-  } else if (req.aspectRatio === "1:1") {
-    params.set("width", "480");
-    params.set("height", "480");
-  } else {
-    params.set("width", "848");
-    params.set("height", "480");
-  }
+  params.set("aspectRatio", req.aspectRatio === "9:16" ? "9:16" : "16:9");
 
   // Try each key in the rotation pool
-  const keysToTry = apiKey ? [apiKey] : POLLINATIONS_KEY_POOL.slice();
+  const keysToTry = apiKey ? [apiKey, ...POLLINATIONS_KEY_POOL.filter(k => k !== apiKey)] : POLLINATIONS_KEY_POOL.slice();
   
-  for (const model of freeModels) {
+  for (const model of videoModels) {
     for (const currentKey of keysToTry) {
       try {
         // Check pollen balance before attempting generation
@@ -550,8 +545,8 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
         console.log(`[BYOK:Pollinations] Trying model: ${model} with key ${currentKey.slice(0, 8)}... (balance: ${balance})`);
         params.set("model", model);
         
-        // CORRECT API URL: /image/{prompt} with model parameter, NOT /video/
-        const url = `https://gen.pollinations.ai/image/${encodedPrompt}?${params.toString()}`;
+        // CORRECT API URL: /video/{prompt} — this is the video generation endpoint
+        const url = `https://gen.pollinations.ai/video/${encodedPrompt}?${params.toString()}`;
         
         const headers: Record<string, string> = {};
         if (currentKey) {

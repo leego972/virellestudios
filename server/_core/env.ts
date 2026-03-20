@@ -57,7 +57,7 @@ export const ENV = {
   openaiApiKey: process.env.OPENAI_API_KEY ?? "",
 
   // ─── Runway ML ─────────────────────────────────────────────────────────────
-  runwayApiKey: process.env.RUNWAYML_API_SECRET ?? "",
+  runwayApiKey: process.env.RUNWAYML_API_SECRET || process.env.RUNWAY_API_KEY || "",
 
   // ─── Pollinations (free video generation — available to all users via key pool) ─
   pollinationsApiKey: process.env.POLLINATIONS_API_KEY || "sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP",

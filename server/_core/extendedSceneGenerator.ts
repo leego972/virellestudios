@@ -30,6 +30,73 @@ import * as os from "os";
 
 const execFileAsync = promisify(execFile);
 
+// ─── Sentinel Resolution Helpers ───
+// Runway and Veo 3 return async sentinels that need polling to get the real video URL.
+
+async function pollRunwaySentinel(apiKey: string, taskId: string): Promise<string> {
+  const RunwayML = (await import("@runwayml/sdk")).default;
+  const client = new RunwayML({ apiKey });
+  const MAX_WAIT_MS = 15 * 60 * 1000; // 15 minutes
+  const POLL_INTERVAL_MS = 10_000;    // 10 seconds
+  const startTime = Date.now();
+  console.log(`[ExtendedScene] Polling Runway task ${taskId}...`);
+  while (Date.now() - startTime < MAX_WAIT_MS) {
+    const task = await (client as any).tasks.retrieve(taskId);
+    const status = task.status as string;
+    if (status === "SUCCEEDED" || status === "succeeded") {
+      const videoUrl = task.output?.[0] || task.output?.video || task.output;
+      if (videoUrl && typeof videoUrl === "string") {
+        // Download and re-upload to S3 for permanent storage
+        const resp = await fetch(videoUrl);
+        if (!resp.ok) throw new Error(`Failed to download Runway video: ${resp.status}`);
+        const buffer = Buffer.from(await resp.arrayBuffer());
+        const key = `scenes/runway-${taskId}-${Date.now()}.mp4`;
+        const { url } = await storagePut(key, buffer, "video/mp4");
+        console.log(`[ExtendedScene] Runway task ${taskId} completed: ${url}`);
+        return url;
+      }
+      throw new Error(`Runway task succeeded but no video URL in output: ${JSON.stringify(task).substring(0, 200)}`);
+    }
+    if (status === "FAILED" || status === "failed") {
+      throw new Error(`Runway task ${taskId} failed: ${JSON.stringify(task.failure || task.error || task).substring(0, 200)}`);
+    }
+    await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
+  }
+  throw new Error(`Runway task ${taskId} timed out after 15 minutes`);
+}
+
+async function pollVeo3Sentinel(apiKey: string, operationName: string): Promise<string> {
+  const MAX_WAIT_MS = 20 * 60 * 1000; // 20 minutes
+  const POLL_INTERVAL_MS = 15_000;    // 15 seconds
+  const startTime = Date.now();
+  console.log(`[ExtendedScene] Polling Veo 3 operation ${operationName}...`);
+  while (Date.now() - startTime < MAX_WAIT_MS) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/${operationName}?key=${apiKey}`;
+    const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    if (resp.ok) {
+      const data = await resp.json() as any;
+      if (data.done) {
+        if (data.error) throw new Error(`Veo 3 operation failed: ${data.error?.message || JSON.stringify(data.error)}`);
+        const generatedVideos = data.response?.generateVideoResponse?.generatedSamples
+          || data.response?.videos || data.response?.generatedVideos || [];
+        const videoUri = generatedVideos[0]?.video?.uri || generatedVideos[0]?.uri || generatedVideos[0]?.videoUri;
+        if (!videoUri) throw new Error(`Veo 3 operation succeeded but no video URI: ${JSON.stringify(data.response).substring(0, 300)}`);
+        // Download and re-upload to S3
+        const downloadUrl = videoUri.includes("?") ? `${videoUri}&key=${apiKey}` : `${videoUri}?key=${apiKey}`;
+        const dlResp = await fetch(downloadUrl, { signal: AbortSignal.timeout(120000) });
+        if (!dlResp.ok) throw new Error(`Failed to download Veo 3 video: ${dlResp.status}`);
+        const buffer = Buffer.from(await dlResp.arrayBuffer());
+        const s3Key = `scenes/veo3-${Date.now()}.mp4`;
+        const { url: s3Url } = await storagePut(s3Key, buffer, "video/mp4");
+        console.log(`[ExtendedScene] Veo 3 operation ${operationName} completed: ${s3Url}`);
+        return s3Url;
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
+  }
+  throw new Error(`Veo 3 operation ${operationName} timed out after 20 minutes`);
+}
+
 // ─── Types ───
 
 export interface SubShot {
@@ -457,10 +524,20 @@ export async function generateExtendedScene(
         seed: request.seed,
       });
 
-      generatedClipUrls.push(videoResult.videoUrl);
+      // Resolve async sentinel URLs (Runway and Veo 3 return pending sentinels that need polling)
+      let resolvedVideoUrl = videoResult.videoUrl;
+      if (resolvedVideoUrl.startsWith("runway-pending:")) {
+        const taskId = resolvedVideoUrl.replace("runway-pending:", "");
+        resolvedVideoUrl = await pollRunwaySentinel(keys.runwayKey!, taskId);
+      } else if (resolvedVideoUrl.startsWith("veo3-pending:")) {
+        const operationName = resolvedVideoUrl.replace("veo3-pending:", "");
+        resolvedVideoUrl = await pollVeo3Sentinel(keys.googleAiKey!, operationName);
+      }
+
+      generatedClipUrls.push(resolvedVideoUrl);
 
       // Extract last frame for next clip's continuity
-      lastFrameUrl = await extractLastFrame(videoResult.videoUrl, request.projectId, request.sceneId);
+      lastFrameUrl = await extractLastFrame(resolvedVideoUrl, request.projectId, request.sceneId);
 
       onProgress?.(i + 1, subShots.length, videoResult.videoUrl);
     } catch (err: any) {
