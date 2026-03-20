@@ -59,7 +59,16 @@ import { scanContent, handleModerationViolation } from "./_core/contentModeratio
 export const appRouter = router({
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(({ ctx }) => {
+      if (!ctx.user) return null;
+      const adminEmails = [ENV.adminEmail?.toLowerCase(), "leego972@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
+      const isAdmin = ctx.user.role === "admin" || adminEmails.includes(ctx.user.email?.toLowerCase() || "");
+      return {
+        ...ctx.user,
+        isAdmin,
+        creditBalance: isAdmin ? -1 : (ctx.user.creditBalance ?? 0),
+      };
+    }),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
