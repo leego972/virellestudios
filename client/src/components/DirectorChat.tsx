@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -54,10 +55,18 @@ interface EditHistoryEntry {
   afterText: string;
   timestamp: number;
 }
+interface ToolBadge {
+  toolName: string;
+  description: string;
+  status: "pending" | "done" | "error";
+  data?: any;
+  error?: string;
+}
 interface ChatMessage {
   role: string;
   content: string;
   actions?: ActionBadge[];
+  toolBadges?: ToolBadge[];
 }
 
 // ─── Preset edit commands ───
@@ -266,6 +275,11 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const streamingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // SSE session for tool-calling
+  const [sseSessionId] = useState(() => Math.random().toString(36).slice(2));
+  const sseRef = useRef<EventSource | null>(null);
+  const [isSending, setIsSending] = useState(false);
+
   // Scroll state
   const [userScrolledUp, setUserScrolledUp] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -300,62 +314,163 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     },
   });
 
-  const sendMutation = trpc.directorChat.send.useMutation({
-    onSuccess: (data) => {
-      const fullText = data.response;
-      const actions = data.actions;
-      setLocalMessages((prev) => [
-        ...prev.filter((m) => m.content !== "__loading__"),
-        { role: "assistant", content: "", actions },
-      ]);
-      setStreamingText(fullText);
-      let i = 0;
-      const charsPerTick = Math.max(1, Math.ceil(fullText.length / 120));
-      if (streamingIntervalRef.current) clearInterval(streamingIntervalRef.current);
-      streamingIntervalRef.current = setInterval(() => {
-        i += charsPerTick;
-        const partial = fullText.slice(0, i);
-        setLocalMessages((prev) => {
-          const updated = [...prev];
-          const lastIdx = updated.length - 1;
-          if (lastIdx >= 0 && updated[lastIdx].role === "assistant") {
-            updated[lastIdx] = { ...updated[lastIdx], content: partial };
-          }
-          return updated;
-        });
-        if (i >= fullText.length) {
-          clearInterval(streamingIntervalRef.current!);
-          streamingIntervalRef.current = null;
-          setStreamingText(null);
-          setLocalMessages((prev) => {
-            const updated = [...prev];
-            const lastIdx = updated.length - 1;
-            if (lastIdx >= 0 && updated[lastIdx].role === "assistant") {
-              updated[lastIdx] = { ...updated[lastIdx], content: fullText, actions };
-            }
-            return updated;
-          });
-          utils.directorChat.history.invalidate({ projectId });
-          // In voice mode — auto-speak the response
-          if (voiceModeActive) {
-            setVoiceModeState("speaking");
-            speakTextViaHttp(fullText).then(() => {
-              setVoiceModeState("listening");
-              startVoiceModeRecording();
-            }).catch(() => {
-              setVoiceModeState("listening");
-              startVoiceModeRecording();
-            });
-          }
+  // Navigation hook for AI-triggered navigation
+  const [, setLocation] = useLocation();
+
+  // ─── SSE-based send with tool-calling ───
+  const sendViaSSE = useCallback(async (
+    messages: Array<{ role: string; content: string }>,
+    projectContext?: string
+  ) => {
+    if (isSending) return;
+    setIsSending(true);
+
+    // Close any existing SSE connection
+    if (sseRef.current) { sseRef.current.close(); sseRef.current = null; }
+
+    // Open SSE stream
+    const es = new EventSource(`/api/director/stream/${sseSessionId}`, { withCredentials: true });
+    sseRef.current = es;
+
+    let fullText = "";
+    let currentToolBadges: ToolBadge[] = [];
+
+    const updateLastAssistantMsg = (update: Partial<ChatMessage>) => {
+      setLocalMessages((prev) => {
+        const updated = [...prev];
+        const lastIdx = updated.length - 1;
+        if (lastIdx >= 0 && updated[lastIdx].role === "assistant") {
+          updated[lastIdx] = { ...updated[lastIdx], ...update };
         }
-      }, 16);
-    },
-    onError: (error) => {
+        return updated;
+      });
+    };
+
+    es.onopen = async () => {
+      // Now POST the message
+      try {
+        await fetch(`/api/director/stream/${sseSessionId}/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            messages,
+            projectContext,
+            directorInstructions: instructionsText || undefined,
+          }),
+        });
+      } catch (err) {
+        es.close();
+        sseRef.current = null;
+        setIsSending(false);
+        setLocalMessages((prev) => prev.filter((m) => m.content !== "__loading__"));
+        toast.error("Failed to send message");
+      }
+    };
+
+    es.addEventListener("thinking", () => {
+      updateLastAssistantMsg({ content: "__loading__", toolBadges: [] });
+    });
+
+    es.addEventListener("tool_start", (e: MessageEvent) => {
+      try {
+        const d = JSON.parse(e.data);
+        const badge: ToolBadge = { toolName: d.toolName, description: d.description, status: "pending" };
+        currentToolBadges = [...currentToolBadges, badge];
+        updateLastAssistantMsg({ content: "__loading__", toolBadges: [...currentToolBadges] });
+      } catch {}
+    });
+
+    es.addEventListener("tool_done", (e: MessageEvent) => {
+      try {
+        const d = JSON.parse(e.data);
+        currentToolBadges = currentToolBadges.map((b) =>
+          b.toolName === d.toolName && b.status === "pending"
+            ? { ...b, status: d.success ? "done" : "error", data: d.data, error: d.error }
+            : b
+        );
+        updateLastAssistantMsg({ toolBadges: [...currentToolBadges] });
+      } catch {}
+    });
+
+    es.addEventListener("action", (e: MessageEvent) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.action?.type === "navigate") {
+          const pageRoutes: Record<string, string> = {
+            dashboard: "/",
+            projects: "/projects",
+            project_detail: d.action.projectId ? `/projects/${d.action.projectId}` : "/projects",
+            scene_editor: d.action.sceneId ? `/scenes/${d.action.sceneId}` : "/",
+            script_editor: d.action.scriptId ? `/scripts/${d.action.scriptId}` : "/",
+            character_library: "/characters",
+            shot_list: d.action.projectId ? `/projects/${d.action.projectId}/shots` : "/",
+            mood_board: "/mood-board",
+            location_scout: "/locations",
+            budget: "/budget",
+            subtitles: "/subtitles",
+            generation: "/generation",
+            settings: "/settings",
+            pricing: "/pricing",
+          };
+          const route = pageRoutes[d.action.page] || "/";
+          setTimeout(() => setLocation(route), 1200);
+        }
+      } catch {}
+    });
+
+    es.addEventListener("token", (e: MessageEvent) => {
+      try {
+        const d = JSON.parse(e.data);
+        fullText += d.token;
+        updateLastAssistantMsg({ content: fullText });
+      } catch {}
+    });
+
+    es.addEventListener("done", (e: MessageEvent) => {
+      try {
+        const d = JSON.parse(e.data);
+        const finalText = d.text || fullText;
+        updateLastAssistantMsg({ content: finalText, toolBadges: [...currentToolBadges] });
+        utils.directorChat.history.invalidate({ projectId });
+        setStreamingText(null);
+        setIsSending(false);
+        es.close();
+        sseRef.current = null;
+        // In voice mode — auto-speak the response
+        if (voiceModeActive) {
+          setVoiceModeState("speaking");
+          speakTextViaHttp(finalText).then(() => {
+            setVoiceModeState("listening");
+            startVoiceModeRecording();
+          }).catch(() => {
+            setVoiceModeState("listening");
+            startVoiceModeRecording();
+          });
+        }
+      } catch {}
+    });
+
+    es.addEventListener("error", (e: MessageEvent) => {
+      try {
+        const d = JSON.parse((e as any).data || "{}");
+        toast.error(d.message || "Director encountered an error");
+      } catch {}
       setLocalMessages((prev) => prev.filter((m) => m.content !== "__loading__"));
-      toast.error("Failed to send message: " + error.message);
+      setIsSending(false);
+      es.close();
+      sseRef.current = null;
       if (voiceModeActive) setVoiceModeState("listening");
-    },
-  });
+    });
+
+    es.onerror = () => {
+      setLocalMessages((prev) => prev.filter((m) => m.content !== "__loading__"));
+      setIsSending(false);
+      es.close();
+      sseRef.current = null;
+      if (voiceModeActive) setVoiceModeState("listening");
+    };
+  }, [isSending, sseSessionId, instructionsText, projectId, utils, voiceModeActive, setLocation]);
 
   const uploadMutation = trpc.directorChat.uploadAttachment.useMutation();
 
@@ -572,13 +687,19 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 if (data.text?.trim()) {
                   setVoiceModeTranscript(data.text.trim());
                   setVoiceModeState("thinking");
-                  // Auto-send
-                  setLocalMessages((prev) => [
-                    ...prev,
-                    { role: "user", content: data.text.trim() },
-                    { role: "assistant", content: "__loading__" },
-                  ]);
-                  sendMutation.mutate({ projectId, message: data.text.trim() });
+                  // Auto-send via SSE
+                  setLocalMessages((prev) => {
+                    const newMsgs = [
+                      ...prev,
+                      { role: "user", content: data.text.trim() },
+                      { role: "assistant", content: "__loading__" },
+                    ];
+                    const allMsgs = newMsgs
+                      .filter((m) => m.content !== "__loading__")
+                      .map((m) => ({ role: m.role, content: m.content }));
+                    void sendViaSSE(allMsgs);
+                    return newMsgs;
+                  });
                 } else {
                   setVoiceModeTranscript("Didn't catch that — try again");
                   setVoiceModeState("listening");
@@ -608,7 +729,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
       setVoiceModeState("inactive");
     }
   };
-  }, [projectId, transcribeMutation, sendMutation]);
+  }, [projectId, transcribeMutation, sendViaSSE]);
 
   const stopVoiceModeRecording = useCallback(() => {
     if (voiceModeRecorderRef.current && voiceModeRecorderRef.current.state === "recording") {
@@ -778,8 +899,12 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
       if (lastAssistantIdx >= 0) filtered.splice(filtered.length - 1 - lastAssistantIdx, 1);
       return [...filtered, { role: "assistant", content: "__loading__" }];
     });
-    sendMutation.mutate({ projectId, message: lastUser.content });
-  }, [localMessages, projectId, sendMutation]);
+    const allMsgs = localMessages
+      .filter((m) => m.role !== "system" && m.content !== "__loading__")
+      .slice(0, -1) // remove last assistant
+      .map((m) => ({ role: m.role, content: m.content }));
+    void sendViaSSE(allMsgs);
+  }, [localMessages, sendViaSSE]);
 
   // ─── Preset Edit Commands ───
   const applyPreset = useCallback((command: string, label: string) => {
@@ -855,14 +980,12 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
       { role: "user", content: messageContent },
       { role: "assistant", content: "__loading__" },
     ]);
-    const imageUrls = attachments.filter((a) => a.mimeType.startsWith("image/")).map((a) => a.url);
-    sendMutation.mutate({
-      projectId,
-      message: trimmed || "Please review the attached files.",
-      attachmentUrl: attachments[0]?.url,
-      attachmentName: attachments[0]?.name,
-      imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
-    });
+    // Build message history for SSE endpoint
+    const allMsgs = localMessages
+      .filter((m) => m.content !== "__loading__")
+      .map((m) => ({ role: m.role, content: m.content }));
+    allMsgs.push({ role: "user", content: messageContent });
+    void sendViaSSE(allMsgs);
     setInput("");
     setAttachments([]);
     setEditHistory([]);
@@ -871,7 +994,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     setShowHistoryPanel(false);
     setShowPresets(false);
     if (textareaRef.current) textareaRef.current.style.height = "auto";
-  }, [input, attachments, projectId, sendMutation, isSpeaking, stopSpeaking, clearMutation]);
+  }, [input, attachments, localMessages, sendViaSSE, isSpeaking, stopSpeaking, clearMutation]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
@@ -896,7 +1019,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
         if (isSpeaking) { e.preventDefault(); stopSpeaking(); return; }
       }
       if (isTyping) return;
-      if ((e.key === "v" || e.key === "V") && voiceState === "idle" && !showEditPreview && !sendMutation.isPending) {
+      if ((e.key === "v" || e.key === "V") && voiceState === "idle" && !showEditPreview && !isSending) {
         e.preventDefault();
         if (input.trim()) startEditRecording(); else startRecording();
         return;
@@ -913,7 +1036,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
     isOpen, voiceState, isRecording, showEditPreview, isSpeaking, input,
     voiceModeActive, cancelRecording, rejectEdit, stopSpeaking, startRecording,
     startEditRecording, stopRecording, speakText, acceptEdit, undoLastEdit,
-    editHistory.length, sendMutation.isPending, closeVoiceMode,
+    editHistory.length, isSending, closeVoiceMode,
   ]);
 
   // ─── Helpers ───
@@ -925,7 +1048,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
   const formatTime = (ts: number) => new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
   const displayMessages = localMessages.filter((m) => m.role !== "system");
-  const isBusy = sendMutation.isPending || voiceState !== "idle";
+  const isBusy = isSending || voiceState !== "idle";
   const hasInputText = input.trim().length > 0;
   const filteredSlashCmds = SLASH_COMMANDS.filter((c) =>
     c.cmd.slice(1).startsWith(slashFilter) || c.desc.toLowerCase().includes(slashFilter)
@@ -1226,6 +1349,26 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                           <p className="whitespace-pre-wrap text-sm">{msg.content}</p>
                         )}
                         {msg.actions && <ActionBadges actions={msg.actions} />}
+                        {msg.toolBadges && msg.toolBadges.length > 0 && (
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {msg.toolBadges.map((tb, ti) => (
+                              <div
+                                key={ti}
+                                className={cn(
+                                  "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium border",
+                                  tb.status === "pending" && "bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse",
+                                  tb.status === "done" && "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                                  tb.status === "error" && "bg-red-500/10 text-red-400 border-red-500/20"
+                                )}
+                              >
+                                {tb.status === "pending" && <Loader2 className="size-3 animate-spin" />}
+                                {tb.status === "done" && <CheckCircle2 className="size-3" />}
+                                {tb.status === "error" && <XCircle className="size-3" />}
+                                {tb.description || tb.toolName.replace(/_/g, " ")}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       {/* Message actions */}
                       <div className={cn(
@@ -1242,7 +1385,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                         {msg.role === "assistant" && i === displayMessages.length - 1 && (
                           <button
                             onClick={regenerateLastResponse}
-                            disabled={sendMutation.isPending}
+                            disabled={isSending}
                             className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                             title="Regenerate response"
                           >
@@ -1451,7 +1594,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                   <button
                     key={preset.label}
                     onClick={() => applyPreset(preset.command, preset.label)}
-                    disabled={voiceState !== "idle" || sendMutation.isPending}
+                    disabled={voiceState !== "idle" || isSending}
                     className={cn(
                       "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-all",
                       "border border-amber-500/20 bg-amber-500/5 text-amber-400",
@@ -1529,7 +1672,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 size="icon"
                 className="size-9 shrink-0 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 transition-all"
                 onClick={startEditRecording}
-                disabled={sendMutation.isPending || showEditPreview}
+                disabled={isSending || showEditPreview}
                 title="Voice edit — speak commands to edit your text (V)"
               >
                 <Pencil className="size-4" />
@@ -1548,7 +1691,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 voiceState === "applying_edit" && "text-violet-500 bg-violet-500/10",
               )}
               onClick={voiceState === "idle" ? startRecording : isRecording ? stopRecording : undefined}
-              disabled={voiceState === "transcribing" || voiceState === "applying_edit" || sendMutation.isPending || showEditPreview}
+              disabled={voiceState === "transcribing" || voiceState === "applying_edit" || isSending || showEditPreview}
               title={voiceState === "idle" ? "Dictate (V)" : isRecording ? "Stop recording (S)" : "Processing..."}
             >
               {voiceState === "transcribing" || voiceState === "applying_edit"
@@ -1568,7 +1711,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                   isSpeaking ? "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20" : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => speakText(input)}
-                disabled={sendMutation.isPending}
+                disabled={isSending}
                 title={isSpeaking ? "Stop reading (Esc)" : "Read back text (R)"}
               >
                 {isSpeaking ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
@@ -1582,7 +1725,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
                 size="icon"
                 className="size-9 shrink-0 text-muted-foreground hover:text-foreground"
                 onClick={undoLastEdit}
-                disabled={sendMutation.isPending}
+                disabled={isSending}
                 title="Undo last voice edit (Z)"
               >
                 <Undo2 className="size-4" />
@@ -1614,7 +1757,7 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
               autoCorrect="off"
               autoCapitalize="sentences"
               enterKeyHint="send"
-              disabled={sendMutation.isPending || voiceState === "transcribing" || voiceState === "applying_edit" || showEditPreview}
+              disabled={isSending || voiceState === "transcribing" || voiceState === "applying_edit" || showEditPreview}
             />
 
             {/* Send button */}
@@ -1622,9 +1765,9 @@ export default function DirectorChat({ projectId }: DirectorChatProps) {
               size="icon"
               className="size-9 shrink-0 bg-amber-500 hover:bg-amber-400 text-black"
               onClick={() => handleSend()}
-              disabled={(!input.trim() && attachments.length === 0) || sendMutation.isPending || voiceState !== "idle" || showEditPreview}
+              disabled={(!input.trim() && attachments.length === 0) || isSending || voiceState !== "idle" || showEditPreview}
             >
-              {sendMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+              {isSending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
             </Button>
           </div>
           <p className="text-[10px] text-muted-foreground mt-1.5 text-center">

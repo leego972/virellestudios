@@ -18,7 +18,9 @@ import { startAutonomousPipelineScheduler } from "../autonomous-pipeline";
 import { startAdScheduler } from "./advertisingEngine";
 import { startVideoJobWorker } from "./videoJobWorker";
 import { runAutoMigration } from "./autoMigrate";
-import { invokeLLMStream } from "./llm";
+import { invokeLLMStream, invokeLLM } from "./llm";
+import { DIRECTOR_TOOLS, getDirectorToolDescription } from "../director-tools";
+import { executeDirectorTool } from "../director-executor";
 import { runStripeProvisioning } from "./stripeProvisioning";
 import { registerSeoRoutes } from "../seo-engine";
 import { registerSeoV4Routes } from "../seo-engine-v4";
@@ -618,34 +620,103 @@ async function startServer() {
 
   app.post("/api/director/stream/:sessionId/send", async (req, res) => {
     const { sessionId } = req.params;
-    const { messages, projectContext } = req.body as {
+    const { messages, projectContext, directorInstructions } = req.body as {
       messages: Array<{ role: string; content: string }>;
       projectContext?: string;
+      directorInstructions?: string;
     };
     const sseRes = activeDirectorStreams.get(sessionId);
     if (!sseRes) { res.status(404).json({ error: "No active stream" }); return; }
 
-    const SYSTEM = `You are the Virelle AI Director — a world-class cinematic AI assistant for Virelle Studios. You help filmmakers, directors, and creators develop their vision into detailed, production-ready scene descriptions, shot lists, dialogue, and storyboards.\n\nYour role:\n- Ask targeted clarifying questions when the request is vague (genre, tone, setting, characters, mood)\n- Never ask more than 2 questions at a time\n- When you have enough context, provide rich, detailed cinematic descriptions\n- Use proper film terminology (mise-en-scène, blocking, lens choices, colour grading, etc.)\n- Think like a director: consider pacing, tension, visual storytelling\n- Be enthusiastic and collaborative — this is a creative partnership\n${projectContext ? `\nProject context: ${projectContext}` : ""}`;
+    // Authenticate the user for tool execution
+    const toolCtx = await createContext({ req, res, info: {} } as any);
+    if (!toolCtx.user) { res.status(401).json({ error: "Unauthorized" }); return; }
 
-    const llmMessages = [
-      { role: "system" as const, content: SYSTEM },
+    const SYSTEM = `You are the Virelle AI Director — a world-class cinematic AI assistant built into Virelle Studios. You help filmmakers, directors, and creators develop their vision into production-ready films.\n\nYou have access to tools that let you take real actions inside the app on behalf of the user — creating projects, writing scenes, generating screenplays, building shot lists, scouting locations, generating dialogue, checking continuity, and more.\n\nCore principles:\n- When the user asks you to DO something (create, generate, write, add, update, delete), USE THE APPROPRIATE TOOL — don't just describe what you would do.\n- When the user asks a question or wants advice, answer conversationally without using tools.\n- Always confirm what you did after using a tool, and offer the next logical step.\n- Use proper film terminology (mise-en-scène, blocking, lens choices, colour grading, etc.).\n- Be enthusiastic and collaborative — this is a creative partnership.\n- Never ask more than 2 clarifying questions at a time.\n${projectContext ? `\nCurrent project context: ${projectContext}` : ""}\n${directorInstructions ? `\nDirector's custom instructions (always follow these): ${directorInstructions}` : ""}`;
+
+    type LLMMessage = { role: "system" | "user" | "assistant" | "tool"; content: string; tool_call_id?: string; tool_calls?: any[] };
+    const llmMessages: LLMMessage[] = [
+      { role: "system", content: SYSTEM },
       ...messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
     ];
 
     sseRes.write(`data: ${JSON.stringify({ type: "thinking", message: "Director is thinking..." })}\n\n`);
+    res.json({ ok: true }); // Acknowledge HTTP immediately; SSE continues async
 
-    await invokeLLMStream(
-      { messages: llmMessages, maxTokens: 1200 },
-      (token) => {
-        sseRes.write(`data: ${JSON.stringify({ type: "token", token })}\n\n`);
-      },
-      (full) => {
-        sseRes.write(`data: ${JSON.stringify({ type: "done", text: full })}\n\n`);
-      },
-      (err) => sseRes.write(`data: ${JSON.stringify({ type: "error", message: err.message })}\n\n`)
-    );
+    // Tool-calling loop (max 5 rounds to prevent infinite loops)
+    const MAX_TOOL_ROUNDS = 5;
+    let round = 0;
+    while (round < MAX_TOOL_ROUNDS) {
+      round++;
+      let llmResult: any;
+      try {
+        llmResult = await invokeLLM({
+          messages: llmMessages as any,
+          tools: DIRECTOR_TOOLS,
+          tool_choice: "auto",
+          maxTokens: 1500,
+        });
+      } catch (err: any) {
+        sseRes.write(`data: ${JSON.stringify({ type: "error", message: err.message || "AI request failed" })}\n\n`);
+        return;
+      }
 
-    res.json({ ok: true });
+      const choice = llmResult.choices?.[0];
+      if (!choice) {
+        sseRes.write(`data: ${JSON.stringify({ type: "error", message: "No response from AI" })}\n\n`);
+        return;
+      }
+
+      const assistantMsg = choice.message;
+
+      // If the AI wants to call tools
+      if (choice.finish_reason === "tool_calls" && assistantMsg.tool_calls?.length) {
+        llmMessages.push({ role: "assistant", content: assistantMsg.content || "", tool_calls: assistantMsg.tool_calls });
+
+        for (const toolCall of assistantMsg.tool_calls) {
+          const toolName = toolCall.function?.name;
+          let toolArgs: Record<string, unknown> = {};
+          try { toolArgs = JSON.parse(toolCall.function?.arguments || "{}"); } catch {}
+
+          const description = getDirectorToolDescription(toolName, toolArgs);
+          sseRes.write(`data: ${JSON.stringify({ type: "tool_start", toolName, description })}\n\n`);
+
+          const toolResult = await executeDirectorTool(toolName, toolArgs, {
+            userId: toolCtx.user!.id,
+            user: toolCtx.user! as any,
+          });
+
+          // If the tool result contains a navigation action, send it to the client
+          if (toolResult.success && (toolResult.data as any)?.action?.type === "navigate") {
+            sseRes.write(`data: ${JSON.stringify({ type: "action", action: (toolResult.data as any).action })}\n\n`);
+          }
+
+          sseRes.write(`data: ${JSON.stringify({ type: "tool_done", toolName, success: toolResult.success, data: toolResult.success ? toolResult.data : null, error: !toolResult.success ? (toolResult as any).error : null })}\n\n`);
+
+          llmMessages.push({
+            role: "tool",
+            content: JSON.stringify(toolResult.success ? toolResult.data : { error: (toolResult as any).error }),
+            tool_call_id: toolCall.id,
+          });
+        }
+        continue;
+      }
+
+      // No more tool calls — stream the final text response word by word
+      const finalText = assistantMsg.content || "";
+      if (finalText) {
+        const words = finalText.split(" ");
+        for (let i = 0; i < words.length; i++) {
+          const token = (i === 0 ? "" : " ") + words[i];
+          sseRes.write(`data: ${JSON.stringify({ type: "token", token })}\n\n`);
+          await new Promise((r) => setTimeout(r, 15));
+        }
+      }
+      sseRes.write(`data: ${JSON.stringify({ type: "done", text: finalText })}\n\n`);
+      return;
+    }
+
+    sseRes.write(`data: ${JSON.stringify({ type: "error", message: "Exceeded maximum tool execution rounds. Please try again." })}\n\n`);
   });
 
   // tRPC API
