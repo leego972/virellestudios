@@ -351,14 +351,12 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     const errorText = await response.text();
 
     // If OpenAI fails, try Forge as fallback (and vice versa)
-    if (provider.url.includes("openai.com") && ENV.forgeApiKey) {
-      console.warn(`[LLM] OpenAI failed (${response.status}), trying Forge fallback...`);
+    if (provider.url.includes("openai.com") && ENV.openaiApiKey) {
+      console.warn(`[LLM] OpenAI gpt-4.1 failed (${response.status}), trying gpt-4.1-mini fallback...`);
       return invokeLLMWithProvider(params, {
-        url: ENV.forgeApiUrl
-          ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
-          : "https://forge.manus.im/v1/chat/completions",
-        apiKey: ENV.forgeApiKey,
-        model: "gemini-2.5-flash",
+        url: "https://api.openai.com/v1/chat/completions",
+        apiKey: ENV.openaiApiKey,
+        model: "gpt-4.1-mini",
       });
     }
 
