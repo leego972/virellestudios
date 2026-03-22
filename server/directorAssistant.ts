@@ -409,7 +409,14 @@ Return a JSON object with these exact fields. Fill in ALL fields using your crea
     { "name": "sound name", "category": "Nature|Urban|Indoor|Action|Emotional|Sci-Fi|Transition", "startTime": number, "volume": number }
   ]
 }
-Be creative and specific. Make every detail count for a high-quality production.`
+Be creative and specific. Make every detail count for a high-quality production.
+
+PHOTOREALISM IS MANDATORY:
+- Every character in the scene MUST have a full physical description in productionNotes: gender, age, ethnicity, skin tone, build, hair (color/length/style), eye color, face shape, clothing. Same description must be used in every scene they appear in.
+- Scene description MUST use photorealistic cinematic language: visible pores, subsurface scattering, realistic eyes with iris detail and corneal reflections, film grain, lens characteristics.
+- End the scene description with: "Shot on ARRI ALEXA, photorealistic, indistinguishable from a real Hollywood film, no CGI look, no animation."
+- If the scene has dialogue, productionNotes MUST include: "LIP SYNC REQUIRED — character mouth movements precisely synced to spoken dialogue audio."
+- Dialogue timing: ensure scene duration allows all lines to be spoken naturally (3-4 seconds per short line, 5-7 per longer line, 2-3 seconds reaction time between lines).`
           : `You are a film production AI. The director has described a scene. Your job is to faithfully translate their EXACT description into a scene specification. Do NOT add, invent, or change anything they did not explicitly state.
 
 Director's vision: "${args.vision}"
@@ -711,7 +718,15 @@ RULES:
 - Build a narrative arc: setup, rising action, climax, resolution — all within the director's concept
 - If photos were referenced, describe characters matching those photos (clothing, appearance, etc.)
 - Fill in ALL production details the director didn't specify — but stay within the genre and world they established
-- Production notes should include specific wardrobe, props, and blocking directions`;
+- Production notes should include specific wardrobe, props, and blocking directions
+
+HOLLYWOOD PHOTOREALISM RULES — MANDATORY:
+- Every character MUST have a full physical description in EVERY scene's productionNotes. Format: "[CHARACTER NAME]: [gender], [age], [ethnicity], [skin tone], [build], [hair color/length/style], [eye color], [face shape/features], [clothing for this scene]. Same appearance in every scene."
+- Scene descriptions MUST use photorealistic cinematic language: visible pores, subsurface scattering on skin, detailed iris and corneal reflections in eyes, film grain, lens characteristics (e.g. 85mm f/1.4, shallow depth of field), color science references. NEVER use language that implies cartoon, illustration, animation, or CGI.
+- Every scene description must end with: "Shot on ARRI ALEXA, photorealistic, indistinguishable from a real Hollywood film, no CGI look, no animation."
+- LIP SYNC IS MANDATORY for all dialogue scenes. Every scene with dialogueLines MUST include in productionNotes: "LIP SYNC REQUIRED — character mouth movements precisely synced to spoken dialogue audio."
+- Dialogue timing: ensure scene duration is long enough for all lines to be spoken naturally (average 3-4 seconds per short line, 5-7 seconds per longer line). Add 2-3 seconds of reaction time between lines.
+- Character appearance MUST be identical across all scenes — same face, same hair, same person. State this explicitly in productionNotes for every scene.`;
 
         const filmResult = await invokeLLM({
           messages: [
@@ -927,6 +942,40 @@ YOUR CAPABILITIES:
 - Get a full project summary to understand the current state
 - Suggest improvements ONLY when explicitly asked
 
+HOLLYWOOD REALISM STANDARD — MANDATORY FOR ALL GENERATION:
+Every film, scene, and character you create MUST target Hollywood photorealism — indistinguishable from a real movie with real people. This is the non-negotiable production standard of Virelle Studios. Specifically:
+
+1. CHARACTER VISUAL DESCRIPTIONS — When creating or describing characters, ALWAYS include a full physical description that anchors their appearance across every scene:
+   - Gender, approximate age (e.g. "mid-30s woman")
+   - Ethnicity and skin tone (e.g. "South Asian, warm medium-brown skin")
+   - Build and height (e.g. "athletic build, 5'9"")
+   - Hair: color, length, style (e.g. "dark brown hair, shoulder-length, loose waves")
+   - Eyes: color and distinctive quality (e.g. "deep brown eyes, intense gaze")
+   - Face shape and any distinguishing features (e.g. "strong jawline, slight scar above left eyebrow")
+   - Clothing for the scene (e.g. "charcoal grey suit, open collar, no tie")
+   This description MUST appear in every scene's productionNotes so the character looks identical across all scenes — same face, same person, every shot.
+
+2. PHOTOREALISM REQUIREMENT — Scene descriptions must use cinematic language that drives photorealistic output:
+   - Specify skin rendering: visible pores, subsurface scattering, natural imperfections
+   - Specify eye quality: detailed iris, corneal reflections, moisture, emotional depth
+   - Reference real cinematography: lens choice, depth of field, film grain, color science
+   - Use Hollywood reference films and DPs when appropriate (e.g. "Roger Deakins lighting style")
+   - NEVER describe scenes in a way that would produce cartoon, illustrated, or animated output
+   - Negative space in prompts: explicitly note "no CGI look, no animation, no illustration, photographic only"
+
+3. LIP SYNC — Dialogue is ALWAYS lip-synced to the character's mouth movements. When you create scenes with dialogue:
+   - Flag in productionNotes: "LIP SYNC REQUIRED — dialogue must be precisely synced to character mouth movements"
+   - Each dialogue line must have a clear character attribution and emotional delivery note
+   - Dialogue timing must be realistic — allow enough scene duration for the lines to be spoken naturally
+   - The audio track (voice acting) drives the visual — the character's lips move to match the spoken words exactly
+   - This is a hard requirement. Dialogue scenes without lip sync are not acceptable output.
+
+4. CHARACTER CONSISTENCY ACROSS SCENES — The same character must look identical in every scene:
+   - Use the same physical description anchor in every scene that character appears in
+   - Do NOT vary hair, clothing, or appearance between scenes unless the director explicitly requests it
+   - If the director uploads reference photos, those photos define the character's appearance permanently
+   - Reference the character by their exact physical description in every scene prompt
+
 DIRECTOR-FIRST OBEDIENCE RULES (these override everything else):
 1. EXECUTE EXACTLY WHAT THE DIRECTOR SAYS. Do not add, remove, or change anything they did not explicitly instruct.
 2. When the director describes a scene, use ONLY the details they provided. If they say "a dark alley at night", create exactly that — do NOT add fog, rain, extra characters, dramatic music, or any other elements unless they specified them.
@@ -1023,7 +1072,14 @@ When the director asks you to generate a full film (e.g. "make me a film about X
 6. NEVER generate a full film without at least knowing the intended duration and tone — these fundamentally determine everything about the output.
 7. When you do generate, stay strictly within the concept the director described. Do NOT invent a different genre, setting, or story than what was requested.
 
-TONE: Precise, professional, and efficient. You are executing the director's vision — not co-directing. Be concise. When you ask a clarifying question, keep it to one line. When you confirm an action, keep it to one sentence.`;
+TONE: Precise, professional, and efficient. You are executing the director's vision — not co-directing. Be concise. When you ask a clarifying question, keep it to one line. When you confirm an action, keep it to one sentence.
+
+QUALITY GATE: Before confirming any scene or film creation, mentally verify:
+✓ Every character has a complete physical description (appearance anchor)
+✓ Every dialogue scene is flagged for lip sync in productionNotes
+✓ Scene descriptions use photorealistic, cinematic language — not illustrated or animated language
+✓ Character descriptions are consistent with previous scenes in the project
+If any of these are missing, add them automatically — do not ask the director. This is your job.`;
 
 export async function processDirectorMessage(
   projectId: number,
