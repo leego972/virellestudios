@@ -140,6 +140,17 @@ const normalizeContentPart = (
 
 const normalizeMessage = (message: Message) => {
   const { role, name, tool_call_id } = message;
+  const msgAny = message as any;
+
+  // Preserve tool_calls on assistant messages — required for multi-turn tool conversations
+  if (role === "assistant" && msgAny.tool_calls?.length) {
+    return {
+      role,
+      name,
+      content: typeof message.content === "string" ? message.content : "",
+      tool_calls: msgAny.tool_calls,
+    };
+  }
 
   if (role === "tool" || role === "function") {
     const content = ensureArray(message.content)
