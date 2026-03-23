@@ -512,8 +512,28 @@ export async function generateExtendedScene(
       // Use director's prompt override for first sub-shot if set; otherwise use auto-generated prompt
       const effectivePrompt = (i === 0 && request.aiPromptOverride) ? request.aiPromptOverride : subShot.prompt;
       // Use first reference image as promptImage for first sub-shot (image-to-video); subsequent clips use last frame
-      const effectiveImageUrl = subShot.referenceFrameUrl ||
+      let effectiveImageUrl: string | undefined = subShot.referenceFrameUrl ||
         (i === 0 && request.referenceImages && request.referenceImages.length > 0 ? request.referenceImages[0] : undefined);
+
+      // Runway Gen-4 Turbo requires a reference image. Auto-generate a Pollinations keyframe
+      // if none is available so Runway always has a visual anchor for the scene.
+      if (!effectiveImageUrl && activeProvider === "runway") {
+        try {
+          const kfPrompt = encodeURIComponent(
+            `${effectivePrompt}, photorealistic, cinematic still frame, 8K, ARRI ALEXA, film grain, professional lighting`
+              .replace(/[^\x20-\x7E]/g, "").substring(0, 500)
+          );
+          const kfUrl = `https://image.pollinations.ai/prompt/${kfPrompt}?width=1280&height=720&nologo=true&enhance=true&model=flux`;
+          const kfCheck = await fetch(kfUrl, { method: "HEAD", signal: AbortSignal.timeout(15000) });
+          if (kfCheck.ok) {
+            effectiveImageUrl = kfUrl;
+            console.log(`[ExtendedScene] Auto-generated Pollinations keyframe for Runway sub-clip ${i + 1}`);
+          }
+        } catch (kfErr: any) {
+          console.warn(`[ExtendedScene] Keyframe auto-gen failed for sub-clip ${i + 1}: ${kfErr.message}`);
+        }
+      }
+
       const videoResult = await generateBYOKVideo(keys, {
         prompt: effectivePrompt,
         imageUrl: effectiveImageUrl,

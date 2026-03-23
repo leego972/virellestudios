@@ -1643,14 +1643,36 @@ export const appRouter = router({
             console.error(`[SceneVideo] Failed to submit Veo 3 job for scene ${scene.id}:`, err.message);
             await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
           }
-        } else if (activeProvider === "runway" && byokKeys.runwayKey) {
+          } else if (activeProvider === "runway" && byokKeys.runwayKey) {
           // ─── RUNWAY: Persistent job queue approach ───
           // Submit the Runway task immediately (non-blocking), store task ID in DB,
           // and let videoJobWorker.ts poll for completion — survives Railway restarts.
           try {
             const effectivePrompt = sceneAiPromptOverride ||
               `Cinematic video: ${prompt}`;
-            const effectiveImageUrl = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
+
+            // Runway Gen-4 Turbo requires a reference image (image-to-video).
+            // If no reference image is set, auto-generate a photorealistic keyframe
+            // using Pollinations (free, instant, no key required) so Runway always
+            // has a visual anchor for the scene.
+            let effectiveImageUrl: string | undefined = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
+            if (!effectiveImageUrl) {
+              try {
+                const keyframePrompt = encodeURIComponent(
+                  `${effectivePrompt}, photorealistic, cinematic still frame, 8K, ARRI ALEXA, film grain, professional lighting`
+                    .replace(/[^\x20-\x7E]/g, "").substring(0, 500)
+                );
+                const keyframeUrl = `https://image.pollinations.ai/prompt/${keyframePrompt}?width=1280&height=720&nologo=true&enhance=true&model=flux`;
+                // Verify the image is accessible before passing to Runway
+                const imgCheck = await fetch(keyframeUrl, { method: "HEAD", signal: AbortSignal.timeout(15000) });
+                if (imgCheck.ok) {
+                  effectiveImageUrl = keyframeUrl;
+                  console.log(`[SceneVideo] Auto-generated Pollinations keyframe for Runway: ${keyframeUrl.substring(0, 80)}`);
+                }
+              } catch (imgErr: any) {
+                console.warn(`[SceneVideo] Keyframe generation failed, proceeding without image: ${imgErr.message}`);
+              }
+            }
 
             const { submitRunwayJob } = await import("./_core/videoJobWorker");
             const taskId = await submitRunwayJob(byokKeys.runwayKey, {
