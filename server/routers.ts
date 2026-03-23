@@ -1653,21 +1653,69 @@ export const appRouter = router({
 
             // Runway Gen-4 Turbo requires a reference image (image-to-video).
             // If no reference image is set, auto-generate a photorealistic keyframe
-            // using Pollinations (free, instant, no key required) so Runway always
-            // has a visual anchor for the scene.
+            // using the user's Google AI key (Gemini Imagen 3) or HuggingFace FLUX as fallback.
             let effectiveImageUrl: string | undefined = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
             if (!effectiveImageUrl) {
               try {
-                const keyframePrompt = encodeURIComponent(
-                  `${effectivePrompt}, photorealistic, cinematic still frame, 8K, ARRI ALEXA, film grain, professional lighting`
-                    .replace(/[^\x20-\x7E]/g, "").substring(0, 500)
-                );
-                const keyframeUrl = `https://image.pollinations.ai/prompt/${keyframePrompt}?width=1280&height=720&nologo=true&enhance=true&model=flux`;
-                // Verify the image is accessible before passing to Runway
-                const imgCheck = await fetch(keyframeUrl, { method: "HEAD", signal: AbortSignal.timeout(15000) });
-                if (imgCheck.ok) {
-                  effectiveImageUrl = keyframeUrl;
-                  console.log(`[SceneVideo] Auto-generated Pollinations keyframe for Runway: ${keyframeUrl.substring(0, 80)}`);
+                const keyframePromptText = `${effectivePrompt}, photorealistic, cinematic still frame, 8K, ARRI ALEXA, film grain, professional lighting`.substring(0, 2000);
+                // Try user's Google AI key (Gemini Imagen 3) first
+                const googleKey = byokKeys.googleAiKey || ENV.googleApiKey;
+                if (googleKey) {
+                  try {
+                    const imgResp = await fetch(
+                      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${googleKey}`,
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          instances: [{ prompt: keyframePromptText }],
+                          parameters: { sampleCount: 1, aspectRatio: "16:9", safetyFilterLevel: "block_some", personGeneration: "allow_adult" },
+                        }),
+                        signal: AbortSignal.timeout(30000),
+                      }
+                    );
+                    if (imgResp.ok) {
+                      const imgData = await imgResp.json() as { predictions?: Array<{ bytesBase64Encoded: string; mimeType: string }> };
+                      if (imgData.predictions?.[0]?.bytesBase64Encoded) {
+                        const buf = Buffer.from(imgData.predictions[0].bytesBase64Encoded, "base64");
+                        const mime = imgData.predictions[0].mimeType || "image/png";
+                        const ext = mime.split("/")[1] || "png";
+                        const stored = await storagePut(`keyframes/${scene.id}_${Date.now()}.${ext}`, buf, mime);
+                        effectiveImageUrl = stored.url;
+                        console.log(`[SceneVideo] Auto-generated Gemini Imagen keyframe for Runway: ${effectiveImageUrl.substring(0, 80)}`);
+                      }
+                    } else {
+                      const errText = await imgResp.text().catch(() => "");
+                      console.warn(`[SceneVideo] Gemini Imagen keyframe failed (${imgResp.status}): ${errText.substring(0, 150)}`);
+                    }
+                  } catch (gErr: any) {
+                    console.warn(`[SceneVideo] Gemini Imagen keyframe error: ${gErr.message}`);
+                  }
+                }
+                // Fallback: HuggingFace FLUX if Google failed
+                if (!effectiveImageUrl) {
+                  const hfKey = byokKeys.hfToken || ENV.huggingFaceApiKey;
+                  if (hfKey) {
+                    try {
+                      const hfResp = await fetch(
+                        "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
+                        {
+                          method: "POST",
+                          headers: { "Authorization": `Bearer ${hfKey}`, "Content-Type": "application/json" },
+                          body: JSON.stringify({ inputs: keyframePromptText.substring(0, 500) }),
+                          signal: AbortSignal.timeout(30000),
+                        }
+                      );
+                      if (hfResp.ok) {
+                        const buf = Buffer.from(await hfResp.arrayBuffer());
+                        const stored = await storagePut(`keyframes/${scene.id}_${Date.now()}.jpg`, buf, "image/jpeg");
+                        effectiveImageUrl = stored.url;
+                        console.log(`[SceneVideo] Auto-generated HuggingFace keyframe for Runway: ${effectiveImageUrl.substring(0, 80)}`);
+                      }
+                    } catch (hfErr: any) {
+                      console.warn(`[SceneVideo] HuggingFace keyframe error: ${hfErr.message}`);
+                    }
+                  }
                 }
               } catch (imgErr: any) {
                 console.warn(`[SceneVideo] Keyframe generation failed, proceeding without image: ${imgErr.message}`);
