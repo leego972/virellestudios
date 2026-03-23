@@ -500,6 +500,8 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   bulk_generate_videos:    { cost: 10,  label: "Bulk Generate Videos (per scene — duration-scaled)" },
   // ── AI writing & production tools ─────────────────────────
   virelle_chat:            { cost: 2,   label: "Virelle AI Chat / Director Assistant (per message)" },
+  director_assistant:      { cost: 2,   label: "Director's Assistant SSE stream message" },
+  voice_tts:               { cost: 2,   label: "Voice TTS synthesis (ElevenLabs / OpenAI)" },
   script_writer_ai:        { cost: 8,   label: "AI Script Writer (full screenplay generation)" },
   storyboard_ai:           { cost: 8,   label: "AI Storyboard Generation (full visual breakdown)" },
   dialogue_editor_ai:      { cost: 5,   label: "AI Dialogue Polish (scene-level rewrite)" },

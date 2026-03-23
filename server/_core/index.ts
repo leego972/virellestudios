@@ -554,6 +554,18 @@ async function startServer() {
       const { text } = req.body || {};
       if (!text || typeof text !== "string") return res.status(400).json({ error: "Missing text" });
       const trimmed = text.slice(0, 4096);
+      // Credits: deduct 2 credits per TTS call (same as virelle_chat) — skip for admins
+      const isAdminTts = ctx.user.role === "admin" || ctx.user.email === process.env.ADMIN_EMAIL;
+      if (!isAdminTts) {
+        try {
+          await db.deductCredits(ctx.user.id, 2, "voice_tts", `TTS: ${trimmed.substring(0, 40)}`);
+        } catch (creditErr: any) {
+          if (creditErr.message?.includes("INSUFFICIENT_CREDITS")) {
+            return res.status(402).json({ error: "Insufficient credits for TTS generation." });
+          }
+          console.warn("[Credits] TTS deduction warning:", creditErr.message);
+        }
+      }
       // Try user's ElevenLabs key first, then system key
       const userKeys = await db.getUserApiKeys(ctx.user.id);
       const elKey = userKeys.elevenlabsKey || process.env.ELEVENLABS_API_KEY || null;
@@ -631,6 +643,23 @@ async function startServer() {
     // Authenticate the user for tool execution
     const toolCtx = await createContext({ req, res, info: {} } as any);
     if (!toolCtx.user) { res.status(401).json({ error: "Unauthorized" }); return; }
+
+    // Credits: deduct 2 credits per Director's Assistant message (same as virelle_chat)
+    // Admin users are exempt from credit deductions
+    const isAdminDirector = toolCtx.user.role === "admin" || toolCtx.user.email === process.env.ADMIN_EMAIL;
+    if (!isAdminDirector) {
+      try {
+        await db.deductCredits(toolCtx.user.id, 2, "director_assistant", "Director's Assistant message");
+      } catch (creditErr: any) {
+        if (creditErr.message?.includes("INSUFFICIENT_CREDITS")) {
+          sseRes.write(`data: ${JSON.stringify({ type: "error", message: "Insufficient credits. Please top up to continue using the Director's Assistant." })}\n\n`);
+          res.json({ ok: false, error: "INSUFFICIENT_CREDITS" });
+          return;
+        }
+        // Non-credit errors don't block — log and continue
+        console.warn("[Credits] Director stream deduction warning:", creditErr.message);
+      }
+    }
 
     const SYSTEM = buildDirectorSystemPrompt(projectContext || "", directorInstructions || "");
 
