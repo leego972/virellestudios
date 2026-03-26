@@ -1,13 +1,17 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { ENV } from "./_core/env";
 
-// Lazy-initialise so the server starts even if RESEND_API_KEY is not set yet
-let _resend: Resend | null = null;
-function getResend(): Resend {
-  if (!_resend) {
-    _resend = new Resend(ENV.resendApiKey);
-  }
-  return _resend;
+// ─── Gmail SMTP Transport ─────────────────────────────────────────────────────
+// Uses Gmail free SMTP service. Set GMAIL_USER and GMAIL_APP_PASSWORD in env.
+// Generate an App Password at: https://myaccount.google.com/apppasswords
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: ENV.gmailUser,
+      pass: ENV.gmailAppPassword,
+    },
+  });
 }
 
 const FROM = `Virelle Studios <${ENV.emailFromAddress}>`;
@@ -94,19 +98,15 @@ export async function sendPasswordResetEmail(
 </html>`;
 
   try {
-    const { error } = await getResend().emails.send({
+    await getTransporter().sendMail({
       from: FROM,
       to,
       subject: "Reset Your Password — Virelle Studios",
       html,
     });
-    if (error) {
-      console.error("Resend: failed to send password reset email:", error);
-      return false;
-    }
     return true;
   } catch (err) {
-    console.error("Resend: unexpected error sending password reset email:", err);
+    console.error("Gmail: unexpected error sending password reset email:", err);
     return false;
   }
 }
@@ -186,20 +186,16 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<boolea
 </html>`;
 
   try {
-    const { error } = await getResend().emails.send({
+    await getTransporter().sendMail({
       from: FROM,
       to,
       bcc: STUDIO_BCC !== to ? STUDIO_BCC : undefined,
       subject: "Welcome to Virelle Studios 🎬",
       html,
     });
-    if (error) {
-      console.error("Resend: failed to send welcome email:", error);
-      return false;
-    }
     return true;
   } catch (err) {
-    console.error("Resend: unexpected error sending welcome email:", err);
+    console.error("Gmail: unexpected error sending welcome email:", err);
     return false;
   }
 }
@@ -258,20 +254,16 @@ export async function sendSubscriptionConfirmationEmail(
 </html>`;
 
   try {
-    const { error } = await getResend().emails.send({
+    await getTransporter().sendMail({
       from: FROM,
       to,
       bcc: STUDIO_BCC !== to ? STUDIO_BCC : undefined,
       subject: `Your ${planName} Subscription is Active — Virelle Studios`,
       html,
     });
-    if (error) {
-      console.error("Resend: failed to send subscription confirmation email:", error);
-      return false;
-    }
     return true;
   } catch (err) {
-    console.error("Resend: unexpected error sending subscription confirmation email:", err);
+    console.error("Gmail: unexpected error sending subscription confirmation email:", err);
     return false;
   }
 }
@@ -319,19 +311,15 @@ export async function sendNewSignupNotification(
 </html>`;
 
   try {
-    const { error } = await getResend().emails.send({
+    await getTransporter().sendMail({
       from: FROM,
       to: STUDIO_BCC,
       subject: `New Signup: ${userName} (${userEmail})`,
       html,
     });
-    if (error) {
-      console.error("Resend: failed to send new signup notification:", error);
-      return false;
-    }
     return true;
   } catch (err) {
-    console.error("Resend: unexpected error sending new signup notification:", err);
+    console.error("Gmail: unexpected error sending new signup notification:", err);
     return false;
   }
 }
@@ -381,27 +369,23 @@ export async function sendNewSubscriptionNotification(
 </html>`;
 
   try {
-    const { error } = await getResend().emails.send({
+    await getTransporter().sendMail({
       from: FROM,
       to: STUDIO_BCC,
       subject: `💰 New Subscription: ${userName} — ${planName} (${amount})`,
       html,
     });
-    if (error) {
-      console.error("Resend: failed to send new subscription notification:", error);
-      return false;
-    }
     return true;
   } catch (err) {
-    console.error("Resend: unexpected error sending new subscription notification:", err);
+    console.error("Gmail: unexpected error sending new subscription notification:", err);
     return false;
   }
 }
 
-/** Verify that the Resend connection works by checking the API key is set */
+/** Verify that the Gmail SMTP connection works by checking credentials are set */
 export async function verifyEmailConnection(): Promise<boolean> {
-  if (!ENV.resendApiKey) {
-    console.error("RESEND_API_KEY is not set");
+  if (!ENV.gmailUser || !ENV.gmailAppPassword) {
+    console.error("GMAIL_USER or GMAIL_APP_PASSWORD is not set");
     return false;
   }
   return true;
@@ -475,19 +459,15 @@ export async function sendCollaborationInviteEmail(
 </body>
 </html>`;
   try {
-    const { error } = await getResend().emails.send({
+    await getTransporter().sendMail({
       from: FROM,
       to,
       subject: `${inviterName} invited you to collaborate on "${projectTitle}" — Virelle Studios`,
       html,
     });
-    if (error) {
-      console.error("Resend: failed to send collaboration invite email:", error);
-      return false;
-    }
     return true;
   } catch (err) {
-    console.error("Resend: unexpected error sending collaboration invite email:", err);
+    console.error("Gmail: unexpected error sending collaboration invite email:", err);
     return false;
   }
 }

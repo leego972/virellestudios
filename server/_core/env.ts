@@ -9,7 +9,6 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   gmailUser: process.env.GMAIL_USER ?? "",
   gmailAppPassword: process.env.GMAIL_APP_PASSWORD ?? "",
-  resendApiKey: process.env.RESEND_API_KEY ?? "",
   emailFromAddress: process.env.EMAIL_FROM ?? "noreply@virelle.life",
 
   // ─── Stripe ────────────────────────────────────────────────────────────────
@@ -90,8 +89,6 @@ export const ENV = {
   linkedinOrganizationId: process.env.LINKEDIN_ORGANIZATION_ID ?? "",
   snapchatAccessToken: process.env.SNAPCHAT_ACCESS_TOKEN ?? "",
   snapchatAdAccountId: process.env.SNAPCHAT_AD_ACCOUNT_ID ?? "",
-  sendgridApiKey: process.env.SENDGRID_API_KEY ?? "",
-  sendgridFromEmail: process.env.SENDGRID_FROM_EMAIL ?? "noreply@virelle.life",
   redditClientId: process.env.REDDIT_CLIENT_ID ?? "",
   redditClientSecret: process.env.REDDIT_CLIENT_SECRET ?? "",
   redditAccessToken: process.env.REDDIT_ACCESS_TOKEN ?? "",

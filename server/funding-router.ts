@@ -3,14 +3,20 @@ import { z } from "zod";
 import { getDb, deductCredits } from "./db";
 import { fundingSources } from "../drizzle/schema";
 import { eq, asc } from "drizzle-orm";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { ENV } from "./_core/env";
 import { CREDIT_COSTS } from "./_core/subscription";
 
-let _resend: Resend | null = null;
-function getResend(): Resend {
-  if (!_resend) _resend = new Resend(ENV.resendApiKey);
-  return _resend;
+// Gmail SMTP transport — free, no API key required
+// Generate an App Password at: https://myaccount.google.com/apppasswords
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: ENV.gmailUser,
+      pass: ENV.gmailAppPassword,
+    },
+  });
 }
 
 // ─── Zod schema for the full 13-section application ───────────────────────────
@@ -460,9 +466,9 @@ export const fundingRouter = router({
       const htmlBody = buildHtmlEmail(input, user.name ?? user.email, user.id);
 
       try {
-        const resend = getResend();
+        const transporter = getTransporter();
         // Send to the applicant's email
-        await resend.emails.send({
+        await transporter.sendMail({
           from: ENV.emailFromAddress,
           to: input.primaryContactEmail,
           subject: `Your Funding Application — ${input.projectTitle} → ${input.fundingOrganization}`,
@@ -470,7 +476,7 @@ export const fundingRouter = router({
         });
         // Also send a copy to the platform admin
         if (ENV.adminEmail) {
-          await resend.emails.send({
+          await transporter.sendMail({
             from: ENV.emailFromAddress,
             to: ENV.adminEmail,
             subject: `[Virelle] New Funding Application: ${input.projectTitle} → ${input.fundingOrganization}`,

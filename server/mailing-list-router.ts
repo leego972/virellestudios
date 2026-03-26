@@ -2,7 +2,7 @@
  * Virelle Studios — Outreach Mailing List Router
  *
  * Admin-only endpoints for managing the filmmaker/studio outreach list
- * and sending campaigns via Resend.
+ * and sending campaigns via Gmail SMTP (free).
  *
  * Features:
  *  - Add contacts manually, via CSV import, or bulk paste
@@ -22,16 +22,22 @@ import {
   type MailingContact,
 } from "../drizzle/schema";
 import { eq, and, inArray, sql } from "drizzle-orm";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { ENV } from "./_core/env";
 import { storagePut } from "./storage";
 import crypto from "crypto";
 
-// ─── Resend client ────────────────────────────────────────────────────────────
-let _resend: Resend | null = null;
-function getResend(): Resend {
-  if (!_resend) _resend = new Resend(ENV.resendApiKey);
-  return _resend;
+// ─── Gmail SMTP Transport ─────────────────────────────────────────────────────
+// Uses Gmail free SMTP service. Set GMAIL_USER and GMAIL_APP_PASSWORD in env.
+// Generate an App Password at: https://myaccount.google.com/apppasswords
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: ENV.gmailUser,
+      pass: ENV.gmailAppPassword,
+    },
+  });
 }
 
 const FROM = `Virelle Studios <${ENV.emailFromAddress || "noreply@virellestudios.com"}>`;
@@ -361,7 +367,7 @@ export const mailingListRouter = router({
       // Mark as sending
       await db.update(emailCampaigns).set({ status: "sending" }).where(eq(emailCampaigns.id, input.campaignId));
 
-      const resend = getResend();
+      const transporter = getTransporter();
       let sentCount = 0;
       let failedCount = 0;
 
@@ -377,7 +383,7 @@ export const mailingListRouter = router({
               campaign.adImageUrl,
               input.origin,
             );
-            await resend.emails.send({
+            await transporter.sendMail({
               from: FROM,
               to: contact.email,
               subject: campaign.subject,
