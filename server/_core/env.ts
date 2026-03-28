@@ -16,19 +16,23 @@ export const ENV = {
   stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
 
+  // ─── Indie tier (DB: "indie") — AUD ────────────────────────────────────────
+  stripeIndieMonthlyPriceId: process.env.STRIPE_INDIE_MONTHLY_PRICE_ID ?? "",
+  stripeIndieAnnualPriceId: process.env.STRIPE_INDIE_ANNUAL_PRICE_ID ?? "",
+
   // ─── Creator tier (DB: "amateur") — AUD ────────────────────────────────────
   stripeCreatorMonthlyPriceId: process.env.STRIPE_CREATOR_MONTHLY_PRICE_ID ?? "",
   stripeCreatorAnnualPriceId: process.env.STRIPE_CREATOR_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Studio tier (DB: "independent") — AUD ──────────────────────
+  // ─── Studio tier (DB: "independent") — AUD ─────────────────────────────────
   stripeStudioMonthlyPriceId: process.env.STRIPE_STUDIO_MONTHLY_PRICE_ID ?? "",
   stripeStudioAnnualPriceId: process.env.STRIPE_STUDIO_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Production tier (DB: "studio") — AUD (consultative; base price only) ────────
+  // ─── Production tier (DB: "studio") — AUD (consultative; base price only) ──
   stripeProductionMonthlyPriceId: process.env.STRIPE_PRODUCTION_MONTHLY_PRICE_ID ?? "",
   stripeProductionAnnualPriceId: process.env.STRIPE_PRODUCTION_ANNUAL_PRICE_ID ?? "",
 
-  // ─── Enterprise tier (DB: "industry") — AUD (custom; base price only) ─────────────
+  // ─── Enterprise tier (DB: "industry") — AUD (custom; base price only) ───────
   stripeEnterpriseMonthlyPriceId: process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID ?? "",
   stripeEnterpriseAnnualPriceId: process.env.STRIPE_ENTERPRISE_ANNUAL_PRICE_ID ?? "",
 

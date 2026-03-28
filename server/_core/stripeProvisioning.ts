@@ -5,14 +5,16 @@
  * if they don't already exist. Uses the STRIPE_SECRET_KEY from env vars.
  *
  * MEMBERSHIP TIERS (AUD):
- *   Creator (DB: amateur)         — A$1,250/month  or A$12,000/year  — 2,000 credits/mo
- *   Studio (DB: independent) — A$3,900/month or A$36,000/year — 5,500 credits/mo
+ *   Indie (DB: indie)              — A$149/month    or A$1,490/year   — 500 credits/mo
+ *   Creator (DB: amateur)          — A$490/month    or A$4,900/year   — 2,000 credits/mo
+ *   Studio (DB: independent)       — A$1,490/month  or A$14,900/year  — 6,000 credits/mo
  *   Production (DB: studio)        — From A$150,000/year (consultative) — 15,500 credits/mo
- *   Enterprise          — Custom pricing (sales-led)         — 50,500 credits/mo
+ *   Enterprise                     — Custom pricing (sales-led)         — 50,500 credits/mo
  *
  * FOUNDING MEMBER OFFER: 50% off first year on annual billing (VIRELLE_FOUNDER_50 coupon)
- *   Creator founder price:        A$6,000  first year (then A$12,000/yr)
- *   Studio founder price: A$18,000 first year (then A$36,000/yr)
+ *   Indie founder price:           A$745   first year (then A$1,490/yr)
+ *   Creator founder price:          A$2,450  first year (then A$4,900/yr)
+ *   Studio founder price:           A$7,450  first year (then A$14,900/yr)
  *
  * CREDIT PACKS (AUD — one-time top-ups):
  *   Starter Pack     — 500 credits    A$750    (A$1.50/credit)
@@ -55,13 +57,38 @@ interface PriceDefinition {
 
 const SUBSCRIPTION_PRICES: PriceDefinition[] = [
 
-  // ─── Creator (DB: amateur) — A$1,250/month ───────────────────────────────
+  // ─── Indie (DB: indie) — A$149/month ─────────────────────────────────────
+  {
+    key: "indie_monthly",
+    envKey: "stripeIndieMonthlyPriceId",
+    productName: "Virelle Studios — Indie (Monthly)",
+    productDesc: "AI film production platform — Indie tier, A$149/month, 500 credits/mo",
+    unitAmount: 14900, // A$149 in cents
+    currency: "aud",
+    recurring: { interval: "month" },
+    metadata: { tier: "indie", display_name: "Indie", billing: "monthly", credits: "500" },
+    paymentMethodTypes: ["card"],
+  },
+  {
+    key: "indie_annual",
+    envKey: "stripeIndieAnnualPriceId",
+    productName: "Virelle Studios — Indie (Annual)",
+    productDesc: "AI film production platform — Indie tier, A$1,490/year, 500 credits/mo",
+    unitAmount: 149000, // A$1,490 in cents (save ~17%)
+    currency: "aud",
+    recurring: { interval: "year" },
+    metadata: { tier: "indie", display_name: "Indie", billing: "annual", credits: "500" },
+    paymentMethodTypes: ["card"],
+  },
+
+  // ─── Creator (DB: amateur) — A$490/month ─────────────────────────────────
+  // Note: DB tier name remains "amateur" for backward compat with existing subscribers
   {
     key: "auteur_monthly",
     envKey: "stripeCreatorMonthlyPriceId",
     productName: "Virelle Studios — Creator (Monthly)",
-    productDesc: "AI film production platform — Creator tier, A$1,250/month, 2,000 credits/mo",
-    unitAmount: 125000, // A$1,250 in cents
+    productDesc: "AI film production platform — Creator tier, A$490/month, 2,000 credits/mo",
+    unitAmount: 49000, // A$490 in cents
     currency: "aud",
     recurring: { interval: "month" },
     metadata: { tier: "amateur", display_name: "Creator", billing: "monthly", credits: "2000" },
@@ -71,35 +98,35 @@ const SUBSCRIPTION_PRICES: PriceDefinition[] = [
     key: "auteur_annual",
     envKey: "stripeCreatorAnnualPriceId",
     productName: "Virelle Studios — Creator (Annual)",
-    productDesc: "AI film production platform — Creator tier, A$12,000/year, 2,000 credits/mo",
-    unitAmount: 1200000, // A$12,000 in cents
+    productDesc: "AI film production platform — Creator tier, A$4,900/year, 2,000 credits/mo",
+    unitAmount: 490000, // A$4,900 in cents (save ~17%)
     currency: "aud",
     recurring: { interval: "year" },
     metadata: { tier: "amateur", display_name: "Creator", billing: "annual", credits: "2000" },
     paymentMethodTypes: ["card"],
   },
 
-  // ─── Studio (DB: independent) — A$3,900/month ───────────────────
+  // ─── Studio (DB: independent) — A$1,490/month ───────────────────
   {
     key: "production_pro_monthly",
     envKey: "stripeProductionProMonthlyPriceId",
     productName: "Virelle Studios — Studio (Monthly)",
-    productDesc: "AI film production platform — Studio tier, A$3,900/month, 5,500 credits/mo",
-    unitAmount: 390000, // A$3,900 in cents
+    productDesc: "AI film production platform — Studio tier, A$1,490/month, 6,000 credits/mo",
+    unitAmount: 149000, // A$1,490 in cents
     currency: "aud",
     recurring: { interval: "month" },
-    metadata: { tier: "independent", display_name: "Studio", billing: "monthly", credits: "5500" },
+    metadata: { tier: "independent", display_name: "Studio", billing: "monthly", credits: "6000" },
     paymentMethodTypes: ["card"],
   },
   {
     key: "production_pro_annual",
     envKey: "stripeProductionProAnnualPriceId",
     productName: "Virelle Studios — Studio (Annual)",
-    productDesc: "AI film production platform — Studio tier, A$36,000/year, 5,500 credits/mo",
-    unitAmount: 3600000, // A$36,000 in cents
+    productDesc: "AI film production platform — Studio tier, A$14,900/year, 6,000 credits/mo",
+    unitAmount: 1490000, // A$14,900 in cents (save ~17%)
     currency: "aud",
     recurring: { interval: "year" },
-    metadata: { tier: "independent", display_name: "Studio", billing: "annual", credits: "5500" },
+    metadata: { tier: "independent", display_name: "Studio", billing: "annual", credits: "6000" },
     paymentMethodTypes: ["card"],
   },
 
@@ -110,8 +137,8 @@ const SUBSCRIPTION_PRICES: PriceDefinition[] = [
     key: "amateur_monthly",
     envKey: "stripeAmateurMonthlyPriceId",
     productName: "Virelle Studios — Creator (Monthly)",
-    productDesc: "AI film production platform — Creator tier, A$1,250/month, 2,000 credits/mo",
-    unitAmount: 125000,
+    productDesc: "AI film production platform — Creator tier, A$490/month, 2,000 credits/mo",
+    unitAmount: 49000,
     currency: "aud",
     recurring: { interval: "month" },
     metadata: { tier: "amateur", display_name: "Creator", billing: "monthly", credits: "2000" },
@@ -121,8 +148,8 @@ const SUBSCRIPTION_PRICES: PriceDefinition[] = [
     key: "amateur_annual",
     envKey: "stripeAmateurAnnualPriceId",
     productName: "Virelle Studios — Creator (Annual)",
-    productDesc: "AI film production platform — Creator tier, A$12,000/year, 2,000 credits/mo",
-    unitAmount: 1200000,
+    productDesc: "AI film production platform — Creator tier, A$4,900/year, 2,000 credits/mo",
+    unitAmount: 490000,
     currency: "aud",
     recurring: { interval: "year" },
     metadata: { tier: "amateur", display_name: "Creator", billing: "annual", credits: "2000" },
@@ -132,22 +159,22 @@ const SUBSCRIPTION_PRICES: PriceDefinition[] = [
     key: "independent_monthly",
     envKey: "stripeIndependentMonthlyPriceId",
     productName: "Virelle Studios — Studio (Monthly)",
-    productDesc: "AI film production platform — Studio tier, A$3,900/month, 5,500 credits/mo",
-    unitAmount: 390000,
+    productDesc: "AI film production platform — Studio tier, A$1,490/month, 6,000 credits/mo",
+    unitAmount: 149000,
     currency: "aud",
     recurring: { interval: "month" },
-    metadata: { tier: "independent", display_name: "Studio", billing: "monthly", credits: "5500" },
+    metadata: { tier: "independent", display_name: "Studio", billing: "monthly", credits: "6000" },
     paymentMethodTypes: ["card"],
   },
   {
     key: "independent_annual",
     envKey: "stripeIndependentAnnualPriceId",
     productName: "Virelle Studios — Studio (Annual)",
-    productDesc: "AI film production platform — Studio tier, A$36,000/year, 5,500 credits/mo",
-    unitAmount: 3600000,
+    productDesc: "AI film production platform — Studio tier, A$14,900/year, 6,000 credits/mo",
+    unitAmount: 1490000,
     currency: "aud",
     recurring: { interval: "year" },
-    metadata: { tier: "independent", display_name: "Studio", billing: "annual", credits: "5500" },
+    metadata: { tier: "independent", display_name: "Studio", billing: "annual", credits: "6000" },
     paymentMethodTypes: ["card"],
   },
 
