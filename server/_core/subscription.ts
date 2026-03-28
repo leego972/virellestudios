@@ -12,11 +12,12 @@ export const stripe = ENV.stripeSecretKey
 // ============================================================
 
 // Internal DB tier keys — display names are mapped in the frontend:
-//   "amateur"     → "Creator"
-//   "independent" → "Studio"
-//   "studio"      → "Production"
-//   "industry"    → "Enterprise"
-export type SubscriptionTier = "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
+//   "indie"       → "Indie"       (A$149/mo — 500 credits — entry tier)
+//   "amateur"     → "Creator"     (A$490/mo — 2,000 credits)
+//   "independent" → "Studio"      (A$1,490/mo — 6,000 credits)
+//   "studio"      → "Production"  (From A$4,990/mo — 15,500 credits)
+//   "industry"    → "Enterprise"  (Custom)
+export type SubscriptionTier = "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -128,7 +129,67 @@ export interface TierLimits {
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
 
-  // ─── CREATOR (DB: "amateur") ─── A$1,250/month — 2,000 credits/month ───────
+  // ─── INDIE (DB: "indie") ─── A$149/month — 500 credits/month ───────────────
+  // Entry tier: screenplay tools, character creator, director assistant, shot list.
+  // No video generation, no voice acting, no film score, no export.
+  indie: {
+    maxProjects: 2,
+    maxCharactersPerProject: 3,
+    maxScenesPerProject: 3,
+    maxGenerationsPerMonth: 10,
+    maxMovieExports: 0,
+    maxCollaboratorsPerProject: 1,
+    maxScriptsPerProject: 1,
+    maxStorageMB: 500,
+    canUseQuickGenerate: false,
+    canUseTrailerGeneration: false,
+    canUseDirectorAssistant: true,
+    canUseAdPosterMaker: false,
+    canUseBudgetEstimator: true,
+    canUseColorGrading: false,
+    canUseSoundEffects: false,
+    canUseSubtitles: false,
+    canUseDialogueEditor: true,
+    canUseLocationScout: true,
+    canUseMoodBoard: true,
+    canUseShotList: true,
+    canUseContinuityCheck: false,
+    canUseScriptWriter: true,
+    canUseStoryboard: false,
+    canUseCollaboration: false,
+    canExportMovies: false,
+    canExportHD: false,
+    canUseAICharacterGen: true,
+    canUseAIScriptGen: true,
+    canUseAIDialogueGen: true,
+    canUseAIBudgetGen: false,
+    canUseAISubtitleGen: false,
+    canUseAILocationSuggest: true,
+    canUseFullFilmGeneration: false,
+    canUseAIVoiceActing: false,
+    canUseAISoundtrack: false,
+    canUseCharacterConsistency: false,
+    canUseSceneContinuity: false,
+    canUseClipChaining: false,
+    canUseVisualEffects: false,
+    canUseBulkGenerate: false,
+    canUseMultiShotSequencer: false,
+    canUseLiveActionPlate: false,
+    canUseNLEExport: false,
+    canUseAICasting: false,
+    canExportUltraHD: false,
+    canUseWhiteLabel: false,
+    canUseAPIAccess: false,
+    canUseCustomFineTuning: false,
+    canUsePriorityRendering: false,
+    resolution: "720p",
+    quality: ["standard"],
+    maxDurationMinutes: 0,
+    maxClipsPerScene: 0,
+    monthlyCredits: 500,
+  },
+
+  // ─── CREATOR (DB: "amateur") ─── A$490/month — 2,000 credits/month ──────────
   amateur: {
     maxProjects: 2,
     maxCharactersPerProject: 5,
@@ -186,7 +247,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 2000,
   },
 
-  // ─── STUDIO (DB: "independent") ─── A$3,900/month — 5,500 credits/month ───
+  // ─── STUDIO (DB: "independent") ─── A$1,490/month — 6,000 credits/month ───
   independent: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -241,7 +302,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     quality: ["standard", "high"],
     maxDurationMinutes: 90,
     maxClipsPerScene: 8,
-    monthlyCredits: 5500,
+    monthlyCredits: 6000,
   },
 
   // ─── STUDIO alias (DB: "creator") ─── same limits as independent ───
@@ -269,7 +330,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canExportUltraHD: true, canUseWhiteLabel: false, canUseAPIAccess: false,
     canUseCustomFineTuning: false, canUsePriorityRendering: false,
     resolution: "4k", quality: ["standard", "high"], maxDurationMinutes: 90, maxClipsPerScene: 8,
-    monthlyCredits: 5500,
+    monthlyCredits: 6000,
   },
 
   // ─── PRODUCTION (DB: "studio") ─── From A$150,000/year — 15,500 credits/month ───
@@ -464,9 +525,11 @@ export interface TierPricing {
  * Industry Enterprise:        Custom pricing (sales-led)  — 50,500 credits/mo
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
-  amateur:     { monthly: 125000, annual: 100000, annualTotal: 1200000, monthlyTotal: 1500000, displayName: "Creator" },
-  independent: { monthly: 390000, annual: 300000, annualTotal: 3600000, monthlyTotal: 4680000, displayName: "Studio" },
-  creator:     { monthly: 390000, annual: 300000, annualTotal: 3600000, monthlyTotal: 4680000, displayName: "Studio" },
+  // All prices in AUD cents. annual = monthly equivalent when billed annually.
+  indie:       { monthly: 14900,  annual: 12400,  annualTotal: 149000,  monthlyTotal: 178800,  displayName: "Indie" },
+  amateur:     { monthly: 49000,  annual: 40800,  annualTotal: 490000,  monthlyTotal: 588000,  displayName: "Creator" },
+  independent: { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Studio" },
+  creator:     { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Studio" },
   studio:      { monthly: 0, annual: 0, annualTotal: 15000000, monthlyTotal: 0, displayName: "Production" }, // From A$150,000/yr — consultative
   industry:    { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Enterprise" }, // Custom
   beta:        { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Beta" },
@@ -474,6 +537,7 @@ export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
 
 // Display name lookup (for use in emails, UI labels, etc.)
 export const TIER_DISPLAY_NAMES: Record<string, string> = {
+  indie: "Indie",
   amateur: "Creator",
   independent: "Studio",
   creator: "Studio",
@@ -604,6 +668,10 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
   const { getStripePriceId } = require("./stripeProvisioning");
 
   const tierKeys: { tier: SubscriptionTier; keys: string[] }[] = [
+    { tier: "indie", keys: [
+      getStripePriceId("indie_monthly"), getStripePriceId("indie_annual"),
+      (ENV as any).stripeIndieMonthlyPriceId, (ENV as any).stripeIndieAnnualPriceId,
+    ]},
     { tier: "amateur", keys: [
       getStripePriceId("auteur_monthly"), getStripePriceId("auteur_annual"),
       getStripePriceId("amateur_monthly"), getStripePriceId("amateur_annual"),
@@ -637,6 +705,7 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
   if (lower.includes("industry") || lower.includes("enterprise")) return "industry";
   if (lower.includes("independent") || lower.includes("pro")) return "independent";
   if (lower.includes("amateur")) return "amateur";
+  if (lower.includes("indie")) return "indie";
 
   console.warn(`[Subscription] Unknown price ID: ${priceId}, defaulting to independent`);
   return "independent";
@@ -652,6 +721,7 @@ function mapTierName(tier: string | null | undefined): SubscriptionTier {
   if (tier === "studio") return "studio";
   if (tier === "creator" || tier === "production_pro") return "independent";
   if (tier === "amateur" || tier === "auteur") return "amateur";
+  if (tier === "indie") return "indie";
   // "pro", "independent" and anything else map to independent
   return "independent";
 }
@@ -696,7 +766,7 @@ export function getTierDisplayName(tier: string | null | undefined): string {
  * or consultative (Production / Enterprise).
  */
 export function isSelfServeTier(tier: SubscriptionTier): boolean {
-  return tier === "amateur" || tier === "independent" || tier === "creator";
+  return tier === "indie" || tier === "amateur" || tier === "independent" || tier === "creator";
 }
 
 
