@@ -180,17 +180,23 @@ async function startServer() {
           // Check if this is a generation top-up pack purchase (one-time payment)
           if (session.metadata?.type === "generation_topup" && userId) {
             const packId = session.metadata.packId;
+            // Credit amounts MUST match TOP_UP_PACKS in subscription.ts
             const packAmounts: Record<string, number> = {
-              topup_10: 10,
-              topup_30: 30,
-              topup_100: 100,
+              topup_10:   500,    // Starter Pack     — 500 credits
+              topup_50:   1500,   // Producer Pack    — 1,500 credits
+              topup_100:  3000,   // Director Pack    — 3,000 credits
+              topup_200:  6000,   // Studio Pack      — 6,000 credits
+              topup_500:  12000,  // Blockbuster Pack — 12,000 credits
+              topup_1000: 25000,  // Mogul Pack       — 25,000 credits
             };
-            const generations = packAmounts[packId] || 0;
-            if (generations > 0) {
-              await db.addBonusGenerations(userId, generations);
+            const credits = packAmounts[packId] || 0;
+            if (credits > 0) {
+              await db.addBonusGenerations(userId, credits);
               // Also add to creditBalance so deductCredits() works
-              await db.addCredits(userId, generations, "credit_pack_purchase", `Top-up pack ${packId} — ${generations} credits added`);
-              logger.info(`Top-up pack ${packId} (+${generations} credits) applied for user ${userId}`);
+              await db.addCredits(userId, credits, "credit_pack_purchase", `Top-up pack ${packId} — ${credits} credits added`);
+              logger.info(`Top-up pack ${packId} (+${credits} credits) applied for user ${userId}`);
+            } else {
+              logger.warn(`Unknown top-up pack ID: ${packId} — no credits granted for user ${userId}`);
             }
             break;
           }
@@ -367,8 +373,9 @@ async function startServer() {
   });
 
   // ── MOBILE APP: App Download Links ─────────────────────────────────────────
-  // Returns the latest iOS/Android download URLs. Set IOS_DOWNLOAD_URL and
-  // ANDROID_DOWNLOAD_URL env vars after each Expo EAS build.
+  // Returns the latest iOS/Android/Desktop download URLs.
+  // Set IOS_DOWNLOAD_URL, ANDROID_DOWNLOAD_URL, DESKTOP_MAC_URL,
+  // DESKTOP_WIN_URL, DESKTOP_LINUX_URL env vars after each build.
   app.get("/api/mobile/downloads", (_req, res) => {
     res.json({
       ios: {
@@ -380,6 +387,13 @@ async function startServer() {
         url: process.env.ANDROID_DOWNLOAD_URL || null,
         version: process.env.APP_VERSION || "1.0.0",
         available: !!process.env.ANDROID_DOWNLOAD_URL,
+      },
+      desktop: {
+        mac: process.env.DESKTOP_MAC_URL || null,
+        win: process.env.DESKTOP_WIN_URL || null,
+        linux: process.env.DESKTOP_LINUX_URL || null,
+        version: process.env.DESKTOP_VERSION || "1.0.0",
+        available: !!(process.env.DESKTOP_MAC_URL || process.env.DESKTOP_WIN_URL || process.env.DESKTOP_LINUX_URL),
       },
     });
   });

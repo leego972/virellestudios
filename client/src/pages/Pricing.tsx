@@ -315,11 +315,22 @@ export default function Pricing() {
         window.location.href = result.url;
         return;
       }
+      // Detect source platform — mobile app or Electron desktop pass ?source=mobile/desktop
+      const urlParams = new URLSearchParams(window.location.search);
+      const source = urlParams.get("source");
+      const isNativeApp = source === "mobile" || source === "desktop" || !!(window as any).electronAPI?.isElectron;
+      // Native apps use the virelle:// deep-link scheme so Stripe can return to the app
+      const successUrl = isNativeApp
+        ? `virelle://billing/success?subscription=success`
+        : `${window.location.origin}/?subscription=success`;
+      const cancelUrl = isNativeApp
+        ? `virelle://billing/cancel?subscription=canceled`
+        : `${window.location.origin}/pricing?subscription=canceled`;
       const result = await checkoutMutation.mutateAsync({
         tier: tierId as any,
         billing: billingCycle,
-        successUrl: `${window.location.origin}/?subscription=success`,
-        cancelUrl: `${window.location.origin}/pricing?subscription=canceled`,
+        successUrl,
+        cancelUrl,
       });
       if (result.url) window.location.href = result.url;
     } catch (err: any) {
