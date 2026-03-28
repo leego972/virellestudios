@@ -1,3 +1,4 @@
+import { Sentry } from "./sentry.js";
 import { UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG } from '@shared/const';
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
