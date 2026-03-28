@@ -10,34 +10,41 @@ import LeegoFooter from "@/components/LeegoFooter";
 import GoldWatermark from "@/components/GoldWatermark";
 
 // ─── Tier Definitions ────────────────────────────────────────────────────────
-// All prices in AUD. Creator and Studio support monthly/annual toggle.
+// All prices in AUD. Indie, Creator, and Studio are self-serve with monthly/annual toggle.
 // Production and Enterprise are consultative — no toggle, no self-checkout.
+//
+// Market context (2026):
+//   Runway Standard: USD$76/mo (~AUD$120) — 625 credits, ~125 video seconds
+//   Kling Standard:  USD$66/mo (~AUD$104) — 3,000 credits
+//   Artlist Creator: USD$199/mo (~AUD$315) — music + video licensing
+//   ElevenLabs Creator: USD$99/mo (~AUD$156) — voice only
+//   Virelle = complete end-to-end film studio. Priced as infrastructure, not a tool.
 
 const SELF_SERVE_TIERS = [
   {
-    id: "amateur",         // Internal DB key — maps to "Creator" display name
-    displayName: "Creator",
+    id: "indie",
+    displayName: "Indie",
     icon: Camera,
     color: "border-emerald-500 ring-2 ring-emerald-500/20",
     buttonColor: "bg-emerald-600 hover:bg-emerald-500",
     accentColor: "text-emerald-400",
-    monthly: 1250,         // AUD 1,250/month
-    annual: 12000,         // AUD 12,000/year
-    credits: 2000,
+    monthly: 149,          // AUD 149/month — accessible entry, competitive with Artlist
+    annual: 1490,          // AUD 1,490/year (~17% saving vs monthly)
+    credits: 500,
     badge: "Entry Tier",
     badgeColor: "bg-emerald-700",
-    audience: "Serious solo filmmakers, creator-directors, paid students, and boutique creators.",
-    description: "Premium creative development for serious solo filmmakers and creator-directors. Includes your core writing, pre-production, story, character, and cinematic planning toolkit. Best for directors developing proof-of-concept films, trailers, shorts, and high-end creator projects.",
+    audience: "Solo filmmakers, students, and creators exploring AI film production.",
+    description: "Everything you need to start making AI films. Core writing, pre-production, character, and cinematic planning tools. Best for directors developing proof-of-concept films, trailers, and shorts.",
     highlights: [
-      "2,000 credits/month included",
+      "500 credits/month (~50 video scenes)",
       "AI Script Writer & Screenplay Tools",
       "Character Creator & DNA Lock",
       "Director's AI Assistant (Virelle Chat)",
       "Location Scout & Mood Board",
-      "Dialogue Editor & Budget Estimator",
       "Shot List Generator",
-      "Up to 2 projects, 5 scenes each",
+      "Up to 2 projects",
       "720p export",
+      "BYOK support (Runway, ElevenLabs, Suno)",
       "Upgrade anytime to unlock video & export",
     ],
     primaryCTA: "Start Creating",
@@ -45,35 +52,61 @@ const SELF_SERVE_TIERS = [
     selfServe: true,
   },
   {
-    id: "independent",     // Internal DB key — maps to "Studio" display name
-    displayName: "Studio",
+    id: "amateur",         // Internal DB key — maps to "Creator" display name
+    displayName: "Creator",
     icon: Film,
     color: "border-amber-500 ring-2 ring-amber-500/20",
     buttonColor: "bg-amber-600 hover:bg-amber-500",
     accentColor: "text-amber-400",
-    monthly: 3900,         // AUD 3,900/month
-    annual: 36000,         // AUD 36,000/year
-    credits: 5500,
-    badge: "Commercial Tier",
+    monthly: 490,          // AUD 490/month — serious indie producers
+    annual: 4900,          // AUD 4,900/year (~17% saving)
+    credits: 2000,
+    badge: "Most Popular",
     badgeColor: "bg-amber-700",
-    audience: "Indie producers, boutique studios, agencies, and commercial directors.",
-    description: "Commercial production workflow for indie producers, boutique studios, and paid client work. Adds fuller video generation, export quality, team collaboration, post-production capabilities, and higher project volume. Best for repeat output, paid campaigns, music videos, branded content, and independent film packages.",
+    audience: "Serious indie producers and boutique creators building paid projects.",
+    description: "Full AI filmmaking pipeline for serious indie producers and creator-directors. Video generation, voice acting, film score, and export. Best for paid projects, music videos, and short films.",
     highlights: [
-      "5,500 credits/month included",
-      "All creative & pre-production tools",
-      "AI Script Writer & Storyboard",
-      "Character Creator & DNA Lock",
-      "Virelle AI Director Chat",
-      "Video Generation & Film Export",
-      "Film Post-Production (ADR, Foley, Score, Mix)",
-      "Subtitles in 130+ languages",
-      "Bulk generation tools",
-      "Ad & Poster Maker",
-      "Up to 25 projects, 90 min per film",
-      "1080p + 4K export",
-      "5 team members",
+      "2,000 credits/month (~200 video scenes)",
+      "Everything in Indie, plus:",
+      "Video Generation (Runway, Sora, Kling, Veo)",
+      "AI Voice Acting (35 emotions, 3,000+ voices)",
+      "AI Film Score (Suno v4)",
+      "Character DNA Lock across all scenes",
+      "Up to 10 projects, 90 min per film",
+      "1080p export",
+      "BYOK support",
     ],
     primaryCTA: "Start Producing",
+    secondaryCTA: "See Workflow Features",
+    selfServe: true,
+  },
+  {
+    id: "independent",     // Internal DB key — maps to "Studio" display name
+    displayName: "Studio",
+    icon: Clapperboard,
+    color: "border-violet-500 ring-2 ring-violet-500/20",
+    buttonColor: "bg-violet-600 hover:bg-violet-500",
+    accentColor: "text-violet-400",
+    monthly: 1490,         // AUD 1,490/month — commercial production
+    annual: 14900,         // AUD 14,900/year (~17% saving)
+    credits: 6000,
+    badge: "Commercial",
+    badgeColor: "bg-violet-700",
+    audience: "Boutique studios, agencies, and commercial directors with repeat pipelines.",
+    description: "Commercial production workflow for boutique studios, agencies, and paid client work. Full post-production, 4K export, team collaboration, and higher project volume.",
+    highlights: [
+      "6,000 credits/month (~600 video scenes)",
+      "Everything in Creator, plus:",
+      "Film Post-Production (ADR, Foley, Score, 3-bus Mix)",
+      "Subtitles in 130+ languages",
+      "VFX Suite & Bulk Generation",
+      "Ad & Poster Maker",
+      "Up to 25 projects, 90 min per film",
+      "4K + ProRes export",
+      "5 team members",
+      "Priority rendering queue",
+    ],
+    primaryCTA: "Scale Production",
     secondaryCTA: "See Workflow Features",
     selfServe: true,
   },
@@ -84,19 +117,19 @@ const ENTERPRISE_TIERS = [
     id: "studio",
     displayName: "Production",
     icon: Building2,
-    color: "border-violet-500 ring-2 ring-violet-500/20 bg-violet-500/5",
-    buttonColor: "bg-violet-600 hover:bg-violet-500",
-    accentColor: "text-violet-400",
-    priceDisplay: "From A$150,000",
-    priceNote: "/year",
+    color: "border-blue-500 ring-2 ring-blue-500/20 bg-blue-500/5",
+    buttonColor: "bg-blue-600 hover:bg-blue-500",
+    accentColor: "text-blue-400",
+    priceDisplay: "From A$4,990",
+    priceNote: "/month",
     credits: 15500,
-    badge: "Most Popular",
-    badgeColor: "bg-violet-700",
+    badge: "Production",
+    badgeColor: "bg-blue-700",
     popular: true,
     audience: "Production companies, VFX teams, and repeat-output studios.",
-    description: "Production infrastructure for companies operating multiple active projects and client pipelines. Adds VFX workflow, sequencing, white-label exports, API access, pipeline integration, and priority rendering. Route all high-intent buyers into a private demo.",
+    description: "Production infrastructure for companies operating multiple active projects and client pipelines. Adds VFX workflow, sequencing, white-label exports, API access, pipeline integration, and priority rendering.",
     highlights: [
-      "15,500 credits/month included",
+      "15,500 credits/month (~1,550 video scenes)",
       "Everything in Studio, plus:",
       "Up to 100 projects, 150 min per film",
       "VFX Suite (Advanced Effects)",
@@ -149,12 +182,12 @@ const ALL_TIERS = [...SELF_SERVE_TIERS, ...ENTERPRISE_TIERS];
 
 // ─── Credit Packs ─────────────────────────────────────────────────────────────
 const CREDIT_PACKS = [
-  { id: "topup_10",   credits: 500,   price: 750,   perCredit: 1.50, label: "Starter Pack",     saving: "" },
-  { id: "topup_50",   credits: 1500,  price: 1800,  perCredit: 1.20, label: "Producer Pack",    saving: "Save 20%" },
-  { id: "topup_100",  credits: 3000,  price: 3150,  perCredit: 1.05, label: "Director Pack",    saving: "Save 30%" },
-  { id: "topup_200",  credits: 6000,  price: 5400,  perCredit: 0.90, label: "Studio Pack",      saving: "Save 40%", popular: true },
-  { id: "topup_500",  credits: 12000, price: 9000,  perCredit: 0.75, label: "Blockbuster Pack", saving: "Save 50%" },
-  { id: "topup_1000", credits: 25000, price: 15000, perCredit: 0.60, label: "Mogul Pack",       saving: "Save 60%" },
+  { id: "topup_10",   credits: 100,   price: 19,    perCredit: 0.19, label: "Starter Pack",     saving: "" },
+  { id: "topup_50",   credits: 300,   price: 49,    perCredit: 0.16, label: "Producer Pack",    saving: "Save 16%" },
+  { id: "topup_100",  credits: 750,   price: 99,    perCredit: 0.13, label: "Director Pack",    saving: "Save 32%" },
+  { id: "topup_200",  credits: 2000,  price: 199,   perCredit: 0.10, label: "Studio Pack",      saving: "Save 47%", popular: true },
+  { id: "topup_500",  credits: 5000,  price: 399,   perCredit: 0.08, label: "Blockbuster Pack", saving: "Save 58%" },
+  { id: "topup_1000", credits: 12000, price: 799,   perCredit: 0.07, label: "Mogul Pack",       saving: "Save 63%" },
 ];
 
 // ─── Credit Cost Reference ────────────────────────────────────────────────────
@@ -181,12 +214,16 @@ const CREDIT_COSTS = [
 // ─── FAQ ──────────────────────────────────────────────────────────────────────
 const FAQ = [
   {
-    q: "Why are Studio and Enterprise plans custom-priced?",
+    q: "How does Virelle's pricing compare to Runway or Kling?",
+    a: "Runway charges AUD$120/mo for ~125 video seconds. Kling charges AUD$104/mo for 3,000 credits. Virelle's Indie plan starts at AUD$149/mo and includes the full production pipeline — screenplay, voice acting, film score, and export. You're not paying for clips; you're paying for a complete film studio.",
+  },
+  {
+    q: "Why are Production and Enterprise plans consultative?",
     a: "Because production volume, credits, support scope, onboarding, integrations, and deployment terms vary significantly across professional teams. We tailor the commercial structure to your pipeline rather than forcing enterprise production into a consumer subscription model.",
   },
   {
     q: "Is Virelle a low-cost creator tool?",
-    a: "No. Virelle is premium cinematic production infrastructure built for serious creative and commercial output. It is priced accordingly — from boutique creator-directors through to major studio and broadcast pipelines.",
+    a: "No. Virelle is premium cinematic production infrastructure built for serious creative and commercial output. It is priced accordingly — from solo filmmakers at AUD$149/mo through to major studio and broadcast pipelines at custom enterprise rates.",
   },
   {
     q: "Can I start smaller and scale later?",
@@ -257,6 +294,7 @@ export default function Pricing() {
 
   // Map DB tier IDs to display names
   const tierDisplayNames: Record<string, string> = {
+    indie: "Indie",
     amateur: "Creator",
     independent: "Studio",
     studio: "Production",
