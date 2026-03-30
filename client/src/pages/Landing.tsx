@@ -245,6 +245,7 @@ export default function Landing() {
   const spotsRemaining = spotsData?.spotsRemaining ?? 19;
   const displayCount = spotsData?.displayCount ?? 31;
   const offerFull = spotsData?.isFull ?? false;
+  const foundingOfferLimit = 50;
 
   const handlePromptSubmit = useCallback(() => {
     if (promptValue.trim()) {
@@ -310,8 +311,8 @@ export default function Landing() {
                 <span className="text-sm font-black uppercase tracking-widest shrink-0 hidden sm:inline">🎬 FOUNDING OFFER</span>
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-sm font-bold">HALF PRICE on your first year's membership</span>
-                  <span className="text-xs font-medium opacity-80">— Limited to first 150 founding directors.</span>
-                  <span className="bg-black/20 text-black text-xs font-black px-2 py-0.5 rounded-full">{spotsRemaining} of 150 spots left</span>
+                  <span className="text-xs font-medium opacity-80">— Limited to first 50 founding directors.</span>
+                  <span className="bg-black/20 text-black text-xs font-black px-2 py-0.5 rounded-full">{spotsRemaining} of {foundingOfferLimit} spots left</span>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
@@ -323,7 +324,7 @@ export default function Landing() {
             </div>
             <div className="max-w-7xl mx-auto mt-1.5">
               <div className="h-1 bg-black/20 rounded-full overflow-hidden">
-                <div className="h-full bg-black/50 rounded-full transition-all duration-1000" style={{ width: `${(displayCount / 150) * 100}%` }} />
+                <div className="h-full bg-black/50 rounded-full transition-all duration-1000" style={{ width: `${(displayCount / foundingOfferLimit) * 100}%` }} />
               </div>
               <div className="flex justify-between text-[10px] font-medium opacity-70 mt-0.5">
                 <span>{displayCount} directors have already joined</span>
@@ -1135,7 +1136,7 @@ export default function Landing() {
               ))}
             </div>
             <div className="text-center mt-8">
-              <p className="text-xs text-foreground/50 mb-3">All prices in AUD. Annual billing saves ~17%. Founding offer: 50% off first year for first 150 directors.</p>
+              <p className="text-xs text-foreground/50 mb-3">All prices in AUD. Annual billing saves ~17%. Founding offer: 50% off first year for first 50 directors.</p>
               <button onClick={() => setLocation("/pricing")} className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-semibold hover:bg-amber-500/20 transition-all">
                 View Full Pricing, Credits &amp; Add-Ons →
               </button>
