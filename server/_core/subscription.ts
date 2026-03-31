@@ -517,10 +517,11 @@ export interface TierPricing {
 /**
  * Platform membership pricing (AUD, in cents).
  *
- * Auteur (amateur):           A$1,250/mo  (A$12,000/yr)  — 2,000 credits/mo
- * Production Pro (independent): A$3,900/mo (A$36,000/yr) — 5,500 credits/mo
- * Studio:                     From A$150,000/yr (consultative) — 15,500 credits/mo
- * Industry Enterprise:        Custom pricing (sales-led)  — 50,500 credits/mo
+ * Indie (indie):              A$149/mo   (A$1,490/yr)   — 500 credits/mo
+ * Creator (amateur):          A$490/mo   (A$4,900/yr)   — 2,000 credits/mo
+ * Studio (independent):       A$1,490/mo (A$14,900/yr)  — 6,000 credits/mo
+ * Production (studio):        From A$4,990/mo (consultative) — 15,500 credits/mo
+ * Enterprise (industry):      Custom pricing (sales-led) — 50,500 credits/mo
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
   // All prices in AUD cents. annual = monthly equivalent when billed annually.
@@ -528,7 +529,7 @@ export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
   amateur:     { monthly: 49000,  annual: 40800,  annualTotal: 490000,  monthlyTotal: 588000,  displayName: "Creator" },
   independent: { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Studio" },
   creator:     { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Studio" },
-  studio:      { monthly: 0, annual: 0, annualTotal: 15000000, monthlyTotal: 0, displayName: "Production" }, // From A$150,000/yr — consultative
+  studio:      { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Production" }, // From A$4,990/mo — consultative, no self-serve checkout
   industry:    { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Enterprise" }, // Custom
   beta:        { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Beta" },
 };

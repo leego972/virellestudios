@@ -301,12 +301,12 @@ export default function DownloadApp() {
 
         {!user && (
           <div className="text-center">
-            <p className="text-gray-400 mb-4">Create a free account to get started</p>
+            <p className="text-gray-400 mb-4">Create your account to get started</p>
             <Button
               onClick={() => setLocation("/register")}
               className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 py-3 rounded-xl text-lg"
             >
-              Sign Up Free — 100 Credits
+              Create Account
             </Button>
           </div>
         )}
