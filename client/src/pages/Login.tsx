@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Eye, EyeOff, Loader2, ArrowRight, UserPlus } from "lucide-react";
-import GoldWatermark from "@/components/GoldWatermark";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import StudioOpener from "@/components/StudioOpener";
 
 export default function Login() {
@@ -61,7 +61,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
-      <GoldWatermark />
+      <GoldWatermarkLaunch />
       <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full max-w-3xl">
         {/* Left side: Login form */}
         <div className="w-full max-w-sm space-y-6">

@@ -1,5 +1,5 @@
-import GoldWatermark from "@/components/GoldWatermark";
-import LeegoFooter from "@/components/LeegoFooter";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 import { Shield, Mail, AlertTriangle, Copyright, Lock, FileText } from "lucide-react";
 import { Link } from "wouter";
 
@@ -10,7 +10,7 @@ export default function IPPolicy() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <GoldWatermark />
+      <GoldWatermarkLaunch />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
         {/* Header */}
         <div className="flex items-center gap-4 mb-10">
@@ -243,7 +243,7 @@ export default function IPPolicy() {
 
         </div>
       </div>
-      <LeegoFooter />
+      <LeegoFooterLaunch />
     </div>
   );
 }

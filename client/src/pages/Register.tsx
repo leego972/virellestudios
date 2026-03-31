@@ -10,8 +10,8 @@ import {
   Eye, EyeOff, Loader2, Gift, ArrowRight, ArrowLeft, Check,
   User, Building2, Palette, ChevronDown, Phone,
 } from "lucide-react";
-import LeegoFooter from "@/components/LeegoFooter";
-import GoldWatermark from "@/components/GoldWatermark";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 
 // ─── Country Codes ───
 
@@ -385,7 +385,7 @@ export default function Register() {
   if (showWelcome) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative">
-        <GoldWatermark />
+        <GoldWatermarkLaunch />
         <div className="w-full max-w-md relative z-10">
           <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10">
             <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-6">
@@ -433,7 +433,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative">
-      <GoldWatermark />
+      <GoldWatermarkLaunch />
       <div className="w-full max-w-md space-y-5 relative z-10">
         {/* Virelle Studios Logo */}
         <div className="flex flex-col items-center gap-3">
@@ -951,7 +951,7 @@ export default function Register() {
 
       {/* Leego Footer */}
       <div className="mt-6">
-        <LeegoFooter />
+        <LeegoFooterLaunch />
       </div>
     </div>
   );

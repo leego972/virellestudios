@@ -6,8 +6,8 @@ import { trpc } from "@/lib/trpc";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
-import LeegoFooter from "@/components/LeegoFooter";
-import GoldWatermark from "@/components/GoldWatermark";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 
 // ─── Tier Definitions ────────────────────────────────────────────────────────
 // All prices in AUD. Indie, Creator, and Studio are self-serve with monthly/annual toggle.
@@ -367,7 +367,7 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <GoldWatermark />
+      <GoldWatermarkLaunch />
 
       {/* ─── Founding Offer Banner ─── */}
       {!offerFull && (
@@ -1100,7 +1100,7 @@ export default function Pricing() {
           )}
         </div>
 
-        <LeegoFooter />
+        <LeegoFooterLaunch />
       </div>
     </div>
   );

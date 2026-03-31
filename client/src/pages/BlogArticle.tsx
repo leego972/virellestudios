@@ -3,7 +3,7 @@ import { useRoute, Link } from "wouter";
 import { ArrowLeft, Calendar, Eye, Tag, Share2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import LeegoFooter from "@/components/LeegoFooter";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 import { useEffect } from "react";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -216,7 +216,7 @@ export default function BlogArticle() {
         </div>
       </article>
 
-      <LeegoFooter />
+      <LeegoFooterLaunch />
     </div>
   );
 }

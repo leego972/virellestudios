@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import { ArrowLeft, Calendar, Eye, Tag, ChevronRight, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import LeegoFooter from "@/components/LeegoFooter";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 
 const CATEGORIES = [
   { key: "all", label: "All Articles" },
@@ -173,7 +173,7 @@ export default function Blog() {
         </Link>
       </section>
 
-      <LeegoFooter />
+      <LeegoFooterLaunch />
     </div>
   );
 }

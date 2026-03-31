@@ -1,15 +1,15 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Shield, AlertTriangle, FileText, Scale, User, MapPin, Film, Copyright, CreditCard, Mail } from "lucide-react";
-import GoldWatermark from "@/components/GoldWatermark";
-import LeegoFooter from "@/components/LeegoFooter";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 
 export default function TermsOfService() {
   const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
-      <GoldWatermark />
+      <GoldWatermarkLaunch />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 relative z-10">
         <Button variant="ghost" size="sm" onClick={() => setLocation("/")} className="mb-8 gap-2">
           <ArrowLeft className="h-4 w-4" /> Back to Home
@@ -458,7 +458,7 @@ export default function TermsOfService() {
 
         </div>
       </div>
-      <LeegoFooter />
+      <LeegoFooterLaunch />
     </div>
   );
 }

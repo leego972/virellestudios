@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
-import GoldWatermark from "@/components/GoldWatermark";
+import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import { Play, Pause, Volume2, VolumeX, Maximize, Film, Clock, Layers, Eye, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 
 /**
@@ -15,7 +15,7 @@ export default function Showcase() {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Golden logo watermark */}
-      <GoldWatermark />
+      <GoldWatermarkLaunch />
 
       {/* Cinematic grain overlay */}
       <div className="fixed inset-0 pointer-events-none z-[1] opacity-[0.03]"

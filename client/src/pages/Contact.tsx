@@ -9,7 +9,7 @@ import { useLocation } from "wouter";
 import { useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import LeegoFooter from "@/components/LeegoFooter";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 
 export default function Contact() {
   const [, setLocation] = useLocation();
@@ -244,7 +244,7 @@ export default function Contact() {
         </div>
       </div>
 
-      <LeegoFooter />
+      <LeegoFooterLaunch />
     </div>
   );
 }
