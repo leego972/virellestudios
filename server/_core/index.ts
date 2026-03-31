@@ -34,6 +34,44 @@ const startedAt = new Date();
 
 // Rate limiting is now handled via centralized Redis-backed rateLimit.ts
 import { rateLimitHeavyAI, rateLimitUpload, rateLimitAI } from "./rateLimit";
+import type { Request, Response, NextFunction } from "express";
+
+/**
+ * Lightweight Express middleware for IP-based rate limiting on public endpoints
+ * (auth, register, password reset). These are unauthenticated routes so the
+ * Redis-backed per-user limiter in rateLimit.ts does not apply.
+ * Uses an in-memory store per-process — acceptable for public auth endpoints
+ * since multi-instance deployments tolerate slightly higher limits on these
+ * low-risk paths. Authenticated AI endpoints use the Redis-backed limiter.
+ */
+function rateLimit(windowMs: number, max: number) {
+  const store = new Map<string, { count: number; resetAt: number }>();
+  // Prune expired entries every 10 minutes to avoid unbounded growth
+  setInterval(() => {
+    const now = Date.now();
+    for (const [ip, entry] of store.entries()) {
+      if (now > entry.resetAt) store.delete(ip);
+    }
+  }, 10 * 60 * 1000).unref();
+  return (req: Request, res: Response, next: NextFunction) => {
+    const ip =
+      (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+      req.socket.remoteAddress ||
+      "unknown";
+    const now = Date.now();
+    const entry = store.get(ip);
+    if (!entry || now > entry.resetAt) {
+      store.set(ip, { count: 1, resetAt: now + windowMs });
+      return next();
+    }
+    entry.count++;
+    if (entry.count > max) {
+      res.status(429).json({ error: "Too many requests. Please try again later." });
+      return;
+    }
+    next();
+  };
+}
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
