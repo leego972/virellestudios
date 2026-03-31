@@ -61,13 +61,11 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     textFields.forEach(assignNullable);
     if (user.lastSignedIn !== undefined) { values.lastSignedIn = user.lastSignedIn; updateSet.lastSignedIn = user.lastSignedIn; }
-    // Auto-assign admin role: check ownerOpenId OR existing role
-    const isAdminByOpenId = user.openId === ENV.ownerOpenId;
-    
+    // Role assignment: strictly database-backed or OWNER_OPEN_ID bootstrap
     if (user.role !== undefined) {
       values.role = user.role;
       updateSet.role = user.role;
-    } else if (isAdminByOpenId) {
+    } else if (user.openId === ENV.ownerOpenId) {
       values.role = 'admin';
       updateSet.role = 'admin';
     }
@@ -126,8 +124,8 @@ export async function createEmailUser(data: {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const openId = `email_${data.email}`; // generate a stable openId from email
-  // Auto-assign admin role for the owner account
-  const isOwner = openId === ENV.ownerOpenId;
+  // Role assignment: strictly database-backed or OWNER_OPEN_ID bootstrap
+  const initialRole = openId === ENV.ownerOpenId ? "admin" : "user";
   
   await db.insert(users).values({
     openId,
@@ -135,7 +133,7 @@ export async function createEmailUser(data: {
     name: data.name,
     passwordHash: data.passwordHash,
     loginMethod: "email",
-    role: isOwner ? "admin" : "user",
+    role: initialRole,
     lastSignedIn: new Date(),
     phone: data.phone || null,
     country: data.country || null,
@@ -1479,8 +1477,7 @@ export async function deductCredits(userId: number, amount: number, action: stri
   if (!user) throw new Error("User not found");
 
   // Entitlement check: Admins bypass credit limits
-  const isExempt = user.role === "admin";
-  if (isExempt) {
+  if (user.role === "admin") {
     const currentBalance = (user.creditBalance as number) || 0;
     // Log the exempt transaction for auditing
     try {

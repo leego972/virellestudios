@@ -125,7 +125,7 @@ export default function Landing() {
             
             <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8">
               CONCEPT TO <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-500">COMPLETE FILM.</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-500">CINEMATIC REALITY.</span>
             </h1>
             
             <p className="max-w-2xl mx-auto text-lg sm:text-xl text-foreground/60 leading-relaxed mb-12">
@@ -154,7 +154,7 @@ export default function Landing() {
                   <ArrowRight className="h-4 w-4 inline ml-1.5" />
                 </button>
               </div>
-              <p className="text-xs text-foreground/40 mt-2">Instant access. Start generating immediately with transparent pricing.</p>
+              <p className="text-xs text-foreground/40 mt-2">Professional production environment. Start your first project with transparent pricing.</p>
             </div>
 
             {/* CTA buttons */}
@@ -169,17 +169,17 @@ export default function Landing() {
               </Button>
             </div>
 
-            {/* Stats bar */}
+            {/* Trust bar */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto opacity-60">
               {[
-                { value: "100's", label: "Films Created", color: "text-amber-400" },
-                { value: "100+", label: "Active Filmmakers", color: "text-green-400" },
-                { value: "High", label: "Platform Uptime", color: "text-blue-400" },
-                { value: "4.9/5", label: "User Rating", color: "text-purple-400" },
+                { value: "Active", label: "Production Pipeline", color: "text-amber-400" },
+                { value: "Global", label: "Filmmaker Community", color: "text-green-400" },
+                { value: "Reliable", label: "Cloud Infrastructure", color: "text-blue-400" },
+                { value: "Premium", label: "User Experience", color: "text-purple-400" },
               ].map(s => (
                 <div key={s.label} className="text-center">
-                  <p className={`text-2xl sm:text-3xl font-black ${s.color}`}>{s.value}</p>
-                  <p className="text-[11px] text-foreground/50 mt-1 uppercase tracking-wider">{s.label}</p>
+                  <p className={`text-xl sm:text-2xl font-black ${s.color}`}>{s.value}</p>
+                  <p className="text-[10px] text-foreground/50 mt-1 uppercase tracking-wider font-bold">{s.label}</p>
                 </div>
               ))}
             </div>
