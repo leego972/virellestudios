@@ -725,14 +725,7 @@ function mapTierName(tier: string | null | undefined): SubscriptionTier {
 }
 
 export function getEffectiveTier(user: User): SubscriptionTier {
-  const ADMIN_EMAILS_INLINE = [
-    "studiosvirelle@gmail.com",
-    "leego972@gmail.com",
-    "brobroplzcheck@gmail.com",
-    "sisteror555@gmail.com",
-    (ENV.adminEmail || "").toLowerCase(),
-  ];
-  const isAdmin = user.role === "admin" || ADMIN_EMAILS_INLINE.includes((user.email || "").toLowerCase());
+  const isAdmin = user.role === "admin";
   if (isAdmin) {
     return "industry";
   }

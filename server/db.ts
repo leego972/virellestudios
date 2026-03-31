@@ -1476,9 +1476,8 @@ export async function deductCredits(userId: number, amount: number, action: stri
 
   if (!user) throw new Error("User not found");
 
-  // Admins have unlimited credits — skip deduction entirely (check both role and email)
-  const isAdminUser = (user.role as string) === "admin" ||
-    ADMIN_EMAILS.includes(((user as any).email || "").toLowerCase());
+  // Admins have unlimited credits — skip deduction entirely
+  const isAdminUser = user.role === "admin";
   if (isAdminUser) {
     console.log(`[Credits] Admin user ${userId}: skipping ${amount} credit deduction for ${action} (unlimited)`);
     // Still log the transaction for auditing, but don't deduct

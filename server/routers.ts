@@ -224,8 +224,7 @@ export const appRouter = router({
         }
 
         // Admin accounts bypass brute-force lockout
-        const adminEmailsList = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "leego972@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
-        const isAdminAccount = adminEmailsList.includes(user.email?.toLowerCase() || "");
+        const isAdminAccount = user.role === "admin";
         if (!isAdminAccount) {
           // Security: Check for brute force / lockout before password check
           const loginPreCheck = trackLoginAttempt(user.id, clientIP, false);
@@ -247,10 +246,9 @@ export const appRouter = router({
         // Mark login as successful
         trackLoginAttempt(user.id, clientIP, true);
         logAuditEvent(user.id, "login_success", clientIP, true);
-        // Auto-promote admin account if not already admin
-        const adminEmails = [(ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase(), "leego972@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
-        const isAdminEmail = adminEmails.includes(user.email?.toLowerCase() || "");
-        if (isAdminEmail && user.role !== "admin") {
+        // Role assignment: owner gets admin role automatically
+        const isOwner = user.openId === ENV.ownerOpenId;
+        if (isOwner && user.role !== "admin") {
           await db.updateUserRole(user.id, "admin");
           user = { ...user, role: "admin" } as typeof user;
         }
@@ -6670,7 +6668,7 @@ Rules:
         generationsRemaining: remaining,
         resetDate: user.monthlyGenerationsResetAt || null,
         limits,
-        isAdmin: user.role === "admin" || user.email === ENV.adminEmail || user.email === "leego972@gmail.com" || user.email === "brobroplzcheck@gmail.com" || user.email === "sisteror555@gmail.com",
+        isAdmin: user.role === "admin",
         stripePublishableKey: ENV.stripePublishableKey,
       };
     }),

@@ -319,7 +319,8 @@ export async function executeDirectorTool(
           return { success: false, error: "This project has no scenes yet. Create some scenes first, then I can generate the screenplay." };
         }
         // Credits: 8 per screenplay generation (same as script_writer_ai)
-        try { await db.deductCredits(ctx.userId, 8, "script_writer_ai", `Director: screenplay for "${project.title}"`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
+        const { CREDIT_COSTS } = await import("./_core/subscription");
+        try { await db.deductCredits(ctx.userId, CREDIT_COSTS.script_writer_ai.cost, "script_writer_ai", `Director: screenplay for "${project.title}"`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
         const sceneBlock = scenes.map((s, i) =>
           `Scene ${i + 1}: "${s.title}" — ${s.description || ""} (${s.locationType || ""}, ${s.timeOfDay || ""}, ${s.mood || ""})`
         ).join("\n");
@@ -373,7 +374,8 @@ export async function executeDirectorTool(
           return { success: false, error: "No scenes found. Add scenes to the project first." };
         }
         // Credits: 5 per shot list generation (same as shot_list_ai)
-        try { await db.deductCredits(ctx.userId, 5, "shot_list_ai", `Director: shot list for "${project.title}"`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
+        const { CREDIT_COSTS } = await import("./_core/subscription");
+        try { await db.deductCredits(ctx.userId, CREDIT_COSTS.shot_list_ai.cost, "shot_list_ai", `Director: shot list for "${project.title}"`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
         const sceneDescriptions = scenes.map((s, i) =>
           `Scene ${i + 1} "${s.title}": ${s.description} | Time: ${s.timeOfDay} | Location: ${s.locationType} | Camera: ${s.cameraAngle} | Lighting: ${s.lighting} | Mood: ${s.mood}`
         ).join("\n");
@@ -462,7 +464,8 @@ export async function executeDirectorTool(
         const scenes = await db.getProjectScenes(projectId);
         const locationTypes = [...new Set(scenes.map((s) => s.locationType).filter(Boolean))];
         // Credits: 3 per location scout (same as location_scout_ai)
-        try { await db.deductCredits(ctx.userId, 3, "location_scout_ai", `Director: location suggestions for "${project.title}"`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
+        const { CREDIT_COSTS } = await import("./_core/subscription");
+        try { await db.deductCredits(ctx.userId, CREDIT_COSTS.location_scout_ai.cost, "location_scout_ai", `Director: location suggestions for "${project.title}"`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
         const result = await invokeLLM({
           messages: [
             {
@@ -559,7 +562,8 @@ export async function executeDirectorTool(
         if (!scene) return { success: false, error: "Scene not found." };
         const language = String(args.language || "en");
         // Credits: 8 per subtitle generation (same as subtitle_gen_ai)
-        try { await db.deductCredits(ctx.userId, 8, "subtitle_gen_ai", `Director: subtitles for scene ${sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
+        const { CREDIT_COSTS } = await import("./_core/subscription");
+        try { await db.deductCredits(ctx.userId, CREDIT_COSTS.subtitle_gen_ai.cost, "subtitle_gen_ai", `Director: subtitles for scene ${sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
         const result = await invokeLLM({
           messages: [
             {
@@ -670,7 +674,8 @@ export async function executeDirectorTool(
         if (!scene) return { success: false, error: "Scene not found." };
         const characters = await db.getProjectCharacters(scene.projectId);
         // Credits: 5 per dialogue generation (same as dialogue_editor_ai)
-        try { await db.deductCredits(ctx.userId, 5, "dialogue_editor_ai", `Director: dialogue for scene ${sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
+        const { CREDIT_COSTS } = await import("./_core/subscription");
+        try { await db.deductCredits(ctx.userId, CREDIT_COSTS.dialogue_editor_ai.cost, "dialogue_editor_ai", `Director: dialogue for scene ${sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
         const result = await invokeLLM({
           messages: [
             {
@@ -745,7 +750,8 @@ export async function executeDirectorTool(
         const scenes = await db.getProjectScenes(projectId);
         const characters = await db.getProjectCharacters(projectId);
         // Credits: 5 per continuity check (same as continuity_check_ai)
-        try { await db.deductCredits(ctx.userId, 5, "continuity_check_ai", `Director: continuity check for "${project.title}"`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
+        const { CREDIT_COSTS } = await import("./_core/subscription");
+        try { await db.deductCredits(ctx.userId, CREDIT_COSTS.continuity_check_ai.cost, "continuity_check_ai", `Director: continuity check for "${project.title}"`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message }; }
         const result = await invokeLLM({
           messages: [
             {
