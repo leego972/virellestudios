@@ -402,10 +402,42 @@ async function startServer() {
     });
   });
 
+  // ─── Admin Protection Middleware ──────────────────────────────────────────
+  const requireAdmin = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const { createContext } = await import("./context");
+      const ctx = await createContext({ req, res } as any);
+      if (!ctx.user || ctx.user.role !== "admin") {
+        console.warn(`[Admin] Unauthorized access attempt to ${req.path} from ${req.ip}`);
+        return res.status(403).json({ error: "Forbidden: Admin access required" });
+      }
+      (req as any).user = ctx.user;
+      next();
+    } catch (err) {
+      res.status(500).json({ error: "Internal server error during admin check" });
+    }
+  };
+
+  const logAdminAction = async (req: express.Request, action: string, details: any) => {
+    try {
+      const { logAuditEvent } = await import("./securityEngine");
+      const user = (req as any).user;
+      await logAuditEvent({
+        userId: user?.id || 0,
+        action: `ADMIN_${action}`,
+        details: { ...details, ip: req.ip, path: req.path },
+        severity: "high"
+      });
+    } catch (err) {
+      console.error("[Admin] Failed to log audit event:", err);
+    }
+  };
+
   // Manual migration trigger (admin only)
-  app.post("/api/admin/migrate", async (_req, res) => {
+  app.post("/api/admin/migrate", requireAdmin, async (req, res) => {
     try {
       await runAutoMigration();
+      await logAdminAction(req, "MIGRATE", { status: "success" });
       res.json({ status: "ok", message: "Migration completed" });
     } catch (err: any) {
       res.status(500).json({ status: "error", message: err.message });
@@ -413,7 +445,7 @@ async function startServer() {
   });
 
   // Force-fix: directly add missing scene columns (bypasses INFORMATION_SCHEMA)
-  app.post("/api/admin/fix-scenes", async (_req, res) => {
+  app.post("/api/admin/fix-scenes", requireAdmin, async (req, res) => {
     const { getDb } = await import("../db");
     const { sql } = await import("drizzle-orm");
     const db = await getDb();
@@ -433,11 +465,12 @@ async function startServer() {
         results.push(`${col}: ${e.message?.slice(0, 100)}`);
       }
     }
+    await logAdminAction(req, "FIX_SCENES", { results });
     res.json({ status: "ok", results });
   });
 
   // Admin: Grant credits to a user
-  app.post("/api/admin/grant-credits", express.json(), async (req, res) => {
+  app.post("/api/admin/grant-credits", express.json(), requireAdmin, async (req, res) => {
     try {
       const { userId, amount } = req.body;
       if (!userId || !amount) {
@@ -450,6 +483,7 @@ async function startServer() {
       await db!.execute(sql.raw(`UPDATE users SET creditBalance = creditBalance + ${parseInt(amount)} WHERE id = ${parseInt(userId)}`));
       const [rows] = await db!.execute(sql.raw(`SELECT creditBalance FROM users WHERE id = ${parseInt(userId)}`));
       const newBalance = (rows as any)?.[0]?.creditBalance || 0;
+      await logAdminAction(req, "GRANT_CREDITS", { targetUserId: userId, amount, newBalance });
       res.json({ status: "ok", userId: parseInt(userId), creditsAdded: parseInt(amount), newBalance });
     } catch (e: any) {
       res.status(500).json({ error: e.message });
@@ -458,7 +492,7 @@ async function startServer() {
 
 
   // Admin: Reset project (delete scenes, update duration, reset status)
-  app.post("/api/admin/reset-project", express.json(), async (req, res) => {
+  app.post("/api/admin/reset-project", express.json(), requireAdmin, async (req, res) => {
     try {
       const { projectId, duration } = req.body;
       if (!projectId) { res.status(400).json({ error: "projectId required" }); return; }
@@ -470,6 +504,7 @@ async function startServer() {
       // Update duration and reset status
       const dur = duration ? parseInt(duration) : 1;
       await db!.execute(sql.raw(`UPDATE projects SET duration = ${dur}, status = 'draft' WHERE id = ${parseInt(projectId)}`));
+      await logAdminAction(req, "RESET_PROJECT", { projectId, duration: dur });
       res.json({ status: "ok", projectId: parseInt(projectId), duration: dur, scenesDeleted: true });
     } catch (e: any) {
       res.status(500).json({ error: e.message });

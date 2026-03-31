@@ -726,7 +726,7 @@ export const appRouter = router({
         }),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAICharacterGen", "AI Character Generation");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character generation: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -793,7 +793,7 @@ export const appRouter = router({
         additionalNotes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAICharacterGen", "AI Character Generation");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character from photo: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -1340,7 +1340,7 @@ export const appRouter = router({
     generatePreview: creationProcedure
       .input(z.object({ sceneId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
         // Credits: deduct for preview image
@@ -1422,7 +1422,7 @@ export const appRouter = router({
         projectId: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
         try { await db.deductCredits(ctx.user.id, 1, "nano_banana_image", `Nano Banana image generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -1468,7 +1468,7 @@ export const appRouter = router({
     bulkGeneratePreviews: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitHeavyAI(ctx.user.id);
+        await rateLimitHeavyAI(ctx.user.id);
         requireFeature(ctx.user, "canUseBulkGenerate", "Bulk Generate Previews");
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
@@ -1549,7 +1549,7 @@ export const appRouter = router({
     generateVideo: creationProcedure
       .input(z.object({ sceneId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitHeavyAI(ctx.user.id);
+        await rateLimitHeavyAI(ctx.user.id);
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
         const scene = await db.getSceneById(input.sceneId);
@@ -1806,7 +1806,7 @@ export const appRouter = router({
     bulkGenerateVideos: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitHeavyAI(ctx.user.id);
+        await rateLimitHeavyAI(ctx.user.id);
         requireFeature(ctx.user, "canUseBulkGenerate", "Bulk Generate Videos");
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
@@ -2137,7 +2137,7 @@ Available fields you can update:
         label: z.string().max(255).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitUpload(ctx.user.id);
+        await rateLimitUpload(ctx.user.id);
         const buffer = Buffer.from(input.base64, "base64");
         const key = `footage/${ctx.user.id}/${nanoid()}-${input.filename}`;
         const { url } = await storagePut(key, buffer, input.contentType);
@@ -2163,7 +2163,7 @@ Available fields you can update:
         sceneId: z.number(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitUpload(ctx.user.id);
+        await rateLimitUpload(ctx.user.id);
         const buffer = Buffer.from(input.base64, "base64");
         const key = `reference-images/${ctx.user.id}/${nanoid()}-${input.filename}`;
         const { url } = await storagePut(key, buffer, input.contentType);
@@ -2197,7 +2197,7 @@ Available fields you can update:
     quickGenerate: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitHeavyAI(ctx.user.id);
+        await rateLimitHeavyAI(ctx.user.id);
         // Security: Track generation and check for abuse
         const genIP = ctx.req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || ctx.req.socket.remoteAddress || "unknown";
         const genCheck = trackGeneration(ctx.user.id, genIP, "quickGenerate");
@@ -2662,7 +2662,7 @@ Break this into 8-15 scenes. For each scene, provide:
     generateTrailer: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitHeavyAI(ctx.user.id);
+        await rateLimitHeavyAI(ctx.user.id);
         requireFeature(ctx.user, "canUseTrailerGeneration", "Trailer Generation");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.trailer_gen.cost, "trailer_gen", `Trailer generation for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -2822,7 +2822,7 @@ Break this into 8-15 scenes. For each scene, provide:
         useSceneContinuity: z.boolean().default(true),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitHeavyAI(ctx.user.id);
+        await rateLimitHeavyAI(ctx.user.id);
         requireFeature(ctx.user, "canUseFullFilmGeneration", "Full Film Generation");
 
         const project = await db.getProjectById(input.projectId, ctx.user.id);
@@ -3183,7 +3183,7 @@ Break this into 8-15 scenes. For each scene, provide:
         instructions: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAIScriptGen", "AI Script Generation");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.script_writer_ai.cost, "script_writer_ai", `AI script generation for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -3425,7 +3425,7 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         instructions: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAIScriptGen", "AI Script Assistant");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.dialogue_editor_ai.cost, "dialogue_editor_ai", `AI script assist: ${input.action}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -3745,7 +3745,7 @@ FORMAT RULES (always apply):
     generate: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseShotList", "Shot List Generator");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.shot_list_ai.cost, "shot_list_ai", `Shot list generation for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -3832,7 +3832,7 @@ FORMAT RULES (always apply):
     check: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseContinuityCheck", "Continuity Check");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.continuity_check_ai.cost, "continuity_check_ai", `Continuity check for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -3974,7 +3974,7 @@ FORMAT RULES (always apply):
     aiSuggest: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneDescription: z.string().optional() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAILocationSuggest", "AI Location Suggestions");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.location_scout_ai.cost, "location_scout_ai", `Location suggestions for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -4174,7 +4174,7 @@ FORMAT RULES (always apply):
     aiGenerate: protectedProcedure
       .input(z.object({ projectId: z.number(), language: z.string().default("en"), languageName: z.string().default("English") }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAISubtitleGen", "AI Subtitle Generation");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.subtitle_gen_ai.cost, "subtitle_gen_ai", `Subtitle generation for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -4256,7 +4256,7 @@ FORMAT RULES (always apply):
         targetLanguageName: z.string().min(1).max(128),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAISubtitleGen", "AI Subtitle Translation");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.subtitle_gen_ai.cost, "subtitle_gen_ai", `Subtitle translation to ${input.targetLanguageName}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -4386,7 +4386,7 @@ FORMAT RULES (always apply):
         direction: z.string().optional(), // e.g. "character is nervous"
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAIDialogueGen", "AI Dialogue Suggestions");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.dialogue_editor_ai.cost, "dialogue_editor_ai", `Dialogue suggestion for ${input.characterName}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -4470,7 +4470,7 @@ Generate 3 dialogue line options for this character.`,
         sceneDescription: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAIDialogueGen", "AI Scene Dialogue Generation");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.dialogue_editor_ai.cost, "dialogue_editor_ai", `Scene dialogue generation for scene ${input.sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -4597,7 +4597,7 @@ Generate the full dialogue for this scene.`,
     generate: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAIBudgetGen", "AI Budget Generation");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.budget_estimate_ai.cost, "budget_estimate_ai", `Budget estimate for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -6142,7 +6142,7 @@ Rules:
         templateType: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_gen.cost, "ad_poster_gen", `Ad/poster image generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -6161,7 +6161,7 @@ Rules:
         templateType: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_copy_gen.cost, "ad_poster_copy_gen", `Ad/poster copy: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -6227,7 +6227,7 @@ Rules:
         platform: z.string().default("youtube"),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         requireGenerationQuota(ctx.user);
         await db.incrementGenerationCount(ctx.user.id);
@@ -6270,7 +6270,7 @@ Rules:
         description: z.string(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.tagline_variants_gen.cost, "tagline_variants_gen", `Tagline variants for: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({
@@ -6297,7 +6297,7 @@ Rules:
         mood: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.brand_kit_gen.cost, "brand_kit_gen", `Brand kit for: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({
@@ -6320,7 +6320,7 @@ Rules:
         logline: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        rateLimitAI(ctx.user.id);
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAdPosterMaker", "Ad & Poster Maker");
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.influencer_kit_gen.cost, "influencer_kit_gen", `Influencer kit for: ${input.title}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({

@@ -1,35 +1,53 @@
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./env";
+import Redis from "ioredis";
 
 /**
- * Simple in-memory rate limiter.
- * For production at scale, replace with Redis-based rate limiting.
+ * Production-safe rate limiting using Redis.
+ * Falls back to in-memory Map if Redis is not available (e.g. in dev).
  */
+
+let redis: Redis | null = null;
+
+if (ENV.redisUrl) {
+  try {
+    redis = new Redis(ENV.redisUrl, {
+      maxRetriesPerRequest: 1,
+      connectTimeout: 2000,
+    });
+    redis.on("error", (err) => {
+      console.warn("[RateLimit] Redis error:", err.message);
+    });
+  } catch (err) {
+    console.warn("[RateLimit] Failed to initialize Redis:", err);
+  }
+} else {
+  console.warn("[RateLimit] REDIS_URL not set. Falling back to in-memory storage (not safe for multi-instance production).");
+}
 
 interface RateLimitEntry {
   count: number;
   resetAt: number;
 }
 
-const store = new Map<string, RateLimitEntry>();
+const memoryStore = new Map<string, RateLimitEntry>();
 
 // Admin user IDs cache — populated on first admin check
 const adminUserIds = new Set<number>();
 
 /**
  * Register a user ID as admin so rate limits are bypassed.
- * Called from context or login when an admin user is detected.
  */
 export function registerAdminForRateLimit(userId: number): void {
   adminUserIds.add(userId);
 }
 
-// Clean up expired entries every 5 minutes
+// Clean up expired memory entries every 5 minutes
 setInterval(() => {
   const now = Date.now();
-  for (const [key, entry] of Array.from(store.entries())) {
+  for (const [key, entry] of Array.from(memoryStore.entries())) {
     if (now > entry.resetAt) {
-      store.delete(key);
+      memoryStore.delete(key);
     }
   }
 }, 5 * 60 * 1000);
@@ -37,27 +55,50 @@ setInterval(() => {
 /**
  * Check rate limit for a given user + action combination.
  * Admin users are exempt from all rate limits.
- * @param userId - The user's ID
- * @param action - The action category (e.g., "ai-generation", "upload")
- * @param maxRequests - Maximum requests allowed in the window
- * @param windowMs - Time window in milliseconds
- * @throws TRPCError with TOO_MANY_REQUESTS code if limit exceeded
  */
-export function checkRateLimit(
+export async function checkRateLimit(
   userId: number,
   action: string,
   maxRequests: number,
   windowMs: number,
-): void {
+): Promise<void> {
   // Admin users bypass all rate limits
   if (adminUserIds.has(userId)) return;
 
-  const key = `${userId}:${action}`;
+  const key = `rl:${userId}:${action}`;
   const now = Date.now();
-  const entry = store.get(key);
 
+  if (redis) {
+    try {
+      // Use a Lua script or simple multi for atomic increment + expire
+      const results = await redis
+        .multi()
+        .incr(key)
+        .pexpire(key, windowMs)
+        .exec();
+
+      if (results && results[0] && results[0][1]) {
+        const count = results[0][1] as number;
+        if (count > maxRequests) {
+          const ttl = await redis.pttl(key);
+          const retryAfterSec = Math.ceil(Math.max(ttl, 0) / 1000);
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: `Rate limit exceeded. Please try again in ${retryAfterSec} seconds.`,
+          });
+        }
+      }
+      return;
+    } catch (err) {
+      if (err instanceof TRPCError) throw err;
+      console.error("[RateLimit] Redis check failed, falling back to memory:", err);
+    }
+  }
+
+  // Fallback to in-memory store
+  const entry = memoryStore.get(key);
   if (!entry || now > entry.resetAt) {
-    store.set(key, { count: 1, resetAt: now + windowMs });
+    memoryStore.set(key, { count: 1, resetAt: now + windowMs });
     return;
   }
 
@@ -74,16 +115,16 @@ export function checkRateLimit(
 // ─── Preset rate limit configs ───
 
 /** AI generation endpoints: 10 requests per minute */
-export function rateLimitAI(userId: number) {
-  checkRateLimit(userId, "ai-generation", 10, 60 * 1000);
+export async function rateLimitAI(userId: number) {
+  await checkRateLimit(userId, "ai-generation", 10, 60 * 1000);
 }
 
 /** File upload endpoints: 20 requests per minute */
-export function rateLimitUpload(userId: number) {
-  checkRateLimit(userId, "upload", 20, 60 * 1000);
+export async function rateLimitUpload(userId: number) {
+  await checkRateLimit(userId, "upload", 20, 60 * 1000);
 }
 
 /** Heavy generation (quickGenerate, trailer): 3 per minute */
-export function rateLimitHeavyAI(userId: number) {
-  checkRateLimit(userId, "heavy-ai", 3, 60 * 1000);
+export async function rateLimitHeavyAI(userId: number) {
+  await checkRateLimit(userId, "heavy-ai", 3, 60 * 1000);
 }

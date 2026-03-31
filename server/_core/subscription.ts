@@ -17,7 +17,7 @@ export const stripe = ENV.stripeSecretKey
 //   "independent" → "Studio"      (A$1,490/mo — 6,000 credits)
 //   "studio"      → "Production"  (From A$4,990/mo — 15,500 credits)
 //   "industry"    → "Enterprise"  (Custom)
-export type SubscriptionTier = "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
+export type SubscriptionTier = "indie" | "amateur" | "independent" | "studio" | "industry" | "beta";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -87,15 +87,14 @@ export interface TierLimits {
  * Pricing architecture (AUD):
  *
  * MEMBERSHIP TIERS (required to use the platform):
- *   Creator (DB: "amateur")            — A$1,250/month  or A$12,000/year  — 2,000 credits/month
- *   Studio (DB: "independent")— A$3,900/month  or A$36,000/year  — 5,500 credits/month
- *   Production (DB: "studio")             — From A$150,000/year (consultative) — 15,500 credits/month
- *   Enterprise (DB: "industry") — Custom pricing (sales-led)    — 50,500 credits/month
+ *   Indie (DB: "indie")                — A$149/month   or A$1,490/year   — 500 credits/month
+ *   Creator (DB: "amateur")            — A$490/month   or A$4,900/year   — 2,000 credits/month
+ *   Studio (DB: "independent")         — A$1,490/month or A$14,900/year  — 6,000 credits/month
+ *   Production (DB: "studio")          — From A$4,990/month (consultative) — 15,500 credits/month
+ *   Enterprise (DB: "industry")        — Custom pricing (sales-led)      — 50,500 credits/month
  *
  * FOUNDING MEMBER OFFER: 50% off first year on annual billing (VIRELLE_FOUNDER_50 coupon)
  *   Applies to Creator and Studio annual plans only.
- *   Creator founder price: A$6,000 first year (then A$12,000/yr)
- *   Studio founder price: A$18,000 first year (then A$36,000/yr)
  *
  * CREDITS SYSTEM — Every action costs credits:
  *   Create New Project:                      FREE
@@ -116,15 +115,14 @@ export interface TierLimits {
  *   Trailer Generation:                      20 credits
  *   Ad/Poster Generation:                     5 credits
  *   Export Final Film:                        8 credits
- *   Movie Export:                             5 credits
  *
  * CREDIT PACKS (AUD — one-time top-ups):
- *   Starter Pack     — 500 credits    A$750    (A$1.50/credit)
- *   Producer Pack    — 1,500 credits  A$1,800  (A$1.20/credit — Save 20%)
- *   Director Pack    — 3,000 credits  A$3,150  (A$1.05/credit — Save 30%)
- *   Studio Pack      — 6,000 credits  A$5,400  (A$0.90/credit — Save 40%)
- *   Blockbuster Pack — 12,000 credits A$9,000  (A$0.75/credit — Save 50%)
- *   Mogul Pack       — 25,000 credits A$15,000 (A$0.60/credit — Save 60%)
+ *   Starter Pack     — 100 credits    A$19     (A$0.19/credit)
+ *   Producer Pack    — 300 credits    A$49     (A$0.16/credit)
+ *   Director Pack    — 750 credits    A$99     (A$0.13/credit)
+ *   Studio Pack      — 2,000 credits  A$199    (A$0.10/credit)
+ *   Blockbuster Pack — 5,000 credits  A$399    (A$0.08/credit)
+ *   Mogul Pack       — 12,000 credits A$799    (A$0.07/credit)
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
@@ -191,44 +189,44 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
 
   // ─── CREATOR (DB: "amateur") ─── A$490/month — 2,000 credits/month ──────────
   amateur: {
-    maxProjects: 2,
-    maxCharactersPerProject: 5,
-    maxScenesPerProject: 5,
-    maxGenerationsPerMonth: 20,
-    maxMovieExports: 0,
+    maxProjects: 10,
+    maxCharactersPerProject: 10,
+    maxScenesPerProject: 20,
+    maxGenerationsPerMonth: 100,
+    maxMovieExports: 10,
     maxCollaboratorsPerProject: 1,
-    maxScriptsPerProject: 1,
-    maxStorageMB: 1000, // 1 GB
+    maxScriptsPerProject: 5,
+    maxStorageMB: 10000, // 10 GB
     canUseQuickGenerate: true,
     canUseTrailerGeneration: false,
     canUseDirectorAssistant: true,
     canUseAdPosterMaker: false,
     canUseBudgetEstimator: true,
-    canUseColorGrading: false,
-    canUseSoundEffects: false,
-    canUseSubtitles: false,
+    canUseColorGrading: true,
+    canUseSoundEffects: true,
+    canUseSubtitles: true,
     canUseDialogueEditor: true,
     canUseLocationScout: true,
     canUseMoodBoard: true,
     canUseShotList: true,
-    canUseContinuityCheck: false,
+    canUseContinuityCheck: true,
     canUseScriptWriter: true,
-    canUseStoryboard: false,
+    canUseStoryboard: true,
     canUseCollaboration: false,
-    canExportMovies: false,
-    canExportHD: false,
+    canExportMovies: true,
+    canExportHD: true,
     canUseAICharacterGen: true,
     canUseAIScriptGen: true,
     canUseAIDialogueGen: true,
-    canUseAIBudgetGen: false,
-    canUseAISubtitleGen: false,
+    canUseAIBudgetGen: true,
+    canUseAISubtitleGen: true,
     canUseAILocationSuggest: true,
-    canUseFullFilmGeneration: false,
-    canUseAIVoiceActing: false,
-    canUseAISoundtrack: false,
-    canUseCharacterConsistency: false,
-    canUseSceneContinuity: false,
-    canUseClipChaining: false,
+    canUseFullFilmGeneration: true,
+    canUseAIVoiceActing: true,
+    canUseAISoundtrack: true,
+    canUseCharacterConsistency: true,
+    canUseSceneContinuity: true,
+    canUseClipChaining: true,
     canUseVisualEffects: false,
     canUseBulkGenerate: false,
     canUseMultiShotSequencer: false,
@@ -240,10 +238,10 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAPIAccess: false,
     canUseCustomFineTuning: false,
     canUsePriorityRendering: false,
-    resolution: "720p",
-    quality: ["standard"],
-    maxDurationMinutes: 5,
-    maxClipsPerScene: 2,
+    resolution: "1080p",
+    quality: ["standard", "high"],
+    maxDurationMinutes: 90,
+    maxClipsPerScene: 5,
     monthlyCredits: 2000,
   },
 
@@ -252,11 +250,11 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     maxProjects: 25,
     maxCharactersPerProject: 30,
     maxScenesPerProject: 90,
-    maxGenerationsPerMonth: 200,
-    maxMovieExports: 25,
+    maxGenerationsPerMonth: 500,
+    maxMovieExports: 50,
     maxCollaboratorsPerProject: 5,
-    maxScriptsPerProject: 15,
-    maxStorageMB: 50000, // 50 GB
+    maxScriptsPerProject: 25,
+    maxStorageMB: 100000, // 100 GB
     canUseQuickGenerate: true,
     canUseTrailerGeneration: true,
     canUseDirectorAssistant: true,
@@ -287,21 +285,21 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseCharacterConsistency: true,
     canUseSceneContinuity: true,
     canUseClipChaining: true,
-    canUseVisualEffects: false,
-    canUseBulkGenerate: false,
-    canUseMultiShotSequencer: false,
-    canUseLiveActionPlate: false,
-    canUseNLEExport: false,
-    canUseAICasting: false,
+    canUseVisualEffects: true,
+    canUseBulkGenerate: true,
+    canUseMultiShotSequencer: true,
+    canUseLiveActionPlate: true,
+    canUseNLEExport: true,
+    canUseAICasting: true,
     canExportUltraHD: true,
     canUseWhiteLabel: false,
     canUseAPIAccess: false,
     canUseCustomFineTuning: false,
-    canUsePriorityRendering: false,
+    canUsePriorityRendering: true,
     resolution: "4k",
-    quality: ["standard", "high"],
+    quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 90,
-    maxClipsPerScene: 8,
+    maxClipsPerScene: 10,
     monthlyCredits: 6000,
   },
 
@@ -310,39 +308,11 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     maxProjects: 25,
     maxCharactersPerProject: 30,
     maxScenesPerProject: 90,
-    maxGenerationsPerMonth: 200,
-    maxMovieExports: 25,
+    maxGenerationsPerMonth: 500,
+    maxMovieExports: 50,
     maxCollaboratorsPerProject: 5,
-    maxScriptsPerProject: 15,
-    maxStorageMB: 50000,
-    canUseQuickGenerate: true, canUseTrailerGeneration: true, canUseDirectorAssistant: true,
-    canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
-    canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
-    canUseLocationScout: true, canUseMoodBoard: true, canUseShotList: true,
-    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true,
-    canUseCollaboration: true, canExportMovies: true, canExportHD: true,
-    canUseAICharacterGen: true, canUseAIScriptGen: true, canUseAIDialogueGen: true,
-    canUseAIBudgetGen: true, canUseAISubtitleGen: true, canUseAILocationSuggest: true,
-    canUseFullFilmGeneration: true, canUseAIVoiceActing: true, canUseAISoundtrack: true,
-    canUseCharacterConsistency: true, canUseSceneContinuity: true, canUseClipChaining: true,
-    canUseVisualEffects: false, canUseBulkGenerate: false, canUseMultiShotSequencer: false,
-    canUseLiveActionPlate: false, canUseNLEExport: false, canUseAICasting: false,
-    canExportUltraHD: true, canUseWhiteLabel: false, canUseAPIAccess: false,
-    canUseCustomFineTuning: false, canUsePriorityRendering: false,
-    resolution: "4k", quality: ["standard", "high"], maxDurationMinutes: 90, maxClipsPerScene: 8,
-    monthlyCredits: 6000,
-  },
-
-  // ─── PRODUCTION (DB: "studio") ─── From A$150,000/year — 15,500 credits/month ───
-  studio: {
-    maxProjects: 100,
-    maxCharactersPerProject: 100,
-    maxScenesPerProject: 150,
-    maxGenerationsPerMonth: 1000,
-    maxMovieExports: 100,
-    maxCollaboratorsPerProject: 25,
-    maxScriptsPerProject: 50,
-    maxStorageMB: 250000, // 250 GB
+    maxScriptsPerProject: 25,
+    maxStorageMB: 100000, // 100 GB
     canUseQuickGenerate: true, canUseTrailerGeneration: true, canUseDirectorAssistant: true,
     canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
     canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
@@ -354,23 +324,51 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseFullFilmGeneration: true, canUseAIVoiceActing: true, canUseAISoundtrack: true,
     canUseCharacterConsistency: true, canUseSceneContinuity: true, canUseClipChaining: true,
     canUseVisualEffects: true, canUseBulkGenerate: true, canUseMultiShotSequencer: true,
-    canUseLiveActionPlate: false, canUseNLEExport: true, canUseAICasting: true,
+    canUseLiveActionPlate: true, canUseNLEExport: true, canUseAICasting: true,
+    canExportUltraHD: true, canUseWhiteLabel: false, canUseAPIAccess: false,
+    canUseCustomFineTuning: false, canUsePriorityRendering: true,
+    resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 90, maxClipsPerScene: 10,
+    monthlyCredits: 6000,
+  },
+
+  // ─── PRODUCTION (DB: "studio") ─── From A$4,990/month — 15,500 credits/month ───
+  studio: {
+    maxProjects: 100,
+    maxCharactersPerProject: 100,
+    maxScenesPerProject: 300,
+    maxGenerationsPerMonth: 2000,
+    maxMovieExports: 200,
+    maxCollaboratorsPerProject: 25,
+    maxScriptsPerProject: 100,
+    maxStorageMB: 500000, // 500 GB
+    canUseQuickGenerate: true, canUseTrailerGeneration: true, canUseDirectorAssistant: true,
+    canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
+    canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
+    canUseLocationScout: true, canUseMoodBoard: true, canUseShotList: true,
+    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true,
+    canUseCollaboration: true, canExportMovies: true, canExportHD: true,
+    canUseAICharacterGen: true, canUseAIScriptGen: true, canUseAIDialogueGen: true,
+    canUseAIBudgetGen: true, canUseAISubtitleGen: true, canUseAILocationSuggest: true,
+    canUseFullFilmGeneration: true, canUseAIVoiceActing: true, canUseAISoundtrack: true,
+    canUseCharacterConsistency: true, canUseSceneContinuity: true, canUseClipChaining: true,
+    canUseVisualEffects: true, canUseBulkGenerate: true, canUseMultiShotSequencer: true,
+    canUseLiveActionPlate: true, canUseNLEExport: true, canUseAICasting: true,
     canExportUltraHD: true, canUseWhiteLabel: true, canUseAPIAccess: true,
     canUseCustomFineTuning: false, canUsePriorityRendering: true,
-    resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 150, maxClipsPerScene: 12,
+    resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 150, maxClipsPerScene: 20,
     monthlyCredits: 15500,
   },
 
   // ─── ENTERPRISE (DB: "industry") ─── Custom pricing — 50,500 credits/month ───
   industry: {
-    maxProjects: -1,
-    maxCharactersPerProject: -1,
-    maxScenesPerProject: -1,
-    maxGenerationsPerMonth: -1,
-    maxMovieExports: -1,
-    maxCollaboratorsPerProject: -1,
-    maxScriptsPerProject: -1,
-    maxStorageMB: -1,
+    maxProjects: 1000,
+    maxCharactersPerProject: 1000,
+    maxScenesPerProject: 1000,
+    maxGenerationsPerMonth: 10000,
+    maxMovieExports: 1000,
+    maxCollaboratorsPerProject: 1000,
+    maxScriptsPerProject: 1000,
+    maxStorageMB: 5000000, // 5 TB
     canUseQuickGenerate: true,
     canUseTrailerGeneration: true,
     canUseDirectorAssistant: true,
@@ -415,7 +413,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     resolution: "4k",
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
-    maxClipsPerScene: 12,
+    maxClipsPerScene: 50,
     monthlyCredits: 50500,
   },
 

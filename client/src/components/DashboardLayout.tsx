@@ -1,5 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import LeegoFooter from "@/components/LeegoFooter";
+import LeegoFooter from "@/components/LeegoFooterLaunch";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -537,22 +537,22 @@ function DashboardLayoutContent({
           </div>
         )}
         <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
-          {/* Gold VS watermark branding — bottom-right corner, never blocks content */}
+          {/* Gold VS watermark branding — bottom-right corner, subtle and non-intrusive */}
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
-            {/* Dark mode: golden logo on dark background */}
+            {/* Dark mode: soft golden logo */}
             <img
               src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
               alt=""
-              className="hidden dark:block w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] object-contain opacity-[0.10]"
-              style={{ filter: "sepia(1) saturate(4) brightness(1.3) hue-rotate(10deg)" }}
+              className="hidden dark:block w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.055]"
+              style={{ filter: "sepia(1) saturate(2.6) brightness(1.1) hue-rotate(8deg)" }}
               draggable={false}
             />
-            {/* Light mode: golden logo with thin black outline for visibility on white */}
+            {/* Light mode: very faint golden logo */}
             <img
               src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
               alt=""
-              className="block dark:hidden w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] object-contain opacity-[0.12]"
-              style={{ filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg) drop-shadow(0 0 1px rgba(0,0,0,0.6)) drop-shadow(0 0 2px rgba(0,0,0,0.3))" }}
+              className="block dark:hidden w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain opacity-[0.06]"
+              style={{ filter: "sepia(1) saturate(2.1) brightness(1.02) hue-rotate(8deg) drop-shadow(0 0 1px rgba(0,0,0,0.18))" }}
               draggable={false}
             />
           </div>

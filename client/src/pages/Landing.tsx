@@ -204,14 +204,6 @@ export default function Landing() {
   const [megaMenuOpen, setMegaMenuOpen] = useState<string | null>(null);
   const [navScrolled, setNavScrolled] = useState(false);
   const [modelCarouselIndex, setModelCarouselIndex] = useState(0);
-  const [leegoEnlarged, setLeegoEnlarged] = useState(false);
-
-  const handleLeegoClick = () => {
-    if (leegoEnlarged) return;
-    setLeegoEnlarged(true);
-    setTimeout(() => setLeegoEnlarged(false), 3000);
-  };
-
   useEffect(() => {
     const handleScroll = () => setNavScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -294,7 +286,7 @@ export default function Landing() {
           backgroundSize: "200px 200px",
           backgroundAttachment: "fixed",
           mixBlendMode: "screen",
-          opacity: 0.45,
+          opacity: 0.025,
           zIndex: 0,
         }}
         aria-hidden
@@ -1358,17 +1350,9 @@ export default function Landing() {
                 <img
                   src="/leego-logo.png"
                   alt="Leego"
-                  onClick={handleLeegoClick}
-                  className="inline align-middle cursor-pointer"
-                  style={{
-                    filter: "drop-shadow(0 0 4px #22c55e)",
-                    height: leegoEnlarged ? "64px" : "16px",
-                    width: leegoEnlarged ? "64px" : "16px",
-                    transition: leegoEnlarged ? "height 0.4s cubic-bezier(0.34,1.56,0.64,1), width 0.4s cubic-bezier(0.34,1.56,0.64,1)" : "height 0.6s ease-in-out, width 0.6s ease-in-out",
-                    verticalAlign: "middle",
-                    zIndex: leegoEnlarged ? 50 : "auto",
-                    position: leegoEnlarged ? "relative" : "static",
-                  }}
+                  className="inline align-middle h-4 w-4 opacity-80"
+                  style={{ verticalAlign: "middle" }}
+                  draggable={false}
                 />{" "}
                 Leego
               </p>

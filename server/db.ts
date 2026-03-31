@@ -42,14 +42,6 @@ export async function getDb() {
   return _db;
 }
 
-// ─── Admin email list (canonical — used by ALL auth flows) ───
-export const ADMIN_EMAILS: string[] = [
-  "studiosvirelle@gmail.com",
-  "leego972@gmail.com",
-  "brobroplzcheck@gmail.com",
-  "sisteror555@gmail.com",
-];
-
 // ─── Users ───
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) throw new Error("User openId is required for upsert");
@@ -69,21 +61,19 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     textFields.forEach(assignNullable);
     if (user.lastSignedIn !== undefined) { values.lastSignedIn = user.lastSignedIn; updateSet.lastSignedIn = user.lastSignedIn; }
-    // Auto-assign admin role: check ownerOpenId OR admin email list
-    const emailLower = (user.email || "").toLowerCase();
-    const isAdminByEmail = !!emailLower && ADMIN_EMAILS.includes(emailLower);
+    // Auto-assign admin role: check ownerOpenId OR existing role
     const isAdminByOpenId = user.openId === ENV.ownerOpenId;
     if (user.role !== undefined) {
       values.role = user.role;
       updateSet.role = user.role;
-    } else if (isAdminByEmail || isAdminByOpenId) {
+    } else if (isAdminByOpenId) {
       values.role = 'admin';
       updateSet.role = 'admin';
     }
     if (!values.lastSignedIn) values.lastSignedIn = new Date();
     if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
     await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
-    if (isAdminByEmail || isAdminByOpenId) {
+    if (isAdminByOpenId) {
       console.log(`[Auth] Admin role assigned/confirmed for ${user.email || user.openId}`);
     }
   } catch (error) { console.error("[Database] Failed to upsert user:", error); throw error; }
@@ -135,8 +125,8 @@ export async function createEmailUser(data: {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const openId = `email_${data.email}`; // generate a stable openId from email
-  // Auto-assign admin role for the owner account (uses canonical ADMIN_EMAILS list)
-  const isOwner = ADMIN_EMAILS.includes(data.email.toLowerCase());
+  // Auto-assign admin role for the owner account
+  const isOwner = openId === ENV.ownerOpenId;
   await db.insert(users).values({
     openId,
     email: data.email,

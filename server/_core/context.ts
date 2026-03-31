@@ -5,10 +5,12 @@ import { SignJWT, jwtVerify } from "jose";
 import * as db from "../db";
 import { registerAdminForRateLimit } from "./rateLimit";
 
-let JWT_SECRET_KEY = process.env.JWT_SECRET;
+import { ENV } from "./env";
+
+let JWT_SECRET_KEY = ENV.cookieSecret;
 
 if (!JWT_SECRET_KEY) {
-  if (process.env.NODE_ENV === "production") {
+  if (ENV.isProduction) {
     throw new Error("FATAL: JWT_SECRET environment variable is required in production. Set a strong random secret.");
   }
   // Only use default in development

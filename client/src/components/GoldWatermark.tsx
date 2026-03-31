@@ -1,31 +1,26 @@
 /**
- * Gold VS Logo Watermark — Virelle Studios brand signature
- * Place this component inside any page wrapper for consistent branding.
- * It renders a large, faint gold-tinted VS logo centered in the background.
- * - Dark mode (dark backgrounds): golden logo, naturally visible
- * - Light mode (white backgrounds): golden logo with thin black outline for visibility
+ * GoldWatermark — production / launch version.
+ * Subtle, toned-down VS logo background branding.
+ * Replaces the old louder version; all existing imports automatically
+ * inherit the cleaner, more premium treatment.
  */
 export default function GoldWatermark({ className = "" }: { className?: string }) {
   return (
     <div className={`fixed inset-0 flex items-center justify-center pointer-events-none z-0 ${className}`}>
-      {/* Dark mode: golden logo on dark background — no outline needed */}
+      {/* Dark mode: soft golden logo on dark background */}
       <img
         src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
         alt=""
-        className="hidden dark:block w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.07]"
-        style={{
-          filter: "sepia(1) saturate(4) brightness(1.3) hue-rotate(10deg)",
-        }}
+        className="hidden dark:block w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] lg:w-[520px] lg:h-[520px] object-contain opacity-[0.045]"
+        style={{ filter: "sepia(1) saturate(2.6) brightness(1.1) hue-rotate(8deg)" }}
         draggable={false}
       />
-      {/* Light mode: golden logo with thin black outline for visibility on white */}
+      {/* Light mode: very faint golden logo on white */}
       <img
         src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png"
         alt=""
-        className="block dark:hidden w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] lg:w-[600px] lg:h-[600px] object-contain opacity-[0.08]"
-        style={{
-          filter: "sepia(1) saturate(3) brightness(1.1) hue-rotate(10deg) drop-shadow(0 0 1px rgba(0,0,0,0.6)) drop-shadow(0 0 2px rgba(0,0,0,0.3))",
-        }}
+        className="block dark:hidden w-[320px] h-[320px] sm:w-[420px] sm:h-[420px] lg:w-[520px] lg:h-[520px] object-contain opacity-[0.05]"
+        style={{ filter: "sepia(1) saturate(2.1) brightness(1.02) hue-rotate(8deg) drop-shadow(0 0 1px rgba(0,0,0,0.18))" }}
         draggable={false}
       />
     </div>
