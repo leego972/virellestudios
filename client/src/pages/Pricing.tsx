@@ -26,8 +26,8 @@ const SELF_SERVE_TIERS = [
     credits: 500,
     badge: "Entry Tier",
     badgeColor: "bg-emerald-700",
-    audience: "Solo filmmakers, students, and creators exploring AI film production.",
-    description: "Everything you need to start making AI films. Core writing, pre-production, character, and cinematic planning tools.",
+    audience: "Solo filmmakers and creators exploring AI-assisted production.",
+    description: "Core tools for screenplay development, character design, and cinematic planning.",
     highlights: [
       "500 credits/month (~50 video scenes)",
       "AI Script Writer & Screenplay Tools",
@@ -55,8 +55,8 @@ const SELF_SERVE_TIERS = [
     credits: 2000,
     badge: "Most Popular",
     badgeColor: "bg-amber-700",
-    audience: "Serious indie producers and boutique creators building paid projects.",
-    description: "Full AI filmmaking pipeline for serious indie producers. Video generation, voice acting, film score, and export.",
+    audience: "Independent producers and creators building commercial-grade projects.",
+    description: "Integrated production pipeline including video generation, voice acting, and scoring.",
     highlights: [
       "2,000 credits/month (~200 video scenes)",
       "Everything in Indie, plus:",
@@ -239,7 +239,7 @@ export default function Pricing() {
             Virelle Studios Membership
           </Badge>
           <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">
-            The Complete AI <span className="text-amber-400">Film Studio</span>
+            Professional AI <span className="text-amber-400">Film Production</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             From screenplay to final mix. Choose the membership that fits your production volume.

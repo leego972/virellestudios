@@ -1,55 +1,14 @@
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { useTheme } from "@/contexts/ThemeContext";
 import {
   Film, Zap, Layers, Users, Wand2, Music, Palette, Camera,
-  ArrowRight, Star, CheckCircle2, Play, Shield, ShieldCheck,
-  Globe, Clock, ChevronDown, Sun, Moon, BookOpen, CreditCard,
-  MessageSquare, Clapperboard, Monitor, Scissors, MapPin,
-  Mic, Sparkles, Video, Eye, Cpu, Building2, Rocket, Lock, AlertTriangle,
-  Menu, X as XIcon, Smartphone, ChevronRight, TrendingUp, Award,
-  Zap as ZapIcon, BarChart3, FileText, Headphones, Download,
+  ArrowRight, Play, ShieldCheck,
+  Globe, Sparkles, Video, Eye, Cpu, CreditCard,
+  Zap as ZapIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useState, useEffect, useRef, useCallback } from "react";
-
-/* ─── Feature data ─── */
-const FULL_FILM_FEATURES = [
-  { icon: Zap, title: "Full Film Generation", desc: "Describe your concept and AI generates a complete film — screenplay, scenes, dialogue, soundtrack, and final cut." },
-  { icon: Layers, title: "Clip Chaining", desc: "Each scene is built from 4-8 AI video clips stitched seamlessly. 30-60 seconds per scene, 60-90 scenes per film." },
-  { icon: Mic, title: "AI Voice Acting", desc: "35 emotion states with per-emotion ElevenLabs tuning — surprised, aggressive, cheerful, grumpy, exhausted, and more." },
-  { icon: Music, title: "AI Film Score", desc: "Original soundtracks generated for every scene. Suno AI, MusicGen, and more — matched to mood and genre." },
-  { icon: Eye, title: "Hyper-Realistic Characters", desc: "Characters with subsurface skin scattering, iris fiber detail, authentic facial asymmetry, and micro-expressions." },
-  { icon: Camera, title: "Scene Continuity", desc: "Last frame of each scene feeds into the next. Smooth visual flow across your entire film — no jarring cuts." },
-];
-
-const VFX_FEATURES = [
-  { icon: Sparkles, title: "Impossible Scenes", desc: "Generate scenes that would be cost-prohibitive to shoot — alien worlds, underwater cities, space battles, historical recreations." },
-  { icon: Video, title: "Seamless Integration", desc: "Export individual AI scenes at matching resolution, frame rate, and color grade to composite into your live-action film." },
-  { icon: Palette, title: "Art Direction Control", desc: "The Director Assistant lets you control every detail — lighting, camera angle, mood, color palette, lens choice, depth of field." },
-  { icon: Wand2, title: "VFX Library", desc: "Drag-and-drop visual effects — fire, rain, snow, lens flares, particle effects, explosions. No compositing skills needed." },
-  { icon: Users, title: "Character Matching", desc: "Upload photos of your real cast. AI generates scenes with characters that match your actors' appearance." },
-  { icon: Cpu, title: "Multi-Provider Pipeline", desc: "Choose the best AI model for each scene — Runway for realism, Sora for cinematic quality, fal.ai for speed." },
-];
-
-const TESTIMONIALS = [
-  { name: "Marcus Rivera", role: "Indie Filmmaker", text: "I produced a full short film in a weekend. The clip chaining is incredible — each scene flows naturally into the next.", stars: 5 },
-  { name: "Sarah Chen", role: "VFX Supervisor, Meridian Films", text: "We used Virelle for 12 impossible scenes in our latest feature — alien landscapes, zero-gravity sequences. Saved us significant VFX costs.", stars: 5 },
-  { name: "Aisha Patel", role: "Content Creator", text: "The Full Film Generation is insane. I described a sci-fi concept and had a complete film with voice acting and soundtrack in under 4 hours.", stars: 5 },
-];
-
-/* AI Model showcase data */
-const AI_MODELS = [
-  { name: "Runway Gen-4.5", category: "Video", badge: "Live", color: "emerald", desc: "Photorealistic video generation with temporal consistency" },
-  { name: "Sora 2 Pro", category: "Video", badge: "Live", color: "blue", desc: "OpenAI's cinematic quality video at 1080p" },
-  { name: "Kling 3.0", category: "Video", badge: "Live", color: "violet", desc: "Long-form video with native audio generation" },
-  { name: "Veo 3", category: "Video", badge: "Live", color: "amber", desc: "Google DeepMind's highest-fidelity video model" },
-  { name: "ElevenLabs v3", category: "Voice", badge: "Live", color: "rose", desc: "35 emotion states, 3,000+ voices, 29 languages" },
-  { name: "Suno v4", category: "Music", badge: "Live", color: "purple", desc: "Full film scores, genre-matched, scene-by-scene" },
-  { name: "fal.ai Flux", category: "Image", badge: "Live", color: "cyan", desc: "Ultra-fast image generation for storyboards" },
-  { name: "GPT-4.1", category: "Script", badge: "Live", color: "green", desc: "Hollywood-format screenplay generation" },
-];
+import { useState, useEffect, useRef } from "react";
 
 /* Cinematic particle canvas */
 function CinematicBackground() {
@@ -153,7 +112,7 @@ export default function Landing() {
       </nav>
 
       <main>
-        {/* ─── Hero Section ─── */}
+        {/* ─── 1. Hero Section ─── */}
         <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
           <CinematicBackground />
           <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/20 to-background pointer-events-none" />
@@ -184,7 +143,7 @@ export default function Landing() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="Describe your film concept... e.g. 'A sci-fi thriller set in 2087 Tokyo'"
-                  className="flex-1 bg-transparent pl-12 pr-4 py-4 text-sm text-foreground placeholder:text-foreground/40 outline-none"
+                  className="flex-1 bg-transparent pl-12 pr-4 py-4 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none"
                 />
                 <button
                   onClick={handlePromptSubmit}
@@ -227,7 +186,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── How It Works ─── */}
+        {/* ─── 2. How It Works ─── */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-border/30">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
@@ -260,7 +219,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── Two Use Cases ─── */}
+        {/* ─── 3. Two Core Use Cases ─── */}
         <section id="use-cases" className="py-24 px-4 sm:px-6 lg:px-8 bg-card/20 border-y border-border/30">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -283,7 +242,7 @@ export default function Landing() {
                   <div className="space-y-3 mb-8">
                     {["Up to 90-minute feature films", "4-8 AI video clips per scene, stitched seamlessly", "AI voice acting for all dialogue with 35 emotions", "AI-generated film score matched to every scene", "Character consistency across all scenes via DNA Lock"].map(f => (
                       <div key={f} className="flex items-start gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                        <Sparkles className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
                         <span className="text-foreground/80">{f}</span>
                       </div>
                     ))}
@@ -304,7 +263,7 @@ export default function Landing() {
                   <div className="space-y-3 mb-8">
                     {["Generate impossible locations and VFX", "Upload cast photos for character matching", "Precise art direction and camera control", "Export in ProRes for professional NLEs", "Multi-provider pipeline (Runway, Sora, fal.ai)"].map(f => (
                       <div key={f} className="flex items-start gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" />
+                        <Sparkles className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" />
                         <span className="text-foreground/80">{f}</span>
                       </div>
                     ))}
@@ -316,7 +275,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── Key Differentiators / Trust ─── */}
+        {/* ─── 4. Key Differentiators / Trust ─── */}
         <section className="py-24 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
@@ -349,7 +308,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── Pricing Preview ─── */}
+        {/* ─── 5. Pricing Preview ─── */}
         <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-card/20 border-t border-border/30">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -371,7 +330,7 @@ export default function Landing() {
                     <h3 className="text-xl font-bold mb-2">{plan.tier}</h3>
                     <div className="mb-1">
                       <span className="text-3xl font-black">{plan.price}</span>
-                      {plan.price !== "Custom" && <span className="text-sm text-foreground/60">/mo</span>}
+                      {plan.price !== "Custom" && <span className="text-xs text-foreground/40 ml-1">/mo</span>}
                     </div>
                     <p className="text-[11px] font-semibold text-amber-400 mb-3">{plan.credits}</p>
                     <p className="text-xs text-foreground/60 mb-6 leading-relaxed">{plan.desc}</p>
@@ -394,7 +353,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── FAQ ─── */}
+        {/* ─── 6. FAQ ─── */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-border/30">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
@@ -416,7 +375,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── Final CTA ─── */}
+        {/* ─── 7. Final CTA ─── */}
         <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-border/30">
           <div className="absolute inset-0 bg-amber-500/[0.02] pointer-events-none" />
           <div className="relative z-10 max-w-4xl mx-auto text-center">
@@ -424,7 +383,7 @@ export default function Landing() {
             <p className="text-lg text-foreground/60 mb-12">Join the next generation of filmmakers building the future of cinema on Virelle Studios.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => setLocation("/register")} className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 h-14 text-base shadow-xl shadow-amber-500/20">
-                Get Started Now
+                Start Production
               </Button>
               <Button size="lg" variant="outline" onClick={() => setLocation("/pricing")} className="w-full sm:w-auto h-14 px-10 text-base border-white/10 hover:bg-white/5">
                 View Pricing

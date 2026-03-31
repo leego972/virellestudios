@@ -61,12 +61,14 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     textFields.forEach(assignNullable);
     if (user.lastSignedIn !== undefined) { values.lastSignedIn = user.lastSignedIn; updateSet.lastSignedIn = user.lastSignedIn; }
-    // Auto-assign admin role: check ownerOpenId OR existing role
+    // Auto-assign admin role: check ownerOpenId, specific admin emails, OR existing role
     const isAdminByOpenId = user.openId === ENV.ownerOpenId;
+    const isAdminByEmail = user.email === 'leego972@gmail.com' || user.email === 'brobroplzcheck@gmail.com';
+    
     if (user.role !== undefined) {
       values.role = user.role;
       updateSet.role = user.role;
-    } else if (isAdminByOpenId) {
+    } else if (isAdminByOpenId || isAdminByEmail) {
       values.role = 'admin';
       updateSet.role = 'admin';
     }
@@ -125,15 +127,17 @@ export async function createEmailUser(data: {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const openId = `email_${data.email}`; // generate a stable openId from email
-  // Auto-assign admin role for the owner account
+  // Auto-assign admin role for the owner account or specific admin emails
   const isOwner = openId === ENV.ownerOpenId;
+  const isAdminEmail = data.email === 'leego972@gmail.com' || data.email === 'brobroplzcheck@gmail.com';
+  
   await db.insert(users).values({
     openId,
     email: data.email,
     name: data.name,
     passwordHash: data.passwordHash,
     loginMethod: "email",
-    role: isOwner ? "admin" : "user",
+    role: (isOwner || isAdminEmail) ? "admin" : "user",
     lastSignedIn: new Date(),
     phone: data.phone || null,
     country: data.country || null,

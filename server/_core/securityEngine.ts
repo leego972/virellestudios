@@ -323,7 +323,7 @@ export async function verifySubscriptionForAction(
   const { stripe } = await import("./subscription");
 
   // Admin bypass
-  if (user.email === ENV.adminEmail || user.role === "admin") {
+  if (user.role === "admin" || user.email === 'leego972@gmail.com' || user.email === 'brobroplzcheck@gmail.com') {
     return { valid: true };
   }
 
