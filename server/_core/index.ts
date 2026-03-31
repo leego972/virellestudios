@@ -32,33 +32,8 @@ validateProductionEnv();
 
 const startedAt = new Date();
 
-// Simple in-memory rate limiter
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-function rateLimit(windowMs: number, maxRequests: number) {
-  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const key = req.ip || req.socket.remoteAddress || "unknown";
-    const now = Date.now();
-    const entry = rateLimitMap.get(key);
-    if (!entry || now > entry.resetAt) {
-      rateLimitMap.set(key, { count: 1, resetAt: now + windowMs });
-      return next();
-    }
-    entry.count++;
-    if (entry.count > maxRequests) {
-      res.status(429).json({ error: "Too many requests. Please try again later." });
-      return;
-    }
-    next();
-  };
-}
-
-// Periodically clean up expired rate limit entries
-setInterval(() => {
-  const now = Date.now();
-  Array.from(rateLimitMap.entries()).forEach(([key, entry]) => {
-    if (now > entry.resetAt) rateLimitMap.delete(key);
-  });
-}, 60_000);
+// Rate limiting is now handled via centralized Redis-backed rateLimit.ts
+import { rateLimitHeavyAI, rateLimitUpload, rateLimitAI } from "./rateLimit";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -88,23 +63,8 @@ async function startServer() {
     // Continue starting — the server may still work with existing schema
   }
 
-  // Ensure all admin-email users have role='admin' in the database
-  try {
-    const adminDb = await db.getDb();
-    if (adminDb) {
-      const { users: usersTable } = await import("../../drizzle/schema");
-      const { inArray } = await import("drizzle-orm");
-      const { ADMIN_EMAILS } = await import("../db");
-      await adminDb
-        .update(usersTable)
-        .set({ role: 'admin' })
-        .where(inArray(usersTable.email, ADMIN_EMAILS));
-      console.log(`[AdminMigration] Ensured admin role for: ${ADMIN_EMAILS.join(", ")}`);
-    }
-  } catch (err: any) {
-    console.error("[AdminMigration] Failed to set admin roles:", err.message);
-    // Non-fatal — continue startup
-  }
+  // Admin roles are now managed via OWNER_OPEN_ID in db.ts upsertUser/createEmailUser
+  // No bulk email-based promotion on startup for better security and auditability.
 
   // Auto-provision Stripe products and prices on startup
   try {
