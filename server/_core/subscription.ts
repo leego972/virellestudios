@@ -17,7 +17,7 @@ export const stripe = ENV.stripeSecretKey
 //   "independent" → "Studio"      (A$1,490/mo — 6,000 credits)
 //   "studio"      → "Production"  (From A$4,990/mo — 15,500 credits)
 //   "industry"    → "Enterprise"  (Custom)
-export type SubscriptionTier = "indie" | "amateur" | "independent" | "studio" | "industry" | "beta";
+export type SubscriptionTier = "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -849,12 +849,8 @@ export async function createCheckoutSession(
 ): Promise<string> {
   if (!stripe) throw new Error("Stripe is not configured");
 
-  // Monthly billing supports direct debit (ACH bank transfer) + card
-  // Annual billing is card-only
-  const paymentMethodTypes: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] =
-    billing === "monthly"
-      ? ["card", "us_bank_account"]
-      : ["card"];
+  // Card-only — us_bank_account (ACH) requires explicit Stripe account activation
+  const paymentMethodTypes: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] = ["card"];
 
   // If a promo code is provided, create/find a 50% off once coupon and apply it
   if (promoCode) {
@@ -886,14 +882,6 @@ export async function createCheckoutSession(
           ...(trialDays ? { trial_period_days: trialDays } : {}),
           ...(promoCouponId ? { discounts: [{ coupon: promoCouponId }] } : {}),
         },
-        ...(billing === "monthly" ? {
-          payment_method_options: {
-            us_bank_account: {
-              financial_connections: { permissions: ["payment_method" as any] },
-              verification_method: "instant" as any,
-            },
-          },
-        } : {}),
       };
       const promoSession = await stripe.checkout.sessions.create(promoSessionParams);
       return promoSession.url!;
@@ -948,17 +936,6 @@ export async function createCheckoutSession(
       ...(trialDays ? { trial_period_days: trialDays } : {}),
       ...(couponId ? { coupon: couponId } : {}),
     },
-    // For ACH direct debit, allow mandate collection
-    ...(billing === "monthly" ? {
-      payment_method_options: {
-        us_bank_account: {
-          financial_connections: {
-            permissions: ["payment_method" as any],
-          },
-          verification_method: "instant" as any,
-        },
-      },
-    } : {}),
   };
   
   const session = await stripe.checkout.sessions.create(sessionParams);
