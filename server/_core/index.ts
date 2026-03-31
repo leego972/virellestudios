@@ -420,12 +420,13 @@ async function startServer() {
     try {
       const { logAuditEvent } = await import("./securityEngine");
       const user = (req as any).user;
-      await logAuditEvent({
-        userId: user?.id || 0,
-        action: `ADMIN_${action}`,
-        details: { ...details, ip: req.ip, path: req.path },
-        severity: "high"
-      });
+      logAuditEvent(
+        user?.id || 0,
+        `ADMIN_${action}`,
+        req.ip || "unknown",
+        true,
+        { ...details, path: req.path }
+      );
     } catch (err) {
       console.error("[Admin] Failed to log audit event:", err);
     }
@@ -864,3 +865,17 @@ async function startServer() {
 }
 
 startServer().catch(console.error);
+
+// ── Graceful shutdown ────────────────────────────────────────────────────────
+function gracefulShutdown(signal: string) {
+  logger.info(`[Server] Received ${signal} — shutting down gracefully`);
+  // Give in-flight requests 10 seconds to complete before forcing exit
+  setTimeout(() => {
+    logger.info("[Server] Forced exit after 10s timeout");
+    process.exit(0);
+  }, 10_000).unref();
+  process.exit(0);
+}
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
+

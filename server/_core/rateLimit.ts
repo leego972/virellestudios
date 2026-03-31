@@ -19,16 +19,28 @@ if (ENV.redisUrl) {
       console.warn("[RateLimit] Redis error:", err.message);
     });
   } catch (err) {
-    console.warn("[RateLimit] Failed to initialize Redis:", err);
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("CRITICAL: Redis initialization failed in production. Rate limiting is required.");
-    }
+    console.error(
+      "[RateLimit] WARNING: Failed to initialize Redis. " +
+      "Falling back to in-memory rate limiting. " +
+      "Check your REDIS_URL environment variable.",
+      err
+    );
+    redis = null;
   }
 } else {
   if (process.env.NODE_ENV === "production") {
-    throw new Error("CRITICAL: REDIS_URL not set in production. Rate limiting is required.");
+    // Warn loudly but do NOT crash — allows the server to start while Redis is
+    // being provisioned. In-memory fallback is used until REDIS_URL is set.
+    // ACTION REQUIRED: Add REDIS_URL to Railway environment variables.
+    console.error(
+      "[RateLimit] WARNING: REDIS_URL not set in production. " +
+      "Falling back to in-memory rate limiting. " +
+      "This is NOT safe for multi-instance deployments. " +
+      "Add REDIS_URL to your Railway environment variables."
+    );
+  } else {
+    console.warn("[RateLimit] REDIS_URL not set. Falling back to in-memory storage (dev only).");
   }
-  console.warn("[RateLimit] REDIS_URL not set. Falling back to in-memory storage (dev only).");
 }
 
 interface RateLimitEntry {
@@ -107,14 +119,7 @@ export async function checkRateLimit(
     }
   }
 
-  // Fallback to in-memory store (Dev only)
-  if (process.env.NODE_ENV === "production") {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Rate limiting service misconfigured.",
-    });
-  }
-
+  // Fallback to in-memory store — used when Redis is not yet provisioned
   const entry = memoryStore.get(key);
   if (!entry || now > entry.resetAt) {
     memoryStore.set(key, { count: 1, resetAt: now + windowMs });

@@ -37,8 +37,8 @@ export async function initializeRedisRateLimit(): Promise<void> {
     const redis = await import("redis");
     redisClient = redis.createClient({ url: redisUrl });
     
-    redisClient.on("error", (err: any) => {
-      logger.error("[RateLimit] Redis connection error:", err);
+    redisClient.on("error", (err: unknown) => {
+      logger.error("[RateLimit] Redis connection error:", { error: String(err) });
       redisAvailable = false;
     });
 
@@ -49,7 +49,7 @@ export async function initializeRedisRateLimit(): Promise<void> {
 
     await redisClient.connect();
   } catch (error) {
-    logger.warn("[RateLimit] Redis not available — falling back to in-memory rate limiting", error);
+    logger.warn("[RateLimit] Redis not available — falling back to in-memory rate limiting", { error: String(error) });
     redisAvailable = false;
   }
 }
@@ -95,7 +95,7 @@ export async function checkRateLimitAsync(
       if (error instanceof TRPCError) throw error;
       
       // Redis error — fall back to in-memory
-      logger.warn("[RateLimit] Redis error, falling back to in-memory:", error);
+      logger.warn("[RateLimit] Redis error, falling back to in-memory:", { error: String(error) });
       checkRateLimitInMemory(userId, action, maxRequests, windowMs);
     }
   } else {
@@ -153,7 +153,7 @@ export async function closeRedisRateLimit(): Promise<void> {
       await redisClient.quit();
       logger.info("[RateLimit] Redis connection closed");
     } catch (error) {
-      logger.error("[RateLimit] Error closing Redis connection:", error);
+      logger.error("[RateLimit] Error closing Redis connection:", { error: String(error) });
     }
   }
 }

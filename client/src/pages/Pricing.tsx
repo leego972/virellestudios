@@ -196,6 +196,33 @@ const CREDIT_COSTS = [
   { action: "Export Final Film", cost: 8, icon: "💾" },
 ];
 
+const FAQ = [
+  {
+    q: "What is Virelle Studios?",
+    a: "Virelle Studios is a premium AI-powered film production platform that lets you create professional-quality films using AI-assisted tools for scripting, character generation, scene production, and post-processing.",
+  },
+  {
+    q: "How do credits work?",
+    a: "Credits are consumed each time you use a generative feature — such as generating a scene video, creating a storyboard, or running the AI script writer. Your subscription includes a monthly credit allowance, and you can purchase additional credit packs at any time.",
+  },
+  {
+    q: "Can I cancel my subscription?",
+    a: "Yes. You can cancel at any time from your billing settings. Your subscription remains active until the end of the current billing period, after which it will not renew.",
+  },
+  {
+    q: "What is the Founding Director offer?",
+    a: "The Founding Director offer gives early members 50% off their first year on any annual Creator or Studio plan. This is a limited offer available to the first 150 members.",
+  },
+  {
+    q: "Do unused credits roll over?",
+    a: "Monthly subscription credits reset at the start of each billing period and do not roll over. Credits purchased as top-up packs do not expire and accumulate in your balance.",
+  },
+  {
+    q: "What payment methods are accepted?",
+    a: "We accept all major credit and debit cards via Stripe. Monthly billing also supports ACH bank transfers for Australian and US customers.",
+  },
+];
+
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
