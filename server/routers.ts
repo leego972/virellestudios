@@ -61,8 +61,8 @@ export const appRouter = router({
   auth: router({
     me: publicProcedure.query(({ ctx }) => {
       if (!ctx.user) return null;
-      const adminEmails = [ENV.adminEmail?.toLowerCase(), "leego972@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
-      const isAdmin = ctx.user.role === "admin" || adminEmails.includes(ctx.user.email?.toLowerCase() || "");
+      // Admin status is determined solely by database role
+      const isAdmin = ctx.user.role === "admin";
       return {
         ...ctx.user,
         isAdmin,

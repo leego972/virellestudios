@@ -63,7 +63,7 @@ export const ENV = {
   runwayApiKey: process.env.RUNWAYML_API_SECRET || process.env.RUNWAY_API_KEY || "",
 
   // ─── Pollinations (free video generation — available to all users via key pool) ─
-  pollinationsApiKey: process.env.POLLINATIONS_API_KEY || "sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP",
+  pollinationsApiKey: process.env.POLLINATIONS_API_KEY ?? "",
 
   // ─── Google (Nano Banana image generation + Veo 3 / Gemini Imagen) ──────────
   googleApiKey: process.env.GOOGLE_API_KEY ?? "",
@@ -71,8 +71,8 @@ export const ENV = {
   // ─── Hugging Face (FLUX.1-dev image generation fallback) ──────────────────────
   huggingFaceApiKey: process.env.HUGGING_FACE_API_KEY ?? "",
 
-  // ─── Admin ─────────────────────────────────────────────────────────────────
-  adminEmail: process.env.ADMIN_EMAIL ?? "Studiosvirelle@gmail.com",
+  // ─── Admin ─────────────────────────────────────────────────────────────
+  adminEmail: process.env.ADMIN_EMAIL ?? "",
 
   // ─── TikTok Content Posting API ────────────────────────────────────────────
   tiktokCreatorToken: process.env.TIKTOK_CREATOR_TOKEN ?? "",

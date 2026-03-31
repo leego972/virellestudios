@@ -5,14 +5,19 @@ import { SignJWT, jwtVerify } from "jose";
 import * as db from "../db";
 import { registerAdminForRateLimit } from "./rateLimit";
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET || "dev-secret-change-me";
+let JWT_SECRET_KEY = process.env.JWT_SECRET;
+
+if (!JWT_SECRET_KEY) {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("FATAL: JWT_SECRET environment variable is required in production. Set a strong random secret.");
+  }
+  // Only use default in development
+  JWT_SECRET_KEY = "dev-secret-change-me";
+  console.warn("⚠️  Using default JWT_SECRET in development. Set JWT_SECRET env var for production.");
+}
+
 const secretKey = new TextEncoder().encode(JWT_SECRET_KEY);
 const JWT_ISSUER = "virelle-studios";
-
-// Warn loudly if using default secret in production
-if (process.env.NODE_ENV === "production" && JWT_SECRET_KEY === "dev-secret-change-me") {
-  console.error("⚠️  CRITICAL: JWT_SECRET is using the default value in production! Set a strong random secret.");
-}
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];

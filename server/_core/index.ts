@@ -12,6 +12,7 @@ import { serveStatic, setupVite } from "./vite";
 import { logger } from "./logger";
 import { stripe, priceIdToTier, TIER_LIMITS } from "./subscription";
 import { ENV } from "./env";
+import { validateProductionEnv } from "./envValidation";
 import * as db from "../db";
 import { trackPaymentFailure } from "./securityEngine";
 import { startBlogScheduler } from "./blogEngine";
@@ -25,6 +26,9 @@ import { executeDirectorTool } from "../director-executor";
 import { runStripeProvisioning } from "./stripeProvisioning";
 import { registerSeoRoutes } from "../seo-engine";
 import { registerSeoV4Routes } from "../seo-engine-v4";
+
+// Validate production environment on startup
+validateProductionEnv();
 
 const startedAt = new Date();
 
