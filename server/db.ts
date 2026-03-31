@@ -61,14 +61,13 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     textFields.forEach(assignNullable);
     if (user.lastSignedIn !== undefined) { values.lastSignedIn = user.lastSignedIn; updateSet.lastSignedIn = user.lastSignedIn; }
-    // Auto-assign admin role: check ownerOpenId, specific admin emails, OR existing role
+    // Auto-assign admin role: check ownerOpenId OR existing role
     const isAdminByOpenId = user.openId === ENV.ownerOpenId;
-    const isAdminByEmail = user.email === 'leego972@gmail.com' || user.email === 'brobroplzcheck@gmail.com';
     
     if (user.role !== undefined) {
       values.role = user.role;
       updateSet.role = user.role;
-    } else if (isAdminByOpenId || isAdminByEmail) {
+    } else if (isAdminByOpenId) {
       values.role = 'admin';
       updateSet.role = 'admin';
     }
@@ -127,9 +126,8 @@ export async function createEmailUser(data: {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const openId = `email_${data.email}`; // generate a stable openId from email
-  // Auto-assign admin role for the owner account or specific admin emails
+  // Auto-assign admin role for the owner account
   const isOwner = openId === ENV.ownerOpenId;
-  const isAdminEmail = data.email === 'leego972@gmail.com' || data.email === 'brobroplzcheck@gmail.com';
   
   await db.insert(users).values({
     openId,
@@ -137,7 +135,7 @@ export async function createEmailUser(data: {
     name: data.name,
     passwordHash: data.passwordHash,
     loginMethod: "email",
-    role: (isOwner || isAdminEmail) ? "admin" : "user",
+    role: isOwner ? "admin" : "user",
     lastSignedIn: new Date(),
     phone: data.phone || null,
     country: data.country || null,
@@ -1480,20 +1478,19 @@ export async function deductCredits(userId: number, amount: number, action: stri
 
   if (!user) throw new Error("User not found");
 
-  // Admins have unlimited credits — skip deduction entirely
-  const isAdminUser = user.role === "admin";
-  if (isAdminUser) {
-    console.log(`[Credits] Admin user ${userId}: skipping ${amount} credit deduction for ${action} (unlimited)`);
-    // Still log the transaction for auditing, but don't deduct
+  // Entitlement check: Admins bypass credit limits
+  const isExempt = user.role === "admin";
+  if (isExempt) {
+    const currentBalance = (user.creditBalance as number) || 0;
+    // Log the exempt transaction for auditing
     try {
-      const currentBalance = (user.creditBalance as number) || 0;
       await db.execute(sql.raw(
-        `INSERT INTO credit_transactions (userId, amount, action, description, balanceAfter, createdAt) VALUES (${userId}, 0, '${action.replace(/'/g, "''")}', 'ADMIN_UNLIMITED: ${(description || action).replace(/'/g, "''")}', ${currentBalance}, NOW())`
+        `INSERT INTO credit_transactions (userId, amount, action, description, balanceAfter, createdAt) VALUES (${userId}, 0, '${action.replace(/'/g, "''")}', 'EXEMPT: ${(description || action).replace(/'/g, "''")}', ${currentBalance}, NOW())`
       ));
     } catch (e) {
-      console.warn("[Credits] Failed to log admin transaction:", e);
+      console.warn("[Credits] Failed to log exempt transaction:", e);
     }
-    return (user.creditBalance as number) || 999999;
+    return currentBalance;
   }
 
   const currentBalance = (user.creditBalance as number) || 0;

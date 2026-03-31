@@ -1580,7 +1580,7 @@ export const appRouter = router({
 
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
         const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
-        const isAdmin = ctx.user.role === "admin" || ctx.user.email === 'leego972@gmail.com' || ctx.user.email === 'brobroplzcheck@gmail.com';
+        const isAdmin = ctx.user.role === "admin";
         const byokKeys: UserApiKeys = {
           openaiKey: rawUserKeys.openaiKey || (isAdmin ? ENV.openaiApiKey : undefined),
           runwayKey: rawUserKeys.runwayKey || (isAdmin ? ENV.runwayApiKey : undefined),
@@ -1822,7 +1822,7 @@ export const appRouter = router({
 
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
         const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
-        const isAdminBulk = ctx.user.role === "admin" || ctx.user.email === 'leego972@gmail.com' || ctx.user.email === 'brobroplzcheck@gmail.com';
+        const isAdminBulk = ctx.user.role === "admin";
         const bulkByokKeys: UserApiKeys = {
           openaiKey: rawUserKeys.openaiKey || (isAdminBulk ? ENV.openaiApiKey : undefined),
           runwayKey: rawUserKeys.runwayKey || (isAdminBulk ? ENV.runwayApiKey : undefined),
@@ -1911,7 +1911,7 @@ export const appRouter = router({
         // Determine which LLM provider to use
         // Admins can use platform keys; regular users must provide their own
         const preferredLlm = userKeys.preferredLlmProvider;
-        const isAdminChat = ctx.user.role === "admin" || ctx.user.email === 'leego972@gmail.com' || ctx.user.email === 'brobroplzcheck@gmail.com';
+        const isAdminChat = ctx.user.role === "admin";
         let provider: "openai" | "anthropic" | "google" = "openai";
         if (preferredLlm === "anthropic" && userKeys.anthropicKey) provider = "anthropic";
         else if (preferredLlm === "google" && userKeys.googleAiKey) provider = "google";
@@ -2492,7 +2492,7 @@ Break this into 8-15 scenes. For each scene, provide:
             // Step 4b: Generate extended video scene using clip chaining (30-60s per scene)
             // Fetch user's API keys; admins also get platform keys as fallback
             const userKeys = await db.getUserApiKeys(ctx.user!.id);
-            const isAdminQuick = ctx.user.role === "admin" || ctx.user.email === 'leego972@gmail.com' || ctx.user.email === 'brobroplzcheck@gmail.com';
+            const isAdminQuick = ctx.user.role === "admin";
             const byokKeys: UserApiKeys = {
               openaiKey: userKeys.openaiKey || (isAdminQuick ? ENV.openaiApiKey : undefined),
               runwayKey: userKeys.runwayKey || (isAdminQuick ? ENV.runwayApiKey : undefined),
@@ -2867,7 +2867,7 @@ Break this into 8-15 scenes. For each scene, provide:
 
         // Fetch user API keys; admins also get platform keys as fallback
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
-        const isAdminFilm = ctx.user.role === "admin" || ctx.user.email === 'leego972@gmail.com' || ctx.user.email === 'brobroplzcheck@gmail.com';
+        const isAdminFilm = ctx.user.role === "admin";
         const videoKeys: UserApiKeys = {
           openaiKey: userKeys.openaiKey || (isAdminFilm ? ENV.openaiApiKey : undefined),
           runwayKey: userKeys.runwayKey || (isAdminFilm ? ENV.runwayApiKey : undefined),
@@ -6233,7 +6233,7 @@ Rules:
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_video_gen.cost, "ad_poster_video_gen", `Video ad for ${input.platform}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
 
         const rawAdKeys = await db.getUserApiKeys(ctx.user.id);
-        const isAdminAd = ctx.user.role === "admin" || ctx.user.email === 'leego972@gmail.com' || ctx.user.email === 'brobroplzcheck@gmail.com';
+        const isAdminAd = ctx.user.role === "admin";
         const byokKeys: UserApiKeys = {
           openaiKey: rawAdKeys.openaiKey || (isAdminAd ? ENV.openaiApiKey : undefined),
           runwayKey: rawAdKeys.runwayKey || (isAdminAd ? ENV.runwayApiKey : undefined),

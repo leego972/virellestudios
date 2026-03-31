@@ -1117,14 +1117,11 @@ export async function runAutoMigration(): Promise<void> {
     console.log("[AutoMigrate] Schema is up to date — no changes needed");
   }
 
-  // ─── Step 3: Ensure all admin accounts have admin role ───
-  const adminEmailsToPromote = [
-    process.env.ADMIN_EMAIL || "Studiosvirelle@gmail.com",
-    "leego972@gmail.com",
-    "brobroplzcheck@gmail.com",
-    "sisteror555@gmail.com",
-  ];
-  for (const adminEmail of adminEmailsToPromote) {
+  // ─── Step 3: Ensure admin accounts have admin role ───
+  // Admin promotion is now strictly controlled via OWNER_OPEN_ID in db.ts or manual DB updates.
+  // We only promote the single ADMIN_EMAIL from environment if provided.
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (adminEmail) {
     try {
       const [adminRows] = await db.execute(sql.raw(
         `SELECT id, role FROM users WHERE LOWER(email) = '${adminEmail.toLowerCase()}' LIMIT 1`
@@ -1135,11 +1132,9 @@ export async function runAutoMigration(): Promise<void> {
           `UPDATE users SET role = 'admin' WHERE id = ${adminUser.id}`
         ));
         console.log(`[AutoMigrate] Promoted ${adminEmail} (user ${adminUser.id}) to admin role`);
-      } else if (adminUser) {
-        console.log(`[AutoMigrate] Admin account ${adminEmail} already has admin role`);
       }
     } catch (err: any) {
-      console.error(`[AutoMigrate] Failed to check/promote admin account ${adminEmail}:`, err.message);
+      console.warn(`[AutoMigrate] Failed to promote admin ${adminEmail}:`, err.message);
     }
   }
   // ─── Step 4: Seed promo codes (INSERT IGNORE — safe to run repeatedly) ───

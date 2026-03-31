@@ -20,9 +20,15 @@ if (ENV.redisUrl) {
     });
   } catch (err) {
     console.warn("[RateLimit] Failed to initialize Redis:", err);
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("CRITICAL: Redis initialization failed in production. Rate limiting is required.");
+    }
   }
 } else {
-  console.warn("[RateLimit] REDIS_URL not set. Falling back to in-memory storage (not safe for multi-instance production).");
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("CRITICAL: REDIS_URL not set in production. Rate limiting is required.");
+  }
+  console.warn("[RateLimit] REDIS_URL not set. Falling back to in-memory storage (dev only).");
 }
 
 interface RateLimitEntry {
@@ -91,11 +97,24 @@ export async function checkRateLimit(
       return;
     } catch (err) {
       if (err instanceof TRPCError) throw err;
-      console.error("[RateLimit] Redis check failed, falling back to memory:", err);
+      console.error("[RateLimit] Redis check failed:", err);
+      if (process.env.NODE_ENV === "production") {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Rate limiting service unavailable.",
+        });
+      }
     }
   }
 
-  // Fallback to in-memory store
+  // Fallback to in-memory store (Dev only)
+  if (process.env.NODE_ENV === "production") {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Rate limiting service misconfigured.",
+    });
+  }
+
   const entry = memoryStore.get(key);
   if (!entry || now > entry.resetAt) {
     memoryStore.set(key, { count: 1, resetAt: now + windowMs });

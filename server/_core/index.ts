@@ -569,7 +569,7 @@ async function startServer() {
       if (!text || typeof text !== "string") return res.status(400).json({ error: "Missing text" });
       const trimmed = text.slice(0, 4096);
       // Credits: deduct 2 credits per TTS call (same as virelle_chat) — skip for admins
-      const isAdminTts = ctx.user.role === "admin" || ctx.user.email === 'leego972@gmail.com' || ctx.user.email === 'brobroplzcheck@gmail.com';
+      const isAdminTts = ctx.user.role === "admin";
       if (!isAdminTts) {
         try {
           await db.deductCredits(ctx.user.id, 2, "voice_tts", `TTS: ${trimmed.substring(0, 40)}`);
@@ -660,7 +660,7 @@ async function startServer() {
 
     // Credits: deduct 2 credits per Director's Assistant message (same as virelle_chat)
     // Admin users are exempt from credit deductions
-    const isAdminDirector = toolCtx.user.role === "admin" || toolCtx.user.email === 'leego972@gmail.com' || toolCtx.user.email === 'brobroplzcheck@gmail.com';
+    const isAdminDirector = toolCtx.user.role === "admin";
     if (!isAdminDirector) {
       try {
         await db.deductCredits(toolCtx.user.id, 2, "director_assistant", "Director's Assistant message");
