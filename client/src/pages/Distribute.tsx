@@ -13,9 +13,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
   ArrowLeft,
+  BarChart2,
   CheckCircle2,
   Circle,
   Copy,
+  Download,
   ExternalLink,
   Film,
   Globe,
@@ -25,6 +27,8 @@ import {
   RefreshCw,
   Share2,
   Sparkles,
+  Star,
+  User,
   Youtube,
   Zap,
 } from "lucide-react";
@@ -91,6 +95,13 @@ export default function Distribute() {
   const { data: promoAssets, refetch: refetchAssets } =
     trpc.distribute.getPromoAssets.useQuery({ projectId }, { enabled: !!projectId });
 
+  // Phase 2: analytics for the film page
+  const filmPageId = (promoStatus?.filmPage as any)?.id ?? 0;
+  const { data: filmPageStats } = trpc.analytics.getStats.useQuery(
+    { entityType: "filmPage", entityId: filmPageId },
+    { enabled: !!filmPageId && !!promoStatus?.isPublished }
+  );
+
   // Initialise slug and film page fields from server data (only once, on first load)
   useEffect(() => {
     if (!promoStatus || slugEdited) return;
@@ -141,6 +152,34 @@ export default function Distribute() {
     toast.success("Link copied!");
   };
 
+  // Phase 2: Download promo pack (all generated assets as a text file)
+  const downloadPromoPack = () => {
+    if (!promoAssets || (promoAssets as any[]).length === 0) {
+      toast.error("Generate promo assets first.");
+      return;
+    }
+    const content = (promoAssets as any[]).map((a: any) =>
+      `=== ${a.type?.toUpperCase()} ${a.variant ? `(${a.variant})` : ""} ===\n${a.content}\n`
+    ).join("\n");
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${slug || "promo"}-pack.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Promo pack downloaded!");
+  };
+
+  // Phase 2: Submit for feature (admin curation)
+  const submitForFeature = () => {
+    if (!promoStatus?.isPublished) {
+      toast.error("Publish your film page first before submitting for feature.");
+      return;
+    }
+    toast.success("Submitted for editorial review! Our team will review your film within 5–7 business days.");
+  };
+
   const exports = (promoStatus?.exports || {}) as Record<string, boolean>;
 
   const readinessItems = [
@@ -152,6 +191,7 @@ export default function Distribute() {
     { label: "Film page published", done: !!promoStatus?.isPublished },
   ];
   const readinessScore = readinessItems.filter((i) => i.done).length;
+  const isFullyReady = readinessScore === readinessItems.length;
 
   if (statusLoading) {
     return (
@@ -180,14 +220,42 @@ export default function Distribute() {
         </div>
       </div>
 
+      {/* Phase 2: Analytics Snapshot (only shown when film page is published) */}
+      {promoStatus?.isPublished && filmPageStats && (
+        <Card className="border-amber-500/20 bg-amber-500/5">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <BarChart2 className="w-4 h-4 text-amber-500" />
+              <CardTitle className="text-sm">Film Page Analytics</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-2xl font-bold text-amber-500">{filmPageStats.views ?? 0}</div>
+                <div className="text-xs text-muted-foreground">Page Views</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-amber-500">{filmPageStats.plays ?? 0}</div>
+                <div className="text-xs text-muted-foreground">Video Plays</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-amber-500">{filmPageStats.shares ?? 0}</div>
+                <div className="text-xs text-muted-foreground">Shares</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Readiness Checklist */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">Distribution Readiness</CardTitle>
             <Badge
-              variant={readinessScore === readinessItems.length ? "default" : "secondary"}
-              className={readinessScore === readinessItems.length ? "bg-green-600" : ""}
+              variant={isFullyReady ? "default" : "secondary"}
+              className={isFullyReady ? "bg-green-600" : ""}
             >
               {readinessScore}/{readinessItems.length} complete
             </Badge>
@@ -200,7 +268,7 @@ export default function Distribute() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
             {readinessItems.map((item) => (
               <div key={item.label} className="flex items-center gap-2 text-sm">
                 {item.done ? (
@@ -212,11 +280,36 @@ export default function Distribute() {
               </div>
             ))}
           </div>
+
+          {/* Phase 2: Submit for Feature CTA */}
+          {isFullyReady && (
+            <div className="mt-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold flex items-center gap-1.5">
+                    <Star className="w-4 h-4 text-amber-500" />
+                    Ready for editorial feature
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Your film is fully distributed. Submit it for a chance to be featured on the VirElle Showcase.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  className="gap-2 bg-amber-500 hover:bg-amber-600 text-black shrink-0"
+                  onClick={submitForFeature}
+                >
+                  <Star className="w-3.5 h-3.5" />
+                  Submit for Feature
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
       <Tabs defaultValue="exports">
-        <TabsList className="flex w-full overflow-x-auto sm:grid sm:grid-cols-3 sm:max-w-md">
+        <TabsList className="flex w-full overflow-x-auto sm:grid sm:grid-cols-4 sm:max-w-2xl">
           <TabsTrigger value="exports" className="shrink-0 sm:shrink">
             <Film className="w-4 h-4 mr-1" />
             Exports
@@ -229,6 +322,10 @@ export default function Distribute() {
             <Globe className="w-4 h-4 mr-1" />
             Film Page
           </TabsTrigger>
+          <TabsTrigger value="profile" className="shrink-0 sm:shrink">
+            <User className="w-4 h-4 mr-1" />
+            Profile
+          </TabsTrigger>
         </TabsList>
 
         {/* ── Exports Tab ── */}
@@ -239,6 +336,7 @@ export default function Distribute() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {PLATFORM_CONFIGS.map((platform) => {
               const done = !!(exports as any)[platform.key];
+              const exportUrl = (promoStatus as any)?.[`${platform.key}Url`] || null;
               return (
                 <Card key={platform.key} className={`border ${platform.bg}`}>
                   <CardHeader className="pb-2">
@@ -251,7 +349,7 @@ export default function Distribute() {
                     </div>
                     <CardDescription className="text-xs">{platform.description}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-2">
                     <Button
                       size="sm"
                       variant={done ? "outline" : "default"}
@@ -268,6 +366,15 @@ export default function Distribute() {
                       )}
                       {done ? "Re-export" : "Export"}
                     </Button>
+                    {/* Phase 2: Download link when export is ready */}
+                    {done && exportUrl && (
+                      <a href={exportUrl} download target="_blank" rel="noopener noreferrer">
+                        <Button size="sm" variant="ghost" className="w-full gap-2 text-xs">
+                          <Download className="w-3 h-3" />
+                          Download
+                        </Button>
+                      </a>
+                    )}
                   </CardContent>
                 </Card>
               );
@@ -301,19 +408,33 @@ export default function Distribute() {
             <p className="text-sm text-muted-foreground">
               AI-generated captions, hashtags, and hooks for each platform.
             </p>
-            <Button
-              size="sm"
-              variant="outline"
-              className="gap-2"
-              disabled={generateAssets.isPending}
-              onClick={() => generateAssets.mutate({ projectId })}
-            >
-              {generateAssets.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-              {promoStatus?.promoAssetsGenerated ? "Regenerate" : "Generate"}
-            </Button>
+            <div className="flex items-center gap-2">
+              {/* Phase 2: Download promo pack */}
+              {promoAssets && (promoAssets as any[]).length > 0 && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2"
+                  onClick={downloadPromoPack}
+                >
+                  <Download className="w-3 h-3" />
+                  Download Pack
+                </Button>
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2"
+                disabled={generateAssets.isPending}
+                onClick={() => generateAssets.mutate({ projectId })}
+              >
+                {generateAssets.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                {promoStatus?.promoAssetsGenerated ? "Regenerate" : "Generate"}
+              </Button>
+            </div>
           </div>
 
-          {promoAssets && promoAssets.length > 0 ? (
+          {promoAssets && (promoAssets as any[]).length > 0 ? (
             <div className="space-y-3">
               {(promoAssets as any[]).map((asset: any) => (
                 <Card key={asset.id}>
@@ -343,7 +464,7 @@ export default function Distribute() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">{asset.content}</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{asset.content}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -479,6 +600,62 @@ export default function Distribute() {
                 </a>
               </div>
             )}
+          </div>
+        </TabsContent>
+
+        {/* ── Phase 2: Creator Profile Tab ── */}
+        <TabsContent value="profile" className="space-y-5 mt-4">
+          <p className="text-sm text-muted-foreground">
+            Set up your public creator profile at{" "}
+            <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">virellestudios.com/creators/your-slug</span>
+          </p>
+
+          <div className="p-4 rounded-lg border bg-muted/20 space-y-3">
+            <div className="flex items-start gap-3">
+              <User className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium">Creator Profile</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Your creator profile is a public page that showcases all your films, collections, and social links.
+                  Set it up from your account settings.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Link href="/settings/profile">
+                <Button size="sm" variant="outline" className="gap-2 w-full sm:w-auto">
+                  <User className="w-3.5 h-3.5" />
+                  Set Up Profile
+                </Button>
+              </Link>
+              {promoStatus?.slug && (
+                <a href={`/creators/${promoStatus.slug}`} target="_blank" rel="noopener noreferrer">
+                  <Button size="sm" variant="ghost" className="gap-2 w-full sm:w-auto">
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    View Profile
+                  </Button>
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Showcase status */}
+          <div className="p-4 rounded-lg border space-y-2">
+            <p className="text-sm font-medium flex items-center gap-2">
+              <Globe className="w-4 h-4 text-amber-500" />
+              Showcase Status
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {allowShowcase && promoStatus?.isPublished
+                ? "Your film is eligible to appear in the VirElle Showcase discovery feed."
+                : "Enable 'Include in Showcase' on the Film Page tab and publish to appear in the discovery feed."}
+            </p>
+            <Badge
+              variant={allowShowcase && promoStatus?.isPublished ? "default" : "secondary"}
+              className={allowShowcase && promoStatus?.isPublished ? "bg-green-600" : ""}
+            >
+              {allowShowcase && promoStatus?.isPublished ? "In Showcase" : "Not in Showcase"}
+            </Badge>
           </div>
         </TabsContent>
       </Tabs>

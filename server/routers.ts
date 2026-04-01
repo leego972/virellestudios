@@ -8074,7 +8074,226 @@ Rules:
       }),
   }),
 
-  // ─── Credit History ───────────────────────────────────────────────────────
+  // ─── Phase 2: Creator Profiles ────────────────────────────────────────────
+  creatorProfile: router({
+    getProfile: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        const rows = await dbConn.execute(
+          sql`SELECT * FROM creatorProfiles WHERE slug = ${input.slug} LIMIT 1`
+        );
+        const profile = (Array.isArray(rows[0]) ? rows[0] : rows as any[])?.[0];
+        if (!profile) throw new TRPCError({ code: "NOT_FOUND", message: "Profile not found" });
+        
+        // Get public collections for this creator
+        const collectionsRows = await dbConn.execute(
+          sql`SELECT * FROM collections WHERE userId = ${profile.userId} AND isPublic = true ORDER BY createdAt DESC`
+        );
+        
+        // Get public films for this creator
+        const filmsRows = await dbConn.execute(
+          sql`SELECT f.*, m.fileUrl as movieUrl, m.thumbnailUrl as movieThumbnail
+              FROM filmPages f 
+              LEFT JOIN movies m ON f.projectId = m.projectId AND m.type = 'film'
+              WHERE f.userId = ${profile.userId} AND f.isPublic = true
+              GROUP BY f.id
+              ORDER BY f.createdAt DESC`
+        );
+        
+        return {
+          ...profile,
+          collections: Array.isArray(collectionsRows[0]) ? collectionsRows[0] : collectionsRows as any[],
+          films: Array.isArray(filmsRows[0]) ? filmsRows[0] : filmsRows as any[],
+        };
+      }),
+      
+    updateProfile: protectedProcedure
+      .input(z.object({
+        slug: z.string().min(3).max(64).regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
+        displayName: z.string().min(2).max(100),
+        bio: z.string().max(1000).optional(),
+        profileType: z.enum(["creator", "studio"]).default("creator"),
+        isPublic: z.boolean().default(false),
+        socialLinks: z.any().optional(),
+        focusTags: z.any().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        // Check if slug is taken by someone else
+        const slugCheck = await dbConn.execute(
+          sql`SELECT id FROM creatorProfiles WHERE slug = ${input.slug} AND userId != ${ctx.user.id} LIMIT 1`
+        );
+        const existingSlug = (Array.isArray(slugCheck[0]) ? slugCheck[0] : slugCheck as any[])?.[0];
+        if (existingSlug) throw new TRPCError({ code: "CONFLICT", message: "Profile URL is already taken" });
+        
+        // Check if profile exists
+        const profileCheck = await dbConn.execute(
+          sql`SELECT id FROM creatorProfiles WHERE userId = ${ctx.user.id} LIMIT 1`
+        );
+        const existingProfile = (Array.isArray(profileCheck[0]) ? profileCheck[0] : profileCheck as any[])?.[0];
+        
+        if (existingProfile) {
+          await dbConn.execute(
+            sql`UPDATE creatorProfiles SET 
+                slug = ${input.slug}, 
+                displayName = ${input.displayName}, 
+                bio = ${input.bio || null}, 
+                profileType = ${input.profileType},
+                isPublic = ${input.isPublic},
+                socialLinks = ${input.socialLinks ? JSON.stringify(input.socialLinks) : null},
+                focusTags = ${input.focusTags ? JSON.stringify(input.focusTags) : null},
+                updatedAt = NOW()
+                WHERE userId = ${ctx.user.id}`
+          );
+        } else {
+          await dbConn.execute(
+            sql`INSERT INTO creatorProfiles (userId, slug, displayName, bio, profileType, isPublic, socialLinks, focusTags) 
+                VALUES (${ctx.user.id}, ${input.slug}, ${input.displayName}, ${input.bio || null}, ${input.profileType}, ${input.isPublic}, ${input.socialLinks ? JSON.stringify(input.socialLinks) : null}, ${input.focusTags ? JSON.stringify(input.focusTags) : null})`
+          );
+        }
+        
+        return { success: true, slug: input.slug };
+      }),
+  }),
+
+  // ─── Phase 2: Collections ─────────────────────────────────────────────────
+  collections: router({
+    getCollection: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        const rows = await dbConn.execute(
+          sql`SELECT c.*, u.name as creatorName, p.slug as creatorSlug
+              FROM collections c
+              LEFT JOIN users u ON c.userId = u.id
+              LEFT JOIN creatorProfiles p ON c.userId = p.userId
+              WHERE c.slug = ${input.slug} LIMIT 1`
+        );
+        const collection = (Array.isArray(rows[0]) ? rows[0] : rows as any[])?.[0];
+        if (!collection) throw new TRPCError({ code: "NOT_FOUND", message: "Collection not found" });
+        
+        // Get items in collection
+        const itemsRows = await dbConn.execute(
+          sql`SELECT ci.*, f.slug as filmSlug, f.title as filmTitle, f.thumbnailUrl as filmThumbnail, m.fileUrl as movieUrl
+              FROM collectionItems ci
+              JOIN filmPages f ON ci.projectId = f.projectId
+              LEFT JOIN movies m ON f.projectId = m.projectId AND m.type = 'film'
+              WHERE ci.collectionId = ${collection.id} AND f.isPublic = true
+              ORDER BY ci.orderIndex ASC`
+        );
+        
+        return {
+          ...collection,
+          items: Array.isArray(itemsRows[0]) ? itemsRows[0] : itemsRows as any[],
+        };
+      }),
+  }),
+
+  // ─── Phase 2: Analytics ───────────────────────────────────────────────────
+  analytics: router({
+    trackEvent: publicProcedure
+      .input(z.object({
+        entityType: z.enum(["filmPage", "creatorProfile", "collection"]),
+        entityId: z.number(),
+        ownerId: z.number(),
+        eventType: z.enum(["page_view", "video_play", "link_click", "share_click"]),
+        metadata: z.any().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return { success: false };
+        
+        try {
+          await dbConn.execute(
+            sql`INSERT INTO analyticsEvents (userId, entityType, entityId, eventType, metadata) 
+                VALUES (${input.ownerId}, ${input.entityType}, ${input.entityId}, ${input.eventType}, ${input.metadata ? JSON.stringify(input.metadata) : null})`
+          );
+          return { success: true };
+        } catch (e) {
+          console.error("Analytics tracking error:", e);
+          return { success: false };
+        }
+      }),
+      
+    getStats: protectedProcedure
+      .input(z.object({
+        entityType: z.enum(["filmPage", "creatorProfile", "collection"]),
+        entityId: z.number(),
+      }))
+      .query(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return { views: 0, plays: 0, shares: 0 };
+        
+        const rows = await dbConn.execute(
+          sql`SELECT eventType, COUNT(*) as count 
+              FROM analyticsEvents 
+              WHERE userId = ${ctx.user.id} AND entityType = ${input.entityType} AND entityId = ${input.entityId}
+              GROUP BY eventType`
+        );
+        
+        const results = Array.isArray(rows[0]) ? rows[0] : rows as any[];
+        const stats = { views: 0, plays: 0, shares: 0 };
+        
+        for (const row of results) {
+          if (row.eventType === 'page_view') stats.views = Number(row.count);
+          if (row.eventType === 'video_play') stats.plays = Number(row.count);
+          if (row.eventType === 'share_click') stats.shares = Number(row.count);
+        }
+        
+        return stats;
+      }),
+     setCurationFlag: adminProcedure
+      .input(z.object({
+        entityType: z.enum(["project", "creatorProfile"]),
+        entityId: z.number(),
+        flagType: z.enum(["featured", "staff_pick", "hidden", "banned"]),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        // Check if flag already exists
+        const existingRows = await dbConn.execute(
+          sql`SELECT id FROM adminCurationFlags 
+              WHERE entityType = ${input.entityType} AND entityId = ${input.entityId} AND flagType = ${input.flagType} LIMIT 1`
+        );
+        const existing = (Array.isArray(existingRows[0]) ? existingRows[0] : existingRows as any[])?.[0];
+        
+        if (!existing) {
+          await dbConn.execute(
+            sql`INSERT INTO adminCurationFlags (entityType, entityId, flagType, adminId, notes) 
+                VALUES (${input.entityType}, ${input.entityId}, ${input.flagType}, ${ctx.user.id}, ${input.notes || null})`
+          );
+        }
+        return { success: true };
+      }),
+      
+    removeCurationFlag: adminProcedure
+      .input(z.object({
+        entityType: z.enum(["project", "creatorProfile"]),
+        entityId: z.number(),
+        flagType: z.enum(["featured", "staff_pick", "hidden", "banned"]),
+      }))
+      .mutation(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        await dbConn.execute(
+          sql`DELETE FROM adminCurationFlags 
+              WHERE entityType = ${input.entityType} AND entityId = ${input.entityId} AND flagType = ${input.flagType}`
+        );
+        return { success: true };
+      }),
+  }),
+  // ─── AI Generation ────────────────────────────────────────────────────────
   credits: router({
     // Paginated credit transaction history for the current user
     getHistory: protectedProcedure

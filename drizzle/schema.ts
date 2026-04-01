@@ -1144,3 +1144,75 @@ export const promoAssets = mysqlTable("promoAssets", {
 });
 export type PromoAsset = typeof promoAssets.$inferSelect;
 export type InsertPromoAsset = typeof promoAssets.$inferInsert;
+
+// ─── Phase 2: Creator Profiles ───────────────────────────────────────────────
+export const creatorProfiles = mysqlTable("creatorProfiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  profileType: mysqlEnum("profileType", ["creator", "studio"]).default("creator").notNull(),
+  displayName: varchar("displayName", { length: 255 }).notNull(),
+  avatarUrl: text("avatarUrl"),
+  bio: text("bio"),
+  focusTags: json("focusTags"), // array of strings
+  socialLinks: json("socialLinks"), // { instagram, tiktok, youtube, website, twitter, linkedin }
+  contactEmail: varchar("contactEmail", { length: 320 }),
+  featuredProjectId: int("featuredProjectId"),
+  isPublic: boolean("isPublic").default(false).notNull(),
+  completenessScore: int("completenessScore").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CreatorProfile = typeof creatorProfiles.$inferSelect;
+export type InsertCreatorProfile = typeof creatorProfiles.$inferInsert;
+
+// ─── Phase 2: Collections / Slates ───────────────────────────────────────────
+export const collections = mysqlTable("collections", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  coverImageUrl: text("coverImageUrl"),
+  isPublic: boolean("isPublic").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Collection = typeof collections.$inferSelect;
+export type InsertCollection = typeof collections.$inferInsert;
+
+export const collectionItems = mysqlTable("collectionItems", {
+  id: int("id").autoincrement().primaryKey(),
+  collectionId: int("collectionId").notNull(),
+  projectId: int("projectId").notNull(),
+  orderIndex: int("orderIndex").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CollectionItem = typeof collectionItems.$inferSelect;
+export type InsertCollectionItem = typeof collectionItems.$inferInsert;
+
+// ─── Phase 2: Public Analytics ───────────────────────────────────────────────
+export const analyticsEvents = mysqlTable("analyticsEvents", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // owner of the content
+  entityType: mysqlEnum("entityType", ["filmPage", "creatorProfile", "collection"]).notNull(),
+  entityId: int("entityId").notNull(),
+  eventType: mysqlEnum("eventType", ["page_view", "video_play", "link_click", "share_click"]).notNull(),
+  metadata: json("metadata"), // e.g., { source: "twitter", linkType: "instagram" }
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
+export type InsertAnalyticsEvent = typeof analyticsEvents.$inferInsert;
+
+// ─── Phase 2: Admin Curation Flags ───────────────────────────────────────────
+export const adminCurationFlags = mysqlTable("adminCurationFlags", {
+  id: int("id").autoincrement().primaryKey(),
+  entityType: mysqlEnum("entityType", ["project", "creatorProfile"]).notNull(),
+  entityId: int("entityId").notNull(),
+  flagType: mysqlEnum("flagType", ["featured", "staff_pick", "hidden", "banned"]).notNull(),
+  adminId: int("adminId").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AdminCurationFlag = typeof adminCurationFlags.$inferSelect;
+export type InsertAdminCurationFlag = typeof adminCurationFlags.$inferInsert;

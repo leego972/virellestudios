@@ -94,6 +94,8 @@ const TVCommercial = lazy(() => import("./pages/TVCommercial"));
 const FundingDirectory = lazy(() => import("./pages/FundingDirectory"));
 const Distribute = lazy(() => import("./pages/Distribute"));
 const FilmPage = lazy(() => import("./pages/FilmPage"));
+const CreatorProfile = lazy(() => import("./pages/CreatorProfile"));
+const Collections = lazy(() => import("./pages/Collections"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -167,6 +169,8 @@ function Router() {
       <Route path="/dmca">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
       <Route path="/showcase">{() => <LazyPage><Showcase /></LazyPage>}</Route>
       <Route path="/films/:slug">{() => <LazyPage><FilmPage /></LazyPage>}</Route>
+      <Route path="/creators/:slug">{() => <LazyPage><CreatorProfile /></LazyPage>}</Route>
+      <Route path="/collections/:slug">{() => <LazyPage><Collections /></LazyPage>}</Route>
       <Route path="/how-it-works">{() => <LazyPage><HowItWorks /></LazyPage>}</Route>
       <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
       <Route path="/faq">{() => <LazyPage><FAQ /></LazyPage>}</Route>
