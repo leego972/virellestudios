@@ -17,6 +17,16 @@ export default function Collections() {
     { enabled: !!slug }
   );
 
+  // Phase 2: Analytics tracking
+  const trackEvent = trpc.analytics.trackEvent.useMutation();
+  const collectionId = (collection as any)?.id ?? 0;
+  const collectionOwner = (collection as any)?.userId ?? 0;
+  useEffect(() => {
+    if (!collection || !collectionId || !collectionOwner) return;
+    trackEvent.mutate({ entityType: "collection", entityId: collectionId, ownerId: collectionOwner, eventType: "page_view" });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collectionId]);
+
   useEffect(() => {
     if (!collection) return;
     document.title = `${collection.title} — VirElle Studios`;

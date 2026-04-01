@@ -172,12 +172,18 @@ export default function Distribute() {
   };
 
   // Phase 2: Submit for feature (admin curation)
+  const submitForFeatureMutation = trpc.submissions.submit.useMutation({
+    onSuccess: () => {
+      toast.success("Submitted for editorial review! Our team will review your film within 5–7 business days.");
+    },
+    onError: (e) => toast.error(e.message),
+  });
   const submitForFeature = () => {
     if (!promoStatus?.isPublished) {
       toast.error("Publish your film page first before submitting for feature.");
       return;
     }
-    toast.success("Submitted for editorial review! Our team will review your film within 5–7 business days.");
+    submitForFeatureMutation.mutate({ projectId });
   };
 
   const exports = (promoStatus?.exports || {}) as Record<string, boolean>;
@@ -298,9 +304,10 @@ export default function Distribute() {
                   size="sm"
                   className="gap-2 bg-amber-500 hover:bg-amber-600 text-black shrink-0"
                   onClick={submitForFeature}
+                  disabled={submitForFeatureMutation.isPending}
                 >
                   <Star className="w-3.5 h-3.5" />
-                  Submit for Feature
+                  {submitForFeatureMutation.isPending ? "Submitting…" : "Submit for Feature"}
                 </Button>
               </div>
             </div>

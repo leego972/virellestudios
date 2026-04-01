@@ -8502,7 +8502,7 @@ Rules:
         if (!dbConn) return [];
         try {
           const rows = await dbConn.execute(
-            sql`SELECT f.id, f.slug, f.title, f.thumbnailUrl,
+            sql`SELECT f.id, f.projectId, f.slug, f.title, f.thumbnailUrl,
                 u.name as creatorName, cp.slug as creatorSlug,
                 COALESCE(v.cnt, 0) as viewCount,
                 COALESCE(p.cnt, 0) as playCount,

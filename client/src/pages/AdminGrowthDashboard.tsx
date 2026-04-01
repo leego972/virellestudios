@@ -230,7 +230,7 @@ function ShowcaseCurationPanel() {
                   variant="outline"
                   className="border-blue-700 text-blue-400 hover:bg-blue-900/20 text-xs"
                   disabled={setCurationMutation.isPending}
-                  onClick={() => setCurationMutation.mutate({ entityType: "project", entityId: film.id, flagType: "staff_pick" })}
+                  onClick={() => setCurationMutation.mutate({ entityType: "project", entityId: film.projectId ?? film.id, flagType: "staff_pick" })}
                 >
                   Staff Pick
                 </Button>
@@ -239,7 +239,7 @@ function ShowcaseCurationPanel() {
                   variant="outline"
                   className="border-red-800 text-red-400 hover:bg-red-900/20 text-xs"
                   disabled={removeCurationMutation.isPending}
-                  onClick={() => removeCurationMutation.mutate({ entityType: "project", entityId: film.id, flagType: "featured" })}
+                  onClick={() => removeCurationMutation.mutate({ entityType: "project", entityId: film.projectId ?? film.id, flagType: "featured" })}
                 >
                   Remove Flag
                 </Button>

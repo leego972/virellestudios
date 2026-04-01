@@ -58,6 +58,18 @@ export default function FilmPage() {
   );
   const relatedFilms = relatedFilmsRaw?.slice(0, 4) ?? [];
 
+  // Phase 2: Analytics tracking
+  const trackEvent = trpc.analytics.trackEvent.useMutation();
+  const fp_id = (filmPage as any)?.id ?? 0;
+  const fp_owner = (filmPage as any)?.userId ?? 0;
+
+  // Fire page_view once when film page loads
+  useEffect(() => {
+    if (!filmPage || !fp_id || !fp_owner) return;
+    trackEvent.mutate({ entityType: "filmPage", entityId: fp_id, ownerId: fp_owner, eventType: "page_view" });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fp_id]);
+
   // Inject Open Graph / Twitter Card metadata for social sharing
   useEffect(() => {
     if (!filmPage) return;
@@ -91,6 +103,9 @@ export default function FilmPage() {
 
   const handleShare = () => {
     const url = window.location.href;
+    if (fp_id && fp_owner) {
+      trackEvent.mutate({ entityType: "filmPage", entityId: fp_id, ownerId: fp_owner, eventType: "share_click" });
+    }
     if (navigator.share) {
       navigator.share({ title: (filmPage as any)?.title || "Film", url });
     } else {
@@ -408,7 +423,16 @@ export default function FilmPage() {
             Start your own project today.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href="https://virellestudios.com/signup" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://virellestudios.com/signup"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                if (fp_id && fp_owner) {
+                  trackEvent.mutate({ entityType: "filmPage", entityId: fp_id, ownerId: fp_owner, eventType: "link_click", metadata: { label: "signup_cta" } });
+                }
+              }}
+            >
               <Button className="gap-2 bg-amber-500 hover:bg-amber-600 text-black font-bold w-full sm:w-auto">
                 <Sparkles className="w-4 h-4" />
                 Start Free

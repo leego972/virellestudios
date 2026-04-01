@@ -18,6 +18,16 @@ export default function CreatorProfile() {
     { enabled: !!slug }
   );
 
+  // Phase 2: Analytics tracking
+  const trackEvent = trpc.analytics.trackEvent.useMutation();
+  const profileId = (profile as any)?.id ?? 0;
+  const profileOwner = (profile as any)?.userId ?? 0;
+  useEffect(() => {
+    if (!profile || !profileId || !profileOwner) return;
+    trackEvent.mutate({ entityType: "creatorProfile", entityId: profileId, ownerId: profileOwner, eventType: "page_view" });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileId]);
+
   // Set OG meta tags
   useEffect(() => {
     if (!profile) return;
