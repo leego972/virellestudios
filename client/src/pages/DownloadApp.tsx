@@ -58,7 +58,7 @@ export default function DownloadApp() {
   function copyReferral() {
     if (user) {
       const code = (user as any).referralCode || user.id;
-      navigator.clipboard.writeText(`https://virellestudios.com/register?ref=${code}`).then(() => {
+      navigator.clipboard.writeText(`https://www.virelle.life/register?ref=${code}`).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       });
@@ -162,7 +162,7 @@ export default function DownloadApp() {
         {!loading && (!links?.ios?.available || !links?.android?.available) && (
           <p className="text-sm text-gray-500 max-w-md mx-auto text-center mb-12">
             The app is currently in beta. Android APK is available for direct install.
-            iOS requires TestFlight — <a href="mailto:support@virellestudios.com" className="text-amber-400 underline">contact us</a> to join the beta.
+            iOS requires TestFlight — <a href="mailto:Studiosvirelle@gmail.com" className="text-amber-400 underline">contact us</a> to join the beta.
           </p>
         )}
 

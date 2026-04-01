@@ -6694,8 +6694,9 @@ Rules:
             annual: getStripePriceId("independent_annual") || (ENV as any).stripeIndependentAnnualPriceId || "",
           },
           creator: {
-            monthly: getStripePriceId("creator_monthly") || "",
-            annual: getStripePriceId("creator_annual") || "",
+            // "creator" is a DB alias for the studio tier — use studio price IDs
+            monthly: getStripePriceId("creator_monthly") || getStripePriceId("studio_monthly") || "",
+            annual: getStripePriceId("creator_annual") || getStripePriceId("studio_annual") || "",
           },
           studio: {
             monthly: getStripePriceId("studio_monthly") || "",

@@ -1495,7 +1495,7 @@ function createAdminContext(): { ctx: TrpcContext; clearedCookies: any[] } {
   const user: AuthenticatedUser = {
     id: 1,
     openId: "admin-user-123",
-    email: "admin@virelle.life",
+    email: "Studiosvirelle@gmail.com",
     name: "Admin Director",
     passwordHash: null,
     loginMethod: "email",

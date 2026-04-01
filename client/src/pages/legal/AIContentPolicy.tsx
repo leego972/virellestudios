@@ -60,7 +60,7 @@ export default function AIContentPolicy() {
               <li>Targeted harassment and threats</li>
             </ul>
             <p className="text-muted-foreground mt-3">
-              Detected violations trigger immediate account freezing and safety team review. False positives can be appealed by contacting <a href="mailto:safety@virelle.life" className="text-primary hover:underline">safety@virelle.life</a>.
+              Detected violations trigger immediate account freezing and safety team review. False positives can be appealed by contacting <a href="mailto:Studiosvirelle@gmail.com" className="text-primary hover:underline">Studiosvirelle@gmail.com</a>.
             </p>
           </section>
 
@@ -81,7 +81,7 @@ export default function AIContentPolicy() {
           <section>
             <h2 className="text-lg font-semibold mb-3 text-foreground">7. Contact</h2>
             <p className="text-muted-foreground">
-              For AI content policy questions: <a href="mailto:legal@virelle.life" className="text-primary hover:underline">legal@virelle.life</a>
+              For AI content policy questions: <a href="mailto:Studiosvirelle@gmail.com" className="text-primary hover:underline">Studiosvirelle@gmail.com</a>
             </p>
           </section>
 

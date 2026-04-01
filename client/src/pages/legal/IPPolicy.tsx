@@ -5,8 +5,8 @@ import { Link } from "wouter";
 
 export default function IPPolicy() {
   const EFFECTIVE_DATE = "1 January 2025";
-  const CONTACT_EMAIL = "legal@virellestudios.com";
-  const DMCA_EMAIL = "dmca@virellestudios.com";
+  const CONTACT_EMAIL = "Studiosvirelle@gmail.com";
+  const DMCA_EMAIL = "Studiosvirelle@gmail.com";
 
   return (
     <div className="min-h-screen bg-background relative">

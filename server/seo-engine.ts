@@ -39,7 +39,7 @@ const SITE_DESCRIPTION =
 const SITE_LOGO =
   "/logos/at-icon-256.png";
 const SITE_TWITTER = "@VirelleStudios";
-const SITE_CONTACT_EMAIL = "hello@virelle.life";
+const SITE_CONTACT_EMAIL = "Studiosvirelle@gmail.com";
 
 // Supported languages for hreflang
 const SUPPORTED_LOCALES = [

@@ -73,7 +73,7 @@ export default function AcceptableUsePolicy() {
           <section>
             <h2 className="text-lg font-semibold mb-3 text-foreground">Reporting Violations</h2>
             <p className="text-muted-foreground">
-              To report a violation of this AUP, contact <a href="mailto:safety@virelle.life" className="text-primary hover:underline">safety@virelle.life</a>. For urgent child safety concerns, contact NCMEC directly at 1-800-THE-LOST or CyberTipline.org.
+              To report a violation of this AUP, contact <a href="mailto:Studiosvirelle@gmail.com" className="text-primary hover:underline">Studiosvirelle@gmail.com</a>. For urgent child safety concerns, contact NCMEC directly at 1-800-THE-LOST or CyberTipline.org.
             </p>
           </section>
 
