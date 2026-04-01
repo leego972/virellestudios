@@ -71,6 +71,7 @@ import {
   Megaphone,
   Pencil,
   StopCircle,
+  Globe,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -1015,8 +1016,14 @@ export default function ProjectDetail() {
                   <Layers className="h-4 w-4 mr-1" />
                   Export Scenes
                 </Button>
+                <Button size="sm" variant="secondary" asChild>
+                  <a href={`/projects/${projectId}/distribute`}>
+                    <Globe className="h-4 w-4 mr-1" />
+                    Distribute & Promote
+                  </a>
+                </Button>
                 <p className="text-xs text-muted-foreground w-full mt-1">
-                  Exported items appear in your My Movies library, organized by movie title.
+                  Exported items appear in your My Movies library, organized by movie title. Use <strong>Distribute &amp; Promote</strong> to create platform-ready cuts for TikTok, Instagram, and YouTube Shorts.
                 </p>
               </div>
             </CardContent>

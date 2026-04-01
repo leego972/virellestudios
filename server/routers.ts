@@ -5486,6 +5486,35 @@ Generate a detailed production budget estimate.`,
         } else if (input.exportType === "trailer") {
           // For trailers, stitch first 3 scenes (or first 30s of each) if available
           const scenesWithVideo = scenes.filter((s: any) => s.videoUrl).slice(0, 3);
+          
+          // Fetch VirElle Studios Opener scenes to prepend as opening credits
+          let openerScenes: any[] = [];
+          try {
+            const dbConn = await db.getDb();
+            if (dbConn) {
+              const openerRows = await dbConn.execute(
+                sql`SELECT p.id FROM projects p WHERE p.title LIKE '%Opener%' ORDER BY p.id DESC LIMIT 1`
+              );
+              const openerProj = (Array.isArray(openerRows[0]) ? openerRows[0] : openerRows as any[])?.[0];
+              if (openerProj) {
+                const opScenes = await db.getProjectScenes(openerProj.id);
+                openerScenes = opScenes
+                  .filter((s: any) => s.videoUrl && s.status === 'completed')
+                  .sort((a: any, b: any) => (a.orderIndex || 0) - (b.orderIndex || 0))
+                  .map((s: any) => ({
+                    videoUrl: s.videoUrl,
+                    title: s.title || 'VirElle Studios',
+                    duration: s.duration || 5,
+                    orderIndex: -1, // Before all user scenes
+                    transition: 'fade' as const,
+                    transitionDuration: 1.2,
+                  }));
+              }
+            }
+          } catch (err) {
+            console.error('[Export] Failed to fetch opener scenes:', err);
+          }
+
           let fileUrl: string | undefined;
           let fileKey: string | undefined;
           let fileSize: number | undefined;
@@ -5495,13 +5524,18 @@ Generate a detailed production budget estimate.`,
           if (scenesWithVideo.length >= 2) {
             try {
               const { stitchMovie } = await import("./_core/videoStitcher");
+              
+              const userScenes = scenesWithVideo.map((s: any) => ({
+                videoUrl: s.videoUrl,
+                title: s.title || undefined,
+                duration: s.duration || undefined,
+                orderIndex: s.orderIndex || 0,
+              }));
+              
+              const allScenes = [...openerScenes, ...userScenes];
+              
               const result = await stitchMovie({
-                scenes: scenesWithVideo.map((s: any) => ({
-                  videoUrl: s.videoUrl,
-                  title: s.title || undefined,
-                  duration: s.duration || undefined,
-                  orderIndex: s.orderIndex || 0,
-                })),
+                scenes: allScenes,
                 projectTitle: `${project.title} - Trailer`,
                 userId: ctx.user.id,
                 projectId: project.id,
@@ -7679,6 +7713,305 @@ Rules:
         return { success: true };
       }),
   }),
+  // ─── Distribute / Promote ─────────────────────────────────────────────────
+  distribute: router({
+    getPromoStatus: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        // Check if film page exists
+        const filmPageRows = await dbConn.execute(
+          sql`SELECT * FROM filmPages WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} LIMIT 1`
+        );
+        const filmPage = (Array.isArray(filmPageRows[0]) ? filmPageRows[0] : filmPageRows as any[])?.[0];
+        
+        // Check if promo assets exist
+        const promoAssetsRows = await dbConn.execute(
+          sql`SELECT COUNT(*) as count FROM promoAssets WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id}`
+        );
+        const promoAssetsCount = (Array.isArray(promoAssetsRows[0]) ? promoAssetsRows[0] : promoAssetsRows as any[])?.[0]?.count || 0;
+        
+        // Check exports
+        const movies = await db.getUserMovies(ctx.user.id);
+        const projectMovies = movies.filter((m: any) => m.projectId === input.projectId);
+        
+        const exports = {
+          trailer: projectMovies.some((m: any) => m.type === "trailer" && !m.tags?.includes("tiktok") && !m.tags?.includes("instagram") && !m.tags?.includes("youtubeShorts") && !m.tags?.includes("square")),
+          tiktok: projectMovies.some((m: any) => m.type === "trailer" && m.tags?.includes("tiktok")),
+          instagram: projectMovies.some((m: any) => m.type === "trailer" && m.tags?.includes("instagram")),
+          youtubeShorts: projectMovies.some((m: any) => m.type === "trailer" && m.tags?.includes("youtubeShorts")),
+          square: projectMovies.some((m: any) => m.type === "trailer" && m.tags?.includes("square")),
+        };
+        
+        return {
+          isPublished: !!filmPage?.isPublic,
+          slug: filmPage?.slug || project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          filmPage: filmPage || null,
+          promoAssetsGenerated: promoAssetsCount > 0,
+          exports,
+        };
+      }),
+      
+    generatePromoAssets: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        // Generate mock promo assets for now (in a real app, this would call an LLM)
+        const assets = [
+          { type: "caption", variant: "viral", content: `Just finished my new film "${project.title}"! 🎬 Wait until the end... #filmmaking #indiefilm #virellestudios` },
+          { type: "caption", variant: "cinematic", content: `A glimpse into the world of "${project.title}". A story about ${project.plotSummary || 'passion and discovery'}. #cinema #director` },
+          { type: "hashtags", variant: "general", content: `#${project.title.replace(/\s+/g, '')} #filmmaker #shortfilm #virellestudios #ai #cinema` },
+          { type: "hook", variant: "tiktok", content: `POV: You just created a cinematic masterpiece using AI...` }
+        ];
+        
+        for (const asset of assets) {
+          await dbConn.execute(
+            sql`INSERT INTO promoAssets (userId, projectId, type, variant, content) VALUES (${ctx.user.id}, ${input.projectId}, ${asset.type}, ${asset.variant}, ${asset.content})`
+          );
+        }
+        
+        return { success: true, message: "Promo assets generated successfully" };
+      }),
+      
+    getPromoAssets: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        const rows = await dbConn.execute(
+          sql`SELECT * FROM promoAssets WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} ORDER BY createdAt DESC`
+        );
+        return Array.isArray(rows[0]) ? rows[0] : rows as any[];
+      }),
+      
+    createPromoExport: protectedProcedure
+      .input(z.object({ 
+        projectId: z.number(),
+        platform: z.enum(["tiktok", "instagram", "youtubeShorts", "square"])
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        
+        const scenes = await db.getProjectScenes(project.id);
+        const scenesWithVideo = scenes.filter((s: any) => s.videoUrl).slice(0, 3); // Use first 3 scenes for promo
+        
+        if (scenesWithVideo.length === 0) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "No video scenes available for export" });
+        }
+        
+        // Fetch VirElle Studios Opener scenes to prepend as opening credits
+        let openerScenes: any[] = [];
+        try {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            const openerRows = await dbConn.execute(
+              sql`SELECT p.id FROM projects p WHERE p.title LIKE '%Opener%' ORDER BY p.id DESC LIMIT 1`
+            );
+            const openerProj = (Array.isArray(openerRows[0]) ? openerRows[0] : openerRows as any[])?.[0];
+            if (openerProj) {
+              const opScenes = await db.getProjectScenes(openerProj.id);
+              openerScenes = opScenes
+                .filter((s: any) => s.videoUrl && s.status === 'completed')
+                .sort((a: any, b: any) => (a.orderIndex || 0) - (b.orderIndex || 0))
+                .map((s: any) => ({
+                  videoUrl: s.videoUrl,
+                  title: s.title || 'VirElle Studios',
+                  duration: s.duration || 5,
+                  orderIndex: -1, // Before all user scenes
+                  transition: 'fade' as const,
+                  transitionDuration: 1.2,
+                }));
+            }
+          }
+        } catch (err) {
+          console.error('[Export] Failed to fetch opener scenes:', err);
+        }
+
+        let fileUrl: string | undefined;
+        let fileKey: string | undefined;
+        let fileSize: number | undefined;
+        let totalDuration: number | undefined;
+        let mimeType: string | undefined;
+
+        if (scenesWithVideo.length >= 2) {
+          try {
+            const { stitchMovie } = await import("./_core/videoStitcher");
+            
+            const userScenes = scenesWithVideo.map((s: any) => ({
+              videoUrl: s.videoUrl,
+              title: s.title || undefined,
+              duration: s.duration || undefined,
+              orderIndex: s.orderIndex || 0,
+            }));
+            
+            const allScenes = [...openerScenes, ...userScenes];
+            
+            // Determine resolution based on platform
+            let resolution = "1080p";
+            if (input.platform === "tiktok" || input.platform === "instagram" || input.platform === "youtubeShorts") {
+              resolution = "1080x1920"; // Vertical
+            } else if (input.platform === "square") {
+              resolution = "1080x1080"; // Square
+            }
+            
+            const result = await stitchMovie({
+              scenes: allScenes,
+              projectTitle: `${project.title} - ${input.platform} Promo`,
+              userId: ctx.user.id,
+              projectId: project.id,
+              resolution, // Pass resolution to stitcher
+            });
+            
+            fileUrl = result.fileUrl;
+            fileKey = result.fileKey;
+            fileSize = result.fileSize;
+            totalDuration = result.duration;
+            mimeType = result.mimeType;
+          } catch (err: any) {
+            console.error(`[Export] ${input.platform} promo stitching failed:`, err.message);
+          }
+        } else if (scenesWithVideo.length === 1) {
+          fileUrl = (scenesWithVideo[0] as any).videoUrl;
+          totalDuration = scenesWithVideo[0].duration || undefined;
+          mimeType = "video/mp4";
+        }
+
+        const movie = await db.createMovie({
+          userId: ctx.user.id,
+          title: `${project.title} - ${input.platform} Promo`,
+          description: `Promotional cut for ${input.platform}`,
+          type: "trailer",
+          projectId: project.id,
+          movieTitle: project.title,
+          thumbnailUrl: project.thumbnailUrl,
+          fileUrl,
+          fileKey,
+          fileSize,
+          duration: totalDuration,
+          mimeType,
+          tags: project.genre ? [project.genre, "promo", input.platform] : ["promo", input.platform],
+        });
+        
+        return { success: true, movieId: movie.id };
+      }),
+      
+    publishFilmPage: protectedProcedure
+      .input(z.object({ 
+        projectId: z.number(),
+        slug: z.string(),
+        isPublic: z.boolean(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        showCreatorName: z.boolean().optional(),
+        allowShowcase: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        // Check if slug is taken by another project
+        const existingSlugRows = await dbConn.execute(
+          sql`SELECT id FROM filmPages WHERE slug = ${input.slug} AND projectId != ${input.projectId} LIMIT 1`
+        );
+        const existingSlug = (Array.isArray(existingSlugRows[0]) ? existingSlugRows[0] : existingSlugRows as any[])?.[0];
+        if (existingSlug) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "This URL slug is already taken" });
+        }
+        
+        // Check if film page exists for this project
+        const filmPageRows = await dbConn.execute(
+          sql`SELECT id FROM filmPages WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} LIMIT 1`
+        );
+        const filmPage = (Array.isArray(filmPageRows[0]) ? filmPageRows[0] : filmPageRows as any[])?.[0];
+        
+        const title = input.title || project.title;
+        const description = input.description || project.plotSummary || project.description || "";
+        
+        if (filmPage) {
+          // Update existing
+          await dbConn.execute(
+            sql`UPDATE filmPages SET 
+                slug = ${input.slug}, 
+                isPublic = ${input.isPublic},
+                title = ${title},
+                description = ${description},
+                showCreatorName = ${input.showCreatorName ?? true},
+                allowShowcase = ${input.allowShowcase ?? true}
+                WHERE id = ${filmPage.id}`
+          );
+        } else {
+          // Create new
+          await dbConn.execute(
+            sql`INSERT INTO filmPages (userId, projectId, slug, title, description, isPublic, showCreatorName, allowShowcase) 
+                VALUES (${ctx.user.id}, ${input.projectId}, ${input.slug}, ${title}, ${description}, ${input.isPublic}, ${input.showCreatorName ?? true}, ${input.allowShowcase ?? true})`
+          );
+        }
+        
+        return { success: true, url: `/films/${input.slug}` };
+      }),
+      
+    getFilmPage: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        const rows = await dbConn.execute(
+          sql`SELECT f.*, u.name as creatorName, u.avatarUrl as creatorAvatar 
+              FROM filmPages f 
+              LEFT JOIN users u ON f.userId = u.id 
+              WHERE f.slug = ${input.slug} AND f.isPublic = true LIMIT 1`
+        );
+        const filmPage = (Array.isArray(rows[0]) ? rows[0] : rows as any[])?.[0];
+        
+        if (!filmPage) throw new TRPCError({ code: "NOT_FOUND", message: "Film page not found or not public" });
+        
+        // Get the actual movie file
+        const movieRows = await dbConn.execute(
+          sql`SELECT * FROM movies WHERE projectId = ${filmPage.projectId} AND type = 'film' ORDER BY createdAt DESC LIMIT 1`
+        );
+        const movie = (Array.isArray(movieRows[0]) ? movieRows[0] : movieRows as any[])?.[0];
+        
+        return {
+          ...filmPage,
+          movieUrl: movie?.fileUrl || null,
+          movieDuration: movie?.duration || null,
+        };
+      }),
+      
+    getShowcase: publicProcedure
+      .query(async () => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        
+        const rows = await dbConn.execute(
+          sql`SELECT f.*, u.name as creatorName, u.avatarUrl as creatorAvatar, m.fileUrl as movieUrl, m.thumbnailUrl as movieThumbnail
+              FROM filmPages f 
+              LEFT JOIN users u ON f.userId = u.id 
+              LEFT JOIN movies m ON f.projectId = m.projectId AND m.type = 'film'
+              WHERE f.isPublic = true AND f.allowShowcase = true
+              GROUP BY f.id
+              ORDER BY f.createdAt DESC LIMIT 20`
+        );
+        return Array.isArray(rows[0]) ? rows[0] : rows as any[];
+      }),
+  }),
+
   // ─── Credit History ───────────────────────────────────────────────────────
   credits: router({
     // Paginated credit transaction history for the current user

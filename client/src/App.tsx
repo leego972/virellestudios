@@ -92,6 +92,8 @@ const DirectorCut = lazy(() => import("./pages/DirectorCut"));
 const TrailerStudio = lazy(() => import("./pages/TrailerStudio"));
 const TVCommercial = lazy(() => import("./pages/TVCommercial"));
 const FundingDirectory = lazy(() => import("./pages/FundingDirectory"));
+const Distribute = lazy(() => import("./pages/Distribute"));
+const FilmPage = lazy(() => import("./pages/FilmPage"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -164,6 +166,7 @@ function Router() {
       <Route path="/ip-policy">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
       <Route path="/dmca">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
       <Route path="/showcase">{() => <LazyPage><Showcase /></LazyPage>}</Route>
+      <Route path="/films/:slug">{() => <LazyPage><FilmPage /></LazyPage>}</Route>
       <Route path="/how-it-works">{() => <LazyPage><HowItWorks /></LazyPage>}</Route>
       <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
       <Route path="/faq">{() => <LazyPage><FAQ /></LazyPage>}</Route>
@@ -221,6 +224,7 @@ function Router() {
               <Route path="/marketplace">{() => <LazyPage><AssetMarketplace /></LazyPage>}</Route>
               <Route path="/settings">{() => <SettingsPage />}</Route>
               <Route path="/funding">{() => <LazyPage><FundingDirectory /></LazyPage>}</Route>
+              <Route path="/projects/:id/distribute">{() => <LazyPage><Distribute /></LazyPage>}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/admin/security">{() => <SecurityDashboard />}</Route>
               <Route path="/admin/autonomous">{() => <LazyPage><AdminAutonomous /></LazyPage>}</Route>
