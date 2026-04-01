@@ -1216,3 +1216,50 @@ export const adminCurationFlags = mysqlTable("adminCurationFlags", {
 });
 export type AdminCurationFlag = typeof adminCurationFlags.$inferSelect;
 export type InsertAdminCurationFlag = typeof adminCurationFlags.$inferInsert;
+
+// ─── Phase 3: Growth & Curation ─────────────────────────────────────────────
+
+export const submissionReviews = mysqlTable("submissionReviews", {
+  id: int("id").primaryKey().autoincrement(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "declined", "featured"]).default("pending").notNull(),
+  adminNotes: text("adminNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SubmissionReview = typeof submissionReviews.$inferSelect;
+export type InsertSubmissionReview = typeof submissionReviews.$inferInsert;
+
+export const conversionEvents = mysqlTable("conversionEvents", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("userId"), // null if anonymous
+  sessionId: varchar("sessionId", { length: 255 }),
+  sourcePath: varchar("sourcePath", { length: 255 }).notNull(),
+  targetPath: varchar("targetPath", { length: 255 }).notNull(),
+  eventType: mysqlEnum("eventType", [
+    "view_to_watch",
+    "watch_to_profile",
+    "profile_to_signup",
+    "showcase_to_film",
+    "film_to_create"
+  ]).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ConversionEvent = typeof conversionEvents.$inferSelect;
+export type InsertConversionEvent = typeof conversionEvents.$inferInsert;
+
+export const abuseFlags = mysqlTable("abuseFlags", {
+  id: int("id").primaryKey().autoincrement(),
+  entityId: int("entityId").notNull(),
+  entityType: mysqlEnum("entityType", ["filmPage", "creatorProfile", "collection"]).notNull(),
+  reporterId: int("reporterId"), // null if automated
+  reason: varchar("reason", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["pending", "reviewed", "actioned", "dismissed"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AbuseFlag = typeof abuseFlags.$inferSelect;
+export type InsertAbuseFlag = typeof abuseFlags.$inferInsert;

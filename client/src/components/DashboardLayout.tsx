@@ -55,6 +55,7 @@ import {
   Headphones,
   Languages,
   MessageSquare,
+  TrendingUp,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -114,6 +115,7 @@ const adminMenuItems = [
   { icon: BarChart3, label: "Advertising", path: "/admin/advertising" },
   { icon: Search, label: "SEO Dashboard", path: "/admin/seo" },
   { icon: Mail, label: "Outreach & Email", path: "/admin/outreach" },
+  { icon: TrendingUp, label: "Growth Dashboard", path: "/admin/growth" },
   { icon: Megaphone, label: "Campaign Manager", path: "/campaigns" },
   { icon: PenTool, label: "Content Creator", path: "/content-creator" },
 ];

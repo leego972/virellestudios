@@ -5890,6 +5890,81 @@ Generate a detailed production budget estimate.`,
           })),
         };
       }),
+    getRanked: publicProcedure
+      .input(z.object({
+        surface: z.enum(["featured", "trending", "new", "staff_picks", "all"]).default("all"),
+        limit: z.number().min(1).max(50).default(24),
+        offset: z.number().min(0).default(0),
+      }))
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        // Build surface filter
+        let surfaceFilter = "";
+        if (input.surface === "featured") {
+          surfaceFilter = `AND EXISTS (SELECT 1 FROM adminCurationFlags acf WHERE acf.entityType = 'project' AND acf.entityId = f.projectId AND acf.flagType = 'featured')`;
+        } else if (input.surface === "staff_picks") {
+          surfaceFilter = `AND EXISTS (SELECT 1 FROM adminCurationFlags acf WHERE acf.entityType = 'project' AND acf.entityId = f.projectId AND acf.flagType = 'staff_pick')`;
+        } else if (input.surface === "new") {
+          surfaceFilter = `AND f.createdAt >= DATE_SUB(NOW(), INTERVAL 14 DAY)`;
+        } else if (input.surface === "trending") {
+          surfaceFilter = `AND EXISTS (SELECT 1 FROM analyticsEvents ae WHERE ae.entityType = 'filmPage' AND ae.entityId = f.id AND ae.createdAt >= DATE_SUB(NOW(), INTERVAL 7 DAY))`;
+        }
+        const rows = await dbConn.execute(
+          sql`SELECT 
+              f.id, f.slug, f.title, f.description, f.thumbnailUrl, f.trailerUrl, f.isPublic,
+              f.showCreatorName, f.showVirelleBranding, f.allowShowcase, f.createdAt,
+              u.name as creatorName, u.avatarUrl as creatorAvatar,
+              cp.slug as creatorSlug, cp.profileType as creatorType,
+              COALESCE(views.cnt, 0) as viewCount,
+              COALESCE(plays.cnt, 0) as playCount,
+              COALESCE(shares.cnt, 0) as shareCount,
+              (
+                CASE WHEN EXISTS (SELECT 1 FROM adminCurationFlags acf WHERE acf.entityType = 'project' AND acf.entityId = f.projectId AND acf.flagType = 'featured') THEN 1000 ELSE 0 END +
+                CASE WHEN EXISTS (SELECT 1 FROM adminCurationFlags acf WHERE acf.entityType = 'project' AND acf.entityId = f.projectId AND acf.flagType = 'staff_pick') THEN 500 ELSE 0 END +
+                COALESCE(views.cnt, 0) * 1 +
+                COALESCE(plays.cnt, 0) * 3 +
+                COALESCE(shares.cnt, 0) * 5 +
+                GREATEST(0, 100 - DATEDIFF(NOW(), f.createdAt) * 3)
+              ) as rankScore
+            FROM filmPages f
+            LEFT JOIN users u ON f.userId = u.id
+            LEFT JOIN creatorProfiles cp ON f.userId = cp.userId
+            LEFT JOIN (
+              SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'page_view' GROUP BY entityId
+            ) views ON views.entityId = f.id
+            LEFT JOIN (
+              SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'video_play' GROUP BY entityId
+            ) plays ON plays.entityId = f.id
+            LEFT JOIN (
+              SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'share_click' GROUP BY entityId
+            ) shares ON shares.entityId = f.id
+            WHERE f.isPublic = true AND f.allowShowcase = true
+            AND NOT EXISTS (SELECT 1 FROM adminCurationFlags acf WHERE acf.entityType = 'project' AND acf.entityId = f.projectId AND acf.flagType IN ('hidden', 'banned'))
+            ${sql.raw(surfaceFilter)}
+            GROUP BY f.id
+            ORDER BY rankScore DESC, f.createdAt DESC
+            LIMIT ${input.limit} OFFSET ${input.offset}`
+        );
+        return Array.isArray(rows[0]) ? rows[0] : rows as any[];
+      }),
+
+    // Admin: set homepage hero (clears existing featured, sets new one)
+    setHero: adminProcedure
+      .input(z.object({ filmPageId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        const fpRows = await dbConn.execute(sql`SELECT projectId FROM filmPages WHERE id = ${input.filmPageId} LIMIT 1`);
+        const fp = (Array.isArray(fpRows[0]) ? fpRows[0] : fpRows as any[])?.[0];
+        if (!fp) throw new TRPCError({ code: "NOT_FOUND", message: "Film page not found" });
+        // Remove all existing featured flags for this entity type
+        await dbConn.execute(sql`DELETE FROM adminCurationFlags WHERE flagType = 'featured' AND entityType = 'project' AND entityId = ${fp.projectId}`);
+        await dbConn.execute(
+          sql`INSERT INTO adminCurationFlags (entityType, entityId, flagType, adminId) VALUES ('project', ${fp.projectId}, 'featured', ${ctx.user.id})`
+        );
+        return { success: true };
+      }),
   }),
 
   // Director's Assistant Chat
@@ -8293,6 +8368,248 @@ Rules:
         return { success: true };
       }),
   }),
+  // ─── Phase 3: Showcase Ranking ──────────────────────────────────────────────────
+
+  // ─── Phase 3: Submission Review Workflow ─────────────────────────────────────
+  submissions: router({
+    submit: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        const projRows = await dbConn.execute(sql`SELECT id FROM projects WHERE id = ${input.projectId} AND userId = ${ctx.user.id} LIMIT 1`);
+        const proj = (Array.isArray(projRows[0]) ? projRows[0] : projRows as any[])?.[0];
+        if (!proj) throw new TRPCError({ code: "FORBIDDEN", message: "Project not found" });
+        const dupRows = await dbConn.execute(sql`SELECT id FROM submissionReviews WHERE projectId = ${input.projectId} AND status = 'pending' LIMIT 1`);
+        const dup = (Array.isArray(dupRows[0]) ? dupRows[0] : dupRows as any[])?.[0];
+        if (dup) throw new TRPCError({ code: "CONFLICT", message: "A submission is already pending for this project" });
+        await dbConn.execute(sql`INSERT INTO submissionReviews (projectId, userId, status) VALUES (${input.projectId}, ${ctx.user.id}, 'pending')`);
+        return { success: true };
+      }),
+
+    getMyStatus: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return null;
+        const rows = await dbConn.execute(
+          sql`SELECT status, createdAt FROM submissionReviews WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} ORDER BY createdAt DESC LIMIT 1`
+        );
+        return (Array.isArray(rows[0]) ? rows[0] : rows as any[])?.[0] ?? null;
+      }),
+
+    listPending: adminProcedure
+      .query(async () => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const rows = await dbConn.execute(
+          sql`SELECT sr.*, p.title as projectTitle, p.genre, u.name as creatorName, u.email as creatorEmail
+              FROM submissionReviews sr
+              LEFT JOIN projects p ON sr.projectId = p.id
+              LEFT JOIN users u ON sr.userId = u.id
+              WHERE sr.status = 'pending'
+              ORDER BY sr.createdAt ASC`
+        );
+        return Array.isArray(rows[0]) ? rows[0] : rows as any[];
+      }),
+
+    review: adminProcedure
+      .input(z.object({
+        submissionId: z.number(),
+        status: z.enum(["approved", "declined", "featured"]),
+        adminNotes: z.string().max(1000).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        await dbConn.execute(sql`UPDATE submissionReviews SET status = ${input.status}, adminNotes = ${input.adminNotes || null}, updatedAt = NOW() WHERE id = ${input.submissionId}`);
+        if (input.status === "featured") {
+          const subRows = await dbConn.execute(sql`SELECT projectId FROM submissionReviews WHERE id = ${input.submissionId} LIMIT 1`);
+          const sub = (Array.isArray(subRows[0]) ? subRows[0] : subRows as any[])?.[0];
+          if (sub) {
+            await dbConn.execute(
+              sql`INSERT IGNORE INTO adminCurationFlags (entityType, entityId, flagType, adminId) VALUES ('project', ${sub.projectId}, 'featured', ${ctx.user.id})`
+            );
+          }
+        }
+        return { success: true };
+      }),
+  }),
+
+  // ─── Phase 3: Abuse / Fraud Guards ────────────────────────────────────────────
+  abuse: router({
+    report: publicProcedure
+      .input(z.object({
+        entityType: z.enum(["filmPage", "creatorProfile", "collection"]),
+        entityId: z.number(),
+        reason: z.string().min(5).max(255),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return { success: false };
+        try {
+          const reporterId = (ctx as any).user?.id ?? null;
+          if (reporterId) {
+            const rateRows = await dbConn.execute(
+              sql`SELECT COUNT(*) as cnt FROM abuseFlags WHERE entityId = ${input.entityId} AND entityType = ${input.entityType} AND reporterId = ${reporterId} AND createdAt >= DATE_SUB(NOW(), INTERVAL 1 DAY)`
+            );
+            const rate = (Array.isArray(rateRows[0]) ? rateRows[0] : rateRows as any[])?.[0];
+            if (Number(rate?.cnt ?? 0) >= 3) {
+              throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "You have already reported this content today" });
+            }
+          }
+          await dbConn.execute(
+            sql`INSERT INTO abuseFlags (entityId, entityType, reporterId, reason) VALUES (${input.entityId}, ${input.entityType}, ${reporterId}, ${input.reason})`
+          );
+          return { success: true };
+        } catch (e: any) {
+          if (e.code === "TOO_MANY_REQUESTS") throw e;
+          console.error("Abuse report error:", e);
+          return { success: false };
+        }
+      }),
+
+    listPending: adminProcedure
+      .query(async () => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const rows = await dbConn.execute(
+          sql`SELECT af.*, u.name as reporterName FROM abuseFlags af LEFT JOIN users u ON af.reporterId = u.id WHERE af.status = 'pending' ORDER BY af.createdAt DESC LIMIT 100`
+        );
+        return Array.isArray(rows[0]) ? rows[0] : rows as any[];
+      }),
+
+    action: adminProcedure
+      .input(z.object({
+        flagId: z.number(),
+        status: z.enum(["reviewed", "actioned", "dismissed"]),
+      }))
+      .mutation(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
+        await dbConn.execute(sql`UPDATE abuseFlags SET status = ${input.status} WHERE id = ${input.flagId}`);
+        return { success: true };
+      }),
+  }),
+
+  // ─── Phase 3: Conversion Funnel Analytics ─────────────────────────────────
+  conversion: router({
+    // Admin: get top performing film pages by conversion score
+    getTopFilms: adminProcedure
+      .input(z.object({ limit: z.number().min(1).max(100).default(20) }))
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        try {
+          const rows = await dbConn.execute(
+            sql`SELECT f.id, f.slug, f.title, f.thumbnailUrl,
+                u.name as creatorName, cp.slug as creatorSlug,
+                COALESCE(v.cnt, 0) as viewCount,
+                COALESCE(p.cnt, 0) as playCount,
+                COALESCE(s.cnt, 0) as shareCount,
+                COALESCE(c.cnt, 0) as conversionCount,
+                (
+                  COALESCE(v.cnt, 0) * 1 +
+                  COALESCE(p.cnt, 0) * 3 +
+                  COALESCE(s.cnt, 0) * 5 +
+                  COALESCE(c.cnt, 0) * 10
+                ) as score
+              FROM filmPages f
+              LEFT JOIN users u ON f.userId = u.id
+              LEFT JOIN creatorProfiles cp ON f.userId = cp.userId
+              LEFT JOIN (SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'page_view' GROUP BY entityId) v ON v.entityId = f.id
+              LEFT JOIN (SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'video_play' GROUP BY entityId) p ON p.entityId = f.id
+              LEFT JOIN (SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'share_click' GROUP BY entityId) s ON s.entityId = f.id
+              LEFT JOIN (SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'signup_cta_click' GROUP BY entityId) c ON c.entityId = f.id
+              WHERE f.isPublic = true
+              ORDER BY score DESC
+              LIMIT ${input.limit}`
+          );
+          return Array.isArray(rows[0]) ? rows[0] : rows as any[];
+        } catch (e) {
+          console.error("getTopFilms error:", e);
+          return [];
+        }
+      }),
+    // Admin: get conversion funnel stats for a time window
+    getFunnelStats: adminProcedure
+      .input(z.object({ days: z.number().min(1).max(365).default(30) }))
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return { views: 0, plays: 0, shares: 0, signupClicks: 0, newUsers: 0 };
+        try {
+          const since = new Date(Date.now() - input.days * 86400000);
+          const viewsRow = await dbConn.execute(sql`SELECT COUNT(*) as cnt FROM analyticsEvents WHERE eventType = 'page_view' AND createdAt >= ${since}`);
+          const playsRow = await dbConn.execute(sql`SELECT COUNT(*) as cnt FROM analyticsEvents WHERE eventType = 'video_play' AND createdAt >= ${since}`);
+          const sharesRow = await dbConn.execute(sql`SELECT COUNT(*) as cnt FROM analyticsEvents WHERE eventType = 'share_click' AND createdAt >= ${since}`);
+          const signupRow = await dbConn.execute(sql`SELECT COUNT(*) as cnt FROM analyticsEvents WHERE eventType = 'signup_cta_click' AND createdAt >= ${since}`);
+          const usersRow = await dbConn.execute(sql`SELECT COUNT(*) as cnt FROM users WHERE createdAt >= ${since}`);
+          const get = (r: any) => Number((Array.isArray(r[0]) ? r[0] : r as any[])?.[0]?.cnt || 0);
+          return {
+            views: get(viewsRow),
+            plays: get(playsRow),
+            shares: get(sharesRow),
+            signupClicks: get(signupRow),
+            newUsers: get(usersRow),
+          };
+        } catch (e) {
+          console.error("getFunnelStats error:", e);
+          return { views: 0, plays: 0, shares: 0, signupClicks: 0, newUsers: 0 };
+        }
+      }),
+    // Admin: get top creators by engagement
+    getTopCreators: adminProcedure
+      .input(z.object({ limit: z.number().min(1).max(100).default(10) }))
+      .query(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        try {
+          const rows = await dbConn.execute(
+            sql`SELECT u.id, u.name, u.email, cp.slug as creatorSlug, cp.profileType,
+                COUNT(DISTINCT f.id) as filmCount,
+                COALESCE(SUM(ae_v.cnt), 0) as totalViews,
+                COALESCE(SUM(ae_p.cnt), 0) as totalPlays
+              FROM users u
+              LEFT JOIN creatorProfiles cp ON u.id = cp.userId
+              LEFT JOIN filmPages f ON f.userId = u.id AND f.isPublic = true
+              LEFT JOIN (SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'page_view' GROUP BY entityId) ae_v ON ae_v.entityId = f.id
+              LEFT JOIN (SELECT entityId, COUNT(*) as cnt FROM analyticsEvents WHERE entityType = 'filmPage' AND eventType = 'video_play' GROUP BY entityId) ae_p ON ae_p.entityId = f.id
+              GROUP BY u.id
+              HAVING filmCount > 0
+              ORDER BY totalViews DESC
+              LIMIT ${input.limit}`
+          );
+          return Array.isArray(rows[0]) ? rows[0] : rows as any[];
+        } catch (e) {
+          console.error("getTopCreators error:", e);
+          return [];
+        }
+      }),
+    // Public: track a conversion event (fire-and-forget, never throws)
+    track: publicProcedure
+      .input(z.object({
+        eventType: z.enum(["view_to_watch", "watch_to_profile", "profile_to_signup", "showcase_to_film", "film_to_create"]),
+        sourcePath: z.string().max(255),
+        targetPath: z.string().max(255),
+        sessionId: z.string().max(255).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return { success: false };
+        try {
+          const userId = (ctx as any).user?.id ?? null;
+          await dbConn.execute(
+            sql`INSERT INTO conversionEvents (userId, sessionId, sourcePath, targetPath, eventType)
+                VALUES (${userId}, ${input.sessionId || null}, ${input.sourcePath}, ${input.targetPath}, ${input.eventType})`
+          );
+          return { success: true };
+        } catch (e) {
+          console.error("Conversion tracking error:", e);
+          return { success: false };
+        }
+      }),
+  }),
+
   // ─── AI Generation ────────────────────────────────────────────────────────
   credits: router({
     // Paginated credit transaction history for the current user
