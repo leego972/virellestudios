@@ -5347,71 +5347,72 @@ Generate a detailed production budget estimate.`,
           let totalDuration = scenesWithVideo.reduce((sum: number, s: any) => sum + (s.duration || 30), 0);
           let mimeType: string | undefined;
 
-          if (scenesWithVideo.length >= 2) {
-            // Fetch all post-production data from database
-            const [projectSfx, projectSubtitles, projectCredits, projectSoundtracks] = await Promise.all([
-              db.listSoundEffectsByProject(project.id),
-              db.getProjectSubtitles(project.id),
-              db.getProjectCredits(project.id),
-              db.getProjectSoundtracks(project.id),
-            ]);
+          // Fetch all post-production data from database (needed regardless of scene count)
+          const [projectSfx, projectSubtitles, projectCredits, projectSoundtracks] = await Promise.all([
+            db.listSoundEffectsByProject(project.id),
+            db.getProjectSubtitles(project.id),
+            db.getProjectCredits(project.id),
+            db.getProjectSoundtracks(project.id),
+          ]);
 
-            // Get per-scene SFX
-            const sceneSfxMap = new Map<number, any[]>();
-            for (const sfx of projectSfx) {
-              if (sfx.sceneId) {
-                if (!sceneSfxMap.has(sfx.sceneId)) sceneSfxMap.set(sfx.sceneId, []);
-                sceneSfxMap.get(sfx.sceneId)!.push(sfx);
-              }
+          // Get per-scene SFX
+          const sceneSfxMap = new Map<number, any[]>();
+          for (const sfx of projectSfx) {
+            if (sfx.sceneId) {
+              if (!sceneSfxMap.has(sfx.sceneId)) sceneSfxMap.set(sfx.sceneId, []);
+              sceneSfxMap.get(sfx.sceneId)!.push(sfx);
             }
+          }
 
-            // Parse subtitle entries and map to scenes
-            const subtitleEntries: any[] = [];
-            if (projectSubtitles.length > 0) {
-              const primarySub = projectSubtitles[0]; // Use first language
-              const entries = (primarySub.entries as any[]) || [];
-              subtitleEntries.push(...entries);
+          // Parse subtitle entries and map to scenes
+          const subtitleEntries: any[] = [];
+          if (projectSubtitles.length > 0) {
+            const primarySub = projectSubtitles[0];
+            const entries = (primarySub.entries as any[]) || [];
+            subtitleEntries.push(...entries);
+          }
+          const sceneSubMap = new Map<number, any[]>();
+          for (const entry of subtitleEntries) {
+            const sid = entry.sceneId;
+            if (sid) {
+              if (!sceneSubMap.has(sid)) sceneSubMap.set(sid, []);
+              sceneSubMap.get(sid)!.push(entry);
             }
-            const sceneSubMap = new Map<number, any[]>();
-            for (const entry of subtitleEntries) {
-              const sid = entry.sceneId;
-              if (sid) {
-                if (!sceneSubMap.has(sid)) sceneSubMap.set(sid, []);
-                sceneSubMap.get(sid)!.push(entry);
-              }
-            }
+          }
 
-            // Find the main soundtrack
-            const mainSoundtrack = projectSoundtracks.find((s: any) => s.fileUrl);
+          // Find the main soundtrack
+          const mainSoundtrack = projectSoundtracks.find((s: any) => s.fileUrl);
 
+          // Always stitch (even single scene) so the VirElle opener is ALWAYS prepended.
+          if (scenesWithVideo.length >= 1) {
             try {
               const { stitchMovie } = await import("./_core/videoStitcher");
               // Build scene list: opener scenes first, then user's film scenes
               const userScenes = scenesWithVideo.map((s: any) => {
-                  const sfxList = sceneSfxMap.get(s.id) || [];
-                  const subList = sceneSubMap.get(s.id) || [];
-                  return {
-                    videoUrl: s.videoUrl,
-                    title: s.title || undefined,
-                    duration: s.duration || undefined,
-                    orderIndex: s.orderIndex || 0,
-                    voiceAudio: (s as any).voiceUrl ? { voiceUrl: (s as any).voiceUrl, voiceVolume: 0.9 } : undefined,
-                    soundEffects: sfxList.filter((x: any) => x.fileUrl).map((x: any) => ({
-                      fileUrl: x.fileUrl,
-                      startTime: x.startTime || 0,
-                      volume: x.volume || 0.5,
-                      loop: !!(x.loop),
-                      name: x.name,
-                    })),
-                    subtitles: subList.map((x: any) => ({
-                      startTime: x.startTime || 0,
-                      endTime: x.endTime || 3,
-                      text: x.text || "",
-                    })),
-                    transition: "fade",
-                    transitionDuration: 0.8,
-                  };
-                });
+                const sfxList = sceneSfxMap.get(s.id) || [];
+                const subList = sceneSubMap.get(s.id) || [];
+                return {
+                  videoUrl: s.videoUrl,
+                  title: s.title || undefined,
+                  duration: s.duration || undefined,
+                  orderIndex: s.orderIndex || 0,
+                  voiceAudio: (s as any).voiceUrl ? { voiceUrl: (s as any).voiceUrl, voiceVolume: 0.9 } : undefined,
+                  soundEffects: sfxList.filter((x: any) => x.fileUrl).map((x: any) => ({
+                    fileUrl: x.fileUrl,
+                    startTime: x.startTime || 0,
+                    volume: x.volume || 0.5,
+                    loop: !!(x.loop),
+                    name: x.name,
+                  })),
+                  subtitles: subList.map((x: any) => ({
+                    startTime: x.startTime || 0,
+                    endTime: x.endTime || 3,
+                    text: x.text || "",
+                  })),
+                  transition: "fade",
+                  transitionDuration: 0.8,
+                };
+              });
               // Prepend opener scenes as opening credits
               const allScenes = [...openerScenes, ...userScenes];
               const result = await stitchMovie({
@@ -5438,13 +5439,12 @@ Generate a detailed production budget estimate.`,
               mimeType = result.mimeType;
             } catch (err: any) {
               console.error("[Export] Video stitching failed:", err.message);
-              // Fall back to creating entry without stitched file
+              // Last-resort fallback: raw scene URL (opener not applied — logged for monitoring)
+              fileUrl = (scenesWithVideo[0] as any).videoUrl;
+              totalDuration = scenesWithVideo[0].duration || totalDuration;
+              mimeType = "video/mp4";
+              console.warn(`[Export] Opener NOT applied for film export of project ${project.id} due to stitch failure`);
             }
-          } else if (scenesWithVideo.length === 1) {
-            // Only one scene — use its video directly
-            fileUrl = (scenesWithVideo[0] as any).videoUrl;
-            totalDuration = scenesWithVideo[0].duration || totalDuration;
-            mimeType = "video/mp4";
           }
 
           const movie = await db.createMovie({
@@ -5521,7 +5521,8 @@ Generate a detailed production budget estimate.`,
           let totalDuration: number | undefined;
           let mimeType: string | undefined;
 
-          if (scenesWithVideo.length >= 2) {
+          // Always stitch (even single scene) so the VirElle opener is ALWAYS prepended.
+          if (scenesWithVideo.length >= 1) {
             try {
               const { stitchMovie } = await import("./_core/videoStitcher");
               
@@ -5547,11 +5548,12 @@ Generate a detailed production budget estimate.`,
               mimeType = result.mimeType;
             } catch (err: any) {
               console.error("[Export] Trailer stitching failed:", err.message);
+              // Last-resort fallback: raw scene URL (opener not applied — logged for monitoring)
+              fileUrl = (scenesWithVideo[0] as any).videoUrl;
+              totalDuration = scenesWithVideo[0].duration || undefined;
+              mimeType = "video/mp4";
+              console.warn(`[Export] Opener NOT applied for trailer export of project ${project.id} due to stitch failure`);
             }
-          } else if (scenesWithVideo.length === 1) {
-            fileUrl = (scenesWithVideo[0] as any).videoUrl;
-            totalDuration = scenesWithVideo[0].duration || undefined;
-            mimeType = "video/mp4";
           }
 
           const movie = await db.createMovie({
@@ -7766,14 +7768,60 @@ Rules:
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
         
-        // Generate mock promo assets for now (in a real app, this would call an LLM)
-        const assets = [
-          { type: "caption", variant: "viral", content: `Just finished my new film "${project.title}"! 🎬 Wait until the end... #filmmaking #indiefilm #virellestudios` },
-          { type: "caption", variant: "cinematic", content: `A glimpse into the world of "${project.title}". A story about ${project.plotSummary || 'passion and discovery'}. #cinema #director` },
-          { type: "hashtags", variant: "general", content: `#${project.title.replace(/\s+/g, '')} #filmmaker #shortfilm #virellestudios #ai #cinema` },
-          { type: "hook", variant: "tiktok", content: `POV: You just created a cinematic masterpiece using AI...` }
+        // Delete existing promo assets for this project before regenerating
+        await dbConn.execute(
+          sql`DELETE FROM promoAssets WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id}`
+        );
+
+        const title = project.title || "Untitled Film";
+        const logline = (project as any).plotSummary || (project as any).description || "an original short film";
+        const genre = (project as any).genre || "drama";
+        const titleSlug = title.replace(/\s+/g, '');
+
+        // Fallback assets used if LLM call fails
+        const fallbackAssets = [
+          { type: "caption", variant: "viral", content: `Just dropped my new film "${title}" 🎬 Watch until the end. #filmmaking #indiefilm #virellestudios` },
+          { type: "caption", variant: "cinematic", content: `"${title}" — a ${genre} short. ${logline.slice(0, 120)}. #cinema #director #shortfilm` },
+          { type: "hashtags", variant: "general", content: `#${titleSlug} #filmmaker #shortfilm #virellestudios #aifilm #cinema #indiefilm #${genre}` },
+          { type: "hook", variant: "tiktok", content: `POV: You just made a cinematic short film with AI and it actually looks incredible...` },
+          { type: "hook", variant: "instagram", content: `This is what happens when storytelling meets AI. "${title}" — now live. 🎥` },
         ];
-        
+
+        let assets = fallbackAssets;
+
+        // Attempt LLM-generated promo copy
+        try {
+          const llmResult = await invokeLLM({
+            model: "gpt-4.1-mini",
+            maxTokens: 600,
+            messages: [
+              {
+                role: "system",
+                content: "You are a social media marketing expert for independent filmmakers. Generate promotional copy in JSON format."
+              },
+              {
+                role: "user",
+                content: `Generate promotional social media copy for a short film with the following details:\n- Title: ${title}\n- Genre: ${genre}\n- Logline: ${logline}\n\nReturn a JSON array with exactly 5 objects, each with: type ("caption"|"hashtags"|"hook"), variant ("viral"|"cinematic"|"tiktok"|"instagram"|"general"), content (the copy text). Keep captions under 200 chars, hashtags as a single space-separated string, hooks under 100 chars. Always include #virellestudios in hashtags.`
+              }
+            ],
+            responseFormat: { type: "json_object" },
+          });
+          const rawContent = llmResult.choices?.[0]?.message?.content;
+          const text = typeof rawContent === "string" ? rawContent : (rawContent as any)?.[0]?.text || "";
+          const parsed = JSON.parse(text);
+          const llmAssets = Array.isArray(parsed) ? parsed : (parsed.assets || parsed.copy || []);
+          if (Array.isArray(llmAssets) && llmAssets.length >= 3) {
+            assets = llmAssets.slice(0, 8).map((a: any) => ({
+              type: String(a.type || "caption"),
+              variant: String(a.variant || "general"),
+              content: String(a.content || "").slice(0, 500),
+            }));
+          }
+        } catch (llmErr: any) {
+          console.warn("[Distribute] LLM promo generation failed, using fallback:", llmErr.message);
+          // fallbackAssets already set above — continue
+        }
+
         for (const asset of assets) {
           await dbConn.execute(
             sql`INSERT INTO promoAssets (userId, projectId, type, variant, content) VALUES (${ctx.user.id}, ${input.projectId}, ${asset.type}, ${asset.variant}, ${asset.content})`
@@ -7845,47 +7893,47 @@ Rules:
         let totalDuration: number | undefined;
         let mimeType: string | undefined;
 
-        if (scenesWithVideo.length >= 2) {
-          try {
-            const { stitchMovie } = await import("./_core/videoStitcher");
-            
-            const userScenes = scenesWithVideo.map((s: any) => ({
-              videoUrl: s.videoUrl,
-              title: s.title || undefined,
-              duration: s.duration || undefined,
-              orderIndex: s.orderIndex || 0,
-            }));
-            
-            const allScenes = [...openerScenes, ...userScenes];
-            
-            // Determine resolution based on platform
-            let resolution = "1080p";
-            if (input.platform === "tiktok" || input.platform === "instagram" || input.platform === "youtubeShorts") {
-              resolution = "1080x1920"; // Vertical
-            } else if (input.platform === "square") {
-              resolution = "1080x1080"; // Square
-            }
-            
-            const result = await stitchMovie({
-              scenes: allScenes,
-              projectTitle: `${project.title} - ${input.platform} Promo`,
-              userId: ctx.user.id,
-              projectId: project.id,
-              resolution, // Pass resolution to stitcher
-            });
-            
-            fileUrl = result.fileUrl;
-            fileKey = result.fileKey;
-            fileSize = result.fileSize;
-            totalDuration = result.duration;
-            mimeType = result.mimeType;
-          } catch (err: any) {
-            console.error(`[Export] ${input.platform} promo stitching failed:`, err.message);
+        // Determine resolution based on platform
+        let resolution = "1080p";
+        if (input.platform === "tiktok" || input.platform === "instagram" || input.platform === "youtubeShorts") {
+          resolution = "1080x1920"; // Vertical 9:16
+        } else if (input.platform === "square") {
+          resolution = "1080x1080"; // Square 1:1
+        }
+
+        // Always stitch (even single scene) so the VirElle opener is ALWAYS prepended.
+        // If stitching fails, fall back to raw scene URL as a last resort.
+        const userScenes = scenesWithVideo.map((s: any) => ({
+          videoUrl: s.videoUrl,
+          title: s.title || undefined,
+          duration: s.duration || undefined,
+          orderIndex: s.orderIndex || 0,
+        }));
+        const allScenes = [...openerScenes, ...userScenes];
+
+        try {
+          const { stitchMovie } = await import("./_core/videoStitcher");
+          const result = await stitchMovie({
+            scenes: allScenes,
+            projectTitle: `${project.title} - ${input.platform} Promo`,
+            userId: ctx.user.id,
+            projectId: project.id,
+            resolution,
+          });
+          fileUrl = result.fileUrl;
+          fileKey = result.fileKey;
+          fileSize = result.fileSize;
+          totalDuration = result.duration;
+          mimeType = result.mimeType;
+        } catch (err: any) {
+          console.error(`[Export] ${input.platform} promo stitching failed:`, err.message);
+          // Last-resort fallback: raw scene URL (opener not applied — logged for monitoring)
+          if (scenesWithVideo.length > 0) {
+            fileUrl = (scenesWithVideo[0] as any).videoUrl;
+            totalDuration = scenesWithVideo[0].duration || undefined;
+            mimeType = "video/mp4";
+            console.warn(`[Export] Opener NOT applied for ${input.platform} promo of project ${project.id} due to stitch failure`);
           }
-        } else if (scenesWithVideo.length === 1) {
-          fileUrl = (scenesWithVideo[0] as any).videoUrl;
-          totalDuration = scenesWithVideo[0].duration || undefined;
-          mimeType = "video/mp4";
         }
 
         const movie = await db.createMovie({
@@ -7910,14 +7958,20 @@ Rules:
     publishFilmPage: protectedProcedure
       .input(z.object({ 
         projectId: z.number(),
-        slug: z.string(),
+        slug: z.string().min(3).max(80).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/, "Slug must be lowercase letters, numbers, and hyphens only, and cannot start or end with a hyphen"),
         isPublic: z.boolean(),
-        title: z.string().optional(),
-        description: z.string().optional(),
+        title: z.string().max(200).optional(),
+        description: z.string().max(2000).optional(),
         showCreatorName: z.boolean().optional(),
         allowShowcase: z.boolean().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Block reserved slugs
+        const RESERVED_SLUGS = ["admin", "api", "app", "auth", "dashboard", "films", "login", "logout", "register", "settings", "showcase", "studio", "support", "terms", "privacy", "virelle", "virellestudios"];
+        if (RESERVED_SLUGS.includes(input.slug)) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: `The slug "${input.slug}" is reserved and cannot be used` });
+        }
+
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         
@@ -7966,8 +8020,8 @@ Rules:
       }),
       
     getFilmPage: publicProcedure
-      .input(z.object({ slug: z.string() }))
-      .query(async ({ input }) => {
+      .input(z.object({ slug: z.string(), preview: z.boolean().optional() }))
+      .query(async ({ ctx, input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
         
@@ -7975,11 +8029,19 @@ Rules:
           sql`SELECT f.*, u.name as creatorName, u.avatarUrl as creatorAvatar 
               FROM filmPages f 
               LEFT JOIN users u ON f.userId = u.id 
-              WHERE f.slug = ${input.slug} AND f.isPublic = true LIMIT 1`
+              WHERE f.slug = ${input.slug} LIMIT 1`
         );
         const filmPage = (Array.isArray(rows[0]) ? rows[0] : rows as any[])?.[0];
         
-        if (!filmPage) throw new TRPCError({ code: "NOT_FOUND", message: "Film page not found or not public" });
+        if (!filmPage) throw new TRPCError({ code: "NOT_FOUND", message: "Film page not found" });
+
+        // Only the owner can view draft pages; everyone else requires isPublic = true
+        const ownerId = filmPage.userId;
+        const requesterId = (ctx as any)?.user?.id ?? null;
+        const isOwner = requesterId !== null && requesterId === ownerId;
+        if (!filmPage.isPublic && !isOwner) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Film page not found or not public" });
+        }
         
         // Get the actual movie file
         const movieRows = await dbConn.execute(

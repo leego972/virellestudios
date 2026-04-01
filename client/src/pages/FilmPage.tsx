@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Film, ArrowLeft, Share2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
+/** Upsert a <meta> tag by name or property attribute */
+function setMeta(attr: "name" | "property", key: string, value: string) {
+  let el = document.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", value);
+}
+
 export default function FilmPage() {
   const { slug } = useParams<{ slug: string }>();
 
@@ -13,6 +25,37 @@ export default function FilmPage() {
     { slug: slug || "" },
     { enabled: !!slug }
   );
+
+  // Inject Open Graph / Twitter Card metadata for social sharing
+  useEffect(() => {
+    if (!filmPage) return;
+    const fp = filmPage as any;
+    const title = fp.title || "Film — VirElle Studios";
+    const description = fp.description || `Watch "${title}" on VirElle Studios`;
+    const image = fp.thumbnailUrl || "https://virellestudios.com/og-default.jpg";
+    const url = window.location.href;
+
+    document.title = `${title} — VirElle Studios`;
+    setMeta("name", "description", description);
+
+    // Open Graph
+    setMeta("property", "og:type", "video.movie");
+    setMeta("property", "og:title", title);
+    setMeta("property", "og:description", description);
+    setMeta("property", "og:image", image);
+    setMeta("property", "og:url", url);
+    setMeta("property", "og:site_name", "VirElle Studios");
+
+    // Twitter Card
+    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:title", title);
+    setMeta("name", "twitter:description", description);
+    setMeta("name", "twitter:image", image);
+
+    return () => {
+      document.title = "VirElle Studios";
+    };
+  }, [filmPage]);
 
   const handleShare = () => {
     const url = window.location.href;
@@ -52,6 +95,18 @@ export default function FilmPage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Draft preview banner */}
+      {!fp.isPublic && (
+        <div className="sticky top-0 z-50 flex items-center justify-center gap-2 bg-amber-500 text-black text-sm font-semibold py-2 px-4">
+          <span>Preview Mode</span>
+          <Badge className="bg-black text-amber-400 text-xs">Draft — not yet public</Badge>
+          <Link href={`/projects/${fp.projectId}/distribute`}>
+            <Button size="sm" variant="ghost" className="h-6 text-xs text-black hover:bg-amber-600">
+              Edit Page
+            </Button>
+          </Link>
+        </div>
+      )}
       {/* Hero / Thumbnail */}
       <div className="relative w-full aspect-video max-h-[70vh] overflow-hidden bg-zinc-900">
         {fp.thumbnailUrl ? (
@@ -95,6 +150,14 @@ export default function FilmPage() {
               <a href={fp.movieUrl} target="_blank" rel="noopener noreferrer">
                 <Film className="w-4 h-4" />
                 Watch Film
+              </a>
+            </Button>
+          )}
+          {fp.trailerUrl && (
+            <Button asChild variant="outline" className="gap-2 border-zinc-600 text-white hover:bg-zinc-800">
+              <a href={fp.trailerUrl} target="_blank" rel="noopener noreferrer">
+                <Film className="w-4 h-4" />
+                Watch Trailer
               </a>
             </Button>
           )}

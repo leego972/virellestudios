@@ -143,6 +143,9 @@ function getResolution(res?: string): { width: number; height: number } {
     case "1080p": return { width: 1920, height: 1080 };
     case "720p": return { width: 1280, height: 720 };
     case "480p": return { width: 854, height: 480 };
+    // Promo / social formats
+    case "1080x1920": return { width: 1080, height: 1920 }; // Vertical 9:16 (TikTok, Reels, Shorts)
+    case "1080x1080": return { width: 1080, height: 1080 }; // Square 1:1
     default: return { width: 1920, height: 1080 };
   }
 }

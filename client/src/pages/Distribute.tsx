@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -91,17 +91,20 @@ export default function Distribute() {
   const { data: promoAssets, refetch: refetchAssets } =
     trpc.distribute.getPromoAssets.useQuery({ projectId }, { enabled: !!projectId });
 
-  // Initialise slug from server data
-  if (promoStatus && !slugEdited && !slug) {
+  // Initialise slug and film page fields from server data (only once, on first load)
+  useEffect(() => {
+    if (!promoStatus || slugEdited) return;
     setSlug(promoStatus.slug || "");
     if (promoStatus.filmPage) {
-      setPageTitle(promoStatus.filmPage.title || "");
-      setPageDescription(promoStatus.filmPage.description || "");
-      setShowCreatorName(promoStatus.filmPage.showCreatorName ?? true);
-      setAllowShowcase(promoStatus.filmPage.allowShowcase ?? true);
-      setIsPublic(promoStatus.filmPage.isPublic ?? false);
+      const fp = promoStatus.filmPage as any;
+      setPageTitle(fp.title || "");
+      setPageDescription(fp.description || "");
+      setShowCreatorName(fp.showCreatorName ?? true);
+      setAllowShowcase(fp.allowShowcase ?? true);
+      setIsPublic(fp.isPublic ?? false);
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [promoStatus]);
 
   // Mutations
   const generateAssets = trpc.distribute.generatePromoAssets.useMutation({
@@ -159,18 +162,18 @@ export default function Distribute() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <Link href={`/projects/${projectId}`}>
-          <Button variant="ghost" size="sm" className="gap-2">
+          <Button variant="ghost" size="sm" className="gap-2 self-start">
             <ArrowLeft className="w-4 h-4" />
             Back to project
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Megaphone className="w-6 h-6 text-amber-500" />
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <Megaphone className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
             Distribute
           </h1>
           <p className="text-sm text-muted-foreground">Publish your film and create platform-ready promo cuts</p>
@@ -213,16 +216,16 @@ export default function Distribute() {
       </Card>
 
       <Tabs defaultValue="exports">
-        <TabsList className="grid grid-cols-3 w-full max-w-md">
-          <TabsTrigger value="exports">
+        <TabsList className="flex w-full overflow-x-auto sm:grid sm:grid-cols-3 sm:max-w-md">
+          <TabsTrigger value="exports" className="shrink-0 sm:shrink">
             <Film className="w-4 h-4 mr-1" />
             Exports
           </TabsTrigger>
-          <TabsTrigger value="assets">
+          <TabsTrigger value="assets" className="shrink-0 sm:shrink">
             <Sparkles className="w-4 h-4 mr-1" />
             Promo Copy
           </TabsTrigger>
-          <TabsTrigger value="filmpage">
+          <TabsTrigger value="filmpage" className="shrink-0 sm:shrink">
             <Globe className="w-4 h-4 mr-1" />
             Film Page
           </TabsTrigger>
