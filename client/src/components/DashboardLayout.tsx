@@ -196,13 +196,14 @@ export default function DashboardLayout({
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
   }, [sidebarWidth]);
 
-  if (loading) {
-    return <DashboardLayoutSkeleton />;
-  }
+  useEffect(() => {
+    if (!loading && !user) {
+      // Redirect to landing page for unauthenticated visitors
+      window.location.href = "/welcome";
+    }
+  }, [loading, user]);
 
-  if (!user) {
-    // Redirect to landing page for unauthenticated visitors
-    window.location.href = "/welcome";
+  if (loading || !user) {
     return <DashboardLayoutSkeleton />;
   }
 

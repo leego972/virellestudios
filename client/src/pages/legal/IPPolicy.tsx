@@ -1,17 +1,22 @@
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
-import { Shield, Mail, AlertTriangle, Copyright, Lock, FileText } from "lucide-react";
-import { Link } from "wouter";
+import { Shield, Mail, AlertTriangle, Copyright, Lock, FileText, ArrowLeft } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
 
 export default function IPPolicy() {
   const EFFECTIVE_DATE = "1 January 2025";
   const CONTACT_EMAIL = "Studiosvirelle@gmail.com";
   const DMCA_EMAIL = "Studiosvirelle@gmail.com";
+  const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen bg-background relative">
       <GoldWatermarkLaunch />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
+        <Button variant="ghost" size="sm" onClick={() => setLocation("/")} className="mb-8 gap-2">
+          <ArrowLeft className="h-4 w-4" /> Back to Home
+        </Button>
         {/* Header */}
         <div className="flex items-center gap-4 mb-10">
           <div className="w-14 h-14 rounded-2xl bg-amber-600/20 flex items-center justify-center shrink-0">
