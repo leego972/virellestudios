@@ -2001,9 +2001,8 @@ interface Redirect {
 
 const REDIRECTS: Redirect[] = [
   // Add redirects for old URLs here as the site evolves
-  { from: "/download", to: "/register", type: 301, reason: "Downloads now require account" },
-  { from: "/features", to: "/", type: 301, reason: "Features merged into homepage" },
-  { from: "/about", to: "/", type: 301, reason: "About merged into homepage" },
+  // NOTE: /download and /about are now live pages — do NOT add redirects for them
+  { from: "/features", to: "/how-it-works", type: 301, reason: "Features page replaced by How It Works" },
   { from: "/signup", to: "/register", type: 301, reason: "URL normalization" },
   { from: "/signin", to: "/login", type: 301, reason: "URL normalization" },
 ];
