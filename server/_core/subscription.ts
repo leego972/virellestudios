@@ -638,12 +638,12 @@ export interface TopUpPack {
 }
 
 export const TOP_UP_PACKS: TopUpPack[] = [
-  { id: "topup_10",   name: "Starter Pack",     credits: 500,   price: 75000,   pricePerCredit: 1.50, savings: "" },
-  { id: "topup_50",   name: "Producer Pack",    credits: 1500,  price: 180000,  pricePerCredit: 1.20, savings: "Save 20%" },
-  { id: "topup_100",  name: "Director Pack",    credits: 3000,  price: 315000,  pricePerCredit: 1.05, savings: "Save 30%" },
-  { id: "topup_200",  name: "Studio Pack",      credits: 6000,  price: 540000,  pricePerCredit: 0.90, savings: "Save 40%" },
-  { id: "topup_500",  name: "Blockbuster Pack", credits: 12000, price: 900000,  pricePerCredit: 0.75, savings: "Save 50%" },
-  { id: "topup_1000", name: "Mogul Pack",       credits: 25000, price: 1500000, pricePerCredit: 0.60, savings: "Save 60%" },
+  { id: "topup_10",   name: "Starter Pack",     credits: 100,   price: 1900,    pricePerCredit: 0.19, savings: "" },
+  { id: "topup_50",   name: "Producer Pack",    credits: 300,   price: 4900,    pricePerCredit: 0.16, savings: "Save 16%" },
+  { id: "topup_100",  name: "Director Pack",    credits: 750,   price: 9900,    pricePerCredit: 0.13, savings: "Save 32%" },
+  { id: "topup_200",  name: "Studio Pack",      credits: 2000,  price: 19900,   pricePerCredit: 0.10, savings: "Save 47%" },
+  { id: "topup_500",  name: "Blockbuster Pack", credits: 5000,  price: 39900,   pricePerCredit: 0.08, savings: "Save 58%" },
+  { id: "topup_1000", name: "Mogul Pack",       credits: 12000, price: 79900,   pricePerCredit: 0.07, savings: "Save 63%" },
 ];
 
 // Referral Rewards

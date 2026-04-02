@@ -184,12 +184,12 @@ async function startServer() {
             const packId = session.metadata.packId;
             // Credit amounts MUST match TOP_UP_PACKS in subscription.ts
             const packAmounts: Record<string, number> = {
-              topup_10:   500,    // Starter Pack     — 500 credits
-              topup_50:   1500,   // Producer Pack    — 1,500 credits
-              topup_100:  3000,   // Director Pack    — 3,000 credits
-              topup_200:  6000,   // Studio Pack      — 6,000 credits
-              topup_500:  12000,  // Blockbuster Pack — 12,000 credits
-              topup_1000: 25000,  // Mogul Pack       — 25,000 credits
+              topup_10:   100,    // Starter Pack     — 100 credits
+              topup_50:   300,    // Producer Pack    — 300 credits
+              topup_100:  750,    // Director Pack    — 750 credits
+              topup_200:  2000,   // Studio Pack      — 2,000 credits
+              topup_500:  5000,   // Blockbuster Pack — 5,000 credits
+              topup_1000: 12000,  // Mogul Pack       — 12,000 credits
             };
             const credits = packAmounts[packId] || 0;
             if (credits > 0) {

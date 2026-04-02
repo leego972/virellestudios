@@ -317,6 +317,7 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "Cannot change your own role" });
         await db.updateUserRole(input.userId, input.role);
+        logAuditEvent(ctx.user.id, "admin_update_user_role", ctx.req.ip || "unknown", true, { targetUserId: input.userId, newRole: input.role });
         return { success: true };
       }),
     assignBetaTier: adminProcedure
@@ -343,8 +344,9 @@ export const appRouter = router({
         amount: z.number().min(1).max(100000),
         reason: z.string().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
         await db.addCredits(input.userId, input.amount, "admin_grant", input.reason || "Admin credit grant");
+        logAuditEvent(ctx.user.id, "admin_grant_credits", ctx.req.ip || "unknown", true, { targetUserId: input.userId, amount: input.amount, reason: input.reason });
         return { success: true };
       }),
   }),
