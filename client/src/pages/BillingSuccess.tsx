@@ -41,7 +41,7 @@ export default function BillingSuccess() {
   useEffect(() => {
     // Invalidate user and subscription queries so the UI reflects the new state
     utils.auth.me.invalidate();
-    utils.subscription.getStatus.invalidate();
+    utils.subscription.status.invalidate();
   }, []);
 
   // Auto-redirect countdown
