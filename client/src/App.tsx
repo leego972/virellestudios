@@ -16,6 +16,7 @@ import Register from "./pages/Register";
 import Landing from "./pages/Landing";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
+import GoldWatermarkLaunch from "./components/GoldWatermarkLaunch";
 import { useContentProtection } from "./components/ContentProtection";
 
 // Dashboard pages — lazy loaded
@@ -257,6 +258,7 @@ function App() {
         switchable
       >
         <TooltipProvider>
+          <GoldWatermarkLaunch />
           <Toaster />
           <Router />
         </TooltipProvider>
