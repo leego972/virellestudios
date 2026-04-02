@@ -1,5 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
+// Default export alias so both import styles work
+export default function StudioOpenerDefault(props: Parameters<typeof StudioOpener>[0]) {
+  return StudioOpener(props);
+}
+
 /**
  * StudioOpener — Virelle Studios cinematic opener
  *
@@ -181,9 +186,11 @@ const easeOutBack = (t: number) => {
   return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export default function StudioOpener({ onComplete, mode = "login", skippable = true }: StudioOpenerProps) {
+// ─── Component ─────────────────────────────────────────────────────────────
+export function StudioOpener({ onComplete, mode = "login", skippable = true }: StudioOpenerProps) {
+  const [videoError, setVideoError] = useState(false);
+  const [isSkipped, setIsSkipped] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [phase, setPhase] = useState<"playing" | "fadeout">("playing");
   const [showSkip, setShowSkip] = useState(false);
   const [t, setT] = useState(0);
@@ -277,6 +284,36 @@ export default function StudioOpener({ onComplete, mode = "login", skippable = t
     drift: (((i * 137.508) % 1) - 0.5) * 0.4,
   }));
 
+  // If video hasn't errored, show video player
+  if (!videoError) {
+    return (
+      <div
+        className="fixed inset-0 z-[9999] bg-black flex items-center justify-center"
+        onClick={() => skippable && setIsSkipped(true)}
+      >
+        <video
+          ref={videoRef}
+          src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663497651330/KKNwAtyzOOzGlBLQ.mp4"
+          autoPlay
+          muted
+          playsInline
+          className="w-full h-full object-contain"
+          onEnded={onComplete}
+          onError={() => setVideoError(true)}
+        />
+        {skippable && (
+          <button
+            className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors"
+            onClick={() => setIsSkipped(true)}
+          >
+            SKIP
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  // Fallback SVG animation if video fails
   return (
     <div
       className={`fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden transition-opacity duration-700 ${phase === "fadeout" ? "opacity-0" : "opacity-100"}`}
