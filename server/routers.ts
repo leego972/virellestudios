@@ -16,7 +16,7 @@ import { nanoid } from "nanoid";
 import { processDirectorMessage } from "./directorAssistant";
 import { transcribeAudio } from "./_core/voiceTranscription";
 import { TRPCError } from "@trpc/server";
-import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buildTrailerPrompt, ENHANCED_SCENE_SCHEMA, type QualityTier } from "./_core/cinematicPromptEngine";
+import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buildTrailerPrompt, ENHANCED_SCENE_SCHEMA, getDefaultNegativePrompt, type QualityTier } from "./_core/cinematicPromptEngine";
 import bcrypt from "bcryptjs";
 import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload } from "./_core/rateLimit";
 import { sanitizeText } from "./_core/sanitize";
@@ -947,7 +947,28 @@ export const appRouter = router({
           }],
         });
 
-        // Step 5: Save the character with all extracted attributes
+        // Step 5: Build faceDnaPrompt — a compact, reusable prompt anchor for scene generation
+        // This is the key string that characterConsistency.ts uses to keep the character
+        // visually consistent across all generated scenes.
+        const faceDnaPrompt = [
+          `${analysis.gender || "person"}, ${analysis.estimatedAge || "adult"}`,
+          analysis.ethnicity ? `${analysis.ethnicity} ethnicity` : "",
+          analysis.skinTone ? `${analysis.skinTone} skin tone` : "",
+          analysis.faceShape ? `${analysis.faceShape} face shape` : "",
+          analysis.eyeColor && analysis.eyeShape ? `${analysis.eyeColor} ${analysis.eyeShape} eyes` : (analysis.eyeColor ? `${analysis.eyeColor} eyes` : ""),
+          analysis.hairColor && analysis.hairStyle ? `${analysis.hairColor} ${analysis.hairStyle} ${analysis.hairLength || ""} hair`.trim() : "",
+          analysis.noseType ? `${analysis.noseType} nose` : "",
+          analysis.lipShape ? `${analysis.lipShape} lips` : "",
+          analysis.facialHair && analysis.facialHair !== "none" && analysis.facialHair !== "None" ? analysis.facialHair : "",
+          analysis.distinguishingFeatures && analysis.distinguishingFeatures !== "none" ? `distinguishing: ${analysis.distinguishingFeatures}` : "",
+        ].filter(Boolean).join(", ");
+
+        const bodyDnaPrompt = [
+          analysis.build ? `${analysis.build} build` : "",
+          analysis.overallVibe ? `overall presence: ${analysis.overallVibe}` : "",
+        ].filter(Boolean).join(", ");
+
+        // Step 6: Save the character with all extracted attributes + DNA prompts
         const character = await db.createCharacter({
           userId: ctx.user.id,
           projectId: input.projectId ?? null,
@@ -961,6 +982,9 @@ export const appRouter = router({
             style,
             aiGenerated: true,
             generatedFromPhoto: true,
+            // DNA prompts for scene generation consistency
+            faceDnaPrompt: faceDnaPrompt || null,
+            bodyDnaPrompt: bodyDnaPrompt || null,
           },
         });
 
@@ -1575,7 +1599,8 @@ export const appRouter = router({
         // Use reference images from scene editor (first = promptImage for image-to-video)
         const sceneRefImages = (scene as any).referenceImages as string[] || [];
         const sceneAiPromptOverride = (scene as any).aiPromptOverride as string | undefined;
-        const sceneNegativePrompt = (scene as any).negativePrompt as string | undefined;
+        // Use scene-level negative prompt if set; otherwise fall back to the cinematic quality default
+        const sceneNegativePrompt: string = ((scene as any).negativePrompt as string | undefined) || getDefaultNegativePrompt(userTier as QualityTier);
         const sceneSeed = (scene as any).seed as number | undefined;
 
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
@@ -2972,10 +2997,10 @@ Break this into 8-15 scenes. For each scene, provide:
                 clothing: c.attributes?.clothingStyle || null,
                 referenceImageUrl: c.photoUrl || null,
                 thumbnailUrl: c.thumbnailUrl || null,
-                faceDnaPrompt: c.faceDnaPrompt || null,
-                bodyDnaPrompt: c.bodyDnaPrompt || null,
-                consistencyNotes: c.consistencyNotes || null,
-                deepProfile: c.deepProfile || null,
+                faceDnaPrompt: (c as any).faceDnaPrompt || c.attributes?.faceDnaPrompt || null,
+                bodyDnaPrompt: (c as any).bodyDnaPrompt || c.attributes?.bodyDnaPrompt || null,
+                consistencyNotes: (c as any).consistencyNotes || c.attributes?.consistencyNotes || null,
+                deepProfile: (c as any).deepProfile || c.attributes?.deepProfile || null,
                 // Voice & speech fields for TTS matching
                 voiceId: c.voiceId || null,
                 voiceType: c.voiceType || null,

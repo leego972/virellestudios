@@ -765,6 +765,14 @@ export function buildScenePrompt(
 
 // ─── Enhanced LLM System Prompt for Scene Breakdown ───
 
+/**
+ * Returns the default cinematic negative prompt for a given quality tier.
+ * Use this as the fallback negativePrompt when the user has not set a scene-level override.
+ */
+export function getDefaultNegativePrompt(tier: QualityTier = "industry"): string {
+  return QUALITY_NEGATIVE[tier];
+}
+
 export function buildSceneBreakdownSystemPrompt(project: {
   title: string;
   genre?: string | null;

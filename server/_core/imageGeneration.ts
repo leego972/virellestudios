@@ -1,12 +1,13 @@
 /**
  * Image generation helper with fallback chain:
- *   1. RunwayML (primary — user BYOK via RUNWAYML_API_SECRET)
- *   2. Google Veo 3 / Gemini Imagen (GOOGLE_API_KEY)
- *   3. Hugging Face Inference API (HUGGING_FACE_API_KEY)
- *   4. OpenAI DALL-E 3 (final fallback — OPENAI_API_KEY)
+ *   1. OpenAI gpt-image-1 (primary — supports reference images via image editing)
+ *   2. Google Gemini Imagen 3 (GOOGLE_API_KEY — supports reference images)
+ *   3. Hugging Face Inference API (HUGGING_FACE_API_KEY — FLUX.1-dev, text-to-image fallback)
+ *   4. OpenAI DALL-E 3 (final fallback — text-to-image only)
  *
- * Each provider is skipped automatically if its API key is not configured,
- * allowing users to bring their own keys (BYOK) and get the best available provider.
+ * When `originalImages` is provided (e.g. character-from-photo), the reference image
+ * is passed to every provider that supports image-to-image or image editing so the
+ * generated output is visually anchored to the reference face/subject.
  *
  * Example usage:
  *   const { url: imageUrl } = await generateImage({
@@ -30,65 +31,133 @@ export type GenerateImageResponse = {
   provider?: string;
 };
 
-/* ─── 1. RunwayML (primary) ─── */
-async function generateWithRunway(
+// ─── Helper: resolve originalImages to base64 ───
+async function resolveReferenceBase64(
+  images: GenerateImageOptions["originalImages"]
+): Promise<Array<{ b64: string; mimeType: string }>> {
+  if (!images || images.length === 0) return [];
+  const results: Array<{ b64: string; mimeType: string }> = [];
+  for (const img of images) {
+    if (img.b64Json) {
+      results.push({ b64: img.b64Json, mimeType: img.mimeType || "image/jpeg" });
+    } else if (img.url) {
+      try {
+        const resp = await fetch(img.url, { signal: AbortSignal.timeout(20000) });
+        if (resp.ok) {
+          const buf = Buffer.from(await resp.arrayBuffer());
+          const ct = resp.headers.get("content-type") || img.mimeType || "image/jpeg";
+          results.push({ b64: buf.toString("base64"), mimeType: ct.split(";")[0].trim() });
+        }
+      } catch { /* skip unresolvable refs */ }
+    }
+  }
+  return results;
+}
+
+/* ─── 1. OpenAI gpt-image-1 (primary — supports reference images) ─── */
+async function generateWithOpenAIImageEdit(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
-  if (!ENV.runwayApiKey) {
-    throw new Error("RunwayML API key not configured");
+  const apiKey = ENV.openaiApiKey;
+  if (!apiKey) throw new Error("OpenAI API key not configured");
+
+  const refs = await resolveReferenceBase64(options.originalImages);
+
+  if (refs.length > 0) {
+    // Use the images/edits endpoint which accepts a reference image
+    // gpt-image-1 supports multi-image editing — anchor to the reference face
+    const formData = new FormData();
+    formData.append("model", "gpt-image-1");
+    formData.append("prompt", options.prompt.slice(0, 4000));
+    formData.append("n", "1");
+    formData.append("size", "1536x1024");
+    // Attach the reference image(s)
+    for (let i = 0; i < Math.min(refs.length, 4); i++) {
+      const { b64, mimeType } = refs[i];
+      const ext = mimeType.split("/")[1] || "jpg";
+      const blob = new Blob([Buffer.from(b64, "base64")], { type: mimeType });
+      formData.append("image[]", blob, `reference_${i}.${ext}`);
+    }
+
+    const response = await fetch("https://api.openai.com/v1/images/edits", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}` },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const detail = await response.text().catch(() => "");
+      throw new Error(`OpenAI image edit failed (${response.status}): ${detail}`);
+    }
+
+    const result = (await response.json()) as {
+      data: Array<{ b64_json?: string; url?: string }>;
+    };
+
+    const b64 = result.data?.[0]?.b64_json;
+    const imgUrl = result.data?.[0]?.url;
+
+    if (b64) {
+      const buffer = Buffer.from(b64, "base64");
+      const { url } = await storagePut(`generated/${Date.now()}.png`, buffer, "image/png");
+      return { url, provider: "openai-gpt-image-1-edit" };
+    }
+    if (imgUrl) {
+      const dlResp = await fetch(imgUrl);
+      if (dlResp.ok) {
+        const buffer = Buffer.from(await dlResp.arrayBuffer());
+        const { url } = await storagePut(`generated/${Date.now()}.png`, buffer, "image/png");
+        return { url, provider: "openai-gpt-image-1-edit" };
+      }
+    }
+    throw new Error("OpenAI image edit returned no image data");
   }
 
-  // Runway Gen-3 Alpha image generation endpoint
-  const response = await fetch("https://api.dev.runwayml.com/v1/image_to_image", {
+  // No reference image — use standard generations endpoint with gpt-image-1
+  const response = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ENV.runwayApiKey}`,
-      "X-Runway-Version": "2024-11-06",
+      Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      promptText: options.prompt.slice(0, 1000),
-      model: "gen3a_turbo",
-      ratio: "1280:768",
+      model: "gpt-image-1",
+      prompt: options.prompt.slice(0, 4000),
+      n: 1,
+      size: "1536x1024",
+      quality: "high",
     }),
   });
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error(
-      `RunwayML image generation failed (${response.status} ${response.statusText})${detail ? `: ${detail}` : ""}`
-    );
+    throw new Error(`OpenAI gpt-image-1 failed (${response.status}): ${detail}`);
   }
 
   const result = (await response.json()) as {
-    artifacts?: Array<{ url: string }>;
-    output?: Array<string>;
+    data: Array<{ b64_json?: string; url?: string }>;
   };
 
-  // Handle both response formats
-  const imageUrl =
-    result.artifacts?.[0]?.url ||
-    result.output?.[0];
+  const b64 = result.data?.[0]?.b64_json;
+  const imgUrl = result.data?.[0]?.url;
 
-  if (!imageUrl) {
-    throw new Error("RunwayML returned no image data");
+  if (b64) {
+    const buffer = Buffer.from(b64, "base64");
+    const { url } = await storagePut(`generated/${Date.now()}.png`, buffer, "image/png");
+    return { url, provider: "openai-gpt-image-1" };
   }
-
-  // Download and re-upload to our S3 storage
-  const imgResponse = await fetch(imageUrl);
-  if (!imgResponse.ok) {
-    throw new Error("Failed to download RunwayML image");
+  if (imgUrl) {
+    const dlResp = await fetch(imgUrl);
+    if (dlResp.ok) {
+      const buffer = Buffer.from(await dlResp.arrayBuffer());
+      const { url } = await storagePut(`generated/${Date.now()}.png`, buffer, "image/png");
+      return { url, provider: "openai-gpt-image-1" };
+    }
   }
-  const buffer = Buffer.from(await imgResponse.arrayBuffer());
-  const { url } = await storagePut(
-    `generated/${Date.now()}.png`,
-    buffer,
-    "image/png"
-  );
-  return { url, provider: "runway" };
+  throw new Error("OpenAI gpt-image-1 returned no image data");
 }
 
-/* ─── 2. Google Veo 3 / Gemini Imagen ─── */
+/* ─── 2. Google Gemini Imagen 3 (supports reference images) ─── */
 async function generateWithGoogle(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
@@ -96,20 +165,31 @@ async function generateWithGoogle(
     throw new Error("Google API key not configured");
   }
 
-  // Use Gemini Imagen 3 for high-quality image generation
+  const refs = await resolveReferenceBase64(options.originalImages);
+
+  // Build the instance — include reference images when available
+  const instance: any = {
+    prompt: options.prompt.slice(0, 2000),
+  };
+
+  if (refs.length > 0) {
+    // Imagen 3 supports referenceImages for subject-consistent generation
+    instance.referenceImages = refs.slice(0, 4).map(r => ({
+      referenceType: "REFERENCE_TYPE_SUBJECT",
+      referenceImage: {
+        bytesBase64Encoded: r.b64,
+        mimeType: r.mimeType,
+      },
+    }));
+  }
+
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${ENV.googleApiKey}`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        instances: [
-          {
-            prompt: options.prompt.slice(0, 2000),
-          },
-        ],
+        instances: [instance],
         parameters: {
           sampleCount: 1,
           aspectRatio: "16:9",
@@ -146,7 +226,7 @@ async function generateWithGoogle(
   return { url, provider: "google-imagen" };
 }
 
-/* ─── 3. Hugging Face Inference API ─── */
+/* ─── 3. Hugging Face Inference API (FLUX.1-dev — text-to-image fallback) ─── */
 async function generateWithHuggingFace(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
@@ -199,8 +279,8 @@ async function generateWithHuggingFace(
   return { url, provider: "huggingface" };
 }
 
-/* ─── 4. OpenAI DALL-E 3 (final fallback) ─── */
-async function generateWithOpenAI(
+/* ─── 4. OpenAI DALL-E 3 (final fallback — text-to-image only) ─── */
+async function generateWithDallE3(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
   const apiKey = ENV.openaiApiKey;
@@ -257,22 +337,22 @@ export async function generateImage(
 ): Promise<GenerateImageResponse> {
   const errors: string[] = [];
 
-  // 1. Try RunwayML first (primary)
-  if (ENV.runwayApiKey) {
+  // 1. OpenAI gpt-image-1 (primary — supports reference images for character-from-photo)
+  if (ENV.openaiApiKey) {
     try {
-      const result = await generateWithRunway(options);
-      console.log("[ImageGen] Generated with RunwayML");
+      const result = await generateWithOpenAIImageEdit(options);
+      console.log(`[ImageGen] Generated with ${result.provider}`);
       return result;
     } catch (err: any) {
-      console.warn(`[ImageGen] RunwayML failed: ${err.message}`);
-      errors.push(`RunwayML: ${err.message}`);
+      console.warn(`[ImageGen] OpenAI gpt-image-1 failed: ${err.message}`);
+      errors.push(`OpenAI gpt-image-1: ${err.message}`);
     }
   }
 
-  // 2. Try Google Veo 3 / Gemini Imagen
+  // 2. Google Gemini Imagen 3 (supports referenceImages for subject consistency)
   if (ENV.googleApiKey) {
     try {
-      console.log("[ImageGen] Falling back to Google Imagen (Veo 3)");
+      console.log("[ImageGen] Falling back to Google Imagen 3");
       const result = await generateWithGoogle(options);
       return result;
     } catch (err: any) {
@@ -281,7 +361,7 @@ export async function generateImage(
     }
   }
 
-  // 3. Try Hugging Face (FLUX.1-dev)
+  // 3. Hugging Face (FLUX.1-dev — text-to-image, no reference image support)
   if (ENV.huggingFaceApiKey) {
     try {
       console.log("[ImageGen] Falling back to Hugging Face (FLUX.1-dev)");
@@ -293,15 +373,15 @@ export async function generateImage(
     }
   }
 
-  // 4. Final fallback: OpenAI DALL-E 3
+  // 4. Final fallback: DALL-E 3 (text-to-image only)
   if (ENV.openaiApiKey) {
     try {
       console.log("[ImageGen] Falling back to OpenAI DALL-E 3");
-      const result = await generateWithOpenAI(options);
+      const result = await generateWithDallE3(options);
       return result;
     } catch (err: any) {
-      console.warn(`[ImageGen] OpenAI failed: ${err.message}`);
-      errors.push(`OpenAI: ${err.message}`);
+      console.warn(`[ImageGen] OpenAI DALL-E 3 failed: ${err.message}`);
+      errors.push(`DALL-E 3: ${err.message}`);
     }
   }
 
