@@ -153,57 +153,73 @@ export function buildCharacterDNA(character: {
     clothing: sceneWardrobeOverride?.wardrobeDescription || character.clothing || undefined,
   };
 
-  // Build the prompt anchor — a compact, specific description
-  // Priority: faceDnaPrompt > manual description > auto-built
-  const parts: string[] = [];
+  // Build the prompt anchor — a structured, cinematographer-grade descriptor
+  // Priority: faceDnaPrompt (from photo analysis) > manual description > auto-built
+  // The anchor is structured in sections so the AI model can parse and weight each category.
+  const sections: string[] = [];
 
-  // If director uploaded a reference photo and we have a face DNA prompt, use it
+  // ── Core identity ──
+  const identityParts = [`${attrs.age} ${attrs.gender}`];
+  if (attrs.ethnicity !== "unspecified") identityParts.push(attrs.ethnicity);
+  if (attrs.nationality) identityParts.push(`${attrs.nationality} nationality`);
+  sections.push(identityParts.join(", "));
+
+  // ── Face DNA (from photo analysis — highest fidelity) ──
   if (character.faceDnaPrompt) {
-    parts.push(character.faceDnaPrompt);
+    // The faceDnaPrompt is already structured with | separators from the photo analysis
+    sections.push(character.faceDnaPrompt);
   } else {
-    parts.push(`${attrs.age} ${attrs.gender}`);
-    if (attrs.ethnicity !== "unspecified") parts.push(`${attrs.ethnicity}`);
-    if (attrs.nationality) parts.push(`${attrs.nationality} nationality`);
-    parts.push(`${attrs.skinTone} skin`);
-    parts.push(`${attrs.build} build`);
-    if (attrs.height) parts.push(`${attrs.height}`);
-    if (attrs.weight) parts.push(`${attrs.weight}`);
-    if (attrs.fitnessLevel) parts.push(`${attrs.fitnessLevel} fitness`);
-    if (attrs.posture) parts.push(`${attrs.posture} posture`);
-    parts.push(`${attrs.hairLength} ${attrs.hairColor} ${attrs.hairStyle} hair`);
-    parts.push(`${attrs.eyeColor} eyes`);
-    parts.push(`${attrs.faceShape} face`);
+    // Auto-build from structured fields
+    const faceSection: string[] = [];
+    faceSection.push(`${attrs.faceShape} face`);
+    faceSection.push(`${attrs.skinTone} skin`);
+    faceSection.push(`${attrs.eyeColor} eyes`);
+    faceSection.push(`${attrs.hairLength} ${attrs.hairColor} ${attrs.hairStyle} hair`.trim());
     if (attrs.distinguishingFeatures.length > 0) {
-      parts.push(attrs.distinguishingFeatures.join(", "));
+      faceSection.push(`DISTINGUISHING: ${attrs.distinguishingFeatures.join(", ")}`);
     }
+    sections.push(faceSection.join(" | "));
   }
 
-  // Body DNA override
+  // ── Body DNA ──
   if (character.bodyDnaPrompt) {
-    parts.push(character.bodyDnaPrompt);
+    sections.push(character.bodyDnaPrompt);
+  } else {
+    const bodySection: string[] = [];
+    bodySection.push(`${attrs.build} build`);
+    if (attrs.height) bodySection.push(attrs.height);
+    if (attrs.weight) bodySection.push(attrs.weight);
+    if (attrs.fitnessLevel) bodySection.push(`${attrs.fitnessLevel} fitness`);
+    if (attrs.posture) bodySection.push(`${attrs.posture} posture`);
+    if (bodySection.length > 1) sections.push(bodySection.join(", "));
   }
 
-  // Wardrobe — scene-specific override takes priority over character default
+  // ── Wardrobe — scene-specific override takes priority over character default ──
   if (sceneWardrobeOverride?.wardrobeDescription) {
-    parts.push(`wearing ${sceneWardrobeOverride.wardrobeDescription}`);
-    if (sceneWardrobeOverride.makeupNotes) parts.push(`makeup: ${sceneWardrobeOverride.makeupNotes}`);
-    if (sceneWardrobeOverride.hairNotes) parts.push(`hair styled: ${sceneWardrobeOverride.hairNotes}`);
-    if (sceneWardrobeOverride.accessories) parts.push(`accessories: ${sceneWardrobeOverride.accessories}`);
+    const wardrobeParts = [`wearing ${sceneWardrobeOverride.wardrobeDescription}`];
+    if (sceneWardrobeOverride.makeupNotes) wardrobeParts.push(`makeup: ${sceneWardrobeOverride.makeupNotes}`);
+    if (sceneWardrobeOverride.hairNotes) wardrobeParts.push(`hair: ${sceneWardrobeOverride.hairNotes}`);
+    if (sceneWardrobeOverride.accessories) wardrobeParts.push(`accessories: ${sceneWardrobeOverride.accessories}`);
+    sections.push(wardrobeParts.join(", "));
   } else if (attrs.clothing) {
-    parts.push(`wearing ${attrs.clothing}`);
+    sections.push(`wearing ${attrs.clothing}`);
   }
 
-  // Consistency notes from director
+  // ── Director consistency notes ──
   if (character.consistencyNotes) {
-    parts.push(`[CONSISTENCY: ${character.consistencyNotes}]`);
+    sections.push(`CONSISTENCY DIRECTIVE: ${character.consistencyNotes}`);
   }
 
-    // Add hyper-realism directives
-  parts.push("hyper-realistic digital human, photorealistic face and body, authentic human features");
-  parts.push("skin with visible pores, micro-wrinkles, and natural imperfections, subsurface scattering");
-  parts.push("eyes with detailed iris fibers, corneal reflections, and subtle moisture");
+  // ── Photorealism enforcement — always injected, character-specific where possible ──
+  sections.push(
+    "photorealistic human face with authentic natural imperfections — " +
+    "skin with visible pores, micro-wrinkles, subsurface scattering, fine peach fuzz — " +
+    "eyes with detailed iris fiber structure, limbal ring, corneal reflections, subtle waterline moisture — " +
+    "individual hair strand detail with natural flyaways — " +
+    "NOT CGI, NOT AI-generated look, NOT plastic skin"
+  );
 
-  const promptAnchor = `[${character.name}: ${parts.join(", ")}]`;
+  const promptAnchor = `[CHARACTER ${character.name}: ${sections.join(" || ")}]`;
 
   return {
     characterId: character.id,

@@ -19,9 +19,37 @@ import { CINEMA_INDUSTRY_PROFILES } from "../../shared/types";
 
 // ─── Hyper-Realism Constants ───
 // Defined before GENRE_PROFILES so they can be referenced in genre skinRendering fields
+// These are the gold standard realism directives injected into every scene prompt.
 const PHOTOREALISM_SKIN_AND_EYES = {
-  skin: "hyper-realistic human skin with visible pores, fine lines, and natural imperfections; subtle subsurface scattering showing blood flow beneath the epidermis; micro-expressions creating authentic emotion; skin texture that reacts to light and environment (e.g., glistening with sweat, goosebumps from cold); avoid airbrushed, plastic, or overly smooth skin at all costs",
-  eyes: "photorealistic human eyes with detailed iris fibers, natural reflections (corneal glare), and subtle moisture in the waterline; sclera should have faint, realistic veins; eyes should have a 'soulful' quality, conveying emotion and thought; avoid dead, glassy, or doll-like eyes",
+  skin: [
+    "hyper-realistic human skin with visible pores, fine surface texture, and natural imperfections",
+    "perfect subsurface scattering showing blood flow and vascular structure beneath translucent skin layers",
+    "micro-wrinkles and fine peach fuzz visible on skin surface",
+    "natural skin blemishes, freckles, age spots, and authentic facial asymmetry preserved",
+    "skin texture reacts to environment: glistening with sweat under heat, goosebumps from cold, flushed from emotion",
+    "NO airbrushed skin, NO plastic skin, NO porcelain skin, NO overly smooth skin, NO mannequin look",
+  ].join("; "),
+  eyes: [
+    "photorealistic human eyes with hyper-detailed iris fiber structure and visible spoke pattern",
+    "prominent dark limbal ring separating iris from sclera",
+    "natural corneal reflections and catchlights matching the scene lighting",
+    "subtle moisture in the waterline and inner corner of the eye",
+    "sclera with faint realistic veins and natural off-white coloring",
+    "eyes have a genuinely alive, soulful quality conveying real emotion and thought",
+    "NO dead eyes, NO glassy eyes, NO doll-like eyes, NO perfectly symmetric eyes",
+  ].join("; "),
+  hair: [
+    "individual hair strand detail with natural variation in thickness and direction",
+    "realistic hair sheen responding to scene lighting",
+    "natural flyaways and imperfections at hairline and crown",
+    "hair weight and gravity behaving physically correctly",
+  ].join("; "),
+  face: [
+    "authentic facial bone structure with natural asymmetry",
+    "micro-expressions conveying genuine emotion",
+    "natural lip moisture and subtle lip line definition",
+    "realistic ear and neck rendering consistent with face",
+  ].join("; "),
 };
 
 // ─── Genre Visual Profiles ───
@@ -49,7 +77,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "intense, kinetic, explosive, visceral, adrenaline-pumping, relentless",
     referenceFilms: "Mad Max: Fury Road (John Seale), John Wick (Dan Laustsen), The Dark Knight (Wally Pfister)",
     cameraMovement: "handheld with controlled shake during combat, smooth dolly tracking alongside running characters, crane shots for scale reveals, snap zooms on impacts",
-    skinRendering: `glistening with sweat, visible pores, cuts and bruises with realistic subsurface scattering, dirt-streaked, high-contrast skin tones. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
+    skinRendering: `glistening with sweat, visible pores, cuts and bruises with realistic subsurface scattering, dirt-streaked, high-contrast skin tones. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
   },
   "Drama": {
     colorPalette: "muted earth tones with selective warm highlights, desaturated backgrounds preserving natural skin tones, subtle color shifts reflecting emotional state — warm for hope, cool for despair",
@@ -60,7 +88,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "intimate, contemplative, raw, emotional, grounded, achingly human",
     referenceFilms: "Moonlight (James Laxton), Manchester by the Sea (Jody Lee Lipes), Nomadland (Joshua James Richards)",
     cameraMovement: "slow deliberate dolly moves, locked-off static shots for contemplation, gentle handheld for emotional vulnerability, slow push-in during revelations",
-    skinRendering: `natural imperfections visible — freckles, wrinkles, age spots, realistic subsurface scattering showing blood beneath skin, tear tracks, natural makeup or no makeup look. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
+    skinRendering: `natural imperfections visible — freckles, wrinkles, age spots, realistic subsurface scattering showing blood beneath skin, tear tracks, natural makeup or no makeup look. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
   },
   "Comedy": {
     colorPalette: "bright warm palette, slightly elevated saturation, cheerful color temperature around 5600K, pastel accents, clean whites",
@@ -71,7 +99,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "lighthearted, vibrant, playful, warm, inviting, witty",
     referenceFilms: "The Grand Budapest Hotel (Robert Yeoman), Booksmart (Jason McCormick), Barbie (Rodrigo Prieto)",
     cameraMovement: "smooth tracking shots, whip pans for comedic reveals, static locked-off for deadpan, quick push-ins for emphasis",
-    skinRendering: `healthy glowing skin, even complexion, flattering soft lighting on faces, minimal visible imperfections, warm healthy skin tones. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
+    skinRendering: `healthy glowing skin, even complexion, flattering soft lighting on faces, minimal visible imperfections, warm healthy skin tones. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
   },
   "Horror": {
     colorPalette: "desaturated cold blue-green tones, sickly yellows in practicals, deep crushed blacks with detail lost in shadows, selective red accents for blood and danger, greenish skin undertones",
@@ -82,7 +110,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "dread, claustrophobic, unsettling, ominous, visceral terror, suffocating",
     referenceFilms: "Hereditary (Pawel Pogorzelski), The Shining (John Alcott), It Follows (Mike Gioulakis)",
     cameraMovement: "slow creeping dolly moves, static locked-off shots where nothing moves then something does, slow 360-degree pans, Steadicam following characters through corridors",
-    skinRendering: `pale sickly complexion, visible veins, dark circles under eyes, cold clammy appearance, goosebumps, blood appearing hyper-real against pale skin. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
+    skinRendering: `pale sickly complexion, visible veins, dark circles under eyes, cold clammy appearance, goosebumps, blood appearing hyper-real against pale skin. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
   },
   "Sci-Fi": {
     colorPalette: "cool blue-steel palette with neon accent colors, cyan and magenta highlights, metallic silver tones, holographic iridescence, bioluminescent greens for organic tech",
@@ -93,7 +121,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "awe-inspiring, vast, technological, otherworldly, cerebral, transcendent",
     referenceFilms: "Blade Runner 2049 (Roger Deakins), Dune (Greig Fraser), Interstellar (Hoyte van Hoytema), Arrival (Bradford Young)",
     cameraMovement: "slow majestic crane reveals, smooth dolly through environments, locked-off symmetrical compositions, slow-motion for awe moments",
-    skinRendering: `clean skin with colored light reflections, neon rim light on skin edges, helmet visor reflections on face, sweat beading in tense moments, realistic skin under artificial lighting. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
+    skinRendering: `clean skin with colored light reflections, neon rim light on skin edges, helmet visor reflections on face, sweat beading in tense moments, realistic skin under artificial lighting. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
   },
   "Romance": {
     colorPalette: "warm golden tones, soft pastels, rosy skin tones, gentle amber highlights, dreamy color wash, selective soft focus creating romantic haze",
@@ -104,7 +132,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "tender, warm, intimate, yearning, passionate, bittersweet",
     referenceFilms: "In the Mood for Love (Christopher Doyle), La La Land (Linus Sandgren), Portrait of a Lady on Fire (Claire Mathon)",
     cameraMovement: "slow dolly-in during intimate moments, gentle orbiting around couples, static shots letting emotion breathe, slow-motion for first kiss/reunion moments",
-    skinRendering: `warm glowing skin with golden highlights, soft focus on skin imperfections, visible blush, lips with natural moisture, eyes with catchlights reflecting the other person. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}`,
+    skinRendering: `warm glowing skin with golden highlights, soft focus on skin imperfections, visible blush, lips with natural moisture, eyes with catchlights reflecting the other person. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
   },
   "Thriller": {
     colorPalette: "cold desaturated palette with sickly green undertones, high contrast, selective warm accents on faces, shadows tinted deep blue, sodium vapor orange for street scenes",
@@ -284,7 +312,7 @@ const FILM_STOCK_PROFILES: Record<string, string> = {
 
 const NEGATIVE_PROMPTS: Record<string, string> = {
   "universal": "blurry, out of focus, low resolution, pixelated, jpeg artifacts, watermark, text overlay, logo, signature, frame border, collage, split image, multiple panels, extra fingers, extra limbs, deformed hands, deformed face, cross-eyed, asymmetric eyes, bad anatomy, bad proportions, mutation, disfigured",
-  "anti_ai": "cartoon, anime, illustration, painting, sketch, drawing, 3D render, CGI, digital art, concept art, fan art, deviantart, artstation, unreal engine render, video game screenshot, plastic skin, waxy skin, porcelain skin, mannequin, doll-like, uncanny valley, airbrushed, overly smooth skin, perfect symmetry, too clean, too perfect, artificial looking, AI generated look, midjourney style, stable diffusion artifacts, neural network artifacts",
+  "anti_ai": "cartoon, anime, illustration, painting, sketch, drawing, 3D render, CGI, digital art, concept art, fan art, deviantart, artstation, unreal engine render, video game screenshot, plastic skin, waxy skin, porcelain skin, mannequin, doll-like, uncanny valley, airbrushed, overly smooth skin, perfect symmetry, too clean, too perfect, artificial looking, AI generated look, midjourney style, stable diffusion artifacts, neural network artifacts, dead eyes, glassy eyes, soulless eyes, empty stare, lifeless expression, frozen expression, wax figure, department store mannequin, CGI face, digital human uncanny valley, hypersmooth AI face, no pores, no imperfections, perfect skin, flawless skin, plastic face, rubber skin, synthetic hair, wig-like hair",
   "photorealistic": "oversaturated, HDR look, overprocessed, Instagram filter, heavy vignette, fish-eye, overexposed, underexposed, flat lighting, flash photography, red eye, motion blur on face, noisy low quality, stock photo look, corporate photography, generic, bland, lifeless",
   "cinematic": "amateur photography, snapshot, selfie, phone camera, webcam, security camera, low budget, cheap production, TV show quality, soap opera lighting, flat video look, vertical video, made for TV, direct to video quality",
 };

@@ -824,23 +824,44 @@ export const appRouter = router({
           refPhotoUrl = stored.url;
         }
 
-        // Step 2: Use LLM with vision to analyze the photo and extract detailed features
+        // Step 2: Use LLM with vision to analyze the photo and extract maximum physical detail
+        // The richer the extraction, the better the character generation and scene consistency.
         const analysisResult = await invokeLLM({
           messages: [
             {
               role: "system",
-              content: `You are an expert casting director and character designer for a Hollywood production studio. Analyze the provided reference photo in extreme detail. Extract every physical characteristic you can observe. Be precise and specific — your description will be used to recreate this person as a movie character.`,
+              content: `You are the world's leading forensic portrait analyst and Hollywood casting director. Your job is to extract every observable physical characteristic from a reference photo with the precision of a forensic scientist and the eye of a master cinematographer.
+
+Your analysis will be used to:
+1. Generate a photorealistic character portrait that is indistinguishable from the reference person
+2. Maintain perfect visual consistency of this character across dozens of film scenes
+3. Direct a VFX team to recreate this person in any lighting, angle, or environment
+
+Be obsessively precise. Use specific, measurable, visual language. Never use vague terms like "normal" or "average" — always describe what you actually observe. If you cannot observe a feature clearly, describe what IS visible and note the limitation.
+
+Focus especially on:
+- Face geometry: exact bone structure, proportions, spatial relationships between features
+- Skin quality: texture, undertone, specific imperfections, how it responds to light
+- Eyes: iris pattern, limbal ring, sclera quality, lid shape, lash density
+- Hair: exact color with highlights/lowlights, texture, growth pattern, density
+- Micro-features: the specific details that make this face unique and recognisable`,
             },
             {
               role: "user",
               content: [
                 {
                   type: "image_url",
-                  image_url: { url: `data:${resolvedMimeType};base64,${resolvedBase64}` },
+                  image_url: { url: `data:${resolvedMimeType};base64,${resolvedBase64}`, detail: "high" },
                 },
                 {
                   type: "text",
-                  text: `Analyze this person's appearance in detail for character recreation. Character name: ${input.name}. ${input.characterRole ? `Role: ${input.characterRole}.` : ""} ${input.additionalNotes ? `Notes: ${input.additionalNotes}` : ""}\n\nProvide your analysis as JSON.`,
+                  text: `Perform a complete forensic physical analysis of this person for cinematic character recreation.
+
+Character name: ${input.name}
+${input.characterRole ? `Character role: ${input.characterRole}` : ""}
+${input.additionalNotes ? `Director notes: ${input.additionalNotes}` : ""}
+
+Analyze every visible feature with maximum precision. Return as JSON.`,
                 },
               ],
             },
@@ -853,27 +874,74 @@ export const appRouter = router({
               schema: {
                 type: "object",
                 properties: {
-                  estimatedAge: { type: "string" },
-                  gender: { type: "string" },
-                  ethnicity: { type: "string" },
-                  skinTone: { type: "string" },
-                  build: { type: "string" },
-                  hairColor: { type: "string" },
-                  hairStyle: { type: "string" },
-                  hairLength: { type: "string" },
-                  eyeColor: { type: "string" },
-                  eyeShape: { type: "string" },
-                  faceShape: { type: "string" },
-                  noseType: { type: "string" },
-                  lipShape: { type: "string" },
-                  facialHair: { type: "string" },
-                  distinguishingFeatures: { type: "string" },
-                  clothing: { type: "string" },
-                  expression: { type: "string" },
-                  overallVibe: { type: "string" },
-                  detailedDescription: { type: "string" },
+                  // ─── Demographics ───
+                  estimatedAge: { type: "string", description: "Precise age estimate with range, e.g. 'mid-30s, approximately 34-37'" },
+                  gender: { type: "string", description: "Gender presentation as observed" },
+                  ethnicity: { type: "string", description: "Specific ethnic heritage as observable from features, e.g. 'East Asian — likely Korean or Japanese' or 'Mixed — appears West African and European'" },
+                  nationality: { type: "string", description: "Most likely nationality based on features and any visible context clues" },
+                  // ─── Skin ───
+                  skinTone: { type: "string", description: "Precise skin tone using Fitzpatrick scale + descriptive, e.g. 'Fitzpatrick Type III — warm olive undertone, golden-brown in natural light'" },
+                  skinUndertone: { type: "string", description: "Warm/cool/neutral undertone and specific hue, e.g. 'warm golden-yellow undertone'" },
+                  skinTexture: { type: "string", description: "Texture quality: pore size, smoothness, visible imperfections, oiliness/dryness" },
+                  skinAgeMarkers: { type: "string", description: "Visible age markers: fine lines, wrinkles, laugh lines, crow's feet, forehead lines — location and depth" },
+                  skinImperfections: { type: "string", description: "Specific visible marks: moles, freckles, scars, birthmarks, hyperpigmentation — exact location" },
+                  // ─── Face Geometry ───
+                  faceShape: { type: "string", description: "Precise face shape with proportions, e.g. 'elongated oval — forehead slightly wider than jaw, high cheekbones, tapered chin'" },
+                  foreheadShape: { type: "string", description: "Forehead height, width, hairline shape (straight/widow's peak/receding), brow ridge prominence" },
+                  cheekboneStructure: { type: "string", description: "Cheekbone height, prominence, width — e.g. 'high prominent cheekbones with defined hollows beneath'" },
+                  jawlineShape: { type: "string", description: "Jaw angle, width, definition — e.g. 'strong angular jaw with defined mandibular angle, slight squareness'" },
+                  chinShape: { type: "string", description: "Chin shape, projection, cleft if present — e.g. 'slightly pointed chin with subtle horizontal dimple'" },
+                  facialSymmetry: { type: "string", description: "Degree of symmetry and notable asymmetries — e.g. 'slight left-side dominance, right eye marginally higher'" },
+                  // ─── Eyes ───
+                  eyeColor: { type: "string", description: "Precise iris color with pattern, e.g. 'deep hazel — inner ring warm amber, outer ring dark green-brown, visible spoke pattern'" },
+                  eyeShape: { type: "string", description: "Eye shape: almond/round/hooded/monolid/upturned/downturned, with lid crease details" },
+                  eyeSize: { type: "string", description: "Relative eye size and spacing — e.g. 'medium-large, slightly wide-set'" },
+                  eyebrowShape: { type: "string", description: "Brow shape, thickness, arch height, color, density — e.g. 'thick straight brows with slight natural arch, dark brown, full'" },
+                  eyelashDescription: { type: "string", description: "Lash length, density, curl, color" },
+                  eyeExpression: { type: "string", description: "The emotional quality conveyed by the eyes — e.g. 'intense and watchful, slight downward inner corner creating a melancholic quality'" },
+                  // ─── Nose ───
+                  noseType: { type: "string", description: "Nose shape: bridge width/height, tip shape, nostril shape/flare, overall profile — e.g. 'straight medium bridge, rounded soft tip, slightly wide nostrils'" },
+                  // ─── Mouth & Lips ───
+                  lipShape: { type: "string", description: "Lip fullness top/bottom, cupid's bow shape, lip line definition, natural color — e.g. 'full lower lip, defined cupid's bow, natural rose-pink'" },
+                  mouthWidth: { type: "string", description: "Mouth width relative to face — e.g. 'medium-wide, corners slightly upturned at rest'" },
+                  teethVisible: { type: "string", description: "If teeth visible: color, alignment, shape" },
+                  // ─── Hair ───
+                  hairColor: { type: "string", description: "Precise hair color with highlights/lowlights/undertone, e.g. 'dark espresso brown with subtle warm auburn highlights in direct light'" },
+                  hairStyle: { type: "string", description: "Specific style: cut, layers, texture styling" },
+                  hairLength: { type: "string", description: "Precise length reference" },
+                  hairTexture: { type: "string", description: "Natural texture: straight/wavy/curly/coily, density, thickness per strand" },
+                  hairlineShape: { type: "string", description: "Hairline shape and any recession" },
+                  facialHair: { type: "string", description: "Precise facial hair description or 'clean-shaven'" },
+                  // ─── Body (if visible) ───
+                  build: { type: "string", description: "Body type as observable: lean/athletic/muscular/average/stocky/plus-size with specific notes" },
+                  neckDescription: { type: "string", description: "Neck length, width, visible musculature" },
+                  shoulderDescription: { type: "string", description: "Shoulder width and posture if visible" },
+                  // ─── Expression & Presence ───
+                  expression: { type: "string", description: "Precise expression in the photo and what it conveys" },
+                  restingExpression: { type: "string", description: "The character's likely resting/neutral expression tendency" },
+                  overallVibe: { type: "string", description: "The overall screen presence and charisma — what a casting director would note" },
+                  distinguishingFeatures: { type: "string", description: "The 3-5 most distinctive features that make this face uniquely recognisable — the things a sketch artist would prioritise" },
+                  // ─── Lighting Response ───
+                  lightingResponse: { type: "string", description: "How this person's skin and features respond to light — e.g. 'olive skin creates warm golden tones under warm light, cool undertones emerge under blue light, cheekbones catch light dramatically'" },
+                  // ─── Clothing (if relevant) ───
+                  clothing: { type: "string", description: "Visible clothing description" },
+                  // ─── Master Description ───
+                  detailedDescription: { type: "string", description: "A 3-4 sentence master casting description that a director could read aloud to immediately visualise this person" },
+                  cinematographerNotes: { type: "string", description: "Notes for the cinematographer on how to light and shoot this face for maximum impact" },
                 },
-                required: ["estimatedAge", "gender", "ethnicity", "skinTone", "build", "hairColor", "hairStyle", "hairLength", "eyeColor", "eyeShape", "faceShape", "noseType", "lipShape", "facialHair", "distinguishingFeatures", "clothing", "expression", "overallVibe", "detailedDescription"],
+                required: [
+                  "estimatedAge", "gender", "ethnicity", "nationality",
+                  "skinTone", "skinUndertone", "skinTexture", "skinAgeMarkers", "skinImperfections",
+                  "faceShape", "foreheadShape", "cheekboneStructure", "jawlineShape", "chinShape", "facialSymmetry",
+                  "eyeColor", "eyeShape", "eyeSize", "eyebrowShape", "eyelashDescription", "eyeExpression",
+                  "noseType",
+                  "lipShape", "mouthWidth", "teethVisible",
+                  "hairColor", "hairStyle", "hairLength", "hairTexture", "hairlineShape", "facialHair",
+                  "build", "neckDescription", "shoulderDescription",
+                  "expression", "restingExpression", "overallVibe", "distinguishingFeatures",
+                  "lightingResponse", "clothing",
+                  "detailedDescription", "cinematographerNotes",
+                ],
                 additionalProperties: false,
               },
             },
@@ -889,54 +957,131 @@ export const appRouter = router({
           analysis = { detailedDescription: "Character from reference photo" };
         }
 
-        // Step 3: Build a rich prompt for image generation using the analysis + reference photo
+        // Step 3: Build a hyper-detailed, face-first image generation prompt
+        // Structure: [TECHNICAL BASE] [FACE GEOMETRY] [SKIN] [EYES] [HAIR] [BODY] [STYLE/LIGHTING] [REALISM ENFORCEMENT]
+        // Face features come first so the AI model weights them highest.
         const style = input.style || "cinematic";
-        // All styles are photorealistic — the style changes the lighting/mood, not the realism level
-        const photorealismBase = "RAW photograph, absolutely indistinguishable from a real photograph of a real human being, captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lens, skin with perfect subsurface scattering, visible pores and micro-wrinkles, hyper-realistic eyes with detailed iris fibers and corneal reflections, authentic facial asymmetry, Kodak Vision3 500T film stock color science, 8K resolution, NOT CGI, NOT illustration, NOT AI-looking";
+
+        // Technical base — always photorealistic, style only changes lighting/mood
+        const photorealismBase = [
+          "RAW photograph, absolutely indistinguishable from a real photograph of a real human being",
+          "captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance T1.5 anamorphic lens",
+          "Kodak Vision3 500T film stock color science with organic grain structure",
+          "8K resolution, Academy Award-winning portrait photography",
+        ].join(", ");
+
         const styleMap: Record<string, string> = {
-          cinematic: `${photorealismBase}, three-point Rembrandt lighting, shallow depth of field f/1.4, cinematic color grading, volumetric atmospheric light, Hollywood movie character portrait`,
-          noir: `${photorealismBase}, dramatic high-contrast lighting with deep shadows, venetian blind light patterns casting bars across the face, desaturated with selective warm practical light, 1940s Hollywood noir aesthetic`,
-          "sci-fi": `${photorealismBase}, holographic rim lighting casting colored shadows, neon accent lights reflecting off skin, cyberpunk color palette with cyan and magenta, futuristic environment reflections in eyes`,
-          fantasy: `${photorealismBase}, ethereal magical golden-hour backlight, rich detailed costume and armor with physically-based material rendering, mystical atmospheric haze, epic scale environment in background`,
-          horror: `${photorealismBase}, extreme low-key lighting with single harsh source creating deep impenetrable shadows, underlighting for menace, pale sickly complexion with visible veins, desaturated with selective red accents`,
-          comedy: `${photorealismBase}, bright warm high-key lighting, cheerful 5600K color temperature, natural relaxed expression with genuine smile, inviting and charismatic presence, vibrant saturated background`,
-          period: `${photorealismBase}, classical old-master painting-inspired lighting with warm candlelight tones, historically accurate styling and costume, rich fabric textures, golden hour warmth`,
-          action: `${photorealismBase}, dramatic hard backlighting with anamorphic lens flare, intense determined expression, grit and sweat on skin, high contrast cinematic grading, dust particles in air`,
+          cinematic: "three-point Rembrandt lighting with soft key, fill, and rim separation, shallow depth of field f/1.4 creamy bokeh, cinematic color grading with lifted blacks, volumetric atmospheric light, Hollywood movie character portrait on neutral dark background",
+          noir: "extreme high-contrast single-source lighting casting deep impenetrable shadows, venetian blind light patterns casting bars across the face, desaturated with selective warm amber practical light, 1940s Hollywood noir aesthetic, smoke and atmosphere",
+          "sci-fi": "holographic rim lighting casting colored cyan and magenta shadows on skin, neon accent lights reflecting off face with colored specular highlights, cyberpunk color palette, futuristic environment reflections in iris, volumetric light beams",
+          fantasy: "ethereal magical golden-hour backlight with lens flare, rich detailed costume and armor with physically-based material rendering, mystical atmospheric haze, epic scale environment in background, warm magical light wrapping the face",
+          horror: "extreme low-key underlighting from a single harsh source creating menacing shadows under eyes and jaw, pale sickly complexion, desaturated with selective deep red accents, heavy vignette, cold blue-green ambient",
+          comedy: "bright warm high-key three-point lighting at 5600K, natural relaxed expression with genuine smile, inviting and charismatic presence, vibrant saturated background, clean flattering light",
+          period: "old-master painting-inspired lighting with warm candlelight tones, historically accurate styling and costume, rich fabric textures, golden hour warmth, Rembrandt triangle on face",
+          action: "dramatic hard backlighting with anamorphic horizontal lens flare, intense determined expression, grit and sweat beading on skin, high contrast cinematic grading, dust particles in air, motivated practical light",
         };
         const stylePrompt = styleMap[style] || styleMap.cinematic;
 
+        // Build the face geometry block — this is the highest-priority section
+        const faceGeometryBlock = [
+          analysis.faceShape ? `${analysis.faceShape} face` : "",
+          analysis.foreheadShape ? `forehead: ${analysis.foreheadShape}` : "",
+          analysis.cheekboneStructure ? `cheekbones: ${analysis.cheekboneStructure}` : "",
+          analysis.jawlineShape ? `jaw: ${analysis.jawlineShape}` : "",
+          analysis.chinShape ? `chin: ${analysis.chinShape}` : "",
+          analysis.facialSymmetry ? `facial symmetry: ${analysis.facialSymmetry}` : "",
+        ].filter(Boolean).join(", ");
+
+        // Build the skin block — the most visible realism indicator
+        const skinBlock = [
+          analysis.skinTone ? `${analysis.skinTone} skin` : "natural skin",
+          analysis.skinUndertone ? `${analysis.skinUndertone} undertone` : "",
+          analysis.skinTexture ? `skin texture: ${analysis.skinTexture}` : "",
+          analysis.skinAgeMarkers && analysis.skinAgeMarkers !== "none" ? `age markers: ${analysis.skinAgeMarkers}` : "",
+          analysis.skinImperfections && analysis.skinImperfections !== "none" ? `visible marks: ${analysis.skinImperfections}` : "",
+          // Always enforce photorealistic skin rendering
+          "skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers",
+          "visible pores and micro-wrinkles and fine peach fuzz on skin surface",
+          "natural skin blemishes and authentic facial asymmetry",
+          analysis.lightingResponse ? `lighting response: ${analysis.lightingResponse}` : "",
+        ].filter(Boolean).join(", ");
+
+        // Build the eyes block — the soul of the character
+        const eyesBlock = [
+          analysis.eyeColor ? `${analysis.eyeColor} irises` : "",
+          analysis.eyeShape ? `${analysis.eyeShape} eye shape` : "",
+          analysis.eyeSize ? `${analysis.eyeSize}` : "",
+          analysis.eyebrowShape ? `brows: ${analysis.eyebrowShape}` : "",
+          analysis.eyelashDescription ? `lashes: ${analysis.eyelashDescription}` : "",
+          analysis.eyeExpression ? `eye expression: ${analysis.eyeExpression}` : "",
+          // Always enforce photorealistic eye rendering
+          "hyper-realistic iris fiber structure with visible spoke pattern and limbal ring",
+          "natural corneal reflections and catchlights",
+          "subtle moisture in waterline and inner corner",
+          "sclera with faint realistic veins",
+          "eyes that look genuinely alive and emotionally present",
+        ].filter(Boolean).join(", ");
+
+        // Build the nose and mouth block
+        const noseAndMouthBlock = [
+          analysis.noseType ? `nose: ${analysis.noseType}` : "",
+          analysis.lipShape ? `lips: ${analysis.lipShape}` : "",
+          analysis.mouthWidth ? `mouth: ${analysis.mouthWidth}` : "",
+        ].filter(Boolean).join(", ");
+
+        // Build the hair block
+        const hairBlock = [
+          analysis.hairColor ? `${analysis.hairColor} hair` : "",
+          analysis.hairStyle ? `${analysis.hairStyle} style` : "",
+          analysis.hairLength ? `${analysis.hairLength} length` : "",
+          analysis.hairTexture ? `${analysis.hairTexture} texture` : "",
+          analysis.facialHair && analysis.facialHair !== "none" && analysis.facialHair !== "None" ? analysis.facialHair : "",
+          "individual hair strand detail, natural flyaways and imperfections, realistic hair sheen and weight",
+        ].filter(Boolean).join(", ");
+
+        // Build the body block
+        const bodyBlock = [
+          analysis.build ? `${analysis.build} build` : "",
+          analysis.neckDescription ? `neck: ${analysis.neckDescription}` : "",
+          analysis.shoulderDescription ? `shoulders: ${analysis.shoulderDescription}` : "",
+        ].filter(Boolean).join(", ");
+
+        // Distinguishing features — highest recognition priority
+        const distinguishingBlock = analysis.distinguishingFeatures && analysis.distinguishingFeatures !== "none"
+          ? `MOST IMPORTANT DISTINGUISHING FEATURES (must be reproduced exactly): ${analysis.distinguishingFeatures}`
+          : "";
+
+        // Character role and expression
+        const characterBlock = [
+          input.characterRole ? `character archetype: ${input.characterRole}` : "",
+          analysis.expression ? `expression: ${analysis.expression}` : "confident expression",
+          analysis.overallVibe ? `screen presence: ${analysis.overallVibe}` : "",
+          analysis.restingExpression ? `resting expression tendency: ${analysis.restingExpression}` : "",
+        ].filter(Boolean).join(", ");
+
+        // Cinematographer notes
+        const dpNotes = analysis.cinematographerNotes
+          ? `CINEMATOGRAPHER NOTES: ${analysis.cinematographerNotes}`
+          : "";
+
+        // Assemble the full prompt — face geometry first for maximum model weighting
         const promptParts = [
-          stylePrompt + ",",
-          `Recreate this exact person as a movie character named ${input.name},`,
-          `${analysis.gender || "person"} appearing ${analysis.estimatedAge || "adult"},`,
-          `${analysis.ethnicity || ""} with ${analysis.skinTone || "natural"} skin tone,`,
-          `${analysis.build || "average"} build,`,
-          `${analysis.hairColor || ""} ${analysis.hairStyle || ""} ${analysis.hairLength || ""} hair,`,
-          `${analysis.eyeColor || ""} ${analysis.eyeShape || ""} eyes,`,
-          `${analysis.faceShape || ""} face shape, ${analysis.noseType || ""} nose, ${analysis.lipShape || ""} lips,`,
-        ];
-        if (analysis.facialHair && analysis.facialHair !== "none" && analysis.facialHair !== "None") {
-          promptParts.push(`facial hair: ${analysis.facialHair},`);
-        }
-        if (analysis.distinguishingFeatures && analysis.distinguishingFeatures !== "none") {
-          promptParts.push(`distinguishing features: ${analysis.distinguishingFeatures},`);
-        }
-        if (input.characterRole) {
-          promptParts.push(`character archetype: ${input.characterRole},`);
-        }
-        promptParts.push(
-          `${analysis.expression || "confident"} expression with authentic micro-expressions and genuine emotion,`,
-          `overall presence: ${analysis.overallVibe || "commanding"},`,
-          // Deep skin realism
-          "skin rendered with perfect subsurface scattering showing blood flow beneath translucent skin layers, visible pores and micro-wrinkles, fine peach fuzz on skin surface, natural blemishes, authentic facial asymmetry,",
-          // Eye realism
-          "eyes with hyper-realistic iris fiber structure, natural corneal reflections, subtle moisture in waterline, sclera with faint realistic veins — eyes that look alive and soulful,",
-          // Hair realism
-          "individual hair strand detail, natural hair texture with flyaways and imperfections, realistic hair sheen and weight,",
-          // Technical
-          "8K resolution, hyperdetailed, Academy Award-winning portrait photography,",
-          "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin — a REAL PHOTOGRAPH of a REAL PERSON"
-        );
+          photorealismBase,
+          `SUBJECT: Recreate this exact person as a movie character named ${input.name}`,
+          `${analysis.gender || "person"}, ${analysis.estimatedAge || "adult"}, ${analysis.ethnicity || ""}`.replace(/,\s*$/, ""),
+          faceGeometryBlock ? `FACE GEOMETRY: ${faceGeometryBlock}` : "",
+          `SKIN: ${skinBlock}`,
+          `EYES: ${eyesBlock}`,
+          noseAndMouthBlock ? `FEATURES: ${noseAndMouthBlock}` : "",
+          `HAIR: ${hairBlock}`,
+          bodyBlock ? `BODY: ${bodyBlock}` : "",
+          distinguishingBlock,
+          characterBlock ? `CHARACTER: ${characterBlock}` : "",
+          dpNotes,
+          `LIGHTING & STYLE: ${stylePrompt}`,
+          // Hard realism enforcement — always last
+          "REALISM ENFORCEMENT: NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-generated look, NOT plastic skin, NOT airbrushed — a REAL PHOTOGRAPH of a REAL HUMAN BEING with all natural imperfections preserved",
+        ].filter(Boolean);
 
         // Step 4: Generate the character image using the reference photo
         const result = await generateImage({
@@ -947,26 +1092,58 @@ export const appRouter = router({
           }],
         });
 
-        // Step 5: Build faceDnaPrompt — a compact, reusable prompt anchor for scene generation
-        // This is the key string that characterConsistency.ts uses to keep the character
-        // visually consistent across all generated scenes.
+        // Step 5: Build faceDnaPrompt — a cinematographer-grade character descriptor
+        // This is the master consistency anchor injected into every scene prompt.
+        // Structured as: [FACE GEOMETRY] | [SKIN] | [EYES] | [HAIR] | [DISTINGUISHING]
+        // so the AI model can parse and weight each category independently.
         const faceDnaPrompt = [
-          `${analysis.gender || "person"}, ${analysis.estimatedAge || "adult"}`,
-          analysis.ethnicity ? `${analysis.ethnicity} ethnicity` : "",
-          analysis.skinTone ? `${analysis.skinTone} skin tone` : "",
-          analysis.faceShape ? `${analysis.faceShape} face shape` : "",
-          analysis.eyeColor && analysis.eyeShape ? `${analysis.eyeColor} ${analysis.eyeShape} eyes` : (analysis.eyeColor ? `${analysis.eyeColor} eyes` : ""),
-          analysis.hairColor && analysis.hairStyle ? `${analysis.hairColor} ${analysis.hairStyle} ${analysis.hairLength || ""} hair`.trim() : "",
-          analysis.noseType ? `${analysis.noseType} nose` : "",
-          analysis.lipShape ? `${analysis.lipShape} lips` : "",
-          analysis.facialHair && analysis.facialHair !== "none" && analysis.facialHair !== "None" ? analysis.facialHair : "",
-          analysis.distinguishingFeatures && analysis.distinguishingFeatures !== "none" ? `distinguishing: ${analysis.distinguishingFeatures}` : "",
-        ].filter(Boolean).join(", ");
+          // Core identity
+          `${analysis.gender || "person"}, ${analysis.estimatedAge || "adult"}, ${analysis.ethnicity || ""}`.replace(/,\s*,/g, ",").trim().replace(/,\s*$/, ""),
+          // Face geometry — the structural foundation
+          analysis.faceShape ? `FACE: ${analysis.faceShape}` : "",
+          analysis.foreheadShape ? `forehead: ${analysis.foreheadShape}` : "",
+          analysis.cheekboneStructure ? `cheekbones: ${analysis.cheekboneStructure}` : "",
+          analysis.jawlineShape ? `jaw: ${analysis.jawlineShape}` : "",
+          analysis.chinShape ? `chin: ${analysis.chinShape}` : "",
+          analysis.facialSymmetry ? `symmetry: ${analysis.facialSymmetry}` : "",
+          // Skin — the most visible realism indicator
+          analysis.skinTone ? `SKIN: ${analysis.skinTone}` : "",
+          analysis.skinUndertone ? `undertone: ${analysis.skinUndertone}` : "",
+          analysis.skinTexture ? `texture: ${analysis.skinTexture}` : "",
+          analysis.skinAgeMarkers && analysis.skinAgeMarkers !== "none" ? `age markers: ${analysis.skinAgeMarkers}` : "",
+          analysis.skinImperfections && analysis.skinImperfections !== "none" ? `marks: ${analysis.skinImperfections}` : "",
+          // Eyes — the soul of the character
+          analysis.eyeColor ? `EYES: ${analysis.eyeColor}` : "",
+          analysis.eyeShape ? `shape: ${analysis.eyeShape}` : "",
+          analysis.eyeSize ? `size: ${analysis.eyeSize}` : "",
+          analysis.eyebrowShape ? `brows: ${analysis.eyebrowShape}` : "",
+          analysis.eyelashDescription ? `lashes: ${analysis.eyelashDescription}` : "",
+          analysis.eyeExpression ? `eye quality: ${analysis.eyeExpression}` : "",
+          // Nose
+          analysis.noseType ? `NOSE: ${analysis.noseType}` : "",
+          // Mouth
+          analysis.lipShape ? `LIPS: ${analysis.lipShape}` : "",
+          analysis.mouthWidth ? `mouth: ${analysis.mouthWidth}` : "",
+          // Hair
+          analysis.hairColor ? `HAIR: ${analysis.hairColor}` : "",
+          analysis.hairStyle ? `style: ${analysis.hairStyle}` : "",
+          analysis.hairLength ? `length: ${analysis.hairLength}` : "",
+          analysis.hairTexture ? `texture: ${analysis.hairTexture}` : "",
+          analysis.facialHair && analysis.facialHair !== "none" && analysis.facialHair !== "None" && analysis.facialHair !== "clean-shaven" ? `facial hair: ${analysis.facialHair}` : "",
+          // Distinguishing features — the top priority for recognition
+          analysis.distinguishingFeatures && analysis.distinguishingFeatures !== "none" ? `DISTINGUISHING: ${analysis.distinguishingFeatures}` : "",
+          // Lighting response — critical for scene realism
+          analysis.lightingResponse ? `LIGHTING RESPONSE: ${analysis.lightingResponse}` : "",
+        ].filter(Boolean).join(" | ");
 
         const bodyDnaPrompt = [
           analysis.build ? `${analysis.build} build` : "",
-          analysis.overallVibe ? `overall presence: ${analysis.overallVibe}` : "",
-        ].filter(Boolean).join(", ");
+          analysis.neckDescription ? `neck: ${analysis.neckDescription}` : "",
+          analysis.shoulderDescription ? `shoulders: ${analysis.shoulderDescription}` : "",
+          analysis.overallVibe ? `screen presence: ${analysis.overallVibe}` : "",
+          analysis.restingExpression ? `resting expression: ${analysis.restingExpression}` : "",
+          analysis.cinematographerNotes ? `DP notes: ${analysis.cinematographerNotes}` : "",
+        ].filter(Boolean).join(" | ");
 
         // Step 6: Save the character with all extracted attributes + DNA prompts
         const character = await db.createCharacter({
