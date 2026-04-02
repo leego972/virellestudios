@@ -14,6 +14,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Landing from "./pages/Landing";
+import OpenerPreview from "./pages/OpenerPreview";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
 import GoldWatermarkLaunch from "./components/GoldWatermarkLaunch";
@@ -157,6 +158,7 @@ function Router() {
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/contact">{() => <LazyPage><Contact /></LazyPage>}</Route>
+      <Route path="/opener-preview">{() => <OpenerPreview />}</Route>
       <Route path="/forgot-password">{() => <LazyPage><ForgotPassword /></LazyPage>}</Route>
       <Route path="/reset-password">{() => <LazyPage><ResetPassword /></LazyPage>}</Route>
 
