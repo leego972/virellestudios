@@ -225,7 +225,7 @@ export default function DashboardLayout({
   // If public route but no user, render children without the dashboard chrome
   if (!user && isPublicRoute) {
     return <>{children}</>;
-  } }
+  }
 
   return (
     <SidebarProvider
