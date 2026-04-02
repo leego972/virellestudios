@@ -256,6 +256,131 @@ const PUBLIC_PAGES: PageSeoConfig[] = [
     changefreq: "yearly",
     ogType: "website",
   },
+  {
+    path: "/about",
+    title: "About — VirÉlle Studios | AI Film Production for Directors",
+    description:
+      "Learn about VirÉlle Studios — the professional AI-powered film production platform built for directors, not demos. Our mission, team, and vision.",
+    keywords: ["about VirÉlle Studios", "AI film studio", "film production platform", "AI director tools"],
+    priority: 0.7,
+    changefreq: "monthly",
+    ogType: "website",
+    breadcrumbs: [
+      { name: "Home", url: "/" },
+      { name: "About", url: "/about" },
+    ],
+  },
+  {
+    path: "/faq",
+    title: "FAQ — VirÉlle Studios | Frequently Asked Questions",
+    description:
+      "Answers to the most common questions about VirÉlle Studios. Learn about AI film generation, pricing, supported formats, and how to get started.",
+    keywords: ["FAQ", "frequently asked questions", "AI film help", "VirÉlle Studios support"],
+    priority: 0.6,
+    changefreq: "monthly",
+    ogType: "website",
+    breadcrumbs: [
+      { name: "Home", url: "/" },
+      { name: "FAQ", url: "/faq" },
+    ],
+  },
+  {
+    path: "/solutions",
+    title: "Solutions — VirÉlle Studios | AI Film Tools for Every Creator",
+    description:
+      "Explore VirÉlle Studios solutions for independent filmmakers, studios, agencies, and content creators. Find the right AI film production workflow for you.",
+    keywords: ["AI film solutions", "filmmaker tools", "studio solutions", "content creator AI"],
+    priority: 0.7,
+    changefreq: "monthly",
+    ogType: "website",
+    breadcrumbs: [
+      { name: "Home", url: "/" },
+      { name: "Solutions", url: "/solutions" },
+    ],
+  },
+  {
+    path: "/how-it-works",
+    title: "How It Works — VirÉlle Studios | AI Film Production Pipeline",
+    description:
+      "Discover how VirÉlle Studios works. From screenplay to cinematic scene generation — a step-by-step guide to the AI film production pipeline.",
+    keywords: ["how it works", "AI film pipeline", "film production steps", "AI video workflow"],
+    priority: 0.7,
+    changefreq: "monthly",
+    ogType: "website",
+    breadcrumbs: [
+      { name: "Home", url: "/" },
+      { name: "How It Works", url: "/how-it-works" },
+    ],
+  },
+  {
+    path: "/download",
+    title: "Download — VirÉlle Studios | Mobile & Desktop Apps",
+    description:
+      "Download the VirÉlle Studios app for iOS, Android, and desktop. Take your AI film production studio everywhere you work.",
+    keywords: ["download app", "iOS app", "Android app", "desktop app", "VirÉlle Studios mobile"],
+    priority: 0.6,
+    changefreq: "monthly",
+    ogType: "website",
+    breadcrumbs: [
+      { name: "Home", url: "/" },
+      { name: "Download", url: "/download" },
+    ],
+  },
+  {
+    path: "/showcase",
+    title: "Showcase — VirÉlle Studios | AI Film Examples & Gallery",
+    description:
+      "Browse the VirÉlle Studios showcase. See cinematic scenes, trailers, and films created with AI by directors worldwide.",
+    keywords: ["AI film showcase", "film gallery", "AI video examples", "cinematic AI demos"],
+    priority: 0.7,
+    changefreq: "weekly",
+    ogType: "website",
+    breadcrumbs: [
+      { name: "Home", url: "/" },
+      { name: "Showcase", url: "/showcase" },
+    ],
+  },
+  {
+    path: "/acceptable-use",
+    title: "Acceptable Use Policy — VirÉlle Studios",
+    description:
+      "VirÉlle Studios acceptable use policy. Learn what content is permitted and prohibited on the platform.",
+    keywords: ["acceptable use policy", "content policy", "usage rules"],
+    priority: 0.2,
+    changefreq: "yearly",
+    ogType: "website",
+  },
+  {
+    path: "/ai-content-policy",
+    title: "AI Content Policy — VirÉlle Studios",
+    description:
+      "VirÉlle Studios AI content policy. Guidelines for responsible AI-generated film content, safety standards, and prohibited uses.",
+    keywords: ["AI content policy", "AI safety", "content guidelines", "responsible AI"],
+    priority: 0.2,
+    changefreq: "yearly",
+    ogType: "website",
+  },
+  {
+    path: "/ip-policy",
+    title: "Intellectual Property & DMCA Policy — VirÉlle Studios",
+    description:
+      "VirÉlle Studios intellectual property and DMCA policy. Learn about copyright, ownership of AI-generated content, and how to file a DMCA notice.",
+    keywords: ["IP policy", "DMCA", "intellectual property", "copyright", "AI content ownership"],
+    priority: 0.2,
+    changefreq: "yearly",
+    ogType: "website",
+  },
+  {
+    path: "/forgot-password",
+    title: "Reset Password — VirÉlle Studios",
+    description:
+      "Reset your VirÉlle Studios password. Enter your email address to receive a password reset link.",
+    keywords: ["forgot password", "reset password", "account recovery"],
+    priority: 0.1,
+    changefreq: "yearly",
+    ogType: "website",
+    noIndex: true,
+  },
 ];
 
 // ─── Dynamic Meta Tag Injection (SSR-like) ─────────────────────────
