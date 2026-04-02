@@ -7069,7 +7069,7 @@ Rules:
     // Create a Stripe checkout session for generation top-up pack
     createTopUpCheckout: protectedProcedure
       .input(z.object({
-        packId: z.enum(["pack_10", "pack_50", "pack_100", "pack_250", "pack_500", "pack_1000", "topup_10", "topup_30", "topup_100"]),
+        packId: z.enum(["pack_10", "pack_50", "pack_100", "pack_250", "pack_500", "pack_1000", "topup_10", "topup_30", "topup_50", "topup_100", "topup_200", "topup_500", "topup_1000"]),
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
       }))
@@ -7085,7 +7085,11 @@ Rules:
           pack_1000: getProvisionedId("pack_1000") || "",
           topup_10: ENV.stripeTopUp10PriceId || getProvisionedId("topup_10"),
           topup_30: ENV.stripeTopUp30PriceId || getProvisionedId("topup_30"),
+          topup_50: getProvisionedId("topup_50") || "",
           topup_100: ENV.stripeTopUp100PriceId || getProvisionedId("topup_100"),
+          topup_200: ENV.stripeTopUp200PriceId || getProvisionedId("topup_200") || "",
+          topup_500: ENV.stripeTopUp500PriceId || getProvisionedId("topup_500") || "",
+          topup_1000: ENV.stripeTopUp1000PriceId || getProvisionedId("topup_1000") || "",
         };
         const priceId = packPriceMap[input.packId];
         if (!priceId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Top-up pack price not configured" });

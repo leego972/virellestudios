@@ -226,11 +226,15 @@ const FAQ = [
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const [loadingPack, setLoadingPack] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const { data: user } = trpc.auth.me.useQuery();
   const isLoggedIn = !!user;
   const currentTier = user?.subscriptionTier || "free";
   const isActiveMember = user?.subscriptionStatus === "active" || user?.subscriptionStatus === "trialing";
+
+  const createCheckout = trpc.subscription.createCheckout.useMutation();
+  const createTopUpCheckout = trpc.subscription.createTopUpCheckout.useMutation();
 
   const formatAUD = (amount: number) => {
     return new Intl.NumberFormat("en-AU", {
@@ -242,13 +246,60 @@ export default function Pricing() {
 
   const handleSubscribe = async (tierId: string) => {
     if (!isLoggedIn) {
-      setLocation("/register");
+      setLocation("/register?redirect=/pricing");
+      return;
+    }
+    // If already on this tier, open billing portal
+    if (currentTier === tierId && isActiveMember) {
+      setLocation("/settings?tab=billing");
       return;
     }
     setLoadingTier(tierId);
-    // Stripe checkout logic would go here
-    toast.info(`Redirecting to checkout for ${tierId}...`);
-    setTimeout(() => setLoadingTier(null), 2000);
+    try {
+      const successUrl = `${window.location.origin}/billing/success?tier=${tierId}`;
+      const cancelUrl = `${window.location.origin}/pricing`;
+      const result = await createCheckout.mutateAsync({
+        tier: tierId as any,
+        billing: billingCycle,
+        successUrl,
+        cancelUrl,
+      });
+      if (result.url) {
+        window.location.href = result.url;
+      } else {
+        toast.error("Failed to create checkout session. Please try again.");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoadingTier(null);
+    }
+  };
+
+  const handleTopUp = async (packId: string) => {
+    if (!isLoggedIn) {
+      setLocation("/register?redirect=/pricing");
+      return;
+    }
+    setLoadingPack(packId);
+    try {
+      const successUrl = `${window.location.origin}/billing/success?type=topup&pack=${packId}`;
+      const cancelUrl = `${window.location.origin}/pricing#credits`;
+      const result = await createTopUpCheckout.mutateAsync({
+        packId: packId as any,
+        successUrl,
+        cancelUrl,
+      });
+      if (result.url) {
+        window.location.href = result.url;
+      } else {
+        toast.error("Failed to create checkout session. Please try again.");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoadingPack(null);
+    }
   };
 
   const handleEnterpriseContact = (type: string) => {
@@ -450,7 +501,15 @@ export default function Pricing() {
                   <CardDescription>{pack.credits.toLocaleString()} credits</CardDescription>
                 </CardHeader>
                 <CardFooter>
-                  <Button variant="outline" className="w-full border-zinc-700 hover:bg-zinc-800">Purchase</Button>
+                  <Button
+                    variant="outline"
+                    className="w-full border-zinc-700 hover:bg-zinc-800"
+                    onClick={() => handleTopUp(pack.id)}
+                    disabled={loadingPack === pack.id}
+                  >
+                    {loadingPack === pack.id ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                    {loadingPack === pack.id ? "Redirecting..." : isLoggedIn ? "Purchase" : "Sign in to Purchase"}
+                  </Button>
                 </CardFooter>
               </Card>
             ))}
