@@ -191,20 +191,36 @@ export default function DashboardLayout({
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
   const { loading, user, logout } = useAuth();
+  const [currentPath] = useLocation();
+
+  // Public routes that should NOT be redirected even if unauthenticated
+  const PUBLIC_ROUTES = [
+    '/about', '/faq', '/solutions', '/download', '/app',
+    '/how-it-works', '/welcome', '/login', '/register', '/pricing',
+    '/contact', '/blog', '/terms', '/privacy', '/acceptable-use',
+    '/ai-content-policy', '/ip-policy', '/dmca', '/showcase',
+    '/forgot-password', '/reset-password', '/subscription',
+  ];
+  const isPublicRoute = PUBLIC_ROUTES.some(r => currentPath === r || currentPath.startsWith(r + '/'));
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
   }, [sidebarWidth]);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !isPublicRoute) {
       // Redirect to landing page for unauthenticated visitors
       window.location.href = "/welcome";
     }
-  }, [loading, user]);
+  }, [loading, user, isPublicRoute]);
 
-  if (loading || !user) {
+  if (loading || (!user && !isPublicRoute)) {
     return <DashboardLayoutSkeleton />;
+  }
+
+  // If public route but no user, render children without the dashboard chrome
+  if (!user && isPublicRoute) {
+    return <>{children}</>;
   }
 
   return (
