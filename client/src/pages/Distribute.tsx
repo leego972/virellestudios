@@ -629,7 +629,7 @@ export default function Distribute() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
-              <Link href="/settings/profile">
+              <Link href="/settings?tab=profile">
                 <Button size="sm" variant="outline" className="gap-2 w-full sm:w-auto">
                   <User className="w-3.5 h-3.5" />
                   Set Up Profile

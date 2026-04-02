@@ -74,7 +74,7 @@ const menuGroups = [
       { icon: Users, label: "Characters", path: "/characters" },
       { icon: Clapperboard, label: "My Movies", path: "/movies" },
       { icon: MessageSquare, label: "Director's Assistant", path: "/assistant" },
-      { icon: Globe, label: "Distribute", path: "/showcase" },
+      { icon: Globe, label: "Distribute", path: "/projects" },
     ],
   },
   {

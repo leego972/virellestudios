@@ -43,6 +43,7 @@ import {
 
 interface DirectorChatProps {
   projectId?: number;
+  defaultOpen?: boolean;
 }
 interface ActionBadge {
   type: string;
@@ -218,8 +219,8 @@ type VoiceState = "idle" | "recording" | "recording_edit" | "transcribing" | "ap
 // Voice mode states (full-screen overlay)
 type VoiceModeState = "listening" | "thinking" | "speaking" | "inactive";
 
-export default function DirectorChat({ projectId }: DirectorChatProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function DirectorChat({ projectId, defaultOpen = false }: DirectorChatProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<Array<{ url: string; name: string; mimeType: string }>>([]);
   const [isUploading, setIsUploading] = useState(false);

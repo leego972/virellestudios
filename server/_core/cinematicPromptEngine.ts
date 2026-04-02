@@ -327,8 +327,29 @@ function resolveQualityTier(tier: string): QualityTier {
 }
 
 const QUALITY_ANCHORS: Record<QualityTier, string> = {
-  "independent": "RAW photograph captured on ARRI ALEXA Mini with Cooke S7/i Full Frame Plus anamorphic lenses, utterly indistinguishable from a real Hollywood film frame, real human skin with visible pores and subsurface scattering showing blood beneath skin, natural skin blemishes and micro-texture, authentic facial asymmetry, real sweat and moisture on skin, 4K resolution, Kodak Vision3 500T film stock emulation with organic grain structure, volumetric atmospheric lighting with physically accurate light falloff, real optical lens characteristics including subtle barrel distortion and natural bokeh with cat-eye shapes at frame edges, authentic set design with lived-in production detail",
-  "industry": "RAW photograph captured on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lenses, absolutely indistinguishable from a real $200M Hollywood production frame by Roger Deakins or Emmanuel Lubezki, real human skin rendered with perfect subsurface scattering showing veins and blood flow beneath translucent skin layers, visible pores and micro-wrinkles and peach fuzz hair, natural skin blemishes and freckles and age spots, authentic facial asymmetry with real bone structure, 8K resolution, Kodak Vision3 500T color science with organic halation on highlights, volumetric atmospheric lighting with physically accurate inverse-square light falloff and color temperature mixing, real optical characteristics including anamorphic lens breathing and oval bokeh and subtle chromatic fringing, Academy Award-winning cinematography, every surface material rendered with physically-based accuracy including specular microstructure on metals and translucency in fabrics and caustics in glass. Eyes are hyper-realistic with detailed iris fibers, corneal reflections, and subtle moisture. Micro-expressions convey genuine emotion.",
+  "independent": [
+    "RAW photograph, shot on ARRI ALEXA Mini LF with Cooke S7/i Full Frame Plus anamorphic lenses",
+    "utterly indistinguishable from a real Hollywood film frame",
+    "real human skin: visible pores, subsurface scattering showing blood beneath translucent skin layers, micro-wrinkles, peach fuzz, natural blemishes, authentic facial asymmetry",
+    "eyes: hyper-detailed iris fiber structure, dark limbal ring, corneal catchlights, subtle moisture in waterline, genuinely alive and soulful expression",
+    "hair: individual strand detail, natural sheen, realistic flyaways, physically correct weight and gravity",
+    "4K resolution, Kodak Vision3 500T film stock emulation, organic grain structure, natural highlight rolloff",
+    "volumetric atmospheric lighting with physically accurate inverse-square light falloff",
+    "real optical lens characteristics: subtle barrel distortion, cat-eye bokeh at frame edges, natural chromatic fringing",
+    "authentic set design with lived-in production detail, every surface material physically accurate",
+  ].join(", "),
+  "industry": [
+    "RAW photograph, shot on ARRI ALEXA 65 large-format sensor with Zeiss Supreme Prime Radiance lenses",
+    "absolutely indistinguishable from a real $200M Hollywood production frame by Roger Deakins or Emmanuel Lubezki or Greig Fraser",
+    "real human skin: perfect subsurface scattering showing veins and blood flow beneath translucent skin layers, visible pores and micro-wrinkles and peach fuzz hair, natural skin blemishes and freckles and age spots, authentic facial asymmetry with real bone structure, skin texture reacts to environment",
+    "eyes: hyper-detailed iris fiber structure with visible spoke pattern, prominent dark limbal ring, natural corneal reflections and catchlights matching scene lighting, subtle moisture in waterline and inner corner, sclera with faint realistic veins, genuinely alive and soulful quality conveying real emotion and thought",
+    "hair: individual strand detail with natural variation in thickness and direction, realistic sheen responding to scene lighting, natural flyaways and imperfections at hairline and crown, hair weight and gravity behaving physically correctly",
+    "face: authentic facial bone structure with natural asymmetry, micro-expressions conveying genuine emotion, natural lip moisture and subtle lip line definition",
+    "8K resolution, Kodak Vision3 500T color science, organic halation on highlights, perfect highlight rolloff",
+    "volumetric atmospheric lighting with physically accurate inverse-square light falloff and color temperature mixing",
+    "real optical characteristics: anamorphic lens breathing, oval bokeh with onion-ring structure, subtle chromatic fringing on high-contrast edges",
+    "Academy Award-winning cinematography, every surface material rendered with physically-based accuracy: specular microstructure on metals, translucency in fabrics, caustics in glass, wet surface reflections",
+  ].join(", "),
 };
 
 const QUALITY_NEGATIVE: Record<QualityTier, string> = {
@@ -480,18 +501,21 @@ export function buildScenePrompt(
   const parts: string[] = [];
   const tier = resolveQualityTier(visualDNA.qualityTier || "independent");
 
-  // 1. Core visual identity (consistency anchor)
-  parts.push(`[VISUAL STYLE: ${visualDNA.consistencyTokens}]`);
-
-  // 2. Shot type and camera with technical precision
-  const cameraAngle = scene.cameraAngle || "medium";
-  const cameraDetail = CAMERA_ANGLE_DETAILS[cameraAngle] || CAMERA_ANGLE_DETAILS["medium"];
-  parts.push(`RAW photograph, photorealistic cinematic film frame — ${cameraDetail}`);
-
   // 2b. AI Prompt Override — if set, skip all auto-building and return override directly
   if (scene.aiPromptOverride && scene.aiPromptOverride.trim().length > 0) {
     return scene.aiPromptOverride.trim();
   }
+
+  // 1. Quality anchor FIRST — highest model attention weight
+  parts.push(QUALITY_ANCHORS[tier]);
+
+  // 2. Core visual identity (consistency anchor)
+  parts.push(`VISUAL STYLE: ${visualDNA.consistencyTokens}`);
+
+  // 3. Shot type and camera with technical precision
+  const cameraAngle = scene.cameraAngle || "medium";
+  const cameraDetail = CAMERA_ANGLE_DETAILS[cameraAngle] || CAMERA_ANGLE_DETAILS["medium"];
+  parts.push(`RAW photograph, photorealistic cinematic film frame — ${cameraDetail}`);
 
   // 2c. Lens and focal length precision
   if (scene.lensType) {
@@ -753,8 +777,7 @@ export function buildScenePrompt(
     parts.push(`Lighting style: ${industryProfile.lightingStyle}`);
     parts.push(`Color grade: ${industryProfile.colorGrade} — ${industryProfile.colorGradeDescription}`);
   }
-  // 18. Quality anchor based on subscription tier
-  parts.push(QUALITY_ANCHORS[tier]);
+  // 18. (Quality anchor moved to position 1 for maximum model attention weight)
 
   // 19. Minor Protection — auto-inject modesty directives for minor characters
   if (options?.characters && options.characters.length > 0) {
@@ -788,7 +811,7 @@ export function buildScenePrompt(
   }
   parts.push(`[AVOID: ${negativePrompt}]`);
 
-  return parts.join(". ");
+  return parts.join(", ");
 }
 
 // ─── Enhanced LLM System Prompt for Scene Breakdown ───

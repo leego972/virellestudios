@@ -25,6 +25,7 @@ import {
   Calendar,
   LayoutGrid,
   List,
+  Globe,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
@@ -51,7 +52,7 @@ export default function Projects() {
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "name" | "status">("newest");
   const [filterStatus, setFilterStatus] = useState<"all" | "draft" | "generating" | "completed" | "failed">("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const { data: projects, isLoading } = trpc.project.list.useQuery();
+  const { data: projects, isLoading, isError } = trpc.project.list.useQuery();
   const utils = trpc.useUtils();
 
   const deleteMutation = trpc.project.delete.useMutation({
@@ -192,7 +193,15 @@ export default function Projects() {
         </div>
       )}
 
-      {isLoading ? (
+      {isError ? (
+        <Card className="bg-card/50 border-destructive/30">
+          <CardContent className="p-12 flex flex-col items-center text-center">
+            <Film className="h-10 w-10 text-destructive/40 mb-3" />
+            <p className="text-sm text-muted-foreground mb-4">Failed to load projects. Please refresh the page.</p>
+            <Button size="sm" variant="outline" onClick={() => window.location.reload()}>Retry</Button>
+          </CardContent>
+        </Card>
+      ) : isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Card key={i} className="bg-card/50">
@@ -292,17 +301,33 @@ export default function Projects() {
                       )}
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive shrink-0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setDeleteId(project.id);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    {project.status === "completed" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"
+                        title="Distribute"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLocation(`/projects/${project.id}/distribute`);
+                        }}
+                      >
+                        <Globe className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteId(project.id);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

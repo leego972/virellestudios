@@ -70,7 +70,8 @@ async function generateWithOpenAIImageEdit(
     formData.append("model", "gpt-image-1");
     formData.append("prompt", options.prompt.slice(0, 4000));
     formData.append("n", "1");
-    formData.append("size", "1536x1024");
+    formData.append("size", "1024x1024"); // Square maximises face detail for character portraits
+    formData.append("quality", "high");   // Always request high quality
     // Attach the reference image(s)
     for (let i = 0; i < Math.min(refs.length, 4); i++) {
       const { b64, mimeType } = refs[i];
@@ -124,8 +125,9 @@ async function generateWithOpenAIImageEdit(
       model: "gpt-image-1",
       prompt: options.prompt.slice(0, 4000),
       n: 1,
-      size: "1536x1024",
+      size: "1024x1024", // Square maximises face detail for character portraits
       quality: "high",
+      output_format: "png", // Lossless for maximum detail preservation
     }),
   });
 
@@ -249,8 +251,8 @@ async function generateWithHuggingFace(
         parameters: {
           width: 1280,
           height: 720,
-          num_inference_steps: 28,
-          guidance_scale: 3.5,
+          num_inference_steps: 50,  // Maximum quality — 28 is too few for photorealism
+          guidance_scale: 4.5,      // Higher adherence to cinematic prompt directives
         },
       }),
     }

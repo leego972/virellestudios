@@ -242,7 +242,7 @@ export default function Pricing() {
 
   const handleSubscribe = async (tierId: string) => {
     if (!isLoggedIn) {
-      setLocation("/auth?mode=register&redirect=/pricing");
+      setLocation("/register");
       return;
     }
     setLoadingTier(tierId);
