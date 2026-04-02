@@ -147,13 +147,6 @@ function GatedTrailerStudio() { return <LazyPage><SubscriptionGate feature="Trai
 function GatedTVCommercial() { return <LazyPage><SubscriptionGate feature="TV Commercial Creator" featureKey="canUseAdPosterMaker" requiredTier="independent"><TVCommercial /></SubscriptionGate></LazyPage>; }
 
 function Router() {
-  // DEBUG: log path on every render
-  if (typeof window !== 'undefined') {
-    const existing = JSON.parse(localStorage.getItem('router_renders') || '[]');
-    existing.push({ path: window.location.pathname, ts: Date.now() });
-    if (existing.length > 20) existing.splice(0, existing.length - 20);
-    localStorage.setItem('router_renders', JSON.stringify(existing));
-  }
   return (
     <Switch>
       {/* Public landing page */}

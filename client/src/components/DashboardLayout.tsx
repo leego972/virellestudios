@@ -213,14 +213,8 @@ export default function DashboardLayout({
     // Re-check using window.location.pathname to avoid stale router state
     const path = window.location.pathname;
     const isPublic = PUBLIC_ROUTES.some(r => path === r || path.startsWith(r + '/'));
-    const logEntry = JSON.stringify({path, loading, user: !!user, isPublic, ts: Date.now()});
-    localStorage.setItem('dl_debug_last', logEntry);
-    const existing = JSON.parse(localStorage.getItem('dl_debug_log') || '[]');
-    existing.push(logEntry);
-    localStorage.setItem('dl_debug_log', JSON.stringify(existing.slice(-20)));
     if (!loading && !user && !isPublic) {
       // Redirect to landing page for unauthenticated visitors
-      localStorage.setItem('dl_debug_redirect', JSON.stringify({from: path, to: '/welcome', ts: Date.now()}));
       window.location.href = "/welcome";
     }
   }, [loading, user]);
