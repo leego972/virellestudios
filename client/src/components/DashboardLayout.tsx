@@ -213,8 +213,10 @@ export default function DashboardLayout({
     // Re-check using window.location.pathname to avoid stale router state
     const path = window.location.pathname;
     const isPublic = PUBLIC_ROUTES.some(r => path === r || path.startsWith(r + '/'));
+    console.log('[DashboardLayout] useEffect fired: path=', path, 'loading=', loading, 'user=', user, 'isPublic=', isPublic);
     if (!loading && !user && !isPublic) {
       // Redirect to landing page for unauthenticated visitors
+      console.log('[DashboardLayout] REDIRECTING to /welcome from path:', path);
       window.location.href = "/welcome";
     }
   }, [loading, user]);
