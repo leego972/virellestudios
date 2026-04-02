@@ -203,13 +203,18 @@ export default function DashboardLayout({
   ];
   const isPublicRoute = PUBLIC_ROUTES.some(r => currentPath === r || currentPath.startsWith(r + '/'));
 
+  // DEBUG: log DashboardLayout render state
+  console.log('[DashboardLayout] render:', { currentPath, isPublicRoute, loading, hasUser: !!user, windowPath: typeof window !== 'undefined' ? window.location.pathname : 'SSR' });
+
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
   }, [sidebarWidth]);
 
   useEffect(() => {
+    console.log('[DashboardLayout] useEffect:', { loading, hasUser: !!user, isPublicRoute, currentPath });
     if (!loading && !user && !isPublicRoute) {
       // Redirect to landing page for unauthenticated visitors
+      console.log('[DashboardLayout] REDIRECTING to /welcome from:', currentPath);
       window.location.href = "/welcome";
     }
   }, [loading, user, isPublicRoute]);
