@@ -192,7 +192,6 @@ export default function DashboardLayout({
   });
   const { loading, user, logout } = useAuth();
   const [currentPath] = useLocation();
-
   // Public routes that should NOT be redirected even if unauthenticated
   const PUBLIC_ROUTES = [
     '/about', '/faq', '/solutions', '/download', '/app',
@@ -201,27 +200,32 @@ export default function DashboardLayout({
     '/ai-content-policy', '/ip-policy', '/dmca', '/showcase',
     '/forgot-password', '/reset-password', '/subscription',
   ];
-  const isPublicRoute = PUBLIC_ROUTES.some(r => currentPath === r || currentPath.startsWith(r + '/'));
+  // Use window.location.pathname as the authoritative path — wouter's useLocation()
+  // may not reflect the actual URL during the initial render on hard page load.
+  const actualPath = typeof window !== 'undefined' ? window.location.pathname : currentPath;
+  const isPublicRoute = PUBLIC_ROUTES.some(r => actualPath === r || actualPath.startsWith(r + '/'));
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
   }, [sidebarWidth]);
 
   useEffect(() => {
-    if (!loading && !user && !isPublicRoute) {
+    // Re-check using window.location.pathname to avoid stale router state
+    const path = window.location.pathname;
+    const isPublic = PUBLIC_ROUTES.some(r => path === r || path.startsWith(r + '/'));
+    if (!loading && !user && !isPublic) {
       // Redirect to landing page for unauthenticated visitors
       window.location.href = "/welcome";
     }
-  }, [loading, user, isPublicRoute]);
+  }, [loading, user]);
 
   if (loading || (!user && !isPublicRoute)) {
     return <DashboardLayoutSkeleton />;
   }
-
   // If public route but no user, render children without the dashboard chrome
   if (!user && isPublicRoute) {
     return <>{children}</>;
-  }
+  } }
 
   return (
     <SidebarProvider
