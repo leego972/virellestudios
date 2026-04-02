@@ -117,6 +117,21 @@ export interface PageSeoConfig {
 
 const PUBLIC_PAGES: PageSeoConfig[] = [
   {
+    path: "/welcome",
+    title: "VirÉlle Studios — The World's Most Advanced AI Film Production Platform",
+    description:
+      "Create photorealistic characters, generate cinematic scenes, and produce complete films autonomously with AI. The ultimate platform for indie filmmakers and content creators.",
+    keywords: [
+      "AI filmmaking", "AI video generation", "AI film production", "indie filmmaking", "cinematic AI"
+    ],
+    priority: 0.9,
+    changefreq: "daily",
+    ogType: "website",
+    // /welcome is the landing page — canonical points to root to consolidate SEO authority
+    canonicalUrl: "https://virelle.life/",
+    noIndex: false,
+  },
+  {
     path: "/",
     title: "VirÉlle Studios — The World's Most Advanced AI Film Production Platform",
     description:
