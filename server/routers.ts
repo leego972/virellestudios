@@ -2869,13 +2869,45 @@ Break this into 8-15 scenes. For each scene, provide:
           await db.updateProject(project.id, ctx.user.id, { progress });
         }
 
+         // ── Auto-stitch all scene videos into a final film ──
+        let outputUrl: string | undefined;
+        try {
+          const freshScenes = await db.getProjectScenes(project.id);
+          const videoScenes = freshScenes
+            .filter((s) => (s as any).videoUrl)
+            .sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+          if (videoScenes.length > 0) {
+            const { stitchMovie } = await import("./_core/videoStitcher");
+            const stitchResult = await stitchMovie({
+              scenes: videoScenes.map((s, idx) => ({
+                videoUrl: (s as any).videoUrl as string,
+                title: s.title || `Scene ${idx + 1}`,
+                duration: (s as any).duration || undefined,
+                orderIndex: s.orderIndex ?? idx,
+                transition: "fade-to-black",
+              })),
+              projectTitle: project.title,
+              userId: ctx.user.id,
+              projectId: project.id,
+              showTitleCard: true,
+              showCredits: false,
+              genre: project.genre || undefined,
+              resolution: project.resolution === "1920x1080" ? "1080p" : "720p",
+            });
+            outputUrl = stitchResult.fileUrl;
+            console.log(`[QuickGen] Auto-stitched ${videoScenes.length} scenes → ${outputUrl}`);
+          }
+        } catch (stitchErr: any) {
+          console.error("[QuickGen] Auto-stitch failed (non-fatal):", stitchErr.message);
+          // Non-fatal — project still completes, user can manually export later
+        }
         // Update job and project
         await db.updateJob(job.id, { status: "completed", progress: 100 });
         await db.updateProject(project.id, ctx.user.id, {
           status: "completed",
           progress: 100,
+          ...(outputUrl ? { outputUrl } : {}),
         });
-
         return { jobId: job.id, scenesCreated: scenesData.length, imagesGenerated: generatedCount };
         } catch (error: any) {
           // Error recovery: ensure project doesn't get stuck in "generating" state

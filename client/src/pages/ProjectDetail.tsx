@@ -140,6 +140,7 @@ export default function ProjectDetail() {
   const fileRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLInputElement>(null);
   const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
+  const [showFullFilm, setShowFullFilm] = useState(false);
 
   const { data: project, isLoading } = trpc.project.get.useQuery({ id: projectId });
   const { data: scenes } = trpc.scene.listByProject.useQuery({ projectId });
@@ -169,6 +170,21 @@ export default function ProjectDetail() {
   }, [scenes, project]);
 
   const activeVideoMovie = scenePlaylist.find((m) => m.id === videoPreviewSceneId) || null;
+  // Full stitched film item (from project.outputUrl)
+  const fullFilmItem = (project as any)?.outputUrl ? {
+    id: -1,
+    title: project?.title || "Full Film",
+    description: project?.description || null,
+    type: "movie" as const,
+    fileUrl: (project as any).outputUrl as string,
+    thumbnailUrl: project?.thumbnailUrl || null,
+    duration: null,
+    fileSize: null,
+    mimeType: "video/mp4",
+    movieTitle: project?.title || null,
+    sceneNumber: null,
+  } : null;
+  const fullFilmPlaylist = fullFilmItem ? [fullFilmItem, ...scenePlaylist] : scenePlaylist;
 
   const uploadMutation = trpc.upload.image.useMutation();
   const createCharMutation = trpc.character.create.useMutation({
@@ -506,7 +522,11 @@ export default function ProjectDetail() {
               <CardContent className="p-4">
                 <div className="relative aspect-video rounded-md overflow-hidden bg-muted group cursor-pointer"
                   onClick={() => {
-                    if (scenePlaylist.length > 0) setVideoPreviewSceneId(scenePlaylist[0].id);
+                    if (fullFilmItem) {
+                      setShowFullFilm(true);
+                    } else if (scenePlaylist.length > 0) {
+                      setVideoPreviewSceneId(scenePlaylist[0].id);
+                    }
                   }}
                 >
                   {project.thumbnailUrl ? (
@@ -516,15 +536,21 @@ export default function ProjectDetail() {
                       <Film className="h-10 w-10 text-muted-foreground/30" />
                     </div>
                   )}
-                  {/* Play button overlay */}
-                  {scenePlaylist.length > 0 && (
+                  {/* Play button overlay — show when full film or scene videos exist */}
+                  {(fullFilmItem || scenePlaylist.length > 0) && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
                       <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
                         <Play className="h-7 w-7 text-white fill-white ml-0.5" />
                       </div>
-                      <span className="absolute bottom-2 right-2 text-[10px] text-white/80 bg-black/50 rounded px-1.5 py-0.5">
-                        {scenePlaylist.length} {scenePlaylist.length === 1 ? 'scene' : 'scenes'}
-                      </span>
+                      {fullFilmItem ? (
+                        <span className="absolute bottom-2 right-2 text-[10px] text-white/80 bg-black/50 rounded px-1.5 py-0.5">
+                          Full Film
+                        </span>
+                      ) : (
+                        <span className="absolute bottom-2 right-2 text-[10px] text-white/80 bg-black/50 rounded px-1.5 py-0.5">
+                          {scenePlaylist.length} {scenePlaylist.length === 1 ? 'scene' : 'scenes'}
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1899,13 +1925,26 @@ export default function ProjectDetail() {
         </DialogContent>
       </Dialog>
 
-      {/* Professional Media Player */}
-      {activeVideoMovie && (
+      {/* Professional Media Player — scene preview */}
+      {activeVideoMovie && !showFullFilm && (
         <MediaPlayer
           movie={activeVideoMovie}
           playlist={scenePlaylist}
           onClose={() => setVideoPreviewSceneId(null)}
           onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
+        />
+      )}
+      {/* Professional Media Player — full stitched film */}
+      {showFullFilm && fullFilmItem && (
+        <MediaPlayer
+          movie={fullFilmItem}
+          playlist={fullFilmPlaylist}
+          onClose={() => setShowFullFilm(false)}
+          onNavigate={(movieId) => {
+            if (movieId === -1) return; // already on full film
+            setShowFullFilm(false);
+            setVideoPreviewSceneId(movieId);
+          }}
         />
       )}
 
