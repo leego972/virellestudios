@@ -72,6 +72,7 @@ import {
   Pencil,
   StopCircle,
   Globe,
+  RefreshCw,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef, useCallback, useMemo } from "react";
@@ -413,14 +414,22 @@ export default function ProjectDetail() {
             <Layers className="h-4 w-4 mr-1" />
             Scene Editor
           </Button>
-          {project.mode === "quick" && project.status === "draft" && (
+          {project.mode === "quick" && (project.status === "draft" || project.status === "completed") && (
             <Button
               size="sm"
-              onClick={() => quickGenMutation.mutate({ projectId: project.id })}
+              variant={project.status === "completed" ? "outline" : "default"}
+              onClick={() => {
+                if (project.status === "completed") {
+                  if (!confirm("Re-generate will overwrite all existing scenes and videos. Continue?")) return;
+                }
+                quickGenMutation.mutate({ projectId: project.id });
+              }}
               disabled={quickGenMutation.isPending}
             >
               {quickGenMutation.isPending ? (
                 <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Generating...</>
+              ) : project.status === "completed" ? (
+                <><RefreshCw className="h-4 w-4 mr-1" />Re-generate Film</>
               ) : (
                 <><Sparkles className="h-4 w-4 mr-1" />Generate Film</>
               )}

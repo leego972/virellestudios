@@ -2437,14 +2437,33 @@ Available fields you can update:
           estimatedSeconds: (project.duration || 90) * 2,
         });
 
+         // ── Reset: clear existing scenes and jobs so re-generate overwrites old content ──
+        // This allows users to re-generate a completed film from scratch.
+        try {
+          const existingScenes = await db.getProjectScenes(project.id);
+          for (const s of existingScenes) {
+            await db.deleteScene(s.id);
+          }
+          // Cancel/clear any stale generation jobs for this project
+          // Use the already-imported db module and schema (drizzle/schema)
+          const { generationJobs: genJobsTable } = await import("../drizzle/schema");
+          const { eq: eqOp } = await import("drizzle-orm");
+          const { getDb: getDbConn } = await import("./db");
+          const dbConn = await getDbConn();
+          if (dbConn) {
+            await dbConn.delete(genJobsTable).where(eqOp(genJobsTable.projectId, project.id));
+          }
+        } catch (clearErr: any) {
+          console.warn("[QuickGen] Could not clear old scenes/jobs:", clearErr.message);
+          // Non-fatal — continue with generation
+        }
         // Update project status
         await db.updateProject(project.id, ctx.user.id, {
           status: "generating",
           progress: 0,
+          thumbnailUrl: null,
         });
-
         try {
-
         // ── Fetch user BYOK keys early — used for both LLM and video generation ──
         // Must be done before Step 0 so user's own OpenAI key is used for LLM calls,
         // not the platform key (which may be quota-exhausted).

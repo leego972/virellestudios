@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import {
   User,
 } from "lucide-react";
 import { toast } from "sonner";
+import MediaPlayer from "@/components/MediaPlayer";
 
 /** Upsert a <meta> tag by name or property attribute */
 function setMeta(attr: "name" | "property", key: string, value: string) {
@@ -45,6 +46,7 @@ function formatDuration(seconds: number) {
 export default function FilmPage() {
   const { slug } = useParams<{ slug: string }>();
   const [showBehindFilm, setShowBehindFilm] = useState(false);
+  const [activeMediaId, setActiveMediaId] = useState<number | null>(null);
 
   const { data: filmPage, isLoading, error } = trpc.distribute.getFilmPage.useQuery(
     { slug: slug || "" },
@@ -144,6 +146,46 @@ export default function FilmPage() {
   const credits: Record<string, string> = fp.credits || {};
   const behindTheFilm: string = fp.behindTheFilm || "";
 
+  // Build MediaPlayer playlist from movieUrl (full film) + scene videos
+  const playlist = useMemo(() => {
+    const items: any[] = [];
+    if (fp.movieUrl) {
+      items.push({
+        id: 0,
+        title: fp.title || "Full Film",
+        description: fp.description || null,
+        type: "movie" as const,
+        fileUrl: fp.movieUrl,
+        thumbnailUrl: fp.thumbnailUrl || null,
+        duration: fp.movieDuration || null,
+        fileSize: null,
+        mimeType: "video/mp4",
+        movieTitle: fp.title || null,
+        sceneNumber: null,
+      });
+    }
+    scenes.forEach((s: any, idx: number) => {
+      if (s.videoUrl) {
+        items.push({
+          id: s.id || idx + 1,
+          title: s.title || `Scene ${idx + 1}`,
+          description: s.description || null,
+          type: "scene" as const,
+          fileUrl: s.videoUrl,
+          thumbnailUrl: s.thumbnailUrl || null,
+          duration: s.duration || null,
+          fileSize: null,
+          mimeType: "video/mp4",
+          movieTitle: fp.title || null,
+          sceneNumber: idx + 1,
+        });
+      }
+    });
+    return items;
+  }, [fp, scenes]);
+
+  const activeMedia = playlist.find((m) => m.id === activeMediaId) || null;
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Draft preview banner */}
@@ -224,14 +266,17 @@ export default function FilmPage() {
           <div className="flex flex-wrap items-center gap-3 mt-5">
             {fp.movieUrl && (
               <Button
-                asChild
                 size="lg"
                 className="gap-2 bg-amber-500 hover:bg-amber-600 text-black font-bold shadow-lg shadow-amber-500/30"
+                onClick={() => {
+                  setActiveMediaId(0);
+                  if (fp_id && fp_owner) {
+                    trackEvent.mutate({ entityType: "filmPage", entityId: fp_id, ownerId: fp_owner, eventType: "video_play" });
+                  }
+                }}
               >
-                <a href={fp.movieUrl} target="_blank" rel="noopener noreferrer">
-                  <Play className="w-5 h-5" fill="black" />
-                  Watch Film
-                </a>
+                <Play className="w-5 h-5" fill="black" />
+                Watch Film
               </Button>
             )}
             {fp.trailerUrl && (
@@ -461,6 +506,16 @@ export default function FilmPage() {
           </a>
         </div>
       </div>
+
+      {/* MediaPlayer — opens when Watch Film or a scene video is clicked */}
+      {activeMedia && (
+        <MediaPlayer
+          movie={activeMedia}
+          playlist={playlist}
+          onClose={() => setActiveMediaId(null)}
+          onNavigate={(id) => setActiveMediaId(id)}
+        />
+      )}
     </div>
   );
 }
