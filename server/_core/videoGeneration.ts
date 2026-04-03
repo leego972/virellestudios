@@ -153,8 +153,15 @@ export async function generateVideo(
 
   // Step 4: Upload MP4 to S3
   const videoKey = `videos/${Date.now()}-${jobId.substring(0, 8)}.mp4`;
-  const { url: videoUrl } = await storagePut(videoKey, videoBuffer, "video/mp4");
-  console.log(`[VideoGen] Uploaded to S3: ${videoUrl}`);
+  let videoUrl: string;
+  try {
+    const { url } = await storagePut(videoKey, videoBuffer, "video/mp4");
+    videoUrl = url;
+    console.log(`[VideoGen] Uploaded to S3: ${videoUrl}`);
+  } catch (storageErr: any) {
+    console.warn(`[VideoGen] Storage unavailable (${storageErr.message}). Configure AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET in Railway Variables.`);
+    throw new Error(`Video generated but could not be stored: ${storageErr.message}`);
+  }
 
   // Step 5: Try to download thumbnail
   let thumbnailUrl: string | undefined;
@@ -163,8 +170,10 @@ export async function generateVideo(
     const thumbArrayBuffer = await thumbResponse.arrayBuffer();
     const thumbBuffer = Buffer.from(thumbArrayBuffer);
     const thumbKey = `thumbnails/${Date.now()}-${jobId.substring(0, 8)}.jpg`;
-    const { url: thumbUrl } = await storagePut(thumbKey, thumbBuffer, "image/jpeg");
-    thumbnailUrl = thumbUrl;
+    try {
+      const { url: thumbUrl } = await storagePut(thumbKey, thumbBuffer, "image/jpeg");
+      thumbnailUrl = thumbUrl;
+    } catch { /* thumbnail storage failure is non-critical */ }
   } catch (e) {
     console.warn("[VideoGen] Could not download thumbnail, using first frame");
   }

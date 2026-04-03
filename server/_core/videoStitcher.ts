@@ -667,7 +667,16 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
 
     const fileKey = `movies/${input.userId}/${input.projectId}/full-film-${Date.now()}.mp4`;
     const fileBuffer = await fs.promises.readFile(outputPath);
-    const { url } = await storagePut(fileKey, fileBuffer, "video/mp4");
+    let url: string;
+    try {
+      const result = await storagePut(fileKey, fileBuffer, "video/mp4");
+      url = result.url;
+    } catch (storageErr: any) {
+      throw new Error(
+        `Film stitched successfully but could not be stored: ${storageErr.message}. ` +
+        "Configure AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET in Railway Variables."
+      );
+    }
 
     console.log(`[VideoStitcher] ✅ Post-production complete: ${url}`);
     console.log(`[VideoStitcher]    Size: ${(stats.size / 1024 / 1024).toFixed(1)} MB`);

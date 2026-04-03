@@ -17,6 +17,30 @@
 import { storagePut } from "server/storage";
 import { ENV } from "./env";
 
+/**
+ * Upload image buffer to storage and return a permanent URL.
+ * Falls back to the raw provider URL (or a data URI) when no storage
+ * backend is configured, so generation never fails due to missing S3 credentials.
+ */
+async function uploadImage(
+  buffer: Buffer,
+  filename: string,
+  contentType: string,
+  rawProviderUrl?: string
+): Promise<string> {
+  try {
+    const { url } = await storagePut(filename, buffer, contentType);
+    return url;
+  } catch (storageErr: any) {
+    if (rawProviderUrl) {
+      console.warn(`[ImageGen] Storage unavailable (${storageErr.message}), using raw provider URL`);
+      return rawProviderUrl;
+    }
+    console.warn(`[ImageGen] Storage unavailable (${storageErr.message}), returning data URI`);
+    return `data:${contentType};base64,${buffer.toString("base64")}`;
+  }
+}
+
 export type GenerateImageOptions = {
   prompt: string;
   originalImages?: Array<{
@@ -100,16 +124,18 @@ async function generateWithOpenAIImageEdit(
 
     if (b64) {
       const buffer = Buffer.from(b64, "base64");
-      const { url } = await storagePut(`generated/${Date.now()}.png`, buffer, "image/png");
+      const url = await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png");
       return { url, provider: "openai-gpt-image-1-edit" };
     }
     if (imgUrl) {
       const dlResp = await fetch(imgUrl);
       if (dlResp.ok) {
         const buffer = Buffer.from(await dlResp.arrayBuffer());
-        const { url } = await storagePut(`generated/${Date.now()}.png`, buffer, "image/png");
+        const url = await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png", imgUrl);
         return { url, provider: "openai-gpt-image-1-edit" };
       }
+      // Could not download — return raw URL directly
+      return { url: imgUrl, provider: "openai-gpt-image-1-edit" };
     }
     throw new Error("OpenAI image edit returned no image data");
   }
@@ -145,16 +171,17 @@ async function generateWithOpenAIImageEdit(
 
   if (b64) {
     const buffer = Buffer.from(b64, "base64");
-    const { url } = await storagePut(`generated/${Date.now()}.png`, buffer, "image/png");
+    const url = await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png");
     return { url, provider: "openai-gpt-image-1" };
   }
   if (imgUrl) {
     const dlResp = await fetch(imgUrl);
     if (dlResp.ok) {
       const buffer = Buffer.from(await dlResp.arrayBuffer());
-      const { url } = await storagePut(`generated/${Date.now()}.png`, buffer, "image/png");
+      const url = await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png", imgUrl);
       return { url, provider: "openai-gpt-image-1" };
     }
+    return { url: imgUrl, provider: "openai-gpt-image-1" };
   }
   throw new Error("OpenAI gpt-image-1 returned no image data");
 }
@@ -220,11 +247,7 @@ async function generateWithGoogle(
   const buffer = Buffer.from(result.predictions[0].bytesBase64Encoded, "base64");
   const mimeType = result.predictions[0].mimeType || "image/png";
   const ext = mimeType.split("/")[1] || "png";
-  const { url } = await storagePut(
-    `generated/${Date.now()}.${ext}`,
-    buffer,
-    mimeType
-  );
+  const url = await uploadImage(buffer, `generated/${Date.now()}.${ext}`, mimeType);
   return { url, provider: "google-imagen" };
 }
 
@@ -273,11 +296,7 @@ async function generateWithHuggingFace(
   const contentType = response.headers.get("content-type") || "image/jpeg";
   const ext = contentType.split("/")[1]?.split(";")[0] || "jpg";
 
-  const { url } = await storagePut(
-    `generated/${Date.now()}.${ext}`,
-    buffer,
-    contentType
-  );
+  const url = await uploadImage(buffer, `generated/${Date.now()}.${ext}`, contentType);
   return { url, provider: "huggingface" };
 }
 
@@ -325,11 +344,7 @@ async function generateWithDallE3(
   }
 
   const buffer = Buffer.from(result.data[0].b64_json, "base64");
-  const { url } = await storagePut(
-    `generated/${Date.now()}.png`,
-    buffer,
-    "image/png"
-  );
+  const url = await uploadImage(buffer, `generated/${Date.now()}.png`, "image/png");
   return { url, provider: "dalle3" };
 }
 

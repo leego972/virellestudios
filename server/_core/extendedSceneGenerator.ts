@@ -57,7 +57,14 @@ async function pollRunwaySentinel(apiKey: string, taskId: string): Promise<strin
         if (!resp.ok) throw new Error(`Failed to download Runway video: ${resp.status}`);
         const buffer = Buffer.from(await resp.arrayBuffer());
         const key = `scenes/runway-${taskId}-${Date.now()}.mp4`;
-        const { url } = await storagePut(key, buffer, "video/mp4");
+        let url: string;
+        try {
+          const result = await storagePut(key, buffer, "video/mp4");
+          url = result.url;
+        } catch (storageErr: any) {
+          console.warn(`[ExtendedScene] Storage unavailable for Runway video (${storageErr.message}), using raw CDN URL`);
+          url = videoUrl;
+        }
         console.log(`[ExtendedScene] Runway task ${taskId} completed: ${url}`);
         return url;
       }
@@ -93,7 +100,14 @@ async function pollVeo3Sentinel(apiKey: string, operationName: string): Promise<
         if (!dlResp.ok) throw new Error(`Failed to download Veo 3 video: ${dlResp.status}`);
         const buffer = Buffer.from(await dlResp.arrayBuffer());
         const s3Key = `scenes/veo3-${Date.now()}.mp4`;
-        const { url: s3Url } = await storagePut(s3Key, buffer, "video/mp4");
+        let s3Url: string;
+        try {
+          const result = await storagePut(s3Key, buffer, "video/mp4");
+          s3Url = result.url;
+        } catch (storageErr: any) {
+          console.warn(`[ExtendedScene] Storage unavailable for Veo3 video (${storageErr.message}), using raw CDN URL`);
+          s3Url = downloadUrl;
+        }
         console.log(`[ExtendedScene] Veo 3 operation ${operationName} completed: ${s3Url}`);
         return s3Url;
       }
@@ -315,8 +329,13 @@ async function extractLastFrame(videoUrl: string, projectId: number, sceneId: nu
     // Upload to S3
     const frameBuffer = await fs.promises.readFile(framePath);
     const key = `frames/${projectId}/scene-${sceneId}-lastframe-${Date.now()}.jpg`;
-    const { url } = await storagePut(key, frameBuffer, "image/jpeg");
-    return url;
+    try {
+      const { url } = await storagePut(key, frameBuffer, "image/jpeg");
+      return url;
+    } catch (storageErr: any) {
+      console.warn(`[ExtendedScene] Storage unavailable for last frame (${storageErr.message}), skipping frame upload`);
+      return undefined;
+    }
   } catch (err) {
     console.warn("[ExtendedScene] Failed to extract last frame:", err);
     return undefined;
@@ -351,8 +370,13 @@ async function extractFirstFrame(videoUrl: string, projectId: number, sceneId: n
 
     const frameBuffer = await fs.promises.readFile(framePath);
     const key = `thumbnails/${projectId}/scene-${sceneId}-thumb-${Date.now()}.jpg`;
-    const { url } = await storagePut(key, frameBuffer, "image/jpeg");
-    return url;
+    try {
+      const { url } = await storagePut(key, frameBuffer, "image/jpeg");
+      return url;
+    } catch (storageErr: any) {
+      console.warn(`[ExtendedScene] Storage unavailable for thumbnail (${storageErr.message}), skipping thumbnail upload`);
+      return undefined;
+    }
   } catch {
     return undefined;
   } finally {
@@ -465,9 +489,17 @@ async function stitchSubClips(
     // Upload to S3
     const fileBuffer = await fs.promises.readFile(outputPath);
     const key = `scenes/${projectId}/scene-${sceneId}-extended-${Date.now()}.mp4`;
-    const { url } = await storagePut(key, fileBuffer, "video/mp4");
+    let videoUrl: string;
+    try {
+      const { url } = await storagePut(key, fileBuffer, "video/mp4");
+      videoUrl = url;
+    } catch (storageErr: any) {
+      // No storage configured — use the first raw clip URL as fallback
+      console.warn(`[ExtendedScene] Storage unavailable for stitched video (${storageErr.message}), using first clip URL as fallback`);
+      videoUrl = clipUrls[0];
+    }
 
-    return { videoUrl: url, duration };
+    return { videoUrl, duration };
   } finally {
     try {
       await fs.promises.rm(tmpDir, { recursive: true, force: true });

@@ -111,7 +111,14 @@ async function processCompletedVeo3Video(
   if (!resp.ok) throw new Error(`Failed to download Veo 3 video: ${resp.status}`);
   const buffer = Buffer.from(await resp.arrayBuffer());
   const s3Key = `scenes/${meta.projectId}/scene-${meta.sceneId}-veo3-${Date.now()}.mp4`;
-  const { url } = await storagePut(s3Key, buffer, "video/mp4");
+  let url: string;
+  try {
+    const result = await storagePut(s3Key, buffer, "video/mp4");
+    url = result.url;
+  } catch (storageErr: any) {
+    console.warn(`[VideoWorker:Veo3] Storage unavailable (${storageErr.message}), using raw CDN URL`);
+    url = downloadUrl;
+  }
   console.log(`[VideoWorker:Veo3] Video uploaded to S3: ${url}`);
   return url;
 }
@@ -229,17 +236,20 @@ async function extractLastFrame(videoUrl: string, projectId: number, sceneId: nu
       "-vframes", "1", "-q:v", "2", "-y", framePath,
     ], { timeout: 15000 });
 
-    const frameBuffer = await fs.promises.readFile(framePath);
+     const frameBuffer = await fs.promises.readFile(framePath);
     const key = `frames/${projectId}/scene-${sceneId}-lastframe-${Date.now()}.jpg`;
-    const { url } = await storagePut(key, frameBuffer, "image/jpeg");
-    return url;
+    try {
+      const { url } = await storagePut(key, frameBuffer, "image/jpeg");
+      return url;
+    } catch {
+      return undefined; // Storage unavailable — skip frame upload
+    }
   } catch {
     return undefined;
   } finally {
     try { await fs.promises.rm(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
   }
 }
-
 // ─── Process a completed Runway video ───
 
 async function processCompletedVideo(
@@ -253,7 +263,14 @@ async function processCompletedVideo(
   const buffer = Buffer.from(await resp.arrayBuffer());
 
   const key = `scenes/${meta.projectId}/scene-${meta.sceneId}-${Date.now()}.mp4`;
-  const { url } = await storagePut(key, buffer, "video/mp4");
+  let url: string;
+  try {
+    const result = await storagePut(key, buffer, "video/mp4");
+    url = result.url;
+  } catch (storageErr: any) {
+    console.warn(`[VideoWorker] Storage unavailable (${storageErr.message}), using raw Runway CDN URL`);
+    url = runwayVideoUrl;
+  }
   console.log(`[VideoWorker] Video uploaded to S3: ${url}`);
   return url;
 }
