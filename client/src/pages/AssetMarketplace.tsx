@@ -264,7 +264,6 @@ export default function AssetMarketplace() {
   // Server-side owned assets (purchased or admin)
   const { data: ownedData, refetch: refetchOwned } = trpc.subscription.getOwnedAssets.useQuery(undefined, {
     retry: false,
-    onError: () => {},
   });
   const createAssetCheckout = trpc.subscription.createAssetCheckout.useMutation();
   const confirmPurchase = trpc.subscription.confirmAssetPurchase.useMutation();
