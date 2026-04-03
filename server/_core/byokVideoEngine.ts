@@ -756,7 +756,7 @@ export async function generateWithVeo3(key: string, req: VideoGenerationRequest)
     instances: [{ prompt: req.prompt }],
     parameters: {
       aspectRatio,
-      durationSeconds: "8",
+      durationSeconds: 8,
       personGeneration: "allow_all",
     },
   };
@@ -801,21 +801,21 @@ export async function generateVideo(
   keys: UserApiKeys,
   req: VideoGenerationRequest
 ): Promise<VideoGenerationResult> {
-  const provider = selectProvider(keys);
+  // Build the ordered list of providers to try, starting with the preferred one
+  // and cascading through ALL available providers until one succeeds.
+  const preferred = selectProvider(keys);
+  console.log(`[BYOK] Selected provider: ${preferred}`);
 
-  console.log(`[BYOK] Selected provider: ${provider}`);
-
-  // Build the key map — ONLY use user-provided keys for paid providers
-  // Platform-level Runway/OpenAI keys are NOT used for video generation
+  // Build key map
   const keyMap: Record<VideoProvider, string | null | undefined> = {
-    runway: keys.runwayKey || null,       // User's own key ONLY
-    openai: keys.openaiKey || null,       // User's own key ONLY
+    runway: keys.runwayKey || null,
+    openai: keys.openaiKey || null,
     replicate: keys.replicateKey || null,
     fal: keys.falKey || null,
     luma: keys.lumaKey || null,
     huggingface: keys.hfToken || "free",
-    seedance: keys.byteplusKey || null,   // BytePlus ModelArk key for SeedDance
-    veo3: keys.googleAiKey || null,        // Gemini API key for Veo 3
+    seedance: keys.byteplusKey || null,
+    veo3: keys.googleAiKey || null,
     pollinations: getNextPollinationsKey(),
   };
 
@@ -831,38 +831,49 @@ export async function generateVideo(
     pollinations: generateWithPollinations,
   };
 
-  const key = keyMap[provider];
-  if (!key && provider !== "pollinations") {
-    // If no key for selected provider, fall back to Pollinations
-    console.log(`[BYOK] No user key for ${provider}, falling back to Pollinations (free)`);
+  // Build ordered cascade: preferred first, then all others with keys, then pollinations last
+  const allOrdered: VideoProvider[] = ["runway", "veo3", "openai", "fal", "seedance", "replicate", "luma", "huggingface", "pollinations"];
+  const cascade: { provider: VideoProvider; key: string }[] = [];
+
+  // Add preferred first
+  const prefKey = keyMap[preferred];
+  if (prefKey) cascade.push({ provider: preferred, key: prefKey });
+
+  // Add all others that have keys (skip preferred to avoid duplicates)
+  for (const p of allOrdered) {
+    if (p === preferred) continue;
+    const k = p === "pollinations" ? getNextPollinationsKey() : keyMap[p];
+    if (k) cascade.push({ provider: p, key: k });
+  }
+
+  // Always ensure pollinations is in the list as final fallback
+  if (!cascade.find(c => c.provider === "pollinations")) {
+    cascade.push({ provider: "pollinations", key: getNextPollinationsKey() });
+  }
+
+  const errors: string[] = [];
+
+  for (const { provider, key } of cascade) {
     try {
-      return await generateWithPollinations(getNextPollinationsKey(), req);
-    } catch (err: any) {
-      throw new Error(`Video generation failed. No API key for ${provider} and Pollinations fallback failed: ${err.message}`);
-    }
-  }
-
-  try {
-    return await providerFunctions[provider](key || "", req);
-  } catch (err: any) {
-    console.error(`[BYOK:${provider}] Failed:`, err.message);
-
-    // If a paid provider failed, try Pollinations as fallback
-    if (provider !== "pollinations") {
-      console.log(`[BYOK] ${provider} failed, falling back to Pollinations (free)...`);
-      try {
-        return await generateWithPollinations(getNextPollinationsKey(), req);
-      } catch (fbErr: any) {
-        console.error(`[BYOK:pollinations] Fallback also failed:`, fbErr.message);
-        throw new Error(
-          `Video generation failed with ${provider} (${err.message}). ` +
-          `Pollinations fallback also failed: ${fbErr.message}`
-        );
+      console.log(`[BYOK] Trying provider: ${provider}`);
+      const result = await providerFunctions[provider](key, req);
+      if (provider !== preferred) {
+        console.log(`[BYOK] Succeeded with fallback provider: ${provider}`);
       }
+      return result;
+    } catch (err: any) {
+      const msg = err.message || String(err);
+      console.error(`[BYOK:${provider}] Failed: ${msg}`);
+      errors.push(`${provider}: ${msg}`);
+      // Continue to next provider
     }
-
-    throw err;
   }
+
+  // All providers exhausted
+  throw new Error(
+    `Video generation failed — all providers exhausted:\n` +
+    errors.map(e => `  • ${e}`).join("\n")
+  );
 }
 
 // ─── Provider Info (for frontend display) ───

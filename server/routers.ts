@@ -2888,8 +2888,14 @@ Break this into 8-15 scenes. For each scene, provide:
                   console.log(`[QuickGen] Scene ${sceneIdx + 1} fallback single-clip generated via ${videoResult.provider}`);
                 }
               } catch (fallbackErr: any) {
-                console.error(`[QuickGen] All video generation failed for scene "${scene.title}":`, fallbackErr.message);
-                await db.updateScene(scene.id, { status: "completed" });
+                const errMsg = fallbackErr.message || String(fallbackErr);
+                console.error(`[QuickGen] All video generation failed for scene "${scene.title}":`, errMsg);
+                // Store actionable error in the job so the UI can surface it
+                try {
+                  await db.updateJob(job.id, { errorMessage: `Scene "${scene.title}" — ${errMsg}` });
+                } catch { /* ignore */ }
+                // Mark scene as failed (not completed) so the UI can distinguish "no video" from "generation failed"
+                await db.updateScene(scene.id, { status: "failed" } as any);
               }
             }
            } catch (e: any) {

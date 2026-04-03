@@ -361,7 +361,8 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
       )}
 
       {/* ── Main logo composition ── */}
-      <div className="relative flex flex-col items-center" style={{ marginTop: "-10px" }}>
+      {/* Padding keeps content inside the letterbox safe area on all screen sizes */}
+      <div className="relative flex flex-col items-center" style={{ paddingTop: "9vh", paddingBottom: "9vh", width: "100%", maxWidth: "420px" }}>
 
         {/* SVG gradient/filter defs */}
         <svg width="0" height="0" style={{ position: "absolute" }}>
@@ -433,7 +434,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
             ? goldGlow(Math.min((gw(0) - 0.4) / 0.6, 1) * 1.2)
             : "drop-shadow(0 3px 14px rgba(255,255,255,0.4)) drop-shadow(0 0 28px rgba(255,255,255,0.18))",
         }}>
-          <svg viewBox="0 0 160 120" width="152" height="114">
+          <svg viewBox="0 0 160 120" style={{ width: "min(152px, 40vw)", height: "auto" }}>
 
             {/* LEFT WING */}
             <g style={{
@@ -591,7 +592,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
             : "drop-shadow(0 5px 20px rgba(0,0,0,0.85))",
           marginTop: "62px",
         }}>
-          <svg viewBox="0 0 300 320" width="272" height="290">
+          <svg viewBox="0 0 300 320" style={{ width: "min(272px, 72vw)", height: "auto" }}>
 
             {/* ── OLIVE BRANCH LEFT ── */}
             <g opacity={branchP} style={{ transformOrigin: "108px 228px", transform: `scale(${branchP})` }}>

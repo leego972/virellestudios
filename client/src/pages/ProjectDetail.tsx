@@ -484,6 +484,33 @@ export default function ProjectDetail() {
       </div>
 
       {/* Generation Progress */}
+      {/* Generation Error Banner — shown when job has an errorMessage (all providers failed) */}
+      {jobs && jobs.some((j: any) => j.errorMessage) && project.status !== "generating" && (
+        <Card className="bg-red-500/5 border-red-500/30">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 text-red-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-red-400">Video generation failed — API quota or key issue</p>
+                <p className="text-xs text-muted-foreground mt-1 break-words">
+                  {jobs.find((j: any) => j.errorMessage)?.errorMessage}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <a href="https://platform.openai.com/account/billing" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 underline hover:text-blue-300">OpenAI Billing</a>
+                  <a href="https://app.runwayml.com/settings" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 underline hover:text-blue-300">Runway Credits</a>
+                  <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 underline hover:text-blue-300">Google AI Studio (Veo3)</a>
+                  <a href="https://enter.pollinations.ai" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 underline hover:text-blue-300">Pollinations Pollen</a>
+                  <a href="https://replicate.com/account/billing" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 underline hover:text-blue-300">Replicate Billing</a>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">After topping up, click <strong>Re-generate Film</strong> to retry.</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {(project.status === "generating" || quickGenMutation.isPending) && (
         <Card className="bg-primary/5 border-primary/20">
           <CardContent className="p-4">
