@@ -661,13 +661,36 @@ async function startServer() {
         body: JSON.stringify({ model: "tts-1-hd", input: trimmed, voice: "nova", speed: 0.95, response_format: "mp3" }),
         signal: AbortSignal.timeout(30000),
       });
-      if (!ttsRes.ok) return res.status(502).json({ error: "TTS generation failed" });
-      const buf = Buffer.from(await ttsRes.arrayBuffer());
-      res.setHeader("Content-Type", "audio/mpeg");
-      res.setHeader("Content-Length", buf.length.toString());
-      res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("X-TTS-Provider", "openai-fallback");
-      res.end(buf);
+      if (!ttsRes.ok) {
+        // OpenAI failed (billing limit, etc.) — fall through to free Pollinations TTS
+        console.warn(`[TTS] OpenAI failed (${ttsRes.status}), trying Pollinations free TTS`);
+      } else {
+        const buf = Buffer.from(await ttsRes.arrayBuffer());
+        res.setHeader("Content-Type", "audio/mpeg");
+        res.setHeader("Content-Length", buf.length.toString());
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("X-TTS-Provider", "openai-fallback");
+        return res.end(buf);
+      }
+
+      // ── Pollinations free TTS (last resort — always available, no key needed) ──
+      try {
+        const encodedText = encodeURIComponent(trimmed.slice(0, 500));
+        const pollinationsUrl = `https://text.pollinations.ai/${encodedText}?model=openai-audio&voice=nova&format=mp3`;
+        const pollRes = await fetch(pollinationsUrl, { signal: AbortSignal.timeout(20000) });
+        if (pollRes.ok) {
+          const pollBuf = Buffer.from(await pollRes.arrayBuffer());
+          res.setHeader("Content-Type", "audio/mpeg");
+          res.setHeader("Content-Length", pollBuf.length.toString());
+          res.setHeader("Cache-Control", "no-cache");
+          res.setHeader("X-TTS-Provider", "pollinations-free");
+          return res.end(pollBuf);
+        }
+      } catch (pollErr) {
+        console.warn("[TTS] Pollinations fallback failed:", pollErr);
+      }
+
+      return res.status(502).json({ error: "TTS generation failed — all providers exhausted" });
     } catch (err) {
       if (!res.headersSent) res.status(500).json({ error: "Internal server error" });
     }

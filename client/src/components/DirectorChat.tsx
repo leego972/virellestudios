@@ -1981,11 +1981,11 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
               {/* ─── Talk button — tap to speak, AI speaks back ─── */}
               <button
                 className={cn(
-                  "p-2 rounded-xl transition-all active:scale-95 disabled:opacity-40 relative",
-                  voiceModeActive && voiceModeState === "listening" ? "text-red-500 bg-red-500/10"
-                  : voiceModeActive && voiceModeState === "thinking" ? "text-blue-400 bg-blue-500/10"
-                  : voiceModeActive && voiceModeState === "speaking" ? "text-emerald-400 bg-emerald-500/10"
-                  : "text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold transition-all active:scale-95 disabled:opacity-40 relative",
+                  voiceModeActive && voiceModeState === "listening" ? "text-red-500 bg-red-500/10 border border-red-500/30"
+                  : voiceModeActive && voiceModeState === "thinking" ? "text-blue-400 bg-blue-500/10 border border-blue-400/30"
+                  : voiceModeActive && voiceModeState === "speaking" ? "text-emerald-400 bg-emerald-500/10 border border-emerald-400/30"
+                  : "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40"
                 )}
                 onClick={() => {
                   if (!voiceModeActive) {
@@ -1999,21 +1999,15 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
                   }
                 }}
                 disabled={voiceModeActive && voiceModeState === "thinking"}
-                title={
-                  !voiceModeActive ? "Talk to Director (tap to speak)"
-                  : voiceModeState === "listening" ? "Stop recording"
-                  : voiceModeState === "speaking" ? "Stop speaking"
-                  : "Processing..."
-                }
-                style={{ touchAction: "manipulation", minWidth: 40, minHeight: 40 }}
+                style={{ touchAction: "manipulation", minHeight: 36 }}
               >
                 {voiceModeActive && voiceModeState === "thinking"
-                  ? <Loader2 className="size-4 animate-spin" />
+                  ? <><Loader2 className="size-3.5 animate-spin" /><span>Thinking...</span></>
                   : voiceModeActive && voiceModeState === "listening"
-                  ? <Square className="size-3.5 fill-current text-red-500" />
+                  ? <><Square className="size-3 fill-current text-red-500" /><span>Stop</span></>
                   : voiceModeActive && voiceModeState === "speaking"
-                  ? <VolumeX className="size-4" />
-                  : <Mic className="size-4" />}
+                  ? <><VolumeX className="size-3.5" /><span>Stop</span></>
+                  : <><Mic className="size-3.5" /><span>Talk</span></>}
                 {/* Pulse ring when listening */}
                 {voiceModeActive && voiceModeState === "listening" && (
                   <span className="absolute inset-0 rounded-xl animate-ping bg-red-500/20" />
