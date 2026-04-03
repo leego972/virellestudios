@@ -822,6 +822,19 @@ export async function runAutoMigration(): Promise<void> {
         updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`,
     },
+    {
+      name: "assetPurchases",
+      createSQL: `CREATE TABLE IF NOT EXISTS assetPurchases (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        assetId VARCHAR(64) NOT NULL,
+        stripeSessionId VARCHAR(255) NULL,
+        stripePaymentIntentId VARCHAR(255) NULL,
+        amountAud INT NOT NULL,
+        status ENUM('pending','paid','failed','refunded') NOT NULL DEFAULT 'pending',
+        purchasedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`,
+    },
   ];
 
   // ─── Columns that may be missing from existing tables ───

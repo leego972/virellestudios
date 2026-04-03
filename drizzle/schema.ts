@@ -1263,3 +1263,17 @@ export const abuseFlags = mysqlTable("abuseFlags", {
 
 export type AbuseFlag = typeof abuseFlags.$inferSelect;
 export type InsertAbuseFlag = typeof abuseFlags.$inferInsert;
+
+// ── Asset Marketplace Purchases ───────────────────────────────────────────────
+export const assetPurchases = mysqlTable("assetPurchases", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("userId").notNull(),
+  assetId: varchar("assetId", { length: 64 }).notNull(),
+  stripeSessionId: varchar("stripeSessionId", { length: 255 }),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  amountAud: int("amountAud").notNull(),
+  status: mysqlEnum("status", ["pending", "paid", "failed", "refunded"]).default("pending").notNull(),
+  purchasedAt: timestamp("purchasedAt").defaultNow().notNull(),
+});
+export type AssetPurchase = typeof assetPurchases.$inferSelect;
+export type InsertAssetPurchase = typeof assetPurchases.$inferInsert;

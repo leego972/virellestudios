@@ -7235,6 +7235,109 @@ Rules:
         return { url };
       }),
 
+    // ── Asset Marketplace ─────────────────────────────────────────────────────
+    // Create a Stripe checkout for a one-time asset purchase
+    createAssetCheckout: protectedProcedure
+      .input(z.object({
+        assetId: z.string(),
+        assetName: z.string(),
+        priceAud: z.number().positive(), // in dollars e.g. 4.99
+        successUrl: z.string().url(),
+        cancelUrl: z.string().url(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Stripe not configured" });
+        // Admins get everything free
+        if (ctx.user.role === "admin") {
+          // Record as paid immediately for admins
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            await dbConn.execute(sql`
+              INSERT IGNORE INTO assetPurchases (userId, assetId, amountAud, status)
+              VALUES (${ctx.user.id}, ${input.assetId}, 0, 'paid')
+            `);
+          }
+          return { url: input.successUrl, adminBypass: true };
+        }
+        // Check if already purchased
+        const dbConn = await db.getDb();
+        if (dbConn) {
+          const existing = await dbConn.execute(sql`
+            SELECT id FROM assetPurchases WHERE userId = ${ctx.user.id} AND assetId = ${input.assetId} AND status = 'paid' LIMIT 1
+          `);
+          if ((existing as any[]).length > 0) {
+            return { url: input.successUrl, alreadyOwned: true };
+          }
+        }
+        const customerId = await getOrCreateStripeCustomer(ctx.user);
+        await db.updateUserSubscription(ctx.user.id, { stripeCustomerId: customerId });
+        const amountCents = Math.round(input.priceAud * 100);
+        const session = await stripe.checkout.sessions.create({
+          customer: customerId,
+          mode: "payment",
+          payment_method_types: ["card"],
+          line_items: [{
+            price_data: {
+              currency: "aud",
+              unit_amount: amountCents,
+              product_data: {
+                name: input.assetName,
+                description: `Virelle Studios Asset — ${input.assetName}`,
+              },
+            },
+            quantity: 1,
+          }],
+          success_url: input.successUrl + `?asset_purchased=${input.assetId}`,
+          cancel_url: input.cancelUrl,
+          metadata: {
+            userId: String(ctx.user.id),
+            assetId: input.assetId,
+            type: "asset_purchase",
+          },
+        });
+        // Record pending purchase
+        if (dbConn) {
+          await dbConn.execute(sql`
+            INSERT INTO assetPurchases (userId, assetId, stripeSessionId, amountAud, status)
+            VALUES (${ctx.user.id}, ${input.assetId}, ${session.id}, ${amountCents}, 'pending')
+          `);
+        }
+        return { url: session.url! };
+      }),
+
+    // Check which assets the current user has purchased (or admin = all)
+    getOwnedAssets: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role === "admin") {
+        return { ownedAssetIds: "all" as const };
+      }
+      const dbConn = await db.getDb();
+      if (!dbConn) return { ownedAssetIds: [] as string[] };
+      const rows = await dbConn.execute(sql`
+        SELECT assetId FROM assetPurchases WHERE userId = ${ctx.user.id} AND status = 'paid'
+      `);
+      return { ownedAssetIds: (rows as any[]).map((r: any) => r.assetId) };
+    }),
+
+    // Confirm asset purchase after Stripe redirect (called on success page)
+    confirmAssetPurchase: protectedProcedure
+      .input(z.object({ assetId: z.string(), sessionId: z.string().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role === "admin") return { success: true };
+        if (!stripe || !input.sessionId) return { success: false };
+        const session = await stripe.checkout.sessions.retrieve(input.sessionId);
+        if (session.payment_status === "paid" && session.metadata?.assetId === input.assetId) {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            await dbConn.execute(sql`
+              UPDATE assetPurchases SET status = 'paid', stripePaymentIntentId = ${String(session.payment_intent || "")}
+              WHERE userId = ${ctx.user.id} AND assetId = ${input.assetId} AND stripeSessionId = ${input.sessionId}
+            `);
+          }
+          return { success: true };
+        }
+        return { success: false };
+      }),
+
     // Get pricing info (public)
     // Public endpoint: count of paid subscribers (for founding offer banner)
     // Returns count + 30 offset to show social proof
