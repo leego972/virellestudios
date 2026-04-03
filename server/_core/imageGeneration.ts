@@ -387,6 +387,17 @@ export async function generateImage(
     }
   }
 
+  // 5. Pollinations (free, no key required — always available as last resort)
+  try {
+    console.log("[ImageGen] Falling back to Pollinations (free, no key required)");
+    const encodedPrompt = encodeURIComponent((options.prompt || "cinematic scene").slice(0, 500));
+    const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1280&height=720&model=flux&nologo=true&enhance=true&seed=${Date.now()}`;
+    // Pollinations returns a direct image URL — no upload needed, it’s a CDN
+    return { url: pollinationsUrl, provider: "pollinations" };
+  } catch (err: any) {
+    errors.push(`Pollinations: ${err.message}`);
+  }
+
   // All providers failed
   throw new Error(
     `All image generation providers failed:\n${errors.join("\n")}`

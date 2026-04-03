@@ -2428,24 +2428,14 @@ Available fields you can update:
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
 
-        // Create a generation job
-        const job = await db.createGenerationJob({
-          projectId: project.id,
-          type: "full-film",
-          status: "processing",
-          progress: 0,
-          estimatedSeconds: (project.duration || 90) * 2,
-        });
-
-         // ── Reset: clear existing scenes and jobs so re-generate overwrites old content ──
-        // This allows users to re-generate a completed film from scratch.
+        // ── Reset: clear existing scenes and OLD jobs BEFORE creating the new job ──
+        // IMPORTANT: must happen before createGenerationJob so we don't delete the new job.
         try {
           const existingScenes = await db.getProjectScenes(project.id);
           for (const s of existingScenes) {
             await db.deleteScene(s.id);
           }
           // Cancel/clear any stale generation jobs for this project
-          // Use the already-imported db module and schema (drizzle/schema)
           const { generationJobs: genJobsTable } = await import("../drizzle/schema");
           const { eq: eqOp } = await import("drizzle-orm");
           const { getDb: getDbConn } = await import("./db");
@@ -2457,6 +2447,14 @@ Available fields you can update:
           console.warn("[QuickGen] Could not clear old scenes/jobs:", clearErr.message);
           // Non-fatal — continue with generation
         }
+        // Create a generation job AFTER clearing old jobs so it isn't immediately deleted
+        const job = await db.createGenerationJob({
+          projectId: project.id,
+          type: "full-film",
+          status: "processing",
+          progress: 0,
+          estimatedSeconds: (project.duration || 90) * 2,
+        });
         // Update project status
         await db.updateProject(project.id, ctx.user.id, {
           status: "generating",
