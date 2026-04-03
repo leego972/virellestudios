@@ -21,6 +21,7 @@ import {
   PictureInPicture2,
   Settings,
   X,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Repeat,
@@ -399,10 +400,8 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
         className={`absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 to-transparent px-4 py-3 flex items-center justify-between transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}
       >
-        <div className="flex items-center gap-3 min-w-0">
-          <Button size="icon" variant="ghost" className="text-white hover:bg-white/10 active:bg-white/20 shrink-0 h-11 w-11" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
+        {/* Left: title */}
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           <div className="min-w-0">
             <h2 className="text-white font-medium text-sm sm:text-base truncate">{movie.title}</h2>
             <div className="flex items-center gap-2 mt-0.5">
@@ -415,17 +414,9 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             </div>
           </div>
         </div>
+
+        {/* Right: window controls — Playlist · Download · Minimise · Fullscreen · Close */}
         <div className="flex items-center gap-1 shrink-0">
-          {/* Minimise button */}
-          <Button
-            size="icon"
-            variant="ghost"
-            className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
-            onClick={() => setIsMinimised(true)}
-            title="Minimise player"
-          >
-            <Minimize className="h-5 w-5" />
-          </Button>
           {playlist && playlist.length > 1 && (
             <Button
               size="sm"
@@ -442,6 +433,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
               size="icon"
               variant="ghost"
               className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
+              title="Download"
               onClick={() => {
                 const a = document.createElement("a");
                 a.href = movie.fileUrl!;
@@ -456,6 +448,36 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
               <Download className="h-5 w-5" />
             </Button>
           )}
+          {/* Minimise */}
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
+            onClick={() => setIsMinimised(true)}
+            title="Minimise"
+          >
+            <ChevronDown className="h-5 w-5" />
+          </Button>
+          {/* Fullscreen */}
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          >
+            {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+          </Button>
+          {/* Close */}
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
+            onClick={onClose}
+            title="Close"
+          >
+            <X className="h-5 w-5" />
+          </Button>
         </div>
       </div>
 
