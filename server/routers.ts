@@ -2445,6 +2445,12 @@ Available fields you can update:
 
         try {
 
+        // ── Fetch user BYOK keys early — used for both LLM and video generation ──
+        // Must be done before Step 0 so user's own OpenAI key is used for LLM calls,
+        // not the platform key (which may be quota-exhausted).
+        const earlyUserKeys = await db.getUserApiKeys(ctx.user!.id);
+        const userLlmApiKey: string | null = earlyUserKeys.openaiKey || null;
+
         // ── Step 0: Auto-generate photorealistic characters if none exist ──
         // This is the key to broadcast-quality output: consistent faces across all scenes
         let existingCharacters = await db.getProjectCharacters(project.id);
@@ -2452,6 +2458,7 @@ Available fields you can update:
           try {
             // Ask LLM to design 2-4 characters (humans + animals if relevant) based on the plot
             const charDesignResult = await invokeLLM({
+              userApiKey: userLlmApiKey,
               messages: [
                 {
                   role: "system",
@@ -2562,6 +2569,7 @@ Available fields you can update:
         const systemPrompt = buildSceneBreakdownSystemPrompt({ ...project, creativeLeeway: hasCreativeLeeway });
 
         const llmResult = await invokeLLM({
+          userApiKey: userLlmApiKey,
           messages: [
             {
               role: "system",
@@ -2694,22 +2702,20 @@ Break this into 8-15 scenes. For each scene, provide:
             }
 
             // Step 4b: Generate extended video scene using clip chaining (30-60s per scene)
-            // Fetch user's API keys; admins also get platform keys as fallback
-            const userKeys = await db.getUserApiKeys(ctx.user!.id);
-            const isAdminQuick = ctx.user.role === "admin";
+            // Re-use earlyUserKeys fetched at the top of quickGenerate (avoids duplicate DB call).
             const byokKeys: UserApiKeys = {
               // User's own key takes priority; platform key is the fallback for ALL users
               // so film generation works out of the box without requiring BYOK setup.
-              openaiKey: userKeys.openaiKey || ENV.openaiApiKey || undefined,
-              runwayKey: userKeys.runwayKey || ENV.runwayApiKey || undefined,
-              replicateKey: userKeys.replicateKey,
-              falKey: userKeys.falKey,
-              lumaKey: userKeys.lumaKey,
-              hfToken: userKeys.hfToken,
-              byteplusKey: userKeys.byteplusKey,
-              googleAiKey: userKeys.googleAiKey || ENV.googleApiKey || undefined,
+              openaiKey: earlyUserKeys.openaiKey || ENV.openaiApiKey || undefined,
+              runwayKey: earlyUserKeys.runwayKey || ENV.runwayApiKey || undefined,
+              replicateKey: earlyUserKeys.replicateKey,
+              falKey: earlyUserKeys.falKey,
+              lumaKey: earlyUserKeys.lumaKey,
+              hfToken: earlyUserKeys.hfToken,
+              byteplusKey: earlyUserKeys.byteplusKey,
+              googleAiKey: earlyUserKeys.googleAiKey || ENV.googleApiKey || undefined,
               // Default to Runway when platform key is available — it's faster and more reliable
-              preferredProvider: userKeys.preferredProvider || (ENV.runwayApiKey ? "runway" : undefined),
+              preferredProvider: earlyUserKeys.preferredProvider || (ENV.runwayApiKey ? "runway" : undefined),
             };
 
             // Build rich video prompt including character physical descriptions for consistent faces

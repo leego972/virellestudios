@@ -68,6 +68,10 @@ export type InvokeParams = {
   response_format?: ResponseFormat;
   systemTag?: string;
   model?: string;
+  /** Per-request user API key — takes priority over the platform key */
+  userApiKey?: string | null;
+  /** Preferred model to use with userApiKey (defaults to gpt-4.1) */
+  userModel?: string;
 };
 
 export type ToolCall = {
@@ -298,6 +302,20 @@ const normalizeResponseFormat = ({
 };
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
+  // If caller provided a user-specific API key, use it first before falling back to the platform key.
+  // This ensures BYOK users always use their own quota, not the platform's.
+  if (params.userApiKey) {
+    try {
+      return await invokeLLMWithProvider(params, {
+        url: "https://api.openai.com/v1/chat/completions",
+        apiKey: params.userApiKey,
+        model: params.userModel || "gpt-4.1",
+      });
+    } catch (e: any) {
+      // If user's own key fails (quota/invalid), log and fall through to platform key
+      console.warn(`[LLM] User BYOK key failed (${e.message?.slice(0, 80)}), falling back to platform provider...`);
+    }
+  }
   const provider = resolveProvider();
 
   const {
