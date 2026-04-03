@@ -360,18 +360,41 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
 
   if (!response.ok) {
     const errorText = await response.text();
+    const isQuotaError = response.status === 429 || errorText.includes("insufficient_quota") || errorText.includes("quota");
+    const isOpenAI = provider.url.includes("openai.com");
 
-    // If OpenAI fails, try Forge as fallback (and vice versa)
-    if (provider.url.includes("openai.com") && ENV.openaiApiKey) {
-      console.warn(`[LLM] OpenAI gpt-4.1 failed (${response.status}), trying gpt-4.1-mini fallback...`);
-      return invokeLLMWithProvider(params, {
-        url: "https://api.openai.com/v1/chat/completions",
-        apiKey: ENV.openaiApiKey,
-        model: "gpt-4.1-mini",
-      });
+    // OpenAI failed — if it's a quota/rate error, skip to Forge immediately.
+    // For other errors, try gpt-4.1-mini first, then Forge.
+    if (isOpenAI) {
+      if (!isQuotaError && ENV.openaiApiKey) {
+        // Transient error — try cheaper model on same account first
+        console.warn(`[LLM] OpenAI gpt-4.1 failed (${response.status}), trying gpt-4.1-mini...`);
+        try {
+          return await invokeLLMWithProvider(params, {
+            url: "https://api.openai.com/v1/chat/completions",
+            apiKey: ENV.openaiApiKey,
+            model: "gpt-4.1-mini",
+          });
+        } catch {
+          // Fall through to Forge
+        }
+      }
+      // Quota exhausted or mini also failed — use Forge/Gemini (free)
+      if (ENV.forgeApiKey) {
+        const forgeUrl = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
+          ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
+          : "https://forge.manus.im/v1/chat/completions";
+        console.warn(`[LLM] OpenAI quota/error (${response.status}) — falling back to Forge/Gemini...`);
+        return invokeLLMWithProvider(params, {
+          url: forgeUrl,
+          apiKey: ENV.forgeApiKey,
+          model: "gemini-2.5-flash",
+        });
+      }
     }
 
-    if (!provider.url.includes("openai.com") && ENV.openaiApiKey) {
+    // Forge/non-OpenAI failed — try OpenAI as fallback (only if not a quota situation)
+    if (!isOpenAI && ENV.openaiApiKey && !isQuotaError) {
       console.warn(`[LLM] Forge failed (${response.status}), trying OpenAI fallback...`);
       return invokeLLMWithProvider(params, {
         url: "https://api.openai.com/v1/chat/completions",
@@ -453,6 +476,20 @@ async function invokeLLMWithProvider(
 
   if (!response.ok) {
     const errorText = await response.text();
+    const isQuotaError = response.status === 429 || errorText.includes("insufficient_quota") || errorText.includes("quota");
+    const isOpenAI = provider.url.includes("openai.com");
+    // If this fallback provider is OpenAI and it's also quota-exhausted, try Forge
+    if (isOpenAI && isQuotaError && ENV.forgeApiKey) {
+      const forgeUrl = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
+        ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
+        : "https://forge.manus.im/v1/chat/completions";
+      console.warn(`[LLM] Fallback OpenAI also quota-exhausted — using Forge/Gemini as final fallback...`);
+      return invokeLLMWithProvider(params, {
+        url: forgeUrl,
+        apiKey: ENV.forgeApiKey,
+        model: "gemini-2.5-flash",
+      });
+    }
     throw new Error(
       `LLM fallback invoke failed: ${response.status} ${response.statusText} – ${errorText}`
     );

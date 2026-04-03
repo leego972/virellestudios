@@ -2698,15 +2698,18 @@ Break this into 8-15 scenes. For each scene, provide:
             const userKeys = await db.getUserApiKeys(ctx.user!.id);
             const isAdminQuick = ctx.user.role === "admin";
             const byokKeys: UserApiKeys = {
-              openaiKey: userKeys.openaiKey || (isAdminQuick ? ENV.openaiApiKey : undefined),
-              runwayKey: userKeys.runwayKey || (isAdminQuick ? ENV.runwayApiKey : undefined),
+              // User's own key takes priority; platform key is the fallback for ALL users
+              // so film generation works out of the box without requiring BYOK setup.
+              openaiKey: userKeys.openaiKey || ENV.openaiApiKey || undefined,
+              runwayKey: userKeys.runwayKey || ENV.runwayApiKey || undefined,
               replicateKey: userKeys.replicateKey,
               falKey: userKeys.falKey,
               lumaKey: userKeys.lumaKey,
               hfToken: userKeys.hfToken,
               byteplusKey: userKeys.byteplusKey,
-              googleAiKey: userKeys.googleAiKey || (isAdminQuick ? ENV.googleApiKey : undefined),
-              preferredProvider: userKeys.preferredProvider,
+              googleAiKey: userKeys.googleAiKey || ENV.googleApiKey || undefined,
+              // Default to Runway when platform key is available — it's faster and more reliable
+              preferredProvider: userKeys.preferredProvider || (ENV.runwayApiKey ? "runway" : undefined),
             };
 
             // Build rich video prompt including character physical descriptions for consistent faces
