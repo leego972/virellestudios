@@ -17,56 +17,7 @@
 import { ENV } from "./env";
 import RunwayML, { TaskFailedError } from "@runwayml/sdk";
 
-// ─── Prompt Sanitizer ───
-// Runway and other providers have strict content moderation.
-// This function rewrites prompts to avoid triggering moderation
-// while preserving the cinematic intent.
-
-const MODERATION_REPLACEMENTS: Array<[RegExp, string]> = [
-  // Named horror/villain characters → generic description
-  [/\bfreddy krueger?\b/gi, "masked horror villain"],
-  [/\bfreddy\b/gi, "masked villain"],
-  [/\bjason voorhees\b/gi, "masked slasher"],
-  [/\bmichael myers\b/gi, "masked figure"],
-  [/\bchucky\b/gi, "possessed doll"],
-  [/\bpennywise\b/gi, "sinister clown"],
-  [/\bhannibal\b/gi, "cunning antagonist"],
-  // Violent action words → cinematic equivalents
-  [/\beats?\b/gi, "defeats"],
-  [/\beating\b/gi, "defeating"],
-  [/\bkills?\b/gi, "defeats"],
-  [/\bkilling\b/gi, "defeating"],
-  [/\bmurders?\b/gi, "defeats"],
-  [/\bslaughters?\b/gi, "defeats"],
-  [/\bbeheads?\b/gi, "overpowers"],
-  [/\bstabs?\b/gi, "strikes"],
-  [/\bstabbing\b/gi, "striking"],
-  [/\bblood(y|ied|bath)?\b/gi, "dramatic"],
-  [/\bgore\b/gi, "intense action"],
-  [/\bgory\b/gi, "intense"],
-  [/\bviolent\b/gi, "intense"],
-  [/\bviolence\b/gi, "intense action"],
-  [/\bdecapitat(e|ion|ed)\b/gi, "overpowers"],
-  [/\bmutilat(e|ion|ed)\b/gi, "defeats"],
-  [/\btortur(e|ed|ing)\b/gi, "confronts"],
-  [/\bfatalit(y|ies)\b/gi, "finishing move"],
-  // Explicit content
-  [/\bnude\b/gi, "figure"],
-  [/\bnaked\b/gi, "figure"],
-  [/\bsex(ual)?\b/gi, "dramatic"],
-];
-
-/**
- * Sanitize a video generation prompt to avoid content moderation rejections.
- * Replaces flagged terms with cinematic equivalents while preserving intent.
- */
-function sanitizePromptForModeration(prompt: string): string {
-  let sanitized = prompt;
-  for (const [pattern, replacement] of MODERATION_REPLACEMENTS) {
-    sanitized = sanitized.replace(pattern, replacement);
-  }
-  return sanitized;
-}
+// No prompt sanitization — user prompts are sent exactly as written to all providers.
 
 // ─── Types ───
 
@@ -157,11 +108,10 @@ function getAvailableProviders(keys: UserApiKeys): VideoProvider[] {
 }
 
 export function selectProvider(keys: UserApiKeys): VideoProvider {
-  // If user explicitly set a preferred provider AND provided their own key for it, use it
+  // If user explicitly set a preferred provider AND provided their own key for it, ALWAYS respect it
   if (keys.preferredProvider) {
     const pref = keys.preferredProvider as VideoProvider;
     if (pref === "pollinations") return "pollinations";
-    // Only use paid providers if user provided their OWN key (not platform keys)
     const hasOwnKey = (
       (pref === "runway" && keys.runwayKey) ||
       (pref === "openai" && keys.openaiKey) ||
@@ -175,10 +125,10 @@ export function selectProvider(keys: UserApiKeys): VideoProvider {
     if (hasOwnKey) return pref;
   }
 
-  // Check if user provided ANY of their own paid keys (in priority order)
-   if (keys.runwayKey) return "runway";
-  if (keys.openaiKey) return "openai";
+  // Default priority order when no preference is set: Veo3 → Runway → OpenAI → fal → SeedDance → Replicate → Luma → HuggingFace → Pollinations
   if (keys.googleAiKey) return "veo3";
+  if (keys.runwayKey) return "runway";
+  if (keys.openaiKey) return "openai";
   if (keys.falKey) return "fal";
   if (keys.byteplusKey) return "seedance";
   if (keys.replicateKey) return "replicate";
@@ -203,10 +153,7 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
   const duration = 10; // seconds
 
   // promptText must be a non-empty string of ≤1000 characters
-  // Also sanitize to avoid content moderation rejections (violence, horror characters, etc.)
-  const promptText = sanitizePromptForModeration(
-    (req.prompt || "cinematic scene").substring(0, 1000).trim() || "cinematic scene"
-  );
+  const promptText = (req.prompt || "cinematic scene").substring(0, 1000).trim() || "cinematic scene";
 
   const client = new RunwayML({ apiKey: key });
 
@@ -530,7 +477,7 @@ async function generateWithHuggingFace(token: string, req: VideoGenerationReques
   }
 
   const payload = {
-    inputs: sanitizePromptForModeration(req.prompt),
+    inputs: req.prompt,
     parameters: {
       num_frames: Math.min((req.duration || 5) * 8, 65),
       num_inference_steps: 25,
@@ -900,7 +847,8 @@ export async function generateVideo(
   };
 
   // Build ordered cascade: preferred first, then all others with keys, then pollinations last
-  const allOrdered: VideoProvider[] = ["runway", "veo3", "openai", "fal", "seedance", "replicate", "luma", "huggingface", "pollinations"];
+  // Default fallback order: veo3 → runway → openai → fal → seedance → replicate → luma → huggingface → pollinations
+  const allOrdered: VideoProvider[] = ["veo3", "runway", "openai", "fal", "seedance", "replicate", "luma", "huggingface", "pollinations"];
   const cascade: { provider: VideoProvider; key: string }[] = [];
 
   // Add preferred first
