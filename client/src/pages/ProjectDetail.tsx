@@ -142,10 +142,31 @@ export default function ProjectDetail() {
   const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
   const [showFullFilm, setShowFullFilm] = useState(false);
 
-  const { data: project, isLoading } = trpc.project.get.useQuery({ id: projectId });
-  const { data: scenes } = trpc.scene.listByProject.useQuery({ projectId });
+  const { data: project, isLoading } = trpc.project.get.useQuery(
+    { id: projectId },
+    {
+      // Poll every 8 seconds while project is generating so thumbnail/status updates appear
+      refetchInterval: (data) =>
+        data?.status === "generating" ? 8000 : false,
+    }
+  );
+  const { data: scenes } = trpc.scene.listByProject.useQuery(
+    { projectId },
+    {
+      // Poll every 8 seconds while any scene is still generating
+      refetchInterval: (data) =>
+        Array.isArray(data) && data.some((s: any) => s.status === "generating") ? 8000 : false,
+    }
+  );
   const { data: characters } = trpc.character.listByProject.useQuery({ projectId });
-  const { data: jobs } = trpc.generation.listJobs.useQuery({ projectId });
+  const { data: jobs } = trpc.generation.listJobs.useQuery(
+    { projectId },
+    {
+      // Poll every 5 seconds while any job is in progress
+      refetchInterval: (data) =>
+        Array.isArray(data) && data.some((j: any) => j.status === "processing" || j.status === "pending") ? 5000 : false,
+    }
+  );
   const { data: soundtracks } = trpc.soundtrack.listByProject.useQuery({ projectId });
   const utils = trpc.useUtils();
 

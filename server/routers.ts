@@ -2791,8 +2791,17 @@ Break this into 8-15 scenes. For each scene, provide:
 
               await db.updateScene(scene.id, {
                 videoUrl: extResult.videoUrl,
+                thumbnailUrl: extResult.thumbnailUrl || undefined,
                 status: "completed",
               });
+
+              // Set project thumbnail from first scene's video thumbnail (if not already set)
+              if (sceneIdx === 0 && extResult.thumbnailUrl && !(project as any).thumbnailUrl) {
+                try {
+                  await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl });
+                  (project as any).thumbnailUrl = extResult.thumbnailUrl;
+                } catch { /* ignore */ }
+              }
 
               // Store last frame URL for continuity
               (scene as any).lastFrameUrl = extResult.lastFrameUrl;
@@ -2901,10 +2910,20 @@ Break this into 8-15 scenes. For each scene, provide:
         }
         // Update job and project
         await db.updateJob(job.id, { status: "completed", progress: 100 });
+        // Ensure project has a thumbnailUrl — use first scene's thumbnail if not already set
+        let finalThumbnailUrl: string | undefined;
+        if (!(project as any).thumbnailUrl) {
+          try {
+            const freshScenes2 = await db.getProjectScenes(project.id);
+            const firstWithThumb = freshScenes2.find((s) => (s as any).thumbnailUrl);
+            if (firstWithThumb) finalThumbnailUrl = (firstWithThumb as any).thumbnailUrl as string;
+          } catch { /* ignore */ }
+        }
         await db.updateProject(project.id, ctx.user.id, {
           status: "completed",
           progress: 100,
           ...(outputUrl ? { outputUrl } : {}),
+          ...(finalThumbnailUrl ? { thumbnailUrl: finalThumbnailUrl } : {}),
         });
         return { jobId: job.id, scenesCreated: scenesData.length, imagesGenerated: generatedCount };
         } catch (error: any) {

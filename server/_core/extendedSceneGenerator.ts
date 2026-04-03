@@ -374,8 +374,20 @@ async function stitchSubClips(
 ): Promise<{ videoUrl: string; duration: number }> {
   if (clipUrls.length === 0) throw new Error("No clips to stitch");
   if (clipUrls.length === 1) {
-    // Single clip — return directly without re-encoding
-    // Duration will be measured by the caller via ffprobe if needed
+    // Single clip — download and upload to S3 for a permanent URL
+    // (Runway/other CDN URLs expire after 24-72 hours)
+    try {
+      const resp = await fetch(clipUrls[0], { signal: AbortSignal.timeout(60_000) });
+      if (resp.ok) {
+        const buffer = Buffer.from(await resp.arrayBuffer());
+        const key = `scenes/${projectId}/scene-${sceneId}-clip-${Date.now()}.mp4`;
+        const { url: permanentUrl } = await storagePut(key, buffer, "video/mp4");
+        return { videoUrl: permanentUrl, duration: 10 };
+      }
+    } catch (uploadErr: any) {
+      console.warn(`[ExtendedScene] Failed to re-upload single clip to S3, using CDN URL as fallback: ${uploadErr.message}`);
+    }
+    // Fallback: return raw URL if S3 upload fails
     return { videoUrl: clipUrls[0], duration: 10 };
   }
 

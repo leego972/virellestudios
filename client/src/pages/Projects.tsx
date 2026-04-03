@@ -52,7 +52,14 @@ export default function Projects() {
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "name" | "status">("newest");
   const [filterStatus, setFilterStatus] = useState<"all" | "draft" | "generating" | "completed" | "failed">("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const { data: projects, isLoading, isError } = trpc.project.list.useQuery();
+  const { data: projects, isLoading, isError } = trpc.project.list.useQuery(
+    undefined,
+    {
+      // Poll every 10 seconds while any project is still generating
+      refetchInterval: (data) =>
+        Array.isArray(data) && data.some((p: any) => p.status === "generating") ? 10000 : false,
+    }
+  );
   const utils = trpc.useUtils();
 
   const deleteMutation = trpc.project.delete.useMutation({
