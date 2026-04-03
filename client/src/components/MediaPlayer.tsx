@@ -96,6 +96,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [showPlaylist, setShowPlaylist] = useState(false);
+  const [isMinimised, setIsMinimised] = useState(false);
 
   const currentIndex = playlist?.findIndex((m) => m.id === movie.id) ?? -1;
   const hasPrev = playlist && currentIndex > 0;
@@ -352,6 +353,45 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
 
   const playableMovies = playlist?.filter((m) => m.fileUrl || m.thumbnailUrl) ?? [];
 
+  // ── Minimised mini-player bar ──
+  if (isMinimised) {
+    return (
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 border-t border-white/10 flex items-center gap-3 px-4 py-3"
+        style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+      >
+        {/* Thumbnail */}
+        <div className="w-12 h-8 rounded overflow-hidden shrink-0 bg-white/5">
+          {movie.thumbnailUrl
+            ? <img src={movie.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+            : <div className="w-full h-full flex items-center justify-center"><Film className="h-3 w-3 text-white/30" /></div>
+          }
+        </div>
+        {/* Title */}
+        <div className="flex-1 min-w-0">
+          <p className="text-white text-xs font-medium truncate">{movie.title}</p>
+          <p className="text-white/40 text-[10px]">{formatTime(currentTime)} / {formatTime(duration)}</p>
+        </div>
+        {/* Play/Pause */}
+        <Button size="icon" variant="ghost" className="text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={togglePlay}>
+          {isPlaying ? <Pause className="h-4 w-4 fill-white" /> : <Play className="h-4 w-4 fill-white ml-0.5" />}
+        </Button>
+        {/* Expand */}
+        <Button size="icon" variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={() => setIsMinimised(false)} title="Expand player">
+          <Maximize className="h-4 w-4" />
+        </Button>
+        {/* Close */}
+        <Button size="icon" variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={onClose} title="Close">
+          <X className="h-4 w-4" />
+        </Button>
+        {/* Hidden video element keeps playback alive while minimised */}
+        {movie.fileUrl && (
+          <video ref={videoRef} src={movie.fileUrl} className="hidden" playsInline muted={isMuted} />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-black/95 flex flex-col" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {/* Top Bar */}
@@ -376,6 +416,16 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
+          {/* Minimise button */}
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
+            onClick={() => setIsMinimised(true)}
+            title="Minimise player"
+          >
+            <Minimize className="h-5 w-5" />
+          </Button>
           {playlist && playlist.length > 1 && (
             <Button
               size="sm"
