@@ -150,10 +150,13 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
   // Use the official RunwayML SDK with the user's BYOK key
   const client = new RunwayML({ apiKey: key });
 
+  // Runway promptText must be a non-empty string of ≤1000 characters
+  const promptText = (req.prompt || "cinematic scene").substring(0, 1000).trim() || "cinematic scene";
+
   try {
     const createParams: any = {
       model: "gen4_turbo",
-      promptText: req.prompt,
+      promptText,
       ratio: ratio as any,
       duration,
     };
@@ -780,7 +783,21 @@ export async function generateWithVeo3(key: string, req: VideoGenerationRequest)
 
   if (!resp.ok) {
     const errText = await resp.text();
-    throw new Error(`Veo 3 API error ${resp.status}: ${errText}`);
+    // Parse quota/billing errors for a cleaner message
+    if (resp.status === 429 || errText.includes("RESOURCE_EXHAUSTED") || errText.includes("quota")) {
+      throw new Error(`Veo3 quota exceeded — recharge at aistudio.google.com`);
+    }
+    if (resp.status === 400) {
+      // Try to extract the specific validation message
+      try {
+        const errJson = JSON.parse(errText);
+        const msg = errJson?.error?.message || errText.substring(0, 200);
+        throw new Error(`Veo3 request error: ${msg}`);
+      } catch (e: any) {
+        if (e.message.startsWith("Veo3")) throw e;
+      }
+    }
+    throw new Error(`Veo3 API error ${resp.status}: ${errText.substring(0, 200)}`);
   }
 
   const data = await resp.json() as any;
@@ -869,10 +886,14 @@ export async function generateVideo(
     }
   }
 
-  // All providers exhausted
+  // All providers exhausted — build a short summary
+  const shortErrors = errors.map(e => {
+    // Truncate each error to 120 chars
+    return e.length > 120 ? e.substring(0, 117) + "..." : e;
+  });
   throw new Error(
     `Video generation failed — all providers exhausted:\n` +
-    errors.map(e => `  • ${e}`).join("\n")
+    shortErrors.map(e => `  • ${e}`).join("\n")
   );
 }
 
