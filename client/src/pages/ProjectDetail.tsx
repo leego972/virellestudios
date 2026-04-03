@@ -146,25 +146,33 @@ export default function ProjectDetail() {
     { id: projectId },
     {
       // Poll every 8 seconds while project is generating so thumbnail/status updates appear
-      refetchInterval: (data) =>
-        data?.status === "generating" ? 8000 : false,
+      refetchInterval: (query) =>
+        (query.state.data as any)?.status === "generating" ? 8000 : false,
     }
   );
   const { data: scenes } = trpc.scene.listByProject.useQuery(
     { projectId },
     {
-      // Poll every 8 seconds while any scene is still generating
-      refetchInterval: (data) =>
-        Array.isArray(data) && data.some((s: any) => s.status === "generating") ? 8000 : false,
+      // Poll every 8 seconds while project or any scene is generating
+      refetchInterval: (query) => {
+        const sceneData = query.state.data as any;
+        const projectGenerating = project?.status === "generating";
+        const anySceneGenerating = Array.isArray(sceneData) && sceneData.some((s: any) => s.status === "generating");
+        return (projectGenerating || anySceneGenerating) ? 8000 : false;
+      },
     }
   );
   const { data: characters } = trpc.character.listByProject.useQuery({ projectId });
   const { data: jobs } = trpc.generation.listJobs.useQuery(
     { projectId },
     {
-      // Poll every 5 seconds while any job is in progress
-      refetchInterval: (data) =>
-        Array.isArray(data) && data.some((j: any) => j.status === "processing" || j.status === "pending") ? 5000 : false,
+      // Poll every 5 seconds while project is generating or any job is in progress
+      refetchInterval: (query) => {
+        const jobData = query.state.data as any;
+        const projectGenerating = project?.status === "generating";
+        const anyJobActive = Array.isArray(jobData) && jobData.some((j: any) => j.status === "processing" || j.status === "pending");
+        return (projectGenerating || anyJobActive) ? 5000 : false;
+      },
     }
   );
   const { data: soundtracks } = trpc.soundtrack.listByProject.useQuery({ projectId });
@@ -260,7 +268,7 @@ export default function ProjectDetail() {
       utils.project.get.invalidate({ id: projectId });
       utils.scene.listByProject.invalidate({ projectId });
       utils.generation.listJobs.invalidate({ projectId });
-      toast.success(`Generated ${result.scenesCreated} scenes`);
+      toast.success("Film generation started! This runs in the background — check back in a few minutes.");
     },
     onError: (err) => toast.error(err.message),
   });

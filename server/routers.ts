@@ -378,7 +378,23 @@ export const appRouter = router({
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ ctx, input }) => {
-        return db.getProjectById(input.id, ctx.user.id);
+        const project = await db.getProjectById(input.id, ctx.user.id);
+        // Auto-populate thumbnailUrl from first scene with a thumbnail if project has none
+        if (project && !(project as any).thumbnailUrl) {
+          try {
+            const scenes = await db.getProjectScenes(project.id);
+            // Prefer scene with both thumbnail AND video; fall back to any with thumbnail
+            const sceneWithThumb =
+              scenes.find((s: any) => s.thumbnailUrl && (s as any).videoUrl) ||
+              scenes.find((s: any) => s.thumbnailUrl);
+            if (sceneWithThumb?.thumbnailUrl) {
+              (project as any).thumbnailUrl = sceneWithThumb.thumbnailUrl;
+              // Persist so future loads are fast
+              await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: sceneWithThumb.thumbnailUrl }).catch(() => {});
+            }
+          } catch { /* non-critical */ }
+        }
+        return project;
       }),
 
     create: creationProcedure
@@ -2461,16 +2477,27 @@ Available fields you can update:
           progress: 0,
           thumbnailUrl: null,
         });
+
+        // ── FIRE-AND-FORGET: Return immediately so Railway's 5-minute HTTP timeout doesn't kill us ──
+        // The full generation pipeline runs in the background. The client polls for updates
+        // via refetchInterval on project.get, scene.listByProject, and generation.listJobs.
+        const userId = ctx.user.id;
+        const projectId = project.id;
+        const jobId = job.id;
+        const projectRef = project;
+        const ctxUser = ctx.user; // capture for background closure
+
+        setImmediate(async () => {
         try {
         // ── Fetch user BYOK keys early — used for both LLM and video generation ──
         // Must be done before Step 0 so user's own OpenAI key is used for LLM calls,
         // not the platform key (which may be quota-exhausted).
-        const earlyUserKeys = await db.getUserApiKeys(ctx.user!.id);
+        const earlyUserKeys = await db.getUserApiKeys(userId);
         const userLlmApiKey: string | null = earlyUserKeys.openaiKey || null;
 
         // ── Step 0: Auto-generate photorealistic characters if none exist ──
         // This is the key to broadcast-quality output: consistent faces across all scenes
-        let existingCharacters = await db.getProjectCharacters(project.id);
+        let existingCharacters = await db.getProjectCharacters(projectId);
         if (existingCharacters.length === 0) {
           try {
             // Ask LLM to design 2-4 characters (humans + animals if relevant) based on the plot
@@ -2483,7 +2510,7 @@ Available fields you can update:
                 },
                 {
                   role: "user",
-                  content: `Plot: ${project.plotSummary || project.description || "A compelling story"}\nGenre: ${project.genre || "Drama"}\n\nDesign 2-4 main characters. Return JSON with this exact schema:\n{"characters": [{"name": string, "role": string, "isAnimal": boolean, "animalSpecies": string|null, "gender": string, "ageRange": string, "ethnicity": string, "skinTone": string, "build": string, "hairColor": string, "hairStyle": string, "eyeColor": string, "facialFeatures": string, "distinguishingMarks": string, "clothingStyle": string, "expression": string, "description": string}]}`,
+                  content: `Plot: ${projectRef.plotSummary || projectRef.description || "A compelling story"}\nGenre: ${projectRef.genre || "Drama"}\n\nDesign 2-4 main characters. Return JSON with this exact schema:\n{"characters": [{"name": string, "role": string, "isAnimal": boolean, "animalSpecies": string|null, "gender": string, "ageRange": string, "ethnicity": string, "skinTone": string, "build": string, "hairColor": string, "hairStyle": string, "eyeColor": string, "facialFeatures": string, "distinguishingMarks": string, "clothingStyle": string, "expression": string, "description": string}]}`,
                 },
               ],
               response_format: { type: "json_object" },
@@ -2538,15 +2565,15 @@ Available fields you can update:
                 const portraitResult = await generateImage({ prompt: portraitPrompt });
                 if (portraitResult.url) {
                   await db.createCharacter({
-                    userId: ctx.user.id,
-                    projectId: project.id,
+                    userId: userId,
+                    projectId: projectId,
                     name: cd.name || "Character",
                     description: cd.description || `${cd.role || "Character"} — ${cd.isAnimal ? cd.animalSpecies : `${cd.gender}, ${cd.ageRange}, ${cd.ethnicity}`}`,
                     photoUrl: portraitResult.url,
                     attributes: {
                       ...cd,
                       aiGenerated: true,
-                      autoGeneratedForProject: project.id,
+                      autoGeneratedForProject: projectId,
                     },
                   });
                   console.log(`[QuickGen] Auto-generated character portrait: ${cd.name}`);
@@ -2562,8 +2589,8 @@ Available fields you can update:
         }
 
         // ── Step 1: Build Visual DNA for consistent style across all scenes ──
-        const characters = await db.getProjectCharacters(project.id);
-        const userTier = getEffectiveTier(ctx.user) as QualityTier;
+        const characters = await db.getProjectCharacters(projectId);
+        const userTier = getEffectiveTier(ctxUser) as QualityTier;
         const visualDNA = buildVisualDNA(project, characters, userTier);
         const charDescriptions = characters.map(c => {
           const attrs = (c.attributes as any) || {};
@@ -2581,7 +2608,7 @@ Available fields you can update:
 
         // ── Step 2: Enhanced LLM scene breakdown with cinematic intelligence ──
         // Check if director explicitly granted creative leeway in their plot/description
-        const directorText = (project.plotSummary || project.description || "").toLowerCase();
+        const directorText = (projectRef.plotSummary || projectRef.description || "").toLowerCase();
         const hasCreativeLeeway = /be creative|use your judgment|surprise me|you decide|fill it in|add what you think|make it cinematic|your choice|go wild|improvise|creative freedom/i.test(directorText);
         const systemPrompt = buildSceneBreakdownSystemPrompt({ ...project, creativeLeeway: hasCreativeLeeway });
 
@@ -2594,7 +2621,7 @@ Available fields you can update:
             },
             {
               role: "user",
-              content: `Plot: ${project.plotSummary || project.description || "A compelling story"}
+              content: `Plot: ${projectRef.plotSummary || projectRef.description || "A compelling story"}
 
 Characters:
 ${charDescriptions}
@@ -2643,7 +2670,7 @@ Break this into 8-15 scenes. For each scene, provide:
         for (let i = 0; i < scenesData.length; i++) {
           const s = scenesData[i];
           await db.createScene({
-            projectId: project.id,
+            projectId: projectId,
             orderIndex: i,
             title: s.title,
             // Store the rich visual description for image generation
@@ -2670,7 +2697,7 @@ Break this into 8-15 scenes. For each scene, provide:
         }
 
         // ── Step 4: Generate VIDEO CLIPS for each scene using Sora API ──
-        const allScenes = await db.getProjectScenes(project.id);
+        const allScenes = await db.getProjectScenes(projectId);
         let generatedCount = 0;
 
         // Collect character photo references for image generation fallback
@@ -2711,7 +2738,7 @@ Break this into 8-15 scenes. For each scene, provide:
                 await db.updateScene(scene.id, { thumbnailUrl: imgResult.url });
                 // Use first scene image as project thumbnail
                 if (sceneIdx === 0) {
-                  await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: imgResult.url });
+                  await db.updateProject(projectId, userId, { thumbnailUrl: imgResult.url });
                 }
               }
             } catch (imgErr) {
@@ -2762,7 +2789,7 @@ Break this into 8-15 scenes. For each scene, provide:
               scene.lighting ? `Lighting: ${scene.lighting}.` : "",
               scene.timeOfDay ? `Time: ${scene.timeOfDay}.` : "",
               scene.weather ? `Weather: ${scene.weather}.` : "",
-              project.genre ? `Genre: ${project.genre}.` : "",
+              projectRef.genre ? `Genre: ${projectRef.genre}.` : "",
               scene.locationType ? `Location: ${scene.locationType}.` : "",
               (scene.cameraAngle as string) === "tracking" ? "Smooth tracking camera movement." : "Slow cinematic dolly shot.",
               "Photorealistic, shot on ARRI Alexa 65, 35mm anamorphic lens, shallow depth of field, natural lighting, film grain, broadcast TV quality.",
@@ -2777,14 +2804,14 @@ Break this into 8-15 scenes. For each scene, provide:
               const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
-                projectId: project.id,
+                projectId: projectId,
                 description: videoPrompt,
                 targetDurationSeconds: targetSceneDuration,
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
                 timeOfDay: scene.timeOfDay || undefined,
                 weather: scene.weather || undefined,
-                genre: project.genre || undefined,
+                genre: projectRef.genre || undefined,
                 locationDescription: scene.locationType || undefined,
                 previousSceneLastFrameUrl: sceneIdx > 0 ? (allScenes[sceneIdx - 1] as any)?.lastFrameUrl : undefined,
               });
@@ -2798,7 +2825,7 @@ Break this into 8-15 scenes. For each scene, provide:
               // Set project thumbnail from first scene's video thumbnail (if not already set)
               if (sceneIdx === 0 && extResult.thumbnailUrl && !(project as any).thumbnailUrl) {
                 try {
-                  await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl });
+                  await db.updateProject(projectId, userId, { thumbnailUrl: extResult.thumbnailUrl });
                   (project as any).thumbnailUrl = extResult.thumbnailUrl;
                 } catch { /* ignore */ }
               }
@@ -2829,7 +2856,7 @@ Break this into 8-15 scenes. For each scene, provide:
                   const taskId = finalVideoUrl.replace("runway-pending:", "");
                   // Store as a proper job for the worker to complete asynchronously
                   await db.createGenerationJob({
-                    projectId: project.id,
+                    projectId: projectId,
                     sceneId: scene.id,
                     type: "scene",
                     status: "processing",
@@ -2839,8 +2866,8 @@ Break this into 8-15 scenes. For each scene, provide:
                       runwayTaskId: taskId,
                       runwayApiKey: byokKeys.runwayKey,
                       sceneId: scene.id,
-                      projectId: project.id,
-                      userId: ctx.user.id,
+                      projectId: projectId,
+                      userId: userId,
                       prompt: videoPrompt,
                       imageUrl: scene.thumbnailUrl || undefined,
                       ratio: "1280:720",
@@ -2873,13 +2900,13 @@ Break this into 8-15 scenes. For each scene, provide:
           // Always update progress — even if this scene failed — so the UI never appears frozen
           const progress = Math.min(95, Math.round(((sceneIdx + 1) / allScenes.length) * 90) + 10);
           await db.updateJob(job.id, { progress });
-          await db.updateProject(project.id, ctx.user.id, { progress });
+          await db.updateProject(projectId, userId, { progress });
         }
 
          // ── Auto-stitch all scene videos into a final film ──
         let outputUrl: string | undefined;
         try {
-          const freshScenes = await db.getProjectScenes(project.id);
+          const freshScenes = await db.getProjectScenes(projectId);
           const videoScenes = freshScenes
             .filter((s) => (s as any).videoUrl)
             .sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
@@ -2893,13 +2920,13 @@ Break this into 8-15 scenes. For each scene, provide:
                 orderIndex: s.orderIndex ?? idx,
                 transition: "fade-to-black",
               })),
-              projectTitle: project.title,
-              userId: ctx.user.id,
-              projectId: project.id,
+              projectTitle: projectRef.title,
+              userId: userId,
+              projectId: projectId,
               showTitleCard: true,
               showCredits: false,
-              genre: project.genre || undefined,
-              resolution: project.resolution === "1920x1080" ? "1080p" : "720p",
+              genre: projectRef.genre || undefined,
+              resolution: projectRef.resolution === "1920x1080" ? "1080p" : "720p",
             });
             outputUrl = stitchResult.fileUrl;
             console.log(`[QuickGen] Auto-stitched ${videoScenes.length} scenes → ${outputUrl}`);
@@ -2914,28 +2941,33 @@ Break this into 8-15 scenes. For each scene, provide:
         let finalThumbnailUrl: string | undefined;
         if (!(project as any).thumbnailUrl) {
           try {
-            const freshScenes2 = await db.getProjectScenes(project.id);
+            const freshScenes2 = await db.getProjectScenes(projectId);
             const firstWithThumb = freshScenes2.find((s) => (s as any).thumbnailUrl);
             if (firstWithThumb) finalThumbnailUrl = (firstWithThumb as any).thumbnailUrl as string;
           } catch { /* ignore */ }
         }
-        await db.updateProject(project.id, ctx.user.id, {
+        await db.updateProject(projectId, userId, {
           status: "completed",
           progress: 100,
           ...(outputUrl ? { outputUrl } : {}),
           ...(finalThumbnailUrl ? { thumbnailUrl: finalThumbnailUrl } : {}),
         });
-        return { jobId: job.id, scenesCreated: scenesData.length, imagesGenerated: generatedCount };
+        console.log(`[QuickGen] Background generation complete for project ${projectId}: ${scenesData.length} scenes, ${generatedCount} videos`);
         } catch (error: any) {
           // Error recovery: ensure project doesn't get stuck in "generating" state
-          console.error("quickGenerate failed:", error?.message, error?.stack);
-          await db.updateJob(job.id, { status: "failed", progress: 0 });
-          await db.updateProject(project.id, ctx.user.id, {
-            status: "draft",
-            progress: 0,
-          });
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Generation failed: ${error.message}. Project has been reset to draft.` });
+          console.error("[QuickGen] Background generation failed:", error?.message, error?.stack);
+          try { await db.updateJob(jobId, { status: "failed", progress: 0 }); } catch { /* ignore */ }
+          try {
+            await db.updateProject(projectId, userId, {
+              status: "draft",
+              progress: 0,
+            });
+          } catch { /* ignore */ }
         }
+        }); // end setImmediate
+
+        // Return immediately — generation continues in background
+        return { jobId: job.id, scenesCreated: 0, imagesGenerated: 0 };
       }),
 
     // Generate trailer from existing scenes

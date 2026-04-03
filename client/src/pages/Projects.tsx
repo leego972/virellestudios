@@ -56,8 +56,8 @@ export default function Projects() {
     undefined,
     {
       // Poll every 10 seconds while any project is still generating
-      refetchInterval: (data) =>
-        Array.isArray(data) && data.some((p: any) => p.status === "generating") ? 10000 : false,
+      refetchInterval: (query) =>
+        Array.isArray((query.state.data as any)) && (query.state.data as any[]).some((p: any) => p.status === "generating") ? 10000 : false,
     }
   );
   const utils = trpc.useUtils();
