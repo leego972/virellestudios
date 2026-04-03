@@ -140,66 +140,62 @@ export function selectProvider(keys: UserApiKeys): VideoProvider {
 // ─── Runway ML ───
 
 async function generateWithRunway(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
-  const ratio = req.aspectRatio === "9:16" ? "720:1280" : req.aspectRatio === "1:1" ? "720:720" : "1280:720";
-  // Runway Gen-4 Turbo only accepts 5 or 10 seconds — use 10s for maximum clip length
-  const duration = 10;
+  // Runway SDK requires different endpoints for image-to-video vs text-to-video:
+  //   - imageToVideo.create() with gen4_turbo: requires promptImage (HTTPS URL)
+  //   - textToVideo.create() with gen4.5: text-only, no image needed
+  // gen4_turbo ratio options: '1280:720' | '720:1280' | '1104:832' | '832:1104' | '960:960' | '1584:672'
+  // gen4.5 ratio options: '1280:720' | '720:1280'
+  const hasImage = !!req.imageUrl;
+  const ratio16x9 = "1280:720";
+  const ratio9x16 = "720:1280";
+  const ratio = req.aspectRatio === "9:16" ? ratio9x16 : ratio16x9;
+  const duration = 10; // seconds
 
-  console.log(`[BYOK:Runway] Starting gen4_turbo job: ${duration}s at ${ratio}`);
-  console.log(`[BYOK:Runway] Prompt: ${req.prompt.substring(0, 200)}`);
-
-  // Use the official RunwayML SDK with the user's BYOK key
-  const client = new RunwayML({ apiKey: key });
-
-  // Runway promptText must be a non-empty string of ≤1000 characters
+  // promptText must be a non-empty string of ≤1000 characters
   const promptText = (req.prompt || "cinematic scene").substring(0, 1000).trim() || "cinematic scene";
 
+  const client = new RunwayML({ apiKey: key });
+
   try {
-    const createParams: any = {
-      model: "gen4_turbo",
-      promptText,
-      ratio: ratio as any,
-      duration,
-    };
+    let task: any;
 
-    if (req.imageUrl) {
-      createParams.promptImage = req.imageUrl;
-      console.log(`[BYOK:Runway] Mode: image-to-video with ref: ${req.imageUrl.substring(0, 80)}`);
+    if (hasImage) {
+      // Image-to-video: use gen4_turbo via imageToVideo endpoint
+      console.log(`[BYOK:Runway] Mode: image-to-video (gen4_turbo) — ref: ${req.imageUrl!.substring(0, 80)}`);
+      const createParams: any = {
+        model: "gen4_turbo",
+        promptImage: req.imageUrl,
+        promptText,
+        ratio: ratio as any,
+        duration,
+      };
+      if (req.seed !== undefined && req.seed !== null) createParams.seed = req.seed;
+      task = await client.imageToVideo.create(createParams);
     } else {
-      console.log(`[BYOK:Runway] Mode: text-to-video`);
+      // Text-to-video: use gen4.5 via textToVideo endpoint (no image required)
+      console.log(`[BYOK:Runway] Mode: text-to-video (gen4.5)`);
+      const createParams: any = {
+        model: "gen4.5",
+        promptText,
+        ratio: ratio as any,
+        duration,
+      };
+      if (req.seed !== undefined && req.seed !== null) createParams.seed = req.seed;
+      task = await (client as any).textToVideo.create(createParams);
     }
 
-    // Add negative prompt if provided (Runway supports this)
-    if (req.negativePrompt) {
-      createParams.negativePrompt = req.negativePrompt;
-      console.log(`[BYOK:Runway] Negative prompt: ${req.negativePrompt.substring(0, 100)}`);
-    }
-
-    // Add seed for reproducibility if provided
-    if (req.seed !== undefined && req.seed !== null) {
-      createParams.seed = req.seed;
-      console.log(`[BYOK:Runway] Seed: ${req.seed}`);
-    }
-
-    // IMPORTANT: Use create() only (non-blocking) — do NOT use waitForTaskOutput().
-    // The task ID is returned to the caller, stored in the DB, and polled by
-    // videoJobWorker.ts which survives Railway restarts.
-    const task = await client.imageToVideo.create(createParams);
     const taskId = (task as any).id;
-
     if (!taskId) {
       throw new Error(`Runway task creation returned no task ID: ${JSON.stringify(task).substring(0, 200)}`);
     }
 
     console.log(`[BYOK:Runway] Task submitted: ${taskId} — worker will poll for completion`);
-
-    // Return a special sentinel URL — the worker will replace this with the real URL
-    // The caller (generateVideo route) stores the taskId in the DB job metadata
     return { provider: "runway", videoUrl: `runway-pending:${taskId}`, jobId: taskId, durationSeconds: duration };
 
   } catch (error: any) {
     if (error instanceof TaskFailedError) {
       console.error("[BYOK:Runway] Task failed:", error.taskDetails);
-      throw new Error(`Runway video generation failed: ${JSON.stringify(error.taskDetails)}`);
+      throw new Error(`Runway video generation failed: ${JSON.stringify(error.taskDetails).substring(0, 300)}`);
     }
     console.error("[BYOK:Runway] Error:", error.message);
     throw new Error(`Runway video generation error: ${error.message}`);
