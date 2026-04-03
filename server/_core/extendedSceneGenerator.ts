@@ -41,13 +41,19 @@ async function pollRunwaySentinel(apiKey: string, taskId: string): Promise<strin
   const startTime = Date.now();
   console.log(`[ExtendedScene] Polling Runway task ${taskId}...`);
   while (Date.now() - startTime < MAX_WAIT_MS) {
-    const task = await (client as any).tasks.retrieve(taskId);
+    // Wrap each SDK call in a race against a 30s timeout to prevent hung connections
+    const task = await Promise.race([
+      (client as any).tasks.retrieve(taskId),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Runway tasks.retrieve timed out after 30s")), 30_000)
+      ),
+    ]);
     const status = task.status as string;
     if (status === "SUCCEEDED" || status === "succeeded") {
       const videoUrl = task.output?.[0] || task.output?.video || task.output;
       if (videoUrl && typeof videoUrl === "string") {
         // Download and re-upload to S3 for permanent storage
-        const resp = await fetch(videoUrl);
+        const resp = await fetch(videoUrl, { signal: AbortSignal.timeout(120_000) });
         if (!resp.ok) throw new Error(`Failed to download Runway video: ${resp.status}`);
         const buffer = Buffer.from(await resp.arrayBuffer());
         const key = `scenes/runway-${taskId}-${Date.now()}.mp4`;
@@ -376,15 +382,19 @@ async function stitchSubClips(
   const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "virelle-stitch-sub-"));
 
   try {
-    // Download all clips
+    // Download all clips (60s timeout per clip to prevent hung downloads)
     const localFiles: string[] = [];
     for (let i = 0; i < clipUrls.length; i++) {
       const localPath = path.join(tmpDir, `clip_${String(i).padStart(3, "0")}.mp4`);
-      const resp = await fetch(clipUrls[i]);
-      if (!resp.ok) continue;
-      const buffer = Buffer.from(await resp.arrayBuffer());
-      await fs.promises.writeFile(localPath, buffer);
-      localFiles.push(localPath);
+      try {
+        const resp = await fetch(clipUrls[i], { signal: AbortSignal.timeout(60_000) });
+        if (!resp.ok) continue;
+        const buffer = Buffer.from(await resp.arrayBuffer());
+        await fs.promises.writeFile(localPath, buffer);
+        localFiles.push(localPath);
+      } catch (dlErr: any) {
+        console.warn(`[ExtendedScene] Failed to download clip ${i + 1} for stitching: ${dlErr.message}`);
+      }
     }
 
     if (localFiles.length === 0) throw new Error("Failed to download any clips");
@@ -534,24 +544,42 @@ export async function generateExtendedScene(
         }
       }
 
-      const videoResult = await generateBYOKVideo(keys, {
-        prompt: effectivePrompt,
-        imageUrl: effectiveImageUrl,
-        duration: subShot.durationSeconds,
-        aspectRatio: "16:9",
-        resolution: "1080p",
-        negativePrompt: request.negativePrompt,
-        seed: request.seed,
-      });
+      // Wrap the entire sub-clip generation (including sentinel polling) in a 20-minute timeout.
+      // This prevents a single hung Runway/Veo3 task from blocking all subsequent scenes.
+      const SUB_CLIP_TIMEOUT_MS = 20 * 60 * 1000;
+      const videoResult = await Promise.race([
+        generateBYOKVideo(keys, {
+          prompt: effectivePrompt,
+          imageUrl: effectiveImageUrl,
+          duration: subShot.durationSeconds,
+          aspectRatio: "16:9",
+          resolution: "1080p",
+          negativePrompt: request.negativePrompt,
+          seed: request.seed,
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error(`Sub-clip ${i + 1} timed out after 20 minutes`)), SUB_CLIP_TIMEOUT_MS)
+        ),
+      ]);
 
       // Resolve async sentinel URLs (Runway and Veo 3 return pending sentinels that need polling)
       let resolvedVideoUrl = videoResult.videoUrl;
       if (resolvedVideoUrl.startsWith("runway-pending:")) {
         const taskId = resolvedVideoUrl.replace("runway-pending:", "");
-        resolvedVideoUrl = await pollRunwaySentinel(keys.runwayKey!, taskId);
+        resolvedVideoUrl = await Promise.race([
+          pollRunwaySentinel(keys.runwayKey!, taskId),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error(`Runway sentinel poll for task ${taskId} timed out after 18 minutes`)), 18 * 60 * 1000)
+          ),
+        ]);
       } else if (resolvedVideoUrl.startsWith("veo3-pending:")) {
         const operationName = resolvedVideoUrl.replace("veo3-pending:", "");
-        resolvedVideoUrl = await pollVeo3Sentinel(keys.googleAiKey!, operationName);
+        resolvedVideoUrl = await Promise.race([
+          pollVeo3Sentinel(keys.googleAiKey!, operationName),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error(`Veo3 sentinel poll for ${operationName} timed out after 22 minutes`)), 22 * 60 * 1000)
+          ),
+        ]);
       }
 
       generatedClipUrls.push(resolvedVideoUrl);

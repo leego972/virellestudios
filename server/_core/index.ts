@@ -115,6 +115,12 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
+  // Film generation can take 30-90 minutes — disable Node.js HTTP server timeouts
+  // so long-running tRPC mutations are never dropped mid-generation.
+  server.timeout = 0;          // disable socket inactivity timeout
+  server.keepAliveTimeout = 0; // disable keep-alive timeout
+  server.headersTimeout = 0;   // disable headers timeout
+
   // Stripe webhook endpoint — MUST be before json body parser
   app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
     if (!stripe) {

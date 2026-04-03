@@ -2839,11 +2839,12 @@ Break this into 8-15 scenes. For each scene, provide:
                 await db.updateScene(scene.id, { status: "completed" });
               }
             }
-          } catch (e) {
-            console.error(`Failed to process scene "${scene.title}":`, e);
+           } catch (e: any) {
+            console.error(`Failed to process scene "${scene.title}":`, e?.message || e);
+            // Mark scene as completed (with no video) so it doesn't stay in 'generating' state
+            try { await db.updateScene(scene.id, { status: "completed" }); } catch { /* ignore */ }
           }
-
-          // Update progress
+          // Always update progress — even if this scene failed — so the UI never appears frozen
           const progress = Math.min(95, Math.round(((sceneIdx + 1) / allScenes.length) * 90) + 10);
           await db.updateJob(job.id, { progress });
           await db.updateProject(project.id, ctx.user.id, { progress });
