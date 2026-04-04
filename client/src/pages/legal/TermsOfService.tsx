@@ -376,9 +376,8 @@ export default function TermsOfService() {
             </div>
             <p>
               Any request for a credit, generation credit top-up, monetary compensation, or subscription
-              refund must be submitted via email to{" "}
-              <a href="mailto:Studiosvirelle@gmail.com" className="text-amber-400 hover:text-amber-300 underline">
-                Studiosvirelle@gmail.com
+              refund must be submitted via email to{" "}              <a href="mailto:billing@virelle.life" className="text-amber-400 hover:text-amber-300 underline">
+                billing@virelle.life
               </a>{" "}
               with clear screenshots evidencing the issue. All such requests are subject to administrator
               review and approval, which may take up to 24 hours. Credits are non-transferable, have no
@@ -394,9 +393,8 @@ export default function TermsOfService() {
             </h2>
             <p>
               In the event of a technical error, generation failure, or malfunction, submit a clear,
-              descriptive email to{" "}
-              <a href="mailto:Studiosvirelle@gmail.com" className="text-amber-400 hover:text-amber-300 underline">
-                Studiosvirelle@gmail.com
+              descriptive email to{" "}              <a href="mailto:support@virelle.life" className="text-amber-400 hover:text-amber-300 underline">
+                support@virelle.life
               </a>{" "}
               with one or more clear screenshots documenting the issue. Reports without supporting
               screenshots may not be actioned. Virelle Studios will endeavour to respond within 24 hours
@@ -440,18 +438,28 @@ export default function TermsOfService() {
             </h2>
             <p>
               For legal enquiries and content moderation appeals:{" "}
-              <a href="mailto:Studiosvirelle@gmail.com" className="text-amber-400 hover:text-amber-300 underline">
-                Studiosvirelle@gmail.com
+              <a href="mailto:legal@virelle.life" className="text-amber-400 hover:text-amber-300 underline">
+                legal@virelle.life
               </a>
               <br />
               For technical support and error reporting:{" "}
-              <a href="mailto:Studiosvirelle@gmail.com" className="text-amber-400 hover:text-amber-300 underline">
-                Studiosvirelle@gmail.com
+              <a href="mailto:support@virelle.life" className="text-amber-400 hover:text-amber-300 underline">
+                support@virelle.life
+              </a>
+              <br />
+              For billing and refund requests:{" "}
+              <a href="mailto:billing@virelle.life" className="text-amber-400 hover:text-amber-300 underline">
+                billing@virelle.life
               </a>
               <br />
               For DMCA takedown notices:{" "}
-              <a href="mailto:Studiosvirelle@gmail.com" className="text-amber-400 hover:text-amber-300 underline">
-                Studiosvirelle@gmail.com
+              <a href="mailto:legal@virelle.life" className="text-amber-400 hover:text-amber-300 underline">
+                legal@virelle.life
+              </a>
+              <br />
+              For general enquiries:{" "}
+              <a href="mailto:hello@virelle.life" className="text-amber-400 hover:text-amber-300 underline">
+                hello@virelle.life
               </a>
             </p>
           </section>

@@ -64,7 +64,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-lg font-semibold mb-3 text-foreground">5. Data Retention</h2>
             <p className="text-muted-foreground">
-              We retain your account data for as long as your account is active. Generated content is retained according to your subscription plan. You may request deletion of your account and associated data by contacting <a href="mailto:Studiosvirelle@gmail.com" className="text-primary hover:underline">Studiosvirelle@gmail.com</a>. Note that we may retain certain data as required by law or for legitimate safety purposes.
+              We retain your account data for as long as your account is active. Generated content is retained according to your subscription plan. You may request deletion of your account and associated data by contacting <a href="mailto:privacy@virelle.life" className="text-primary hover:underline">privacy@virelle.life</a>. Note that we may retain certain data as required by law or for legitimate safety purposes.
             </p>
           </section>
 
@@ -86,14 +86,14 @@ export default function PrivacyPolicy() {
               <li>Data portability</li>
             </ul>
             <p className="text-muted-foreground mt-3">
-              To exercise these rights, contact <a href="mailto:Studiosvirelle@gmail.com" className="text-primary hover:underline">Studiosvirelle@gmail.com</a>.
+              To exercise these rights, contact <a href="mailto:privacy@virelle.life" className="text-primary hover:underline">privacy@virelle.life</a>.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-semibold mb-3 text-foreground">8. Contact</h2>
             <p className="text-muted-foreground">
-              For privacy-related inquiries: <a href="mailto:Studiosvirelle@gmail.com" className="text-primary hover:underline">Studiosvirelle@gmail.com</a>
+              For privacy-related inquiries: <a href="mailto:privacy@virelle.life" className="text-primary hover:underline">privacy@virelle.life</a><br />For legal matters: <a href="mailto:legal@virelle.life" className="text-primary hover:underline">legal@virelle.life</a><br />For support: <a href="mailto:support@virelle.life" className="text-primary hover:underline">support@virelle.life</a>
             </p>
           </section>
 
