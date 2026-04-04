@@ -542,6 +542,7 @@ function DashboardLayoutContent({
       </div>
 
       <SidebarInset>
+        {/* Mobile header */}
         {isMobile && (
           <div data-mobile-header className="flex border-b h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
             <div className="flex items-center gap-2">
@@ -558,6 +559,47 @@ function DashboardLayoutContent({
                 {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
             )}
+          </div>
+        )}
+        {/* Desktop header */}
+        {!isMobile && (
+          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="h-9 w-9 rounded-lg" />
+              <span className="text-sm text-muted-foreground hidden sm:block">
+                {menuItems.find(m => m.path === '/' ? location === '/' : location.startsWith(m.path))?.label || 'Dashboard'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <NotificationBell />
+              {switchable && (
+                <button
+                  onClick={toggleTheme}
+                  className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-accent transition-colors"
+                  aria-label="Toggle theme"
+                >
+                  {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </button>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-accent/50 transition-colors focus:outline-none">
+                    <Avatar className="h-7 w-7 border shrink-0">
+                      <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
+                        {user?.name?.charAt(0).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium hidden md:block">{user?.name || 'Director'}</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         )}
         <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
