@@ -567,7 +567,7 @@ function DashboardLayoutContent({
             <div className="flex items-center gap-2">
               <SidebarTrigger className="h-9 w-9 rounded-lg" />
               <span className="text-sm text-muted-foreground hidden sm:block">
-                {menuItems.find(m => m.path === '/' ? location === '/' : location.startsWith(m.path))?.label || 'Dashboard'}
+                {[...menuItems, ...adminMenuItems].find(m => m.path === '/' ? location === '/' : location.startsWith(m.path))?.label || 'Dashboard'}
               </span>
             </div>
             <div className="flex items-center gap-2">

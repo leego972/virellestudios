@@ -1142,8 +1142,20 @@ export async function runAutoMigration(): Promise<void> {
   }
 
   // ─── Step 3: Admin Role Bootstrap ───
-  // Admin promotion is now strictly controlled via OWNER_OPEN_ID in db.ts or manual DB updates.
-  // No implicit email-based promotion is performed here for production discipline.
+  // Promote the owner email to admin on every startup (idempotent)
+  const adminEmailToPromote = (process.env.ADMIN_EMAIL || "Studiosvirelle@gmail.com").toLowerCase();
+  try {
+    const [adminRow] = await db.execute(sql.raw(`SELECT id, role FROM users WHERE LOWER(email) = '${adminEmailToPromote}' LIMIT 1`)) as any;
+    const adminUser = Array.isArray(adminRow) ? adminRow[0] : adminRow;
+    if (adminUser && adminUser.role !== 'admin') {
+      await db.execute(sql.raw(`UPDATE users SET role = 'admin' WHERE id = ${adminUser.id}`));
+      console.log(`[AutoMigrate] Promoted ${adminEmailToPromote} to admin`);
+    } else if (adminUser) {
+      console.log(`[AutoMigrate] Admin role confirmed for ${adminEmailToPromote}`);
+    }
+  } catch (err: any) {
+    console.warn('[AutoMigrate] Admin bootstrap failed:', err.message);
+  }
   // ─── Step 4: Seed promo codes (INSERT IGNORE — safe to run repeatedly) ───
   const PROMO_CODES = [
     { code: "VIRELLE50",   description: "50% off — General launch promo" },

@@ -50,7 +50,7 @@ export default function LeegoFooter() {
             <span>·</span>
             <a href="/privacy" className="hover:text-foreground/70 transition-colors">Privacy Policy</a>
             <span>·</span>
-            <a href="/legal/acceptable-use" className="hover:text-foreground/70 transition-colors">Acceptable Use</a>
+            <a href="/acceptable-use" className="hover:text-foreground/70 transition-colors">Acceptable Use</a>
             <span>·</span>
             <a href="mailto:hello@virelle.life" className="hover:text-amber-400 transition-colors">hello@virelle.life</a>
           </div>
