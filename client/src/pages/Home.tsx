@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
-import OnboardingOverlay from "@/components/OnboardingOverlay";
+import OnboardingOverlay, { useOnboardingChecklist } from "@/components/OnboardingOverlay";
 import StudioOpener from "@/components/StudioOpener";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -280,6 +280,8 @@ export default function Home() {
           </Card>
         ))}
       </div>
+      {/* Getting Started Checklist — only show until all done */}
+      <GettingStartedChecklist onShowGuide={() => setForceOnboarding(true)} />
 
       {/* Production Workflow Guide */}
       <div>
@@ -500,5 +502,100 @@ export default function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── Getting Started Checklist Widget ───────────────────────────────────────
+
+function GettingStartedChecklist({ onShowGuide }: { onShowGuide: () => void }) {
+  const { items, markDone, completedCount, allDone } = useOnboardingChecklist();
+  const [, setLocation] = useLocation();
+  const [dismissed, setDismissed] = useState(() => {
+    return localStorage.getItem("virelle-checklist-dismissed") === "true";
+  });
+
+  if (allDone || dismissed) return null;
+
+  const ITEM_ACTIONS: Record<string, () => void> = {
+    api_key: () => setLocation("/settings?tab=api-keys"),
+    first_project: () => setLocation("/projects/new"),
+    first_scene: () => setLocation("/projects"),
+    add_character: () => setLocation("/characters"),
+    add_sound: () => setLocation("/projects"),
+    browse_funding: () => setLocation("/funding"),
+  };
+
+  return (
+    <Card className="bg-card/60 border-amber-500/20">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Zap className="h-4 w-4 text-amber-400" />
+            <span className="text-sm font-semibold">Getting Started</span>
+            <span className="text-xs text-muted-foreground">
+              {completedCount}/{items.length} complete
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onShowGuide}
+              className="text-xs text-amber-400 hover:text-amber-300 underline underline-offset-2"
+            >
+              View Guide
+            </button>
+            <button
+              onClick={() => {
+                localStorage.setItem("virelle-checklist-dismissed", "true");
+                setDismissed(true);
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground"
+              aria-label="Dismiss checklist"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="h-1.5 bg-muted rounded-full mb-4 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-amber-500 transition-all duration-500"
+            style={{ width: `${(completedCount / items.length) * 100}%` }}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {items.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                if (!item.done) {
+                  markDone(item.id);
+                  ITEM_ACTIONS[item.id]?.();
+                }
+              }}
+              className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-colors ${
+                item.done
+                  ? "opacity-50 cursor-default"
+                  : "hover:bg-amber-500/10 cursor-pointer"
+              }`}
+            >
+              <div
+                className={`h-4 w-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                  item.done
+                    ? "bg-amber-500 border-amber-500"
+                    : "border-border"
+                }`}
+              >
+                {item.done && <CheckCircle2 className="h-3 w-3 text-white" />}
+              </div>
+              <span className={`text-xs ${item.done ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                {item.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
