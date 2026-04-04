@@ -1130,6 +1130,17 @@ export async function runAutoMigration(): Promise<void> {
     console.log("[AutoMigrate] Schema is up to date — no changes needed");
   }
 
+  // ─── Step 2b: Add UNIQUE constraint to funding_sources (idempotent) ───
+  try {
+    await db.execute(sql.raw(`ALTER TABLE funding_sources ADD UNIQUE INDEX uq_funding_country_org (country(100), organization(100))`));
+    console.log('[AutoMigrate] Added UNIQUE constraint to funding_sources');
+  } catch (err: any) {
+    // Duplicate key name = constraint already exists — that's fine
+    if (!err.message?.includes('Duplicate key name') && !err.message?.includes('already exists')) {
+      console.warn('[AutoMigrate] Could not add UNIQUE to funding_sources:', err.message);
+    }
+  }
+
   // ─── Step 3: Admin Role Bootstrap ───
   // Admin promotion is now strictly controlled via OWNER_OPEN_ID in db.ts or manual DB updates.
   // No implicit email-based promotion is performed here for production discipline.

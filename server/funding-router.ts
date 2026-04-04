@@ -414,8 +414,15 @@ export const fundingRouter = router({
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) return [];
-      const results = await db.select().from(fundingSources).orderBy(asc(fundingSources.country), asc(fundingSources.organization));
-
+      const allResults = await db.select().from(fundingSources).orderBy(asc(fundingSources.country), asc(fundingSources.organization));
+      // Deduplicate by country+organization — keep only the first (lowest id) occurrence
+      const seen = new Set<string>();
+      const results = allResults.filter(f => {
+        const key = `${f.country}|||${f.organization}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
       let filtered = results;
       if (input.country) {
         filtered = filtered.filter(f =>
