@@ -658,11 +658,11 @@ export async function generateFullFilm(
           onProgress?.(progress);
 
           try {
-            const musicPreset = getGenreMusicPreset(config.genre, scene.mood || "neutral");
+            const musicPreset = getGenreMusicPreset(config.genre, scene.mood || config.genre || "neutral");
             const soundtrackResult = await generateSoundtrack(musicKeys, {
               projectId: project.id,
               sceneId: scene.id,
-              mood: scene.mood || "neutral",
+              mood: scene.mood || config.genre || "neutral",
               genre: config.genre,
               durationSeconds: sceneResult.totalDuration,
               instruments: musicPreset.instruments,
@@ -871,11 +871,11 @@ export async function generateSingleScene(
   let soundtrackUrl: string | undefined;
   if (input.generateSoundtrack) {
     try {
-      const musicPreset = getGenreMusicPreset(input.genre, scene.mood || "neutral");
+      const musicPreset = getGenreMusicPreset(input.genre, scene.mood || input.genre || "neutral");
       const soundtrackResult = await generateSoundtrack(musicKeys, {
         projectId: input.projectId,
         sceneId: scene.id,
-        mood: scene.mood || "neutral",
+        mood: scene.mood || input.genre || "neutral",
         genre: input.genre,
         durationSeconds: sceneResult.totalDuration,
         instruments: musicPreset.instruments,
