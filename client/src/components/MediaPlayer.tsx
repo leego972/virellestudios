@@ -395,15 +395,15 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
 
   return (
     <div className="fixed inset-0 z-50 bg-black/95 flex flex-col" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      {/* Top Bar */}
+      {/* Top Bar — always-visible window controls strip */}
       <div
-        className={`absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/80 to-transparent px-4 py-3 flex items-center justify-between transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between"
         style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}
       >
-        {/* Left: title */}
-        <div className="flex items-center gap-2 min-w-0 flex-1">
+        {/* Left: title — fades with controls */}
+        <div className={`flex items-center gap-2 min-w-0 flex-1 px-4 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
           <div className="min-w-0">
-            <h2 className="text-white font-medium text-sm sm:text-base truncate">{movie.title}</h2>
+            <h2 className="text-white font-medium text-sm sm:text-base truncate drop-shadow">{movie.title}</h2>
             <div className="flex items-center gap-2 mt-0.5">
               <Badge className={`${TYPE_COLORS[movie.type] || TYPE_COLORS.film} border text-[10px]`}>
                 {TYPE_LABELS[movie.type] || movie.type}
@@ -415,8 +415,8 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           </div>
         </div>
 
-        {/* Right: window controls — Playlist · Download · Minimise · Fullscreen · Close */}
-        <div className="flex items-center gap-1 shrink-0">
+        {/* Right: window controls — ALWAYS VISIBLE */}
+        <div className="flex items-center gap-0.5 shrink-0 pr-2 bg-black/40 backdrop-blur-sm rounded-bl-xl">
           {playlist && playlist.length > 1 && (
             <Button
               size="sm"
@@ -452,7 +452,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           <Button
             size="icon"
             variant="ghost"
-            className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
+            className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
             onClick={() => setIsMinimised(true)}
             title="Minimise"
           >
@@ -462,7 +462,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           <Button
             size="icon"
             variant="ghost"
-            className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
+            className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
             onClick={toggleFullscreen}
             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           >
@@ -472,7 +472,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           <Button
             size="icon"
             variant="ghost"
-            className="text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
+            className="text-white hover:bg-red-500/80 active:bg-red-600 h-11 w-11"
             onClick={onClose}
             title="Close"
           >
