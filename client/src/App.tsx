@@ -113,9 +113,13 @@ function PageLoader() {
   );
 }
 
-// ─── Suspense wrapper for lazy components ───
+// ─── Suspense wrapper for lazy components with local error recovery ───
 function LazyPage({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<PageLoader />}>{children}</Suspense>;
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<PageLoader />}>{children}</Suspense>
+    </ErrorBoundary>
+  );
 }
 
 // Gated page wrappers — show upgrade prompt if user's subscription doesn't include the feature

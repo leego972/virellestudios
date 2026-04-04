@@ -9,27 +9,63 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  retryCount: number;
 }
 
 const isProd = import.meta.env.PROD;
 
+// Detect chunk-load / dynamic-import failures (network hiccup on first nav)
+function isChunkLoadError(err: Error | null): boolean {
+  const msg = err?.message || "";
+  return (
+    msg.includes("Failed to fetch dynamically imported module") ||
+    msg.includes("Importing a module script failed") ||
+    msg.includes("ChunkLoadError") ||
+    msg.includes("Loading chunk") ||
+    msg.includes("dynamically imported module")
+  );
+}
+
 class ErrorBoundary extends Component<Props, State> {
+  private _retryTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, retryCount: 0 };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, info: { componentStack: string }) {
     // Log to console in all environments for debugging
     console.error("[ErrorBoundary] Caught error:", error, info);
+    // Auto-retry once for chunk-load errors (network blip on first navigation)
+    if (isChunkLoadError(error) && this.state.retryCount === 0) {
+      this._retryTimer = setTimeout(() => {
+        this.setState({ hasError: false, error: null, retryCount: 1 });
+      }, 800);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this._retryTimer) clearTimeout(this._retryTimer);
   }
 
   render() {
     if (this.state.hasError) {
+      // For chunk-load errors on first try — show spinner while auto-retrying
+      if (isChunkLoadError(this.state.error) && this.state.retryCount === 0) {
+        return (
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex flex-col items-center gap-3">
+              <RotateCcw className="w-8 h-8 animate-spin text-amber-500" />
+              <p className="text-sm text-muted-foreground">Loading page…</p>
+            </div>
+          </div>
+        );
+      }
       return (
         <div className="flex items-center justify-center min-h-screen p-8 bg-background">
           <div className="flex flex-col items-center w-full max-w-lg text-center">
