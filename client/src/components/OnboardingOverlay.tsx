@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import {
-  X, ChevronRight, ChevronLeft, CheckCircle2, Clapperboard,
+  X, ChevronRight, ChevronLeft, CheckCircle2,
   Key, Film, Star, Rocket, Globe, Mic2, Sparkles
 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -51,7 +51,7 @@ export function useOnboardingChecklist() {
 const STEPS = [
   {
     id: "welcome",
-    icon: <Clapperboard className="h-10 w-10 text-amber-400" />,
+    icon: <img src="/virelle-logo-square.png" alt="Virelle Studios" className="h-16 w-16 object-contain" />,
     bg: "from-amber-950/60 to-black",
     accent: "#b45309",
     title: "Welcome to Virelle Studios",
