@@ -94,6 +94,48 @@ const ASSETS = [
     description: "10 villain monologue templates across genres: cold corporate, theatrical megalomaniac, quiet menace, tragic antagonist.",
     applyHint: "Use as dialogue starting points in the Dialogue Editor.",
   },
+  {
+    id: "a029", name: "Indie Film Starter Prompt Pack", category: "prompt-packs" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.7, downloads: 7400,
+    tags: ["indie", "drama", "prompts", "beginner"], author: "Virelle Studios",
+    description: "30 beginner-friendly scene prompts for indie drama: kitchen arguments, late-night drives, rooftop conversations, and quiet morning routines.",
+    applyHint: "Use prompts directly in Quick Generate or Scene Editor.",
+  },
+  {
+    id: "a030", name: "Sci-Fi Ambient SFX Pack", category: "sfx" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.7, downloads: 5900,
+    tags: ["sci-fi", "ambient", "space", "electronic"], author: "Virelle Studios",
+    description: "22 sci-fi ambient sound prompts: ship engine hum, airlock pressure, holographic interface beeps, distant nebula winds, and cryosleep chambers.",
+    applyHint: "Added to your Sound Library.",
+  },
+  {
+    id: "a031", name: "Street Photography Color Grades", category: "color-grades" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.5, downloads: 3800,
+    tags: ["street", "urban", "gritty", "documentary"], author: "Virelle Studios",
+    description: "5 gritty urban color grade presets: faded film, high-contrast B&W, bleach bypass, cold steel, and warm sepia.",
+    applyHint: "Apply in Color Grading Studio.",
+  },
+  {
+    id: "a032", name: "Hero's Journey Character Pack", category: "characters" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.8, downloads: 8100,
+    tags: ["hero", "adventure", "archetype", "drama"], author: "Virelle Studios",
+    description: "5 classic hero archetype profiles: the reluctant hero, the chosen one, the anti-hero, the underdog, and the reformed villain. Includes backstory and personality notes.",
+    applyHint: "Import directly into your project's Character Library.",
+  },
+  {
+    id: "a033", name: "Nature & Wilderness SFX Pack", category: "sfx" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.6, downloads: 4200,
+    tags: ["nature", "wilderness", "outdoor", "ambient"], author: "Virelle Studios",
+    description: "20 nature sound prompts: dense forest at dawn, crashing ocean waves, thunderstorm approach, desert wind, and mountain stream.",
+    applyHint: "Added to your Sound Library.",
+  },
+  {
+    id: "a034", name: "Confrontation Dialogue Pack", category: "dialogue-packs" as AssetCategory,
+    price: 0, isPremium: false, rating: 4.7, downloads: 5300,
+    tags: ["confrontation", "drama", "tension", "dialogue"], author: "Virelle Studios",
+    description: "15 confrontation scene dialogue templates: family argument, workplace power struggle, betrayal reveal, and courtroom cross-examination.",
+    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
+  },
 
   // ── PREMIUM ASSETS ───────────────────────────────────────────────────────────
   {
@@ -215,6 +257,211 @@ const ASSETS = [
     description: "8 western score cues: lonesome frontier theme, standoff tension, saloon brawl, sunset ride, and final showdown. Acoustic guitar, harmonica, and sweeping strings.",
     applyHint: "Added to your Sound Library.",
   },
+
+  // ── NEW PREMIUM ASSETS ───────────────────────────────────────────────────────
+  {
+    id: "a035", name: "Period Drama Wardrobe — Regency Era", category: "wardrobes" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.8, downloads: 2800,
+    tags: ["regency", "period", "costume", "romance"], author: "CostumePro",
+    description: "10 Regency-era wardrobe descriptions: aristocratic ball gowns, military dress uniforms, servant livery, and country gentleman attire. Perfect for Jane Austen-style productions.",
+    applyHint: "Apply wardrobe descriptions to your characters.",
+  },
+  {
+    id: "a036", name: "Tokyo Neon Rooftop Location Pack", category: "locations" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.9, downloads: 4100,
+    tags: ["tokyo", "rooftop", "neon", "night"], author: "Virelle Studios",
+    description: "8 Tokyo rooftop locations: rain-soaked helipad, neon-lit terrace bar, satellite dish forest, penthouse pool at midnight, and graffiti-covered water tower.",
+    applyHint: "Use as location references in your scene's Location field.",
+  },
+  {
+    id: "a037", name: "Electronic & Synthwave Score Pack", category: "music" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.8, downloads: 3600,
+    tags: ["synthwave", "electronic", "retro", "80s"], author: "FilmScore Pro",
+    description: "10 synthwave score cues: neon chase, slow-motion hero walk, digital heartbeat, retro-future montage, and final transmission. Perfect for 80s-inspired and cyberpunk films.",
+    applyHint: "Added to your Sound Library.",
+  },
+  {
+    id: "a038", name: "Crime Thriller Dialogue Pack", category: "dialogue-packs" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.8, downloads: 3900,
+    tags: ["crime", "thriller", "interrogation", "dialogue"], author: "Virelle Studios",
+    description: "20 crime thriller dialogue templates: police interrogation, criminal negotiation, witness intimidation, corrupt deal, and courtroom testimony under pressure.",
+    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
+  },
+  {
+    id: "a039", name: "Water & Ocean VFX Pack", category: "vfx-packs" as AssetCategory,
+    price: 6.99, isPremium: true, rating: 4.7, downloads: 2400,
+    tags: ["water", "ocean", "storm", "vfx"], author: "VFXPro",
+    description: "18 water and ocean VFX prompt templates: rogue waves, underwater pressure cracks, ship hull breach, tsunami wall, rain curtain, and flooded city streets.",
+    applyHint: "Apply in VFX Suite.",
+  },
+  {
+    id: "a040", name: "Tilt-Shift & Macro Cinematography Pack", category: "cinematography" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.7, downloads: 2100,
+    tags: ["tilt-shift", "macro", "miniature", "artistic"], author: "CinematicLUTs",
+    description: "14 tilt-shift and macro shot descriptions: miniaturised city overhead, extreme close-up emotional detail, shallow-depth-of-field isolation, and dreamlike focus pulls.",
+    applyHint: "Apply in Scene Editor under Camera & Optics.",
+  },
+  {
+    id: "a041", name: "Post-Apocalyptic Location Pack", category: "locations" as AssetCategory,
+    price: 5.99, isPremium: true, rating: 4.9, downloads: 4700,
+    tags: ["post-apocalyptic", "wasteland", "ruins", "survival"], author: "Virelle Studios",
+    description: "12 post-apocalyptic locations: overgrown shopping mall, flooded subway tunnels, collapsed skyscraper camp, irradiated desert highway, and fortified survivor compound.",
+    applyHint: "Use as location references in your scene's Location field.",
+  },
+  {
+    id: "a042", name: "Fantasy Epic Score Pack", category: "music" as AssetCategory,
+    price: 5.99, isPremium: true, rating: 4.9, downloads: 5500,
+    tags: ["fantasy", "epic", "choir", "orchestral"], author: "FilmScore Pro",
+    description: "12 fantasy epic cues: ancient prophecy theme, dragon flight, dark forest approach, throne room confrontation, and sacrifice finale. Full choir and orchestral.",
+    applyHint: "Added to your Sound Library.",
+  },
+  {
+    id: "a043", name: "Horror Character Pack — 6 Archetypes", category: "characters" as AssetCategory,
+    price: 6.99, isPremium: true, rating: 4.8, downloads: 3300,
+    tags: ["horror", "characters", "dark", "supernatural"], author: "Virelle Studios",
+    description: "6 horror character profiles: the final girl, the skeptic, the occultist, the possessed innocent, the ancient evil, and the grieving parent. Full backstory and psychological notes.",
+    applyHint: "Import directly into your project's Character Library.",
+  },
+  {
+    id: "a044", name: "Cinéma Vérité Color Grade Pack", category: "color-grades" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.7, downloads: 2700,
+    tags: ["documentary", "vérité", "naturalistic", "raw"], author: "CinematicLUTs",
+    description: "6 naturalistic color grade presets: raw daylight, overcast grey, fluorescent interior, golden magic hour, and desaturated realism. For documentary and social realist films.",
+    applyHint: "Apply in Color Grading Studio.",
+  },
+  {
+    id: "a045", name: "Sci-Fi Prompt Pack Vol. 2 — Space Opera", category: "prompt-packs" as AssetCategory,
+    price: 7.99, isPremium: true, rating: 4.9, downloads: 3800,
+    tags: ["sci-fi", "space-opera", "prompts", "epic"], author: "Virelle Studios",
+    description: "60 space opera scene prompts: first contact encounters, fleet battles, alien world landings, AI uprising sequences, and wormhole jumps. Built for Veo3 and Runway.",
+    applyHint: "Use prompts in Quick Generate or Scene Editor.",
+  },
+  {
+    id: "a046", name: "Futuristic Wardrobe Pack", category: "wardrobes" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.7, downloads: 2500,
+    tags: ["futuristic", "sci-fi", "fashion", "costume"], author: "CostumePro",
+    description: "12 futuristic wardrobe descriptions: biopunk body armour, corporate executive nanosuit, rebel faction gear, AI android uniform, and high-fashion zero-gravity couture.",
+    applyHint: "Apply wardrobe descriptions to your characters.",
+  },
+  {
+    id: "a047", name: "Battle & Combat SFX Pack", category: "sfx" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.9, downloads: 5800,
+    tags: ["battle", "combat", "war", "action"], author: "FilmScore Pro",
+    description: "25 battle and combat sound prompts: sword clashes, gunfire echoes, grenade concussions, tank rumble, helicopter blades, and distant artillery.",
+    applyHint: "Added to your Sound Library.",
+  },
+  {
+    id: "a048", name: "Emotional Monologue Dialogue Pack", category: "dialogue-packs" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.8, downloads: 4100,
+    tags: ["monologue", "emotional", "drama", "character"], author: "Virelle Studios",
+    description: "12 emotional monologue templates: grief after loss, redemption confession, farewell speech, survivor's testimony, and a parent's apology to their child.",
+    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
+  },
+  {
+    id: "a049", name: "Macro Close-Up SFX Pack", category: "sfx" as AssetCategory,
+    price: 2.99, isPremium: true, rating: 4.6, downloads: 2200,
+    tags: ["foley", "close-up", "detail", "practical"], author: "Virelle Studios",
+    description: "20 hyper-detailed Foley sound prompts: pen clicking, coffee pour, paper rustle, glass clink, keyboard typing, and heartbeat under stress.",
+    applyHint: "Added to your Sound Library.",
+  },
+  {
+    id: "a050", name: "Supernatural VFX Pack", category: "vfx-packs" as AssetCategory,
+    price: 7.99, isPremium: true, rating: 4.9, downloads: 3900,
+    tags: ["supernatural", "magic", "vfx", "horror"], author: "VFXPro",
+    description: "20 supernatural VFX prompt templates: spectral apparitions, shadow tendrils, reality tears, levitation effects, blood-red sky, and demonic possession visual distortions.",
+    applyHint: "Apply in VFX Suite.",
+  },
+  {
+    id: "a051", name: "Spy Thriller Location Pack", category: "locations" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.8, downloads: 3500,
+    tags: ["spy", "thriller", "international", "luxury"], author: "Virelle Studios",
+    description: "10 spy thriller locations: Monaco casino floor, Berlin safe house, Moscow metro at night, Geneva private bank vault, Dubai rooftop helipad, and Istanbul grand bazaar.",
+    applyHint: "Use as location references in your scene's Location field.",
+  },
+  {
+    id: "a052", name: "Jazz & Soul Score Pack", category: "music" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.8, downloads: 3200,
+    tags: ["jazz", "soul", "blues", "character"], author: "FilmScore Pro",
+    description: "10 jazz and soul score cues: late-night piano bar, slow blues walk, upbeat bebop chase, soulful ballad, and melancholic trumpet solo.",
+    applyHint: "Added to your Sound Library.",
+  },
+  {
+    id: "a053", name: "Crime Drama Character Pack — 8 Profiles", category: "characters" as AssetCategory,
+    price: 7.99, isPremium: true, rating: 4.8, downloads: 3600,
+    tags: ["crime", "drama", "characters", "gritty"], author: "Virelle Studios",
+    description: "8 crime drama character profiles: the burned detective, the ambitious DA, the mob enforcer, the informant, the corrupt politician, the reformed criminal, the journalist, and the crime boss.",
+    applyHint: "Import directly into your project's Character Library.",
+  },
+  {
+    id: "a054", name: "Wuxia & Martial Arts Wardrobe Pack", category: "wardrobes" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.7, downloads: 2300,
+    tags: ["wuxia", "martial-arts", "chinese", "period"], author: "CostumePro",
+    description: "10 wuxia wardrobe descriptions: silk fighting robes, imperial guard armour, wandering swordsman attire, court official robes, and assassin's black garb.",
+    applyHint: "Apply wardrobe descriptions to your characters.",
+  },
+  {
+    id: "a055", name: "Neon Cyberpunk Color Grade Pack", category: "color-grades" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.9, downloads: 4900,
+    tags: ["cyberpunk", "neon", "teal-orange", "night"], author: "CinematicLUTs",
+    description: "8 cyberpunk color grade presets: neon magenta crush, acid green shadows, orange-teal split, holographic blue, and rain-soaked amber. The definitive cyberpunk look.",
+    applyHint: "Apply in Color Grading Studio.",
+  },
+  {
+    id: "a056", name: "Horror Prompt Pack — Supernatural & Slasher", category: "prompt-packs" as AssetCategory,
+    price: 6.99, isPremium: true, rating: 4.8, downloads: 3400,
+    tags: ["horror", "supernatural", "slasher", "prompts"], author: "Virelle Studios",
+    description: "55 horror scene prompts: haunted house reveals, slasher chase sequences, possession rituals, creature encounters, and psychological breakdown scenes.",
+    applyHint: "Use prompts in Quick Generate or Scene Editor.",
+  },
+  {
+    id: "a057", name: "Long Take & Oner Cinematography Pack", category: "cinematography" as AssetCategory,
+    price: 5.99, isPremium: true, rating: 4.9, downloads: 2800,
+    tags: ["long-take", "oner", "tracking", "cinematic"], author: "CinematicLUTs",
+    description: "12 long-take and single-shot descriptions: Goodfellas-style restaurant walk, war trench oner, apartment building descent, and crowd-parting reveal. The most cinematic shots in film.",
+    applyHint: "Apply in Scene Editor under Camera Movement.",
+  },
+  {
+    id: "a058", name: "Ambient Electronic & Dark Ambient Score Pack", category: "music" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.7, downloads: 2900,
+    tags: ["ambient", "dark", "electronic", "atmospheric"], author: "FilmScore Pro",
+    description: "10 dark ambient and electronic score cues: industrial drone, glitching signal, void silence, corrupted memory, and slow system shutdown. For sci-fi, horror, and art house.",
+    applyHint: "Added to your Sound Library.",
+  },
+  {
+    id: "a059", name: "Comedy Dialogue Pack", category: "dialogue-packs" as AssetCategory,
+    price: 2.99, isPremium: true, rating: 4.7, downloads: 3700,
+    tags: ["comedy", "banter", "sitcom", "dialogue"], author: "Virelle Studios",
+    description: "20 comedy dialogue templates: awkward first date, workplace misunderstanding, family dinner chaos, best friend banter, and mistaken identity confrontation.",
+    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
+  },
+  {
+    id: "a060", name: "Natural Disaster VFX Pack", category: "vfx-packs" as AssetCategory,
+    price: 9.99, isPremium: true, rating: 4.9, downloads: 4200,
+    tags: ["disaster", "vfx", "earthquake", "tornado"], author: "VFXPro",
+    description: "24 natural disaster VFX prompt templates: earthquake ground split, tornado funnel, volcanic eruption, flash flood surge, wildfire wall, and lightning storm strike.",
+    applyHint: "Apply in VFX Suite.",
+  },
+  {
+    id: "a061", name: "Abandoned Locations Pack", category: "locations" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.8, downloads: 3100,
+    tags: ["abandoned", "decay", "atmospheric", "horror"], author: "Virelle Studios",
+    description: "10 abandoned location descriptions: derelict hospital, overgrown theme park, flooded basement, crumbling church, rust-belt factory, and empty shopping mall at night.",
+    applyHint: "Use as location references in your scene's Location field.",
+  },
+  {
+    id: "a062", name: "Royalty & Court Wardrobe Pack", category: "wardrobes" as AssetCategory,
+    price: 4.99, isPremium: true, rating: 4.8, downloads: 2600,
+    tags: ["royalty", "medieval", "court", "fantasy"], author: "CostumePro",
+    description: "12 royal and court wardrobe descriptions: king's battle armour, queen's ceremonial gown, court jester, royal assassin's cloak, and exiled prince's travel wear.",
+    applyHint: "Apply wardrobe descriptions to your characters.",
+  },
+  {
+    id: "a063", name: "Cinematic Dialogue Pack — Mentor & Student", category: "dialogue-packs" as AssetCategory,
+    price: 3.99, isPremium: true, rating: 4.8, downloads: 3400,
+    tags: ["mentor", "student", "wisdom", "drama"], author: "Virelle Studios",
+    description: "15 mentor-student dialogue templates: first lesson, moment of doubt, tough love confrontation, passing the torch, and final goodbye. Timeless dramatic exchanges.",
+    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
+  },
 ];
 
 const CATEGORY_ICONS: Record<AssetCategory, React.ReactNode> = {
@@ -268,6 +515,7 @@ export default function AssetMarketplace() {
   const createAssetCheckout = trpc.subscription.createAssetCheckout.useMutation();
   const confirmPurchase = trpc.subscription.confirmAssetPurchase.useMutation();
 
+  // Admin owns everything — ownedAssetIds === "all" means admin bypass
   const isAdmin = ownedData?.ownedAssetIds === "all";
   const ownedIds: string[] = isAdmin ? ASSETS.map(a => a.id) : (ownedData?.ownedAssetIds as string[] ?? []);
 
@@ -349,6 +597,16 @@ export default function AssetMarketplace() {
     } finally {
       setBuying(null);
     }
+  };
+
+  const handleUseOwned = (asset: typeof ASSETS[0]) => {
+    const saved = JSON.parse(localStorage.getItem("virelle_marketplace_assets") || "[]");
+    if (!saved.find((a: any) => a.id === asset.id)) {
+      saved.push({ id: asset.id, name: asset.name, category: asset.category, tags: asset.tags, description: asset.description, applyHint: asset.applyHint, savedAt: new Date().toISOString() });
+      localStorage.setItem("virelle_marketplace_assets", JSON.stringify(saved));
+      setSavedIds(prev => [...prev, asset.id]);
+    }
+    toast.success(`"${asset.name}" added to your library. ${asset.applyHint}`);
   };
 
   const freeCount = ASSETS.filter(a => !a.isPremium).length;
@@ -491,20 +749,11 @@ export default function AssetMarketplace() {
                           <><Download className="w-3 h-3 mr-1" /> Save</>}
                       </Button>
                     ) : isOwned ? (
-                      // Premium — already owned
+                      // Premium — already owned (includes admin)
                       <Button
                         size="sm"
                         className="h-7 text-xs bg-green-600 hover:bg-green-700 text-white"
-                        onClick={() => {
-                          // Save to local library for use in scenes
-                          const saved = JSON.parse(localStorage.getItem("virelle_marketplace_assets") || "[]");
-                          if (!saved.find((a: any) => a.id === asset.id)) {
-                            saved.push({ id: asset.id, name: asset.name, category: asset.category, tags: asset.tags, description: asset.description, applyHint: asset.applyHint, savedAt: new Date().toISOString() });
-                            localStorage.setItem("virelle_marketplace_assets", JSON.stringify(saved));
-                            setSavedIds(prev => [...prev, asset.id]);
-                          }
-                          toast.success(`"${asset.name}" added to your library. ${asset.applyHint}`);
-                        }}
+                        onClick={() => handleUseOwned(asset)}
                       >
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Use Asset
                       </Button>
