@@ -32,7 +32,7 @@ const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; colo
   independent: {
     name: "Industry",
     icon: Film,
-    color: "text-amber-400",
+    color: "text-violet-400",
     price: "A$1,490/month or A$14,900/year",
     credits: "6,000 credits/month included",
   },
@@ -40,14 +40,14 @@ const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; colo
   creator: {
     name: "Industry",
     icon: Film,
-    color: "text-amber-400",
+    color: "text-violet-400",
     price: "A$1,490/month or A$14,900/year",
     credits: "6,000 credits/month included",
   },
   studio: {
     name: "Industry",
     icon: Film,
-    color: "text-amber-400",
+    color: "text-violet-400",
     price: "A$1,490/month or A$14,900/year",
     credits: "6,000 credits/month included",
   },
@@ -66,6 +66,22 @@ function normaliseTier(tier: string): string {
   return tier;
 }
 
+// Tier-aware button class — matches Pricing.tsx tier colors
+function tierButtonClass(normTier: string): string {
+  if (normTier === "indie")       return "bg-emerald-600 hover:bg-emerald-500 text-white";
+  if (normTier === "amateur")     return "bg-amber-600 hover:bg-amber-500 text-white";
+  if (normTier === "independent") return "bg-violet-600 hover:bg-violet-500 text-white";
+  return "bg-yellow-600 hover:bg-yellow-500 text-white"; // industry / contact sales
+}
+
+// Tier-aware border/bg class for the compact wrapper
+function tierBorderClass(normTier: string): string {
+  if (normTier === "indie")       return "border-emerald-500/30 bg-emerald-500/5";
+  if (normTier === "amateur")     return "border-amber-500/30 bg-amber-500/5";
+  if (normTier === "independent") return "border-violet-500/30 bg-violet-500/5";
+  return "border-yellow-500/30 bg-yellow-500/5";
+}
+
 export function UpgradePrompt({
   feature,
   requiredTier = "independent",
@@ -81,9 +97,10 @@ export function UpgradePrompt({
   const isContactSales = normTier === "industry" && tier.price === "Custom pricing";
 
   if (compact) {
+    const btnClass = tierButtonClass(normTier);
     return (
-      <div className={`flex items-center gap-3 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5 ${className}`}>
-        <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+      <div className={`flex items-center gap-3 p-3 rounded-lg border ${tierBorderClass(normTier)} ${className}`}>
+        <Lock className={`w-4 h-4 ${tier.color} shrink-0`} />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">
             {feature ? `${feature} requires ` : "Requires "}
@@ -94,7 +111,7 @@ export function UpgradePrompt({
         {isContactSales ? (
           <Button
             size="sm"
-            className="bg-amber-600 hover:bg-amber-500 text-white shrink-0"
+            className={`${btnClass} shrink-0`}
             onClick={() => {
               window.location.href = `mailto:Studiosvirelle@gmail.com?subject=${encodeURIComponent(
                 `Virelle Studios — ${tier.name} Enquiry`
@@ -107,7 +124,7 @@ export function UpgradePrompt({
         ) : (
           <Button
             size="sm"
-            className="bg-amber-600 hover:bg-amber-500 text-white shrink-0"
+            className={`${btnClass} shrink-0`}
             onClick={() => setLocation("/pricing")}
           >
             <ArrowRight className="w-3 h-3 mr-1" />
@@ -142,7 +159,7 @@ export function UpgradePrompt({
         <div className={`flex items-center gap-3 p-3 rounded-lg border ${
           normTier === "indie"        ? "border-blue-500/30 bg-blue-500/5" :
           normTier === "amateur"      ? "border-emerald-500/30 bg-emerald-500/5" :
-          normTier === "independent"  ? "border-amber-500/30 bg-amber-500/5" :
+          normTier === "independent"  ? "border-violet-500/30 bg-violet-500/5" :
           "border-yellow-500/30 bg-yellow-500/5"
         }`}>
           <Icon className={`w-5 h-5 ${tier.color} shrink-0`} />
@@ -158,7 +175,7 @@ export function UpgradePrompt({
           {[
             { key: "indie",       label: "Indie",    color: "text-blue-400",    bg: "bg-blue-500/10" },
             { key: "amateur",     label: "Creator",  color: "text-emerald-400", bg: "bg-emerald-500/10" },
-            { key: "independent", label: "Industry", color: "text-amber-400",   bg: "bg-amber-500/10" },
+            { key: "independent", label: "Industry", color: "text-violet-400",  bg: "bg-violet-500/10" },
           ].map((t) => (
             <div
               key={t.key}
@@ -175,7 +192,7 @@ export function UpgradePrompt({
         {isContactSales ? (
           <div className="space-y-2">
             <Button
-              className="w-full bg-amber-600 hover:bg-amber-500 text-white"
+              className={`w-full ${tierButtonClass(normTier)}`}
               onClick={() => {
                 window.location.href = `mailto:Studiosvirelle@gmail.com?subject=${encodeURIComponent(
                   `Virelle Studios — ${tier.name} Enquiry`
@@ -196,7 +213,7 @@ export function UpgradePrompt({
         ) : (
           <div className="space-y-2">
             <Button
-              className="w-full bg-amber-600 hover:bg-amber-500 text-white"
+              className={`w-full ${tierButtonClass(normTier)}`}
               onClick={() => setLocation("/pricing")}
             >
               <Zap className="w-4 h-4 mr-2" />
@@ -246,7 +263,7 @@ export function CreatorBadge() {
 
 export function IndustryBadge() {
   return (
-    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-500 border border-amber-500/20">
+    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-500/10 text-violet-400 border border-violet-500/20">
       <Film className="w-2.5 h-2.5" /> INDUSTRY
     </span>
   );

@@ -129,7 +129,7 @@ export default function Landing() {
               <Smartphone className="h-3.5 w-3.5" />
               Get the App
             </button>
-            <button onClick={() => setLocation("/contact")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Enterprise</button>
+            <button onClick={() => setLocation("/contact")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Industry</button>
           </div>
 
           {/* Auth buttons */}
@@ -378,10 +378,10 @@ export default function Landing() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {[
-                { tier: "Indie", price: "A$149", credits: "500 credits/mo", desc: "Solo filmmakers and students.", cta: "Select Indie" },
-                { tier: "Creator", price: "A$490", credits: "2,000 credits/mo", desc: "Serious indie producers.", cta: "Select Creator", highlight: true },
-                { tier: "Studio", price: "A$1,490", credits: "6,000 credits/mo", desc: "Boutique studios and agencies.", cta: "Select Studio" },
-                { tier: "Enterprise", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.", cta: "Contact Sales" },
+                { tier: "Indie",    price: "A$149",   credits: "500 credits/mo",   desc: "Solo filmmakers and students.",          cta: "Select Indie" },
+                { tier: "Creator",  price: "A$490",   credits: "2,000 credits/mo",  desc: "Serious indie producers.",               cta: "Select Creator", highlight: true },
+                { tier: "Industry", price: "A$1,490", credits: "6,000 credits/mo",  desc: "Boutique studios and agencies.",         cta: "Select Industry" },
+                { tier: "Industry+", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.",         cta: "Contact Sales" },
               ].map(plan => (
                 <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-white/10 hover:border-amber-500/30 bg-white/[0.02]"}`}>
                   <CardContent className="p-6">
@@ -395,7 +395,7 @@ export default function Landing() {
                     <Button
                       className={`w-full font-semibold ${plan.highlight ? "bg-amber-500 hover:bg-amber-600 text-black" : "bg-white/10 hover:bg-white/20 text-white"}`}
                       size="sm"
-                      onClick={() => setLocation(plan.tier === "Enterprise" ? "/contact" : "/register")}
+                      onClick={() => setLocation(plan.tier === "Industry+" ? "/contact" : "/register")}
                     >
                       {plan.cta}
                     </Button>

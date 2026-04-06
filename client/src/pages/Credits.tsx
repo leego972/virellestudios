@@ -55,11 +55,13 @@ function getActionMeta(action: string): { label: string; color: string; icon: Re
 }
 
 const TIER_LABELS: Record<string, string> = {
-  independent: "Independent",
-  creator: "Creator",
-  studio: "Studio",
-  industry: "Industry",
-  amateur: "Amateur",
+  indie:       "Indie",
+  amateur:     "Creator",
+  independent: "Industry",
+  creator:     "Industry",  // alias
+  studio:      "Industry",  // alias
+  industry:    "Industry",
+  free:        "Free",
 };
 
 const PAGE_SIZE = 25;
@@ -137,7 +139,7 @@ export default function Credits() {
                   <p className="text-2xl font-bold">{formatCredits(summary?.monthlyAllocation || 0)}</p>
                   <p className="text-sm text-muted-foreground">monthly allocation</p>
                   <Badge className="mt-1 bg-blue-600/20 text-blue-400 border-blue-500/30 text-xs capitalize">
-                    {TIER_LABELS[summary?.tier || "independent"] || summary?.tier} Plan
+                    {TIER_LABELS[summary?.tier ?? "free"] ?? summary?.tier} Plan
                   </Badge>
                 </div>
               </div>
