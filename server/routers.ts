@@ -4656,7 +4656,7 @@ FORMAT RULES (always apply):
         return db.getProjectDialogues(input.projectId);
       }),
 
-     create: creationProcedure
+    create: creationProcedure
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().optional(),
@@ -8740,7 +8740,7 @@ Rules:
         
         return stats;
       }),
-     setCurationFlag: adminProcedure
+    setCurationFlag: adminProcedure
       .input(z.object({
         entityType: z.enum(["project", "creatorProfile"]),
         entityId: z.number(),
