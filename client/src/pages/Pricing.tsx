@@ -10,8 +10,8 @@ import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 
 // ─── Tier Definitions ────────────────────────────────────────────────────────
-// All prices in AUD. Indie, Creator, and Studio are self-serve with monthly/annual toggle.
-// Production and Enterprise are consultative — no toggle, no self-checkout.
+// All prices in AUD. Three public tiers: Indie, Creator, Industry — all self-serve.
+// Legacy DB keys independent/creator/studio all resolve to Industry.
 
 const SELF_SERVE_TIERS = [
   {
@@ -73,25 +73,25 @@ const SELF_SERVE_TIERS = [
   },
   {
     id: "independent",
-    displayName: "Studio",
+    displayName: "Industry",
     icon: Clapperboard,
-    color: "border-violet-500 ring-2 ring-violet-500/20",
-    buttonColor: "bg-violet-600 hover:bg-violet-500",
-    accentColor: "text-violet-400",
+    color: "border-amber-500 ring-2 ring-amber-500/20",
+    buttonColor: "bg-amber-600 hover:bg-amber-500",
+    accentColor: "text-amber-400",
     monthly: 1490,
     annual: 14900,
     credits: 6000,
     badge: "Commercial",
-    badgeColor: "bg-violet-700",
+    badgeColor: "bg-amber-700",
     audience: "Boutique studios, agencies, and commercial directors with repeat pipelines.",
-    description: "Commercial production workflow for boutique studios and agencies. Full post-production, 4K export, and team collaboration.",
+    description: "Full commercial production workflow. Post-production, 4K export, VFX, multi-shot sequencer, and team collaboration.",
     highlights: [
       "6,000 credits/month (~600 video scenes)",
       "Everything in Creator, plus:",
       "Film Post-Production (ADR, Foley, Score, Mix)",
       "Subtitles in 130+ languages",
       "VFX Suite & Bulk Generation",
-      "Ad & Poster Maker",
+      "Multi-Shot Sequencer & NLE Export",
       "Up to 25 projects, 90 min per film",
       "4K + ProRes export",
       "5 team members",
@@ -102,41 +102,11 @@ const SELF_SERVE_TIERS = [
   },
 ];
 
+// Enterprise / custom-pricing tier (contact sales — not shown in main grid)
 const ENTERPRISE_TIERS = [
   {
-    id: "studio",
-    displayName: "Production",
-    icon: Building2,
-    color: "border-blue-500 ring-2 ring-blue-500/20 bg-blue-500/5",
-    buttonColor: "bg-blue-600 hover:bg-blue-500",
-    accentColor: "text-blue-400",
-    priceDisplay: "From A$4,990",
-    priceNote: "/month",
-    credits: 15500,
-    badge: "Production",
-    badgeColor: "bg-blue-700",
-    popular: true,
-    audience: "Production companies, VFX teams, and repeat-output studios.",
-    description: "Production infrastructure for companies operating multiple active projects and client pipelines.",
-    highlights: [
-      "15,500 credits/month (~1,550 video scenes)",
-      "Everything in Studio, plus:",
-      "Up to 100 projects, 150 min per film",
-      "VFX Suite (Advanced Effects)",
-      "Multi-Shot Sequencer",
-      "NLE / DaVinci Resolve Export",
-      "AI Casting Tool",
-      "White-Label Exports",
-      "25 team members",
-      "API Access & Pipeline Integration",
-    ],
-    primaryCTA: "Book a Private Demo",
-    secondaryCTA: "Request Production Pricing",
-    selfServe: false,
-  },
-  {
     id: "industry",
-    displayName: "Enterprise",
+    displayName: "Industry (Enterprise)",
     icon: Crown,
     color: "border-yellow-500 ring-2 ring-yellow-500/30 bg-yellow-500/5",
     buttonColor: "bg-yellow-600 hover:bg-yellow-500",
@@ -150,9 +120,8 @@ const ENTERPRISE_TIERS = [
     description: "Contract-led deployment for major studios and broadcasters. Custom model tuning and bespoke commercial terms.",
     highlights: [
       "Credits tailored to deployment scope",
-      "Everything in Production, plus:",
+      "Everything in Industry, plus:",
       "Unlimited projects, 180 min per film",
-      "4K + ProRes export",
       "Live Action Plate Compositing",
       "Custom AI Model Fine-Tuning",
       "Dedicated Account Manager",
@@ -211,7 +180,7 @@ const FAQ = [
   },
   {
     q: "What is the Founding Director offer?",
-    a: "The Founding Director offer gives early members 50% off their first year on any annual Creator or Studio plan. This is a limited offer available to the first 150 members.",
+    a: "The Founding Director offer gives early members 50% off their first year on any annual Creator or Industry plan. This is a limited offer available to the first 150 members.",
   },
   {
     q: "Do unused credits roll over?",
@@ -443,31 +412,29 @@ export default function Pricing() {
               <thead>
                 <tr className="border-b border-zinc-800 bg-zinc-900/50">
                   <th className="py-4 px-6 font-semibold">Feature</th>
-                  <th className="py-4 px-6 text-center font-semibold text-emerald-400">Indie</th>
-                  <th className="py-4 px-6 text-center font-semibold text-amber-400">Creator</th>
-                  <th className="py-4 px-6 text-center font-semibold text-violet-400">Studio</th>
-                  <th className="py-4 px-6 text-center font-semibold text-blue-400">Production</th>
-                  <th className="py-4 px-6 text-center font-semibold text-yellow-400">Enterprise</th>
+                  <th className="py-4 px-6 text-center font-semibold text-blue-400">Indie</th>
+                  <th className="py-4 px-6 text-center font-semibold text-emerald-400">Creator</th>
+                  <th className="py-4 px-6 text-center font-semibold text-amber-400">Industry</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800">
                 {[
-                  { name: "Monthly Credits", indie: "500", creator: "2,000", studio: "6,000", production: "15,500", enterprise: "Custom" },
-                  { name: "Max Projects", indie: "2", creator: "10", studio: "25", production: "100", enterprise: "Unlimited" },
-                  { name: "AI Script Writer", indie: true, creator: true, studio: true, production: true, enterprise: true },
-                  { name: "Character DNA Lock", indie: true, creator: true, studio: true, production: true, enterprise: true },
-                  { name: "Video Generation", indie: false, creator: true, studio: true, production: true, enterprise: true },
-                  { name: "AI Voice Acting", indie: false, creator: true, studio: true, production: true, enterprise: true },
-                  { name: "AI Film Score", indie: false, creator: true, studio: true, production: true, enterprise: true },
-                  { name: "4K Export", indie: false, creator: false, studio: true, production: true, enterprise: true },
-                  { name: "VFX Suite", indie: false, creator: false, studio: true, production: true, enterprise: true },
-                  { name: "Team Members", indie: "1", creator: "1", studio: "5", production: "25", enterprise: "Unlimited" },
-                  { name: "API Access", indie: false, creator: false, studio: false, production: true, enterprise: true },
-                  { name: "Custom Model Tuning", indie: false, creator: false, studio: false, production: false, enterprise: true },
+                  { name: "Monthly Credits", indie: "500", creator: "2,000", industry: "6,000" },
+                  { name: "Max Projects", indie: "2", creator: "10", industry: "25" },
+                  { name: "AI Script Writer", indie: true, creator: true, industry: true },
+                  { name: "Character DNA Lock", indie: true, creator: true, industry: true },
+                  { name: "Video Generation", indie: false, creator: true, industry: true },
+                  { name: "AI Voice Acting", indie: false, creator: true, industry: true },
+                  { name: "AI Film Score", indie: false, creator: true, industry: true },
+                  { name: "4K Export", indie: false, creator: false, industry: true },
+                  { name: "VFX Suite", indie: false, creator: false, industry: true },
+                  { name: "Multi-Shot Sequencer", indie: false, creator: false, industry: true },
+                  { name: "NLE Export", indie: false, creator: false, industry: true },
+                  { name: "Team Members", indie: "1", creator: "1", industry: "5" },
                 ].map((row, i) => (
                   <tr key={i} className="hover:bg-zinc-800/30 transition-colors">
                     <td className="py-4 px-6 font-medium text-zinc-300">{row.name}</td>
-                    {[row.indie, row.creator, row.studio, row.production, row.enterprise].map((val, j) => (
+                    {[row.indie, row.creator, row.industry].map((val, j) => (
                       <td key={j} className="py-4 px-6 text-center">
                         {typeof val === "boolean" ? (
                           val ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-zinc-600 mx-auto" />

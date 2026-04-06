@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 
 const TIER_NAMES: Record<string, string> = {
-  amateur: "Indie Filmmaker",
-  independent: "Independent Creator",
-  creator: "Creator",
-  studio: "Studio",
+  indie: "Indie",
+  amateur: "Creator",
+  independent: "Industry",
+  creator: "Industry",  // alias
+  studio: "Industry",   // alias
   industry: "Industry",
 };
 

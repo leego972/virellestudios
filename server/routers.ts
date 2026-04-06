@@ -9040,18 +9040,13 @@ Rules:
     // Credit balance summary (balance, tier, monthly allocation, period end)
     getSummary: protectedProcedure.query(async ({ ctx }) => {
       const user = ctx.user as any;
-      const tierAllocation: Record<string, number> = {
-        independent: 10000,
-        creator: 35000,
-        studio: 100000,
-        industry: 300000,
-        amateur: 2500,
-      };
-      const tier = user.subscriptionTier || "independent";
+      // Use canonical TIER_LIMITS so allocation always matches the source of truth in subscription.ts
+      const effectiveTier = getEffectiveTier(user);
+      const monthlyAllocation = TIER_LIMITS[effectiveTier]?.monthlyCredits ?? 0;
       return {
         balance: user.creditBalance || 0,
-        tier,
-        monthlyAllocation: tierAllocation[tier] ?? 10000,
+        tier: effectiveTier,
+        monthlyAllocation,
         subscriptionStatus: user.subscriptionStatus || "none",
         subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd || null,
       };

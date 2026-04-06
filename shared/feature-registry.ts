@@ -19,7 +19,9 @@
  *   category    — grouping for the All Tools screen
  *   webPath     — website path (relative, e.g. /projects/:projectId/script)
  *   description — short description shown in the mobile tools grid
- *   minTier     — minimum subscription tier required ("free"|"amateur"|"independent"|"creator"|"studio"|"industry")
+ *   minTier     — minimum subscription tier required ("free"|"indie"|"amateur"|"independent"|"industry")
+ *                 Three public tiers: Indie (indie), Creator (amateur), Industry (independent).
+ *                 Use "free" for features available to all subscribers.
  *   hasNative   — true if a native mobile component exists for this tool
  *   isNew       — show "NEW" badge in the mobile app
  *   isAdmin     — only visible to admin users
@@ -32,7 +34,7 @@ export interface FeatureEntry {
   category: string;
   webPath: string;
   description: string;
-  minTier: "free" | "amateur" | "independent" | "creator" | "studio" | "industry";
+  minTier: "free" | "indie" | "amateur" | "independent" | "industry";
   hasNative: boolean;
   isNew?: boolean;
   isAdmin?: boolean;
@@ -47,7 +49,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Writing",
     webPath: "/projects/:projectId/script",
     description: "AI-generated screenplay from a premise",
-    minTier: "amateur",
+    minTier: "indie",   // canUseScriptWriter is true from indie
     hasNative: true,
   },
   {
@@ -57,7 +59,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Writing",
     webPath: "/projects/:projectId/dialogue",
     description: "Improve character dialogue with AI",
-    minTier: "amateur",
+    minTier: "indie",   // canUseDialogueEditor is true from indie
     hasNative: true,
   },
   {
@@ -89,7 +91,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Visual",
     webPath: "/projects/:projectId/storyboard",
     description: "Visual panel-by-panel planning",
-    minTier: "amateur",
+    minTier: "amateur", // canUseStoryboard is true from amateur (Creator)
     hasNative: true,
   },
   {
@@ -99,7 +101,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Visual",
     webPath: "/projects/:id/mood-board",
     description: "Visual tone and style references",
-    minTier: "amateur",
+    minTier: "indie",   // canUseMoodBoard is true from indie
     hasNative: false,
   },
   {
@@ -109,7 +111,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Visual",
     webPath: "/projects/:projectId/color-grading",
     description: "AI-assisted color grade your footage",
-    minTier: "independent",
+    minTier: "amateur", // canUseColorGrading is true from amateur (Creator)
     hasNative: false,
   },
   {
@@ -131,7 +133,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "AI Video",
     webPath: "/projects/:id",
     description: "Generate AI video clips from prompts",
-    minTier: "independent",
+    minTier: "amateur", // canUseFullFilmGeneration is true from amateur (Creator)
     hasNative: true,
   },
   {
@@ -141,7 +143,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "AI Video",
     webPath: "/projects/:projectId/trailer-studio",
     description: "Create a cinematic film trailer",
-    minTier: "creator",
+    minTier: "independent", // canUseTrailerGeneration is true from independent (Industry)
     hasNative: true,
   },
   {
@@ -151,7 +153,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "AI Video",
     webPath: "/projects/:projectId/director-cut",
     description: "Generate a complete short film",
-    minTier: "creator",
+    minTier: "independent", // canUseFullFilmGeneration is true from independent (Industry)
     hasNative: true,
   },
   {
@@ -161,7 +163,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "AI Video",
     webPath: "/projects/:projectId/multi-shot",
     description: "Chain multiple AI shots into sequences",
-    minTier: "creator",
+    minTier: "independent", // canUseMultiShotSequencer is true from independent (Industry)
     hasNative: false,
   },
   {
@@ -171,7 +173,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "AI Video",
     webPath: "/projects/:projectId/tv-commercial",
     description: "Generate broadcast-quality TV ads",
-    minTier: "studio",
+    minTier: "independent", // canUseAdPosterMaker is true from independent (Industry)
     hasNative: false,
   },
 
@@ -183,7 +185,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Production",
     webPath: "/projects/:projectId/shot-list",
     description: "Camera shot breakdown per scene",
-    minTier: "amateur",
+    minTier: "indie",   // canUseShotList is true from indie
     hasNative: true,
   },
   {
@@ -193,7 +195,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Production",
     webPath: "/projects/:projectId/budget",
     description: "AI production cost breakdown",
-    minTier: "independent",
+    minTier: "indie",   // canUseBudgetEstimator is true from indie
     hasNative: true,
   },
   {
@@ -213,7 +215,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Production",
     webPath: "/projects/:projectId/ai-casting",
     description: "AI-powered actor casting suggestions",
-    minTier: "creator",
+    minTier: "independent", // canUseAICasting is true from independent (Industry)
     hasNative: false,
   },
   {
@@ -223,7 +225,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Production",
     webPath: "/projects/:id/locations",
     description: "AI location scouting and matching",
-    minTier: "independent",
+    minTier: "indie",   // canUseLocationScout is true from indie
     hasNative: false,
   },
   {
@@ -233,7 +235,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Production",
     webPath: "/projects/:projectId/live-action-plate",
     description: "Composite AI video with live footage",
-    minTier: "studio",
+    minTier: "independent", // canUseLiveActionPlate is true from independent (Industry)
     hasNative: false,
   },
 
@@ -245,7 +247,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Post-Production",
     webPath: "/projects/:id/subtitles",
     description: "Auto-generate SRT subtitles",
-    minTier: "amateur",
+    minTier: "amateur", // canUseSubtitles is true from amateur (Creator)
     hasNative: true,
   },
   {
@@ -255,7 +257,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Post-Production",
     webPath: "/projects/:projectId/continuity",
     description: "Find script inconsistencies",
-    minTier: "independent",
+    minTier: "amateur", // canUseContinuityCheck is true from amateur (Creator)
     hasNative: true,
   },
   {
@@ -265,7 +267,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Post-Production",
     webPath: "/projects/:projectId/nle-export",
     description: "Export to Premiere, DaVinci, Final Cut",
-    minTier: "creator",
+    minTier: "independent", // canUseNLEExport is true from independent (Industry)
     hasNative: false,
   },
   {
@@ -275,7 +277,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Post-Production",
     webPath: "/projects/:projectId/vfx-suite",
     description: "AI visual effects and compositing",
-    minTier: "studio",
+    minTier: "independent", // canUseVisualEffects is true from independent (Industry)
     hasNative: false,
   },
   {
@@ -285,7 +287,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Post-Production",
     webPath: "/projects/:id/sound-effects",
     description: "AI sound design and effects",
-    minTier: "independent",
+    minTier: "amateur", // canUseSoundEffects is true from amateur (Creator)
     hasNative: false,
   },
   {
@@ -295,7 +297,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Post-Production",
     webPath: "/projects/:id/visual-effects",
     description: "AI-generated visual effects",
-    minTier: "independent",
+    minTier: "independent", // canUseVisualEffects is true from independent (Industry)
     hasNative: false,
   },
 
@@ -307,7 +309,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     category: "Management",
     webPath: "/projects/:id/collaboration",
     description: "Invite and manage collaborators",
-    minTier: "creator",
+    minTier: "independent", // canUseCollaboration is true from independent (Industry)
     hasNative: true,
   },
   {
@@ -386,10 +388,14 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
 
 /** Returns all features for a given subscription tier */
 export function getFeaturesForTier(tier: string): FeatureEntry[] {
-  const TIER_ORDER = ["free", "amateur", "independent", "creator", "studio", "industry"];
-  const tierIndex = TIER_ORDER.indexOf(tier);
+  // Canonical order: free < indie < amateur < independent = industry
+  const TIER_ORDER = ["free", "indie", "amateur", "independent", "industry"];
+  // Normalise aliases (creator/studio) to canonical key
+  const normTier = (tier === "creator" || tier === "studio") ? "independent" : tier;
+  const tierIndex = TIER_ORDER.indexOf(normTier);
   return FEATURE_REGISTRY.filter(f => {
     if (f.isAdmin) return false;
+    // minTier type is already constrained to the 5 canonical values — no alias needed here
     const featureTierIndex = TIER_ORDER.indexOf(f.minTier);
     return featureTierIndex <= tierIndex;
   });

@@ -17,9 +17,10 @@ interface SubscriptionGateProps {
 export function SubscriptionGate({ children, feature, featureKey, requiredTier }: SubscriptionGateProps) {
   const { canUseFeature, tier, isLoading } = useSubscription();
 
-  // Normalise backward-compat aliases to canonical DB keys
-  const mappedTier = requiredTier === "creator" ? "amateur"
-    : requiredTier === "pro" ? "industry"
+  // Normalise backward-compat aliases to canonical DB keys.
+  // creator, studio, pro all resolve to independent (Industry).
+  const mappedTier = (requiredTier === "creator" || requiredTier === "studio" || requiredTier === "pro")
+    ? "independent"
     : requiredTier;
 
   if (isLoading) {

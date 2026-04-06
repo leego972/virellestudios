@@ -14,9 +14,10 @@ export const stripe = ENV.stripeSecretKey
 // Internal DB tier keys — display names are mapped in the frontend:
 //   "indie"       → "Indie"       (A$149/mo — 500 credits — entry tier)
 //   "amateur"     → "Creator"     (A$490/mo — 2,000 credits)
-//   "independent" → "Studio"      (A$1,490/mo — 6,000 credits)
-//   "studio"      → "Production"  (From A$4,990/mo — 15,500 credits)
-//   "industry"    → "Enterprise"  (Custom)
+//   "independent" → "Industry"    (A$1,490/mo — 6,000 credits — top self-serve tier)
+//   "creator"     → "Industry"    (alias for independent, backward-compat)
+//   "studio"      → "Industry"    (alias for independent, backward-compat)
+//   "industry"    → "Industry"    (custom/sales-led, same display name)
 export type SubscriptionTier = "none" | "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
 export type BillingInterval = "monthly" | "annual";
 
@@ -87,14 +88,15 @@ export interface TierLimits {
  * Pricing architecture (AUD):
  *
  * MEMBERSHIP TIERS (required to use the platform):
- *   Indie (DB: "indie")                — A$149/month   or A$1,490/year   — 500 credits/month
- *   Creator (DB: "amateur")            — A$490/month   or A$4,900/year   — 2,000 credits/month
- *   Studio (DB: "independent")         — A$1,490/month or A$14,900/year  — 6,000 credits/month
- *   Production (DB: "studio")          — From A$4,990/month (consultative) — 15,500 credits/month
- *   Enterprise (DB: "industry")        — Custom pricing (sales-led)      — 50,500 credits/month
+ *   Indie    (DB: "indie")       — A$149/month   or A$1,490/year   — 500 credits/month
+ *   Creator  (DB: "amateur")     — A$490/month   or A$4,900/year   — 2,000 credits/month
+ *   Industry (DB: "independent") — A$1,490/month or A$14,900/year  — 6,000 credits/month
+ *
+ *   Legacy aliases (map to Industry): "creator", "studio"
+ *   Enterprise (DB: "industry") — Custom pricing (sales-led) — 50,500 credits/month
  *
  * FOUNDING MEMBER OFFER: 50% off first year on annual billing (VIRELLE_FOUNDER_50 coupon)
- *   Applies to Creator and Studio annual plans only.
+ *   Applies to Creator and Industry annual plans only.
  *
  * CREDITS SYSTEM — Every action costs credits:
  *   Create New Project:                      FREE
@@ -303,7 +305,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 2000,
   },
 
-  // ─── STUDIO (DB: "independent") ─── A$1,490/month — 6,000 credits/month ───
+  // ─── INDUSTRY (DB: "independent") ─── A$1,490/month — 6,000 credits/month ───
   independent: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -361,7 +363,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 6000,
   },
 
-  // ─── STUDIO alias (DB: "creator") ─── same limits as independent ───
+  // ─── INDUSTRY alias (DB: "creator") ─── same limits as independent ───
   creator: {
     maxProjects: 25,
     maxCharactersPerProject: 30,
@@ -389,7 +391,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     monthlyCredits: 6000,
   },
 
-  // ─── PRODUCTION (DB: "studio") ─── From A$4,990/month — 15,500 credits/month ───
+  // ─── INDUSTRY alias (DB: "studio") ─── same limits as independent ───
   studio: {
     maxProjects: 100,
     maxCharactersPerProject: 100,
@@ -575,21 +577,20 @@ export interface TierPricing {
 /**
  * Platform membership pricing (AUD, in cents).
  *
- * Indie (indie):              A$149/mo   (A$1,490/yr)   — 500 credits/mo
- * Creator (amateur):          A$490/mo   (A$4,900/yr)   — 2,000 credits/mo
- * Studio (independent):       A$1,490/mo (A$14,900/yr)  — 6,000 credits/mo
- * Production (studio):        From A$4,990/mo (consultative) — 15,500 credits/mo
- * Enterprise (industry):      Custom pricing (sales-led) — 50,500 credits/mo
+ * Indie     (indie):       A$149/mo   (A$1,490/yr)   — 500 credits/mo
+ * Creator   (amateur):     A$490/mo   (A$4,900/yr)   — 2,000 credits/mo
+ * Industry  (independent): A$1,490/mo (A$14,900/yr)  — 6,000 credits/mo
+ * (Legacy aliases "creator" and "studio" map to Industry)
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
   // All prices in AUD cents. annual = monthly equivalent when billed annually.
   none:        { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Free" },
   indie:       { monthly: 14900,  annual: 12400,  annualTotal: 149000,  monthlyTotal: 178800,  displayName: "Indie" },
   amateur:     { monthly: 49000,  annual: 40800,  annualTotal: 490000,  monthlyTotal: 588000,  displayName: "Creator" },
-  independent: { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Studio" },
-  creator:     { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Studio" },
-  studio:      { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Production" }, // From A$4,990/mo — consultative, no self-serve checkout
-  industry:    { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Enterprise" }, // Custom
+  independent: { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Industry" },
+  creator:     { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Industry" }, // alias
+  studio:      { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Industry" }, // alias
+  industry:    { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Industry" }, // Custom / sales-led
   beta:        { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Beta" },
 };
 
@@ -597,16 +598,16 @@ export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
 export const TIER_DISPLAY_NAMES: Record<string, string> = {
   indie: "Indie",
   amateur: "Creator",
-  independent: "Studio",
-  creator: "Studio",
-  studio: "Production",
-  industry: "Enterprise",
+  independent: "Industry",
+  creator: "Industry",  // alias
+  studio: "Industry",   // alias
+  industry: "Industry",
   beta: "Beta",
 };
 
 // Launch special flag — set to false to disable 50% off
 export const LAUNCH_SPECIAL_ACTIVE = true;
-export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first year of annual Creator / Studio
+export const LAUNCH_SPECIAL_DISCOUNT = 0.5; // 50% off first year of annual Creator / Industry
 
 // ============================================================
 // CREDIT COSTS PER ACTION
@@ -776,8 +777,8 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
 function mapTierName(tier: string | null | undefined): SubscriptionTier {
   if (!tier) return "none";
   if (tier === "industry" || tier === "enterprise" || tier === "industry_enterprise") return "industry";
-  if (tier === "studio") return "studio";
-  if (tier === "independent" || tier === "creator" || tier === "production_pro") return "independent";
+  if (tier === "studio" || tier === "production_pro") return "independent"; // legacy aliases → Industry
+  if (tier === "independent" || tier === "creator") return "independent";
   if (tier === "amateur" || tier === "auteur") return "amateur";
   if (tier === "indie") return "indie";
   if (tier === "beta") return "beta";
@@ -819,7 +820,8 @@ export function getTierDisplayName(tier: string | null | undefined): string {
  * or consultative (Production / Enterprise).
  */
 export function isSelfServeTier(tier: SubscriptionTier): boolean {
-  return tier === "indie" || tier === "amateur" || tier === "independent" || tier === "creator";
+  // Indie, Creator, and Industry are all self-serve checkout tiers.
+  return tier === "indie" || tier === "amateur" || tier === "independent" || tier === "creator" || tier === "studio";
 }
 
 
