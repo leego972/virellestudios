@@ -130,7 +130,7 @@ function LazyPage({ children }: { children: React.ReactNode }) {
 // requiredTier values match the first tier where the canUse* flag is true in TIER_LIMITS (subscription.ts)
 function GatedScriptWriter() { return <LazyPage><SubscriptionGate feature="Script Writer" featureKey="canUseScriptWriter" requiredTier="indie"><ScriptWriter /></SubscriptionGate></LazyPage>; }
 function GatedStoryboard() { return <LazyPage><SubscriptionGate feature="Storyboard" featureKey="canUseStoryboard" requiredTier="amateur"><Storyboard /></SubscriptionGate></LazyPage>; }
-function GatedCreditsEditor() { return <LazyPage><SubscriptionGate feature="Credits Editor" featureKey="canUseStoryboard" requiredTier="amateur"><CreditsEditor /></SubscriptionGate></LazyPage>; }
+function GatedCreditsEditor() { return <LazyPage><SubscriptionGate feature="Credits Editor" featureKey="canUseCreditsEditor" requiredTier="amateur"><CreditsEditor /></SubscriptionGate></LazyPage>; }
 function GatedShotList() { return <LazyPage><SubscriptionGate feature="Shot List" featureKey="canUseShotList" requiredTier="indie"><ShotList /></SubscriptionGate></LazyPage>; }
 function GatedContinuityCheck() { return <LazyPage><SubscriptionGate feature="Continuity Check" featureKey="canUseContinuityCheck" requiredTier="amateur"><ContinuityCheck /></SubscriptionGate></LazyPage>; }
 function GatedColorGrading() { return <LazyPage><SubscriptionGate feature="Color Grading" featureKey="canUseColorGrading" requiredTier="amateur"><ColorGrading /></SubscriptionGate></LazyPage>; }

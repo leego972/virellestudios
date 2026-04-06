@@ -46,6 +46,7 @@ export interface TierLimits {
   canUseContinuityCheck: boolean;
   canUseScriptWriter: boolean;
   canUseStoryboard: boolean;
+  canUseCreditsEditor: boolean;
   canUseCollaboration: boolean;
   canExportMovies: boolean;
   canExportHD: boolean;
@@ -122,7 +123,7 @@ export interface TierLimits {
  *   Starter Pack     — 100 credits    A$19     (A$0.19/credit)
  *   Producer Pack    — 300 credits    A$49     (A$0.16/credit)
  *   Director Pack    — 750 credits    A$99     (A$0.13/credit)
- *   Studio Pack      — 2,000 credits  A$199    (A$0.10/credit)
+ *   Filmmaker Pack   — 2,000 credits  A$199    (A$0.10/credit)
  *   Blockbuster Pack — 5,000 credits  A$399    (A$0.08/credit)
  *   Mogul Pack       — 12,000 credits A$799    (A$0.07/credit)
  */
@@ -154,6 +155,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseContinuityCheck: false,
     canUseScriptWriter: false,
     canUseStoryboard: false,
+    canUseCreditsEditor: false,
     canUseCollaboration: false,
     canExportMovies: false,
     canExportHD: false,
@@ -214,6 +216,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseContinuityCheck: false,
     canUseScriptWriter: true,
     canUseStoryboard: false,
+    canUseCreditsEditor: false,
     canUseCollaboration: false,
     canExportMovies: false,
     canExportHD: false,
@@ -272,6 +275,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseContinuityCheck: true,
     canUseScriptWriter: true,
     canUseStoryboard: true,
+    canUseCreditsEditor: true,
     canUseCollaboration: false,
     canExportMovies: true,
     canExportHD: true,
@@ -330,6 +334,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseContinuityCheck: true,
     canUseScriptWriter: true,
     canUseStoryboard: true,
+    canUseCreditsEditor: true,
     canUseCollaboration: true,
     canExportMovies: true,
     canExportHD: true,
@@ -377,7 +382,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
     canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
     canUseLocationScout: true, canUseMoodBoard: true, canUseShotList: true,
-    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true,
+    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true, canUseCreditsEditor: true,
     canUseCollaboration: true, canExportMovies: true, canExportHD: true,
     canUseAICharacterGen: true, canUseAIScriptGen: true, canUseAIDialogueGen: true,
     canUseAIBudgetGen: true, canUseAISubtitleGen: true, canUseAILocationSuggest: true,
@@ -405,7 +410,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
     canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
     canUseLocationScout: true, canUseMoodBoard: true, canUseShotList: true,
-    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true,
+    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true, canUseCreditsEditor: true,
     canUseCollaboration: true, canExportMovies: true, canExportHD: true,
     canUseAICharacterGen: true, canUseAIScriptGen: true, canUseAIDialogueGen: true,
     canUseAIBudgetGen: true, canUseAISubtitleGen: true, canUseAILocationSuggest: true,
@@ -444,6 +449,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseContinuityCheck: true,
     canUseScriptWriter: true,
     canUseStoryboard: true,
+    canUseCreditsEditor: true,
     canUseCollaboration: true,
     canExportMovies: true,
     canExportHD: true,
@@ -491,7 +497,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAdPosterMaker: true, canUseBudgetEstimator: true, canUseColorGrading: true,
     canUseSoundEffects: true, canUseSubtitles: true, canUseDialogueEditor: true,
     canUseLocationScout: true, canUseMoodBoard: true, canUseShotList: true,
-    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true,
+    canUseContinuityCheck: true, canUseScriptWriter: true, canUseStoryboard: true, canUseCreditsEditor: true,
     canUseCollaboration: true, canExportMovies: true, canExportHD: true,
     canUseAICharacterGen: true, canUseAIScriptGen: true, canUseAIDialogueGen: true,
     canUseAIBudgetGen: true, canUseAISubtitleGen: true, canUseAILocationSuggest: true,
@@ -701,7 +707,7 @@ export const TOP_UP_PACKS: TopUpPack[] = [
   { id: "topup_10",   name: "Starter Pack",     credits: 100,   price: 1900,    pricePerCredit: 0.19, savings: "" },
   { id: "topup_50",   name: "Producer Pack",    credits: 300,   price: 4900,    pricePerCredit: 0.16, savings: "Save 16%" },
   { id: "topup_100",  name: "Director Pack",    credits: 750,   price: 9900,    pricePerCredit: 0.13, savings: "Save 32%" },
-  { id: "topup_200",  name: "Studio Pack",      credits: 2000,  price: 19900,   pricePerCredit: 0.10, savings: "Save 47%" },
+  { id: "topup_200",  name: "Filmmaker Pack",      credits: 2000,  price: 19900,   pricePerCredit: 0.10, savings: "Save 47%" },
   { id: "topup_500",  name: "Blockbuster Pack", credits: 5000,  price: 39900,   pricePerCredit: 0.08, savings: "Save 58%" },
   { id: "topup_1000", name: "Mogul Pack",       credits: 12000, price: 79900,   pricePerCredit: 0.07, savings: "Save 63%" },
 ];

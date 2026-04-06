@@ -140,7 +140,7 @@ const CREDIT_PACKS = [
   { id: "topup_10",   credits: 100,   price: 19,    perCredit: 0.19, label: "Starter Pack",     saving: "" },
   { id: "topup_50",   credits: 300,   price: 49,    perCredit: 0.16, label: "Producer Pack",    saving: "Save 16%" },
   { id: "topup_100",  credits: 750,   price: 99,    perCredit: 0.13, label: "Director Pack",    saving: "Save 32%" },
-  { id: "topup_200",  credits: 2000,  price: 199,   perCredit: 0.10, label: "Studio Pack",      saving: "Save 47%", popular: true },
+  { id: "topup_200",  credits: 2000,  price: 199,   perCredit: 0.10, label: "Filmmaker Pack",      saving: "Save 47%", popular: true },
   { id: "topup_500",  credits: 5000,  price: 399,   perCredit: 0.08, label: "Blockbuster Pack", saving: "Save 58%" },
   { id: "topup_1000", credits: 12000, price: 799,   perCredit: 0.07, label: "Mogul Pack",       saving: "Save 63%" },
 ];
