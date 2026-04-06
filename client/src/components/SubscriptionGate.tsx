@@ -7,7 +7,7 @@ interface SubscriptionGateProps {
   feature: string;
   featureKey: string;
   // Accepts all DB tier keys plus backward-compat aliases
-  requiredTier: "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
+  requiredTier: "indie" | "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
 }
 
 /**
@@ -33,7 +33,7 @@ export function SubscriptionGate({ children, feature, featureKey, requiredTier }
   if (!canUseFeature(featureKey)) {
     return (
       <div className="p-4 sm:p-6">
-        <UpgradePrompt feature={feature} requiredTier={mappedTier as "amateur" | "independent" | "studio" | "industry"} currentTier={tier} />
+        <UpgradePrompt feature={feature} requiredTier={mappedTier as "indie" | "amateur" | "independent" | "studio" | "industry"} currentTier={tier} />
       </div>
     );
   }

@@ -147,7 +147,7 @@ function GatedNLEExport() { return <LazyPage><SubscriptionGate feature="NLE Expo
 function GatedVFXSuite() { return <LazyPage><SubscriptionGate feature="VFX Suite" featureKey="canUseVisualEffects" requiredTier="studio"><VFXSuite /></SubscriptionGate></LazyPage>; }
 function GatedLiveActionPlate() { return <LazyPage><SubscriptionGate feature="Live Action Plate" featureKey="canUseLiveActionPlate" requiredTier="industry"><LiveActionPlate /></SubscriptionGate></LazyPage>; }
 function GatedAICasting() { return <LazyPage><SubscriptionGate feature="AI Casting" featureKey="canUseAICasting" requiredTier="studio"><AICasting /></SubscriptionGate></LazyPage>; }
-function GatedDirectorCut() { return <LazyPage><DirectorCut /></LazyPage>; }
+function GatedDirectorCut() { return <LazyPage><SubscriptionGate feature="Director's Cut" featureKey="canUseDirectorAssistant" requiredTier="indie"><DirectorCut /></SubscriptionGate></LazyPage>; }
 function GatedTrailerStudio() { return <LazyPage><SubscriptionGate feature="Trailer Studio" featureKey="canUseFullFilmGeneration" requiredTier="independent"><TrailerStudio /></SubscriptionGate></LazyPage>; }
 function GatedTVCommercial() { return <LazyPage><SubscriptionGate feature="TV Commercial Creator" featureKey="canUseAdPosterMaker" requiredTier="independent"><TVCommercial /></SubscriptionGate></LazyPage>; }
 

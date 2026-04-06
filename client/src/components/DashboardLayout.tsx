@@ -226,6 +226,11 @@ export default function DashboardLayout({
   if (!user && isPublicRoute) {
     return <>{children}</>;
   }
+  // Admin route guard — non-admins are silently redirected to home
+  if (actualPath.startsWith('/admin') && (user as any)?.role !== 'admin') {
+    window.location.href = '/';
+    return <DashboardLayoutSkeleton />;
+  }
 
   return (
     <SidebarProvider

@@ -5759,11 +5759,8 @@ Generate a detailed production budget estimate.`,
               mimeType = result.mimeType;
             } catch (err: any) {
               console.error("[Export] Video stitching failed:", err.message);
-              // Last-resort fallback: raw scene URL (opener not applied — logged for monitoring)
-              fileUrl = (scenesWithVideo[0] as any).videoUrl;
-              totalDuration = scenesWithVideo[0].duration || totalDuration;
-              mimeType = "video/mp4";
-              console.warn(`[Export] Opener NOT applied for film export of project ${project.id} due to stitch failure`);
+              // Hard fail — never save a full film without the Virelle Studios opener.
+              throw new Error(`Film compilation failed: ${err.message}. Please try again.`);
             }
           }
 
@@ -5868,11 +5865,8 @@ Generate a detailed production budget estimate.`,
               mimeType = result.mimeType;
             } catch (err: any) {
               console.error("[Export] Trailer stitching failed:", err.message);
-              // Last-resort fallback: raw scene URL (opener not applied — logged for monitoring)
-              fileUrl = (scenesWithVideo[0] as any).videoUrl;
-              totalDuration = scenesWithVideo[0].duration || undefined;
-              mimeType = "video/mp4";
-              console.warn(`[Export] Opener NOT applied for trailer export of project ${project.id} due to stitch failure`);
+              // Hard fail — never save a trailer without the Virelle Studios opener.
+              throw new Error(`Trailer compilation failed: ${err.message}. Please try again.`);
             }
           }
 
@@ -7058,14 +7052,14 @@ Rules:
             const livePeriodEnd = new Date((sub as any).current_period_end * 1000);
 
             // Only update DB if something changed
-            const tierChanged = (liveStatus === "active" || liveStatus === "trialing" ? liveTier : "independent") !== user.subscriptionTier;
+            const effectiveTierForDb = (liveStatus === "active" || liveStatus === "trialing" ? liveTier : null);
+            const tierChanged = effectiveTierForDb !== user.subscriptionTier;
             const statusChanged = liveStatus !== user.subscriptionStatus;
             const periodChanged = !user.subscriptionCurrentPeriodEnd || 
               Math.abs(livePeriodEnd.getTime() - new Date(user.subscriptionCurrentPeriodEnd).getTime()) > 60000;
-
             if (tierChanged || statusChanged || periodChanged) {
               await db.updateUserSubscription(user.id, {
-                subscriptionTier: (liveStatus === "active" || liveStatus === "trialing" ? liveTier : "independent") as any,
+                subscriptionTier: effectiveTierForDb as any,
                 subscriptionStatus: liveStatus as any,
                 subscriptionCurrentPeriodEnd: livePeriodEnd,
               });
@@ -8429,13 +8423,8 @@ Rules:
           mimeType = result.mimeType;
         } catch (err: any) {
           console.error(`[Export] ${input.platform} promo stitching failed:`, err.message);
-          // Last-resort fallback: raw scene URL (opener not applied — logged for monitoring)
-          if (scenesWithVideo.length > 0) {
-            fileUrl = (scenesWithVideo[0] as any).videoUrl;
-            totalDuration = scenesWithVideo[0].duration || undefined;
-            mimeType = "video/mp4";
-            console.warn(`[Export] Opener NOT applied for ${input.platform} promo of project ${project.id} due to stitch failure`);
-          }
+          // Hard fail — never save a promo without the Virelle Studios opener.
+          throw new Error(`Promo compilation failed: ${err.message}. Please try again.`);
         }
 
         const movie = await db.createMovie({
@@ -9066,6 +9055,123 @@ Rules:
         subscriptionStatus: user.subscriptionStatus || "none",
         subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd || null,
       };
+    }),
+  }),
+
+  // ─── YouTube Export ───────────────────────────────────────────────────────
+  youtube: router({
+    /**
+     * Export a movie/trailer to the Virelle Studios YouTube channel.
+     * Requires: paid subscription tier (independent, creator, studio, industry)
+     */
+    exportToChannel: protectedProcedure
+      .input(z.object({
+        movieId: z.number().optional(),
+        videoUrl: z.string().url(),
+        title: z.string().min(1).max(100),
+        description: z.string().max(5000).default(""),
+        privacyStatus: z.enum(["public", "unlisted", "private"]).default("public"),
+        projectId: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Only Studio+ tiers can export to YouTube — use getEffectiveTier for consistent access control
+        const effectiveTier = getEffectiveTier(ctx.user);
+        const paidTiers = ["independent", "creator", "studio", "industry", "beta"];
+        if (!paidTiers.includes(effectiveTier) && ctx.user.role !== "admin") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "YouTube export is available on Studio plan and above. Upgrade to unlock this feature.",
+          });
+        }
+
+        const { uploadVideoToYouTube, isYouTubeConfigured } = await import("./youtube-service");
+
+        if (!isYouTubeConfigured()) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "YouTube integration is not yet configured. Please contact support.",
+          });
+        }
+
+        const { getDb: getYtDb } = await import("./db");
+        const { sql: sqlRaw } = await import("drizzle-orm");
+        const conn = await getYtDb();
+        const ytUser = ctx.user as any;
+
+        // Insert export record as 'uploading'
+        let exportId: number | null = null;
+        try {
+          if (conn) {
+            const ins = await (conn as any).execute(sqlRaw.raw(`
+              INSERT INTO youtubeExports (userId, movieId, projectId, videoUrl, youtubeVideoId, youtubeUrl, title, description, privacyStatus, status)
+              VALUES (${ytUser.id}, ${input.movieId ?? "NULL"}, ${input.projectId ?? "NULL"}, '${input.videoUrl.replace(/'/g, "\\'")}',' ', ' ', '${input.title.replace(/'/g, "\\'").substring(0, 255)}', '${(input.description || "").replace(/'/g, "\\'").substring(0, 4999)}', '${input.privacyStatus}', 'uploading')
+            `)) as any;
+            exportId = ins?.insertId ?? null;
+          }
+        } catch (_) {}
+
+        let result;
+        try {
+          result = await uploadVideoToYouTube({
+            videoUrl: input.videoUrl,
+            title: input.title,
+            description: input.description || `Created with Virelle Studios — AI-powered cinema.\n\nhttps://virelle.life`,
+            privacyStatus: input.privacyStatus,
+            tags: ["Virelle Studios", "AI Film", "AI Cinema", "Short Film", "AI Generated"],
+          });
+        } catch (err: any) {
+          // Mark as failed
+          if (conn && exportId) {
+            await conn.execute(sqlRaw.raw(`UPDATE youtubeExports SET status='failed', errorMessage='${String(err.message).substring(0, 500).replace(/'/g, "\\'")}'  WHERE id=${exportId}`)).catch(() => {});
+          }
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: `YouTube upload failed: ${err.message}`,
+          });
+        }
+
+        // Mark export as done and update the movie record
+        if (conn) {
+          if (exportId) {
+            await conn.execute(sqlRaw.raw(`UPDATE youtubeExports SET status='done', youtubeVideoId='${result.youtubeVideoId}', youtubeUrl='${result.youtubeUrl}' WHERE id=${exportId}`)).catch(() => {});
+          }
+          if (input.movieId) {
+            await conn.execute(sqlRaw.raw(`UPDATE movies SET youtubeVideoId='${result.youtubeVideoId}', youtubeUrl='${result.youtubeUrl}', youtubeExportedAt=NOW() WHERE id=${input.movieId}`)).catch(() => {});
+          }
+        }
+
+        return {
+          success: true,
+          youtubeVideoId: result.youtubeVideoId,
+          youtubeUrl: result.youtubeUrl,
+        };
+      }),
+
+    /**
+     * Get YouTube export history for the current user.
+     */
+    getExportHistory: protectedProcedure.query(async ({ ctx }) => {
+      const histUser = ctx.user as any;
+      const { getDb: getHistDb } = await import("./db");
+      const conn = await getHistDb();
+      if (!conn) return [];
+      const { sql: sqlRaw } = await import("drizzle-orm");
+      const [rows] = await (conn as any).execute(sqlRaw.raw(`
+        SELECT id, movieId, projectId, youtubeVideoId, youtubeUrl, title, privacyStatus, status, errorMessage, exportedAt
+        FROM youtubeExports
+        WHERE userId = ${histUser.id}
+        ORDER BY exportedAt DESC
+        LIMIT 50
+      `)) as any;
+      return Array.isArray(rows) ? rows : [];
+    }),
+
+    /**
+     * Check whether YouTube credentials are configured (admin only).
+     */
+    isConfigured: protectedProcedure.query(async ({ ctx }) => {
+      const { isYouTubeConfigured } = await import("./youtube-service");
+      return { configured: isYouTubeConfigured() };
     }),
   }),
 });

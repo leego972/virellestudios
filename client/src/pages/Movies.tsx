@@ -7,6 +7,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useSubscription } from "@/hooks/useSubscription";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Film,
   Clapperboard,
@@ -23,6 +35,9 @@ import {
   ChevronLeft,
   Folder,
   Sparkles,
+  Youtube,
+  ExternalLink,
+  Lock,
 } from "lucide-react";
 import { useLocation } from "wouter";
 
@@ -80,10 +95,151 @@ type MovieItem = {
   updatedAt: Date;
 };
 
+// ─── YouTube Export Modal ────────────────────────────────────────────────────
+function YouTubeExportModal({
+  movie,
+  open,
+  onClose,
+}: {
+  movie: MovieItem | null;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [privacy, setPrivacy] = useState<"public" | "unlisted" | "private">("public");
+  const exportMutation = trpc.youtube.exportToChannel.useMutation({
+    onSuccess: (data) => {
+      toast.success(
+        <span>
+          Uploaded to YouTube!{" "}
+          <a
+            href={data.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-amber-400"
+          >
+            Watch on YouTube
+          </a>
+        </span>
+      );
+      onClose();
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  // Pre-fill title when movie changes
+  const prevMovieId = useRef<number | null>(null);
+  if (movie && movie.id !== prevMovieId.current) {
+    prevMovieId.current = movie.id;
+    setTitle(movie.title);
+    setDescription(
+      movie.description
+        ? `${movie.description}\n\nCreated with Virelle Studios — AI-powered cinema.\nhttps://virelle.life`
+        : `Created with Virelle Studios — AI-powered cinema.\nhttps://virelle.life`
+    );
+  }
+
+  if (!movie) return null;
+
+  const canExport = !!movie.fileUrl;
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Youtube className="h-5 w-5 text-red-500" />
+            Export to Virelle Studios YouTube
+          </DialogTitle>
+          <DialogDescription>
+            This will upload your video to the official{" "}
+            <span className="text-amber-400 font-medium">Virelle Studios</span>{" "}
+            YouTube channel.
+          </DialogDescription>
+        </DialogHeader>
+
+        {!canExport ? (
+          <div className="py-4 text-center text-muted-foreground">
+            <FileVideo className="h-10 w-10 mx-auto mb-2 opacity-40" />
+            <p>This movie has no video file to upload.</p>
+          </div>
+        ) : (
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="yt-title">Title</Label>
+              <Input
+                id="yt-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                maxLength={100}
+                placeholder="Video title on YouTube"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="yt-desc">Description</Label>
+              <Textarea
+                id="yt-desc"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+                maxLength={5000}
+                placeholder="Video description"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Privacy</Label>
+              <Select value={privacy} onValueChange={(v) => setPrivacy(v as any)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="public">Public</SelectItem>
+                  <SelectItem value="unlisted">Unlisted</SelectItem>
+                  <SelectItem value="private">Private</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={exportMutation.isPending}>
+            Cancel
+          </Button>
+          {canExport && (
+            <Button
+              className="gap-2 bg-red-600 hover:bg-red-700 text-white"
+              disabled={!title.trim() || exportMutation.isPending}
+              onClick={() =>
+                exportMutation.mutate({
+                  movieId: movie.id,
+                  videoUrl: movie.fileUrl!,
+                  title: title.trim(),
+                  description,
+                  privacyStatus: privacy,
+                  projectId: movie.projectId ?? undefined,
+                })
+              }
+            >
+              <Youtube className="h-4 w-4" />
+              {exportMutation.isPending ? "Uploading…" : "Upload to YouTube"}
+            </Button>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function Movies() {
   const [showPlayer, setShowPlayer] = useState<number | null>(null);
   const [showOpenerBefore, setShowOpenerBefore] = useState<number | null>(null); // movie ID to play after opener
   const [searchQuery, setSearchQuery] = useState("");
+  const [ytExportMovie, setYtExportMovie] = useState<MovieItem | null>(null);
+  const { tier, isAdmin } = useSubscription();
+  const paidTiers = ["independent", "creator", "studio", "industry", "beta"];
+  const canYouTubeExport = isAdmin || paidTiers.includes(tier);
 
   // Helper: show opener before playing full films, play scenes/trailers directly
   const playMovie = useCallback((movieId: number, movieType?: string) => {
@@ -101,6 +257,15 @@ export default function Movies() {
   const utils = trpc.useUtils();
   const { data: grouped, isLoading } = trpc.movie.listGrouped.useQuery();
   const { data: allMovies = [] } = trpc.movie.list.useQuery();
+
+  const openYouTubeExport = useCallback((movie: MovieItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!canYouTubeExport) {
+      toast.error("YouTube export is available on Studio plan and above. Upgrade to unlock.");
+      return;
+    }
+    setYtExportMovie(movie);
+  }, [canYouTubeExport]);
 
   const deleteMutation = trpc.movie.delete.useMutation({
     onSuccess: () => {
@@ -195,31 +360,51 @@ export default function Movies() {
           </div>
         )}
         {/* Hover overlay with action buttons - desktop only */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-end justify-center pb-3 gap-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            className="gap-1 h-8"
-            onClick={(e) => { e.stopPropagation(); playMovie(movie.id, movie.type); }}
-          >
-            <Play className="h-3 w-3" />
-            Watch
-          </Button>
-          {movie.fileUrl && (
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex flex-col items-center justify-end pb-3 gap-2">
+          {/* Primary row: Watch + Download */}
+          <div className="flex items-center gap-2">
             <Button
               size="sm"
               variant="secondary"
-              className="gap-1 h-8"
-              onClick={(e) => {
-                e.stopPropagation();
-                const a = document.createElement("a");
-                a.href = movie.fileUrl!;
-                a.download = movie.title;
-                a.click();
-              }}
+              className="gap-1 h-8 text-xs"
+              onClick={(e) => { e.stopPropagation(); playMovie(movie.id, movie.type); }}
             >
-              <Download className="h-3 w-3" />
-              Download
+              <Play className="h-3 w-3" />
+              Watch
+            </Button>
+            {movie.fileUrl && (
+              <Button
+                size="sm"
+                variant="secondary"
+                className="gap-1 h-8 text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const a = document.createElement("a");
+                  a.href = movie.fileUrl!;
+                  a.download = movie.title;
+                  a.click();
+                }}
+              >
+                <Download className="h-3 w-3" />
+                Download
+              </Button>
+            )}
+          </div>
+          {/* Secondary row: YouTube export (only for trailers & films) */}
+          {movie.fileUrl && (movie.type === "trailer" || movie.type === "film") && (
+            <Button
+              size="sm"
+              variant="secondary"
+              className={`gap-1.5 h-8 text-xs w-auto px-3 ${
+                canYouTubeExport
+                  ? "bg-red-600/90 hover:bg-red-600 text-white border-0"
+                  : "text-muted-foreground/60 border border-muted-foreground/20"
+              }`}
+              onClick={(e) => openYouTubeExport(movie, e)}
+              title={canYouTubeExport ? "Export to Virelle Studios YouTube" : "Upgrade to Studio plan to export to YouTube"}
+            >
+              {canYouTubeExport ? <Youtube className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+              {canYouTubeExport ? "Export to YouTube" : "YouTube (Upgrade)"}
             </Button>
           )}
         </div>
@@ -249,8 +434,8 @@ export default function Movies() {
               </p>
             )}
           </div>
+          {/* Card top-right: only delete icon always visible; play is shown on mobile */}
           <div className="flex items-center gap-1 shrink-0">
-            {/* Mobile-only action buttons (play, download, delete) */}
             {(movie.fileUrl || movie.thumbnailUrl) && (
               <Button
                 size="icon"
@@ -262,22 +447,6 @@ export default function Movies() {
                 }}
               >
                 <Play className="h-4 w-4" />
-              </Button>
-            )}
-            {movie.fileUrl && (
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8 sm:hidden text-muted-foreground hover:text-foreground"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const a = document.createElement("a");
-                  a.href = movie.fileUrl!;
-                  a.download = movie.title;
-                  a.click();
-                }}
-              >
-                <Download className="h-4 w-4" />
               </Button>
             )}
             <Button
@@ -400,6 +569,17 @@ export default function Movies() {
               }}
             >
               <Download className="h-4 w-4" />
+            </Button>
+          )}
+          {movie.fileUrl && (
+            <Button
+              size="icon"
+              variant="ghost"
+              className={`h-9 w-9 sm:h-8 sm:w-8 hidden sm:flex ${canYouTubeExport ? "text-red-400 hover:text-red-300" : "text-muted-foreground/40"}`}
+              onClick={(e) => openYouTubeExport(movie, e)}
+              title={canYouTubeExport ? "Export to Virelle Studios YouTube" : "Upgrade to export to YouTube"}
+            >
+              <Youtube className="h-4 w-4" />
             </Button>
           )}
           <Button
@@ -797,6 +977,13 @@ export default function Movies() {
           onNavigate={(movieId) => setShowPlayer(movieId)}
         />
       )}
+
+      {/* YouTube Export Modal */}
+      <YouTubeExportModal
+        movie={ytExportMovie}
+        open={!!ytExportMovie}
+        onClose={() => setYtExportMovie(null)}
+      />
     </div>
   );
 }

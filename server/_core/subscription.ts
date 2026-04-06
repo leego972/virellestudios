@@ -17,7 +17,7 @@ export const stripe = ENV.stripeSecretKey
 //   "independent" → "Studio"      (A$1,490/mo — 6,000 credits)
 //   "studio"      → "Production"  (From A$4,990/mo — 15,500 credits)
 //   "industry"    → "Enterprise"  (Custom)
-export type SubscriptionTier = "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
+export type SubscriptionTier = "none" | "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
@@ -126,6 +126,64 @@ export interface TierLimits {
  */
 
 export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
+
+  // ─── NONE (no active subscription) ─── zero premium entitlements ──────────
+  none: {
+    maxProjects: 0,
+    maxCharactersPerProject: 0,
+    maxScenesPerProject: 0,
+    maxGenerationsPerMonth: 0,
+    maxMovieExports: 0,
+    maxCollaboratorsPerProject: 0,
+    maxScriptsPerProject: 0,
+    maxStorageMB: 0,
+    canUseQuickGenerate: false,
+    canUseTrailerGeneration: false,
+    canUseDirectorAssistant: false,
+    canUseAdPosterMaker: false,
+    canUseBudgetEstimator: false,
+    canUseColorGrading: false,
+    canUseSoundEffects: false,
+    canUseSubtitles: false,
+    canUseDialogueEditor: false,
+    canUseLocationScout: false,
+    canUseMoodBoard: false,
+    canUseShotList: false,
+    canUseContinuityCheck: false,
+    canUseScriptWriter: false,
+    canUseStoryboard: false,
+    canUseCollaboration: false,
+    canExportMovies: false,
+    canExportHD: false,
+    canUseAICharacterGen: false,
+    canUseAIScriptGen: false,
+    canUseAIDialogueGen: false,
+    canUseAIBudgetGen: false,
+    canUseAISubtitleGen: false,
+    canUseAILocationSuggest: false,
+    canUseFullFilmGeneration: false,
+    canUseAIVoiceActing: false,
+    canUseAISoundtrack: false,
+    canUseCharacterConsistency: false,
+    canUseSceneContinuity: false,
+    canUseClipChaining: false,
+    canUseVisualEffects: false,
+    canUseBulkGenerate: false,
+    canUseMultiShotSequencer: false,
+    canUseLiveActionPlate: false,
+    canUseNLEExport: false,
+    canUseAICasting: false,
+    canExportUltraHD: false,
+    canUseWhiteLabel: false,
+    canUseAPIAccess: false,
+    canUseCustomFineTuning: false,
+    canUsePriorityRendering: false,
+    resolution: "720p",
+    quality: ["standard"],
+    maxDurationMinutes: 0,
+    maxClipsPerScene: 0,
+    monthlyCredits: 0,
+  },
 
   // ─── INDIE (DB: "indie") ─── A$149/month — 500 credits/month ───────────────
   // Entry tier: screenplay tools, character creator, director assistant, shot list.
@@ -525,6 +583,7 @@ export interface TierPricing {
  */
 export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
   // All prices in AUD cents. annual = monthly equivalent when billed annually.
+  none:        { monthly: 0, annual: 0, annualTotal: 0, monthlyTotal: 0, displayName: "Free" },
   indie:       { monthly: 14900,  annual: 12400,  annualTotal: 149000,  monthlyTotal: 178800,  displayName: "Indie" },
   amateur:     { monthly: 49000,  annual: 40800,  annualTotal: 490000,  monthlyTotal: 588000,  displayName: "Creator" },
   independent: { monthly: 149000, annual: 124100, annualTotal: 1490000, monthlyTotal: 1788000, displayName: "Studio" },
@@ -715,14 +774,15 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
 // ============================================================
 
 function mapTierName(tier: string | null | undefined): SubscriptionTier {
-  if (!tier) return "independent";
+  if (!tier) return "none";
   if (tier === "industry" || tier === "enterprise" || tier === "industry_enterprise") return "industry";
   if (tier === "studio") return "studio";
-  if (tier === "creator" || tier === "production_pro") return "independent";
+  if (tier === "independent" || tier === "creator" || tier === "production_pro") return "independent";
   if (tier === "amateur" || tier === "auteur") return "amateur";
   if (tier === "indie") return "indie";
-  // "pro", "independent" and anything else map to independent
-  return "independent";
+  if (tier === "beta") return "beta";
+  // Unknown tier — deny access, force subscription
+  return "none";
 }
 
 export function getEffectiveTier(user: User): SubscriptionTier {
@@ -739,7 +799,8 @@ export function getEffectiveTier(user: User): SubscriptionTier {
   if (user.subscriptionStatus === "active" || user.subscriptionStatus === "trialing") {
     return mapTierName(user.subscriptionTier);
   }
-  return "independent";
+  // No active subscription — canceled, past_due, unpaid, expired, never-subscribed
+  return "none";
 }
 
 export function getUserLimits(user: User): TierLimits {

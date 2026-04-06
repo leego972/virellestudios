@@ -1,16 +1,18 @@
 import { trpc } from "@/lib/trpc";
 
 // All DB tier keys in ascending order of access level
-export type SubscriptionTier = "amateur" | "independent" | "creator" | "studio" | "industry";
+export type SubscriptionTier = "none" | "indie" | "amateur" | "independent" | "creator" | "studio" | "industry";
 
 // Tier order for hasAccess() comparisons (higher = more access)
 const TIER_ORDER: Record<string, number> = {
-  amateur:     0,  // Creator
-  independent: 1,  // Studio
-  creator:     1,  // Studio (alias — same limits as independent)
-  studio:      2,  // Production
-  industry:    3,  // Enterprise
-  beta:        3,  // Beta (full access, same as Enterprise)
+  none:        -1, // No active subscription — must subscribe to use any feature
+  indie:        0, // Indie — entry tier (A$149/mo)
+  amateur:      1, // Creator (A$490/mo)
+  independent:  2, // Studio (A$1,490/mo)
+  creator:      2, // Studio alias
+  studio:       3, // Production
+  industry:     4, // Enterprise
+  beta:         4, // Beta (full access)
 };
 
 export function useSubscription() {
@@ -19,7 +21,8 @@ export function useSubscription() {
     staleTime: 30_000, // Cache for 30 seconds
   });
 
-  const tier = (data?.tier as SubscriptionTier) || "amateur";
+  // Default to "none" (no access) until server confirms a paid tier
+  const tier = (data?.tier as SubscriptionTier) || "none";
   const isAdmin = data?.isAdmin || false;
 
   /**
@@ -28,7 +31,7 @@ export function useSubscription() {
    */
   const hasAccess = (requiredTier: SubscriptionTier): boolean => {
     if (isAdmin) return true;
-    return (TIER_ORDER[tier] ?? 0) >= (TIER_ORDER[requiredTier] ?? 0);
+    return (TIER_ORDER[tier] ?? -1) >= (TIER_ORDER[requiredTier] ?? 0);
   };
 
   /**
@@ -44,12 +47,14 @@ export function useSubscription() {
     return true;
   };
 
+  const isSubscribed = isAdmin || (tier !== "none" && (data?.status === "active" || data?.status === "trialing"));
+
   return {
     tier,
     isAdmin,
     isLoading,
     error,
-    status: data?.status || "inactive",
+    status: data?.status || "none",
     generationsUsed: data?.generationsUsed || 0,
     generationsLimit: data?.generationsLimit || 0,
     limits: data?.limits || null,
@@ -58,15 +63,16 @@ export function useSubscription() {
     canUseFeature,
 
     // Convenience booleans — using DB keys
+    isIndie:      hasAccess("indie"),       // Indie and above
     isCreator:    hasAccess("amateur"),     // Creator and above
     isStudio:     hasAccess("independent"), // Studio and above
     isProduction: hasAccess("studio"),      // Production and above
     isEnterprise: hasAccess("industry"),    // Enterprise only
 
-    // Backward-compatibility aliases (old names)
+    // Backward-compatibility aliases
     isIndependent: hasAccess("independent"),
     isIndustry:    hasAccess("industry"),
-    isSubscribed:  true, // All users must have a paid membership
+    isSubscribed,  // True only if actively subscribed or admin
     isPro:         hasAccess("independent"),
   };
 }

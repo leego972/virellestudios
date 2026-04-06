@@ -835,6 +835,24 @@ export async function runAutoMigration(): Promise<void> {
         purchasedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       )`,
     },
+    {
+      name: "youtubeExports",
+      createSQL: `CREATE TABLE IF NOT EXISTS youtubeExports (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        movieId INT NULL,
+        projectId INT NULL,
+        videoUrl TEXT NOT NULL,
+        youtubeVideoId VARCHAR(64) NOT NULL,
+        youtubeUrl TEXT NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        description TEXT NULL,
+        privacyStatus ENUM('public','unlisted','private') NOT NULL DEFAULT 'public',
+        status ENUM('pending','uploading','done','failed') NOT NULL DEFAULT 'pending',
+        errorMessage TEXT NULL,
+        exportedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`,
+    },
   ];
 
   // ─── Columns that may be missing from existing tables ───
@@ -1086,6 +1104,10 @@ export async function runAutoMigration(): Promise<void> {
     { table: "funding_sources", column: "tailoringNotes", definition: "TEXT NULL" },
     { table: "film_foley_tracks", column: "status", definition: "ENUM('pending','recorded','approved') NOT NULL DEFAULT 'pending'" },
     { table: "dialogues", column: "pacing", definition: "VARCHAR(32) NULL" },
+    // YouTube export tracking on movies
+    { table: "movies", column: "youtubeVideoId", definition: "VARCHAR(64) NULL" },
+    { table: "movies", column: "youtubeUrl", definition: "TEXT NULL" },
+    { table: "movies", column: "youtubeExportedAt", definition: "TIMESTAMP NULL" },
   ];
 
   let tablesCreated = 0;
@@ -1142,19 +1164,25 @@ export async function runAutoMigration(): Promise<void> {
   }
 
   // ─── Step 3: Admin Role Bootstrap ───
-  // Promote the owner email to admin on every startup (idempotent)
-  const adminEmailToPromote = (process.env.ADMIN_EMAIL || "Studiosvirelle@gmail.com").toLowerCase();
-  try {
-    const [adminRow] = await db.execute(sql.raw(`SELECT id, role FROM users WHERE LOWER(email) = '${adminEmailToPromote}' LIMIT 1`)) as any;
-    const adminUser = Array.isArray(adminRow) ? adminRow[0] : adminRow;
-    if (adminUser && adminUser.role !== 'admin') {
-      await db.execute(sql.raw(`UPDATE users SET role = 'admin' WHERE id = ${adminUser.id}`));
-      console.log(`[AutoMigrate] Promoted ${adminEmailToPromote} to admin`);
-    } else if (adminUser) {
-      console.log(`[AutoMigrate] Admin role confirmed for ${adminEmailToPromote}`);
+  // Promote all owner/studio emails to admin on every startup (idempotent)
+  const adminEmailsToPromote = [
+    (process.env.ADMIN_EMAIL || "Studiosvirelle@gmail.com").toLowerCase(),
+    "studiosvirelle@gmail.com",
+    "leego972@gmail.com",
+  ];
+  for (const adminEmailToPromote of [...new Set(adminEmailsToPromote)]) {
+    try {
+      const [adminRow] = await db.execute(sql.raw(`SELECT id, role FROM users WHERE LOWER(email) = '${adminEmailToPromote}' LIMIT 1`)) as any;
+      const adminUser = Array.isArray(adminRow) ? adminRow[0] : adminRow;
+      if (adminUser && adminUser.role !== 'admin') {
+        await db.execute(sql.raw(`UPDATE users SET role = 'admin' WHERE id = ${adminUser.id}`));
+        console.log(`[AutoMigrate] Promoted ${adminEmailToPromote} to admin`);
+      } else if (adminUser) {
+        console.log(`[AutoMigrate] Admin role confirmed for ${adminEmailToPromote}`);
+      }
+    } catch (err: any) {
+      console.warn(`[AutoMigrate] Admin bootstrap failed for ${adminEmailToPromote}:`, err.message);
     }
-  } catch (err: any) {
-    console.warn('[AutoMigrate] Admin bootstrap failed:', err.message);
   }
   // ─── Step 4: Seed promo codes (INSERT IGNORE — safe to run repeatedly) ───
   const PROMO_CODES = [

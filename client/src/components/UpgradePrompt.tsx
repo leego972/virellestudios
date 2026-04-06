@@ -7,7 +7,7 @@ import { useLocation } from "wouter";
 interface UpgradePromptProps {
   feature?: string;
   // Accepts both DB keys (amateur/independent/studio/industry) and backward-compat names (creator/pro)
-  requiredTier?: "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
+  requiredTier?: "indie" | "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
   currentTier?: string;
   className?: string;
   compact?: boolean;
@@ -15,6 +15,13 @@ interface UpgradePromptProps {
 
 // Tier display names — internal DB keys map to public-facing names
 const TIER_DISPLAY: Record<string, { name: string; icon: React.ElementType; color: string; price: string; credits: string }> = {
+  indie: {
+    name: "Indie",
+    icon: Zap,
+    color: "text-blue-400",
+    price: "A$149/month or A$1,490/year",
+    credits: "500 credits/month included",
+  },
   amateur: {
     name: "Creator",
     icon: Camera,
@@ -193,7 +200,7 @@ export function UpgradePrompt({
 interface FeatureGateProps {
   children: React.ReactNode;
   feature: string;
-  requiredTier: "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
+  requiredTier: "indie" | "amateur" | "independent" | "studio" | "industry" | "creator" | "pro";
   currentTier?: string;
   hasAccess: boolean;
 }

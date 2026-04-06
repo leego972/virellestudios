@@ -385,23 +385,29 @@ async function startServer() {
   // Set IOS_DOWNLOAD_URL, ANDROID_DOWNLOAD_URL, DESKTOP_MAC_URL,
   // DESKTOP_WIN_URL, DESKTOP_LINUX_URL env vars after each build.
   app.get("/api/mobile/downloads", (_req, res) => {
+    // Fallback URLs are hard-coded to the latest EAS build artifacts.
+    // Override at runtime by setting IOS_DOWNLOAD_URL / ANDROID_DOWNLOAD_URL env vars.
+    const IOS_FALLBACK = "https://apps.apple.com/app/virelle-studios/id6761315616";
+    const ANDROID_FALLBACK = "https://expo.dev/artifacts/eas/bn4xvB9UD5hJFUEsNeQooV.aab";
+    const iosUrl = process.env.IOS_DOWNLOAD_URL || IOS_FALLBACK;
+    const androidUrl = process.env.ANDROID_DOWNLOAD_URL || ANDROID_FALLBACK;
     res.json({
       ios: {
-        url: process.env.IOS_DOWNLOAD_URL || null,
+        url: iosUrl,
         version: process.env.APP_VERSION || "1.0.0",
-        available: !!process.env.IOS_DOWNLOAD_URL,
+        available: true,
       },
       android: {
-        url: process.env.ANDROID_DOWNLOAD_URL || null,
+        url: androidUrl,
         version: process.env.APP_VERSION || "1.0.0",
-        available: !!process.env.ANDROID_DOWNLOAD_URL,
+        available: true,
       },
       desktop: {
-        mac: process.env.DESKTOP_MAC_URL || null,
-        win: process.env.DESKTOP_WIN_URL || null,
-        linux: process.env.DESKTOP_LINUX_URL || null,
+        mac: process.env.DESKTOP_MAC_URL || "https://virelle.life",
+        win: process.env.DESKTOP_WIN_URL || "https://virelle.life",
+        linux: process.env.DESKTOP_LINUX_URL || "https://virelle.life",
         version: process.env.DESKTOP_VERSION || "1.0.0",
-        available: !!(process.env.DESKTOP_MAC_URL || process.env.DESKTOP_WIN_URL || process.env.DESKTOP_LINUX_URL),
+        available: true,
       },
     });
   });
