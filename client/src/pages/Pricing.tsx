@@ -193,7 +193,14 @@ const FAQ = [
 ];
 
 export default function Pricing() {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
+  // Read URL params — source=mobile means the user came from the mobile app
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlSource = urlParams.get("source") ?? "";
+  const urlTier = urlParams.get("tier") ?? "";
+  const urlBilling = (urlParams.get("billing") ?? "annual") as "monthly" | "annual";
+  const isMobileSource = urlSource === "mobile";
+
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(urlBilling);
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [loadingPack, setLoadingPack] = useState<string | null>(null);
   const [, setLocation] = useLocation();
@@ -205,6 +212,13 @@ export default function Pricing() {
   const createCheckout = trpc.subscription.createCheckout.useMutation();
   const createTopUpCheckout = trpc.subscription.createTopUpCheckout.useMutation();
 
+  // Auto-trigger checkout when source=mobile and tier is pre-selected in URL
+  useEffect(() => {
+    if (isMobileSource && urlTier && isLoggedIn) {
+      handleSubscribe(urlTier);
+    }
+  }, [isLoggedIn, isMobileSource, urlTier]);
+
   const formatAUD = (amount: number) => {
     return new Intl.NumberFormat("en-AU", {
       style: "currency",
@@ -215,7 +229,10 @@ export default function Pricing() {
 
   const handleSubscribe = async (tierId: string) => {
     if (!isLoggedIn) {
-      setLocation("/register?redirect=/pricing");
+      const redirect = isMobileSource
+        ? `/register?redirect=/pricing?tier=${tierId}&billing=${billingCycle}&source=mobile`
+        : `/register?redirect=/pricing`;
+      setLocation(redirect);
       return;
     }
     // If already on this tier, open billing portal
@@ -225,8 +242,12 @@ export default function Pricing() {
     }
     setLoadingTier(tierId);
     try {
-      const successUrl = `${window.location.origin}/billing/success?tier=${tierId}`;
-      const cancelUrl = `${window.location.origin}/pricing`;
+      // When source=mobile, append source param so BillingSuccess can redirect back to the app
+      const sourceParam = isMobileSource ? "&source=mobile" : "";
+      const successUrl = `${window.location.origin}/billing/success?tier=${tierId}${sourceParam}`;
+      const cancelUrl = isMobileSource
+        ? `virelle://billing/cancel?subscription=canceled`
+        : `${window.location.origin}/pricing`;
       const result = await createCheckout.mutateAsync({
         tier: tierId as any,
         billing: billingCycle,
@@ -252,8 +273,11 @@ export default function Pricing() {
     }
     setLoadingPack(packId);
     try {
-      const successUrl = `${window.location.origin}/billing/success?type=topup&pack=${packId}`;
-      const cancelUrl = `${window.location.origin}/pricing#credits`;
+      const sourceParam = isMobileSource ? "&source=mobile" : "";
+      const successUrl = `${window.location.origin}/billing/success?type=topup&pack=${packId}${sourceParam}`;
+      const cancelUrl = isMobileSource
+        ? `virelle://billing/cancel?subscription=canceled`
+        : `${window.location.origin}/pricing#credits`;
       const result = await createTopUpCheckout.mutateAsync({
         packId: packId as any,
         successUrl,

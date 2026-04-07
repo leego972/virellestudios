@@ -7101,7 +7101,7 @@ Rules:
     // Create a Stripe checkout session for subscription
     createCheckout: creationProcedure
       .input(z.object({
-        tier: z.enum(["amateur", "independent", "creator", "studio", "industry"]),
+        tier: z.enum(["indie", "amateur", "independent", "creator", "studio", "industry"]),
         billing: z.enum(["monthly", "annual"]).default("annual"),
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
@@ -7110,6 +7110,10 @@ Rules:
         // Resolve the correct Stripe price ID — check auto-provisioned first, then ENV fallbacks
         const { getStripePriceId } = await import("./_core/stripeProvisioning");
         const priceMap: Record<string, Record<string, string>> = {
+          indie: {
+            monthly: getStripePriceId("indie_monthly") || (ENV as any).stripeIndieMonthlyPriceId || "",
+            annual: getStripePriceId("indie_annual") || (ENV as any).stripeIndieAnnualPriceId || "",
+          },
           amateur: {
             monthly: getStripePriceId("amateur_monthly") || "",
             annual: getStripePriceId("amateur_annual") || "",

@@ -237,8 +237,8 @@ async function startServer() {
               const newSubUser = await db.getUserById(userId);
               if (newSubUser?.email) {
                 const { sendSubscriptionConfirmationEmail, sendNewSubscriptionNotification } = await import("../email");
-                const planLabel = tier === "creator" ? "Creator" : tier === "studio" ? "Studio" : tier === "industry" ? "Industry" : tier === "independent" ? "Independent" : String(tier);
-                const tierPrice = tier === "creator" ? "$2,500/mo" : tier === "studio" ? "$5,000/mo" : tier === "industry" ? "$10,000/mo" : "";
+                const planLabel = tier === "indie" ? "Indie" : tier === "amateur" ? "Creator" : tier === "creator" ? "Creator" : tier === "studio" ? "Studio" : tier === "industry" ? "Industry" : tier === "independent" ? "Independent" : String(tier);
+                const tierPrice = tier === "indie" ? "A$149/mo" : tier === "amateur" ? "A$490/mo" : tier === "independent" ? "A$1,490/mo" : tier === "creator" ? "A$1,490/mo" : tier === "studio" ? "A$1,490/mo" : tier === "industry" ? "A$1,490/mo" : "";
                 sendSubscriptionConfirmationEmail(newSubUser.email, newSubUser.name || "Filmmaker", planLabel).catch(() => {});
                 sendNewSubscriptionNotification(newSubUser.email, newSubUser.name || "Unknown", planLabel, tierPrice).catch(() => {});
               }
@@ -262,7 +262,7 @@ async function startServer() {
             const existingUser = await db.getUserById(userId);
             const isUpgrade = existingUser && existingUser.subscriptionTier !== tier;
             await db.updateUserSubscription(userId, {
-              subscriptionTier: (status === "active" || status === "trialing" ? tier : "independent") as any,
+              subscriptionTier: (status === "active" || status === "trialing" ? tier : "none") as any,
               subscriptionStatus: status,
               subscriptionCurrentPeriodEnd: new Date(sub.current_period_end * 1000),
             });
@@ -280,7 +280,7 @@ async function startServer() {
           const userId = await resolveUserId(sub.metadata, customerId);
           if (userId) {
             await db.updateUserSubscription(userId, {
-              subscriptionTier: "independent",
+              subscriptionTier: "none",
               subscriptionStatus: "canceled",
               stripeSubscriptionId: null,
               subscriptionCurrentPeriodEnd: null,
@@ -388,9 +388,12 @@ async function startServer() {
     // Fallback URLs are hard-coded to the latest EAS build artifacts.
     // Override at runtime by setting IOS_DOWNLOAD_URL / ANDROID_DOWNLOAD_URL env vars.
     const IOS_FALLBACK = "https://apps.apple.com/app/virelle-studios/id6761315616";
-    const ANDROID_FALLBACK = "https://expo.dev/artifacts/eas/bn4xvB9UD5hJFUEsNeQooV.aab";
+    // ANDROID_FALLBACK points to the EAS preview APK (buildType: apk) — directly installable.
+    // The .aab artifact is an App Bundle, not directly installable on devices.
+    // Update ANDROID_DOWNLOAD_URL env var after each EAS preview build to keep this current.
+    const ANDROID_FALLBACK = process.env.ANDROID_DOWNLOAD_URL || "https://expo.dev/accounts/virellestudios/projects/virelle-studios/builds";
     const iosUrl = process.env.IOS_DOWNLOAD_URL || IOS_FALLBACK;
-    const androidUrl = process.env.ANDROID_DOWNLOAD_URL || ANDROID_FALLBACK;
+    const androidUrl = ANDROID_FALLBACK;
     res.json({
       ios: {
         url: iosUrl,
@@ -400,7 +403,8 @@ async function startServer() {
       android: {
         url: androidUrl,
         version: process.env.APP_VERSION || "1.0.0",
-        available: true,
+        // Mark as available only when a real APK URL is configured
+        available: !!process.env.ANDROID_DOWNLOAD_URL,
       },
       desktop: {
         mac: process.env.DESKTOP_MAC_URL || "https://virelle.life",

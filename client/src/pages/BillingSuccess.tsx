@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { CheckCircle, Sparkles, ArrowRight, Loader2 } from "lucide-react";
+import { CheckCircle, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
@@ -26,12 +26,16 @@ const PACK_NAMES: Record<string, string> = {
 export default function BillingSuccess() {
   const [, setLocation] = useLocation();
   const [countdown, setCountdown] = useState(8);
+  const [mobileRedirecting, setMobileRedirecting] = useState(false);
 
   // Parse query params
   const params = new URLSearchParams(window.location.search);
   const tier = params.get("tier");
   const type = params.get("type");
   const pack = params.get("pack");
+  // source=mobile is set by the mobile app when it opens the web pricing page
+  const source = params.get("source");
+  const isMobile = source === "mobile";
 
   const isTopUp = type === "topup";
   const tierName = tier ? (TIER_NAMES[tier] || tier) : null;
@@ -45,15 +49,30 @@ export default function BillingSuccess() {
     utils.subscription.status.invalidate();
   }, []);
 
-  // Auto-redirect countdown
+  // If this checkout was initiated from the mobile app, redirect back via deep link
   useEffect(() => {
+    if (!isMobile) return;
+    setMobileRedirecting(true);
+    // Give the webhook a moment to process, then redirect back to the app
+    const timer = setTimeout(() => {
+      const deepLink = isTopUp
+        ? `virelle://billing/success?subscription=success&type=topup&pack=${pack ?? ""}`
+        : `virelle://billing/success?subscription=success&tier=${tier ?? ""}`;
+      window.location.href = deepLink;
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [isMobile, isTopUp, tier, pack]);
+
+  // Auto-redirect countdown (web only)
+  useEffect(() => {
+    if (isMobile) return; // mobile handles its own redirect above
     if (countdown <= 0) {
       setLocation("/");
       return;
     }
     const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => clearTimeout(timer);
-  }, [countdown]);
+  }, [countdown, isMobile]);
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
@@ -85,72 +104,97 @@ export default function BillingSuccess() {
           </p>
         </div>
 
-        {/* What's next */}
-        <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 text-left space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">What's next</h2>
-          {isTopUp ? (
-            <ul className="space-y-3 text-sm text-zinc-300">
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                Credits are live in your account — no delay
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                Use them for video generation, voice acting, film score, and more
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                Credits never expire — use them at your own pace
-              </li>
-            </ul>
-          ) : (
-            <ul className="space-y-3 text-sm text-zinc-300">
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                Your monthly credits are ready to use right now
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                All features for your plan are unlocked immediately
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                A receipt has been sent to your email address
-              </li>
-            </ul>
-          )}
-        </div>
+        {/* Mobile redirect notice */}
+        {mobileRedirecting && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 text-center space-y-2">
+            <p className="text-amber-400 font-semibold">Returning to Virelle Studios app…</p>
+            <p className="text-zinc-400 text-sm">
+              If the app does not open automatically,{" "}
+              <a
+                href={isTopUp
+                  ? `virelle://billing/success?subscription=success&type=topup&pack=${pack ?? ""}`
+                  : `virelle://billing/success?subscription=success&tier=${tier ?? ""}`}
+                className="text-amber-400 underline"
+              >
+                tap here
+              </a>
+              .
+            </p>
+          </div>
+        )}
 
-        {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button
-            className="bg-amber-600 hover:bg-amber-500 text-white font-semibold px-8"
-            onClick={() => setLocation("/")}
-          >
-            Go to Dashboard
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-          <Button
-            variant="outline"
-            className="border-zinc-700 hover:bg-zinc-800"
-            onClick={() => setLocation("/pricing")}
-          >
-            View Pricing
-          </Button>
-        </div>
+        {/* What's next (web only) */}
+        {!mobileRedirecting && (
+          <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 text-left space-y-4">
+            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">What's next</h2>
+            {isTopUp ? (
+              <ul className="space-y-3 text-sm text-zinc-300">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  Credits are live in your account — no delay
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  Use them for video generation, voice acting, film score, and more
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  Credits never expire — use them at your own pace
+                </li>
+              </ul>
+            ) : (
+              <ul className="space-y-3 text-sm text-zinc-300">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  Your monthly credits are ready to use right now
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  All features for your plan are unlocked immediately
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  A receipt has been sent to your email address
+                </li>
+              </ul>
+            )}
+          </div>
+        )}
 
-        {/* Auto-redirect notice */}
-        <p className="text-xs text-zinc-600">
-          Redirecting to your dashboard in{" "}
-          <span className="text-zinc-400 font-medium">{countdown}s</span>
-          {" "}—{" "}
-          <button
-            className="text-amber-500 hover:text-amber-400 underline"
-            onClick={() => setCountdown(0)}
-          >
-            go now
-          </button>
-        </p>
+        {/* CTA buttons (web only) */}
+        {!mobileRedirecting && (
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button
+              className="bg-amber-600 hover:bg-amber-500 text-white font-semibold px-8"
+              onClick={() => setLocation("/")}
+            >
+              Go to Dashboard
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+            <Button
+              variant="outline"
+              className="border-zinc-700 hover:bg-zinc-800"
+              onClick={() => setLocation("/pricing")}
+            >
+              View Pricing
+            </Button>
+          </div>
+        )}
+
+        {/* Auto-redirect notice (web only) */}
+        {!mobileRedirecting && (
+          <p className="text-xs text-zinc-600">
+            Redirecting to your dashboard in{" "}
+            <span className="text-zinc-400 font-medium">{countdown}s</span>
+            {" "}—{" "}
+            <button
+              className="text-amber-500 hover:text-amber-400 underline"
+              onClick={() => setCountdown(0)}
+            >
+              go now
+            </button>
+          </p>
+        )}
       </div>
     </div>
   );
