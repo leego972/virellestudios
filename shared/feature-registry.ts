@@ -102,7 +102,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     webPath: "/projects/:id/mood-board",
     description: "Visual tone and style references",
     minTier: "indie",   // canUseMoodBoard is true from indie
-    hasNative: false,
+    hasNative: true, // Native: components/tools/MoodBoard.tsx
   },
   {
     id: "color-grading",
@@ -112,7 +112,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     webPath: "/projects/:projectId/color-grading",
     description: "AI-assisted color grade your footage",
     minTier: "amateur", // canUseColorGrading is true from amateur (Creator)
-    hasNative: false,
+    hasNative: true, // Native: components/tools/ColorGrading.tsx
   },
   {
     id: "poster-maker",
@@ -288,7 +288,7 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     webPath: "/projects/:id/sound-effects",
     description: "AI sound design and effects",
     minTier: "amateur", // canUseSoundEffects is true from amateur (Creator)
-    hasNative: false,
+    hasNative: true, // Native: components/tools/SoundEffects.tsx
   },
   {
     id: "visual-effects",
@@ -301,7 +301,18 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     hasNative: false,
   },
 
-  // ── MANAGEMENT ────────────────────────────────────────────────────────────
+  {
+    id: "scene-editor",
+    label: "Scene Editor",
+    icon: "✏️",
+    category: "Writing",
+    webPath: "/projects/:projectId/scenes/edit",
+    description: "Add, edit and manage individual scenes",
+    minTier: "free",
+    hasNative: true, // Native: components/tools/SceneEditor.tsx
+  },
+
+  // ── MANAGEMENT ────────────────────────────────────────────────────────────────────────────
   {
     id: "team",
     label: "Team Collaboration",
@@ -315,12 +326,12 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
   {
     id: "credits-editor",
     label: "Credits Editor",
-    icon: "🎬",
+    icon: "🎦",
     category: "Management",
     webPath: "/projects/:projectId/credits",
     description: "Edit film credits and end titles",
     minTier: "amateur",
-    hasNative: false,
+    hasNative: true, // Native: components/tools/CreditsEditor.tsx
   },
   {
     id: "marketplace",
