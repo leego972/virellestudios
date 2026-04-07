@@ -151,6 +151,90 @@
 /* Muted body text in cards: ensure readable dark grey on white */
 .dark .text-muted-foreground { color: oklch(0.35 0.008 260) !important; }
 
+/* ── Light mode (black bg) text visibility fixes ─────────────────────────────
+   When NO .dark class is present, the background is near-black (oklch 0.08).
+   Hardcoded Tailwind dark-text classes (text-black, text-gray-*, text-slate-*,
+   text-zinc-*, text-neutral-*) are invisible on this dark background.
+   bg-white and light bg classes create jarring white blocks.
+   These global overrides remap them to readable gold/light values.
+   Scoped to :root:not(.dark) so dark mode is completely unaffected.
+────────────────────────────────────────────────────────────────────────────── */
+
+/* text-black → gold foreground */
+:root:not(.dark) .text-black { color: oklch(0.82 0.18 85) !important; }
+
+/* text-gray-* → readable on dark bg */
+:root:not(.dark) .text-gray-100 { color: oklch(0.90 0.06 85) !important; }
+:root:not(.dark) .text-gray-200 { color: oklch(0.85 0.10 85) !important; }
+:root:not(.dark) .text-gray-300 { color: oklch(0.80 0.13 85) !important; }
+:root:not(.dark) .text-gray-400 { color: oklch(0.75 0.14 85) !important; }
+:root:not(.dark) .text-gray-500 { color: oklch(0.68 0.12 85) !important; }
+:root:not(.dark) .text-gray-600 { color: oklch(0.72 0.13 85) !important; }
+:root:not(.dark) .text-gray-700 { color: oklch(0.76 0.14 85) !important; }
+:root:not(.dark) .text-gray-800 { color: oklch(0.80 0.16 85) !important; }
+:root:not(.dark) .text-gray-900 { color: oklch(0.84 0.17 85) !important; }
+
+/* text-slate-* → readable on dark bg */
+:root:not(.dark) .text-slate-100 { color: oklch(0.90 0.06 85) !important; }
+:root:not(.dark) .text-slate-200 { color: oklch(0.85 0.10 85) !important; }
+:root:not(.dark) .text-slate-300 { color: oklch(0.80 0.13 85) !important; }
+:root:not(.dark) .text-slate-400 { color: oklch(0.74 0.13 85) !important; }
+:root:not(.dark) .text-slate-500 { color: oklch(0.68 0.12 85) !important; }
+:root:not(.dark) .text-slate-600 { color: oklch(0.72 0.13 85) !important; }
+:root:not(.dark) .text-slate-700 { color: oklch(0.76 0.14 85) !important; }
+:root:not(.dark) .text-slate-800 { color: oklch(0.80 0.16 85) !important; }
+:root:not(.dark) .text-slate-900 { color: oklch(0.84 0.17 85) !important; }
+
+/* text-zinc-* → readable on dark bg */
+:root:not(.dark) .text-zinc-100 { color: oklch(0.90 0.06 85) !important; }
+:root:not(.dark) .text-zinc-200 { color: oklch(0.85 0.10 85) !important; }
+:root:not(.dark) .text-zinc-300 { color: oklch(0.80 0.13 85) !important; }
+:root:not(.dark) .text-zinc-400 { color: oklch(0.74 0.13 85) !important; }
+:root:not(.dark) .text-zinc-500 { color: oklch(0.68 0.12 85) !important; }
+:root:not(.dark) .text-zinc-600 { color: oklch(0.72 0.13 85) !important; }
+:root:not(.dark) .text-zinc-700 { color: oklch(0.76 0.14 85) !important; }
+:root:not(.dark) .text-zinc-800 { color: oklch(0.80 0.16 85) !important; }
+:root:not(.dark) .text-zinc-900 { color: oklch(0.84 0.17 85) !important; }
+:root:not(.dark) .text-zinc-950 { color: oklch(0.86 0.18 85) !important; }
+
+/* text-neutral-* → readable on dark bg */
+:root:not(.dark) .text-neutral-100 { color: oklch(0.90 0.06 85) !important; }
+:root:not(.dark) .text-neutral-200 { color: oklch(0.85 0.10 85) !important; }
+:root:not(.dark) .text-neutral-300 { color: oklch(0.80 0.13 85) !important; }
+:root:not(.dark) .text-neutral-400 { color: oklch(0.74 0.13 85) !important; }
+:root:not(.dark) .text-neutral-500 { color: oklch(0.68 0.12 85) !important; }
+:root:not(.dark) .text-neutral-600 { color: oklch(0.72 0.13 85) !important; }
+:root:not(.dark) .text-neutral-700 { color: oklch(0.76 0.14 85) !important; }
+:root:not(.dark) .text-neutral-800 { color: oklch(0.80 0.16 85) !important; }
+:root:not(.dark) .text-neutral-900 { color: oklch(0.84 0.17 85) !important; }
+:root:not(.dark) .text-neutral-950 { color: oklch(0.86 0.18 85) !important; }
+
+/* bg-white (solid) → dark card surface in light mode */
+:root:not(.dark) .bg-white { background-color: oklch(0.12 0.005 260) !important; }
+
+/* Light grey backgrounds → dark card surfaces */
+:root:not(.dark) .bg-gray-50  { background-color: oklch(0.10 0.005 260) !important; }
+:root:not(.dark) .bg-gray-100 { background-color: oklch(0.12 0.005 260) !important; }
+:root:not(.dark) .bg-gray-200 { background-color: oklch(0.14 0.005 260) !important; }
+:root:not(.dark) .bg-slate-50  { background-color: oklch(0.10 0.005 260) !important; }
+:root:not(.dark) .bg-slate-100 { background-color: oklch(0.12 0.005 260) !important; }
+:root:not(.dark) .bg-slate-200 { background-color: oklch(0.14 0.005 260) !important; }
+
+/* border-white (solid) → subtle gold-tinted border */
+:root:not(.dark) .border-white { border-color: oklch(0.30 0.015 85) !important; }
+
+/* placeholder text in inputs */
+:root:not(.dark) input::placeholder,
+:root:not(.dark) textarea::placeholder { color: oklch(0.55 0.10 85) !important; }
+
+/* DirectorCut and other pages that use text-zinc-400/500 for body copy */
+:root:not(.dark) [class*="text-zinc-4"],
+:root:not(.dark) [class*="text-zinc-5"] { color: oklch(0.72 0.12 85) !important; }
+:root:not(.dark) [class*="text-neutral-4"],
+:root:not(.dark) [class*="text-neutral-5"] { color: oklch(0.72 0.12 85) !important; }
+:root:not(.dark) [class*="text-gray-4"],
+:root:not(.dark) [class*="text-gray-5"] { color: oklch(0.72 0.12 85) !important; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -491,3 +575,25 @@
   mix-blend-mode: overlay;
   z-index: 1;
 }
+
+/* ── Dark mode (white bg) text-white / bg-black visibility fixes ─────────────
+   When .dark is active the background is white. text-white classes become
+   invisible. bg-black creates jarring black blocks. Override them.
+────────────────────────────────────────────────────────────────────────────── */
+
+/* text-white → dark foreground in dark mode */
+.dark .text-white { color: oklch(0.10 0.005 260) !important; }
+
+/* bg-black (solid) → light card surface in dark mode */
+.dark .bg-black { background-color: oklch(0.97 0.002 260) !important; }
+
+/* bg-zinc-800/900/950 → light card surfaces in dark mode */
+.dark .bg-zinc-800 { background-color: oklch(0.93 0.003 260) !important; }
+.dark .bg-zinc-900 { background-color: oklch(0.95 0.002 260) !important; }
+.dark .bg-zinc-950 { background-color: oklch(0.97 0.002 260) !important; }
+.dark .bg-neutral-800 { background-color: oklch(0.93 0.003 260) !important; }
+.dark .bg-neutral-900 { background-color: oklch(0.95 0.002 260) !important; }
+.dark .bg-neutral-950 { background-color: oklch(0.97 0.002 260) !important; }
+
+/* text-white/70, text-white/80, text-white/60 → dark muted in dark mode */
+.dark [class*="text-white\/"] { color: oklch(0.25 0.005 260) !important; }
