@@ -1,0 +1,13 @@
+#!/bin/sh
+# Pre-push hook: run TypeScript check before allowing push
+# Install: git config core.hooksPath .githooks
+echo "Running TypeScript check before push..."
+pnpm check
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: TypeScript check failed. Push blocked."
+  echo "Fix all TypeScript errors before pushing."
+  exit 1
+fi
+echo "TypeScript check passed. Proceeding with push."
+exit 0

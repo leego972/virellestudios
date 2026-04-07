@@ -262,7 +262,7 @@ async function startServer() {
             const existingUser = await db.getUserById(userId);
             const isUpgrade = existingUser && existingUser.subscriptionTier !== tier;
             await db.updateUserSubscription(userId, {
-              subscriptionTier: (status === "active" || status === "trialing" ? tier : "none") as any,
+              subscriptionTier: (status === "active" || status === "trialing" ? tier : "independent") as any,
               subscriptionStatus: status,
               subscriptionCurrentPeriodEnd: new Date(sub.current_period_end * 1000),
             });
@@ -280,7 +280,7 @@ async function startServer() {
           const userId = await resolveUserId(sub.metadata, customerId);
           if (userId) {
             await db.updateUserSubscription(userId, {
-              subscriptionTier: "none",
+              subscriptionTier: "independent",
               subscriptionStatus: "canceled",
               stripeSubscriptionId: null,
               subscriptionCurrentPeriodEnd: null,
