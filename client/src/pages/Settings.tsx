@@ -372,9 +372,10 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue={useQueryParam("tab") || "profile"} className="w-full">
-        <TabsList className="flex w-full max-w-2xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-4 h-auto">
+        <TabsList className="flex w-full max-w-2xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-5 h-auto">
           <TabsTrigger value="profile" className="text-xs gap-1 flex-shrink-0 py-2"><User className="h-3 w-3" />Profile</TabsTrigger>
           <TabsTrigger value="security" className="text-xs gap-1 flex-shrink-0 py-2"><Lock className="h-3 w-3" />Security</TabsTrigger>
+          <TabsTrigger value="billing" className="text-xs gap-1 flex-shrink-0 py-2"><Sparkles className="h-3 w-3" />Billing</TabsTrigger>
           <TabsTrigger value="api-keys" className="text-xs gap-1 flex-shrink-0 py-2"><Key className="h-3 w-3" />API Keys</TabsTrigger>
           <TabsTrigger value="connected-platforms" className="text-xs gap-1 flex-shrink-0 py-2"><Share2 className="h-3 w-3" />Platforms</TabsTrigger>
         </TabsList>
@@ -627,6 +628,11 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* ─── Billing Tab ─── */}
+        <TabsContent value="billing" className="space-y-6 mt-6">
+          <BillingTab profile={profile} />
         </TabsContent>
 
         {/* ─── API Keys Tab ─── */}
@@ -1006,6 +1012,124 @@ const SOCIAL_PLATFORMS = [
     ],
   },
 ];
+
+// ─── BillingTab Component ─────────────────────────────────────────────────────
+function BillingTab({ profile }: { profile: any }) {
+  const [loadingPortal, setLoadingPortal] = useState(false);
+  const billingPortalMutation = trpc.subscription.createBillingPortal.useMutation({
+    onSuccess: (data) => {
+      window.location.href = data.url;
+    },
+    onError: (e) => {
+      toast.error(e.message || "Could not open billing portal");
+      setLoadingPortal(false);
+    },
+  });
+
+  const TIER_DISPLAY: Record<string, { label: string; color: string }> = {
+    free:        { label: "Free",     color: "bg-muted text-muted-foreground" },
+    indie:       { label: "Indie",    color: "bg-sky-500/20 text-sky-400" },
+    amateur:     { label: "Amateur",  color: "bg-green-500/20 text-green-400" },
+    independent: { label: "Industry", color: "bg-amber-500/20 text-amber-400" },
+    creator:     { label: "Creator",  color: "bg-purple-500/20 text-purple-400" },
+    studio:      { label: "Studio",   color: "bg-pink-500/20 text-pink-400" },
+    industry:    { label: "Industry", color: "bg-amber-500/20 text-amber-400" },
+  };
+
+  const tier = profile?.subscriptionTier || "free";
+  const tierDisplay = TIER_DISPLAY[tier] ?? TIER_DISPLAY.free;
+  const isActive = profile?.subscriptionStatus === "active" || profile?.subscriptionStatus === "trialing";
+  const isPaid = tier !== "free" && tier !== "none";
+
+  const handleManageBilling = () => {
+    setLoadingPortal(true);
+    billingPortalMutation.mutate({ returnUrl: window.location.href });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Current Plan Card */}
+      <Card className="bg-card/50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-amber-400" />
+            Current Plan
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-3 flex-wrap">
+            <Badge className={tierDisplay.color}>{tierDisplay.label}</Badge>
+            {isActive && <Badge className="bg-green-500/20 text-green-400">Active</Badge>}
+            {profile?.subscriptionStatus === "past_due" && <Badge className="bg-red-500/20 text-red-400">Past Due</Badge>}
+            {profile?.subscriptionStatus === "canceled" && <Badge className="bg-muted text-muted-foreground">Canceled</Badge>}
+            {profile?.role === "admin" && <Badge className="bg-red-500/20 text-red-400">Admin</Badge>}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Member since {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : "—"}
+          </p>
+          {isPaid && (
+            <div className="pt-2">
+              <Button
+                onClick={handleManageBilling}
+                disabled={loadingPortal || billingPortalMutation.isPending}
+                className="bg-amber-500 hover:bg-amber-600 text-black font-medium"
+              >
+                {loadingPortal || billingPortalMutation.isPending ? (
+                  <><Loader2 className="h-4 w-4 animate-spin mr-2" />Opening portal...</>
+                ) : (
+                  <>Manage Subscription &amp; Billing</>
+                )}
+              </Button>
+              <p className="text-xs text-muted-foreground mt-2">
+                Update payment method, download invoices, or cancel your subscription via the Stripe billing portal.
+              </p>
+            </div>
+          )}
+          {!isPaid && (
+            <div className="pt-2">
+              <a href="/pricing">
+                <Button className="bg-amber-500 hover:bg-amber-600 text-black font-medium">
+                  <Sparkles className="h-4 w-4 mr-2" />Upgrade Plan
+                </Button>
+              </a>
+              <p className="text-xs text-muted-foreground mt-2">
+                Choose a plan to unlock all AI filmmaking tools.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Credits Summary */}
+      <Card className="bg-card/50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Zap className="h-4 w-4 text-amber-400" />
+            Credits
+          </CardTitle>
+          <CardDescription className="text-xs">
+            Credits are used each time you run an AI tool. They accumulate and never expire.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-bold text-amber-400">
+              {profile?.role === "admin" ? "∞" : (profile?.credits ?? 0).toLocaleString()}
+            </span>
+            <span className="text-sm text-muted-foreground">credits remaining</span>
+          </div>
+          <div className="mt-4">
+            <a href="/pricing?tab=topup">
+              <Button variant="outline" size="sm" className="text-xs gap-1">
+                <Zap className="h-3 w-3" />Buy Top-Up Pack
+              </Button>
+            </a>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 function ConnectedPlatformsTab() {
   const { data: connectedList, refetch } = trpc.socialCredentials.list.useQuery();

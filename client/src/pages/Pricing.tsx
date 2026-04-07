@@ -163,6 +163,16 @@ const CREDIT_COSTS = [
   { action: "Ad/Poster Generation", cost: 5, icon: "🖼️" },
   { action: "Subtitle Generation", cost: 8, icon: "💬" },
   { action: "Export Final Film", cost: 8, icon: "💾" },
+  { action: "Budget Estimator", cost: 5, icon: "💰" },
+  { action: "Location Scout", cost: 3, icon: "📍" },
+  { action: "Mood Board", cost: 3, icon: "🎨" },
+  { action: "Color Grading Plan", cost: 4, icon: "🌈" },
+  { action: "Sound Effects (AI)", cost: 5, icon: "🔊" },
+  { action: "ADR Suggestions", cost: 5, icon: "🎙️" },
+  { action: "Foley Suggestions", cost: 5, icon: "🎵" },
+  { action: "Score Cues", cost: 8, icon: "🎼" },
+  { action: "Mix Summary Export", cost: 2, icon: "🎚️" },
+  { action: "Funding Application", cost: 10, icon: "💼" },
 ];
 
 const FAQ = [
@@ -184,7 +194,7 @@ const FAQ = [
   },
   {
     q: "Do unused credits roll over?",
-    a: "Monthly subscription credits reset at the start of each billing period and do not roll over. Credits purchased as top-up packs do not expire and accumulate in your balance.",
+    a: "Yes — all credits accumulate in your balance and never expire. Each month, your subscription's monthly allowance is added on top of any remaining balance. Credits purchased as top-up packs work the same way: they are added to your balance and carry forward indefinitely.",
   },
   {
     q: "What payment methods are accepted?",

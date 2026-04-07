@@ -7753,6 +7753,8 @@ Rules:
         email: user.email,
         role: u.role || "user",
         subscriptionTier: u.subscriptionTier || "independent",
+        subscriptionStatus: u.subscriptionStatus || "none",
+        credits: u.credits ?? 0,
         phone: u.phone || null,
         avatarUrl: u.avatarUrl || null,
         bio: u.bio || null,

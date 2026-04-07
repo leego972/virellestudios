@@ -647,6 +647,9 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   tagline_variants_gen:    { cost: 3,   label: "AI Tagline Variants (5 distinct tagline options)" },
   brand_kit_gen:           { cost: 5,   label: "AI Brand Kit Generation (palette + fonts + logo concept)" },
   influencer_kit_gen:      { cost: 5,   label: "AI Influencer Kit Generation (press release + social copy)" },
+  // ── Visual design AI (mobile-native tools) ─────────────────
+  color_grading_ai:        { cost: 4,   label: "AI Color Grading Plan (palette, LUTs, and settings — mobile)" },
+  mood_board_ai:           { cost: 3,   label: "AI Mood Board Generation (visual concept + color palette — mobile)" },
   // ── Sound & voice generation ──────────────────────────────
   sfx_generate_from_text:  { cost: 5,   label: "AI Sound Effect Generation (ElevenLabs text-to-SFX)" },
   sfx_voice_choir:         { cost: 5,   label: "AI Voice Choir Generation (ElevenLabs TTS choir/wings)" },

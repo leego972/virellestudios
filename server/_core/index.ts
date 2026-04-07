@@ -237,7 +237,7 @@ async function startServer() {
               const newSubUser = await db.getUserById(userId);
               if (newSubUser?.email) {
                 const { sendSubscriptionConfirmationEmail, sendNewSubscriptionNotification } = await import("../email");
-                const planLabel = tier === "indie" ? "Indie" : tier === "amateur" ? "Creator" : tier === "creator" ? "Creator" : tier === "studio" ? "Studio" : tier === "industry" ? "Industry" : tier === "independent" ? "Independent" : String(tier);
+                const planLabel = tier === "indie" ? "Indie" : tier === "amateur" ? "Creator" : tier === "creator" ? "Industry" : tier === "studio" ? "Industry" : tier === "industry" ? "Industry" : tier === "independent" ? "Industry" : String(tier);
                 const tierPrice = tier === "indie" ? "A$149/mo" : tier === "amateur" ? "A$490/mo" : tier === "independent" ? "A$1,490/mo" : tier === "creator" ? "A$1,490/mo" : tier === "studio" ? "A$1,490/mo" : tier === "industry" ? "A$1,490/mo" : "";
                 sendSubscriptionConfirmationEmail(newSubUser.email, newSubUser.name || "Filmmaker", planLabel).catch(() => {});
                 sendNewSubscriptionNotification(newSubUser.email, newSubUser.name || "Unknown", planLabel, tierPrice).catch(() => {});
