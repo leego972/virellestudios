@@ -63,6 +63,8 @@ import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import NotificationBell from "./NotificationBell";
+import { HollywoodIcon } from "./HollywoodIcon";
+import { ToolIconKey } from "@/constants/hollywoodIcons";
 
 // Navigation grouped by production pipeline logic
 const menuGroups = [
@@ -71,18 +73,18 @@ const menuGroups = [
     items: [
       { icon: LayoutDashboard, label: "Dashboard", path: "/" },
       { icon: Film, label: "Projects", path: "/projects" },
-      { icon: Users, label: "Characters", path: "/characters" },
+      { icon: Users, label: "Characters", path: "/characters", hollywoodKey: "characters" as ToolIconKey },
       { icon: Clapperboard, label: "My Movies", path: "/movies" },
-      { icon: MessageSquare, label: "Director's Assistant", path: "/assistant" },
+      { icon: MessageSquare, label: "Director's Assistant", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
       { icon: Globe, label: "Distribute", path: "/showcase" },
     ],
   },
   {
     label: "Create",
     items: [
-      { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker" },
+      { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker", hollywoodKey: "poster_maker" as ToolIconKey },
       { icon: PlaySquare, label: "Project Samples", path: "/samples" },
-      { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace" },
+      { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
     ],
   },
   {
@@ -94,13 +96,13 @@ const menuGroups = [
   {
     label: "Account",
     items: [
-      { icon: CreditCard, label: "Subscription", path: "/pricing" },
-      { icon: Coins, label: "Credits & History", path: "/credits" },
+      { icon: CreditCard, label: "Subscription", path: "/pricing", hollywoodKey: "subscription_plans" as ToolIconKey },
+      { icon: Coins, label: "Credits & History", path: "/credits", hollywoodKey: "credits" as ToolIconKey },
       { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
-      { icon: Gift, label: "Referrals", path: "/referrals" },
+      { icon: Gift, label: "Referrals", path: "/referrals", hollywoodKey: "referrals" as ToolIconKey },
       { icon: Smartphone, label: "Download App", path: "/download" },
       { icon: BookOpen, label: "Blog", path: "/blog" },
-      { icon: Settings, label: "Settings", path: "/settings" },
+      { icon: Settings, label: "Settings", path: "/settings", hollywoodKey: "settings" as ToolIconKey },
     ],
   },
 ];
@@ -350,7 +352,15 @@ function DashboardLayoutContent({
                         tooltip={item.label}
                         className="h-9 md:h-10 transition-all font-normal"
                       >
-                        <item.icon className={`h-4 w-4 ${active ? "text-primary" : ""}`} />
+                        {(item as any).hollywoodKey ? (
+                          <HollywoodIcon
+                            tool={(item as any).hollywoodKey as ToolIconKey}
+                            size={18}
+                            className={`shrink-0 transition-opacity ${active ? "opacity-100" : "opacity-60 hover:opacity-90"}`}
+                          />
+                        ) : (
+                          <item.icon className={`h-4 w-4 ${active ? "text-primary" : ""}`} />
+                        )}
                         <span>{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -374,7 +384,15 @@ function DashboardLayoutContent({
                         tooltip={item.label}
                         className="h-10 transition-all font-normal"
                       >
-                        <item.icon className={`h-4 w-4 ${active ? "text-primary" : ""}`} />
+                        {(item as any).hollywoodKey ? (
+                          <HollywoodIcon
+                            tool={(item as any).hollywoodKey as ToolIconKey}
+                            size={18}
+                            className={`shrink-0 transition-opacity ${active ? "opacity-100" : "opacity-60 hover:opacity-90"}`}
+                          />
+                        ) : (
+                          <item.icon className={`h-4 w-4 ${active ? "text-primary" : ""}`} />
+                        )}
                         <span>{item.label}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -392,11 +410,8 @@ function DashboardLayoutContent({
                 className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors group-data-[collapsible=icon]:justify-center"
                 title={(user as any).isAdmin ? "Admin — Unlimited credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining — click to top up`}
               >
-                <div
-                  className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 text-black font-bold text-xs"
-                  style={{ background: "linear-gradient(135deg, #d4af37 0%, #b8941f 100%)" }}
-                >
-                  C
+                <div className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden" style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%)", border: "1.5px solid #d4af37" }}>
+                  <HollywoodIcon tool="credits" size={20} className="opacity-90" />
                 </div>
                 <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                   <div className="flex items-center justify-between">

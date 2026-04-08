@@ -3,6 +3,7 @@ import {
   Copy, Gift, Users, TrendingUp, Share2, Check,
   Trophy, Zap, ChevronRight, Linkedin, MessageCircle, Tag,
 } from "lucide-react";
+import { HollywoodIcon } from "@/components/HollywoodIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -98,8 +99,8 @@ export default function Referrals() {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-          <Gift className="h-7 w-7 text-amber-400" />
+        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
+          <HollywoodIcon tool="referrals" size={36} />
           Refer &amp; Earn
         </h1>
         <p className="text-muted-foreground mt-1">

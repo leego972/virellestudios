@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="96" viewBox="0 0 320 96" fill="none">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="320" y2="96" gradientUnits="userSpaceOnUse">
+<stop stop-color="#C6FFE7"/><stop offset="1" stop-color="#5CCB9D"/></linearGradient>
+<linearGradient id="bg" x1="0" y1="0" x2="320" y2="96" gradientUnits="userSpaceOnUse">
+<stop stop-color="#13261F"/><stop offset="1" stop-color="#0E1B17"/></linearGradient>
+</defs>
+<rect x="4" y="4" width="312" height="88" rx="44" fill="url(#bg)" stroke="url(#g)" stroke-width="3"/>
+<circle cx="48" cy="48" r="22" stroke="url(#g)" stroke-width="3"/>
+<path d="M48 32l4.5 10.5L64 44l-8.5 7.5L58 63l-10-5.5L38 63l2.5-11.5L32 44l11.5-1.5L48 32z" fill="url(#g)"/>
+<text x="82" y="44" fill="url(#g)" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="700">INDIE</text>
+<text x="82" y="68" fill="#C6FFE7" font-family="Helvetica, Arial, sans-serif" font-size="14" opacity="0.92">Entry plan / creative starter</text>
+</svg>

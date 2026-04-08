@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Crown, Zap, Lock, ArrowRight, Camera, Film, CalendarDays } from "lucide-react";
+import { HollywoodBadge } from "@/components/HollywoodIcon";
 import { useLocation } from "wouter";
 
 interface UpgradePromptProps {
@@ -162,7 +163,7 @@ export function UpgradePrompt({
           normTier === "independent"  ? "border-violet-500/30 bg-violet-500/5" :
           "border-yellow-500/30 bg-yellow-500/5"
         }`}>
-          <Icon className={`w-5 h-5 ${tier.color} shrink-0`} />
+          <HollywoodBadge tier={normTier === "indie" ? "indie" : normTier === "amateur" ? "creator" : "industry"} size={32} className="shrink-0" />
           <div>
             <p className={`text-sm font-semibold ${tier.color}`}>{tier.name}</p>
             <p className="text-xs text-muted-foreground">{tier.price}</p>
@@ -173,17 +174,18 @@ export function UpgradePrompt({
         {/* Tier progression — 3 public tiers */}
         <div className="grid grid-cols-3 gap-1 text-center">
           {[
-            { key: "indie",       label: "Indie",    color: "text-blue-400",    bg: "bg-blue-500/10" },
-            { key: "amateur",     label: "Creator",  color: "text-emerald-400", bg: "bg-emerald-500/10" },
-            { key: "independent", label: "Industry", color: "text-violet-400",  bg: "bg-violet-500/10" },
+            { key: "indie",       badgeKey: "indie" as const,    label: "Indie",    color: "text-blue-400",    bg: "bg-blue-500/10" },
+            { key: "amateur",     badgeKey: "creator" as const,  label: "Creator",  color: "text-emerald-400", bg: "bg-emerald-500/10" },
+            { key: "independent", badgeKey: "industry" as const, label: "Industry", color: "text-violet-400",  bg: "bg-violet-500/10" },
           ].map((t) => (
             <div
               key={t.key}
-              className={`p-1.5 rounded text-[10px] font-medium ${
-                t.key === normTier ? `${t.bg} ${t.color} ring-1 ring-current` : "text-muted-foreground"
+              className={`p-1.5 rounded flex flex-col items-center gap-0.5 ${
+                t.key === normTier ? `${t.bg} ring-1 ring-current ${t.color}` : "opacity-40"
               }`}
             >
-              {t.label}
+              <HollywoodBadge tier={t.badgeKey} size={20} />
+              <span className="text-[9px] font-medium">{t.label}</span>
             </div>
           ))}
         </div>
@@ -243,28 +245,28 @@ export function FeatureGate({ children, feature, requiredTier, currentTier, hasA
 }
 
 /**
- * Small inline badge showing membership tier.
+ * Small inline badge showing membership tier — uses Hollywood branded badge images.
  */
 export function IndieBadge() {
   return (
-    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-      <Zap className="w-2.5 h-2.5" /> INDIE
+    <span className="inline-flex items-center gap-1.5">
+      <HollywoodBadge tier="indie" size={22} />
     </span>
   );
 }
 
 export function CreatorBadge() {
   return (
-    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-      <Camera className="w-2.5 h-2.5" /> CREATOR
+    <span className="inline-flex items-center gap-1.5">
+      <HollywoodBadge tier="creator" size={22} />
     </span>
   );
 }
 
 export function IndustryBadge() {
   return (
-    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-500/10 text-violet-400 border border-violet-500/20">
-      <Film className="w-2.5 h-2.5" /> INDUSTRY
+    <span className="inline-flex items-center gap-1.5">
+      <HollywoodBadge tier="industry" size={22} />
     </span>
   );
 }

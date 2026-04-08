@@ -602,6 +602,7 @@ export const TIER_PRICING: Record<SubscriptionTier, TierPricing> = {
 
 // Display name lookup (for use in emails, UI labels, etc.)
 export const TIER_DISPLAY_NAMES: Record<string, string> = {
+  free: "Free",
   indie: "Indie",
   amateur: "Creator",
   independent: "Industry",
@@ -785,6 +786,7 @@ export function priceIdToTier(priceId: string): SubscriptionTier {
 
 function mapTierName(tier: string | null | undefined): SubscriptionTier {
   if (!tier) return "none";
+  if (tier === "free") return "none"; // free tier = no active subscription
   if (tier === "industry" || tier === "enterprise" || tier === "industry_enterprise") return "industry";
   if (tier === "studio" || tier === "production_pro") return "independent"; // legacy aliases → Industry
   if (tier === "independent" || tier === "creator") return "independent";

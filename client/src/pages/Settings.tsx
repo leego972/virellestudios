@@ -14,6 +14,7 @@ import {
   Sparkles, AlertTriangle, Info, Star, Zap, Film, User, Lock, Globe,
   Briefcase, MapPin, Phone, Mail, Building2, Save, Share2, Trash2, RefreshCw,
 } from "lucide-react";
+import { HollywoodIcon } from "@/components/HollywoodIcon";
 import { toast } from "sonner";
 
 function useQueryParam(key: string) {
@@ -363,7 +364,7 @@ export default function Settings() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-          <User className="w-8 h-8 text-amber-500" />
+          <HollywoodIcon tool="settings" size={36} />
           Settings
         </h1>
         <p className="text-muted-foreground mt-2">
@@ -1028,11 +1029,12 @@ function BillingTab({ profile }: { profile: any }) {
 
   const TIER_DISPLAY: Record<string, { label: string; color: string }> = {
     free:        { label: "Free",     color: "bg-muted text-muted-foreground" },
+    none:        { label: "Free",     color: "bg-muted text-muted-foreground" },
     indie:       { label: "Indie",    color: "bg-sky-500/20 text-sky-400" },
-    amateur:     { label: "Amateur",  color: "bg-green-500/20 text-green-400" },
+    amateur:     { label: "Creator",  color: "bg-green-500/20 text-green-400" },
     independent: { label: "Industry", color: "bg-amber-500/20 text-amber-400" },
-    creator:     { label: "Creator",  color: "bg-purple-500/20 text-purple-400" },
-    studio:      { label: "Studio",   color: "bg-pink-500/20 text-pink-400" },
+    creator:     { label: "Industry", color: "bg-amber-500/20 text-amber-400" },
+    studio:      { label: "Industry", color: "bg-amber-500/20 text-amber-400" },
     industry:    { label: "Industry", color: "bg-amber-500/20 text-amber-400" },
   };
 

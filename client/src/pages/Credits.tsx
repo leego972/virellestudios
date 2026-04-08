@@ -5,6 +5,8 @@ import {
   ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle,
   Calendar, CreditCard, Gift,
 } from "lucide-react";
+import { HollywoodIcon, HollywoodBadge } from "@/components/HollywoodIcon";
+import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -91,8 +93,8 @@ export default function Credits() {
 
       {/* ─── Header ─── */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-          <Coins className="h-7 w-7 text-amber-400" />
+        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
+          <HollywoodIcon tool="credits" size={36} />
           Credits &amp; History
         </h1>
         <p className="text-muted-foreground mt-1">
@@ -138,9 +140,14 @@ export default function Credits() {
                 <div>
                   <p className="text-2xl font-bold">{formatCredits(summary?.monthlyAllocation || 0)}</p>
                   <p className="text-sm text-muted-foreground">monthly allocation</p>
-                  <Badge className="mt-1 bg-blue-600/20 text-blue-400 border-blue-500/30 text-xs capitalize">
-                    {TIER_LABELS[summary?.tier ?? "free"] ?? summary?.tier} Plan
-                  </Badge>
+                    <div className="flex items-center gap-1.5 mt-1">
+                    {summary?.tier && PRICING_TIER_BADGE[summary.tier] && (
+                      <HollywoodBadge tier={PRICING_TIER_BADGE[summary.tier] as TierBadgeKey} size={20} />
+                    )}
+                    <Badge className="bg-blue-600/20 text-blue-400 border-blue-500/30 text-xs capitalize">
+                      {TIER_LABELS[summary?.tier ?? "free"] ?? summary?.tier} Plan
+                    </Badge>
+                  </div>
                 </div>
               </div>
             )}

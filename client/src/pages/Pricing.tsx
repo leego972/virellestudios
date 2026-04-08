@@ -8,6 +8,8 @@ import { useLocation } from "wouter";
 import { toast } from "sonner";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
+import { HollywoodBadge } from "@/components/HollywoodIcon";
+import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
 
 // ─── Tier Definitions ────────────────────────────────────────────────────────
 // All prices in AUD. Three public tiers: Indie, Creator, Industry — all self-serve.
@@ -356,8 +358,14 @@ export default function Pricing() {
                   </div>
                 )}
                 <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className={`w-5 h-5 ${tier.accentColor}`} />
+                  <div className="flex items-center gap-3 mb-2">
+                    {PRICING_TIER_BADGE[tier.id] && (
+                      <HollywoodBadge
+                        tier={PRICING_TIER_BADGE[tier.id] as TierBadgeKey}
+                        size={36}
+                        className="shrink-0"
+                      />
+                    )}
                     <CardTitle className="text-2xl">{tier.displayName}</CardTitle>
                   </div>
                   <CardDescription className="min-h-[3rem]">{tier.description}</CardDescription>
@@ -404,8 +412,14 @@ export default function Pricing() {
                   <Badge className={`${tier.badgeColor} text-white px-4 py-1`}>{tier.badge}</Badge>
                 </div>
                 <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className={`w-5 h-5 ${tier.accentColor}`} />
+                  <div className="flex items-center gap-3 mb-2">
+                    {PRICING_TIER_BADGE[tier.id] && (
+                      <HollywoodBadge
+                        tier={PRICING_TIER_BADGE[tier.id] as TierBadgeKey}
+                        size={36}
+                        className="shrink-0"
+                      />
+                    )}
                     <CardTitle className="text-2xl">{tier.displayName}</CardTitle>
                   </div>
                   <CardDescription className="min-h-[3rem]">{tier.description}</CardDescription>
@@ -446,9 +460,24 @@ export default function Pricing() {
               <thead>
                 <tr className="border-b border-zinc-800 bg-zinc-900/50">
                   <th className="py-4 px-6 font-semibold">Feature</th>
-                  <th className="py-4 px-6 text-center font-semibold text-blue-400">Indie</th>
-                  <th className="py-4 px-6 text-center font-semibold text-emerald-400">Creator</th>
-                  <th className="py-4 px-6 text-center font-semibold text-amber-400">Industry</th>
+                  <th className="py-4 px-6 text-center font-semibold text-blue-400">
+                    <div className="flex flex-col items-center gap-1">
+                      <HollywoodBadge tier="indie" size={24} />
+                      <span>Indie</span>
+                    </div>
+                  </th>
+                  <th className="py-4 px-6 text-center font-semibold text-emerald-400">
+                    <div className="flex flex-col items-center gap-1">
+                      <HollywoodBadge tier="creator" size={24} />
+                      <span>Creator</span>
+                    </div>
+                  </th>
+                  <th className="py-4 px-6 text-center font-semibold text-amber-400">
+                    <div className="flex flex-col items-center gap-1">
+                      <HollywoodBadge tier="industry" size={24} />
+                      <span>Industry</span>
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800">
