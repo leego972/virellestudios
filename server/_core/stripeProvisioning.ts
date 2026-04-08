@@ -17,12 +17,12 @@
  *   Studio founder price:           A$7,450  first year (then A$14,900/yr)
  *
  * CREDIT PACKS (AUD — one-time top-ups):
- *   Starter Pack     — 500 credits    A$750    (A$1.50/credit)
- *   Producer Pack    — 1,500 credits  A$1,800  (A$1.20/credit — Save 20%)
- *   Director Pack    — 3,000 credits  A$3,150  (A$1.05/credit — Save 30%)
- *   Studio Pack      — 6,000 credits  A$5,400  (A$0.90/credit — Save 40%)
- *   Blockbuster Pack — 12,000 credits A$9,000  (A$0.75/credit — Save 50%)
- *   Mogul Pack       — 25,000 credits A$15,000 (A$0.60/credit — Save 60%)
+ *   Starter Pack     — 100 credits    A$19     (A$0.19/credit)
+ *   Producer Pack    — 300 credits    A$49     (A$0.16/credit — Save 16%)
+ *   Director Pack    — 750 credits    A$99     (A$0.13/credit — Save 32%)
+ *   Filmmaker Pack   — 2,000 credits  A$199    (A$0.10/credit — Save 47%)
+ *   Blockbuster Pack — 5,000 credits  A$399    (A$0.08/credit — Save 58%)
+ *   Mogul Pack       — 12,000 credits A$799    (A$0.07/credit — Save 63%)
  */
 import Stripe from "stripe";
 import { ENV } from "./env";
@@ -251,60 +251,67 @@ const SUBSCRIPTION_PRICES: PriceDefinition[] = [
   },
 ];
 
+// Credit pack prices match the Pricing page UI (Pricing.tsx CREDIT_PACKS array).
+// topup_10   = Starter Pack:     100 cr  A$19
+// topup_50   = Producer Pack:    300 cr  A$49
+// topup_100  = Director Pack:    750 cr  A$99
+// topup_200  = Filmmaker Pack: 2,000 cr  A$199  (most popular)
+// topup_500  = Blockbuster Pack: 5,000 cr A$399
+// topup_1000 = Mogul Pack:    12,000 cr A$799
 const TOPUP_PRICES: PriceDefinition[] = [
   {
     key: "topup_10",
     envKey: "stripeTopUp10PriceId",
-    productName: "Virelle Studios — 500 Credits (Starter Pack)",
-    productDesc: "One-time pack of 500 production credits — A$750 (A$1.50/credit)",
-    unitAmount: 75000, // A$750
+    productName: "Virelle Studios — 100 Credits (Starter Pack)",
+    productDesc: "One-time pack of 100 production credits — A$19 (A$0.19/credit)",
+    unitAmount: 1900, // A$19
     currency: "aud",
-    metadata: { type: "topup", credits: "500", pack: "starter" },
+    metadata: { type: "topup", credits: "100", pack: "starter" },
   },
   {
-    key: "topup_30",
-    envKey: "stripeTopUp30PriceId",
-    productName: "Virelle Studios — 1,500 Credits (Producer Pack)",
-    productDesc: "One-time pack of 1,500 production credits — A$1,800 (A$1.20/credit — Save 20%)",
-    unitAmount: 180000, // A$1,800
+    key: "topup_50",
+    envKey: "stripeTopUp50PriceId",
+    productName: "Virelle Studios — 300 Credits (Producer Pack)",
+    productDesc: "One-time pack of 300 production credits — A$49 (A$0.16/credit — Save 16%)",
+    unitAmount: 4900, // A$49
     currency: "aud",
-    metadata: { type: "topup", credits: "1500", pack: "producer" },
+    metadata: { type: "topup", credits: "300", pack: "producer" },
   },
   {
     key: "topup_100",
     envKey: "stripeTopUp100PriceId",
-    productName: "Virelle Studios — 3,000 Credits (Director Pack)",
-    productDesc: "One-time pack of 3,000 production credits — A$3,150 (A$1.05/credit — Save 30%)",
-    unitAmount: 315000, // A$3,150
+    productName: "Virelle Studios — 750 Credits (Director Pack)",
+    productDesc: "One-time pack of 750 production credits — A$99 (A$0.13/credit — Save 32%)",
+    unitAmount: 9900, // A$99
     currency: "aud",
-    metadata: { type: "topup", credits: "3000", pack: "director" },
+    metadata: { type: "topup", credits: "750", pack: "director" },
   },
   {
     key: "topup_200",
     envKey: "stripeTopUp200PriceId",
-    productName: "Virelle Studios — 6,000 Credits (Studio Pack)",
-    productDesc: "One-time pack of 6,000 production credits — A$5,400 (A$0.90/credit — Save 40%)",
-    unitAmount: 540000, // A$5,400
+    productName: "Virelle Studios — 2,000 Credits (Filmmaker Pack)",
+    productDesc: "One-time pack of 2,000 production credits — A$199 (A$0.10/credit — Save 47%)",
+    unitAmount: 19900, // A$199
     currency: "aud",
-    metadata: { type: "topup", credits: "6000", pack: "studio" },
+    metadata: { type: "topup", credits: "2000", pack: "filmmaker" },
   },
   {
     key: "topup_500",
     envKey: "stripeTopUp500PriceId",
-    productName: "Virelle Studios — 12,000 Credits (Blockbuster Pack)",
-    productDesc: "One-time pack of 12,000 production credits — A$9,000 (A$0.75/credit — Save 50%)",
-    unitAmount: 900000, // A$9,000
+    productName: "Virelle Studios — 5,000 Credits (Blockbuster Pack)",
+    productDesc: "One-time pack of 5,000 production credits — A$399 (A$0.08/credit — Save 58%)",
+    unitAmount: 39900, // A$399
     currency: "aud",
-    metadata: { type: "topup", credits: "12000", pack: "blockbuster" },
+    metadata: { type: "topup", credits: "5000", pack: "blockbuster" },
   },
   {
     key: "topup_1000",
     envKey: "stripeTopUp1000PriceId",
-    productName: "Virelle Studios — 25,000 Credits (Mogul Pack)",
-    productDesc: "One-time pack of 25,000 production credits — A$15,000 (A$0.60/credit — Save 60%)",
-    unitAmount: 1500000, // A$15,000
+    productName: "Virelle Studios — 12,000 Credits (Mogul Pack)",
+    productDesc: "One-time pack of 12,000 production credits — A$799 (A$0.07/credit — Save 63%)",
+    unitAmount: 79900, // A$799
     currency: "aud",
-    metadata: { type: "topup", credits: "25000", pack: "mogul" },
+    metadata: { type: "topup", credits: "12000", pack: "mogul" },
   },
 ];
 

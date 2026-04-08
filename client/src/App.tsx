@@ -100,6 +100,7 @@ const FilmPage = lazy(() => import("./pages/FilmPage"));
 const CreatorProfile = lazy(() => import("./pages/CreatorProfile"));
 const Collections = lazy(() => import("./pages/Collections"));
 const BillingSuccess = lazy(() => import("./pages/BillingSuccess"));
+const BillingPortal = lazy(() => import("./pages/BillingPortal"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -163,6 +164,7 @@ function Router() {
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/billing/success">{() => <LazyPage><BillingSuccess /></LazyPage>}</Route>
+      <Route path="/billing/portal">{() => <LazyPage><BillingPortal /></LazyPage>}</Route>
       <Route path="/contact">{() => <LazyPage><Contact /></LazyPage>}</Route>
       <Route path="/opener-preview">{() => <OpenerPreview />}</Route>
       <Route path="/forgot-password">{() => <LazyPage><ForgotPassword /></LazyPage>}</Route>

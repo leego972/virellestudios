@@ -193,7 +193,7 @@ async function startServer() {
               topup_10:   100,    // Starter Pack     — 100 credits
               topup_50:   300,    // Producer Pack    — 300 credits
               topup_100:  750,    // Director Pack    — 750 credits
-              topup_200:  2000,   // Studio Pack      — 2,000 credits
+              topup_200:  2000,   // Filmmaker Pack   — 2,000 credits
               topup_500:  5000,   // Blockbuster Pack — 5,000 credits
               topup_1000: 12000,  // Mogul Pack       — 12,000 credits
             };

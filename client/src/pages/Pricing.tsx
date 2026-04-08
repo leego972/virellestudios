@@ -209,6 +209,7 @@ export default function Pricing() {
   const urlParams = new URLSearchParams(window.location.search);
   const urlSource = urlParams.get("source") ?? "";
   const urlTier = urlParams.get("tier") ?? "";
+  const urlPack = urlParams.get("pack") ?? "";
   const urlBilling = (urlParams.get("billing") ?? "annual") as "monthly" | "annual";
   const isMobileSource = urlSource === "mobile";
 
@@ -230,6 +231,12 @@ export default function Pricing() {
       handleSubscribe(urlTier);
     }
   }, [isLoggedIn, isMobileSource, urlTier]);
+  // Auto-trigger top-up checkout when source=mobile and pack is pre-selected in URL
+  useEffect(() => {
+    if (isMobileSource && urlPack && isLoggedIn) {
+      handleTopUp(urlPack);
+    }
+  }, [isLoggedIn, isMobileSource, urlPack]);
 
   const formatAUD = (amount: number) => {
     return new Intl.NumberFormat("en-AU", {
