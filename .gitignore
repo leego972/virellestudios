@@ -114,13 +114,10 @@ audit_findings.txt
 stripe_audit.txt
 audit_notes.txt
 gen_audit.txt
-client/public/virelle-opener.mp4
 client/public/virelle-logo-full.png
 client/public/virelle-logo-nav.png
-client/public/virelle-opener.mp4
 client/public/virelle-logo-full.png
 client/public/virelle-logo-nav.png
 # Large binary assets - served from CDN
-client/public/virelle-opener.mp4
 client/public/virelle-logo-full.png
 client/public/virelle-logo-nav.png
