@@ -295,10 +295,10 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
       >
         <video
           ref={videoRef}
-          src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663497651330/KKNwAtyzOOzGlBLQ.mp4"
           autoPlay
           muted
           playsInline
+          preload="auto"
           className="w-full h-full object-contain"
           onEnded={() => {
             // Hold on the final golden logo frame for 2 full seconds, then fade out
@@ -309,7 +309,12 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
             }, 2000);
           }}
           onError={() => setVideoError(true)}
-        />
+        >
+          {/* Primary: self-hosted on Railway for reliable delivery */}
+          <source src="/virelle-opener.mp4" type="video/mp4" />
+          {/* Fallback: CDN */}
+          <source src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663497651330/KKNwAtyzOOzGlBLQ.mp4" type="video/mp4" />
+        </video>
         {skippable && (
           <button
             className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors"
