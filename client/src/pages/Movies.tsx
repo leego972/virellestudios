@@ -16,6 +16,16 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -234,6 +244,7 @@ function YouTubeExportModal({
 
 export default function Movies() {
   const [showPlayer, setShowPlayer] = useState<number | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
   const [showOpenerBefore, setShowOpenerBefore] = useState<number | null>(null); // movie ID to play after opener
   const [searchQuery, setSearchQuery] = useState("");
   const [ytExportMovie, setYtExportMovie] = useState<MovieItem | null>(null);
@@ -455,9 +466,7 @@ export default function Movies() {
               className="h-8 w-8 text-destructive hover:text-destructive"
               onClick={(e) => {
                 e.stopPropagation();
-                if (confirm("Delete this movie?")) {
-                  deleteMutation.mutate({ id: movie.id });
-                }
+                setDeleteConfirmId(movie.id);
               }}
             >
               <Trash2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
@@ -588,9 +597,7 @@ export default function Movies() {
             className="h-9 w-9 sm:h-8 sm:w-8 text-destructive hover:text-destructive"
             onClick={(e) => {
               e.stopPropagation();
-              if (confirm("Delete this movie?")) {
-                deleteMutation.mutate({ id: movie.id });
-              }
+              setDeleteConfirmId(movie.id);
             }}
           >
             <Trash2 className="h-4 w-4" />
@@ -984,6 +991,27 @@ export default function Movies() {
         open={!!ytExportMovie}
         onClose={() => setYtExportMovie(null)}
       />
+
+      {/* Delete Movie Confirm */}
+      <AlertDialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this movie?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove the movie file and cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (deleteConfirmId) deleteMutation.mutate({ id: deleteConfirmId }); setDeleteConfirmId(null); }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -1290,11 +1290,12 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                   onClick={handleSubmit}
                   disabled={!canSubmit || submitMutation.isPending}
                   className="gap-1.5 bg-amber-600 hover:bg-amber-700 text-white"
+                  title="10 credits"
                 >
                   {submitMutation.isPending ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> Sending...</>
                   ) : (
-                    <><Send className="h-4 w-4" /> Email & Download</>
+                    <><Send className="h-4 w-4" /> Email & Download <span className="text-[10px] font-medium opacity-80 ml-0.5">10cr</span></>
                   )}
                 </Button>
               </div>

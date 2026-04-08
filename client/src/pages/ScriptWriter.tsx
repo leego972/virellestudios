@@ -1046,9 +1046,10 @@ export default function ScriptWriter() {
                   <Sparkles className="h-3 w-3 mr-1" />
                 )}
                 Generate
+                <span className="ml-1 text-[10px] font-medium text-amber-400/80">8cr</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>AI generates a complete screenplay from your project details</TooltipContent>
+            <TooltipContent>AI generates a complete screenplay from your project details (8 credits)</TooltipContent>
           </Tooltip>
 
           <Separator orientation="vertical" className="h-5 mx-1 shrink-0" />

@@ -6,6 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -478,6 +488,7 @@ function UploadForm({ onSuccess }: { onSuccess: () => void }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function ProjectSamples() {
   const [playingSample, setPlayingSample] = useState<ProjectSample | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   // Auth
   const { data: me } = trpc.auth.me.useQuery();
@@ -499,8 +510,7 @@ export default function ProjectSamples() {
   });
 
   const handleDelete = (id: number) => {
-    if (!confirm("Delete this sample? This cannot be undone.")) return;
-    deleteMutation.mutate({ id });
+    setDeleteConfirmId(id);
   };
 
   const handleTogglePublish = (sample: ProjectSample) => {
@@ -613,6 +623,27 @@ export default function ProjectSamples() {
           </div>
         )}
       </div>
+
+      {/* Delete Sample Confirm */}
+      <AlertDialog open={deleteConfirmId !== null} onOpenChange={() => setDeleteConfirmId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this sample?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove the sample video and cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (deleteConfirmId) deleteMutation.mutate({ id: deleteConfirmId }); setDeleteConfirmId(null); }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

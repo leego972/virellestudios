@@ -414,6 +414,7 @@ export default function SceneEditor() {
   });
 
   const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
+  const [bulkVideoConfirmOpen, setBulkVideoConfirmOpen] = useState(false);
 
   const exportMutation = trpc.movie.exportFromProject.useMutation({
     onSuccess: (result, variables) => {
@@ -723,6 +724,7 @@ export default function SceneEditor() {
               bulkGenMutation.mutate({ projectId: Number(projectId) });
             }}
             disabled={bulkGenMutation.isPending}
+            title={`3 credits × ${scenes?.length || 0} scenes = ${3 * (scenes?.length || 0)} credits total`}
           >
             {bulkGenMutation.isPending ? (
               <Loader2 className="h-4 w-4 mr-1 animate-spin" />
@@ -731,6 +733,11 @@ export default function SceneEditor() {
             )}
             <span className="hidden sm:inline">Generate All</span>
             <span className="sm:hidden">Gen All</span>
+            {(scenes?.length ?? 0) > 0 && (
+              <span className="ml-1.5 text-[10px] font-medium text-muted-foreground hidden sm:inline">
+                {3 * (scenes?.length ?? 0)}cr
+              </span>
+            )}
           </Button>
           <Button
             size="sm"
@@ -738,9 +745,15 @@ export default function SceneEditor() {
             className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
             onClick={() => {
               if (!projectId) return;
-              bulkVideoMutation.mutate({ projectId: Number(projectId) });
+              const sceneCount = scenes?.length ?? 0;
+              if (sceneCount > 2) {
+                setBulkVideoConfirmOpen(true);
+              } else {
+                bulkVideoMutation.mutate({ projectId: Number(projectId) });
+              }
             }}
             disabled={bulkVideoMutation.isPending}
+            title={`~10–20 credits × ${scenes?.length || 0} scenes (varies by duration)`}
           >
             {bulkVideoMutation.isPending ? (
               <Loader2 className="h-4 w-4 mr-1 animate-spin" />
@@ -749,6 +762,11 @@ export default function SceneEditor() {
             )}
             <span className="hidden sm:inline">Generate Videos</span>
             <span className="sm:hidden">Videos</span>
+            {(scenes?.length ?? 0) > 0 && (
+              <span className="ml-1.5 text-[10px] font-medium text-amber-400/70 hidden sm:inline">
+                ~{10 * (scenes?.length ?? 0)}cr+
+              </span>
+            )}
           </Button>
           {scenePlaylist.length > 0 && (
             <Button
@@ -2133,6 +2151,27 @@ export default function SceneEditor() {
               onClick={() => deleteId && deleteMutation.mutate({ id: deleteId })}
             >
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Video Generation Confirm Dialog */}
+      <AlertDialog open={bulkVideoConfirmOpen} onOpenChange={setBulkVideoConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Generate videos for all {scenes?.length} scenes?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will use approximately <strong>{10 * (scenes?.length ?? 0)}–{20 * (scenes?.length ?? 0)} credits</strong> (exact cost varies by scene duration). Each scene is billed individually as it generates.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-amber-600 hover:bg-amber-700 text-white"
+              onClick={() => { setBulkVideoConfirmOpen(false); bulkVideoMutation.mutate({ projectId: Number(projectId) }); }}
+            >
+              Generate All Videos
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

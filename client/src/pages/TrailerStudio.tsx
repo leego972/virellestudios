@@ -299,9 +299,10 @@ export default function TrailerStudio() {
             <Button variant="outline" size="sm" className="h-7 text-xs hidden md:flex" onClick={autoAssignScenes}>
               <Wand2 className="h-3 w-3 mr-1" />Auto-Assign
             </Button>
-            <Button size="sm" className="h-7 text-xs bg-amber-600 hover:bg-amber-700" onClick={handleGenerate} disabled={generateTrailer.isPending}>
+            <Button size="sm" className="h-7 text-xs bg-amber-600 hover:bg-amber-700" onClick={handleGenerate} disabled={generateTrailer.isPending} title="20 credits">
               {generateTrailer.isPending ? <RotateCcw className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
               <span className="hidden sm:inline ml-1">{generateTrailer.isPending ? "Generating..." : "Generate"}</span>
+              {!generateTrailer.isPending && <span className="ml-1 text-[10px] font-medium opacity-80">20cr</span>}
             </Button>
           </div>
         </div>

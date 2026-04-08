@@ -18,6 +18,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowLeft,
@@ -62,6 +72,7 @@ export default function Collaboration() {
   const [, setLocation] = useLocation();
 
   const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [removeConfirmId, setRemoveConfirmId] = useState<number | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<"viewer" | "editor" | "producer" | "director">("editor");
   const [showLinkDialog, setShowLinkDialog] = useState(false);
@@ -284,9 +295,7 @@ export default function Collaboration() {
                           size="icon"
                           className="h-8 w-8 text-destructive"
                           onClick={() => {
-                            if (confirm("Remove this team member?")) {
-                              removeMutation.mutate({ id: member.id });
-                            }
+                            setRemoveConfirmId(member.id);
                           }}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -499,6 +508,27 @@ export default function Collaboration() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Remove Team Member Confirm */}
+      <AlertDialog open={removeConfirmId !== null} onOpenChange={() => setRemoveConfirmId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove team member?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This person will lose access to the project immediately.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (removeConfirmId) removeMutation.mutate({ id: removeConfirmId }); setRemoveConfirmId(null); }}
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

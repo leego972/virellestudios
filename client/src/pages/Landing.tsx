@@ -1,6 +1,6 @@
 import { useLocation } from "wouter";
 import {
-  Zap, Layers, Users, Wand2, Music, Palette, Camera,
+  Zap, Layers, Users, Music, Palette, Camera,
   ArrowRight, Play, ShieldCheck,
   Globe, Sparkles, Video, Eye, Cpu, CreditCard,
   Zap as ZapIcon, Film, Smartphone, Download,
@@ -91,7 +91,6 @@ function GoldWatermark() {
 
 export default function Landing() {
   const [, setLocation] = useLocation();
-  const [prompt, setPrompt] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -99,14 +98,6 @@ export default function Landing() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handlePromptSubmit = () => {
-    if (prompt.trim()) {
-      setLocation(`/register?prompt=${encodeURIComponent(prompt)}`);
-    } else {
-      setLocation("/register");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-amber-500/30 relative">
@@ -170,32 +161,6 @@ export default function Landing() {
             <p className="max-w-2xl mx-auto text-lg sm:text-xl text-white/60 leading-relaxed mb-12">
               The professional orchestration platform for AI cinema. Generate full-length films with screenplay, scene continuity, voice acting, and original scores in a unified production pipeline.
             </p>
-
-            {/* Prompt input */}
-            <div className="max-w-2xl mx-auto mb-10">
-              <div className="relative flex items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-1 shadow-2xl focus-within:border-amber-500/50 transition-all">
-                <div className="absolute left-4 text-white/40">
-                  <Wand2 className="h-5 w-5" />
-                </div>
-                <input
-                  type="text"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handlePromptSubmit()}
-                  placeholder="Describe your film concept… e.g. 'A sci-fi thriller set in 2087 Tokyo'"
-                  className="flex-1 bg-transparent pl-12 pr-4 py-4 text-sm text-white placeholder:text-white/30 focus:outline-none"
-                />
-                <button
-                  onClick={handlePromptSubmit}
-                  className="m-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-black transition-all hover:scale-105 active:scale-95 shrink-0"
-                  style={{ background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)" }}
-                >
-                  Generate Film
-                  <ArrowRight className="h-4 w-4 inline ml-1.5" />
-                </button>
-              </div>
-              <p className="text-xs text-white/30 mt-2">Professional production environment. Start your first project with transparent pricing.</p>
-            </div>
 
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">

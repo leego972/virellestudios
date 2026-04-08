@@ -25,6 +25,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowLeft,
@@ -102,6 +112,9 @@ export default function ProjectDetail() {
   const [, setLocation] = useLocation();
   const [charDialogOpen, setCharDialogOpen] = useState(false);
   const [aiCharDialogOpen, setAiCharDialogOpen] = useState(false);
+  const [regenConfirmOpen, setRegenConfirmOpen] = useState(false);
+  const [stopGenConfirmOpen, setStopGenConfirmOpen] = useState(false);
+  const [duplicateConfirmOpen, setDuplicateConfirmOpen] = useState(false);
   const [trailerDialogOpen, setTrailerDialogOpen] = useState(false);
   const [soundtrackDialogOpen, setSoundtrackDialogOpen] = useState(false);
   const [charForm, setCharForm] = useState({
@@ -465,9 +478,10 @@ export default function ProjectDetail() {
               variant={project.status === "completed" ? "outline" : "default"}
               onClick={() => {
                 if (project.status === "completed") {
-                  if (!confirm("Re-generate will overwrite all existing scenes and videos. Continue?")) return;
+                  setRegenConfirmOpen(true);
+                } else {
+                  quickGenMutation.mutate({ projectId: project.id });
                 }
-                quickGenMutation.mutate({ projectId: project.id });
               }}
               disabled={quickGenMutation.isPending}
             >
@@ -511,9 +525,7 @@ export default function ProjectDetail() {
                 size="sm"
                 className="h-7 text-xs border-red-500/40 text-red-400 hover:bg-red-500/10 hover:border-red-500 hover:text-red-300 gap-1.5 shrink-0"
                 onClick={() => {
-                  if (confirm("Stop generation? Scenes created so far will be kept, but the AI will stop generating new ones.")) {
-                    cancelGenerationMutation.mutate({ projectId });
-                  }
+                  setStopGenConfirmOpen(true);
                 }}
                 disabled={cancelGenerationMutation.isPending}
               >
@@ -1422,9 +1434,7 @@ export default function ProjectDetail() {
               </CardContent>
             </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => {
-              if (confirm('Duplicate this project? A copy will be created with all settings.')) {
-                duplicateMutation.mutate({ projectId: project.id });
-              }
+              setDuplicateConfirmOpen(true);
             }}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -1993,6 +2003,68 @@ export default function ProjectDetail() {
 
       {/* Director's Assistant Chat */}
       <DirectorChat projectId={project.id} />
+
+      {/* Re-generate Film Confirm */}
+      <AlertDialog open={regenConfirmOpen} onOpenChange={setRegenConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Re-generate film?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will overwrite all existing scenes and videos. Any manual edits to scenes will be lost. This action uses <strong>10 credits</strong>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { setRegenConfirmOpen(false); quickGenMutation.mutate({ projectId: project.id }); }}
+            >
+              Re-generate
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Stop Generation Confirm */}
+      <AlertDialog open={stopGenConfirmOpen} onOpenChange={setStopGenConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Stop generation?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Scenes created so far will be kept, but the AI will stop generating new ones.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Generating</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { setStopGenConfirmOpen(false); cancelGenerationMutation.mutate({ projectId }); }}
+            >
+              Stop
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Duplicate Project Confirm */}
+      <AlertDialog open={duplicateConfirmOpen} onOpenChange={setDuplicateConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Duplicate project?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A copy will be created with all settings, characters, and scenes. Videos are not copied.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => { setDuplicateConfirmOpen(false); duplicateMutation.mutate({ projectId: project.id }); }}
+            >
+              Duplicate
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
