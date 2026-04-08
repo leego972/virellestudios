@@ -192,6 +192,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
   const [isSkipped, setIsSkipped] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [phase, setPhase] = useState<"playing" | "fadeout">("playing");
+  const [videoPhase, setVideoPhase] = useState<"playing" | "hold" | "fadeout">("playing");
   const [showSkip, setShowSkip] = useState(false);
   const [t, setT] = useState(0);
   const rafRef = useRef<number>(0);
@@ -288,7 +289,8 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
   if (!videoError) {
     return (
       <div
-        className="fixed inset-0 z-[9999] bg-black flex items-center justify-center"
+        className="fixed inset-0 z-[9999] bg-black flex items-center justify-center transition-opacity duration-700"
+        style={{ opacity: videoPhase === "fadeout" ? 0 : 1 }}
         onClick={() => skippable && setIsSkipped(true)}
       >
         <video
@@ -298,7 +300,14 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
           muted
           playsInline
           className="w-full h-full object-contain"
-          onEnded={onComplete}
+          onEnded={() => {
+            // Hold on the final golden logo frame for 2 full seconds, then fade out
+            setVideoPhase("hold");
+            setTimeout(() => {
+              setVideoPhase("fadeout");
+              setTimeout(onComplete, 700);
+            }, 2000);
+          }}
           onError={() => setVideoError(true)}
         />
         {skippable && (
