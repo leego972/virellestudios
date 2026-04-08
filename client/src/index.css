@@ -576,24 +576,3 @@
   z-index: 1;
 }
 
-/* ── Dark mode (white bg) text-white / bg-black visibility fixes ─────────────
-   When .dark is active the background is white. text-white classes become
-   invisible. bg-black creates jarring black blocks. Override them.
-────────────────────────────────────────────────────────────────────────────── */
-
-/* text-white → dark foreground in dark mode */
-.dark .text-white { color: oklch(0.10 0.005 260) !important; }
-
-/* bg-black (solid) → light card surface in dark mode */
-.dark .bg-black { background-color: oklch(0.97 0.002 260) !important; }
-
-/* bg-zinc-800/900/950 → light card surfaces in dark mode */
-.dark .bg-zinc-800 { background-color: oklch(0.93 0.003 260) !important; }
-.dark .bg-zinc-900 { background-color: oklch(0.95 0.002 260) !important; }
-.dark .bg-zinc-950 { background-color: oklch(0.97 0.002 260) !important; }
-.dark .bg-neutral-800 { background-color: oklch(0.93 0.003 260) !important; }
-.dark .bg-neutral-900 { background-color: oklch(0.95 0.002 260) !important; }
-.dark .bg-neutral-950 { background-color: oklch(0.97 0.002 260) !important; }
-
-/* text-white/70, text-white/80, text-white/60 → dark muted in dark mode */
-.dark [class*="text-white\/"] { color: oklch(0.25 0.005 260) !important; }
