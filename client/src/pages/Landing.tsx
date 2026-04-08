@@ -68,15 +68,21 @@ function CinematicBackground() {
   );
 }
 
-/* Gold watermark — bottom-right, non-interactive */
+/* Gold watermark — large, fixed, perfectly centered, stays on screen while scrolling */
 function GoldWatermark() {
   return (
-    <div className="fixed bottom-4 right-4 pointer-events-none z-0 select-none">
+    <div
+      className="fixed inset-0 flex items-center justify-center pointer-events-none select-none"
+      style={{ zIndex: 0 }}
+    >
       <img
         src={LOGO_URL}
         alt=""
-        className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain opacity-[0.07]"
-        style={{ filter: "sepia(1) saturate(2.6) brightness(1.1) hue-rotate(8deg)" }}
+        className="w-[380px] h-[380px] sm:w-[520px] sm:h-[520px] lg:w-[660px] lg:h-[660px] object-contain"
+        style={{
+          opacity: 0.06,
+          filter: "sepia(1) saturate(4) brightness(1.4) hue-rotate(5deg)",
+        }}
         draggable={false}
       />
     </div>
