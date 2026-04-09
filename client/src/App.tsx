@@ -38,6 +38,7 @@ const AdminOutreach = lazy(() => import("./pages/AdminOutreach"));
 const SecurityDashboard = lazy(() => import("./pages/SecurityDashboard"));
 const AdminAutonomous = lazy(() => import("./pages/AdminAutonomous"));
 const AdminGrowthDashboard = lazy(() => import("./pages/AdminGrowthDashboard"));
+const AdminSignatureCast = lazy(() => import("./pages/AdminSignatureCast"));
 const AdvertisingDashboard = lazy(() => import("./pages/AdvertisingDashboard"));
 const SeoDashboard = lazy(() => import("./pages/SeoDashboard"));
 
@@ -252,6 +253,7 @@ function Router() {
               <Route path="/admin/seo">{() => <LazyPage><SeoDashboard /></LazyPage>}</Route>
               <Route path="/admin/outreach">{() => <LazyPage><AdminOutreach /></LazyPage>}</Route>
               <Route path="/admin/growth">{() => <LazyPage><AdminGrowthDashboard /></LazyPage>}</Route>
+              <Route path="/admin/signature-cast">{() => <LazyPage><AdminSignatureCast /></LazyPage>}</Route>
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>

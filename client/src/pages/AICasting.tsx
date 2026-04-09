@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -195,7 +195,7 @@ const AI_ACTOR_LIBRARY = [
   { id: "actor-011", name: "Omar Khalil", archetype: "Wise Mentor", age: "55-70", ethnicity: "Middle Eastern", specialty: "Drama / Fantasy", rating: 4.8, uses: 9200, description: "Has seen enough of the world to know its patterns. Teaches through questions, not answers." },
 ];
 
-type SignatureActor = typeof SIGNATURE_CAST[0];
+type SignatureActor = typeof SIGNATURE_CAST[0] & { isEntitled?: boolean; entitlementSource?: string };
 type GenericActor = typeof AI_ACTOR_LIBRARY[0];
 type CastMode = "signature" | "generic";
 
@@ -230,13 +230,34 @@ export default function AICasting() {
   const [filterSpecialty, setFilterSpecialty] = useState("all");
   const [tierFilter, setTierFilter] = useState("all");
   const [castSuccess, setCastSuccess] = useState(false);
+  const [unlockModalActor, setUnlockModalActor] = useState<SignatureActor | null>(null);
 
   const createCharacterMutation = trpc.character.create.useMutation();
+  const createUnlockCheckout = trpc.signatureCast.createUnlockCheckout.useMutation();
+
+  // Fetch real entitlements from server
+  const { data: actorList } = trpc.signatureCast.listActors.useQuery(undefined, {
+    retry: false,
+  });
+
+  // Merge static SIGNATURE_CAST with real entitlement data
+  const enrichedSignatureCast = useMemo(() => {
+    return SIGNATURE_CAST.map((actor) => {
+      // Map sig- prefixed IDs to server IDs (sig-julian-vance → julian-vance)
+      const serverId = actor.id.replace(/^sig-/, "");
+      const serverActor = actorList?.find((a: any) => a.id === serverId);
+      return {
+        ...actor,
+        isEntitled: serverActor?.isEntitled ?? true, // default open during beta
+        entitlementSource: serverActor?.entitlementSource ?? "plan_inclusion",
+      };
+    });
+  }, [actorList]);
 
   const specialties = ["all", "Drama", "Action", "Thriller", "Sci-Fi", "Comedy", "Romance", "Horror", "Crime"];
 
   // Filter signature cast
-  const filteredSignature = SIGNATURE_CAST.filter((actor) => {
+  const filteredSignature = enrichedSignatureCast.filter((actor) => {
     const matchSearch =
       !searchQuery ||
       actor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -258,9 +279,28 @@ export default function AICasting() {
   });
 
   const toggleActor = (id: string) => {
+    // Check entitlement before allowing selection
+    const actor = enrichedSignatureCast.find((a) => a.id === id);
+    if (actor && !actor.isEntitled) {
+      setUnlockModalActor(actor);
+      return;
+    }
     setSelectedActors((prev) =>
       prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
     );
+  };
+
+  const handleUnlockCheckout = async (actor: SignatureActor, licenseType: "creator" | "commercial" | "episodic") => {
+    try {
+      const result = await createUnlockCheckout.mutateAsync({
+        actorId: actor.id.replace(/^sig-/, ""),
+        licenseType,
+        projectId: projectId || undefined,
+      });
+      window.location.href = result.url;
+    } catch (err: any) {
+      toast.error(err?.message || "Could not start checkout. Please try again.");
+    }
   };
 
   const getActorById = (id: string) => {
@@ -322,6 +362,7 @@ export default function AICasting() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-background">
       {/* HEADER */}
       <div className="border-b border-border/40 bg-black/20 px-4 py-3">
@@ -471,6 +512,7 @@ export default function AICasting() {
                     actor={actor}
                     selected={selectedActors.includes(actor.id)}
                     onToggle={() => toggleActor(actor.id)}
+                    onUnlock={() => setUnlockModalActor(actor)}
                   />
                 ))}
 
@@ -486,6 +528,7 @@ export default function AICasting() {
                     actor={actor}
                     selected={selectedActors.includes(actor.id)}
                     onToggle={() => toggleActor(actor.id)}
+                    onUnlock={() => setUnlockModalActor(actor)}
                   />
                 ))}
 
@@ -501,6 +544,7 @@ export default function AICasting() {
                     actor={actor}
                     selected={selectedActors.includes(actor.id)}
                     onToggle={() => toggleActor(actor.id)}
+                    onUnlock={() => setUnlockModalActor(actor)}
                   />
                 ))}
 
@@ -691,6 +735,17 @@ export default function AICasting() {
         </div>
       </div>
     </div>
+
+    {/* Unlock Modal */}
+    {unlockModalActor && (
+      <UnlockModal
+        actor={unlockModalActor}
+        onClose={() => setUnlockModalActor(null)}
+        onCheckout={(licenseType) => handleUnlockCheckout(unlockModalActor, licenseType)}
+        isLoading={createUnlockCheckout.isPending}
+      />
+    )}
+    </>
   );
 }
 
@@ -699,20 +754,30 @@ function SignatureActorCard({
   actor,
   selected,
   onToggle,
+  onUnlock,
 }: {
   actor: SignatureActor;
   selected: boolean;
   onToggle: () => void;
+  onUnlock: () => void;
 }) {
+  const isLocked = actor.isEntitled === false;
   return (
     <button
-      onClick={onToggle}
-      className={`w-full text-left p-4 rounded-lg border transition-all ${
-        selected
+      onClick={isLocked ? onUnlock : onToggle}
+      className={`w-full text-left p-4 rounded-lg border transition-all relative ${
+        isLocked
+          ? "border-zinc-700/40 bg-zinc-900/40 opacity-70 hover:opacity-90 hover:border-amber-500/30"
+          : selected
           ? "border-amber-500 bg-amber-500/10"
           : "border-border/40 bg-black/20 hover:border-amber-500/40"
       }`}
     >
+      {isLocked && (
+        <div className="absolute top-3 right-3">
+          <Lock className="w-3.5 h-3.5 text-zinc-500" />
+        </div>
+      )}
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -724,21 +789,110 @@ function SignatureActorCard({
                 Next Door
               </Badge>
             )}
+            {actor.entitlementSource === "plan_inclusion" && !isLocked && (
+              <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs h-4">Included</Badge>
+            )}
           </div>
           <p className="text-xs text-amber-400/80">{actor.archetype}</p>
         </div>
-        {selected && <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />}
+        {!isLocked && selected && <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />}
       </div>
       <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{actor.description}</p>
       <div className="flex items-center justify-between gap-2">
         <span className="text-xs text-zinc-600">{actor.specialty}</span>
-        {actor.chemistry.length > 0 && (
-          <span className="text-xs text-zinc-600">
-            Chemistry: <span className="text-zinc-500">{actor.chemistry[0]}</span>
-            {actor.chemistry.length > 1 && <span className="text-zinc-600"> +{actor.chemistry.length - 1}</span>}
-          </span>
+        {isLocked ? (
+          <span className="text-xs text-amber-500/70 font-medium">Unlock to cast</span>
+        ) : (
+          actor.chemistry.length > 0 && (
+            <span className="text-xs text-zinc-600">
+              Chemistry: <span className="text-zinc-500">{actor.chemistry[0]}</span>
+              {actor.chemistry.length > 1 && <span className="text-zinc-600"> +{actor.chemistry.length - 1}</span>}
+            </span>
+          )
         )}
       </div>
     </button>
+  );
+}
+
+// ─── UNLOCK MODAL ─────────────────────────────────────────────────────────────
+function UnlockModal({
+  actor,
+  onClose,
+  onCheckout,
+  isLoading,
+}: {
+  actor: SignatureActor;
+  onClose: () => void;
+  onCheckout: (licenseType: "creator" | "commercial" | "episodic") => void;
+  isLoading: boolean;
+}) {
+  const TIER_PRICES: Record<string, { creator: string; commercial: string; episodic: string }> = {
+    standard: { creator: "A$15", commercial: "A$94", episodic: "A$60" },
+    premium:  { creator: "A$39", commercial: "A$118", episodic: "A$156" },
+    flagship: { creator: "A$99", commercial: "A$178", episodic: "A$396" },
+  };
+  const prices = TIER_PRICES[actor.tier] ?? TIER_PRICES.standard;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div className="bg-zinc-900 border border-zinc-700/60 rounded-xl max-w-md w-full p-6 space-y-5">
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-white">{actor.name}</h2>
+            <p className="text-xs text-amber-400/80 mt-0.5">{actor.archetype} — <TierBadge tier={actor.tier} /></p>
+          </div>
+          <button onClick={onClose} className="text-zinc-500 hover:text-white text-xl leading-none">&times;</button>
+        </div>
+        <p className="text-sm text-zinc-400">
+          Select a license to unlock <strong className="text-white">{actor.name}</strong> for this project.
+          Virelle Stars are licensed for professional cinematic use — not pornography.
+        </p>
+        <div className="space-y-2">
+          <button
+            onClick={() => onCheckout("creator")}
+            disabled={isLoading}
+            className="w-full text-left p-3 rounded-lg border border-zinc-700/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all group"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-white">Creator License</p>
+                <p className="text-xs text-zinc-400 mt-0.5">Personal & creator projects. Non-commercial.</p>
+              </div>
+              <span className="text-amber-400 font-bold text-sm">{prices.creator}</span>
+            </div>
+          </button>
+          <button
+            onClick={() => onCheckout("commercial")}
+            disabled={isLoading}
+            className="w-full text-left p-3 rounded-lg border border-zinc-700/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-white">Commercial License</p>
+                <p className="text-xs text-zinc-400 mt-0.5">Ads, campaigns, branded content.</p>
+              </div>
+              <span className="text-amber-400 font-bold text-sm">{prices.commercial}</span>
+            </div>
+          </button>
+          <button
+            onClick={() => onCheckout("episodic")}
+            disabled={isLoading}
+            className="w-full text-left p-3 rounded-lg border border-zinc-700/60 hover:border-amber-500/40 bg-zinc-800/50 transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-white">Series / Episodic License</p>
+                <p className="text-xs text-zinc-400 mt-0.5">Multi-episode series, recurring use.</p>
+              </div>
+              <span className="text-amber-400 font-bold text-sm">{prices.episodic}</span>
+            </div>
+          </button>
+        </div>
+        <p className="text-xs text-zinc-600 border-t border-zinc-800 pt-3">
+          Provocative scenes yes. Pornography no. Explicit sexual content prohibited.
+          Professional cinematic use only. <a href="/terms" className="text-zinc-500 underline">Full terms</a>.
+        </p>
+      </div>
+    </div>
   );
 }

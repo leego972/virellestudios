@@ -11,6 +11,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { logger } from "./logger";
 import { stripe, priceIdToTier, TIER_LIMITS } from "./subscription";
+import { sql } from "drizzle-orm";
 import { ENV } from "./env";
 import { validateProductionEnv } from "./envValidation";
 import * as db from "../db";
@@ -162,6 +163,48 @@ async function startServer() {
           const session = event.data.object;
           const customerId = session.customer as string;
           const userId = await resolveUserId(session.metadata, customerId);
+
+          // Check if this is a Signature Cast actor unlock
+          if (session.metadata?.type === "signature_cast_unlock" && userId) {
+            const { actorId, licenseType, projectId } = session.metadata;
+            const amountPaidAud = session.amount_total ?? 0; // in cents
+            try {
+              const dbConn = await db.getDb();
+              if (dbConn) {
+                // Idempotent insert — skip if already fulfilled for this session
+                const existing = await dbConn.execute(sql`
+                  SELECT id FROM signatureCastEntitlements
+                  WHERE stripeSessionId = ${session.id} LIMIT 1
+                `) as any;
+                const rows = Array.isArray(existing) ? existing : existing[0] ?? [];
+                if (rows.length === 0) {
+                  await dbConn.execute(sql`
+                    INSERT INTO signatureCastEntitlements
+                      (userId, actorId, licenseType, projectId, isCommercial, isEpisodic,
+                       source, stripeSessionId, amountPaidAud, status, startedAt, createdAt, updatedAt)
+                    VALUES
+                      (${userId}, ${actorId}, ${licenseType}, ${projectId ? parseInt(projectId) : null},
+                       ${licenseType === "commercial" ? 1 : 0}, ${licenseType === "episodic" ? 1 : 0},
+                       'stripe_webhook', ${session.id}, ${amountPaidAud}, 'active', NOW(), NOW(), NOW())
+                  `);
+                  await dbConn.execute(sql`
+                    INSERT INTO signatureCastEvents
+                      (userId, actorId, event, licenseType, projectId, metadata, createdAt)
+                    VALUES
+                      (${userId}, ${actorId}, 'checkout_completed', ${licenseType},
+                       ${projectId ? parseInt(projectId) : null},
+                       ${JSON.stringify({ stripeSessionId: session.id, amountPaidAud, source: 'webhook' })}, NOW())
+                  `);
+                  logger.info(`[SignatureCast] Entitlement granted: user=${userId} actor=${actorId} license=${licenseType} session=${session.id}`);
+                } else {
+                  logger.info(`[SignatureCast] Duplicate webhook skipped: session=${session.id}`);
+                }
+              }
+            } catch (err: any) {
+              logger.error(`[SignatureCast] Webhook fulfillment failed: ${err.message}`);
+            }
+            break;
+          }
 
           // Check if this is a film production package purchase
           if (session.metadata?.type === "film_production" && userId) {

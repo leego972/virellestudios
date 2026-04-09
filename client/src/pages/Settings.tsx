@@ -1206,15 +1206,8 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
           )}
         </div>
 
-        {/* Individual licenses section */}
-        <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses</p>
-          <div className="rounded-lg border border-white/5 bg-zinc-950/40 p-4 text-center">
-            <Film className="h-8 w-8 text-zinc-700 mx-auto mb-2" />
-            <p className="text-xs text-zinc-500 mb-1">No individual actor licenses yet.</p>
-            <p className="text-xs text-zinc-600">When you unlock a specific actor for a project, it will appear here.</p>
-          </div>
-        </div>
+        {/* Individual licenses section — live data */}
+        <ActiveTalentLicensesList />
 
         {/* Usage terms reminder */}
         <div className="rounded-lg border border-white/5 bg-zinc-950/40 p-3 space-y-1">
@@ -1246,6 +1239,63 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+// ─── ACTIVE TALENT LICENSES LIST (live tRPC data) ────────────────────────────
+function ActiveTalentLicensesList() {
+  const { data: entitlements, isLoading } = trpc.signatureCast.myEntitlements.useQuery(undefined, {
+    retry: false,
+  });
+  if (isLoading) {
+    return (
+      <div>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses</p>
+        <div className="rounded-lg border border-white/5 bg-zinc-950/40 p-4 text-center">
+          <Loader2 className="h-5 w-5 text-zinc-600 mx-auto animate-spin" />
+        </div>
+      </div>
+    );
+  }
+  const list = (entitlements as any[]) ?? [];
+  if (list.length === 0) {
+    return (
+      <div>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses</p>
+        <div className="rounded-lg border border-white/5 bg-zinc-950/40 p-4 text-center">
+          <Film className="h-8 w-8 text-zinc-700 mx-auto mb-2" />
+          <p className="text-xs text-zinc-500 mb-1">No individual actor licenses yet.</p>
+          <p className="text-xs text-zinc-600">When you unlock a specific actor for a project, it will appear here.</p>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div>
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses ({list.length})</p>
+      <div className="space-y-2">
+        {list.map((e: any, i: number) => (
+          <div key={i} className="rounded-lg border border-white/5 bg-zinc-950/40 p-3 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-white truncate">{e.actorId}</p>
+              <p className="text-xs text-zinc-500">
+                {e.licenseType} license{e.projectId ? ` · Project ${e.projectId}` : ""}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Badge className={`text-xs border ${
+                e.licenseType === "commercial" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                e.licenseType === "episodic"   ? "bg-purple-500/10 text-purple-400 border-purple-500/20" :
+                "bg-zinc-700/50 text-zinc-400 border-zinc-600/30"
+              }`}>{e.licenseType}</Badge>
+              {e.createdAt && (
+                <span className="text-xs text-zinc-600">{new Date(e.createdAt).toLocaleDateString()}</span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
