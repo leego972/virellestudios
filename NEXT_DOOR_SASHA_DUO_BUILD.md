@@ -1,5 +1,7 @@
 # NEXT DOOR: The Sasha Duo (Vale Household Security)
 
+> **STATUS: LOCKED** — Operational split and visual habits added. This is the baseline.
+
 **Core Concept:**
 Two men, both named Sasha, serving as the live-in (or near-live-in) security team for the Vale household. They are a visible, recurring sign that the Vales are not normal wealthy neighbors. They operate as a polished, socially intelligent security system—a refined "good gangster / bad gangster" dynamic where contrast in temperament is a deliberate method, not a comedy routine. They are highly capable professionals who have worked around dangerous people long enough to become weirdly domestic about it. They provide tension, precision, and dry humor without ever slipping into incompetence, broad comedy, or caricature.
 
@@ -62,6 +64,24 @@ They operate as a polished, socially intelligent security system. This is a refi
 The humor stems from precision, dryness, familiarity, and the stark contrast in their temperaments—the fact that one sounds almost hospitable while the other sounds like strict policy. It does not come from buffoonery, exaggerated menace, or over-talking. They are more dangerous together because their contrast is a deliberate, practiced method of control.
 
 They are NOT blood brothers. They share a first name and a professional history, plausibly coming from the same broad Eastern European or Slavic-adjacent security world.
+
+---
+
+## Operational Split
+
+**Little Sasha** owns the front-facing layer of security. He handles gate access, arrivals, delivery screening, and guest handling. He is the socially friendly first contact—the person visitors see, speak to, and briefly believe is on their side. His domain is the threshold: the gate intercom, the front drive, the door. He is the system's public face.
+
+**Big Sasha** owns the perimeter and the hard stop. He handles escalation, visible deterrence, and any situation that has moved past conversation. He carries night-watch energy even in daylight. He is not stationed at the gate; he is stationed everywhere else. Visitors who get past Little Sasha become aware of him. Visitors who do not get past Little Sasha never see him at all—which is its own kind of message.
+
+The split is clean and practiced. It is not assigned in the moment; it is simply how they work.
+
+---
+
+## Visual Habits
+
+**Little Sasha** always has a small notebook or phone in his hand at the gate—not for show, but for logging. He checks it before he speaks to anyone. It signals that he already knows something about you before you open your mouth. Guests find this unsettling without being able to say why.
+
+**Big Sasha** rolls his right sleeve up to the elbow when he is paying close attention to someone. It is not a threat gesture. It is simply what he does when he has decided a person is worth watching carefully. Anyone who has spent enough time around the Vale house learns to notice it.
 
 ---
 
