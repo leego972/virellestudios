@@ -182,8 +182,7 @@ const SIGNATURE_CAST = [
 
 // ─── GENERIC ARCHETYPE LIBRARY (secondary) ────────────────────────────────
 const AI_ACTOR_LIBRARY = [
-  { id: "actor-001", name: "Marcus Vane", archetype: "Brooding Anti-Hero", age: "35-45", ethnicity: "Mixed", specialty: "Drama / Thriller", rating: 4.9, uses: 12840, description: "A morally conflicted man driven by past trauma. Intense, guarded, and capable
- of both great violence and unexpected tenderness." },
+  { id: "actor-001", name: "Marcus Vane", archetype: "Brooding Anti-Hero", age: "35-45", ethnicity: "Mixed", specialty: "Drama / Thriller", rating: 4.9, uses: 12840, description: "A morally conflicted man driven by past trauma. Intense, guarded, and capable of both great violence and unexpected tenderness." },
   { id: "actor-002", name: "Elara Solis", archetype: "Fierce Protagonist", age: "25-35", ethnicity: "Latina", specialty: "Action / Sci-Fi", rating: 4.8, uses: 9320, description: "Relentlessly determined and physically formidable. Leads from the front, earns loyalty through action, not words." },
   { id: "actor-003", name: "Jin Harlow", archetype: "Charming Rogue", age: "28-38", ethnicity: "East Asian", specialty: "Comedy / Romance", rating: 4.7, uses: 7650, description: "Disarmingly charismatic with a quick wit and flexible moral compass. Hides real depth behind a mask of levity." },
   { id: "actor-004", name: "Nadia Voss", archetype: "Cold Intellectual", age: "30-40", ethnicity: "Eastern European", specialty: "Thriller / Sci-Fi", rating: 4.9, uses: 11200, description: "Brilliant, precise, and emotionally detached. Every action is calculated. Vulnerability is a liability she refuses to show." },
