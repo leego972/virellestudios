@@ -203,6 +203,7 @@ export default function DashboardLayout({
     '/contact', '/blog', '/terms', '/privacy', '/acceptable-use',
     '/ai-content-policy', '/ip-policy', '/dmca', '/showcase',
     '/forgot-password', '/reset-password', '/subscription',
+    '/signature-cast', '/talent-search',
   ];
   // Use window.location.pathname as the authoritative path — wouter's useLocation()
   // may not reflect the actual URL during the initial render on hard page load.
