@@ -393,6 +393,48 @@ export default function SignatureCast() {
         </div>
       </section>
 
+      {/* USAGE TERMS */}
+      <section className="border-t border-white/5 bg-zinc-950/80">
+        <div className="max-w-4xl mx-auto px-6 py-16">
+          <div className="rounded-2xl border border-white/5 bg-zinc-900/40 p-8">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                <Shield className="w-5 h-5 text-zinc-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1">Signature Cast — Usage Terms</h3>
+                <p className="text-sm text-zinc-500">Virelle Stars are premium digital actors for professional cinematic use.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <p className="text-xs font-semibold text-green-400 uppercase tracking-wider mb-3">Permitted Use</p>
+                <ul className="space-y-2 text-sm text-zinc-400">
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-green-400 mt-0.5 shrink-0" /> Films, trailers, series, and campaigns</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-green-400 mt-0.5 shrink-0" /> Prestige digital content and branded work</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-green-400 mt-0.5 shrink-0" /> Sensual, romantic, and mature dramatic scenes</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-green-400 mt-0.5 shrink-0" /> Adult chemistry and seductive tension (prestige standard)</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-green-400 mt-0.5 shrink-0" /> Provocative wardrobe, adult glamour, implied intimacy</li>
+                </ul>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-red-400 uppercase tracking-wider mb-3">Prohibited Use</p>
+                <ul className="space-y-2 text-sm text-zinc-400">
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-red-400 mt-0.5 shrink-0" /> Pornographic content or explicit sexual acts</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-red-400 mt-0.5 shrink-0" /> Graphic nudity intended for sexual display</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-red-400 mt-0.5 shrink-0" /> Adult-industry or adult-creator platform use</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-red-400 mt-0.5 shrink-0" /> Fetish content or sexual exploitation material</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-red-400 mt-0.5 shrink-0" /> Marketing actors as pornographic performers</li>
+                </ul>
+              </div>
+            </div>
+            <p className="text-xs text-zinc-600 mt-6 border-t border-white/5 pt-4">
+              Virelle Stars are commercially clean, brand-safe premium digital talent. Violations of these terms will result in immediate content removal and account action. See the full <span className="text-zinc-400 underline cursor-pointer">Terms of Service</span> for details.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* FINAL CTA */}
       <section className="border-t border-white/5 bg-zinc-950">
         <div className="max-w-3xl mx-auto px-6 py-20 text-center">

@@ -464,6 +464,51 @@ export default function TermsOfService() {
             </p>
           </section>
 
+          {/* Signature Cast Licensing */}
+          <section>
+            <h2 className="text-lg font-semibold mb-3 text-foreground flex items-center gap-2">
+              <Film className="w-4 h-4 text-amber-400" />
+              Signature Cast — Licensing &amp; Prohibited Use
+            </h2>
+            <p className="mb-4">
+              Virelle Signature Cast actors (&ldquo;Virelle Stars&rdquo;) are premium digital talent owned and licensed by Virelle Studios.
+              They are made available to users for professional cinematic and commercial creative use under the following terms.
+            </p>
+            <div className="p-4 rounded-lg bg-green-500/5 border border-green-500/20 mb-4">
+              <p className="text-green-400 text-xs font-semibold uppercase tracking-wider mb-2">Permitted Use</p>
+              <p>
+                Virelle Stars may be used in films, trailers, series, campaigns, prestige digital content, branded work, and professional creative productions.
+                Sensual scenes, romantic tension, seductive styling, adult glamour, implied intimacy, and mature dramatic content are permitted
+                within a prestige-film standard (broadly equivalent to a PG-13 to mature drama rating).
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/20 mb-4">
+              <p className="text-red-400 text-xs font-semibold uppercase tracking-wider mb-2">Strictly Prohibited Use</p>
+              <p className="mb-3">
+                The following uses of Virelle Stars are strictly prohibited and will result in immediate content removal, license revocation, and account action:
+              </p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Pornographic content of any kind</li>
+                <li>Explicit sexual acts or graphic sexual depictions</li>
+                <li>Graphic nudity intended for sexual display or arousal</li>
+                <li>Fetish content or sexual exploitation material</li>
+                <li>Adult-industry or adult-creator platform use</li>
+                <li>Marketing or positioning Virelle Stars as pornographic performers or adult models</li>
+                <li>Any content that sexualises Virelle Stars beyond the prestige cinematic standard described above</li>
+              </ul>
+            </div>
+            <p className="mb-3">
+              <strong className="text-foreground">Content Standard:</strong> The permitted standard is provocative, not pornographic.
+              Prestige sensuality is permitted. Explicit sex is not. Adult chemistry is permitted. Adult-industry use is not.
+              This distinction is a hard product rule and is enforced at both the platform and content moderation level.
+            </p>
+            <p>
+              If a generation request involving a Virelle Star is detected as violating these terms, the request will be blocked,
+              the user will be notified, and the incident will be logged. Repeated violations may result in permanent account suspension.
+              Virelle Studios reserves the right to modify, suspend, or revoke Signature Cast access at any time for violations of this policy.
+            </p>
+          </section>
+
         </div>
       </div>
       <LeegoFooterLaunch />

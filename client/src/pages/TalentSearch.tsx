@@ -290,6 +290,7 @@ export default function TalentSearch() {
   const [tierFilter, setTierFilter] = useState("All");
   const [selectedActor, setSelectedActor] = useState<typeof SIGNATURE_CAST[0] | null>(null);
   const [shortlist, setShortlist] = useState<string[]>([]);
+  const [castConfirmActor, setCastConfirmActor] = useState<typeof SIGNATURE_CAST[0] | null>(null);
 
   const filtered = SIGNATURE_CAST.filter((actor) => {
     const matchSearch =
@@ -530,6 +531,48 @@ export default function TalentSearch() {
         )}
       </div>
 
+      {/* CAST CONFIRMATION DIALOG */}
+      {castConfirmActor && (
+        <Dialog open={!!castConfirmActor} onOpenChange={() => setCastConfirmActor(null)}>
+          <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold">Cast {castConfirmActor.name}?</DialogTitle>
+              <DialogDescription className="text-zinc-400">
+                You are about to cast a Virelle Signature Star in your project.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 mt-2">
+              <div className="rounded-lg border border-white/5 bg-zinc-950/60 p-4 space-y-2">
+                <p className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">License Confirmation</p>
+                <ul className="text-xs text-zinc-400 space-y-1.5">
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" /> Permitted: films, trailers, series, campaigns, prestige digital content</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" /> Permitted: sensual, romantic, and mature dramatic scenes (prestige standard)</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" /> Prohibited: pornography, explicit sexual content, adult-industry use</li>
+                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" /> Prohibited: graphic nudity for sexual display, fetish content, exploitation</li>
+                </ul>
+              </div>
+              <p className="text-xs text-zinc-500">By casting, you confirm you have read and agree to the Virelle Signature Cast usage terms.</p>
+              <div className="flex gap-3">
+                <Button
+                  className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-semibold"
+                  onClick={() => { setCastConfirmActor(null); navigate("/projects/new"); }}
+                >
+                  Confirm &amp; Cast
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-white/10 text-zinc-300 hover:bg-white/5"
+                  onClick={() => setCastConfirmActor(null)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* ACTOR PROFILE DIALOG */}
       {selectedActor && (
         <Dialog open={!!selectedActor} onOpenChange={() => setSelectedActor(null)}>
@@ -607,12 +650,23 @@ export default function TalentSearch() {
                 ))}
               </div>
 
+              {/* USAGE TERMS NOTICE */}
+              <div className="rounded-lg border border-white/5 bg-zinc-950/60 p-4">
+                <p className="text-xs font-semibold text-zinc-400 mb-2 uppercase tracking-wider">Signature Cast — Usage Terms</p>
+                <p className="text-xs text-zinc-500 leading-relaxed">
+                  Virelle Stars are licensed for professional cinematic use: films, trailers, series, campaigns, and prestige digital content.
+                  Sensual, romantic, and mature dramatic scenes are permitted within a prestige-film standard.
+                  Pornographic content, explicit sexual acts, graphic nudity intended for sexual display, and adult-industry use are
+                  <span className="text-zinc-300 font-medium"> strictly prohibited</span> and will result in immediate content removal and account action.
+                </p>
+              </div>
+
               {/* CTAs */}
               <div className="flex gap-3 pt-2">
                 {selectedActor.unlocked ? (
                   <Button
                     className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-semibold"
-                    onClick={() => { setSelectedActor(null); navigate("/projects/new"); }}
+                    onClick={() => { setCastConfirmActor(selectedActor); setSelectedActor(null); }}
                   >
                     Cast in Project
                     <ArrowRight className="ml-2 w-4 h-4" />

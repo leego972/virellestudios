@@ -44,7 +44,8 @@ export type ViolationCategory =
   | "HARASSMENT"
   | "IMPERSONATION"
   | "COPYRIGHT_INFRINGEMENT"
-  | "SUSPICIOUS_PATTERN";
+  | "SUSPICIOUS_PATTERN"
+  | "SIGNATURE_CAST_EXPLICIT";
 
 interface ViolationRule {
   category: ViolationCategory;
@@ -127,6 +128,30 @@ const VIOLATION_RULES: ViolationRule[] = [
       "dox this person", "swat this person", "harass this person",
     ],
     freeze: false,
+    reportToAuthorities: false,
+  },
+  // ─── Signature Cast Brand-Safety Rule ─────────────────────────────────────────
+  // Blocks explicit sexual / pornographic requests that name Virelle Stars.
+  // Severity: HIGH (freeze=true, no authority report — internal enforcement only).
+  // Permitted: sensual, romantic, mature drama, implied intimacy, adult glamour.
+  // Prohibited: pornography, explicit sex acts, graphic nudity for sexual display,
+  //             fetish content, adult-industry positioning.
+  {
+    category: "SIGNATURE_CAST_EXPLICIT",
+    severity: "HIGH",
+    keywords: [
+      // Explicit sexual acts combined with Virelle Star names or the cast system
+      "virelle star porn", "signature cast porn", "virelle star sex scene explicit",
+      "virelle star nude explicit", "signature cast nude", "virelle star naked explicit",
+      "julian vance porn", "elena rostova porn", "sofia reyes porn",
+      "kofi adebayo porn", "kenji sato porn", "gallagher twins porn",
+      "julian vance sex scene explicit", "elena rostova sex scene explicit",
+      "sofia reyes sex scene explicit", "kofi adebayo sex scene explicit",
+      "virelle star fetish", "signature cast fetish",
+      "virelle star adult content", "signature cast adult film",
+      "virelle star onlyfans", "signature cast onlyfans",
+    ],
+    freeze: true,
     reportToAuthorities: false,
   },
 ];
