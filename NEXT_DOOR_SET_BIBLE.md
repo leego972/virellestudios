@@ -1,139 +1,165 @@
-# NEXT DOOR: LOCKED SET DESIGN BIBLE (PILOT)
+# NEXT DOOR: ELEVATED SET DESIGN BIBLE (PILOT)
 
 ## PART 1: OVERALL ENVIRONMENTAL PHILOSOPHY
 
 The world of *Next Door* is not flashy crime spectacle. It is polished suburban tension. Everything should feel expensive but controlled, beautiful but watchful, quiet enough that every sound matters, and domestic enough that danger feels invasive.
 
-The set design must communicate the difference between appearing stable and being stable. It is an active storytelling tool.
+The set design must communicate the difference between appearing stable and being stable. It is an active storytelling tool. Every location is an active power space.
 
 ### The Three Environment Systems
 1. **The Cross World:** Warm, practical, strained, slightly cluttered, lived-in. Trying hard. Financially stretched but respectable. Emotionally honest in objects and wear.
+   - **Philosophy:** Life is happening faster than the family can organize it. Love exists here, but so does fatigue. Objects accumulate because people are busy surviving.
+   - **Status Shame:** The house creates subtle embarrassment in scenes with the Vales or detectives. Not because it is bad, but because it is less finished, slightly smaller, more cluttered, and more visibly real. Imperfections are visible, excuses sound louder, and domestic strain shows through.
 2. **The Vale World:** Expensive, controlled, curated, symmetrical, intentional. Quietly predatory. Cold power disguised as elegance. Every object chosen, nothing accidental.
+   - **Philosophy:** Nothing is accidental. Space is curated to control emotion. Hospitality is part of power. Beauty is used to disarm.
+   - **Dangerously Perfect:** It should feel too composed, too ready, too clean emotionally, like a place that edits people's behavior. It seduces the Cross family and the audience at the same time, then gradually reveals that the calm is a form of discipline and surveillance.
 3. **The Street / Observation World:** Quiet upscale suburban calm. Hedges, fences, gates, driveways, streetlamps. Every exterior space functions as surveillance theater. Neighbors can see each other without seeming to look.
+   - **Philosophy:** The street is a stage of mutual observation.
+   - **Geography:** Mavis's porch sees the Cross driveway and Vale front door. Teenagers can talk by the curb where adults can see but not hear. A parked car feels suspicious; a person standing still feels threatening.
 
 ---
 
-## PART 2: STREET / NEIGHBORHOOD BIBLE
+## PART 2: 10 VISUAL MOTIFS
 
-**Street Identity:** Affluent suburban street or hillside residential lane. Wide enough for privacy, close enough for watching. No urban mess, no chaotic traffic. Every home looks curated. The silence should feel almost expensive.
-
-**Design Details:** Trimmed hedges, clean driveways, discreet mailbox design, well-kept trees, understated modern lamps. Luxury SUVs and sedans, no noisy clutter. Tasteful, expensive exterior stone, wood, or stucco palette. No bright colors, no cartoon suburbia, no overdesigned Beverly Hills parody.
-
-**Visual Atmosphere by Time:**
-* **Day:** Bright but softened sunlight. Slow neighborhood pace. Birds, sprinklers, distant mower. Tension comes from stillness, not chaos.
-* **Dusk:** Strongest tone for the series. Warm street lamps beginning to glow. Pools of golden and blue light. Windows becoming visible. Driveways and front steps feel like stages.
-* **Night:** Dark but readable. Quiet enough that engines, footsteps, and gate clicks stand out. Houses glow differently according to family identity. Surveillance energy is strongest at night.
-* **Pre-Dawn / Early Morning:** Blue-grey stillness. Too quiet. Guilt and aftermath energy. Ideal for panic-cleaning, secret arrivals, or private confrontation.
-
----
-
-## PART 3: CROSS HOUSE SET BIBLE
-
-**Design Language:** A family home trying to look better than it currently feels. Decent house, not poor, but with slight visual strain in every room. Things are practical, not art-directed to perfection. Some older pieces mixed with a few aspirational purchases. More objects than the Vales. Visible effort.
-
-**Main Palette:** Warm cream, soft beige, faded navy, muted olive, honey-toned wood, lived-in whites, soft brown leather or faux leather, family clutter colors.
-
-**Lighting & Texture:** Warmer practical lamps, under-cabinet kitchen lighting. Occasional harsh overheads when under stress. Evening light should feel tired and domestic; daylight should reveal flaws, boxes, bills, and unfinished settling. Mixed wood tones, scuffed surfaces, family photos not fully placed yet, practical appliances. Visible lunch prep, paperwork, charging cables, unpacked boxes, keys bowl. Slight noise in the frame.
-
-### Key Rooms & Emotional Purpose
-* **Front Entry / Foyer:** Narrower than the Vale house. Practical bench or shoe pile. Coat hooks or temporary box. Welcome basket visible later as symbolic intrusion. Floor mat slightly worn. Door lock/alarm panel visible and not premium. **Purpose:** Threshold of vulnerability. Where unwanted people arrive. Where Daniel feels exposed.
-* **Living Room:** Comfortable but not "designer." Sofa slightly too big or slightly too old for the space. TV. Half-unpacked boxes (early pilot). Children’s traces. Lamp with warm shade. Coffee table clutter. Maybe one aspirational decorative object that feels out of budget. **Purpose:** Family stress room. Detective arrival room. Emotional fallout room.
-* **Kitchen / Dining Area:** One of the main emotional engines. Practical, used hard. Visible food prep. Lunchboxes, sandwich materials, school clutter. Affordable stools/chairs. Slightly crowded counters. Under-cabinet warm light useful for tense scenes. Fridge should feel real: magnets, lists, school papers, delivery notes. **Purpose:** Nina’s command center. Truth-adjacent conversations. Marriage tension room. Ordinary domestic realism in contrast to Vale control.
-* **Garage / Driveway Access:** Absolutely important. Cleaning supplies, utility shelving, stacked moving boxes, storage disorder. Believable place for panic-cleaning trunk scene. Not cinematic-beautiful; practical and revealing. **Purpose:** Daniel’s first collapse zone. Evidence anxiety zone. Masculine hidden-failure zone.
+Create recurring motifs the audience will subconsciously remember. This makes the show feel authored.
+1. **The Welcome Basket:** Sitting on the Cross counter, a constant reminder of the Vales' invasive hospitality.
+2. **The Half-Open Garage Light Seam:** The Vale garage door cracked open, spilling cold light into the warm night.
+3. **Mavis's Notebook and Mug:** Resting on her porch railing, the tools of neighborhood surveillance.
+4. **Marcus Framed in Thresholds:** Standing in doorways or gates, controlling who enters and who leaves.
+5. **Celeste in Kitchen Island Compositions:** Centered behind expensive stone, directing social flow like a general.
+6. **Daniel in Driveways and Trunks:** Trapped in transitional, exposed spaces.
+7. **Nina Under the Under-Cabinet Light:** Lit warmly but harshly, exposing her exhaustion and sharp intelligence.
+8. **Jaden and Mia at the Curb Line:** Standing on the literal boundary between their two worlds.
+9. **Viktor Under Ugly Practical Light:** Unflattering, functional illumination that highlights his lack of pretense.
+10. **Detectives Framed by Cold Exterior Light:** Standing at the Cross front door, bringing the chill of the outside world into the domestic warmth.
 
 ---
 
-## PART 4: VALE HOUSE SET BIBLE
+## PART 3: THRESHOLD DESIGN
 
-**Design Language:** Wealthy, severe, elegant, curated, too calm. Always ready. Beautiful enough to seduce, controlled enough to threaten. Not gaudy crime wealth, not tacky gold and marble cliché. Old-world control expressed through modern refinement. Every object intentional. Negative space matters. No random clutter, no visual chaos. The house must feel like it has rules.
-
-**Main Palette:** Dark walnut, black stone, smoked glass, soft cream, cold taupe, slate, deep forest green, burgundy accents, brushed steel/bronze details.
-
-**Lighting & Texture:** Clean architectural lighting. Warm pools in selected areas, darker edges. At night the house glows like it is performing calm. Kitchen should look expensive and surgical. Patio should look luxurious but interrogative. Garage should sharply contrast the social surfaces. Stone counters, integrated cabinetry, controlled floral arrangements, perfect glassware, expensive dining ware, subtle art. All surfaces look maintained.
-
-### Key Rooms & Emotional Purpose
-* **Entry / Foyer:** High-ceiling feel if possible. Elegant flooring. Art or sculpture that feels expensive but not flashy. Sightline into house should immediately establish superiority over Cross house. Clean echo in sound design. **Purpose:** First intimidation threshold. Social dominance zone.
-* **Main Living Area:** Large but not too open. Expensive sofa, perfect lines. Maybe fireplace or architectural anchor. Low decor count. Discreet bar cart or drinks zone. Everything expensive enough to make the Crosses slightly self-conscious. **Purpose:** Social performance zone. Impression management. "Their world is better than ours" zone.
-* **Kitchen:** Immaculate. Large island. Controlled lighting. Expensive surfaces. Wine storage or elegant bottle presence. No real mess even while hosting. Feels like surgery by hospitality. **Purpose:** Celeste power zone. Female chessboard zone. Quiet psychological combat space.
-* **Patio / Outdoor Entertainment Zone:** One of the most important recurring spaces. Warm evening lighting. Expensive lounge furniture. Fire feature or water reflection if achievable. Controlled landscaping. Privacy with just enough exposure to feel watched. Glasses, candlelight, polished serving ware. **Purpose:** Seduction zone. Class contrast zone. Criminal-coded hospitality zone.
-* **Garage / Operational Back Room:** This is where the house reveals its other self. Cleaner than expected but colder. Tools in order, metal cabinet, concrete floor, practical workbench. No cartoon torture-chamber. Feels like business, not rage. **Purpose:** Hidden operational truth. Where Mia/Jaden see too much. Where Viktor belongs more naturally than the patio.
-* **Upstairs Window / Watch Position:** Somebody watching from above should feel plausible. Exterior window visibility important. **Purpose:** The house always watches back.
+Thresholds matter deeply in this show. Power changes when someone is invited in vs. standing outside.
+* **Front Doors:** The line between social performance and domestic reality. The Cross door is an invasion point; the Vale door is an intimidation point.
+* **Gates and Driveway Lines:** The boundary of ownership. Where neighbors can talk without officially visiting.
+* **Garage Seams:** The crack between the curated facade and the operational truth.
+* **Porch Edges:** Mavis's domain limit. Where observation turns into interaction.
+* **Kitchen Islands:** The physical barrier in social combat. Celeste uses hers as a shield and a stage.
 
 ---
 
-## PART 5: MAVIS HOUSE / PORCH BIBLE
+## PART 4: LIGHTING AS MORAL LANGUAGE
 
-**Design Language:** Older, more personal, slightly cluttered, lived-in across decades. Domestic surveillance nest. Not shabby, but older. Floral traces, porch furniture, curtains that create shadow play. Visible signs of one person living alone but staying alert.
-
-**Main Palette:** Faded floral tones, cream, pale blue, old rose, soft burgundy, green houseplants.
-
-**Key Features:** Porch chair, mug resting table, notebook/pen. Binoculars or "birdwatching" excuse prop. Lace or patterned curtains. Lamp by window. Watering can, garden gloves, tidy-but-fussy exterior.
-
-**Story Function:** Neighborhood watchtower. Comic pressure point. The place from which truth is noticed first. *Important:* Mavis’s porch and front window must allow believable sightlines toward both houses and the street.
-
----
-
-## PART 6: DETECTIVE ENVIRONMENT RULES
-
-When detectives appear, the environment should shift from seduction to reality. Use colder porch light, simple practical framing, neutral car headlights/police spill if needed, less flattering light, fewer cozy textures, and more open visual exposure. Their scenes should feel procedural, sober, precise, unromantic, and quietly threatening.
+Lighting is part of the drama, not just time of day.
+* **Cross Kitchen Morning Light:** Truth finds you early. Unforgiving, practical, exposing the strain of the new day.
+* **Vale Patio Dusk:** Seduction and social pressure. Warm, golden, making everything look expensive and everyone feel vulnerable to judgment.
+* **Cross Foyer Late Night:** Law and crime both arrive here. Shadows stretch, and the domestic safety feels thin.
+* **Airfield Security Light:** No softness, no story, only consequence. Cold, ugly, sodium or LED glare.
+* **Vale Kitchen Artificial Light:** Surgical, perfect, shadowless. The light of absolute control.
 
 ---
 
-## PART 7: AIRFIELD SET BIBLE
+## PART 5: CROSS HOUSE SET BIBLE
 
-The airfield sequence must feel like a different edge of the same world. Not big action spectacle. Small private airfield access road, ugly security lighting, open asphalt, wind, low industrial building, sparse signage, too much empty space. Daniel looks isolated and underqualified.
+**Design Language:** A family home trying to look better than it currently feels. Practical, not art-directed to perfection. Some older pieces mixed with aspirational purchases. More objects than the Vales. Visible effort.
 
-**Palette:** Grey-blue night, white security light, black asphalt, occasional sodium warmth if needed, stark shadows.
-
-**Story Function:** Daniel crosses from neighbor favors into real criminal logistics. Viktor emerges from this space like the truth of the Vale family in physical form.
-
----
-
-## PART 8: SCENE-TO-SET MAP (PILOT)
-
-1. **The Trunk (4:30 AM):** Cross driveway + garage access. Pre-dawn cold blue light. Car as panic chamber. Driveway as public exposure space.
-2. **The Kitchen (6:30 AM):** Cross kitchen. Warm early domestic realism. Nina control center.
-3. **The Welcome at the Door (10:00 AM):** Cross threshold + visible Vale curb approach. Bright, slightly too-exposed late morning light. Visual class contrast immediate.
-4. **Mia and Jaden (4:00 PM):** Curb / bin zone / street crossing. Late afternoon softness. Teens in shared no-man’s-land between houses.
-5. **Mavis Intrudes (6:45 PM):** Cross living room / entry. Early evening pre-dinner pressure. Casserole as social invasion prop.
-6. **Vale Dinner (8:00 PM):** Vale patio / outdoor dining. Dusk into warm controlled night. Seduction and interrogation.
-7. **Nina / Celeste (8:45 PM):** Vale kitchen. Female power scene under expensive light.
-8. **Small Favor (9:15 PM):** Vale driveway / departure threshold. Cooler night air. Marcus controls edge of space.
-9. **Garage Reveal (9:30 PM):** Vale side yard / garage seam. Danger revealed behind curated home facade.
-10. **Kitchen Confrontation (10:00 PM):** Cross kitchen late night. Warm but exhausted emotional fallout.
-11. **Detectives Arrive (11:00 PM):** Cross front door / living room threshold. Law enters domestic space.
-12. **Porch Watch (11:43 PM):** Mavis porch. Neighborhood surveillance theater.
-13. **The Pickup (Midnight):** Isolated private airfield. Operational underworld realism.
-14. **End of the Night (3:00 AM):** Cross foyer / living room pre-dawn. Invasion through domestic quiet.
+### Key Rooms & Power Functions
+* **Front Entry / Foyer:**
+  - **Power:** Invasion threshold. Where outside power enters domestic safety.
+  - **Emotion:** Vulnerability. Where Daniel feels exposed.
+  - **Details:** Practical bench, shoe pile, welcome basket visible later. Door lock/alarm panel is visible and not premium.
+* **Living Room:**
+  - **Power:** Family stress room. Detective arrival room.
+  - **Emotion:** Strain and emotional fallout.
+  - **Details:** Sofa slightly too big/old. Half-unpacked boxes. Children's traces. Warm lamp. Coffee table clutter.
+* **Kitchen / Dining Area:**
+  - **Power:** Nina's command space. Where Daniel fails at lying. The emotional core of the show.
+  - **Emotion:** Used, pressured, functional, human, emotionally alive.
+  - **Details:** Visible lunch prep, school clutter. Affordable stools. Slightly crowded counters. Fridge has magnets, lists, delivery notes.
+* **Garage / Driveway Access:**
+  - **Power:** Daniel's first collapse zone. Evidence anxiety zone.
+  - **Emotion:** Masculine hidden-failure zone.
+  - **Details:** Cleaning supplies, utility shelving, stacked boxes. Practical and revealing, not cinematic-beautiful.
 
 ---
 
-## PART 9: PROMO / TRAILER SET MOMENTS
+## PART 6: VALE HOUSE SET BIBLE
 
-These are not just scene moments. They are poster, trailer, thumbnail, and social campaign images:
-1. Cross driveway pre-dawn trunk cleaning
-2. Celeste at the Cross door with welcome basket
-3. Vale patio dinner under controlled lighting
-4. Nina and Celeste in Vale kitchen
-5. Mavis on porch with notebook
-6. Garage light under half-open door
-7. Detectives at Cross front door
-8. Airfield with Viktor entering the car
-9. Marcus seated in Cross house before dawn
-10. Mia and Jaden on the curb at dusk
+**Design Language:** Wealthy, severe, elegant, curated, too calm. Always ready. Beautiful enough to seduce, controlled enough to threaten. Old-world control expressed through modern refinement.
+
+### Key Rooms & Power Functions
+* **Entry / Foyer:**
+  - **Power:** First intimidation threshold. Social dominance zone.
+  - **Emotion:** Makes guests feel small.
+  - **Details:** High-ceiling feel. Elegant flooring. Expensive but not flashy art. Clean echo.
+* **Main Living Area:**
+  - **Power:** Social performance zone. Impression management.
+  - **Emotion:** "Their world is better than ours."
+  - **Details:** Expensive sofa, perfect lines. Low decor count. Discreet bar cart. Everything makes the Crosses self-conscious.
+* **Kitchen:**
+  - **Power:** Celeste's power zone. Female chessboard zone.
+  - **Emotion:** Surgery by hospitality. Quiet psychological combat.
+  - **Details:** Immaculate. Large island. Controlled lighting. Expensive surfaces. Wine storage. No real mess.
+* **Patio / Outdoor Entertainment Zone:**
+  - **Power:** Marcus/Celeste social dominance space. Where hospitality becomes interrogation.
+  - **Emotion:** Seduction and class contrast.
+  - **Details:** Warm evening lighting. Expensive lounge furniture. Fire/water feature. Controlled landscaping.
+* **Garage / Operational Back Room:**
+  - **Power:** Viktor's truth space. Where the operation is revealed without performance.
+  - **Emotion:** Practical, cold, organized, routinely criminal. More disturbing because it is clean and normal.
+  - **Details:** Tools in order, metal cabinet, concrete floor, practical workbench. Bad things happen here efficiently. Not a fantasy lair.
 
 ---
 
-## PART 10: VIRELLE GENERATION CONSISTENCY & BUDGET SIMPLIFICATION
+## PART 7: MAVIS HOUSE / PORCH BIBLE
 
-### Virelle Generation Risks & Rules
-1. **Prevent "McMansion" Hallucination:** When generating the Vale house, use negative prompts for "gold," "marble columns," "gaudy," and "overdecorated." Force prompts for "dark walnut," "architectural lighting," and "minimalist luxury."
-2. **Prevent "Slum" Hallucination:** When generating the Cross house, do not use words like "poor" or "run-down." Use "middle-class," "lived-in," "practical," and "slightly cluttered."
-3. **Anchor the Street:** Lock the neighborhood exterior generations with "mature hedges," "no sidewalks," and "expensive silence" to avoid generic suburbia.
-4. **Lighting Continuity:** Explicitly prompt the time-of-day lighting rules (e.g., "blue-grey pre-dawn," "warm dusk pools") to prevent Virelle from defaulting to flat daytime lighting.
+**Design Language:** Older, more personal, slightly cluttered, lived-in across decades. Domestic surveillance nest.
 
-### Budget Simplification Recommendations
-If production budget or compute limits require efficiency:
-* **Merge the Cross Kitchen and Living Room:** Shoot them as one continuous open-plan space to save on set builds/generation variations.
-* **Reduce the Vale House Footprint:** The entire Vale interior can be implied through the Patio and the Kitchen. The Entry/Foyer can be skipped if the exterior approach is strong enough.
-* **Implied Airfield:** The airfield can be entirely shot inside the car (Daniel's POV) with only security lights and wind sound design outside the window, saving a massive exterior generation.
+### Key Rooms & Power Functions
+* **Front Porch:**
+  - **Power:** Surveillance and judgment space.
+  - **Emotion:** Alertness masked as leisure.
+  - **Details:** Porch chair, mug resting table, notebook/pen. Binoculars. Lace curtains. Tidy-but-fussy exterior. Sightlines to both the Cross and Vale houses.
+
+---
+
+## PART 8: AIRFIELD SET BIBLE
+
+**Design Language:** A different edge of the same world. Small private airfield access road, ugly security lighting, open asphalt, wind.
+
+### Key Rooms & Power Functions
+* **Tarmac / Access Road:**
+  - **Power:** Criminal threshold. Where neighbor favors become real logistics.
+  - **Emotion:** Isolation. Daniel is underqualified. Viktor is in his element.
+  - **Details:** Grey-blue night, white security light, black asphalt, stark shadows.
+
+---
+
+## PART 9: SCENE-SPECIFIC SET PRESSURE NOTES (PILOT)
+
+1. **The Trunk (4:30 AM):** Cross driveway. Pre-dawn cold blue light exposes Daniel's panic. The driveway is a public stage; the trunk is a private confession box.
+2. **The Kitchen (6:30 AM):** Cross kitchen. Warm morning light. Nina packs lunches while reading Daniel's lies. The set supports the subtext of domestic survival.
+3. **The Welcome at the Door (10:00 AM):** Cross threshold. Bright late morning light. Celeste crosses the boundary, bringing Vale perfection into Cross clutter.
+4. **Mia and Jaden (4:00 PM):** Curb line. Late afternoon softness. The physical boundary mirrors their social boundary.
+5. **Mavis Intrudes (6:45 PM):** Cross living room. Early evening. The casserole is a prop of social invasion. Mavis judges the unpacked boxes.
+6. **Vale Dinner (8:00 PM):** Vale patio. Dusk into warm night. Seduction light. The expensive glassware and perfect food make Daniel's lies harder to maintain.
+7. **Nina / Celeste (8:45 PM):** Vale kitchen. Surgical lighting. The massive stone island separates them as they engage in polite combat.
+8. **Small Favor (9:15 PM):** Vale driveway. Cooler night air. Marcus controls the threshold, standing higher on the driveway slope than Daniel.
+9. **Garage Reveal (9:30 PM):** Vale garage seam. Cold light spills out. Viktor is framed in the practical, efficient workspace of violence.
+10. **Kitchen Confrontation (10:00 PM):** Cross kitchen. Late night exhaustion. The under-cabinet light isolates Nina and Daniel in their shared mess.
+11. **Detectives Arrive (11:00 PM):** Cross front door. Colder porch light pushes into the warm foyer. The house suddenly feels too small to hide in.
+12. **Porch Watch (11:43 PM):** Mavis porch. Shadow play. The notebook is active.
+13. **The Pickup (Midnight):** Airfield. Ugly sodium glare. No comfort, only consequence.
+14. **End of the Night (3:00 AM):** Cross living room. Pre-dawn stillness. Marcus sits in the Cross armchair, turning their safe space into his waiting room.
+
+---
+
+## PART 10: PROMO / TRAILER SET MOMENTS
+
+Strongest 8 promo/trailer images tied to specific set logic:
+1. **The Trunk:** Daniel illuminated only by the trunk light in the cold pre-dawn driveway.
+2. **The Welcome:** Celeste perfectly framed in the Cross doorway, holding the basket, looking too clean for the space.
+3. **The Interrogation:** Marcus smiling across the Vale patio fire feature, the light reflecting in his eyes.
+4. **The Island:** Nina and Celeste separated by the massive Vale kitchen island under surgical lighting.
+5. **The Watcher:** Mavis's silhouette behind lace curtains, a notebook on the sill.
+6. **The Seam:** Viktor's face half-lit by the cold light spilling from the cracked Vale garage door.
+7. **The Invasion:** Detectives standing on the Cross porch, framed by cold exterior light pushing into the warm foyer.
+8. **The Waiting Room:** Marcus seated in the Cross living room armchair in the pre-dawn blue, looking completely in control of someone else's house.

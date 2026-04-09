@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
-import { ArrowLeft, Zap, Layers, Loader2, BookOpen, Film, Sparkles, Lock, Clapperboard } from "lucide-react";
+import { ArrowLeft, Zap, Layers, Loader2, BookOpen, Film, Sparkles, Lock, Clapperboard, Crown, Users, Blend } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useLocation, useSearch } from "wouter";
 import { useState } from "react";
@@ -825,6 +825,43 @@ export default function NewProject() {
             </Card>
           </TabsContent>
         </Tabs>}
+
+        {/* Cast Lane Chooser */}
+        <div className="space-y-2 pt-2">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">How do you want to build your cast?</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div
+              className="rounded-lg border border-white/10 bg-card/50 p-4 cursor-pointer hover:border-amber-500/40 transition-colors"
+              onClick={() => window.open('/talent-search', '_blank')}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Crown className="h-4 w-4 text-amber-400" />
+                <p className="text-sm font-medium">Cast a Virelle Star</p>
+              </div>
+              <p className="text-xs text-muted-foreground">Continuity-tuned premium talent. Faster, more cinematic, promo-ready.</p>
+            </div>
+            <div
+              className="rounded-lg border border-white/10 bg-card/50 p-4 cursor-pointer hover:border-white/20 transition-colors"
+              onClick={() => window.open('/characters', '_blank')}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Users className="h-4 w-4 text-zinc-400" />
+                <p className="text-sm font-medium">Create Custom Characters</p>
+              </div>
+              <p className="text-xs text-muted-foreground">Full creative freedom. Upload faces or generate originals from scratch.</p>
+            </div>
+            <div
+              className="rounded-lg border border-white/10 bg-card/50 p-4 cursor-pointer hover:border-purple-500/40 transition-colors"
+              onClick={() => window.open('/talent-search', '_blank')}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Blend className="h-4 w-4 text-purple-400" />
+                <p className="text-sm font-medium">Mix Both</p>
+              </div>
+              <p className="text-xs text-muted-foreground">Cast Virelle Stars for key roles and create custom characters for the rest.</p>
+            </div>
+          </div>
+        </div>
 
         {/* Submit */}
         <div className="flex items-center justify-end gap-3 pt-2">

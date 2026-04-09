@@ -3,7 +3,7 @@ import {
   Zap, Layers, Users, Music, Palette, Camera,
   ArrowRight, Play, ShieldCheck,
   Globe, Sparkles, Video, Eye, Cpu, CreditCard,
-  Zap as ZapIcon, Film, Smartphone, Download,
+  Zap as ZapIcon, Film, Smartphone, Download, Crown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -303,6 +303,49 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ─── 3b. Signature Cast Teaser ─── */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
+                <Crown className="h-3.5 w-3.5" />
+                Virelle Signature Cast
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
+                Create your own cast — or cast a{" "}
+                <span className="text-amber-400">Virelle Star</span>
+              </h2>
+              <p className="text-white/60 max-w-2xl mx-auto">
+                Build original characters from scratch, or cast premium AI-born digital talent with continuity, screen presence, and commercial-ready identity built in. Both lanes are open in every project.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-10">
+              {[
+                { label: "Skip setup", sub: "Cast immediately" },
+                { label: "Stronger continuity", sub: "Across every scene" },
+                { label: "Cinematic close-ups", sub: "Premium screen presence" },
+                { label: "Promo-ready", sub: "Trailers, films, ads" },
+                { label: "Commercially clean", sub: "Platform-owned talent" },
+                { label: "Better for teams", sub: "Shared repeatable cast" },
+              ].map(item => (
+                <div key={item.label} className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center">
+                  <p className="text-sm font-semibold text-amber-300 mb-0.5">{item.label}</p>
+                  <p className="text-xs text-white/40">{item.sub}</p>
+                </div>
+              ))}
+            </div>
+            <div className="text-center">
+              <button
+                onClick={() => setLocation("/signature-cast")}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm transition-colors"
+              >
+                Browse the Signature Cast
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </section>
+
         {/* ─── 4. Key Differentiators ─── */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black">
           <div className="max-w-7xl mx-auto">
@@ -374,7 +417,23 @@ export default function Landing() {
                 </Card>
               ))}
             </div>
-            <div className="text-center mt-10">
+            {/* Signature Cast Tier Callout */}
+            <div className="mt-10 rounded-2xl border border-amber-500/15 bg-amber-500/5 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Crown className="h-5 w-5 text-amber-400 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-white">Unlock the Virelle Signature Cast</p>
+                  <p className="text-xs text-white/50 mt-0.5">Standard cast on Creator. Premium and Flagship Stars on Industry and above. Higher fidelity, better continuity, exclusive looks.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setLocation("/signature-cast")}
+                className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/30 text-amber-300 text-xs font-semibold hover:bg-amber-500/10 transition-colors"
+              >
+                View the Cast <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="text-center mt-6">
               <button onClick={() => setLocation("/pricing")} className="text-sm font-bold text-amber-400 hover:text-amber-300 transition-colors">
                 View Full Pricing & Feature Comparison →
               </button>
