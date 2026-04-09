@@ -1,0 +1,195 @@
+# Upgraded Actor Bibles (Preview)
+## Male Leads
+### Julian Vance (M-L01)
+- **Archetype:** The Charismatic Rogue
+- **Tier:** Flagship Star
+- **Age:** 32-38
+- **Phenotype:** Mixed European/Mediterranean, sharp jawline, olive skin with warm undertones.
+- **Body:** Lean athletic, 6'1". Built for tailored suits and fluid movement.
+- **Accents:** ['British RP', 'Mid-Atlantic', 'French-accented English', 'General American']
+- **Emotional Strengths:** Controlled confidence, sardonic amusement, sudden terrifying stillness.
+- **Emotional Weak Zones:** Genuine, uncomplicated joy. He always looks like he's holding something back.
+- **Expression Grammar:** Heavy-lidded observation. He rarely widens his eyes in surprise.
+- **Smile Type:** Asymmetrical, left-leaning smirk. Never shows teeth unless he's playing a role.
+- **Eye Behavior:** Unblinking when listening. Slow blinks when speaking.
+- **Signature Poses:** Adjusting cuffs, leaning against a doorframe with crossed ankles, looking down slightly to meet a gaze.
+- **Wardrobe Identity:** Architectural tailoring. Navy, charcoal, deep burgundy. Never casual.
+- **Grooming Identity:** Immaculate stubble (exactly 3mm). Hair styled back but slightly loose on the right side.
+- **Silhouette Flexibility:** Can bulk up slightly for action roles, but naturally reads as a fencer or dancer rather than a brawler.
+- **Transformation Limits:** Does not read well in highly distressed or impoverished roles; his bone structure always looks expensive.
+- **Chemistry Pairings:** Electric adversarial tension with Sofia Reyes (F-L04). Mentor dynamic with Sammy Vance (B-Y01).
+- **Poster Identity:** Profile or three-quarter turn, looking back over the shoulder. High contrast lighting on the jawline.
+- **Vulnerable Look:** Looking down, jaw tight, one hand covering his mouth.
+- **Danger Look:** Head tilted down, eyes locked on target, complete physical stillness.
+- **Glamour Look:** Tuxedo, loose bowtie, holding a lowball glass.
+- **Why Cast:** He provides instant, sophisticated leading-man charisma without the uncanny perfection of standard AI generations. His micro-expressions are pre-tuned for high-stakes drama.
+
+### Kofi Adebayo (M-L02)
+- **Archetype:** The Driven Professional
+- **Tier:** Flagship Star
+- **Age:** 28-35
+- **Phenotype:** West African diaspora, deep warm brown skin, strong brow, prominent cheekbones.
+- **Body:** Broad shoulders, 6'2". Imposing physical presence.
+- **Accents:** ['General American', 'London MLE', 'West African English', 'British RP']
+- **Emotional Strengths:** Integrity under pressure, controlled rage, quiet grief, absolute authority.
+- **Emotional Weak Zones:** Frivolous comedy. He carries too much natural weight for slapstick.
+- **Expression Grammar:** Minimal facial movement. He speaks with his eyes and the set of his jaw.
+- **Smile Type:** Rare, wide, and transformative. It completely changes his face from intimidating to warm.
+- **Eye Behavior:** Direct, unyielding eye contact. He does not look away first.
+- **Signature Poses:** Hands clasped in front of him, standing perfectly straight. Seated, leaning forward with elbows on knees.
+- **Wardrobe Identity:** Utilitarian luxury. Heavy wool coats, tactical gear, perfectly fitted plain t-shirts.
+- **Grooming Identity:** Close-cropped fade or shaved head. Clean-shaven or extremely neat short beard.
+- **Silhouette Flexibility:** Can play both a billionaire CEO and a frontline soldier with zero structural changes.
+- **Transformation Limits:** Cannot be made to look weak or frail. His bone structure projects power.
+- **Chemistry Pairings:** Reluctant respect with Julian Vance (M-L01). Protective dynamic with Amara King (F-L02).
+- **Poster Identity:** Straight-on medium shot, lit from above to highlight the brow ridge. Serious, unsmiling.
+- **Vulnerable Look:** Looking slightly off-camera, jaw clenched, eyes shining but not crying.
+- **Danger Look:** Stepping forward into the light, shoulders squared.
+- **Glamour Look:** Double-breasted suit, perfectly tailored, staring directly into the lens.
+- **Why Cast:** He brings immediate, earned gravitas to any scene. He is the anchor for prestige drama and high-stakes action.
+
+### Kenji Sato (M-L03)
+- **Archetype:** The Quiet Intensity
+- **Tier:** Premium Cast
+- **Age:** 30-40
+- **Phenotype:** East Asian, high cheekbones, piercing narrow eyes, sharp jawline.
+- **Body:** Wiry, 5'11". Moves with deliberate precision.
+- **Accents:** ['General American', 'Japanese-accented English', 'London MLE']
+- **Emotional Strengths:** Cold fury, hidden longing, moral ambiguity, intellectual superiority.
+- **Emotional Weak Zones:** Overt panic or terror. He always looks like he has a backup plan.
+- **Expression Grammar:** Micro-expressions only. A slight narrowing of the eyes, a millimeter shift in the jaw.
+- **Smile Type:** A tight, closed-mouth smile that rarely reaches his eyes.
+- **Eye Behavior:** Calculating. He scans a room quickly and then locks onto his target.
+- **Signature Poses:** Standing with hands in pockets. Sitting perfectly still while others pace.
+- **Wardrobe Identity:** Avant-garde minimalism. Asymmetrical cuts, monochrome palettes, high collars.
+- **Grooming Identity:** Hair slightly long on top, sharply faded on the sides. Clean-shaven.
+- **Silhouette Flexibility:** Highly flexible. Can play a starving artist or a tech billionaire.
+- **Transformation Limits:** Does not read well in rugged, dirt-covered roles. His features are too refined.
+- **Chemistry Pairings:** Mirror-image tension with Elena Rostova (F-L01).
+- **Poster Identity:** Half-lit face, emerging from shadow. Neo-noir aesthetic.
+- **Vulnerable Look:** Eyes closed, head tilted back slightly, bathed in neon light.
+- **Danger Look:** Head tilted slightly to the side, eyes locked, completely still.
+- **Glamour Look:** Silk shirt, unbuttoned at the collar, looking over a glass.
+- **Why Cast:** He is the definitive choice for neo-noir, cyberpunk, and intellectual thrillers. His face handles dramatic lighting better than any other actor.
+
+### Mateo Silva (M-L04)
+- **Archetype:** The Passionate Antihero
+- **Tier:** Premium Cast
+- **Age:** 35-45
+- **Phenotype:** Latin American, rugged texture, dark expressive eyes, prominent nose.
+- **Body:** Stocky muscular, 5'10". Carries his weight in his chest and shoulders.
+- **Accents:** ['Spanish-accented English', 'Miami American', 'New York']
+- **Emotional Strengths:** Explosive rage, desperate love, exhaustion, fierce loyalty.
+- **Emotional Weak Zones:** Cold, detached calculation. He wears his heart on his sleeve.
+- **Expression Grammar:** Highly mobile face. Deep brow furrows, flared nostrils when angry.
+- **Smile Type:** Wide, genuine, slightly crooked. Shows teeth.
+- **Eye Behavior:** Expressive and wide. He does not hide what he is looking at.
+- **Signature Poses:** Running a hand through his hair, leaning heavily against a wall, pacing.
+- **Wardrobe Identity:** Worn leather, unbuttoned henleys, denim. Clothes that look lived-in.
+- **Grooming Identity:** Perpetual heavy stubble. Messy, textured hair that falls into his eyes.
+- **Silhouette Flexibility:** Can bulk up significantly for heavy action roles.
+- **Transformation Limits:** Does not read well in high-society or aristocratic roles. He always looks like a street fighter.
+- **Chemistry Pairings:** Combustible romance with Sofia Reyes (F-L04). Sibling dynamic with Mia Silva (G-Y02).
+- **Poster Identity:** Looking directly into the lens, bruised or dirty, defiant expression.
+- **Vulnerable Look:** Looking down, shoulders slumped, physically exhausted.
+- **Danger Look:** Jaw clenched, eyes wide, moving rapidly toward the camera.
+- **Glamour Look:** A suit that fits well but is worn carelessly—tie undone, collar open.
+- **Why Cast:** He provides raw, unfiltered emotion. He is the actor you cast when the scene requires the audience to feel the character's pain or passion immediately.
+
+## Female Leads
+### Elena Rostova (F-L01)
+- **Archetype:** The Elegant Mastermind
+- **Tier:** Flagship Star
+- **Age:** 30-38
+- **Phenotype:** Eastern European/Slavic, pale flawless skin, striking green eyes, high cheekbones.
+- **Body:** Tall willowy, 5'10". Moves with the precision of a trained dancer.
+- **Accents:** ['British RP', 'Russian-accented English', 'Mid-Atlantic', 'General American']
+- **Emotional Strengths:** Cold calculation, hidden warmth, extreme competence, seductive manipulation.
+- **Emotional Weak Zones:** Clumsiness or genuine confusion. She always looks like she knows exactly what is happening.
+- **Expression Grammar:** Stillness. She forces others to fill the silence.
+- **Smile Type:** A slow, deliberate curve of the lips. A smile used as a weapon.
+- **Eye Behavior:** Unblinking, predatory focus. She tracks movement without turning her head.
+- **Signature Poses:** Holding a glass by the stem. Sitting with legs crossed at the knee and ankle. Looking over her shoulder.
+- **Wardrobe Identity:** High-end luxury. Silk slip dresses, structured trench coats, stiletto heels.
+- **Grooming Identity:** Immaculate. Hair pulled back tightly or falling in perfect waves. Signature red lip.
+- **Silhouette Flexibility:** Can play high fashion or sleek tactical, but never frumpy.
+- **Transformation Limits:** Cannot play 'girl next door.' Her bone structure is too severe.
+- **Chemistry Pairings:** Lethal cat-and-mouse with Julian Vance (M-L01).
+- **Poster Identity:** Looking down slightly at the lens, chin lowered, eyes sharp. High fashion lighting.
+- **Vulnerable Look:** Makeup slightly smudged, staring blankly into a mirror.
+- **Danger Look:** A perfectly blank face while performing a violent action.
+- **Glamour Look:** Floor-length gown, diamonds, descending a staircase.
+- **Why Cast:** She is the ultimate femme fatale and mastermind. She brings an immediate sense of danger, luxury, and intelligence to any scene.
+
+### Amara King (F-L02)
+- **Archetype:** The Unstoppable Force
+- **Tier:** Flagship Star
+- **Age:** 25-32
+- **Phenotype:** Black/Mixed Heritage, glowing bronze skin, natural textured hair.
+- **Body:** Athletic curves, 5'7". Visibly strong and capable.
+- **Accents:** ['General American', 'Southern US', 'London MLE']
+- **Emotional Strengths:** Defiant joy, protective fury, earned vulnerability, fierce loyalty.
+- **Emotional Weak Zones:** Subservience or victimhood. She naturally projects agency and fight.
+- **Expression Grammar:** Open and readable. Her face shows exactly what she is feeling.
+- **Smile Type:** Radiant, full-teeth smile that lights up her entire face.
+- **Eye Behavior:** Direct, challenging, and warm.
+- **Signature Poses:** Hands on hips, chin raised. Leaning forward in a chair, engaged and listening.
+- **Wardrobe Identity:** Utilitarian chic. Leather jackets, combat boots, tailored denim.
+- **Grooming Identity:** Natural curls worn loose or pulled into a practical, messy bun. Minimal makeup.
+- **Silhouette Flexibility:** Highly flexible. Can play a high-fashion model or a hardened survivor.
+- **Transformation Limits:** None. She is one of the most versatile actors on the roster.
+- **Chemistry Pairings:** Protective dynamic with Kofi Adebayo (M-L02).
+- **Poster Identity:** Mid-action, looking off-camera, hair moving. Dynamic and energetic.
+- **Vulnerable Look:** Looking up, eyes wide, jaw trembling slightly.
+- **Danger Look:** Chin tucked, eyes narrowed, moving deliberately forward.
+- **Glamour Look:** Sleek, metallic evening wear, hair styled high.
+- **Why Cast:** She is the definitive action lead and contemporary drama anchor. She brings immediate empathy and undeniable physical presence.
+
+### Priya Sharma (F-L03)
+- **Archetype:** The Brilliant Strategist
+- **Tier:** Premium Cast
+- **Age:** 28-36
+- **Phenotype:** South Asian, warm golden undertones, large expressive brown eyes.
+- **Body:** Petite elegant, 5'4". Moves with quiet purpose.
+- **Accents:** ['British RP', 'General American', 'Indian-accented English']
+- **Emotional Strengths:** Intellectual authority, deep empathy, moral conflict, quiet devastation.
+- **Emotional Weak Zones:** Physical intimidation. She commands rooms with her mind, not her body.
+- **Expression Grammar:** Subtle shifts in the eyes and brow. She listens intensely.
+- **Smile Type:** Warm, knowing, slightly asymmetrical.
+- **Eye Behavior:** Rapid scanning when thinking. Deep, still focus when listening.
+- **Signature Poses:** Tucking a strand of hair behind her ear. Pushing up glasses (if worn). Standing with arms crossed over her chest.
+- **Wardrobe Identity:** Academic or corporate elegance. Turtlenecks, tailored blazers, fine knitwear.
+- **Grooming Identity:** Simple, elegant. Hair usually worn down and straight or in a neat low ponytail.
+- **Silhouette Flexibility:** Best suited for modern, realistic settings. Not an action silhouette.
+- **Transformation Limits:** Struggles to read as a hardened criminal or physical threat.
+- **Chemistry Pairings:** Intellectual sparring with Kenji Sato (M-L03).
+- **Poster Identity:** Close-up, softly lit, looking directly into the lens with a slight, knowing smile.
+- **Vulnerable Look:** Eyes cast down, a single tear, completely silent.
+- **Danger Look:** A cold, unblinking stare that completely lacks empathy.
+- **Glamour Look:** Traditional South Asian formal wear or a sleek, modern silk gown.
+- **Why Cast:** She is the actor for complex, dialogue-heavy roles. She projects intelligence and warmth, making her the perfect protagonist for sci-fi, medical, or legal dramas.
+
+### Sofia Reyes (F-L04)
+- **Archetype:** The Femme Fatale
+- **Tier:** Flagship Star
+- **Age:** 27-35
+- **Phenotype:** Mediterranean/Latin, olive skin, sharp cheekbones, thick dark hair.
+- **Body:** Hourglass, 5'6". Moves with deliberate, predatory grace.
+- **Accents:** ['Spanish-accented English', 'General American', 'Miami American']
+- **Emotional Strengths:** Seduction, betrayal, explosive anger, manipulative charm.
+- **Emotional Weak Zones:** Innocence. She always looks like she knows a secret.
+- **Expression Grammar:** Highly controlled. She uses her expressions to manipulate the person she is looking at.
+- **Smile Type:** A slow, devastating smile that suggests she has already won.
+- **Eye Behavior:** A slow, deliberate scan from feet to eyes. She assesses everyone as a target.
+- **Signature Poses:** Leaning across a table. Looking up through her lashes. Running a finger along the rim of a glass.
+- **Wardrobe Identity:** Sensual luxury. Deep reds, emerald greens, silks, and velvets. Form-fitting.
+- **Grooming Identity:** Voluminous, tumbling hair. Smoky eye makeup. Always looks ready for a gala.
+- **Silhouette Flexibility:** Can play high-society or street-level criminal, but always retains a sensual edge.
+- **Transformation Limits:** Cannot play a wallflower. She draws the eye in every frame.
+- **Chemistry Pairings:** Combustible, adversarial romance with Julian Vance (M-L01) or Mateo Silva (M-L04).
+- **Poster Identity:** Over-the-shoulder glance, hair falling across one eye, dramatic lighting.
+- **Vulnerable Look:** Staring blankly, makeup ruined, physically exhausted.
+- **Danger Look:** A sudden, terrifying stillness, followed by a slow smile.
+- **Glamour Look:** Her default state. Flawless evening wear.
+- **Why Cast:** She is the ultimate weaponized beauty. She brings immediate tension, romance, and danger to any scene, and her chemistry with the male leads is off the charts.
+
