@@ -315,6 +315,99 @@ const TOPUP_PRICES: PriceDefinition[] = [
   },
 ];
 
+// ─── Signature Cast One-Time License Prices ─────────────────────────────────
+// 3 tiers × 3 license types = 9 prices (AUD, one-time)
+// Standard: A$15 creator / A$94 commercial / A$60 episodic
+// Premium:  A$39 creator / A$118 commercial / A$156 episodic
+// Flagship: A$99 creator / A$178 commercial / A$396 episodic
+
+const SIGNATURE_CAST_PRICES: PriceDefinition[] = [
+  // ─── Standard Tier ────────────────────────────────────────────────────────
+  {
+    key: "sc_standard_creator",
+    envKey: "stripeScStandardCreatorPriceId",
+    productName: "Virelle Signature Cast — Standard Actor (Creator License)",
+    productDesc: "One-time creator license for a Standard Signature Cast actor — personal/portfolio use, A$15",
+    unitAmount: 1500, // A$15
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "standard", license: "creator" },
+  },
+  {
+    key: "sc_standard_commercial",
+    envKey: "stripeScStandardCommercialPriceId",
+    productName: "Virelle Signature Cast — Standard Actor (Commercial License)",
+    productDesc: "One-time commercial license for a Standard Signature Cast actor — paid campaigns, A$94",
+    unitAmount: 9400, // A$94
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "standard", license: "commercial" },
+  },
+  {
+    key: "sc_standard_episodic",
+    envKey: "stripeScStandardEpisodicPriceId",
+    productName: "Virelle Signature Cast — Standard Actor (Episodic License)",
+    productDesc: "One-time episodic license for a Standard Signature Cast actor — series/multi-episode, A$60",
+    unitAmount: 6000, // A$60
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "standard", license: "episodic" },
+  },
+  // ─── Premium Tier ─────────────────────────────────────────────────────────
+  {
+    key: "sc_premium_creator",
+    envKey: "stripeScPremiumCreatorPriceId",
+    productName: "Virelle Signature Cast — Premium Actor (Creator License)",
+    productDesc: "One-time creator license for a Premium Signature Cast actor — personal/portfolio use, A$39",
+    unitAmount: 3900, // A$39
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "premium", license: "creator" },
+  },
+  {
+    key: "sc_premium_commercial",
+    envKey: "stripeScPremiumCommercialPriceId",
+    productName: "Virelle Signature Cast — Premium Actor (Commercial License)",
+    productDesc: "One-time commercial license for a Premium Signature Cast actor — paid campaigns, A$118",
+    unitAmount: 11800, // A$118
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "premium", license: "commercial" },
+  },
+  {
+    key: "sc_premium_episodic",
+    envKey: "stripeScPremiumEpisodicPriceId",
+    productName: "Virelle Signature Cast — Premium Actor (Episodic License)",
+    productDesc: "One-time episodic license for a Premium Signature Cast actor — series/multi-episode, A$156",
+    unitAmount: 15600, // A$156
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "premium", license: "episodic" },
+  },
+  // ─── Flagship Tier ────────────────────────────────────────────────────────
+  {
+    key: "sc_flagship_creator",
+    envKey: "stripeScFlagshipCreatorPriceId",
+    productName: "Virelle Signature Cast — Flagship Star (Creator License)",
+    productDesc: "One-time creator license for a Flagship Signature Cast star — personal/portfolio use, A$99",
+    unitAmount: 9900, // A$99
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "flagship", license: "creator" },
+  },
+  {
+    key: "sc_flagship_commercial",
+    envKey: "stripeScFlagshipCommercialPriceId",
+    productName: "Virelle Signature Cast — Flagship Star (Commercial License)",
+    productDesc: "One-time commercial license for a Flagship Signature Cast star — paid campaigns, A$178",
+    unitAmount: 17800, // A$178
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "flagship", license: "commercial" },
+  },
+  {
+    key: "sc_flagship_episodic",
+    envKey: "stripeScFlagshipEpisodicPriceId",
+    productName: "Virelle Signature Cast — Flagship Star (Episodic License)",
+    productDesc: "One-time episodic license for a Flagship Signature Cast star — series/multi-episode, A$396",
+    unitAmount: 39600, // A$396
+    currency: "aud",
+    metadata: { type: "signature_cast", tier: "flagship", license: "episodic" },
+  },
+];
+
 // ─── Provisioning Logic ───────────────────────────────────────────────────────
 
 async function findOrCreateProduct(name: string, description: string): Promise<string> {
@@ -415,7 +508,7 @@ export async function runStripeProvisioning(): Promise<void> {
 
   await ensureFounderCoupon();
 
-  const allPrices = [...SUBSCRIPTION_PRICES, ...TOPUP_PRICES];
+  const allPrices = [...SUBSCRIPTION_PRICES, ...TOPUP_PRICES, ...SIGNATURE_CAST_PRICES];
   let created = 0;
   let existing = 0;
 
@@ -451,7 +544,7 @@ export async function runStripeProvisioning(): Promise<void> {
  * Get the payment method types for a given price key.
  */
 export function getPaymentMethodTypes(priceKey: string): string[] {
-  const def = [...SUBSCRIPTION_PRICES, ...TOPUP_PRICES].find(d => d.key === priceKey);
+  const def = [...SUBSCRIPTION_PRICES, ...TOPUP_PRICES, ...SIGNATURE_CAST_PRICES].find(d => d.key === priceKey);
   return def?.paymentMethodTypes || ["card"];
 }
 
