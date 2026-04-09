@@ -191,6 +191,8 @@ function Router() {
       <Route path="/solutions">{() => <LazyPage><Solutions /></LazyPage>}</Route>
       <Route path="/download">{() => <LazyPage><DownloadApp /></LazyPage>}</Route>
       <Route path="/app">{() => <LazyPage><DownloadApp /></LazyPage>}</Route>
+      <Route path="/signature-cast">{() => <LazyPage><SignatureCast /></LazyPage>}</Route>
+      <Route path="/talent-search">{() => <LazyPage><TalentSearch /></LazyPage>}</Route>
 
       {/* Full-screen pages with subscription gates */}
       <Route path="/projects/:projectId/script/:scriptId" component={GatedScriptWriter} />
@@ -234,8 +236,6 @@ function Router() {
               <Route path="/assistant">{() => <LazyPage><AssistantPage /></LazyPage>}</Route>
               <Route path="/poster-maker">{() => <AdPosterMaker />}</Route>
               <Route path="/characters">{() => <Characters />}</Route>
-              <Route path="/signature-cast">{() => <LazyPage><SignatureCast /></LazyPage>}</Route>
-              <Route path="/talent-search">{() => <LazyPage><TalentSearch /></LazyPage>}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
               <Route path="/content-creator">{() => <ContentCreatorPage />}</Route>
               <Route path="/samples">{() => <LazyPage><ProjectSamples /></LazyPage>}</Route>
