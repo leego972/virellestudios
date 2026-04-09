@@ -56,6 +56,7 @@ import {
   Languages,
   MessageSquare,
   TrendingUp,
+  Star,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -74,6 +75,7 @@ const menuGroups = [
       { icon: LayoutDashboard, label: "Dashboard", path: "/" },
       { icon: Film, label: "Projects", path: "/projects" },
       { icon: Users, label: "Characters", path: "/characters", hollywoodKey: "characters" as ToolIconKey },
+      { icon: Star, label: "Signature Cast", path: "/signature-cast" },
       { icon: Clapperboard, label: "My Movies", path: "/movies" },
       { icon: MessageSquare, label: "Director's Assistant", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
       { icon: Globe, label: "Distribute", path: "/showcase" },

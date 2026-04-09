@@ -323,6 +323,35 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Signature Cast Banner */}
+      <div
+        className="rounded-2xl border border-amber-500/20 bg-gradient-to-r from-amber-950/30 via-zinc-900/60 to-zinc-900/60 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer hover:border-amber-500/40 transition-colors"
+        onClick={() => setLocation("/signature-cast")}
+      >
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+            <Sparkles className="w-5 h-5 text-amber-400" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm font-semibold text-white">Virelle Signature Cast</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium">New</span>
+            </div>
+            <p className="text-xs text-zinc-400 max-w-lg">
+              Cast premium digital talent directly into your project. Continuity-tuned, screen-tested, and promo-ready. Skip setup — start casting.
+            </p>
+          </div>
+        </div>
+        <Button
+          size="sm"
+          className="bg-amber-500 hover:bg-amber-400 text-black font-semibold shrink-0"
+          onClick={(e) => { e.stopPropagation(); setLocation("/talent-search"); }}
+        >
+          Browse the Cast
+          <ArrowRight className="ml-2 w-3 h-3" />
+        </Button>
+      </div>
+
       {/* Continue Filming + Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

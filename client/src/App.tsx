@@ -25,6 +25,8 @@ const Projects = lazy(() => import("./pages/Projects"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const NewProject = lazy(() => import("./pages/NewProject"));
 const Characters = lazy(() => import("./pages/Characters"));
+const SignatureCast = lazy(() => import("./pages/SignatureCast"));
+const TalentSearch = lazy(() => import("./pages/TalentSearch"));
 const SceneEditor = lazy(() => import("./pages/SceneEditor"));
 const Movies = lazy(() => import("./pages/Movies"));
 const AssistantPage = lazy(() => import("./pages/AssistantPage"));
@@ -232,6 +234,8 @@ function Router() {
               <Route path="/assistant">{() => <LazyPage><AssistantPage /></LazyPage>}</Route>
               <Route path="/poster-maker">{() => <AdPosterMaker />}</Route>
               <Route path="/characters">{() => <Characters />}</Route>
+              <Route path="/signature-cast">{() => <LazyPage><SignatureCast /></LazyPage>}</Route>
+              <Route path="/talent-search">{() => <LazyPage><TalentSearch /></LazyPage>}</Route>
               <Route path="/campaigns">{() => <CampaignManager />}</Route>
               <Route path="/content-creator">{() => <ContentCreatorPage />}</Route>
               <Route path="/samples">{() => <LazyPage><ProjectSamples /></LazyPage>}</Route>
