@@ -218,3 +218,55 @@ To prevent AI hallucination drift inside Virelle generation:
 3. **Control the Accessories:** Limit generated jewelry. Explicitly prompt "minimal jewelry" for Celeste and Nina. Explicitly prompt "cheap digital watch on inside of left wrist" for Viktor in every generation.
 4. **Anchor Mavis:** Always generate Mavis with "faded floral patterns" and "layered cardigans" to prevent her from looking too polished.
 5. **Anchor the Detectives:** Use "unmarked dark field jacket" and "plain tailored coat" to avoid stereotypical police uniforms or badges unless explicitly required.
+
+---
+
+## PART 6: SASHA DUO (VALE SECURITY) WARDROBE BIBLE
+
+The Sasha Duo operates as the polished, visible security layer of the Vale household. Their wardrobe is dark, functional, and highly controlled, but with a subtle split that reflects their operational roles.
+
+### Big Sasha (The Hard Edge)
+**Core Identity:** Imposing, stationary threat. Heavy, dense, weathered.
+**Silhouette:** Broad, thick, durable. Utilitarian shapes that dominate a doorway.
+**Palette:** Black, charcoal, dark olive, faded navy, steel grey.
+**Pieces:** Heavy overshirts, dark fitted tees, cargo/utility trousers, thick leather belt, sturdy black boots.
+**Visual Habit:** Right sleeve rolled to the elbow when paying close attention.
+**Never Wear:** Logos, obvious body armor, trendy streetwear, anything that looks new.
+
+### Little Sasha (The Smooth Contact)
+**Core Identity:** Deceptively approachable, mobile, socially intelligent.
+**Silhouette:** Leaner, quicker, slightly younger energy. Clean and functional.
+**Palette:** Black, slate, dark green, washed charcoal, muted navy.
+**Pieces:** Lighter bombers or overshirts, fitted dark henleys, slim utility trousers, clean dark boots or dark trainers.
+**Visual Habit:** Always holding a small notebook or phone at the gate.
+**Never Wear:** Heavy tactical gear, bright colors, sloppy fits.
+
+---
+
+## PART 7: HADDAD FAMILY WARDROBE BIBLE
+
+The Haddads are the second criminal power in *Next Door*. Their wardrobe is expansive, warm, luxurious, and completely unapologetic. They do not hide their wealth behind minimalism like the Vales.
+
+### Tariq Haddad (The Patriarch)
+**Core Identity:** Charismatic, unpredictable power. Expansive luxury.
+**Silhouette:** Relaxed but impeccably tailored. Comfortable dominance.
+**Palette:** Deep burgundy, navy, rich chocolate brown, gold accents.
+**Pieces:** Cashmere sweaters, velvet jackets, heavy silk shirts with open collars.
+**Accessories:** Heavy gold watch, signet ring. Visible but not cheap.
+**Never Wear:** Stiff formal suits, tight clothing, cheap shine.
+
+### Yasmine Haddad (The Matriarch)
+**Core Identity:** Overwhelming hospitality, fierce protection. Takes up space.
+**Silhouette:** Glamorous, bold, structured drape.
+**Palette:** Emerald green, ruby red, deep saffron, black with gold threading.
+**Pieces:** Heavy satin blouses, embroidered layers, rich dresses.
+**Accessories:** Layered gold necklaces, statement earrings, heavy bracelets.
+**Never Wear:** Minimalist neutral tones, casual athleisure, anything subtle.
+
+### Zayn Haddad (The Heir Apparent)
+**Core Identity:** Ambitious, reckless, flashy. Wants to modernize the operation.
+**Silhouette:** Sharp, modern, aggressive streetwear mixed with tailoring.
+**Palette:** Black, stark white, oxblood, metallic accents.
+**Pieces:** Designer leather jackets, high-end cotton tees, premium streetwear trousers.
+**Accessories:** Flashy designer watch, modern chains.
+**Never Wear:** Traditional old-world suits, understated basics.

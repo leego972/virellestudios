@@ -101,43 +101,43 @@ const CHEMISTRY_PAIRS = [
 const VALUE_PROPS = [
   {
     icon: Zap,
-    title: "Faster",
-    description: "Skip character setup and refinement loops. Cast immediately.",
+    title: "No setup. Just cast.",
+    description: "Every Virelle Star is already built, tested, and ready. No character sheets, no prompt refinement loops, no wasted sessions.",
     color: "text-amber-400",
     bg: "bg-amber-500/10",
   },
   {
     icon: Shield,
-    title: "More Consistent",
-    description: "Identity continuity across stills, scenes, trailers, and promo assets.",
+    title: "Continuity that holds.",
+    description: "The same face, expression range, and identity across stills, scenes, trailers, and campaign assets — without drift.",
     color: "text-blue-400",
     bg: "bg-blue-500/10",
   },
   {
     icon: Film,
-    title: "More Cinematic",
-    description: "Stronger close-ups, better expression handling, premium screen presence.",
+    title: "Built for close-ups.",
+    description: "Stronger expression handling, better dramatic lighting response, and screen presence that reads as premium — not generated.",
     color: "text-purple-400",
     bg: "bg-purple-500/10",
   },
   {
     icon: Star,
-    title: "More Marketable",
-    description: "Defined screen personas, premium promo imagery, and chemistry pairings built in.",
+    title: "Easier to market.",
+    description: "Defined personas, established visual identities, and chemistry pairings that make trailers, posters, and campaigns easier to build.",
     color: "text-rose-400",
     bg: "bg-rose-500/10",
   },
   {
     icon: CheckCircle2,
-    title: "Commercially Cleaner",
-    description: "Platform-owned talent. Designed for public releases and branded work.",
+    title: "Commercially clean.",
+    description: "Platform-owned talent with clear licensing. Safe for public releases, branded work, and commercial campaigns without legal ambiguity.",
     color: "text-green-400",
     bg: "bg-green-500/10",
   },
   {
     icon: Users,
-    title: "Better for Teams",
-    description: "Shared, repeatable cast layer instead of random one-off generations.",
+    title: "Shared across your team.",
+    description: "One cast layer that every collaborator on your project can use consistently — not a different face every time someone generates.",
     color: "text-cyan-400",
     bg: "bg-cyan-500/10",
   },
@@ -174,16 +174,16 @@ export default function SignatureCast() {
             Virelle Signature Cast
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
-            Cast a{" "}
+            Your next film needs a{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">
-              Virelle Star
+              real cast.
             </span>
           </h1>
           <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-4">
-            Premium digital talent built for realism, continuity, and cinematic storytelling.
+            Virelle Stars are premium digital actors — continuity-tuned, screen-tested, and ready to cast into any project without setup.
           </p>
           <p className="text-zinc-500 max-w-xl mx-auto mb-10">
-            Cast them directly into your Virelle project in minutes — or build your own cast from scratch. Both lanes are open.
+            Use them in films, trailers, campaigns, and series. Or build your own cast from scratch. Both lanes are open inside every project.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Button
@@ -212,7 +212,7 @@ export default function SignatureCast() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Why cast a Virelle Star?</h2>
           <p className="text-zinc-400 max-w-xl mx-auto">
-            Skip setup. Start casting. Every Virelle Star is continuity-tuned, screen-tested, and promo-ready out of the box.
+            Building a character from scratch takes time, prompt refinement, and still produces inconsistent results. Virelle Stars are already built — and they hold.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -237,7 +237,7 @@ export default function SignatureCast() {
       {/* CUSTOM VS VIRELLE STARS */}
       <section className="border-y border-white/5 bg-white/[0.01]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <h2 className="text-3xl font-bold text-center mb-12">Two lanes. Both open.</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Two ways to cast. Both fully supported.</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-8">
               <h3 className="text-lg font-semibold mb-2 text-zinc-300">Create Your Own Character</h3>
@@ -350,10 +350,10 @@ export default function SignatureCast() {
       <section className="border-y border-white/5 bg-white/[0.01]">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Ready-made chemistry</h2>
-            <p className="text-zinc-400 max-w-xl mx-auto">
-              You're not just picking faces. You're choosing castable chemistry and believable ensembles.
-            </p>
+          <h2 className="text-3xl font-bold mb-4">Built-in chemistry pairings</h2>
+          <p className="text-zinc-400 max-w-xl mx-auto">
+            You are not just picking a face. You are choosing a castable dynamic — pairings that already work together on screen.
+          </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {CHEMISTRY_PAIRS.map((pair) => (
@@ -381,7 +381,7 @@ export default function SignatureCast() {
           </Badge>
           <h2 className="text-3xl font-bold mb-4">Seen in <em>Next Door</em></h2>
           <p className="text-zinc-400 max-w-2xl mx-auto mb-8">
-            The Virelle Signature Cast powers Virelle's own original series. The same actors you cast in your projects are the stars of Virelle Originals — building recognition, familiarity, and cultural weight with every episode.
+            Virelle Signature Cast actors are the stars of Virelle’s own original productions. The same cast you use in your projects already has screen time, recognition, and established presence — which makes them easier to market and more believable to audiences.
           </p>
           <Button
             className="bg-amber-500 hover:bg-amber-400 text-black font-semibold"
@@ -440,7 +440,7 @@ export default function SignatureCast() {
         <div className="max-w-3xl mx-auto px-6 py-20 text-center">
           <h2 className="text-3xl font-bold mb-4">Start casting today</h2>
           <p className="text-zinc-400 mb-10">
-            Create your own cast — or cast a Virelle Star. Both lanes are open inside every project.
+            Browse the full cast, build your shortlist, and cast directly into your next project — or create your own characters from scratch. Both lanes are fully supported.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Button

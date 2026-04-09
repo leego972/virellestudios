@@ -65,3 +65,38 @@ The tension between the two families drives the larger syndicate plot of *Next D
 - **The Vales** want efficiency, invisibility, and complete control.
 - **The Haddads** want expansion, loyalty, and the enjoyment of their power.
 - **Daniel Cross** (the neighbor) will inevitably be caught between them, finding Tariq’s warmth appealing compared to Marcus’s coldness, only to realize the fire burns just as hot as the ice freezes.
+
+---
+
+## PART 6: WARDROBE BIBLE ADDITION
+
+**Haddad Family Wardrobe Identity:**
+If the Vales wear cold neutrals and structural tailoring to project control, the Haddads wear rich colors, heavy fabrics, and visible jewelry to project life and power. They do not hide their wealth. They enjoy it.
+
+### Tariq Haddad
+**Palette:** Deep burgundy, navy, rich chocolate brown, gold accents.
+**Fabrics:** Velvet, heavy silk, cashmere, fine wool.
+**Silhouette:** Relaxed but expensive. Open collars. Never looks stiff or restricted.
+**Accessories:** Heavy gold watch, signet ring. Visible but not cheap.
+
+### Yasmine Haddad
+**Palette:** Emerald green, ruby red, deep saffron, black with gold threading.
+**Fabrics:** Silk drape, heavy satin, embroidered layers.
+**Silhouette:** Glamorous, commanding. Takes up visual space.
+**Accessories:** Layered gold necklaces, statement earrings, heavy bracelets.
+
+### Zayn Haddad
+**Palette:** Black, stark white, oxblood, metallic accents.
+**Fabrics:** Premium streetwear fabrics, designer leather, high-end cotton.
+**Silhouette:** Sharp, modern, slightly aggressive.
+**Accessories:** Flashy designer watch, modern chains.
+
+---
+
+## PART 7: VIRELLE GENERATION CONSISTENCY NOTES
+
+To prevent AI hallucination drift when generating the Haddad family:
+1. **Lock the Phenotype:** Always prompt "Levantine Mediterranean phenotype, olive skin, dark hair" to maintain ethnic consistency across generations.
+2. **Lock the Environment:** Use "warm golden lighting, rich wooden textures, deep red velvet" in background prompts to contrast with the cold Vale sets.
+3. **Anchor the Jewelry:** Explicitly prompt "heavy gold jewelry" for Yasmine and "gold signet ring" for Tariq to maintain their visual signatures.
+4. **Avoid Stereotypes:** Use negative prompts: "no desert backgrounds, no stereotypical gangster suits, no cheap flashy clothing." They are sophisticated operators.
