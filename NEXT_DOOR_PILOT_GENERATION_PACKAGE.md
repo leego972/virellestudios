@@ -8,7 +8,7 @@ This is the locked production layout for the NEXT DOOR pilot. It serves as the s
 
 ## PART 1 — PILOT MASTER OVERVIEW
 
-**TITLE:** NEXT DOOR (Pilot: "The Trunk")
+**TITLE:** NEXT DOOR (Pilot: "The Welcome Basket")
 **LOGLINE:** When a struggling suburban family accidentally discovers their wealthy, perfect new neighbors are running a high-end criminal enterprise, they must navigate a dangerous social game where every dinner invitation is a threat and every favor has a lethal price.
 **EPISODE LENGTH TARGET:** 45 minutes (Prestige Drama pacing)
 **GENRE:** Suburban Noir / Prestige Thriller
@@ -16,9 +16,10 @@ This is the locked production layout for the NEXT DOOR pilot. It serves as the s
 **TARGET EMOTIONAL EFFECT:** Suffocating tension beneath a veneer of absolute normalcy. The audience should feel that the Cross family is constantly outmatched and outmaneuvered.
 
 **CORE CAST (13):**
-*   **The Cross Family:** Daniel (father), Nina (mother), Mia (daughter, 16), Cole (son, 10)
+*   **The Cross Family:** Daniel (father), Nina (mother), Mia (daughter, 16)
 *   **The Vale Household:** Marcus (patriarch), Celeste (matriarch), Adrian (son, 17), Jaden (son, 16), Big Sasha (security), Little Sasha (security)
-*   **The Neighborhood:** Mavis Whitlock (HOA president), Detectives Mercer and Viktor (police)
+*   **The Neighborhood & Law:** Mavis Whitlock (HOA president), Detective Mercer (police), Detective Hayes (police)
+*   **The Fixer:** Viktor Saric (Vale operator/consigliere)
 
 **LOCATIONS LIST (11):**
 *   Cross Foyer, Cross Living Room, Cross Kitchen, Cross Driveway/Garage
@@ -104,10 +105,10 @@ This is the exact dramatic flow of the pilot. Every beat must execute its define
 *   **Emotional Hook:** Dread. The trap has snapped shut.
 
 **9. The Garage Reveal / The Children See Too Much (9:30 PM)**
-*   **Action:** Daniel hides the briefcase in his garage. Cole (the 10-year-old) sees him do it and asks an innocent, terrifying question.
-*   **New Info:** The secret is no longer contained to Daniel; the children are now in the blast radius.
-*   **New Danger:** Cole might talk. The Cross family's internal security is compromised.
-*   **Relationship Change:** Daniel must now lie to his own son to protect him.
+*   **Action:** Daniel hides the briefcase in his garage. Mia catches him coming back inside, sweaty and nervous, and asks a sharp, suspicious question.
+*   **New Info:** The secret is no longer contained to Daniel; his teenage daughter is now suspicious.
+*   **New Danger:** Mia is observant and doesn't trust him. The Cross family's internal security is compromised.
+*   **Relationship Change:** Daniel must now lie to his own daughter to protect her, losing her trust.
 *   **Emotional Hook:** Guilt and rising panic.
 
 **10. The Kitchen Confrontation (10:00 PM)**
@@ -118,7 +119,7 @@ This is the exact dramatic flow of the pilot. Every beat must execute its define
 *   **Emotional Hook:** Desperation. The family is imploding from the inside.
 
 **11. The Detectives Arrive (11:00 PM)**
-*   **Action:** Detectives Mercer and Viktor knock on the Cross door, asking routine questions about neighborhood activity.
+*   **Action:** Detectives knock on the Cross door, asking routine questions about neighborhood activity.
 *   **New Info:** The police are already watching the street.
 *   **New Danger:** Daniel is caught between the police and the Vales. If he talks, the Vales kill him. If he lies, he's obstructing justice.
 *   **Relationship Change:** The law is introduced as a threat, not a savior.

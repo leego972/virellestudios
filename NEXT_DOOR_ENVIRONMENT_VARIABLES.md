@@ -12,13 +12,13 @@ This document contains the exact generation variables for all 11 core locations.
 **Texture Keywords:** Cluttered, lived-in, scuffed, warm, practical.
 **Lighting Mode:** 
 - *Morning:* Bright but chaotic light spilling from the kitchen.
-- *Night:* A single warm overhead light, casting soft shadows.
-**Emotional Role:** The transition from the public world to private stress.
-**Power Role:** Where the Cross family drops their guard.
-**Recurring Props:** A pile of unopened mail on a small console table, mismatched shoes near the door.
+- *Night:* A single warm overhead light, casting soft shadows. Colder porch light pushes in when the door opens.
+**Emotional Role:** The transition from the public world to private stress. Vulnerability.
+**Power Role:** Invasion threshold. Where outside power enters domestic safety.
+**Recurring Props:** A pile of unopened mail on a small console table, mismatched shoes near the door. The Welcome Basket.
 **Continuity Risks:** The arrangement of the mail and shoes must remain consistent or purposefully altered by action.
 **Negative Prompts:** Do not make it grand. No double doors. No marble floors. No perfectly arranged decor.
-**Best Promo Angle:** A low angle looking up from the shoes to Daniel's exhausted face.
+**Best Promo Angle:** A low angle looking up from the shoes to Daniel's exhausted face. Detectives framed by cold exterior light pushing into the warm foyer.
 **Best Dialogue Angle:** Tight over-the-shoulder, emphasizing the lack of space.
 
 ## 2. CROSS LIVING ROOM
@@ -56,14 +56,15 @@ This document contains the exact generation variables for all 11 core locations.
 **Palette:** Concrete gray, faded asphalt, the dull colors of stored boxes.
 **Texture Keywords:** Concrete, cardboard, dust, oil stains.
 **Lighting Mode:**
+- *Pre-dawn:* Cold blue light exposing panic.
 - *Day:* Harsh, flat exterior sunlight.
 - *Night:* A single, motion-sensor floodlight that casts harsh, unforgiving shadows.
-**Emotional Role:** The seam between the safe house and the dangerous outside world.
-**Power Role:** Where Daniel tries and fails to hide his secrets.
+**Emotional Role:** The seam between the safe house and the dangerous outside world. Masculine hidden-failure zone.
+**Power Role:** Daniel's first collapse zone. Evidence anxiety zone.
 **Recurring Props:** Stacks of plastic storage bins, a slightly rusty lawnmower.
 **Continuity Risks:** The exact placement of the storage bins where the briefcase is hidden.
 **Negative Prompts:** No clean epoxy floors. No luxury cars. No organized tool walls.
-**Best Promo Angle:** A high-angle surveillance-style shot from the Vale house looking down at the Cross driveway.
+**Best Promo Angle:** Daniel illuminated only by the trunk light in the cold pre-dawn driveway.
 **Best Dialogue Angle:** Low angle, emphasizing the claustrophobia of the cluttered garage.
 
 ## 5. VALE ENTRY
@@ -73,8 +74,8 @@ This document contains the exact generation variables for all 11 core locations.
 **Lighting Mode:**
 - *Day:* Diffused, perfect gallery lighting from high windows.
 - *Night:* Architectural uplighting that makes the space feel like a museum.
-**Emotional Role:** Intimidation and assessment.
-**Power Role:** Where the Vales establish dominance before a guest even takes off their coat.
+**Emotional Role:** Intimidation and assessment. Makes guests feel small.
+**Power Role:** First intimidation threshold. Social dominance zone. Where the Vales establish dominance before a guest even takes off their coat.
 **Recurring Props:** A single, massive, perfectly arranged floral centerpiece on a glass table.
 **Continuity Risks:** The floral arrangement must never look wilted or changed unless by a character.
 **Negative Prompts:** No clutter. No shoes by the door. No mail. No warm colors.
@@ -102,13 +103,13 @@ This document contains the exact generation variables for all 11 core locations.
 **Texture Keywords:** Seamless, reflective, cold, sharp.
 **Lighting Mode:**
 - *Day:* Bright, even, shadowless light.
-- *Night:* Under-cabinet LEDs creating sharp, precise lines of light.
-**Emotional Role:** The interrogation room.
-**Power Role:** Celeste's absolute domain. Where she isolates and dissects targets.
-**Recurring Props:** A massive, completely empty marble island. An espresso machine that looks like a piece of lab equipment.
+- *Night:* Under-cabinet LEDs creating sharp, precise lines of light. Surgical lighting.
+**Emotional Role:** The interrogation room. Surgery by hospitality. Quiet psychological combat.
+**Power Role:** Celeste's absolute domain. Female chessboard zone. Where she isolates and dissects targets.
+**Recurring Props:** A massive, completely empty marble island. An espresso machine that looks like a piece of lab equipment. Wine storage.
 **Continuity Risks:** The absolute emptiness of the counters.
 **Negative Prompts:** No clutter. No warm wood. No signs of actual cooking.
-**Best Promo Angle:** A wide shot down the length of the empty island, emphasizing the distance between characters.
+**Best Promo Angle:** Nina and Celeste separated by the massive Vale kitchen island under surgical lighting.
 **Best Dialogue Angle:** Profile shots that highlight the sharp, clean lines of the background.
 
 ## 8. VALE GARAGE
@@ -116,13 +117,13 @@ This document contains the exact generation variables for all 11 core locations.
 **Palette:** Bright white epoxy, brushed steel, matte black vehicles.
 **Texture Keywords:** Glossy, sterile, industrial, silent.
 **Lighting Mode:**
-- *Night:* Blinding, shadowless overhead LED panels.
-**Emotional Role:** The truth. Where the criminal reality is exposed.
-**Power Role:** Marcus's operational center.
-**Recurring Props:** High-end black SUVs. Heavy, locked steel cabinets.
+- *Night:* Blinding, shadowless overhead LED panels. Cold light spilling from the cracked door.
+**Emotional Role:** The truth. Where the criminal reality is exposed. Practical, cold, organized, routinely criminal.
+**Power Role:** Marcus's operational center. Viktor's truth space. Where the operation is revealed without performance.
+**Recurring Props:** High-end black SUVs. Heavy, locked steel cabinets. Tools in order. Practical workbench.
 **Continuity Risks:** The exact position of the vehicles.
-**Negative Prompts:** No cardboard boxes. No tools. No oil stains. No clutter whatsoever.
-**Best Promo Angle:** A low-angle shot from the trunk of the SUV looking out into the blinding white light.
+**Negative Prompts:** No cardboard boxes. No scattered tools. No oil stains. No clutter whatsoever. Not a fantasy lair.
+**Best Promo Angle:** Viktor's face half-lit by the cold light spilling from the cracked Vale garage door.
 **Best Dialogue Angle:** Wide shots that emphasize the sterile, terrifying emptiness of the space.
 
 ## 9. MAVIS PORCH
@@ -131,13 +132,13 @@ This document contains the exact generation variables for all 11 core locations.
 **Texture Keywords:** Painted wood, stiff fabrics, manicured.
 **Lighting Mode:**
 - *Day:* Bright, direct sunlight.
-- *Night:* A slightly too-bright porch light that illuminates the street.
-**Emotional Role:** Surveillance and judgment.
+- *Night:* A slightly too-bright porch light that illuminates the street. Shadow play.
+**Emotional Role:** Surveillance and judgment. Alertness masked as leisure.
 **Power Role:** Mavis's panopticon. Where she feels she controls the neighborhood.
-**Recurring Props:** A pair of binoculars partially hidden by a potted plant. A perfectly clean welcome mat.
-**Continuity Risks:** The position of the binoculars.
+**Recurring Props:** A pair of binoculars partially hidden by a potted plant. A perfectly clean welcome mat. Mavis's notebook and mug.
+**Continuity Risks:** The position of the binoculars and notebook.
 **Negative Prompts:** No peeling paint. No dead plants. No modern furniture.
-**Best Promo Angle:** A shot from the street looking up at Mavis half-hidden in the shadows of the porch.
+**Best Promo Angle:** Mavis's silhouette behind lace curtains, a notebook on the sill.
 **Best Dialogue Angle:** High angle looking down from the porch to the street, emphasizing Mavis's perceived superiority.
 
 ## 10. STREET CURB / BIN LINE
@@ -159,9 +160,9 @@ This document contains the exact generation variables for all 11 core locations.
 **Palette:** Rust, concrete, warning-sign yellow, deep night sky.
 **Texture Keywords:** Chain-link, cracked concrete, cold, industrial.
 **Lighting Mode:**
-- *Night:* Harsh, distant floodlights cutting through the darkness. Sweeping beams from security lights.
-**Emotional Role:** Consequence. The terrifying scale of the Vales' operation.
-**Power Role:** Absolute Vale dominance. The Cross family does not belong here.
+- *Night:* Harsh, distant floodlights cutting through the darkness. Sweeping beams from security lights. Ugly sodium glare.
+**Emotional Role:** Consequence. The terrifying scale of the Vales' operation. Isolation. Daniel is underqualified. Viktor is in his element.
+**Power Role:** Absolute Vale dominance. The Cross family does not belong here. Criminal threshold.
 **Recurring Props:** Unmarked cargo vans. Chain-link gates.
 **Continuity Risks:** The position of the vans and the gates.
 **Negative Prompts:** No suburban elements. No warmth. No safe spaces.

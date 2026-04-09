@@ -7,7 +7,7 @@ This document contains the exact generation variables for all 13 core characters
 ---
 
 ## 1. MARCUS VALE
-**Role Function:** The Apex Predator / Patriarch
+**Role Function:** The Composed Patriarch / Criminal Operator
 **Cast Source:** Signature Cast (Julian Vance)
 **Family Grouping:** Vale Family
 **Age Band:** Late 40s / Early 50s
@@ -41,7 +41,7 @@ This document contains the exact generation variables for all 13 core characters
 **Forbidden Drift Notes:** Do not generate her looking maternal in a soft, messy way. No floral prints. No messy buns.
 
 ## 3. ADRIAN VALE
-**Role Function:** The Heir / Enforcer in Training
+**Role Function:** The Adult Destabilizer / Charisma Engine
 **Cast Source:** Custom Build
 **Family Grouping:** Vale Family
 **Age Band:** 17
@@ -58,7 +58,7 @@ This document contains the exact generation variables for all 13 core characters
 **Forbidden Drift Notes:** Do not make him look like a typical high school jock. He is a young corporate criminal.
 
 ## 4. JADEN VALE
-**Role Function:** The Lure / The Charm
+**Role Function:** The Younger Bridge Character / Guarded Teen
 **Cast Source:** Custom Build
 **Family Grouping:** Vale Family
 **Age Band:** 16
@@ -75,7 +75,7 @@ This document contains the exact generation variables for all 13 core characters
 **Forbidden Drift Notes:** Do not make him look sinister. His danger comes from how safe he feels.
 
 ## 5. DANIEL CROSS
-**Role Function:** The Mark / The Desperate Father
+**Role Function:** The Outmatched Father / Desperate Suburbia
 **Cast Source:** Custom Build
 **Family Grouping:** Cross Family
 **Age Band:** Mid 40s
@@ -125,24 +125,7 @@ This document contains the exact generation variables for all 13 core characters
 **Continuity Notes:** Always has her phone in her hand or back pocket.
 **Forbidden Drift Notes:** Do not make her look like a polished Instagram model. She is a real teenager trying too hard.
 
-## 8. COLE CROSS
-**Role Function:** The Innocent / The Liability
-**Cast Source:** Custom Build
-**Family Grouping:** Cross Family
-**Age Band:** 10
-**Gender:** Male
-**Phenotype / Resemblance Logic:** Looks like a younger Daniel. Wide-eyed.
-**Wardrobe Identity:** Graphic tees, slightly too-short jeans, scuffed sneakers.
-**Hair Identity:** Unruly, needs brushing.
-**Makeup / Grooming:** Often has a smudge of dirt on his face.
-**Emotional Default State:** Curious, observant.
-**Visual Signature:** Staring blankly at adults when they are lying.
-**Dialogue Style:** Blunt, asking the wrong questions at the wrong time.
-**Physical Behavior Cues:** Stands perfectly still when he sees something confusing.
-**Continuity Notes:** Often carrying a small toy or a piece of Lego.
-**Forbidden Drift Notes:** Do not make him a precocious, witty TV kid. He is a normal, slightly slow-to-process 10-year-old.
-
-## 9. MAVIS WHITLOCK
+## 8. MAVIS WHITLOCK
 **Role Function:** The Nuisance / The Unwitting Wildcard
 **Cast Source:** Custom Build
 **Family Grouping:** Neighborhood (HOA)
@@ -159,8 +142,8 @@ This document contains the exact generation variables for all 13 core characters
 **Continuity Notes:** Always wears a prominent watch and a lanyard with her keys.
 **Forbidden Drift Notes:** Do not make her sympathetic. She is an obstacle.
 
-## 10. DETECTIVE MERCER
-**Role Function:** The Threat of the Law (The Talker)
+## 9. DETECTIVE MERCER
+**Role Function:** The Law (Folksy Threat)
 **Cast Source:** Custom Build
 **Family Grouping:** Police
 **Age Band:** 50s
@@ -176,8 +159,8 @@ This document contains the exact generation variables for all 13 core characters
 **Continuity Notes:** Carries a battered notebook.
 **Forbidden Drift Notes:** Do not make him look like a sharp, high-end TV detective. He is a tired city cop.
 
-## 11. DETECTIVE VIKTOR
-**Role Function:** The Threat of the Law (The Observer)
+## 10. DETECTIVE HAYES
+**Role Function:** The Law (Silent Observer)
 **Cast Source:** Custom Build
 **Family Grouping:** Police
 **Age Band:** 30s
@@ -193,6 +176,23 @@ This document contains the exact generation variables for all 13 core characters
 **Continuity Notes:** Never takes his eyes off the person Mercer is talking to.
 **Forbidden Drift Notes:** Do not make him friendly. He is the muscle of the partnership.
 
+## 11. VIKTOR SARIC
+**Role Function:** The Fixer / Consigliere
+**Cast Source:** Custom Build
+**Family Grouping:** Vale Operation
+**Age Band:** 40s
+**Gender:** Male
+**Phenotype / Resemblance Logic:** Gaunt, sharp-featured, insomnia-worn.
+**Wardrobe Identity:** Dark, functional, expensive but invisible. Black coats, charcoal trousers.
+**Hair Identity:** Thinning, neat.
+**Makeup / Grooming:** Dark circles under eyes, pale.
+**Emotional Default State:** Exhausted competence.
+**Visual Signature:** Checking a second, burner phone.
+**Dialogue Style:** Direct, emotionless, transactional.
+**Physical Behavior Cues:** Moves silently.
+**Continuity Notes:** He is the ghost in the machine. He solves the problems Marcus creates.
+**Forbidden Drift Notes:** Do not make him law enforcement. Do not put him in a police uniform or associate him with Mercer. He is the Vale criminal operator.
+
 ## 12. BIG SASHA (SASHA PETROVIC)
 **Role Function:** The Hard Stop / The Perimeter
 **Cast Source:** Custom Build
@@ -200,7 +200,7 @@ This document contains the exact generation variables for all 13 core characters
 **Age Band:** 40s
 **Gender:** Male
 **Phenotype / Resemblance Logic:** Massive, imposing, blocky Eastern European features.
-**Wardrobe Identity:** Dark tactical gear disguised as casual wear. Black henleys, dark cargo pants.
+**Wardrobe Identity:** Dark suit at all times by default (black, charcoal, or deep navy). Heavier cut, broad silhouette. Clean shirt, open collar. Intimidating through fit and presence. (Exception: jacket off, ribbed undershirt only during dirty operational labor like burials).
 **Hair Identity:** Shaved head.
 **Makeup / Grooming:** Scarred, weathered.
 **Emotional Default State:** Stone-faced readiness.
@@ -208,7 +208,7 @@ This document contains the exact generation variables for all 13 core characters
 **Dialogue Style:** Monosyllabic, final.
 **Physical Behavior Cues:** Blocks doorways with his entire body.
 **Continuity Notes:** Never smiles.
-**Forbidden Drift Notes:** Do not make him a comedy goon. He is terrifying.
+**Forbidden Drift Notes:** Do not put him in tactical gear, henleys, or cargo pants. He is a private, expensive problem solver who wears a suit.
 
 ## 13. LITTLE SASHA (SASHA DRASKOV)
 **Role Function:** The Smooth First Contact / The Gate
@@ -217,7 +217,7 @@ This document contains the exact generation variables for all 13 core characters
 **Age Band:** 30s
 **Gender:** Male
 **Phenotype / Resemblance Logic:** Leaner, sharper, more conventionally handsome than Big Sasha.
-**Wardrobe Identity:** Tailored dark suits, no tie. Looks like high-end executive protection.
+**Wardrobe Identity:** Dark tailored suit at all times by default. Slightly sharper, cleaner silhouette than Big Sasha. Polished, socially smooth executive-protection energy.
 **Hair Identity:** Slicked back, neat.
 **Makeup / Grooming:** Clean-shaven, polished.
 **Emotional Default State:** Professionally warm, assessing.
@@ -225,4 +225,4 @@ This document contains the exact generation variables for all 13 core characters
 **Dialogue Style:** Disarming, polite, explanatory.
 **Physical Behavior Cues:** Smiles with his mouth, not his eyes.
 **Continuity Notes:** Always positioned slightly in front of Big Sasha.
-**Forbidden Drift Notes:** Do not make him weak. His warmth is a weapon.
+**Forbidden Drift Notes:** Do not make him a comedy sidekick. His warmth is a security function, not a personality flaw.
