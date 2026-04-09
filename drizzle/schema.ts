@@ -1277,3 +1277,90 @@ export const assetPurchases = mysqlTable("assetPurchases", {
 });
 export type AssetPurchase = typeof assetPurchases.$inferSelect;
 export type InsertAssetPurchase = typeof assetPurchases.$inferInsert;
+
+// ── Signature Cast — Actor Registry ──────────────────────────────────────────
+// Config-driven actor catalog. Tier, pricing, and plan-inclusion are all
+// stored here so they can be updated without touching UI logic.
+export const signatureCastActors = mysqlTable("signatureCastActors", {
+  id: varchar("id", { length: 64 }).primaryKey(), // e.g. "julian-vance"
+  name: varchar("name", { length: 255 }).notNull(),
+  tier: mysqlEnum("tier", ["standard", "premium", "flagship"]).notNull().default("standard"),
+  // Plan inclusion: lowest plan that gets this actor via subscription
+  includedInPlan: mysqlEnum("includedInPlan", ["none", "indie", "amateur", "independent"]).notNull().default("none"),
+  // Per-unlock pricing (AUD cents) by license type
+  pricePersonalAud: int("pricePersonalAud").default(0).notNull(),    // personal/private
+  priceCreatorAud: int("priceCreatorAud").default(0).notNull(),      // creator/public release
+  priceCommercialAud: int("priceCommercialAud").default(0).notNull(), // commercial/client work
+  priceEpisodicAud: int("priceEpisodicAud").default(0).notNull(),    // episodic/series
+  // Metadata
+  hook: text("hook"),              // one-line casting description
+  tags: json("tags"),              // string[] genre/use-case tags
+  chemistryWith: json("chemistryWith"), // string[] actor IDs
+  portraitUrl: text("portraitUrl"),
+  // Admin controls
+  isActive: boolean("isActive").default(true).notNull(),
+  isFeatured: boolean("isFeatured").default(false).notNull(),
+  isRetired: boolean("isRetired").default(false).notNull(),
+  allowCommercialUse: boolean("allowCommercialUse").default(true).notNull(),
+  noExplicitContent: boolean("noExplicitContent").default(true).notNull(), // hard brand-safety flag
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SignatureCastActor = typeof signatureCastActors.$inferSelect;
+export type InsertSignatureCastActor = typeof signatureCastActors.$inferInsert;
+
+// ── Signature Cast — Actor Entitlements ──────────────────────────────────────
+// One record per user-actor-license grant. Records both subscription-included
+// access and paid per-actor unlocks. This is the source of truth for casting
+// rights checks inside project generation.
+export const signatureCastEntitlements = mysqlTable("signatureCastEntitlements", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("userId").notNull(),
+  actorId: varchar("actorId", { length: 64 }).notNull(), // FK → signatureCastActors.id
+  // License type
+  licenseType: mysqlEnum("licenseType", ["personal", "creator", "commercial", "episodic", "plan_inclusion"]).notNull(),
+  // Project scope — null means cross-project (license allows all projects)
+  projectId: int("projectId"),
+  // Commercial and usage flags
+  isCommercial: boolean("isCommercial").default(false).notNull(),
+  isEpisodic: boolean("isEpisodic").default(false).notNull(),
+  // Payment source
+  source: mysqlEnum("source", ["subscription", "stripe_checkout", "admin_comp", "promo"]).notNull().default("stripe_checkout"),
+  stripeSessionId: varchar("stripeSessionId", { length: 255 }),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  amountPaidAud: int("amountPaidAud").default(0).notNull(), // 0 for plan_inclusion
+  // Validity
+  status: mysqlEnum("status", ["active", "expired", "revoked", "pending"]).notNull().default("active"),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"), // null = perpetual within license scope
+  // Audit
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SignatureCastEntitlement = typeof signatureCastEntitlements.$inferSelect;
+export type InsertSignatureCastEntitlement = typeof signatureCastEntitlements.$inferInsert;
+
+// ── Signature Cast — Analytics Events ────────────────────────────────────────
+// Lightweight event log for actor-level analytics: views, unlock modal opens,
+// conversions, plan upgrade triggers, and checkout abandonment.
+export const signatureCastEvents = mysqlTable("signatureCastEvents", {
+  id: int("id").primaryKey().autoincrement(),
+  userId: int("userId"),            // null for anonymous views
+  actorId: varchar("actorId", { length: 64 }).notNull(),
+  event: mysqlEnum("event", [
+    "profile_view",
+    "unlock_modal_open",
+    "checkout_started",
+    "checkout_completed",
+    "checkout_abandoned",
+    "cast_assigned",
+    "plan_upgrade_triggered",
+    "content_blocked",
+  ]).notNull(),
+  licenseType: varchar("licenseType", { length: 32 }),
+  projectId: int("projectId"),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type SignatureCastEvent = typeof signatureCastEvents.$inferSelect;
+export type InsertSignatureCastEvent = typeof signatureCastEvents.$inferInsert;

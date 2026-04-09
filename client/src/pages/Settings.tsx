@@ -1102,6 +1102,9 @@ function BillingTab({ profile }: { profile: any }) {
         </CardContent>
       </Card>
 
+      {/* Active Talent Licenses */}
+      <ActiveTalentLicenses subscriptionTier={tier} />
+
       {/* Credits Summary */}
       <Card className="bg-card/50">
         <CardHeader className="pb-3">
@@ -1130,6 +1133,119 @@ function BillingTab({ profile }: { profile: any }) {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+// ─── Active Talent Licenses Panel ────────────────────────────────────────────
+const PLAN_CAST_ACCESS: Record<string, string[]> = {
+  none:        [],
+  free:        [],
+  indie:       ["standard"],
+  amateur:     ["standard", "premium"],
+  independent: ["standard", "premium", "flagship"],
+  creator:     ["standard", "premium", "flagship"],
+  studio:      ["standard", "premium", "flagship"],
+  industry:    ["standard", "premium", "flagship"],
+  beta:        ["standard"],
+};
+
+const TIER_INCLUSION_COPY: Record<string, { label: string; tiers: string; color: string }> = {
+  none:        { label: "No cast access", tiers: "Upgrade to include Signature Cast actors", color: "text-zinc-500" },
+  free:        { label: "No cast access", tiers: "Upgrade to include Signature Cast actors", color: "text-zinc-500" },
+  indie:       { label: "Standard Cast Included", tiers: "Browse and cast all Standard tier actors", color: "text-sky-400" },
+  amateur:     { label: "Standard + Premium Cast Included", tiers: "Browse and cast Standard and Premium actors", color: "text-purple-400" },
+  independent: { label: "Full Cast Access Included", tiers: "All tiers: Standard, Premium, and Flagship Stars", color: "text-amber-400" },
+  creator:     { label: "Full Cast Access Included", tiers: "All tiers: Standard, Premium, and Flagship Stars", color: "text-amber-400" },
+  studio:      { label: "Full Cast Access Included", tiers: "All tiers: Standard, Premium, and Flagship Stars", color: "text-amber-400" },
+  industry:    { label: "Full Cast Access Included", tiers: "All tiers: Standard, Premium, and Flagship Stars", color: "text-amber-400" },
+  beta:        { label: "Standard Cast Included", tiers: "Browse and cast all Standard tier actors", color: "text-sky-400" },
+};
+
+function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }) {
+  const planAccess = PLAN_CAST_ACCESS[subscriptionTier] ?? [];
+  const inclusionCopy = TIER_INCLUSION_COPY[subscriptionTier] ?? TIER_INCLUSION_COPY.none;
+  const hasCastAccess = planAccess.length > 0;
+
+  return (
+    <Card className="bg-card/50">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <Film className="h-4 w-4 text-amber-400" />
+          Signature Cast
+        </CardTitle>
+        <CardDescription className="text-xs">
+          Premium digital actors for films, trailers, series, and campaigns.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Plan inclusion status */}
+        <div className="rounded-lg border border-white/5 bg-white/5 p-4 space-y-2">
+          <div className="flex items-center gap-2">
+            {hasCastAccess ? (
+              <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
+            ) : (
+              <Lock className="h-4 w-4 text-zinc-500 shrink-0" />
+            )}
+            <span className={`text-sm font-medium ${inclusionCopy.color}`}>{inclusionCopy.label}</span>
+          </div>
+          <p className="text-xs text-muted-foreground pl-6">{inclusionCopy.tiers}</p>
+          {hasCastAccess && (
+            <div className="pl-6 flex flex-wrap gap-1.5 pt-1">
+              {planAccess.includes("standard") && (
+                <Badge className="bg-zinc-700/50 text-zinc-300 border border-zinc-600/30 text-xs">Standard</Badge>
+              )}
+              {planAccess.includes("premium") && (
+                <Badge className="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs">Premium</Badge>
+              )}
+              {planAccess.includes("flagship") && (
+                <Badge className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs">
+                  <Star className="w-3 h-3 mr-1" />Flagship Stars
+                </Badge>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Individual licenses section */}
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses</p>
+          <div className="rounded-lg border border-white/5 bg-zinc-950/40 p-4 text-center">
+            <Film className="h-8 w-8 text-zinc-700 mx-auto mb-2" />
+            <p className="text-xs text-zinc-500 mb-1">No individual actor licenses yet.</p>
+            <p className="text-xs text-zinc-600">When you unlock a specific actor for a project, it will appear here.</p>
+          </div>
+        </div>
+
+        {/* Usage terms reminder */}
+        <div className="rounded-lg border border-white/5 bg-zinc-950/40 p-3 space-y-1">
+          <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Usage Terms</p>
+          <div className="flex items-start gap-2 text-xs text-zinc-600">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />
+            Films, trailers, series, campaigns, prestige digital content
+          </div>
+          <div className="flex items-start gap-2 text-xs text-zinc-600">
+            <XCircle className="w-3.5 h-3.5 text-red-500 mt-0.5 shrink-0" />
+            Pornographic content, explicit sex acts, adult-industry use — prohibited
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="flex gap-2">
+          <a href="/talent-search">
+            <Button size="sm" className="bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold">
+              <Film className="h-3 w-3 mr-1" />Browse Signature Cast
+            </Button>
+          </a>
+          {!hasCastAccess && (
+            <a href="/pricing">
+              <Button size="sm" variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 text-xs">
+                Upgrade for Cast Access
+              </Button>
+            </a>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

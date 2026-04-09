@@ -9175,5 +9175,242 @@ Rules:
       return { configured: isYouTubeConfigured() };
     }),
   }),
+
+  // ─── Signature Cast ──────────────────────────────────────────────────────────
+  signatureCast: router({
+
+    // List all active actors with entitlement status for the current user
+    listActors: publicProcedure.query(async ({ ctx }) => {
+      const { PLAN_CAST_ACCESS, INITIAL_ACTORS } = await import("./_core/signatureCast");
+      const userTier = (ctx.user?.subscriptionTier ?? "none") as import("./_core/subscription").SubscriptionTier;
+      const actors = INITIAL_ACTORS.filter((a: any) => a.isActive && !a.isRetired);
+
+      // If user is logged in, check paid entitlements via raw SQL
+      let entitlements: string[] = [];
+      if (ctx.user) {
+        try {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            const rows = await dbConn.execute(sql`
+              SELECT actorId FROM signatureCastEntitlements
+              WHERE userId = ${ctx.user.id} AND status = 'active'
+            `) as any;
+            entitlements = (Array.isArray(rows) ? rows : rows[0] ?? []).map((r: any) => r.actorId);
+          }
+        } catch { /* table may not exist yet */ }
+      }
+
+      const planAccess = PLAN_CAST_ACCESS[userTier] ?? [];
+
+      return actors.map((actor: any) => ({
+        ...actor,
+        isEntitled: entitlements.includes(actor.id) || planAccess.includes(actor.tier),
+        entitlementSource: entitlements.includes(actor.id) ? "paid_unlock" :
+          planAccess.includes(actor.tier) ? "plan_inclusion" : "none",
+      }));
+    }),
+
+    // Get entitlement status for a single actor
+    getActorEntitlement: protectedProcedure
+      .input(z.object({ actorId: z.string() }))
+      .query(async ({ ctx, input }) => {
+        const { PLAN_CAST_ACCESS, INITIAL_ACTORS, DEFAULT_UNLOCK_PRICING, LICENSE_COPY } = await import("./_core/signatureCast");
+        const userTier = (ctx.user.subscriptionTier ?? "none") as import("./_core/subscription").SubscriptionTier;
+        const actor = INITIAL_ACTORS.find((a: any) => a.id === input.actorId);
+        if (!actor) throw new TRPCError({ code: "NOT_FOUND", message: "Actor not found" });
+
+        const planAccess = PLAN_CAST_ACCESS[userTier] ?? [];
+        const planIncluded = planAccess.includes(actor.tier);
+
+        let paidEntitlements: any[] = [];
+        try {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            const rows = await dbConn.execute(sql`
+              SELECT * FROM signatureCastEntitlements
+              WHERE userId = ${ctx.user.id} AND actorId = ${input.actorId} AND status = 'active'
+            `) as any;
+            paidEntitlements = Array.isArray(rows) ? rows : rows[0] ?? [];
+          }
+        } catch { /* table may not exist yet */ }
+
+        const pricing = DEFAULT_UNLOCK_PRICING[actor.tier as keyof typeof DEFAULT_UNLOCK_PRICING];
+        return {
+          actor,
+          isEntitled: planIncluded || paidEntitlements.length > 0,
+          entitlementSource: paidEntitlements.length > 0 ? "paid_unlock" : planIncluded ? "plan_inclusion" : "none",
+          paidEntitlements,
+          pricing,
+          licenseCopy: LICENSE_COPY,
+          planIncluded,
+          userTier,
+        };
+      }),
+
+    // Create Stripe checkout session for actor unlock
+    createUnlockCheckout: protectedProcedure
+      .input(z.object({
+        actorId: z.string(),
+        licenseType: z.enum(["personal", "creator", "commercial", "episodic"]),
+        projectId: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { INITIAL_ACTORS, DEFAULT_UNLOCK_PRICING, createActorUnlockCheckoutSession } = await import("./_core/signatureCast");
+        const { stripe, getOrCreateStripeCustomer } = await import("./_core/subscription");
+        if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Stripe not configured" });
+
+        const actor = INITIAL_ACTORS.find(a => a.id === input.actorId);
+        if (!actor) throw new TRPCError({ code: "NOT_FOUND", message: "Actor not found" });
+        if (!actor.isActive || actor.isRetired) throw new TRPCError({ code: "BAD_REQUEST", message: "Actor not available" });
+
+        const amountAud = DEFAULT_UNLOCK_PRICING[actor.tier][input.licenseType];
+        const stripeCustomerId = await getOrCreateStripeCustomer(ctx.user);
+
+        // Log analytics event
+        try {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            await dbConn.execute(sql`
+              INSERT INTO signatureCastEvents (userId, actorId, event, licenseType, projectId, createdAt)
+              VALUES (${ctx.user.id}, ${input.actorId}, 'checkout_started', ${input.licenseType}, ${input.projectId ?? null}, NOW())
+            `);
+          }
+        } catch { /* analytics non-blocking */ }
+
+        const baseUrl = process.env.APP_URL ?? "https://virelle.life";
+        const { url, sessionId } = await createActorUnlockCheckoutSession({
+          actorId: input.actorId,
+          actorName: actor.name,
+          actorTier: actor.tier,
+          licenseType: input.licenseType,
+          projectId: input.projectId,
+          amountAud,
+          userId: ctx.user.id,
+          userEmail: ctx.user.email ?? "",
+          stripeCustomerId,
+          successUrl: `${baseUrl}/talent-search?unlock_success=1&actor=${input.actorId}&session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${baseUrl}/talent-search?actor=${input.actorId}`,
+        }, stripe);
+
+        return { url, sessionId, amountAud, actorName: actor.name };
+      }),
+
+    // Webhook handler: fulfill actor unlock after successful Stripe payment
+    fulfillUnlock: protectedProcedure
+      .input(z.object({
+        actorId: z.string(),
+        licenseType: z.enum(["personal", "creator", "commercial", "episodic"]),
+        projectId: z.number().optional(),
+        stripeSessionId: z.string(),
+        amountPaidAud: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        try {
+          await dbConn.execute(sql`
+            INSERT INTO signatureCastEntitlements
+              (userId, actorId, licenseType, projectId, isCommercial, isEpisodic, source, stripeSessionId, amountPaidAud, status, startedAt, createdAt, updatedAt)
+            VALUES
+              (${ctx.user.id}, ${input.actorId}, ${input.licenseType}, ${input.projectId ?? null},
+               ${input.licenseType === "commercial" ? 1 : 0}, ${input.licenseType === "episodic" ? 1 : 0},
+               'stripe_checkout', ${input.stripeSessionId}, ${input.amountPaidAud}, 'active', NOW(), NOW(), NOW())
+          `);
+          await dbConn.execute(sql`
+            INSERT INTO signatureCastEvents (userId, actorId, event, licenseType, projectId, metadata, createdAt)
+            VALUES (${ctx.user.id}, ${input.actorId}, 'checkout_completed', ${input.licenseType},
+                    ${input.projectId ?? null}, ${JSON.stringify({ stripeSessionId: input.stripeSessionId, amountPaidAud: input.amountPaidAud })}, NOW())
+          `);
+        } catch (e) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to record entitlement" });
+        }
+        return { success: true };
+      }),
+
+    // Get all active entitlements for the current user (for billing page)
+    myEntitlements: protectedProcedure.query(async ({ ctx }) => {
+      try {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const rows = await dbConn.execute(sql`
+          SELECT * FROM signatureCastEntitlements
+          WHERE userId = ${ctx.user.id} AND status = 'active'
+          ORDER BY createdAt DESC
+        `) as any;
+        return Array.isArray(rows) ? rows : rows[0] ?? [];
+      } catch { return []; }
+    }),
+
+    // Log analytics event (profile view, modal open, etc.)
+    logEvent: publicProcedure
+      .input(z.object({
+        actorId: z.string(),
+        event: z.enum(["profile_view", "unlock_modal_open", "checkout_abandoned", "cast_assigned", "plan_upgrade_triggered", "content_blocked"]),
+        licenseType: z.string().optional(),
+        projectId: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        try {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            await dbConn.execute(sql`
+              INSERT INTO signatureCastEvents (userId, actorId, event, licenseType, projectId, createdAt)
+              VALUES (${ctx.user?.id ?? null}, ${input.actorId}, ${input.event},
+                      ${input.licenseType ?? null}, ${input.projectId ?? null}, NOW())
+            `);
+          }
+        } catch { /* non-blocking */ }
+        return { ok: true };
+      }),
+
+    // Admin: get analytics summary
+    adminAnalytics: adminProcedure.query(async () => {
+      try {
+        const dbConn = await db.getDb();
+        if (!dbConn) return { events: [] };
+        const rows = await dbConn.execute(sql`
+          SELECT * FROM signatureCastEvents ORDER BY createdAt DESC LIMIT 500
+        `) as any;
+        return { events: Array.isArray(rows) ? rows : rows[0] ?? [] };
+      } catch { return { events: [] }; }
+    }),
+
+    // Admin: list all entitlements
+    adminEntitlements: adminProcedure.query(async () => {
+      try {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const rows = await dbConn.execute(sql`
+          SELECT * FROM signatureCastEntitlements ORDER BY createdAt DESC LIMIT 200
+        `) as any;
+        return Array.isArray(rows) ? rows : rows[0] ?? [];
+      } catch { return []; }
+    }),
+
+    // Admin: grant comp/promo entitlement
+    adminGrantEntitlement: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        actorId: z.string(),
+        licenseType: z.enum(["personal", "creator", "commercial", "episodic"]),
+        projectId: z.number().optional(),
+        expiresAt: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        await dbConn.execute(sql`
+          INSERT INTO signatureCastEntitlements
+            (userId, actorId, licenseType, projectId, isCommercial, isEpisodic, source, amountPaidAud, status,
+             expiresAt, startedAt, createdAt, updatedAt)
+          VALUES
+            (${input.userId}, ${input.actorId}, ${input.licenseType}, ${input.projectId ?? null},
+             ${input.licenseType === "commercial" ? 1 : 0}, ${input.licenseType === "episodic" ? 1 : 0},
+             'admin_comp', 0, 'active',
+             ${input.expiresAt ? new Date(input.expiresAt) : null}, NOW(), NOW(), NOW())
+        `);
+        return { success: true };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

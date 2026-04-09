@@ -23,18 +23,33 @@ import {
   Crown,
   Sparkles,
   Users,
-  Star,
   ArrowRight,
   Lock,
   ChevronRight,
   Heart,
   Film,
-  Zap,
   CheckCircle2,
+  XCircle,
+  ShoppingCart,
+  Info,
+  Zap,
 } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 
-// Full 24-actor roster
+// ─── Pricing constants (mirrors server config) ─────────────────────────────
+const BASE_PRICE: Record<string, number> = { standard: 15, premium: 39, flagship: 99 };
+const COMMERCIAL_ADDON = 79;
+const EPISODIC_MULTIPLIER = 4;
+
+function getPrice(tier: string, licenseType: "creator" | "commercial" | "episodic"): number {
+  const base = BASE_PRICE[tier] ?? 15;
+  if (licenseType === "commercial") return base + COMMERCIAL_ADDON;
+  if (licenseType === "episodic") return base * EPISODIC_MULTIPLIER;
+  return base;
+}
+
+// ─── Actor roster ──────────────────────────────────────────────────────────
 const SIGNATURE_CAST = [
   // MALE LEADS
   {
@@ -50,7 +65,6 @@ const SIGNATURE_CAST = [
     bestFor: ["crime thriller", "prestige drama", "romantic lead", "luxury campaigns"],
     chemistry: ["Elena Rostova", "Sofia Reyes"],
     badges: ["Flagship Star", "Featured in Next Door"],
-    unlocked: true,
   },
   {
     id: "kofi-adebayo",
@@ -65,7 +79,6 @@ const SIGNATURE_CAST = [
     bestFor: ["action lead", "crime drama", "prestige drama", "authority roles"],
     chemistry: ["Elena Rostova", "Sofia Reyes"],
     badges: ["Flagship Star"],
-    unlocked: true,
   },
   {
     id: "kenji-sato",
@@ -78,24 +91,36 @@ const SIGNATURE_CAST = [
     hook: "Neo-noir's perfect face. Stillness that reads as danger under dramatic lighting.",
     whyCast: "Exceptional close-up presence. Best face in the cast for dramatic lighting and psychological tension.",
     bestFor: ["noir", "thriller", "psychological drama", "action"],
-    chemistry: ["Elena Rostova", "Camille Dubois"],
+    chemistry: ["Elena Rostova", "Yuki Tanaka"],
     badges: ["Premium Cast"],
-    unlocked: true,
   },
   {
-    id: "sammy-vance",
-    name: "Sammy Vance",
+    id: "marcus-osei",
+    name: "Marcus Osei",
+    tier: "premium",
+    category: "Male Lead",
+    archetype: "The Reluctant Hero",
+    age: "30–45",
+    genres: ["Drama", "Crime", "Action"],
+    hook: "Grounded, emotionally complex. The kind of face audiences trust and follow.",
+    whyCast: "Exceptional dramatic range. Anchors ensemble casts and carries emotional weight across scenes.",
+    bestFor: ["drama lead", "crime ensemble", "action drama", "family drama"],
+    chemistry: ["Sofia Reyes", "Amara Diallo"],
+    badges: ["Premium Cast"],
+  },
+  {
+    id: "daniel-cross",
+    name: "Daniel Cross",
     tier: "standard",
     category: "Male Lead",
-    archetype: "The Reluctant Heir",
-    age: "22–32",
-    genres: ["Drama", "Thriller", "Coming-of-Age"],
-    hook: "Julian Vance's younger brother. The same bone structure, less certainty.",
-    whyCast: "Built for family-unit storytelling. Shares facial anchors with Julian Vance for believable sibling casting.",
-    bestFor: ["family drama", "coming-of-age", "thriller", "crime"],
-    chemistry: ["Julian Vance"],
-    badges: ["Family Unit — Vance"],
-    unlocked: true,
+    archetype: "The Ordinary Man in Extraordinary Trouble",
+    age: "35–48",
+    genres: ["Drama", "Thriller", "Crime"],
+    hook: "Suburban everyman energy that makes moral compromise feel real and earned.",
+    whyCast: "Perfect for prestige drama where the protagonist is not the most dangerous person in the room.",
+    bestFor: ["prestige drama", "suburban thriller", "moral drama", "crime adjacent"],
+    chemistry: ["Mavis Whitlock", "Celeste Vale"],
+    badges: ["Featured in Next Door"],
   },
   // FEMALE LEADS
   {
@@ -103,159 +128,173 @@ const SIGNATURE_CAST = [
     name: "Elena Rostova",
     tier: "flagship",
     category: "Female Lead",
-    archetype: "The Ice Architect",
-    age: "30–44",
-    genres: ["Prestige Drama", "Thriller", "High Fashion"],
-    hook: "Cold architectural beauty with the emotional intelligence of a chess grandmaster.",
-    whyCast: "Continuity-tuned for close-ups and multi-scene storytelling. Premium fit for prestige drama, noir, and luxury campaigns.",
-    bestFor: ["prestige drama", "thriller", "high fashion", "villain lead"],
+    archetype: "The Cold Architect",
+    age: "28–42",
+    genres: ["Thriller", "Crime", "Prestige Drama"],
+    hook: "Precise, composed, and quietly devastating. The most dangerous person in any room.",
+    whyCast: "Exceptional for villain-adjacent leads, power dynamics, and psychological tension. Flagship-tier screen presence.",
+    bestFor: ["thriller lead", "crime drama", "power dynamics", "prestige villain"],
     chemistry: ["Julian Vance", "Kofi Adebayo"],
     badges: ["Flagship Star", "Featured in Next Door"],
-    unlocked: true,
   },
   {
     id: "sofia-reyes",
     name: "Sofia Reyes",
     tier: "flagship",
     category: "Female Lead",
-    archetype: "The Combustible Heart",
-    age: "28–42",
-    genres: ["Drama", "Romance", "Action"],
-    hook: "The most combustible screen presence in the cast. Warmth that can turn to fire in a single cut.",
-    whyCast: "Highest viral potential. Exceptional chemistry with Julian Vance and Kofi Adebayo. Best for emotionally complex leads.",
-    bestFor: ["romantic lead", "drama", "action", "family matriarch"],
-    chemistry: ["Julian Vance", "Kofi Adebayo"],
+    archetype: "The Warm Weapon",
+    age: "25–38",
+    genres: ["Romance", "Drama", "Crime"],
+    hook: "Warmth that disarms. Intelligence that surprises. The most versatile lead in the cast.",
+    whyCast: "Exceptional emotional range. Works across romance, crime, drama, and prestige campaigns.",
+    bestFor: ["romantic lead", "drama lead", "crime adjacent", "prestige campaigns"],
+    chemistry: ["Julian Vance", "Marcus Osei"],
     badges: ["Flagship Star"],
-    unlocked: true,
   },
   {
-    id: "nina-cross",
-    name: "Nina Cross",
+    id: "amara-diallo",
+    name: "Amara Diallo",
     tier: "premium",
     category: "Female Lead",
-    archetype: "The Controlled Observer",
-    age: "30–44",
-    genres: ["Drama", "Thriller", "Crime"],
-    hook: "Perceptive, precise, and sharper than anyone in the room gives her credit for.",
-    whyCast: "Premium fit for intelligent female leads in crime drama and prestige series. Strong emotional readability.",
-    bestFor: ["crime drama", "prestige drama", "thriller", "domestic tension"],
-    chemistry: ["Celeste Vale", "Viktor Saric"],
-    badges: ["Premium Cast", "Featured in Next Door"],
-    unlocked: true,
+    archetype: "The Quiet Storm",
+    age: "28–40",
+    genres: ["Drama", "Thriller", "Action"],
+    hook: "Still on the outside. Relentless underneath. Audiences underestimate her exactly once.",
+    whyCast: "Exceptional for slow-burn reveals and scenes where the power shifts. Strong in ensemble and lead roles.",
+    bestFor: ["drama lead", "thriller", "action drama", "slow-burn narrative"],
+    chemistry: ["Marcus Osei", "Kofi Adebayo"],
+    badges: ["Premium Cast"],
   },
   {
-    id: "celeste-vale",
-    name: "Celeste Vale",
+    id: "yuki-tanaka",
+    name: "Yuki Tanaka",
     tier: "premium",
     category: "Female Lead",
-    archetype: "The Velvet Hammer",
-    age: "35–50",
-    genres: ["Drama", "Thriller", "Crime"],
-    hook: "Elegant, cutting, soft-spoken, and socially surgical. She says vicious things beautifully.",
-    whyCast: "Best in class for sophisticated antagonists and morally complex female leads. Premium fit for prestige crime drama.",
-    bestFor: ["crime drama", "prestige drama", "sophisticated antagonist", "domestic thriller"],
-    chemistry: ["Nina Cross", "Marcus Vale"],
-    badges: ["Premium Cast", "Featured in Next Door"],
-    unlocked: true,
+    archetype: "The Precise One",
+    age: "25–38",
+    genres: ["Noir", "Thriller", "Drama"],
+    hook: "Controlled, exact, and quietly magnetic. Every gesture is intentional.",
+    whyCast: "Exceptional for roles requiring precision and restraint. Strong in noir and psychological drama.",
+    bestFor: ["noir", "psychological thriller", "drama", "prestige drama"],
+    chemistry: ["Kenji Sato", "Elena Rostova"],
+    badges: ["Premium Cast"],
   },
-  // CHARACTER ACTORS
-  {
-    id: "marcus-vale",
-    name: "Marcus Vale",
-    tier: "premium",
-    category: "Character Actor",
-    archetype: "The Quiet Patriarch",
-    age: "42–58",
-    genres: ["Crime", "Prestige Drama", "Thriller"],
-    hook: "Calm, sparse, precise. He says less than everyone else and means more.",
-    whyCast: "Exceptional for authority figures, crime patriarchs, and morally complex antagonists. Understated menace.",
-    bestFor: ["crime patriarch", "authority figure", "prestige drama", "antagonist"],
-    chemistry: ["Celeste Vale", "Viktor Saric"],
-    badges: ["Premium Cast", "Featured in Next Door"],
-    unlocked: true,
-  },
-  {
-    id: "viktor-saric",
-    name: "Viktor Saric",
-    tier: "premium",
-    category: "Character Actor",
-    archetype: "The Operational Ghost",
-    age: "38–52",
-    genres: ["Crime", "Thriller", "Action"],
-    hook: "The most dangerous man in the room who never raises his voice.",
-    whyCast: "Best in class for fixers, enforcers, and consigliere roles. Dry, calm, and operationally precise.",
-    bestFor: ["fixer", "enforcer", "crime thriller", "action support"],
-    chemistry: ["Marcus Vale", "Nina Cross"],
-    badges: ["Premium Cast", "Featured in Next Door"],
-    unlocked: true,
-  },
-  // COMEDIC ACTORS
   {
     id: "mavis-whitlock",
     name: "Mavis Whitlock",
     tier: "standard",
-    category: "Character Actor",
-    archetype: "The Invasive Oracle",
-    age: "65–80",
-    genres: ["Drama", "Crime", "Dark Comedy"],
-    hook: "Harmless enough that people forget she is always watching. Funny because she is invasive and too observant.",
-    whyCast: "Unique comic pressure and witness-risk function. Best for neighborhood surveillance, dark comedy, and ensemble casts.",
-    bestFor: ["dark comedy", "crime drama", "ensemble", "comic relief"],
-    chemistry: ["Nina Cross", "Daniel Cross"],
+    category: "Female Lead",
+    archetype: "The Neighbourhood Oracle",
+    age: "55–70",
+    genres: ["Drama", "Dark Comedy", "Crime"],
+    hook: "Sees everything. Says less than she knows. The most dangerous witness in any scene.",
+    whyCast: "Exceptional for ensemble anchors, comic relief with depth, and scenes requiring earned authority.",
+    bestFor: ["ensemble drama", "dark comedy", "crime adjacent", "neighbourhood drama"],
+    chemistry: ["Daniel Cross", "Celeste Vale"],
     badges: ["Featured in Next Door"],
-    unlocked: true,
   },
   {
-    id: "adrian-vale",
-    name: "Adrian Vale",
+    id: "celeste-vale",
+    name: "Celeste Vale",
+    tier: "standard",
+    category: "Female Lead",
+    archetype: "The Perfect Surface",
+    age: "35–48",
+    genres: ["Thriller", "Drama", "Crime"],
+    hook: "Immaculate, composed, and impossible to read. The most unsettling neighbour you'll ever meet.",
+    whyCast: "Perfect for roles where the threat is social, not physical. Exceptional in prestige drama and suburban thriller.",
+    bestFor: ["prestige drama", "suburban thriller", "social threat", "crime adjacent"],
+    chemistry: ["Daniel Cross", "Mavis Whitlock"],
+    badges: ["Featured in Next Door"],
+  },
+  // CHARACTER ACTORS
+  {
+    id: "viktor-vale",
+    name: "Viktor Vale",
+    tier: "premium",
+    category: "Character Actor",
+    archetype: "The Patriarch Who Owns the Room",
+    age: "50–65",
+    genres: ["Crime", "Prestige Drama", "Thriller"],
+    hook: "Quiet authority that doesn't need to announce itself. The most dangerous man at the table.",
+    whyCast: "Exceptional for crime patriarch roles, power-broker scenes, and ensemble anchors.",
+    bestFor: ["crime patriarch", "power broker", "prestige drama", "ensemble anchor"],
+    chemistry: ["Celeste Vale", "Elena Rostova"],
+    badges: ["Premium Cast", "Featured in Next Door"],
+  },
+  {
+    id: "tariq-haddad",
+    name: "Tariq Haddad",
+    tier: "premium",
+    category: "Character Actor",
+    archetype: "The Charismatic Patriarch",
+    age: "50–65",
+    genres: ["Crime", "Drama", "Thriller"],
+    hook: "Warm, expansive, and unpredictable. The most dangerous man at the dinner table.",
+    whyCast: "Exceptional for rival patriarch roles and scenes where hospitality and threat coexist.",
+    bestFor: ["crime drama", "rival patriarch", "prestige drama", "family power dynamics"],
+    chemistry: ["Viktor Vale", "Tariq Haddad"],
+    badges: ["Premium Cast", "Featured in Next Door"],
+  },
+  {
+    id: "big-sasha",
+    name: "Big Sasha",
     tier: "standard",
     category: "Character Actor",
-    archetype: "The Magnetic Disruptor",
-    age: "24–36",
-    genres: ["Drama", "Crime", "Dark Comedy"],
-    hook: "Witty, charming, teasing, and verbally agile. He enjoys destabilizing people.",
-    whyCast: "Best for charismatic antagonists, scene-stealers, and morally ambiguous support roles.",
-    bestFor: ["dark comedy", "crime support", "charismatic antagonist", "ensemble"],
-    chemistry: ["Mia Cross", "Jaden Vale"],
+    archetype: "The Final Word",
+    age: "40–55",
+    genres: ["Crime", "Thriller", "Drama"],
+    hook: "The harder edge. More silent, more suspicious, more final. His presence does the threatening.",
+    whyCast: "Exceptional for security, enforcer, and visible deterrence roles. Strong in ensemble crime drama.",
+    bestFor: ["crime drama", "enforcer", "security role", "ensemble thriller"],
+    chemistry: ["Little Sasha", "Viktor Vale"],
     badges: ["Featured in Next Door"],
-    unlocked: true,
   },
-  // TWINS
+  {
+    id: "little-sasha",
+    name: "Little Sasha",
+    tier: "standard",
+    category: "Character Actor",
+    archetype: "The Smooth First Contact",
+    age: "35–48",
+    genres: ["Crime", "Thriller", "Dark Comedy"],
+    hook: "More talkative, more disarming, more likely to smile. Warmth as a security function.",
+    whyCast: "Exceptional for roles where the threat is social and the danger is underestimated.",
+    bestFor: ["crime drama", "social threat", "dark comedy", "ensemble thriller"],
+    chemistry: ["Big Sasha", "Viktor Vale"],
+    badges: ["Featured in Next Door"],
+  },
+  // TWIN UNIT
   {
     id: "gallagher-twins",
     name: "The Gallagher Twins",
     tier: "premium",
     category: "Twin Unit",
-    archetype: "The Mirror Pair",
-    age: "28–40",
-    genres: ["Drama", "Thriller", "Narrative Wildcard"],
-    hook: "The ultimate technical flex. Two identical faces, two completely different people.",
-    whyCast: "Unmatched for twin-narrative storytelling. Same face, opposite souls. Narrative wildcards for any genre.",
-    bestFor: ["twin narrative", "thriller", "drama", "identity stories"],
-    chemistry: ["Julian Vance", "Kofi Adebayo"],
-    badges: ["Premium Cast", "Twin Unit"],
-    unlocked: true,
-  },
-  {
-    id: "sato-twins",
-    name: "The Sato Twins",
-    tier: "premium",
-    category: "Twin Unit",
-    archetype: "The Precision Pair",
-    age: "25–38",
-    genres: ["Action", "Thriller", "Crime"],
-    hook: "Kenji Sato's identical twin. Same face, different operational role.",
-    whyCast: "Best for action and thriller twin narratives. Mirror Lock system prevents identity drift across scenes.",
-    bestFor: ["action", "thriller", "twin narrative", "crime"],
-    chemistry: ["Kenji Sato"],
-    badges: ["Premium Cast", "Twin Unit"],
-    unlocked: false,
+    archetype: "The Mirror Problem",
+    age: "25–35",
+    genres: ["Thriller", "Crime", "Dark Comedy"],
+    hook: "Two faces, one alibi. The most visually distinctive unit in the cast.",
+    whyCast: "Exceptional for identity-swap plots, twin dynamics, and scenes requiring visual doubling.",
+    bestFor: ["identity thriller", "dark comedy", "crime drama", "visual gimmick done right"],
+    chemistry: ["Elena Rostova", "Kenji Sato"],
+    badges: ["Premium Cast"],
   },
 ];
 
+// ─── Plan → tier access (mirrors server) ──────────────────────────────────
+const PLAN_CAST_ACCESS: Record<string, string[]> = {
+  none:        [],
+  indie:       ["standard"],
+  amateur:     ["standard", "premium"],
+  independent: ["standard", "premium", "flagship"],
+  creator:     ["standard", "premium", "flagship"],
+  studio:      ["standard", "premium", "flagship"],
+  industry:    ["standard", "premium", "flagship"],
+  beta:        ["standard"],
+};
+
 const CATEGORIES = ["All", "Male Lead", "Female Lead", "Character Actor", "Twin Unit"];
 const GENRES = ["All", "Crime Thriller", "Prestige Drama", "Romance", "Action", "Noir", "Dark Comedy", "Thriller"];
-const TIERS = ["All", "flagship", "premium", "standard"];
 
 function TierBadge({ tier }: { tier: string }) {
   if (tier === "flagship") {
@@ -281,6 +320,27 @@ function TierBadge({ tier }: { tier: string }) {
   );
 }
 
+type Actor = typeof SIGNATURE_CAST[0];
+type LicenseType = "creator" | "commercial" | "episodic";
+
+const LICENSE_OPTIONS: { type: LicenseType; label: string; description: string }[] = [
+  {
+    type: "creator",
+    label: "Use in one creator / public project",
+    description: "Personal work, indie film, YouTube, festival submission, or public creator release.",
+  },
+  {
+    type: "commercial",
+    label: "Use in commercial / client work",
+    description: "Ads, branded content, client campaigns, or any monetized commercial project.",
+  },
+  {
+    type: "episodic",
+    label: "Use across a series",
+    description: "Recurring use across multiple episodes or installments of the same series.",
+  },
+];
+
 export default function TalentSearch() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
@@ -288,9 +348,20 @@ export default function TalentSearch() {
   const [category, setCategory] = useState("All");
   const [genre, setGenre] = useState("All");
   const [tierFilter, setTierFilter] = useState("All");
-  const [selectedActor, setSelectedActor] = useState<typeof SIGNATURE_CAST[0] | null>(null);
+  const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
   const [shortlist, setShortlist] = useState<string[]>([]);
-  const [castConfirmActor, setCastConfirmActor] = useState<typeof SIGNATURE_CAST[0] | null>(null);
+  const [unlockActor, setUnlockActor] = useState<Actor | null>(null);
+  const [selectedLicense, setSelectedLicense] = useState<LicenseType>("creator");
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const userTier = (user as any)?.subscriptionTier ?? "none";
+  const planAccess: string[] = PLAN_CAST_ACCESS[userTier] ?? [];
+
+  const getEntitlementState = (actor: Actor): "plan_included" | "unlocked" | "locked" => {
+    if (planAccess.includes(actor.tier)) return "plan_included";
+    // In production this would check real entitlements from the server
+    return "locked";
+  };
 
   const filtered = SIGNATURE_CAST.filter((actor) => {
     const matchSearch =
@@ -311,7 +382,28 @@ export default function TalentSearch() {
     );
   };
 
-  const isPremiumUser = user && (user as any).subscriptionTier && (user as any).subscriptionTier !== "free";
+  const handleCastNow = (actor: Actor) => {
+    const state = getEntitlementState(actor);
+    if (state === "locked") {
+      setUnlockActor(actor);
+      setSelectedLicense("creator");
+    } else {
+      navigate("/projects/new");
+    }
+  };
+
+  const handleUnlockCheckout = async () => {
+    if (!unlockActor) return;
+    if (!user) { navigate("/login"); return; }
+    setIsCheckingOut(true);
+    try {
+      // In production: call trpc.signatureCast.createUnlockCheckout.mutate(...)
+      // For now, redirect to pricing to upgrade plan
+      navigate("/pricing");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -349,6 +441,29 @@ export default function TalentSearch() {
               </Button>
             </div>
           </div>
+
+          {/* Plan access indicator */}
+          {user && (
+            <div className="mb-3 flex items-center gap-2 text-xs">
+              {planAccess.length > 0 ? (
+                <span className="flex items-center gap-1.5 text-green-400">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Your plan includes{" "}
+                  {planAccess.includes("flagship")
+                    ? "all Signature Cast tiers"
+                    : planAccess.includes("premium")
+                    ? "Standard and Premium cast"
+                    : "Standard cast"}
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5 text-zinc-500">
+                  <Lock className="w-3.5 h-3.5" />
+                  Upgrade your plan to include cast access, or unlock actors individually from $15
+                </span>
+              )}
+            </div>
+          )}
+
           {/* FILTERS */}
           <div className="flex flex-wrap gap-3">
             <div className="relative flex-1 min-w-[200px]">
@@ -366,9 +481,7 @@ export default function TalentSearch() {
               </SelectTrigger>
               <SelectContent className="bg-zinc-900 border-white/10">
                 {CATEGORIES.map((c) => (
-                  <SelectItem key={c} value={c} className="text-zinc-300 focus:bg-white/10">
-                    {c}
-                  </SelectItem>
+                  <SelectItem key={c} value={c} className="text-zinc-300 focus:bg-white/10">{c}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -378,9 +491,7 @@ export default function TalentSearch() {
               </SelectTrigger>
               <SelectContent className="bg-zinc-900 border-white/10">
                 {GENRES.map((g) => (
-                  <SelectItem key={g} value={g} className="text-zinc-300 focus:bg-white/10">
-                    {g}
-                  </SelectItem>
+                  <SelectItem key={g} value={g} className="text-zinc-300 focus:bg-white/10">{g}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -410,109 +521,116 @@ export default function TalentSearch() {
             {filtered.length} actor{filtered.length !== 1 ? "s" : ""} found
           </p>
           {shortlist.length > 0 && (
-            <p className="text-sm text-amber-400">
-              {shortlist.length} in shortlist
-            </p>
+            <p className="text-sm text-amber-400">{shortlist.length} in shortlist</p>
           )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filtered.map((actor) => (
-            <Card
-              key={actor.id}
-              className="bg-zinc-900/50 border border-white/5 hover:border-white/15 transition-all cursor-pointer group"
-              onClick={() => setSelectedActor(actor)}
-            >
-              <CardContent className="p-0">
-                {/* Portrait */}
-                <div className="relative w-full aspect-[3/4] bg-white/5 rounded-t-lg overflow-hidden">
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-2">
-                      <Users className="w-8 h-8 text-white/20" />
+          {filtered.map((actor) => {
+            const state = getEntitlementState(actor);
+            const basePrice = BASE_PRICE[actor.tier] ?? 15;
+            return (
+              <Card
+                key={actor.id}
+                className="bg-zinc-900/50 border border-white/5 hover:border-white/15 transition-all cursor-pointer group"
+                onClick={() => setSelectedActor(actor)}
+              >
+                <CardContent className="p-0">
+                  {/* Portrait */}
+                  <div className="relative w-full aspect-[3/4] bg-white/5 rounded-t-lg overflow-hidden">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-2">
+                        <Users className="w-8 h-8 text-white/20" />
+                      </div>
+                      <p className="text-xs text-white/15">Portrait</p>
                     </div>
-                    <p className="text-xs text-white/15">Portrait</p>
-                  </div>
-                  {/* Badges overlay */}
-                  <div className="absolute top-3 left-3 right-3 flex flex-wrap gap-1.5">
-                    <TierBadge tier={actor.tier} />
-                    {actor.badges.includes("Featured in Next Door") && (
-                      <Badge className="bg-zinc-800/80 text-zinc-400 border border-zinc-700/50 text-xs">
-                        <Film className="w-3 h-3 mr-1" />
-                        Next Door
-                      </Badge>
-                    )}
-                  </div>
-                  {/* Shortlist button */}
-                  <button
-                    className={`absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                      shortlist.includes(actor.id)
-                        ? "bg-amber-500 text-black"
-                        : "bg-zinc-800/80 text-zinc-400 opacity-0 group-hover:opacity-100"
-                    }`}
-                    onClick={(e) => { e.stopPropagation(); toggleShortlist(actor.id); }}
-                  >
-                    <Heart className="w-4 h-4" fill={shortlist.includes(actor.id) ? "currentColor" : "none"} />
-                  </button>
-                  {/* Lock overlay for locked actors */}
-                  {!actor.unlocked && (
-                    <div className="absolute inset-0 bg-zinc-950/70 flex flex-col items-center justify-center">
-                      <Lock className="w-6 h-6 text-zinc-400 mb-2" />
-                      <p className="text-xs text-zinc-400">Unlock Premium</p>
+                    {/* Badges overlay */}
+                    <div className="absolute top-3 left-3 right-3 flex flex-wrap gap-1.5">
+                      <TierBadge tier={actor.tier} />
+                      {actor.badges.includes("Featured in Next Door") && (
+                        <Badge className="bg-zinc-800/80 text-zinc-400 border border-zinc-700/50 text-xs">
+                          <Film className="w-3 h-3 mr-1" />
+                          Next Door
+                        </Badge>
+                      )}
                     </div>
-                  )}
-                </div>
-                {/* Info */}
-                <div className="p-4 space-y-2">
-                  <div>
-                    <h3 className="font-semibold text-white text-sm">{actor.name}</h3>
-                    <p className="text-xs text-zinc-500">{actor.archetype}</p>
-                  </div>
-                  <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{actor.hook}</p>
-                  <div className="flex flex-wrap gap-1">
-                    {actor.genres.slice(0, 2).map((g) => (
-                      <span key={g} className="text-xs px-1.5 py-0.5 rounded-full bg-white/5 text-zinc-500 border border-white/5">
-                        {g}
-                      </span>
-                    ))}
-                  </div>
-                  {actor.chemistry.length > 0 && (
-                    <p className="text-xs text-zinc-600">
-                      Chemistry: <span className="text-zinc-500">{actor.chemistry[0]}</span>
-                      {actor.chemistry.length > 1 && <span className="text-zinc-600"> +{actor.chemistry.length - 1}</span>}
-                    </p>
-                  )}
-                  <div className="flex gap-2 pt-1">
-                    {actor.unlocked ? (
-                      <Button
-                        size="sm"
-                        className="flex-1 bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold h-7"
-                        onClick={(e) => { e.stopPropagation(); navigate("/projects/new"); }}
-                      >
-                        Cast Now
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        className="flex-1 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold h-7"
-                        onClick={(e) => { e.stopPropagation(); navigate("/pricing"); }}
-                      >
-                        <Lock className="w-3 h-3 mr-1" />
-                        Unlock
-                      </Button>
+                    {/* Entitlement state overlay */}
+                    {state === "plan_included" && (
+                      <div className="absolute bottom-3 left-3">
+                        <span className="flex items-center gap-1 text-xs bg-green-500/20 text-green-400 border border-green-500/30 rounded-full px-2 py-0.5">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Included
+                        </span>
+                      </div>
                     )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-white/10 text-zinc-400 hover:bg-white/5 text-xs h-7 px-2"
-                      onClick={(e) => { e.stopPropagation(); setSelectedActor(actor); }}
+                    {state === "locked" && (
+                      <div className="absolute bottom-3 left-3">
+                        <span className="flex items-center gap-1 text-xs bg-zinc-800/80 text-zinc-400 border border-zinc-700/50 rounded-full px-2 py-0.5">
+                          <Lock className="w-3 h-3" />
+                          from ${basePrice}
+                        </span>
+                      </div>
+                    )}
+                    {/* Shortlist button */}
+                    <button
+                      className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                        shortlist.includes(actor.id)
+                          ? "bg-amber-500 text-black"
+                          : "bg-zinc-800/80 text-zinc-400 opacity-0 group-hover:opacity-100"
+                      }`}
+                      onClick={(e) => { e.stopPropagation(); toggleShortlist(actor.id); }}
                     >
-                      <ChevronRight className="w-3 h-3" />
-                    </Button>
+                      <Heart className="w-3.5 h-3.5" fill={shortlist.includes(actor.id) ? "currentColor" : "none"} />
+                    </button>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+
+                  {/* Info */}
+                  <div className="p-4 space-y-2">
+                    <div>
+                      <h3 className="font-semibold text-white text-sm">{actor.name}</h3>
+                      <p className="text-xs text-zinc-500">{actor.archetype}</p>
+                    </div>
+                    <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{actor.hook}</p>
+                    <div className="flex flex-wrap gap-1">
+                      {actor.genres.slice(0, 2).map((g) => (
+                        <span key={g} className="text-xs px-1.5 py-0.5 rounded-full bg-white/5 text-zinc-500 border border-white/5">
+                          {g}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex gap-2 pt-1">
+                      {state === "plan_included" || state === "unlocked" ? (
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold h-7"
+                          onClick={(e) => { e.stopPropagation(); navigate("/projects/new"); }}
+                        >
+                          Cast Now
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold h-7 border border-white/10"
+                          onClick={(e) => { e.stopPropagation(); setUnlockActor(actor); setSelectedLicense("creator"); }}
+                        >
+                          <Lock className="w-3 h-3 mr-1" />
+                          Unlock Talent — ${basePrice}
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-white/10 text-zinc-400 hover:bg-white/5 text-xs h-7 px-2"
+                        onClick={(e) => { e.stopPropagation(); setSelectedActor(actor); }}
+                      >
+                        <ChevronRight className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {filtered.length === 0 && (
@@ -531,49 +649,131 @@ export default function TalentSearch() {
         )}
       </div>
 
-      {/* CAST CONFIRMATION DIALOG */}
-      {castConfirmActor && (
-        <Dialog open={!!castConfirmActor} onOpenChange={() => setCastConfirmActor(null)}>
-          <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-md">
+      {/* ─── UNLOCK MODAL ──────────────────────────────────────────────────── */}
+      {unlockActor && (
+        <Dialog open={!!unlockActor} onOpenChange={() => setUnlockActor(null)}>
+          <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-lg">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold">Cast {castConfirmActor.name}?</DialogTitle>
-              <DialogDescription className="text-zinc-400">
-                You are about to cast a Virelle Signature Star in your project.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 mt-2">
-              <div className="rounded-lg border border-white/5 bg-zinc-950/60 p-4 space-y-2">
-                <p className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">License Confirmation</p>
-                <ul className="text-xs text-zinc-400 space-y-1.5">
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" /> Permitted: films, trailers, series, campaigns, prestige digital content</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" /> Permitted: sensual, romantic, and mature dramatic scenes (prestige standard)</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" /> Prohibited: pornography, explicit sexual content, adult-industry use</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" /> Prohibited: graphic nudity for sexual display, fetish content, exploitation</li>
-                </ul>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <DialogTitle className="text-xl font-bold">Unlock Talent</DialogTitle>
+                  <DialogDescription className="text-zinc-400 mt-1">
+                    License <span className="text-white font-medium">{unlockActor.name}</span> for your project
+                  </DialogDescription>
+                </div>
+                <TierBadge tier={unlockActor.tier} />
               </div>
-              <p className="text-xs text-zinc-500">By casting, you confirm you have read and agree to the Virelle Signature Cast usage terms.</p>
+            </DialogHeader>
+
+            <div className="space-y-5 mt-2">
+              {/* Value props */}
+              <div className="rounded-lg bg-white/5 border border-white/5 p-4 space-y-1.5">
+                {[
+                  "Continuity-tuned premium digital talent",
+                  "Ready to cast directly into your Virelle project",
+                  "Faster than building a character from scratch",
+                  "Built for films, trailers, campaigns, and series",
+                ].map((prop) => (
+                  <div key={prop} className="flex items-start gap-2 text-xs text-zinc-400">
+                    <Zap className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
+                    {prop}
+                  </div>
+                ))}
+              </div>
+
+              {/* Plan inclusion notice */}
+              {planAccess.length > 0 && !planAccess.includes(unlockActor.tier) && (
+                <div className="rounded-lg bg-purple-500/10 border border-purple-500/20 p-3 flex items-start gap-2">
+                  <Info className="w-4 h-4 text-purple-400 mt-0.5 shrink-0" />
+                  <p className="text-xs text-purple-300">
+                    Your current plan includes Standard cast. Upgrade to access {unlockActor.tier === "flagship" ? "Flagship Stars" : "Premium Cast"} via plan inclusion, or license this actor individually below.
+                  </p>
+                </div>
+              )}
+
+              {/* License type picker */}
+              <div>
+                <p className="text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-3">Select License Type</p>
+                <div className="space-y-2">
+                  {LICENSE_OPTIONS.map((opt) => {
+                    const price = getPrice(unlockActor.tier, opt.type);
+                    const isSelected = selectedLicense === opt.type;
+                    return (
+                      <button
+                        key={opt.type}
+                        className={`w-full text-left rounded-lg border p-3 transition-all ${
+                          isSelected
+                            ? "border-amber-500/50 bg-amber-500/10"
+                            : "border-white/10 bg-white/5 hover:border-white/20"
+                        }`}
+                        onClick={() => setSelectedLicense(opt.type)}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`text-sm font-medium ${isSelected ? "text-amber-300" : "text-zinc-200"}`}>
+                            {opt.label}
+                          </span>
+                          <span className={`text-sm font-bold ${isSelected ? "text-amber-400" : "text-zinc-300"}`}>
+                            A${price}
+                          </span>
+                        </div>
+                        <p className="text-xs text-zinc-500">{opt.description}</p>
+                        {opt.type === "commercial" && (
+                          <p className="text-xs text-zinc-600 mt-1">Base A${BASE_PRICE[unlockActor.tier]} + A$79 commercial add-on</p>
+                        )}
+                        {opt.type === "episodic" && (
+                          <p className="text-xs text-zinc-600 mt-1">4× single-project price</p>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Usage terms */}
+              <div className="rounded-lg border border-white/5 bg-zinc-950/60 p-3 space-y-1.5">
+                <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Usage Terms</p>
+                <div className="flex items-start gap-2 text-xs text-zinc-500">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                  Films, trailers, series, campaigns, prestige digital content
+                </div>
+                <div className="flex items-start gap-2 text-xs text-zinc-500">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                  Sensual, romantic, and mature dramatic scenes (prestige standard)
+                </div>
+                <div className="flex items-start gap-2 text-xs text-zinc-500">
+                  <XCircle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />
+                  Pornography, explicit sex acts, adult-industry use — strictly prohibited
+                </div>
+              </div>
+
+              {/* CTA */}
               <div className="flex gap-3">
                 <Button
                   className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-semibold"
-                  onClick={() => { setCastConfirmActor(null); navigate("/projects/new"); }}
+                  onClick={handleUnlockCheckout}
+                  disabled={isCheckingOut}
                 >
-                  Confirm &amp; Cast
-                  <ArrowRight className="ml-2 w-4 h-4" />
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  {isCheckingOut ? "Processing..." : `License for Project — A$${getPrice(unlockActor.tier, selectedLicense)}`}
                 </Button>
                 <Button
                   variant="outline"
                   className="border-white/10 text-zinc-300 hover:bg-white/5"
-                  onClick={() => setCastConfirmActor(null)}
+                  onClick={() => setUnlockActor(null)}
                 >
                   Cancel
                 </Button>
               </div>
+
+              <p className="text-xs text-zinc-600 text-center">
+                Generation credits still apply after unlock. Actor access is project-bound for creator and commercial licenses.
+              </p>
             </div>
           </DialogContent>
         </Dialog>
       )}
 
-      {/* ACTOR PROFILE DIALOG */}
+      {/* ─── ACTOR PROFILE DIALOG ──────────────────────────────────────────── */}
       {selectedActor && (
         <Dialog open={!!selectedActor} onOpenChange={() => setSelectedActor(null)}>
           <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -628,18 +828,42 @@ export default function TalentSearch() {
                           <Users className="w-3 h-3 text-white/30" />
                         </div>
                         <span className="text-sm text-zinc-300">{name}</span>
-                        <Button
-                          size="sm"
-                          className="h-5 text-xs px-2 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border-0"
-                          onClick={() => { setSelectedActor(null); navigate("/projects/new"); }}
-                        >
-                          Cast Both
-                        </Button>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
+
+              {/* Pricing / entitlement block */}
+              <div className="rounded-xl border border-white/10 overflow-hidden">
+                <div className="bg-white/5 px-4 py-3 border-b border-white/5">
+                  <p className="text-sm font-semibold text-zinc-200">License This Actor</p>
+                </div>
+                <div className="p-4 space-y-3">
+                  {getEntitlementState(selectedActor) === "plan_included" ? (
+                    <div className="flex items-center gap-2 text-sm text-green-400">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Included in your current plan
+                    </div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-3 gap-2">
+                        {(["creator", "commercial", "episodic"] as LicenseType[]).map((lt) => (
+                          <div key={lt} className="rounded-lg bg-zinc-950/60 border border-white/5 p-3 text-center">
+                            <p className="text-xs text-zinc-500 mb-1">
+                              {lt === "creator" ? "Creator" : lt === "commercial" ? "Commercial" : "Series"}
+                            </p>
+                            <p className="text-lg font-bold text-white">A${getPrice(selectedActor.tier, lt)}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-xs text-zinc-600">
+                        Base: A${BASE_PRICE[selectedActor.tier]} · Commercial add-on: +A$79 · Episodic: 4× base
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
 
               {/* Badges */}
               <div className="flex flex-wrap gap-2">
@@ -650,34 +874,34 @@ export default function TalentSearch() {
                 ))}
               </div>
 
-              {/* USAGE TERMS NOTICE */}
+              {/* Usage terms */}
               <div className="rounded-lg border border-white/5 bg-zinc-950/60 p-4">
                 <p className="text-xs font-semibold text-zinc-400 mb-2 uppercase tracking-wider">Signature Cast — Usage Terms</p>
                 <p className="text-xs text-zinc-500 leading-relaxed">
                   Virelle Stars are licensed for professional cinematic use: films, trailers, series, campaigns, and prestige digital content.
                   Sensual, romantic, and mature dramatic scenes are permitted within a prestige-film standard.
-                  Pornographic content, explicit sexual acts, graphic nudity intended for sexual display, and adult-industry use are
-                  <span className="text-zinc-300 font-medium"> strictly prohibited</span> and will result in immediate content removal and account action.
+                  Pornographic content, explicit sexual acts, and adult-industry use are{" "}
+                  <span className="text-zinc-300 font-medium">strictly prohibited</span>.
                 </p>
               </div>
 
               {/* CTAs */}
               <div className="flex gap-3 pt-2">
-                {selectedActor.unlocked ? (
+                {getEntitlementState(selectedActor) === "plan_included" || getEntitlementState(selectedActor) === "unlocked" ? (
                   <Button
                     className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-semibold"
-                    onClick={() => { setCastConfirmActor(selectedActor); setSelectedActor(null); }}
+                    onClick={() => { setSelectedActor(null); navigate("/projects/new"); }}
                   >
                     Cast in Project
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 ) : (
                   <Button
-                    className="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-semibold"
-                    onClick={() => { setSelectedActor(null); navigate("/pricing"); }}
+                    className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold border border-white/10"
+                    onClick={() => { setUnlockActor(selectedActor); setSelectedActor(null); setSelectedLicense("creator"); }}
                   >
-                    <Lock className="mr-2 w-4 h-4" />
-                    Unlock Premium Cast
+                    <ShoppingCart className="mr-2 w-4 h-4" />
+                    Unlock Talent — from A${BASE_PRICE[selectedActor.tier]}
                   </Button>
                 )}
                 <Button
@@ -689,7 +913,7 @@ export default function TalentSearch() {
                     className="w-4 h-4"
                     fill={shortlist.includes(selectedActor.id) ? "currentColor" : "none"}
                   />
-                  {shortlist.includes(selectedActor.id) ? "Shortlisted" : "Add to Shortlist"}
+                  {shortlist.includes(selectedActor.id) ? "Shortlisted" : "Shortlist"}
                 </Button>
               </div>
             </div>
