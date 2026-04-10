@@ -180,7 +180,23 @@ export async function submitRunwayJob(
   console.log(`[VideoWorker] Submitting Runway job: "${params.prompt.substring(0, 100)}..."`);
 
   // Create the task — returns immediately with a task ID
-  const task = await client.imageToVideo.create(createParams);
+  // Use imageToVideo (gen4_turbo) only when an image is provided; otherwise use textToVideo (gen4.5)
+  let task: any;
+  if (params.imageUrl) {
+    task = await client.imageToVideo.create(createParams);
+  } else {
+    // Text-to-video: use gen4.5 model via textToVideo endpoint (no promptImage required)
+    const textParams: any = {
+      model: "gen4.5",
+      promptText: createParams.promptText,
+      ratio: createParams.ratio,
+      duration: createParams.duration,
+    };
+    if (createParams.seed !== undefined) textParams.seed = createParams.seed;
+    console.log(`[VideoWorker] Runway text-to-video (gen4.5) — no image provided`);
+    task = await (client as any).textToVideo.create(textParams);
+  }
+
   const taskId = (task as any).id;
 
   if (!taskId) {
