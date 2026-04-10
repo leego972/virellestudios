@@ -152,7 +152,7 @@ export async function submitRunwayJob(
     aspectRatio?: string;
   }
 ): Promise<string> {
-  const ratio = params.aspectRatio === "9:16" ? "720:1280" : params.aspectRatio === "1:1" ? "720:720" : "1280:720";
+  const ratio = params.aspectRatio === "9:16" ? "720:1280" : "1280:720";
   const duration = 10;
 
   const client = new RunwayML({ apiKey });
