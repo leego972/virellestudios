@@ -108,11 +108,11 @@ function getAvailableProviders(keys: UserApiKeys): VideoProvider[] {
 }
 
 export function selectProvider(keys: UserApiKeys): VideoProvider {
-  // If user explicitly set a preferred provider AND provided their own key for it, ALWAYS respect it
+  // If user explicitly set a preferred provider AND a key is available for it (own or platform), ALWAYS respect it
   if (keys.preferredProvider) {
     const pref = keys.preferredProvider as VideoProvider;
     if (pref === "pollinations") return "pollinations";
-    const hasOwnKey = (
+    const hasKey = (
       (pref === "runway" && keys.runwayKey) ||
       (pref === "openai" && keys.openaiKey) ||
       (pref === "replicate" && keys.replicateKey) ||
@@ -122,7 +122,7 @@ export function selectProvider(keys: UserApiKeys): VideoProvider {
       (pref === "seedance" && keys.byteplusKey) ||
       (pref === "veo3" && keys.googleAiKey)
     );
-    if (hasOwnKey) return pref;
+    if (hasKey) return pref;
   }
 
   // Default priority order when no preference is set: Veo3 → Runway → OpenAI → fal → SeedDance → Replicate → Luma → HuggingFace → Pollinations
