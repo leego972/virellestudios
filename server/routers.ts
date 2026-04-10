@@ -2113,13 +2113,18 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         // Pollinations is always available as a free fallback — no key required.
         // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
 
+        // Determine the active provider for this user
+        const { selectProvider } = await import("./_core/byokVideoEngine");
+        const bulkActiveProvider = selectProvider(bulkByokKeys);
+        const isFalProvider = bulkActiveProvider === "fal" && bulkByokKeys.falKey;
+
         let generated = 0;
-        const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
-        // Process 2 at a time to avoid API overload
-        const BATCH = 2;
-        for (let i = 0; i < scenesNeedingVideo.length; i += BATCH) {
-          const batch = scenesNeedingVideo.slice(i, i + BATCH);
-          await Promise.allSettled(batch.map(async (scene) => {
+
+        if (isFalProvider) {
+          // ─── FAL.AI BULK: Use persistent job queue for each scene ───
+          // Submit all fal.ai jobs immediately (non-blocking), store in generationJobs,
+          // and let videoJobWorker.ts poll for completion — survives Railway restarts.
+          for (const scene of scenesNeedingVideo) {
             try {
               const sceneIdx = scenes.findIndex(s => s.id === scene.id);
               const prompt = buildScenePrompt(
@@ -2132,32 +2137,109 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   characterNames: characters.map(c => c.name),
                 }
               );
+              const effectivePrompt = `Cinematic video: ${prompt}`;
+              const sceneRefImages = (scene as any).referenceImages as string[] || [];
+              const effectiveImageUrl: string | undefined = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
+              const sceneNegativePrompt: string = ((scene as any).negativePrompt as string | undefined) || getDefaultNegativePrompt(userTier as QualityTier);
+              const sceneSeed = (scene as any).seed as number | undefined;
+
               await db.updateScene(scene.id, { status: "generating" } as any);
-              const extResult = await generateExtendedScene(bulkByokKeys, {
-                sceneId: scene.id,
+
+              // Submit fal.ai job (returns fal-pending sentinel immediately)
+              const { generateVideo: generateBYOKVideoFalBulk } = await import("./_core/byokVideoEngine");
+              const falResult = await generateBYOKVideoFalBulk(
+                { falKey: bulkByokKeys.falKey, preferredProvider: "fal" },
+                {
+                  prompt: effectivePrompt,
+                  imageUrl: effectiveImageUrl,
+                  duration: Math.max(10, scene.duration || 45),
+                  aspectRatio: "16:9",
+                  resolution: "1080p",
+                  negativePrompt: sceneNegativePrompt,
+                  seed: sceneSeed,
+                }
+              );
+
+              // Extract request ID and model from sentinel: fal-pending|{requestId}|{model}
+              const sentinelParts = falResult.videoUrl.replace("fal-pending|", "").split("|");
+              const falRequestId = sentinelParts[0];
+              const falModel = sentinelParts.slice(1).join("|");
+
+              await db.createGenerationJob({
                 projectId: project.id,
-                description: `Cinematic video: ${prompt}`,
-                targetDurationSeconds: Math.max(10, scene.duration || 45),
-                mood: scene.mood || undefined,
-                lighting: scene.lighting || undefined,
-                timeOfDay: scene.timeOfDay || undefined,
-                genre: project.genre || undefined,
-                locationDescription: scene.locationType || undefined,
+                sceneId: scene.id,
+                type: "scene",
+                status: "processing",
+                progress: 0,
+                estimatedSeconds: 600,
+                metadata: {
+                  falRequestId,
+                  falModel,
+                  falApiKey: bulkByokKeys.falKey,
+                  sceneId: scene.id,
+                  projectId: project.id,
+                  userId: ctx.user.id,
+                  prompt: effectivePrompt,
+                  imageUrl: effectiveImageUrl,
+                },
               });
-              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
-              // Auto-set project thumbnail if project has none
-              if (extResult.thumbnailUrl && !project.thumbnailUrl) {
-                try {
-                  await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl });
-                  (project as any).thumbnailUrl = extResult.thumbnailUrl;
-                } catch (e) { /* ignore */ }
-              }
+
+              console.log(`[BulkVideo:fal] Request ${falRequestId} submitted for scene ${scene.id} — worker will poll for completion`);
               generated++;
-            } catch (e) {
-              console.error(`Bulk video gen failed for scene "${scene.title}":`, e);
+            } catch (e: any) {
+              console.error(`[BulkVideo:fal] Failed to submit job for scene "${scene.title}":`, e.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
             }
-          }));
+          }
+        } else {
+          // ─── OTHER PROVIDERS: Sequential batch processing ───
+          // Non-fal providers (Pollinations, Replicate, Luma, HuggingFace, SeedDance) complete
+          // synchronously within the request or use their own polling internally.
+          const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
+          // Process 2 at a time to avoid API overload
+          const BATCH = 2;
+          for (let i = 0; i < scenesNeedingVideo.length; i += BATCH) {
+            const batch = scenesNeedingVideo.slice(i, i + BATCH);
+            await Promise.allSettled(batch.map(async (scene) => {
+              try {
+                const sceneIdx = scenes.findIndex(s => s.id === scene.id);
+                const prompt = buildScenePrompt(
+                  { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
+                  visualDNA,
+                  {
+                    sceneIndex: sceneIdx >= 0 ? sceneIdx : 0,
+                    totalScenes: scenes.length,
+                    previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
+                    characterNames: characters.map(c => c.name),
+                  }
+                );
+                await db.updateScene(scene.id, { status: "generating" } as any);
+                const extResult = await generateExtendedScene(bulkByokKeys, {
+                  sceneId: scene.id,
+                  projectId: project.id,
+                  description: `Cinematic video: ${prompt}`,
+                  targetDurationSeconds: Math.max(10, scene.duration || 45),
+                  mood: scene.mood || undefined,
+                  lighting: scene.lighting || undefined,
+                  timeOfDay: scene.timeOfDay || undefined,
+                  genre: project.genre || undefined,
+                  locationDescription: scene.locationType || undefined,
+                });
+                await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+                // Auto-set project thumbnail if project has none
+                if (extResult.thumbnailUrl && !project.thumbnailUrl) {
+                  try {
+                    await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl });
+                    (project as any).thumbnailUrl = extResult.thumbnailUrl;
+                  } catch (e) { /* ignore */ }
+                }
+                generated++;
+              } catch (e) {
+                console.error(`Bulk video gen failed for scene "${scene.title}":`, e);
+                await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+              }
+            }));
+          }
         }
         return { generated, total: scenes.length };
       }),
