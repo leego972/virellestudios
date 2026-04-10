@@ -63,6 +63,9 @@ export const ENV = {
   // ─── Runway ML ─────────────────────────────────────────────────────────────
   runwayApiKey: process.env.RUNWAYML_API_SECRET || process.env.RUNWAY_API_KEY || "",
 
+  // ─── fal.ai (video generation — platform key used as fallback for admin users) ────
+  falApiKey: process.env.FAL_KEY ?? "",
+
   // ─── Pollinations (free video generation — available to all users via key pool) ─
   pollinationsApiKey: process.env.POLLINATIONS_API_KEY ?? "",
 
