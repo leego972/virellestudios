@@ -1981,10 +1981,65 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             console.error(`[SceneVideo] Failed to submit Runway job for scene ${scene.id}:`, err.message);
             await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
           }
+        } else if (activeProvider === "fal" && byokKeys.falKey) {
+          // ─── FAL.AI: Persistent job queue approach ───
+          // Submit the fal.ai HunyuanVideo job immediately (non-blocking), store request ID in DB,
+          // and let videoJobWorker.ts poll for completion — survives Railway restarts.
+          try {
+            const effectivePrompt = sceneAiPromptOverride || `Cinematic video: ${prompt}`;
+            const effectiveImageUrl: string | undefined = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
+
+            // Submit fal.ai job (now returns fal-pending sentinel immediately)
+            const { generateVideo: generateBYOKVideoFal } = await import("./_core/byokVideoEngine");
+            const falResult = await generateBYOKVideoFal(
+              { falKey: byokKeys.falKey, preferredProvider: "fal" },
+              {
+                prompt: effectivePrompt,
+                imageUrl: effectiveImageUrl,
+                duration: Math.max(10, scene.duration || 45),
+                aspectRatio: "16:9",
+                resolution: "1080p",
+                negativePrompt: sceneNegativePrompt,
+                seed: sceneSeed,
+              }
+            );
+
+            // Extract request ID and model from the sentinel URL: fal-pending|{requestId}|{model}
+            const sentinelParts = falResult.videoUrl.replace("fal-pending|", "").split("|");
+            const falRequestId = sentinelParts[0];
+            const falModel = sentinelParts.slice(1).join("|"); // rejoin in case model contains pipes
+
+            const falJobMeta = {
+              falRequestId,
+              falModel,
+              falApiKey: byokKeys.falKey,
+              sceneId: scene.id,
+              projectId: project.id,
+              userId: ctx.user.id,
+              prompt: effectivePrompt,
+              imageUrl: effectiveImageUrl,
+            };
+
+            await db.createGenerationJob({
+              projectId: project.id,
+              sceneId: scene.id,
+              type: "scene",
+              status: "processing",
+              progress: 0,
+              estimatedSeconds: 600,
+              metadata: falJobMeta,
+            });
+
+            console.log(`[SceneVideo] fal.ai request ${falRequestId} submitted for scene ${scene.id} — worker will poll for completion`);
+          } catch (err: any) {
+            console.error(`[SceneVideo] Failed to submit fal.ai job for scene ${scene.id}:`, err.message);
+            await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+          }
         } else {
           // ─── OTHER PROVIDERS: Fire-and-forget background task ───
-          // Non-Runway providers (Pollinations, fal, Replicate, Luma) are fast enough
-          // that Railway restarts are unlikely to interrupt them.
+          // Non-fal providers (Pollinations, Replicate, Luma, HuggingFace, SeedDance) are handled
+          // via background async tasks. These providers complete synchronously within the request
+          // or use their own polling internally.
           (async () => {
             try {
               console.log(`[SceneVideo] Background generation started for scene ${scene.id} (provider: ${activeProvider})`);

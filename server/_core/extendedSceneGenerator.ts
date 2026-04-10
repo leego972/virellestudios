@@ -606,7 +606,7 @@ export async function generateExtendedScene(
         ),
       ]);
 
-      // Resolve async sentinel URLs (Runway and Veo 3 return pending sentinels that need polling)
+      // Resolve async sentinel URLs (Runway, Veo 3, and fal.ai return pending sentinels that need polling)
       let resolvedVideoUrl = videoResult.videoUrl;
       if (resolvedVideoUrl.startsWith("runway-pending:")) {
         const taskId = resolvedVideoUrl.replace("runway-pending:", "");
@@ -622,6 +622,28 @@ export async function generateExtendedScene(
           pollVeo3Sentinel(keys.googleAiKey!, operationName),
           new Promise<never>((_, reject) =>
             setTimeout(() => reject(new Error(`Veo3 sentinel poll for ${operationName} timed out after 22 minutes`)), 22 * 60 * 1000)
+          ),
+        ]);
+      } else if (resolvedVideoUrl.startsWith("fal-pending|")) {
+        // fal-pending|{requestId}|{model}
+        const parts = resolvedVideoUrl.replace("fal-pending|", "").split("|");
+        const falRequestId = parts[0];
+        const falModel = parts.slice(1).join("|");
+        resolvedVideoUrl = await Promise.race([
+          (async () => {
+            const { pollFalRequest } = await import("./byokVideoEngine");
+            const MAX_WAIT_MS = 20 * 60 * 1000;
+            const startTime = Date.now();
+            while (Date.now() - startTime < MAX_WAIT_MS) {
+              await new Promise(r => setTimeout(r, 8000));
+              const result = await pollFalRequest(keys.falKey!, falRequestId, falModel);
+              if (result.status === "succeeded" && result.videoUrl) return result.videoUrl;
+              if (result.status === "failed") throw new Error(`fal.ai sub-clip failed: ${result.error}`);
+            }
+            throw new Error(`fal.ai sub-clip timed out after 20 minutes`);
+          })(),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error(`fal.ai sentinel poll for ${falRequestId} timed out after 22 minutes`)), 22 * 60 * 1000)
           ),
         ]);
       }

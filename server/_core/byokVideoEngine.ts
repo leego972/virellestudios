@@ -360,6 +360,7 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
       "Content-Type": "application/json",
     },
     body: JSON.stringify(input),
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!submitResp.ok) {
@@ -370,20 +371,32 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
   const submitData = await submitResp.json() as any;
   const requestId = submitData.request_id;
   if (!requestId) throw new Error(`fal.ai: no request_id in response: ${JSON.stringify(submitData)}`);
-  console.log(`[BYOK:fal] Request submitted: ${requestId}`);
+  console.log(`[BYOK:fal] Request submitted: ${requestId} — returning sentinel for worker polling`);
 
-  const maxWait = 600000;
-  const startTime = Date.now();
-  while (Date.now() - startTime < maxWait) {
-    await new Promise(r => setTimeout(r, 8000));
+  // Return a sentinel URL immediately — the videoJobWorker will poll for completion.
+  // This is non-blocking and survives Railway restarts, matching the Runway/Veo3 pattern.
+  // Format: fal-pending|{requestId}|{model} (pipe separator avoids conflicts with model name slashes/colons)
+  return { provider: "fal", videoUrl: `fal-pending|${requestId}|${model}`, jobId: requestId, durationSeconds: actualDuration };
+}
 
+/**
+ * Poll a fal.ai request until it completes and return the video URL.
+ * Used by the videoJobWorker to resolve fal-pending sentinels.
+ */
+export async function pollFalRequest(key: string, requestId: string, model: string): Promise<{
+  status: "running" | "succeeded" | "failed";
+  videoUrl?: string;
+  error?: string;
+}> {
+  try {
     const statusResp = await fetch(`https://queue.fal.run/${model}/requests/${requestId}/status`, {
       headers: { "Authorization": `Key ${key}` },
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!statusResp.ok) {
-      console.log(`[BYOK:fal] Status check failed (${statusResp.status}), retrying...`);
-      continue;
+      console.log(`[BYOK:fal] Status check failed (${statusResp.status}), treating as running`);
+      return { status: "running" };
     }
 
     const statusData = await statusResp.json() as any;
@@ -391,7 +404,11 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
     if (statusData.status === "COMPLETED") {
       const resultResp = await fetch(`https://queue.fal.run/${model}/requests/${requestId}`, {
         headers: { "Authorization": `Key ${key}` },
+        signal: AbortSignal.timeout(30000),
       });
+      if (!resultResp.ok) {
+        return { status: "failed", error: `fal.ai result fetch failed: ${resultResp.status}` };
+      }
       const resultData = await resultResp.json() as any;
       // Try multiple possible video URL locations in response
       const videoUrl =
@@ -399,15 +416,22 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
         resultData.output?.url ||
         resultData.output?.video?.url ||
         (Array.isArray(resultData.output) ? resultData.output[0] : null);
-      if (!videoUrl) throw new Error(`fal.ai completed but no video URL found in: ${JSON.stringify(resultData)}`);
-      return { provider: "fal", videoUrl, jobId: requestId, durationSeconds: actualDuration };
+      if (!videoUrl) {
+        return { status: "failed", error: `fal.ai completed but no video URL found in: ${JSON.stringify(resultData).substring(0, 300)}` };
+      }
+      return { status: "succeeded", videoUrl };
     }
+
     if (statusData.status === "FAILED") {
-      throw new Error(`fal.ai failed: ${statusData.error || statusData.detail || "Unknown"}`);
+      return { status: "failed", error: `fal.ai failed: ${statusData.error || statusData.detail || "Unknown"}` };
     }
-    console.log(`[BYOK:fal] Request ${requestId} status: ${statusData.status} (${Math.round((Date.now() - startTime) / 1000)}s elapsed)`);
+
+    // IN_QUEUE, IN_PROGRESS, etc. — still running
+    return { status: "running" };
+  } catch (err: any) {
+    console.warn(`[BYOK:fal] Poll error (treating as running):`, err.message);
+    return { status: "running" };
   }
-  throw new Error("fal.ai request timed out after 10 minutes");
 }
 
 // ─── Luma AI ───

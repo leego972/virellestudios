@@ -57,6 +57,19 @@ export interface Veo3JobMetadata {
   imageUrl?: string;
 }
 
+// ─── fal.ai Job Metadata ───
+
+export interface FalJobMetadata {
+  falRequestId: string;
+  falModel: string;
+  falApiKey: string;
+  sceneId: number;
+  projectId: number;
+  userId: number;
+  prompt: string;
+  imageUrl?: string;
+}
+
 // ─── Poll a single Veo 3 operation ───
 
 async function pollVeo3Operation(apiKey: string, operationName: string): Promise<{
@@ -347,6 +360,70 @@ async function runWorkerCycle() {
             });
           } catch { /* ignore */ }
           console.log(`[VideoWorker:Veo3] Scene ${meta.sceneId} completed: ${veo3FinalUrl}`);
+          continue;
+        }
+
+        // ─── fal.ai Job ───
+        if (meta?.falRequestId) {
+          if (!meta.falApiKey || !meta.falModel) {
+            console.warn(`[VideoWorker:fal] Job ${job.id} missing fal.ai API key or model — marking failed`);
+            await db.updateJob(job.id, { status: "failed", errorMessage: "Missing fal.ai API key or model" });
+            await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            continue;
+          }
+          const { pollFalRequest } = await import("./byokVideoEngine");
+          const falResult = await pollFalRequest(meta.falApiKey, meta.falRequestId, meta.falModel);
+          if (falResult.status === "running") {
+            const createdAt = new Date(job.createdAt).getTime();
+            const ageMs = Date.now() - createdAt;
+            if (ageMs > 20 * 60 * 1000) {
+              console.warn(`[VideoWorker:fal] Job ${job.id} timed out after ${Math.round(ageMs / 60000)}min`);
+              await db.updateJob(job.id, { status: "failed", errorMessage: "fal.ai request timed out after 20 minutes" });
+              await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            }
+            continue;
+          }
+          if (falResult.status === "failed") {
+            console.error(`[VideoWorker:fal] Request ${meta.falRequestId} failed: ${falResult.error}`);
+            await db.updateJob(job.id, { status: "failed", errorMessage: falResult.error });
+            await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            continue;
+          }
+          // Succeeded! Download and store the video
+          console.log(`[VideoWorker:fal] Request ${meta.falRequestId} succeeded! Processing video...`);
+          let falFinalUrl = falResult.videoUrl!;
+          try {
+            const falResp = await fetch(falFinalUrl, { signal: AbortSignal.timeout(120000) });
+            if (falResp.ok) {
+              const buffer = Buffer.from(await falResp.arrayBuffer());
+              const s3Key = `scenes/${meta.projectId}/scene-${meta.sceneId}-fal-${Date.now()}.mp4`;
+              try {
+                const result = await storagePut(s3Key, buffer, "video/mp4");
+                falFinalUrl = result.url;
+              } catch (storageErr: any) {
+                console.warn(`[VideoWorker:fal] Storage unavailable (${storageErr.message}), using raw fal CDN URL`);
+              }
+            }
+          } catch (dlErr: any) {
+            console.warn(`[VideoWorker:fal] Video download failed (${dlErr.message}), using raw CDN URL`);
+          }
+          const falThumbnail = await extractLastFrame(falFinalUrl, meta.projectId, meta.sceneId);
+          await db.updateScene(meta.sceneId, {
+            videoUrl: falFinalUrl,
+            status: "completed",
+            ...(falThumbnail ? { thumbnailUrl: falThumbnail } : {}),
+          } as any);
+          await db.updateJob(job.id, { status: "completed", resultUrl: falFinalUrl, progress: 100 });
+          try {
+            await db.createNotification({
+              userId: meta.userId,
+              type: "generation_complete",
+              title: "fal.ai video ready!",
+              message: `Your scene video is ready.`,
+              link: `/projects/${meta.projectId}/scenes`,
+            });
+          } catch { /* ignore */ }
+          console.log(`[VideoWorker:fal] Scene ${meta.sceneId} completed: ${falFinalUrl}`);
           continue;
         }
 
