@@ -313,7 +313,11 @@ async function runWorkerCycle() {
 
     for (const job of jobs) {
       try {
-        const meta = job.metadata as any;
+        // Parse metadata: raw SQL returns JSON columns as strings; Drizzle ORM returns objects.
+        // Normalise to always work with a parsed object so property access works correctly.
+        const meta: any = typeof job.metadata === "string"
+          ? (() => { try { return JSON.parse(job.metadata); } catch { return {}; } })()
+          : (job.metadata ?? {});
 
         // ─── Veo 3 Job ───
         if (meta?.veo3OperationName) {
