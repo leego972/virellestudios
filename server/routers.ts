@@ -1816,6 +1816,20 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         // Pollinations is always available as a free fallback — no key required.
         // Users with paid API keys (Runway, OpenAI, etc.) will use those for higher quality.
 
+        // Cancel any existing processing jobs for this scene to prevent race conditions.
+        // Old jobs with stale API keys would otherwise keep failing and resetting the scene status.
+        try {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            const { sql } = await import("drizzle-orm");
+            await dbConn.execute(
+              sql.raw(`UPDATE generationJobs SET status = 'cancelled', errorMessage = 'Superseded by new generation request' WHERE sceneId = ${scene.id} AND status = 'processing'`)
+            );
+          }
+        } catch (cancelErr: any) {
+          console.warn(`[SceneVideo] Could not cancel old jobs for scene ${scene.id}: ${cancelErr.message}`);
+        }
+
         // Mark scene as generating immediately
         await db.updateScene(scene.id, { status: "generating" } as any);
 
