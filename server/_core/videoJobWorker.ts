@@ -388,14 +388,40 @@ async function runWorkerCycle() {
 
         // ─── fal.ai Job ───
         if (meta?.falRequestId) {
-          if (!meta.falApiKey || !meta.falModel) {
-            console.warn(`[VideoWorker:fal] Job ${job.id} missing fal.ai API key or model — marking failed`);
-            await db.updateJob(job.id, { status: "failed", errorMessage: "Missing fal.ai API key or model" });
+          if (!meta.falModel) {
+            console.warn(`[VideoWorker:fal] Job ${job.id} missing fal.ai model — marking failed`);
+            await db.updateJob(job.id, { status: "failed", errorMessage: "Missing fal.ai model" });
+            await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            continue;
+          }
+          // Always fetch the latest fal.ai API key from the user's DB settings.
+          // The key stored in job metadata may be stale if the user rotated their key.
+          let effectiveFalKey = meta.falApiKey;
+          try {
+            if (meta.userId) {
+              const currentUserKeys = await db.getUserApiKeys(meta.userId);
+              const freshFalKey = currentUserKeys.falKey;
+              if (freshFalKey && freshFalKey !== meta.falApiKey) {
+                console.log(`[VideoWorker:fal] Using refreshed fal.ai API key for job ${job.id} (user ${meta.userId})`);
+                effectiveFalKey = freshFalKey;
+              }
+            }
+          } catch (keyErr: any) {
+            console.warn(`[VideoWorker:fal] Could not refresh fal.ai key for job ${job.id}: ${keyErr.message}`);
+          }
+          // Platform-level fallback
+          if (!effectiveFalKey) {
+            const { ENV } = await import("../env");
+            effectiveFalKey = (ENV as any).falApiKey || meta.falApiKey;
+          }
+          if (!effectiveFalKey) {
+            console.warn(`[VideoWorker:fal] Job ${job.id} has no valid fal.ai API key — marking failed`);
+            await db.updateJob(job.id, { status: "failed", errorMessage: "No valid fal.ai API key available" });
             await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
             continue;
           }
           const { pollFalRequest } = await import("./byokVideoEngine");
-          const falResult = await pollFalRequest(meta.falApiKey, meta.falRequestId, meta.falModel);
+          const falResult = await pollFalRequest(effectiveFalKey, meta.falRequestId, meta.falModel);
           if (falResult.status === "running") {
             const createdAt = new Date(job.createdAt).getTime();
             const ageMs = Date.now() - createdAt;
