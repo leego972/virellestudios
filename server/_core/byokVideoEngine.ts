@@ -343,7 +343,8 @@ async function generateWithFal(key: string, req: VideoGenerationRequest): Promis
     num_frames: numFrames,
     num_inference_steps: 30,
     aspect_ratio: req.aspectRatio === "9:16" ? "9:16" : "16:9",
-    resolution: req.resolution === "1080p" ? "1080p" : "720p",
+    // HunyuanVideo only supports 480p, 580p, 720p — cap at 720p
+    resolution: "720p",
     enable_safety_checker: false,
   };
 
