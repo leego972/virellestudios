@@ -411,7 +411,7 @@ async function runWorkerCycle() {
           }
           // Platform-level fallback
           if (!effectiveFalKey) {
-            const { ENV } = await import("../env");
+            const { ENV } = await import("./env");
             effectiveFalKey = (ENV as any).falApiKey || meta.falApiKey;
           }
           if (!effectiveFalKey) {
@@ -502,7 +502,7 @@ async function runWorkerCycle() {
         }
         // Platform-level fallback
         if (!effectiveRunwayKey) {
-          const { ENV } = await import("../env");
+          const { ENV } = await import("./env");
           effectiveRunwayKey = ENV.runwayApiKey || meta.runwayApiKey;
         }
         if (!effectiveRunwayKey) {
