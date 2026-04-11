@@ -451,14 +451,42 @@ async function runWorkerCycle() {
         }
 
         // ─── Runway Job ───
-        if (!meta?.runwayTaskId || !meta?.runwayApiKey) {
-          console.warn(`[VideoWorker] Job ${job.id} missing Runway task ID or API key — marking failed`);
+        if (!meta?.runwayTaskId) {
+          console.warn(`[VideoWorker] Job ${job.id} missing Runway task ID — marking failed`);
           await db.updateJob(job.id, { status: "failed", errorMessage: "Missing Runway task ID" });
           await db.updateScene(meta?.sceneId, { status: "failed" } as any).catch(() => {});
           continue;
         }
 
-        const result = await pollRunwayTask(meta.runwayApiKey, meta.runwayTaskId);
+        // Always fetch the latest Runway API key from the user's DB settings.
+        // The key stored in job metadata may be stale if the user rotated their key.
+        // Fall back to: (1) current user DB key, (2) platform ENV key, (3) stored job key.
+        let effectiveRunwayKey = meta.runwayApiKey;
+        try {
+          if (meta.userId) {
+            const currentUserKeys = await db.getUserApiKeys(meta.userId);
+            const freshKey = currentUserKeys.runwayKey;
+            if (freshKey && freshKey !== meta.runwayApiKey) {
+              console.log(`[VideoWorker] Using refreshed Runway API key for job ${job.id} (user ${meta.userId})`);
+              effectiveRunwayKey = freshKey;
+            }
+          }
+        } catch (keyErr: any) {
+          console.warn(`[VideoWorker] Could not refresh Runway key for job ${job.id}: ${keyErr.message}`);
+        }
+        // Platform-level fallback
+        if (!effectiveRunwayKey) {
+          const { ENV } = await import("../env");
+          effectiveRunwayKey = ENV.runwayApiKey || meta.runwayApiKey;
+        }
+        if (!effectiveRunwayKey) {
+          console.warn(`[VideoWorker] Job ${job.id} has no valid Runway API key — marking failed`);
+          await db.updateJob(job.id, { status: "failed", errorMessage: "No valid Runway API key available" });
+          await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+          continue;
+        }
+
+        const result = await pollRunwayTask(effectiveRunwayKey, meta.runwayTaskId);
 
         if (result.status === "running") {
           // Still running — check if it's been more than 15 minutes (timeout)
