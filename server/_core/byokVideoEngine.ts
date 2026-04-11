@@ -395,6 +395,11 @@ export async function pollFalRequest(key: string, requestId: string, model: stri
     });
 
     if (!statusResp.ok) {
+      // 404 = request not found (wrong key or expired) — treat as failed, not running
+      if (statusResp.status === 404 || statusResp.status === 401 || statusResp.status === 403) {
+        console.warn(`[BYOK:fal] Status check returned ${statusResp.status} for request ${requestId} — marking as failed (not found/unauthorized)`);
+        return { status: "failed", error: `fal.ai request not found or unauthorized (HTTP ${statusResp.status})` };
+      }
       console.log(`[BYOK:fal] Status check failed (${statusResp.status}), treating as running`);
       return { status: "running" };
     }
