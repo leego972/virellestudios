@@ -307,6 +307,134 @@ async function processCompletedVideo(
   return url;
 }
 
+// ─── Cascading Fallback Resubmit ───
+
+/**
+ * When an async job (Runway, Veo3, fal.ai) fails after submission,
+ * re-submit the original request through the next available provider
+ * in the cascade chain instead of hard-failing the scene.
+ *
+ * Provider cascade order: runway → fal → seedance → replicate → luma → huggingface → pollinations
+ */
+async function resubmitWithFallback(
+  failedProvider: string,
+  meta: any,
+  jobId: number
+): Promise<boolean> {
+  try {
+    const userKeys = await db.getUserApiKeys(meta.userId).catch(() => ({} as any));
+
+    // Build the full cascade list (same order as byokVideoEngine)
+    const ALL_PROVIDERS = ["runway", "fal", "seedance", "replicate", "luma", "huggingface", "pollinations"];
+
+    // Find the next provider after the one that just failed
+    const failedIdx = ALL_PROVIDERS.indexOf(failedProvider);
+    const remaining = failedIdx >= 0 ? ALL_PROVIDERS.slice(failedIdx + 1) : ALL_PROVIDERS;
+
+    // Filter to providers that have a key available
+    const keyMap: Record<string, string | null> = {
+      runway: userKeys.runwayKey || null,
+      fal: userKeys.falKey || null,
+      seedance: userKeys.byteplusKey || null,
+      replicate: userKeys.replicateKey || null,
+      luma: userKeys.lumaKey || null,
+      huggingface: userKeys.hfToken || "free",
+      pollinations: "free",
+    };
+
+    const { generateVideo } = await import("./byokVideoEngine");
+
+    for (const nextProvider of remaining) {
+      const key = keyMap[nextProvider];
+      if (!key) continue;
+
+      console.log(`[VideoWorker:Fallback] Scene ${meta.sceneId}: ${failedProvider} failed — trying ${nextProvider}`);
+
+      try {
+        // Build a minimal UserApiKeys object that only exposes the next provider
+        // so generateVideo() selects it as preferred
+        const singleKeyMap: any = {
+          preferredProvider: nextProvider,
+          runwayKey: nextProvider === "runway" ? key : null,
+          falKey: nextProvider === "fal" ? key : null,
+          byteplusKey: nextProvider === "seedance" ? key : null,
+          replicateKey: nextProvider === "replicate" ? key : null,
+          lumaKey: nextProvider === "luma" ? key : null,
+          hfToken: nextProvider === "huggingface" ? key : null,
+          // Always include all user keys so the full cascade still works from this point
+          ...userKeys,
+          preferredProvider: nextProvider,
+        };
+
+        const req = {
+          prompt: meta.prompt || meta.aiPromptOverride || "cinematic scene",
+          imageUrl: meta.imageUrl || undefined,
+          duration: meta.duration || 10,
+          aspectRatio: meta.ratio === "720:1280" ? "9:16" : "16:9",
+          seed: meta.seed || undefined,
+        };
+
+        const result = await generateVideo(singleKeyMap, req);
+
+        // Update the job metadata with the new provider result
+        const newMeta = { ...meta, fallbackProvider: nextProvider, fallbackFrom: failedProvider };
+
+        if (result.videoUrl.startsWith("runway-pending:") || result.videoUrl.startsWith("veo3-pending:") || result.videoUrl.startsWith("fal-pending:")) {
+          // Async job — update job metadata so worker picks it up on next cycle
+          const newJobMeta: any = { ...newMeta };
+          if (result.videoUrl.startsWith("runway-pending:")) {
+            newJobMeta.runwayTaskId = result.videoUrl.replace("runway-pending:", "");
+            newJobMeta.runwayApiKey = key;
+            delete newJobMeta.veo3OperationName;
+            delete newJobMeta.falRequestId;
+          } else if (result.videoUrl.startsWith("veo3-pending:")) {
+            newJobMeta.veo3OperationName = result.videoUrl.replace("veo3-pending:", "");
+            newJobMeta.veo3ApiKey = key;
+            delete newJobMeta.runwayTaskId;
+            delete newJobMeta.falRequestId;
+          } else if (result.videoUrl.startsWith("fal-pending:")) {
+            const [requestId, model] = result.videoUrl.replace("fal-pending:", "").split(":");
+            newJobMeta.falRequestId = requestId;
+            newJobMeta.falModel = model;
+            newJobMeta.falApiKey = key;
+            delete newJobMeta.runwayTaskId;
+            delete newJobMeta.veo3OperationName;
+          }
+          // Reset job to processing with new metadata
+          const dbConn = await getDb();
+          if (dbConn) {
+            const metaJson = JSON.stringify(newJobMeta).replace(/'/g, "\\'");
+            await dbConn.execute(sql.raw(`UPDATE generationJobs SET status = 'processing', metadata = '${metaJson}', errorMessage = NULL WHERE id = ${jobId}`));
+            await db.updateScene(meta.sceneId, { status: "generating" } as any).catch(() => {});
+          }
+          console.log(`[VideoWorker:Fallback] Scene ${meta.sceneId}: re-submitted async job via ${nextProvider}`);
+          return true;
+        } else {
+          // Synchronous result — update scene directly
+          const thumbnailUrl = await extractLastFrame(result.videoUrl, meta.projectId, meta.sceneId);
+          await db.updateScene(meta.sceneId, {
+            videoUrl: result.videoUrl,
+            status: "completed",
+            ...(thumbnailUrl ? { thumbnailUrl } : {}),
+          } as any);
+          await db.updateJob(jobId, { status: "completed", resultUrl: result.videoUrl, progress: 100 });
+          console.log(`[VideoWorker:Fallback] Scene ${meta.sceneId}: completed via ${nextProvider} (sync)`);
+          return true;
+        }
+      } catch (err: any) {
+        console.warn(`[VideoWorker:Fallback] ${nextProvider} also failed for scene ${meta.sceneId}: ${err.message}`);
+        // Continue to next provider
+      }
+    }
+
+    console.error(`[VideoWorker:Fallback] Scene ${meta.sceneId}: all fallback providers exhausted`);
+    return false;
+  } catch (err: any) {
+    console.error(`[VideoWorker:Fallback] Unexpected error for scene ${meta?.sceneId}: ${err.message}`);
+    return false;
+  }
+}
+
 // ─── Main Worker Loop ───
 
 let workerRunning = false;
@@ -359,8 +487,12 @@ async function runWorkerCycle() {
           }
           if (veo3Result.status === "failed") {
             console.error(`[VideoWorker:Veo3] Operation ${meta.veo3OperationName} failed: ${veo3Result.error}`);
-            await db.updateJob(job.id, { status: "failed", errorMessage: veo3Result.error });
-            await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            // Attempt cascade to next provider before marking failed
+            const resubmitted = await resubmitWithFallback("veo3", meta, job.id);
+            if (!resubmitted) {
+              await db.updateJob(job.id, { status: "failed", errorMessage: veo3Result.error });
+              await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            }
             continue;
           }
           // Succeeded!
@@ -434,8 +566,12 @@ async function runWorkerCycle() {
           }
           if (falResult.status === "failed") {
             console.error(`[VideoWorker:fal] Request ${meta.falRequestId} failed: ${falResult.error}`);
-            await db.updateJob(job.id, { status: "failed", errorMessage: falResult.error });
-            await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            // Attempt cascade to next provider before marking failed
+            const resubmitted = await resubmitWithFallback("fal", meta, job.id);
+            if (!resubmitted) {
+              await db.updateJob(job.id, { status: "failed", errorMessage: falResult.error });
+              await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+            }
             continue;
           }
           // Succeeded! Download and store the video
@@ -529,8 +665,12 @@ async function runWorkerCycle() {
 
         if (result.status === "failed") {
           console.error(`[VideoWorker] Runway task ${meta.runwayTaskId} failed: ${result.error}`);
-          await db.updateJob(job.id, { status: "failed", errorMessage: result.error });
-          await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+          // Attempt cascade to next provider before marking failed
+          const resubmitted = await resubmitWithFallback("runway", meta, job.id);
+          if (!resubmitted) {
+            await db.updateJob(job.id, { status: "failed", errorMessage: result.error });
+            await db.updateScene(meta.sceneId, { status: "failed" } as any).catch(() => {});
+          }
           continue;
         }
 
