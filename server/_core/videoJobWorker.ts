@@ -157,9 +157,12 @@ export async function submitRunwayJob(
 
   const client = new RunwayML({ apiKey });
 
+  // Runway API enforces a 1000-character limit on promptText — truncate to avoid 400 errors
+  const truncatedPrompt = params.prompt.length > 1000 ? params.prompt.substring(0, 997) + "..." : params.prompt;
+
   const createParams: any = {
     model: "gen4_turbo",
-    promptText: params.prompt,
+    promptText: truncatedPrompt,
     ratio: ratio as any,
     duration,
   };
