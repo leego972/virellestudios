@@ -1839,163 +1839,69 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const activeProvider = selectProvider(byokKeys);
 
         if (activeProvider === "veo3" && byokKeys.googleAiKey) {
-          // ─── VEO 3: Persistent job queue approach ───
-          // Submit the Veo 3 operation immediately (non-blocking), store operation name in DB,
-          // and let videoJobWorker.ts poll for completion — survives Railway restarts.
-          try {
-            const effectivePrompt = sceneAiPromptOverride || `Cinematic video: ${prompt}`;
-            const effectiveImageUrl = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
-            const { generateWithVeo3 } = await import("./_core/byokVideoEngine");
-            const veo3Result = await generateWithVeo3(byokKeys.googleAiKey, {
-              prompt: effectivePrompt,
-              imageUrl: effectiveImageUrl,
-              aspectRatio: "16:9",
-            });
-            // Extract the operation name from the sentinel URL
-            const operationName = veo3Result.jobId!;
-            const jobMeta = {
-              veo3OperationName: operationName,
-              veo3ApiKey: byokKeys.googleAiKey,
-              sceneId: scene.id,
-              projectId: project.id,
-              userId: ctx.user.id,
-              prompt: effectivePrompt,
-              imageUrl: effectiveImageUrl,
-            };
-            await db.createGenerationJob({
-              projectId: project.id,
-              sceneId: scene.id,
-              type: "scene",
-              status: "processing",
-              progress: 0,
-              estimatedSeconds: 600,
-              metadata: jobMeta,
-            });
-            console.log(`[SceneVideo] Veo 3 operation ${operationName} submitted for scene ${scene.id} — worker will poll for completion`);
-          } catch (err: any) {
-            console.error(`[SceneVideo] Failed to submit Veo 3 job for scene ${scene.id}:`, err.message);
-            await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
-          }
-          } else if (activeProvider === "runway" && byokKeys.runwayKey) {
-          // ─── RUNWAY: Persistent job queue approach ───
-          // Submit the Runway task immediately (non-blocking), store task ID in DB,
-          // and let videoJobWorker.ts poll for completion — survives Railway restarts.
-          try {
-            const effectivePrompt = sceneAiPromptOverride ||
-              `Cinematic video: ${prompt}`;
-
-            // Runway Gen-4 Turbo requires a reference image (image-to-video).
-            // If no reference image is set, auto-generate a photorealistic keyframe
-            // using the user's Google AI key (Gemini Imagen 3) or HuggingFace FLUX as fallback.
-            let effectiveImageUrl: string | undefined = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
-            if (!effectiveImageUrl) {
-              try {
-                const keyframePromptText = `${effectivePrompt}, photorealistic, cinematic still frame, 8K, ARRI ALEXA, film grain, professional lighting`.substring(0, 2000);
-                // Try user's Google AI key (Gemini Imagen 3) first
-                const googleKey = byokKeys.googleAiKey || ENV.googleApiKey;
-                if (googleKey) {
-                  try {
-                    const imgResp = await fetch(
-                      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${googleKey}`,
-                      {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          instances: [{ prompt: keyframePromptText }],
-                          parameters: { sampleCount: 1, aspectRatio: "16:9", safetyFilterLevel: "block_some", personGeneration: "allow_adult" },
-                        }),
-                        signal: AbortSignal.timeout(30000),
-                      }
-                    );
-                    if (imgResp.ok) {
-                      const imgData = await imgResp.json() as { predictions?: Array<{ bytesBase64Encoded: string; mimeType: string }> };
-                      if (imgData.predictions?.[0]?.bytesBase64Encoded) {
-                        const buf = Buffer.from(imgData.predictions[0].bytesBase64Encoded, "base64");
-                        const mime = imgData.predictions[0].mimeType || "image/png";
-                        const ext = mime.split("/")[1] || "png";
-                        const stored = await storagePut(`keyframes/${scene.id}_${Date.now()}.${ext}`, buf, mime);
-                        effectiveImageUrl = stored.url;
-                        console.log(`[SceneVideo] Auto-generated Gemini Imagen keyframe for Runway: ${effectiveImageUrl.substring(0, 80)}`);
-                      }
-                    } else {
-                      const errText = await imgResp.text().catch(() => "");
-                      console.warn(`[SceneVideo] Gemini Imagen keyframe failed (${imgResp.status}): ${errText.substring(0, 150)}`);
-                    }
-                  } catch (gErr: any) {
-                    console.warn(`[SceneVideo] Gemini Imagen keyframe error: ${gErr.message}`);
-                  }
-                }
-                // Fallback: HuggingFace FLUX if Google failed
-                if (!effectiveImageUrl) {
-                  const hfKey = byokKeys.hfToken || ENV.huggingFaceApiKey;
-                  if (hfKey) {
-                    try {
-                      const hfResp = await fetch(
-                        "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
-                        {
-                          method: "POST",
-                          headers: { "Authorization": `Bearer ${hfKey}`, "Content-Type": "application/json" },
-                          body: JSON.stringify({ inputs: keyframePromptText.substring(0, 500) }),
-                          signal: AbortSignal.timeout(30000),
-                        }
-                      );
-                      if (hfResp.ok) {
-                        const buf = Buffer.from(await hfResp.arrayBuffer());
-                        const stored = await storagePut(`keyframes/${scene.id}_${Date.now()}.jpg`, buf, "image/jpeg");
-                        effectiveImageUrl = stored.url;
-                        console.log(`[SceneVideo] Auto-generated HuggingFace keyframe for Runway: ${effectiveImageUrl.substring(0, 80)}`);
-                      }
-                    } catch (hfErr: any) {
-                      console.warn(`[SceneVideo] HuggingFace keyframe error: ${hfErr.message}`);
-                    }
-                  }
-                }
-              } catch (imgErr: any) {
-                console.warn(`[SceneVideo] Keyframe generation failed, proceeding without image: ${imgErr.message}`);
+          // ─── VEO 3: Extended clip-chaining via background task ───
+          // Uses generateExtendedScene to chain multiple sub-clips into full declared duration.
+          (async () => {
+            try {
+              console.log(`[SceneVideo] Extended Veo3 generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
+              const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
+              const extResult = await generateExtendedScene(byokKeys, {
+                sceneId: scene.id,
+                projectId: project.id,
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                targetDurationSeconds: Math.max(10, scene.duration || 45),
+                mood: scene.mood || undefined,
+                lighting: scene.lighting || undefined,
+                timeOfDay: scene.timeOfDay || undefined,
+                genre: project.genre || undefined,
+                locationDescription: scene.locationType || undefined,
+                referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                aiPromptOverride: sceneAiPromptOverride,
+                negativePrompt: sceneNegativePrompt,
+                seed: sceneSeed,
+              });
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
+                try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
+              console.log(`[SceneVideo] Extended Veo3 generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+            } catch (err: any) {
+              console.error(`[SceneVideo] Extended Veo3 generation failed for scene ${scene.id}:`, err.message);
+              await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
             }
-
-            const { submitRunwayJob } = await import("./_core/videoJobWorker");
-            const taskId = await submitRunwayJob(byokKeys.runwayKey, {
-              prompt: effectivePrompt,
-              imageUrl: effectiveImageUrl,
-              negativePrompt: sceneNegativePrompt,
-              seed: sceneSeed,
-              aspectRatio: "16:9",
-            });
-
-            // Store job in DB with Runway task ID — worker will poll and complete it
-            const jobMeta = {
-              runwayTaskId: taskId,
-              runwayApiKey: byokKeys.runwayKey,
-              sceneId: scene.id,
-              projectId: project.id,
-              userId: ctx.user.id,
-              prompt: effectivePrompt,
-              imageUrl: effectiveImageUrl,
-              negativePrompt: sceneNegativePrompt,
-              seed: sceneSeed,
-              ratio: "1280:720",
-              duration: 10,
-              referenceImages: sceneRefImages,
-              aiPromptOverride: sceneAiPromptOverride,
-            };
-
-            await db.createGenerationJob({
-              projectId: project.id,
-              sceneId: scene.id,
-              type: "scene",
-              status: "processing",
-              progress: 0,
-              estimatedSeconds: 600,
-              metadata: jobMeta,
-            });
-
-            console.log(`[SceneVideo] Runway task ${taskId} submitted for scene ${scene.id} — worker will poll for completion`);
-          } catch (err: any) {
-            console.error(`[SceneVideo] Failed to submit Runway job for scene ${scene.id}:`, err.message);
-            await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
-          }
+          })();
+          } else if (activeProvider === "runway" && byokKeys.runwayKey) {
+          // ─── RUNWAY: Extended clip-chaining via background task ───
+          // Uses generateExtendedScene to chain multiple 10s Runway clips into full declared duration.
+          (async () => {
+            try {
+              console.log(`[SceneVideo] Extended Runway generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
+              const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
+              const extResult = await generateExtendedScene(byokKeys, {
+                sceneId: scene.id,
+                projectId: project.id,
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                targetDurationSeconds: Math.max(10, scene.duration || 45),
+                mood: scene.mood || undefined,
+                lighting: scene.lighting || undefined,
+                timeOfDay: scene.timeOfDay || undefined,
+                genre: project.genre || undefined,
+                locationDescription: scene.locationType || undefined,
+                referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                aiPromptOverride: sceneAiPromptOverride,
+                negativePrompt: sceneNegativePrompt,
+                seed: sceneSeed,
+              });
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
+                try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
+              }
+              console.log(`[SceneVideo] Extended Runway generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+            } catch (err: any) {
+              console.error(`[SceneVideo] Extended Runway generation failed for scene ${scene.id}:`, err.message);
+              await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+            }
+          })();
         } else if (activeProvider === "fal" && byokKeys.falKey) {
           // ─── FAL.AI: Extended clip-chaining via background task ───
           // Uses generateExtendedScene to chain multiple sub-clips (each ~10-16s) into a
@@ -2117,75 +2023,55 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         let generated = 0;
 
         if (isFalProvider) {
-          // ─── FAL.AI BULK: Use persistent job queue for each scene ───
-          // Submit all fal.ai jobs immediately (non-blocking), store in generationJobs,
-          // and let videoJobWorker.ts poll for completion — survives Railway restarts.
-          for (const scene of scenesNeedingVideo) {
-            try {
-              const sceneIdx = scenes.findIndex(s => s.id === scene.id);
-              const prompt = buildScenePrompt(
-                { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
-                visualDNA,
-                {
-                  sceneIndex: sceneIdx >= 0 ? sceneIdx : 0,
-                  totalScenes: scenes.length,
-                  previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
-                  characterNames: characters.map(c => c.name),
-                }
-              );
-              const effectivePrompt = `Cinematic video: ${prompt}`;
-              const sceneRefImages = (scene as any).referenceImages as string[] || [];
-              const effectiveImageUrl: string | undefined = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
-              const sceneNegativePrompt: string = ((scene as any).negativePrompt as string | undefined) || getDefaultNegativePrompt(userTier as QualityTier);
-              const sceneSeed = (scene as any).seed as number | undefined;
-
-              await db.updateScene(scene.id, { status: "generating" } as any);
-
-              // Submit fal.ai job (returns fal-pending sentinel immediately)
-              const { generateVideo: generateBYOKVideoFalBulk } = await import("./_core/byokVideoEngine");
-              const falResult = await generateBYOKVideoFalBulk(
-                { falKey: bulkByokKeys.falKey, preferredProvider: "fal" },
-                {
-                  prompt: effectivePrompt,
-                  imageUrl: effectiveImageUrl,
-                  duration: Math.max(10, scene.duration || 45),
-                  aspectRatio: "16:9",
-                  resolution: "1080p",
-                  negativePrompt: sceneNegativePrompt,
-                  seed: sceneSeed,
-                }
-              );
-
-              // Extract request ID and model from sentinel: fal-pending|{requestId}|{model}
-              const sentinelParts = falResult.videoUrl.replace("fal-pending|", "").split("|");
-              const falRequestId = sentinelParts[0];
-              const falModel = sentinelParts.slice(1).join("|");
-
-              await db.createGenerationJob({
-                projectId: project.id,
-                sceneId: scene.id,
-                type: "scene",
-                status: "processing",
-                progress: 0,
-                estimatedSeconds: 600,
-                metadata: {
-                  falRequestId,
-                  falModel,
-                  falApiKey: bulkByokKeys.falKey,
+          // ─── FAL.AI BULK: Extended clip-chaining for each scene ───
+          // Uses generateExtendedScene to chain multiple sub-clips into full declared duration.
+          // Process 2 at a time to avoid API overload.
+          const { generateExtendedScene: generateExtendedSceneBulkFal } = await import("./_core/extendedSceneGenerator");
+          const BULK_FAL_BATCH = 2;
+          for (let i = 0; i < scenesNeedingVideo.length; i += BULK_FAL_BATCH) {
+            const batch = scenesNeedingVideo.slice(i, i + BULK_FAL_BATCH);
+            await Promise.allSettled(batch.map(async (scene) => {
+              try {
+                const sceneIdx = scenes.findIndex(s => s.id === scene.id);
+                const prompt = buildScenePrompt(
+                  { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
+                  visualDNA,
+                  {
+                    sceneIndex: sceneIdx >= 0 ? sceneIdx : 0,
+                    totalScenes: scenes.length,
+                    previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
+                    characterNames: characters.map(c => c.name),
+                  }
+                );
+                const sceneRefImages = (scene as any).referenceImages as string[] || [];
+                const sceneNegativePrompt: string = ((scene as any).negativePrompt as string | undefined) || getDefaultNegativePrompt(userTier as QualityTier);
+                const sceneSeed = (scene as any).seed as number | undefined;
+                const sceneAiPromptOverride = (scene as any).aiPromptOverride as string | undefined;
+                await db.updateScene(scene.id, { status: "generating" } as any);
+                console.log(`[BulkVideo:fal] Extended generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
+                const extResult = await generateExtendedSceneBulkFal(bulkByokKeys, {
                   sceneId: scene.id,
                   projectId: project.id,
-                  userId: ctx.user.id,
-                  prompt: effectivePrompt,
-                  imageUrl: effectiveImageUrl,
-                },
-              });
-
-              console.log(`[BulkVideo:fal] Request ${falRequestId} submitted for scene ${scene.id} — worker will poll for completion`);
-              generated++;
-            } catch (e: any) {
-              console.error(`[BulkVideo:fal] Failed to submit job for scene "${scene.title}":`, e.message);
-              await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
-            }
+                  description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                  targetDurationSeconds: Math.max(10, scene.duration || 45),
+                  mood: scene.mood || undefined,
+                  lighting: scene.lighting || undefined,
+                  timeOfDay: scene.timeOfDay || undefined,
+                  genre: project.genre || undefined,
+                  locationDescription: scene.locationType || undefined,
+                  referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                  aiPromptOverride: sceneAiPromptOverride,
+                  negativePrompt: sceneNegativePrompt,
+                  seed: sceneSeed,
+                });
+                await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+                console.log(`[BulkVideo:fal] Extended generation completed for scene ${scene.id}: ${extResult.totalDuration}s, ${extResult.subClipCount} clips`);
+                generated++;
+              } catch (e: any) {
+                console.error(`[BulkVideo:fal] Extended generation failed for scene "${scene.title}":`, e.message);
+                await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+              }
+            }));
           }
         } else {
           // ─── OTHER PROVIDERS: Sequential batch processing ───
