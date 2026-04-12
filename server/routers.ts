@@ -1997,59 +1997,40 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
           }
         } else if (activeProvider === "fal" && byokKeys.falKey) {
-          // ─── FAL.AI: Persistent job queue approach ───
-          // Submit the fal.ai HunyuanVideo job immediately (non-blocking), store request ID in DB,
-          // and let videoJobWorker.ts poll for completion — survives Railway restarts.
-          try {
-            const effectivePrompt = sceneAiPromptOverride || `Cinematic video: ${prompt}`;
-            const effectiveImageUrl: string | undefined = sceneRefImages.length > 0 ? sceneRefImages[0] : undefined;
-
-            // Submit fal.ai job (now returns fal-pending sentinel immediately)
-            const { generateVideo: generateBYOKVideoFal } = await import("./_core/byokVideoEngine");
-            const falResult = await generateBYOKVideoFal(
-              { falKey: byokKeys.falKey, preferredProvider: "fal" },
-              {
-                prompt: effectivePrompt,
-                imageUrl: effectiveImageUrl,
-                duration: Math.max(10, scene.duration || 45),
-                aspectRatio: "16:9",
-                resolution: "1080p",
+          // ─── FAL.AI: Extended clip-chaining via background task ───
+          // Uses generateExtendedScene to chain multiple sub-clips (each ~10-16s) into a
+          // full-length scene matching the declared duration (60-90s). Same pattern as
+          // other providers — fire-and-forget background task.
+          (async () => {
+            try {
+              console.log(`[SceneVideo] Extended fal.ai generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
+              const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
+              const extResult = await generateExtendedScene(byokKeys, {
+                sceneId: scene.id,
+                projectId: project.id,
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                targetDurationSeconds: Math.max(10, scene.duration || 45),
+                mood: scene.mood || undefined,
+                lighting: scene.lighting || undefined,
+                timeOfDay: scene.timeOfDay || undefined,
+                genre: project.genre || undefined,
+                locationDescription: scene.locationType || undefined,
+                referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
+              });
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
+                try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
-            );
+              console.log(`[SceneVideo] Extended fal.ai generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+            } catch (err: any) {
+              console.error(`[SceneVideo] Extended fal.ai generation failed for scene ${scene.id}:`, err.message);
+              await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+            }
+          })();
 
-            // Extract request ID and model from the sentinel URL: fal-pending|{requestId}|{model}
-            const sentinelParts = falResult.videoUrl.replace("fal-pending|", "").split("|");
-            const falRequestId = sentinelParts[0];
-            const falModel = sentinelParts.slice(1).join("|"); // rejoin in case model contains pipes
-
-            const falJobMeta = {
-              falRequestId,
-              falModel,
-              falApiKey: byokKeys.falKey,
-              sceneId: scene.id,
-              projectId: project.id,
-              userId: ctx.user.id,
-              prompt: effectivePrompt,
-              imageUrl: effectiveImageUrl,
-            };
-
-            await db.createGenerationJob({
-              projectId: project.id,
-              sceneId: scene.id,
-              type: "scene",
-              status: "processing",
-              progress: 0,
-              estimatedSeconds: 600,
-              metadata: falJobMeta,
-            });
-
-            console.log(`[SceneVideo] fal.ai request ${falRequestId} submitted for scene ${scene.id} — worker will poll for completion`);
-          } catch (err: any) {
-            console.error(`[SceneVideo] Failed to submit fal.ai job for scene ${scene.id}:`, err.message);
-            await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
-          }
         } else {
           // ─── OTHER PROVIDERS: Fire-and-forget background task ───
           // Non-fal providers (Pollinations, Replicate, Luma, HuggingFace, SeedDance) are handled
