@@ -50,6 +50,7 @@ import { advertisingRouter } from "./advertising-router";
 import { mailingListRouter } from "./mailing-list-router";
 import { fundingRouter } from "./funding-router";
 import { filmPostRouter } from "./film-post-router";
+import { featureFilmRouter } from "./feature-film-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
 import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_STATES, type VoiceActingKeys } from "./_core/voiceActingEngine";
@@ -7594,6 +7595,7 @@ Rules:
   mailingList: mailingListRouter,
   funding: fundingRouter,
   filmPost: filmPostRouter,
+  featureFilm: featureFilmRouter,
   blog: router({
     // Public: list published articles
     list: publicProcedure

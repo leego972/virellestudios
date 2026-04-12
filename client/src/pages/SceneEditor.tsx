@@ -951,7 +951,7 @@ export default function SceneEditor() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-wrap justify-end">
+                <div className="flex items-center gap-1 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-wrap justify-end max-w-full">
                   <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
                     onClick={() => videoMutation.mutate({ sceneId: scene.id })}
                     disabled={videoMutation.isPending}>

@@ -1364,3 +1364,184 @@ export const signatureCastEvents = mysqlTable("signatureCastEvents", {
 });
 export type SignatureCastEvent = typeof signatureCastEvents.$inferSelect;
 export type InsertSignatureCastEvent = typeof signatureCastEvents.$inferInsert;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FEATURE FILM PIPELINE — Persistent Cut, Timeline, Continuity, Audio
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Feature Cuts ─────────────────────────────────────────────────────────────
+export const featureCuts = mysqlTable("featureCuts", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  version: varchar("version", { length: 64 }).default("v1.0").notNull(),
+  description: text("description"),
+  isLocked: boolean("isLocked").default(false).notNull(),
+  lockedAt: timestamp("lockedAt"),
+  lockedBy: int("lockedBy"),
+  isDefault: boolean("isDefault").default(false).notNull(),
+  totalDuration: int("totalDuration").default(0).notNull(),
+  sceneCount: int("sceneCount").default(0).notNull(),
+  targetRuntime: int("targetRuntime"),
+  actStructure: mysqlEnum("featureCutActStructure", ["three-act", "five-act", "heros-journey", "nonlinear", "episodic", "two-act"]).default("three-act").notNull(),
+  notes: text("notes"),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FeatureCut = typeof featureCuts.$inferSelect;
+export type InsertFeatureCut = typeof featureCuts.$inferInsert;
+
+// ── Feature Cut Scenes ────────────────────────────────────────────────────────
+export const featureCutScenes = mysqlTable("featureCutScenes", {
+  id: int("id").autoincrement().primaryKey(),
+  cutId: int("cutId").notNull(),
+  sceneId: int("sceneId").notNull(),
+  orderIndex: int("orderIndex").notNull(),
+  actNumber: int("actNumber").default(1).notNull(),
+  actLabel: varchar("actLabel", { length: 128 }),
+  sequenceLabel: varchar("sequenceLabel", { length: 128 }),
+  isIncluded: boolean("isIncluded").default(true).notNull(),
+  trimIn: int("trimIn").default(0).notNull(),
+  trimOut: int("trimOut").default(0).notNull(),
+  transitionType: varchar("transitionType", { length: 64 }).default("cut").notNull(),
+  transitionDuration: float("transitionDuration").default(0).notNull(),
+  directorNote: text("directorNote"),
+  colorGrade: varchar("colorGrade", { length: 64 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FeatureCutScene = typeof featureCutScenes.$inferSelect;
+export type InsertFeatureCutScene = typeof featureCutScenes.$inferInsert;
+
+// ── Act Groups ────────────────────────────────────────────────────────────────
+export const actGroups = mysqlTable("actGroups", {
+  id: int("id").autoincrement().primaryKey(),
+  cutId: int("cutId").notNull(),
+  projectId: int("projectId").notNull(),
+  actNumber: int("actNumber").notNull(),
+  label: varchar("label", { length: 128 }).notNull(),
+  description: text("description"),
+  targetDuration: int("targetDuration"),
+  colorCode: varchar("colorCode", { length: 16 }).default("#3b82f6"),
+  orderIndex: int("orderIndex").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ActGroup = typeof actGroups.$inferSelect;
+export type InsertActGroup = typeof actGroups.$inferInsert;
+
+// ── Long-Scene Shot Packages ──────────────────────────────────────────────────
+export const shotPackages = mysqlTable("shotPackages", {
+  id: int("id").autoincrement().primaryKey(),
+  sceneId: int("sceneId").notNull(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  shotIndex: int("shotIndex").notNull(),
+  prompt: text("prompt").notNull(),
+  negativePrompt: text("negativePrompt"),
+  durationSeconds: int("durationSeconds").default(10).notNull(),
+  videoUrl: text("videoUrl"),
+  videoKey: varchar("videoKey", { length: 512 }),
+  keyframeUrl: text("keyframeUrl"),
+  status: mysqlEnum("shotPackageStatus", ["pending", "generating", "completed", "failed", "retrying"]).default("pending").notNull(),
+  provider: varchar("provider", { length: 64 }),
+  errorMessage: text("errorMessage"),
+  retryCount: int("retryCount").default(0).notNull(),
+  generationJobId: int("generationJobId"),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ShotPackage = typeof shotPackages.$inferSelect;
+export type InsertShotPackage = typeof shotPackages.$inferInsert;
+
+// ── Continuity Records ────────────────────────────────────────────────────────
+export const continuityRecords = mysqlTable("continuityRecords", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  sceneId: int("sceneId").notNull(),
+  userId: int("userId").notNull(),
+  wardrobeNotes: text("wardrobeNotes"),
+  wardrobeImages: json("wardrobeImages"),
+  propNotes: text("propNotes"),
+  propList: json("propList"),
+  timeOfDay: varchar("timeOfDay", { length: 64 }),
+  dayNumber: int("dayNumber"),
+  locationNotes: text("locationNotes"),
+  characterStates: json("characterStates"),
+  dependsOnSceneId: int("dependsOnSceneId"),
+  emotionalCarryover: text("emotionalCarryover"),
+  continuityFlags: json("continuityFlags"),
+  lastCheckedAt: timestamp("lastCheckedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ContinuityRecord = typeof continuityRecords.$inferSelect;
+export type InsertContinuityRecord = typeof continuityRecords.$inferInsert;
+
+// ── Feature Audio Plans ───────────────────────────────────────────────────────
+export const featureAudioPlans = mysqlTable("featureAudioPlans", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  voiceAssignments: json("voiceAssignments"),
+  ambientLayers: json("ambientLayers"),
+  musicCues: json("musicCues"),
+  dialogueBus: float("dialogueBus").default(0.9),
+  musicBus: float("musicBus").default(0.25),
+  effectsBus: float("effectsBus").default(0.6),
+  masterVolume: float("masterVolume").default(1.0),
+  audioPassNotes: text("audioPassNotes"),
+  mixStatus: mysqlEnum("featureAudioMixStatus", ["draft", "in-progress", "locked", "final"]).default("draft").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FeatureAudioPlan = typeof featureAudioPlans.$inferSelect;
+export type InsertFeatureAudioPlan = typeof featureAudioPlans.$inferInsert;
+
+// ── Film Compile Jobs ─────────────────────────────────────────────────────────
+export const filmCompileJobs = mysqlTable("filmCompileJobs", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  cutId: int("cutId"),
+  userId: int("userId").notNull(),
+  status: mysqlEnum("filmCompileStatus", ["queued", "processing", "completed", "failed"]).default("queued").notNull(),
+  progress: int("progress").default(0).notNull(),
+  currentStep: varchar("currentStep", { length: 255 }),
+  resultUrl: text("resultUrl"),
+  resultKey: varchar("resultKey", { length: 512 }),
+  resultDuration: int("resultDuration"),
+  resultFileSize: int("resultFileSize"),
+  errorMessage: text("errorMessage"),
+  includeOpener: boolean("includeOpener").default(true).notNull(),
+  includeCredits: boolean("includeCredits").default(true).notNull(),
+  burnSubtitles: boolean("burnSubtitles").default(false).notNull(),
+  resolution: varchar("resolution", { length: 16 }).default("1080p").notNull(),
+  frameRate: int("frameRate").default(24).notNull(),
+  metadata: json("metadata"),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type FilmCompileJob = typeof filmCompileJobs.$inferSelect;
+export type InsertFilmCompileJob = typeof filmCompileJobs.$inferInsert;
+
+// ── Character Arc Tracking ────────────────────────────────────────────────────
+export const characterArcs = mysqlTable("characterArcs", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  characterId: int("characterId").notNull(),
+  userId: int("userId").notNull(),
+  arcType: varchar("arcType", { length: 64 }).default("transformation"),
+  arcSummary: text("arcSummary"),
+  arcBeats: json("arcBeats"),
+  startingState: text("startingState"),
+  endingState: text("endingState"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CharacterArc = typeof characterArcs.$inferSelect;
+export type InsertCharacterArc = typeof characterArcs.$inferInsert;

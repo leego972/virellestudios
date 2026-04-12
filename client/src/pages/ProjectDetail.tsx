@@ -1279,6 +1279,17 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/feature-timeline`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0">
+                  <Layers className="h-5 w-5 text-amber-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-amber-500">Feature Timeline</p>
+                  <p className="text-xs text-muted-foreground">Act groups, versioned cuts &amp; compile</p>
+                </div>
+              </CardContent>
+            </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">

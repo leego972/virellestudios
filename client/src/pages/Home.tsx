@@ -218,6 +218,21 @@ export default function Home() {
             <PlayCircle className="h-4 w-4" />
             <span className="hidden sm:inline">Getting Started</span>
           </Button>
+          <a
+            href="https://d2xsxph8kpxj0f.cloudfront.net/310519663524747580/RcWVgE53GVrjFSCRF9TVPg/Virelle_User_Manual_v1.0_f850d2ee.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              variant="ghost"
+              className="gap-2 text-muted-foreground hover:text-foreground"
+              size="sm"
+              title="Virelle User Manual"
+            >
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">User Manual</span>
+            </Button>
+          </a>
           <Button
             onClick={() => setLocation("/projects")}
             className="gap-2"
