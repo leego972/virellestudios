@@ -354,15 +354,15 @@ async function resubmitWithFallback(
         // Build a minimal UserApiKeys object that only exposes the next provider
         // so generateVideo() selects it as preferred
         const singleKeyMap: any = {
-          preferredProvider: nextProvider,
+          // Spread user keys first so our overrides take precedence
+          ...userKeys,
           runwayKey: nextProvider === "runway" ? key : null,
           falKey: nextProvider === "fal" ? key : null,
           byteplusKey: nextProvider === "seedance" ? key : null,
           replicateKey: nextProvider === "replicate" ? key : null,
           lumaKey: nextProvider === "luma" ? key : null,
           hfToken: nextProvider === "huggingface" ? key : null,
-          // Always include all user keys so the full cascade still works from this point
-          ...userKeys,
+          // Force preferred provider to the fallback target
           preferredProvider: nextProvider,
         };
 
