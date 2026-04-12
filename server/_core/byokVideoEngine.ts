@@ -333,26 +333,31 @@ async function generateWithReplicate(key: string, req: VideoGenerationRequest): 
 // ─── fal.ai ───
 
 async function generateWithFal(key: string, req: VideoGenerationRequest): Promise<VideoGenerationResult> {
-  // HunyuanVideo: supports up to ~16s at 8fps (129 frames)
-  const model = req.imageUrl ? "fal-ai/hunyuan-video/image-to-video" : "fal-ai/hunyuan-video";
-  const numFrames = Math.min(Math.max((req.duration || 5) * 8, 16), 129);
-  const actualDuration = Math.round(numFrames / 8);
+  // Kling v2.6 Pro: supports 3–15s per clip natively (ideal for chained extended generation)
+  // Use image-to-video model when a reference image is provided for visual continuity
+  const requestedDuration = Math.min(Math.max(req.duration || 5, 3), 15);
+  const actualDuration = requestedDuration;
+  let model: string;
 
   const input: any = {
     prompt: req.prompt,
-    num_frames: numFrames,
-    num_inference_steps: 30,
+    duration: String(requestedDuration) as any,
     aspect_ratio: req.aspectRatio === "9:16" ? "9:16" : "16:9",
-    // HunyuanVideo only supports 480p, 580p, 720p — cap at 720p
-    resolution: "720p",
-    enable_safety_checker: false,
+    negative_prompt: req.negativePrompt || "blur, distort, low quality, watermark, text, logo",
+    cfg_scale: 0.5,
+    generate_audio: false,
   };
 
   if (req.imageUrl) {
+    // Kling v2.6 Pro image-to-video
+    model = "fal-ai/kling-video/v2.6/pro/image-to-video";
     input.image_url = req.imageUrl;
+  } else {
+    // Kling v2.6 Pro text-to-video
+    model = "fal-ai/kling-video/v2.6/pro/text-to-video";
   }
 
-  console.log(`[BYOK:fal] Submitting ${model} (${numFrames} frames = ~${actualDuration}s)`);
+  console.log(`[BYOK:fal] Submitting ${model} (${actualDuration}s clip)`);
 
   const submitResp = await fetch(`https://queue.fal.run/${model}`, {
     method: "POST",
@@ -969,11 +974,11 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
   {
     id: "fal",
     name: "fal.ai",
-    description: "Fast and affordable. Supports HunyuanVideo, Veo3, LTX-Video. Bring your own key.",
+    description: "Fast and affordable. Supports Kling v2.6 Pro, Veo3, LTX-Video. Bring your own key.",
     keyPrefix: "",
     signupUrl: "https://fal.ai/dashboard/keys",
     pricing: "Pay-per-use. ~$0.40 per video clip.",
-    models: "HunyuanVideo, Google Veo 3, LTX-Video",
+    models: "Kling v2.6 Pro, Google Veo 3, LTX-Video",
   },
   {
     id: "replicate",

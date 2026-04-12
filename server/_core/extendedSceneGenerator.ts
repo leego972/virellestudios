@@ -191,7 +191,8 @@ const CAMERA_VARIATIONS = [
  * Uses provider-appropriate clip durations:
  * - Runway / SeedDance: 10s (API only accepts 5 or 10)
  * - Pollinations / HuggingFace: 8s (model limitation)
- * - Sora / Replicate / fal: 15s (supports up to 20s)
+ * - fal.ai (Kling v2.6 Pro): 10s (supports 3–15s; 10s chosen for reliable chaining)
+ * - Sora / Replicate: 15s (supports up to 20s)
  */
 export function planSubShots(
   sceneDescription: string,
@@ -210,11 +211,12 @@ export function planSubShots(
 ): SubShot[] {
   // Select clip duration based on provider capabilities
   // Runway and SeedDance only accept 5s or 10s; always request 10s for maximum coverage
+  // fal.ai uses Kling v2.6 Pro which supports 3–15s; use 10s for reliable chaining
   const provider = options?.provider || "pollinations";
   const clipDuration =
-    provider === "runway" || provider === "seedance" ? 10 :
+    provider === "runway" || provider === "seedance" || provider === "fal" ? 10 :
     provider === "pollinations" || provider === "huggingface" ? 8 :
-    15; // Sora, Replicate, fal — up to 20s per clip
+    15; // Sora, Replicate — up to 20s per clip
 
   // Allow 1 clip when the scene fits within a single clip duration — no need to chain
   const numClips = Math.max(1, Math.ceil(targetDurationSeconds / clipDuration));
