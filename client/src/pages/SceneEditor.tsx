@@ -307,10 +307,10 @@ export default function SceneEditor() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [form, setForm] = useState<SceneForm>(defaultScene);
 
-  const { data: project } = trpc.project.get.useQuery({ id: projectId });
-  const { data: scenes, isLoading } = trpc.scene.listByProject.useQuery({ projectId });
-  const { data: characters } = trpc.character.listByProject.useQuery({ projectId });
-  const { data: soundtracks } = trpc.soundtrack.listByProject.useQuery({ projectId });
+  const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: projectId > 0 });
+  const { data: scenes, isLoading } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: projectId > 0 });
+  const { data: characters } = trpc.character.listByProject.useQuery({ projectId }, { enabled: projectId > 0 });
+  const { data: soundtracks } = trpc.soundtrack.listByProject.useQuery({ projectId }, { enabled: projectId > 0 });
   const utils = trpc.useUtils();
 
   const createMutation = trpc.scene.create.useMutation({
@@ -868,7 +868,7 @@ export default function SceneEditor() {
       )}
 
       {/* Scene List */}
-      {isLoading ? (
+      {(isLoading || (projectId > 0 && scenes === undefined)) ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="bg-card/50">
