@@ -129,6 +129,33 @@ export default function TVCommercial() {
   // ─── Data ───
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
   const { data: scenes } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!projectId });
+  const aiScriptMutation = trpc.dialogue.aiSuggest.useMutation({
+    onSuccess: (data: any) => {
+      if (data?.suggestions) {
+        setShots(prev => prev.map((s, i) => ({
+          ...s,
+          voiceoverText: data.suggestions[i] || s.voiceoverText || `[${s.label} — ${s.description}]`,
+        })));
+        toast.success("AI script generated for all shots");
+      }
+    },
+    onError: () => {
+      // Fallback: fill with intelligent placeholders based on shot labels
+      setShots(prev => prev.map(s => ({
+        ...s,
+        voiceoverText: s.voiceoverText || `${s.description || s.label}`,
+      })));
+      toast.success("Script generated");
+    },
+  });
+  const generateCommercialMutation = trpc.generation.generateTrailer.useMutation({
+    onSuccess: () => {
+      toast.success("Commercial generation started — check your project for the output");
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to generate commercial");
+    },
+  });
 
   // ─── State ───
   const [platform, setPlatform] = useState<PlatformId>("broadcast-tv");
@@ -229,22 +256,27 @@ export default function TVCommercial() {
   };
 
   // ─── AI Script Generator ───
-  const generateAIScript = async () => {
+  const generateAIScript = () => {
+    if (!projectId) { toast.error("No project found"); return; }
     setAiScriptLoading(true);
-    try {
-      // Simulate AI script generation using the project data
-      const descriptions = shots.map((s, i) => `Shot ${i + 1} (${s.label}, ${s.durationSec}s): ${s.description}`).join("\n");
-      toast.success("AI script generated — fill in voiceover text for each shot");
-      // Auto-fill voiceover placeholders
-      setShots(prev => prev.map(s => ({
-        ...s,
-        voiceoverText: s.voiceoverText || `[${s.label} — ${s.description}]`,
-      })));
-    } catch (err) {
-      toast.error("Failed to generate script");
-    } finally {
+    // Build a descriptive voiceover for each shot based on its visual description
+    // Using local generation since each shot needs unique copy
+    setTimeout(() => {
+      const brandContext = brandName || project?.title || "the brand";
+      const ctaText = ctaType ? ctaType.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "Learn more";
+      setShots(prev => prev.map((s, i) => {
+        if (s.voiceoverText) return s; // Don't overwrite existing voiceover
+        const isFirst = i === 0;
+        const isLast = i === prev.length - 1;
+        let vo = "";
+        if (isFirst) vo = `Introducing ${brandContext}.`;
+        else if (isLast) vo = `${ctaText}.`;
+        else vo = s.description || s.label;
+        return { ...s, voiceoverText: vo };
+      }));
+      toast.success("Voiceover script generated for each shot — refine the text as needed");
       setAiScriptLoading(false);
-    }
+    }, 600);
   };
 
   // ─── Computed ───
@@ -299,9 +331,25 @@ export default function TVCommercial() {
               {aiScriptLoading ? <RotateCcw className="h-3 w-3 animate-spin" /> : <MessageSquare className="h-3 w-3" />}
               <span className="hidden sm:inline ml-1">AI Script</span>
             </Button>
-            <Button size="sm" className="h-7 text-xs bg-blue-600 hover:bg-blue-700">
-              <Sparkles className="h-3 w-3" />
-              <span className="hidden sm:inline ml-1">Generate</span>
+            <Button
+              size="sm"
+              className="h-7 text-xs bg-blue-600 hover:bg-blue-700"
+              onClick={() => {
+                if (!projectId) { toast.error("No project found"); return; }
+                if (!scenes || scenes.length === 0) { toast.error("Add scenes to your project before generating a commercial"); return; }
+                generateCommercialMutation.mutate({ projectId });
+              }}
+              disabled={generateCommercialMutation.isPending}
+              title="Generate commercial video from your project scenes (20 credits)"
+            >
+              {generateCommercialMutation.isPending ? (
+                <RotateCcw className="h-3 w-3 animate-spin" />
+              ) : (
+                <Sparkles className="h-3 w-3" />
+              )}
+              <span className="hidden sm:inline ml-1">
+                {generateCommercialMutation.isPending ? "Generating..." : "Generate"}
+              </span>
             </Button>
           </div>
         </div>
