@@ -328,7 +328,7 @@ async function executeAction(
           lighting: (args.lighting as any) || "natural",
           cameraAngle: (args.cameraAngle as any) || "medium",
           mood: (args.mood as string) || undefined,
-          duration: (args.duration as number) || 30,
+          duration: (args.duration as number) || 60,
           transitionType: (args.transitionType as string) || "cut",
           status: "draft",
         });
@@ -428,7 +428,7 @@ RULES:
   * Weather: beach/tropical → clear | mountain cabin/ski resort → overcast or snowy | graveyard/funeral → overcast or foggy
   * Mood: funeral/memorial → somber | wedding/celebration → joyful | chase/fight → urgent | interrogation/confrontation → tense | first date → nervous/warm
   * If you infer a value, note it in productionNotes as "[inferred from context: X]"
-- If you genuinely cannot infer a field, use the neutral default (timeOfDay: "afternoon", weather: "clear", lighting: "natural", cameraAngle: "medium", transitionType: "cut", transitionDuration: 0.5, duration: 30).
+- If you genuinely cannot infer a field, use the neutral default (timeOfDay: "afternoon", weather: "clear", lighting: "natural", cameraAngle: "medium", transitionType: "cut", transitionDuration: 0.5, duration: 60).
 - dialogueLines: [] unless the director wrote specific dialogue.
 - soundEffects: [] unless the director specified sounds.
 - productionNotes: repeat back only what the director described plus any inference notes, do not add crew instructions.
@@ -442,7 +442,7 @@ Return a JSON object with these exact fields:
   "lighting": "natural|dramatic|soft|neon|candlelight|studio|backlit|silhouette",
   "cameraAngle": "wide|medium|close-up|extreme-close-up|birds-eye|low-angle|dutch-angle|over-shoulder|pov",
   "mood": "one or two words — only if the director indicated a mood, otherwise neutral",
-  "duration": number (seconds — use 30 as default if not specified),
+  "duration": number (seconds — use 60 as default if not specified, aim for 60-90 for full scenes),
   "transitionType": "cut|fade|dissolve|wipe|iris|cross-dissolve",
   "transitionDuration": number (seconds),
   "colorGrading": "standard",
@@ -662,8 +662,8 @@ Return a JSON object with these exact fields:
       case "generate_full_film": {
         const targetMinutes = (args.durationMinutes as number) || 2;
         const targetSeconds = targetMinutes * 60;
-        // Estimate ~15-30 seconds per scene for a realistic film
-        const estimatedSceneCount = Math.max(3, Math.min(20, Math.round(targetSeconds / 20)));
+        // Estimate ~60-90 seconds per scene for a realistic film
+        const estimatedSceneCount = Math.max(2, Math.min(20, Math.round(targetSeconds / 60)));
         const imageRefs = (args.imageReferences as string[]) || [];
 
         const imageContext = imageRefs.length > 0
@@ -675,7 +675,7 @@ Return a JSON object with these exact fields:
 Director's concept: "${args.concept}"${imageContext}
 
 Target duration: ${targetMinutes} minute(s) (${targetSeconds} seconds total)
-Create exactly ${estimatedSceneCount} scenes that together tell a complete story within this duration.
+Create exactly ${estimatedSceneCount} scenes that together tell a complete story within this duration. Each scene should be 60-90 seconds long (minimum 45 seconds). Scenes must be substantial enough for extended cinematic sequences — do NOT create short 15-30 second scenes unless the total film duration specifically requires very short scenes.
 
 For EACH scene, provide ALL production details. The scenes should flow naturally with proper pacing, building tension or emotion as appropriate.
 
@@ -712,6 +712,8 @@ RULES:
 - If the director named specific characters, use THOSE character names throughout. Do not invent new characters unless the concept requires supporting roles.
 - If the director specified a tone (thriller, comedy, drama, etc.), every scene must match that tone. Do not mix genres unless the director requested it.
 - Scene durations MUST add up to approximately ${targetSeconds} seconds
+- Each individual scene should be 60-90 seconds minimum — never less than 45 seconds unless total film is under 2 minutes
+- More scenes of shorter duration is WORSE than fewer scenes of proper 60-90 second length
 - Include realistic dialogue that matches the genre and characters the director described
 - Add ambient and action sound effects appropriate to the genre and setting
 - Vary camera angles and transitions for visual interest
