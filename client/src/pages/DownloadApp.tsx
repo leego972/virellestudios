@@ -17,11 +17,31 @@ interface DownloadLinks {
 }
 
 function getApiBase() {
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
+  if (typeof window !== "undefined") return window.location.origin;
   return "";
 }
+
+const MOBILE_FEATURES = [
+  { icon: "🎬", label: "Director Chat", desc: "AI creative guidance on the go" },
+  { icon: "📝", label: "Script Writer", desc: "Write screenplays from your phone" },
+  { icon: "🎥", label: "Video Generation", desc: "Generate AI video clips anywhere" },
+  { icon: "🖼️", label: "Storyboard", desc: "Visual planning in your pocket" },
+  { icon: "💰", label: "Budget Estimator", desc: "Track production costs on set" },
+  { icon: "🔍", label: "Continuity Checker", desc: "Catch script errors instantly" },
+  { icon: "🤝", label: "Team Collaboration", desc: "Manage your crew from anywhere" },
+  { icon: "📋", label: "Shot List", desc: "Reference your shots on location" },
+];
+
+const DESKTOP_FEATURES = [
+  { icon: "🖥️", label: "Native Window", desc: "Dedicated app, no browser tab to lose" },
+  { icon: "🔄", label: "Auto-Updates", desc: "Always on the latest version" },
+  { icon: "🔔", label: "System Tray", desc: "Quick access to projects from the menu bar" },
+  { icon: "🔗", label: "Deep Links", desc: "Stripe checkout returns directly to the app" },
+  { icon: "📁", label: "File System", desc: "Native file access for exports" },
+  { icon: "⌨️", label: "Keyboard Shortcuts", desc: "Full desktop keyboard support" },
+  { icon: "🌐", label: "Offline Mode", desc: "Browse projects without internet" },
+  { icon: "🎨", label: "Full Screen", desc: "Immersive full-screen filmmaking" },
+];
 
 export default function DownloadApp() {
   const { user } = useAuth();
@@ -29,81 +49,43 @@ export default function DownloadApp() {
   const [links, setLinks] = useState<DownloadLinks | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [pwaInstallPrompt, setPwaInstallPrompt] = useState<any>(null);
+  const [pwaPrompt, setPwaPrompt] = useState<any>(null);
   const [pwaInstalled, setPwaInstalled] = useState(false);
-
-  useEffect(() => {
-    const handler = (e: any) => { e.preventDefault(); setPwaInstallPrompt(e); };
-    window.addEventListener("beforeinstallprompt", handler);
-    window.addEventListener("appinstalled", () => setPwaInstalled(true));
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
-    };
-  }, []);
-
-  async function handlePwaInstall() {
-    if (!pwaInstallPrompt) return;
-    pwaInstallPrompt.prompt();
-    const { outcome } = await pwaInstallPrompt.userChoice;
-    if (outcome === "accepted") { setPwaInstalled(true); setPwaInstallPrompt(null); }
-  }
 
   useEffect(() => {
     fetch(`${getApiBase()}/api/mobile/downloads`)
       .then(r => r.json())
       .then(setLinks)
       .catch(() => setLinks({
-        ios: { url: null, version: "1.0.0", available: false },
-        android: { url: null, version: "1.0.0", available: false },
-        desktop: { mac: null, win: null, linux: null, version: "1.0.0", available: false },
+        ios: { url: "https://apps.apple.com/app/virelle-studios/id6761315616", version: "1.0.0", available: true },
+        android: { url: "https://expo.dev/accounts/virellestudios/projects/virelle-studios/builds", version: "1.0.0", available: true },
+        desktop: { mac: "https://virelle.life", win: "https://virelle.life", linux: "https://virelle.life", version: "1.0.0", available: true },
       }))
       .finally(() => setLoading(false));
   }, []);
 
-  function handleAndroidDownload() {
-    if (links?.android?.url) window.open(links.android.url, "_blank");
-  }
+  useEffect(() => {
+    const handler = (e: any) => { e.preventDefault(); setPwaPrompt(e); };
+    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", () => { setPwaInstalled(true); setPwaPrompt(null); });
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
 
-  function handleIOSDownload() {
-    if (links?.ios?.url) window.open(links.ios.url, "_blank");
-  }
-
-  function handleDesktopDownload(platform: "mac" | "win" | "linux") {
-    const url = links?.desktop?.[platform];
-    if (url) window.open(url, "_blank");
+  async function handlePwaInstall() {
+    if (!pwaPrompt) return;
+    pwaPrompt.prompt();
+    const { outcome } = await pwaPrompt.userChoice;
+    if (outcome === "accepted") { setPwaInstalled(true); setPwaPrompt(null); }
   }
 
   function copyReferral() {
     if (user) {
       const code = (user as any).referralCode || user.id;
-      navigator.clipboard.writeText(`https://www.virelle.life/register?ref=${code}`).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
+      navigator.clipboard
+        .writeText(`https://www.virelle.life/register?ref=${code}`)
+        .then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
     }
   }
-
-  const MOBILE_FEATURES = [
-    { icon: "🎬", label: "Director Chat", desc: "AI creative guidance on the go" },
-    { icon: "📝", label: "Script Writer", desc: "Write screenplays from your phone" },
-    { icon: "🎥", label: "Video Generation", desc: "Generate AI video clips anywhere" },
-    { icon: "🖼️", label: "Storyboard", desc: "Visual planning in your pocket" },
-    { icon: "💰", label: "Budget Estimator", desc: "Track production costs on set" },
-    { icon: "🔍", label: "Continuity Checker", desc: "Catch script errors instantly" },
-    { icon: "🤝", label: "Team Collaboration", desc: "Manage your crew from anywhere" },
-    { icon: "📋", label: "Shot List", desc: "Reference your shots on location" },
-  ];
-
-  const DESKTOP_FEATURES = [
-    { icon: "🖥️", label: "Native Window", desc: "Dedicated app, no browser tab to lose" },
-    { icon: "🔄", label: "Auto-Updates", desc: "Always on the latest version" },
-    { icon: "🔔", label: "System Tray", desc: "Quick access to projects from the menu bar" },
-    { icon: "🔗", label: "Deep Links", desc: "Stripe checkout returns directly to the app" },
-    { icon: "📁", label: "File System", desc: "Native file access for exports" },
-    { icon: "⌨️", label: "Keyboard Shortcuts", desc: "Full desktop keyboard support" },
-    { icon: "🌐", label: "Offline Mode", desc: "Browse projects without internet" },
-    { icon: "🎨", label: "Full Screen", desc: "Immersive full-screen filmmaking" },
-  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -111,164 +93,163 @@ export default function DownloadApp() {
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-black to-purple-900/20" />
-        <div className="relative max-w-6xl mx-auto px-6 py-20 text-center">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center">
           <Badge className="mb-6 bg-amber-500/20 text-amber-400 border-amber-500/30 px-4 py-1.5 text-sm">
-            📱 iOS · Android · Mac · Windows · Linux
+            📱 iOS · Android · Mac · Windows · Linux · PWA
           </Badge>
-          <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 leading-tight">
             Virelle Studios
             <span className="block text-amber-400">Everywhere You Work</span>
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed px-2">
             Every AI filmmaking tool — Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more — available natively on iOS, Android, macOS, Windows, and Linux. One subscription. All platforms.
           </p>
         </div>
       </div>
 
-      {/* ── Mobile Downloads ──────────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-3">📱 Mobile App</h2>
-          <p className="text-gray-400">iOS & Android — your full studio in your pocket</p>
-        </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 space-y-20">
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
-          {/* Android */}
-          <button
-            onClick={() => window.open(links?.android?.url ?? "https://expo.dev/accounts/virellestudios/projects/virelle-studios/builds", "_blank")}
-            disabled={loading}
-            className="group flex items-center gap-4 px-8 py-4 rounded-2xl border-2 transition-all duration-200 min-w-[220px] bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:scale-105 cursor-pointer"
-          >
-            <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.523 15.341l-5.523-9.569-5.523 9.569h11.046zM12 2.5l-9.5 16.5h19L12 2.5z" />
-              <path d="M4.5 20h15l-1.5-2.5h-12L4.5 20z" />
-            </svg>
-            <div className="text-left">
-              <div className="text-xs opacity-70">Get it on</div>
-              <div className="text-lg font-bold leading-tight">Android APK</div>
-              <div className="text-xs opacity-60">v{links?.android?.version ?? "1.0.0"} · APK</div>
-            </div>
-          </button>
-
-          {/* iOS */}
-          <button
-            onClick={handleIOSDownload}
-            disabled={loading || !links?.ios?.available}
-            className={`group flex items-center gap-4 px-8 py-4 rounded-2xl border-2 transition-all duration-200 min-w-[220px]
-              ${links?.ios?.available
-                ? "bg-foreground text-background border-foreground hover:opacity-90 hover:scale-105 cursor-pointer"
-                : "bg-white/5 text-white/50 border-white/20 cursor-not-allowed"
-              }`}
-          >
-            <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-            </svg>
-            <div className="text-left">
-              <div className="text-xs opacity-70">Download on the</div>
-              <div className="text-lg font-bold leading-tight">App Store</div>
-              <div className="text-xs opacity-60">v{links?.ios?.version ?? "1.0.0"}</div>
-            </div>
-          </button>
-        </div>
-
-
-
-        {/* Mobile features grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
-          {MOBILE_FEATURES.map((f) => (
-            <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/8 transition-colors">
-              <div className="text-3xl mb-3">{f.icon}</div>
-              <div className="font-semibold mb-1">{f.label}</div>
-              <div className="text-sm text-gray-400">{f.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Desktop Downloads ─────────────────────────────────────────────────── */}
-        <div className="border-t border-white/10 pt-16">
+        {/* ── Mobile Downloads ──────────────────────────────────────────────────── */}
+        <section>
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold mb-3">🖥️ Desktop App</h2>
-            <p className="text-gray-400">macOS · Windows · Linux — native window, auto-updates, system tray</p>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">📱 Mobile App</h2>
+            <p className="text-gray-400">iOS & Android — your full studio in your pocket</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
-            {/* macOS */}
+            {/* Android */}
             <button
-              onClick={() => handleDesktopDownload("mac")}
-              className="group flex items-center gap-4 px-8 py-4 rounded-2xl border-2 transition-all duration-200 min-w-[220px] bg-gradient-to-br from-card to-muted text-foreground border-border hover:border-primary/60 hover:scale-105 cursor-pointer"
+              onClick={() => window.open(
+                links?.android?.url ?? "https://expo.dev/accounts/virellestudios/projects/virelle-studios/builds",
+                "_blank"
+              )}
+              disabled={loading}
+              className="group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:scale-105 cursor-pointer disabled:opacity-50"
+            >
+              <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.523 15.341l-5.523-9.569-5.523 9.569h11.046zM12 2.5l-9.5 16.5h19L12 2.5z" />
+                <path d="M4.5 20h15l-1.5-2.5h-12L4.5 20z" />
+              </svg>
+              <div className="text-left">
+                <div className="text-xs opacity-70">Get it on</div>
+                <div className="text-lg font-bold leading-tight">Android</div>
+                <div className="text-xs opacity-60">
+                  {links?.android?.available ? `v${links.android.version} · APK` : "EAS Build Preview"}
+                </div>
+              </div>
+            </button>
+
+            {/* iOS */}
+            <button
+              onClick={() => window.open(
+                links?.ios?.url ?? "https://apps.apple.com/app/virelle-studios/id6761315616",
+                "_blank"
+              )}
+              disabled={loading}
+              className="group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] bg-foreground text-background border-foreground hover:opacity-90 hover:scale-105 cursor-pointer disabled:opacity-50"
             >
               <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
               </svg>
               <div className="text-left">
-                <div className="text-xs opacity-70">Download for</div>
-                <div className="text-lg font-bold leading-tight">macOS</div>
-                <div className="text-xs opacity-60">Open web app</div>
-              </div>
-            </button>
-
-            {/* Windows */}
-            <button
-              onClick={() => handleDesktopDownload("win")}
-              className="group flex items-center gap-4 px-8 py-4 rounded-2xl border-2 transition-all duration-200 min-w-[220px] bg-gradient-to-br from-blue-900/60 to-blue-950/80 text-foreground border-blue-600/60 hover:border-blue-400 hover:scale-105 cursor-pointer"
-            >
-              <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801" />
-              </svg>
-              <div className="text-left">
-                <div className="text-xs opacity-70">Download for</div>
-                <div className="text-lg font-bold leading-tight">Windows</div>
-                <div className="text-xs opacity-60">Open web app</div>
-              </div>
-            </button>
-
-            {/* Linux */}
-            <button
-              onClick={() => handleDesktopDownload("linux")}
-              className="group flex items-center gap-4 px-8 py-4 rounded-2xl border-2 transition-all duration-200 min-w-[220px] bg-gradient-to-br from-orange-900/60 to-orange-950/80 text-foreground border-orange-600/60 hover:border-orange-400 hover:scale-105 cursor-pointer"
-            >
-              <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368v-.004c.026-1.152.032-2.35-.498-3.377C15.5.55 14.197-.015 12.504 0zm.387 2.807c.228.006.455.025.68.064 1.134.2 1.811.896 2.261 1.815.45.92.551 2.015.541 3.074-.012 1.764.787 2.914 1.651 3.997.854 1.072 1.738 2.193 2.198 3.435.46 1.242.479 2.607-.102 3.972-.581 1.366-1.774 2.617-3.686 3.272-1.912.655-4.378.655-6.29 0-1.912-.655-3.105-1.906-3.686-3.272-.581-1.365-.562-2.73-.102-3.972.46-1.242 1.344-2.363 2.198-3.435.864-1.083 1.663-2.233 1.651-3.997-.01-1.059.091-2.154.541-3.074.45-.919 1.127-1.615 2.261-1.815.225-.039.452-.058.68-.064h.184z" />
-              </svg>
-              <div className="text-left">
-                <div className="text-xs opacity-70">Download for</div>
-                <div className="text-lg font-bold leading-tight">Linux</div>
-                <div className="text-xs opacity-60">Open web app</div>
+                <div className="text-xs opacity-70">Download on the</div>
+                <div className="text-lg font-bold leading-tight">App Store</div>
+                <div className="text-xs opacity-60">v{links?.ios?.version ?? "1.0.0"} · iOS</div>
               </div>
             </button>
           </div>
 
-          <p className="text-sm text-gray-400 max-w-md mx-auto text-center mb-12">
-            No desktop app to install — Virelle runs entirely in your browser. Click any button above to open the full studio at virelle.life.
-          </p>
+          {/* PWA Install */}
+          <div className="flex justify-center mt-4">
+            {pwaInstalled ? (
+              <div className="flex items-center gap-2 text-sm text-green-400 bg-green-500/10 border border-green-500/20 rounded-xl px-6 py-3 font-semibold">
+                <span>✓</span> App installed — find it on your home screen
+              </div>
+            ) : pwaPrompt ? (
+              <button
+                onClick={handlePwaInstall}
+                className="flex items-center gap-3 bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 py-3 rounded-2xl transition-all hover:scale-105 shadow-lg shadow-amber-500/30"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Install Web App (PWA)
+              </button>
+            ) : (
+              <p className="text-xs text-white/30 text-center max-w-xs">
+                Open in Chrome (Android) or Safari (iOS) and tap "Add to Home Screen" to install the web app
+              </p>
+            )}
+          </div>
 
-          {/* Desktop features grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
-            {DESKTOP_FEATURES.map((f) => (
-              <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/8 transition-colors">
-                <div className="text-3xl mb-3">{f.icon}</div>
-                <div className="font-semibold mb-1">{f.label}</div>
-                <div className="text-sm text-gray-400">{f.desc}</div>
+          {/* Mobile feature grid */}
+          <div className="mt-12">
+            <h3 className="text-center text-lg font-semibold mb-6 text-white/60">Every tool, on mobile</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {MOBILE_FEATURES.map(f => (
+                <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/8 transition-colors">
+                  <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{f.icon}</div>
+                  <div className="font-semibold text-sm sm:text-base mb-1">{f.label}</div>
+                  <div className="text-xs text-gray-400 leading-snug">{f.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Desktop Downloads ──────────────────────────────────────────────────── */}
+        <section>
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">🖥️ Desktop App</h2>
+            <p className="text-gray-400">macOS, Windows & Linux — native performance</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            {(["mac", "win", "linux"] as const).map(platform => {
+              const label = platform === "mac" ? "macOS" : platform === "win" ? "Windows" : "Linux";
+              const emoji = platform === "mac" ? "🍎" : platform === "win" ? "🪟" : "🐧";
+              const url = links?.desktop?.[platform] ?? "https://virelle.life";
+              return (
+                <button
+                  key={platform}
+                  onClick={() => window.open(url, "_blank")}
+                  disabled={loading}
+                  className="flex items-center gap-3 px-6 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 hover:scale-105 transition-all text-sm font-semibold w-full sm:w-auto justify-center disabled:opacity-50"
+                >
+                  <span className="text-xl">{emoji}</span>
+                  Download for {label}
+                  <span className="text-xs opacity-50 ml-1">v{links?.desktop?.version ?? "1.0.0"}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {DESKTOP_FEATURES.map(f => (
+              <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/8 transition-colors">
+                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{f.icon}</div>
+                <div className="font-semibold text-sm sm:text-base mb-1">{f.label}</div>
+                <div className="text-xs text-gray-400 leading-snug">{f.desc}</div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* ── Auto-parity callout ───────────────────────────────────────────────── */}
-        <div className="bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-amber-500/20 rounded-3xl p-8 text-center mb-16">
+        {/* ── Parity callout ────────────────────────────────────────────────────── */}
+        <div className="bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-amber-500/20 rounded-3xl p-6 sm:p-8 text-center">
           <div className="text-4xl mb-4">🔄</div>
-          <h2 className="text-2xl font-bold mb-3">One Subscription. All Platforms.</h2>
-          <p className="text-gray-400 max-w-xl mx-auto">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3">One Subscription. All Platforms.</h2>
+          <p className="text-gray-400 max-w-xl mx-auto text-sm sm:text-base">
             Your Virelle subscription works across web, mobile, and desktop. Credits, projects, and settings sync automatically. New features added to the platform appear everywhere — no app update required.
           </p>
         </div>
 
-        {/* ── Referral / CTA ───────────────────────────────────────────────────── */}
-        {user && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-8 text-center">
+        {/* ── Referral / CTA ────────────────────────────────────────────────────── */}
+        {user ? (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center">
             <div className="text-3xl mb-3">🎁</div>
             <h3 className="text-xl font-bold mb-2">Share with Your Crew</h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-400 mb-6 text-sm sm:text-base">
               Share your referral link — you both earn bonus credits when they sign up.
             </p>
             <button
@@ -278,19 +259,18 @@ export default function DownloadApp() {
               {copied ? "✓ Copied!" : "Copy Referral Link"}
             </button>
           </div>
-        )}
-
-        {!user && (
-          <div className="text-center">
-            <p className="text-gray-400 mb-4">Create your account to get started</p>
+        ) : (
+          <div className="text-center pb-8">
+            <p className="text-gray-400 mb-4 text-sm">Create your account to get started</p>
             <Button
               onClick={() => setLocation("/register")}
               className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 py-3 rounded-xl text-lg"
             >
-              Create Account
+              Create Account — It's Free
             </Button>
           </div>
         )}
+
       </div>
     </div>
   );
