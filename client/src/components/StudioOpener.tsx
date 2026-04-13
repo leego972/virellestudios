@@ -19,7 +19,7 @@ export default function StudioOpenerDefault(props: Parameters<typeof StudioOpene
  *  4.5s  — Gold transformation wave sweeps from dove outward
  *  5.8s  — "VIRELLE STUDIOS" rises in gold with glow
  *  6.5s  — "WHERE VISION BECOMES FILM" fades in
- *  8.5s  — Fade to black, onComplete fires
+ * 9.5s  — Fade to black, onComplete fires
  */
 
 type StudioOpenerProps = {
@@ -199,7 +199,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
   const startTimeRef = useRef<number>(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioFiredRef = useRef({ whoosh: false, flaps: false, choir: false, metal: false, boom: false, shimmer: false, sustain: false });
-  const TOTAL = 8500;
+  const TOTAL = 9500;
 
   useEffect(() => {
     if (!skippable) return;
@@ -301,12 +301,12 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
           preload="auto"
           className="w-full h-full object-contain"
           onEnded={() => {
-            // Hold on the final golden logo frame for 2 full seconds, then fade out
+            // Hold on the final golden logo frame for 3 full seconds, then fade out
             setVideoPhase("hold");
             setTimeout(() => {
               setVideoPhase("fadeout");
               setTimeout(onComplete, 700);
-            }, 2000);
+            }, 3000);
           }}
           onError={() => setVideoError(true)}
         >
