@@ -38,9 +38,15 @@ export const VEHICLE_TYPES = [
 ] as const;
 
 export const GENRE_OPTIONS = [
-  "Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Romance",
-  "Thriller", "Documentary", "Animation", "Fantasy", "Mystery",
-  "Western", "Musical", "War", "Crime", "Adventure",
+  // ─── Classic Hollywood ───
+  "Action", "Adventure", "Comedy", "Drama", "Horror",
+  "Mystery", "Romance", "Sci-Fi", "Thriller", "Fantasy",
+  "Western", "Musical", "War", "Crime", "Documentary", "Animation",
+  // ─── Elevated Blockbuster ───
+  "Superhero", "Heist", "Biopic", "Historical Epic", "Psychological Thriller",
+  "Sports Drama", "Martial Arts", "Period Drama",
+  // ─── World Cinema ───
+  "K-Drama", "Bollywood", "Nollywood",
 ] as const;
 
 export const ACT_STRUCTURE_OPTIONS = [
