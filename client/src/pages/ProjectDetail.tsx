@@ -85,7 +85,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
-import { useState, useRef, useCallback, useMemo } from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import {
   RATING_OPTIONS,
@@ -284,6 +284,25 @@ export default function ProjectDetail() {
       toast.success("Film generation started! This runs in the background — check back in a few minutes.");
     },
     onError: (err) => toast.error(err.message),
+  });
+
+
+  // ─── Generate Full Feature Film (60-90 min) ───
+  const [fullFilmDialogOpen, setFullFilmDialogOpen] = React.useState(false);
+  const [fullFilmConfig, setFullFilmConfig] = React.useState({
+    targetDurationMinutes: project?.duration || 90,
+    generateDialogue: true,
+    generateSoundtrack: true,
+    useCharacterConsistency: true,
+    useSceneContinuity: true,
+  });
+  const generateFullFilmMutation = trpc.film.generateFullFilm.useMutation({
+    onSuccess: () => {
+      toast.success("🎬 Full film generation started! This will take some time — you'll be notified when complete.");
+      utils.project.get.invalidate({ id: projectId });
+      setFullFilmDialogOpen(false);
+    },
+    onError: (err) => toast.error(err.message || "Failed to start film generation"),
   });
 
   const cancelGenerationMutation = trpc.generation.cancelGeneration.useMutation({
@@ -855,7 +874,12 @@ export default function ProjectDetail() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground">#{idx + 1}</span>
-                        <p className="text-sm font-medium truncate">{scene.title || "Untitled Scene"}</p>
+
+                    {scenes && scenes.length > 0 && (
+                      <span className="absolute top-2 left-2 text-[10px] text-white/80 bg-black/50 rounded px-1.5 py-0.5">
+                        {scenes.length} scenes · ~{Math.round(scenes.length * 1.5)} min est.
+                      </span>
+                    )}                        <p className="text-sm font-medium truncate">{scene.title || "Untitled Scene"}</p>
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" · ")}
@@ -1283,6 +1307,31 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <Card 
+              className="cursor-pointer hover:ring-1 hover:ring-violet-500/40 transition-all border-violet-500/20 col-span-full"
+              onClick={() => setFullFilmDialogOpen(true)}
+            >
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-12 w-12 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0">
+                  <Film className="h-6 w-6 text-violet-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium flex items-center gap-2">
+                    Generate Full Feature Film
+                    <span className="text-xs bg-violet-500/20 text-violet-400 px-1.5 py-0.5 rounded">
+                      {project?.duration || 90} min
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Generate all {scenes?.length || 0} scenes automatically — dialogue, cinematics, soundtrack, full assembly
+                  </p>
+                </div>
+                <div className="text-xs text-muted-foreground text-right shrink-0">
+                  <div className="font-medium text-foreground/70">~{Math.round(((scenes?.length || 1) * 8) / 60)} hrs</div>
+                  <div>to generate</div>
+                </div>
+              </CardContent>
+            </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -2059,6 +2108,88 @@ export default function ProjectDetail() {
         </DialogContent>
       </Dialog>
 
+
+      {/* Generate Full Film Dialog */}
+      <Dialog open={fullFilmDialogOpen} onOpenChange={setFullFilmDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Film className="h-5 w-5 text-violet-400" />
+              Generate Full Feature Film
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="p-3 rounded-lg bg-muted/30 border border-border/40 text-xs text-muted-foreground space-y-1">
+              <div className="flex justify-between">
+                <span>Scenes</span>
+                <span className="font-medium text-foreground">{scenes?.length || 0} scenes</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Target Duration</span>
+                <span className="font-medium text-foreground">{fullFilmConfig.targetDurationMinutes} minutes</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Est. Clips</span>
+                <span className="font-medium text-foreground">~{(scenes?.length || 0) * 6} video clips</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Est. Generation Time</span>
+                <span className="font-medium text-foreground">~{Math.max(1, Math.round(((scenes?.length || 1) * 8) / 60))} hours</span>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-xs">Target Duration (minutes)</Label>
+              <div className="flex items-center gap-3">
+                <Slider
+                  min={10} max={180} step={5}
+                  value={[fullFilmConfig.targetDurationMinutes]}
+                  onValueChange={([v]) => setFullFilmConfig(c => ({ ...c, targetDurationMinutes: v }))}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium w-12 text-right">{fullFilmConfig.targetDurationMinutes}m</span>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              {[
+                ['generateDialogue', 'Generate Voice Acting & Dialogue', '🎙️'],
+                ['generateSoundtrack', 'Generate AI Film Score', '🎵'],
+                ['useCharacterConsistency', 'Character Consistency (LoRA)', '👤'],
+                ['useSceneContinuity', 'Scene-to-Scene Continuity Chain', '🔗'],
+              ].map(([key, label, emoji]) => (
+                <label key={key} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-3.5 h-3.5 rounded"
+                    checked={fullFilmConfig[key as keyof typeof fullFilmConfig] as boolean}
+                    onChange={e => setFullFilmConfig(c => ({ ...c, [key]: e.target.checked }))}
+                  />
+                  <span className="text-xs">{emoji} {label}</span>
+                </label>
+              ))}
+            </div>
+            
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" size="sm" className="flex-1" onClick={() => setFullFilmDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                className="flex-1 bg-violet-600 hover:bg-violet-700"
+                disabled={generateFullFilmMutation.isPending}
+                onClick={() => generateFullFilmMutation.mutate({ projectId, ...fullFilmConfig })}
+              >
+                {generateFullFilmMutation.isPending ? (
+                  <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Starting...</>
+                ) : (
+                  <><Film className="h-3.5 w-3.5 mr-1.5" /> Start Generation</>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* Professional Media Player — scene preview */}
       {activeVideoMovie && !showFullFilm && (
         <MediaPlayer
