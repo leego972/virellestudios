@@ -1764,7 +1764,34 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       }),
 
     // Generate video for a single scene
-    generateVideo: creationProcedure
+// Build a rich, accurate description for extended scene generation that faithfully reflects
+    // the director's scene content, including dialogue context and production notes.
+    function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string): string {
+      const parts: string[] = [];
+      // Lead with the scene's actual story description (most important for accuracy)
+      if (sceneData.description) {
+        parts.push(sceneData.description);
+      }
+      // Include dialogue context so video captures speaking/lip-sync moments
+      if (sceneData.dialogueText && sceneData.dialogueText.trim()) {
+        parts.push(`DIALOGUE IN THIS SCENE: ${sceneData.dialogueText.trim()}`);
+      }
+      // Include production notes for blocking and action detail
+      if (sceneData.productionNotes && sceneData.productionNotes.trim()) {
+        parts.push(`DIRECTOR NOTES: ${sceneData.productionNotes.trim()}`);
+      }
+      // Include action description if separate
+      if (sceneData.actionDescription && sceneData.actionDescription.trim()) {
+        parts.push(`ACTION: ${sceneData.actionDescription.trim()}`);
+      }
+      // Append the full cinematic production prompt for visual style/quality
+      if (cinematicPrompt) {
+        parts.push(`CINEMATIC STYLE: ${cinematicPrompt}`);
+      }
+      return parts.join('. ');
+    }
+
+        generateVideo: creationProcedure
       .input(z.object({ sceneId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitHeavyAI(ctx.user.id);
@@ -1848,7 +1875,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -1880,7 +1907,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -1914,7 +1941,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -1949,7 +1976,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -2052,7 +2079,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 const extResult = await generateExtendedSceneBulkFal(bulkByokKeys, {
                   sceneId: scene.id,
                   projectId: project.id,
-                  description: sceneAiPromptOverride ? sceneAiPromptOverride : `Cinematic video: ${prompt}`,
+                  description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
                   targetDurationSeconds: Math.max(10, scene.duration || 45),
                   mood: scene.mood || undefined,
                   lighting: scene.lighting || undefined,
