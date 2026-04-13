@@ -1785,6 +1785,16 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       if (sceneData.actionDescription && sceneData.actionDescription.trim()) {
         parts.push(`ACTION: ${sceneData.actionDescription.trim()}`);
       }
+      // Include spatial composition details for accurate framing
+      if (sceneData.foregroundElements && sceneData.foregroundElements.trim()) {
+        parts.push(`FOREGROUND: ${sceneData.foregroundElements.trim()}`);
+      }
+      if (sceneData.backgroundElements && sceneData.backgroundElements.trim()) {
+        parts.push(`BACKGROUND: ${sceneData.backgroundElements.trim()}`);
+      }
+      if (sceneData.characterBlocking && sceneData.characterBlocking.trim()) {
+        parts.push(`CHARACTER POSITIONS: ${sceneData.characterBlocking.trim()}`);
+      }
       // Append the full cinematic production prompt for visual style/quality
       if (cinematicPrompt) {
         parts.push(`CINEMATIC STYLE: ${cinematicPrompt}`);
@@ -2122,12 +2132,32 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 const sceneNegativePrompt: string = ((scene as any).negativePrompt as string | undefined) || getDefaultNegativePrompt(userTier as QualityTier);
                 const sceneSeed = (scene as any).seed as number | undefined;
                 const sceneAiPromptOverride = (scene as any).aiPromptOverride as string | undefined;
+                // Fetch dialogue fallback from dialogue records
+                let bulkFalDialogue = (scene as any).dialogueText as string | undefined;
+                if (!bulkFalDialogue?.trim()) {
+                  try {
+                    const dlRecs = await db.getSceneDialogues(scene.id);
+                    if (dlRecs?.length) bulkFalDialogue = dlRecs.map((d: any) => `${d.characterName}: "${d.line}"${d.emotion ? ` (${d.emotion})` : ''}`).join('\n');
+                  } catch { /* ignore */ }
+                }
+                // Build character data for visual consistency
+                const bulkFalCharIds = ((scene as any).characterIds as number[]) || [];
+                const bulkFalSceneChars = characters.filter((c: any) => bulkFalCharIds.length === 0 || bulkFalCharIds.includes(c.id));
+                const bulkFalCharDescs = bulkFalSceneChars.filter((c: any) => c.name).map((c: any) => {
+                  const p = [c.name]; if (c.age) p.push(`age ${c.age}`); if (c.gender) p.push(c.gender); if (c.ethnicity) p.push(c.ethnicity);
+                  if (c.build) p.push(c.build); if (c.hairColor) p.push(`${c.hairColor} hair`); if (c.description) p.push(c.description);
+                  return p.filter(Boolean).join(', ');
+                }).filter(Boolean);
+                if (sceneRefImages.length === 0) {
+                  const cp = bulkFalSceneChars.filter((c: any) => c.photoUrl).map((c: any) => c.photoUrl as string).slice(0, 2);
+                  sceneRefImages.push(...cp);
+                }
                 await db.updateScene(scene.id, { status: "generating" } as any);
                 console.log(`[BulkVideo:fal] Extended generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
                 const extResult = await generateExtendedSceneBulkFal(bulkByokKeys, {
                   sceneId: scene.id,
                   projectId: project.id,
-                  description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
+                  description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, bulkFalDialogue),
                   targetDurationSeconds: Math.max(10, scene.duration || 45),
                   mood: scene.mood || undefined,
                   lighting: scene.lighting || undefined,
@@ -2135,6 +2165,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   genre: project.genre || undefined,
                   locationDescription: scene.locationType || undefined,
                   referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                  characterDescriptions: bulkFalCharDescs.length > 0 ? bulkFalCharDescs : undefined,
                   aiPromptOverride: sceneAiPromptOverride,
                   negativePrompt: sceneNegativePrompt,
                   seed: sceneSeed,
@@ -2171,16 +2202,40 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   }
                 );
                 await db.updateScene(scene.id, { status: "generating" } as any);
+                // Fetch dialogue fallback + character data for other providers
+                let bulkOtherDialogue = (scene as any).dialogueText as string | undefined;
+                if (!bulkOtherDialogue?.trim()) {
+                  try {
+                    const dlRecs2 = await db.getSceneDialogues(scene.id);
+                    if (dlRecs2?.length) bulkOtherDialogue = dlRecs2.map((d: any) => `${d.characterName}: "${d.line}"${d.emotion ? ` (${d.emotion})` : ''}`).join('\n');
+                  } catch { /* ignore */ }
+                }
+                const bulkOtherCharIds = ((scene as any).characterIds as number[]) || [];
+                const bulkOtherSceneChars = characters.filter((c: any) => bulkOtherCharIds.length === 0 || bulkOtherCharIds.includes(c.id));
+                const bulkOtherCharDescs = bulkOtherSceneChars.filter((c: any) => c.name).map((c: any) => {
+                  const p = [c.name]; if (c.age) p.push(`age ${c.age}`); if (c.gender) p.push(c.gender); if (c.ethnicity) p.push(c.ethnicity);
+                  if (c.build) p.push(c.build); if (c.hairColor) p.push(`${c.hairColor} hair`); if (c.description) p.push(c.description);
+                  return p.filter(Boolean).join(', ');
+                }).filter(Boolean);
+                const bulkOtherRefs = (scene as any).referenceImages as string[] || [];
+                if (bulkOtherRefs.length === 0) {
+                  const cp2 = bulkOtherSceneChars.filter((c: any) => c.photoUrl).map((c: any) => c.photoUrl as string).slice(0, 2);
+                  bulkOtherRefs.push(...cp2);
+                }
+                const bulkOtherPromptOverride = (scene as any).aiPromptOverride as string | undefined;
+                const bulkOtherDesc = bulkOtherPromptOverride ? bulkOtherPromptOverride : buildExtendedSceneDescription(scene, prompt, bulkOtherDialogue);
                 const extResult = await generateExtendedScene(bulkByokKeys, {
                   sceneId: scene.id,
                   projectId: project.id,
-                  description: `Cinematic video: ${prompt}`,
+                  description: bulkOtherDesc,
                   targetDurationSeconds: Math.max(10, scene.duration || 45),
                   mood: scene.mood || undefined,
                   lighting: scene.lighting || undefined,
                   timeOfDay: scene.timeOfDay || undefined,
                   genre: project.genre || undefined,
                   locationDescription: scene.locationType || undefined,
+                  referenceImages: bulkOtherRefs.length > 0 ? bulkOtherRefs : undefined,
+                  characterDescriptions: bulkOtherCharDescs.length > 0 ? bulkOtherCharDescs : undefined,
                 });
                 await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
                 // Auto-set project thumbnail if project has none
@@ -2876,8 +2931,24 @@ Break this into 8-15 scenes. For each scene, provide:
               return parts.join(", ");
             }).filter(Boolean);
 
+            // Dialogue fallback: fetch from dialogue records if scene.dialogueText is empty
+            let quickGenDialogue = (scene as any).dialogueText as string | undefined;
+            if (!quickGenDialogue?.trim()) {
+              try {
+                const dlRecs = await db.getSceneDialogues(scene.id);
+                if (dlRecs?.length) quickGenDialogue = dlRecs.map((d: any) => `${d.characterName}: "${d.line}"${d.emotion ? ` (${d.emotion})` : ''}`).join('\n');
+              } catch { /* ignore */ }
+            }
+            // Character reference images for visual consistency
+            const qgRefImages: string[] = (scene as any).referenceImages as string[] || [];
+            if (qgRefImages.length === 0) {
+              const charPhotos = characters.filter((c: any) => c.photoUrl).map((c: any) => c.photoUrl as string).slice(0, 2);
+              qgRefImages.push(...charPhotos);
+            }
             const videoPrompt = [
               `Cinematic video scene: ${scene.description || scene.title || "A cinematic scene"}.`,
+              quickGenDialogue?.trim() ? `DIALOGUE: ${quickGenDialogue.trim()}` : "",
+              (scene as any).productionNotes?.trim() ? `DIRECTOR NOTES: ${(scene as any).productionNotes.trim()}` : "",
               charVideoDescriptions.length > 0 ? `Characters in scene: ${charVideoDescriptions.join(" | ")}.` : "",
               scene.mood ? `Mood: ${scene.mood}.` : "",
               scene.lighting ? `Lighting: ${scene.lighting}.` : "",
@@ -2907,6 +2978,8 @@ Break this into 8-15 scenes. For each scene, provide:
                 weather: scene.weather || undefined,
                 genre: projectRef.genre || undefined,
                 locationDescription: scene.locationType || undefined,
+                referenceImages: qgRefImages.length > 0 ? qgRefImages : undefined,
+                characterDescriptions: charVideoDescriptions.length > 0 ? charVideoDescriptions : undefined,
                 previousSceneLastFrameUrl: sceneIdx > 0 ? (allScenes[sceneIdx - 1] as any)?.lastFrameUrl : undefined,
               });
 
