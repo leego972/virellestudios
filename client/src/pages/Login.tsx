@@ -49,14 +49,10 @@ export default function Login() {
     loginMutation.mutate({ email, password });
   };
 
-  const handleOpenerComplete = () => {
-    setShowOpener(false);
-    navigate("/");
-  };
-
   // Show the studio opener fullscreen
   if (showOpener) {
-    return <StudioOpener onComplete={handleOpenerComplete} mode="login" skippable />;
+    navigate("/?opener=1");
+    return null;
   }
 
   return (

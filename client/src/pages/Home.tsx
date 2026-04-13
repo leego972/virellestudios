@@ -126,9 +126,9 @@ export default function Home() {
     }
   }, []);
 
-  const { data: projects, isLoading } = trpc.project.list.useQuery();
-  const { data: characters } = trpc.character.list.useQuery();
-  const { data: providers } = trpc.settings.getProviders.useQuery();
+  const { data: projects, isLoading } = trpc.project.list.useQuery(undefined, { enabled: !showOpener });
+  const { data: characters } = trpc.character.list.useQuery(undefined, { enabled: !showOpener });
+  const { data: providers } = trpc.settings.getProviders.useQuery(undefined, { enabled: !showOpener });
   const hasApiKey = providers && (providers as any[]).some((p: any) => p.isConfigured);
 
   const stats = {
