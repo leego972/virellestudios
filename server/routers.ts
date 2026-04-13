@@ -65,6 +65,14 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
   const dialogueText = effectiveDialogueText?.trim() || sceneData.dialogueText?.trim();
   if (dialogueText) parts.push(`DIALOGUE IN THIS SCENE: ${dialogueText}`);
   if (sceneData.productionNotes?.trim()) parts.push(`DIRECTOR NOTES: ${sceneData.productionNotes.trim()}`);
+  if ((sceneData as any).shotIntent?.trim()) parts.push(`DIRECTOR SHOT INTENT (what this shot must convey emotionally): ${(sceneData as any).shotIntent.trim()}`);
+  if ((sceneData as any).practicalLights?.trim()) parts.push(`PRACTICAL LIGHT SOURCES IN FRAME: ${(sceneData as any).practicalLights.trim()}`);
+  if ((sceneData as any).coverageType?.trim()) parts.push(`SHOT COVERAGE TYPE: ${(sceneData as any).coverageType.replace(/_/g, ' ').trim()}`);
+  if ((sceneData as any).screenDirection?.trim()) parts.push(`SCREEN DIRECTION: ${(sceneData as any).screenDirection.replace(/_/g, ' ').trim()}`);
+  if ((sceneData as any).continuityNotes?.trim()) parts.push(`CONTINUITY FROM PREVIOUS SCENE: ${(sceneData as any).continuityNotes.trim()}`);
+  if ((sceneData as any).dialogueSubtext?.trim()) parts.push(`DIALOGUE SUBTEXT (what characters truly mean beneath the words): ${(sceneData as any).dialogueSubtext.trim()}`);
+  if ((sceneData as any).lensFilter?.trim()) parts.push(`OPTICAL FILTER ON LENS: ${(sceneData as any).lensFilter.replace(/_/g, ' ').trim()}`);
+  if ((sceneData as any).shootingFormat?.trim()) parts.push(`SHOOTING FORMAT / COLOR SCIENCE: ${(sceneData as any).shootingFormat.replace(/_/g, ' ').trim()}`);
   if (sceneData.actionDescription?.trim()) parts.push(`ACTION: ${sceneData.actionDescription.trim()}`);
   if (sceneData.foregroundElements?.trim()) parts.push(`FOREGROUND: ${sceneData.foregroundElements.trim()}`);
   if (sceneData.backgroundElements?.trim()) parts.push(`BACKGROUND: ${sceneData.backgroundElements.trim()}`);
