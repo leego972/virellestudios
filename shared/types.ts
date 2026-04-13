@@ -186,34 +186,39 @@ export const LIGHTING_LABELS: Record<string, string> = {
 
 // ─── Camera Angle Labels ──────────────────────────────────────────────────────
 export const CAMERA_ANGLE_LABELS: Record<string, string> = {
-  "wide": "Wide Shot", "medium": "Medium Shot", "close-up": "Close-Up",
-  "extreme-close-up": "Extreme Close-Up / Insert", "birds-eye": "Bird's Eye / Top-Down",
-  "low-angle": "Low Angle (Hero Shot)", "dutch-angle": "Dutch Angle / Tilted",
-  "over-shoulder": "Over-the-Shoulder", "pov": "POV / First Person",
-  "extreme-wide": "Extreme Wide / Establishing", "medium-wide": "Medium Wide / Cowboy",
-  "medium-close": "Medium Close-Up", "two-shot": "Two-Shot",
-  "high-angle": "High Angle (Diminishing)", "worms-eye": "Worm's Eye (Looking Up)",
-  "canted": "Canted / Oblique", "aerial": "Aerial / Helicopter", "drone": "Drone Shot",
-  "tracking": "Tracking Shot", "dolly": "Dolly / Dolly-Zoom",
-  "handheld": "Handheld / Verite", "steadicam": "Steadicam / Smooth Follow",
-  "crane": "Crane / Jib", "underwater-angle": "Underwater Angle",
-  "through-glass": "Through Glass / Window", "mirror-reflection": "Mirror / Reflection Shot",
-  "eye-level": "Eye Level — Neutral / Direct",
-  "two-shot": "Two-Shot — Both Subjects in Frame",
-  "worms-eye": "Worm's Eye — Extreme Low (Looking Up)",
+  // ─ Standard Sizes ─
+  "wide": "Wide Shot",
   "extreme-wide": "Extreme Wide (EWS) — Full Environment",
   "medium-wide": "Medium Wide (MWS) — Below Knee",
+  "medium": "Medium Shot",
   "medium-close": "Medium Close-Up (MCU) — Chest Up",
+  "close-up": "Close-Up",
+  "extreme-close-up": "Extreme Close-Up / Insert",
+  // ─ Height / Position ─
+  "birds-eye": "Bird's Eye / Top-Down",
   "aerial": "Aerial — High Above Looking Down",
   "drone": "Drone Shot — Flying Overhead",
+  "high-angle": "High Angle (Diminishing)",
+  "eye-level": "Eye Level — Neutral / Direct",
+  "low-angle": "Low Angle (Hero Shot)",
+  "worms-eye": "Worm's Eye — Extreme Low (Looking Up)",
+  // ─ Relative / Relational ─
+  "over-shoulder": "Over-the-Shoulder",
+  "two-shot": "Two-Shot — Both Subjects in Frame",
+  "pov": "POV / First Person",
+  "dutch-angle": "Dutch Angle / Tilted",
+  "canted": "Canted / Dutch Tilt — Unease",
+  "profile": "Profile Shot",
+  // ─ Camera Movement Style ─
   "tracking": "Tracking Shot — Follows Subject",
+  "dolly": "Dolly / Dolly-Zoom",
   "handheld": "Handheld — Visceral / Documentary",
-  "steadicam": "Steadicam — Fluid Follow",
+  "steadicam": "Steadicam / Smooth Follow",
   "crane": "Crane — Sweeping Vertical",
+  // ─ Compositional / Special ─
   "through-glass": "Through Glass — Voyeuristic",
   "mirror-reflection": "Mirror Reflection — Duality",
   "underwater-angle": "Underwater Angle — Below Surface",
-  "canted": "Canted / Dutch Tilt — Unease",
 };
 
 // ─── Camera Movement ──────────────────────────────────────────────────────────
