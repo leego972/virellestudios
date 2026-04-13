@@ -141,6 +141,16 @@ type SceneForm = {
   mood: string;
   emotionalBeat: string;
   sceneType: string;
+  // Coverage & Continuity
+  coverageType: string;
+  screenDirection: string;
+  continuityNotes: string;
+  shotIntent: string;
+  practicalLights: string;
+  dialogueSubtext: string;
+  // Camera Optics Pro
+  lensFilter: string;
+  shootingFormat: string;
   // Camera & Optics
   cameraAngle: string;
   cameraMovement: string;
@@ -226,6 +236,14 @@ const defaultScene: SceneForm = {
   mood: "",
   emotionalBeat: "",
   sceneType: "",
+  coverageType: "",
+  screenDirection: "",
+  continuityNotes: "",
+  shotIntent: "",
+  practicalLights: "",
+  dialogueSubtext: "",
+  lensFilter: "",
+  shootingFormat: "",
   // Camera & Optics
   cameraAngle: "medium",
   cameraMovement: "",
@@ -469,6 +487,14 @@ export default function SceneEditor() {
       mood: scene.mood || "",
       emotionalBeat: scene.emotionalBeat || "",
       sceneType: (scene as any).sceneType || "",
+      coverageType: (scene as any).coverageType || "",
+      screenDirection: (scene as any).screenDirection || "",
+      continuityNotes: (scene as any).continuityNotes || "",
+      shotIntent: (scene as any).shotIntent || "",
+      practicalLights: (scene as any).practicalLights || "",
+      dialogueSubtext: (scene as any).dialogueSubtext || "",
+      lensFilter: (scene as any).lensFilter || "",
+      shootingFormat: (scene as any).shootingFormat || "",
       // Camera & Optics
       cameraAngle: scene.cameraAngle || "medium",
       cameraMovement: scene.cameraMovement || ext.cameraMovement || "",
@@ -557,6 +583,14 @@ export default function SceneEditor() {
       mood: form.mood || undefined,
       emotionalBeat: form.emotionalBeat || undefined,
       sceneType: form.sceneType || undefined,
+      coverageType: form.coverageType || undefined,
+      screenDirection: form.screenDirection || undefined,
+      continuityNotes: form.continuityNotes || undefined,
+      shotIntent: form.shotIntent || undefined,
+      practicalLights: form.practicalLights || undefined,
+      dialogueSubtext: form.dialogueSubtext || undefined,
+      lensFilter: form.lensFilter || undefined,
+      shootingFormat: form.shootingFormat || undefined,
       // Camera & Optics
       cameraAngle: form.cameraAngle || undefined,
       cameraMovement: form.cameraMovement || undefined,
@@ -668,6 +702,7 @@ export default function SceneEditor() {
     atmosphere: false,
     camera: false,
     cameraRig: false,
+    coverage: false,
     visualStyle: false,
     location: false,
     characters: true,
@@ -1301,6 +1336,125 @@ export default function SceneEditor() {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Optical Filter</Label>
+                      <Select value={form.lensFilter || ""} onValueChange={v => setField("lensFilter", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="No filter" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">No filter (clean)</SelectItem>
+                          <SelectItem value="black_pro_mist_14">Black Pro-Mist ¼ — subtle halation</SelectItem>
+                          <SelectItem value="black_pro_mist_12">Black Pro-Mist ½ — dreamy bloom</SelectItem>
+                          <SelectItem value="black_pro_mist_1">Black Pro-Mist 1 — heavy diffusion</SelectItem>
+                          <SelectItem value="glimmerglass_1">Tiffen Glimmerglass 1 — fine halation</SelectItem>
+                          <SelectItem value="glimmerglass_2">Tiffen Glimmerglass 2 — medium glow</SelectItem>
+                          <SelectItem value="glimmerglass_3">Tiffen Glimmerglass 3 — soft glow</SelectItem>
+                          <SelectItem value="classic_soft_1">Schneider Classic Soft 1 — portrait diffusion</SelectItem>
+                          <SelectItem value="pearlescent_14">Tiffen Pearlescent ¼ — pearl luminosity</SelectItem>
+                          <SelectItem value="low_contrast_1">Low Contrast 1 — shadow lift, film-like</SelectItem>
+                          <SelectItem value="low_contrast_3">Low Contrast 3 — heavy shadow lift</SelectItem>
+                          <SelectItem value="ultra_contrast_3">Ultra Contrast 3 — dual highlight+shadow</SelectItem>
+                          <SelectItem value="nd_2stop">ND 2-stop (0.6) — exposure control</SelectItem>
+                          <SelectItem value="nd_3stop">ND 3-stop (0.9) — wide aperture outdoors</SelectItem>
+                          <SelectItem value="nd_4stop">ND 4-stop (1.2) — shallow DoF in daylight</SelectItem>
+                          <SelectItem value="nd_6stop">ND 6-stop (1.8) — extreme control</SelectItem>
+                          <SelectItem value="polarizer">Polarizer — removes reflections</SelectItem>
+                          <SelectItem value="streak_horizontal">Streak (horizontal) — anamorphic flares</SelectItem>
+                          <SelectItem value="star_4pt">Star 4-point — practical starbursts</SelectItem>
+                          <SelectItem value="infrared">Infrared — surreal, leaves glow white</SelectItem>
+                          <SelectItem value="uv_skylight">UV / Skylight — haze reduction</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Shooting Format / Color Science</Label>
+                      <Select value={form.shootingFormat || ""} onValueChange={v => setField("shootingFormat", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto / REC709" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Auto / REC709 (standard)</SelectItem>
+                          <SelectItem value="logc3_arriraw">ARRI LogC3 / ARRIRAW</SelectItem>
+                          <SelectItem value="logc4_alexa35">ARRI LogC4 / ALEXA 35</SelectItem>
+                          <SelectItem value="slog3_sgamut3">Sony S-Log3 / S-Gamut3</SelectItem>
+                          <SelectItem value="ipp2_redcode">RED IPP2 / REDCODE RAW</SelectItem>
+                          <SelectItem value="vlog_vgamut">Panasonic V-Log / V-Gamut</SelectItem>
+                          <SelectItem value="clog2_cgamut">Canon C-Log2 / C-Gamut</SelectItem>
+                          <SelectItem value="aces_13">ACES 1.3 — VFX pipeline</SelectItem>
+                          <SelectItem value="aces_20">ACES 2.0 — HDR/WCG pipeline</SelectItem>
+                          <SelectItem value="dci_p3">DCI-P3 — cinema projector</SelectItem>
+                          <SelectItem value="hdr10_pq">HDR10 / PQ — streaming HDR</SelectItem>
+                          <SelectItem value="dolby_vision">Dolby Vision — premium HDR</SelectItem>
+                          <SelectItem value="super8_reversal">Super 8 reversal — warm, grainy</SelectItem>
+                          <SelectItem value="16mm_eclair">16mm Éclair — textured grain</SelectItem>
+                          <SelectItem value="35mm_scope">35mm Anamorphic — Panavision scope</SelectItem>
+                          <SelectItem value="imax_70mm">IMAX 70mm — maximum clarity</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── Coverage & Continuity ── */}
+            <Collapsible open={openSections.coverage} onOpenChange={() => toggleSection("coverage")}>
+              <CollapsibleTrigger asChild>
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-colors text-left">
+                  <ChevronRight className={`h-3.5 w-3.5 text-purple-400 transition-transform duration-200 ${openSections.coverage ? "rotate-90" : ""}`} />
+                  <Film className="h-3.5 w-3.5 text-purple-400" />
+                  <span className="text-xs uppercase tracking-wider font-medium text-purple-400 flex-1">Coverage &amp; Continuity</span>
+                  <Badge className="text-[10px] h-4 bg-purple-500/20 text-purple-400 border-purple-500/40">Pro</Badge>
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 border border-t-0 border-purple-500/30 rounded-b-lg space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Coverage Type</Label>
+                      <Select value={form.coverageType || ""} onValueChange={v => setField("coverageType", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Unspecified" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Auto / Unspecified</SelectItem>
+                          <SelectItem value="establishing">Establishing — sets location/context</SelectItem>
+                          <SelectItem value="master">Master shot — full scene wide</SelectItem>
+                          <SelectItem value="medium_coverage">Medium coverage — waist-up singles</SelectItem>
+                          <SelectItem value="close_coverage">Close-up coverage — face singles</SelectItem>
+                          <SelectItem value="over_shoulder">Over-the-shoulder (OTS)</SelectItem>
+                          <SelectItem value="insert">Insert — ECU detail (hands, props)</SelectItem>
+                          <SelectItem value="cutaway">Cutaway — reaction / environmental</SelectItem>
+                          <SelectItem value="pickup">Pickup — isolated re-shoot</SelectItem>
+                          <SelectItem value="broll">B-roll / non-sync coverage</SelectItem>
+                          <SelectItem value="mos">MOS — picture only, no sync sound</SelectItem>
+                          <SelectItem value="pov">POV — character's eye view</SelectItem>
+                          <SelectItem value="vfx_plate">VFX plate — compositing background</SelectItem>
+                          <SelectItem value="aerial">Aerial / drone coverage</SelectItem>
+                          <SelectItem value="second_unit">Second unit coverage</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Screen Direction</Label>
+                      <Select value={form.screenDirection || ""} onValueChange={v => setField("screenDirection", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Auto / Not specified</SelectItem>
+                          <SelectItem value="ltr">L→R — subjects move left to right</SelectItem>
+                          <SelectItem value="rtl">R→L — subjects move right to left</SelectItem>
+                          <SelectItem value="towards_camera">Towards camera</SelectItem>
+                          <SelectItem value="away_camera">Away from camera</SelectItem>
+                          <SelectItem value="stationary">Stationary — no lateral movement</SelectItem>
+                          <SelectItem value="180_axis_right">180° axis — camera right side</SelectItem>
+                          <SelectItem value="180_axis_left">180° axis — camera left side</SelectItem>
+                          <SelectItem value="crossing_line">Crossing the line (intentional)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Continuity Notes</Label>
+                    <Textarea
+                      placeholder="What carries into this scene? e.g. 'Character wet from Scene 3 rain — wet hair, damp clothing throughout. Prop: gun in right hand all of Act 2. Wound on left cheek visible and bleeding.'"
+                      value={form.continuityNotes}
+                      onChange={e => setField("continuityNotes", e.target.value)}
+                      className="min-h-[56px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
                   </div>
                 </div>
               </CollapsibleContent>
@@ -1650,6 +1804,14 @@ export default function SceneEditor() {
                     value={form.dialogueText}
                     onChange={e => setField("dialogueText", e.target.value)}
                     className="min-h-[80px] text-sm bg-background/50 resize-y font-mono" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                  <div className="mt-3 space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Dialogue Subtext <span className="text-muted-foreground/60 text-[10px] font-normal">(what characters truly mean beneath the words)</span></Label>
+                    <Textarea
+                      placeholder="e.g. 'ELENA says she forgives him but every pause communicates she never will. He knows it. She knows he knows it. The scene is about the silence between the lines.'"
+                      value={form.dialogueSubtext}
+                      onChange={e => setField("dialogueSubtext", e.target.value)}
+                      className="min-h-[56px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                  </div>
                 </div>
               </CollapsibleContent>
             </Collapsible>
@@ -1931,12 +2093,31 @@ export default function SceneEditor() {
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg">
-                  <Textarea
-                    placeholder="Private notes for this scene — creative intent, references, technical reminders, continuity notes..."
-                    value={form.directorNotes}
-                    onChange={e => setField("directorNotes", e.target.value)}
-                    className="min-h-[60px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground font-medium">Shot Intent <span className="text-muted-foreground/60 font-normal">(what must this shot make the audience feel)</span></Label>
+                    <Textarea
+                      placeholder="e.g. 'The audience must feel the character's total isolation. The world outside doesn't exist. Every extra second of silence deepens the dread. Do not cut too soon.'"
+                      value={form.shotIntent}
+                      onChange={e => setField("shotIntent", e.target.value)}
+                      className="min-h-[64px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Practical Lights in Frame</Label>
+                    <Textarea
+                      placeholder="e.g. 'Motivated by window camera-left (overcast daylight). Single practical desk lamp at 3 o'clock (tungsten, slight flicker). No other sources. Character's face splits: cool blue on one half, warm amber on the other.'"
+                      value={form.practicalLights}
+                      onChange={e => setField("practicalLights", e.target.value)}
+                      className="min-h-[56px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">General Notes</Label>
+                    <Textarea
+                      placeholder="Technical reminders, script references, other continuity details..."
+                      value={form.directorNotes}
+                      onChange={e => setField("directorNotes", e.target.value)}
+                      className="min-h-[56px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
+                  </div>
                 </div>
               </CollapsibleContent>
             </Collapsible>
