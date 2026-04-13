@@ -198,10 +198,23 @@ export const CAMERA_ANGLE_LABELS: Record<string, string> = {
   "handheld": "Handheld / Verite", "steadicam": "Steadicam / Smooth Follow",
   "crane": "Crane / Jib", "underwater-angle": "Underwater Angle",
   "through-glass": "Through Glass / Window", "mirror-reflection": "Mirror / Reflection Shot",
+  "eye-level": "Eye Level — Neutral / Direct",
+  "two-shot": "Two-Shot — Both Subjects in Frame",
+  "worms-eye": "Worm's Eye — Extreme Low (Looking Up)",
+  "extreme-wide": "Extreme Wide (EWS) — Full Environment",
+  "medium-wide": "Medium Wide (MWS) — Below Knee",
+  "medium-close": "Medium Close-Up (MCU) — Chest Up",
+  "aerial": "Aerial — High Above Looking Down",
+  "drone": "Drone Shot — Flying Overhead",
+  "tracking": "Tracking Shot — Follows Subject",
+  "handheld": "Handheld — Visceral / Documentary",
+  "steadicam": "Steadicam — Fluid Follow",
+  "crane": "Crane — Sweeping Vertical",
+  "through-glass": "Through Glass — Voyeuristic",
+  "mirror-reflection": "Mirror Reflection — Duality",
+  "underwater-angle": "Underwater Angle — Below Surface",
+  "canted": "Canted / Dutch Tilt — Unease",
 };
-
-// Camera Angles — additional entries
-  "eye-level": "Eye Level — neutral, direct",
 
 // ─── Camera Movement ──────────────────────────────────────────────────────────
 export const CAMERA_MOVEMENT_OPTIONS = [
