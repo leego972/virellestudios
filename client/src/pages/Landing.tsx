@@ -4,6 +4,7 @@ import {
   ArrowRight, Play, ShieldCheck,
   Globe, Sparkles, Video, Eye, Cpu, CreditCard,
   Zap as ZapIcon, Film, Smartphone, Download, Crown,
+  Menu, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -92,6 +93,7 @@ function GoldWatermark() {
 export default function Landing() {
   const [, setLocation] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -131,12 +133,34 @@ export default function Landing() {
 
           {/* Auth buttons */}
           <div className="flex items-center gap-3">
-            <button onClick={() => setLocation("/login")} className="text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Login</button>
-            <Button onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-6 shadow-lg shadow-amber-500/20">
+            <button onClick={() => setLocation("/login")} className="hidden sm:block text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Login</button>
+            <Button onClick={() => setLocation("/register")} className="hidden sm:flex bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-6 shadow-lg shadow-amber-500/20">
               Get Started
             </Button>
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(o => !o)}
+              className="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 py-4 px-6 space-y-1 shadow-2xl">
+            <button onClick={() => { setLocation("/showcase"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Showcase</button>
+            <button onClick={() => { setLocation("/pricing"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Pricing</button>
+            <button onClick={() => { setLocation("/download"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all flex items-center gap-2"><Smartphone className="h-4 w-4 text-amber-400" />Get the App</button>
+            <button onClick={() => { setLocation("/contact"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Industry</button>
+            <div className="border-t border-white/10 pt-3 mt-1 flex flex-col gap-2">
+              <button onClick={() => { setLocation("/login"); setMobileMenuOpen(false); }} className="w-full py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all text-left">Login</button>
+              <Button onClick={() => { setLocation("/register"); setMobileMenuOpen(false); }} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl py-3">Get Started Free</Button>
+            </div>
+          </div>
+        )}
       </nav>
 
       <main>
