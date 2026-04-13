@@ -856,7 +856,7 @@ export default function SceneEditor() {
                     </div>
                     <p className="text-xs font-medium truncate">{scene.title || `Scene ${idx + 1}`}</p>
                     <div className="flex items-center gap-1">
-                      <p className="text-[10px] text-muted-foreground">{scene.duration || 30}s</p>
+                      <p className="text-[10px] text-muted-foreground">{scene.duration || 60}s</p>
                       {(scene as any).videoUrl && <Badge className="text-[7px] h-3 px-0.5 bg-amber-500/80 text-white border-0">VIDEO</Badge>}
                     </div>
                   </div>
@@ -946,7 +946,7 @@ export default function SceneEditor() {
                     {(scene.status === 'generating' || scene.status === 'failed') && (
                       <button className="text-[9px] text-muted-foreground hover:text-amber-400 underline" onClick={(e) => { e.stopPropagation(); resetStatusMutation.mutate({ sceneId: scene.id }); }}>Reset</button>
                     )}
-                    <span className="text-[10px] text-muted-foreground">{scene.duration || 30}s</span>
+                    <span className="text-[10px] text-muted-foreground">{scene.duration || 60}s</span>
                     {(scene as any).videoUrl && <Badge variant="outline" className="text-[10px] h-5 text-amber-400 border-amber-500/30"><Video className="h-2.5 w-2.5 mr-0.5" />Video</Badge>}
                   </div>
                 </div>
