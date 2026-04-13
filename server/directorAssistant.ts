@@ -573,6 +573,15 @@ Return a JSON object with these exact fields:
           });
         }
 
+        // Save compiled dialogue text to scene record so video generation
+        // can include it in the prompt for accurate lip-sync and character interaction
+        if (spec.dialogueLines && spec.dialogueLines.length > 0) {
+          const dialogueTextForScene = spec.dialogueLines
+            .map((dl: any) => `${dl.character}: "${dl.line}"${dl.emotion ? ` (${dl.emotion})` : ''}`)
+            .join('\n');
+          await db.updateScene(newScene.id, { dialogueText: dialogueTextForScene } as any);
+        }
+
         const detailsSummary = [
           `**${spec.title}** — Position ${orderIdx + 1}`,
           `${spec.description}`,
@@ -873,6 +882,14 @@ HOLLYWOOD PHOTOREALISM RULES — MANDATORY:
               isCustom: 0,
               tags: [],
             });
+          }
+
+          // Save compiled dialogue text to scene record for video generation prompt accuracy
+          if (sceneSpec.dialogueLines && sceneSpec.dialogueLines.length > 0) {
+            const dialogueTextForScene = sceneSpec.dialogueLines
+              .map((dl: any) => `${dl.character}: "${dl.line}"${dl.emotion ? ` (${dl.emotion})` : ''}`)
+              .join('\n');
+            await db.updateScene(newScene.id, { dialogueText: dialogueTextForScene } as any);
           }
 
           createdScenes.push(`${i + 1}. **${sceneSpec.title}** (${sceneSpec.duration}s) — ${sceneSpec.mood}, ${sceneSpec.lighting} lighting, ${sceneSpec.cameraAngle}`);
