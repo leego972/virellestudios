@@ -159,6 +159,8 @@ export interface ExtendedSceneRequest {
   negativePrompt?: string;
   /** Seed for reproducible generations */
   seed?: number;
+  /** Explicit scene type — overrides genre/mood auto-detection for Hollywood shot grammar selection */
+  sceneType?: "action" | "dialogue" | "emotional" | "horror" | "reveal" | "default";
 }
 
 export interface ExtendedSceneResult {
@@ -733,6 +735,7 @@ export async function generateExtendedScene(
       characterDescriptions: request.characterDescriptions,
       locationDescription: request.locationDescription,
       provider: activeProvider,
+      sceneType: (request.sceneType as any) || "default",
     }
   );
 
