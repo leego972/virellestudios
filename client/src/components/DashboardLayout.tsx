@@ -74,25 +74,39 @@ const menuGroups = [
     items: [
       { icon: LayoutDashboard, label: "Dashboard", path: "/" },
       { icon: Film, label: "Projects", path: "/projects" },
-      { icon: Users, label: "Characters", path: "/characters", hollywoodKey: "characters" as ToolIconKey },
-      { icon: Star, label: "Signature Cast", path: "/signature-cast" },
       { icon: Clapperboard, label: "My Movies", path: "/movies" },
       { icon: MessageSquare, label: "Director's Assistant", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
-      { icon: Globe, label: "Distribute", path: "/showcase" },
+    ],
+  },
+  {
+    label: "Cast & Talent",
+    items: [
+      { icon: Users, label: "Characters", path: "/characters", hollywoodKey: "characters" as ToolIconKey },
+      { icon: Star, label: "Signature Cast", path: "/signature-cast" },
+      { icon: Search, label: "Talent Search", path: "/talent-search" },
     ],
   },
   {
     label: "Create",
     items: [
       { icon: Megaphone, label: "Ad & Poster Maker", path: "/poster-maker", hollywoodKey: "poster_maker" as ToolIconKey },
+      { icon: PenTool, label: "Content Creator", path: "/content-creator" },
+      { icon: Wand2, label: "Campaign Manager", path: "/campaigns" },
       { icon: PlaySquare, label: "Project Samples", path: "/samples" },
+    ],
+  },
+  {
+    label: "Distribute",
+    items: [
+      { icon: Globe, label: "Film Showcase", path: "/showcase" },
       { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
     ],
   },
   {
-    label: "Tools",
+    label: "Resources",
     items: [
       { icon: DollarSign, label: "Funding Directory", path: "/funding" },
+      { icon: BookOpen, label: "Blog", path: "/blog" },
     ],
   },
   {
@@ -100,10 +114,9 @@ const menuGroups = [
     items: [
       { icon: CreditCard, label: "Subscription", path: "/pricing", hollywoodKey: "subscription_plans" as ToolIconKey },
       { icon: Coins, label: "Credits & History", path: "/credits", hollywoodKey: "credits" as ToolIconKey },
-      { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
       { icon: Gift, label: "Referrals", path: "/referrals", hollywoodKey: "referrals" as ToolIconKey },
+      { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
       { icon: Smartphone, label: "Download App", path: "/download" },
-      { icon: BookOpen, label: "Blog", path: "/blog" },
       { icon: Settings, label: "Settings", path: "/settings", hollywoodKey: "settings" as ToolIconKey },
     ],
   },
@@ -115,13 +128,11 @@ const menuItems = menuGroups.flatMap((g) => g.items);
 const adminMenuItems = [
   { icon: Shield, label: "User Management", path: "/admin/users" },
   { icon: ShieldAlert, label: "Security", path: "/admin/security" },
+  { icon: TrendingUp, label: "Growth Dashboard", path: "/admin/growth" },
   { icon: Zap, label: "Autonomous Pipeline", path: "/admin/autonomous" },
   { icon: BarChart3, label: "Advertising", path: "/admin/advertising" },
   { icon: Search, label: "SEO Dashboard", path: "/admin/seo" },
   { icon: Mail, label: "Outreach & Email", path: "/admin/outreach" },
-  { icon: TrendingUp, label: "Growth Dashboard", path: "/admin/growth" },
-  { icon: Megaphone, label: "Campaign Manager", path: "/campaigns" },
-  { icon: PenTool, label: "Content Creator", path: "/content-creator" },
 ];
 
 const SUPPORTED_LANGUAGES = [
