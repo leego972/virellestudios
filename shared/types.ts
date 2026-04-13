@@ -7,10 +7,54 @@ export type * from "../drizzle/schema";
 export * from "./_core/errors";
 
 // Scene parameter options for the manual editor
-export const TIME_OF_DAY_OPTIONS = ["dawn", "morning", "afternoon", "evening", "night", "golden-hour"] as const;
-export const WEATHER_OPTIONS = ["clear", "cloudy", "rainy", "stormy", "snowy", "foggy", "windy"] as const;
-export const LIGHTING_OPTIONS = ["natural", "dramatic", "soft", "neon", "candlelight", "studio", "backlit", "silhouette"] as const;
-export const CAMERA_ANGLE_OPTIONS = ["wide", "medium", "close-up", "extreme-close-up", "birds-eye", "low-angle", "dutch-angle", "over-shoulder", "pov"] as const;
+export const TIME_OF_DAY_OPTIONS = [
+  // ─ Core Times ─
+  "dawn", "pre-dawn", "early-morning", "morning", "midday",
+  "afternoon", "golden-hour", "magic-hour", "dusk", "blue-hour",
+  "evening", "night", "midnight",
+  // ─ Interior/Agnostic ─
+  "interior-day", "interior-night",
+] as const;
+export const WEATHER_OPTIONS = [
+  // ─ Fair Weather ─
+  "clear", "partly-cloudy", "cloudy", "overcast", "windy",
+  // ─ Precipitation ─
+  "drizzle", "light-rain", "rainy", "heavy-rain", "thunderstorm", "stormy",
+  // ─ Cold ─
+  "snowy", "blizzard", "sleet", "frost",
+  // ─ Atmospheric ─
+  "foggy", "mist", "haze", "heat-haze", "dust-storm",
+  // ─ Extreme / Special ─
+  "hurricane", "humid-tropical", "dry-arid", "wildfire-smoke",
+  "post-rain-clearing", "rainbow-aftermath", "aurora-northern-lights",
+] as const;
+export const LIGHTING_OPTIONS = [
+  // ─ Natural / Outdoor ─
+  "natural", "golden-hour", "magic-hour-warm", "blue-hour", "overcast-diffused",
+  "moonlight", "volumetric-god-rays", "underwater",
+  // ─ Dramatic Studio Setups ─
+  "dramatic", "dramatic-chiaroscuro", "hard-directional", "interrogation",
+  "low-key", "high-key", "split", "rembrandt", "loop", "butterfly",
+  // ─ Soft / Fill ─
+  "soft", "soft-fill", "studio-three-point", "rim-light", "motivated",
+  // ─ Practical Sources ─
+  "practical-only", "candlelight", "firelight", "fluorescent",
+  "mixed-day-interior", "neon",
+  // ─ Stylised ─
+  "backlit", "silhouette", "studio",
+  // ─ Specialised ─
+  "streetlight-sodium", "uv-blacklight", "campfire-only", "operating-theatre", "car-headlights",
+] as const;
+export const CAMERA_ANGLE_OPTIONS = [
+  // ─ Standard Sizes ─
+  "extreme-wide", "wide", "medium-wide", "medium", "medium-close", "close-up", "extreme-close-up",
+  // ─ Position / Height ─
+  "birds-eye", "aerial", "drone", "high-angle", "eye-level", "low-angle", "worms-eye",
+  // ─ Relative to Subject ─
+  "over-shoulder", "two-shot", "pov", "dutch-angle", "canted",
+  // ─ Compositional ─
+  "through-glass", "mirror-reflection", "tracking", "handheld", "steadicam", "crane", "underwater-angle",
+] as const;
 export const RATING_OPTIONS = ["G", "PG", "PG-13", "R"] as const;
 export const QUALITY_OPTIONS = ["standard", "high", "ultra"] as const;
 export const MOOD_OPTIONS = ["tense", "romantic", "action", "comedic", "dramatic", "mysterious", "horror", "inspirational", "melancholic", "epic"] as const;
@@ -91,23 +135,29 @@ export type CharacterPosition = {
 
 // ─── Extended Time of Day Labels ──────────────────────────────────────────────
 export const TIME_OF_DAY_LABELS: Record<string, string> = {
-  "dawn": "Dawn", "morning": "Morning", "afternoon": "Afternoon",
-  "evening": "Evening", "night": "Night", "golden-hour": "Golden Hour",
-  "early-morning": "Early Morning", "midday": "Midday / Noon",
-  "magic-hour": "Magic Hour", "dusk": "Dusk", "blue-hour": "Blue Hour / Twilight",
-  "midnight": "Midnight", "pre-dawn": "Pre-Dawn / 3am",
+  "dawn": "Dawn", "pre-dawn": "Pre-Dawn / 3–4am", "early-morning": "Early Morning / First Light",
+  "morning": "Morning", "midday": "Midday / Solar Noon", "afternoon": "Afternoon",
+  "golden-hour": "Golden Hour (Sunset)", "magic-hour": "Magic Hour (Any Transition)",
+  "dusk": "Dusk / Civil Twilight", "blue-hour": "Blue Hour / Twilight",
+  "evening": "Evening", "night": "Night", "midnight": "Midnight",
+  "interior-day": "Interior / Day (Window Light)", "interior-night": "Interior / Night (Practical Sources)",
 };
 
 // ─── Weather Labels ───────────────────────────────────────────────────────────
 export const WEATHER_LABELS: Record<string, string> = {
   "clear": "Clear & Sunny", "cloudy": "Cloudy", "rainy": "Rainy",
   "stormy": "Stormy", "snowy": "Snowy", "foggy": "Foggy", "windy": "Windy",
-  "partly-cloudy": "Partly Cloudy", "overcast": "Overcast / Grey",
-  "light-rain": "Light Rain", "heavy-rain": "Heavy Rain",
-  "thunderstorm": "Thunderstorm", "drizzle": "Drizzle", "blizzard": "Blizzard",
-  "mist": "Mist", "haze": "Haze", "heat-haze": "Heat Haze / Shimmer",
-  "dust-storm": "Dust Storm / Sandstorm", "humid-tropical": "Humid / Tropical",
-  "dry-arid": "Dry / Arid", "hurricane": "Hurricane / Cyclone",
+  "partly-cloudy": "Partly Cloudy", "overcast": "Overcast (Flat, Shadowless)",
+  "light-rain": "Light Rain", "heavy-rain": "Heavy Rain", "drizzle": "Drizzle",
+  "thunderstorm": "Thunderstorm + Lightning", "blizzard": "Blizzard",
+  "sleet": "Sleet / Freezing Rain", "frost": "Frost / Frozen Surfaces",
+  "mist": "Mist / Light Haze", "haze": "Haze", "heat-haze": "Heat Haze / Desert Shimmer",
+  "dust-storm": "Dust Storm / Sandstorm", "wildfire-smoke": "Wildfire Smoke Haze",
+  "humid-tropical": "Humid / Tropical",
+  "dry-arid": "Dry / Arid", "post-rain-clearing": "Post-Rain / Clearing Sky",
+  "rainbow-aftermath": "Rainbow Aftermath",
+  "aurora-northern-lights": "Aurora Borealis / Northern Lights",
+  "hurricane": "Hurricane / Cyclone",
 };
 
 // ─── Lighting Labels ──────────────────────────────────────────────────────────
@@ -126,7 +176,12 @@ export const LIGHTING_LABELS: Record<string, string> = {
   "low-key": "Low Key / Dark", "motivated": "Motivated / Practical",
   "practical-only": "Practical Lights Only", "mixed-day-interior": "Mixed Day / Interior",
   "magic-hour-warm": "Magic Hour Warm", "interrogation": "Interrogation / Harsh Overhead",
-  "underwater": "Underwater / Caustics", "volumetric-god-rays": "Volumetric God Rays",
+  "underwater": "Underwater / Caustics", "streetlight-sodium": "Streetlight Sodium (Orange City Night)",
+  "uv-blacklight": "UV / Blacklight (Club Neon)",
+  "campfire-only": "Campfire Only (Flickering Orange)",
+  "operating-theatre": "Operating Theatre (Harsh Clinical White)",
+  "car-headlights": "Car Headlights Sweeping",
+  "volumetric-god-rays": "Volumetric God Rays",
 };
 
 // ─── Camera Angle Labels ──────────────────────────────────────────────────────
@@ -144,6 +199,9 @@ export const CAMERA_ANGLE_LABELS: Record<string, string> = {
   "crane": "Crane / Jib", "underwater-angle": "Underwater Angle",
   "through-glass": "Through Glass / Window", "mirror-reflection": "Mirror / Reflection Shot",
 };
+
+// Camera Angles — additional entries
+  "eye-level": "Eye Level — neutral, direct",
 
 // ─── Camera Movement ──────────────────────────────────────────────────────────
 export const CAMERA_MOVEMENT_OPTIONS = [
