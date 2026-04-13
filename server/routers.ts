@@ -1766,15 +1766,16 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
     // Generate video for a single scene
 // Build a rich, accurate description for extended scene generation that faithfully reflects
     // the director's scene content, including dialogue context and production notes.
-    function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string): string {
+    function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, effectiveDialogueText?: string): string {
       const parts: string[] = [];
       // Lead with the scene's actual story description (most important for accuracy)
       if (sceneData.description) {
         parts.push(sceneData.description);
       }
-      // Include dialogue context so video captures speaking/lip-sync moments
-      if (sceneData.dialogueText && sceneData.dialogueText.trim()) {
-        parts.push(`DIALOGUE IN THIS SCENE: ${sceneData.dialogueText.trim()}`);
+      // Include dialogue — use override (from dialogue records) or scene field
+      const dialogueText = effectiveDialogueText?.trim() || (sceneData.dialogueText?.trim());
+      if (dialogueText) {
+        parts.push(`DIALOGUE IN THIS SCENE: ${dialogueText}`);
       }
       // Include production notes for blocking and action detail
       if (sceneData.productionNotes && sceneData.productionNotes.trim()) {
@@ -1826,6 +1827,32 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const sceneNegativePrompt: string = ((scene as any).negativePrompt as string | undefined) || getDefaultNegativePrompt(userTier as QualityTier);
         const sceneSeed = (scene as any).seed as number | undefined;
 
+        // Fetch dialogue records as fallback when scene.dialogueText is empty
+        // This covers Director AI scenes where dialogue is stored in the dialogue table
+        let effectiveDialogueText: string | undefined = (scene as any).dialogueText as string | undefined;
+        if (!effectiveDialogueText?.trim()) {
+          try {
+            const dialogueRecords = await db.getSceneDialogues(scene.id);
+            if (dialogueRecords?.length) {
+              effectiveDialogueText = dialogueRecords
+                .map((d: any) => `${d.characterName}: "${d.line}"${d.emotion ? ` (${d.emotion})` : ''}`)
+                .join('\n');
+            }
+          } catch { /* ignore */ }
+        }
+
+        // Auto-include character photos as visual reference anchors for character consistency
+        // When no manual reference images are set, use character profile photos
+        if (sceneRefImages.length === 0) {
+          const sceneCharIds = ((scene as any).characterIds as number[]) || [];
+          const charPhotos = characters
+            .filter((c: any) => sceneCharIds.length === 0 || sceneCharIds.includes(c.id))
+            .filter((c: any) => c.photoUrl)
+            .map((c: any) => c.photoUrl as string)
+            .slice(0, 2); // Max 2 reference images to keep prompts focused
+          sceneRefImages.push(...charPhotos);
+        }
+
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
         const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
         const isAdmin = ctx.user.role === "admin";
@@ -1875,7 +1902,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -1907,7 +1934,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -1941,7 +1968,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -1976,7 +2003,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
