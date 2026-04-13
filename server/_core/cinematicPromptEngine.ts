@@ -432,7 +432,65 @@ const CAMERA_ANGLE_DETAILS: Record<string, string> = {
   "two-shot": "balanced two-shot on 50mm showing both characters in frame, equal visual weight, relationship dynamics visible in body language and spacing, f/2.8 separating from background",
   "cowboy": "cowboy shot framed from mid-thigh up on 50mm, showing hands and holster area, classic Western framing, character's stance and posture fully visible",
   "profile": "clean profile shot on 85mm, subject facing perpendicular to camera, strong silhouette potential, dramatic nose and jawline visible, single-source side lighting",
+  // ─ Expanded Angle Library ─
+  "extreme-wide": "absolute widest framing 12-18mm, human figures reduced to tiny elements within massive environment, landscape and architecture dominate, deep focus reveals every detail across frame",
+  "medium-wide": "below-knee framing on 28-35mm, character fully visible with strong environmental context, action readable and setting clear, most used for moving dialogue scenes",
+  "medium-close": "chest-to-crown MCU on 50-85mm, single most used dramatic framing, face and upper body gesture both fully readable, slight compression flattening background pleasantly",
+  "eye-level": "camera at exact character eye height, neutral democratic perspective, audience feels equal to subject, no implied power relationship, matter-of-fact and direct",
+  "worms-eye": "extreme upward angle nearly at ground level looking up, subjects appear godlike and imposing, architecture towers overhead, exaggerated perspective distortion, used for power and superheroic scale",
+  "aerial": "high altitude overhead looking directly down, humans become patterns in environment, movement becomes choreography, used for scale revelation and geographic context",
+  "two-shot": "both subjects framed together on 35-50mm, relationship dynamic expressed by proximity and relative position, eyelines between them creating invisible tension",
+  "through-glass": "shooting through window, aquarium glass, car windshield or rain-covered surface, voyeuristic remove, subject partially obscured or distorted, observer perspective",
+  "mirror-reflection": "composing subject via mirror creating split or doubled image, duality of identity, hidden self vs public self, split personality made visual",
+  "tracking": "camera moves laterally matching subject's direction at constant distance, environment scrolling past, character's relationship to moving world sustained",
+  "steadicam": "fluid perfectly-stabilized following shot through environment, Kubrickian smooth pursuit, subjective experience without handheld shake, exploration mode",
+  "crane": "camera mounted on crane sweeping vertically from ground to sky revealing full scale, classic Hollywood reveal, God-perspective achieved through vertical move",
+  "underwater-angle": "camera below water surface looking up at subjects above, distorted wavering reality, caustic light patterns dancing on subjects, primal and elemental",
 };
+
+// ─── Lighting Descriptions — Cinematographer Grade ───
+// Used when scene.lighting is set to provide rich technical prompt direction
+
+const LIGHTING_DESCRIPTIONS: Record<string, string> = {
+  "natural": "natural daylight as primary source, no artificial fill, color temperature following time of day, authentic shadows from available light, environmental motivation for every photon",
+  "golden-hour": "warm backlight from low sun at 3000-3500K, rim light halos on subjects, rich amber-gold fill from reflected sky, maximum emotional warmth, magic hour fleeting beauty",
+  "magic-hour-warm": "transitional light between warm and cool, sky acting as giant gradient reflector, equal parts golden fill and blue ambient, simultaneous warm and cool — the most cinematic natural state",
+  "blue-hour": "deep twilight cool ambient at 7000-9000K, warm practicals beginning to dominate, excellent skin rendering from cool diffused sky, city lights creating warm points against blue",
+  "overcast-diffused": "total cloud cover as ultimate softbox, zero harsh shadows, perfect skin rendering, flat even illumination across entire scene, slightly desaturated, technically excellent beauty light",
+  "dramatic": "single hard directional source creating strong shadows, high contrast between light and dark, three-dimensional subject modeling, theatrical quality",
+  "dramatic-chiaroscuro": "Baroque extremity of light and darkness, single candle or bare bulb key, 10:1 contrast ratio minimum, deep black shadows with just-enough subject reveal, Caravaggio-inspired",
+  "hard-directional": "single undiffused source at 45-degree angle, crisp shadow edges defining facial structure, strong modeling, documentary and naturalistic quality from motivated source",
+  "interrogation": "single overhead practical or bare bulb directly above subject, harsh downward shadows under eyes and nose, face half-lit half-shadow, classic police procedural lighting, power imbalance expressed",
+  "low-key": "predominantly dark frame with selective subject lighting, 8:1+ contrast ratio, noir influence, dark clothing dissolving into shadow, only essential elements lit",
+  "high-key": "bright even illumination with minimal shadows, low contrast, optimistic and commercial quality, beauty and lifestyle aesthetic, white backgrounds becoming luminous",
+  "split": "50/50 lighting with exactly half face in light and half in deep shadow, dramatic duality, character conflict made visual, strong and confrontational",
+  "rembrandt": "classic portrait triangle of light on shadowed cheek under eye, 3/4 lighting direction, highly dimensional subject rendering, Old Master painting quality",
+  "loop": "nose shadow loops down and to one side without merging with cheek shadow, most flattering conventional portrait lighting, natural yet controlled",
+  "butterfly": "key light directly in front and above creating butterfly shadow under nose, Paramount golden age glamour lighting, most flattering for female subjects",
+  "soft": "large diffused source close to subject, very soft shadow gradients, beauty and fashion quality, wrapping light that flatters all subjects",
+  "soft-fill": "primary fill light using large bounced source, shadow elimination without losing dimension, commercial and accessible quality",
+  "studio-three-point": "key + fill + backlight in controlled ratio, classic professional setup, full subject separation from background, broadcast quality",
+  "rim-light": "backlight creating bright edge outline separating subject from background, subject extraction from environment, halo of light, action and drama enhancement",
+  "motivated": "all light sources motivated by visible or just-off-screen practical sources, complete realism, audience can identify where every photon originates",
+  "practical-only": "only light sources visible in the scene — lamps, candles, screens, signs — nothing else, complete practical motivation, maximum authenticity",
+  "candlelight": "single or multiple candle sources at 1800K, warm flickering amber light creating maximum intimacy, strong fall-off within few feet, deep shadows beyond candle radius",
+  "firelight": "larger fire source — fireplace, campfire, barrel fire — 2000-2500K flickering light, orange-red warm fill dancing on faces, animated shadow play, ancient primal quality",
+  "moonlight": "cool silver-blue directional light at 6500-7500K simulating full moon, sharp shadows in cool blue, hard directional source but cool, nocturnal and romantic or threatening depending on subject",
+  "fluorescent": "office/institutional fluorescent tubes at 4000-5500K with slight green cast, overhead flat illumination, institutional environment communicated, slight underexposure adds tension",
+  "mixed-day-interior": "exterior daylight from windows in cool blue at 5600K mixing with warm tungsten interior practicals at 3200K, natural domestic/workplace tension, realistic and naturalistic",
+  "neon": "colored LED or neon tube practical sources, cyberpunk color wash, high saturation colored shadows, cinematic urban night quality, vibrant and synthetic",
+  "backlit": "primary source behind subject creating silhouette or rim-light effect, subject front in relative darkness, contre-jour quality, shape over detail",
+  "silhouette": "complete backlight dominance, subject rendered as pure black shape against bright background, emotion through form alone, most abstract and powerful framing mode",
+  "studio": "controlled neutral studio environment, full technical control over all light sources, neutral-to-subject color rendition, commercial and controlled quality",
+  "volumetric-god-rays": "visible light beams through atmospheric particles — dust, smoke, fog, steam — creating cathedral shaft quality, divine scale and drama, cinematographic spectacle",
+  "underwater": "caustic light patterns from above-water refraction, green-blue color shift, particles floating in water column, dreamy wavering edges on everything",
+  "streetlight-sodium": "sodium vapor streetlights casting warm orange-amber pools on wet pavement, cool blue sky above, classic noir urban night, pools and absence",
+  "uv-blacklight": "ultraviolet sources causing fluorescence in white fabrics and select materials, club/venue aesthetic, black background with glowing elements, psychedelic and surreal",
+  "campfire-only": "single campfire as sole source, warm flickering orange-red light 2000K, dancing shadows on surrounding faces and environment, primal connection, very limited radius",
+  "operating-theatre": "harsh overhead surgical lights creating clinical white environment, zero shadow, maximum visibility, sterile and clinical, antiseptic and cold",
+  "car-headlights": "twin beams sweeping through frame illuminating scene in progressive reveals, headlight lens flares, moving shadow play, noir vehicle scene quality, highway night driving",
+};
+
 
 // ─── Camera Movement Descriptions ───
 
