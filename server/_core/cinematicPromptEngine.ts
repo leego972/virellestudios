@@ -900,7 +900,11 @@ export function buildScenePrompt(
 
   // 9. Lighting setup (scene-specific override + genre default)
   const lighting = scene.lighting || "natural";
-  parts.push(`Lighting: ${lighting} setup — ${visualDNA.genreProfile.lightingStyle}`);
+  const lightingDesc = LIGHTING_DESCRIPTIONS[lighting] || null;
+  const lightingLabel = lightingDesc
+    ? `${lighting} — ${lightingDesc} | Genre default: ${visualDNA.genreProfile.lightingStyle}`
+    : `${lighting} setup — ${visualDNA.genreProfile.lightingStyle}`;
+  parts.push(`Lighting: ${lightingLabel}`);
 
   // 10. Mood and emotional direction
   if (scene.mood) {
