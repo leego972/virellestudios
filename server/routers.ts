@@ -2316,7 +2316,7 @@ You are currently editing this scene:
 - Camera Angle: ${scene.cameraAngle || "not set"}
 - Mood: ${scene.mood || "not set"}
 - Location: ${scene.locationType || "not set"}
-- Duration: ${scene.duration || 30}s
+- Duration: ${scene.duration || 60}s
 - Director Notes: ${(scene as any).productionNotes || "none"}
 
 DIRECTOR-FIRST RULES (non-negotiable):
@@ -2830,7 +2830,7 @@ Break this into 8-15 scenes. For each scene, provide:
             cameraAngle: s.cameraAngle as any,
             locationType: s.locationType,
             mood: s.mood,
-            duration: s.estimatedDuration || 30,
+            duration: s.estimatedDuration || 60,
             transitionType: s.transitionFromPrevious || "cut",
             // Store additional cinematic data in production notes
             productionNotes: [
@@ -4671,7 +4671,7 @@ FORMAT RULES (always apply):
 
         const sceneContext = scenes.map((s, i) => {
           const charNames = (s.characterIds as number[] || []).map(id => characters.find(c => c.id === id)?.name || 'Unknown').join(', ');
-          return `Scene ${i+1} "${s.title}" (${s.duration || 30}s): ${s.description || 'No description'} | Characters: ${charNames} | Dialogue: ${s.dialogueText || 'none'}`;
+          return `Scene ${i+1} "${s.title}" (${s.duration || 60}s): ${s.description || 'No description'} | Characters: ${charNames} | Dialogue: ${s.dialogueText || 'none'}`;
         }).join("\n");
 
         let _llmRefundAmount_subtitle_gen_ai = 3;
@@ -5831,7 +5831,7 @@ Generate a detailed production budget estimate.`,
           let fileKey: string | undefined;
           let fileSize: number | undefined;
           // Calculate total duration from actual scene durations, not project.duration (which is user-entered estimate in minutes)
-          let totalDuration = scenesWithVideo.reduce((sum: number, s: any) => sum + (s.duration || 30), 0);
+          let totalDuration = scenesWithVideo.reduce((sum: number, s: any) => sum + (s.duration || 60), 0);
           let mimeType: string | undefined;
 
           // Fetch all post-production data from database (needed regardless of scene count)
@@ -6178,13 +6178,13 @@ Generate a detailed production budget estimate.`,
         if (input.format === "fcpxml" || input.format === "resolve_xml") {
           let offset = 0;
           const assetDefs = completedScenes.map((scene: any, i: number) => {
-            const durationFrames = Math.round((scene.duration ?? 30) * fps);
+            const durationFrames = Math.round((scene.duration ?? 60) * fps);
             const src = (scene.videoUrl ?? "").replace(/&/g, "&amp;");
             const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
             return `  <asset id="r${i + 2}" name="${title}" uid="${nanoid(16)}" src="${src}" start="0s" duration="${durationFrames}/${fps}s" hasVideo="1" hasAudio="1" />`;
           }).join("\n");
           const clipElements = completedScenes.map((scene: any, i: number) => {
-            const durationFrames = Math.round((scene.duration ?? 30) * fps);
+            const durationFrames = Math.round((scene.duration ?? 60) * fps);
             const offsetFrames = offset;
             offset += durationFrames;
             const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
@@ -6194,7 +6194,7 @@ Generate a detailed production budget estimate.`,
           ${opts.markers ? `<marker start="0s" duration="1/${fps}s" value="Scene ${i + 1}" />` : ""}
         </asset-clip>`;
           }).join("\n");
-          const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 30) * fps), 0);
+          const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 60) * fps), 0);
           const projTitle = project.title.replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
           content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n<fcpxml version="1.10">\n  <resources>\n    <format id="r1" name="FFVideoFormat1080p24" frameDuration="1/${fps}s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)" />\n${assetDefs}\n  </resources>\n  <library>\n    <event name="${projTitle}">\n      <project name="${projTitle} — Virelle Export">\n        <sequence format="r1" duration="${totalFrames}/${fps}s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">\n          <spine>\n${clipElements}\n          </spine>\n        </sequence>\n      </project>\n    </event>\n  </library>\n</fcpxml>`;
           mimeType = "application/xml";
@@ -6205,7 +6205,7 @@ Generate a detailed production budget estimate.`,
           const lines = [`TITLE: ${project.title}`, "FCM: NON-DROP FRAME", ""];
           let editNum = 1; let recIn = 0;
           completedScenes.forEach((scene: any, i: number) => {
-            const df = Math.round((scene.duration ?? 30) * fps);
+            const df = Math.round((scene.duration ?? 60) * fps);
             const recOut = recIn + df;
             lines.push(`${String(editNum).padStart(3,"0")}  AX       V     C        ${toTC(0)} ${toTC(df)} ${toTC(recIn)} ${toTC(recOut)}`);
             lines.push(`* FROM CLIP NAME: ${scene.title ?? `Scene ${i + 1}`}`);
@@ -6220,13 +6220,13 @@ Generate a detailed production budget estimate.`,
         } else if (input.format === "premiere_xml") {
           let offset = 0;
           const clipItems = completedScenes.map((scene: any, i: number) => {
-            const df = Math.round((scene.duration ?? 30) * fps);
+            const df = Math.round((scene.duration ?? 60) * fps);
             const start = offset; const end = offset + df; offset = end;
             const title = (scene.title ?? `Scene ${i + 1}`).replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
             const src = (scene.videoUrl ?? "").replace(/&/g, "&amp;");
             return `        <clipitem id="clipitem-${i+1}"><name>${title}</name><duration>${df}</duration><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate><start>${start}</start><end>${end}</end><in>0</in><out>${df}</out><file id="file-${i+1}"><name>${title}</name><pathurl>${src}</pathurl><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate><duration>${df}</duration></file></clipitem>`;
           }).join("\n");
-          const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 30) * fps), 0);
+          const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 60) * fps), 0);
           const projTitle = project.title.replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
           content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE xmeml>\n<xmeml version="4">\n  <sequence>\n    <name>${projTitle}</name>\n    <duration>${totalFrames}</duration>\n    <rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate>\n    <media><video><track>\n${clipItems}\n    </track></video></media>\n  </sequence>\n</xmeml>`;
           mimeType = "application/xml";
@@ -6236,7 +6236,7 @@ Generate a detailed production budget estimate.`,
           // CSV
           const rows = [["Scene #","Title","Duration (s)","Video URL","Mood","Time of Day","Location","Status"]];
           completedScenes.forEach((scene: any, i: number) => {
-            rows.push([String(i+1), scene.title??`Scene ${i+1}`, String(scene.duration??30), scene.videoUrl??"", scene.mood??"", scene.timeOfDay??"", scene.location??"", scene.status??"completed"]);
+            rows.push([String(i+1), scene.title??`Scene ${i+1}`, String(scene.duration??60), scene.videoUrl??"", scene.mood??"", scene.timeOfDay??"", scene.location??"", scene.status??"completed"]);
           });
           content = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
           mimeType = "text/csv";
