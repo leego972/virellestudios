@@ -296,13 +296,13 @@ export default function ProjectDetail() {
     useCharacterConsistency: true,
     useSceneContinuity: true,
   });
-  const generateFullFilmMutation = trpc.film.generateFullFilm.useMutation({
+  const generateFullFilmMutation = trpc.generation.generateFullFilm.useMutation({
     onSuccess: () => {
       toast.success("🎬 Full film generation started! This will take some time — you'll be notified when complete.");
       utils.project.get.invalidate({ id: projectId });
       setFullFilmDialogOpen(false);
     },
-    onError: (err) => toast.error(err.message || "Failed to start film generation"),
+    onError: (err: { message?: string }) => toast.error(err.message || "Failed to start film generation"),
   });
 
   const cancelGenerationMutation = trpc.generation.cancelGeneration.useMutation({
