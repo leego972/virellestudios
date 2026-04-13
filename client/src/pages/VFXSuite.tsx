@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -49,12 +49,56 @@ export default function VFXSuite() {
 
   const updateSceneMutation = trpc.scene.update.useMutation();
   const generateVideoMutation = trpc.scene.generateVideo.useMutation();
+  const uploadImageMutation = trpc.upload.image.useMutation();
+  const uploadRefImageMutation = trpc.upload.referenceImage.useMutation();
 
+  const frameFileRef = useRef<HTMLInputElement>(null);
   const [selectedOps, setSelectedOps] = useState<string[]>([]);
   const [intensity, setIntensity] = useState(75);
   const [retakeInstructions, setRetakeInstructions] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [processComplete, setProcessComplete] = useState(false);
+  const [uploadedFrameUrl, setUploadedFrameUrl] = useState<string | null>(null);
+  const [uploadingFrame, setUploadingFrame] = useState(false);
+
+  const handleFrameUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("File too large. Max 20MB.");
+      return;
+    }
+    if (!sceneId) {
+      toast.error("No scene found. Navigate here from a specific scene.");
+      return;
+    }
+    setUploadingFrame(true);
+    try {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.split(",")[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      // Upload as reference image directly attached to the scene
+      const result = await uploadRefImageMutation.mutateAsync({
+        base64,
+        filename: file.name,
+        contentType: file.type,
+        sceneId,
+      });
+      setUploadedFrameUrl(result.url);
+      toast.success("Source frame uploaded — it will be used as a visual reference for VFX processing");
+    } catch (err: any) {
+      toast.error(err.message || "Upload failed");
+    } finally {
+      setUploadingFrame(false);
+      if (frameFileRef.current) frameFileRef.current.value = "";
+    }
+  };
 
   const toggleOp = (op: string) => {
     if (op === "none") {
@@ -204,10 +248,36 @@ export default function VFXSuite() {
               <Separator />
               <div>
                 <Label className="text-xs text-muted-foreground mb-2 block">Upload Source Frame</Label>
-                <button className="w-full border border-dashed border-amber-500/30 rounded-lg p-4 text-xs text-muted-foreground hover:border-amber-500/60 hover:text-amber-400 transition-colors flex flex-col items-center gap-1">
-                  <Upload className="w-5 h-5" />
-                  <span>Drop image or click to upload</span>
-                  <span className="text-xs opacity-60">PNG, JPG, WebP up to 20MB</span>
+                <input
+                  ref={frameFileRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="hidden"
+                  onChange={handleFrameUpload}
+                />
+                <button
+                  onClick={() => frameFileRef.current?.click()}
+                  disabled={uploadingFrame}
+                  className="w-full border border-dashed border-amber-500/30 rounded-lg p-4 text-xs text-muted-foreground hover:border-amber-500/60 hover:text-amber-400 transition-colors flex flex-col items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {uploadingFrame ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
+                      <span className="text-amber-400">Uploading...</span>
+                    </>
+                  ) : uploadedFrameUrl ? (
+                    <>
+                      <CheckCircle2 className="w-5 h-5 text-green-400" />
+                      <span className="text-green-400">Frame uploaded</span>
+                      <span className="text-xs opacity-60">Click to replace</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5" />
+                      <span>Click to upload source frame</span>
+                      <span className="text-xs opacity-60">PNG, JPG, WebP up to 20MB</span>
+                    </>
+                  )}
                 </button>
               </div>
             </CardContent>
