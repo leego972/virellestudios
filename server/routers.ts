@@ -1920,6 +1920,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
+                sceneType: (scene as any).sceneType || undefined,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
