@@ -418,36 +418,35 @@ const WEATHER_ATMOSPHERE: Record<string, string> = {
 // ─── Camera Angle Technical Details ───
 
 const CAMERA_ANGLE_DETAILS: Record<string, string> = {
+  // ─ Standard Shot Sizes ─
   "wide": "wide establishing shot on 24mm lens showing full environment and spatial relationships, deep focus f/8, characters placed in context of their surroundings, architecture and landscape visible",
   "medium": "medium shot on 50mm lens from waist up, natural perspective matching human eye, f/2.8 with gentle background separation, conversational distance, character and environment balanced",
   "close-up": "close-up on 85mm lens capturing face and shoulders, shallow depth of field f/1.8 with creamy bokeh background, intimate emotional connection, every facial detail and micro-expression visible",
   "extreme-close-up": "extreme close-up on 100mm macro lens isolating specific detail — eyes, hands, object — razor-thin depth of field f/1.4, texture and detail filling frame, hyper-intimate",
-  "birds-eye": "overhead birds-eye view looking straight down, showing spatial patterns and geography, god-like perspective, subjects appear small within larger pattern, drone or crane shot",
-  "low-angle": "low-angle shot looking up at subject on 35mm lens, subject appears powerful and dominant, sky or ceiling visible behind, heroic or threatening depending on context, ground-level perspective",
-  "dutch-angle": "dutch angle tilted 15-30 degrees creating visual unease and disorientation, 35mm lens, psychological tension, world feels off-balance and unstable",
-  "over-shoulder": "over-the-shoulder shot on 50mm, foreground shoulder and head out of focus framing the subject in sharp focus, creates conversational dynamic and spatial relationship between characters",
-  "pov": "point-of-view shot simulating character's vision, slight handheld movement for realism, 35mm lens matching human field of view, immersive first-person perspective, hands or body parts visible at frame edges",
-  "tracking": "smooth tracking shot on 35mm following subject movement, Steadicam or dolly, subject stays in frame while background moves, creates kinetic energy and forward momentum",
-  "crane": "crane shot starting low and rising to reveal environment, 35mm transitioning to wide, dramatic scale reveal, subjects shrink as camera rises showing context",
-  "two-shot": "balanced two-shot on 50mm showing both characters in frame, equal visual weight, relationship dynamics visible in body language and spacing, f/2.8 separating from background",
-  "cowboy": "cowboy shot framed from mid-thigh up on 50mm, showing hands and holster area, classic Western framing, character's stance and posture fully visible",
-  "profile": "clean profile shot on 85mm, subject facing perpendicular to camera, strong silhouette potential, dramatic nose and jawline visible, single-source side lighting",
-  // ─ Expanded Angle Library ─
   "extreme-wide": "absolute widest framing 12-18mm, human figures reduced to tiny elements within massive environment, landscape and architecture dominate, deep focus reveals every detail across frame",
   "medium-wide": "below-knee framing on 28-35mm, character fully visible with strong environmental context, action readable and setting clear, most used for moving dialogue scenes",
   "medium-close": "chest-to-crown MCU on 50-85mm, single most used dramatic framing, face and upper body gesture both fully readable, slight compression flattening background pleasantly",
+  // ─ Height / Vertical Position ─
+  "birds-eye": "overhead birds-eye view looking straight down, showing spatial patterns and geography, god-like perspective, subjects appear small within larger pattern, drone or crane shot",
+  "low-angle": "low-angle shot looking up at subject on 35mm lens, subject appears powerful and dominant, sky or ceiling visible behind, heroic or threatening depending on context, ground-level perspective",
   "eye-level": "camera at exact character eye height, neutral democratic perspective, audience feels equal to subject, no implied power relationship, matter-of-fact and direct",
   "worms-eye": "extreme upward angle nearly at ground level looking up, subjects appear godlike and imposing, architecture towers overhead, exaggerated perspective distortion, used for power and superheroic scale",
   "aerial": "high altitude overhead looking directly down, humans become patterns in environment, movement becomes choreography, used for scale revelation and geographic context",
-  "two-shot": "both subjects framed together on 35-50mm, relationship dynamic expressed by proximity and relative position, eyelines between them creating invisible tension",
+  // ─ Framing Relative to Subject ─
+  "dutch-angle": "dutch angle tilted 15-30 degrees creating visual unease and disorientation, 35mm lens, psychological tension, world feels off-balance and unstable",
+  "over-shoulder": "over-the-shoulder shot on 50mm, foreground shoulder and head out of focus framing the subject in sharp focus, creates conversational dynamic and spatial relationship between characters",
+  "pov": "point-of-view shot simulating character's vision, slight handheld movement for realism, 35mm lens matching human field of view, immersive first-person perspective, hands or body parts visible at frame edges",
+  "two-shot": "balanced two-shot on 50mm showing both characters in frame, equal visual weight, relationship dynamics visible in body language and spacing, f/2.8 separating from background",
+  "profile": "clean profile shot on 85mm, subject facing perpendicular to camera, strong silhouette potential, dramatic nose and jawline visible, single-source side lighting",
+  // ─ Camera Movement / Rig ─
+  "tracking": "smooth tracking shot on 35mm following subject movement, Steadicam or dolly, subject stays in frame while background moves, creates kinetic energy and forward momentum",
+  "crane": "camera mounted on crane sweeping vertically from ground to sky revealing full scale, classic Hollywood reveal, God-perspective achieved through vertical move",
+  "steadicam": "fluid perfectly-stabilized following shot through environment, Kubrickian smooth pursuit, subjective experience without handheld shake, exploration mode",
+  // ─ Compositional / Special ─
   "through-glass": "shooting through window, aquarium glass, car windshield or rain-covered surface, voyeuristic remove, subject partially obscured or distorted, observer perspective",
   "mirror-reflection": "composing subject via mirror creating split or doubled image, duality of identity, hidden self vs public self, split personality made visual",
-  "tracking": "camera moves laterally matching subject's direction at constant distance, environment scrolling past, character's relationship to moving world sustained",
-  "steadicam": "fluid perfectly-stabilized following shot through environment, Kubrickian smooth pursuit, subjective experience without handheld shake, exploration mode",
-  "crane": "camera mounted on crane sweeping vertically from ground to sky revealing full scale, classic Hollywood reveal, God-perspective achieved through vertical move",
   "underwater-angle": "camera below water surface looking up at subjects above, distorted wavering reality, caustic light patterns dancing on subjects, primal and elemental",
 };
-
 // ─── Lighting Descriptions — Cinematographer Grade ───
 // Used when scene.lighting is set to provide rich technical prompt direction
 
