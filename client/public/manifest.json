@@ -20,15 +20,33 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/virelle-favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/virelle-favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/virelle-favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/virelle-opener.mp4",
+      "type": "video/mp4",
+      "sizes": "1920x1080",
+      "label": "Virelle Studios in action"
     }
   ],
   "shortcuts": [
@@ -38,8 +56,8 @@
       "description": "Start a new film project",
       "icons": [
         {
-          "src": "/favicon.ico",
-          "sizes": "48x48"
+          "src": "/virelle-favicon-192.png",
+          "sizes": "192x192"
         }
       ]
     },
@@ -49,8 +67,8 @@
       "description": "View all your projects",
       "icons": [
         {
-          "src": "/favicon.ico",
-          "sizes": "48x48"
+          "src": "/virelle-favicon-192.png",
+          "sizes": "192x192"
         }
       ]
     },
@@ -60,10 +78,29 @@
       "description": "Chat with your AI director",
       "icons": [
         {
-          "src": "/favicon.ico",
-          "sizes": "48x48"
+          "src": "/virelle-favicon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Pricing",
+      "url": "/pricing",
+      "description": "View subscription plans",
+      "icons": [
+        {
+          "src": "/virelle-favicon-192.png",
+          "sizes": "192x192"
         }
       ]
     }
-  ]
+  ],
+  "related_applications": [
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/virelle-studios/id6761315616",
+      "id": "id6761315616"
+    }
+  ],
+  "prefer_related_applications": false
 }
