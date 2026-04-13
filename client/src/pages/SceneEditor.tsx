@@ -140,6 +140,7 @@ type SceneForm = {
   lighting: string;
   mood: string;
   emotionalBeat: string;
+  sceneType: string;
   // Camera & Optics
   cameraAngle: string;
   cameraMovement: string;
@@ -224,6 +225,7 @@ const defaultScene: SceneForm = {
   lighting: "natural",
   mood: "",
   emotionalBeat: "",
+  sceneType: "",
   // Camera & Optics
   cameraAngle: "medium",
   cameraMovement: "",
@@ -466,6 +468,7 @@ export default function SceneEditor() {
       lighting: scene.lighting || "natural",
       mood: scene.mood || "",
       emotionalBeat: scene.emotionalBeat || "",
+      sceneType: (scene as any).sceneType || "",
       // Camera & Optics
       cameraAngle: scene.cameraAngle || "medium",
       cameraMovement: scene.cameraMovement || ext.cameraMovement || "",
@@ -553,6 +556,7 @@ export default function SceneEditor() {
       lighting: form.lighting || undefined,
       mood: form.mood || undefined,
       emotionalBeat: form.emotionalBeat || undefined,
+      sceneType: form.sceneType || undefined,
       // Camera & Optics
       cameraAngle: form.cameraAngle || undefined,
       cameraMovement: form.cameraMovement || undefined,
@@ -1090,6 +1094,20 @@ export default function SceneEditor() {
                         <SelectContent>
                           <SelectItem value="unspecified">Unspecified</SelectItem>
                           {EMOTIONAL_BEAT_OPTIONS.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">Scene Type <span className="text-muted-foreground/60 text-[10px]">(camera grammar)</span></Label>
+                      <Select value={form.sceneType} onValueChange={v => setField("sceneType", v)}>
+                        <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Auto-detect from genre/mood" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Auto-detect from genre &amp; mood</SelectItem>
+                          <SelectItem value="action">Action — fight, chase, battle</SelectItem>
+                          <SelectItem value="dialogue">Dialogue — conversation, confrontation</SelectItem>
+                          <SelectItem value="emotional">Emotional — grief, love, loss, reunion</SelectItem>
+                          <SelectItem value="horror">Horror — threat, dread, supernatural</SelectItem>
+                          <SelectItem value="reveal">Reveal — discovery, twist, confession</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
