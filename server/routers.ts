@@ -57,6 +57,22 @@ import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_
 import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 
+// Build a rich, accurate prompt description for extended scene generation.
+// Placed at module scope (not inside router object) to satisfy TypeScript's strict checker.
+function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, effectiveDialogueText?: string): string {
+  const parts: string[] = [];
+  if (sceneData.description) parts.push(sceneData.description);
+  const dialogueText = effectiveDialogueText?.trim() || sceneData.dialogueText?.trim();
+  if (dialogueText) parts.push(`DIALOGUE IN THIS SCENE: ${dialogueText}`);
+  if (sceneData.productionNotes?.trim()) parts.push(`DIRECTOR NOTES: ${sceneData.productionNotes.trim()}`);
+  if (sceneData.actionDescription?.trim()) parts.push(`ACTION: ${sceneData.actionDescription.trim()}`);
+  if (sceneData.foregroundElements?.trim()) parts.push(`FOREGROUND: ${sceneData.foregroundElements.trim()}`);
+  if (sceneData.backgroundElements?.trim()) parts.push(`BACKGROUND: ${sceneData.backgroundElements.trim()}`);
+  if (sceneData.characterBlocking?.trim()) parts.push(`CHARACTER POSITIONS: ${sceneData.characterBlocking.trim()}`);
+  if (cinematicPrompt) parts.push(`CINEMATIC STYLE: ${cinematicPrompt}`);
+  return parts.join('. ');
+}
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -1267,44 +1283,6 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         };
       }),
   }),
-
-// Build a rich, accurate description for extended scene generation that faithfully reflects
-// the director's scene content, including dialogue context and production notes.
-function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, effectiveDialogueText?: string): string {
-  const parts: string[] = [];
-  // Lead with the scene's actual story description (most important for accuracy)
-  if (sceneData.description) {
-    parts.push(sceneData.description);
-  }
-  // Include dialogue — use override (from dialogue records) or scene field
-  const dialogueText = effectiveDialogueText?.trim() || (sceneData.dialogueText?.trim());
-  if (dialogueText) {
-    parts.push(`DIALOGUE IN THIS SCENE: ${dialogueText}`);
-  }
-  // Include production notes for blocking and action detail
-  if (sceneData.productionNotes && sceneData.productionNotes.trim()) {
-    parts.push(`DIRECTOR NOTES: ${sceneData.productionNotes.trim()}`);
-  }
-  // Include action description if separate
-  if (sceneData.actionDescription && sceneData.actionDescription.trim()) {
-    parts.push(`ACTION: ${sceneData.actionDescription.trim()}`);
-  }
-  // Include spatial composition details for accurate framing
-  if (sceneData.foregroundElements && sceneData.foregroundElements.trim()) {
-    parts.push(`FOREGROUND: ${sceneData.foregroundElements.trim()}`);
-  }
-  if (sceneData.backgroundElements && sceneData.backgroundElements.trim()) {
-    parts.push(`BACKGROUND: ${sceneData.backgroundElements.trim()}`);
-  }
-  if (sceneData.characterBlocking && sceneData.characterBlocking.trim()) {
-    parts.push(`CHARACTER POSITIONS: ${sceneData.characterBlocking.trim()}`);
-  }
-  // Append the full cinematic production prompt for visual style/quality
-  if (cinematicPrompt) {
-    parts.push(`CINEMATIC STYLE: ${cinematicPrompt}`);
-  }
-  return parts.join('. ');
-}
 
   // ─── Scenes ───
   scene: router({
