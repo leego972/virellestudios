@@ -7,7 +7,7 @@
  * On detection:
  *  1. Logs the incident to the `moderationIncidents` table
  *  2. Freezes the user account (sets isFrozen = true)
- *  3. Sends an alert email to the admin (Studiosvirelle@gmail.com)
+ *  3. Sends an alert email to the admin (studiosvirelle@gmail.com)
  *  4. Sends a notification email to the user explaining the freeze
  *
  * Severity levels:
@@ -272,7 +272,7 @@ async function sendAdminAlert(opts: {
   scanResult: ModerationScanResult;
 }): Promise<void> {
   const { userId, userEmail, userName, contentType, contentSnippet, scanResult } = opts;
-  const adminEmail = ENV.adminEmail ?? "Studiosvirelle@gmail.com";
+  const adminEmail = ENV.adminEmail ?? "studiosvirelle@gmail.com";
   const severityColor = scanResult.highestSeverity === "CRITICAL" ? "#dc2626" :
     scanResult.highestSeverity === "HIGH" ? "#ea580c" :
     scanResult.highestSeverity === "MEDIUM" ? "#d97706" : "#65a30d";
@@ -414,7 +414,7 @@ async function sendUserFreezeNotification(opts: {
             Please note that certain violations — particularly those involving content that exploits or endangers minors — are subject to mandatory reporting to law enforcement and will result in permanent account termination.
           </p>
           <p style="margin:0;font-size:14px;line-height:1.7;color:#a3a3a3;">
-            Contact us at <a href="mailto:Studiosvirelle@gmail.com" style="color:#d4a843;">Studiosvirelle@gmail.com</a> to discuss your case.
+            Contact us at <a href="mailto:studiosvirelle@gmail.com" style="color:#d4a843;">studiosvirelle@gmail.com</a> to discuss your case.
           </p>
         </td></tr>
         <tr><td style="padding:20px 32px;background-color:#0d0d0d;text-align:center;border-top:1px solid #262626;">

@@ -308,7 +308,7 @@
 - [x] Provide exact GoDaddy DNS settings
 
 ## Access Restriction
-- [x] Restrict app access to leego972@gmail.com only
+- [x] Restrict app access to studiosvirelle@gmail.com only
 - [x] Block login for all other emails with clear error message
 - [x] Add email whitelist check in backend protectedProcedure
 

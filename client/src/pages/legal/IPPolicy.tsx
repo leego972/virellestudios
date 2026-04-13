@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 
 export default function IPPolicy() {
   const EFFECTIVE_DATE = "1 January 2025";
-  const CONTACT_EMAIL = "Studiosvirelle@gmail.com";
-  const DMCA_EMAIL = "Studiosvirelle@gmail.com";
+  const CONTACT_EMAIL = "studiosvirelle@gmail.com";
+  const DMCA_EMAIL = "studiosvirelle@gmail.com";
   const [, setLocation] = useLocation();
 
   return (

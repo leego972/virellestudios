@@ -107,7 +107,7 @@ dashboards, handles authentication flows, and extracts credentials autonomously.
 
 # Contact
 - Website: ${SITE_URL}
-- Email: support@virellestudios.com
+- Email: studiosvirelle@gmail.com
 - Twitter: @VirelleStudios
 - GitHub: https://github.com/ArchibaldTitan
 `;

@@ -8194,7 +8194,7 @@ Rules:
         }
         // Also create an in-app notification for admin users
         try {
-          const adminUser = await db.getUserByEmail((ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase());
+          const adminUser = await db.getUserByEmail((ENV.adminEmail || "studiosvirelle@gmail.com").toLowerCase());
           if (adminUser) {
             await db.createNotification({
               userId: adminUser.id,

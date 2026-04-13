@@ -39,4 +39,4 @@ You may update, correct, or delete your account information at any time by loggi
 
 ## 6. Contact Us
 
-If you have any questions about this Privacy Policy, please contact us at legal@virelle.life.
+If you have any questions about this Privacy Policy, please contact us at studiosvirelle@gmail.com.

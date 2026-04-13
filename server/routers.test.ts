@@ -10,7 +10,7 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: any[] } {
   const user: AuthenticatedUser = {
     id: 1,
     openId: "test-user-123",
-    email: "leego972@gmail.com",
+    email: "studiosvirelle@gmail.com",
     name: "Test Director",
     passwordHash: null,
     loginMethod: "manus",
@@ -56,7 +56,7 @@ describe("auth.me", () => {
     const result = await caller.auth.me();
     expect(result).toBeTruthy();
     expect(result?.name).toBe("Test Director");
-    expect(result?.email).toBe("leego972@gmail.com");
+    expect(result?.email).toBe("studiosvirelle@gmail.com");
   });
 
   it("returns null for unauthenticated user", async () => {
@@ -929,7 +929,7 @@ describe("auth access control", () => {
     const caller = appRouter.createCaller(ctx);
     const result = await caller.auth.me();
     expect(result).toBeTruthy();
-    expect(result?.email).toBe("leego972@gmail.com");
+    expect(result?.email).toBe("studiosvirelle@gmail.com");
   });
 
   it("blocks unauthenticated users from protected procedures", async () => {
@@ -1499,7 +1499,7 @@ function createAdminContext(): { ctx: TrpcContext; clearedCookies: any[] } {
   const user: AuthenticatedUser = {
     id: 1,
     openId: "admin-user-123",
-    email: "Studiosvirelle@gmail.com",
+    email: "studiosvirelle@gmail.com",
     name: "Admin Director",
     passwordHash: null,
     loginMethod: "email",

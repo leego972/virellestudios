@@ -40,7 +40,7 @@ function getTransporter() {
   });
 }
 
-const FROM = `Virelle Studios <${ENV.emailFromAddress || "Studiosvirelle@gmail.com"}>`;
+const FROM = `Virelle Studios <${ENV.emailFromAddress || "studiosvirelle@gmail.com"}>`;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

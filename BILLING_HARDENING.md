@@ -313,7 +313,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 ### Optional
 ```bash
 # Billing monitoring/alerting
-BILLING_ALERT_EMAIL=admin@virelle.life
+BILLING_ALERT_EMAIL=studiosvirelle@gmail.com
 BILLING_ALERT_THRESHOLD=1000  # Alert if credit grant > 1000
 ```
 

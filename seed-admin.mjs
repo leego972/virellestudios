@@ -6,7 +6,7 @@ const DATABASE_URL = process.env.DATABASE_URL;
 async function main() {
   const connection = await mysql.createConnection(DATABASE_URL);
   
-  const email = 'leego972@gmail.com';
+  const email = 'studiosvirelle@gmail.com';
   const password = 'Hello123123';
   const name = 'Lee Gold';
   const openId = `email_${email}`;

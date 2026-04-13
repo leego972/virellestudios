@@ -1253,7 +1253,7 @@ var init_env = __esm({
       forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
       gmailUser: process.env.GMAIL_USER ?? "",
       gmailAppPassword: process.env.GMAIL_APP_PASSWORD ?? "",
-      emailFromAddress: process.env.EMAIL_FROM ?? "noreply@virelle.life",
+      emailFromAddress: process.env.EMAIL_FROM ?? "studiosvirelle@gmail.com",
       // ─── Stripe ────────────────────────────────────────────────────────────────
       stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
       stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY ?? "",
@@ -6627,7 +6627,7 @@ dashboards, handles authentication flows, and extracts credentials autonomously.
 
 # Contact
 - Website: ${SITE_URL}
-- Email: support@virellestudios.com
+- Email: studiosvirelle@gmail.com
 - Twitter: @VirelleStudios
 - GitHub: https://github.com/ArchibaldTitan
 `;
@@ -9659,7 +9659,7 @@ var init_seo_engine = __esm({
     SITE_DESCRIPTION2 = "The World's Most Advanced AI Film Production Platform. Create photorealistic characters, generate cinematic scenes, and produce complete films autonomously with AI.";
     SITE_LOGO = "/logos/at-icon-256.png";
     SITE_TWITTER = "@VirelleStudios";
-    SITE_CONTACT_EMAIL = "hello@virelle.life";
+    SITE_CONTACT_EMAIL = "studiosvirelle@gmail.com";
     SUPPORTED_LOCALES = [
       "en",
       "es",
@@ -12303,7 +12303,7 @@ var init_email = __esm({
     "use strict";
     init_env();
     FROM2 = `Virelle Studios <${ENV.emailFromAddress}>`;
-    STUDIO_BCC = ENV.adminEmail || "Studiosvirelle@gmail.com";
+    STUDIO_BCC = ENV.adminEmail || "studiosvirelle@gmail.com";
   }
 });
 
@@ -23971,7 +23971,7 @@ function getTransporter() {
     }
   });
 }
-var FROM = `Virelle Studios <${ENV.emailFromAddress || "noreply@virellestudios.com"}>`;
+var FROM = `Virelle Studios <${ENV.emailFromAddress || "studiosvirelle@gmail.com"}>`;
 function generateUnsubToken() {
   return crypto2.randomBytes(32).toString("hex");
 }
@@ -27073,7 +27073,7 @@ async function handleModerationViolation(opts) {
 }
 async function sendAdminAlert(opts) {
   const { userId, userEmail, userName, contentType, contentSnippet, scanResult } = opts;
-  const adminEmail = ENV.adminEmail ?? "legal@virelle.life";
+  const adminEmail = ENV.adminEmail ?? "studiosvirelle@gmail.com";
   const severityColor = scanResult.highestSeverity === "CRITICAL" ? "#dc2626" : scanResult.highestSeverity === "HIGH" ? "#ea580c" : scanResult.highestSeverity === "MEDIUM" ? "#d97706" : "#65a30d";
   const violationRows = scanResult.violations.map(
     (v) => `<tr>
@@ -27204,7 +27204,7 @@ async function sendUserFreezeNotification(opts) {
             Please note that certain violations \u2014 particularly those involving content that exploits or endangers minors \u2014 are subject to mandatory reporting to law enforcement and will result in permanent account termination.
           </p>
           <p style="margin:0;font-size:14px;line-height:1.7;color:#a3a3a3;">
-            Contact us at <a href="mailto:legal@virelle.life" style="color:#d4a843;">legal@virelle.life</a> to discuss your case.
+            Contact us at <a href="mailto:studiosvirelle@gmail.com" style="color:#d4a843;">studiosvirelle@gmail.com</a> to discuss your case.
           </p>
         </td></tr>
         <tr><td style="padding:20px 32px;background-color:#0d0d0d;text-align:center;border-top:1px solid #262626;">
@@ -34207,7 +34207,7 @@ ${input.message}`
         logger.warn(`Contact form owner notification failed: ${notifyErr}`);
       }
       try {
-        const adminUser = await getUserByEmail((ENV.adminEmail || "Studiosvirelle@gmail.com").toLowerCase());
+        const adminUser = await getUserByEmail((ENV.adminEmail || "studiosvirelle@gmail.com").toLowerCase());
         if (adminUser) {
           await createNotification({
             userId: adminUser.id,
@@ -36477,16 +36477,16 @@ async function runAutoMigration() {
     console.error(`[AutoMigrate] Failed to seed promo codes:`, err.message);
   }
   const BETA_ACCOUNTS = [
-    { email: "beta01@virellestudios.com", name: "Beta Tester 01", hash: "$2b$12$kPcp3jQv.2xeT30d3piIKew0I51ENu9IQia9KsTrDAWb3FZWI.YtW" },
-    { email: "beta02@virellestudios.com", name: "Beta Tester 02", hash: "$2b$12$OfsynB96qWPpeGC.nEaAL.QYMvFFzgzeTndnTJQ4i7wEmEg4mLhmi" },
-    { email: "beta03@virellestudios.com", name: "Beta Tester 03", hash: "$2b$12$1bhSGVJqrEgdQ72rireGp.gStOEPrYx8srWCquhbUpSonJ/wRvo3i" },
-    { email: "beta04@virellestudios.com", name: "Beta Tester 04", hash: "$2b$12$IlaXZw8SIWT5cr3DPLtwnO3WzGW/mClrk8yGvhGtkQ6lxFEHVgKWq" },
-    { email: "beta05@virellestudios.com", name: "Beta Tester 05", hash: "$2b$12$MtkiCrPMSnJ3vnmpI6f12umwGADADPdVIKK4/9/M/GjOGAfw5Tusi" },
-    { email: "beta06@virellestudios.com", name: "Beta Tester 06", hash: "$2b$12$zTfZfdCAYcYkiVZjZ5r7JeB38QsDTSwoubffp.ZK9oF1TqIWAZdEO" },
-    { email: "beta07@virellestudios.com", name: "Beta Tester 07", hash: "$2b$12$jTRem0RgWS7WHJPfEyuh4OwUkXO.jIwNSAPYva.LsBQPIrbJOAoFS" },
-    { email: "beta08@virellestudios.com", name: "Beta Tester 08", hash: "$2b$12$nUqVX2xYN0V5SRez6rWT/eSSNwQR/BqpKNMSfIHL6UoxJxOhfRxjq" },
-    { email: "beta09@virellestudios.com", name: "Beta Tester 09", hash: "$2b$12$UqgWEDWiJzhr2eeqOyk5defWvokvWBT.BzCtpqTuMOPw9S2o6xWwu" },
-    { email: "beta10@virellestudios.com", name: "Beta Tester 10", hash: "$2b$12$Bnw/0cXNuWO6qYNAeBJguelpY6/jldZjYxFN0XtkLUmM/FV3uk0rG" }
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 01", hash: "$2b$12$kPcp3jQv.2xeT30d3piIKew0I51ENu9IQia9KsTrDAWb3FZWI.YtW" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 02", hash: "$2b$12$OfsynB96qWPpeGC.nEaAL.QYMvFFzgzeTndnTJQ4i7wEmEg4mLhmi" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 03", hash: "$2b$12$1bhSGVJqrEgdQ72rireGp.gStOEPrYx8srWCquhbUpSonJ/wRvo3i" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 04", hash: "$2b$12$IlaXZw8SIWT5cr3DPLtwnO3WzGW/mClrk8yGvhGtkQ6lxFEHVgKWq" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 05", hash: "$2b$12$MtkiCrPMSnJ3vnmpI6f12umwGADADPdVIKK4/9/M/GjOGAfw5Tusi" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 06", hash: "$2b$12$zTfZfdCAYcYkiVZjZ5r7JeB38QsDTSwoubffp.ZK9oF1TqIWAZdEO" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 07", hash: "$2b$12$jTRem0RgWS7WHJPfEyuh4OwUkXO.jIwNSAPYva.LsBQPIrbJOAoFS" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 08", hash: "$2b$12$nUqVX2xYN0V5SRez6rWT/eSSNwQR/BqpKNMSfIHL6UoxJxOhfRxjq" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 09", hash: "$2b$12$UqgWEDWiJzhr2eeqOyk5defWvokvWBT.BzCtpqTuMOPw9S2o6xWwu" },
+    { email: "studiosvirelle@gmail.com", name: "Beta Tester 10", hash: "$2b$12$Bnw/0cXNuWO6qYNAeBJguelpY6/jldZjYxFN0XtkLUmM/FV3uk0rG" }
   ];
   try {
     for (const u of BETA_ACCOUNTS) {

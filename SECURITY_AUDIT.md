@@ -50,7 +50,7 @@ if (!JWT_SECRET_KEY) {
 
 **Issues:**
 - Multiple critical secrets have empty string defaults (`??` operator)
-- Hardcoded fallback for `adminEmail` (line 75): `"Studiosvirelle@gmail.com"`
+- Hardcoded fallback for `adminEmail` (line 75): `"studiosvirelle@gmail.com"`
 - Hardcoded fallback for `pollinationsApiKey` (line 66): `"sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP"`
 - No validation that required production keys are actually set
 
@@ -79,12 +79,12 @@ if (!JWT_SECRET_KEY) {
 
 **Issue:**
 - Admin email is hardcoded with a default value
-- Additional hardcoded admin emails in routers.ts: `"leego972@gmail.com"`, `"brobroplzcheck@gmail.com"`, `"sisteror555@gmail.com"`
+- Additional hardcoded admin emails in routers.ts: `"studiosvirelle@gmail.com"`, `"brobroplzcheck@gmail.com"`, `"sisteror555@gmail.com"`
 - These emails grant admin access without proper configuration
 
 **Current Code (routers.ts, line 64-65):**
 ```typescript
-const adminEmails = [ENV.adminEmail?.toLowerCase(), "leego972@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
+const adminEmails = [ENV.adminEmail?.toLowerCase(), "studiosvirelle@gmail.com", "brobroplzcheck@gmail.com", "sisteror555@gmail.com"];
 const isAdmin = ctx.user.role === "admin" || adminEmails.includes(ctx.user.email?.toLowerCase() || "");
 ```
 

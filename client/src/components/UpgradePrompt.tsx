@@ -114,7 +114,7 @@ export function UpgradePrompt({
             size="sm"
             className={`${btnClass} shrink-0`}
             onClick={() => {
-              window.location.href = `mailto:Studiosvirelle@gmail.com?subject=${encodeURIComponent(
+              window.location.href = `mailto:studiosvirelle@gmail.com?subject=${encodeURIComponent(
                 `Virelle Studios — ${tier.name} Enquiry`
               )}`;
             }}
@@ -196,7 +196,7 @@ export function UpgradePrompt({
             <Button
               className={`w-full ${tierButtonClass(normTier)}`}
               onClick={() => {
-                window.location.href = `mailto:Studiosvirelle@gmail.com?subject=${encodeURIComponent(
+                window.location.href = `mailto:studiosvirelle@gmail.com?subject=${encodeURIComponent(
                   `Virelle Studios — ${tier.name} Enquiry`
                 )}`;
               }}

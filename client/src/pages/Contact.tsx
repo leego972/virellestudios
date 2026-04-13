@@ -108,7 +108,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">Studiosvirelle@gmail.com</p>
+                    <p className="text-sm text-muted-foreground">studiosvirelle@gmail.com</p>
                   </div>
                 </CardContent>
               </Card>

@@ -3,11 +3,11 @@
  * Clean, restrained footer with professional contact emails.
  */
 const CONTACT_EMAILS = [
-  { label: "Support", email: "support@virelle.life" },
-  { label: "Billing", email: "billing@virelle.life" },
-  { label: "Partnerships", email: "partnerships@virelle.life" },
-  { label: "Press", email: "press@virelle.life" },
-  { label: "Legal & Privacy", email: "legal@virelle.life" },
+  { label: "Support", email: "studiosvirelle@gmail.com" },
+  { label: "Billing", email: "studiosvirelle@gmail.com" },
+  { label: "Partnerships", email: "studiosvirelle@gmail.com" },
+  { label: "Press", email: "studiosvirelle@gmail.com" },
+  { label: "Legal & Privacy", email: "studiosvirelle@gmail.com" },
 ];
 
 export default function LeegoFooter() {
@@ -52,7 +52,7 @@ export default function LeegoFooter() {
             <span>·</span>
             <a href="/acceptable-use" className="hover:text-foreground/70 transition-colors">Acceptable Use</a>
             <span>·</span>
-            <a href="mailto:hello@virelle.life" className="hover:text-amber-400 transition-colors">hello@virelle.life</a>
+            <a href="mailto:studiosvirelle@gmail.com" className="hover:text-amber-400 transition-colors">studiosvirelle@gmail.com</a>
           </div>
         </div>
       </div>

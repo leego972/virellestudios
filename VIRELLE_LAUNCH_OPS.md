@@ -13,8 +13,8 @@
 - [ ] Log in as admin — confirm `/admin/users`, `/admin/growth`, `/admin/security` load
 - [ ] Make a test Stripe checkout (use test card `4242 4242 4242 4242`) — confirm credits granted
 - [ ] Trigger a test webhook from Stripe dashboard — confirm `200 OK` response
-- [ ] Confirm support email `support@virelle.life` is receiving mail
-- [ ] Confirm `hello@virelle.life` forwards correctly
+- [ ] Confirm support email `studiosvirelle@gmail.com` is receiving mail
+- [ ] Confirm `studiosvirelle@gmail.com` forwards correctly
 - [ ] Confirm opener video plays fully and golden logo holds for 2 seconds
 - [ ] Confirm mobile deep-link returns to app after Stripe checkout
 - [ ] Confirm Android APK download link is live and correct
@@ -154,7 +154,7 @@ Access these URLs daily (must be logged in as admin):
 | New signups | `/admin/users` | Count, plan distribution, any suspicious patterns |
 | Conversions | `/admin/growth` | Free → paid conversion rate, plan breakdown |
 | Failed payments | Stripe Dashboard | `past_due` subscriptions, failed payment_intents |
-| Support tickets | `support@virelle.life` inbox | Open/unanswered emails |
+| Support tickets | `studiosvirelle@gmail.com` inbox | Open/unanswered emails |
 | Top errors | Railway Logs | Filter by `ERROR` level |
 | Showcase activity | `/admin/users` → creator filter | New creator pages, flagged content |
 | Export success rate | Railway Logs | Filter by export route errors |
@@ -164,7 +164,7 @@ Access these URLs daily (must be logged in as admin):
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Support contact visible | ✅ | `support@virelle.life` in footer on all pages |
+| Support contact visible | ✅ | `studiosvirelle@gmail.com` in footer on all pages |
 | Billing management path | ✅ | `/billing` page with Stripe portal link |
 | Moderation/admin tools | ✅ | `/admin/users`, `/admin/security` accessible |
 | Growth dashboard | ✅ | `/admin/growth` with conversion data |
@@ -175,8 +175,8 @@ Access these URLs daily (must be logged in as admin):
 ## PART 4 — CUSTOMER READINESS
 
 ### Support Contact
-- **Support email:** support@virelle.life
-- **General contact:** hello@virelle.life
+- **Support email:** studiosvirelle@gmail.com
+- **General contact:** studiosvirelle@gmail.com
 - **Response SLA:** 4 hours for P0/P1, 24 hours for P2/P3
 
 ### Refund/Cancellation Policy Notes
