@@ -174,21 +174,195 @@ export interface ExtendedSceneResult {
 // Cycle through these to create cinematic variety within a single scene
 
 const CAMERA_VARIATIONS = [
-  { angle: "wide establishing", movement: "slow dolly forward", description: "Wide establishing shot slowly pushing in" },
-  { angle: "medium", movement: "steady tracking right", description: "Medium shot tracking alongside the action" },
-  { angle: "close-up", movement: "subtle handheld", description: "Close-up with subtle handheld movement" },
-  { angle: "over-shoulder", movement: "slow push in", description: "Over-the-shoulder shot slowly pushing in" },
-  { angle: "low angle", movement: "slow tilt up", description: "Low angle looking up, slow tilt" },
-  { angle: "wide", movement: "slow pan left to right", description: "Wide shot panning across the scene" },
-  { angle: "medium close-up", movement: "orbiting slowly", description: "Medium close-up slowly orbiting the subject" },
-  { angle: "birds eye", movement: "descending crane", description: "Bird's eye view descending into the scene" },
+  { angle: "wide establishing", movement: "slow dolly forward", description: "Wide establishing shot slowly pushing in, revealing environment and context" },
+  { angle: "medium two-shot", movement: "subtle steady push", description: "Medium two-shot framing both subjects, gentle push toward emotional center" },
+  { angle: "close-up", movement: "imperceptible handheld breathing", description: "Close-up with organic handheld micro-movement, actor fills frame" },
+  { angle: "over-shoulder", movement: "slow push in", description: "Over-the-shoulder shot establishing eyeline and spatial relationship" },
+  { angle: "low angle", movement: "slow tilt up revealing subject", description: "Low angle heroic frame, slow tilt up to full reveal" },
+  { angle: "wide", movement: "slow pan left to right following action", description: "Wide master shot panning with the scene" },
+  { angle: "medium close-up", movement: "slow orbit revealing depth", description: "Medium close-up slowly orbiting subject, revealing background depth" },
+  { angle: "birds eye overhead", movement: "descending crane into scene", description: "Bird's-eye crane descending into the scene, god's perspective narrowing to human scale" },
+  { angle: "extreme close-up", movement: "locked off held tension", description: "Extreme close-up on eyes, hands, or key detail — locked off to create tension" },
+  { angle: "POV first-person", movement: "naturalistic handheld", description: "First-person POV with naturalistic handheld sway, viewer inhabits character" },
+  { angle: "Dutch angle tilt", movement: "slow creep forward", description: "Dutch angle creating psychological unease, slow creep amplifies dread" },
+  { angle: "insert detail shot", movement: "locked macro", description: "Macro insert on critical story detail — hand, object, wound, text" },
+  { angle: "wide high angle", movement: "slow push down", description: "High wide angle looking down, characters small in environment, push slowly down" },
+  { angle: "tracking medium", movement: "lateral tracking shot", description: "Medium lateral tracking shot moving parallel to action, cinéma vérité energy" },
+  { angle: "reverse angle", movement: "static cut-in", description: "Reverse angle cut-in, flipping spatial orientation for dramatic counter-point" },
+  { angle: "aerial drone", movement: "sweeping reveal arc", description: "Sweeping aerial drone arc revealing landscape scale and geographic context" },
 ];
+
+// ─── Hollywood Shot Grammar Sequences ───
+// Each genre/scene-type uses a deliberate shot progression, not random cycling.
+// Modeled on real Hollywood editing conventions.
+
+type ShotBeat = {
+  angle: string;
+  movement: string;
+  description: string;
+  dramaticPurpose: string;
+  filmStock: string;
+};
+
+function buildShotGrammar(
+  genre: string,
+  mood: string,
+  numClips: number,
+  sceneType: "action" | "dialogue" | "emotional" | "horror" | "reveal" | "default"
+): ShotBeat[] {
+  // Film stock selection based on scene mood — real Hollywood stock choices
+  const getFilmStock = (beatType: string): string => {
+    const dark = ["horror", "noir", "thriller", "tension", "night", "fear", "dread"];
+    const warm = ["romance", "golden", "warm", "nostalgic", "sunset", "hope"];
+    const cold = ["sci-fi", "dystopian", "clinical", "sterile", "interrogation"];
+    const m = mood.toLowerCase();
+    const g = genre.toLowerCase();
+    if (dark.some(d => m.includes(d) || g.includes(d))) return "Kodak Vision3 500T 5219, pushed one stop, crushed blacks";
+    if (warm.some(w => m.includes(w) || g.includes(w))) return "Kodak Vision3 250D 5207, warm golden LUT, gentle highlight rolloff";
+    if (cold.some(c => m.includes(c) || g.includes(c))) return "Fuji Eterna 500T 8573, desaturated teal shift, clinical whites";
+    if (beatType === "day exterior") return "Kodak Vision3 200T 5213, natural daylight balanced, vivid color rendition";
+    return "Kodak Vision3 500T 5219, ACES color science, cinematic DI finish";
+  };
+
+  // Genre-specific shot sequence templates
+  // Each sequence has 16 entries — we'll slice to numClips
+  const sequences: Record<string, ShotBeat[]> = {
+    action: [
+      { angle: "wide establishing", movement: "rapid push-in", description: "Wide master establishing danger zone", dramaticPurpose: "Establish scale and threat", filmStock: getFilmStock("exterior") },
+      { angle: "low angle", movement: "explosive tilt up", description: "Low heroic frame on protagonist, explosive tilt up", dramaticPurpose: "Hero power reveal", filmStock: getFilmStock("day") },
+      { angle: "medium tracking", movement: "kinetic run-alongside", description: "Medium shot tracking alongside sprinting action", dramaticPurpose: "Keep pace with physical action", filmStock: getFilmStock("action") },
+      { angle: "extreme close-up", movement: "locked off held", description: "Extreme close-up on face — determination, adrenaline", dramaticPurpose: "Emotional stakes", filmStock: getFilmStock("intensity") },
+      { angle: "POV first-person", movement: "aggressive handheld rush", description: "First-person rush through environment, visceral and disorienting", dramaticPurpose: "Put viewer inside action", filmStock: getFilmStock("adrenaline") },
+      { angle: "wide chaos", movement: "whip pan", description: "Wide shot capturing full chaos of confrontation with whip pan", dramaticPurpose: "Convey scale of conflict", filmStock: getFilmStock("action") },
+      { angle: "insert detail", movement: "locked macro", description: "Macro insert on hands, weapon, wound — critical story beat", dramaticPurpose: "Consequence and stakes", filmStock: getFilmStock("intensity") },
+      { angle: "medium slow-motion", movement: "ultra-slow tracking", description: "Phantom slow-motion at 1000fps — key impact moment suspended in time", dramaticPurpose: "Grace and brutality of action", filmStock: getFilmStock("film") },
+      { angle: "over-shoulder reaction", movement: "push in", description: "Over-shoulder on opponent's reaction to hero's action", dramaticPurpose: "Power dynamic reversal", filmStock: getFilmStock("close") },
+      { angle: "low angle chase", movement: "ground-level tracking", description: "Ground-level low angle tracking chase — feet, dust, momentum", dramaticPurpose: "Physicality and desperation", filmStock: getFilmStock("action") },
+      { angle: "birds eye overhead", movement: "rapid descending crane", description: "Birds-eye tactical overhead showing spatial relationship of combatants", dramaticPurpose: "Geographic clarity in chaos", filmStock: getFilmStock("film") },
+      { angle: "wide resolution", movement: "slow dolly out", description: "Wide shot pulling out from resolution moment", dramaticPurpose: "Scale of aftermath", filmStock: getFilmStock("day") },
+      { angle: "close-up aftermath", movement: "slow push in", description: "Close-up on protagonist face in aftermath — exhaustion, survival, cost", dramaticPurpose: "Emotional aftermath", filmStock: getFilmStock("quiet") },
+      { angle: "medium", movement: "static locked", description: "Static medium shot — silence after the storm", dramaticPurpose: "Let the beat breathe", filmStock: getFilmStock("film") },
+      { angle: "wide", movement: "slow pan reveal", description: "Wide pan revealing full aftermath of action", dramaticPurpose: "World changed forever", filmStock: getFilmStock("aftermath") },
+      { angle: "aerial drone", movement: "sweeping arc away", description: "Aerial sweeping arc pulling back from scene — distance and consequence", dramaticPurpose: "Godlike perspective on consequences", filmStock: getFilmStock("film") },
+    ],
+    dialogue: [
+      { angle: "wide two-shot", movement: "subtle push toward conversation", description: "Wide two-shot establishing both characters in space, slowly pushing into their world", dramaticPurpose: "Establish spatial relationship and power dynamic", filmStock: getFilmStock("interior") },
+      { angle: "medium over-shoulder A", movement: "slow push toward B", description: "Over character A's shoulder looking at character B, gentle push in", dramaticPurpose: "Introduce first perspective", filmStock: getFilmStock("dialogue") },
+      { angle: "medium close-up B", movement: "imperceptible handheld", description: "Medium close-up on character B listening, micro-expression visible", dramaticPurpose: "Character's internal reaction", filmStock: getFilmStock("close") },
+      { angle: "medium over-shoulder B", movement: "slow push toward A", description: "Reverse — over character B's shoulder looking at A responding", dramaticPurpose: "Counter perspective, power shift", filmStock: getFilmStock("dialogue") },
+      { angle: "medium close-up A", movement: "slight orbit", description: "Medium close-up on A responding, slight orbit revealing emotional state", dramaticPurpose: "Escalation — stakes rising in dialogue", filmStock: getFilmStock("close") },
+      { angle: "insert detail", movement: "locked macro", description: "Insert on hands, glass, object being held — physical expression of emotion", dramaticPurpose: "Physical manifestation of tension", filmStock: getFilmStock("detail") },
+      { angle: "close-up A", movement: "ultra-slow push in", description: "Close-up on A — key line or emotional turn, ultra-slow push amplifying weight", dramaticPurpose: "The turning point of the scene", filmStock: getFilmStock("emotion") },
+      { angle: "close-up B", movement: "subtle pull back shock", description: "Close-up on B — reaction to turning point, subtle pull back on impact", dramaticPurpose: "Reaction — the scene changes here", filmStock: getFilmStock("reaction") },
+      { angle: "wide two-shot new dynamic", movement: "slow reframe", description: "Wide two-shot again but relationship has shifted — visual reframe shows new dynamic", dramaticPurpose: "Show how power balance changed", filmStock: getFilmStock("dialogue") },
+      { angle: "medium walking", movement: "tracking with character", description: "Medium tracking shot — character crosses room, physical movement expressing emotion", dramaticPurpose: "Physical punctuation to emotional beat", filmStock: getFilmStock("movement") },
+      { angle: "extreme close-up eyes", movement: "locked held", description: "Extreme close-up on eyes — tears, realization, suppressed anger", dramaticPurpose: "The truth in the eyes", filmStock: getFilmStock("truth") },
+      { angle: "wide lonely", movement: "slow pull back", description: "Wide shot — character alone in frame, space pressing in, slow pull back", dramaticPurpose: "Isolation and consequence", filmStock: getFilmStock("emotion") },
+      { angle: "medium profile", movement: "locked profile", description: "Static profile — character looking away, processing what happened", dramaticPurpose: "Introspection, scene closes", filmStock: getFilmStock("quiet") },
+      { angle: "over-shoulder out window", movement: "slow push toward glass", description: "Over shoulder looking out window — character's gaze at the world outside", dramaticPurpose: "Yearning, escape, hope or dread", filmStock: getFilmStock("mood") },
+      { angle: "wide two-shot departure", movement: "static as one character leaves", description: "Wide two-shot — one character exits frame, leaving the other alone", dramaticPurpose: "Visual statement of separation", filmStock: getFilmStock("end") },
+      { angle: "close-up remaining", movement: "slow push in resolution", description: "Close-up on remaining character — final expression that carries into next scene", dramaticPurpose: "Bridge to what comes next", filmStock: getFilmStock("quiet") },
+    ],
+    horror: [
+      { angle: "wide deceptively serene", movement: "slow dolly forward into false peace", description: "Wide shot — everything looks normal, too normal. Slow creep forward.", dramaticPurpose: "Establish false safety before violation", filmStock: getFilmStock("horror") },
+      { angle: "medium POV", movement: "naturalistic nervous handheld", description: "Medium POV — character moving through space, looking around, nervous energy", dramaticPurpose: "Put viewer in danger alongside protagonist", filmStock: getFilmStock("horror") },
+      { angle: "over-shoulder into darkness", movement: "push toward the dark", description: "Over shoulder looking into darkness or around a corner — push slowly toward unknown", dramaticPurpose: "The approach — anticipation of threat", filmStock: getFilmStock("horror") },
+      { angle: "low Dutch angle", movement: "slow creep", description: "Dutch angle low frame — spatial wrongness, creeping forward", dramaticPurpose: "Reality distortion — something is wrong", filmStock: getFilmStock("horror") },
+      { angle: "extreme close-up eyes", movement: "locked — dilation visible", description: "Extreme close-up on protagonist eyes — pupils dilate in fear, locked still", dramaticPurpose: "Fear registering in body", filmStock: getFilmStock("horror") },
+      { angle: "wide reveal", movement: "rapid push-in on reveal", description: "Wide shot with sudden push-in on the threat revealed in frame", dramaticPurpose: "The reveal — sudden confrontation with dread", filmStock: getFilmStock("horror") },
+      { angle: "medium chaos handheld", movement: "violent unstabilized", description: "Medium violent handheld — world destabilized by threat, camera struggling", dramaticPurpose: "Chaos and loss of control", filmStock: getFilmStock("horror") },
+      { angle: "insert graphic detail", movement: "locked macro", description: "Insert on disturbing detail — blood, wound, wrong shape in shadow", dramaticPurpose: "The cost made visceral and specific", filmStock: getFilmStock("horror") },
+      { angle: "wide aftermath silence", movement: "completely static", description: "Wide completely static shot of aftermath — silence is the horror", dramaticPurpose: "The silence after is more terrifying", filmStock: getFilmStock("horror") },
+      { angle: "close-up survivor", movement: "slow push in", description: "Close-up on survivor's face — trauma, disbelief, survival guilt", dramaticPurpose: "Human cost of horror", filmStock: getFilmStock("horror") },
+      { angle: "birds eye looking down", movement: "slow descend", description: "Birds-eye looking down at lone survivor in vast dark space — vulnerability", dramaticPurpose: "Smallness, isolation, continued threat", filmStock: getFilmStock("horror") },
+      { angle: "background threat", movement: "locked as background shifts", description: "Focus on foreground character while threat appears out of focus in background", dramaticPurpose: "Viewer sees danger character cannot", filmStock: getFilmStock("horror") },
+      { angle: "POV retreat", movement: "backing away handheld", description: "POV backing away from threat — claustrophobic, trapped", dramaticPurpose: "Viewer retreating with protagonist", filmStock: getFilmStock("horror") },
+      { angle: "medium reaction", movement: "locked", description: "Medium locked shot — character freezes, processing, deciding", dramaticPurpose: "Decision point — fight or flight", filmStock: getFilmStock("horror") },
+      { angle: "wide threat looming", movement: "locked with threat in frame", description: "Wide shot — threat visible and growing in frame, protagonist unaware", dramaticPurpose: "Dramatic irony — audience knows", filmStock: getFilmStock("horror") },
+      { angle: "close-up door/barrier", movement: "push toward", description: "Close-up push toward last barrier between character and safety", dramaticPurpose: "Final hope and its fragility", filmStock: getFilmStock("horror") },
+    ],
+    emotional: [
+      { angle: "wide isolating", movement: "slow pull back to emphasize loneliness", description: "Wide shot pulling back — character small, world large and indifferent", dramaticPurpose: "Establish emotional isolation", filmStock: getFilmStock("emotion") },
+      { angle: "medium approaching", movement: "slow dolly in as emotion builds", description: "Medium shot slowly moving in as emotional moment builds — camera drawn to subject", dramaticPurpose: "Gravity of the emotional moment", filmStock: getFilmStock("emotion") },
+      { angle: "close-up face", movement: "imperceptible handheld breath", description: "Close-up on face — every micro-expression visible, organic breathing of camera", dramaticPurpose: "Intimacy — we are with this person", filmStock: getFilmStock("emotion") },
+      { angle: "insert hands", movement: "locked macro", description: "Macro insert on hands — trembling, clasped, letting go", dramaticPurpose: "Emotion in the body, not just the face", filmStock: getFilmStock("detail") },
+      { angle: "extreme close-up tears", movement: "locked held on tears forming", description: "ECU on eye — tear forms, runs, falls. Locked held.", dramaticPurpose: "The moment of release", filmStock: getFilmStock("emotion") },
+      { angle: "wide two-shot embrace", movement: "slow orbit", description: "Wide slowly orbiting two-shot of physical comfort or confrontation", dramaticPurpose: "The physical expression of the emotional truth", filmStock: getFilmStock("connection") },
+      { angle: "medium pull back", movement: "slow pull back leaving space", description: "Medium pulling back — creating space between characters or around subject", dramaticPurpose: "The beginning of separation or acceptance", filmStock: getFilmStock("emotion") },
+      { angle: "window reflection", movement: "slow push toward glass", description: "Character reflected in glass while real world visible beyond — duality", dramaticPurpose: "Inner vs outer world", filmStock: getFilmStock("introspection") },
+      { angle: "profile locked", movement: "static profile contemplation", description: "Static profile shot — character looking at something only they can see", dramaticPurpose: "The weight of memory, regret, or hope", filmStock: getFilmStock("quiet") },
+      { angle: "close-up smile/break", movement: "ultra-slow push", description: "ECU ultra-slow push — the face breaking into release whether tears or joy", dramaticPurpose: "Catharsis", filmStock: getFilmStock("emotion") },
+      { angle: "medium departing", movement: "static as character moves away", description: "Static medium — character walks away into distance, we watch them go", dramaticPurpose: "Departure and loss", filmStock: getFilmStock("end") },
+      { angle: "wide final", movement: "slow crane rise", description: "Wide crane rising above scene — giving scale and perspective to emotion", dramaticPurpose: "Transcendence of the moment", filmStock: getFilmStock("resolution") },
+    ],
+    reveal: [
+      { angle: "tight on concealing element", movement: "locked hiding truth", description: "Tight shot on what conceals the truth — door, box, face, shadow", dramaticPurpose: "Build anticipation for what will be revealed", filmStock: getFilmStock("tension") },
+      { angle: "POV approach", movement: "slow inexorable push toward reveal", description: "POV slowly approaching the thing about to be revealed — inexorable", dramaticPurpose: "Participate in the discovery", filmStock: getFilmStock("tension") },
+      { angle: "wide reveal moment", movement: "rapid push-in on reveal or pull-back wide", description: "The reveal — either rapid push-in (shock) or rapid pull-back wide (context)", dramaticPurpose: "The reveal itself — maximum impact", filmStock: getFilmStock("shock") },
+      { angle: "close-up reaction", movement: "push in on reaction face", description: "Immediate close-up on the face reacting to the reveal — nothing hidden", dramaticPurpose: "Audience proxy reaction", filmStock: getFilmStock("reaction") },
+      { angle: "wide context", movement: "slow pull back showing full picture", description: "Wide pull back showing what the reveal means in full context", dramaticPurpose: "Let the stakes register fully", filmStock: getFilmStock("film") },
+      { angle: "insert detail", movement: "macro on critical detail", description: "Macro insert on the specific detail that makes the reveal undeniable", dramaticPurpose: "The inescapable proof", filmStock: getFilmStock("detail") },
+      { angle: "medium aftermath", movement: "slow push in on processing", description: "Medium shot of character processing — the reveal sinking in", dramaticPurpose: "The reveal's aftermath — what it means", filmStock: getFilmStock("aftermath") },
+      { angle: "wide consequence", movement: "static held", description: "Wide static shot — the world as it now must be understood", dramaticPurpose: "The new reality established", filmStock: getFilmStock("resolution") },
+    ],
+    default: [
+      { angle: "wide establishing", movement: "slow dolly forward", description: "Wide establishing shot slowly pushing in, grounding scene in space and time", dramaticPurpose: "Orient viewer to location and emotional context", filmStock: getFilmStock("exterior") },
+      { angle: "medium", movement: "steady tracking", description: "Medium shot tracking with primary subject through the scene", dramaticPurpose: "Follow the action at human scale", filmStock: getFilmStock("film") },
+      { angle: "close-up", movement: "subtle handheld", description: "Close-up with subtle organic handheld breathing — actor in sharp focus", dramaticPurpose: "Intimacy with character's inner life", filmStock: getFilmStock("close") },
+      { angle: "over-shoulder", movement: "push in", description: "Over-the-shoulder shot establishing spatial and emotional relationship", dramaticPurpose: "Interpersonal dynamics made visible", filmStock: getFilmStock("dialogue") },
+      { angle: "wide", movement: "slow pan", description: "Wide panning shot — environment active and expressive", dramaticPurpose: "World as character — environment shapes mood", filmStock: getFilmStock("film") },
+      { angle: "low angle", movement: "tilt up", description: "Low angle tilt up — stature, power, heroism, or threat", dramaticPurpose: "Scale and status communicated through geometry", filmStock: getFilmStock("power") },
+      { angle: "medium close-up", movement: "slow orbit", description: "Medium close-up slowly orbiting — all angles of the emotional moment", dramaticPurpose: "Full roundedness of the character beat", filmStock: getFilmStock("close") },
+      { angle: "birds eye", movement: "descending crane", description: "Bird's-eye crane descending into scene — world to human scale", dramaticPurpose: "Context and consequence from above", filmStock: getFilmStock("film") },
+      { angle: "extreme close-up", movement: "locked held", description: "ECU locked — the essential detail that carries the scene's meaning", dramaticPurpose: "The irreducible truth of the moment", filmStock: getFilmStock("detail") },
+      { angle: "tracking medium", movement: "lateral movement", description: "Lateral tracking medium shot — parallel to action, journalistic energy", dramaticPurpose: "Movement as life — kinetic honesty", filmStock: getFilmStock("movement") },
+      { angle: "wide aerial", movement: "sweeping arc", description: "Sweeping aerial arc — geographic and emotional scale", dramaticPurpose: "Transcendence — the scene in its full world context", filmStock: getFilmStock("film") },
+      { angle: "close profile", movement: "static profile", description: "Static profile close-up — character looking off toward what matters to them", dramaticPurpose: "Interior life made exterior", filmStock: getFilmStock("quiet") },
+    ],
+  };
+
+  // Select the appropriate sequence based on genre and mood keywords
+  let sequenceKey: keyof typeof sequences = "default";
+  const g = genre.toLowerCase();
+  const m = mood.toLowerCase();
+  const actionKeywords = ["action", "fight", "chase", "battle", "explosion", "combat", "war", "heist", "escape", "crash"];
+  const horrorKeywords = ["horror", "terror", "dread", "fear", "monster", "threat", "danger", "creature", "supernatural", "dark"];
+  const dialogueKeywords = ["dialogue", "conversation", "confrontation", "negotiation", "reunion", "meeting", "argument", "debate"];
+  const emotionalKeywords = ["emotional", "sad", "grief", "joy", "love", "loss", "crying", "tears", "heartbreak", "reunion", "tender", "romance"];
+  const revealKeywords = ["reveal", "discovery", "twist", "uncover", "shock", "surprise", "confession"];
+
+  if (actionKeywords.some(k => g.includes(k) || m.includes(k)) || g === "action" || g === "war") {
+    sequenceKey = "action";
+  } else if (horrorKeywords.some(k => g.includes(k) || m.includes(k)) || g === "horror") {
+    sequenceKey = "horror";
+  } else if (revealKeywords.some(k => m.includes(k))) {
+    sequenceKey = "reveal";
+  } else if (emotionalKeywords.some(k => m.includes(k)) || g === "romance") {
+    sequenceKey = "emotional";
+  } else if (dialogueKeywords.some(k => m.includes(k)) || g === "drama" || g === "film noir" || g === "crime") {
+    sequenceKey = "dialogue";
+  } else if (sceneType !== "default") {
+    sequenceKey = sceneType;
+  }
+
+  const sequence = sequences[sequenceKey];
+  // Slice to numClips — take the most dramatically appropriate beats from the front
+  return sequence.slice(0, Math.min(numClips, sequence.length));
+}
 
 // ─── Sub-Shot Planning ───
 
 /**
- * Break a scene into sub-shots based on target duration.
- * Uses provider-appropriate clip durations:
+ * Break a scene into cinematically intelligent sub-shots based on target duration.
+ * Uses genre-aware Hollywood shot grammar — not random camera cycling.
+ * 
+ * Shot sequencing follows real Hollywood editing conventions:
+ * - Action: wide→low→tracking→ECU→POV→chaos→insert→slo-mo→aftermath
+ * - Dialogue: two-shot→OS-A→CU-B→OS-B→CU-A→insert→turn→reaction→resolution
+ * - Horror: serene→POV→approach→Dutch→ECU→reveal→chaos→insert→silence
+ * - Emotional: wide-isolating→approach→close→hands→tears→embrace→departure
+ * 
+ * Provider clip durations:
  * - Runway / SeedDance: 10s (API only accepts 5 or 10)
  * - Pollinations / HuggingFace: 8s (model limitation)
  * - fal.ai (Kling v2.6 Pro): 10s (supports 3–15s; 10s chosen for reliable chaining)
@@ -207,77 +381,91 @@ export function planSubShots(
     locationDescription?: string;
     /** Active provider — used to select the correct clip duration */
     provider?: string;
+    /** Hint about the type of scene for shot grammar selection */
+    sceneType?: "action" | "dialogue" | "emotional" | "horror" | "reveal" | "default";
   }
 ): SubShot[] {
-  // Select clip duration based on provider capabilities
-  // Runway and SeedDance only accept 5s or 10s; always request 10s for maximum coverage
-  // fal.ai uses Kling v2.6 Pro which supports 3–15s; use 10s for reliable chaining
   const provider = options?.provider || "pollinations";
   const clipDuration =
     provider === "runway" || provider === "seedance" || provider === "fal" ? 10 :
     provider === "pollinations" || provider === "huggingface" ? 8 :
     15; // Sora, Replicate — up to 20s per clip
 
-  // Allow 1 clip when the scene fits within a single clip duration — no need to chain
   const numClips = Math.max(1, Math.ceil(targetDurationSeconds / clipDuration));
+  const genre = options?.genre || "Drama";
+  const mood = options?.mood || "cinematic";
+  const sceneType = options?.sceneType || "default";
+
+  // Get genre-aware shot grammar sequence
+  const shotGrammar = buildShotGrammar(genre, mood, numClips, sceneType);
 
   const subShots: SubShot[] = [];
 
   for (let i = 0; i < numClips; i++) {
-    const cameraVar = CAMERA_VARIATIONS[i % CAMERA_VARIATIONS.length];
+    // Use shot grammar when available, fall back to camera variations array for overflow
+    const grammarBeat = shotGrammar[i];
+    const fallbackVar = CAMERA_VARIATIONS[i % CAMERA_VARIATIONS.length];
+    
+    const angle = grammarBeat?.angle || fallbackVar.angle;
+    const movement = grammarBeat?.movement || fallbackVar.movement;
+    const description = grammarBeat?.description || fallbackVar.description;
+    const dramaticPurpose = grammarBeat?.dramaticPurpose || "";
+    const filmStock = grammarBeat?.filmStock || "Kodak Vision3 500T 5219, ACES color science";
+
     const isFirst = i === 0;
     const isLast = i === numClips - 1;
 
-    // Build a specific prompt for this sub-shot
+    // Build a deeply cinematic prompt for this specific sub-shot
     const promptParts: string[] = [];
 
-    // Cinematic quality anchor
-    promptParts.push("Photorealistic cinematic footage, shot on ARRI ALEXA 65, 24fps, anamorphic widescreen");
+    // Camera & technical anchor — specific enough for Hollywood-grade output
+    promptParts.push(`Photorealistic cinematic footage, ARRI ALEXA 65 with ${angle === "aerial drone" ? "aerial gimbal" : "Leica Summicron-C prime lens"}, 24fps, 2.39:1 anamorphic CinemaScope, ${filmStock}`);
 
-    if (options?.genre) promptParts.push(`${options.genre} film`);
+    if (options?.genre) promptParts.push(`${options.genre} feature film`);
 
-    // Scene description with camera-specific framing
+    // Dramatic context
+    if (dramaticPurpose) promptParts.push(`Scene intention: ${dramaticPurpose}`);
+
+    // Scene description with shot-specific framing directive
     if (isFirst) {
-      promptParts.push(`Opening shot: ${sceneDescription}`);
+      promptParts.push(`Scene opening — ${description}: ${sceneDescription}`);
     } else if (isLast) {
-      promptParts.push(`Closing moment: ${sceneDescription}`);
+      promptParts.push(`Scene closing — ${description}: ${sceneDescription}`);
     } else {
-      promptParts.push(sceneDescription);
+      promptParts.push(`${description}: ${sceneDescription}`);
     }
 
     // Camera specifics
-    promptParts.push(`Camera: ${cameraVar.description}`);
-    promptParts.push(`${cameraVar.angle} shot with ${cameraVar.movement}`);
+    promptParts.push(`Shot: ${angle}, camera movement: ${movement}`);
 
-    // Character descriptions for consistency
+    // Character descriptions for visual consistency
     if (options?.characterDescriptions && options.characterDescriptions.length > 0) {
-      promptParts.push(`Characters: ${options.characterDescriptions.join("; ")}`);
+      promptParts.push(`Cast in frame: ${options.characterDescriptions.join("; ")}`);
     }
 
-    // Location
+    // Location grounding
     if (options?.locationDescription) {
-      promptParts.push(`Location: ${options.locationDescription}`);
+      promptParts.push(`Setting: ${options.locationDescription}`);
     }
 
-    // Atmosphere
-    if (options?.timeOfDay) promptParts.push(`${options.timeOfDay} lighting`);
-    if (options?.weather && options.weather !== "clear") promptParts.push(`${options.weather} weather`);
-    if (options?.lighting) promptParts.push(`${options.lighting} lighting setup`);
-    if (options?.mood) promptParts.push(`${options.mood} atmosphere`);
+    // Atmosphere and lighting
+    if (options?.timeOfDay) promptParts.push(`${options.timeOfDay} natural light`);
+    if (options?.weather && options.weather !== "clear") promptParts.push(`${options.weather} weather conditions`);
+    if (options?.lighting) promptParts.push(`Lighting: ${options.lighting}`);
+    if (options?.mood) promptParts.push(`Atmosphere: ${options.mood}`);
 
-    // Quality reinforcement
-    promptParts.push("natural skin texture, photorealistic, real-world physics, shallow depth of field, cinematic color grading, film grain");
+    // Technical quality standards — Hollywood DI finish requirements
+    promptParts.push("subsurface skin scattering, micro-pore skin texture, photorealistic eye reflections, natural depth of field bokeh, subtle lens breathing, optical vignetting, anamorphic lens flare characteristics, cinematic color timing");
 
-    // Duration for this clip — allow up to 20s per clip (providers will cap to their own max)
     const thisDuration = isLast
       ? Math.max(5, targetDurationSeconds - (numClips - 1) * clipDuration)
       : clipDuration;
 
     subShots.push({
       index: i,
-      prompt: promptParts.join(", "),
-      cameraAngle: cameraVar.angle,
-      cameraMovement: cameraVar.movement,
+      prompt: promptParts.join(". "),
+      cameraAngle: angle,
+      cameraMovement: movement,
       durationSeconds: Math.min(20, Math.max(2, thisDuration)),
     });
   }
