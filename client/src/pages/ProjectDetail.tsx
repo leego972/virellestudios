@@ -329,6 +329,23 @@ export default function ProjectDetail() {
     onError: (err) => toast.error(err.message),
   });
 
+  const generateSceneMutation = trpc.scene.generateVideo.useMutation({
+    onSuccess: (result: any) => {
+      utils.scene.listByProject.invalidate({ projectId });
+      if (result?.status === "generating") {
+        toast.success("Scene regeneration started — check back in 2–5 minutes.");
+      } else {
+        toast.success("Scene video generation queued.");
+      }
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const resetSceneStatusMutation = trpc.scene.resetStatus.useMutation({
+    onSuccess: () => utils.scene.listByProject.invalidate({ projectId }),
+    onError: (err) => toast.error(err.message),
+  });
+
   const handlePhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -791,8 +808,21 @@ export default function ProjectDetail() {
           </div>
           {scenes?.length ? (
             <div className="space-y-2">
-              {scenes.map((scene, idx) => (
-                <Card key={scene.id} className="bg-card/50 group">
+              {scenes.map((scene, idx) => {
+                const sceneStatus = (scene as any).status as string;
+                const isFailed = sceneStatus === "failed";
+                const isGenerating = sceneStatus === "generating" || sceneStatus === "processing";
+                const isCompleted = sceneStatus === "completed";
+                const isRegenerating = generateSceneMutation.isPending && (generateSceneMutation.variables as any)?.sceneId === scene.id;
+                const cardBorder = isFailed
+                  ? "border-red-500/40 bg-red-500/5"
+                  : isGenerating
+                    ? "border-amber-500/40 bg-amber-500/5"
+                    : isCompleted
+                      ? "border-emerald-500/20 bg-card/50"
+                      : "bg-card/50";
+                return (
+                <Card key={scene.id} className={`group ${cardBorder}`}>
                   <CardContent className="p-3 flex items-center gap-3">
                     <div className="relative h-14 w-20 shrink-0">
                       {scene.thumbnailUrl ? (
@@ -801,10 +831,19 @@ export default function ProjectDetail() {
                         </div>
                       ) : (
                         <div className="h-full w-full rounded bg-muted/50 flex items-center justify-center">
-                          <ImageIcon className="h-5 w-5 text-muted-foreground/30" />
+                          {isGenerating ? (
+                            <Loader2 className="h-5 w-5 text-amber-400 animate-spin" />
+                          ) : (
+                            <ImageIcon className="h-5 w-5 text-muted-foreground/30" />
+                          )}
                         </div>
                       )}
-                      {(scene as any).videoUrl && (
+                      {isGenerating && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded">
+                          <Loader2 className="h-5 w-5 text-amber-400 animate-spin" />
+                        </div>
+                      )}
+                      {(scene as any).videoUrl && !isGenerating && (
                         <button
                           className="absolute inset-0 flex items-center justify-center bg-black/40 rounded transition-colors active:bg-black/60"
                           onClick={() => setVideoPreviewSceneId(scene.id)}
@@ -821,6 +860,9 @@ export default function ProjectDetail() {
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" · ")}
                       </p>
+                      {isFailed && (
+                        <p className="text-[11px] text-red-400 mt-0.5">Generation failed — click Retry to regenerate this scene</p>
+                      )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       {(scene as any).videoUrl && (
@@ -842,16 +884,44 @@ export default function ProjectDetail() {
                           <Download className="h-3.5 w-3.5" />
                         </button>
                       )}
+                      {(isFailed || isCompleted) && !isGenerating && (
+                        <button
+                          className={`h-7 w-7 rounded-md flex items-center justify-center transition-colors ${isFailed ? "text-red-400 hover:bg-red-500/10 active:bg-red-500/20" : "text-muted-foreground hover:bg-muted active:bg-muted/80 opacity-0 group-hover:opacity-100"}`}
+                          title={isFailed ? "Retry scene generation" : "Regenerate this scene video"}
+                          disabled={isRegenerating}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            generateSceneMutation.mutate({ sceneId: scene.id });
+                          }}
+                        >
+                          {isRegenerating ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <RefreshCw className="h-3.5 w-3.5" />
+                          )}
+                        </button>
+                      )}
                       {(scene as any).videoUrl && (
                         <Badge className="text-[10px] h-5 bg-amber-500/20 text-amber-400 border-amber-500/30 border">
                           <VideoIcon className="h-2.5 w-2.5 mr-0.5" />Video
                         </Badge>
                       )}
-                      <Badge variant="outline" className="text-xs capitalize">{scene.status}</Badge>
+                      {isFailed ? (
+                        <Badge className="text-[10px] h-5 bg-red-500/20 text-red-400 border-red-500/30 border capitalize">Failed</Badge>
+                      ) : isGenerating ? (
+                        <Badge className="text-[10px] h-5 bg-amber-500/20 text-amber-400 border-amber-500/30 border">
+                          <Loader2 className="h-2.5 w-2.5 mr-0.5 animate-spin" />Generating
+                        </Badge>
+                      ) : isCompleted ? (
+                        <Badge className="text-[10px] h-5 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 border capitalize">Done</Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs capitalize">{sceneStatus}</Badge>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <Card className="bg-card/50 border-dashed">
