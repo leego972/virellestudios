@@ -29,6 +29,24 @@ export default function DownloadApp() {
   const [links, setLinks] = useState<DownloadLinks | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [pwaInstallPrompt, setPwaInstallPrompt] = useState<any>(null);
+  const [pwaInstalled, setPwaInstalled] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: any) => { e.preventDefault(); setPwaInstallPrompt(e); };
+    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", () => setPwaInstalled(true));
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+    };
+  }, []);
+
+  async function handlePwaInstall() {
+    if (!pwaInstallPrompt) return;
+    pwaInstallPrompt.prompt();
+    const { outcome } = await pwaInstallPrompt.userChoice;
+    if (outcome === "accepted") { setPwaInstalled(true); setPwaInstallPrompt(null); }
+  }
 
   useEffect(() => {
     fetch(`${getApiBase()}/api/mobile/downloads`)
@@ -117,13 +135,9 @@ export default function DownloadApp() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
           {/* Android */}
           <button
-            onClick={handleAndroidDownload}
-            disabled={loading || !links?.android?.available}
-            className={`group flex items-center gap-4 px-8 py-4 rounded-2xl border-2 transition-all duration-200 min-w-[220px]
-              ${links?.android?.available
-                ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:scale-105 cursor-pointer"
-                : "bg-white/10 text-white/50 border-white/20 cursor-not-allowed"
-              }`}
+            onClick={() => window.open(links?.android?.url ?? "https://expo.dev/accounts/virellestudios/projects/virelle-studios/builds", "_blank")}
+            disabled={loading}
+            className="group flex items-center gap-4 px-8 py-4 rounded-2xl border-2 transition-all duration-200 min-w-[220px] bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:scale-105 cursor-pointer"
           >
             <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
               <path d="M17.523 15.341l-5.523-9.569-5.523 9.569h11.046zM12 2.5l-9.5 16.5h19L12 2.5z" />
