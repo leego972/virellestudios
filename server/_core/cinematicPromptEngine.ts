@@ -370,6 +370,15 @@ const TIME_OF_DAY_LIGHTING: Record<string, string> = {
   "golden-hour": "magic hour backlight with intense warm glow wrapping around subjects, lens flare from low sun, silhouette potential, rich orange and gold tones at 3000K, long horizontal shadows, atmospheric particles glowing like fireflies, most cinematic natural light",
   "twilight": "deep blue ambient light after sunset, neon and practical lights becoming dominant, color temperature 9000K+ ambient with warm practicals, mysterious transitional quality, city lights beginning to glow",
   "midnight": "near-total darkness with selective motivated light sources, deep blue-black sky, moonlight creating silver edges on surfaces, extreme contrast, pools of warm light from windows and fires",
+  // ─ Expanded Time Options ─
+  "pre-dawn": "deepest darkness before first light, 3–4am stillness, city completely asleep, only artificial sources remain, cool blue-black atmosphere, occasional car headlights sweeping, silence made visible, stars at maximum brightness",
+  "early-morning": "first light breaking horizon as cool blue transitions to warm pink, thin golden line on horizon, air perfectly still and clean, dew on surfaces, birdsong atmosphere, everything hushed and new",
+  "midday": "solar noon with overhead harsh light creating short black shadow directly below, maximum brightness, tropical harshness, bleached-out highlights requiring careful exposure, heat shimmer on hot surfaces, cyan-blue sky overhead",
+  "magic-hour": "any golden-to-blue or blue-to-golden transition, equal mix of warm golden sky and cool blue ambient, split lighting on faces, the most sought-after cinematographic light, every surface glows",
+  "dusk": "civil twilight 20 minutes after sunset, sky still luminous but sun gone, cool blue ambient without artificial warmth, city lights beginning to compete with sky, perfect balance between day and night",
+  "blue-hour": "deep twilight with brilliant blue sky, artificial lights now fully dominant and warm, perfect contrast between cool blue sky and warm orange lights, high ISO mood, urban night beginning",
+  "interior-day": "windows acting as large softboxes, daylight fill from outside mixed with practical interior sources, motivated light with clear sources, no direct sun — reflected daylight only, warm practicals in background",
+  "interior-night": "practical sources only — lamps, screens, candles, motivated by visible light sources in frame, pools of warm light in deep darkness, strong fall-off from all practical sources, realistic domestic or professional interior at night",
 };
 
 // ─── Weather Atmosphere ───
@@ -383,6 +392,27 @@ const WEATHER_ATMOSPHERE: Record<string, string> = {
   "foggy": "heavy atmospheric diffusion creating depth layers, limited visibility making nearby objects precious, halos around every light source, mysterious obscured backgrounds, soft edges on everything, volumetric light beams visible",
   "windy": "dynamic movement in hair, clothing, and vegetation, dust or particles in air catching directional light, sense of force and energy, slightly desaturated from airborne particles, dramatic cloud movement",
   "humid": "hazy tropical atmosphere, visible moisture in air softening distant objects, sweat on skin, lush green saturation, warm heavy air visible as heat distortion, condensation on cold surfaces",
+  // ─ Expanded Weather Options ─
+  "partly-cloudy": "broken cloud cover creating alternating bright and diffused light, dramatic cloud shadows racing across landscape, dynamic changing quality of light, deep blue sky contrast with white cumulus",
+  "overcast": "total cloud cover creating ultimate natural softbox, zero harsh shadows, perfect diffused light for face beauty work, flat but technically excellent, slightly cool, muted natural colors",
+  "light-rain": "fine rain barely visible except as shimmer on surfaces, everything beginning to get wet, fresh smell visible in image, first reflections appearing on pavement, gentle patter atmosphere",
+  "heavy-rain": "torrential rain with silver curtain of droplets visible in air, sheets of water, everything drenched, rivers forming in streets, dramatic curtain of rain in foreground and background depth layers",
+  "thunderstorm": "sudden violent illumination as lightning freezes action in blue-white light, alternating deep darkness and explosive brightness, rain driven sideways, dramatic dark clouds underlit by lightning",
+  "drizzle": "persistent fine grey mist, everything permanently damp, diffused light trapped in low cloud, intimate and introspective, city lights creating circular halos in the moisture",
+  "blizzard": "white-out conditions with horizontal snow reducing visibility to near zero, howling wind made visible by snow movement, figures barely visible through white curtain, desperate survival quality",
+  "sleet": "icy rain-snow mixture creating treacherous surfaces, dull grey atmosphere, miserable and harsh, reflective icy patches, every breath visible, hostile winter conditions",
+  "frost": "every surface crystallized with ice structure, morning cold before thaw, blue-white crystalline texture on leaves and surfaces, perfectly clear cold air, pristine and silent",
+  "mist": "soft ground-level fog hanging at knee height, tops of people and vehicles visible above mist, mysterious and ethereal, diffused lower light, upper body floating in clarity",
+  "haze": "general atmospheric haze reducing saturation and contrast with distance, warm golden filter on mid-distance, compressed telephoto perspective enhanced, dreamlike quality",
+  "heat-haze": "visible temperature distortion rising from hot surfaces, desert shimmer, reality itself warping, chrome surfaces reflecting distorted images, physical heat made visible",
+  "dust-storm": "orange-red atmospheric density reducing visibility, diffused warm glow from trapped sunlight, apocalyptic color grade, everything coated in fine particles, biblical scale",
+  "wildfire-smoke": "orange-red filtered light through dense smoke, apocalyptic sky turning everything amber, ash falling like snow, reduced visibility, eerie daytime darkness",
+  "post-rain-clearing": "air scrubbed perfectly clean by rain, maximum atmospheric clarity, wet surfaces creating mirror reflections everywhere, double rainbow potential, freshly washed world",
+  "rainbow-aftermath": "prismatic arc spanning full frame background, complementary warm and cool light split by rainbow, post-storm clarity, emotionally optimistic atmosphere",
+  "aurora-northern-lights": "supernatural green and purple ribbons dancing in black sky, cold clear arctic night, phenomenon illuminating snow and ice with ethereal glow, otherworldly",
+  "hurricane": "apocalyptic wind force, debris in air, palm trees bending to 45°, rain nearly horizontal, dark ominous sky, extreme dramatic power, survival-scale event",
+  "dry-arid": "bleached-out desert light, zero moisture, dusty surfaces, harsh specular on all reflective materials, dried vegetation, bone-dry earth cracking",
+  "humid-tropical": "lush green saturation, visible heat, moisture on every surface, insect and jungle sound environment, heavy warm air, rapid cloud development",
 };
 
 // ─── Camera Angle Technical Details ───
