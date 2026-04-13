@@ -871,6 +871,7 @@ export async function runAutoMigration(): Promise<void> {
     // Scenes table - transition & grading (missing from original CREATE TABLE)
     { table: "scenes", column: "transitionType", definition: "VARCHAR(64) NULL DEFAULT 'cut'" },
     { table: "scenes", column: "transitionDuration", definition: "FLOAT NULL DEFAULT 0.5" },
+    { table: "scenes", column: "sceneType", definition: "VARCHAR(64) NULL" },
     { table: "scenes", column: "colorGrading", definition: "VARCHAR(128) NULL" },
     { table: "scenes", column: "productionNotes", definition: "TEXT NULL" },
     // Scenes table - video generation fields
