@@ -1841,17 +1841,34 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           } catch { /* ignore */ }
         }
 
-        // Auto-include character photos as visual reference anchors for character consistency
-        // When no manual reference images are set, use character profile photos
+        // Build character data: photos (reference images) + descriptions (for visual consistency)
+        // sceneCharIds filters to only characters appearing in this specific scene
+        const sceneCharIds = ((scene as any).characterIds as number[]) || [];
+        const sceneActiveCharacters = characters.filter((c: any) =>
+          sceneCharIds.length === 0 || sceneCharIds.includes(c.id)
+        );
+
+        // Auto-include character photos as visual reference anchors when no manual refs are set
         if (sceneRefImages.length === 0) {
-          const sceneCharIds = ((scene as any).characterIds as number[]) || [];
-          const charPhotos = characters
-            .filter((c: any) => sceneCharIds.length === 0 || sceneCharIds.includes(c.id))
+          const charPhotos = sceneActiveCharacters
             .filter((c: any) => c.photoUrl)
             .map((c: any) => c.photoUrl as string)
             .slice(0, 2); // Max 2 reference images to keep prompts focused
           sceneRefImages.push(...charPhotos);
         }
+        const characterDescriptions = sceneActiveCharacters
+          .filter((c: any) => c.name)
+          .map((c: any) => {
+            const parts: string[] = [c.name];
+            if (c.age) parts.push(`age ${c.age}`);
+            if (c.gender) parts.push(c.gender);
+            if (c.ethnicity) parts.push(c.ethnicity);
+            if (c.build) parts.push(c.build);
+            if (c.hairColor) parts.push(`${c.hairColor} hair`);
+            if (c.description) parts.push(c.description);
+            return parts.filter(Boolean).join(", ");
+          })
+          .filter(Boolean);
 
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
         const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
@@ -1910,6 +1927,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 genre: project.genre || undefined,
                 locationDescription: scene.locationType || undefined,
                 referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                characterDescriptions: characterDescriptions.length > 0 ? characterDescriptions : undefined,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
@@ -1942,6 +1960,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 genre: project.genre || undefined,
                 locationDescription: scene.locationType || undefined,
                 referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                characterDescriptions: characterDescriptions.length > 0 ? characterDescriptions : undefined,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
@@ -1976,6 +1995,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 genre: project.genre || undefined,
                 locationDescription: scene.locationType || undefined,
                 referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                characterDescriptions: characterDescriptions.length > 0 ? characterDescriptions : undefined,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
@@ -2011,6 +2031,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 genre: project.genre || undefined,
                 locationDescription: scene.locationType || undefined,
                 referenceImages: sceneRefImages.length > 0 ? sceneRefImages : undefined,
+                characterDescriptions: characterDescriptions.length > 0 ? characterDescriptions : undefined,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
