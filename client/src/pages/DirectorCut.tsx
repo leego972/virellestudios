@@ -302,6 +302,29 @@ export default function DirectorCut() {
     onError: (e) => toast.error(e.message),
   });
 
+    // ─── Cut Management ───────────────────────────────────────────────────────
+    const [activeCutId, setActiveCutId] = useState<number | null>(null);
+    const [showNewCutDialog, setShowNewCutDialog] = useState(false);
+    const [newCutTitle, setNewCutTitle] = useState("Director's Cut");
+    const { data: cuts, refetch: refetchCuts } = trpc.featureCut.list.useQuery(
+      { projectId }, { enabled: !!projectId }
+    );
+    const activeCut = cuts?.find((c: any) => c.id === activeCutId) ?? null;
+    const { data: cutScenes, refetch: refetchCutScenes } = trpc.featureCut.listScenes.useQuery(
+      { cutId: activeCutId! }, { enabled: !!activeCutId }
+    );
+    const createCutMutation = trpc.featureCut.create.useMutation({
+      onSuccess: (cut: any) => {
+        refetchCuts();
+        if (cut) { setActiveCutId(cut.id); setNewCutTitle("Director's Cut"); setShowNewCutDialog(false); }
+        toast.success("New cut created");
+      },
+    });
+    const lockCutMutation = trpc.featureCut.lock.useMutation({ onSuccess: () => { refetchCuts(); toast.success("Cut locked"); } });
+    const reopenCutMutation = trpc.featureCut.reopen.useMutation({ onSuccess: () => { refetchCuts(); toast.success("Cut reopened"); } });
+    const compileMutation = trpc.featureCut.compile.useMutation({ onSuccess: () => toast.success("Compile started") });
+    const addSceneToCutMutation = trpc.featureCut.addScene.useMutation({ onSuccess: () => { refetchCutScenes(); toast.success("Scene added"); } });
+
   // Timeline state
   const [scenes, setScenes] = useState<TimelineScene[]>([]);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
