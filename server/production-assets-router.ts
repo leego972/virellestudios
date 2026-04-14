@@ -15,7 +15,7 @@
 import { z } from "zod";
 import { router, protectedProcedure, creationProcedure } from "./_core/trpc";
 import { getDb } from "./db";
-import { directorVision, productionVehicles, wardrobeItems } from "../drizzle/schema_additions";
+import { directorVision, productionVehicles, wardrobeItems, shotListItems, shootingDays } from "../drizzle/schema_additions";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
 import { locations } from "../drizzle/schema";
@@ -1075,7 +1075,7 @@ CRITICAL REQUIREMENTS:
       }),
   }),
 
-  wardrobeUpload: {
+  wardrobeUpload: router({
 
   list: protectedProcedure
     .input(z.object({ projectId: z.number() }))
@@ -1249,6 +1249,19 @@ Analyse the provided garment photo with expert precision. Return only valid JSON
       };
     }),
 
+  setCharacterLink: protectedProcedure
+    .input(z.object({ itemId: z.number(), characterName: z.string(), sceneRef: z.string().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      await db.update(wardrobeItems).set({
+        ...(input.characterName !== undefined && { characterName: input.characterName } as any),
+        ...(input.sceneRef     !== undefined && { sceneRef:     input.sceneRef     } as any),
+        updatedAt: new Date(),
+      }).where(and(eq(wardrobeItems.id, input.itemId), eq(wardrobeItems.userId, ctx.user.id)));
+      return { success: true };
+    }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
@@ -1258,5 +1271,316 @@ Analyse the provided garment photo with expert precision. Return only valid JSON
         .where(and(eq(wardrobeItems.id, input.id), eq(wardrobeItems.userId, ctx.user.id)));
       return { success: true };
     }),
-})
+  }),
+
+// ─── IMPROVEMENT 1: Shot List Auto-Generator ─────────────────────────────────
+  shotList: router({
+
+    generate: creationProcedure
+      .input(z.object({
+        projectId:   z.number(),
+        sceneName:   z.string().min(1),
+        sceneNumber: z.string().optional(),
+        scriptText:  z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        const [vision] = await db.select().from(directorVision)
+          .where(eq(directorVision.projectId, input.projectId)).limit(1);
+        const vCtx = [
+          (vision as any)?.productionEra      && "Era: "      + (vision as any).productionEra,
+          (vision as any)?.productionCountry  && "Country: "  + (vision as any).productionCountry,
+          (vision as any)?.cameraFormat       && "Camera: "   + (vision as any).cameraFormat,
+          (vision as any)?.lensProfile        && "Lens: "     + (vision as any).lensProfile,
+          (vision as any)?.cameraMovement     && "Movement: " + (vision as any).cameraMovement,
+          (vision as any)?.lightingStyle      && "Lighting: " + (vision as any).lightingStyle,
+          (vision as any)?.colorGrade         && "Grade: "    + (vision as any).colorGrade,
+          (vision as any)?.visualDnaPrompt    && "Visual DNA: "+ (vision as any).visualDnaPrompt,
+        ].filter(Boolean).join("\n");
+        const resp = await invokeLLM({
+          messages: [
+            { role: "system", content: `You are an experienced DP and First AD. Generate a detailed professional shot list from the provided scene. Each shot must be cinematically motivated and technically precise. Match the director's visual style exactly.` },
+            { role: "user", content: `Generate a complete shot list.\n\nDIRECTOR'S VISION:\n${vCtx || "Standard cinematic"}\n\nSCENE ${input.sceneNumber || ""}${input.sceneName ? ": " + input.sceneName : ""}:\n${input.scriptText}\n\nReturn JSON {"shots": [{shotNumber,shotType,lensLength,cameraMovement,frameDescription,action,dialogue,estimatedDuration,lightingNote,directorNote}]}` },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "shot_list_gen",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  shots: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        shotNumber:       { type: "string" },
+                        shotType:         { type: "string" },
+                        lensLength:       { type: "string" },
+                        cameraMovement:   { type: "string" },
+                        frameDescription: { type: "string" },
+                        action:           { type: "string" },
+                        dialogue:         { type: "string" },
+                        estimatedDuration:{ type: "number" },
+                        lightingNote:     { type: "string" },
+                        directorNote:     { type: "string" },
+                      },
+                      required: ["shotNumber","shotType","lensLength","cameraMovement","frameDescription","action","dialogue","estimatedDuration","lightingNote","directorNote"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["shots"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+        const parsed = JSON.parse((resp.choices[0].message.content as string) || '{"shots":[]}');
+        return { shots: (parsed.shots || []) as any[] };
+      }),
+
+    save: protectedProcedure
+      .input(z.object({
+        projectId:   z.number(),
+        sceneName:   z.string(),
+        sceneNumber: z.string().optional(),
+        shots: z.array(z.object({
+          shotNumber: z.string(), shotType: z.string(), lensLength: z.string(),
+          cameraMovement: z.string(), frameDescription: z.string(), action: z.string(),
+          dialogue: z.string(), estimatedDuration: z.number(),
+          lightingNote: z.string(), directorNote: z.string(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        await db.delete(shotListItems).where(
+          and(eq(shotListItems.projectId, input.projectId), eq(shotListItems.sceneName, input.sceneName), eq(shotListItems.userId, ctx.user.id))
+        );
+        if (input.shots.length > 0) {
+          await db.insert(shotListItems).values(input.shots.map(s => ({
+            projectId: input.projectId, userId: ctx.user.id,
+            sceneName: input.sceneName, sceneNumber: input.sceneNumber,
+            shotNumber: s.shotNumber, shotType: s.shotType, lensLength: s.lensLength,
+            cameraMovement: s.cameraMovement, frameDescription: s.frameDescription,
+            action: s.action, dialogue: s.dialogue,
+            estimatedDuration: s.estimatedDuration,
+            lightingNote: s.lightingNote, directorNote: s.directorNote,
+            createdAt: new Date(), updatedAt: new Date(),
+          })));
+        }
+        return { success: true, count: input.shots.length };
+      }),
+
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        return db.select().from(shotListItems)
+          .where(and(eq(shotListItems.projectId, input.projectId), eq(shotListItems.userId, ctx.user.id)))
+          .orderBy(shotListItems.sceneName, shotListItems.shotNumber);
+      }),
+
+    deleteScene: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneName: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        await db.delete(shotListItems).where(
+          and(eq(shotListItems.projectId, input.projectId), eq(shotListItems.sceneName, input.sceneName), eq(shotListItems.userId, ctx.user.id))
+        );
+        return { success: true };
+      }),
+  }),
+
+// ─── IMPROVEMENT 2: Wardrobe Character Linking (added to wardrobeUpload) ─────
+// setCharacterLink is injected into wardrobeUpload sub-router separately
+
+// ─── IMPROVEMENT 3: Location → Shooting Schedule ─────────────────────────────
+  shootingSchedule: router({
+
+    generate: creationProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        const [locs, shots, visionArr] = await Promise.all([
+          db.select().from(locations).where(and(eq(locations.projectId, input.projectId), eq(locations.userId, ctx.user.id))),
+          db.select().from(shotListItems).where(and(eq(shotListItems.projectId, input.projectId), eq(shotListItems.userId, ctx.user.id))),
+          db.select().from(directorVision).where(eq(directorVision.projectId, input.projectId)).limit(1),
+        ]);
+        const vision = visionArr[0];
+        const locSummary = (locs as any[]).map((l: any) =>
+          `- ${l.name} (type:${l.locationType||"?"}, bestTime:${l.bestTimeOfDay||"any"}, permit:${l.permitRequired?"REQUIRED":"no"}, capacity:${l.crewCapacity||"?"})`
+        ).join("\n") || "No locations scouted";
+        const sceneNames = [...new Set((shots as any[]).map((s: any) => s.sceneName))];
+        const sceneSummary = sceneNames.map(n => {
+          const sc = (shots as any[]).filter((s: any) => s.sceneName === n);
+          const totalSec = sc.reduce((a: number, s: any) => a + (s.estimatedDuration || 5), 0);
+          return `- ${n}: ${sc.length} shots, ~${Math.ceil(totalSec / 60 * 3)} min screen time`;
+        }).join("\n") || "No shot list generated yet";
+        const resp = await invokeLLM({
+          messages: [
+            { role: "system", content: `You are an experienced First AD scheduling a film shoot. Optimise the schedule to minimise company moves, group scenes by location, respect permit windows, and maximise golden-hour shooting. Be practical and specific.` },
+            { role: "user", content: `Create a shooting schedule.\n\nLOCATIONS:\n${locSummary}\n\nSCENES:\n${sceneSummary}\n\nPRODUCTION:\nEra:${(vision as any)?.productionEra||"?"} Country:${(vision as any)?.productionCountry||"?"}\n\nReturn JSON {"days":[{dayNumber,locationName,scenes,callTime,wrapTime,estimatedPages,notes,lightingWindow}]}` },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "shooting_schedule",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  days: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        dayNumber:      { type: "number" },
+                        locationName:   { type: "string" },
+                        scenes:         { type: "array", items: { type: "string" } },
+                        callTime:       { type: "string" },
+                        wrapTime:       { type: "string" },
+                        estimatedPages: { type: "string" },
+                        notes:          { type: "string" },
+                        lightingWindow: { type: "string" },
+                      },
+                      required: ["dayNumber","locationName","scenes","callTime","wrapTime","estimatedPages","notes","lightingWindow"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["days"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+        const parsed = JSON.parse((resp.choices[0].message.content as string) || '{"days":[]}');
+        return { days: (parsed.days || []) as any[] };
+      }),
+
+    save: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        days: z.array(z.object({
+          dayNumber: z.number(), locationName: z.string(),
+          scenes: z.array(z.string()), callTime: z.string(), wrapTime: z.string(),
+          estimatedPages: z.string(), notes: z.string(), lightingWindow: z.string(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        await db.delete(shootingDays).where(and(eq(shootingDays.projectId, input.projectId), eq(shootingDays.userId, ctx.user.id)));
+        if (input.days.length > 0) {
+          await db.insert(shootingDays).values(input.days.map(d => ({
+            projectId: input.projectId, userId: ctx.user.id,
+            dayNumber: d.dayNumber, locationName: d.locationName,
+            scenes: JSON.stringify(d.scenes), callTime: d.callTime, wrapTime: d.wrapTime,
+            estimatedPages: d.estimatedPages, notes: d.notes, lightingWindow: d.lightingWindow,
+            createdAt: new Date(), updatedAt: new Date(),
+          })));
+        }
+        return { success: true };
+      }),
+
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        const rows = await db.select().from(shootingDays)
+          .where(and(eq(shootingDays.projectId, input.projectId), eq(shootingDays.userId, ctx.user.id)))
+          .orderBy(shootingDays.dayNumber);
+        return (rows as any[]).map((r: any) => ({
+          ...r,
+          scenes: typeof r.scenes === "string" ? JSON.parse(r.scenes) : (r.scenes || []),
+        }));
+      }),
+
+    deleteAll: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        await db.delete(shootingDays).where(and(eq(shootingDays.projectId, input.projectId), eq(shootingDays.userId, ctx.user.id)));
+        return { success: true };
+      }),
+  }),
+
+// ─── IMPROVEMENT 5: Cross-Module Continuity Checker ──────────────────────────
+  continuityCheck: router({
+
+    run: creationProcedure
+      .input(z.object({ projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        const [locsArr, wardrobeArr, visionArr] = await Promise.all([
+          db.select().from(locations).where(and(eq(locations.projectId, input.projectId), eq(locations.userId, ctx.user.id))),
+          db.select().from(wardrobeItems).where(and(eq(wardrobeItems.projectId, input.projectId), eq(wardrobeItems.userId, ctx.user.id))),
+          db.select().from(directorVision).where(eq(directorVision.projectId, input.projectId)).limit(1),
+        ]);
+        const vision = visionArr[0];
+        const locsSummary = (locsArr as any[]).map((l: any) =>
+          `- ${l.name}: type=${l.locationType||"?"}, era=${l.eraOverride||"none"}, class=${l.socialClass||"?"}, country=${l.countryOverride||"none"}`
+        ).join("\n") || "None scouted";
+        const wardrobeSummary = (wardrobeArr as any[]).map((w: any) => {
+          const ai = w.aiStyleProfile ? (() => { try { return JSON.parse(w.aiStyleProfile); } catch { return null; } })() : null;
+          return `- ${w.name}: cat=${w.category||"?"}, era=${ai?.estimatedEra||w.era||"?"}, class=${ai?.socialClassIndicator||"?"}, character=${(w as any).characterName||"unassigned"}`;
+        }).join("\n") || "None uploaded";
+        const resp = await invokeLLM({
+          messages: [
+            { role: "system", content: `You are an expert Script Supervisor specialising in continuity. Analyse the production data and identify continuity conflicts, mismatches, and risks across wardrobe, locations, and the director's vision. Be specific and actionable.` },
+            { role: "user", content: `Continuity check for this production.\n\nDIRECTOR'S VISION:\nEra: ${(vision as any)?.productionEra||"Not set"}\nCountry: ${(vision as any)?.productionCountry||"Not set"}\nVisual DNA: ${(vision as any)?.visualDnaPrompt||"Not generated"}\n\nLOCATIONS (${locsArr.length}):\n${locsSummary}\n\nWARDROBE (${wardrobeArr.length} items):\n${wardrobeSummary}\n\nReturn JSON: {"overallRisk":"low|medium|high","summary":"2 sentence overview","issues":[{"severity":"critical|warning|info","category":"era|geography|class|character|lighting|other","title":"short title","description":"specific conflict","recommendation":"action to take"}],"strengths":["what is consistent and working"]}` },
+          ],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "continuity_check",
+              strict: true,
+              schema: {
+                type: "object",
+                properties: {
+                  overallRisk: { type: "string" },
+                  summary:     { type: "string" },
+                  issues: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        severity:       { type: "string" },
+                        category:       { type: "string" },
+                        title:          { type: "string" },
+                        description:    { type: "string" },
+                        recommendation: { type: "string" },
+                      },
+                      required: ["severity","category","title","description","recommendation"],
+                      additionalProperties: false,
+                    },
+                  },
+                  strengths: { type: "array", items: { type: "string" } },
+                },
+                required: ["overallRisk","summary","issues","strengths"],
+                additionalProperties: false,
+              },
+            },
+          },
+        });
+        const parsed = JSON.parse((resp.choices[0].message.content as string) || '{"overallRisk":"low","summary":"","issues":[],"strengths":[]}');
+        return {
+          overallRisk: parsed.overallRisk || "low",
+          summary:     parsed.summary     || "",
+          issues:      parsed.issues      || [],
+          strengths:   parsed.strengths   || [],
+        };
+      }),
+  }),
+
 });
