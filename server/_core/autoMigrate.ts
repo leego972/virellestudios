@@ -905,6 +905,7 @@ export async function runAutoMigration(): Promise<void> {
 ,
     {
       name: "wardrobeItems",
+    { table: "wardrobeItems",   column: "sceneRef",          definition: "VARCHAR(512) NULL" },
       createSQL: `CREATE TABLE IF NOT EXISTS wardrobeItems (
         id INT AUTO_INCREMENT PRIMARY KEY,
         projectId INT NOT NULL,
