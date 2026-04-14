@@ -9569,6 +9569,65 @@ Rules:
         `);
         return { success: true };
       }),
-  }),
+  }),,
+    featureCut: router({
+      list: protectedProcedure
+        .input(z.object({ projectId: z.number() }))
+        .query(async ({ ctx, input }) => {
+          return db.getProjectFeatureCuts(input.projectId, ctx.user.id);
+        }),
+      get: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .query(async ({ ctx, input }) => {
+          const cut = await db.getFeatureCutById(input.id, ctx.user.id);
+          if (!cut) throw new TRPCError({ code: "NOT_FOUND", message: "Feature cut not found" });
+          return cut;
+        }),
+      create: protectedProcedure
+        .input(z.object({
+          projectId: z.number(),
+          title: z.string().min(1).max(255).default("Director's Cut"),
+          description: z.string().max(2000).optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          return db.createFeatureCut(input.projectId, ctx.user.id, input.title, input.description);
+        }),
+      update: protectedProcedure
+        .input(z.object({ id: z.number(), title: z.string().min(1).max(255).optional(), description: z.string().max(2000).optional(), targetRuntime: z.number().optional(), notes: z.string().optional() }))
+        .mutation(async ({ ctx, input }) => {
+          const { id, ...data } = input;
+          return db.updateFeatureCut(id, ctx.user.id, data);
+        }),
+      lock: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ ctx, input }) => { return db.lockFeatureCut(input.id, ctx.user.id); }),
+      reopen: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ ctx, input }) => { return db.reopenFeatureCut(input.id, ctx.user.id); }),
+      delete: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ ctx, input }) => { return db.deleteFeatureCut(input.id, ctx.user.id); }),
+      listScenes: protectedProcedure
+        .input(z.object({ cutId: z.number() }))
+        .query(async ({ ctx, input }) => { return db.getCutScenes(input.cutId, ctx.user.id); }),
+      addScene: protectedProcedure
+        .input(z.object({ cutId: z.number(), sceneId: z.number(), orderIndex: z.number().optional() }))
+        .mutation(async ({ ctx, input }) => { return db.addSceneToCut(input.cutId, input.sceneId, ctx.user.id, input.orderIndex); }),
+      removeScene: protectedProcedure
+        .input(z.object({ cutId: z.number(), sceneId: z.number() }))
+        .mutation(async ({ ctx, input }) => { return db.removeSceneFromCut(input.cutId, input.sceneId, ctx.user.id); }),
+      toggleScene: protectedProcedure
+        .input(z.object({ cutId: z.number(), sceneId: z.number(), included: z.boolean() }))
+        .mutation(async ({ ctx, input }) => { return db.toggleSceneInclusion(input.cutId, input.sceneId, input.included); }),
+      reorderScenes: protectedProcedure
+        .input(z.object({ cutId: z.number(), sceneIds: z.array(z.number()) }))
+        .mutation(async ({ ctx, input }) => { return db.reorderCutScenes(input.cutId, input.sceneIds, ctx.user.id); }),
+      compile: protectedProcedure
+        .input(z.object({ cutId: z.number(), format: z.string().optional() }))
+        .mutation(async ({ ctx, input }) => { return db.createCompileJob(input.cutId, ctx.user.id, input.format ?? "mp4"); }),
+      getCompileJob: protectedProcedure
+        .input(z.object({ jobId: z.number() }))
+        .query(async ({ ctx, input }) => { return db.getCompileJobById(input.jobId); }),
+    }),
 });
 export type AppRouter = typeof appRouter;
