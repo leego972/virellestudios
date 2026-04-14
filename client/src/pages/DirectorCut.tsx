@@ -630,7 +630,79 @@ export default function DirectorCut() {
             )}
           </div>
 
-          {/* Playback Controls */}
+          {/* ── Cut Manager Bar ── */}
+            <div className="flex items-center gap-2 px-3 py-1.5 border-b border-white/10 bg-zinc-900/60 shrink-0 overflow-x-auto">
+              <span className="text-xs text-zinc-500 font-medium shrink-0">Cut:</span>
+              <Select value={activeCutId?.toString() ?? ""} onValueChange={(v) => setActiveCutId(v ? parseInt(v) : null)}>
+                <SelectTrigger className="h-6 text-xs w-44 shrink-0 border-white/10 bg-zinc-800">
+                  <SelectValue placeholder="No cut selected" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(cuts ?? []).map((c) => (
+                    <SelectItem key={c.id} value={c.id.toString()}>
+                      {c.isLocked ? "🔒 " : "✂️ "}{c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button size="sm" variant="ghost" className="h-6 text-xs px-2 shrink-0" onClick={() => setShowNewCutDialog(true)}>
+                <Plus className="w-3 h-3 mr-1" /> New Cut
+              </Button>
+              {activeCut && (
+                <>
+                  <Separator orientation="vertical" className="h-4 bg-white/10" />
+                  <span className="text-xs text-zinc-400 shrink-0">
+                    {activeCut.isLocked
+                      ? `🔒 Locked · ${(cutScenes ?? []).filter((s) => s.isIncluded).length} scenes`
+                      : `${(cutScenes ?? []).filter((s) => s.isIncluded).length} scenes in cut`}
+                  </span>
+                  {!activeCut.isLocked && (
+                    <Button size="sm" variant="outline" className="h-6 text-xs px-2 shrink-0 border-emerald-500/40 text-emerald-400"
+                      onClick={() => lockCutMutation.mutate({ id: activeCut.id })} disabled={lockCutMutation.isPending}>
+                      {lockCutMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3 mr-1" />} Lock
+                    </Button>
+                  )}
+                  {activeCut.isLocked && (
+                    <Button size="sm" variant="outline" className="h-6 text-xs px-2 shrink-0 border-amber-500/40 text-amber-400"
+                      onClick={() => reopenCutMutation.mutate({ id: activeCut.id })} disabled={reopenCutMutation.isPending}>
+                      <RefreshCw className="w-3 h-3 mr-1" /> Reopen
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" className="h-6 text-xs px-2 shrink-0 border-violet-500/40 text-violet-400"
+                    onClick={() => compileMutation.mutate({ cutId: activeCut.id })} disabled={compileMutation.isPending}>
+                    {compileMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3 mr-1" />} Compile
+                  </Button>
+                  {!activeCut.isLocked && (
+                    <Select onValueChange={(v) => { if (activeCutId && v) addSceneToCutMutation.mutate({ cutId: activeCutId, sceneId: parseInt(v) }); }}>
+                      <SelectTrigger className="h-6 text-xs w-36 shrink-0 border-white/10 bg-zinc-800">
+                        <SelectValue placeholder="+ Add scene" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {scenes.filter(s => !(cutScenes ?? []).some(cs => cs.sceneId === s.id)).map(s => (
+                          <SelectItem key={s.id} value={s.id.toString()}>{s.title || `Scene ${s.id}`}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </>
+              )}
+            </div>
+            {/* New Cut Dialog */}
+            <Dialog open={showNewCutDialog} onOpenChange={setShowNewCutDialog}>
+              <DialogContent className="bg-zinc-900 border-white/10 text-white">
+                <DialogHeader><DialogTitle>Create New Cut</DialogTitle></DialogHeader>
+                <Label className="text-xs text-zinc-400">Cut name</Label>
+                <Input value={newCutTitle} onChange={e => setNewCutTitle(e.target.value)} className="bg-zinc-800 border-white/10" placeholder="Director's Cut v2" />
+                <DialogFooter>
+                  <Button variant="ghost" onClick={() => setShowNewCutDialog(false)}>Cancel</Button>
+                  <Button onClick={() => createCutMutation.mutate({ projectId, title: newCutTitle })} disabled={createCutMutation.isPending}>
+                    {createCutMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Playback Controls */}
           <div className="flex items-center justify-between px-2 md:px-4 py-1.5 md:py-2 bg-zinc-950 border-b border-white/10 shrink-0">
             <div className="flex items-center gap-0.5 md:gap-1">
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPlayheadTime(0)}>
