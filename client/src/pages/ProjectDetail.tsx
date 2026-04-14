@@ -1263,7 +1263,18 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all border-amber-500/30 bg-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/pre-production`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Director's Pre-Production Panel</p>
+                    <p className="text-xs text-muted-foreground">Vision · Locations · Vehicles · Atmosphere</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <MapPin className="h-5 w-5 text-primary" />
