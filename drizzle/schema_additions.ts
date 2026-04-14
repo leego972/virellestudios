@@ -122,3 +122,45 @@ export const wardrobeItems = mysqlTable("wardrobeItems", {
 });
 export type WardrobeItem = typeof wardrobeItems.$inferSelect;
 export type InsertWardrobeItem = typeof wardrobeItems.$inferInsert;
+
+// ─── Shot List Items (auto-generated shot lists per scene) ───────────────────
+export const shotListItems = mysqlTable("shotListItems", {
+  id:               int("id").autoincrement().primaryKey(),
+  projectId:        int("projectId").notNull(),
+  userId:           int("userId").notNull(),
+  sceneName:        varchar("sceneName",     { length: 255 }).notNull(),
+  sceneNumber:      varchar("sceneNumber",   { length: 32  }),
+  shotNumber:       varchar("shotNumber",    { length: 16  }).notNull(),
+  shotType:         varchar("shotType",      { length: 32  }),
+  lensLength:       varchar("lensLength",    { length: 32  }),
+  cameraMovement:   varchar("cameraMovement",{ length: 64  }),
+  frameDescription: text("frameDescription"),
+  action:           text("action"),
+  dialogue:         text("dialogue"),
+  estimatedDuration:float("estimatedDuration"),
+  lightingNote:     text("lightingNote"),
+  directorNote:     text("directorNote"),
+  createdAt:        timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:        timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ShotListItem   = typeof shotListItems.$inferSelect;
+export type InsertShotListItem = typeof shotListItems.$inferInsert;
+
+// ─── Shooting Days (schedule grouped by location) ────────────────────────────
+export const shootingDays = mysqlTable("shootingDays", {
+  id:             int("id").autoincrement().primaryKey(),
+  projectId:      int("projectId").notNull(),
+  userId:         int("userId").notNull(),
+  dayNumber:      int("dayNumber").notNull(),
+  locationName:   varchar("locationName",  { length: 255 }),
+  scenes:         json("scenes"),
+  callTime:       varchar("callTime",      { length: 16  }),
+  wrapTime:       varchar("wrapTime",      { length: 16  }),
+  estimatedPages: varchar("estimatedPages",{ length: 32  }),
+  notes:          text("notes"),
+  lightingWindow: text("lightingWindow"),
+  createdAt:      timestamp("createdAt").defaultNow().notNull(),
+  updatedAt:      timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ShootingDay   = typeof shootingDays.$inferSelect;
+export type InsertShootingDay = typeof shootingDays.$inferInsert;
