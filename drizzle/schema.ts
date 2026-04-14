@@ -397,6 +397,17 @@ export const locations = mysqlTable("locations", {
   tags: json("tags"), // array of string tags
   latitude: float("latitude"),
   longitude: float("longitude"),
+  // Pre-production scout variables — director's location control panel
+  bestTimeOfDay: varchar("bestTimeOfDay", { length: 64 }),
+  weatherPreferences: json("weatherPreferences"),
+  permitStatus: varchar("permitStatus", { length: 32 }).default("not_required"),
+  permitNotes: text("permitNotes"),
+  powerAccess: boolean("powerAccess").default(false),
+  parkingNotes: text("parkingNotes"),
+  crewCapacity: varchar("crewCapacity", { length: 64 }),
+  shootingConstraints: text("shootingConstraints"),
+  seasonalNotes: text("seasonalNotes"),
+  aiVisualPrompt: text("aiVisualPrompt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
