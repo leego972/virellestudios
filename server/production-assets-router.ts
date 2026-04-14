@@ -59,7 +59,142 @@ const LocationScoutInput = z.object({
   projectId: z.number(),
   name: z.string().min(1).max(255),
   address: z.string().max(512).optional(),
-  locationType: z.string().max(128).optional(),       // city-street, forest, beach, mansion, warehouse, rooftop, underground
+  locationType: z.enum([
+    // ── Residential ──────────────────────────────────────────────────────
+    "apartment-building-exterior",  // apartment block / complex outside shot
+    "apartment-interior",           // inside a flat/apartment unit
+    "apartment-lobby",              // building entrance, mailboxes, lifts, common hall
+    "apartment-corridor",           // hallway between units
+    "house-single-storey",          // single-level private residence exterior
+    "house-double-storey",          // two-storey private house exterior
+    "house-interior-lounge",        // living room / lounge
+    "house-interior-kitchen",       // kitchen / open-plan kitchen-dining
+    "house-interior-bedroom",       // bedroom
+    "house-interior-bathroom",      // bathroom / ensuite
+    "house-backyard",               // private garden / pool area
+    "penthouse-interior",           // top-floor luxury interior
+    "penthouse-terrace",            // rooftop terrace of penthouse
+    "townhouse",                    // terraced / row house
+    "villa-exterior",               // standalone luxury villa outside
+    "villa-interior",               // inside a villa
+    "mansion-exterior",             // grand estate exterior
+    "mansion-interior",             // inside a mansion (ballroom, library, study)
+    "loft-apartment",               // open industrial-style loft
+    "studio-apartment",             // single-room compact apartment
+    "basement-apartment",           // below-grade unit
+    "gated-community",              // private estate / compound entrance
+    "housing-estate",               // suburban estate / development street
+    "construction-site-residential",// house being built
+    // ── Hospitality ───────────────────────────────────────────────────────
+    "hotel-exterior",               // hotel building façade
+    "hotel-lobby",                  // check-in, concierge, reception area
+    "hotel-room",                   // standard or luxury hotel bedroom
+    "hotel-suite",                  // suite with lounge area
+    "hotel-corridor",               // hotel hallway
+    "hotel-rooftop-bar",            // sky bar / rooftop pool deck
+    "hotel-restaurant",             // hotel dining room
+    "hotel-conference-room",        // meeting / event space
+    "boutique-hotel-interior",      // styled boutique hotel common areas
+    "resort-exterior",              // holiday resort grounds
+    "resort-pool",                  // resort pool area
+    "motel",                        // roadside motel exterior + rooms
+    "airbnb-property",              // short-stay rental interior
+    // ── Commercial / Business ─────────────────────────────────────────────
+    "office-building-exterior",     // corporate tower / business park outside
+    "office-interior-open-plan",    // open-plan office floor
+    "office-interior-private",      // private office / executive suite
+    "office-lobby",                 // corporate reception / atrium
+    "office-conference-room",       // boardroom / meeting room
+    "coworking-space",              // shared workspace / WeWork-style
+    "retail-store",                 // shop floor / showroom
+    "shopping-mall-interior",       // mall concourse
+    "shopping-mall-exterior",       // mall forecourt / carpark
+    "bank-interior",                // bank branch or vault
+    "bank-exterior",                // bank building façade
+    "law-firm",                     // legal office interior
+    "medical-clinic",               // doctor's office / waiting room
+    "pharmacy",                     // chemist interior
+    // ── Dining & Nightlife ────────────────────────────────────────────────
+    "restaurant-fine-dining",       // upscale restaurant interior
+    "restaurant-casual",            // casual diner / bistro
+    "restaurant-exterior",          // restaurant façade / al fresco tables
+    "cafe",                         // coffee shop interior
+    "bar",                          // pub / bar interior
+    "nightclub",                    // dance floor / club interior
+    "rooftop-bar",                  // outdoor rooftop bar (non-hotel)
+    // ── Urban Exterior ────────────────────────────────────────────────────
+    "city-street",                  // main road with buildings
+    "alley",                        // narrow lane / back alley
+    "rooftop-urban",                // generic urban rooftop with city view
+    "carpark-multi-level",          // multi-storey parking structure
+    "carpark-basement",             // underground carpark
+    "carpark-surface",              // open-air surface carpark
+    "bridge",                       // road or pedestrian bridge
+    "tunnel",                       // vehicle or pedestrian tunnel
+    "underpass",                    // below overpass / underpass graffiti wall
+    "urban-plaza",                  // public square / piazza
+    "bus-stop",                     // street-level bus shelter
+    "sidewalk",                     // footpath / pavement close-up
+    // ── Transport Infrastructure ──────────────────────────────────────────
+    "airport-terminal-interior",    // check-in, departures, arrivals hall
+    "airport-exterior",             // terminal façade / runway view
+    "train-station-interior",       // concourse / platforms
+    "train-station-exterior",       // station building exterior
+    "subway-station",               // underground metro platform
+    "subway-train-interior",        // carriage interior
+    "highway",                      // motorway / freeway with movement
+    "dockyard-marina",              // harbour, boats, loading dock
+    "helipad",                      // rooftop or ground helipad
+    // ── Natural / Landscape ───────────────────────────────────────────────
+    "forest",                       // dense woodland
+    "beach",                        // coastal beach
+    "desert",                       // arid sand or rocky desert
+    "mountain",                     // high-altitude terrain
+    "countryside",                  // open rural landscape
+    "lake",                         // lakeside / water's edge
+    "river",                        // riverbank / bridge over river
+    "cliff",                        // coastal or inland cliff edge
+    "field",                        // open grass field / meadow
+    "swamp",                        // wetlands / bayou
+    // ── Rural / Farm ──────────────────────────────────────────────────────
+    "farmhouse-exterior",           // rural house with land
+    "farmhouse-interior",           // inside a farmhouse
+    "barn",                         // agricultural barn
+    "silo",                         // grain silo / farm structure
+    // ── Industrial ────────────────────────────────────────────────────────
+    "warehouse",                    // empty or active warehouse interior
+    "factory-floor",                // manufacturing / production floor
+    "shipping-container-yard",      // port container stacks
+    "power-station",                // industrial power facility
+    "construction-site",            // active construction site
+    "abandoned-building",           // derelict structure interior/exterior
+    // ── Institutional ─────────────────────────────────────────────────────
+    "school-exterior",              // school building outside
+    "school-classroom",             // classroom interior
+    "school-corridor",              // school hallway / lockers
+    "university-campus",            // campus grounds
+    "hospital-exterior",            // hospital building façade
+    "hospital-interior",            // ward, corridor, operating theatre
+    "police-station",               // exterior or interior
+    "courthouse",                   // exterior or courtroom
+    "government-building",          // civic / government exterior
+    "church-exterior",              // religious building outside
+    "church-interior",              // nave, altar, pews
+    "cemetery",                     // gravestone grounds
+    // ── Entertainment / Leisure ───────────────────────────────────────────
+    "stadium-exterior",             // sports stadium outside
+    "stadium-interior",             // pitch view / stands
+    "cinema-interior",              // screen room or lobby
+    "theatre-stage",                // stage with seats
+    "gym-fitness",                  // gym floor / boxing ring
+    "swimming-pool-indoor",         // enclosed pool
+    "swimming-pool-outdoor",        // outdoor pool / lido
+    "casino-floor",                 // gaming floor interior
+    "art-gallery",                  // gallery white walls
+    "museum",                       // museum exhibit space
+    // ── Other ─────────────────────────────────────────────────────────────
+    "custom",                       // director-specified custom type
+  ]).optional()
   description: z.string().optional(),
   // Director's pre-production scout variables
   bestTimeOfDay: z.string().max(64).optional(),       // golden-hour-morning, midday, blue-hour, night, pre-dawn
@@ -134,7 +269,37 @@ const AtmosphereInput = z.object({
   visibility: z.enum(["crystal-clear","normal","reduced","low","near-zero"]).optional(),
   windCondition: z.enum(["still","gentle-breeze","moderate-wind","strong-wind","gale"]).optional(),
   lightingIntent: z.string().max(128).optional(),    // "low-key moody", "high-key energetic", "naturalistic", "dramatic chiaroscuro"
-  locationContext: z.string().optional(),            // "urban canyon", "dense forest", "open ocean", "cramped interior", "vast desert"
+  locationContext: z.enum([
+    // Residential
+    "residential-apartment-exterior", "residential-apartment-interior", "residential-apartment-lobby",
+    "residential-house-exterior", "residential-house-interior", "residential-mansion", "residential-penthouse",
+    "residential-villa", "residential-loft", "residential-backyard", "residential-estate",
+    // Hospitality
+    "hotel-exterior", "hotel-lobby", "hotel-room", "hotel-rooftop", "hotel-restaurant",
+    "resort-grounds", "resort-pool", "motel",
+    // Commercial / Office
+    "office-exterior", "office-interior", "office-lobby", "retail-store", "shopping-mall",
+    "bank", "coworking-space",
+    // Dining & Nightlife
+    "restaurant-interior", "restaurant-exterior", "cafe", "bar", "nightclub", "rooftop-bar",
+    // Urban Exterior
+    "urban-city-street", "urban-alley", "urban-rooftop", "urban-plaza", "urban-carpark",
+    "urban-bridge", "urban-tunnel", "urban-underpass",
+    // Transport
+    "airport-terminal", "train-station", "subway-station", "highway", "dockyard",
+    // Natural
+    "forest", "beach", "desert", "mountain", "countryside", "lake", "river", "cliff", "field",
+    // Rural / Farm
+    "farmhouse", "barn", "rural-landscape",
+    // Industrial
+    "warehouse", "factory", "construction-site", "abandoned-building", "shipping-yard",
+    // Institutional
+    "school", "hospital", "police-station", "courthouse", "government-building", "church", "cemetery",
+    // Entertainment
+    "stadium", "cinema", "theatre", "gym", "casino", "gallery", "museum",
+    // Custom
+    "custom",
+  ]).optional()
   // Director's Visual DNA (inject master prompt if available)
   visualDna: z.string().optional(),
 });
