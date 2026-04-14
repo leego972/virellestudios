@@ -15,7 +15,9 @@
 import { z } from "zod";
 import { router, protectedProcedure, creationProcedure } from "./_core/trpc";
 import { getDb } from "./db";
-import { directorVision, productionVehicles } from "../drizzle/schema_additions";
+import { directorVision, productionVehicles, wardrobeItems } from "../drizzle/schema_additions";
+import { storagePut } from "./storage";
+import { nanoid } from "nanoid";
 import { locations } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
@@ -1072,4 +1074,189 @@ CRITICAL REQUIREMENTS:
         };
       }),
   }),
+
+  wardrobeUpload: {
+
+  list: protectedProcedure
+    .input(z.object({ projectId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      return db.select().from(wardrobeItems)
+        .where(and(eq(wardrobeItems.projectId, input.projectId), eq(wardrobeItems.userId, ctx.user.id)))
+        .orderBy(wardrobeItems.createdAt);
+    }),
+
+  upload: creationProcedure
+    .input(WardrobeUploadInput)
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      // Decode and upload image to S3
+      let imageUrl: string;
+      let storageKey: string | undefined;
+      try {
+        const imageBuffer = Buffer.from(input.imageBase64, "base64");
+        const ext = input.mimeType === "image/png" ? "png"
+          : input.mimeType === "image/webp" ? "webp"
+          : "jpg";
+        const key = `wardrobe/${ctx.user.id}/${input.projectId}/${nanoid()}.${ext}`;
+        const result = await storagePut(key, imageBuffer, input.mimeType);
+        imageUrl = result.url;
+        storageKey = result.key;
+      } catch (e: any) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Storage upload failed: ${e.message}. Ensure storage credentials are configured.`,
+        });
+      }
+
+      const ins = await db.insert(wardrobeItems).values({
+        projectId:      input.projectId,
+        userId:         ctx.user.id,
+        name:           input.name,
+        imageUrl,
+        storageKey,
+        category:       input.category,
+        color:          input.color,
+        secondaryColor: input.secondaryColor,
+        fabric:         input.fabric,
+        condition:      input.condition,
+        brand:          input.brand,
+        description:    input.description,
+        createdAt:      new Date(),
+        updatedAt:      new Date(),
+      });
+      return { success: true, id: Number((ins as any).insertId), imageUrl };
+    }),
+
+  analyseGarment: creationProcedure
+    .input(z.object({ itemId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      const [item] = await db.select().from(wardrobeItems)
+        .where(and(eq(wardrobeItems.id, input.itemId), eq(wardrobeItems.userId, ctx.user.id)));
+      if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Wardrobe item not found" });
+
+      // Get project vision for era/country context
+      const [vision] = await db.select().from(directorVision)
+        .where(eq(directorVision.projectId, item.projectId)).limit(1);
+
+      const contextLines = [
+        item.name           && `Garment name: ${item.name}`,
+        item.category       && `Category: ${item.category}`,
+        item.color          && `Primary colour (user-tagged): ${item.color}`,
+        item.secondaryColor && `Secondary colour (user-tagged): ${item.secondaryColor}`,
+        item.fabric         && `Fabric (user-tagged): ${item.fabric}`,
+        item.condition      && `Condition (user-tagged): ${item.condition}`,
+        item.brand          && `Brand: ${item.brand}`,
+        item.description    && `Notes: ${item.description}`,
+        (vision as any)?.productionEra     && `Production era: ${(vision as any).productionEra}`,
+        (vision as any)?.productionCountry && `Production country: ${(vision as any).productionCountry}`,
+        (vision as any)?.visualDnaPrompt   && `Visual DNA: ${(vision as any).visualDnaPrompt}`,
+      ].filter(Boolean).join("\n");
+
+      const resp = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert Costume Designer and Film Historian specialising in professional cinema production. You have deep knowledge of:
+
+1. HISTORICAL ACCURACY — garment construction, fabrics available per era/region, social class indicators through clothing, correct terminology
+2. CINEMATOGRAPHIC EXPERTISE — how different fabrics, colours, and textures behave under film lighting (satin sheen, velvet absorption, linen texture, metal reflection)
+3. CHARACTER STORYTELLING — how costume communicates psychology, social class, narrative arc, and relationship dynamics
+4. COLOUR SCIENCE — how garment colours interact with different colour grades, what reads on camera vs what bleeds or blows out
+
+Analyse the provided garment photo with expert precision. Return only valid JSON.`,
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "image_url",
+                image_url: { url: item.imageUrl, detail: "high" },
+              },
+              {
+                type: "text",
+                text: `Analyse this garment photo and return a complete cinematographic costume profile.\n\nContext provided by costume department:\n${contextLines}\n\nReturn JSON with exactly these fields:\n{\n  "garmentName": "specific descriptive name",\n  "detectedCategory": "top|bottom|dress|outerwear|footwear|headwear|accessory|underwear|full-outfit",\n  "primaryColor": "precise colour name with tone",\n  "secondaryColor": "secondary colours/trim",\n  "fabricType": "fabric with texture description",\n  "condition": "condition descriptor",\n  "silhouette": "silhouette description",\n  "estimatedEra": "era range this garment belongs to",\n  "socialClassIndicator": "what class/status this garment signals",\n  "cinematicNotes": "how this garment reads on camera — sheen, texture, lighting behaviour, exposure risk",\n  "characterSuggestion": "what character type, role, and narrative position this costume fits",\n  "stylingTips": "complementary garments, accessories, hair, makeup to complete the look",\n  "continuityNotes": "practical costume department notes — multiples needed, aging sequence, fragility",\n  "aiPromptSuffix": "60-80 word cinematic prompt describing this exact garment for consistent AI generation"\n}`,
+              },
+            ],
+          },
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "garment_analysis",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                garmentName:          { type: "string" },
+                detectedCategory:     { type: "string" },
+                primaryColor:         { type: "string" },
+                secondaryColor:       { type: "string" },
+                fabricType:           { type: "string" },
+                condition:            { type: "string" },
+                silhouette:           { type: "string" },
+                estimatedEra:         { type: "string" },
+                socialClassIndicator: { type: "string" },
+                cinematicNotes:       { type: "string" },
+                characterSuggestion:  { type: "string" },
+                stylingTips:          { type: "string" },
+                continuityNotes:      { type: "string" },
+                aiPromptSuffix:       { type: "string" },
+              },
+              required: [
+                "garmentName","detectedCategory","primaryColor","secondaryColor",
+                "fabricType","condition","silhouette","estimatedEra","socialClassIndicator",
+                "cinematicNotes","characterSuggestion","stylingTips","continuityNotes","aiPromptSuffix",
+              ],
+              additionalProperties: false,
+            },
+          },
+        },
+      });
+
+      const parsed = JSON.parse((resp.choices[0].message.content as string) || "{}");
+
+      // Save AI results to DB
+      await db.update(wardrobeItems).set({
+        aiGarmentName:  parsed.garmentName  || undefined,
+        aiCategory:     parsed.detectedCategory || undefined,
+        aiStyleProfile: JSON.stringify(parsed),
+        aiPromptSuffix: parsed.aiPromptSuffix || undefined,
+        updatedAt:      new Date(),
+      }).where(eq(wardrobeItems.id, item.id));
+
+      return {
+        garmentName:          parsed.garmentName          || "",
+        detectedCategory:     parsed.detectedCategory     || "",
+        primaryColor:         parsed.primaryColor         || "",
+        secondaryColor:       parsed.secondaryColor       || "",
+        fabricType:           parsed.fabricType           || "",
+        condition:            parsed.condition            || "",
+        silhouette:           parsed.silhouette           || "",
+        estimatedEra:         parsed.estimatedEra         || "",
+        socialClassIndicator: parsed.socialClassIndicator || "",
+        cinematicNotes:       parsed.cinematicNotes       || "",
+        characterSuggestion:  parsed.characterSuggestion  || "",
+        stylingTips:          parsed.stylingTips          || "",
+        continuityNotes:      parsed.continuityNotes      || "",
+        aiPromptSuffix:       parsed.aiPromptSuffix       || "",
+      };
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      await db.delete(wardrobeItems)
+        .where(and(eq(wardrobeItems.id, input.id), eq(wardrobeItems.userId, ctx.user.id)));
+      return { success: true };
+    }),
+})
 });
