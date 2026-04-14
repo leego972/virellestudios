@@ -902,7 +902,33 @@ export async function runAutoMigration(): Promise<void> {
         updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`,
     },
-  ];
+,
+    {
+      name: "wardrobeItems",
+      createSQL: `CREATE TABLE IF NOT EXISTS wardrobeItems (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        projectId INT NOT NULL,
+        userId INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        category VARCHAR(64) NULL,
+        imageUrl TEXT NOT NULL,
+        storageKey VARCHAR(512) NULL,
+        description TEXT NULL,
+        color VARCHAR(128) NULL,
+        secondaryColor VARCHAR(128) NULL,
+        fabric VARCHAR(128) NULL,
+        \`condition\` VARCHAR(64) NULL,
+        brand VARCHAR(128) NULL,
+        era VARCHAR(128) NULL,
+        tags JSON NULL,
+        aiGarmentName VARCHAR(255) NULL,
+        aiCategory VARCHAR(64) NULL,
+        aiStyleProfile TEXT NULL,
+        aiPromptSuffix TEXT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    }  ];
 
   // ─── Columns that may be missing from existing tables ───
   const missingColumns: ColumnCheck[] = [
