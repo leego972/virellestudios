@@ -1,4 +1,4 @@
-import { mysqlTable, int, varchar, text, timestamp, boolean, json } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar, text, timestamp, boolean, json, float } from "drizzle-orm/mysql-core";
 
 // Public Film Pages (Promote / Distribution)
 export const filmPages = mysqlTable("filmPages", {
