@@ -1075,6 +1075,22 @@ CRITICAL REQUIREMENTS:
       }),
   }),
 
+  // ─── Wardrobe Upload Input ────────────────────────────────────────────────────
+  const WardrobeUploadInput = z.object({
+    projectId:       z.number(),
+    name:            z.string().min(1).max(255),
+    imageBase64:     z.string(),
+    mimeType:        z.enum(["image/jpeg", "image/png", "image/webp"]),
+    category:        z.string().max(64).optional(),
+    color:           z.string().max(128).optional(),
+    secondaryColor:  z.string().max(128).optional(),
+    fabric:          z.string().max(128).optional(),
+    condition:       z.string().max(64).optional(),
+    brand:           z.string().max(128).optional(),
+    description:     z.string().optional(),
+  });
+
+  
   wardrobeUpload: router({
 
   list: protectedProcedure
