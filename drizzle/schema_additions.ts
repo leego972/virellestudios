@@ -95,3 +95,30 @@ export const productionVehicles = mysqlTable("productionVehicles", {
 });
 export type ProductionVehicle = typeof productionVehicles.$inferSelect;
 export type InsertProductionVehicle = typeof productionVehicles.$inferInsert;
+
+// ─── Wardrobe Items (photo upload wardrobe per project) ──────────────────────
+export const wardrobeItems = mysqlTable("wardrobeItems", {
+  id:             int("id").autoincrement().primaryKey(),
+  projectId:      int("projectId").notNull(),
+  userId:         int("userId").notNull(),
+  name:           varchar("name",          { length: 255 }).notNull(),
+  category:       varchar("category",      { length: 64  }),
+  imageUrl:       text("imageUrl").notNull(),
+  storageKey:     varchar("storageKey",    { length: 512 }),
+  description:    text("description"),
+  color:          varchar("color",         { length: 128 }),
+  secondaryColor: varchar("secondaryColor",{ length: 128 }),
+  fabric:         varchar("fabric",        { length: 128 }),
+  condition:      varchar("condition",     { length: 64  }),
+  brand:          varchar("brand",         { length: 128 }),
+  era:            varchar("era",           { length: 128 }),
+  tags:           json("tags"),
+  aiGarmentName:  varchar("aiGarmentName", { length: 255 }),
+  aiCategory:     varchar("aiCategory",    { length: 64  }),
+  aiStyleProfile: text("aiStyleProfile"),
+  aiPromptSuffix: text("aiPromptSuffix"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type WardrobeItem = typeof wardrobeItems.$inferSelect;
+export type InsertWardrobeItem = typeof wardrobeItems.$inferInsert;
