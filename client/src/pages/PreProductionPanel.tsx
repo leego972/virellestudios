@@ -2299,6 +2299,18 @@ export default function PreProductionPanel() {
           <TabsContent value="wardrobe">
             <WardrobeTab projectId={projectId} />
           </TabsContent>
+          <TabsContent value="shotlist">
+            <ShotListTab projectId={projectId} />
+          </TabsContent>
+          <TabsContent value="schedule">
+            <ScheduleTab projectId={projectId} />
+          </TabsContent>
+          <TabsContent value="continuity">
+            <ContinuityTab projectId={projectId} />
+          </TabsContent>
+          <TabsContent value="titlecard">
+            <TitleCardTab projectId={projectId} />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
