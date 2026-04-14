@@ -1177,6 +1177,14 @@ export async function runAutoMigration(): Promise<void> {
     { table: "locations", column: "shootingConstraints", definition: "TEXT NULL" },
     { table: "locations", column: "seasonalNotes",       definition: "TEXT NULL" },
     { table: "locations", column: "aiVisualPrompt",      definition: "TEXT NULL" },
+    { table: "locations", column: "architecturalStyle",  definition: "VARCHAR(128) NULL" },
+    { table: "locations", column: "eraOverride",         definition: "VARCHAR(64) NULL" },
+    { table: "locations", column: "countryOverride",     definition: "VARCHAR(128) NULL" },
+    { table: "locations", column: "socialClass",         definition: "VARCHAR(64) NULL" },
+    { table: "directorVision", column: "productionEra",      definition: "VARCHAR(128) NULL" },
+    { table: "directorVision", column: "productionCountry",  definition: "VARCHAR(128) NULL" },
+    { table: "directorVision", column: "productionSetting",  definition: "TEXT NULL" },
+    { table: "directorVision", column: "architecturalStyle", definition: "VARCHAR(128) NULL" },
   ];
 
   let tablesCreated = 0;
