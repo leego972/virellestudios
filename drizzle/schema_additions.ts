@@ -60,7 +60,11 @@ export const directorVision = mysqlTable("directorVision", {
   soundDesignDirection: text("soundDesignDirection"),
   musicGenre:      varchar("musicGenre", { length: 128 }),
   // AI-generated master prompt
-  visualDnaPrompt: text("visualDnaPrompt"),
+  productionEra:      varchar("productionEra",     { length: 128 }),
+  productionCountry:  varchar("productionCountry", { length: 128 }),
+  productionSetting:  text("productionSetting"),
+  architecturalStyle: varchar("architecturalStyle", { length: 128 }),
+  visualDnaPrompt:    text("visualDnaPrompt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
