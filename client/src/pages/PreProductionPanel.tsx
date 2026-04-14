@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -986,6 +986,387 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
   );
 }
 
+
+// ─── Wardrobe Upload Tab ──────────────────────────────────────────────────────
+const WARDROBE_CATEGORIES = [
+  { value: "all",         label: "All" },
+  { value: "top",         label: "Tops" },
+  { value: "bottom",      label: "Bottoms" },
+  { value: "dress",       label: "Dresses / Gowns" },
+  { value: "outerwear",   label: "Outerwear" },
+  { value: "footwear",    label: "Footwear" },
+  { value: "headwear",    label: "Headwear" },
+  { value: "accessory",   label: "Accessories" },
+  { value: "underwear",   label: "Undergarments" },
+  { value: "full-outfit", label: "Full Outfits" },
+];
+
+const CAT_COLORS: Record<string, string> = {
+  top:          "bg-blue-500/15 text-blue-700 border-blue-300",
+  bottom:       "bg-green-500/15 text-green-700 border-green-300",
+  dress:        "bg-pink-500/15 text-pink-700 border-pink-300",
+  outerwear:    "bg-slate-500/15 text-slate-700 border-slate-300",
+  footwear:     "bg-amber-500/15 text-amber-700 border-amber-300",
+  headwear:     "bg-purple-500/15 text-purple-700 border-purple-300",
+  accessory:    "bg-rose-500/15 text-rose-700 border-rose-300",
+  underwear:    "bg-orange-500/15 text-orange-700 border-orange-300",
+  "full-outfit":"bg-indigo-500/15 text-indigo-700 border-indigo-300",
+};
+
+function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
+  const utils = trpc.useUtils();
+  const { data: items = [], isLoading } = trpc.productionAssets.wardrobeUpload.list.useQuery(
+    { projectId }, { enabled: !!projectId }
+  );
+
+  const [filterCat, setFilterCat] = useState("all");
+  const [showUpload, setShowUpload] = useState(false);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [analysisMap, setAnalysisMap] = useState<Record<number, any>>({});
+  const [dragOver, setDragOver] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imageMime, setImageMime] = useState("image/jpeg");
+  const [uName, setUName] = useState("");
+  const [uCat, setUCat] = useState("");
+  const [uColor, setUColor] = useState("");
+  const [uColor2, setUColor2] = useState("");
+  const [uFabric, setUFabric] = useState("");
+  const [uCondition, setUCondition] = useState("");
+  const [uBrand, setUBrand] = useState("");
+  const [uDesc, setUDesc] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  function resetForm() {
+    setPreviewUrl(null); setImageBase64(null); setImageMime("image/jpeg");
+    setUName(""); setUCat(""); setUColor(""); setUColor2("");
+    setUFabric(""); setUCondition(""); setUBrand(""); setUDesc("");
+  }
+
+  const uploadMutation = trpc.productionAssets.wardrobeUpload.upload.useMutation({
+    onSuccess: () => {
+      utils.productionAssets.wardrobeUpload.list.invalidate({ projectId });
+      setShowUpload(false); resetForm(); toast.success("Garment added to wardrobe");
+    },
+    onError: e => toast.error(e.message),
+  });
+
+  const deleteMutation = trpc.productionAssets.wardrobeUpload.delete.useMutation({
+    onSuccess: () => { utils.productionAssets.wardrobeUpload.list.invalidate({ projectId }); toast.success("Garment removed"); },
+    onError: e => toast.error(e.message),
+  });
+
+  const analyseMutation = trpc.productionAssets.wardrobeUpload.analyseGarment.useMutation({
+    onSuccess: (data, variables) => {
+      setAnalysisMap(prev => ({ ...prev, [variables.itemId]: data }));
+      setExpandedId(variables.itemId);
+      utils.productionAssets.wardrobeUpload.list.invalidate({ projectId });
+      toast.success("Garment analysed by AI costume designer");
+    },
+    onError: e => toast.error(e.message),
+  });
+
+  function processFile(file: File) {
+    if (!file.type.startsWith("image/")) { toast.error("Please upload an image file"); return; }
+    if (file.size > 8 * 1024 * 1024) { toast.error("Image must be under 8 MB"); return; }
+    setImageMime(file.type);
+    if (!uName) setUName(file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "));
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const result = ev.target?.result as string;
+      setPreviewUrl(result);
+      setImageBase64(result.replace(/^data:[^;]+;base64,/, ""));
+    };
+    reader.readAsDataURL(file);
+  }
+
+  const filteredItems = (items as any[]).filter(i => filterCat === "all" || i.category === filterCat);
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center py-20">
+      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+    </div>
+  );
+
+  return (
+    <div className="space-y-5 max-w-5xl">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <h2 className="text-sm font-semibold flex items-center gap-2">
+            <Camera className="h-4 w-4 text-violet-500" />Wardrobe Library
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {(items as any[]).length} garment{(items as any[]).length !== 1 ? "s" : ""} uploaded
+          </p>
+        </div>
+        <Dialog open={showUpload} onOpenChange={open => { setShowUpload(open); if (!open) resetForm(); }}>
+          <DialogTrigger asChild>
+            <Button size="sm" className="gap-2 bg-violet-600 hover:bg-violet-700">
+              <Plus className="h-4 w-4" />Upload Garment
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Camera className="h-5 w-5 text-violet-500" />Upload Garment Photo
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              {/* Drop zone */}
+              <div
+                className={["border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden",
+                  dragOver ? "border-violet-500 bg-violet-500/10" : "border-muted hover:border-violet-400 hover:bg-violet-500/5",
+                  previewUrl ? "border-solid border-violet-400" : ""].join(" ")}
+                onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) processFile(f); }}
+                onClick={() => !previewUrl && fileRef.current?.click()}
+              >
+                {previewUrl ? (
+                  <div className="relative">
+                    <img src={previewUrl} alt="Preview" className="w-full max-h-72 object-contain bg-muted/30" />
+                    <Button size="sm" variant="destructive" className="absolute top-2 right-2 h-7 text-xs"
+                      onClick={e => { e.stopPropagation(); setPreviewUrl(null); setImageBase64(null); if (fileRef.current) fileRef.current.value = ""; }}>
+                      Change Photo
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                    <div className="h-14 w-14 rounded-full bg-violet-500/10 flex items-center justify-center mb-3">
+                      <Camera className="h-7 w-7 text-violet-400" />
+                    </div>
+                    <p className="text-sm font-medium">Drop your garment photo here</p>
+                    <p className="text-xs text-muted-foreground mt-1">or click to browse — JPEG, PNG, WEBP up to 8 MB</p>
+                  </div>
+                )}
+              </div>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden"
+                onChange={e => { const f = e.target.files?.[0]; if (f) processFile(f); }} />
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <FieldGroup label="Garment Name *">
+                    <Input value={uName} onChange={e => setUName(e.target.value)} placeholder='"Black Wool Overcoat", "1940s Silk Evening Gown"' />
+                  </FieldGroup>
+                </div>
+                <FieldGroup label="Category">
+                  <Select value={uCat} onValueChange={setUCat}>
+                    <SelectTrigger className="text-sm"><SelectValue placeholder="Select category..." /></SelectTrigger>
+                    <SelectContent>
+                      {WARDROBE_CATEGORIES.filter(c => c.value !== "all").map(c => (
+                        <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FieldGroup>
+                <FieldGroup label="Brand / Designer">
+                  <Input value={uBrand} onChange={e => setUBrand(e.target.value)} placeholder="Chanel, H&M, custom-made..." className="text-sm" />
+                </FieldGroup>
+                <FieldGroup label="Primary Colour">
+                  <Input value={uColor} onChange={e => setUColor(e.target.value)} placeholder="midnight black, ivory..." className="text-sm" />
+                </FieldGroup>
+                <FieldGroup label="Secondary / Trim Colour">
+                  <Input value={uColor2} onChange={e => setUColor2(e.target.value)} placeholder="gold trim, white lace..." className="text-sm" />
+                </FieldGroup>
+                <FieldGroup label="Fabric / Material">
+                  <Input value={uFabric} onChange={e => setUFabric(e.target.value)} placeholder="wool, silk, denim, velvet..." className="text-sm" />
+                </FieldGroup>
+                <FieldGroup label="Condition">
+                  <Select value={uCondition} onValueChange={setUCondition}>
+                    <SelectTrigger className="text-sm"><SelectValue placeholder="Select condition..." /></SelectTrigger>
+                    <SelectContent>
+                      {["pristine", "lightly worn", "worn", "weathered", "distressed", "battle-damaged", "patched"].map(c => (
+                        <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FieldGroup>
+                <div className="col-span-2">
+                  <FieldGroup label="Notes / Scene Context">
+                    <Textarea value={uDesc} onChange={e => setUDesc(e.target.value)} rows={2}
+                      className="text-sm resize-none" placeholder="Which character wears this? Which scenes? Any relevant context..." />
+                  </FieldGroup>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => { setShowUpload(false); resetForm(); }}>Cancel</Button>
+              <Button className="bg-violet-600 hover:bg-violet-700"
+                onClick={() => {
+                  if (!imageBase64) { toast.error("Please select a photo first"); return; }
+                  if (!uName.trim()) { toast.error("Please enter a garment name"); return; }
+                  uploadMutation.mutate({
+                    projectId, name: uName, imageBase64, mimeType: imageMime,
+                    category: uCat || undefined, color: uColor || undefined,
+                    secondaryColor: uColor2 || undefined, fabric: uFabric || undefined,
+                    condition: uCondition || undefined, brand: uBrand || undefined,
+                    description: uDesc || undefined,
+                  });
+                }}
+                disabled={uploadMutation.isPending || !imageBase64 || !uName.trim()}
+              >
+                {uploadMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                Upload Garment
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Category filter */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {WARDROBE_CATEGORIES.map(cat => {
+          const count = cat.value === "all" ? (items as any[]).length : (items as any[]).filter((i: any) => i.category === cat.value).length;
+          if (cat.value !== "all" && count === 0) return null;
+          return (
+            <Button key={cat.value} variant={filterCat === cat.value ? "default" : "outline"}
+              size="sm" className="h-7 text-xs px-3"
+              onClick={() => setFilterCat(cat.value)}>
+              {cat.label}{count > 0 && <span className="ml-1 opacity-60 text-[10px]">{count}</span>}
+            </Button>
+          );
+        })}
+      </div>
+
+      {/* Empty state */}
+      {(items as any[]).length === 0 && (
+        <div className="rounded-xl border-2 border-dashed border-muted p-14 text-center">
+          <div className="h-14 w-14 rounded-full bg-violet-500/10 flex items-center justify-center mx-auto mb-4">
+            <Camera className="h-7 w-7 text-violet-400" />
+          </div>
+          <p className="font-medium text-sm">Your wardrobe is empty</p>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+            Upload photos of real costumes, garments, or reference clothing. The AI costume designer will analyse each piece — detecting fabric, era, social class, and generating cinematic prompts for consistent character rendering.
+          </p>
+          <Button size="sm" className="mt-4 bg-violet-600 hover:bg-violet-700 gap-2"
+            onClick={() => setShowUpload(true)}>
+            <Plus className="h-4 w-4" />Upload First Garment
+          </Button>
+        </div>
+      )}
+
+      {/* Gallery */}
+      {filteredItems.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {filteredItems.map((item: any) => {
+            const isExpanded = expandedId === item.id;
+            const analysis = analysisMap[item.id];
+            const savedAnalysis = item.aiStyleProfile ? (() => { try { return JSON.parse(item.aiStyleProfile); } catch { return null; } })() : null;
+            const displayAnalysis = analysis || savedAnalysis;
+            const catColor = CAT_COLORS[item.category] || "bg-muted text-muted-foreground border-border";
+            const isAnalysing = analyseMutation.isPending && (analyseMutation.variables as any)?.itemId === item.id;
+            return (
+              <Card key={item.id} className="overflow-hidden group hover:ring-1 hover:ring-violet-400/50 transition-all">
+                {/* Image */}
+                <div className="relative aspect-square bg-muted/30 overflow-hidden cursor-pointer"
+                  onClick={() => setExpandedId(isExpanded ? null : item.id)}>
+                  <img src={item.imageUrl} alt={item.name}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                  {(item.aiStyleProfile || analysis) && (
+                    <div className="absolute top-1.5 right-1.5">
+                      <Badge className="text-[10px] h-4 px-1.5 bg-violet-600/90">
+                        <Sparkles className="h-2.5 w-2.5 mr-0.5" />AI
+                      </Badge>
+                    </div>
+                  )}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                    <p className="text-white text-xs font-medium truncate">{item.name}</p>
+                    {item.category && (
+                      <span className={["text-[10px] px-1.5 py-0.5 rounded border", catColor].join(" ")}>
+                        {WARDROBE_CATEGORIES.find(c => c.value === item.category)?.label || item.category}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action row */}
+                <div className="p-2 flex items-center gap-1.5">
+                  <Button size="sm" variant="outline"
+                    className="flex-1 h-7 text-[11px] gap-1 border-violet-300 text-violet-700 hover:bg-violet-50"
+                    onClick={() => analyseMutation.mutate({ itemId: item.id })} disabled={isAnalysing}>
+                    {isAnalysing ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                    AI Analyse
+                  </Button>
+                  <Button size="sm" variant="ghost"
+                    className="h-7 w-7 p-0 text-destructive hover:text-destructive shrink-0"
+                    onClick={() => deleteMutation.mutate({ id: item.id })} disabled={deleteMutation.isPending}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+
+                {/* Expanded analysis */}
+                {isExpanded && (
+                  <div className="border-t bg-muted/20 p-3 space-y-2">
+                    {displayAnalysis ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Sparkles className="h-3 w-3 text-violet-500" />
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-violet-600">AI Costume Analysis</span>
+                        </div>
+                        {displayAnalysis.garmentName && (
+                          <p className="text-xs font-medium">{displayAnalysis.garmentName}</p>
+                        )}
+                        <div className="grid grid-cols-2 gap-1 text-[11px]">
+                          {displayAnalysis.primaryColor && (
+                            <div><span className="text-muted-foreground">Colour: </span>
+                              {displayAnalysis.primaryColor}{displayAnalysis.secondaryColor ? " / " + displayAnalysis.secondaryColor : ""}
+                            </div>
+                          )}
+                          {displayAnalysis.fabricType && (
+                            <div><span className="text-muted-foreground">Fabric: </span>{displayAnalysis.fabricType}</div>
+                          )}
+                          {displayAnalysis.silhouette && (
+                            <div><span className="text-muted-foreground">Silhouette: </span>{displayAnalysis.silhouette}</div>
+                          )}
+                          {displayAnalysis.estimatedEra && (
+                            <div><span className="text-muted-foreground">Era: </span>{displayAnalysis.estimatedEra}</div>
+                          )}
+                          {displayAnalysis.socialClassIndicator && (
+                            <div className="col-span-2"><span className="text-muted-foreground">Class: </span>{displayAnalysis.socialClassIndicator}</div>
+                          )}
+                        </div>
+                        {displayAnalysis.cinematicNotes && (
+                          <ResultBlock label="Cinematic Notes" value={displayAnalysis.cinematicNotes} />
+                        )}
+                        {displayAnalysis.characterSuggestion && (
+                          <ResultBlock label="Character Fit" value={displayAnalysis.characterSuggestion} />
+                        )}
+                        {displayAnalysis.stylingTips && (
+                          <ResultBlock label="Styling Tips" value={displayAnalysis.stylingTips} />
+                        )}
+                        {displayAnalysis.continuityNotes && (
+                          <ResultBlock label="Continuity Notes" value={displayAnalysis.continuityNotes} />
+                        )}
+                        {displayAnalysis.aiPromptSuffix && (
+                          <ResultBlock label="AI Generation Prompt" value={displayAnalysis.aiPromptSuffix} copyable />
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center py-3">
+                        <Sparkles className="h-5 w-5 text-violet-300 mx-auto mb-1.5" />
+                        <p className="text-[11px] text-muted-foreground">Click AI Analyse to get garment analysis — era, silhouette, cinematic lighting notes, and an AI generation prompt.</p>
+                      </div>
+                    )}
+                    {(item.color || item.fabric || item.brand || item.condition) && (
+                      <div className="grid grid-cols-2 gap-1 text-[11px] pt-2 border-t">
+                        {item.color && <div><span className="text-muted-foreground">Tagged colour: </span>{item.color}</div>}
+                        {item.fabric && <div><span className="text-muted-foreground">Tagged fabric: </span>{item.fabric}</div>}
+                        {item.brand && <div><span className="text-muted-foreground">Brand: </span>{item.brand}</div>}
+                        {item.condition && <div><span className="text-muted-foreground">Condition: </span>{item.condition}</div>}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function PreProductionPanel() {
   const { loading: authLoading, isAuthenticated } = useAuth();
@@ -1034,6 +1415,9 @@ export default function PreProductionPanel() {
             <TabsTrigger value="atmosphere" className="gap-2 text-xs sm:text-sm">
               <CloudSun className="h-3.5 w-3.5" />Atmosphere
             </TabsTrigger>
+            <TabsTrigger value="wardrobe" className="gap-2 text-xs sm:text-sm">
+              <Camera className="h-3.5 w-3.5" />Wardrobe
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="vision">
             <VisionTab projectId={projectId} constants={constants as Constants | null} />
@@ -1046,6 +1430,9 @@ export default function PreProductionPanel() {
           </TabsContent>
           <TabsContent value="atmosphere">
             <AtmosphereTab projectId={projectId} constants={constants as Constants | null} />
+          </TabsContent>
+          <TabsContent value="wardrobe">
+            <WardrobeTab projectId={projectId} />
           </TabsContent>
         </Tabs>
       </div>
