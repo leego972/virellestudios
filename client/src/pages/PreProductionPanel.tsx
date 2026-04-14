@@ -1051,6 +1051,10 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
     onError: e => toast.error(e.message),
   });
 
+  const charLinkMutation = trpc.productionAssets.wardrobeUpload.setCharacterLink.useMutation({
+    onSuccess: () => { utils.productionAssets.wardrobeUpload.list.invalidate({ projectId }); toast.success("Character link saved"); },
+    onError: e => toast.error(e.message),
+  });
   const deleteMutation = trpc.productionAssets.wardrobeUpload.delete.useMutation({
     onSuccess: () => { utils.productionAssets.wardrobeUpload.list.invalidate({ projectId }); toast.success("Garment removed"); },
     onError: e => toast.error(e.message),
@@ -1367,6 +1371,855 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
   );
 }
 
+
+// ─── Shot List Tab ────────────────────────────────────────────────────────────
+const SHOT_TYPES = ["ECU","CU","MCU","MS","MLS","LS","WS","EWS","OTS","POV","TWO-SHOT","INSERT","AERIAL","DUTCH"];
+const CAMERA_MOVEMENTS = ["STATIC","DOLLY IN","DOLLY OUT","PAN L","PAN R","TILT U","TILT D","TRACK","CRANE UP","CRANE DOWN","HANDHELD","STEADICAM","ZOOM IN","ZOOM OUT","DUTCH TILT"];
+
+function ShotListTab({ projectId }: { projectId: number }) {
+  const utils = trpc.useUtils();
+  const { data: savedShots = [] } = trpc.productionAssets.shotList.list.useQuery({ projectId }, { enabled: !!projectId });
+
+  const [sceneName, setSceneName]     = useState("");
+  const [sceneNumber, setSceneNumber] = useState("");
+  const [scriptText, setScriptText]   = useState("");
+  const [generatedShots, setGeneratedShots] = useState<any[]>([]);
+  const [activeScene, setActiveScene]   = useState<string | null>(null);
+
+  const generateMutation = trpc.productionAssets.shotList.generate.useMutation({
+    onSuccess: data => { setGeneratedShots(data.shots); toast.success(`${data.shots.length} shots generated`); },
+    onError: e => toast.error(e.message),
+  });
+  const saveMutation = trpc.productionAssets.shotList.save.useMutation({
+    onSuccess: () => { utils.productionAssets.shotList.list.invalidate({ projectId }); toast.success("Shot list saved"); setGeneratedShots([]); setSceneName(""); setScriptText(""); },
+    onError: e => toast.error(e.message),
+  });
+  const deleteMutation = trpc.productionAssets.shotList.deleteScene.useMutation({
+    onSuccess: () => { utils.productionAssets.shotList.list.invalidate({ projectId }); toast.success("Scene deleted"); },
+    onError: e => toast.error(e.message),
+  });
+
+  // Group saved shots by scene
+  const scenes = Array.from(new Set((savedShots as any[]).map((s: any) => s.sceneName)));
+
+  const totalDuration = (shots: any[]) => {
+    const secs = shots.reduce((a, s) => a + (s.estimatedDuration || 0), 0);
+    return secs >= 60 ? `${Math.floor(secs/60)}m ${secs%60}s` : `${secs}s`;
+  };
+
+  const shotBadgeColor: Record<string, string> = {
+    ECU:"bg-red-100 text-red-800", CU:"bg-orange-100 text-orange-800",
+    MCU:"bg-amber-100 text-amber-800", MS:"bg-yellow-100 text-yellow-800",
+    MLS:"bg-lime-100 text-lime-800", LS:"bg-green-100 text-green-800",
+    WS:"bg-teal-100 text-teal-800", EWS:"bg-cyan-100 text-cyan-800",
+    OTS:"bg-blue-100 text-blue-800", POV:"bg-indigo-100 text-indigo-800",
+    "TWO-SHOT":"bg-violet-100 text-violet-800", INSERT:"bg-purple-100 text-purple-800",
+    AERIAL:"bg-pink-100 text-pink-800", "DUTCH":"bg-rose-100 text-rose-800",
+  };
+
+  return (
+    <div className="space-y-6 max-w-5xl">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-semibold flex items-center gap-2">
+            <Film className="h-4 w-4 text-violet-500" />Shot List Generator
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Paste your scene script — the AI reads your Director&apos;s Vision and generates a full shot list
+          </p>
+        </div>
+        <Badge variant="outline" className="text-xs">
+          {scenes.length} scene{scenes.length !== 1 ? "s" : ""} saved
+        </Badge>
+      </div>
+
+      {/* Generator form */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Wand2 className="h-4 w-4 text-violet-500" />Generate New Shot List
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="col-span-2">
+              <FieldGroup label="Scene Name *">
+                <Input value={sceneName} onChange={e => setSceneName(e.target.value)}
+                  placeholder='e.g. "INT. GRAND BALLROOM - NIGHT"' className="text-sm" />
+              </FieldGroup>
+            </div>
+            <FieldGroup label="Scene #">
+              <Input value={sceneNumber} onChange={e => setSceneNumber(e.target.value)}
+                placeholder="14" className="text-sm" />
+            </FieldGroup>
+          </div>
+          <FieldGroup label="Scene Script / Description *">
+            <Textarea value={scriptText} onChange={e => setScriptText(e.target.value)}
+              rows={6} className="text-sm font-mono resize-none"
+              placeholder={"INT. GRAND BALLROOM - NIGHT\n\nELEANOR descends the marble staircase. Every eye in the room turns. MARCUS watches from the shadows by the far column, champagne untouched in his hand.\n\nELEANOR\nI didn't think you'd come.\n\nMARCUS steps forward into the candlelight..."} />
+          </FieldGroup>
+          <div className="flex items-center gap-2">
+            <Button className="bg-violet-600 hover:bg-violet-700 gap-2"
+              onClick={() => {
+                if (!sceneName.trim()) { toast.error("Enter a scene name"); return; }
+                if (!scriptText.trim()) { toast.error("Paste your scene script"); return; }
+                generateMutation.mutate({ projectId, sceneName: sceneName.trim(), sceneNumber: sceneNumber.trim() || undefined, scriptText });
+              }}
+              disabled={generateMutation.isPending}>
+              {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+              Generate Shot List
+            </Button>
+            <p className="text-xs text-muted-foreground">Uses your Director&apos;s Vision (era, camera, lens, movement style)</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Generated results */}
+      {generatedShots.length > 0 && (
+        <Card className="border-violet-200 bg-violet-50/30">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-violet-500" />
+                {generatedShots.length} shots — {totalDuration(generatedShots)} screen time
+              </CardTitle>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => setGeneratedShots([])}>Discard</Button>
+                <Button size="sm" className="bg-violet-600 hover:bg-violet-700 gap-1"
+                  onClick={() => saveMutation.mutate({ projectId, sceneName, sceneNumber: sceneNumber || undefined, shots: generatedShots })}
+                  disabled={saveMutation.isPending}>
+                  {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                  Save to Project
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b bg-muted/40">
+                    <th className="text-left p-2 font-medium w-12">#</th>
+                    <th className="text-left p-2 font-medium w-20">Type</th>
+                    <th className="text-left p-2 font-medium w-16">Lens</th>
+                    <th className="text-left p-2 font-medium w-24">Movement</th>
+                    <th className="text-left p-2 font-medium">Frame / Action</th>
+                    <th className="text-left p-2 font-medium w-24">Lighting</th>
+                    <th className="text-left p-2 font-medium w-12">Dur.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {generatedShots.map((shot, i) => (
+                    <tr key={i} className="border-b hover:bg-muted/20">
+                      <td className="p-2 font-mono font-semibold text-violet-700">{shot.shotNumber}</td>
+                      <td className="p-2">
+                        <span className={["text-[10px] px-1.5 py-0.5 rounded font-medium", shotBadgeColor[shot.shotType] || "bg-muted text-muted-foreground"].join(" ")}>
+                          {shot.shotType}
+                        </span>
+                      </td>
+                      <td className="p-2 font-mono text-muted-foreground">{shot.lensLength}</td>
+                      <td className="p-2 text-[10px] text-muted-foreground">{shot.cameraMovement}</td>
+                      <td className="p-2">
+                        <p className="font-medium">{shot.frameDescription}</p>
+                        <p className="text-muted-foreground">{shot.action}</p>
+                        {shot.dialogue && <p className="italic mt-0.5 text-violet-600">&ldquo;{shot.dialogue}&rdquo;</p>}
+                        {shot.directorNote && <p className="text-amber-700 mt-0.5">✦ {shot.directorNote}</p>}
+                      </td>
+                      <td className="p-2 text-muted-foreground text-[10px]">{shot.lightingNote}</td>
+                      <td className="p-2 text-muted-foreground">{shot.estimatedDuration}s</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Saved scenes */}
+      {scenes.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Saved Shot Lists</h3>
+          {scenes.map(sName => {
+            const sShots = (savedShots as any[]).filter((s: any) => s.sceneName === sName);
+            const isOpen = activeScene === sName;
+            return (
+              <Card key={sName}>
+                <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/30"
+                  onClick={() => setActiveScene(isOpen ? null : sName)}>
+                  <div className="flex items-center gap-3">
+                    <Film className="h-4 w-4 text-violet-400 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium">{sName}</p>
+                      <p className="text-xs text-muted-foreground">{sShots.length} shots · {totalDuration(sShots)} screen time</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive"
+                      onClick={e => { e.stopPropagation(); deleteMutation.mutate({ projectId, sceneName: sName }); }}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                    {isOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                  </div>
+                </div>
+                {isOpen && (
+                  <div className="border-t overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead><tr className="border-b bg-muted/30">
+                        <th className="text-left p-2 w-12">#</th>
+                        <th className="text-left p-2 w-20">Type</th>
+                        <th className="text-left p-2 w-16">Lens</th>
+                        <th className="text-left p-2 w-24">Movement</th>
+                        <th className="text-left p-2">Frame / Action</th>
+                        <th className="text-left p-2 w-12">Dur.</th>
+                      </tr></thead>
+                      <tbody>
+                        {sShots.map((shot: any, i: number) => (
+                          <tr key={i} className="border-b hover:bg-muted/10">
+                            <td className="p-2 font-mono font-semibold text-violet-700">{shot.shotNumber}</td>
+                            <td className="p-2">
+                              <span className={["text-[10px] px-1.5 py-0.5 rounded font-medium", shotBadgeColor[shot.shotType] || "bg-muted text-muted-foreground"].join(" ")}>{shot.shotType}</span>
+                            </td>
+                            <td className="p-2 font-mono text-muted-foreground">{shot.lensLength}</td>
+                            <td className="p-2 text-[10px] text-muted-foreground">{shot.cameraMovement}</td>
+                            <td className="p-2">
+                              <p className="font-medium">{shot.frameDescription}</p>
+                              <p className="text-muted-foreground">{shot.action}</p>
+                              {shot.dialogue && <p className="italic text-violet-600">&ldquo;{shot.dialogue}&rdquo;</p>}
+                            </td>
+                            <td className="p-2 text-muted-foreground">{shot.estimatedDuration}s</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {scenes.length === 0 && generatedShots.length === 0 && (
+        <div className="rounded-xl border-2 border-dashed border-muted p-14 text-center">
+          <Film className="h-10 w-10 text-violet-300 mx-auto mb-3" />
+          <p className="font-medium text-sm">No shot lists yet</p>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+            Paste a scene from your script above. The AI reads your Director&apos;s Vision — era, camera format, lens profile, movement style — and generates a complete shot list with timing, framing, and lighting notes.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// ─── Shooting Schedule Tab ────────────────────────────────────────────────────
+function ScheduleTab({ projectId }: { projectId: number }) {
+  const utils = trpc.useUtils();
+  const { data: days = [], isLoading } = trpc.productionAssets.shootingSchedule.list.useQuery({ projectId }, { enabled: !!projectId });
+  const [generatedDays, setGeneratedDays] = useState<any[]>([]);
+
+  const generateMutation = trpc.productionAssets.shootingSchedule.generate.useMutation({
+    onSuccess: data => { setGeneratedDays(data.days); toast.success(`${data.days.length}-day schedule generated`); },
+    onError: e => toast.error(e.message),
+  });
+  const saveMutation = trpc.productionAssets.shootingSchedule.save.useMutation({
+    onSuccess: () => { utils.productionAssets.shootingSchedule.list.invalidate({ projectId }); setGeneratedDays([]); toast.success("Schedule saved"); },
+    onError: e => toast.error(e.message),
+  });
+  const deleteMutation = trpc.productionAssets.shootingSchedule.deleteAll.useMutation({
+    onSuccess: () => { utils.productionAssets.shootingSchedule.list.invalidate({ projectId }); toast.success("Schedule cleared"); },
+    onError: e => toast.error(e.message),
+  });
+
+  const displayDays = generatedDays.length > 0 ? generatedDays : (days as any[]);
+  const isGenerated = generatedDays.length > 0;
+
+  if (isLoading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+
+  return (
+    <div className="space-y-5 max-w-4xl">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 className="text-sm font-semibold flex items-center gap-2">
+            <CalendarDays className="h-4 w-4 text-violet-500" />Shooting Schedule
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            AI groups your scenes by location, minimises company moves, respects permit windows and golden hour
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {(days as any[]).length > 0 && !isGenerated && (
+            <Button size="sm" variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/5"
+              onClick={() => deleteMutation.mutate({ projectId })} disabled={deleteMutation.isPending}>
+              <Trash2 className="h-3.5 w-3.5" />Clear Schedule
+            </Button>
+          )}
+          <Button size="sm" className="bg-violet-600 hover:bg-violet-700 gap-2"
+            onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending}>
+            {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+            {generateMutation.isPending ? "Scheduling..." : "Generate Schedule"}
+          </Button>
+        </div>
+      </div>
+
+      {isGenerated && (
+        <div className="flex items-center justify-between bg-violet-50 border border-violet-200 rounded-lg p-3">
+          <p className="text-sm text-violet-700 font-medium">
+            <Sparkles className="h-4 w-4 inline mr-1" />
+            {generatedDays.length}-day schedule ready — review then save
+          </p>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setGeneratedDays([])}>Discard</Button>
+            <Button size="sm" className="bg-violet-600 hover:bg-violet-700 gap-1"
+              onClick={() => saveMutation.mutate({ projectId, days: generatedDays })} disabled={saveMutation.isPending}>
+              {saveMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+              Save Schedule
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {displayDays.length === 0 && !generateMutation.isPending && (
+        <div className="rounded-xl border-2 border-dashed border-muted p-14 text-center">
+          <CalendarDays className="h-10 w-10 text-violet-300 mx-auto mb-3" />
+          <p className="font-medium text-sm">No schedule yet</p>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+            First scout your locations (Locations tab) and generate shot lists (Shot List tab). Then the AI can create an optimised day-by-day shooting schedule that groups scenes by location and respects your scouting data.
+          </p>
+          <Button size="sm" className="mt-4 bg-violet-600 hover:bg-violet-700 gap-2"
+            onClick={() => generateMutation.mutate({ projectId })} disabled={generateMutation.isPending}>
+            <Wand2 className="h-4 w-4" />Generate Schedule
+          </Button>
+        </div>
+      )}
+
+      {generateMutation.isPending && (
+        <div className="flex flex-col items-center justify-center py-16 gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+          <p className="text-sm text-muted-foreground">Analysing locations and scenes...</p>
+          <p className="text-xs text-muted-foreground">Optimising for minimal company moves and golden hour windows</p>
+        </div>
+      )}
+
+      {displayDays.length > 0 && (
+        <div className="space-y-3">
+          {displayDays.map((day: any, i: number) => (
+            <Card key={i} className={isGenerated ? "border-violet-200" : ""}>
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-violet-600 flex items-center justify-center shrink-0">
+                      <span className="text-white text-sm font-bold">D{day.dayNumber}</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">{day.locationName}</p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                        <span className="flex items-center gap-1"><Sun className="h-3 w-3" />{day.callTime} — {day.wrapTime}</span>
+                        <span>{day.estimatedPages} pages</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 pl-13 ml-13 space-y-2">
+                  <div className="ml-13">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5">Scenes</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(Array.isArray(day.scenes) ? day.scenes : []).map((sc: string, si: number) => (
+                        <Badge key={si} variant="secondary" className="text-xs">{sc}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  {day.lightingWindow && (
+                    <div className="flex items-start gap-2 text-xs bg-amber-50 border border-amber-200 rounded-lg p-2">
+                      <Sun className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+                      <p className="text-amber-800"><span className="font-medium">Golden Hour:</span> {day.lightingWindow}</p>
+                    </div>
+                  )}
+                  {day.notes && (
+                    <p className="text-xs text-muted-foreground bg-muted/30 rounded-lg p-2">{day.notes}</p>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))}
+          {displayDays.length > 0 && (
+            <div className="grid grid-cols-3 gap-3 pt-2">
+              <Card className="p-3 text-center">
+                <p className="text-2xl font-bold text-violet-700">{displayDays.length}</p>
+                <p className="text-xs text-muted-foreground">Shoot Days</p>
+              </Card>
+              <Card className="p-3 text-center">
+                <p className="text-2xl font-bold text-violet-700">
+                  {new Set(displayDays.map((d: any) => d.locationName)).size}
+                </p>
+                <p className="text-xs text-muted-foreground">Locations Used</p>
+              </Card>
+              <Card className="p-3 text-center">
+                <p className="text-2xl font-bold text-violet-700">
+                  {displayDays.reduce((a: number, d: any) => a + (Array.isArray(d.scenes) ? d.scenes.length : 0), 0)}
+                </p>
+                <p className="text-xs text-muted-foreground">Total Scenes</p>
+              </Card>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// ─── Continuity Checker Tab ───────────────────────────────────────────────────
+function ContinuityTab({ projectId }: { projectId: number }) {
+  const [result, setResult] = useState<any>(null);
+  const checkMutation = trpc.productionAssets.continuityCheck.run.useMutation({
+    onSuccess: data => { setResult(data); },
+    onError: e => toast.error(e.message),
+  });
+
+  const riskColors: Record<string, string> = {
+    low:    "bg-green-100 text-green-800 border-green-200",
+    medium: "bg-amber-100 text-amber-800 border-amber-200",
+    high:   "bg-red-100 text-red-800 border-red-200",
+  };
+  const severityColors: Record<string, string> = {
+    critical: "border-l-red-500 bg-red-50/50",
+    warning:  "border-l-amber-500 bg-amber-50/50",
+    info:     "border-l-blue-500 bg-blue-50/50",
+  };
+  const severityIcons: Record<string, string> = {
+    critical: "🔴", warning: "🟡", info: "🔵",
+  };
+  const catLabels: Record<string, string> = {
+    era:"Era / Period", geography:"Geography", class:"Social Class",
+    character:"Character", lighting:"Lighting", other:"Other",
+  };
+
+  return (
+    <div className="space-y-5 max-w-3xl">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 className="text-sm font-semibold flex items-center gap-2">
+            <Eye className="h-4 w-4 text-violet-500" />Continuity Checker
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            AI cross-references wardrobe, locations, and your Director&apos;s Vision to flag conflicts before they reach set
+          </p>
+        </div>
+        <Button size="sm" className="bg-violet-600 hover:bg-violet-700 gap-2"
+          onClick={() => checkMutation.mutate({ projectId })} disabled={checkMutation.isPending}>
+          {checkMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+          {checkMutation.isPending ? "Analysing..." : "Run Continuity Check"}
+        </Button>
+      </div>
+
+      {checkMutation.isPending && (
+        <div className="flex flex-col items-center justify-center py-16 gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+          <p className="text-sm text-muted-foreground">Comparing wardrobe eras with location eras...</p>
+          <p className="text-xs text-muted-foreground">Checking social class consistency, geographic accuracy...</p>
+        </div>
+      )}
+
+      {!result && !checkMutation.isPending && (
+        <div className="rounded-xl border-2 border-dashed border-muted p-14 text-center">
+          <Eye className="h-10 w-10 text-violet-300 mx-auto mb-3" />
+          <p className="font-medium text-sm">No continuity report yet</p>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+            Add your Director&apos;s Vision (Vision tab), scout locations (Locations tab), and upload wardrobe (Wardrobe tab). Then run a check to catch era mismatches, geography conflicts, and social class inconsistencies before you reach set.
+          </p>
+        </div>
+      )}
+
+      {result && (
+        <div className="space-y-4">
+          {/* Overall risk */}
+          <div className={["rounded-xl border p-4 flex items-start gap-3", riskColors[result.overallRisk] || riskColors.low].join(" ")}>
+            <div className="text-2xl mt-0.5">
+              {result.overallRisk === "high" ? "🔴" : result.overallRisk === "medium" ? "🟡" : "🟢"}
+            </div>
+            <div>
+              <p className="font-semibold capitalize">{result.overallRisk} Continuity Risk</p>
+              <p className="text-sm mt-1">{result.summary}</p>
+              <p className="text-xs mt-1 opacity-70">
+                {result.issues.length} issue{result.issues.length !== 1 ? "s" : ""} found · {result.strengths.length} strength{result.strengths.length !== 1 ? "s" : ""} identified
+              </p>
+            </div>
+          </div>
+
+          {/* Issues */}
+          {result.issues.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Issues Found</h3>
+              {result.issues.map((issue: any, i: number) => (
+                <div key={i} className={["rounded-lg border-l-4 p-3 space-y-1", severityColors[issue.severity] || severityColors.info].join(" ")}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">{severityIcons[issue.severity] || "🔵"}</span>
+                    <p className="text-sm font-semibold">{issue.title}</p>
+                    <Badge variant="outline" className="text-[10px] h-4 ml-auto">
+                      {catLabels[issue.category] || issue.category}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground pl-6">{issue.description}</p>
+                  <p className="text-xs pl-6 font-medium">
+                    <span className="text-muted-foreground">Fix: </span>{issue.recommendation}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Strengths */}
+          {result.strengths.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Strengths</h3>
+              <div className="rounded-xl bg-green-50 border border-green-200 p-3 space-y-1.5">
+                {result.strengths.map((s: string, i: number) => (
+                  <div key={i} className="flex items-start gap-2 text-xs text-green-800">
+                    <span className="text-green-600 shrink-0">✓</span>
+                    <span>{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <Button size="sm" variant="outline" className="gap-2"
+            onClick={() => checkMutation.mutate({ projectId })} disabled={checkMutation.isPending}>
+            <Zap className="h-3.5 w-3.5" />Re-run Check
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// ─── Title Card / Text Overlay Tool ──────────────────────────────────────────
+const TITLE_PRESETS = [
+  { label: "TO BE CONTINUED...",  text: "TO BE CONTINUED...",  style: "cinematic", align: "center", pos: "bottom" },
+  { label: "GUEST STAR",          text: "GUEST STAR\n[Name]",  style: "credits",   align: "center", pos: "bottom" },
+  { label: "PREVIOUSLY ON...",    text: "PREVIOUSLY ON...",    style: "cinematic", align: "left",   pos: "top" },
+  { label: "NEXT TIME ON...",     text: "NEXT TIME ON...",     style: "cinematic", align: "left",   pos: "top" },
+  { label: "EPISODE TITLE",       text: "Episode I\n[Title]", style: "title",     align: "center", pos: "center" },
+  { label: "TIME / PLACE CARD",   text: "PARIS, 1943",         style: "subtitle",  align: "left",   pos: "bottom" },
+  { label: "YEARS LATER",         text: "5 YEARS LATER",      style: "cinematic", align: "center", pos: "center" },
+  { label: "IN MEMORY OF",        text: "In Memory Of\n[Name]",style: "elegant",  align: "center", pos: "center" },
+  { label: "THE END",             text: "THE END",             style: "title",     align: "center", pos: "center" },
+  { label: "BASED ON...",         text: "Based on a true story",style: "subtitle", align: "center", pos: "bottom" },
+];
+
+const TEXT_STYLES = [
+  { value: "cinematic",  label: "Cinematic",  font: "bold 48px 'Georgia', serif",           color: "#ffffff", shadow: "3px 3px 12px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7)", letterSpacing: 6 },
+  { value: "title",      label: "Grand Title",font: "bold 64px 'Georgia', serif",           color: "#ffffff", shadow: "2px 2px 20px rgba(0,0,0,1)", letterSpacing: 8 },
+  { value: "credits",    label: "TV Credits", font: "300 36px 'Arial', sans-serif",         color: "#ffffff", shadow: "1px 1px 8px rgba(0,0,0,0.9)", letterSpacing: 3 },
+  { value: "subtitle",   label: "Subtitle",   font: "italic 28px 'Georgia', serif",         color: "#e8e8e8", shadow: "1px 1px 6px rgba(0,0,0,0.8)", letterSpacing: 2 },
+  { value: "elegant",    label: "Elegant",    font: "300 40px 'Georgia', serif",            color: "#f0e8d0", shadow: "0 0 30px rgba(0,0,0,0.8)", letterSpacing: 4 },
+  { value: "neon",       label: "Neon",       font: "bold 48px 'Arial', sans-serif",        color: "#00ffff", shadow: "0 0 20px #00ffff, 0 0 40px #00ffff66", letterSpacing: 4 },
+  { value: "horror",     label: "Horror",     font: "bold 52px 'Georgia', serif",           color: "#cc0000", shadow: "2px 2px 0 #000, 0 0 30px rgba(180,0,0,0.8)", letterSpacing: 2 },
+  { value: "vintage",    label: "Vintage",    font: "bold italic 42px 'Georgia', serif",    color: "#f5e6a0", shadow: "2px 2px 8px rgba(0,0,0,0.9)", letterSpacing: 3 },
+];
+
+const TEXT_POSITIONS = [
+  { value: "top",    label: "Top" },
+  { value: "center", label: "Center" },
+  { value: "bottom", label: "Bottom" },
+];
+
+const TEXT_ALIGNS = [
+  { value: "left",   label: "Left" },
+  { value: "center", label: "Center" },
+  { value: "right",  label: "Right" },
+];
+
+function TitleCardTab({ projectId }: { projectId: number }) {
+  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const fileRef2   = useRef<HTMLInputElement>(null);
+
+  const [bgImage,      setBgImage]      = useState<HTMLImageElement | null>(null);
+  const [bgDataUrl,    setBgDataUrl]    = useState<string | null>(null);
+  const [overlayText,  setOverlayText]  = useState("TO BE CONTINUED...");
+  const [textStyle,    setTextStyle]    = useState("cinematic");
+  const [textPos,      setTextPos]      = useState("bottom");
+  const [textAlign,    setTextAlign]    = useState("center");
+  const [customColor,  setCustomColor]  = useState("#ffffff");
+  const [useCustomCol, setUseCustomCol] = useState(false);
+  const [overlayDim,   setOverlayDim]   = useState(true);
+  const [dimStrength,  setDimStrength]  = useState(40);
+  const [vignette,     setVignette]     = useState(true);
+  const [rendered,     setRendered]     = useState(false);
+  const [paddingX,     setPaddingX]     = useState(60);
+  const [lineSpacing,  setLineSpacing]  = useState(1.3);
+
+  function loadImage(file: File) {
+    if (!file.type.startsWith("image/")) { toast.error("Please select an image file"); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const url = ev.target?.result as string;
+      setBgDataUrl(url);
+      const img = new Image();
+      img.onload = () => { setBgImage(img); setRendered(false); };
+      img.src = url;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderToCanvas() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const W = 1920, H = 1080;
+    canvas.width = W; canvas.height = H;
+    const ctx2d = canvas.getContext("2d")!;
+    ctx2d.clearRect(0, 0, W, H);
+
+    // Background
+    if (bgImage) {
+      const scale = Math.max(W / bgImage.width, H / bgImage.height);
+      const sw = bgImage.width * scale, sh = bgImage.height * scale;
+      ctx2d.drawImage(bgImage, (W - sw) / 2, (H - sh) / 2, sw, sh);
+    } else {
+      ctx2d.fillStyle = "#0a0a0a";
+      ctx2d.fillRect(0, 0, W, H);
+    }
+
+    // Overlay dimming
+    if (overlayDim) {
+      ctx2d.fillStyle = `rgba(0,0,0,${dimStrength / 100})`;
+      ctx2d.fillRect(0, 0, W, H);
+    }
+
+    // Vignette
+    if (vignette) {
+      const grad = ctx2d.createRadialGradient(W/2, H/2, H*0.3, W/2, H/2, H*0.85);
+      grad.addColorStop(0, "rgba(0,0,0,0)");
+      grad.addColorStop(1, "rgba(0,0,0,0.7)");
+      ctx2d.fillStyle = grad;
+      ctx2d.fillRect(0, 0, W, H);
+    }
+
+    // Text
+    const styleObj = TEXT_STYLES.find(s => s.value === textStyle) || TEXT_STYLES[0];
+    ctx2d.font = styleObj.font;
+    ctx2d.shadowColor = "transparent";
+
+    const lines = overlayText.split("\n");
+    const lineH = parseInt(styleObj.font.match(/\d+(?=px)/)?.[0] || "48") * lineSpacing;
+    const totalH = lineH * lines.length;
+
+    let baseY: number;
+    if (textPos === "top")    baseY = paddingX + lineH;
+    else if (textPos === "bottom") baseY = H - paddingX - totalH + lineH;
+    else                      baseY = (H - totalH) / 2 + lineH;
+
+    ctx2d.textAlign = textAlign as CanvasTextAlign;
+    let textX: number;
+    if (textAlign === "left")  textX = paddingX;
+    else if (textAlign === "right") textX = W - paddingX;
+    else                       textX = W / 2;
+
+    // Draw shadow/glow
+    ctx2d.shadowColor   = styleObj.shadow.includes("rgba") ? styleObj.shadow.match(/rgba\([^)]+\)/)?.[0] || "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.9)";
+    ctx2d.shadowBlur    = 20;
+    ctx2d.shadowOffsetX = 2;
+    ctx2d.shadowOffsetY = 2;
+    ctx2d.fillStyle     = useCustomCol ? customColor : styleObj.color;
+
+    lines.forEach((line, li) => {
+      ctx2d.letterSpacing = styleObj.letterSpacing + "px";
+      ctx2d.fillText(line, textX, baseY + li * lineH);
+    });
+
+    setRendered(true);
+  }
+
+  function downloadImage() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = "title-card.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+    toast.success("Title card downloaded!");
+  }
+
+  // Auto-render when settings change
+  const depsKey = [overlayText, textStyle, textPos, textAlign, customColor, useCustomCol, overlayDim, dimStrength, vignette, paddingX, lineSpacing, bgDataUrl].join("|");
+  useEffect(() => {
+    if (canvasRef.current) renderToCanvas();
+  }, [depsKey]);
+
+  return (
+    <div className="space-y-5 max-w-5xl">
+      <div>
+        <h2 className="text-sm font-semibold flex items-center gap-2">
+          <Star className="h-4 w-4 text-violet-500" />Title Card Creator
+        </h2>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Add cinematic text overlays — &ldquo;TO BE CONTINUED&rdquo;, &ldquo;GUEST STAR&rdquo;, chapter titles, time cards, and more
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+        {/* Controls */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Quick presets */}
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Quick Presets</CardTitle></CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-1.5">
+                {TITLE_PRESETS.map((p, i) => (
+                  <Button key={i} variant="outline" size="sm" className="h-6 text-[10px] px-2"
+                    onClick={() => {
+                      setOverlayText(p.text);
+                      setTextStyle(p.style);
+                      setTextAlign(p.align);
+                      setTextPos(p.pos);
+                    }}>{p.label}</Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Background image */}
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Background Image</CardTitle></CardHeader>
+            <CardContent className="space-y-2">
+              <div
+                className={["border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-violet-400 transition-colors",
+                  bgDataUrl ? "border-violet-300 bg-violet-50/20" : "border-muted"].join(" ")}
+                onClick={() => fileRef2.current?.click()}>
+                {bgDataUrl ? (
+                  <div className="flex items-center gap-2">
+                    <img src={bgDataUrl} className="h-10 w-16 object-cover rounded" />
+                    <div className="text-left">
+                      <p className="text-xs font-medium">Image loaded</p>
+                      <p className="text-[10px] text-muted-foreground">Click to change</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <Camera className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
+                    <p className="text-xs text-muted-foreground">Click to upload background image</p>
+                    <p className="text-[10px] text-muted-foreground">(Optional — black background if none)</p>
+                  </div>
+                )}
+              </div>
+              <input ref={fileRef2} type="file" accept="image/*" className="hidden"
+                onChange={e => { const f = e.target.files?.[0]; if (f) loadImage(f); }} />
+              {bgDataUrl && (
+                <Button size="sm" variant="ghost" className="w-full h-7 text-xs text-muted-foreground"
+                  onClick={() => { setBgImage(null); setBgDataUrl(null); }}>Remove image</Button>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Text content */}
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Text Content</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <Textarea value={overlayText} onChange={e => setOverlayText(e.target.value)}
+                rows={3} className="text-sm font-mono resize-none"
+                placeholder={"TO BE CONTINUED...\nor\nGUEST STAR\nJOHN DOE"} />
+              <p className="text-[10px] text-muted-foreground">Use new lines to split text into multiple lines</p>
+            </CardContent>
+          </Card>
+
+          {/* Style options */}
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Style</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <FieldGroup label="Text Style">
+                <Select value={textStyle} onValueChange={setTextStyle}>
+                  <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {TEXT_STYLES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </FieldGroup>
+              <div className="grid grid-cols-2 gap-2">
+                <FieldGroup label="Position">
+                  <Select value={textPos} onValueChange={setTextPos}>
+                    <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {TEXT_POSITIONS.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </FieldGroup>
+                <FieldGroup label="Alignment">
+                  <Select value={textAlign} onValueChange={setTextAlign}>
+                    <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {TEXT_ALIGNS.map(a => <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </FieldGroup>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="customCol" checked={useCustomCol} onChange={e => setUseCustomCol(e.target.checked)} className="rounded" />
+                <label htmlFor="customCol" className="text-xs">Custom text colour</label>
+                {useCustomCol && (
+                  <input type="color" value={customColor} onChange={e => setCustomColor(e.target.value)} className="h-6 w-10 rounded cursor-pointer border border-muted" />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Overlay options */}
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">Image Effects</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="dimCheck" checked={overlayDim} onChange={e => setOverlayDim(e.target.checked)} className="rounded" />
+                <label htmlFor="dimCheck" className="text-xs">Darken background</label>
+              </div>
+              {overlayDim && (
+                <div className="pl-5 space-y-1">
+                  <label className="text-xs text-muted-foreground">Strength: {dimStrength}%</label>
+                  <input type="range" min={10} max={90} value={dimStrength} onChange={e => setDimStrength(+e.target.value)} className="w-full h-1.5 accent-violet-600" />
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="vigCheck" checked={vignette} onChange={e => setVignette(e.target.checked)} className="rounded" />
+                <label htmlFor="vigCheck" className="text-xs">Cinematic vignette</label>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Margin from edges: {paddingX}px</label>
+                <input type="range" min={20} max={200} value={paddingX} onChange={e => setPaddingX(+e.target.value)} className="w-full h-1.5 accent-violet-600" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground">Line spacing: {lineSpacing}x</label>
+                <input type="range" min={1} max={2} step={0.05} value={lineSpacing} onChange={e => setLineSpacing(+e.target.value)} className="w-full h-1.5 accent-violet-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Preview */}
+        <div className="lg:col-span-3 space-y-3">
+          <div className="aspect-video w-full rounded-xl overflow-hidden border bg-black relative">
+            <canvas ref={canvasRef} className="w-full h-full object-contain" />
+            {!rendered && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                <p className="text-white/60 text-sm">Preview will appear here</p>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button className="flex-1 bg-violet-600 hover:bg-violet-700 gap-2" onClick={downloadImage} disabled={!rendered}>
+              <Zap className="h-4 w-4" />Download Title Card (1920×1080 PNG)
+            </Button>
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center">
+            Rendered at 1920×1080 — broadcast quality. The preview is live; changes update automatically.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function PreProductionPanel() {
   const { loading: authLoading, isAuthenticated } = useAuth();
@@ -1417,6 +2270,18 @@ export default function PreProductionPanel() {
             </TabsTrigger>
             <TabsTrigger value="wardrobe" className="gap-2 text-xs sm:text-sm">
               <Camera className="h-3.5 w-3.5" />Wardrobe
+            </TabsTrigger>
+            <TabsTrigger value="shotlist" className="gap-2 text-xs sm:text-sm">
+              <Film className="h-3.5 w-3.5" />Shot List
+            </TabsTrigger>
+            <TabsTrigger value="schedule" className="gap-2 text-xs sm:text-sm">
+              <CalendarDays className="h-3.5 w-3.5" />Schedule
+            </TabsTrigger>
+            <TabsTrigger value="continuity" className="gap-2 text-xs sm:text-sm">
+              <Eye className="h-3.5 w-3.5" />Continuity
+            </TabsTrigger>
+            <TabsTrigger value="titlecard" className="gap-2 text-xs sm:text-sm">
+              <Star className="h-3.5 w-3.5" />Title Cards
             </TabsTrigger>
           </TabsList>
           <TabsContent value="vision">
