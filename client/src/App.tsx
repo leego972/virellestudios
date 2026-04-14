@@ -95,6 +95,7 @@ const LiveActionPlate = lazy(() => import("./pages/LiveActionPlate"));
 const AICasting = lazy(() => import("./pages/AICasting"));
 const AssetMarketplace = lazy(() => import("./pages/AssetMarketplace"));
 const DirectorCut = lazy(() => import("./pages/DirectorCut"));
+const PreProductionPanel = lazy(() => import("./pages/PreProductionPanel"));
 const FeatureTimeline = lazy(() => import("./pages/FeatureTimeline"));
 const TrailerStudio = lazy(() => import("./pages/TrailerStudio"));
 const TVCommercial = lazy(() => import("./pages/TVCommercial"));
@@ -153,6 +154,7 @@ function GatedVFXSuite() { return <LazyPage><SubscriptionGate feature="VFX Suite
 function GatedLiveActionPlate() { return <LazyPage><SubscriptionGate feature="Live Action Plate" featureKey="canUseLiveActionPlate" requiredTier="independent"><LiveActionPlate /></SubscriptionGate></LazyPage>; }
 function GatedAICasting() { return <LazyPage><SubscriptionGate feature="AI Casting" featureKey="canUseAICasting" requiredTier="independent"><AICasting /></SubscriptionGate></LazyPage>; }
 function GatedDirectorCut() { return <LazyPage><SubscriptionGate feature="Director's Cut" featureKey="canUseDirectorAssistant" requiredTier="indie"><DirectorCut /></SubscriptionGate></LazyPage>; }
+function GatedPreProductionPanel() { return <LazyPage><SubscriptionGate feature="Pre-Production Panel" featureKey="canUseLocationScout" requiredTier="indie"><PreProductionPanel /></SubscriptionGate></LazyPage>; }
 function GatedFeatureTimeline() { return <LazyPage><SubscriptionGate feature="Feature Timeline" featureKey="canUseDirectorAssistant" requiredTier="indie"><FeatureTimeline /></SubscriptionGate></LazyPage>; }
 function GatedTrailerStudio() { return <LazyPage><SubscriptionGate feature="Trailer Studio" featureKey="canUseFullFilmGeneration" requiredTier="amateur"><TrailerStudio /></SubscriptionGate></LazyPage>; }
 function GatedTVCommercial() { return <LazyPage><SubscriptionGate feature="TV Commercial Creator" featureKey="canUseAdPosterMaker" requiredTier="independent"><TVCommercial /></SubscriptionGate></LazyPage>; }
@@ -221,6 +223,7 @@ function Router() {
       <Route path="/projects/:projectId/live-action-plate" component={GatedLiveActionPlate} />
       <Route path="/projects/:projectId/ai-casting" component={GatedAICasting} />
       <Route path="/projects/:projectId/director-cut" component={GatedDirectorCut} />
+      <Route path="/projects/:id/pre-production" component={GatedPreProductionPanel} />
       <Route path="/projects/:projectId/feature-timeline" component={GatedFeatureTimeline} />
       <Route path="/projects/:projectId/trailer-studio" component={GatedTrailerStudio} />
       <Route path="/projects/:projectId/tv-commercial" component={GatedTVCommercial} />
