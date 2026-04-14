@@ -853,6 +853,55 @@ export async function runAutoMigration(): Promise<void> {
         exportedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       )`,
     },
+    {
+      name: "directorVision",
+      createSQL: `CREATE TABLE IF NOT EXISTS directorVision (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        projectId INT NOT NULL UNIQUE,
+        userId INT NOT NULL,
+        cameraSystem VARCHAR(128) NULL,
+        lensSet VARCHAR(128) NULL,
+        aspectRatio VARCHAR(16) NULL,
+        frameRate VARCHAR(16) NULL,
+        shootingFormat VARCHAR(64) NULL,
+        colorGradeStyle VARCHAR(128) NULL,
+        referenceFilms JSON NULL,
+        colorPalette JSON NULL,
+        lutName VARCHAR(128) NULL,
+        movementStyle VARCHAR(128) NULL,
+        coverageNotes TEXT NULL,
+        lightingStyle VARCHAR(128) NULL,
+        soundDesignDirection TEXT NULL,
+        musicGenre VARCHAR(128) NULL,
+        visualDnaPrompt TEXT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "productionVehicles",
+      createSQL: `CREATE TABLE IF NOT EXISTS productionVehicles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        projectId INT NOT NULL,
+        userId INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        make VARCHAR(128) NULL,
+        model VARCHAR(128) NULL,
+        year INT NULL,
+        color VARCHAR(128) NULL,
+        \`condition\` VARCHAR(64) NULL,
+        vehicleRole VARCHAR(64) NOT NULL DEFAULT 'hero',
+        vehicleType VARCHAR(64) NULL,
+        period VARCHAR(64) NULL,
+        specialFeatures TEXT NULL,
+        sceneIds JSON NULL,
+        aiVisualPrompt TEXT NULL,
+        referenceImages JSON NULL,
+        notes TEXT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    },
   ];
 
   // ─── Columns that may be missing from existing tables ───
@@ -1117,6 +1166,17 @@ export async function runAutoMigration(): Promise<void> {
     { table: "movies", column: "youtubeVideoId", definition: "VARCHAR(64) NULL" },
     { table: "movies", column: "youtubeUrl", definition: "TEXT NULL" },
     { table: "movies", column: "youtubeExportedAt", definition: "TIMESTAMP NULL" },
+    // Locations — pre-production scout & director variables
+    { table: "locations", column: "bestTimeOfDay",       definition: "VARCHAR(64) NULL" },
+    { table: "locations", column: "weatherPreferences",  definition: "JSON NULL" },
+    { table: "locations", column: "permitStatus",        definition: "VARCHAR(32) NULL DEFAULT 'not_required'" },
+    { table: "locations", column: "permitNotes",         definition: "TEXT NULL" },
+    { table: "locations", column: "powerAccess",         definition: "BOOLEAN NOT NULL DEFAULT FALSE" },
+    { table: "locations", column: "parkingNotes",        definition: "TEXT NULL" },
+    { table: "locations", column: "crewCapacity",        definition: "VARCHAR(64) NULL" },
+    { table: "locations", column: "shootingConstraints", definition: "TEXT NULL" },
+    { table: "locations", column: "seasonalNotes",       definition: "TEXT NULL" },
+    { table: "locations", column: "aiVisualPrompt",      definition: "TEXT NULL" },
   ];
 
   let tablesCreated = 0;
