@@ -928,6 +928,46 @@ export async function runAutoMigration(): Promise<void> {
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`,
+    },
+    {
+      name: "shotListItems",
+      createSQL: `CREATE TABLE IF NOT EXISTS shotListItems (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        projectId INT NOT NULL,
+        userId INT NOT NULL,
+        sceneName VARCHAR(255) NOT NULL,
+        sceneNumber VARCHAR(32) NULL,
+        shotNumber VARCHAR(16) NOT NULL,
+        shotType VARCHAR(32) NULL,
+        lensLength VARCHAR(32) NULL,
+        cameraMovement VARCHAR(64) NULL,
+        frameDescription TEXT NULL,
+        action TEXT NULL,
+        dialogue TEXT NULL,
+        estimatedDuration FLOAT NULL,
+        lightingNote TEXT NULL,
+        directorNote TEXT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+    },
+    {
+      name: "shootingDays",
+      createSQL: `CREATE TABLE IF NOT EXISTS shootingDays (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        projectId INT NOT NULL,
+        userId INT NOT NULL,
+        dayNumber INT NOT NULL,
+        locationName VARCHAR(255) NULL,
+        scenes JSON NULL,
+        callTime VARCHAR(16) NULL,
+        wrapTime VARCHAR(16) NULL,
+        estimatedPages VARCHAR(32) NULL,
+        notes TEXT NULL,
+        lightingWindow TEXT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
     }  ];
 
   // ─── Columns that may be missing from existing tables ───
