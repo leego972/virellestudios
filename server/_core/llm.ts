@@ -302,7 +302,25 @@ const normalizeResponseFormat = ({
 };
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
-  // If caller provided a user-specific API key, use it first before falling back to the platform key.
+  // ── TitanAI fast-path ───────────────────────────────────────────────────
+  // If TITAN_API_URL is set AND the caller requests a titan-* model, route
+  // directly to the self-hosted TitanAI API server (OpenAI-compatible).
+  // Falls back to standard OpenAI/Forge routing if TitanAI API is unavailable.
+  const requestedModel = typeof params.model === "string" ? params.model : "";
+  if (ENV.titanApiUrl && requestedModel.startsWith("titan-")) {
+    console.log(`[LLM] Routing to TitanAI API: ${requestedModel}`);
+    try {
+      return await invokeLLMWithProvider(params, {
+        url: `${ENV.titanApiUrl}/v1/chat/completions`,
+        apiKey: ENV.titanApiKey || "",
+        model: requestedModel,
+      });
+    } catch (titanErr: unknown) {
+      console.warn(`[LLM] TitanAI API failed, falling back to platform provider: ${(titanErr as Error).message}`);
+    }
+  }
+
+    // If caller provided a user-specific API key, use it first before falling back to the platform key.
   // This ensures BYOK users always use their own quota, not the platform's.
   if (params.userApiKey) {
     try {
