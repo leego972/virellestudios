@@ -2285,16 +2285,16 @@ export default function PreProductionPanel() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="vision">
-            <VisionTab projectId={projectId} constants={constants as Constants | null} />
+            <VisionTab projectId={projectId} constants={constants as unknown as Constants | null} />
           </TabsContent>
           <TabsContent value="locations">
-            <LocationScoutTab projectId={projectId} constants={constants as Constants | null} />
+            <LocationScoutTab projectId={projectId} constants={constants as unknown as Constants | null} />
           </TabsContent>
           <TabsContent value="vehicles">
-            <VehicleRegistryTab projectId={projectId} constants={constants as Constants | null} />
+            <VehicleRegistryTab projectId={projectId} constants={constants as unknown as Constants | null} />
           </TabsContent>
           <TabsContent value="atmosphere">
-            <AtmosphereTab projectId={projectId} constants={constants as Constants | null} />
+            <AtmosphereTab projectId={projectId} constants={constants as unknown as Constants | null} />
           </TabsContent>
           <TabsContent value="wardrobe">
             <WardrobeTab projectId={projectId} />
