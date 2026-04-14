@@ -593,7 +593,7 @@ const WardrobeUploadInput = z.object({
     projectId:       z.number(),
     name:            z.string().min(1).max(255),
     imageBase64:     z.string(),
-    mimeType:        z.enum(["image/jpeg", "image/png", "image/webp"]),
+    mimeType:        z.string(), // e.g. "image/jpeg" | "image/png" | "image/webp"
     category:        z.string().max(64).optional(),
     color:           z.string().max(128).optional(),
     secondaryColor:  z.string().max(128).optional(),
