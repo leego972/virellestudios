@@ -143,7 +143,37 @@ export default function AdminSignatureCast() {
                 <CardTitle className="text-sm text-zinc-300">Actor Registry — Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                {/* Portrait Generation */}
+                <div className="mb-4 p-4 bg-violet-500/10 rounded-xl border border-violet-500/20">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                      <h3 className="text-sm font-semibold text-violet-300">AI Portrait Generation</h3>
+                      <p className="text-xs text-zinc-500 mt-0.5">Generate cinematic AI portraits for all actors using visual specs</p>
+                    </div>
+                    <div className="flex gap-2 flex-wrap">
+                      {(["flagship", "premium", "standard"] as const).map(tier => (
+                        <Button key={tier} variant="outline" size="sm"
+                          className="border-violet-500/30 text-violet-300 hover:bg-violet-500/20 text-xs h-7"
+                          onClick={() => generateAllMutation.mutate({ tier })}
+                          disabled={generateAllMutation.isPending}>
+                          {tier.charAt(0).toUpperCase() + tier.slice(1)}
+                        </Button>
+                      ))}
+                      <Button size="sm"
+                        className="bg-violet-600 hover:bg-violet-700 gap-1.5 h-7 text-xs"
+                        onClick={() => generateAllMutation.mutate({ tier: "all" })}
+                        disabled={generateAllMutation.isPending}>
+                        {generateAllMutation.isPending ? "Generating..." : "Generate All"}
+                      </Button>
+                    </div>
+                  </div>
+                  {generateAllMutation.data && (
+                    <p className="text-xs text-emerald-400 mt-2">
+                      {"Completed: " + generateAllMutation.data.succeeded + "/" + generateAllMutation.data.total + " portraits generated"}
+                    </p>
+                  )}
+                </div>
+                                <div className="space-y-2">
                   {actors.map((actor) => (
                     <div key={actor.id} className="flex items-center gap-3 p-3 rounded-lg border border-zinc-800 bg-zinc-900/30">
                       {editingId === actor.id ? (
@@ -234,6 +264,15 @@ export default function AdminSignatureCast() {
                               {" · "}ID: {actor.id}
                             </p>
                           </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => generateOneMutation.mutate({ actorId: actor.id })}
+                            disabled={generateOneMutation.isPending && (generateOneMutation.variables as any)?.actorId === actor.id}
+                            className="h-7 text-xs text-violet-400 hover:text-violet-300 hover:bg-violet-500/10"
+                          >
+                            {generateOneMutation.isPending && (generateOneMutation.variables as any)?.actorId === actor.id ? "..." : "Portrait"}
+                          </Button>
                           <Button
                             size="sm"
                             variant="ghost"
