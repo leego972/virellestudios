@@ -28,7 +28,7 @@ import {
     featureCuts, InsertFeatureCut, FeatureCut,
     featureCutScenes, InsertFeatureCutScene, FeatureCutScene,
     filmCompileJobs, InsertFilmCompileJob, FilmCompileJob,
-    filmMixSettings, filmAdrTracks,
+    filmMixSettings, filmAdrTracks, filmFoleyTracks, filmScoreCues,
   } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
