@@ -79,6 +79,11 @@ import { trpc } from "@/lib/trpc";
   }
 
   export default function SignatureCast() {
+  const { data: liveActors } = trpc.signatureCast.listActors.useQuery(undefined, { staleTime: 5 * 60 * 1000 });
+  function actorPortrait(id: string): string | null {
+    return (liveActors?.find((a: any) => a.id === id) as any)?.portraitUrl ?? null;
+  }
+
     const [, navigate] = useLocation();
     const [hoveredActor, setHoveredActor] = useState<string | null>(null);
 
