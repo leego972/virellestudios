@@ -1,4 +1,4 @@
-import { eq, and, asc, desc, isNull } from "drizzle-orm";
+import { eq, and, asc, desc, isNull, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { sql } from "drizzle-orm";
 import {
@@ -28,6 +28,7 @@ import {
     featureCuts, InsertFeatureCut, FeatureCut,
     featureCutScenes, InsertFeatureCutScene, FeatureCutScene,
     filmCompileJobs, InsertFilmCompileJob, FilmCompileJob,
+    filmMixSettings, filmAdrTracks,
   } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1850,7 +1851,7 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
   export async function updateFeatureCut(
     id: number,
     userId: number,
-    data: Partial<{ title: string; description: string; notes: string; totalRuntime: number }>
+    data: Partial<{ name: string; description: string; notes: string; totalDuration: number }>
   ) {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
@@ -1866,7 +1867,7 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
     if (!db) throw new Error("Database not available");
     await db
       .update(featureCuts)
-      .set({ status: "locked", lockedAt: new Date(), lockedBy: userId })
+      .set({ isLocked: true, lockedAt: new Date(), lockedBy: userId })
       .where(and(eq(featureCuts.id, id), eq(featureCuts.userId, userId)));
     return getFeatureCutById(id, userId);
   }
@@ -1876,7 +1877,7 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
     if (!db) throw new Error("Database not available");
     await db
       .update(featureCuts)
-      .set({ status: "open", lockedAt: null, lockedBy: null })
+      .set({ isLocked: false, lockedAt: null, lockedBy: null })
       .where(and(eq(featureCuts.id, id), eq(featureCuts.userId, userId)));
     return getFeatureCutById(id, userId);
   }
@@ -1934,7 +1935,7 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
     if (!db) throw new Error("Database not available");
     await db
       .update(featureCutScenes)
-      .set({ included })
+      .set({ isIncluded: included })
       .where(and(eq(featureCutScenes.cutId, cutId), eq(featureCutScenes.sceneId, sceneId)));
     return { success: true };
   }
@@ -1957,12 +1958,12 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
     const db = await getDb();
     if (!db) return;
     const cutScenes = await db
-      .select({ sceneId: featureCutScenes.sceneId, included: featureCutScenes.included })
+      .select({ sceneId: featureCutScenes.sceneId, isIncluded: featureCutScenes.isIncluded })
       .from(featureCutScenes)
       .where(eq(featureCutScenes.cutId, cutId));
-    const includedIds = cutScenes.filter((s) => s.included).map((s) => s.sceneId);
+    const includedIds = cutScenes.filter((s) => s.isIncluded).map((s) => s.sceneId);
     if (includedIds.length === 0) {
-      await db.update(featureCuts).set({ totalRuntime: 0 }).where(eq(featureCuts.id, cutId));
+      await db.update(featureCuts).set({ totalDuration: 0 }).where(eq(featureCuts.id, cutId));
       return;
     }
     const sceneRows = await db
@@ -1970,7 +1971,7 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
       .from(scenes)
       .where(inArray(scenes.id, includedIds));
     const total = sceneRows.reduce((sum, s) => sum + (s.duration ?? 0), 0);
-    await db.update(featureCuts).set({ totalRuntime: total }).where(eq(featureCuts.id, cutId));
+    await db.update(featureCuts).set({ totalDuration: total }).where(eq(featureCuts.id, cutId));
   }
 
   // ─── Compile Jobs ─────────────────────────────────────────────────────────────
