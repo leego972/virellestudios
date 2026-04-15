@@ -718,7 +718,7 @@ export default function DirectorCut() {
                 <Input value={newCutTitle} onChange={e => setNewCutTitle(e.target.value)} className="bg-zinc-800 border-white/10" placeholder="Director's Cut v2" />
                 <DialogFooter>
                   <Button variant="ghost" onClick={() => setShowNewCutDialog(false)}>Cancel</Button>
-                  <Button onClick={() => createCutMutation.mutate({ projectId, title: newCutTitle })} disabled={createCutMutation.isPending}>
+                  <Button onClick={() => createCutMutation.mutate({ projectId, name: newCutTitle })} disabled={createCutMutation.isPending}>
                     {createCutMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create"}
                   </Button>
                 </DialogFooter>
