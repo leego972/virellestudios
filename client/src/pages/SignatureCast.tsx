@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
   import { useLocation } from "wouter";
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
@@ -208,8 +209,12 @@ import { useState } from "react";
                     {/* Actor identity avatar */}
                     <div className={`w-full aspect-[3/4] rounded-lg ${ac.bg} ${ac.border} border mb-4 flex flex-col items-center justify-center gap-2 overflow-hidden relative`}>
                       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.05),transparent_70%)]" />
-                      <div className={`relative z-10 w-16 h-16 rounded-full ${ac.bg} ${ac.border} border-2 flex items-center justify-center text-xl font-bold ${ac.text}`}>
-                        {actor.initials}
+                      <div className={`relative z-10 w-20 h-20 rounded-full ${ac.bg} ${ac.border} border-2 flex items-center justify-center text-xl font-bold ${ac.text} overflow-hidden`}>
+                        {actorPortrait(actor.id) ? (
+                          <img src={actorPortrait(actor.id)!} alt={actor.name} className="w-full h-full object-cover object-top" />
+                        ) : (
+                          <span>{actor.initials}</span>
+                        )}
                       </div>
                       <p className={`relative z-10 text-[10px] ${ac.text} font-semibold tracking-widest uppercase opacity-60`}>{actor.category}</p>
                     </div>
@@ -257,8 +262,12 @@ import { useState } from "react";
                     className="rounded-xl border border-white/5 hover:border-purple-500/20 bg-zinc-900/30 p-5 cursor-pointer transition-all group"
                     onClick={() => navigate(`/talent-search?actor=${actor.id}`)}>
                     <div className="flex items-center gap-3 mb-3">
-                      <div className={`w-10 h-10 rounded-full ${ac.bg} ${ac.border} border flex items-center justify-center text-sm font-bold ${ac.text}`}>
-                        {actor.initials}
+                      <div className={`w-10 h-10 rounded-full ${ac.bg} ${ac.border} border flex items-center justify-center text-sm font-bold ${ac.text} overflow-hidden`}>
+                        {actorPortrait(actor.id) ? (
+                          <img src={actorPortrait(actor.id)!} alt={actor.name} className="w-full h-full object-cover object-top" />
+                        ) : (
+                          <span>{actor.initials}</span>
+                        )}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-white">{actor.name}</p>
@@ -300,8 +309,12 @@ import { useState } from "react";
                 <div key={actor.id}
                   className="rounded-lg border border-white/5 hover:border-white/10 bg-zinc-900/20 p-4 cursor-pointer transition-all text-center"
                   onClick={() => navigate(`/talent-search?actor=${actor.id}`)}>
-                  <div className={`w-12 h-12 rounded-full ${ac.bg} ${ac.border} border flex items-center justify-center text-sm font-bold ${ac.text} mx-auto mb-2`}>
-                    {actor.initials}
+                  <div className={`w-12 h-12 rounded-full ${ac.bg} ${ac.border} border flex items-center justify-center text-sm font-bold ${ac.text} mx-auto mb-2 overflow-hidden`}>
+                    {actorPortrait(actor.id) ? (
+                      <img src={actorPortrait(actor.id)!} alt={actor.name} className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <span>{actor.initials}</span>
+                    )}
                   </div>
                   <p className="text-xs font-semibold text-zinc-300">{actor.name}</p>
                   <p className="text-[10px] text-zinc-600 mt-0.5">{actor.category}</p>
