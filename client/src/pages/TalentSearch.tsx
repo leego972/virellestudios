@@ -475,7 +475,7 @@ import { useState, useEffect } from "react";
       gradient: "from-purple-900/35 via-zinc-900 to-zinc-950",
       initials: "GT",
     },
-  ] as const;
+  ];
 
   type Actor = typeof SIGNATURE_CAST[number];
   type LicenseType = "creator" | "commercial" | "episodic";
@@ -773,7 +773,7 @@ import { useState, useEffect } from "react";
                       {/* Tier badge overlay */}
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
                         <TierBadge tier={actor.tier} />
-                        {actor.badges.includes("Featured in Next Door") && (
+                        {(actor.badges as readonly string[]).includes("Featured in Next Door") && (
                           <Badge className="bg-zinc-800/80 text-zinc-400 border border-zinc-700/50 text-xs">
                             <Film className="w-3 h-3 mr-1" />Next Door
                           </Badge>
@@ -1124,7 +1124,7 @@ import { useState, useEffect } from "react";
 
                 {/* Badges */}
                 <div className="flex flex-wrap gap-2">
-                  {selectedActor.badges.map((badge: string) => (
+                  {(selectedActor.badges as readonly string[]).map((badge: string) => (
                     <Badge key={badge} className="bg-zinc-800/50 text-zinc-400 border border-zinc-700/30 text-xs">{badge}</Badge>
                   ))}
                 </div>
