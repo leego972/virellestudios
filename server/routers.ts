@@ -9569,8 +9569,8 @@ Rules:
         `);
         return { success: true };
       }),
-  }),,
-    featureCut: router({
+  }),
+  featureCut: router({
       list: protectedProcedure
         .input(z.object({ projectId: z.number() }))
         .query(async ({ ctx, input }) => {
