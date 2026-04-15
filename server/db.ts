@@ -1812,7 +1812,7 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
   export async function createFeatureCut(
     projectId: number,
     userId: number,
-    title: string,
+    name: string,
     description?: string
   ) {
     const db = await getDb();
@@ -1820,7 +1820,7 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
     const [result] = await db.insert(featureCuts).values({
       projectId,
       userId,
-      title,
+      name,
       description,
     });
     return getFeatureCutById((result as any).insertId, userId);
