@@ -9586,11 +9586,11 @@ Rules:
       create: protectedProcedure
         .input(z.object({
           projectId: z.number(),
-          title: z.string().min(1).max(255).default("Director's Cut"),
+          name: z.string().min(1).max(255).default("Director's Cut"),
           description: z.string().max(2000).optional(),
         }))
         .mutation(async ({ ctx, input }) => {
-          return db.createFeatureCut(input.projectId, ctx.user.id, input.title, input.description);
+          return db.createFeatureCut(input.projectId, ctx.user.id, input.name, input.description);
         }),
       update: protectedProcedure
         .input(z.object({ id: z.number(), title: z.string().min(1).max(255).optional(), description: z.string().max(2000).optional(), targetRuntime: z.number().optional(), notes: z.string().optional() }))
