@@ -9360,12 +9360,23 @@ Rules:
 
       const planAccess = PLAN_CAST_ACCESS[userTier] ?? [];
 
-      return actors.map((actor: any) => ({
-        ...actor,
-        isEntitled: entitlements.includes(actor.id) || planAccess.includes(actor.tier),
-        entitlementSource: entitlements.includes(actor.id) ? "paid_unlock" :
-          planAccess.includes(actor.tier) ? "plan_inclusion" : "none",
-      }));
+      // Merge DB-stored portraitUrls over config defaults
+        let dbPortraits: Record<string, string> = {};
+        try {
+          const dbConn2 = await db.getDb();
+          if (dbConn2) {
+            const rows2 = await dbConn2.execute(sql`SELECT id, portraitUrl FROM signatureCastActors WHERE portraitUrl IS NOT NULL`) as any;
+            const pRows = Array.isArray(rows2) ? rows2 : rows2[0] ?? [];
+            for (const row of pRows) { if (row.portraitUrl) dbPortraits[row.id] = row.portraitUrl; }
+          }
+        } catch { /* table may not exist */ }
+        return actors.map((actor: any) => ({
+          ...actor,
+          portraitUrl: dbPortraits[actor.id] ?? (actor as any).portraitUrl ?? null,
+          isEntitled: entitlements.includes(actor.id) || planAccess.includes(actor.tier),
+          entitlementSource: entitlements.includes(actor.id) ? "paid_unlock" :
+            planAccess.includes(actor.tier) ? "plan_inclusion" : "none",
+        }));
     }),
 
     // Get entitlement status for a single actor
@@ -9569,6 +9580,103 @@ Rules:
         `);
         return { success: true };
       }),
+
+
+    // ── Portrait Generation (Admin) ──────────────────────────────────────────
+    generatePortrait: adminProcedure
+      .input(z.object({ actorId: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const { INITIAL_ACTORS } = await import("./_core/signatureCast");
+        const actor = (INITIAL_ACTORS as any[]).find((a: any) => a.id === input.actorId);
+        if (!actor) throw new TRPCError({ code: "NOT_FOUND", message: "Actor not found" });
+        const a = actor as any;
+        if (!a.visualSpec) throw new TRPCError({ code: "BAD_REQUEST", message: "Actor has no visual spec" });
+        const prompt = [
+          "Cinematic portrait photograph of a fictional character:",
+          a.visualSpec + ".",
+          "Professional Hollywood actor headshot.",
+          a.promptStyle + ".",
+          "Shot on Arri Alexa 35, 85mm prime lens, shallow depth of field, sharp focus on eyes.",
+          "High-end production quality. Photorealistic. 8K. Award-winning cinematography.",
+          "NO text. NO watermarks. NO logos.",
+        ].join(" ");
+        const result = await generateImage({ prompt });
+        if (!result?.url) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Image generation failed" });
+        // Upsert into signatureCastActors DB
+        try {
+          const dbConn = await db.getDb();
+          if (dbConn) {
+            await dbConn.execute(sql`
+              INSERT INTO signatureCastActors
+                (id, name, tier, hook, portraitUrl, isActive, isFeatured, isRetired, allowCommercialUse, noExplicitContent, includedInPlan, pricePersonalAud, priceCreatorAud, priceCommercialAud, priceEpisodicAud, createdAt, updatedAt)
+              VALUES
+                (${a.id}, ${a.name}, ${a.tier}, ${a.hook || ""}, ${result.url},
+                 ${a.isActive ? 1 : 0}, ${a.isFeatured ? 1 : 0}, ${a.isRetired ? 1 : 0},
+                 ${a.allowCommercialUse ? 1 : 0}, ${a.noExplicitContent ? 1 : 0},
+                 ${a.includedInPlan}, ${a.pricePersonalAud}, ${a.priceCreatorAud},
+                 ${a.priceCommercialAud}, ${a.priceEpisodicAud}, NOW(), NOW())
+              ON DUPLICATE KEY UPDATE portraitUrl = ${result.url}, updatedAt = NOW()
+            `);
+          }
+        } catch (e: any) { console.error("DB save failed:", e.message); }
+        return { success: true, actorId: a.id, portraitUrl: result.url };
+      }),
+
+    generateAllPortraits: adminProcedure
+      .input(z.object({ tier: z.enum(["standard", "premium", "flagship", "all"]).optional() }))
+      .mutation(async ({ ctx, input }) => {
+        const { INITIAL_ACTORS } = await import("./_core/signatureCast");
+        const actors = (INITIAL_ACTORS as any[]).filter((a: any) =>
+          !a.isRetired && a.isActive && a.visualSpec &&
+          (input.tier === "all" || !input.tier || a.tier === input.tier)
+        );
+        const results: { actorId: string; success: boolean; portraitUrl?: string; error?: string }[] = [];
+        for (const actor of actors) {
+          const a = actor as any;
+          try {
+            const prompt = [
+              "Cinematic portrait photograph of a fictional character:",
+              a.visualSpec + ".",
+              "Professional Hollywood actor headshot.",
+              a.promptStyle + ".",
+              "Shot on Arri Alexa 35, 85mm prime lens, shallow depth of field, sharp focus on eyes.",
+              "High-end production quality. Photorealistic. 8K. Award-winning cinematography.",
+              "NO text. NO watermarks. NO logos.",
+            ].join(" ");
+            const result = await generateImage({ prompt });
+            if (result?.url) {
+              try {
+                const dbConn = await db.getDb();
+                if (dbConn) {
+                  await dbConn.execute(sql`
+                    INSERT INTO signatureCastActors
+                      (id, name, tier, hook, portraitUrl, isActive, isFeatured, isRetired, allowCommercialUse, noExplicitContent, includedInPlan, pricePersonalAud, priceCreatorAud, priceCommercialAud, priceEpisodicAud, createdAt, updatedAt)
+                    VALUES
+                      (${a.id}, ${a.name}, ${a.tier}, ${a.hook || ""}, ${result.url},
+                       ${a.isActive ? 1 : 0}, ${a.isFeatured ? 1 : 0}, ${a.isRetired ? 1 : 0},
+                       ${a.allowCommercialUse ? 1 : 0}, ${a.noExplicitContent ? 1 : 0},
+                       ${a.includedInPlan}, ${a.pricePersonalAud}, ${a.priceCreatorAud},
+                       ${a.priceCommercialAud}, ${a.priceEpisodicAud}, NOW(), NOW())
+                    ON DUPLICATE KEY UPDATE portraitUrl = ${result.url}, updatedAt = NOW()
+                  `);
+                }
+              } catch { /* ignore */ }
+              results.push({ actorId: a.id, success: true, portraitUrl: result.url });
+            } else {
+              results.push({ actorId: a.id, success: false, error: "No URL returned" });
+            }
+          } catch (e: any) {
+            results.push({ actorId: a.id, success: false, error: e.message });
+          }
+          await new Promise(r => setTimeout(r, 600));
+        }
+        return {
+          total:     actors.length,
+          succeeded: results.filter(r => r.success).length,
+          results,
+        };
+      }),
+
   }),
   featureCut: router({
       list: protectedProcedure
