@@ -50,7 +50,16 @@ function TierBadge({ tier }: { tier: string }) {
 }
 
 export default function AdminSignatureCast() {
-  const [actors, setActors] = useState<ActorConfig[]>(ACTOR_REGISTRY);
+  const utils = trpc.useUtils();
+  const generateAllMutation = trpc.signatureCast.generateAllPortraits.useMutation({
+    onSuccess: (d: any) => toast.success("Generated " + d.succeeded + "/" + d.total + " portraits"),
+    onError: (e: any) => toast.error("Portrait generation failed: " + e.message),
+  });
+  const generateOneMutation = trpc.signatureCast.generatePortrait.useMutation({
+    onSuccess: (d: any) => { toast.success("Portrait generated: " + d.actorId); utils.signatureCast.listActors.invalidate(); },
+    onError: (e: any) => toast.error("Generation failed: " + e.message),
+  });
+    const [actors, setActors] = useState<ActorConfig[]>(ACTOR_REGISTRY);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<Partial<ActorConfig>>({});
   const [activeTab, setActiveTab] = useState("actors");
