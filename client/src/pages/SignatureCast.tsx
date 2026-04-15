@@ -80,24 +80,25 @@ import { trpc } from "@/lib/trpc";
 
   export default function SignatureCast() {
   const { data: liveActors } = trpc.signatureCast.listActors.useQuery(undefined, { staleTime: 5 * 60 * 1000 });
+  // Portrait paths — new subdirectory structure with master/neutral/warm/intense variants
   const STATIC_PORTRAITS: Record<string, string> = {
-    "julian-vance": "/portraits/julian-vance.png",
-    "elena-rostova": "/portraits/elena-rostova.png",
-    "sofia-reyes": "/portraits/sofia-reyes.png",
-    "kofi-adebayo": "/portraits/kofi-adebayo.png",
-    "kenji-sato": "/portraits/kenji-sato.png",
-    "marcus-osei": "/portraits/marcus-osei.png",
-    "amara-diallo": "/portraits/amara-diallo.png",
-    "yuki-tanaka": "/portraits/yuki-tanaka.png",
-    "viktor-vale": "/portraits/viktor-vale.png",
-    "tariq-haddad": "/portraits/tariq-haddad.png",
-    "gallagher-twins": "/portraits/gallagher-twins.png",
-    "daniel-cross": "/portraits/daniel-cross.png",
-    "mavis-whitlock": "/portraits/mavis-whitlock.png",
-    "celeste-vale": "/portraits/celeste-vale.png",
-    "big-sasha": "/portraits/big-sasha.png",
-    "little-sasha": "/portraits/little-sasha.png"
-};
+    "julian-vance": "/portraits/julian-vance/master.png",
+    "elena-rostova": "/portraits/elena-rostova/master.png",
+    "sofia-reyes": "/portraits/sofia-reyes/master.png",
+    "kofi-adebayo": "/portraits/kofi-adebayo/master.png",
+    "kenji-sato": "/portraits/kenji-sato/master.png",
+    "marcus-osei": "/portraits/marcus-osei/master.png",
+    "amara-diallo": "/portraits/amara-diallo/master.png",
+    "yuki-tanaka": "/portraits/yuki-tanaka/master.png",
+    "viktor-vale": "/portraits/viktor-vale/master.png",
+    "tariq-haddad": "/portraits/tariq-haddad/master.png",
+    "gallagher-twins": "/portraits/gallagher-twins/master.png",
+    "daniel-cross": "/portraits/daniel-cross/master.png",
+    "mavis-whitlock": "/portraits/mavis-whitlock/master.png",
+    "celeste-vale": "/portraits/celeste-vale/master.png",
+    "big-sasha": "/portraits/big-sasha/master.png",
+    "little-sasha": "/portraits/little-sasha/master.png",
+  };
   function actorPortrait(id: string): string | null {
     return (liveActors?.find((a: any) => a.id === id) as any)?.portraitUrl
       ?? STATIC_PORTRAITS[id]
