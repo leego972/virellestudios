@@ -537,27 +537,25 @@ import { useState, useEffect } from "react";
     return <Badge className="bg-zinc-700/50 text-zinc-400 border border-zinc-600/30 text-xs">Standard</Badge>;
   }
 
-  // Actor portrait: distinctive gradient avatar per actor
-  function ActorPortrait({ actor, size = "card" }: { actor: Actor; size?: "card" | "dialog" }) {
+  // Actor portrait — photorealistic with gradient fallback
+  function ActorPortrait({ actor, size = "card", variant = "master" }: { actor: Actor; size?: "card" | "dialog"; variant?: "master" | "neutral" | "warm" | "intense" }) {
     const accent = getAccent(actor.accentColor);
-    const isDialog = size === "dialog";
+    const isCard = size === "card";
+    const [imgFailed, setImgFailed] = useState(false);
+    const src = `/portraits/${actor.id}/${variant}.png`;
     return (
-      <div className={`relative w-full ${isDialog ? "aspect-[16/9] rounded-xl" : "aspect-[3/4] rounded-t-lg"} bg-gradient-to-b ${actor.gradient} flex flex-col items-center justify-center overflow-hidden border-b border-white/5`}>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.04),transparent_70%)]" />
-        <div className={`relative z-10 flex flex-col items-center ${isDialog ? "gap-3" : "gap-2"}`}>
-          <div className={`${isDialog ? "w-20 h-20 text-2xl" : "w-14 h-14 text-lg"} rounded-full ${accent.bg} ${accent.border} border-2 flex items-center justify-center font-bold tracking-wider ${accent.text}`}>
-            {actor.initials}
-          </div>
-          {isDialog && (
-            <div className="text-center px-4">
-              <p className={`text-xs ${accent.text} font-semibold tracking-widest uppercase`}>{actor.archetype}</p>
-              <p className="text-xs text-white/25 mt-1">{actor.nationality} · {actor.age}</p>
-            </div>
-          )}
-          {!isDialog && (
+      <div className={`relative w-full ${isCard ? "aspect-[3/4] rounded-t-lg" : "aspect-[3/4] rounded-xl"} bg-gradient-to-b ${actor.gradient} overflow-hidden ${isCard ? "border-b border-white/5" : ""}`}>
+        {!imgFailed && (
+          <img src={src} alt={actor.name} onError={() => setImgFailed(true)}
+            className="absolute inset-0 w-full h-full object-cover object-top" />
+        )}
+        {isCard && <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent" />}
+        {imgFailed && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+            <div className={`w-14 h-14 rounded-full ${accent.bg} ${accent.border} border-2 flex items-center justify-center font-bold ${accent.text} text-lg`}>{actor.initials}</div>
             <p className={`text-[10px] ${accent.text} font-semibold tracking-widest uppercase opacity-60`}>{actor.archetype}</p>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -962,129 +960,162 @@ import { useState, useEffect } from "react";
           </Dialog>
         )}
 
-        {/* ── ACTOR PROFILE DIALOG ──────────────────────────────────────────── */}
+        {/* ── ACTOR PROFILE DIALOG — Hollywood Casting Card ───────────────── */}
         {selectedActor && (
           <Dialog open={!!selectedActor} onOpenChange={() => setSelectedActor(null)}>
-            <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <DialogTitle className="text-2xl font-bold mb-1">{selectedActor.name}</DialogTitle>
-                    <DialogDescription className="text-zinc-400">{selectedActor.archetype}</DialogDescription>
-                  </div>
-                  <TierBadge tier={selectedActor.tier} />
-                </div>
-              </DialogHeader>
+            <DialogContent className="bg-zinc-950 border border-white/8 text-white max-w-4xl max-h-[95vh] overflow-y-auto p-0">
 
-              <div className="space-y-6 mt-2">
-                {/* Portrait */}
-                <ActorPortrait actor={selectedActor} size="dialog" />
-
-                {/* Hook */}
-                <p className="text-zinc-200 leading-relaxed text-base">{selectedActor.hook}</p>
-
-                {/* Physical / Identity */}
-                <div className={`rounded-xl border ${selectedAccent?.border} ${selectedAccent?.bg} p-4 grid grid-cols-2 gap-x-6 gap-y-3`}>
-                  <div>
-                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Nationality</p>
-                    <p className="text-sm text-zinc-200">{selectedActor.nationality}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Age Range</p>
-                    <p className="text-sm text-zinc-200">{selectedActor.age}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Build</p>
-                    <p className="text-sm text-zinc-200">{selectedActor.build}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Eyes</p>
-                    <p className="text-sm text-zinc-200">{selectedActor.eyes}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-1">Hair</p>
-                    <p className="text-sm text-zinc-200">{selectedActor.hair}</p>
-                  </div>
+              {/* ── Hero Section: Portrait + Identity Banner ── */}
+              <div className="relative">
+                {/* Hero Portrait */}
+                <div className="aspect-[16/9] sm:aspect-[21/9] w-full overflow-hidden bg-zinc-900">
+                  <img
+                    src={`/portraits/${selectedActor.id}/master.png`}
+                    alt={selectedActor.name}
+                    className="w-full h-full object-cover object-top"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                  {/* Cinematic gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/60 via-transparent to-transparent" />
                 </div>
 
-                {/* Voice */}
-                <div className="rounded-lg bg-white/5 border border-white/5 p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Mic className={`w-4 h-4 ${selectedAccent?.text}`} />
-                    <h4 className="text-sm font-semibold text-zinc-200">Voice</h4>
+                {/* Identity overlay at bottom of hero */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 pb-5">
+                  <div className="flex items-end justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <TierBadge tier={selectedActor.tier} />
+                        {(selectedActor.badges as readonly string[]).includes("Featured in Next Door") && (
+                          <Badge className="bg-black/60 text-zinc-300 border border-white/20 text-xs backdrop-blur-sm">
+                            <Film className="w-3 h-3 mr-1" />Next Door
+                          </Badge>
+                        )}
+                      </div>
+                      <h2 className="text-3xl sm:text-4xl font-bold text-white leading-none tracking-tight">{selectedActor.name}</h2>
+                      <p className={`text-sm mt-1.5 font-medium tracking-wide ${selectedAccent?.text ?? "text-zinc-400"}`}>{selectedActor.archetype}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-xs text-zinc-500 uppercase tracking-widest">{selectedActor.nationality}</p>
+                      <p className="text-sm text-zinc-300 mt-0.5">{selectedActor.age}</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-zinc-400">{selectedActor.voice}</p>
                 </div>
+              </div>
 
-                {/* Mannerisms */}
-                <div className="rounded-lg bg-white/5 border border-white/5 p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Eye className={`w-4 h-4 ${selectedAccent?.text}`} />
-                    <h4 className="text-sm font-semibold text-zinc-200">Signature Mannerisms</h4>
-                  </div>
-                  <p className="text-sm text-zinc-400">{selectedActor.mannerisms}</p>
-                </div>
+              {/* ── Body Content ── */}
+              <div className="px-6 pb-8 space-y-7 mt-2">
 
-                {/* Emotional range */}
-                <div className="rounded-lg bg-white/5 border border-white/5 p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Film className={`w-4 h-4 ${selectedAccent?.text}`} />
-                    <h4 className="text-sm font-semibold text-zinc-200">Emotional Range</h4>
-                  </div>
-                  <p className="text-sm text-zinc-400">{selectedActor.emotionalRange}</p>
-                </div>
+                {/* ── HOOK / Logline ── */}
+                <p className={`text-lg text-zinc-100 leading-relaxed font-light border-l-2 ${selectedAccent?.text ? "border-current" : "border-amber-500"} pl-4 ${selectedAccent?.text ?? ""}`}>
+                  {selectedActor.hook}
+                </p>
 
-                {/* Technical notes */}
-                <div className="rounded-lg bg-white/5 border border-white/5 p-4">
-                  <h4 className="text-sm font-semibold text-zinc-300 mb-2">Technical Notes</h4>
-                  <p className="text-sm text-zinc-400">{selectedActor.technicalNotes}</p>
-                </div>
-
-                {/* Signature scenes */}
+                {/* ── PHYSICAL IDENTITY ── */}
                 <div>
-                  <h4 className="text-sm font-semibold text-zinc-300 mb-2">Signature Scene Types</h4>
-                  <div className="space-y-1.5">
-                    {selectedActor.signatureScenes.map((scene: string) => (
-                      <div key={scene} className="flex items-start gap-2 text-xs text-zinc-400">
-                        <span className={`mt-1 w-1.5 h-1.5 rounded-full ${selectedAccent?.bg} ${selectedAccent?.border} border shrink-0`} />
-                        {scene}
+                  <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Physical Identity</h3>
+                  <div className={`rounded-xl border ${selectedAccent?.border ?? "border-white/8"} ${selectedAccent?.bg ?? "bg-white/3"} p-5 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4`}>
+                    {[
+                      { label: "Heritage", value: selectedActor.nationality },
+                      { label: "Age Range", value: selectedActor.age },
+                      { label: "Build", value: selectedActor.build },
+                      { label: "Eyes", value: selectedActor.eyes },
+                      { label: "Hair", value: selectedActor.hair },
+                    ].map(({ label, value }) => (
+                      <div key={label}>
+                        <p className="text-[10px] text-zinc-600 uppercase tracking-widest mb-0.5">{label}</p>
+                        <p className="text-sm text-zinc-200">{value}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Why cast */}
-                <div className="rounded-lg bg-white/5 border border-white/5 p-4">
-                  <h4 className={`text-sm font-semibold ${selectedAccent?.text} mb-2`}>Why cast {selectedActor.name}?</h4>
-                  <p className="text-sm text-zinc-400">{selectedActor.whyCast}</p>
+                {/* ── SCREEN PRESENCE / PERFORMANCE PROFILE ── */}
+                <div>
+                  <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Screen Presence</h3>
+                  <div className="space-y-3">
+                    <div className="rounded-xl bg-zinc-900/60 border border-white/5 p-4">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Mic className={`w-3.5 h-3.5 ${selectedAccent?.text ?? "text-amber-400"}`} />
+                        <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Voice</span>
+                      </div>
+                      <p className="text-sm text-zinc-300 leading-relaxed">{selectedActor.voice}</p>
+                    </div>
+                    <div className="rounded-xl bg-zinc-900/60 border border-white/5 p-4">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Eye className={`w-3.5 h-3.5 ${selectedAccent?.text ?? "text-amber-400"}`} />
+                        <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Mannerisms</span>
+                      </div>
+                      <p className="text-sm text-zinc-300 leading-relaxed">{selectedActor.mannerisms}</p>
+                    </div>
+                    <div className="rounded-xl bg-zinc-900/60 border border-white/5 p-4">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Film className={`w-3.5 h-3.5 ${selectedAccent?.text ?? "text-amber-400"}`} />
+                        <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Emotional Range</span>
+                      </div>
+                      <p className="text-sm text-zinc-300 leading-relaxed">{selectedActor.emotionalRange}</p>
+                    </div>
+                    {selectedActor.technicalNotes && (
+                      <div className="rounded-xl bg-zinc-900/60 border border-white/5 p-4">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <Zap className={`w-3.5 h-3.5 ${selectedAccent?.text ?? "text-amber-400"}`} />
+                          <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wide">Technical Notes</span>
+                        </div>
+                        <p className="text-sm text-zinc-300 leading-relaxed">{selectedActor.technicalNotes}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {/* Best for */}
+                {/* ── SIGNATURE SCENES ── */}
+                {selectedActor.signatureScenes?.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Signature Scenes</h3>
+                    <div className="space-y-2">
+                      {(selectedActor.signatureScenes as string[]).map((scene: string) => (
+                        <div key={scene} className="flex items-start gap-3 rounded-lg bg-zinc-900/40 border border-white/5 px-4 py-2.5">
+                          <span className={`text-lg ${selectedAccent?.text ?? "text-amber-400"} leading-none mt-0.5`}>›</span>
+                          <p className="text-sm text-zinc-300">{scene}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── GENRES + BEST FOR ── */}
                 <div>
-                  <h4 className="text-sm font-semibold text-zinc-300 mb-2">Best for</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedActor.bestFor.map((b: string) => (
-                      <span key={b} className={`text-xs px-3 py-1 rounded-full ${selectedAccent?.bg} ${selectedAccent?.text} border ${selectedAccent?.border}`}>{b}</span>
+                  <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Genres & Best Used For</h3>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {(selectedActor.genres as string[]).map((g: string) => (
+                      <span key={g} className={`px-3 py-1 rounded-full text-xs font-medium border ${selectedAccent?.border ?? "border-amber-500/30"} ${selectedAccent?.bg ?? "bg-amber-500/10"} ${selectedAccent?.text ?? "text-amber-300"}`}>{g}</span>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(selectedActor.bestFor as string[]).map((b: string) => (
+                      <span key={b} className="px-2.5 py-0.5 rounded-full text-[11px] border border-white/8 text-zinc-500 bg-white/3 capitalize">{b}</span>
                     ))}
                   </div>
                 </div>
 
-                {/* Chemistry */}
-                {selectedActor.chemistry.length > 0 && (
+                {/* ── CHEMISTRY / PAIRINGS ── */}
+                {selectedActor.chemistry?.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold text-zinc-300 mb-2">Works well with</h4>
+                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Casting Chemistry</h3>
+                    <p className="text-xs text-zinc-600 mb-2.5">This actor has tested chemistry compatibility with:</p>
                     <div className="flex flex-wrap gap-2">
-                      {selectedActor.chemistry.map((name: string) => {
+                      {(selectedActor.chemistry as string[]).map((name: string) => {
                         const partner = SIGNATURE_CAST.find(a => a.name === name);
-                        const pa = partner ? getAccent(partner.accentColor) : null;
                         return (
                           <button key={name}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 hover:border-white/15 transition-colors"
-                            onClick={() => { const a = SIGNATURE_CAST.find(ac => ac.name === name); if (a) { setSelectedActor(null); setTimeout(() => setSelectedActor(a as any), 50); } }}>
-                            <div className={`w-5 h-5 rounded-full ${pa?.bg ?? "bg-white/10"} flex items-center justify-center text-[9px] font-bold ${pa?.text ?? "text-white/40"}`}>
-                              {partner?.initials ?? name.slice(0, 2)}
-                            </div>
-                            <span className="text-sm text-zinc-300">{name}</span>
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8 transition-all text-xs text-zinc-300 font-medium`}
+                            onClick={() => { if (partner) { setSelectedActor(null); setTimeout(() => setSelectedActor(partner), 100); } }}>
+                            {partner && (
+                              <div className="w-5 h-5 rounded-full overflow-hidden bg-zinc-800 shrink-0">
+                                <img src={`/portraits/${partner.id}/master.png`} alt={name} className="w-full h-full object-cover object-top"
+                                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                              </div>
+                            )}
+                            {name}
                           </button>
                         );
                       })}
@@ -1092,69 +1123,104 @@ import { useState, useEffect } from "react";
                   </div>
                 )}
 
-                {/* Pricing */}
-                <div className="rounded-xl border border-white/10 overflow-hidden">
-                  <div className="bg-white/5 px-4 py-3 border-b border-white/5">
-                    <p className="text-sm font-semibold text-zinc-200">License This Actor</p>
+                {/* ── IDENTITY CONSISTENCY NOTE ── */}
+                <div className={`rounded-xl border ${selectedAccent?.border ?? "border-amber-500/20"} ${selectedAccent?.bg ?? "bg-amber-500/5"} p-4`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Star className={`w-4 h-4 ${selectedAccent?.text ?? "text-amber-400"}`} />
+                    <h4 className="text-sm font-semibold text-zinc-200">Identity Consistency</h4>
                   </div>
-                  <div className="p-4 space-y-3">
-                    {getEntitlementState(selectedActor) === "plan_included" ? (
-                      <div className="flex items-center gap-2 text-sm text-green-400">
-                        <CheckCircle2 className="w-4 h-4" />Included in your current plan
-                      </div>
-                    ) : getEntitlementState(selectedActor) === "unlocked" ? (
-                      <div className="flex items-center gap-2 text-sm text-amber-400">
-                        <Star className="w-4 h-4" />Unlocked — ready to cast
-                      </div>
-                    ) : (
-                      <>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(["creator", "commercial", "episodic"] as LicenseType[]).map((lt) => (
-                            <div key={lt} className="rounded-lg bg-zinc-950/60 border border-white/5 p-3 text-center">
-                              <p className="text-xs text-zinc-500 mb-1">{lt === "creator" ? "Creator" : lt === "commercial" ? "Commercial" : "Series"}</p>
-                              <p className="text-lg font-bold text-white">A${getPrice(selectedActor.tier, lt)}</p>
-                            </div>
-                          ))}
-                        </div>
-                        <p className="text-xs text-zinc-600">Base: A${BASE_PRICE[selectedActor.tier]} · Commercial add-on: +A$79 · Episodic: 4× base</p>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Badges */}
-                <div className="flex flex-wrap gap-2">
-                  {(selectedActor.badges as readonly string[]).map((badge: string) => (
-                    <Badge key={badge} className="bg-zinc-800/50 text-zinc-400 border border-zinc-700/30 text-xs">{badge}</Badge>
-                  ))}
-                </div>
-
-                {/* Usage terms */}
-                <div className="rounded-lg border border-white/5 bg-zinc-950/60 p-4">
-                  <p className="text-xs font-semibold text-zinc-400 mb-2 uppercase tracking-wider">Signature Cast — Usage Terms</p>
-                  <p className="text-xs text-zinc-500 leading-relaxed">
-                    Virelle Stars are licensed for professional cinematic use: films, trailers, series, campaigns, and prestige digital content.
-                    Sensual, romantic, and mature dramatic scenes are permitted within a prestige-film standard.
-                    Pornographic content, explicit sexual acts, and adult-industry use are{" "}
-                    <span className="text-zinc-300 font-medium">strictly prohibited</span>.
+                  <p className="text-sm text-zinc-400 leading-relaxed">
+                    <span className="text-zinc-200 font-medium">{selectedActor.name}</span> maintains a persistent photorealistic identity across every production.
+                    Character names, roles, and costumes may change — the actor's face, build, and physical signature remain locked.
+                    This enables coherent multi-scene and series-level casting with no continuity drift.
                   </p>
                 </div>
 
-                {/* CTAs */}
-                <div className="flex gap-3 pt-2">
+                {/* ── SUPPORTING PORTRAIT GALLERY ── */}
+                {selectedActor.tier === "flagship" && (
+                  <div>
+                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Expression Portfolio</h3>
+                    <div className="grid grid-cols-3 gap-3">
+                      {(["neutral", "warm", "intense"] as const).map((variant) => (
+                        <div key={variant} className="space-y-1.5">
+                          <div className="aspect-[3/4] rounded-lg overflow-hidden bg-zinc-900 border border-white/5">
+                            <img
+                              src={`/portraits/${selectedActor.id}/${variant}.png`}
+                              alt={`${selectedActor.name} — ${variant}`}
+                              className="w-full h-full object-cover object-top"
+                              onError={(e) => { (e.target as HTMLImageElement).parentElement!.classList.add('hidden'); }}
+                            />
+                          </div>
+                          <p className="text-center text-[10px] text-zinc-600 uppercase tracking-widest capitalize">{variant}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── LICENSING / ACCESS ── */}
+                <div>
+                  <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Access & Licensing</h3>
+                  <div className="rounded-xl border border-white/8 bg-zinc-900/50 overflow-hidden">
+                    {/* Plan inclusion note */}
+                    <div className="px-5 py-4 border-b border-white/5">
+                      {getEntitlementState(selectedActor) === "plan_included" ? (
+                        <div className="flex items-center gap-2 text-green-400">
+                          <CheckCircle2 className="w-4 h-4 shrink-0" />
+                          <p className="text-sm font-medium">Included in your current plan</p>
+                        </div>
+                      ) : getEntitlementState(selectedActor) === "unlocked" ? (
+                        <div className="flex items-center gap-2 text-amber-400">
+                          <Star className="w-4 h-4 shrink-0" />
+                          <p className="text-sm font-medium">Individually unlocked — ready to cast</p>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-zinc-400">
+                          <Lock className="w-4 h-4 shrink-0" />
+                          <p className="text-sm">Requires unlock · from <span className="text-white font-semibold">A${BASE_PRICE[selectedActor.tier]}</span></p>
+                        </div>
+                      )}
+                    </div>
+                    {/* License options preview */}
+                    <div className="px-5 py-4 grid grid-cols-3 gap-3">
+                      {[
+                        { type: "creator", label: "Creator", desc: "Personal & indie projects" },
+                        { type: "commercial", label: "Commercial", desc: "Paid client work & ads" },
+                        { type: "episodic", label: "Episodic", desc: "Series & broadcast" },
+                      ].map((opt) => (
+                        <div key={opt.type} className="text-center p-3 rounded-lg bg-white/3 border border-white/5">
+                          <p className="text-xs font-semibold text-zinc-300 mb-0.5">{opt.label}</p>
+                          <p className="text-[10px] text-zinc-600">{opt.desc}</p>
+                          <p className={`text-xs font-bold mt-1.5 ${selectedAccent?.text ?? "text-amber-400"}`}>
+                            A${getPrice(selectedActor.tier, opt.type as "creator" | "commercial" | "episodic")}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Usage note */}
+                    <div className="px-5 py-3 bg-zinc-950/40 border-t border-white/5">
+                      <p className="text-[11px] text-zinc-600 leading-relaxed">
+                        Licensed for films, trailers, series, and campaigns. Prestige dramatic use permitted. Adult content strictly prohibited.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── CTA BUTTONS ── */}
+                <div className="flex gap-3 pt-1">
                   {getEntitlementState(selectedActor) === "plan_included" || getEntitlementState(selectedActor) === "unlocked" ? (
-                    <Button className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-semibold"
+                    <Button className={`flex-1 ${selectedAccent?.text === "text-amber-400" || !selectedAccent ? "bg-amber-500 hover:bg-amber-400 text-black" : "bg-white hover:bg-zinc-100 text-black"} font-semibold`}
                       onClick={() => { setSelectedActor(null); navigate("/projects/new"); }}>
-                      Cast in Project<ArrowRight className="ml-2 w-4 h-4" />
+                      Cast in Project <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   ) : (
-                    <Button className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold border border-white/10"
+                    <Button className="flex-1 bg-white hover:bg-zinc-100 text-black font-semibold"
                       onClick={() => { setUnlockActor(selectedActor); setSelectedActor(null); setSelectedLicense("creator"); }}>
                       <ShoppingCart className="mr-2 w-4 h-4" />
-                      Unlock Talent — from A${BASE_PRICE[selectedActor.tier]}
+                      Unlock Actor — from A${BASE_PRICE[selectedActor.tier]}
                     </Button>
                   )}
-                  <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5"
+                  <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 gap-2"
                     onClick={() => toggleShortlist(selectedActor.id)}>
                     <Heart className="w-4 h-4" fill={shortlist.includes(selectedActor.id) ? "currentColor" : "none"} />
                     {shortlist.includes(selectedActor.id) ? "Shortlisted" : "Shortlist"}
