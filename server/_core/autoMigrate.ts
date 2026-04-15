@@ -967,6 +967,77 @@ export async function runAutoMigration(): Promise<void> {
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`,
+    {
+        name: "featureCuts",
+        createSQL: `CREATE TABLE IF NOT EXISTS featureCuts (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          projectId INT NOT NULL,
+          userId INT NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          version VARCHAR(64) NOT NULL DEFAULT 'v1.0',
+          description TEXT NULL,
+          isLocked TINYINT(1) NOT NULL DEFAULT 0,
+          lockedAt TIMESTAMP NULL,
+          lockedBy INT NULL,
+          isDefault TINYINT(1) NOT NULL DEFAULT 0,
+          totalDuration INT NOT NULL DEFAULT 0,
+          sceneCount INT NOT NULL DEFAULT 0,
+          targetRuntime INT NULL,
+          actStructure ENUM('three-act','five-act','heros-journey','nonlinear','episodic','two-act') NOT NULL DEFAULT 'three-act',
+          notes TEXT NULL,
+          metadata JSON NULL,
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`,
+      },
+      {
+        name: "featureCutScenes",
+        createSQL: `CREATE TABLE IF NOT EXISTS featureCutScenes (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          cutId INT NOT NULL,
+          sceneId INT NOT NULL,
+          orderIndex INT NOT NULL,
+          actNumber INT NOT NULL DEFAULT 1,
+          actLabel VARCHAR(128) NULL,
+          sequenceLabel VARCHAR(128) NULL,
+          isIncluded TINYINT(1) NOT NULL DEFAULT 1,
+          trimIn INT NOT NULL DEFAULT 0,
+          trimOut INT NOT NULL DEFAULT 0,
+          transitionType VARCHAR(64) NOT NULL DEFAULT 'cut',
+          transitionDuration FLOAT NOT NULL DEFAULT 0,
+          directorNote TEXT NULL,
+          colorGrade VARCHAR(64) NULL,
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`,
+      },
+      {
+        name: "filmCompileJobs",
+        createSQL: `CREATE TABLE IF NOT EXISTS filmCompileJobs (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          projectId INT NOT NULL,
+          cutId INT NULL,
+          userId INT NOT NULL,
+          status ENUM('queued','processing','completed','failed') NOT NULL DEFAULT 'queued',
+          progress INT NOT NULL DEFAULT 0,
+          currentStep VARCHAR(255) NULL,
+          resultUrl TEXT NULL,
+          resultKey VARCHAR(512) NULL,
+          resultDuration INT NULL,
+          resultFileSize INT NULL,
+          errorMessage TEXT NULL,
+          includeOpener TINYINT(1) NOT NULL DEFAULT 1,
+          includeCredits TINYINT(1) NOT NULL DEFAULT 1,
+          burnSubtitles TINYINT(1) NOT NULL DEFAULT 0,
+          resolution VARCHAR(16) NOT NULL DEFAULT '1080p',
+          frameRate INT NOT NULL DEFAULT 24,
+          metadata JSON NULL,
+          startedAt TIMESTAMP NULL,
+          completedAt TIMESTAMP NULL,
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`,
+      },
     }  ];
 
   // ─── Columns that may be missing from existing tables ───
@@ -1490,6 +1561,7 @@ export async function runAutoMigration(): Promise<void> {
     await db.execute(sql.raw(`INSERT IGNORE INTO funding_sources (country, organization, type, supports, stage, fundingForm, eligibility, officialSite, notes, packType, primaryLanguage, packTitle, localizedSections, recommendedAttachments, tailoringNotes, createdAt, updatedAt) VALUES ('Israel', 'Gesher Multicultural Film Fund', 'Foundation/public-interest fund', 'Multicultural film support', 'Development/Production', 'Grant', 'Israel', 'https://gesherfilmfund.org.il', 'Israeli multicultural fund', 'Standard Film Fund Pack', 'Hebrew', 'Gesher Multicultural Film Fund — חבילת הגשה', 'המגיש / החברה | שם הפרויקט | פורמט / ז׳אנר / משך | לוגליין | סינופסיס / טריטמנט | הצהרת הבמאי | הצהרת המפיק / אסטרטגיית מימון | חבילה יצירתית וצוות מפתח | תקציב ותכנית מימון | זכויות / שרשרת זכויות | לוח זמנים ומסירות | קהל / הפצה / השפעה | הצהרות / חתימות', 'Application form; project synopsis; director and producer statements; budget; finance plan; schedule; rights documents; team bios; declarations', 'Default feature/short fiction package.', NOW(), NOW())`));
     await db.execute(sql.raw(`INSERT IGNORE INTO funding_sources (country, organization, type, supports, stage, fundingForm, eligibility, officialSite, notes, packType, primaryLanguage, packTitle, localizedSections, recommendedAttachments, tailoringNotes, createdAt, updatedAt) VALUES ('Israel', 'Israel Film Fund', 'National/private public-interest fund', 'Feature film support', 'Development/Production', 'Grant', 'Israel', 'https://www.filmfund.org.il', 'Major Israeli feature fund', 'Standard Film Fund Pack', 'Hebrew', 'Israel Film Fund — חבילת הגשה', 'המגיש / החברה | שם הפרויקט | פורמט / ז׳אנר / משך | לוגליין | סינופסיס / טריטמנט | הצהרת הבמאי | הצהרת המפיק / אסטרטגיית מימון | חבילה יצירתית וצוות מפתח | תקציב ותכנית מימון | זכויות / שרשרת זכויות | לוח זמנים ומסירות | קהל / הפצה / השפעה | הצהרות / חתימות', 'Application form; project synopsis; director and producer statements; budget; finance plan; schedule; rights documents; team bios; declarations', 'Default feature/short fiction package.', NOW(), NOW())`));
     await db.execute(sql.raw(`INSERT IGNORE INTO funding_sources (country, organization, type, supports, stage, fundingForm, eligibility, officialSite, notes, packType, primaryLanguage, packTitle, localizedSections, recommendedAttachments, tailoringNotes, createdAt, updatedAt) VALUES ('Israel', 'New Fund for Cinema and Television', 'Foundation/public-interest fund', 'Documentary and social-change cinema/TV', 'Development/Production', 'Grant', 'Israel', 'https://nfct.org.il/en', 'Israeli independent fund', 'Documentary Fund Pack', 'Hebrew', 'New Fund for Cinema and Television — חבילת הגשה', 'המגיש / החברה | שם הפרויקט | פורמט / ז׳אנר / משך | לוגליין | סינופסיס / טריטמנט | הצהרת הבמאי | הצהרת המפיק / אסטרטגיית מימון | חבילה יצירתית וצוות מפתח | תקציב ותכנית מימון | לוח זמנים ומסירות | קהל / הפצה / השפעה | דוגמת עבודה | הצהרות / חתימות', 'Application form; documentary proposal; director vision; access status; ethics/safeguarding note if sensitive; teaser or sample reel; budget; finance plan; schedule; team bios; declarations', 'Use for documentary-focused funds. Emphasize access, editorial approach, ethics, sample material, and fundraising strategy.', NOW(), NOW())`));
+    { table: "wardrobeItems", column: "sceneRef", definition: "INT NULL" },
     await db.execute(sql.raw(`INSERT IGNORE INTO funding_sources (country, organization, type, supports, stage, fundingForm, eligibility, officialSite, notes, packType, primaryLanguage, packTitle, localizedSections, recommendedAttachments, tailoringNotes, createdAt, updatedAt) VALUES ('Israel', 'Rabinovich Foundation - Cinema Project', 'Foundation/public-interest fund', 'Feature film support', 'Development/Production', 'Grant', 'Israel', 'https://rabinovichfoundation.org.il', 'Major Israeli cinema fund', 'Standard Film Fund Pack', 'Hebrew', 'Rabinovich Foundation - Cinema Project — חבילת הגשה', 'המגיש / החברה | שם הפרויקט | פורמט / ז׳אנר / משך | לוגליין | סינופסיס / טריטמנט | הצהרת הבמאי | הצהרת המפיק / אסטרטגיית מימון | חבילה יצירתית וצוות מפתח | תקציב ותכנית מימון | זכויות / שרשרת זכויות | לוח זמנים ומסירות | קהל / הפצה / השפעה | הצהרות / חתימות', 'Application form; project synopsis; director and producer statements; budget; finance plan; schedule; rights documents; team bios; declarations', 'Default feature/short fiction package.', NOW(), NOW())`));
     await db.execute(sql.raw(`INSERT IGNORE INTO funding_sources (country, organization, type, supports, stage, fundingForm, eligibility, officialSite, notes, packType, primaryLanguage, packTitle, localizedSections, recommendedAttachments, tailoringNotes, createdAt, updatedAt) VALUES ('Italy', 'Apulia Film Fund / Apulia Film Commission', 'Regional public agency', 'Production support', 'Production', 'Grant / rebate', 'Italy', 'https://www.apuliafilmcommission.it', 'Regional incentive/fund', 'Incentive / Commission Pack', 'Italian', 'Apulia Film Fund / Apulia Film Commission — Pacchetto di candidatura', 'Richiedente / Società | Titolo del progetto | Formato / Genere / Durata | Sinossi / Trattamento | Dichiarazione del produttore / Strategia finanziaria | Budget e piano finanziario | Calendario e consegne | Coproduzione / Ammissibilità | Dichiarazioni / Firme', 'Application form; production company details; local spend budget; finance evidence; shooting schedule; script/treatment; vendor plan; residency/tax docs; incentive declarations', 'Use for rebates, commissions, and production incentives. Focus on eligible spend, local hires, schedule, and legal compliance.', NOW(), NOW())`));
     await db.execute(sql.raw(`INSERT IGNORE INTO funding_sources (country, organization, type, supports, stage, fundingForm, eligibility, officialSite, notes, packType, primaryLanguage, packTitle, localizedSections, recommendedAttachments, tailoringNotes, createdAt, updatedAt) VALUES ('Italy', 'DGCA / Direzione Generale Cinema e Audiovisivo', 'National public agency', 'Cinema and audiovisual', 'Development/Production/Distribution', 'Tax credit / grants', 'Italy', 'https://cinema.cultura.gov.it', 'Main Italian film body', 'Public Agency Pack', 'Italian', 'DGCA / Direzione Generale Cinema e Audiovisivo — Pacchetto di candidatura', 'Richiedente / Società | Titolo del progetto | Formato / Genere / Durata | Logline | Sinossi / Trattamento | Dichiarazione del regista | Dichiarazione del produttore / Strategia finanziaria | Pacchetto creativo e team chiave | Budget e piano finanziario | Diritti / Catena dei diritti | Calendario e consegne | Pubblico / Distribuzione / Impatto | Dichiarazioni / Firme', 'Application form; company registration; script or treatment; director statement; producer statement; budget; finance plan; chain of title; schedule; key team CVs; market/distribution note; legal declarations', 'Use for national/state agencies. Stress cultural relevance, economic impact, eligibility, and recoupment assumptions.', NOW(), NOW())`));
