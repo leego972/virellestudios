@@ -1976,15 +1976,16 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
 
   // ─── Compile Jobs ─────────────────────────────────────────────────────────────
 
-  export async function createCompileJob(cutId: number, projectId: number, userId: number, scenesTotal: number) {
+  export async function createCompileJob(cutId: number, userId: number, format?: string) {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
+    const cut = await getFeatureCutById(cutId, userId);
+    if (!cut) throw new Error("Feature cut not found");
     const [result] = await db.insert(filmCompileJobs).values({
       cutId,
-      projectId,
+      projectId: cut.projectId,
       userId,
-      scenesTotal,
-      status: "queued",
+      resolution: format === "4k" ? "4k" : "1080p",
       currentStep: "Preparing scenes for compilation...",
     });
     return getCompileJobById((result as any).insertId);
