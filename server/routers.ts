@@ -9609,19 +9609,19 @@ Rules:
         .mutation(async ({ ctx, input }) => { return db.deleteFeatureCut(input.id, ctx.user.id); }),
       listScenes: protectedProcedure
         .input(z.object({ cutId: z.number() }))
-        .query(async ({ ctx, input }) => { return db.getCutScenes(input.cutId, ctx.user.id); }),
+        .query(async ({ ctx, input }) => { return db.getCutScenes(input.cutId); }),
       addScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number(), orderIndex: z.number().optional() }))
-        .mutation(async ({ ctx, input }) => { return db.addSceneToCut(input.cutId, input.sceneId, ctx.user.id, input.orderIndex); }),
+        .mutation(async ({ ctx, input }) => { return db.addSceneToCut(input.cutId, input.sceneId, input.orderIndex ?? 0); }),
       removeScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number() }))
-        .mutation(async ({ ctx, input }) => { return db.removeSceneFromCut(input.cutId, input.sceneId, ctx.user.id); }),
+        .mutation(async ({ ctx, input }) => { return db.removeSceneFromCut(input.cutId, input.sceneId); }),
       toggleScene: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneId: z.number(), included: z.boolean() }))
         .mutation(async ({ ctx, input }) => { return db.toggleSceneInclusion(input.cutId, input.sceneId, input.included); }),
       reorderScenes: protectedProcedure
         .input(z.object({ cutId: z.number(), sceneIds: z.array(z.number()) }))
-        .mutation(async ({ ctx, input }) => { return db.reorderCutScenes(input.cutId, input.sceneIds, ctx.user.id); }),
+        .mutation(async ({ ctx, input }) => { return db.reorderCutScenes(input.cutId, input.sceneIds); }),
       compile: protectedProcedure
         .input(z.object({ cutId: z.number(), format: z.string().optional() }))
         .mutation(async ({ ctx, input }) => { return db.createCompileJob(input.cutId, ctx.user.id, input.format ?? "mp4"); }),
