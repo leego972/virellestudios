@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import DirectorChat from "@/components/DirectorChat";
+import ProjectJourneyNav from "@/components/ProjectJourneyNav";
 import MediaPlayer from "@/components/MediaPlayer";
 import ShareButton from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
@@ -584,6 +585,9 @@ export default function ProjectDetail() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-card/50 flex-nowrap sm:flex-wrap h-auto gap-1 p-1 overflow-x-auto w-full justify-start">
           {/* Pipeline order: Overview → Story → Characters → Scenes → Soundtrack → Trailer → Export → Tools */}
+          <TabsTrigger value="journey" className="text-xs">
+            <Clapperboard className="h-3 w-3 mr-1" />Journey
+          </TabsTrigger>
           <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
           <TabsTrigger value="story" className="text-xs">
             <BookOpen className="h-3 w-3 mr-1" />Story
@@ -605,6 +609,25 @@ export default function ProjectDetail() {
             <Settings className="h-3 w-3 mr-1" />Tools
           </TabsTrigger>
         </TabsList>
+
+        {/* Journey Tab — the unified filmmaker pipeline */}
+        <TabsContent value="journey" className="space-y-4">
+          <ProjectJourneyNav
+            projectId={projectId}
+            signals={{
+              hasLogline: !!(project?.logline && project.logline.trim().length > 0),
+              characterCount: characters?.length ?? 0,
+              sceneCount: scenes?.length ?? 0,
+              hasScript: !!(project as any)?.scriptText && ((project as any).scriptText as string).trim().length > 0,
+              hasBudget: !!(project as any)?.budget && Number((project as any).budget) > 0,
+              hasFundingApplication: false,
+              hasShotsGenerated: (scenes ?? []).some((s: any) => s.videoUrl || s.thumbnailUrl),
+              hasLockedShots: (scenes ?? []).some((s: any) => s.status === "locked" || s.status === "approved"),
+              hasExport: project?.status === "completed" || !!(project as any)?.exportedAt,
+              hasCampaign: false,
+            }}
+          />
+        </TabsContent>
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
