@@ -503,10 +503,21 @@ export default function ProjectDetail() {
             variant="outline"
             onClick={async () => {
               try {
+                const reviewerName = window.prompt(
+                  "Reviewer name (optional)\n\nFor watermarked screeners — leave blank for an unwatermarked link, or enter a name (e.g. \"Studio A24\", \"Jane Producer\") to brand the screener with their name + timestamp on every frame. Pro tip: use a different name per recipient so leaks can be traced.",
+                  "",
+                ) || "";
                 const res = await utils.client.project.getShareLink.query({ id: project.id });
-                const url = `${window.location.origin}${res.path}`;
+                let url = `${window.location.origin}${res.path}`;
+                if (reviewerName.trim()) {
+                  url += `?as=${encodeURIComponent(reviewerName.trim())}`;
+                }
                 await navigator.clipboard.writeText(url);
-                toast.success("Review link copied — paste it to share with producers, friends or collaborators.");
+                toast.success(
+                  reviewerName.trim()
+                    ? `Watermarked screener link copied for "${reviewerName.trim()}"`
+                    : "Review link copied — paste it to share with producers, friends or collaborators.",
+                );
               } catch (e: any) {
                 toast.error(e?.message || "Could not generate share link");
               }

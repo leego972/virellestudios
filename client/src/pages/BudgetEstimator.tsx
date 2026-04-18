@@ -16,6 +16,107 @@ function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(amount);
 }
 
+function ActualsRow({
+  budgetId,
+  categoryKey,
+  estimate,
+  initialActual,
+  onSaved,
+}: {
+  budgetId: number;
+  categoryKey: string;
+  estimate: number;
+  initialActual: number | null;
+  onSaved: () => void;
+}) {
+  const [val, setVal] = useState<string>(initialActual != null ? String(initialActual) : "");
+  const setActuals = trpc.budget.setActuals.useMutation({
+    onSuccess: () => {
+      toast.success("Actuals updated");
+      onSaved();
+    },
+    onError: (e) => toast.error(e.message),
+  });
+  const actualNum = parseFloat(val);
+  const valid = !isNaN(actualNum) && actualNum >= 0;
+  const variance = valid ? actualNum - estimate : 0;
+  const pctOver = estimate > 0 && valid ? (variance / estimate) * 100 : 0;
+  const hot = pctOver > 5;
+  const cold = pctOver < -5;
+  return (
+    <div className="px-4 py-3 bg-muted/30 border-t border-border/40">
+      <div className="flex items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2">
+          <DollarSign className="h-3 w-3 text-muted-foreground" />
+          <span className="font-medium">Actual spend</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={0}
+            step={100}
+            value={val}
+            onChange={(e) => setVal(e.target.value)}
+            placeholder="0"
+            className="w-28 h-7 px-2 rounded-md border border-border bg-background text-right text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 px-2 text-xs"
+            disabled={!valid || setActuals.isPending}
+            onClick={() => setActuals.mutate({ budgetId, category: categoryKey, actual: actualNum })}
+          >
+            {setActuals.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+          </Button>
+        </div>
+      </div>
+      {valid && (
+        <div className="flex items-center justify-between gap-3 mt-1.5 text-[11px]">
+          <span className="text-muted-foreground">vs estimate {formatCurrency(estimate)}</span>
+          <span
+            className={`font-semibold ${hot ? "text-red-500" : cold ? "text-amber-500" : "text-green-500"}`}
+            title={hot ? "Over budget — hot cost" : cold ? "Underspend — review estimate" : "On budget"}
+          >
+            {variance >= 0 ? "+" : ""}{formatCurrency(variance)} ({pctOver >= 0 ? "+" : ""}{pctOver.toFixed(1)}%)
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TotalActualsRow({ budget }: { budget: any }) {
+  const breakdown = budget?.breakdown || {};
+  const totalActual = Object.values(breakdown).reduce(
+    (sum: number, c: any) => sum + (typeof c?.actual === "number" ? c.actual : 0),
+    0,
+  ) as number;
+  if (totalActual <= 0) return null;
+  const variance = totalActual - (budget.totalEstimate || 0);
+  const pct = budget.totalEstimate > 0 ? (variance / budget.totalEstimate) * 100 : 0;
+  const hot = pct > 5;
+  const cold = pct < -5;
+  return (
+    <Card className="bg-muted/40 border-2">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold">Hot-cost roll-up</p>
+            <p className="text-xs text-muted-foreground">Total actuals tracked across all categories</p>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-bold">{formatCurrency(totalActual)}</p>
+            <p className={`text-sm font-medium ${hot ? "text-red-500" : cold ? "text-amber-500" : "text-green-500"}`}>
+              {variance >= 0 ? "+" : ""}{formatCurrency(variance)} ({pct >= 0 ? "+" : ""}{pct.toFixed(1)}%) vs estimate
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 const CATEGORY_COLORS: Record<string, string> = {
   preProduction: "bg-blue-500",
   cast: "bg-amber-500",
@@ -41,8 +142,8 @@ export default function BudgetEstimator() {
   if (!user) { window.location.href = getLoginUrl(); return null; }
 
   const project = trpc.project.get.useQuery({ id: projectId });
-  const budgetsList = trpc.budget.list.useQuery({ projectId });
   const utils = trpc.useUtils();
+  const budgetsList = trpc.budget.list.useQuery({ projectId });
 
   const generateMutation = trpc.budget.generate.useMutation({
     onSuccess: (data) => {
@@ -276,9 +377,9 @@ export default function BudgetEstimator() {
                         {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                       </div>
                     </button>
-                    {isExpanded && cat.items && cat.items.length > 0 && (
+                    {isExpanded && (
                       <div className="border-t border-border/30">
-                        {cat.items.map((item, i) => (
+                        {cat.items && cat.items.length > 0 && cat.items.map((item: any, i: number) => (
                           <div key={i} className="px-4 py-2.5 flex items-center justify-between text-sm border-b border-border/20 last:border-0">
                             <div className="flex-1 min-w-0">
                               <p className="font-medium text-sm">{item.name}</p>
@@ -287,12 +388,23 @@ export default function BudgetEstimator() {
                             <span className="text-sm font-medium ml-4 flex-shrink-0">{formatCurrency(item.cost)}</span>
                           </div>
                         ))}
+                        {/* ── Hot-cost tracker: estimate vs actual ── */}
+                        <ActualsRow
+                          budgetId={activeBudget.id}
+                          categoryKey={key}
+                          estimate={cat.estimate}
+                          initialActual={typeof (cat as any).actual === "number" ? (cat as any).actual : null}
+                          onSaved={() => utils.budget.list.invalidate()}
+                        />
                       </div>
                     )}
                   </Card>
                 );
               })}
             </div>
+
+            {/* Total actuals roll-up */}
+            <TotalActualsRow budget={activeBudget} />
 
             {/* AI Analysis */}
             {activeBudget.aiAnalysis && (

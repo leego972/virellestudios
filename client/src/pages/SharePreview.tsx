@@ -1,10 +1,40 @@
-import { useParams } from "wouter";
+import { useParams, useSearch } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Film, AlertCircle, CheckCircle2, Clock, Play } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+
+/**
+ * Reviewer-name watermark overlay.
+ * Pro studios send screeners watermarked with the recipient's name +
+ * timestamp so leaks can be traced. Diagonal text, low opacity,
+ * impossible to crop without destroying the frame.
+ */
+function ScreenerWatermark({ name }: { name: string }) {
+  if (!name) return null;
+  const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
+  const label = `${name} · ${stamp} UTC · CONFIDENTIAL`;
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="text-white/25 text-2xl sm:text-3xl font-bold tracking-wider whitespace-nowrap"
+          style={{ transform: "rotate(-22deg)", textShadow: "0 1px 2px rgba(0,0,0,.6)" }}
+        >
+          {label}
+        </span>
+      </div>
+      <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/60 text-white/90 text-[10px] font-mono">
+        {label}
+      </div>
+      <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/60 text-white/90 text-[10px] font-mono">
+        {label}
+      </div>
+    </div>
+  );
+}
 
 /**
  * Public, token-gated, read-only project preview.
@@ -17,6 +47,11 @@ export default function SharePreview() {
   const params = useParams<{ projectId: string; token: string }>();
   const projectId = parseInt(params.projectId || "0");
   const token = params.token || "";
+  const search = useSearch();
+  const reviewerName = useMemo(() => {
+    const sp = new URLSearchParams(search);
+    return (sp.get("as") || "").slice(0, 60).trim();
+  }, [search]);
   const [activeScene, setActiveScene] = useState<number | null>(null);
 
   const { data, isLoading, error } = trpc.project.getPublicById.useQuery(
@@ -97,6 +132,15 @@ export default function SharePreview() {
           )}
         </div>
 
+        {reviewerName && (
+          <div className="mb-4 px-3 py-2 rounded-md border border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-xs flex items-center gap-2">
+            <AlertCircle className="h-3.5 w-3.5" />
+            <span>
+              Confidential screener watermarked for <strong>{reviewerName}</strong>. Do not redistribute or screen-record.
+            </span>
+          </div>
+        )}
+
         {active && (
           <Card className="mb-6 overflow-hidden">
             <div className="aspect-video bg-black relative">
@@ -106,6 +150,8 @@ export default function SharePreview() {
                   poster={active.thumbnailUrl || undefined}
                   controls
                   autoPlay
+                  controlsList="nodownload"
+                  onContextMenu={(e) => e.preventDefault()}
                   className="w-full h-full"
                 />
               ) : (
@@ -113,6 +159,7 @@ export default function SharePreview() {
                   <Film className="h-12 w-12 opacity-30" />
                 </div>
               )}
+              <ScreenerWatermark name={reviewerName} />
             </div>
             <CardContent className="p-4">
               <div className="flex items-center justify-between gap-3">
@@ -156,7 +203,7 @@ export default function SharePreview() {
               >
                 <div className="aspect-video bg-muted relative group">
                   {s.thumbnailUrl ? (
-                    <img src={s.thumbnailUrl} alt={s.title} className="w-full h-full object-cover" />
+                    <img src={s.thumbnailUrl} alt={s.title} className="w-full h-full object-cover" onContextMenu={(e) => e.preventDefault()} draggable={false} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Film className="h-8 w-8 text-muted-foreground/30" />
@@ -167,6 +214,7 @@ export default function SharePreview() {
                       <Play className="h-10 w-10 text-white" />
                     </div>
                   )}
+                  <ScreenerWatermark name={reviewerName} />
                   <div className="absolute top-2 right-2">
                     {s.status === "completed" ? (
                       <Badge className="bg-green-500/90 text-white border-0 text-[10px]">

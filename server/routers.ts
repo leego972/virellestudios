@@ -16,7 +16,7 @@ import { nanoid } from "nanoid";
 import { processDirectorMessage } from "./directorAssistant";
 import { transcribeAudio } from "./_core/voiceTranscription";
 import { TRPCError } from "@trpc/server";
-import { assertOwnsProject } from "./_core/ownership";
+import { assertOwnsProject, assertCanAccessProject } from "./_core/ownership";
 import { safeJsonExtract } from "./_core/safeParse";
 import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buildTrailerPrompt, ENHANCED_SCENE_SCHEMA, getDefaultNegativePrompt, type QualityTier } from "./_core/cinematicPromptEngine";
 import bcrypt from "bcryptjs";
@@ -641,7 +641,7 @@ export const appRouter = router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .query(async ({ ctx, input }) => {
-        await assertOwnsProject(input.projectId, ctx.user.id);
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectCharacters(input.projectId);
       }),
 
@@ -1351,7 +1351,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .query(async ({ ctx, input }) => {
-        await assertOwnsProject(input.projectId, ctx.user.id);
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectScenes(input.projectId);
       }),
 
@@ -4135,7 +4135,7 @@ FORMAT RULES (always apply):
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .query(async ({ ctx, input }) => {
-        await assertOwnsProject(input.projectId, ctx.user.id);
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectSoundtracks(input.projectId);
       }),
 
@@ -4581,7 +4581,7 @@ FORMAT RULES (always apply):
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .query(async ({ ctx, input }) => {
-        await assertOwnsProject(input.projectId, ctx.user.id);
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectMoodBoard(input.projectId);
       }),
 
@@ -5122,6 +5122,43 @@ Generate the full dialogue for this scene.`,
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
         return db.getBudgetById(input.id);
+      }),
+
+    /**
+     * Studio-grade hot-cost tracking: set the actual spend for one
+     * budget category so producers can compare estimate vs actual,
+     * surface variance, and flag over-budget categories ("hot costs")
+     * before they snowball.
+     *
+     * Stores `actual` per category inside the existing breakdown JSON
+     * so no schema migration is needed.
+     */
+    setActuals: protectedProcedure
+      .input(z.object({
+        budgetId: z.number(),
+        category: z.string(),
+        actual: z.number().min(0),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const budget = await db.getBudgetById(input.budgetId);
+        if (!budget) throw new TRPCError({ code: "NOT_FOUND", message: "Budget not found" });
+        await assertOwnsProject((budget as any).projectId, ctx.user.id);
+        const breakdown: any = (budget as any).breakdown || {};
+        if (!breakdown[input.category]) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: `Unknown category: ${input.category}` });
+        }
+        breakdown[input.category].actual = input.actual;
+        // Recompute aggregate actuals
+        const totalActual = Object.values(breakdown).reduce(
+          (sum: number, c: any) => sum + (typeof c?.actual === "number" ? c.actual : 0),
+          0,
+        );
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        await dbConn.execute(
+          sql`UPDATE budgets SET breakdown = ${JSON.stringify(breakdown)} WHERE id = ${input.budgetId}`,
+        );
+        return { success: true, totalActual };
       }),
 
     generate: creationProcedure
