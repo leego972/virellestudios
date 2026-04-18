@@ -85,6 +85,7 @@ import {
   Globe,
   RefreshCw,
   Link2,
+  Building2,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import React, { useState, useRef, useCallback, useMemo } from "react";
@@ -1595,6 +1596,28 @@ export default function ProjectDetail() {
                 <div>
                   <p className="text-sm font-medium">Ad & Poster Maker</p>
                   <p className="text-xs text-muted-foreground">Movie posters, social cards & promotional art</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-pink-500/60 transition-all border-pink-500/40 bg-pink-500/5" onClick={() => setLocation(`/projects/${project.id}/social-cuts`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-pink-500/20 flex items-center justify-center shrink-0">
+                  <Film className="h-5 w-5 text-pink-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-pink-400">Social Cuts Factory</p>
+                  <p className="text-xs text-muted-foreground">TikTok, Reels & Shorts cuts auto-generated from your film</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/brand-outreach`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Building2 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Brand Outreach</p>
+                  <p className="text-xs text-muted-foreground">Pitch sponsors & brand partners for this project</p>
                 </div>
               </CardContent>
             </Card>
