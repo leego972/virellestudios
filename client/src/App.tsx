@@ -107,6 +107,8 @@ const PressKit = lazy(() => import("./pages/PressKit"));
 const FestivalTracker = lazy(() => import("./pages/FestivalTracker"));
 const CrowdfundingHub = lazy(() => import("./pages/CrowdfundingHub"));
 const BrandOutreach = lazy(() => import("./pages/BrandOutreach"));
+const ProductionOffice = lazy(() => import("./pages/ProductionOffice"));
+const SocialCutsFactory = lazy(() => import("./pages/SocialCutsFactory"));
 const FilmPage = lazy(() => import("./pages/FilmPage"));
 const CreatorProfile = lazy(() => import("./pages/CreatorProfile"));
 const Collections = lazy(() => import("./pages/Collections"));
@@ -266,6 +268,8 @@ function Router() {
               <Route path="/projects/:projectId/brand-outreach">{() => <LazyPage><BrandOutreach /></LazyPage>}</Route>
               <Route path="/crowdfunding">{() => <LazyPage><CrowdfundingHub /></LazyPage>}</Route>
               <Route path="/brand-outreach">{() => <LazyPage><BrandOutreach /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/production-office">{() => <LazyPage><ProductionOffice /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/social-cuts">{() => <LazyPage><SocialCutsFactory /></LazyPage>}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/admin/security">{() => <SecurityDashboard />}</Route>
               <Route path="/admin/autonomous">{() => <LazyPage><AdminAutonomous /></LazyPage>}</Route>
