@@ -13,6 +13,7 @@
  * Budget: $500 AUD/month → Google Ads only (highest intent traffic)
  */
 
+import { safeJsonExtract } from "./_core/safeParse";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
 import { getDb } from "./db";
@@ -720,7 +721,7 @@ Return as JSON: { "title": "...", "metaDescription": "...", "content": "...(mark
       },
     });
 
-    const post = JSON.parse((response.choices[0].message.content as string) || "{}");
+    const post = safeJsonExtract<any>(response.choices[0].message.content, {});
 
     // Generate a slug
     const slug = post.title
@@ -980,7 +981,7 @@ Return as JSON: { "subject": "...", "body": "...", "targetType": "filmmaking_blo
       },
     });
 
-    const email = JSON.parse((response.choices[0].message.content as string) || "{}");
+    const email = safeJsonExtract<any>(response.choices[0].message.content, {});
 
     // Store the outreach template in marketing content
     const db = await getDb();
@@ -1076,7 +1077,7 @@ Return as JSON: { "subject": "...", "preheader": "...", "body": "...(html)...", 
       },
     });
 
-    const email = JSON.parse((response.choices[0].message.content as string) || "{}");
+    const email = safeJsonExtract<any>(response.choices[0].message.content, {});
 
     // Store in marketing content
     const db = await getDb();
@@ -1200,7 +1201,7 @@ Return as JSON: { "platform": "${platform}", "topic": "...", "content": "...", "
       },
     });
 
-    const post = JSON.parse((response.choices[0].message.content as string) || "{}");
+    const post = safeJsonExtract<any>(response.choices[0].message.content, {});
 
     // Store in marketing content for review/publishing
     const db = await getDb();
@@ -1259,7 +1260,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         ],
         response_format: { type: "json_schema", json_schema: { name: "devto_article", strict: true, schema: { type: "object", properties: { title: { type: "string" }, body: { type: "string" }, tags: { type: "array", items: { type: "string" } } }, required: ["title", "body", "tags"], additionalProperties: false } } },
       });
-      const article = JSON.parse((response.choices[0].message.content as string) || "{}");
+      const article = safeJsonExtract<any>(response.choices[0].message.content, {});
       const result = await devtoAdapter.publishArticle({
         title: article.title,
         body: article.body,
@@ -1285,7 +1286,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         ],
         response_format: { type: "json_schema", json_schema: { name: "medium_article", strict: true, schema: { type: "object", properties: { title: { type: "string" }, content: { type: "string" }, tags: { type: "array", items: { type: "string" } } }, required: ["title", "content", "tags"], additionalProperties: false } } },
       });
-      const article = JSON.parse((response.choices[0].message.content as string) || "{}");
+      const article = safeJsonExtract<any>(response.choices[0].message.content, {});
       const result = await mediumAdapter.publishPost({
         title: article.title,
         content: article.content,
@@ -1312,7 +1313,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         ],
         response_format: { type: "json_schema", json_schema: { name: "hashnode_article", strict: true, schema: { type: "object", properties: { title: { type: "string" }, content: { type: "string" }, tags: { type: "array", items: { type: "string" } } }, required: ["title", "content", "tags"], additionalProperties: false } } },
       });
-      const article = JSON.parse((response.choices[0].message.content as string) || "{}");
+      const article = safeJsonExtract<any>(response.choices[0].message.content, {});
       const result = await hashnodeAdapter.publishArticle({
         title: article.title,
         content: article.content,
@@ -1337,7 +1338,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         ],
         response_format: { type: "json_schema", json_schema: { name: "discord_msg", strict: true, schema: { type: "object", properties: { content: { type: "string" } }, required: ["content"], additionalProperties: false } } },
       });
-      const msg = JSON.parse((response.choices[0].message.content as string) || "{}");
+      const msg = safeJsonExtract<any>(response.choices[0].message.content, {});
       const result = await discordAdapter.postMessage({ content: msg.content });
       actions.push({ channel: "discord_community", action: "send_message", status: result.success ? "success" : "failed", details: result.success ? `Posted to Discord` : `Discord failed: ${result.error}`, cost: 0 });
     } catch (err: unknown) {
@@ -1357,7 +1358,7 @@ async function publishToExpandedChannels(): Promise<AdvertisingAction[]> {
         ],
         response_format: { type: "json_schema", json_schema: { name: "mastodon_toot", strict: true, schema: { type: "object", properties: { status: { type: "string" } }, required: ["status"], additionalProperties: false } } },
       });
-      const toot = JSON.parse((response.choices[0].message.content as string) || "{}");
+      const toot = safeJsonExtract<any>(response.choices[0].message.content, {});
       const result = await mastodonAdapter.postStatus({ status: toot.status });
       actions.push({ channel: "mastodon_creative", action: "post_status", status: result.success ? "success" : "failed", details: result.success ? `Posted to Mastodon` : `Mastodon failed: ${result.error}`, cost: 0 });
     } catch (err: unknown) {
@@ -1486,7 +1487,7 @@ Return JSON: { "title": "...", "content": "...(markdown)...", "forum": "${forum.
       },
     });
 
-    const post = JSON.parse((response.choices[0].message.content as string) || "{}");
+    const post = safeJsonExtract<any>(response.choices[0].message.content, {});
 
     // Store in content queue
     const db = await getDb();
@@ -1580,7 +1581,7 @@ Return JSON: { "hook": "...", "script": "...", "visualDirections": ["..."], "has
       },
     });
 
-    const video = JSON.parse((response.choices[0].message.content as string) || "{}");
+    const video = safeJsonExtract<any>(response.choices[0].message.content, {});
 
     // Store in content queue
     const db = await getDb();
@@ -1760,7 +1761,7 @@ async function generateContentQueueItems(): Promise<AdvertisingAction> {
           response_format: { type: "json_schema", json_schema: { name: "queue_content", strict: true, schema: { type: "object", properties: { title: { type: "string" }, content: { type: "string" }, platform: { type: "string" } }, required: ["title", "content", "platform"], additionalProperties: false } } },
         });
 
-         const item = JSON.parse((response.choices[0].message.content as string) || "{}");
+         const item = safeJsonExtract<any>(response.choices[0].message.content, {});
         const db = await getDb();
         if (db) {
           await db.insert(marketingContent).values({
@@ -2015,7 +2016,7 @@ async function recycleTopContent(): Promise<AdvertisingAction> {
       response_format: { type: "json_schema", json_schema: { name: "recycled_content", strict: true, schema: { type: "object", properties: { title: { type: "string" }, content: { type: "string" }, format: { type: "string" } }, required: ["title", "content", "format"], additionalProperties: false } } },
     });
 
-    const recycled = JSON.parse((response.choices[0].message.content as string) || "{}");
+    const recycled = safeJsonExtract<any>(response.choices[0].message.content, {});
 
     // Store recycled content
     await db.insert(marketingContent).values({

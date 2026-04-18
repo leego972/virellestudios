@@ -16,6 +16,8 @@ import { nanoid } from "nanoid";
 import { processDirectorMessage } from "./directorAssistant";
 import { transcribeAudio } from "./_core/voiceTranscription";
 import { TRPCError } from "@trpc/server";
+import { assertOwnsProject } from "./_core/ownership";
+import { safeJsonExtract } from "./_core/safeParse";
 import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buildTrailerPrompt, ENHANCED_SCENE_SCHEMA, getDefaultNegativePrompt, type QualityTier } from "./_core/cinematicPromptEngine";
 import bcrypt from "bcryptjs";
 import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload } from "./_core/rateLimit";
@@ -588,7 +590,8 @@ export const appRouter = router({
 
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
         return db.getProjectCharacters(input.projectId);
       }),
 
@@ -1297,7 +1300,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
   scene: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
         return db.getProjectScenes(input.projectId);
       }),
 
@@ -4080,7 +4084,8 @@ FORMAT RULES (always apply):
   soundtrack: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
         return db.getProjectSoundtracks(input.projectId);
       }),
 
@@ -4525,7 +4530,8 @@ FORMAT RULES (always apply):
   moodBoard: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
         return db.getProjectMoodBoard(input.projectId);
       }),
 

@@ -5,6 +5,7 @@
  * Called by the SSE director stream handler after the LLM decides to use a tool.
  */
 
+import { safeJsonExtract } from "./_core/safeParse";
 import * as db from "./db";
 import { invokeLLM } from "./_core/llm";
 
@@ -426,7 +427,7 @@ export async function executeDirectorTool(
           },
         });
         const content = result.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+        const parsed = safeJsonExtract<any>(content, {});
         return {
           success: true,
           data: {
@@ -509,7 +510,7 @@ export async function executeDirectorTool(
           },
         });
         const content = result.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+        const parsed = safeJsonExtract<any>(content, {});
         // Save the suggestions to the database
         const saved = [];
         for (const loc of (parsed.locations || []).slice(0, 5)) {
@@ -604,7 +605,7 @@ export async function executeDirectorTool(
           },
         });
         const content = result.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+        const parsed = safeJsonExtract<any>(content, {});
         // Save subtitles as a single subtitle document with entries
         const langNames: Record<string, string> = { en: "English", fr: "French", es: "Spanish", de: "German", zh: "Chinese", ja: "Japanese", ko: "Korean", pt: "Portuguese", it: "Italian", ar: "Arabic" };
         const entries = (parsed.subtitles || []).map((sub: any) => ({ sceneId, startTime: sub.startTime, endTime: sub.endTime, text: sub.text }));
@@ -717,7 +718,7 @@ export async function executeDirectorTool(
           },
         });
         const content = result.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+        const parsed = safeJsonExtract<any>(content, {});
         // Save dialogue lines
         for (let i = 0; i < (parsed.lines || []).length; i++) {
           const line = parsed.lines[i];
@@ -795,7 +796,7 @@ export async function executeDirectorTool(
           },
         });
         const content = result.choices[0]?.message?.content;
-        const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+        const parsed = safeJsonExtract<any>(content, {});
         return {
           success: true,
           data: {

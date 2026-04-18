@@ -1,3 +1,4 @@
+import { safeJsonExtract } from "./_core/safeParse";
 import { z } from "zod";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
@@ -292,7 +293,7 @@ Tone: ${input.tone}`
         },
       });
 
-      const generated = JSON.parse(response.choices[0].message.content as string);
+      const generated = safeJsonExtract<any>(response.choices[0].message.content, {});
       return {
         ...generated,
         category: input.category,
@@ -352,7 +353,7 @@ Tone: ${input.tone}`
             },
           });
 
-          const generated = JSON.parse(response.choices[0].message.content as string);
+          const generated = safeJsonExtract<any>(response.choices[0].message.content, {});
           const seoScore = calculateSeoScore({
             title: generated.title,
             content: generated.content,

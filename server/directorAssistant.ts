@@ -1,3 +1,4 @@
+import { safeJsonExtract } from "./_core/safeParse";
 import { invokeLLM, type Tool, type Message } from "./_core/llm";
 import * as db from "./db";
 
@@ -512,7 +513,7 @@ Return a JSON object with these exact fields:
           },
         });
 
-        const spec = JSON.parse(visionResult.choices[0].message.content as string);
+        const spec = safeJsonExtract<any>(visionResult.choices[0].message.content, {});
 
         // Determine position
         const allScenes = await db.getProjectScenes(projectId);
@@ -821,7 +822,7 @@ HOLLYWOOD PHOTOREALISM RULES — MANDATORY:
           },
         });
 
-        const filmSpec = JSON.parse(filmResult.choices[0].message.content as string);
+        const filmSpec = safeJsonExtract<any>(filmResult.choices[0].message.content, {});
 
         // Update project title if it's a generic name
         const project = await db.getProjectById(projectId, userId);

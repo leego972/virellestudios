@@ -10,6 +10,7 @@
  * 6. Film compile jobs (one-click full-film assembly)
  * 7. Act group management for feature-scale timelines
  */
+import { safeJsonExtract } from "./_core/safeParse";
 import { z } from "zod";
 import { router, protectedProcedure } from "./_core/trpc";
 import { getDb } from "./db";
@@ -644,7 +645,7 @@ export const featureFilmRouter = router({
       });
 
       const content = llmResult.choices[0]?.message?.content;
-      const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+      const parsed = safeJsonExtract<any>(content, {});
 
       // Apply act assignments to cut scenes
       const cutSceneRows = await db
@@ -768,7 +769,7 @@ export const featureFilmRouter = router({
       });
 
       const content = llmResult.choices[0]?.message?.content;
-      const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+      const parsed = safeJsonExtract<any>(content, {});
 
       // Delete existing shot packages for this scene
       await db.delete(shotPackages).where(and(eq(shotPackages.sceneId, input.sceneId), eq(shotPackages.userId, ctx.user.id)));
@@ -977,7 +978,7 @@ export const featureFilmRouter = router({
       });
 
       const content = llmResult.choices[0]?.message?.content;
-      const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+      const parsed = safeJsonExtract<any>(content, {});
       let count = 0;
 
       for (const record of parsed.records || []) {
@@ -1221,7 +1222,7 @@ export const featureFilmRouter = router({
       });
 
       const content = llmResult.choices[0]?.message?.content;
-      const parsed = JSON.parse(typeof content === "string" ? content : "{}");
+      const parsed = safeJsonExtract<any>(content, {});
       let count = 0;
 
       for (const arc of parsed.arcs || []) {
