@@ -581,6 +581,56 @@ export const appRouter = router({
         await dbConn.execute(sql`DELETE FROM projects WHERE id = ${input.id}`);
         return { success: true, deletedProjectId: input.id };
       }),
+
+    // ─── Stateless review-share link (owner-only) ──────────────────────────
+    // Returns a public URL the owner can share with producers, friends, or
+    // collaborators. The token is an HMAC of the project id, so no schema
+    // change is needed and revocation = rotate JWT_SECRET.
+    getShareLink: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertOwnsProject(input.id, ctx.user.id);
+        const { makeShareToken } = await import("./_core/shareToken");
+        const token = makeShareToken(input.id);
+        return { path: `/share/${input.id}/${token}`, token };
+      }),
+
+    // ─── Public read-only project view (token-gated) ───────────────────────
+    // Used by /share/:projectId/:token for review/approval flows.
+    getPublicById: publicProcedure
+      .input(z.object({ id: z.number(), token: z.string() }))
+      .query(async ({ input }) => {
+        const { verifyShareToken } = await import("./_core/shareToken");
+        if (!verifyShareToken(input.id, input.token)) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Invalid or expired share link" });
+        }
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        const result = await dbConn.execute(
+          sql`SELECT p.id, p.title, p.genre, p.mode, p.plotSummary, p.description, p.logline,
+                     p.duration, p.quality, p.resolution, p.status, p.thumbnailUrl, p.createdAt,
+                     u.name as directorName
+              FROM projects p
+              LEFT JOIN users u ON p.userId = u.id
+              WHERE p.id = ${input.id}
+              LIMIT 1`
+        );
+        const rows = (Array.isArray(result[0]) ? result[0] : result) as any[];
+        const project = rows?.[0];
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const scenes = await db.getProjectScenes(input.id);
+        const safeScenes = (scenes as any[]).map((s) => ({
+          id: s.id,
+          sceneNumber: s.sceneNumber,
+          title: s.title,
+          description: s.description,
+          status: s.status,
+          thumbnailUrl: s.thumbnailUrl,
+          videoUrl: s.videoUrl,
+          duration: s.duration,
+        }));
+        return { project, scenes: safeScenes };
+      }),
   }),
   // ─── Characters ────
   character: router({

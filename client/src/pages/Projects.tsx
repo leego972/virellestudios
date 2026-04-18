@@ -28,6 +28,7 @@ import {
   Globe,
 } from "lucide-react";
 import { useLocation } from "wouter";
+import { JOURNEY_STAGES, computeProjectStage } from "@/lib/journeyStages";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 
@@ -266,6 +267,16 @@ export default function Projects() {
                   <div className="min-w-0">
                     <h3 className="font-medium text-sm truncate">{project.title}</h3>
                     <div className="flex items-center gap-2 mt-1.5 text-xs text-muted-foreground">
+                      {(() => {
+                        const stage = computeProjectStage(project as any);
+                        const meta = JOURNEY_STAGES[stage - 1];
+                        return (
+                          <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium border-primary/30 bg-primary/5 text-primary">
+                            Stage {stage}/8 · {meta.title}
+                          </Badge>
+                        );
+                      })()}
+                      <span className="text-border">·</span>
                       <span className="capitalize">{project.mode}</span>
                       {project.rating && (
                         <>

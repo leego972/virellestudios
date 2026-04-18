@@ -53,6 +53,7 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Showcase = lazy(() => import("./pages/Showcase"));
+const SharePreview = lazy(() => import("./pages/SharePreview"));
 
 // Legal pages — lazy loaded
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -197,6 +198,7 @@ function Router() {
       <Route path="/ip-policy">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
       <Route path="/dmca">{() => <LazyPage><IPPolicy /></LazyPage>}</Route>
       <Route path="/showcase">{() => <LazyPage><Showcase /></LazyPage>}</Route>
+      <Route path="/share/:projectId/:token">{() => <LazyPage><SharePreview /></LazyPage>}</Route>
       <Route path="/films/:slug">{() => <LazyPage><FilmPage /></LazyPage>}</Route>
       <Route path="/creators/:slug">{() => <LazyPage><CreatorProfile /></LazyPage>}</Route>
       <Route path="/collections/:slug">{() => <LazyPage><Collections /></LazyPage>}</Route>

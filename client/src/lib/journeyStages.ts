@@ -72,3 +72,19 @@ export function getStage(n: number): JourneyStageMeta | undefined {
 export function getNextStage(n: number): JourneyStageMeta | undefined {
   return JOURNEY_STAGES.find((s) => s.number === n + 1);
 }
+
+/**
+ * Heuristic current-stage detector based on lightweight project signals.
+ * Used in dashboard tiles where we don't want to fetch full per-project
+ * signals (characters list, scene list, etc.) just to render a badge.
+ */
+export function computeProjectStage(p: {
+  status?: string | null;
+  logline?: string | null;
+}): number {
+  if (!p) return 1;
+  if (p.status === "completed") return 8;
+  if (p.status === "generating") return 6;
+  if ((p.logline ?? "").toString().trim()) return 2;
+  return 1;
+}

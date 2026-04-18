@@ -191,6 +191,38 @@ function elementsToFountain(els: ScriptElement[]): string {
     .trim();
 }
 
+function elementsToFdx(els: ScriptElement[], title: string, authorName: string): string {
+  const escapeXml = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+  const typeMap: Record<string, string> = {
+    "scene-heading": "Scene Heading",
+    "action": "Action",
+    "character": "Character",
+    "dialogue": "Dialogue",
+    "parenthetical": "Parenthetical",
+    "transition": "Transition",
+  };
+  const paragraphs = els
+    .map((el) => {
+      const fdxType = typeMap[el.type] || "Action";
+      return `    <Paragraph Type="${fdxType}">\n      <Text>${escapeXml(el.text || "")}</Text>\n    </Paragraph>`;
+    })
+    .join("\n");
+  return `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<FinalDraft DocumentType="Script" Template="No" Version="5">
+  <Content>
+    <Paragraph Type="General">
+      <Text>${escapeXml(title)}</Text>
+    </Paragraph>
+    <Paragraph Type="General">
+      <Text>Written by ${escapeXml(authorName)}</Text>
+    </Paragraph>
+${paragraphs}
+  </Content>
+</FinalDraft>
+`;
+}
+
 function elementsToScreenplayFormat(els: ScriptElement[], title: string, authorName: string): string {
   const lines: string[] = [
     title.toUpperCase(),
@@ -841,10 +873,11 @@ export default function ScriptWriter() {
 
   // ─── Export handler ───────────────────────────────────────────────────────
 
-  const handleExport = (format: "txt" | "fountain" | "screenplay") => {
+  const handleExport = (format: "txt" | "fountain" | "screenplay" | "fdx") => {
     const safeName = title.replace(/[^a-zA-Z0-9]/g, "_");
     let content: string;
     let ext: string;
+    let mime = "text/plain";
     switch (format) {
       case "fountain":
         content = elementsToFountain(elements);
@@ -854,11 +887,16 @@ export default function ScriptWriter() {
         content = elementsToScreenplayFormat(elements, title, user?.name || "Director");
         ext = "txt";
         break;
+      case "fdx":
+        content = elementsToFdx(elements, title, user?.name || "Director");
+        ext = "fdx";
+        mime = "application/xml";
+        break;
       default:
         content = elementsToScript(elements);
         ext = "txt";
     }
-    const blob = new Blob([content], { type: "text/plain" });
+    const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -956,15 +994,16 @@ export default function ScriptWriter() {
               <TooltipContent>Import external scene (.fountain / .txt / paste)</TooltipContent>
             </Tooltip>
 
-            <Select onValueChange={(v) => handleExport(v as "txt" | "fountain" | "screenplay")}>
+            <Select onValueChange={(v) => handleExport(v as "txt" | "fountain" | "screenplay" | "fdx")}>
               <SelectTrigger className="w-auto h-8 px-2 gap-1 border-none bg-transparent hover:bg-accent">
                 <Download className="h-4 w-4" />
                 <span className="text-xs hidden sm:inline">Export</span>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="txt">Plain Text (.txt)</SelectItem>
+                <SelectItem value="fdx">Final Draft (.fdx)</SelectItem>
                 <SelectItem value="fountain">Fountain (.fountain)</SelectItem>
                 <SelectItem value="screenplay">Screenplay Format (.txt)</SelectItem>
+                <SelectItem value="txt">Plain Text (.txt)</SelectItem>
               </SelectContent>
             </Select>
 

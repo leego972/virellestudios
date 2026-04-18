@@ -84,6 +84,7 @@ import {
   StopCircle,
   Globe,
   RefreshCw,
+  Link2,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import React, { useState, useRef, useCallback, useMemo } from "react";
@@ -497,6 +498,23 @@ export default function ProjectDetail() {
         </div>
         <div className="flex items-center gap-2 shrink-0 flex-wrap justify-start sm:justify-end max-w-full overflow-x-auto">
           <ShareButton title={project.title} description={project.plotSummary || project.description || undefined} compact />
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={async () => {
+              try {
+                const res = await utils.client.project.getShareLink.query({ id: project.id });
+                const url = `${window.location.origin}${res.path}`;
+                await navigator.clipboard.writeText(url);
+                toast.success("Review link copied — paste it to share with producers, friends or collaborators.");
+              } catch (e: any) {
+                toast.error(e?.message || "Could not generate share link");
+              }
+            }}
+          >
+            <Link2 className="h-4 w-4 mr-1" />
+            Share for review
+          </Button>
           <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/storyboard`)}>
             <Grid3X3 className="h-4 w-4 mr-1" />
             Storyboard
