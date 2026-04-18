@@ -428,15 +428,20 @@ async function startServer() {
   // Set IOS_DOWNLOAD_URL, ANDROID_DOWNLOAD_URL, DESKTOP_MAC_URL,
   // DESKTOP_WIN_URL, DESKTOP_LINUX_URL env vars after each build.
   app.get("/api/mobile/downloads", (_req, res) => {
-    // Fallback URLs are hard-coded to the latest EAS build artifacts.
-    // Override at runtime by setting IOS_DOWNLOAD_URL / ANDROID_DOWNLOAD_URL env vars.
-    const IOS_FALLBACK = "https://apps.apple.com/app/virelle-studios/id6761315616";
-    // ANDROID_FALLBACK points to the EAS preview APK (buildType: apk) — directly installable.
-    // The .aab artifact is an App Bundle, not directly installable on devices.
-    // Update ANDROID_DOWNLOAD_URL env var after each EAS preview build to keep this current.
-    const ANDROID_FALLBACK = process.env.ANDROID_DOWNLOAD_URL || "https://expo.dev/accounts/virellestudios/projects/virelle-studios/builds";
-    const iosUrl = process.env.IOS_DOWNLOAD_URL || IOS_FALLBACK;
-    const androidUrl = ANDROID_FALLBACK;
+    // iOS: live App Store listing — always available.
+    const IOS_LIVE_URL = "https://apps.apple.com/app/virelle-studios/id6761315616";
+    const iosUrl = process.env.IOS_DOWNLOAD_URL || IOS_LIVE_URL;
+
+    // Android: only mark available when a real public APK / Play Store URL is configured.
+    // Do NOT silently fall back to the EAS dev dashboard — that requires login and breaks user trust.
+    const androidUrl = process.env.ANDROID_DOWNLOAD_URL || null;
+
+    // Desktop: only mark each platform available when its env var is set.
+    // Do NOT fall back to the website — clicking "Download for macOS" must not silently open the homepage.
+    const macUrl = process.env.DESKTOP_MAC_URL || null;
+    const winUrl = process.env.DESKTOP_WIN_URL || null;
+    const linuxUrl = process.env.DESKTOP_LINUX_URL || null;
+
     res.json({
       ios: {
         url: iosUrl,
@@ -446,15 +451,15 @@ async function startServer() {
       android: {
         url: androidUrl,
         version: process.env.APP_VERSION || "1.0.0",
-        // Mark as available only when a real APK URL is configured
-        available: !!process.env.ANDROID_DOWNLOAD_URL,
+        available: !!androidUrl,
       },
       desktop: {
-        mac: process.env.DESKTOP_MAC_URL || "https://virelle.life",
-        win: process.env.DESKTOP_WIN_URL || "https://virelle.life",
-        linux: process.env.DESKTOP_LINUX_URL || "https://virelle.life",
+        mac: macUrl,
+        win: winUrl,
+        linux: linuxUrl,
         version: process.env.DESKTOP_VERSION || "1.0.0",
-        available: true,
+        available: !!(macUrl || winUrl || linuxUrl),
+        availability: { mac: !!macUrl, win: !!winUrl, linux: !!linuxUrl },
       },
     });
   });

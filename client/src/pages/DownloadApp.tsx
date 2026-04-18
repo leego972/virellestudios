@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ interface DownloadLinks {
     linux: string | null;
     version: string;
     available: boolean;
+    availability?: { mac: boolean; win: boolean; linux: boolean };
   };
 }
 
@@ -57,9 +58,10 @@ export default function DownloadApp() {
       .then(r => r.json())
       .then(setLinks)
       .catch(() => setLinks({
+        // Honest fallback: only iOS is publicly available today.
         ios: { url: "https://apps.apple.com/app/virelle-studios/id6761315616", version: "1.0.0", available: true },
-        android: { url: "https://expo.dev/accounts/virellestudios/projects/virelle-studios/builds", version: "1.0.0", available: true },
-        desktop: { mac: "https://virelle.life", win: "https://virelle.life", linux: "https://virelle.life", version: "1.0.0", available: true },
+        android: { url: null, version: "1.0.0", available: false },
+        desktop: { mac: null, win: null, linux: null, version: "1.0.0", available: false, availability: { mac: false, win: false, linux: false } },
       }))
       .finally(() => setLoading(false));
   }, []);
@@ -87,6 +89,17 @@ export default function DownloadApp() {
     }
   }
 
+  // Derive availability flags for honest marketing copy.
+  const desktopAvail = links?.desktop?.availability ?? { mac: false, win: false, linux: false };
+  const heroBadge = useMemo(() => {
+    const parts = ["iOS", "PWA"];
+    if (links?.android?.available) parts.splice(1, 0, "Android");
+    if (desktopAvail.mac) parts.push("Mac");
+    if (desktopAvail.win) parts.push("Windows");
+    if (desktopAvail.linux) parts.push("Linux");
+    return parts.join(" · ");
+  }, [links, desktopAvail]);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
 
@@ -95,14 +108,14 @@ export default function DownloadApp() {
         <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-black to-purple-900/20" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center">
           <Badge className="mb-6 bg-amber-500/20 text-amber-400 border-amber-500/30 px-4 py-1.5 text-sm">
-            📱 iOS · Android · Mac · Windows · Linux · PWA
+            📱 {heroBadge}
           </Badge>
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 leading-tight">
             Virelle Studios
             <span className="block text-amber-400">Everywhere You Work</span>
           </h1>
           <p className="text-base sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed px-2">
-            Every AI filmmaking tool — Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more — available natively on iOS, Android, macOS, Windows, and Linux. One subscription. All platforms.
+            Every AI filmmaking tool — Script Writer, Storyboard, Video Generation, Director Chat, and 30+ more — available on iOS today, with Android and desktop apps coming soon. One subscription. All platforms.
           </p>
         </div>
       </div>
@@ -113,38 +126,46 @@ export default function DownloadApp() {
         <section>
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">📱 Mobile App</h2>
-            <p className="text-gray-400">iOS & Android — your full studio in your pocket</p>
+            <p className="text-gray-400">iOS available now — Android coming soon</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
             {/* Android */}
-            <button
-              onClick={() => window.open(
-                links?.android?.url ?? "https://expo.dev/accounts/virellestudios/projects/virelle-studios/builds",
-                "_blank"
-              )}
-              disabled={loading}
-              className="group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:scale-105 cursor-pointer disabled:opacity-50"
-            >
-              <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.523 15.341l-5.523-9.569-5.523 9.569h11.046zM12 2.5l-9.5 16.5h19L12 2.5z" />
-                <path d="M4.5 20h15l-1.5-2.5h-12L4.5 20z" />
-              </svg>
-              <div className="text-left">
-                <div className="text-xs opacity-70">Get it on</div>
-                <div className="text-lg font-bold leading-tight">Android</div>
-                <div className="text-xs opacity-60">
-                  {links?.android?.available ? `v${links.android.version} · APK` : "EAS Build Preview"}
-                </div>
-              </div>
-            </button>
+            {(() => {
+              const androidReady = !!links?.android?.available && !!links?.android?.url;
+              return (
+                <button
+                  onClick={() => { if (androidReady && links?.android?.url) window.open(links.android.url, "_blank"); }}
+                  disabled={loading || !androidReady}
+                  aria-disabled={!androidReady}
+                  title={androidReady ? "Download Android APK" : "Android app coming soon"}
+                  className={`group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] ${
+                    androidReady
+                      ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:scale-105 cursor-pointer"
+                      : "bg-white/5 text-white/60 border-white/15 cursor-not-allowed"
+                  } disabled:opacity-60`}
+                >
+                  <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.523 15.341l-5.523-9.569-5.523 9.569h11.046zM12 2.5l-9.5 16.5h19L12 2.5z" />
+                    <path d="M4.5 20h15l-1.5-2.5h-12L4.5 20z" />
+                  </svg>
+                  <div className="text-left">
+                    <div className="text-xs opacity-70">{androidReady ? "Get it on" : "Status"}</div>
+                    <div className="text-lg font-bold leading-tight">Android</div>
+                    <div className="text-xs opacity-70">
+                      {androidReady ? `v${links?.android?.version ?? "1.0.0"} · APK` : "Coming soon"}
+                    </div>
+                  </div>
+                </button>
+              );
+            })()}
 
             {/* iOS */}
             <button
-              onClick={() => window.open(
-                links?.ios?.url ?? "https://apps.apple.com/app/virelle-studios/id6761315616",
-                "_blank"
-              )}
+              onClick={() => {
+                const url = links?.ios?.url ?? "https://apps.apple.com/app/virelle-studios/id6761315616";
+                window.open(url, "_blank");
+              }}
               disabled={loading}
               className="group flex items-center gap-4 px-6 sm:px-8 py-4 rounded-2xl border-2 transition-all duration-200 w-full sm:w-auto sm:min-w-[220px] bg-foreground text-background border-foreground hover:opacity-90 hover:scale-105 cursor-pointer disabled:opacity-50"
             >
@@ -201,24 +222,37 @@ export default function DownloadApp() {
         <section>
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">🖥️ Desktop App</h2>
-            <p className="text-gray-400">macOS, Windows & Linux — native performance</p>
+            <p className="text-gray-400">
+              {links?.desktop?.available
+                ? "macOS, Windows & Linux — native performance"
+                : "Native desktop apps — coming soon"}
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             {(["mac", "win", "linux"] as const).map(platform => {
               const label = platform === "mac" ? "macOS" : platform === "win" ? "Windows" : "Linux";
               const emoji = platform === "mac" ? "🍎" : platform === "win" ? "🪟" : "🐧";
-              const url = links?.desktop?.[platform] ?? "https://virelle.life";
+              const url = links?.desktop?.[platform] ?? null;
+              const ready = !!desktopAvail[platform] && !!url;
               return (
                 <button
                   key={platform}
-                  onClick={() => window.open(url, "_blank")}
-                  disabled={loading}
-                  className="flex items-center gap-3 px-6 py-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 hover:scale-105 transition-all text-sm font-semibold w-full sm:w-auto justify-center disabled:opacity-50"
+                  onClick={() => { if (ready && url) window.open(url, "_blank"); }}
+                  disabled={loading || !ready}
+                  aria-disabled={!ready}
+                  title={ready ? `Download for ${label}` : `${label} app coming soon`}
+                  className={`flex items-center gap-3 px-6 py-3 rounded-xl border text-sm font-semibold w-full sm:w-auto justify-center transition-all ${
+                    ready
+                      ? "border-white/20 bg-white/5 hover:bg-white/10 hover:scale-105 cursor-pointer"
+                      : "border-white/10 bg-white/5 text-white/50 cursor-not-allowed"
+                  } disabled:opacity-60`}
                 >
                   <span className="text-xl">{emoji}</span>
-                  Download for {label}
-                  <span className="text-xs opacity-50 ml-1">v{links?.desktop?.version ?? "1.0.0"}</span>
+                  {ready ? `Download for ${label}` : `${label} — Coming Soon`}
+                  {ready && (
+                    <span className="text-xs opacity-50 ml-1">v{links?.desktop?.version ?? "1.0.0"}</span>
+                  )}
                 </button>
               );
             })}
