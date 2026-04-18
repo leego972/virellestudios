@@ -1,7 +1,7 @@
 {
   "name": "virelle-studios-desktop",
   "productName": "Virelle Studios",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Virelle Studios desktop app — native window for the AI filmmaking platform.",
   "main": "main.js",
   "private": true,
