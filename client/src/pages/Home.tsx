@@ -27,8 +27,9 @@ import {
   Mic2,
   DollarSign,
 } from "lucide-react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { toast } from "sonner";
+import { JOURNEY_STAGES } from "@/lib/journeyStages";
 
 function timeAgo(date: string | Date) {
   const now = new Date();
@@ -274,6 +275,61 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* 8-stage Journey Progress for most-recent project */}
+      {inProgressProjects[0] && (() => {
+        const p = inProgressProjects[0] as any;
+        // Heuristic stage: 1=new draft, 2=has chars, 6=generating, 7=completed
+        const projChars = (characters || []).filter((c: any) => c.projectId === p.id).length;
+        let currentStage = 1;
+        if (p.status === "completed") currentStage = 8;
+        else if (p.status === "generating") currentStage = 6;
+        else if (projChars >= 1) currentStage = 3;
+        else if ((p.logline ?? "").toString().trim()) currentStage = 2;
+        const cur = JOURNEY_STAGES.find((s) => s.number === currentStage)!;
+        const next = JOURNEY_STAGES.find((s) => s.number === currentStage + 1) ?? cur;
+        return (
+          <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/0 p-4 sm:p-5 space-y-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Continue your film</p>
+                <h2 className="text-lg font-semibold truncate mt-0.5">{p.title}</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Currently at Stage {currentStage} of 8 — {cur.title}
+                </p>
+              </div>
+              <Link href={next.hrefFor(p.id)}>
+                <Button className="min-h-[40px] gap-2 whitespace-nowrap">
+                  {currentStage === 8 ? "Plan release" : `Continue → Stage ${next.number}`}
+                </Button>
+              </Link>
+            </div>
+            <div className="flex items-center gap-1 overflow-x-auto pb-1 -mx-1 px-1">
+              {JOURNEY_STAGES.map((s) => {
+                const status: "done" | "active" | "todo" =
+                  s.number < currentStage ? "done" : s.number === currentStage ? "active" : "todo";
+                return (
+                  <Link key={s.key} href={s.hrefFor(p.id)} className="shrink-0">
+                    <div
+                      className={`h-9 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-medium border transition-colors ${
+                        status === "done"
+                          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                          : status === "active"
+                          ? "border-primary/60 bg-primary/15 text-primary"
+                          : "border-border bg-background/50 text-muted-foreground hover:bg-muted"
+                      }`}
+                      title={s.blurb}
+                    >
+                      <span className="font-bold">{s.number}</span>
+                      <span className="hidden sm:inline">{s.title}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Stats Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">

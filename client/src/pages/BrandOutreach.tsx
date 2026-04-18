@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
+import { NextStageCTA } from "@/components/NextStageCTA";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -347,6 +348,7 @@ export default function BrandOutreach() {
           </CardContent>
         </Card>
       </div>
+  {!!projectId && <NextStageCTA projectId={projectId} currentStage={5} />}
     </div>
   );
 }

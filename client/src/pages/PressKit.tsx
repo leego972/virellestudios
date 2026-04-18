@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "wouter";
+import { NextStageCTA } from "@/components/NextStageCTA";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -149,6 +150,7 @@ export default function PressKit() {
           </CardContent>
         </Card>
       </div>
+  {!!id && <NextStageCTA projectId={id} currentStage={8} />}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
+import { NextStageCTA } from "@/components/NextStageCTA";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -301,6 +302,7 @@ Output: a markdown table with columns | t | scene # | beat | text overlay (if an
           );
         })}
       </div>
+  {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
   );
 }

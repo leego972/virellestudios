@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useParams, Link } from "wouter";
+import { NextStageCTA } from "@/components/NextStageCTA";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -193,6 +194,7 @@ export default function PitchLab() {
           </TabsContent>
         ))}
       </Tabs>
+  {!!projectId && <NextStageCTA projectId={projectId} currentStage={1} />}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
+import { NextStageCTA } from "@/components/NextStageCTA";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -269,6 +270,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
           </CardContent>
         </Card>
       )}
+  {!!projectId && <NextStageCTA projectId={projectId} currentStage={8} />}
     </div>
   );
 }
