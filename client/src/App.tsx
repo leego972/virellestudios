@@ -109,6 +109,8 @@ const CrowdfundingHub = lazy(() => import("./pages/CrowdfundingHub"));
 const BrandOutreach = lazy(() => import("./pages/BrandOutreach"));
 const ProductionOffice = lazy(() => import("./pages/ProductionOffice"));
 const SocialCutsFactory = lazy(() => import("./pages/SocialCutsFactory"));
+const CastingBoard = lazy(() => import("./pages/CastingBoard"));
+const CuttingRoom = lazy(() => import("./pages/CuttingRoom"));
 const FilmPage = lazy(() => import("./pages/FilmPage"));
 const CreatorProfile = lazy(() => import("./pages/CreatorProfile"));
 const Collections = lazy(() => import("./pages/Collections"));
@@ -270,6 +272,8 @@ function Router() {
               <Route path="/brand-outreach">{() => <LazyPage><BrandOutreach /></LazyPage>}</Route>
               <Route path="/projects/:projectId/production-office">{() => <LazyPage><ProductionOffice /></LazyPage>}</Route>
               <Route path="/projects/:projectId/social-cuts">{() => <LazyPage><SocialCutsFactory /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/casting-board">{() => <LazyPage><CastingBoard /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/cutting-room">{() => <LazyPage><CuttingRoom /></LazyPage>}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/admin/security">{() => <SecurityDashboard />}</Route>
               <Route path="/admin/autonomous">{() => <LazyPage><AdminAutonomous /></LazyPage>}</Route>
