@@ -122,6 +122,11 @@ async function startServer() {
   server.keepAliveTimeout = 0; // disable keep-alive timeout
   server.headersTimeout = 0;   // disable headers timeout
 
+  // Hardened security headers (CSP, HSTS, frame-options, permissions-policy)
+  // applied to every response before route handlers run.
+  const { securityHeaders } = await import("./securityHeaders");
+  app.use(securityHeaders());
+
   // Stripe webhook endpoint — MUST be before json body parser
   app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
     if (!stripe) {
@@ -384,9 +389,12 @@ async function startServer() {
     }
   });
 
-  // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // Body parser: 25mb is plenty for the largest legitimate base64 thumbnail
+  // upload (≈18MB raw) while making request smuggling and accidental DoS via
+  // pathological payloads materially harder. Stripe webhooks above use
+  // express.raw() so this limit does not affect them.
+  app.use(express.json({ limit: "25mb" }));
+  app.use(express.urlencoded({ limit: "25mb", extended: true }));
 
   // Request logging middleware
   app.use("/api/", (req, _res, next) => {

@@ -41,14 +41,6 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/virelle-opener.mp4",
-      "type": "video/mp4",
-      "sizes": "1920x1080",
-      "label": "Virelle Studios in action"
-    }
-  ],
   "shortcuts": [
     {
       "name": "New Project",

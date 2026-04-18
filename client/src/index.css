@@ -41,6 +41,14 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-serif: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+}
+
+/* Hollywood-grade title typography — apply with className="font-serif" */
+.font-serif {
+  font-family: var(--font-serif);
+  font-feature-settings: "liga", "dlig", "kern";
+  letter-spacing: -0.005em;
 }
 
 /* Light theme — Day mode: black background, gold text */

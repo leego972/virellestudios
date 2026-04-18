@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Virelle Studios — Offline</title>
+    <link rel="icon" href="/apple-touch-icon.png" />
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; height: 100%; background: #0a0a0a; color: #d4a843; font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; }
+      .wrap { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px; }
+      .reel { width: 88px; height: 88px; border-radius: 50%; border: 6px solid #2a2a2a; border-top-color: #d4a843; animation: spin 1.6s linear infinite; margin-bottom: 24px; }
+      h1 { font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif; font-weight: 500; font-size: 32px; letter-spacing: 0.02em; margin: 0 0 12px; }
+      p { color: #b89a5e; max-width: 32rem; line-height: 1.6; margin: 0 0 24px; font-size: 15px; }
+      button { background: #d4a843; color: #0a0a0a; border: none; padding: 12px 28px; border-radius: 999px; font-weight: 600; font-size: 15px; cursor: pointer; min-height: 44px; }
+      button:hover { background: #e3b955; }
+      .quote { margin-top: 56px; max-width: 28rem; font-style: italic; color: #6e5a36; font-size: 13px; line-height: 1.7; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="reel" aria-hidden="true"></div>
+      <h1>The reel is paused.</h1>
+      <p>You're currently offline. Your work is safe — Virelle will sync the moment you're back on the air.</p>
+      <button onclick="location.reload()">Try again</button>
+      <p class="quote">"There's no terror in the bang, only in the anticipation of it." — Alfred Hitchcock</p>
+    </div>
+  </body>
+</html>

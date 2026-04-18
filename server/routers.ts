@@ -6455,6 +6455,7 @@ Generate a detailed production budget estimate.`,
         imageUrls: z.array(z.string()).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseDirectorAssistant", "Director AI Assistant");
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "virelle_chat", `Director assistant message`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // Build user message with attachment info if present

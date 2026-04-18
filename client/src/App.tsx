@@ -19,6 +19,7 @@ import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
 import GoldWatermarkLaunch from "./components/GoldWatermarkLaunch";
 import { useContentProtection } from "./components/ContentProtection";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 
 // Dashboard pages — lazy loaded
 const Projects = lazy(() => import("./pages/Projects"));
@@ -283,6 +284,7 @@ function App() {
           <GoldWatermarkLaunch />
           <Toaster />
           <Router />
+          <PWAInstallPrompt />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
