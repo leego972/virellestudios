@@ -57,6 +57,11 @@ import {
   MessageSquare,
   TrendingUp,
   Star,
+  Rocket,
+  Building2,
+  Calendar,
+  ClipboardList,
+  Scissors,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -100,12 +105,15 @@ const menuGroups = [
     items: [
       { icon: Globe, label: "Film Showcase", path: "/showcase" },
       { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
+      { icon: Calendar, label: "Festival Tracker", path: "/festivals" },
     ],
   },
   {
     label: "Resources",
     items: [
       { icon: DollarSign, label: "Funding Directory", path: "/funding" },
+      { icon: Rocket, label: "Crowdfunding Hub", path: "/crowdfunding" },
+      { icon: Building2, label: "Brand Outreach", path: "/brand-outreach" },
       { icon: BookOpen, label: "Blog", path: "/blog" },
     ],
   },
