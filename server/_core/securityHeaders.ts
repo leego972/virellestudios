@@ -19,17 +19,23 @@ import type { Request, Response, NextFunction } from "express";
 export function securityHeaders() {
   const isProd = process.env.NODE_ENV === "production";
 
-  // CSP — `'unsafe-inline'` and `'unsafe-eval'` are tolerated because Vite,
-  // tRPC's hydration, sonner toast, and the JSON-LD blocks all need them in
-  // common React deployments. Tighten further once a nonce strategy is in
-  // place.
+  // CSP — deliberately permissive on https: for img/media/connect to cover all
+  // the asset CDNs already in active use (files.manuscdn.com, *.cloudfront.net,
+  // OpenAI/Anthropic/Google AI providers, Sentry ingestion, payment provider
+  // domains, etc.) without enumerating each. `'unsafe-inline'` / `'unsafe-eval'`
+  // are tolerated for Vite hydration, sonner toast, and JSON-LD blocks until a
+  // nonce strategy is in place. script-src is locked down to specific trusted
+  // origins rather than `https:` to materially reduce XSS blast radius.
   const csp = [
     "default-src 'self'",
     "img-src 'self' data: blob: https:",
     "media-src 'self' blob: https:",
     "font-src 'self' data: https://fonts.gstatic.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://checkout.stripe.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://checkout.stripe.com https://browser.sentry-cdn.com https://*.ingest.sentry.io",
+    "worker-src 'self' blob:",
+    // connect-src kept open on https:/wss: so AI providers, Sentry, Stripe, and
+    // CDN telemetry all work without per-vendor allowlisting.
     "connect-src 'self' https: wss: blob:",
     "frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com",
     "object-src 'none'",

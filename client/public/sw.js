@@ -49,8 +49,12 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Cache only Vite-emitted lightweight static assets. Video / audio is excluded
+// because a single mp4 can blow past Cache Storage quota and silently break
+// the SW for the entire origin.
 function isHashedAsset(url) {
-  return /\/assets\/.+\.(js|css|woff2?|png|jpg|jpeg|webp|svg|mp4|webm)$/.test(url.pathname);
+  if (!url.pathname.startsWith("/assets/")) return false;
+  return /\.(js|css|woff2?|png|jpg|jpeg|webp|avif|svg|ico)$/.test(url.pathname);
 }
 
 self.addEventListener("fetch", (event) => {
