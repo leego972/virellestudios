@@ -52,10 +52,10 @@ const STAGES: Stage[] = [
     title: "Idea & Pitch",
     blurb: "Logline, treatment, lookbook, pitch deck",
     icon: Lightbulb,
-    hrefFor: (id) => `/projects/${id}/mood-board`,
+    hrefFor: (id) => `/projects/${id}/pitch-lab`,
     isDone: (s) => s.hasLogline,
-    ctaLabel: "Start your pitch",
-    surfaces: ["Mood Board", "Project overview"],
+    ctaLabel: "Open Pitch Lab",
+    surfaces: ["Pitch Lab", "Mood Board"],
   },
   {
     key: "characters",
@@ -129,10 +129,10 @@ const STAGES: Stage[] = [
     title: "Release & Promote",
     blurb: "Trailer, social cuts, festivals, paid campaigns",
     icon: Megaphone,
-    hrefFor: () => `/distribute`,
+    hrefFor: (id) => `/projects/${id}/press-kit`,
     isDone: (s) => s.hasCampaign,
-    ctaLabel: "Release your film",
-    surfaces: ["Distribute", "Trailer Studio", "Campaign Manager", "Ad Poster Maker"],
+    ctaLabel: "Build Press Kit",
+    surfaces: ["Press Kit", "Festival Tracker", "Distribute", "Trailer Studio", "Campaign Manager"],
   },
 ];
 

@@ -615,7 +615,7 @@ export default function ProjectDetail() {
           <ProjectJourneyNav
             projectId={projectId}
             signals={{
-              hasLogline: !!(project?.logline && project.logline.trim().length > 0),
+              hasLogline: !!((project as any)?.logline && ((project as any).logline as string).trim().length > 0),
               characterCount: characters?.length ?? 0,
               sceneCount: scenes?.length ?? 0,
               hasScript: !!(project as any)?.scriptText && ((project as any).scriptText as string).trim().length > 0,
