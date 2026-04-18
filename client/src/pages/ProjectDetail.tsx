@@ -526,6 +526,11 @@ export default function ProjectDetail() {
             <Link2 className="h-4 w-4 mr-1" />
             Share for review
           </Button>
+          <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
+            <Users className="h-4 w-4 mr-1" />
+            Team
+          </Button>
+          <ReviewsButton projectId={project.id} />
           <Button size="sm" variant="outline" onClick={() => setLocation(`/projects/${project.id}/storyboard`)}>
             <Grid3X3 className="h-4 w-4 mr-1" />
             Storyboard
@@ -2542,5 +2547,60 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * Reviews inbox — surfaces public reviewer comments left on shared
+ * screener links. Producers / directors see them grouped by reviewer
+ * with optional scene + timecode references.
+ */
+function ReviewsButton({ projectId }: { projectId: number }) {
+  const [open, setOpen] = useState(false);
+  const reviews = trpc.review.list.useQuery({ projectId }, { enabled: open });
+  const count = reviews.data?.length ?? 0;
+  return (
+    <>
+      <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+        <MessageSquare className="h-4 w-4 mr-1" />
+        Reviews{count > 0 ? ` (${count})` : ""}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Screener feedback</DialogTitle>
+          </DialogHeader>
+          {reviews.isLoading ? (
+            <div className="py-8 flex items-center justify-center">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : (reviews.data?.length ?? 0) === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              No reviewer comments yet. Comments left on watermarked share links will appear here.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {reviews.data!.map((r) => (
+                <Card key={r.id}>
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <div className="flex items-center gap-2 text-xs">
+                        <Badge variant="outline" className="text-[10px]">{r.reviewerName}</Badge>
+                        {r.sceneId ? <span className="text-muted-foreground">Scene #{r.sceneId}</span> : null}
+                        {r.timecode ? <span className="font-mono text-muted-foreground">@ {r.timecode}</span> : null}
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">
+                        {new Date(r.createdAt as any).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed">{r.comment}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

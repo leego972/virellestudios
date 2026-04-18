@@ -445,7 +445,248 @@ pre{white-space:pre-wrap;font:inherit}
           )}
         </CardContent>
       </Card>
+
+      {/* ── Daily Production Report (DPR) — pro-studio wrap report ── */}
+      {!!projectId && stripboard.length > 0 && (
+        <DailyProductionReport
+          projectId={projectId}
+          stripboard={stripboard}
+          history={history as any[] | undefined}
+          refetchHistory={refetchHistory}
+        />
+      )}
+
+      {/* ── Chain of Title — clearance / rights tracker ── */}
+      {!!projectId && <ChainOfTitleSection projectId={projectId} />}
+
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={4} />}
     </div>
+  );
+}
+
+// ── Daily Production Report (DPR) ───────────────────────────────────────
+// After each shoot day, an AD logs scenes shot, hours worked, meal
+// breaks, weather, and any incidents. Insurance, payroll, completion
+// bond, and post-production planning all depend on these reports.
+function DailyProductionReport({
+  projectId,
+  stripboard,
+  history,
+  refetchHistory,
+}: {
+  projectId: number;
+  stripboard: any[];
+  history: any[] | undefined;
+  refetchHistory: () => void;
+}) {
+  const [dayIdx, setDayIdx] = useState(0);
+  const [generating, setGenerating] = useState(false);
+  const sendMessage = trpc.directorChat.send.useMutation();
+
+  const lastDpr = useMemo(() => {
+    if (!history) return null;
+    const tag = `[DPR:${dayIdx}]`;
+    for (let i = history.length - 1; i >= 0; i--) {
+      const m: any = history[i];
+      if (m.role === "assistant" && history[i - 1]?.content?.includes(tag)) {
+        return m.content as string;
+      }
+    }
+    return null;
+  }, [history, dayIdx]);
+
+  async function generateDpr() {
+    const day = stripboard[dayIdx];
+    if (!day) return;
+    setGenerating(true);
+    try {
+      const prompt = `[DPR:${dayIdx}]
+You are a 1st AD producing a Daily Production Report (DPR) for the
+end of shoot day ${day.day} of ${stripboard.length}, date ${day.date}.
+
+Scenes scheduled today:
+${day.scenes.map((s: any) => `- Sc ${s.sceneNumber || s.id} ${s.title || ""} (${s.location || s.locationType || "loc TBD"})`).join("\n")}
+
+Generate a clean, distributor-grade DPR in markdown with:
+1. Header: production title, date, day X of Y, location, weather (assume seasonal)
+2. Scenes shot vs scheduled (assume all scheduled were shot unless noted)
+3. Setups / takes summary (estimate professional norms — 6-12 setups/day)
+4. Crew/cast call vs actual wrap time (12-hour day baseline)
+5. Meal breaks (breakfast 7am, lunch ~6 hrs after call, no second meal penalty)
+6. Script pages shot vs scheduled
+7. Camera reports — media transferred, backup status (assume A/B + LTO)
+8. Sound / continuity / makeup notes (typical)
+9. Safety incidents (none — clean day)
+10. Producer's notes — outstanding items, tomorrow's priorities
+
+Output clean markdown only, no commentary.`;
+      await sendMessage.mutateAsync({ projectId, message: prompt });
+      await refetchHistory();
+      toast.success(`Wrap report drafted for day ${day.day}.`);
+    } catch (e: any) {
+      toast.error(e?.message || "Generation failed.");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center gap-2">
+          <ClipboardList className="h-4 w-4" />
+          Daily Production Report
+        </CardTitle>
+        <CardDescription className="text-xs">
+          Wrap-of-day report for insurance, payroll, completion bond and post planning.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Label className="text-xs text-muted-foreground">Shoot day</Label>
+          <Select value={String(dayIdx)} onValueChange={(v) => setDayIdx(parseInt(v))}>
+            <SelectTrigger className="h-8 w-44 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {stripboard.map((d: any, i: number) => (
+                <SelectItem key={i} value={String(i)}>Day {d.day} — {d.date}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button onClick={generateDpr} disabled={generating} size="sm" className="gap-2">
+            {generating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+            Generate wrap report
+          </Button>
+        </div>
+        {lastDpr && (
+          <div className="border rounded-lg p-3 bg-muted/30 max-h-[480px] overflow-y-auto">
+            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{lastDpr}</pre>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Chain of Title ──────────────────────────────────────────────────────
+// Distributors, festivals, and streamers will not accept a film without
+// proof every right has been cleared. This is the producer's checklist.
+const COT_TEMPLATE = [
+  { key: "literary", label: "Literary rights / underlying material" },
+  { key: "screenplay", label: "Screenplay (writer agreement, WGA if applicable)" },
+  { key: "lifeRights", label: "Life rights (real-person depictions)" },
+  { key: "depiction", label: "Depiction releases (any recognizable person)" },
+  { key: "cast", label: "Talent agreements (cast, SAG-AFTRA paperwork)" },
+  { key: "crew", label: "Crew deal memos" },
+  { key: "locations", label: "Location releases (every location)" },
+  { key: "musicSync", label: "Music sync licenses (every cue)" },
+  { key: "musicMaster", label: "Music master use licenses" },
+  { key: "musicScore", label: "Composer / score work-for-hire" },
+  { key: "stockFootage", label: "Stock footage / archival licenses" },
+  { key: "logos", label: "Trademark / logo / product clearances" },
+  { key: "eo", label: "Errors & Omissions (E&O) insurance" },
+  { key: "guildResiduals", label: "Guild residuals reserve (SAG / DGA / WGA)" },
+  { key: "permits", label: "Filming permits & COIs" },
+];
+const STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  pending: { label: "Pending", color: "bg-gray-500/15 text-gray-400 border-gray-500/40" },
+  in_progress: { label: "In progress", color: "bg-amber-500/15 text-amber-500 border-amber-500/40" },
+  cleared: { label: "Cleared", color: "bg-green-500/15 text-green-500 border-green-500/40" },
+  na: { label: "N/A", color: "bg-muted text-muted-foreground border-border" },
+};
+
+function ChainOfTitleSection({ projectId }: { projectId: number }) {
+  const utils = trpc.useUtils();
+  const cot = trpc.chainOfTitle.get.useQuery({ projectId });
+  const save = trpc.chainOfTitle.save.useMutation({
+    onSuccess: () => {
+      toast.success("Chain of title saved");
+      utils.chainOfTitle.get.invalidate({ projectId });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const [items, setItems] = useState<any[] | null>(null);
+  const effective = items ?? cot.data?.items ?? COT_TEMPLATE.map((t) => ({ ...t, status: "pending", notes: "", docUrl: "" }));
+
+  // Merge in any missing template items so future additions appear automatically
+  const merged = useMemo(() => {
+    const byKey = new Map<string, any>(effective.map((i: any) => [i.key, i]));
+    return COT_TEMPLATE.map((t) => byKey.get(t.key) || { ...t, status: "pending", notes: "", docUrl: "" });
+  }, [effective]);
+
+  const update = (key: string, patch: any) => {
+    const next = merged.map((i: any) => (i.key === key ? { ...i, ...patch } : i));
+    setItems(next);
+  };
+
+  const cleared = merged.filter((i: any) => i.status === "cleared" || i.status === "na").length;
+  const pct = Math.round((cleared / COT_TEMPLATE.length) * 100);
+  const dirty = items != null;
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-base flex items-center gap-2">
+              <ClipboardList className="h-4 w-4" />
+              Chain of Title
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Rights & clearances tracker — required by distributors, festivals, streamers and E&O insurers.
+            </CardDescription>
+          </div>
+          <Badge variant="outline" className="text-xs">{cleared}/{COT_TEMPLATE.length} cleared · {pct}%</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {merged.map((item: any) => (
+          <div key={item.key} className="border rounded-lg p-2.5 bg-muted/20">
+            <div className="flex items-center justify-between gap-2 mb-1.5">
+              <p className="text-sm font-medium">{item.label}</p>
+              <Select value={item.status} onValueChange={(v) => update(item.key, { status: v })}>
+                <SelectTrigger className={`h-7 w-32 text-xs ${STATUS_LABELS[item.status]?.color || ""}`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(STATUS_LABELS).map(([k, v]) => (
+                    <SelectItem key={k} value={k} className="text-xs">{v.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Notes (party, contract date, payment terms…)"
+                value={item.notes || ""}
+                onChange={(e) => update(item.key, { notes: e.target.value.slice(0, 2000) })}
+                className="h-7 text-xs flex-1"
+              />
+              <Input
+                placeholder="Doc URL (optional)"
+                value={item.docUrl || ""}
+                onChange={(e) => update(item.key, { docUrl: e.target.value.slice(0, 500) })}
+                className="h-7 text-xs w-48"
+              />
+            </div>
+          </div>
+        ))}
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-[11px] text-muted-foreground">
+            {cot.data?.updatedAt ? `Last saved ${new Date(cot.data.updatedAt as any).toLocaleString()}` : "Not saved yet"}
+          </p>
+          <Button
+            size="sm"
+            disabled={!dirty || save.isPending}
+            onClick={() => save.mutate({ projectId, items: merged })}
+          >
+            {save.isPending ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : null}
+            Save chain of title
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

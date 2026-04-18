@@ -5110,6 +5110,137 @@ Generate the full dialogue for this scene.`,
         });
       }),
   }),
+  // ─── Public reviewer comments on shared screeners ────
+  // Pro studios send screeners to investors / distributors / festival
+  // programmers and need their feedback collected against scenes.
+  // Reviewers don't have accounts — they reach the project via an HMAC
+  // share-token URL — so the add endpoint is publicProcedure but
+  // gated by verifyShareToken. Comments are stored in the existing
+  // directorChats table tagged `[REVIEW@sceneId|reviewerName|timecode]`
+  // so the project owner sees them inline (no schema migration).
+  review: router({
+    add: publicProcedure
+      .input(z.object({
+        projectId: z.number(),
+        token: z.string(),
+        sceneId: z.number().nullable().optional(),
+        reviewerName: z.string().min(1).max(60),
+        comment: z.string().min(1).max(2000),
+        timecode: z.string().max(24).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { verifyShareToken } = await import("./_core/shareToken");
+        if (!verifyShareToken(input.projectId, input.token)) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Invalid or expired share link" });
+        }
+        // Look up the project owner so the comment lands in their chat history
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        const rows: any = await dbConn.execute(
+          sql`SELECT userId FROM projects WHERE id = ${input.projectId} LIMIT 1`,
+        );
+        const arr = Array.isArray(rows[0]) ? rows[0] : rows;
+        const ownerId = (arr as any[])?.[0]?.userId as number | undefined;
+        if (!ownerId) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+
+        const reviewer = input.reviewerName.replace(/[\[\]\|]/g, " ").slice(0, 60).trim();
+        const tc = (input.timecode || "").replace(/[\[\]\|]/g, " ").slice(0, 24).trim();
+        const tag = `[REVIEW@${input.sceneId ?? 0}|${reviewer}${tc ? `|${tc}` : ""}]`;
+        await db.createChatMessage({
+          projectId: input.projectId,
+          userId: ownerId,
+          role: "user",
+          content: `${tag}\n${input.comment.trim()}`,
+        });
+        return { success: true };
+      }),
+
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const rows: any = await dbConn.execute(
+          sql`SELECT id, content, createdAt FROM directorChats
+              WHERE projectId = ${input.projectId} AND role = 'user'
+                AND content LIKE '[REVIEW@%'
+              ORDER BY createdAt DESC LIMIT 200`,
+        );
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return (arr || []).map((r: any) => {
+          const m = /^\[REVIEW@(\d+)\|([^|\]]+)(?:\|([^\]]+))?\]\s*\n?([\s\S]*)$/.exec(r.content || "");
+          return {
+            id: r.id,
+            sceneId: m ? parseInt(m[1]) || null : null,
+            reviewerName: m ? m[2].trim() : "Anonymous",
+            timecode: m && m[3] ? m[3].trim() : null,
+            comment: m ? m[4].trim() : r.content,
+            createdAt: r.createdAt,
+          };
+        });
+      }),
+  }),
+
+  // ─── Chain of Title — clearance / rights tracker ────
+  // Pro film distribution requires verifiable proof every right has been
+  // cleared (literary, music sync + master, life rights, location releases,
+  // talent agreements, depiction releases, E&O insurance). Without this
+  // a film can't be sold to streamers, festivals or distributors.
+  // Persisted as one canonical `[ChainOfTitle]` JSON message per project
+  // to avoid schema migration on Railway.
+  chainOfTitle: router({
+    get: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) return null;
+        const rows: any = await dbConn.execute(
+          sql`SELECT content, updatedAt FROM directorChats
+              WHERE projectId = ${input.projectId} AND content LIKE '[ChainOfTitle]%'
+              ORDER BY updatedAt DESC LIMIT 1`,
+        );
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        const row = arr?.[0];
+        if (!row) return null;
+        try {
+          const json = (row.content as string).replace(/^\[ChainOfTitle\]\s*\n?/, "");
+          return { items: JSON.parse(json), updatedAt: row.updatedAt };
+        } catch {
+          return null;
+        }
+      }),
+
+    save: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        items: z.array(z.object({
+          key: z.string().max(64),
+          label: z.string().max(120),
+          status: z.enum(["pending", "in_progress", "cleared", "na"]),
+          notes: z.string().max(2000).optional(),
+          docUrl: z.string().max(500).optional(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        // Delete previous chain-of-title messages, then write a single fresh one
+        await dbConn.execute(
+          sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[ChainOfTitle]%'`,
+        );
+        await db.createChatMessage({
+          projectId: input.projectId,
+          userId: ctx.user.id,
+          role: "user",
+          content: `[ChainOfTitle]\n${JSON.stringify(input.items)}`,
+        });
+        return { success: true };
+      }),
+  }),
+
   // ─── Budget Estimator ────
   budget: router({
     list: protectedProcedure

@@ -12,6 +12,79 @@ import { useState, useMemo } from "react";
  * timestamp so leaks can be traced. Diagonal text, low opacity,
  * impossible to crop without destroying the frame.
  */
+function ReviewerCommentBox({
+  projectId,
+  token,
+  sceneId,
+  sceneTitle,
+  defaultName,
+}: {
+  projectId: number;
+  token: string;
+  sceneId: number;
+  sceneTitle: string;
+  defaultName: string;
+}) {
+  const [name, setName] = useState(defaultName);
+  const [tc, setTc] = useState("");
+  const [comment, setComment] = useState("");
+  const [sent, setSent] = useState(false);
+  const add = trpc.review.add.useMutation({
+    onSuccess: () => {
+      setSent(true);
+      setComment("");
+      setTimeout(() => setSent(false), 3500);
+    },
+  });
+  const submit = () => {
+    if (!name.trim() || !comment.trim()) return;
+    add.mutate({ projectId, token, sceneId, reviewerName: name.trim(), comment: comment.trim(), timecode: tc.trim() || undefined });
+  };
+  return (
+    <div className="px-4 py-3 border-b bg-muted/20">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Leave a note on "{sceneTitle}"
+        </p>
+        {sent && <span className="text-[11px] text-green-500 font-medium">✓ Sent to filmmaker</span>}
+      </div>
+      <div className="flex gap-2 mb-2">
+        <input
+          type="text"
+          placeholder="Your name"
+          value={name}
+          onChange={(e) => setName(e.target.value.slice(0, 60))}
+          className="flex-1 h-8 px-2 rounded-md border border-border bg-background text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+        <input
+          type="text"
+          placeholder="Timecode (e.g. 00:42)"
+          value={tc}
+          onChange={(e) => setTc(e.target.value.slice(0, 24))}
+          className="w-32 h-8 px-2 rounded-md border border-border bg-background text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+      </div>
+      <textarea
+        placeholder="Your note for the filmmaker — pacing, performance, sound, story…"
+        value={comment}
+        onChange={(e) => setComment(e.target.value.slice(0, 2000))}
+        rows={2}
+        className="w-full px-2 py-1.5 rounded-md border border-border bg-background text-xs resize-y min-h-[60px] focus:outline-none focus:ring-1 focus:ring-primary"
+      />
+      <div className="flex justify-end mt-2">
+        <button
+          onClick={submit}
+          disabled={!name.trim() || !comment.trim() || add.isPending}
+          className="h-7 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium disabled:opacity-50 hover:opacity-90"
+        >
+          {add.isPending ? "Sending…" : "Send note"}
+        </button>
+      </div>
+      {add.error && <p className="mt-1 text-[11px] text-red-500">{add.error.message}</p>}
+    </div>
+  );
+}
+
 function ScreenerWatermark({ name }: { name: string }) {
   if (!name) return null;
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
@@ -143,6 +216,13 @@ export default function SharePreview() {
 
         {active && (
           <Card className="mb-6 overflow-hidden">
+            <ReviewerCommentBox
+              projectId={projectId}
+              token={token}
+              sceneId={active.id}
+              sceneTitle={active.title}
+              defaultName={reviewerName}
+            />
             <div className="aspect-video bg-black relative">
               {active.videoUrl ? (
                 <video
