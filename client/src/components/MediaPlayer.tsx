@@ -80,6 +80,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
   const containerRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const lastTapRef = useRef<number>(0);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -98,6 +99,14 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
   const [hasError, setHasError] = useState(false);
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [isMinimised, setIsMinimised] = useState(false);
+  const [seekFlash, setSeekFlash] = useState<{ side: "left" | "right"; at: number } | null>(null);
+
+  // Auto-clear the seek-flash indicator after 600ms
+  useEffect(() => {
+    if (!seekFlash) return;
+    const t = setTimeout(() => setSeekFlash(null), 600);
+    return () => clearTimeout(t);
+  }, [seekFlash]);
 
   const currentIndex = playlist?.findIndex((m) => m.id === movie.id) ?? -1;
   const hasPrev = playlist && currentIndex > 0;
@@ -133,13 +142,17 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
     const onCanPlay = () => {
       setIsLoading(false);
       setHasError(false);
-      // Auto-unmute after iOS muted autoplay succeeds
-      if (video.muted && isMuted) {
+      // Auto-unmute after the muted-autoplay handshake succeeds.
+      // We check video.muted directly (not React state) to avoid the stale-closure
+      // race where state hasn't caught up to the muted attribute set in JSX.
+      // iOS Safari may still reject programmatic unmute without a user gesture —
+      // in that case the user taps the volume icon to unmute.
+      if (video.muted) {
         try {
           video.muted = false;
           setIsMuted(false);
         } catch {
-          // iOS may block unmute — user will need to tap volume
+          /* iOS gesture requirement — surface via volume button */
         }
       }
     };
@@ -535,6 +548,27 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
         onClick={(e) => {
           // Don't toggle play if clicking on controls
           if ((e.target as HTMLElement).closest("[data-controls]")) return;
+          // Double-tap-to-seek (YouTube/Netflix UX) — only on touch-likely devices,
+          // and only inside the video area, never on top of controls.
+          const now = Date.now();
+          const target = e.currentTarget as HTMLElement;
+          const rect = target.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const isLeft = x < rect.width * 0.35;
+          const isRight = x > rect.width * 0.65;
+          const isDoubleTap = now - lastTapRef.current < 300 && (isLeft || isRight);
+          if (isDoubleTap) {
+            const video = videoRef.current;
+            if (video) {
+              const delta = isLeft ? -10 : 10;
+              video.currentTime = Math.max(0, Math.min(video.duration || 0, video.currentTime + delta));
+              setSeekFlash({ side: isLeft ? "left" : "right", at: now });
+              lastTapRef.current = 0;
+              resetControlsTimeout();
+              return;
+            }
+          }
+          lastTapRef.current = now;
           togglePlay();
           resetControlsTimeout();
         }}
@@ -549,6 +583,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             playsInline
             autoPlay
             muted
+            preload="auto"
             poster={movie.thumbnailUrl || undefined}
             x-webkit-airplay="allow"
             controlsList="nodownload"
@@ -609,6 +644,21 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             >
               Try Again
             </Button>
+          </div>
+        )}
+
+        {/* Double-tap seek flash indicator */}
+        {seekFlash && (
+          <div
+            className={`absolute inset-y-0 ${seekFlash.side === "left" ? "left-0 right-2/3" : "right-0 left-2/3"} pointer-events-none flex items-center justify-center bg-white/10 backdrop-blur-[2px] animate-pulse`}
+            aria-hidden="true"
+          >
+            <div className="flex flex-col items-center gap-1 text-white">
+              {seekFlash.side === "left"
+                ? <ChevronDown className="h-8 w-8 -rotate-90" />
+                : <ChevronDown className="h-8 w-8 rotate-90" />}
+              <span className="text-xs font-medium">{seekFlash.side === "left" ? "−10s" : "+10s"}</span>
+            </div>
           </div>
         )}
 
@@ -688,7 +738,8 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-10 w-10 sm:h-9 sm:w-9"
+                          aria-label="Previous video"
+                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11 sm:h-9 sm:w-9"
                           disabled={!hasPrev}
                           onClick={() => hasPrev && onNavigate?.(playlist![currentIndex - 1].id)}
                         >
@@ -707,6 +758,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                       <Button
                         size="icon"
                         variant="ghost"
+                        aria-label={isPlaying ? "Pause" : "Play"}
                         className="text-white hover:bg-white/10 active:bg-white/20 h-11 w-11 sm:h-10 sm:w-10"
                         onClick={togglePlay}
                       >
@@ -725,7 +777,8 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-10 w-10 sm:h-9 sm:w-9"
+                          aria-label="Next video"
+                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11 sm:h-9 sm:w-9"
                           disabled={!hasNext}
                           onClick={() => hasNext && onNavigate?.(playlist![currentIndex + 1].id)}
                         >
@@ -745,7 +798,8 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 sm:h-9 sm:w-9"
+                          aria-label={isMuted ? "Unmute" : "Mute"}
+                          className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11 sm:h-9 sm:w-9"
                           onClick={() => {
                             const video = videoRef.current;
                             if (!video) return;
