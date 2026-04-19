@@ -1645,6 +1645,37 @@ export default function ProjectDetail() {
             </Card>
           </div>
 
+          {/* Pro Studio */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-border/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Pro Studio</span>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-amber-400" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-amber-400">Pro Studio</p>
+                    <p className="text-xs text-muted-foreground">Style bible · Shot versions · Voice rights · C2PA · Render economics</p>
+                  </div>
+                  <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-2 hover:ring-violet-500/60 transition-all border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5" onClick={() => setLocation(`/projects/${project.id}/studio-ops`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-violet-500/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-violet-400" /></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-violet-400">Studio Operations</p>
+                    <p className="text-xs text-muted-foreground">Frame reviews · Color · Versions · Render queue · Deliverables · Clearances · Distribution · Audit · Proxies · Cuts</p>
+                  </div>
+                  <Badge className="bg-violet-500/20 text-violet-400 border-violet-500/30 text-[10px]">OPS</Badge>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
           {/* Project Management */}
           <div>
             <div className="flex items-center gap-2 mb-3">

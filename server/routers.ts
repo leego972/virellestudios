@@ -5531,6 +5531,260 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
+  // ─── Pro Ops: Frame Comments (Frame.io-style review) ────
+  frameComments: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number().optional() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const tag = input.sceneId != null ? `[FrameComments@${input.sceneId}]%` : `[FrameComments@%`;
+        const rows: any = await dbConn.execute(sql`SELECT id, content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${tag} ORDER BY updatedAt DESC LIMIT 500`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return arr.map((r: any) => { const m = /^\[FrameComments@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), comments: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter(Boolean);
+      }),
+    save: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number(), comments: z.array(z.object({ id: z.string(), author: z.string().max(120), role: z.string().max(40), timecode: z.string().max(20).optional(), text: z.string().max(2000), status: z.enum(["open","resolved","approved"]), createdAt: z.string() })) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${`[FrameComments@${input.sceneId}]%`}`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[FrameComments@${input.sceneId}]\n${JSON.stringify(input.comments)}` });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Ops: Color Pipeline (CDL + LUT + ACES) ────
+  colorPipeline: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const rows: any = await dbConn.execute(sql`SELECT content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[ColorPipeline@%' ORDER BY updatedAt DESC LIMIT 500`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return arr.map((r: any) => { const m = /^\[ColorPipeline@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter(Boolean);
+      }),
+    save: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number(), data: z.object({ slope: z.tuple([z.number(),z.number(),z.number()]), offset: z.tuple([z.number(),z.number(),z.number()]), power: z.tuple([z.number(),z.number(),z.number()]), saturation: z.number(), lutName: z.string().max(120).optional(), lutUrl: z.string().max(1000).optional(), colorSpace: z.string().max(40), gamma: z.string().max(40).optional() }) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${`[ColorPipeline@${input.sceneId}]%`}`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[ColorPipeline@${input.sceneId}]\n${JSON.stringify(input.data)}` });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Ops: Asset Versions (script/schedule/budget/EDL snapshots) ────
+  assetVersions: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const rows: any = await dbConn.execute(sql`SELECT content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[AssetVersions]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        const row = arr?.[0]; if (!row) return [];
+        try { return JSON.parse((row.content as string).replace(/^\[AssetVersions\]\s*\n?/, "")); } catch { return []; }
+      }),
+    snapshot: protectedProcedure
+      .input(z.object({ projectId: z.number(), assetType: z.enum(["script","schedule","budget","edl","audio_stems","color_grade"]), label: z.string().max(120), notes: z.string().max(2000).optional(), payloadUrl: z.string().max(1000).optional(), checksum: z.string().max(120).optional() }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        const existing: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[AssetVersions]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const exArr = (Array.isArray(existing[0]) ? existing[0] : existing) as any[];
+        let versions: any[] = [];
+        if (exArr?.[0]) { try { versions = JSON.parse((exArr[0].content as string).replace(/^\[AssetVersions\]\s*\n?/, "")); } catch {} }
+        versions.unshift({ id: `v${Date.now()}`, assetType: input.assetType, label: input.label, notes: input.notes, payloadUrl: input.payloadUrl, checksum: input.checksum, author: (ctx.user as any).email || String(ctx.user.id), createdAt: new Date().toISOString() });
+        if (versions.length > 200) versions = versions.slice(0, 200);
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[AssetVersions]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[AssetVersions]\n${JSON.stringify(versions)}` });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Ops: Render Queue (priorities + cost caps) ────
+  renderQueue: router({
+    get: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return { jobs: [], cap: null };
+        const rows: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[RenderQueue]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        if (!arr?.[0]) return { jobs: [], cap: null };
+        try { return JSON.parse((arr[0].content as string).replace(/^\[RenderQueue\]\s*\n?/, "")); } catch { return { jobs: [], cap: null }; }
+      }),
+    save: protectedProcedure
+      .input(z.object({ projectId: z.number(), data: z.object({ cap: z.object({ dailyCredits: z.number().nullable(), perJobCredits: z.number().nullable(), pauseOnExceed: z.boolean() }).nullable(), jobs: z.array(z.object({ id: z.string(), label: z.string().max(200), sceneId: z.number().nullable(), priority: z.enum(["low","normal","high","urgent"]), model: z.string().max(64), estimatedCredits: z.number(), maxRetries: z.number().min(0).max(5), scheduledAt: z.string().nullable(), status: z.enum(["queued","running","done","failed","paused","skipped"]), notes: z.string().max(1000).optional() })) }) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[RenderQueue]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[RenderQueue]\n${JSON.stringify(input.data)}` });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Ops: Deliverable Packager ────
+  deliverables: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const rows: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Deliverables]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        if (!arr?.[0]) return [];
+        try { return JSON.parse((arr[0].content as string).replace(/^\[Deliverables\]\s*\n?/, "")); } catch { return []; }
+      }),
+    save: protectedProcedure
+      .input(z.object({ projectId: z.number(), specs: z.array(z.object({ id: z.string(), profile: z.enum(["prores4444","dcp_2k","dcp_4k","imf","broadcast_safe","youtube_4k","tiktok_vertical","instagram_square","ig_reel","x_landscape","prores_proxy"]), label: z.string().max(120), aspectRatio: z.string().max(20), frameRate: z.number(), audioMix: z.enum(["stereo","5.1","7.1","atmos"]), captions: z.boolean(), hdrPass: z.enum(["sdr","hdr10","dolby_vision"]).optional(), targetUrl: z.string().max(1000).optional(), status: z.enum(["pending","building","ready","failed"]), createdAt: z.string() })) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Deliverables]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[Deliverables]\n${JSON.stringify(input.specs)}` });
+        return { success: true };
+      }),
+    manifest: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const dbConn = await db.getDb();
+        let specs: any[] = [];
+        if (dbConn) {
+          const rows: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Deliverables]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+          if (arr?.[0]) { try { specs = JSON.parse((arr[0].content as string).replace(/^\[Deliverables\]\s*\n?/, "")); } catch {} }
+        }
+        return { generatedAt: new Date().toISOString(), project: { id: project.id, title: project.title }, deliverables: specs, totalCount: specs.length, readyCount: specs.filter((s: any) => s.status === "ready").length };
+      }),
+  }),
+
+  // ─── Pro Ops: Clearances (music/location/talent/AI rider) ────
+  clearances: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const rows: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Clearances]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        if (!arr?.[0]) return [];
+        try { return JSON.parse((arr[0].content as string).replace(/^\[Clearances\]\s*\n?/, "")); } catch { return []; }
+      }),
+    save: protectedProcedure
+      .input(z.object({ projectId: z.number(), records: z.array(z.object({ id: z.string(), kind: z.enum(["music_sync","master_use","location_release","talent_release","ai_rider_sag","stock_footage","trademark"]), title: z.string().max(200), counterparty: z.string().max(200), status: z.enum(["needed","requested","negotiating","signed","denied","not_required"]), territory: z.string().max(120).optional(), term: z.string().max(120).optional(), feeUsd: z.number().optional(), notes: z.string().max(2000).optional(), documentUrl: z.string().max(1000).optional(), expiresAt: z.string().optional() })) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Clearances]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[Clearances]\n${JSON.stringify(input.records)}` });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Ops: Distribution Targets ────
+  distributionTargets: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const rows: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[DistributionTargets]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        if (!arr?.[0]) return [];
+        try { return JSON.parse((arr[0].content as string).replace(/^\[DistributionTargets\]\s*\n?/, "")); } catch { return []; }
+      }),
+    save: protectedProcedure
+      .input(z.object({ projectId: z.number(), targets: z.array(z.object({ id: z.string(), platform: z.enum(["filmfreeway","vimeo_ott","prime_video_direct","youtube","tiktok","meta","x_video","tubi","plex","custom"]), label: z.string().max(200), accountHandle: z.string().max(120).optional(), status: z.enum(["draft","scheduled","submitted","live","rejected"]), submittedAt: z.string().optional(), liveUrl: z.string().max(1000).optional(), notes: z.string().max(2000).optional() })) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[DistributionTargets]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[DistributionTargets]\n${JSON.stringify(input.targets)}` });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Ops: Audit Log (SOC2-grade activity trail) ────
+  auditLog: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number(), limit: z.number().min(1).max(1000).default(200) }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const rows: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[AuditLog]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        if (!arr?.[0]) return [];
+        try { const events = JSON.parse((arr[0].content as string).replace(/^\[AuditLog\]\s*\n?/, "")); return events.slice(0, input.limit); } catch { return []; }
+      }),
+    append: protectedProcedure
+      .input(z.object({ projectId: z.number(), event: z.object({ action: z.string().max(120), targetType: z.string().max(60).optional(), targetId: z.string().max(120).optional(), summary: z.string().max(500), metadata: z.record(z.string(), z.any()).optional() }) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        const existing: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[AuditLog]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const exArr = (Array.isArray(existing[0]) ? existing[0] : existing) as any[];
+        let events: any[] = [];
+        if (exArr?.[0]) { try { events = JSON.parse((exArr[0].content as string).replace(/^\[AuditLog\]\s*\n?/, "")); } catch {} }
+        events.unshift({ id: `e${Date.now()}_${Math.random().toString(36).slice(2,8)}`, ...input.event, actorId: ctx.user.id, actorEmail: (ctx.user as any).email || null, at: new Date().toISOString() });
+        if (events.length > 1000) events = events.slice(0, 1000);
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[AuditLog]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[AuditLog]\n${JSON.stringify(events)}` });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Ops: Proxy Chain (1/4 res proxies → master conform) ────
+  proxyChain: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const rows: any = await dbConn.execute(sql`SELECT content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[ProxyChain@%' ORDER BY updatedAt DESC LIMIT 500`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return arr.map((r: any) => { const m = /^\[ProxyChain@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter(Boolean);
+      }),
+    save: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number(), data: z.object({ proxyUrl: z.string().max(1000).optional(), proxyResolution: z.string().max(20).optional(), proxyStatus: z.enum(["pending","ready","failed"]), masterUrl: z.string().max(1000).optional(), masterResolution: z.string().max(20).optional(), masterStatus: z.enum(["pending","ready","failed"]), notes: z.string().max(1000).optional() }) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${`[ProxyChain@${input.sceneId}]%`}`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[ProxyChain@${input.sceneId}]\n${JSON.stringify(input.data)}` });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Ops: Timeline Cuts (in/out trim + transitions per scene) ────
+  timelineCuts: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const rows: any = await dbConn.execute(sql`SELECT content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[TimelineCuts@%' ORDER BY updatedAt DESC LIMIT 500`);
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return arr.map((r: any) => { const m = /^\[TimelineCuts@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter(Boolean);
+      }),
+    save: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number(), data: z.object({ trimInSec: z.number().min(0), trimOutSec: z.number().min(0), transitionIn: z.enum(["cut","fade","dissolve","wipe","jcut","lcut"]), transitionInDurationSec: z.number().min(0).max(10), transitionOut: z.enum(["cut","fade","dissolve","wipe","jcut","lcut"]), transitionOutDurationSec: z.number().min(0).max(10), audioFadeInSec: z.number().min(0).max(10), audioFadeOutSec: z.number().min(0).max(10), notes: z.string().max(1000).optional() }) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${`[TimelineCuts@${input.sceneId}]%`}`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[TimelineCuts@${input.sceneId}]\n${JSON.stringify(input.data)}` });
+        return { success: true };
+      }),
+  }),
+
   // ─── Budget Estimator ────
   budget: router({
     list: protectedProcedure

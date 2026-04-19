@@ -110,6 +110,7 @@ const CrowdfundingHub = lazy(() => import("./pages/CrowdfundingHub"));
 const BrandOutreach = lazy(() => import("./pages/BrandOutreach"));
 const ProductionOffice = lazy(() => import("./pages/ProductionOffice"));
 const ProStudio = lazy(() => import("./pages/ProStudio"));
+const ProStudioOps = lazy(() => import("./pages/ProStudioOps"));
 const SocialCutsFactory = lazy(() => import("./pages/SocialCutsFactory"));
 const CastingBoard = lazy(() => import("./pages/CastingBoard"));
 const CuttingRoom = lazy(() => import("./pages/CuttingRoom"));
@@ -278,6 +279,7 @@ function Router() {
               <Route path="/projects/:projectId/casting-board">{() => <LazyPage><CastingBoard /></LazyPage>}</Route>
               <Route path="/projects/:projectId/cutting-room">{() => <LazyPage><CuttingRoom /></LazyPage>}</Route>
               <Route path="/projects/:projectId/pro-studio">{() => <LazyPage><ProStudio /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/studio-ops">{() => <LazyPage><ProStudioOps /></LazyPage>}</Route>
               <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/admin/security">{() => <SecurityDashboard />}</Route>
               <Route path="/admin/autonomous">{() => <LazyPage><AdminAutonomous /></LazyPage>}</Route>
