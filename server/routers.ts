@@ -1852,6 +1852,19 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         await db.incrementGenerationCount(ctx.user.id);
         const scene = await db.getSceneById(input.sceneId);
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        // ─── Scene Lock Check: blocked if director has locked this scene ───
+        try {
+          const dbl = await db.getDb();
+          if (dbl) {
+            const lr: any = await dbl.execute(sql`SELECT content FROM directorChats WHERE projectId = ${scene.projectId} AND content LIKE '[SceneLocks]%' ORDER BY updatedAt DESC LIMIT 1`);
+            const larr = (Array.isArray(lr[0]) ? lr[0] : lr) as any[];
+            if (larr?.[0]) {
+              const locks = JSON.parse((larr[0].content as string).replace(/^\[SceneLocks\]\s*\n?/, ""));
+              const lock = (locks || []).find((x: any) => x.sceneId === input.sceneId && x.locked);
+              if (lock) throw new TRPCError({ code: "FORBIDDEN", message: `Scene is locked by ${lock.lockedBy || "director"}${lock.reason ? ` (${lock.reason})` : ""}. Unlock in Studio Ops → Locks to regenerate.` });
+            }
+          }
+        } catch (e: any) { if (e instanceof TRPCError) throw e; }
         // Credits: duration-scaled deduction (≤15s=3cr, 16-45s=5cr, 46-90s=7cr, >90s=10cr)
         const videoCredits = getVideoCredits(Math.max(10, scene.duration || 45), false);
         // ─── Render Queue Executor Guard: enforce per-project caps before spending ───
@@ -10586,6 +10599,36 @@ Rules:
       }),
   }),
 
+  // ─── Pro Locks: director-locked scenes (block accidental regeneration) ────
+  sceneLocks: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const r: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[SceneLocks]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+        if (!arr?.[0]) return [];
+        try { return JSON.parse((arr[0].content as string).replace(/^\[SceneLocks\]\s*\n?/, "")); } catch { return []; }
+      }),
+    toggle: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number(), locked: z.boolean(), reason: z.string().max(500).optional() }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        const r: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[SceneLocks]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+        let locks: any[] = [];
+        if (arr?.[0]) { try { locks = JSON.parse((arr[0].content as string).replace(/^\[SceneLocks\]\s*\n?/, "")) || []; } catch {} }
+        const idx = locks.findIndex((x: any) => x.sceneId === input.sceneId);
+        const entry = { sceneId: input.sceneId, locked: input.locked, reason: input.reason || null, lockedBy: (ctx.user as any).email || `user${ctx.user.id}`, lockedAt: new Date().toISOString() };
+        if (idx >= 0) locks[idx] = entry; else locks.push(entry);
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[SceneLocks]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[SceneLocks]\n${JSON.stringify(locks)}` });
+        return { success: true };
+      }),
+  }),
+
   // ─── Pro Dashboard: single-pane studio readiness summary ────
   studioDashboard: router({
     summary: protectedProcedure
@@ -10670,13 +10713,30 @@ Rules:
           failed === 0 ? 1 : 0.5,
         ];
         const readiness = Math.round((readinessParts.reduce((a, b) => a + b, 0) / readinessParts.length) * 100);
+        // Forecast: scenes without video × duration-scaled credit estimate
+        const unrenderedScenes = scenes.filter((s: any) => !s.videoUrl);
+        const forecastCredits = unrenderedScenes.reduce((sum: number, s: any) => {
+          const dur = Math.max(10, s.duration || 45);
+          const cr = dur <= 15 ? 3 : dur <= 45 ? 5 : dur <= 90 ? 7 : 10;
+          return sum + cr;
+        }, 0);
+        // Locked scenes count
+        let lockedScenes = 0;
+        if (dbConn) {
+          const lr: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[SceneLocks]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const larr = (Array.isArray(lr[0]) ? lr[0] : lr) as any[];
+          if (larr?.[0]) {
+            try { lockedScenes = (JSON.parse((larr[0].content as string).replace(/^\[SceneLocks\]\s*\n?/, "")) || []).filter((x: any) => x.locked).length; } catch {}
+          }
+        }
         return {
-          scenes: { total: totalScenes, withVideo: scenesWithVideo },
+          scenes: { total: totalScenes, withVideo: scenesWithVideo, locked: lockedScenes },
           queue: { queued: queueDepth, running, done, failed, paused, cap },
           comments: { open: openComments, resolved: resolvedComments },
           deliverables: { ready: deliverablesReady, total: deliverablesTotal },
           clearances: { pending: clearancesPending, total: clearancesTotal },
           spend: { today: todaySpend, dailyCap, burnPct },
+          forecast: { unrenderedScenes: unrenderedScenes.length, estimatedCredits: forecastCredits },
           activeUsers,
           readiness,
         };

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { ArrowLeft, Save, Plus, Trash2, MessageSquare, Palette, GitBranch, ListOrdered, Package, Scale, Send, ScrollText, Layers, Scissors, Download, Gauge, Users, Pause, Play, RotateCcw, Eraser, Zap } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, MessageSquare, Palette, GitBranch, ListOrdered, Package, Scale, Send, ScrollText, Layers, Scissors, Download, Gauge, Users, Pause, Play, RotateCcw, Eraser, Zap, Lock, Unlock, Sparkles, Calculator } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 
@@ -64,10 +64,10 @@ export default function ProStudioOps() {
       const map: Record<string, string> = {
         "1": "dashboard", "2": "comments", "3": "color", "4": "versions", "5": "queue",
         "6": "deliver", "7": "clear", "8": "dist", "9": "audit", "0": "cuts",
-        "d": "dashboard", "f": "comments", "q": "queue", "p": "deliver", "x": "cuts",
+        "d": "dashboard", "f": "comments", "q": "queue", "p": "deliver", "x": "cuts", "l": "locks",
       };
       if (map[e.key]) { setActiveTab(map[e.key]); e.preventDefault(); }
-      else if (e.key === "?") { toast.info("Shortcuts: 1-0 = tabs · D Dashboard · F Frames · Q Queue · P Deliverables · X Cuts"); e.preventDefault(); }
+      else if (e.key === "?") { toast.info("Shortcuts: 1-0 = tabs · D Dashboard · F Frames · Q Queue · P Deliverables · L Locks · X Cuts"); e.preventDefault(); }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -100,6 +100,7 @@ export default function ProStudioOps() {
           <TabsTrigger value="audit"><ScrollText className="h-3.5 w-3.5 mr-1.5" />Audit Log</TabsTrigger>
           <TabsTrigger value="proxy"><Layers className="h-3.5 w-3.5 mr-1.5" />Proxy Chain</TabsTrigger>
           <TabsTrigger value="cuts"><Scissors className="h-3.5 w-3.5 mr-1.5" />Cuts & Transitions</TabsTrigger>
+          <TabsTrigger value="locks"><Lock className="h-3.5 w-3.5 mr-1.5" />Locks</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard"><StudioDashboardTab projectId={projectId} /></TabsContent>
@@ -113,6 +114,7 @@ export default function ProStudioOps() {
         <TabsContent value="audit"><AuditTab projectId={projectId} /></TabsContent>
         <TabsContent value="proxy"><ProxyTab projectId={projectId} /></TabsContent>
         <TabsContent value="cuts"><CutsTab projectId={projectId} /></TabsContent>
+        <TabsContent value="locks"><LocksTab projectId={projectId} /></TabsContent>
       </Tabs>
     </div>
   );
@@ -156,6 +158,21 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
           <div className="text-[11px] text-muted-foreground mt-1">live in last 45s</div>
         </CardContent></Card>
       </div>
+      {d.forecast && (
+        <Card className="border-violet-500/30 bg-violet-500/5"><CardContent className="pt-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Calculator className="h-5 w-5 text-violet-400" />
+            <div>
+              <div className="text-xs text-muted-foreground">Production Cost Forecast</div>
+              <div className="text-base font-semibold">{d.forecast.unrenderedScenes} scenes left to render · est <span className="text-violet-300">{d.forecast.estimatedCredits} credits</span></div>
+            </div>
+          </div>
+          <div className="text-[11px] text-muted-foreground">
+            {d.spend.dailyCap != null ? `≈ ${Math.ceil(d.forecast.estimatedCredits / d.spend.dailyCap)} day(s) at current daily cap` : "No daily cap set"}
+            {d.scenes.locked > 0 && <span className="ml-3 text-amber-400">· 🔒 {d.scenes.locked} locked scene(s)</span>}
+          </div>
+        </CardContent></Card>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><MessageSquare className="h-4 w-4" />Frame Reviews</CardTitle></CardHeader><CardContent>
           <div className="flex items-baseline gap-3"><div className="text-2xl font-bold">{d.comments.open}</div><div className="text-xs text-muted-foreground">open · {d.comments.resolved} resolved</div></div>
@@ -359,6 +376,15 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
   const bulk = trpc.renderQueueBulk.apply.useMutation({ onSuccess: (r: any) => { toast.success(`Bulk: ${r.changed} jobs updated`); q.refetch(); } });
   const audit = trpc.auditLog.append.useMutation();
   const runBulk = (action: "pauseAll"|"resumeAll"|"retryFailed"|"clearDone"|"startAllQueued") => { bulk.mutate({ projectId, action }); audit.mutate({ projectId, event: { action: `renderQueue.bulk.${action}`, summary: `Bulk ${action}` } }); };
+  const runVid = trpc.scene.generateVideo.useMutation({
+    onSuccess: () => { toast.success("Render kicked off — credits deducted, video generation in progress."); q.refetch(); },
+    onError: (err: any) => { toast.error(err?.message || "Render failed"); q.refetch(); },
+  });
+  const runNow = (job: any) => {
+    if (!job.sceneId) { toast.error("This job has no scene attached — set sceneId first."); return; }
+    runVid.mutate({ sceneId: job.sceneId });
+    audit.mutate({ projectId, event: { action: "renderQueue.runNow", targetType: "scene", targetId: String(job.sceneId), summary: `Run now: ${job.label}` } });
+  };
   const [draft, setDraft] = useState<any | null>(null);
   const live = draft ?? q.data ?? { jobs: [], cap: { dailyCredits: 500, perJobCredits: 100, pauseOnExceed: true } };
   const update = (patch: any) => setDraft({ ...live, ...patch });
@@ -400,6 +426,9 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
               <Input type="number" value={j.estimatedCredits} onChange={e => updateJob(i, { estimatedCredits: Number(e.target.value) })} className="h-8 text-xs col-span-1 font-mono" />
               <Select value={j.status} onValueChange={v => updateJob(i, { status: v })}><SelectTrigger className="h-8 text-xs col-span-2"><SelectValue /></SelectTrigger><SelectContent>{["queued","running","done","failed","paused","skipped"].map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}</SelectContent></Select>
               <div className="flex gap-0.5 col-span-1 justify-end">
+                {(j.status === "queued" || j.status === "failed" || j.status === "paused") && (
+                  <Button size="icon" variant="ghost" className="h-7 w-7" title="Run now (charge & generate)" onClick={() => runNow(j)} disabled={runVid.isPending}><Sparkles className="h-3 w-3 text-violet-400" /></Button>
+                )}
                 <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => moveUp(i)}>↑</Button>
                 <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeJob(i)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
               </div>
@@ -634,6 +663,57 @@ function CutsTab({ projectId }: { projectId: number }) {
                 <div className="col-span-1"><Label className="text-[10px]">A fadeOut</Label><Input type="number" step="0.1" value={d.audioFadeOutSec} onChange={e => update(s.id, { audioFadeOutSec: Number(e.target.value) })} className="h-7 text-xs font-mono" /></div>
               </div>
               <div className="flex justify-end"><Button size="sm" variant={dirty ? "default" : "outline"} disabled={!dirty} onClick={() => persist(s.id)}><Save className="h-3 w-3 mr-1" />Save</Button></div>
+            </div>
+          );
+        })}
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ─── Scene Locks: prevent accidental re-renders of approved scenes ─── */
+function LocksTab({ projectId }: { projectId: number }) {
+  const scenes = useScenes(projectId);
+  const list = trpc.sceneLocks.list.useQuery({ projectId }, { refetchInterval: 10000 });
+  const toggle = trpc.sceneLocks.toggle.useMutation({
+    onSuccess: () => { toast.success("Lock updated"); list.refetch(); },
+    onError: (e: any) => toast.error(e?.message || "Toggle failed"),
+  });
+  const audit = trpc.auditLog.append.useMutation();
+  const locks = (list.data || []) as Array<{ sceneId: number; locked: boolean; reason?: string; lockedBy?: string; lockedAt?: number }>;
+  const lockMap = new Map(locks.map(l => [l.sceneId, l]));
+  const onToggle = (sceneId: number, locked: boolean, label: string) => {
+    const reason = locked ? (window.prompt("Lock reason (e.g. 'approved by client', 'final cut')?", "approved") || "approved") : undefined;
+    toggle.mutate({ projectId, sceneId, locked, reason });
+    audit.mutate({ projectId, event: { action: locked ? "sceneLock.lock" : "sceneLock.unlock", targetType: "scene", targetId: String(sceneId), summary: `${locked ? "Locked" : "Unlocked"}: ${label}${reason ? ` — ${reason}` : ""}` } });
+  };
+  if (!scenes.data?.length) return <Card><CardContent className="pt-6 text-sm text-muted-foreground">No scenes yet — create scenes first to lock approved renders.</CardContent></Card>;
+  const lockedCount = locks.filter(l => l.locked).length;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2"><Lock className="h-4 w-4" />Scene Locks</CardTitle>
+        <div className="text-xs text-muted-foreground">Locked scenes cannot be re-rendered. Protects approved cuts from accidental credit spend. <span className="text-amber-400">{lockedCount} of {scenes.data.length} locked.</span></div>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {scenes.data.map((s: any) => {
+          const lk = lockMap.get(s.id);
+          const isLocked = !!lk?.locked;
+          return (
+            <div key={s.id} className={`flex items-center gap-3 p-2.5 rounded border ${isLocked ? "border-amber-500/40 bg-amber-500/5" : "border-border bg-card/50"}`}>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium truncate flex items-center gap-2">
+                  {isLocked ? <Lock className="h-3.5 w-3.5 text-amber-400 shrink-0" /> : <Unlock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                  Scene {s.order ?? s.id}: {s.title || s.description?.slice(0, 60) || "(untitled)"}
+                </div>
+                {isLocked && lk && (
+                  <div className="text-[11px] text-muted-foreground mt-0.5 ml-5">
+                    🔒 {lk.reason || "locked"} · by {lk.lockedBy || "—"} {lk.lockedAt ? `· ${new Date(lk.lockedAt).toLocaleString()}` : ""}
+                  </div>
+                )}
+                {!isLocked && s.videoUrl && <div className="text-[11px] text-emerald-400/70 mt-0.5 ml-5">✓ has render — consider locking once approved</div>}
+              </div>
+              <Switch checked={isLocked} onCheckedChange={(v) => onToggle(s.id, v, s.title || `Scene ${s.order ?? s.id}`)} disabled={toggle.isPending} />
             </div>
           );
         })}
