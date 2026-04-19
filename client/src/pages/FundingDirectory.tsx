@@ -1490,9 +1490,14 @@ export default function FundingDirectory() {
             {sources.length} funding sources across {countries.length} countries — grants, incentives, and co-production funds worldwide.
           </p>
         </div>
-        <Badge variant="outline" className="border-amber-500/30 text-amber-400 bg-amber-500/10 text-xs">
-          Paid Members Only
-        </Badge>
+        <div className="flex flex-col items-end gap-2">
+          <Badge variant="outline" className="border-amber-500/30 text-amber-400 bg-amber-500/10 text-xs">
+            Paid Members Only
+          </Badge>
+          <button onClick={() => setLocation("/funding-pro")} className="text-xs px-3 py-1.5 rounded-md border border-violet-500/40 bg-violet-500/10 text-violet-300 hover:bg-violet-500/20 transition-colors flex items-center gap-1.5">
+            ✨ AI Match & Application Tracker →
+          </button>
+        </div>
       </div>
 
       {/* Professional Working-Pack Notice */}

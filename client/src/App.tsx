@@ -102,6 +102,7 @@ const FeatureTimeline = lazy(() => import("./pages/FeatureTimeline"));
 const TrailerStudio = lazy(() => import("./pages/TrailerStudio"));
 const TVCommercial = lazy(() => import("./pages/TVCommercial"));
 const FundingDirectory = lazy(() => import("./pages/FundingDirectory"));
+const FundingProMatch = lazy(() => import("./pages/FundingProMatch"));
 const Distribute = lazy(() => import("./pages/Distribute"));
 const PitchLab = lazy(() => import("./pages/PitchLab"));
 const PressKit = lazy(() => import("./pages/PressKit"));
@@ -266,6 +267,7 @@ function Router() {
               <Route path="/settings">{() => <SettingsPage />}</Route>
               <Route path="/funding">{() => <LazyPage><FundingDirectory /></LazyPage>}</Route>
               <Route path="/funding-directory">{() => <LazyPage><FundingDirectory /></LazyPage>}</Route>
+              <Route path="/funding-pro">{() => <LazyPage><FundingProMatch /></LazyPage>}</Route>
               <Route path="/festivals">{() => <LazyPage><FestivalTracker /></LazyPage>}</Route>
               <Route path="/projects/:id/distribute">{() => <LazyPage><Distribute /></LazyPage>}</Route>
               <Route path="/projects/:projectId/pitch-lab">{() => <LazyPage><PitchLab /></LazyPage>}</Route>

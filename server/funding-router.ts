@@ -1,11 +1,66 @@
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
-import { getDb, deductCredits } from "./db";
+import { getDb, deductCredits, getProjectById, getProjectScenes, getProjectCharacters, createChatMessage } from "./db";
 import { fundingSources } from "../drizzle/schema";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, sql } from "drizzle-orm";
 import nodemailer from "nodemailer";
 import { ENV } from "./_core/env";
 import { CREDIT_COSTS } from "./_core/subscription";
+import { invokeLLM } from "./_core/llm";
+import { TRPCError } from "@trpc/server";
+
+/* ─── Helpers: project context + scoring ─── */
+async function getProjectContext(projectId: number, userId: number) {
+  const project = await getProjectById(projectId, userId);
+  if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+  const scenes = await getProjectScenes(projectId).catch(() => []);
+  const characters = await getProjectCharacters(projectId).catch(() => []);
+  return { project, scenes, characters };
+}
+
+function scoreSourceAgainstProject(src: any, project: any): { score: number; reasons: string[] } {
+  const reasons: string[] = [];
+  let score = 0;
+  const projCountry = (project.country || project.location || "").toLowerCase();
+  const projGenre = (project.genre || "").toLowerCase();
+  const projType = (project.type || project.format || "").toLowerCase();
+  const projStage = (project.stage || project.productionStage || "").toLowerCase();
+  const projSynopsis = (project.synopsis || project.logline || project.description || "").toLowerCase();
+  const projTitle = (project.title || project.name || "").toLowerCase();
+  // Country (heaviest)
+  const srcCountry = (src.country || "").toLowerCase();
+  if (srcCountry && projCountry) {
+    if (srcCountry === projCountry) { score += 35; reasons.push(`✓ Country match: ${src.country}`); }
+    else if (srcCountry === "international" || srcCountry.includes("global")) { score += 18; reasons.push("✓ International scope"); }
+  } else if (srcCountry === "international" || srcCountry.includes("global")) { score += 12; reasons.push("✓ International scope"); }
+  // Stage match
+  const srcStage = (src.stage || "").toLowerCase();
+  if (srcStage && projStage) {
+    if (srcStage.includes(projStage) || projStage.includes(srcStage)) { score += 15; reasons.push(`✓ Stage fit: ${src.stage}`); }
+  }
+  // Type/format match
+  const srcType = (src.type || "").toLowerCase();
+  if (srcType && projType) {
+    if (srcType.includes(projType) || projType.includes(srcType)) { score += 12; reasons.push(`✓ Type fit: ${src.type}`); }
+  }
+  // Supports / eligibility text match
+  const supports = (src.supports || "").toLowerCase();
+  const eligibility = (src.eligibility || "").toLowerCase();
+  const haystack = `${supports} ${eligibility} ${(src.notes || "").toLowerCase()}`;
+  const needles = [projGenre, projType, projTitle.split(" ")[0]].filter(n => n && n.length >= 3);
+  for (const n of needles) {
+    if (haystack.includes(n)) { score += 8; reasons.push(`✓ Mentions "${n}"`); break; }
+  }
+  // Synopsis keyword overlap (rough)
+  if (projSynopsis && haystack) {
+    const synWords = projSynopsis.split(/\s+/).filter((w: string) => w.length >= 5).slice(0, 12);
+    const hits = synWords.filter((w: string) => haystack.includes(w)).length;
+    if (hits >= 2) { score += Math.min(15, hits * 3); reasons.push(`✓ ${hits} synopsis keyword(s) align`); }
+  }
+  // Recommended attachments hint
+  if (src.recommendedAttachments) { score += 3; reasons.push("ⓘ Has attachment guidance"); }
+  return { score: Math.min(100, score), reasons };
+}
 
 // Gmail SMTP transport — free, no API key required
 // Generate an App Password at: https://myaccount.google.com/apppasswords
@@ -494,6 +549,155 @@ export const fundingRouter = router({
         console.error("[FundingRouter] Failed to send application email:", err);
         // Don't fail the mutation — form was submitted, email is best-effort
       }
+      // Track in [FundingApplications] log so the tracker UI can show it
+      try {
+        const dbConn = await getDb();
+        if (dbConn) {
+          const r: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE userId = ${user.id} AND content LIKE '[FundingApplications]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+          let apps: any[] = [];
+          if (arr?.[0]) { try { apps = JSON.parse((arr[0].content as string).replace(/^\[FundingApplications\]\s*\n?/, "")) || []; } catch {} }
+          apps.push({
+            id: `app_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            fundingSourceId: input.fundingSourceId,
+            organization: input.fundingOrganization,
+            country: input.fundingCountry,
+            projectTitle: input.projectTitle,
+            submittedAt: new Date().toISOString(),
+            status: "submitted",
+            notes: "",
+          });
+          await dbConn.execute(sql`DELETE FROM directorChats WHERE userId = ${user.id} AND content LIKE '[FundingApplications]%'`);
+          await createChatMessage({ projectId: 0, userId: user.id, role: "user", content: `[FundingApplications]\n${JSON.stringify(apps)}` });
+        }
+      } catch (e) { console.error("[FundingRouter] application tracker write failed:", e); }
       return { success: true, message: "Application compiled and sent to your email." };
+    }),
+
+  /* ─── Match scoring: rank funding sources for a specific project ─── */
+  matchScore: protectedProcedure
+    .input(z.object({ projectId: z.number(), limit: z.number().min(1).max(100).default(25), country: z.string().optional() }))
+    .query(async ({ input, ctx }) => {
+      const { project } = await getProjectContext(input.projectId, ctx.user.id);
+      const db = await getDb();
+      if (!db) return [];
+      const all = input.country
+        ? await db.select().from(fundingSources).where(eq(fundingSources.country, input.country))
+        : await db.select().from(fundingSources);
+      const scored = all.map((src: any) => {
+        const { score, reasons } = scoreSourceAgainstProject(src, project);
+        return { source: src, score, reasons };
+      }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, input.limit);
+      return scored;
+    }),
+
+  /* ─── Saved/shortlisted sources per project ─── */
+  savedList: protectedProcedure
+    .input(z.object({ projectId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      const r: any = await db.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} AND content LIKE '[FundingSaved]%' ORDER BY updatedAt DESC LIMIT 1`);
+      const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+      if (!arr?.[0]) return [];
+      try { return JSON.parse((arr[0].content as string).replace(/^\[FundingSaved\]\s*\n?/, "")); } catch { return []; }
+    }),
+
+  toggleSaved: protectedProcedure
+    .input(z.object({ projectId: z.number(), sourceId: z.number(), saved: z.boolean() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+      const r: any = await db.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} AND content LIKE '[FundingSaved]%' ORDER BY updatedAt DESC LIMIT 1`);
+      const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+      let saved: number[] = [];
+      if (arr?.[0]) { try { saved = JSON.parse((arr[0].content as string).replace(/^\[FundingSaved\]\s*\n?/, "")) || []; } catch {} }
+      saved = saved.filter(id => id !== input.sourceId);
+      if (input.saved) saved.push(input.sourceId);
+      await db.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} AND content LIKE '[FundingSaved]%'`);
+      await createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[FundingSaved]\n${JSON.stringify(saved)}` });
+      return { success: true, total: saved.length };
+    }),
+
+  /* ─── Application tracker (per user, across projects) ─── */
+  applicationsList: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      const r: any = await db.execute(sql`SELECT content FROM directorChats WHERE userId = ${ctx.user.id} AND content LIKE '[FundingApplications]%' ORDER BY updatedAt DESC LIMIT 1`);
+      const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+      if (!arr?.[0]) return [];
+      try { return JSON.parse((arr[0].content as string).replace(/^\[FundingApplications\]\s*\n?/, "")); } catch { return []; }
+    }),
+
+  setApplicationStatus: protectedProcedure
+    .input(z.object({ applicationId: z.string(), status: z.enum(["submitted","under_review","accepted","rejected","waitlisted","withdrawn"]), notes: z.string().max(2000).optional() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+      const r: any = await db.execute(sql`SELECT content FROM directorChats WHERE userId = ${ctx.user.id} AND content LIKE '[FundingApplications]%' ORDER BY updatedAt DESC LIMIT 1`);
+      const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+      let apps: any[] = [];
+      if (arr?.[0]) { try { apps = JSON.parse((arr[0].content as string).replace(/^\[FundingApplications\]\s*\n?/, "")) || []; } catch {} }
+      const idx = apps.findIndex(a => a.id === input.applicationId);
+      if (idx < 0) throw new TRPCError({ code: "NOT_FOUND", message: "Application not found" });
+      apps[idx].status = input.status;
+      if (input.notes !== undefined) apps[idx].notes = input.notes;
+      apps[idx].updatedAt = new Date().toISOString();
+      await db.execute(sql`DELETE FROM directorChats WHERE userId = ${ctx.user.id} AND content LIKE '[FundingApplications]%'`);
+      await createChatMessage({ projectId: 0, userId: ctx.user.id, role: "user", content: `[FundingApplications]\n${JSON.stringify(apps)}` });
+      return { success: true };
+    }),
+
+  /* ─── AI Autofill: draft application fields from project bible ─── */
+  autofillDraft: protectedProcedure
+    .input(z.object({ projectId: z.number(), fundingSourceId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const { project, scenes, characters } = await getProjectContext(input.projectId, ctx.user.id);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+      const [src] = await db.select().from(fundingSources).where(eq(fundingSources.id, input.fundingSourceId));
+      if (!src) throw new TRPCError({ code: "NOT_FOUND", message: "Funding source not found" });
+      // Charge a small credit cost; reuse the funding_app_submit cost if present, else nominal
+      const cost = (CREDIT_COSTS as any).funding_app_autofill?.cost ?? 3;
+      try { await deductCredits(ctx.user.id, cost, "funding_app_autofill", `Autofill draft: ${(project as any).title} → ${src.organization}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+      const projAny = project as any;
+      const projContext = `
+PROJECT
+  Title: ${projAny.title || projAny.name || "Untitled"}
+  Logline / Synopsis: ${projAny.synopsis || projAny.logline || projAny.description || ""}
+  Genre: ${projAny.genre || "—"}
+  Type/Format: ${projAny.type || projAny.format || "—"}
+  Stage: ${projAny.stage || projAny.productionStage || "—"}
+  Country: ${projAny.country || projAny.location || "—"}
+  Scenes: ${scenes.length}, Characters: ${characters.length}
+
+FUNDING TARGET
+  Organization: ${src.organization} (${src.country})
+  Type: ${src.type || ""}
+  Supports: ${src.supports || ""}
+  Eligibility: ${src.eligibility || ""}
+  Tailoring notes: ${src.tailoringNotes || ""}
+`.trim();
+      let draft: any = {};
+      try {
+        const resp: any = await invokeLLM({
+          messages: [
+            { role: "system", content: "You are a film-funding application copywriter. Return ONLY a JSON object matching this exact shape (omit fields you cannot fill). Use plain prose, no markdown." },
+            { role: "user", content: `Draft application content for the funding target below, tailored from the project context. Output JSON with keys: applicantLegalName, projectTitle, workingTitle, logline (one sentence), synopsis (3-4 sentences), genres (string), format (string), targetAudience (string), filmmakerStatement (3-4 sentences), socialImpact (2-3 sentences), distributionStrategy (2-3 sentences), uniqueSellingPoints (2-3 sentences), reasonForApplying (2-3 sentences focused on this funder's mission).\n\n${projContext}` },
+          ],
+        });
+        const txt = String(resp?.content ?? resp?.text ?? "").trim();
+        const m = txt.match(/\{[\s\S]*\}/);
+        if (m) draft = JSON.parse(m[0]);
+      } catch (e) { console.error("[FundingRouter] autofill LLM failed:", e); }
+      // Always include facts we know
+      draft.projectTitle = draft.projectTitle || projAny.title || projAny.name || "";
+      draft.workingTitle = draft.workingTitle || draft.projectTitle;
+      draft.logline = draft.logline || projAny.logline || "";
+      draft.synopsis = draft.synopsis || projAny.synopsis || projAny.description || "";
+      draft.genres = draft.genres || projAny.genre || "";
+      draft.format = draft.format || projAny.type || projAny.format || "";
+      return { draft, costCharged: cost };
     }),
 });
