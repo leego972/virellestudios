@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,42 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { ArrowLeft, Save, Plus, Trash2, MessageSquare, Palette, GitBranch, ListOrdered, Package, Scale, Send, ScrollText, Layers, Scissors, Download } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, MessageSquare, Palette, GitBranch, ListOrdered, Package, Scale, Send, ScrollText, Layers, Scissors, Download, Gauge, Users, Pause, Play, RotateCcw, Eraser, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
+
+/* ─── Live Presence Bar (heartbeats every 12s, polls every 6s) ─── */
+function PresenceBar({ projectId, tab }: { projectId: number; tab: string }) {
+  const heartbeat = trpc.presence.heartbeat.useMutation();
+  const list = trpc.presence.list.useQuery({ projectId }, { refetchInterval: 6000 });
+  const tabRef = useRef(tab);
+  useEffect(() => { tabRef.current = tab; }, [tab]);
+  useEffect(() => {
+    const ping = () => { heartbeat.mutate({ projectId, tab: tabRef.current }); };
+    ping();
+    const id = setInterval(ping, 12000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
+  const users = (list.data || []) as any[];
+  if (users.length === 0) return null;
+  return (
+    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+      <Users className="h-3.5 w-3.5" />
+      <span>{users.length} live</span>
+      <div className="flex -space-x-1">
+        {users.slice(0, 6).map((u: any, i: number) => {
+          const initial = (u.email || "?").charAt(0).toUpperCase();
+          return (
+            <div key={i} title={`${u.email || "user"} · ${u.tab || ""}`} className="h-6 w-6 rounded-full bg-emerald-600/80 text-white text-[10px] flex items-center justify-center border border-background ring-1 ring-emerald-400/30">
+              {initial}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 const uid = () => `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
@@ -21,6 +54,25 @@ export default function ProStudioOps() {
   const projectId = Number(pidParam);
   const [, navigate] = useLocation();
   const { isAuthenticated } = useAuth();
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  // ─── Pro NLE keyboard shortcuts (only when not typing in form fields) ───
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      const map: Record<string, string> = {
+        "1": "dashboard", "2": "comments", "3": "color", "4": "versions", "5": "queue",
+        "6": "deliver", "7": "clear", "8": "dist", "9": "audit", "0": "cuts",
+        "d": "dashboard", "f": "comments", "q": "queue", "p": "deliver", "x": "cuts",
+      };
+      if (map[e.key]) { setActiveTab(map[e.key]); e.preventDefault(); }
+      else if (e.key === "?") { toast.info("Shortcuts: 1-0 = tabs · D Dashboard · F Frames · Q Queue · P Deliverables · X Cuts"); e.preventDefault(); }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   if (!isAuthenticated) { if (typeof window !== "undefined") window.location.href = "/login"; return null; }
   if (!projectId) return <div className="p-8 text-sm text-muted-foreground">Invalid project.</div>;
 
@@ -28,14 +80,16 @@ export default function ProStudioOps() {
     <div className="container mx-auto px-4 py-6 max-w-7xl">
       <div className="flex items-center gap-3 mb-6">
         <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-bold">Studio Operations</h1>
-          <p className="text-xs text-muted-foreground">Pro production workflow: review, color, versioning, render queue, deliverables, clearances, distribution, audit, proxies & cuts.</p>
+          <p className="text-xs text-muted-foreground">Pro production workflow · live multi-user collab · server-enforced render budget · NLE shortcuts (press ?)</p>
         </div>
+        <PresenceBar projectId={projectId} tab={activeTab} />
       </div>
 
-      <Tabs defaultValue="comments">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex flex-wrap gap-1 h-auto mb-4">
+          <TabsTrigger value="dashboard"><Gauge className="h-3.5 w-3.5 mr-1.5" />Dashboard</TabsTrigger>
           <TabsTrigger value="comments"><MessageSquare className="h-3.5 w-3.5 mr-1.5" />Frame Reviews</TabsTrigger>
           <TabsTrigger value="color"><Palette className="h-3.5 w-3.5 mr-1.5" />Color</TabsTrigger>
           <TabsTrigger value="versions"><GitBranch className="h-3.5 w-3.5 mr-1.5" />Asset Versions</TabsTrigger>
@@ -48,6 +102,7 @@ export default function ProStudioOps() {
           <TabsTrigger value="cuts"><Scissors className="h-3.5 w-3.5 mr-1.5" />Cuts & Transitions</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="dashboard"><StudioDashboardTab projectId={projectId} /></TabsContent>
         <TabsContent value="comments"><FrameCommentsTab projectId={projectId} /></TabsContent>
         <TabsContent value="color"><ColorTab projectId={projectId} /></TabsContent>
         <TabsContent value="versions"><AssetVersionsTab projectId={projectId} /></TabsContent>
@@ -63,6 +118,68 @@ export default function ProStudioOps() {
   );
 }
 
+/* ─── Studio Dashboard: single pane of glass for production readiness ─── */
+function StudioDashboardTab({ projectId }: { projectId: number }) {
+  const summary = trpc.studioDashboard.summary.useQuery({ projectId }, { refetchInterval: 8000 });
+  const d = summary.data as any;
+  if (!d) return <div className="p-6 text-sm text-muted-foreground">Loading studio metrics…</div>;
+  const burn = d.spend.burnPct;
+  const burnColor = burn == null ? "text-muted-foreground" : burn > 90 ? "text-rose-400" : burn > 70 ? "text-amber-400" : "text-emerald-400";
+  const readyColor = d.readiness > 80 ? "text-emerald-400" : d.readiness > 50 ? "text-amber-400" : "text-rose-400";
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card><CardContent className="pt-4">
+          <div className="text-xs text-muted-foreground">Production Readiness</div>
+          <div className={`text-3xl font-bold ${readyColor}`}>{d.readiness}%</div>
+          <div className="text-[11px] text-muted-foreground mt-1">{d.scenes.withVideo}/{d.scenes.total} scenes rendered</div>
+        </CardContent></Card>
+        <Card><CardContent className="pt-4">
+          <div className="text-xs text-muted-foreground">Render Queue</div>
+          <div className="text-3xl font-bold">{d.queue.queued + d.queue.running}</div>
+          <div className="text-[11px] text-muted-foreground mt-1">
+            <span className="text-blue-400">{d.queue.running} running</span> · <span>{d.queue.queued} queued</span>
+            {d.queue.failed > 0 && <span className="text-rose-400"> · {d.queue.failed} failed</span>}
+            {d.queue.paused > 0 && <span className="text-amber-400"> · {d.queue.paused} paused</span>}
+          </div>
+        </CardContent></Card>
+        <Card><CardContent className="pt-4">
+          <div className="text-xs text-muted-foreground">Today's Render Spend</div>
+          <div className={`text-3xl font-bold ${burnColor}`}>{d.spend.today}<span className="text-sm font-normal text-muted-foreground">cr</span></div>
+          <div className="text-[11px] text-muted-foreground mt-1">
+            {d.spend.dailyCap != null ? `${burn ?? 0}% of ${d.spend.dailyCap}cr daily cap` : "No cap set"}
+          </div>
+        </CardContent></Card>
+        <Card><CardContent className="pt-4">
+          <div className="text-xs text-muted-foreground">Active Collaborators</div>
+          <div className="text-3xl font-bold text-emerald-400">{d.activeUsers}</div>
+          <div className="text-[11px] text-muted-foreground mt-1">live in last 45s</div>
+        </CardContent></Card>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><MessageSquare className="h-4 w-4" />Frame Reviews</CardTitle></CardHeader><CardContent>
+          <div className="flex items-baseline gap-3"><div className="text-2xl font-bold">{d.comments.open}</div><div className="text-xs text-muted-foreground">open · {d.comments.resolved} resolved</div></div>
+          {d.comments.open > 0 && <div className="text-[11px] text-amber-400 mt-1">⚠ awaiting director attention</div>}
+        </CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><Package className="h-4 w-4" />Deliverables</CardTitle></CardHeader><CardContent>
+          <div className="flex items-baseline gap-3"><div className="text-2xl font-bold">{d.deliverables.ready}/{d.deliverables.total}</div><div className="text-xs text-muted-foreground">ready</div></div>
+          {d.deliverables.total > 0 && d.deliverables.ready < d.deliverables.total && <div className="text-[11px] text-muted-foreground mt-1">{d.deliverables.total - d.deliverables.ready} pending packaging</div>}
+        </CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><Scale className="h-4 w-4" />Clearances</CardTitle></CardHeader><CardContent>
+          <div className="flex items-baseline gap-3"><div className="text-2xl font-bold">{d.clearances.total - d.clearances.pending}/{d.clearances.total}</div><div className="text-xs text-muted-foreground">cleared</div></div>
+          {d.clearances.pending > 0 && <div className="text-[11px] text-rose-400 mt-1">⚠ {d.clearances.pending} blocking distribution</div>}
+        </CardContent></Card>
+      </div>
+      {d.queue.cap?.pauseOnExceed && (
+        <Card className="border-emerald-500/30 bg-emerald-500/5"><CardContent className="pt-4">
+          <div className="text-xs text-emerald-400 font-medium flex items-center gap-2"><Zap className="h-3.5 w-3.5" />Render Queue Executor active</div>
+          <div className="text-[11px] text-muted-foreground mt-1">Server-side enforcement: per-job cap {d.queue.cap.perJobCredits ?? "—"}cr · daily cap {d.queue.cap.dailyCredits ?? "—"}cr · jobs over cap will be rejected at the generation chokepoint.</div>
+        </CardContent></Card>
+      )}
+    </div>
+  );
+}
+
 function useScenes(projectId: number) {
   return trpc.scene.listByProject.useQuery({ projectId });
 }
@@ -70,7 +187,7 @@ function useScenes(projectId: number) {
 /* ─── Frame Comments ─── */
 function FrameCommentsTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
-  const all = trpc.frameComments.list.useQuery({ projectId });
+  const all = trpc.frameComments.list.useQuery({ projectId }, { refetchInterval: 6000 });
   const save = trpc.frameComments.save.useMutation({ onSuccess: () => { toast.success("Comments saved"); all.refetch(); } });
   const audit = trpc.auditLog.append.useMutation();
   const { user } = useAuth();
@@ -237,9 +354,11 @@ function AssetVersionsTab({ projectId }: { projectId: number }) {
 /* ─── Render Queue ─── */
 function RenderQueueTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
-  const q = trpc.renderQueue.get.useQuery({ projectId });
+  const q = trpc.renderQueue.get.useQuery({ projectId }, { refetchInterval: 8000 });
   const save = trpc.renderQueue.save.useMutation({ onSuccess: () => { toast.success("Queue saved"); q.refetch(); } });
+  const bulk = trpc.renderQueueBulk.apply.useMutation({ onSuccess: (r: any) => { toast.success(`Bulk: ${r.changed} jobs updated`); q.refetch(); } });
   const audit = trpc.auditLog.append.useMutation();
+  const runBulk = (action: "pauseAll"|"resumeAll"|"retryFailed"|"clearDone"|"startAllQueued") => { bulk.mutate({ projectId, action }); audit.mutate({ projectId, event: { action: `renderQueue.bulk.${action}`, summary: `Bulk ${action}` } }); };
   const [draft, setDraft] = useState<any | null>(null);
   const live = draft ?? q.data ?? { jobs: [], cap: { dailyCredits: 500, perJobCredits: 100, pauseOnExceed: true } };
   const update = (patch: any) => setDraft({ ...live, ...patch });
@@ -261,7 +380,16 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
           <div className="flex items-end gap-2 pb-1"><Switch checked={!!live.cap?.pauseOnExceed} onCheckedChange={c => updateCap({ pauseOnExceed: c })} /><span className="text-xs">Pause queue if over cap</span></div>
         </CardContent>
       </Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm">Queue ({live.jobs.length} jobs · est {dailyEstimate} cr {overCap && <span className="text-rose-400">⚠ over cap</span>})</CardTitle><Button size="sm" onClick={addJob}><Plus className="h-3.5 w-3.5 mr-1" />Add Job</Button></CardHeader>
+      <Card><CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2"><CardTitle className="text-sm">Queue ({live.jobs.length} jobs · est {dailyEstimate} cr {overCap && <span className="text-rose-400">⚠ over cap</span>})</CardTitle>
+        <div className="flex flex-wrap gap-1">
+          <Button size="sm" variant="outline" onClick={() => runBulk("startAllQueued")} disabled={bulk.isPending}><Play className="h-3.5 w-3.5 mr-1" />Start All</Button>
+          <Button size="sm" variant="outline" onClick={() => runBulk("pauseAll")} disabled={bulk.isPending}><Pause className="h-3.5 w-3.5 mr-1" />Pause All</Button>
+          <Button size="sm" variant="outline" onClick={() => runBulk("resumeAll")} disabled={bulk.isPending}>Resume Paused</Button>
+          <Button size="sm" variant="outline" onClick={() => runBulk("retryFailed")} disabled={bulk.isPending}><RotateCcw className="h-3.5 w-3.5 mr-1" />Retry Failed</Button>
+          <Button size="sm" variant="outline" onClick={() => runBulk("clearDone")} disabled={bulk.isPending}><Eraser className="h-3.5 w-3.5 mr-1" />Clear Done</Button>
+          <Button size="sm" onClick={addJob}><Plus className="h-3.5 w-3.5 mr-1" />Add Job</Button>
+        </div>
+      </CardHeader>
         <CardContent className="space-y-2">
           {live.jobs.map((j: any, i: number) => (
             <div key={j.id} className="border rounded p-2 grid grid-cols-12 gap-2 items-center text-xs">

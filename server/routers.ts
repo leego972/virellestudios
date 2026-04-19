@@ -1178,7 +1178,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           `LIGHTING & STYLE: ${stylePrompt}`,
           // Hard realism enforcement — always last
           "REALISM ENFORCEMENT: NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-generated look, NOT plastic skin, NOT airbrushed — a REAL PHOTOGRAPH of a REAL HUMAN BEING with all natural imperfections preserved",
-        ].filter(Boolean);
+        ].filter((x: any) => x !== null) as any[];
 
         // Step 4: Generate the character image using the reference photo
         const result = await generateImage({
@@ -1854,6 +1854,31 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
         // Credits: duration-scaled deduction (≤15s=3cr, 16-45s=5cr, 46-90s=7cr, >90s=10cr)
         const videoCredits = getVideoCredits(Math.max(10, scene.duration || 45), false);
+        // ─── Render Queue Executor Guard: enforce per-project caps before spending ───
+        try {
+          const dbq = await db.getDb();
+          if (dbq) {
+            const qr: any = await dbq.execute(sql`SELECT content FROM directorChats WHERE projectId = ${scene.projectId} AND content LIKE '[RenderQueue]%' ORDER BY updatedAt DESC LIMIT 1`);
+            const qarr = (Array.isArray(qr[0]) ? qr[0] : qr) as any[];
+            if (qarr?.[0]) {
+              const qdata = JSON.parse((qarr[0].content as string).replace(/^\[RenderQueue\]\s*\n?/, ""));
+              const cap = qdata?.cap;
+              if (cap?.pauseOnExceed) {
+                if (cap.perJobCredits != null && videoCredits > cap.perJobCredits) {
+                  throw new TRPCError({ code: "FORBIDDEN", message: `Render queue cap: per-job ${cap.perJobCredits}cr exceeded (this job needs ${videoCredits}cr). Adjust scene duration or raise cap in Studio Ops → Render Queue.` });
+                }
+                if (cap.dailyCredits != null) {
+                  const spentR: any = await dbq.execute(sql`SELECT COALESCE(SUM(-amount),0) AS spent FROM credit_transactions WHERE userId = ${ctx.user.id} AND amount < 0 AND action LIKE 'generate_%' AND createdAt > NOW() - INTERVAL '24 HOURS'`);
+                  const spentArr = (Array.isArray(spentR[0]) ? spentR[0] : spentR) as any[];
+                  const spent = Number(spentArr?.[0]?.spent || 0);
+                  if (spent + videoCredits > cap.dailyCredits) {
+                    throw new TRPCError({ code: "FORBIDDEN", message: `Render queue cap: daily ${cap.dailyCredits}cr cap reached (${spent}cr spent, this job needs ${videoCredits}cr). Pause until tomorrow or raise cap.` });
+                  }
+                }
+              }
+            }
+          }
+        } catch (e: any) { if (e instanceof TRPCError) throw e; /* fail open on guard errors */ }
         try { await db.deductCredits(ctx.user.id, videoCredits, "generate_scene_video", `Video for scene ${input.sceneId} (${scene.duration || 45}s)`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const project = await db.getProjectById(scene.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
@@ -1920,7 +1945,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             if (c.description) parts.push(c.description);
             return parts.filter(Boolean).join(", ");
           })
-          .filter(Boolean);
+          .filter((x: any) => x !== null) as any[];
 
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
         const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
@@ -2190,7 +2215,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   const p = [c.name]; if (c.age) p.push(`age ${c.age}`); if (c.gender) p.push(c.gender); if (c.ethnicity) p.push(c.ethnicity);
                   if (c.build) p.push(c.build); if (c.hairColor) p.push(`${c.hairColor} hair`); if (c.description) p.push(c.description);
                   return p.filter(Boolean).join(', ');
-                }).filter(Boolean);
+                }).filter((x: any) => x !== null) as any[];
                 if (sceneRefImages.length === 0) {
                   const cp = bulkFalSceneChars.filter((c: any) => c.photoUrl).map((c: any) => c.photoUrl as string).slice(0, 2);
                   sceneRefImages.push(...cp);
@@ -2259,7 +2284,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   const p = [c.name]; if (c.age) p.push(`age ${c.age}`); if (c.gender) p.push(c.gender); if (c.ethnicity) p.push(c.ethnicity);
                   if (c.build) p.push(c.build); if (c.hairColor) p.push(`${c.hairColor} hair`); if (c.description) p.push(c.description);
                   return p.filter(Boolean).join(', ');
-                }).filter(Boolean);
+                }).filter((x: any) => x !== null) as any[];
                 const bulkOtherRefs = (scene as any).referenceImages as string[] || [];
                 if (bulkOtherRefs.length === 0) {
                   const cp2 = bulkOtherSceneChars.filter((c: any) => c.photoUrl).map((c: any) => c.photoUrl as string).slice(0, 2);
@@ -2972,7 +2997,7 @@ Break this into 8-15 scenes. For each scene, provide:
               if (attrs.facialFeatures) parts.push(attrs.facialFeatures);
               if (attrs.distinguishingMarks) parts.push(attrs.distinguishingMarks);
               return parts.join(", ");
-            }).filter(Boolean);
+            }).filter((x: any) => x !== null) as any[];
 
             // Dialogue fallback: fetch from dialogue records if scene.dialogueText is empty
             let quickGenDialogue = (scene as any).dialogueText as string | undefined;
@@ -3737,7 +3762,7 @@ Break this into 8-15 scenes. For each scene, provide:
             attrs?.gender ? `Gender: ${attrs.gender}` : "",
             c.nationality ? `Nationality: ${c.nationality}` : "",
             c.occupation ? `Occupation: ${c.occupation}` : "",
-          ].filter(Boolean);
+          ].filter((x: any) => x !== null) as any[];
           if (identityParts.length) lines.push(`  Identity: ${identityParts.join(" | ")}`);
           // Voice & Speech — critical for authentic dialogue
           const voiceParts = [
@@ -3747,7 +3772,7 @@ Break this into 8-15 scenes. For each scene, provide:
             c.accent ? `Accent: ${c.accent}` : "",
             c.catchphrase ? `Catchphrase: "${c.catchphrase}"` : "",
             c.signatureMannerisms ? `Mannerisms: ${c.signatureMannerisms}` : "",
-          ].filter(Boolean);
+          ].filter((x: any) => x !== null) as any[];
           if (voiceParts.length) lines.push(`  Voice/Speech: ${voiceParts.join(" | ")}`);
           // Psychology & Character Arc
           if (c.backstory) lines.push(`  Backstory: ${c.backstory.slice(0, 300)}`);
@@ -5261,7 +5286,7 @@ Generate the full dialogue for this scene.`,
           if (!m) return null;
           try { return { sceneId: Number(m[1]), versions: JSON.parse(m[2]), updatedAt: r.updatedAt }; }
           catch { return null; }
-        }).filter(Boolean);
+        }).filter((x: any) => x !== null) as any[];
       }),
     save: protectedProcedure
       .input(z.object({
@@ -5365,7 +5390,7 @@ Generate the full dialogue for this scene.`,
           if (!m) return null;
           try { return { key: m[1], data: JSON.parse(m[2]), updatedAt: r.updatedAt }; }
           catch { return null; }
-        }).filter(Boolean);
+        }).filter((x: any) => x !== null) as any[];
       }),
     upsert: protectedProcedure
       .input(z.object({
@@ -5541,7 +5566,7 @@ Generate the full dialogue for this scene.`,
         const tag = input.sceneId != null ? `[FrameComments@${input.sceneId}]%` : `[FrameComments@%`;
         const rows: any = await dbConn.execute(sql`SELECT id, content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${tag} ORDER BY updatedAt DESC LIMIT 500`);
         const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
-        return arr.map((r: any) => { const m = /^\[FrameComments@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), comments: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter(Boolean);
+        return arr.map((r: any) => { const m = /^\[FrameComments@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), comments: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter((x: any) => x !== null) as any[];
       }),
     save: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneId: z.number(), comments: z.array(z.object({ id: z.string(), author: z.string().max(120), role: z.string().max(40), timecode: z.string().max(20).optional(), text: z.string().max(2000), status: z.enum(["open","resolved","approved"]), createdAt: z.string() })) }))
@@ -5563,7 +5588,7 @@ Generate the full dialogue for this scene.`,
         const dbConn = await db.getDb(); if (!dbConn) return [];
         const rows: any = await dbConn.execute(sql`SELECT content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[ColorPipeline@%' ORDER BY updatedAt DESC LIMIT 500`);
         const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
-        return arr.map((r: any) => { const m = /^\[ColorPipeline@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter(Boolean);
+        return arr.map((r: any) => { const m = /^\[ColorPipeline@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter((x: any) => x !== null) as any[];
       }),
     save: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneId: z.number(), data: z.object({ slope: z.tuple([z.number(),z.number(),z.number()]), offset: z.tuple([z.number(),z.number(),z.number()]), power: z.tuple([z.number(),z.number(),z.number()]), saturation: z.number(), lutName: z.string().max(120).optional(), lutUrl: z.string().max(1000).optional(), colorSpace: z.string().max(40), gamma: z.string().max(40).optional() }) }))
@@ -5750,7 +5775,7 @@ Generate the full dialogue for this scene.`,
         const dbConn = await db.getDb(); if (!dbConn) return [];
         const rows: any = await dbConn.execute(sql`SELECT content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[ProxyChain@%' ORDER BY updatedAt DESC LIMIT 500`);
         const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
-        return arr.map((r: any) => { const m = /^\[ProxyChain@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter(Boolean);
+        return arr.map((r: any) => { const m = /^\[ProxyChain@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter((x: any) => x !== null) as any[];
       }),
     save: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneId: z.number(), data: z.object({ proxyUrl: z.string().max(1000).optional(), proxyResolution: z.string().max(20).optional(), proxyStatus: z.enum(["pending","ready","failed"]), masterUrl: z.string().max(1000).optional(), masterResolution: z.string().max(20).optional(), masterStatus: z.enum(["pending","ready","failed"]), notes: z.string().max(1000).optional() }) }))
@@ -5772,7 +5797,7 @@ Generate the full dialogue for this scene.`,
         const dbConn = await db.getDb(); if (!dbConn) return [];
         const rows: any = await dbConn.execute(sql`SELECT content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[TimelineCuts@%' ORDER BY updatedAt DESC LIMIT 500`);
         const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
-        return arr.map((r: any) => { const m = /^\[TimelineCuts@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter(Boolean);
+        return arr.map((r: any) => { const m = /^\[TimelineCuts@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || ""); if (!m) return null; try { return { sceneId: Number(m[1]), data: JSON.parse(m[2]), updatedAt: r.updatedAt }; } catch { return null; } }).filter((x: any) => x !== null) as any[];
       }),
     save: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneId: z.number(), data: z.object({ trimInSec: z.number().min(0), trimOutSec: z.number().min(0), transitionIn: z.enum(["cut","fade","dissolve","wipe","jcut","lcut"]), transitionInDurationSec: z.number().min(0).max(10), transitionOut: z.enum(["cut","fade","dissolve","wipe","jcut","lcut"]), transitionOutDurationSec: z.number().min(0).max(10), audioFadeInSec: z.number().min(0).max(10), audioFadeOutSec: z.number().min(0).max(10), notes: z.string().max(1000).optional() }) }))
@@ -10506,5 +10531,156 @@ Rules:
         .input(z.object({ jobId: z.number() }))
         .query(async ({ ctx, input }) => { return db.getCompileJobById(input.jobId); }),
     }),
+  // ─── Pro Ops: Render Queue Bulk Operations ────
+  renderQueueBulk: router({
+    apply: protectedProcedure
+      .input(z.object({ projectId: z.number(), action: z.enum(["pauseAll","resumeAll","retryFailed","clearDone","startAllQueued"]) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        const r: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[RenderQueue]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+        if (!arr?.[0]) return { changed: 0 };
+        const data = JSON.parse((arr[0].content as string).replace(/^\[RenderQueue\]\s*\n?/, ""));
+        let changed = 0;
+        const jobs = (data.jobs || []).map((j: any) => {
+          const before = j.status;
+          if (input.action === "pauseAll" && (j.status === "queued" || j.status === "running")) j.status = "paused";
+          else if (input.action === "resumeAll" && j.status === "paused") j.status = "queued";
+          else if (input.action === "retryFailed" && j.status === "failed") j.status = "queued";
+          else if (input.action === "clearDone" && (j.status === "done" || j.status === "skipped")) return null;
+          else if (input.action === "startAllQueued" && j.status === "queued") j.status = "running";
+          if (j && j.status !== before) changed++;
+          return j;
+        }).filter((x: any) => x !== null);
+        const next = { ...data, jobs };
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[RenderQueue]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[RenderQueue]\n${JSON.stringify(next)}` });
+        return { changed };
+      }),
+  }),
+
+  // ─── Pro Collab: Presence (multi-user heartbeat for live collaboration) ────
+  presence: router({
+    heartbeat: protectedProcedure
+      .input(z.object({ projectId: z.number(), tab: z.string().max(60).optional(), sceneId: z.number().nullable().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return { ok: false };
+        const tag = `[Presence@${ctx.user.id}]`;
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${tag + "%"}`);
+        const payload = { userId: ctx.user.id, email: (ctx.user as any).email || null, tab: input.tab || null, sceneId: input.sceneId ?? null, ts: new Date().toISOString() };
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `${tag}\n${JSON.stringify(payload)}` });
+        return { ok: true };
+      }),
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return [];
+        const r: any = await dbConn.execute(sql`SELECT content, updatedAt FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Presence@%' AND updatedAt > NOW() - INTERVAL '45 SECONDS' ORDER BY updatedAt DESC`);
+        const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+        return (arr || []).map((row: any) => {
+          try { return JSON.parse((row.content as string).replace(/^\[Presence@\d+\]\s*\n?/, "")); } catch { return null; }
+        }).filter((x: any) => x !== null) as any[];
+      }),
+  }),
+
+  // ─── Pro Dashboard: single-pane studio readiness summary ────
+  studioDashboard: router({
+    summary: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const scenes = await db.getProjectScenes(input.projectId);
+        const totalScenes = scenes.length;
+        const scenesWithVideo = scenes.filter((s: any) => s.videoUrl).length;
+        let queueDepth = 0, running = 0, done = 0, failed = 0, paused = 0;
+        let cap: any = null;
+        let openComments = 0, resolvedComments = 0;
+        let deliverablesReady = 0, deliverablesTotal = 0;
+        let clearancesPending = 0, clearancesTotal = 0;
+        let todaySpend = 0;
+        let activeUsers = 0;
+        if (dbConn) {
+          // Render queue
+          const qr: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[RenderQueue]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const qarr = (Array.isArray(qr[0]) ? qr[0] : qr) as any[];
+          if (qarr?.[0]) {
+            try {
+              const d = JSON.parse((qarr[0].content as string).replace(/^\[RenderQueue\]\s*\n?/, ""));
+              cap = d.cap || null;
+              for (const j of (d.jobs || [])) {
+                if (j.status === "queued") queueDepth++;
+                else if (j.status === "running") running++;
+                else if (j.status === "done") done++;
+                else if (j.status === "failed") failed++;
+                else if (j.status === "paused") paused++;
+              }
+            } catch {}
+          }
+          // Frame comments
+          const cr: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[FrameComments@%'`);
+          const carr = (Array.isArray(cr[0]) ? cr[0] : cr) as any[];
+          for (const row of (carr || [])) {
+            try {
+              const list = JSON.parse((row.content as string).replace(/^\[FrameComments@\d+\]\s*\n?/, ""));
+              for (const c of list) { if (c.status === "resolved") resolvedComments++; else openComments++; }
+            } catch {}
+          }
+          // Deliverables
+          const dr: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Deliverables]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const darr = (Array.isArray(dr[0]) ? dr[0] : dr) as any[];
+          if (darr?.[0]) {
+            try {
+              const list = JSON.parse((darr[0].content as string).replace(/^\[Deliverables\]\s*\n?/, ""));
+              deliverablesTotal = list.length;
+              deliverablesReady = list.filter((x: any) => x.status === "ready").length;
+            } catch {}
+          }
+          // Clearances
+          const clr: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Clearances]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const clarr = (Array.isArray(clr[0]) ? clr[0] : clr) as any[];
+          if (clarr?.[0]) {
+            try {
+              const list = JSON.parse((clarr[0].content as string).replace(/^\[Clearances\]\s*\n?/, ""));
+              clearancesTotal = list.length;
+              clearancesPending = list.filter((x: any) => x.status !== "cleared" && x.status !== "n/a").length;
+            } catch {}
+          }
+          // Today's render spend (this user)
+          const sr: any = await dbConn.execute(sql`SELECT COALESCE(SUM(-amount),0) AS spent FROM credit_transactions WHERE userId = ${ctx.user.id} AND amount < 0 AND action LIKE 'generate_%' AND createdAt > NOW() - INTERVAL '24 HOURS'`);
+          const sarr = (Array.isArray(sr[0]) ? sr[0] : sr) as any[];
+          todaySpend = Number(sarr?.[0]?.spent || 0);
+          // Active users (last 45s)
+          const ar: any = await dbConn.execute(sql`SELECT COUNT(DISTINCT content) AS n FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Presence@%' AND updatedAt > NOW() - INTERVAL '45 SECONDS'`);
+          const aarr = (Array.isArray(ar[0]) ? ar[0] : ar) as any[];
+          activeUsers = Number(aarr?.[0]?.n || 0);
+        }
+        const dailyCap = cap?.dailyCredits ?? null;
+        const burnPct = dailyCap ? Math.min(100, Math.round((todaySpend / dailyCap) * 100)) : null;
+        const readinessParts = [
+          totalScenes > 0 ? scenesWithVideo / totalScenes : 0,
+          deliverablesTotal > 0 ? deliverablesReady / deliverablesTotal : 0,
+          clearancesTotal > 0 ? (clearancesTotal - clearancesPending) / clearancesTotal : 0,
+          openComments === 0 ? 1 : Math.max(0, 1 - openComments / 20),
+          failed === 0 ? 1 : 0.5,
+        ];
+        const readiness = Math.round((readinessParts.reduce((a, b) => a + b, 0) / readinessParts.length) * 100);
+        return {
+          scenes: { total: totalScenes, withVideo: scenesWithVideo },
+          queue: { queued: queueDepth, running, done, failed, paused, cap },
+          comments: { open: openComments, resolved: resolvedComments },
+          deliverables: { ready: deliverablesReady, total: deliverablesTotal },
+          clearances: { pending: clearancesPending, total: clearancesTotal },
+          spend: { today: todaySpend, dailyCap, burnPct },
+          activeUsers,
+          readiness,
+        };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;
