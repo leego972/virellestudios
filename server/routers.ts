@@ -10629,6 +10629,105 @@ Rules:
       }),
   }),
 
+  // ─── Pro Ops: 3-tier Approval Chain (director → producer → exec) ───
+  approvals: router({
+    get: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return {};
+        const r: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Approvals]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+        if (!arr?.[0]) return {};
+        try { return JSON.parse((arr[0].content as string).replace(/^\[Approvals\]\s*\n?/, "")); } catch { return {}; }
+      }),
+    set: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number(), role: z.enum(["director","producer","exec"]), state: z.enum(["pending","approved","rejected"]), note: z.string().max(500).optional() }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        const r: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Approvals]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+        let approvals: any = {};
+        if (arr?.[0]) { try { approvals = JSON.parse((arr[0].content as string).replace(/^\[Approvals\]\s*\n?/, "")) || {}; } catch {} }
+        const sk = String(input.sceneId);
+        if (!approvals[sk]) approvals[sk] = {};
+        approvals[sk][input.role] = { state: input.state, note: input.note || null, by: (ctx.user as any).email || `user${ctx.user.id}`, at: new Date().toISOString() };
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Approvals]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[Approvals]\n${JSON.stringify(approvals)}` });
+        // Auto-lock when all 3 roles approved
+        const a = approvals[sk];
+        const fullyApproved = a?.director?.state === "approved" && a?.producer?.state === "approved" && a?.exec?.state === "approved";
+        if (fullyApproved) {
+          const lr: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[SceneLocks]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const larr = (Array.isArray(lr[0]) ? lr[0] : lr) as any[];
+          let locks: any[] = [];
+          if (larr?.[0]) { try { locks = JSON.parse((larr[0].content as string).replace(/^\[SceneLocks\]\s*\n?/, "")) || []; } catch {} }
+          const idx = locks.findIndex((x: any) => x.sceneId === input.sceneId);
+          const entry = { sceneId: input.sceneId, locked: true, reason: "fully approved (D+P+E)", lockedBy: "auto-approval-chain", lockedAt: new Date().toISOString() };
+          if (idx >= 0) locks[idx] = entry; else locks.push(entry);
+          await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[SceneLocks]%'`);
+          await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[SceneLocks]\n${JSON.stringify(locks)}` });
+        }
+        return { success: true, autoLocked: fullyApproved };
+      }),
+  }),
+
+  // ─── Pro Ops: Project Budget Tracker (config + actuals roll-up) ───
+  studioBudget: router({
+    get: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) return null;
+        const r: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[StudioBudget]%' ORDER BY updatedAt DESC LIMIT 1`);
+        const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+        let cfg: any = {
+          totalBudget: 0,
+          byStage: { development: 0, preProduction: 0, production: 0, postProduction: 0, distribution: 0 },
+          contingencyPct: 10,
+          // Industry savings benchmarks (configurable)
+          tradCostPerScene: 5000,   // USD — mid-range indie scene shoot
+          tradHoursPerScene: 8,     // hours — one production day per scene
+          creditUsdRate: 0.05,      // USD per credit (used to convert AI spend to dollars)
+        };
+        if (arr?.[0]) { try { cfg = { ...cfg, ...JSON.parse((arr[0].content as string).replace(/^\[StudioBudget\]\s*\n?/, "")) }; } catch {} }
+        // Roll up actuals from credit_transactions for this project
+        let spentCredits = 0;
+        try {
+          const tx: any = await dbConn.execute(sql`SELECT COALESCE(SUM(amount), 0) AS total FROM credit_transactions WHERE projectId = ${input.projectId} AND amount < 0`);
+          const txarr = (Array.isArray(tx[0]) ? tx[0] : tx) as any[];
+          spentCredits = Math.abs(Number(txarr?.[0]?.total ?? 0));
+        } catch {}
+        const spentUsd = Math.round(spentCredits * cfg.creditUsdRate * 100) / 100;
+        // Count rendered scenes for savings calc
+        const scenes = await db.getProjectScenes(input.projectId);
+        const renderedScenes = scenes.filter((s: any) => s.videoUrl).length;
+        const tradEquivalentUsd = renderedScenes * cfg.tradCostPerScene;
+        const tradEquivalentHours = renderedScenes * cfg.tradHoursPerScene;
+        const moneySavedUsd = Math.max(0, tradEquivalentUsd - spentUsd);
+        const timeSavedHours = tradEquivalentHours; // AI render time negligible vs shoot day
+        const timeSavedDays = Math.round((timeSavedHours / 8) * 10) / 10;
+        const savingsMultiplier = spentUsd > 0 ? Math.round((tradEquivalentUsd / spentUsd) * 10) / 10 : null;
+        const variance = (cfg.totalBudget || 0) - spentUsd;
+        const burnPct = cfg.totalBudget > 0 ? Math.round((spentUsd / cfg.totalBudget) * 100) : null;
+        return {
+          ...cfg,
+          spentCredits, spentUsd, variance, burnPct,
+          savings: { renderedScenes, tradEquivalentUsd, moneySavedUsd, timeSavedHours, timeSavedDays, savingsMultiplier },
+        };
+      }),
+    set: protectedProcedure
+      .input(z.object({ projectId: z.number(), totalBudget: z.number().min(0), byStage: z.object({ development: z.number().min(0), preProduction: z.number().min(0), production: z.number().min(0), postProduction: z.number().min(0), distribution: z.number().min(0) }), contingencyPct: z.number().min(0).max(100), tradCostPerScene: z.number().min(0).optional(), tradHoursPerScene: z.number().min(0).optional(), creditUsdRate: z.number().min(0).optional() }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb(); if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[StudioBudget]%'`);
+        await db.createChatMessage({ projectId: input.projectId, userId: ctx.user.id, role: "user", content: `[StudioBudget]\n${JSON.stringify(input)}` });
+        return { success: true };
+      }),
+  }),
+
   // ─── Pro Dashboard: single-pane studio readiness summary ────
   studioDashboard: router({
     summary: protectedProcedure
@@ -10729,6 +10828,46 @@ Rules:
             try { lockedScenes = (JSON.parse((larr[0].content as string).replace(/^\[SceneLocks\]\s*\n?/, "")) || []).filter((x: any) => x.locked).length; } catch {}
           }
         }
+        // Approvals roll-up
+        let approvalsRollup = { fullyApproved: 0, partial: 0, pending: totalScenes, rejected: 0 };
+        if (dbConn) {
+          const ar: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[Approvals]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const aarr = (Array.isArray(ar[0]) ? ar[0] : ar) as any[];
+          if (aarr?.[0]) {
+            try {
+              const ap = JSON.parse((aarr[0].content as string).replace(/^\[Approvals\]\s*\n?/, "")) || {};
+              let fa = 0, p = 0, rj = 0;
+              for (const sk of Object.keys(ap)) {
+                const a = ap[sk] || {};
+                const states = ["director","producer","exec"].map(r => a[r]?.state);
+                if (states.some(s => s === "rejected")) rj++;
+                else if (states.every(s => s === "approved")) fa++;
+                else if (states.some(s => s === "approved")) p++;
+              }
+              approvalsRollup = { fullyApproved: fa, partial: p, rejected: rj, pending: Math.max(0, totalScenes - fa - p - rj) };
+            } catch {}
+          }
+        }
+        // Savings roll-up — mirror of studioBudget.get computation, lighter
+        let savings: any = null;
+        if (dbConn) {
+          let cfg: any = { tradCostPerScene: 5000, tradHoursPerScene: 8, creditUsdRate: 0.05 };
+          const br: any = await dbConn.execute(sql`SELECT content FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[StudioBudget]%' ORDER BY updatedAt DESC LIMIT 1`);
+          const barr = (Array.isArray(br[0]) ? br[0] : br) as any[];
+          if (barr?.[0]) { try { cfg = { ...cfg, ...JSON.parse((barr[0].content as string).replace(/^\[StudioBudget\]\s*\n?/, "")) }; } catch {} }
+          let spentCredits = 0;
+          try {
+            const tx: any = await dbConn.execute(sql`SELECT COALESCE(SUM(amount), 0) AS total FROM credit_transactions WHERE projectId = ${input.projectId} AND amount < 0`);
+            const txarr = (Array.isArray(tx[0]) ? tx[0] : tx) as any[];
+            spentCredits = Math.abs(Number(txarr?.[0]?.total ?? 0));
+          } catch {}
+          const spentUsd = Math.round(spentCredits * cfg.creditUsdRate * 100) / 100;
+          const tradEquivalentUsd = scenesWithVideo * cfg.tradCostPerScene;
+          const moneySavedUsd = Math.max(0, tradEquivalentUsd - spentUsd);
+          const timeSavedDays = Math.round((scenesWithVideo * cfg.tradHoursPerScene / 8) * 10) / 10;
+          const savingsMultiplier = spentUsd > 0 ? Math.round((tradEquivalentUsd / spentUsd) * 10) / 10 : null;
+          savings = { renderedScenes: scenesWithVideo, spentUsd, tradEquivalentUsd, moneySavedUsd, timeSavedDays, savingsMultiplier };
+        }
         return {
           scenes: { total: totalScenes, withVideo: scenesWithVideo, locked: lockedScenes },
           queue: { queued: queueDepth, running, done, failed, paused, cap },
@@ -10737,6 +10876,8 @@ Rules:
           clearances: { pending: clearancesPending, total: clearancesTotal },
           spend: { today: todaySpend, dailyCap, burnPct },
           forecast: { unrenderedScenes: unrenderedScenes.length, estimatedCredits: forecastCredits },
+          approvals: approvalsRollup,
+          savings,
           activeUsers,
           readiness,
         };

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { ArrowLeft, Save, Plus, Trash2, MessageSquare, Palette, GitBranch, ListOrdered, Package, Scale, Send, ScrollText, Layers, Scissors, Download, Gauge, Users, Pause, Play, RotateCcw, Eraser, Zap, Lock, Unlock, Sparkles, Calculator } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, MessageSquare, Palette, GitBranch, ListOrdered, Package, Scale, Send, ScrollText, Layers, Scissors, Download, Gauge, Users, Pause, Play, RotateCcw, Eraser, Zap, Lock, Unlock, Sparkles, Calculator, CheckCheck, DollarSign, Clock, TrendingUp, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 
@@ -65,9 +65,10 @@ export default function ProStudioOps() {
         "1": "dashboard", "2": "comments", "3": "color", "4": "versions", "5": "queue",
         "6": "deliver", "7": "clear", "8": "dist", "9": "audit", "0": "cuts",
         "d": "dashboard", "f": "comments", "q": "queue", "p": "deliver", "x": "cuts", "l": "locks",
+        "a": "approvals", "b": "budget",
       };
       if (map[e.key]) { setActiveTab(map[e.key]); e.preventDefault(); }
-      else if (e.key === "?") { toast.info("Shortcuts: 1-0 = tabs · D Dashboard · F Frames · Q Queue · P Deliverables · L Locks · X Cuts"); e.preventDefault(); }
+      else if (e.key === "?") { toast.info("Shortcuts: 1-0 = tabs · D Dashboard · F Frames · Q Queue · P Deliverables · L Locks · A Approvals · B Budget · X Cuts"); e.preventDefault(); }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -101,6 +102,8 @@ export default function ProStudioOps() {
           <TabsTrigger value="proxy"><Layers className="h-3.5 w-3.5 mr-1.5" />Proxy Chain</TabsTrigger>
           <TabsTrigger value="cuts"><Scissors className="h-3.5 w-3.5 mr-1.5" />Cuts & Transitions</TabsTrigger>
           <TabsTrigger value="locks"><Lock className="h-3.5 w-3.5 mr-1.5" />Locks</TabsTrigger>
+          <TabsTrigger value="approvals"><CheckCheck className="h-3.5 w-3.5 mr-1.5" />Approvals</TabsTrigger>
+          <TabsTrigger value="budget"><DollarSign className="h-3.5 w-3.5 mr-1.5" />Budget & Savings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard"><StudioDashboardTab projectId={projectId} /></TabsContent>
@@ -115,6 +118,8 @@ export default function ProStudioOps() {
         <TabsContent value="proxy"><ProxyTab projectId={projectId} /></TabsContent>
         <TabsContent value="cuts"><CutsTab projectId={projectId} /></TabsContent>
         <TabsContent value="locks"><LocksTab projectId={projectId} /></TabsContent>
+        <TabsContent value="approvals"><ApprovalsTab projectId={projectId} /></TabsContent>
+        <TabsContent value="budget"><StudioBudgetTab projectId={projectId} /></TabsContent>
       </Tabs>
     </div>
   );
@@ -158,6 +163,38 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
           <div className="text-[11px] text-muted-foreground mt-1">live in last 45s</div>
         </CardContent></Card>
       </div>
+      {d.savings && d.savings.renderedScenes > 0 && (
+        <Card className="border-emerald-500/40 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent">
+          <CardContent className="pt-5 pb-5">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-emerald-300/80 mb-2"><TrendingUp className="h-3.5 w-3.5" />Virelle vs Traditional Production</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <div className="text-xs text-muted-foreground flex items-center gap-1.5"><DollarSign className="h-3 w-3" />Money saved</div>
+                <div className="text-3xl font-bold text-emerald-400">${d.savings.moneySavedUsd.toLocaleString()}</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">vs ${d.savings.tradEquivalentUsd.toLocaleString()} traditional · spent ${d.savings.spentUsd.toLocaleString()}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground flex items-center gap-1.5"><Clock className="h-3 w-3" />Time saved</div>
+                <div className="text-3xl font-bold text-teal-400">{d.savings.timeSavedDays} days</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">{d.savings.renderedScenes} scenes rendered · ~1 shoot day each</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground flex items-center gap-1.5"><Sparkles className="h-3 w-3" />Cost multiplier</div>
+                <div className="text-3xl font-bold text-violet-300">{d.savings.savingsMultiplier ? `${d.savings.savingsMultiplier}×` : "—"}</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">cheaper than shooting traditional</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {d.approvals && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <Card><CardContent className="pt-3 pb-3"><div className="text-[10px] uppercase text-muted-foreground">Fully Approved</div><div className="text-xl font-bold text-emerald-400">{d.approvals.fullyApproved}</div></CardContent></Card>
+          <Card><CardContent className="pt-3 pb-3"><div className="text-[10px] uppercase text-muted-foreground">Partial Sign-off</div><div className="text-xl font-bold text-amber-400">{d.approvals.partial}</div></CardContent></Card>
+          <Card><CardContent className="pt-3 pb-3"><div className="text-[10px] uppercase text-muted-foreground">Pending Review</div><div className="text-xl font-bold text-muted-foreground">{d.approvals.pending}</div></CardContent></Card>
+          <Card><CardContent className="pt-3 pb-3"><div className="text-[10px] uppercase text-muted-foreground">Rejected</div><div className="text-xl font-bold text-rose-400">{d.approvals.rejected}</div></CardContent></Card>
+        </div>
+      )}
       {d.forecast && (
         <Card className="border-violet-500/30 bg-violet-500/5"><CardContent className="pt-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -719,5 +756,147 @@ function LocksTab({ projectId }: { projectId: number }) {
         })}
       </CardContent>
     </Card>
+  );
+}
+
+/* ─── 3-Tier Approval Chain (director → producer → exec, auto-locks on full sign-off) ─── */
+function ApprovalsTab({ projectId }: { projectId: number }) {
+  const scenes = useScenes(projectId);
+  const list = trpc.approvals.get.useQuery({ projectId }, { refetchInterval: 10000 });
+  const setOne = trpc.approvals.set.useMutation({
+    onSuccess: (r: any) => { toast.success(r?.autoLocked ? "Approved + auto-locked (full sign-off)" : "Approval saved"); list.refetch(); },
+    onError: (e: any) => toast.error(e?.message || "Save failed"),
+  });
+  const audit = trpc.auditLog.append.useMutation();
+  const approvals = (list.data || {}) as any;
+  if (!scenes.data?.length) return <Card><CardContent className="pt-6 text-sm text-muted-foreground">No scenes yet — create scenes first to route them through approval.</CardContent></Card>;
+  const apply = (sceneId: number, role: "director"|"producer"|"exec", state: "approved"|"rejected"|"pending", label: string) => {
+    const note = state === "rejected" ? (window.prompt("Rejection reason?", "") || "") : undefined;
+    setOne.mutate({ projectId, sceneId, role, state, note });
+    audit.mutate({ projectId, event: { action: `approval.${state}`, targetType: "scene", targetId: String(sceneId), summary: `${role.toUpperCase()} ${state}: ${label}${note ? ` — ${note}` : ""}` } });
+  };
+  const pill = (s?: string) => {
+    if (s === "approved") return <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40">approved</Badge>;
+    if (s === "rejected") return <Badge className="bg-rose-500/20 text-rose-300 border-rose-500/40">rejected</Badge>;
+    return <Badge variant="outline" className="text-muted-foreground">pending</Badge>;
+  };
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2"><CheckCheck className="h-4 w-4" />3-Tier Approval Chain</CardTitle>
+        <div className="text-xs text-muted-foreground">Director → Producer → Executive. When all three approve, scene <strong>auto-locks</strong> against further renders.</div>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <div className="grid grid-cols-12 gap-2 px-2 text-[10px] uppercase text-muted-foreground tracking-wider">
+          <div className="col-span-4">Scene</div>
+          <div className="col-span-2 text-center">Director</div>
+          <div className="col-span-2 text-center">Producer</div>
+          <div className="col-span-2 text-center">Exec</div>
+          <div className="col-span-2"></div>
+        </div>
+        {scenes.data.map((s: any) => {
+          const a = approvals[String(s.id)] || {};
+          const all = a.director?.state === "approved" && a.producer?.state === "approved" && a.exec?.state === "approved";
+          return (
+            <div key={s.id} className={`grid grid-cols-12 gap-2 items-center p-2 rounded border ${all ? "border-emerald-500/40 bg-emerald-500/5" : "border-border bg-card/50"}`}>
+              <div className="col-span-4 min-w-0">
+                <div className="text-sm font-medium truncate">Scene {s.order ?? s.id}: {s.title || s.description?.slice(0, 50) || "(untitled)"}</div>
+                {all && <div className="text-[10px] text-emerald-400 mt-0.5">🔒 fully approved → auto-locked</div>}
+              </div>
+              {(["director","producer","exec"] as const).map(role => (
+                <div key={role} className="col-span-2 flex items-center justify-center gap-1">
+                  {pill(a[role]?.state)}
+                </div>
+              ))}
+              <div className="col-span-2 flex justify-end gap-1 flex-wrap">
+                {(["director","producer","exec"] as const).map(role => (
+                  <div key={role} className="flex gap-0.5">
+                    <Button size="icon" variant="ghost" className="h-6 w-6" title={`${role}: approve`} onClick={() => apply(s.id, role, "approved", s.title || `Scene ${s.order}`)} disabled={setOne.isPending}><ThumbsUp className="h-3 w-3 text-emerald-400" /></Button>
+                    <Button size="icon" variant="ghost" className="h-6 w-6" title={`${role}: reject`} onClick={() => apply(s.id, role, "rejected", s.title || `Scene ${s.order}`)} disabled={setOne.isPending}><ThumbsDown className="h-3 w-3 text-rose-400" /></Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ─── Studio Budget + Director-facing Savings Tracker ─── */
+function StudioBudgetTab({ projectId }: { projectId: number }) {
+  const q = trpc.studioBudget.get.useQuery({ projectId }, { refetchInterval: 10000 });
+  const save = trpc.studioBudget.set.useMutation({
+    onSuccess: () => { toast.success("Budget saved"); q.refetch(); },
+    onError: (e: any) => toast.error(e?.message || "Save failed"),
+  });
+  const audit = trpc.auditLog.append.useMutation();
+  const [draft, setDraft] = useState<any | null>(null);
+  const live = draft ?? q.data;
+  if (!live) return <div className="p-6 text-sm text-muted-foreground">Loading budget…</div>;
+  const update = (patch: any) => setDraft({ ...live, ...patch });
+  const updateStage = (k: string, v: number) => setDraft({ ...live, byStage: { ...live.byStage, [k]: v } });
+  const persist = () => {
+    save.mutate({ projectId, totalBudget: live.totalBudget, byStage: live.byStage, contingencyPct: live.contingencyPct, tradCostPerScene: live.tradCostPerScene, tradHoursPerScene: live.tradHoursPerScene, creditUsdRate: live.creditUsdRate });
+    audit.mutate({ projectId, event: { action: "budget.save", summary: `Budget set to $${live.totalBudget}` } });
+    setDraft(null);
+  };
+  const s = live.savings;
+  const stageSum = Object.values(live.byStage).reduce((a: number, b: any) => a + Number(b || 0), 0) as number;
+  return (
+    <div className="space-y-4">
+      {s && (
+        <Card className="border-emerald-500/40 bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent">
+          <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2 text-emerald-300"><TrendingUp className="h-4 w-4" />What Virelle has saved you on this project</CardTitle></CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div>
+              <div className="text-xs text-muted-foreground flex items-center gap-1.5"><DollarSign className="h-3 w-3" />Money saved</div>
+              <div className="text-4xl font-bold text-emerald-400">${s.moneySavedUsd.toLocaleString()}</div>
+              <div className="text-[11px] text-muted-foreground mt-1">vs ${s.tradEquivalentUsd.toLocaleString()} at industry rates · you spent ${live.spentUsd.toLocaleString()} ({live.spentCredits} credits)</div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground flex items-center gap-1.5"><Clock className="h-3 w-3" />Time saved</div>
+              <div className="text-4xl font-bold text-teal-400">{s.timeSavedDays} <span className="text-xl">days</span></div>
+              <div className="text-[11px] text-muted-foreground mt-1">{s.timeSavedHours.toLocaleString()} hours · {s.renderedScenes} scenes × {live.tradHoursPerScene}h shoot day</div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground flex items-center gap-1.5"><Sparkles className="h-3 w-3" />Cost multiplier</div>
+              <div className="text-4xl font-bold text-violet-300">{s.savingsMultiplier ? `${s.savingsMultiplier}×` : "—"}</div>
+              <div className="text-[11px] text-muted-foreground mt-1">cheaper than traditional production</div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      <Card>
+        <CardHeader><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="h-4 w-4" />Project Budget</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div><Label className="text-xs">Total budget (USD)</Label><Input type="number" value={live.totalBudget} onChange={e => update({ totalBudget: Number(e.target.value) })} /></div>
+            <div><Label className="text-xs">Contingency %</Label><Input type="number" value={live.contingencyPct} onChange={e => update({ contingencyPct: Number(e.target.value) })} /></div>
+            <div><Label className="text-xs">Spent to date</Label><div className="h-9 flex items-center font-mono text-sm">${live.spentUsd.toLocaleString()}</div></div>
+            <div><Label className="text-xs">Variance</Label><div className={`h-9 flex items-center font-mono text-sm ${live.variance < 0 ? "text-rose-400" : "text-emerald-400"}`}>${live.variance.toLocaleString()}{live.burnPct != null && <span className="ml-2 text-[11px] text-muted-foreground">({live.burnPct}% burned)</span>}</div></div>
+          </div>
+          <div className="space-y-1 pt-2">
+            <Label className="text-xs uppercase tracking-wider text-muted-foreground">Allocation by stage</Label>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+              {Object.entries(live.byStage).map(([k, v]: [string, any]) => (
+                <div key={k}><Label className="text-[10px] capitalize">{k.replace(/([A-Z])/g, " $1")}</Label><Input type="number" value={v} onChange={e => updateStage(k, Number(e.target.value))} className="h-8 text-sm" /></div>
+              ))}
+            </div>
+            <div className="text-[11px] text-muted-foreground text-right">Stage sum: ${stageSum.toLocaleString()}{Math.abs(stageSum - live.totalBudget) > 1 && <span className="ml-2 text-amber-400">⚠ doesn't equal total ({live.totalBudget})</span>}</div>
+          </div>
+          <div className="space-y-1 pt-3 border-t border-border/40">
+            <Label className="text-xs uppercase tracking-wider text-muted-foreground">Industry savings benchmarks (used for ROI calc)</Label>
+            <div className="grid grid-cols-3 gap-2">
+              <div><Label className="text-[10px]">Traditional cost / scene (USD)</Label><Input type="number" value={live.tradCostPerScene} onChange={e => update({ tradCostPerScene: Number(e.target.value) })} className="h-8 text-sm" /></div>
+              <div><Label className="text-[10px]">Traditional hours / scene</Label><Input type="number" value={live.tradHoursPerScene} onChange={e => update({ tradHoursPerScene: Number(e.target.value) })} className="h-8 text-sm" /></div>
+              <div><Label className="text-[10px]">Credit-to-USD rate</Label><Input type="number" step="0.01" value={live.creditUsdRate} onChange={e => update({ creditUsdRate: Number(e.target.value) })} className="h-8 text-sm" /></div>
+            </div>
+          </div>
+          <div className="flex justify-end pt-2"><Button size="sm" onClick={persist} disabled={save.isPending || !draft}><Save className="h-3.5 w-3.5 mr-1.5" />Save Budget</Button></div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
