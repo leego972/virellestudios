@@ -5241,6 +5241,296 @@ Generate the full dialogue for this scene.`,
       }),
   }),
 
+  // ─── Pro Studio: Shot Versions (per-scene generation history) ────
+  shotVersions: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number(), sceneId: z.number().optional() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const tag = input.sceneId != null ? `[ShotVersions@${input.sceneId}]%` : `[ShotVersions@%`;
+        const rows: any = await dbConn.execute(
+          sql`SELECT id, content, updatedAt FROM directorChats
+              WHERE projectId = ${input.projectId} AND content LIKE ${tag}
+              ORDER BY updatedAt DESC LIMIT 200`
+        );
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return arr.map((r: any) => {
+          const m = /^\[ShotVersions@(\d+)\]\s*\n?([\s\S]*)$/.exec(r.content || "");
+          if (!m) return null;
+          try { return { sceneId: Number(m[1]), versions: JSON.parse(m[2]), updatedAt: r.updatedAt }; }
+          catch { return null; }
+        }).filter(Boolean);
+      }),
+    save: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number(),
+        versions: z.array(z.object({
+          label: z.string().max(64),
+          url: z.string().max(1000).optional(),
+          model: z.string().max(64).optional(),
+          prompt: z.string().max(4000).optional(),
+          notes: z.string().max(1000).optional(),
+          isFinal: z.boolean().optional(),
+          createdAt: z.string().optional(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        const likeTag = `[ShotVersions@${input.sceneId}]%`;
+        await dbConn.execute(
+          sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${likeTag}`
+        );
+        await db.createChatMessage({
+          projectId: input.projectId,
+          userId: ctx.user.id,
+          role: "user",
+          content: `[ShotVersions@${input.sceneId}]\n${JSON.stringify(input.versions)}`,
+        });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Studio: Style Bible (project visual identity) ────
+  styleBible: router({
+    get: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) return null;
+        const rows: any = await dbConn.execute(
+          sql`SELECT content, updatedAt FROM directorChats
+              WHERE projectId = ${input.projectId} AND content LIKE '[StyleBible]%'
+              ORDER BY updatedAt DESC LIMIT 1`
+        );
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        const row = arr?.[0];
+        if (!row) return null;
+        try {
+          return { data: JSON.parse((row.content as string).replace(/^\[StyleBible\]\s*\n?/, "")), updatedAt: row.updatedAt };
+        } catch { return null; }
+      }),
+    save: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        data: z.object({
+          tone: z.string().max(2000).optional(),
+          colorPalette: z.string().max(2000).optional(),
+          lighting: z.string().max(2000).optional(),
+          lensStyle: z.string().max(2000).optional(),
+          era: z.string().max(2000).optional(),
+          referenceUrls: z.array(z.string().max(500)).optional(),
+          bannedTerms: z.string().max(2000).optional(),
+          notes: z.string().max(4000).optional(),
+        }),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        await dbConn.execute(
+          sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE '[StyleBible]%'`
+        );
+        await db.createChatMessage({
+          projectId: input.projectId,
+          userId: ctx.user.id,
+          role: "user",
+          content: `[StyleBible]\n${JSON.stringify(input.data)}`,
+        });
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Studio: Voice Clone Consent (AI talent likeness rights) ────
+  voiceConsent: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const rows: any = await dbConn.execute(
+          sql`SELECT content, updatedAt FROM directorChats
+              WHERE projectId = ${input.projectId} AND content LIKE '[VoiceConsent@%'
+              ORDER BY updatedAt DESC LIMIT 200`
+        );
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return arr.map((r: any) => {
+          const m = /^\[VoiceConsent@([^\]]+)\]\s*\n?([\s\S]*)$/.exec(r.content || "");
+          if (!m) return null;
+          try { return { key: m[1], data: JSON.parse(m[2]), updatedAt: r.updatedAt }; }
+          catch { return null; }
+        }).filter(Boolean);
+      }),
+    upsert: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        characterKey: z.string().max(120),
+        data: z.object({
+          signedBy: z.string().max(200),
+          signedDate: z.string().max(40),
+          allowedUses: z.string().max(2000),
+          sampleUrl: z.string().max(1000).optional(),
+          notes: z.string().max(2000).optional(),
+          ipConfirmed: z.boolean(),
+        }),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        const tag = `[VoiceConsent@${input.characterKey}]`;
+        await dbConn.execute(
+          sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${tag + "%"}`
+        );
+        await db.createChatMessage({
+          projectId: input.projectId,
+          userId: ctx.user.id,
+          role: "user",
+          content: `${tag}\n${JSON.stringify(input.data)}`,
+        });
+        return { success: true };
+      }),
+    remove: protectedProcedure
+      .input(z.object({ projectId: z.number(), characterKey: z.string().max(120) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+        const tag = `[VoiceConsent@${input.characterKey}]%`;
+        await dbConn.execute(
+          sql`DELETE FROM directorChats WHERE projectId = ${input.projectId} AND content LIKE ${tag}`
+        );
+        return { success: true };
+      }),
+  }),
+
+  // ─── Pro Studio: C2PA-Compatible Provenance Manifest ────
+  // Generates a downloadable JSON manifest disclosing all AI-generated
+  // assets for distribution platforms requiring AI content disclosure
+  // (YouTube, Meta, TikTok, broadcast deliverables).
+  provenance: router({
+    export: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const scenes = await db.getProjectScenes(input.projectId).catch(() => [] as any[]);
+        const characters = await db.getProjectCharacters(input.projectId).catch(() => [] as any[]);
+        const assertions: any[] = [];
+        for (const c of (characters as any[])) {
+          const url = c.referenceImageUrl || c.thumbnailUrl;
+          if (url) {
+            assertions.push({
+              type: "character.image",
+              characterId: c.id,
+              name: c.name,
+              url,
+              generator: { type: "ai", model: "image-gen", description: "AI-generated character reference image" },
+            });
+          }
+        }
+        for (const s of (scenes as any[])) {
+          if (s.imageUrl) {
+            assertions.push({
+              type: "scene.image",
+              sceneId: s.id,
+              title: s.title || s.name,
+              url: s.imageUrl,
+              generator: { type: "ai", model: "image-gen", description: "AI-generated scene image" },
+            });
+          }
+          if (s.videoUrl) {
+            assertions.push({
+              type: "scene.video",
+              sceneId: s.id,
+              title: s.title || s.name,
+              url: s.videoUrl,
+              generator: { type: "ai", model: s.videoProvider || "video-gen", description: "AI-generated scene video" },
+            });
+          }
+        }
+        return {
+          spec: "c2pa-1.3-compatible",
+          generator: "Virelle Studios",
+          generatedAt: new Date().toISOString(),
+          project: {
+            id: project.id,
+            title: project.title,
+            createdAt: project.createdAt,
+          },
+          aiDisclosure: {
+            isAiGenerated: true,
+            disclosureRequired: true,
+            statement: "This work was created using generative AI tools orchestrated by Virelle Studios. Visual, audio, and narrative elements were synthesized by machine learning models. Human creative direction, editorial decisions and final approval were performed by the credited filmmakers.",
+            standards: ["C2PA 1.3", "FTC AI Disclosure", "EU AI Act Art. 50"],
+          },
+          assertions,
+          assertionCount: assertions.length,
+        };
+      }),
+  }),
+
+  // ─── Pro Studio: Render History & Cost Dashboard ────
+  // Pulls from the existing credit_transactions ledger so producers
+  // can see every AI generation, its cost, and 30-day burn rate.
+  renderHistory: router({
+    list: protectedProcedure
+      .input(z.object({ limit: z.number().min(1).max(500).default(100) }))
+      .query(async ({ ctx, input }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return [];
+        const rows: any = await dbConn.execute(
+          sql`SELECT id, amount, action, description, balanceAfter, createdAt
+              FROM credit_transactions
+              WHERE userId = ${ctx.user.id}
+              ORDER BY createdAt DESC
+              LIMIT ${input.limit}`
+        );
+        const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return arr.map((r: any) => ({
+          id: r.id,
+          amount: Number(r.amount),
+          action: r.action,
+          description: r.description,
+          balanceAfter: Number(r.balanceAfter),
+          createdAt: r.createdAt,
+        }));
+      }),
+    summary: protectedProcedure
+      .query(async ({ ctx }) => {
+        const dbConn = await db.getDb();
+        if (!dbConn) return { totalSpent: 0, byAction: [], last30Days: 0 };
+        const all: any = await dbConn.execute(
+          sql`SELECT action, SUM(ABS(amount)) as total, COUNT(*) as count
+              FROM credit_transactions
+              WHERE userId = ${ctx.user.id} AND amount < 0
+              GROUP BY action
+              ORDER BY total DESC LIMIT 30`
+        );
+        const last30: any = await dbConn.execute(
+          sql`SELECT COALESCE(SUM(ABS(amount)), 0) as total
+              FROM credit_transactions
+              WHERE userId = ${ctx.user.id} AND amount < 0
+                AND createdAt >= NOW() - INTERVAL '30 days'`
+        );
+        const allArr = (Array.isArray(all[0]) ? all[0] : all) as any[];
+        const lastArr = (Array.isArray(last30[0]) ? last30[0] : last30) as any[];
+        const totalSpent = allArr.reduce((sum: number, r: any) => sum + Number(r.total || 0), 0);
+        return {
+          totalSpent,
+          byAction: allArr.map((r: any) => ({ action: r.action, total: Number(r.total), count: Number(r.count) })),
+          last30Days: Number(lastArr[0]?.total || 0),
+        };
+      }),
+  }),
+
   // ─── Budget Estimator ────
   budget: router({
     list: protectedProcedure

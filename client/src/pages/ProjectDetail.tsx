@@ -1624,6 +1624,27 @@ export default function ProjectDetail() {
           </div>
           </div>
 
+          {/* Pro Studio */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-border/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Pro Studio</span>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0">
+                  <Globe className="h-5 w-5 text-amber-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-amber-400">Pro Studio Controls</p>
+                  <p className="text-xs text-muted-foreground">Style bible · Shot versions · Voice/likeness rights · C2PA provenance · Render economics</p>
+                </div>
+                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Project Management */}
           <div>
             <div className="flex items-center gap-2 mb-3">
