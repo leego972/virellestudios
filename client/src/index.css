@@ -584,3 +584,38 @@
   z-index: 1;
 }
 
+
+/* Mobile touch-target accessibility — WCAG 2.5.5 (44px minimum) */
+@media (pointer: coarse) {
+  button:not([data-no-min-touch]),
+  [role="button"]:not([data-no-min-touch]),
+  a[href]:not([data-no-min-touch]):not(.inline-link),
+  input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea,
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  summary {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Inline icons and tiny chips inside larger tap targets shouldn't grow */
+  button svg,
+  [role="button"] svg,
+  a[href] svg {
+    flex-shrink: 0;
+  }
+
+  /* Preserve compact input UX inside flex rows where parent owns the height */
+  .h-7, .h-8 { min-height: 44px; }
+
+  /* Checkboxes and radios — keep visual size, expand the hit area via padding */
+  input[type="checkbox"],
+  input[type="radio"] {
+    padding: 10px;
+    margin: -10px;
+    background-clip: content-box;
+  }
+}
