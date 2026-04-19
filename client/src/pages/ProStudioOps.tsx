@@ -373,7 +373,7 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
   const scenes = useScenes(projectId);
   const q = trpc.renderQueue.get.useQuery({ projectId }, { refetchInterval: 8000 });
   const save = trpc.renderQueue.save.useMutation({ onSuccess: () => { toast.success("Queue saved"); q.refetch(); } });
-  const bulk = trpc.renderQueueBulk.apply.useMutation({ onSuccess: (r: any) => { toast.success(`Bulk: ${r.changed} jobs updated`); q.refetch(); } });
+  const bulk = trpc.renderQueueBulk.run.useMutation({ onSuccess: (r: any) => { toast.success(`Bulk: ${r.changed} jobs updated`); q.refetch(); } });
   const audit = trpc.auditLog.append.useMutation();
   const runBulk = (action: "pauseAll"|"resumeAll"|"retryFailed"|"clearDone"|"startAllQueued") => { bulk.mutate({ projectId, action }); audit.mutate({ projectId, event: { action: `renderQueue.bulk.${action}`, summary: `Bulk ${action}` } }); };
   const runVid = trpc.scene.generateVideo.useMutation({

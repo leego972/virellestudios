@@ -10546,7 +10546,7 @@ Rules:
     }),
   // ─── Pro Ops: Render Queue Bulk Operations ────
   renderQueueBulk: router({
-    apply: protectedProcedure
+    run: protectedProcedure
       .input(z.object({ projectId: z.number(), action: z.enum(["pauseAll","resumeAll","retryFailed","clearDone","startAllQueued"]) }))
       .mutation(async ({ ctx, input }) => {
         await assertOwnsProject(input.projectId, ctx.user.id);
