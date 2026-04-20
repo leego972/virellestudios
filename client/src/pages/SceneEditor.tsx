@@ -2219,7 +2219,7 @@ export default function SceneEditor() {
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
-                        if (file.size > 10 * 1024 * 1024) { alert("File too large. Max 10MB."); return; }
+                        if (file.size > 10 * 1024 * 1024) { toast.error("File too large. Max 10MB."); return; }
                         const reader = new FileReader();
                         reader.onload = async (ev) => {
                           const base64 = (ev.target?.result as string).split(",")[1];
@@ -2278,7 +2278,7 @@ export default function SceneEditor() {
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          if (file.size > 150 * 1024 * 1024) { alert("File too large. Max 150MB."); return; }
+                          if (file.size > 150 * 1024 * 1024) { toast.error("File too large. Max 150MB."); return; }
                           const reader = new FileReader();
                           reader.onload = async (ev) => {
                             const base64 = (ev.target?.result as string).split(",")[1];
