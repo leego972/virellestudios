@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import SiteHead from "@/components/SiteHead";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -362,6 +363,7 @@ export default function Settings() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 p-4 md:p-6">
+      <SiteHead title="Settings" description="Manage your profile, security, billing, API keys and connected platforms on Virelle Studios." />
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">

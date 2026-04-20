@@ -3,6 +3,7 @@ import DirectorChat from "@/components/DirectorChat";
 import ProjectJourneyNav from "@/components/ProjectJourneyNav";
 import MediaPlayer from "@/components/MediaPlayer";
 import ShareButton from "@/components/ShareButton";
+import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -460,6 +461,7 @@ export default function ProjectDetail() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <SiteHead title={project.title} description={(project as any).logline || (project as any).synopsis || `Production workspace for ${project.title} on Virelle Studios.`} />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
         <div className="flex items-center gap-3 min-w-0">

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Printer, Download, FileText, Copy, Mail, Link as LinkIcon, Loader2 } from "lucide-react";
+import SiteHead from "@/components/SiteHead";
 import { toast } from "sonner";
 
 interface KitState {
@@ -69,6 +70,7 @@ export default function PressKit() {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl space-y-6">
+      <SiteHead title={`Press Kit — ${project?.title || "Project"}`} description={`Electronic Press Kit for ${project?.title || "your film"} — synopsis, technical specs, festival selections and press quotes.`} />
       <div className="flex items-center gap-3 print:hidden">
         <Link href={`/projects/${id}`}>
           <Button variant="ghost" size="sm" className="min-h-[44px]"><ArrowLeft className="h-4 w-4 mr-2" />Back to project</Button>

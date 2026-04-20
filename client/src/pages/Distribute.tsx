@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import SiteHead from "@/components/SiteHead";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -209,6 +210,7 @@ export default function Distribute() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <SiteHead title="Distribute" description="Promote, package and ship your AI film — promo packs, festival submissions, and one-click distribution." />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <Link href={`/projects/${projectId}`}>

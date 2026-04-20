@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import SiteHead from "@/components/SiteHead";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
@@ -120,6 +121,7 @@ export default function Projects() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
+      <SiteHead title="Projects" description="Manage all your AI film productions in one place — scripts, scenes, casting, scoring, and distribution." />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>

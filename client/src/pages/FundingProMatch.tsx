@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Sparkles, Star, ExternalLink, Send, FileText, Trophy, Clock, CheckCircle2, XCircle, AlertCircle, Bookmark, BookmarkCheck, Wand2 } from "lucide-react";
+import SiteHead from "@/components/SiteHead";
 import { toast } from "sonner";
 
 const STATUS_META: Record<string, { label: string; color: string; icon: any }> = {
@@ -30,6 +31,7 @@ export default function FundingProMatch() {
 
   return (
     <div className="container max-w-7xl mx-auto p-4 space-y-4">
+      <SiteHead title="Funding — Pro Match & Tracker" description="AI-matched funding opportunities for your film, with shortlist, autofill drafts and application status tracking." />
       <div className="flex items-center gap-3">
         <Button size="sm" variant="ghost" onClick={() => setLocation("/funding")}><ArrowLeft className="h-4 w-4 mr-1.5" />Back to Directory</Button>
         <h1 className="text-2xl font-bold">Funding — Pro Match & Tracker</h1>

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import OnboardingOverlay, { useOnboardingChecklist } from "@/components/OnboardingOverlay";
 import WhatsNewPanel from "@/components/WhatsNewPanel";
+import SiteHead from "@/components/SiteHead";
 import StudioOpener from "@/components/StudioOpener";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -174,6 +175,7 @@ export default function Home() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
+      <SiteHead title="Dashboard" description="Your AI film production studio dashboard — projects, generations, funding and distribution all in one place." />
       <OnboardingOverlay forceShow={forceOnboarding} onClose={() => setForceOnboarding(false)} />
       <WhatsNewPanel />
 
