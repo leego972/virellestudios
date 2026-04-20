@@ -270,7 +270,7 @@ export default function Home() {
           </Button>
           <a
             href="https://d2xsxph8kpxj0f.cloudfront.net/310519663524747580/RcWVgE53GVrjFSCRF9TVPg/Virelle_User_Manual_v1.0_f850d2ee.pdf"
-            target="_blank" rel="noopener noreferrer"
+            target="_blank"
             rel="noopener noreferrer"
           >
             <Button
