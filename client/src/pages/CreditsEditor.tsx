@@ -95,8 +95,8 @@ export default function CreditsEditor() {
       <div className="border-b bg-card/50 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
-              <ArrowLeft className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
               <h1 className="text-base sm:text-lg font-semibold truncate">{project?.title} — Credits</h1>
@@ -192,8 +192,9 @@ export default function CreditsEditor() {
                       size="icon"
                       className="h-7 w-7 shrink-0 text-destructive/60 hover:text-destructive"
                       onClick={() => deleteCredit.mutate({ id: credit.id })}
+                      aria-label={`Delete credit for ${credit.name}`}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
                   </div>
                 ))}
@@ -232,8 +233,9 @@ export default function CreditsEditor() {
                       size="icon"
                       className="h-7 w-7 shrink-0 text-destructive/60 hover:text-destructive"
                       onClick={() => deleteCredit.mutate({ id: credit.id })}
+                      aria-label={`Delete credit for ${credit.name}`}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
                   </div>
                 ))}
