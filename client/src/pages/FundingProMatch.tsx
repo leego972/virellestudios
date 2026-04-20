@@ -174,7 +174,7 @@ function AppsTab() {
   const [statusDialog, setStatusDialog] = useState<{ appId: number; status: string; label: string; notes: string } | null>(null);
   const submitStatusDialog = () => {
     if (!statusDialog) return;
-    setStatus.mutate({ applicationId: statusDialog.appId, status: statusDialog.status as any, notes: statusDialog.notes.trim() || undefined });
+    setStatus.mutate({ applicationId: statusDialog.appId as any, status: statusDialog.status as any, notes: statusDialog.notes.trim() || undefined });
     setStatusDialog(null);
   };
   const list = (apps.data || []) as any[];
