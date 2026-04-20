@@ -297,7 +297,7 @@ export default function Collaboration() {
                           onClick={() => {
                             setRemoveConfirmId(member.id);
                           }}
-                          aria-label={`Remove ${member.user?.email || "member"} from project`}
+                          aria-label="Remove member from project"
                         >
                           <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
