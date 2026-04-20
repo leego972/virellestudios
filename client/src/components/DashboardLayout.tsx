@@ -618,6 +618,16 @@ function DashboardLayoutContent({
               </span>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }))}
+                className="hidden md:flex items-center gap-2 h-9 px-3 rounded-lg border border-border/60 bg-muted/30 hover:bg-muted/60 transition-colors text-xs text-muted-foreground"
+                aria-label="Open command palette"
+                title="Quick navigation (⌘K)"
+              >
+                <Search className="h-3.5 w-3.5" />
+                <span>Search…</span>
+                <kbd className="ml-2 px-1.5 py-0.5 text-[10px] font-mono rounded bg-background/80 border border-border/40">⌘K</kbd>
+              </button>
               <NotificationBell />
               {switchable && (
                 <button
