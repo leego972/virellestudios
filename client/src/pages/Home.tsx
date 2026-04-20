@@ -2,6 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import OnboardingOverlay, { useOnboardingChecklist } from "@/components/OnboardingOverlay";
+import WhatsNewPanel from "@/components/WhatsNewPanel";
 import StudioOpener from "@/components/StudioOpener";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -174,6 +175,7 @@ export default function Home() {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <OnboardingOverlay forceShow={forceOnboarding} onClose={() => setForceOnboarding(false)} />
+      <WhatsNewPanel />
 
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">

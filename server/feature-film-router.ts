@@ -1542,4 +1542,77 @@ export const featureFilmRouter = router({
         readyToCompile: scenesWithVideo > 0,
       };
     }),
+
+  /* ─── Email Press Kit to recipients ─── */
+  emailPressKit: protectedProcedure
+    .input(z.object({
+      projectId: z.number(),
+      recipients: z.array(z.string().email()).min(1).max(20),
+      projectTitle: z.string().min(1).max(300),
+      kit: z.object({
+        tagline: z.string().optional(),
+        synopsisShort: z.string().optional(),
+        synopsisLong: z.string().optional(),
+        directorBio: z.string().optional(),
+        productionCompany: z.string().optional(),
+        contactEmail: z.string().optional(),
+        technicalSpecs: z.string().optional(),
+        festivals: z.string().optional(),
+        awards: z.string().optional(),
+        pressQuotes: z.string().optional(),
+      }),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const nodemailer = (await import("nodemailer")).default;
+      const { ENV } = await import("./_core/env");
+      const transporter = nodemailer.createTransport({
+        host: (ENV as any).SMTP_HOST || "smtp.gmail.com",
+        port: Number((ENV as any).SMTP_PORT || 587),
+        secure: false,
+        auth: { user: (ENV as any).SMTP_USER, pass: (ENV as any).SMTP_PASS },
+      });
+      const k = input.kit;
+      const shareUrl = `${(ENV as any).PUBLIC_URL || "https://virelle.life"}/projects/${input.projectId}/press-kit`;
+      const html = `
+<!DOCTYPE html><html><body style="font-family:Georgia,serif;max-width:680px;margin:0 auto;padding:24px;color:#111">
+  <div style="text-align:center;border-bottom:2px solid #b8860b;padding-bottom:16px;margin-bottom:24px">
+    <div style="text-transform:uppercase;letter-spacing:0.2em;color:#b8860b;font-size:11px">Electronic Press Kit</div>
+    <h1 style="font-size:28px;margin:6px 0">${escapeHtml(input.projectTitle)}</h1>
+    ${k.tagline ? `<p style="font-style:italic;margin:0;color:#555">${escapeHtml(k.tagline)}</p>` : ""}
+  </div>
+  ${section("Logline / Short Synopsis", k.synopsisShort)}
+  ${section("Synopsis", k.synopsisLong)}
+  ${section("Director's Bio", k.directorBio)}
+  ${section("Technical Specs", k.technicalSpecs)}
+  ${section("Festivals & Selections", k.festivals)}
+  ${section("Awards", k.awards)}
+  ${k.pressQuotes ? `<section style="margin-bottom:16px"><h2 style="font-size:11px;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid #ddd;padding-bottom:4px">Press</h2><p style="font-style:italic;white-space:pre-wrap">${escapeHtml(k.pressQuotes)}</p></section>` : ""}
+  <div style="margin-top:32px;padding-top:16px;border-top:1px solid #ddd;font-size:12px;color:#555">
+    <p>${k.productionCompany ? `<strong>${escapeHtml(k.productionCompany)}</strong><br>` : ""}${k.contactEmail ? `Contact: <a href="mailto:${escapeHtml(k.contactEmail)}">${escapeHtml(k.contactEmail)}</a>` : ""}</p>
+    <p>Live press kit: <a href="${shareUrl}">${shareUrl}</a></p>
+    <p style="font-size:10px;color:#999;margin-top:16px">Sent via Virelle Studios on behalf of ${escapeHtml(ctx.user.name || ctx.user.email || "the production")}.</p>
+  </div>
+</body></html>`.trim();
+      try {
+        await transporter.sendMail({
+          from: `"${ctx.user.name || "Virelle Studios"}" <${(ENV as any).SMTP_USER || "noreply@virelle.life"}>`,
+          to: input.recipients.join(", "),
+          replyTo: k.contactEmail || ctx.user.email || undefined,
+          subject: `Press Kit — ${input.projectTitle}`,
+          html,
+        });
+      } catch (err) {
+        console.error("[FeatureFilmRouter] emailPressKit failed:", err);
+        throw new Error("Email delivery failed. Check SMTP configuration or try again later.");
+      }
+      return { success: true, message: `Press kit sent to ${input.recipients.length} recipient(s).`, recipients: input.recipients.length };
+    }),
 });
+
+function escapeHtml(s: string | undefined): string {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+}
+function section(title: string, body: string | undefined): string {
+  if (!body) return "";
+  return `<section style="margin-bottom:16px"><h2 style="font-size:11px;text-transform:uppercase;letter-spacing:0.15em;border-bottom:1px solid #ddd;padding-bottom:4px">${title}</h2><p style="white-space:pre-wrap;line-height:1.6">${escapeHtml(body)}</p></section>`;
+}

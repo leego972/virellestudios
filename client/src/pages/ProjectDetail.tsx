@@ -88,7 +88,7 @@ import {
   Building2,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import {
   RATING_OPTIONS,
@@ -151,7 +151,35 @@ export default function ProjectDetail() {
   const [editingDescription, setEditingDescription] = useState(false);
   const [editingDuration, setEditingDuration] = useState(false);
   const [durationInput, setDurationInput] = useState("");
-  const [activeTab, setActiveTab] = useState("overview");
+  const PROJECT_TABS = ["journey","overview","story","characters","scenes","soundtrack","trailer","export","tools"];
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (typeof window === "undefined") return "overview";
+    const t = new URLSearchParams(window.location.search).get("tab");
+    return t && PROJECT_TABS.includes(t) ? t : "overview";
+  });
+  // Sync tab to URL (?tab=xxx) without full navigation, and support 1-9 keyboard shortcuts
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("tab") !== activeTab) {
+      url.searchParams.set("tab", activeTab);
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [activeTab]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement)?.isContentEditable) return;
+      const n = parseInt(e.key, 10);
+      if (n >= 1 && n <= PROJECT_TABS.length) {
+        e.preventDefault();
+        setActiveTab(PROJECT_TABS[n - 1]);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   const [descForm, setDescForm] = useState({ description: "", plotSummary: "" });
   const fileRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLInputElement>(null);

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Printer, Download, FileText, Copy } from "lucide-react";
+import { ArrowLeft, Printer, Download, FileText, Copy, Mail, Link as LinkIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface KitState {
@@ -45,6 +45,11 @@ export default function PressKit() {
   function update<K extends keyof KitState>(k: K, v: KitState[K]) {
     setKit((prev) => ({ ...prev, [k]: v }));
   }
+
+  const emailKit = trpc.featureFilm.emailPressKit.useMutation({
+    onSuccess: (r: any) => toast.success(r?.message || "Press kit sent"),
+    onError: (e: any) => toast.error(e?.message || "Failed to send press kit"),
+  });
 
   function exportMarkdown() {
     const md = buildMarkdown(project?.title || "Untitled", kit, characters ?? []);
@@ -98,6 +103,19 @@ export default function PressKit() {
               <Button onClick={() => window.print()} className="min-h-[44px] bg-amber-600 hover:bg-amber-500 text-black"><Printer className="h-4 w-4 mr-2" />Print / Save as PDF</Button>
               <Button variant="outline" onClick={exportMarkdown} className="min-h-[44px]"><Download className="h-4 w-4 mr-2" />Export .md</Button>
               <Button variant="outline" onClick={copyAll} className="min-h-[44px]"><Copy className="h-4 w-4 mr-2" />Copy all</Button>
+              <Button variant="outline" onClick={() => {
+                const recipients = window.prompt("Send press kit to (comma-separated emails):", "");
+                if (!recipients) return;
+                const list = recipients.split(/[,;\s]+/).map(s => s.trim()).filter(s => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
+                if (list.length === 0) { toast.error("No valid email addresses"); return; }
+                emailKit.mutate({ projectId: id, recipients: list, kit, projectTitle: project?.title || "Untitled Project" });
+              }} disabled={emailKit.isPending} className="min-h-[44px]">
+                {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Mail className="h-4 w-4 mr-2" />}Email Press Pack
+              </Button>
+              <Button variant="outline" onClick={() => {
+                const url = `${window.location.origin}/projects/${id}/press-kit`;
+                navigator.clipboard.writeText(url).then(() => toast.success("Share link copied")).catch(() => toast.error("Could not copy"));
+              }} className="min-h-[44px]"><LinkIcon className="h-4 w-4 mr-2" />Copy share link</Button>
             </div>
           </CardContent>
         </Card>
