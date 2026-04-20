@@ -447,6 +447,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
               variant="ghost"
               className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
               title="Download"
+              aria-label="Download movie"
               onClick={() => {
                 const a = document.createElement("a");
                 a.href = movie.fileUrl!;
@@ -458,7 +459,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                 document.body.removeChild(a);
               }}
             >
-              <Download className="h-5 w-5" />
+              <Download className="h-5 w-5" aria-hidden="true" />
             </Button>
           )}
           {/* Minimise */}
@@ -468,8 +469,9 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
             onClick={() => setIsMinimised(true)}
             title="Minimise"
+            aria-label="Minimise player"
           >
-            <ChevronDown className="h-5 w-5" />
+            <ChevronDown className="h-5 w-5" aria-hidden="true" />
           </Button>
           {/* Fullscreen */}
           <Button
@@ -478,8 +480,9 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             className="text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 h-11 w-11"
             onClick={toggleFullscreen}
             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
-            {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+            {isFullscreen ? <Minimize className="h-5 w-5" aria-hidden="true" /> : <Maximize className="h-5 w-5" aria-hidden="true" />}
           </Button>
           {/* Close */}
           <Button
@@ -488,8 +491,9 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
             className="text-white hover:bg-red-500/80 active:bg-red-600 h-11 w-11"
             onClick={onClose}
             title="Close"
+            aria-label="Close player"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" aria-hidden="true" />
           </Button>
         </div>
       </div>
@@ -499,8 +503,8 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
         <div className="absolute top-0 right-0 bottom-0 w-full sm:w-80 z-30 bg-black/90 backdrop-blur-sm border-l border-white/10 overflow-y-auto">
           <div className="p-3 border-b border-white/10 flex items-center justify-between sticky top-0 bg-black/90 backdrop-blur-sm">
             <h3 className="text-white text-sm font-medium">Playlist</h3>
-            <Button size="icon" variant="ghost" className="text-white/70 hover:text-white active:bg-white/20 h-9 w-9" onClick={() => setShowPlaylist(false)}>
-              <X className="h-4 w-4" />
+            <Button size="icon" variant="ghost" className="text-white/70 hover:text-white active:bg-white/20 h-9 w-9" onClick={() => setShowPlaylist(false)} aria-label="Close playlist">
+              <X className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
           <div className="p-2 space-y-1">
