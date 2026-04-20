@@ -601,8 +601,8 @@ export default function SoundEffects() {
         <div className="container py-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => setLocation(`/projects/${projectId}`)}>
-                <ArrowLeft className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => setLocation(`/projects/${projectId}`)} aria-label="Back to project">
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               </Button>
               <div className="min-w-0">
                 <h1 className="text-base sm:text-lg font-semibold truncate">Film Post-Production</h1>
@@ -731,16 +731,18 @@ export default function SoundEffects() {
                               size="icon"
                               className="h-7 w-7"
                               onClick={() => handleAssignToScene(sound.name)}
+                              aria-label={`Assign ${sound.name} to scene`}
                             >
-                              <Clock className="h-3.5 w-3.5" />
+                              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="icon"
                               className="h-7 w-7 text-destructive"
                               onClick={() => deleteMutation.mutate({ id: sound.id })}
+                              aria-label={`Delete ${sound.name}`}
                             >
-                              <Trash2 className="h-3.5 w-3.5" />
+                              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                             </Button>
                           </div>
                         </div>
@@ -898,8 +900,8 @@ export default function SoundEffects() {
                                 <SelectItem value="rejected">Rejected</SelectItem>
                               </SelectContent>
                             </Select>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteAdr.mutate({ id: track.id })}>
-                              <Trash2 className="h-3.5 w-3.5" />
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteAdr.mutate({ id: track.id })} aria-label={`Delete ADR track ${track.characterName || track.dialogueLine || track.id}`}>
+                              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                             </Button>
                           </div>
                         </div>
@@ -969,8 +971,8 @@ export default function SoundEffects() {
                                 <SelectItem value="approved">Approved</SelectItem>
                               </SelectContent>
                             </Select>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteFoley.mutate({ id: track.id })}>
-                              <Trash2 className="h-3.5 w-3.5" />
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteFoley.mutate({ id: track.id })} aria-label={`Delete foley track ${track.name || track.id}`}>
+                              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                             </Button>
                           </div>
                         </div>
@@ -1033,8 +1035,8 @@ export default function SoundEffects() {
                               <span className="text-[10px] text-muted-foreground w-8">{Math.round((cue.volume ?? 0.7) * 100)}%</span>
                             </div>
                           </div>
-                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive shrink-0" onClick={() => deleteCue.mutate({ id: cue.id })}>
-                            <Trash2 className="h-3.5 w-3.5" />
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive shrink-0" onClick={() => deleteCue.mutate({ id: cue.id })} aria-label={`Delete music cue ${cue.name || cue.id}`}>
+                            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           </Button>
                         </div>
                       ))}
