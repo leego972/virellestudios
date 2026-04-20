@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import CinematicEmptyState from "@/components/CinematicEmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -224,25 +225,28 @@ export default function Projects() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <Card className="bg-card/50 border-dashed">
-          <CardContent className="p-12 flex flex-col items-center text-center">
-            <Film className="h-10 w-10 text-muted-foreground/40 mb-3" />
-            <p className="text-sm text-muted-foreground mb-4">
-              {search || filterStatus !== "all" ? "No projects match your filters" : "No projects yet"}
-            </p>
-            {!search && filterStatus === "all" && (
-              <Button size="sm" onClick={() => setLocation("/projects/new")}>
-                <Plus className="h-4 w-4 mr-1" />
-                Create your first project
+        <CinematicEmptyState
+          quoteSeed="projects-list"
+          icon={<Film className="h-9 w-9 text-primary/70" />}
+          title={search || filterStatus !== "all" ? "Nothing matches those filters" : "Roll camera on your first project"}
+          description={
+            search || filterStatus !== "all"
+              ? "Try clearing your search or status filter to see your other projects."
+              : "Every Virelle film starts as a project — title, genre, characters, scenes. Open a fresh slate and start writing."
+          }
+          action={
+            !search && filterStatus === "all" ? (
+              <Button onClick={() => setLocation("/projects/new")} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Start a New Project
               </Button>
-            )}
-            {(search || filterStatus !== "all") && (
-              <Button size="sm" variant="outline" onClick={() => { setSearch(""); setFilterStatus("all"); }}>
+            ) : (
+              <Button variant="outline" onClick={() => { setSearch(""); setFilterStatus("all"); }}>
                 Clear Filters
               </Button>
-            )}
-          </CardContent>
-        </Card>
+            )
+          }
+        />
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((project) => (

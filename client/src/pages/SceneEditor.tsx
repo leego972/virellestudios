@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import CinematicEmptyState from "@/components/CinematicEmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -971,18 +972,18 @@ export default function SceneEditor() {
           ))}
         </div>
       ) : !scenes?.length ? (
-        <Card className="bg-card/50 border-dashed">
-          <CardContent className="p-12 flex flex-col items-center text-center">
-            <Clapperboard className="h-10 w-10 text-muted-foreground/40 mb-3" />
-            <p className="text-sm text-muted-foreground mb-4">
-              No scenes yet. Start building your film scene by scene.
-            </p>
-            <Button size="sm" onClick={openNewScene}>
-              <Plus className="h-4 w-4 mr-1" />
-              Create First Scene
+        <CinematicEmptyState
+          quoteSeed="scene-editor"
+          icon={<Clapperboard className="h-9 w-9 text-primary/70" />}
+          title="Block out your first scene"
+          description="A scene is the smallest unit of story Virelle can shoot. Set the location, time of day, mood, and the action — then generate a preview to see it come alive."
+          action={
+            <Button onClick={openNewScene} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Open the First Scene
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
         <div className="space-y-2">
           {scenes.map((scene, idx) => (

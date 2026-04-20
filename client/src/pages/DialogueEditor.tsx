@@ -250,8 +250,11 @@ export default function DialogueEditor() {
                     </button>
                   ))}
                   {sceneList.length === 0 && (
-                    <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-                      No scenes yet. Create scenes in the Scene Editor first.
+                    <div className="px-4 py-8 text-center">
+                      <p className="text-sm font-medium text-foreground/80">No scenes to write for yet</p>
+                      <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                        Create your scenes in the Scene Editor first — they'll appear here ready for dialogue.
+                      </p>
                     </div>
                   )}
                 </ScrollArea>

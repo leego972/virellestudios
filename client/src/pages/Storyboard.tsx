@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import CinematicEmptyState from "@/components/CinematicEmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -149,13 +150,17 @@ export default function Storyboard() {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         {!scenes || scenes.length === 0 ? (
-          <div className="flex flex-col items-center py-20 text-center">
-            <Grid3X3 className="h-12 w-12 text-muted-foreground/30 mb-3" />
-            <p className="text-muted-foreground">No scenes yet. Add scenes in the Scene Editor first.</p>
-            <Button className="mt-4" size="sm" onClick={() => navigate(`/projects/${projectId}/scenes`)}>
-              Go to Scene Editor
-            </Button>
-          </div>
+          <CinematicEmptyState
+            quoteSeed="storyboard"
+            icon={<Grid3X3 className="h-9 w-9 text-primary/70" />}
+            title="No frames to board yet"
+            description="Storyboards turn your scenes into a visual sequence. Add scenes in the Scene Editor first, then come back here to compose your shots."
+            action={
+              <Button onClick={() => navigate(`/projects/${projectId}/scenes`)} className="gap-2">
+                Open the Scene Editor
+              </Button>
+            }
+          />
         ) : viewMode === "grid" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {scenes.map((scene, idx) => (
