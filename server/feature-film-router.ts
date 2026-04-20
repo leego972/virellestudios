@@ -1548,7 +1548,6 @@ export const featureFilmRouter = router({
     .input(z.object({
       projectId: z.number(),
       recipients: z.array(z.string().email()).min(1).max(20),
-      projectTitle: z.string().min(1).max(300),
       kit: z.object({
         tagline: z.string().optional(),
         synopsisShort: z.string().optional(),
@@ -1563,13 +1562,34 @@ export const featureFilmRouter = router({
       }),
     }))
     .mutation(async ({ input, ctx }) => {
+      // Verified project access — prevents unauthorized SMTP abuse
+      const project = await requireProjectAccess(input.projectId, ctx.user.id);
+      const projectTitle = (project as any).title || "Untitled Project";
+
+      // Lightweight per-user rate limit: max 10 press-kit emails per hour
+      try {
+        const dbConn = await getDb();
+        if (dbConn) {
+          const r: any = await dbConn.execute(sql`SELECT COUNT(*) AS n FROM credit_transactions WHERE userId = ${ctx.user.id} AND action = 'press_kit_email' AND createdAt > NOW() - INTERVAL '1 HOUR'`);
+          const arr = (Array.isArray(r[0]) ? r[0] : r) as any[];
+          const n = Number(arr?.[0]?.n || 0);
+          if (n >= 10) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Press-kit email limit reached (10/hour). Try again later." });
+        }
+      } catch (e: any) { if (e instanceof TRPCError) throw e; }
+
       const nodemailer = (await import("nodemailer")).default;
       const { ENV } = await import("./_core/env");
+      const smtpUser = (ENV as any).SMTP_USER;
+      const smtpPass = (ENV as any).SMTP_PASS;
+      if (!smtpUser || !smtpPass) {
+        throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Email service is not configured. Contact support." });
+      }
+      const port = Number((ENV as any).SMTP_PORT || 587);
       const transporter = nodemailer.createTransport({
         host: (ENV as any).SMTP_HOST || "smtp.gmail.com",
-        port: Number((ENV as any).SMTP_PORT || 587),
-        secure: false,
-        auth: { user: (ENV as any).SMTP_USER, pass: (ENV as any).SMTP_PASS },
+        port,
+        secure: port === 465,
+        auth: { user: smtpUser, pass: smtpPass },
       });
       const k = input.kit;
       const shareUrl = `${(ENV as any).PUBLIC_URL || "https://virelle.life"}/projects/${input.projectId}/press-kit`;
@@ -1577,7 +1597,7 @@ export const featureFilmRouter = router({
 <!DOCTYPE html><html><body style="font-family:Georgia,serif;max-width:680px;margin:0 auto;padding:24px;color:#111">
   <div style="text-align:center;border-bottom:2px solid #b8860b;padding-bottom:16px;margin-bottom:24px">
     <div style="text-transform:uppercase;letter-spacing:0.2em;color:#b8860b;font-size:11px">Electronic Press Kit</div>
-    <h1 style="font-size:28px;margin:6px 0">${escapeHtml(input.projectTitle)}</h1>
+    <h1 style="font-size:28px;margin:6px 0">${escapeHtml(projectTitle)}</h1>
     ${k.tagline ? `<p style="font-style:italic;margin:0;color:#555">${escapeHtml(k.tagline)}</p>` : ""}
   </div>
   ${section("Logline / Short Synopsis", k.synopsisShort)}
@@ -1595,15 +1615,23 @@ export const featureFilmRouter = router({
 </body></html>`.trim();
       try {
         await transporter.sendMail({
-          from: `"${ctx.user.name || "Virelle Studios"}" <${(ENV as any).SMTP_USER || "noreply@virelle.life"}>`,
+          from: `"${ctx.user.name || "Virelle Studios"}" <${smtpUser}>`,
           to: input.recipients.join(", "),
           replyTo: k.contactEmail || ctx.user.email || undefined,
-          subject: `Press Kit — ${input.projectTitle}`,
+          subject: `Press Kit — ${projectTitle}`,
           html,
         });
-      } catch (err) {
+        // Record send for rate limiting (zero-cost transaction)
+        try {
+          const dbConn = await getDb();
+          if (dbConn) {
+            await dbConn.execute(sql`INSERT INTO credit_transactions (userId, amount, action, description, createdAt) VALUES (${ctx.user.id}, 0, 'press_kit_email', ${`Press kit emailed to ${input.recipients.length} recipient(s) for project ${input.projectId}`}, NOW())`);
+          }
+        } catch (_) { /* non-critical */ }
+      } catch (err: any) {
+        if (err instanceof TRPCError) throw err;
         console.error("[FeatureFilmRouter] emailPressKit failed:", err);
-        throw new Error("Email delivery failed. Check SMTP configuration or try again later.");
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Email delivery failed. Try again later or contact support." });
       }
       return { success: true, message: `Press kit sent to ${input.recipients.length} recipient(s).`, recipients: input.recipients.length };
     }),

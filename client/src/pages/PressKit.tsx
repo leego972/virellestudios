@@ -110,7 +110,7 @@ export default function PressKit() {
                 if (!recipients) return;
                 const list = recipients.split(/[,;\s]+/).map(s => s.trim()).filter(s => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
                 if (list.length === 0) { toast.error("No valid email addresses"); return; }
-                emailKit.mutate({ projectId: id, recipients: list, kit, projectTitle: project?.title || "Untitled Project" });
+                emailKit.mutate({ projectId: id, recipients: list, kit });
               }} disabled={emailKit.isPending} className="min-h-[44px]">
                 {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Mail className="h-4 w-4 mr-2" />}Email Press Pack
               </Button>

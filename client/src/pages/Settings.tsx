@@ -253,7 +253,11 @@ const COUNTRIES = [
 ];
 
 export default function Settings() {
-  const [settingsTab, setSettingsTab] = useState<string>(() => useQueryParam("tab") || "profile");
+  const ALLOWED_TABS = ["profile", "security", "billing", "api-keys", "connected-platforms"] as const;
+  const [settingsTab, setSettingsTab] = useState<string>(() => {
+    const t = useQueryParam("tab") || "profile";
+    return (ALLOWED_TABS as readonly string[]).includes(t) ? t : "profile";
+  });
   const [keyInputs, setKeyInputs] = useState<Record<string, string>>({});
   const [testingProvider, setTestingProvider] = useState<string | null>(null);
   const [savingProvider, setSavingProvider] = useState<string | null>(null);

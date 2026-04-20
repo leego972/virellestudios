@@ -329,6 +329,7 @@ export default function SceneEditor() {
   const formRef = useRef<HTMLFormElement | null>(null);
   const lastSavedSnapshotRef = useRef<string>("");
   const [autosavedAt, setAutosavedAt] = useState<number | null>(null);
+  const isAutosaveSubmitRef = useRef<boolean>(false);
 
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: projectId > 0 });
   const { data: scenes, isLoading } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: projectId > 0 });
@@ -349,10 +350,18 @@ export default function SceneEditor() {
   const updateMutation = trpc.scene.update.useMutation({
     onSuccess: () => {
       utils.scene.listByProject.invalidate({ projectId });
+      if (isAutosaveSubmitRef.current) {
+        isAutosaveSubmitRef.current = false;
+        // silent autosave — keep dialog open, no toast
+        return;
+      }
       toast.success("Scene updated");
       setEditDialogOpen(false);
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => {
+      isAutosaveSubmitRef.current = false;
+      toast.error(err.message);
+    },
   });
 
   const deleteMutation = trpc.scene.delete.useMutation({
@@ -710,6 +719,8 @@ export default function SceneEditor() {
     }
     if (snapshot === lastSavedSnapshotRef.current) return;
     const timer = setTimeout(() => {
+      if (updateMutation.isPending) return;
+      isAutosaveSubmitRef.current = true;
       formRef.current?.requestSubmit();
       lastSavedSnapshotRef.current = snapshot;
       setAutosavedAt(Date.now());
