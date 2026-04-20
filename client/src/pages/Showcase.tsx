@@ -510,22 +510,27 @@ function VideoPlayer({ src, title }: { src: string; title: string }) {
             <button
               onClick={togglePlay}
               className="text-white hover:text-[#d4af37] transition-colors"
+              aria-label={isPlaying ? "Pause" : "Play"}
+              aria-pressed={isPlaying}
             >
-              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              {isPlaying ? <Pause className="w-5 h-5" aria-hidden="true" /> : <Play className="w-5 h-5" aria-hidden="true" />}
             </button>
             <button
               onClick={toggleMute}
               className="text-white hover:text-[#d4af37] transition-colors"
+              aria-label={isMuted ? "Unmute" : "Mute"}
+              aria-pressed={isMuted}
             >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              {isMuted ? <VolumeX className="w-5 h-5" aria-hidden="true" /> : <Volume2 className="w-5 h-5" aria-hidden="true" />}
             </button>
             <span className="text-xs text-neutral-400">{title}</span>
           </div>
           <button
             onClick={toggleFullscreen}
             className="text-white hover:text-[#d4af37] transition-colors"
+            aria-label="Fullscreen"
           >
-            <Maximize className="w-4 h-4" />
+            <Maximize className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>

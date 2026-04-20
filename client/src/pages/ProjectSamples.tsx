@@ -72,8 +72,9 @@ function VideoPlayerModal({
         <button
           onClick={onClose}
           className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors"
+          aria-label="Close preview"
         >
-          <X className="w-6 h-6" />
+          <X className="w-6 h-6" aria-hidden="true" />
         </button>
 
         {/* Video */}
