@@ -845,10 +845,10 @@ export default function AdPosterMaker() {
           {/* Action Toolbar */}
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-0.5 bg-muted/50 rounded-lg p-0.5">
-              <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md" onClick={undo} disabled={!canUndo} title="Undo">
+              <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md" onClick={undo} disabled={!canUndo} title="Undo" aria-label="Undo">
                 <Undo2 className="h-4 w-4" />
               </Button>
-              <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md" onClick={redo} disabled={!canRedo} title="Redo">
+              <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md" onClick={redo} disabled={!canRedo} title="Redo" aria-label="Redo">
                 <Redo2 className="h-4 w-4" />
               </Button>
             </div>
@@ -933,14 +933,14 @@ export default function AdPosterMaker() {
               )}
             </div>
             <div className="flex items-center gap-1">
-              <Button size="icon" variant="ghost" className="h-7 w-7 text-white/40 hover:text-white" onClick={() => setZoom((z) => Math.max(0.2, z - 0.1))}>
+              <Button size="icon" variant="ghost" className="h-7 w-7 text-white/40 hover:text-white" onClick={() => setZoom((z) => Math.max(0.2, z - 0.1))} aria-label="Zoom out">
                 <ZoomOut className="h-3.5 w-3.5" />
               </Button>
               <span className="text-xs text-white/40 w-10 text-center">{Math.round(zoom * 100)}%</span>
-              <Button size="icon" variant="ghost" className="h-7 w-7 text-white/40 hover:text-white" onClick={() => setZoom((z) => Math.min(2, z + 0.1))}>
+              <Button size="icon" variant="ghost" className="h-7 w-7 text-white/40 hover:text-white" onClick={() => setZoom((z) => Math.min(2, z + 0.1))} aria-label="Zoom in">
                 <ZoomIn className="h-3.5 w-3.5" />
               </Button>
-              <Button size="icon" variant="ghost" className="h-7 w-7 text-white/40 hover:text-white" onClick={() => setZoom(1)}>
+              <Button size="icon" variant="ghost" className="h-7 w-7 text-white/40 hover:text-white" onClick={() => setZoom(1)} aria-label="Reset zoom to 100%">
                 <RotateCcw className="h-3 w-3" />
               </Button>
             </div>
@@ -1168,7 +1168,7 @@ export default function AdPosterMaker() {
                     {poster.badgeOverlays.map((b) => (
                       <div key={b.id} className="flex items-center justify-between bg-muted/30 rounded-lg px-2 py-1">
                         <span className="text-xs" style={{ color: b.bgColor }}>{b.label}</span>
-                        <Button size="icon" variant="ghost" className="h-5 w-5 text-destructive/60 hover:text-destructive" onClick={() => removeBadge(b.id)}>
+                        <Button size="icon" variant="ghost" className="h-5 w-5 text-destructive/60 hover:text-destructive" onClick={() => removeBadge(b.id)} aria-label={`Remove badge ${b.label}`}>
                           <X className="h-3 w-3" />
                         </Button>
                       </div>
@@ -1219,10 +1219,10 @@ export default function AdPosterMaker() {
                   >
                     <Type className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span className="text-xs truncate flex-1">{el.text}</span>
-                    <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0" onClick={(e) => { e.stopPropagation(); duplicateTextElement(el.id); }}>
+                    <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0" onClick={(e) => { e.stopPropagation(); duplicateTextElement(el.id); }} aria-label={`Duplicate text "${el.text}"`}>
                       <Copy className="h-3 w-3" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0 text-destructive/60 hover:text-destructive" onClick={(e) => { e.stopPropagation(); removeTextElement(el.id); }}>
+                    <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0 text-destructive/60 hover:text-destructive" onClick={(e) => { e.stopPropagation(); removeTextElement(el.id); }} aria-label={`Delete text "${el.text}"`}>
                       <X className="h-3 w-3" />
                     </Button>
                   </button>
@@ -1260,20 +1260,20 @@ export default function AdPosterMaker() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1 flex-wrap">
-                      <Button size="icon" variant={selectedElement.fontWeight === "bold" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { fontWeight: selectedElement.fontWeight === "bold" ? "normal" : "bold" })}>
+                      <Button size="icon" variant={selectedElement.fontWeight === "bold" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { fontWeight: selectedElement.fontWeight === "bold" ? "normal" : "bold" })} aria-label="Bold" aria-pressed={selectedElement.fontWeight === "bold"}>
                         <Bold className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant={selectedElement.fontStyle === "italic" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { fontStyle: selectedElement.fontStyle === "italic" ? "normal" : "italic" })}>
+                      <Button size="icon" variant={selectedElement.fontStyle === "italic" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { fontStyle: selectedElement.fontStyle === "italic" ? "normal" : "italic" })} aria-label="Italic" aria-pressed={selectedElement.fontStyle === "italic"}>
                         <Italic className="h-3.5 w-3.5" />
                       </Button>
                       <div className="w-px h-5 bg-border mx-0.5" />
-                      <Button size="icon" variant={selectedElement.textAlign === "left" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { textAlign: "left" })}>
+                      <Button size="icon" variant={selectedElement.textAlign === "left" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { textAlign: "left" })} aria-label="Align left" aria-pressed={selectedElement.textAlign === "left"}>
                         <AlignLeft className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant={selectedElement.textAlign === "center" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { textAlign: "center" })}>
+                      <Button size="icon" variant={selectedElement.textAlign === "center" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { textAlign: "center" })} aria-label="Align center" aria-pressed={selectedElement.textAlign === "center"}>
                         <AlignCenter className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant={selectedElement.textAlign === "right" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { textAlign: "right" })}>
+                      <Button size="icon" variant={selectedElement.textAlign === "right" ? "secondary" : "ghost"} className="h-7 w-7" onClick={() => updateTextElement(selectedElement.id, { textAlign: "right" })} aria-label="Align right" aria-pressed={selectedElement.textAlign === "right"}>
                         <AlignRight className="h-3.5 w-3.5" />
                       </Button>
                       <div className="w-px h-5 bg-border mx-0.5" />
