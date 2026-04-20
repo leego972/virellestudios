@@ -296,26 +296,28 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           resetControlsTimeout();
           break;
         case "<":
-          // Decrease playback speed
+          // Decrease playback speed — functional update so repeated presses
+          // step cumulatively (avoids stale closure on playbackSpeed).
           e.preventDefault();
-          {
-            const idx = PLAYBACK_SPEEDS.indexOf(playbackSpeed);
+          setPlaybackSpeed((prev) => {
+            const idx = PLAYBACK_SPEEDS.indexOf(prev);
             const next = PLAYBACK_SPEEDS[Math.max(0, (idx === -1 ? 3 : idx) - 1)];
             video.playbackRate = next;
-            setPlaybackSpeed(next);
-            resetControlsTimeout();
-          }
+            return next;
+          });
+          resetControlsTimeout();
           break;
         case ">":
-          // Increase playback speed
+          // Increase playback speed — functional update so repeated presses
+          // step cumulatively (avoids stale closure on playbackSpeed).
           e.preventDefault();
-          {
-            const idx = PLAYBACK_SPEEDS.indexOf(playbackSpeed);
+          setPlaybackSpeed((prev) => {
+            const idx = PLAYBACK_SPEEDS.indexOf(prev);
             const next = PLAYBACK_SPEEDS[Math.min(PLAYBACK_SPEEDS.length - 1, (idx === -1 ? 3 : idx) + 1)];
             video.playbackRate = next;
-            setPlaybackSpeed(next);
-            resetControlsTimeout();
-          }
+            return next;
+          });
+          resetControlsTimeout();
           break;
         case "1": case "2": case "3": case "4": case "5":
         case "6": case "7": case "8": case "9":

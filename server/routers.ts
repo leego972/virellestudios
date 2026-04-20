@@ -1797,25 +1797,49 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const characters = await db.getProjectCharacters(project.id);
         const userTier = getEffectiveTier(ctx.user) as QualityTier;
         const visualDNA = buildVisualDNA(project, characters, userTier);
-        // Collect character photos + Signature Cast portraits for identity-locked
-        // reference. This mirrors the single-scene preview path so that bulk
-        // generation produces faces consistent with the rest of the project.
+        // Per-scene reference assembly. Mirrors single-scene preview (~1678):
+        // 1) scene's own cast first (signature anchor + photo)
+        // 2) backfill remaining project cast
+        // 3) cap at 4 (gpt-image-1-edit / Imagen ref limit) with anchors > photos.
         const { getSignatureActorReferenceImage: getBulkActorRef } = await import("./_core/signatureCast");
-        const characterPhotos: Array<{ url?: string; b64Json?: string; mimeType: string }> = [];
-        const seenBulkActorIds = new Set<string>();
-        for (const char of characters) {
-          if (char.photoUrl) {
-            characterPhotos.push({ url: char.photoUrl, mimeType: "image/jpeg" });
-          }
-          const aiActorId = (char as any).aiActorId as string | undefined;
-          if (aiActorId && !seenBulkActorIds.has(aiActorId)) {
-            const ref = getBulkActorRef(aiActorId);
-            if (ref) {
-              characterPhotos.push({ b64Json: ref.b64Json, mimeType: ref.mimeType });
-              seenBulkActorIds.add(aiActorId);
+        const REF_CAP = 4;
+        type Ref = { url?: string; b64Json?: string; mimeType: string; key: string; priority: number };
+        const buildSceneRefs = (sceneCharacterIds: number[]): Array<{ url?: string; b64Json?: string; mimeType: string }> => {
+          const refs: Ref[] = [];
+          const seen = new Set<string>();
+          const addChar = (char: any, scenePriority: number) => {
+            // priority: anchors (lower number = higher priority) before photos
+            const aiActorId = char?.aiActorId as string | undefined;
+            if (aiActorId) {
+              const key = `anchor:${aiActorId}`;
+              if (!seen.has(key)) {
+                const ref = getBulkActorRef(aiActorId);
+                if (ref) {
+                  refs.push({ b64Json: ref.b64Json, mimeType: ref.mimeType, key, priority: scenePriority * 10 + 1 });
+                  seen.add(key);
+                }
+              }
             }
+            if (char?.photoUrl) {
+              const key = `photo:${char.photoUrl}`;
+              if (!seen.has(key)) {
+                refs.push({ url: char.photoUrl, mimeType: "image/jpeg", key, priority: scenePriority * 10 + 2 });
+                seen.add(key);
+              }
+            }
+          };
+          // Pass 1: scene's own cast (priority 0)
+          for (const cid of sceneCharacterIds) {
+            const char = characters.find(c => c.id === cid);
+            if (char) addChar(char, 0);
           }
-        }
+          // Pass 2: backfill project cast (priority 1)
+          for (const char of characters) {
+            addChar(char, 1);
+          }
+          refs.sort((a, b) => a.priority - b.priority);
+          return refs.slice(0, REF_CAP).map(({ url, b64Json, mimeType }) => ({ url, b64Json, mimeType }));
+        };
         let generated = 0;
         const BATCH = 4;
         for (let i = 0; i < scenesNeedingImages.length; i += BATCH) {
@@ -1833,9 +1857,11 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   characterNames: characters.map(c => c.name),
                 }
               );
+              const sceneCharacterIds = (scene.characterIds as number[]) || [];
+              const sceneRefs = buildSceneRefs(sceneCharacterIds);
               const result = await generateImage({
                 prompt,
-                originalImages: characterPhotos.length > 0 ? characterPhotos : undefined,
+                originalImages: sceneRefs.length > 0 ? sceneRefs : undefined,
               });
               await db.updateScene(scene.id, { thumbnailUrl: result.url });
               // Auto-set project thumbnail from first generated scene
