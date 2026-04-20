@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
 import { NextStageCTA } from "@/components/NextStageCTA";
+import CinematicEmptyState from "@/components/CinematicEmptyState";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -212,11 +213,11 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
       </div>
 
       {!characters || characters.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No characters yet. Build your cast first, then return here to attach actors.
-          </CardContent>
-        </Card>
+        <CinematicEmptyState
+          quoteSeed="casting-board"
+          title="No cast to call yet"
+          description="The Casting Board is where roles meet performers — once you've built characters, you'll attach actors, draft sides, and lock consent here. Build your cast first."
+        />
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {characters.map((c: any) => {

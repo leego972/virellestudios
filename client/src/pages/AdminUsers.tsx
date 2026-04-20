@@ -280,7 +280,7 @@ export default function AdminUsers() {
                       ))}
                       {users.length === 0 && (
                         <tr>
-                          <td colSpan={7} className="text-center py-8 text-muted-foreground">No users found</td>
+                          <td colSpan={7} className="text-center py-10 text-sm text-muted-foreground">No users match the current filters.</td>
                         </tr>
                       )}
                     </tbody>
@@ -374,8 +374,8 @@ export default function AdminUsers() {
                       ))}
                       {projects.length === 0 && (
                         <tr>
-                          <td colSpan={8} className="text-center py-8 text-muted-foreground">
-                            {projectSearch ? "No projects match your search." : "No projects found."}
+                          <td colSpan={8} className="text-center py-10 text-sm text-muted-foreground">
+                            {projectSearch ? "No projects match your search." : "No projects on the platform yet."}
                           </td>
                         </tr>
                       )}
@@ -528,7 +528,7 @@ export default function AdminUsers() {
                     })}
                     {users.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="text-center py-8 text-muted-foreground">No users found</td>
+                        <td colSpan={7} className="text-center py-10 text-sm text-muted-foreground">No team members match the current filters.</td>
                       </tr>
                     )}
                   </tbody>

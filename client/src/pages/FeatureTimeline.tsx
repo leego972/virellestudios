@@ -691,7 +691,8 @@ export default function FeatureTimeline() {
               {cuts.length === 0 ? (
                 <div className="text-center py-6">
                   <Layers size={24} className="text-zinc-700 mx-auto mb-2" />
-                  <p className="text-xs text-zinc-600">No cuts yet</p>
+                  <p className="text-xs font-medium text-zinc-400">No cuts yet</p>
+                  <p className="text-[11px] text-zinc-600 mt-0.5 leading-snug px-2">A cut is a saved version of your edit — name your first one to start.</p>
                   <Button
                     size="sm"
                     variant="outline"
