@@ -157,7 +157,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
         <CardHeader><CardTitle className="text-sm">Scenes</CardTitle></CardHeader>
         <CardContent className="p-2 max-h-[60vh] overflow-y-auto">
           {sceneList.length === 0 ? (
-            <p className="text-xs text-muted-foreground p-2">No scenes yet.</p>
+            <p className="text-xs text-muted-foreground p-3 leading-relaxed">No scenes loaded — open a project with scenes to begin a Pro Studio session.</p>
           ) : sceneList.map(s => (
             <button key={s.id} onClick={() => { setSelectedSceneId(s.id); setDraft(null); }} className={`w-full text-left p-2 rounded text-xs hover:bg-muted/50 ${sceneId === s.id ? "bg-muted/70 ring-1 ring-primary/30" : ""}`}>
               <div className="font-medium truncate">{s.title || s.name || `Scene ${s.id}`}</div>

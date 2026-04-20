@@ -204,7 +204,10 @@ Output: a markdown table with columns | t | scene # | beat | text overlay (if an
         </CardHeader>
         <CardContent>
           {sortedScenes.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6 text-center">No scenes yet.</p>
+            <div className="py-8 text-center">
+              <p className="text-sm text-foreground/80 font-medium">No scenes on the timeline yet</p>
+              <p className="text-xs text-muted-foreground mt-1">Add scenes in the Scene Editor and the post-production checklist will appear here.</p>
+            </div>
           ) : (
             <div className="space-y-2">
               {sortedScenes.map((s: any, i: number) => {

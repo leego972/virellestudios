@@ -648,7 +648,13 @@ export default function DirectorCut() {
             ) : (
               <div className="flex flex-col items-center gap-2 text-zinc-600">
                 <Film className="w-12 h-12" />
-                <p className="text-sm">{scenes.length === 0 ? "No scenes yet" : selectedScene ? "No preview available" : "Select a scene to preview"}</p>
+                <p className="text-sm font-medium">
+                  {scenes.length === 0
+                    ? "No scenes to cut yet"
+                    : selectedScene
+                      ? "Generate a preview for this scene to start cutting"
+                      : "Select a scene from the list to preview it here"}
+                </p>
               </div>
             )}
           </div>

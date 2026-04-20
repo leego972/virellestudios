@@ -331,9 +331,10 @@ pre{white-space:pre-wrap;font:inherit}
               </div>
             ))}
             {stripboard.length === 0 && (
-              <p className="text-sm text-muted-foreground py-6 col-span-full text-center">
-                No scenes yet. Build your script first.
-              </p>
+              <div className="py-8 col-span-full text-center">
+                <p className="text-sm text-foreground/80 font-medium">Stripboard empty</p>
+                <p className="text-xs text-muted-foreground mt-1">Write your script in the Scene Editor — locations, time of day and characters will roll up here automatically.</p>
+              </div>
             )}
           </div>
         </CardContent>
