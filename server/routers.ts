@@ -1797,11 +1797,23 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const characters = await db.getProjectCharacters(project.id);
         const userTier = getEffectiveTier(ctx.user) as QualityTier;
         const visualDNA = buildVisualDNA(project, characters, userTier);
-        // Collect character photos for reference
-        const characterPhotos: Array<{ url: string; mimeType: string }> = [];
+        // Collect character photos + Signature Cast portraits for identity-locked
+        // reference. This mirrors the single-scene preview path so that bulk
+        // generation produces faces consistent with the rest of the project.
+        const { getSignatureActorReferenceImage: getBulkActorRef } = await import("./_core/signatureCast");
+        const characterPhotos: Array<{ url?: string; b64Json?: string; mimeType: string }> = [];
+        const seenBulkActorIds = new Set<string>();
         for (const char of characters) {
           if (char.photoUrl) {
             characterPhotos.push({ url: char.photoUrl, mimeType: "image/jpeg" });
+          }
+          const aiActorId = (char as any).aiActorId as string | undefined;
+          if (aiActorId && !seenBulkActorIds.has(aiActorId)) {
+            const ref = getBulkActorRef(aiActorId);
+            if (ref) {
+              characterPhotos.push({ b64Json: ref.b64Json, mimeType: ref.mimeType });
+              seenBulkActorIds.add(aiActorId);
+            }
           }
         }
         let generated = 0;
