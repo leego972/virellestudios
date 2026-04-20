@@ -150,7 +150,7 @@ export default function Characters() {
       toast.success("Character deleted");
       setDeleteId(null);
     },
-    onError: () => toast.error("Failed to delete character"),
+    onError: () => toast.error("Couldn't remove that character — please try again."),
   });
 
   const aiGenMutation = trpc.character.aiGenerate.useMutation({

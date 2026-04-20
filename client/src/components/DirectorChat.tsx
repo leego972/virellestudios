@@ -389,7 +389,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
         sseRef.current = null;
         setIsSending(false);
         setLocalMessages((prev) => prev.filter((m) => m.content !== "__loading__"));
-        toast.error("Failed to send message");
+        toast.error("Your message didn't reach the Director — please try again.");
       }
     };
 
@@ -1145,7 +1145,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
     navigator.clipboard.writeText(text).then(() => {
       setCopiedIdx(idx);
       setTimeout(() => setCopiedIdx(null), 1500);
-    }).catch(() => toast.error("Failed to copy"));
+    }).catch(() => toast.error("Couldn't copy to clipboard — try selecting the text manually."));
   }, []);
 
   // ─── Regenerate last response ───
@@ -1214,7 +1214,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
         setAttachments((prev) => [...prev, { url: result.url, name: result.fileName, mimeType: file.type }]);
         toast.success(`Attached: ${file.name}`);
       }
-    } catch { toast.error("Failed to upload file"); }
+    } catch { toast.error("That file didn't upload. Check the size and format, then try again."); }
     finally { setIsUploading(false); if (fileInputRef.current) fileInputRef.current.value = ""; }
   }, [projectId, uploadMutation]);
 

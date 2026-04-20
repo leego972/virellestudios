@@ -151,7 +151,7 @@ export default function BudgetEstimator() {
       setSelectedBudgetId(data.id);
       toast.success("Budget estimate generated");
     },
-    onError: () => toast.error("Failed to generate budget estimate"),
+    onError: () => toast.error("Couldn't run the budget estimate this time — please try again in a moment."),
   });
 
   const deleteMutation = trpc.budget.delete.useMutation({

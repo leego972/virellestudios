@@ -513,7 +513,7 @@ export default function SoundEffects() {
         isCustom: 1,
       });
     } catch {
-      toast.error("Failed to upload sound");
+      toast.error("That sound didn't upload — check the file format and size, then try again.");
     } finally {
       setUploading(false);
     }

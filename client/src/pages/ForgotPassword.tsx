@@ -20,7 +20,7 @@ export default function ForgotPassword() {
       toast.success(data.message);
     },
     onError: (err) => {
-      toast.error(err.message || "Something went wrong");
+      toast.error(err.message || "We couldn't send the reset email right now. Please try again in a moment.");
     },
   });
 

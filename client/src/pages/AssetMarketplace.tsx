@@ -570,7 +570,7 @@ export default function AssetMarketplace() {
       setSavedIds((prev) => [...prev, asset.id]);
       toast.success(`"${asset.name}" saved to your library. ${asset.applyHint}`);
     } catch {
-      toast.error("Failed to save asset. Please try again.");
+      toast.error("That asset didn't save to your library. Please try again.");
     } finally {
       setDownloading(null);
     }

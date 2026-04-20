@@ -74,11 +74,10 @@ class ErrorBoundary extends Component<Props, State> {
             </div>
 
             <h2 className="text-2xl font-bold text-foreground mb-2">
-              Something went wrong
+              Cut — something broke on this take
             </h2>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              An unexpected error occurred. Your work has been saved. Please
-              reload the page or return to the home screen.
+              The studio hit an unexpected error on this view. Your project work is autosaved — reload this page to roll again, or head back to the home screen.
             </p>
 
             {/* Show technical details only in development */}

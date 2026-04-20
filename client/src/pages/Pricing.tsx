@@ -281,10 +281,10 @@ export default function Pricing() {
       if (result.url) {
         window.location.href = result.url;
       } else {
-        toast.error("Failed to create checkout session. Please try again.");
+        toast.error("We couldn't open Stripe checkout. Please try again, or contact support if this keeps happening.");
       }
     } catch (err: any) {
-      toast.error(err?.message || "Something went wrong. Please try again.");
+      toast.error(err?.message || "Couldn't start your subscription right now. Please try again in a moment.");
     } finally {
       setLoadingTier(null);
     }
@@ -310,10 +310,10 @@ export default function Pricing() {
       if (result.url) {
         window.location.href = result.url;
       } else {
-        toast.error("Failed to create checkout session. Please try again.");
+        toast.error("We couldn't open Stripe checkout for this credit pack. Please try again.");
       }
     } catch (err: any) {
-      toast.error(err?.message || "Something went wrong. Please try again.");
+      toast.error(err?.message || "Couldn't start your top-up right now. Please try again in a moment.");
     } finally {
       setLoadingPack(null);
     }

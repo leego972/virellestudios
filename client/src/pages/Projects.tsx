@@ -71,7 +71,7 @@ export default function Projects() {
       toast.success("Project deleted");
       setDeleteId(null);
     },
-    onError: () => toast.error("Failed to delete project"),
+    onError: () => toast.error("Couldn't delete that project — please try again, or refresh if it persists."),
   });
 
   const filtered = useMemo(() => {
@@ -208,7 +208,8 @@ export default function Projects() {
         <Card className="bg-card/50 border-destructive/30">
           <CardContent className="p-12 flex flex-col items-center text-center">
             <Film className="h-10 w-10 text-destructive/40 mb-3" />
-            <p className="text-sm text-muted-foreground mb-4">Failed to load projects. Please refresh the page.</p>
+            <p className="text-sm font-medium text-foreground/80 mb-1">We couldn't load your projects</p>
+            <p className="text-xs text-muted-foreground mb-4">Network or server hiccup — your work is safe. Retry below or refresh the page.</p>
             <Button size="sm" variant="outline" onClick={() => window.location.reload()}>Retry</Button>
           </CardContent>
         </Card>
