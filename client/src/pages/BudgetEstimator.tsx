@@ -235,7 +235,7 @@ export default function BudgetEstimator() {
       <div className="border-b border-border/40 bg-card/50 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="min-w-0">
@@ -315,8 +315,9 @@ export default function BudgetEstimator() {
                       variant="ghost"
                       size="icon"
                       onClick={() => deleteMutation.mutate({ id: activeBudget.id })}
+                      aria-label="Delete budget"
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="h-4 w-4 text-destructive" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>

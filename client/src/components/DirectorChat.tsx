@@ -1825,7 +1825,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
                       <p className="text-xs font-medium text-foreground truncate">"{entry.command}"</p>
                       <p className="text-[10px] text-muted-foreground">{formatTime(entry.timestamp)}</p>
                     </div>
-                    <Button variant="ghost" size="icon" className="size-6 shrink-0 text-muted-foreground hover:text-violet-400" onClick={() => revertToEdit(entry.id)} title={`Revert to before "${entry.command}"`}>
+                    <Button variant="ghost" size="icon" className="size-6 shrink-0 text-muted-foreground hover:text-violet-400" onClick={() => revertToEdit(entry.id)} title={`Revert to before "${entry.command}"`} aria-label={`Revert to before ${entry.command}`}>
                       <RotateCcw className="size-3" />
                     </Button>
                   </div>
