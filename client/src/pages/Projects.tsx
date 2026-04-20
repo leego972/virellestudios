@@ -248,8 +248,17 @@ export default function Projects() {
           {filtered.map((project) => (
             <Card
               key={project.id}
-              className="bg-card/50 group cursor-pointer hover:border-primary/30 transition-colors relative"
+              className="bg-card/50 group cursor-pointer hover:border-primary/30 transition-colors relative focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               onClick={() => setLocation(`/projects/${project.id}`)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Open project ${project.title}`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setLocation(`/projects/${project.id}`);
+                }
+              }}
             >
               <CardContent className="p-4">
                 {project.thumbnailUrl ? (
@@ -359,8 +368,17 @@ export default function Projects() {
           {filtered.map((project) => (
             <Card
               key={project.id}
-              className="bg-card/50 group cursor-pointer hover:border-primary/30 transition-colors"
+              className="bg-card/50 group cursor-pointer hover:border-primary/30 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               onClick={() => setLocation(`/projects/${project.id}`)}
+              role="button"
+              tabIndex={0}
+              aria-label={`Open project ${project.title}`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setLocation(`/projects/${project.id}`);
+                }
+              }}
             >
               <CardContent className="p-3 flex items-center gap-3">
                 {project.thumbnailUrl ? (
