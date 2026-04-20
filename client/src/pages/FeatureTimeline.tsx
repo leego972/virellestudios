@@ -653,7 +653,7 @@ export default function FeatureTimeline() {
             {compileJob?.status === "completed" && (
               <a
                 href={compileJob.resultUrl || "#"}
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-950/40 border border-green-800/40 text-green-400 text-xs hover:bg-green-900/40 transition-colors"
               >

@@ -86,7 +86,7 @@ export default function ShareButton({ title, description, url, compact = false }
             <a
               key={social.name}
               href={social.url}
-              target="_blank"
+              target="_blank" rel="noopener noreferrer"
               rel="noopener noreferrer"
               className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-sm text-white/80"
               onClick={() => setOpen(false)}

@@ -125,7 +125,7 @@ function YouTubeExportModal({
           Uploaded to YouTube!{" "}
           <a
             href={data.youtubeUrl}
-            target="_blank"
+            target="_blank" rel="noopener noreferrer"
             rel="noopener noreferrer"
             className="underline text-amber-400"
           >

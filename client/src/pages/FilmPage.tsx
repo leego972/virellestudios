@@ -470,7 +470,7 @@ export default function FilmPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="https://virellestudios.com/signup"
-              target="_blank"
+              target="_blank" rel="noopener noreferrer"
               rel="noopener noreferrer"
               onClick={() => {
                 if (fp_id && fp_owner) {
@@ -497,7 +497,7 @@ export default function FilmPage() {
           <span>Made with VirElle Studios · AI-Generated Cinema</span>
           <a
             href="https://virellestudios.com"
-            target="_blank"
+            target="_blank" rel="noopener noreferrer"
             rel="noopener noreferrer"
             className="hover:text-amber-500 transition-colors flex items-center gap-1"
           >

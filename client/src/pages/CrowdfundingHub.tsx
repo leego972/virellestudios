@@ -207,7 +207,7 @@ export default function CrowdfundingHub() {
                 <a
                   key={p.id}
                   href={p.website || "#"}
-                  target="_blank"
+                  target="_blank" rel="noopener noreferrer"
                   rel="noopener noreferrer"
                   className="block p-3 rounded-lg border hover:border-primary hover:bg-accent/40 transition-colors"
                 >

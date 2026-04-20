@@ -602,7 +602,7 @@ export default function Distribute() {
                 Your film page is live at{" "}
                 <a
                   href={`/films/${promoStatus.slug}`}
-                  target="_blank"
+                  target="_blank" rel="noopener noreferrer"
                   rel="noopener noreferrer"
                   className="underline font-medium"
                 >
