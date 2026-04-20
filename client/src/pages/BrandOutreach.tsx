@@ -226,7 +226,7 @@ export default function BrandOutreach() {
                       {p.website && (
                         <a
                           href={p.website}
-                          target="_blank" rel="noopener noreferrer"
+                          target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           className="shrink-0"

@@ -664,7 +664,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
               {source.officialSite && (
                 <a
                   href={source.officialSite}
-                  target="_blank" rel="noopener noreferrer"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1"
                 >
@@ -1399,7 +1399,7 @@ function FundingCard({ source, onApply }: { source: FundingSource; onApply: () =
         {source.officialSite && (
           <a
             href={source.officialSite}
-            target="_blank" rel="noopener noreferrer"
+            target="_blank"
             rel="noopener noreferrer"
             className="h-8 w-8 rounded-md border border-border flex items-center justify-center hover:bg-accent transition-colors shrink-0"
             title="Visit official site"
