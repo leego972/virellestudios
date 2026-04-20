@@ -467,6 +467,7 @@ export default function Distribute() {
                           navigator.clipboard.writeText(asset.content);
                           toast.success("Copied!");
                         }}
+                        aria-label={`Copy ${asset.type}${asset.variant ? ` ${asset.variant}` : ""} to clipboard`}
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
@@ -509,13 +510,13 @@ export default function Distribute() {
                   placeholder="my-film-title"
                   className="rounded-l-none"
                 />
-                <Button size="icon" variant="outline" onClick={copySlug}>
-                  <Copy className="w-4 h-4" />
+                <Button size="icon" variant="outline" onClick={copySlug} aria-label="Copy film page URL">
+                  <Copy className="w-4 h-4" aria-hidden="true" />
                 </Button>
                 {promoStatus?.isPublished && (
                   <Button size="icon" variant="outline" asChild>
-                    <a href={`/films/${slug}`} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="w-4 h-4" />
+                    <a href={`/films/${slug}`} target="_blank" rel="noopener noreferrer" aria-label="Open published film page in new tab">
+                      <ExternalLink className="w-4 h-4" aria-hidden="true" />
                     </a>
                   </Button>
                 )}

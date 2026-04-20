@@ -68,20 +68,23 @@ function ShotCard({
             <Button
               variant="ghost" size="icon" className="h-6 w-6"
               onClick={() => onMoveUp(shot.id)} disabled={index === 0}
+              aria-label={`Move shot ${index + 1} up`}
             >
-              <ChevronUp className="w-3 h-3" />
+              <ChevronUp className="w-3 h-3" aria-hidden="true" />
             </Button>
             <Button
               variant="ghost" size="icon" className="h-6 w-6"
               onClick={() => onMoveDown(shot.id)} disabled={index === total - 1}
+              aria-label={`Move shot ${index + 1} down`}
             >
-              <ChevronDown className="w-3 h-3" />
+              <ChevronDown className="w-3 h-3" aria-hidden="true" />
             </Button>
             <Button
               variant="ghost" size="icon" className="h-6 w-6 text-red-400 hover:text-red-300"
               onClick={() => onDelete(shot.id)}
+              aria-label={`Delete shot ${index + 1}`}
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 className="w-3 h-3" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -249,8 +252,8 @@ export default function MultiShotSequencer() {
       <div className="border-b border-border/40 bg-black/20 px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}>
-              <ArrowLeft className="w-4 h-4" />
+            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             </Button>
             <div>
               <h1 className="text-lg font-semibold flex items-center gap-2">

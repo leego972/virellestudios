@@ -947,8 +947,9 @@ export default function ScriptWriter() {
             size="icon"
             className="h-10 w-10 sm:h-9 sm:w-9 shrink-0"
             onClick={() => navigate(`/projects/${pid}`)}
+            aria-label="Back to project"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           </Button>
 
           <Input
@@ -970,9 +971,10 @@ export default function ScriptWriter() {
                   size="icon"
                   onClick={handleSave}
                   disabled={createMutation.isPending || updateMutation.isPending}
+                  aria-label="Save script"
                 >
                   {(createMutation.isPending || updateMutation.isPending) ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                   ) : (
                     <Save className="h-4 w-4" />
                   )}
@@ -987,8 +989,9 @@ export default function ScriptWriter() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setImportModalOpen(true)}
+                  aria-label="Import external scene"
                 >
-                  <FilePlus className="h-4 w-4" />
+                  <FilePlus className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Import external scene (.fountain / .txt / paste)</TooltipContent>
@@ -1014,8 +1017,9 @@ export default function ScriptWriter() {
                     variant="ghost"
                     size="icon"
                     onClick={() => deleteMutation.mutate({ id: parseInt(scriptId) })}
+                    aria-label="Delete script"
                   >
-                    <Trash2 className="h-4 w-4 text-destructive" />
+                    <Trash2 className="h-4 w-4 text-destructive" aria-hidden="true" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Delete script</TooltipContent>
@@ -1124,8 +1128,9 @@ export default function ScriptWriter() {
               size="icon"
               className="h-6 w-6"
               onClick={() => navigate(`/projects/${pid}/script/new`)}
+              aria-label="New script"
             >
-              <Plus className="h-3 w-3" />
+              <Plus className="h-3 w-3" aria-hidden="true" />
             </Button>
           </div>
           <div className="space-y-1">
