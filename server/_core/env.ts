@@ -119,7 +119,7 @@ export const ENV = {
   whatsappPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID ?? "",
 
   // ─── TitanAI Inference API ─────────────────────────────────────────────────
-  // Set TITAN_API_URL to the running TitanAI API server (e.g. http://ssh3.vast.ai:8000)
+  // Set TITAN_API_URL to the running TitanAI API server (e.g. http://ssh5.vast.ai:8000 — current Vast box: TitanAI-Verified-2)
   // Leave empty to disable — falls back to OpenAI/Forge routing as normal.
   titanApiUrl: process.env.TITAN_API_URL ?? "",
   titanApiKey: process.env.TITAN_API_KEY ?? "",
