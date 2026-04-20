@@ -456,8 +456,9 @@ export default function Movies() {
                   e.stopPropagation();
                   playMovie(movie.id, movie.type);
                 }}
+                aria-label={`Play ${movie.title}`}
               >
-                <Play className="h-4 w-4" />
+                <Play className="h-4 w-4" aria-hidden="true" />
               </Button>
             )}
             <Button
@@ -468,8 +469,9 @@ export default function Movies() {
                 e.stopPropagation();
                 setDeleteConfirmId(movie.id);
               }}
+              aria-label={`Delete ${movie.title}`}
             >
-              <Trash2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+              <Trash2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -561,8 +563,9 @@ export default function Movies() {
             variant="ghost"
             className="h-9 w-9 sm:h-8 sm:w-8"
             onClick={(e) => { e.stopPropagation(); playMovie(movie.id, movie.type); }}
+            aria-label={`Play ${movie.title}`}
           >
-            <Play className="h-4 w-4" />
+            <Play className="h-4 w-4" aria-hidden="true" />
           </Button>
           {movie.fileUrl && (
             <Button
@@ -576,8 +579,9 @@ export default function Movies() {
                 a.download = movie.title;
                 a.click();
               }}
+              aria-label={`Download ${movie.title}`}
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4" aria-hidden="true" />
             </Button>
           )}
           {movie.fileUrl && (
@@ -587,14 +591,16 @@ export default function Movies() {
               className={`h-9 w-9 sm:h-8 sm:w-8 hidden sm:flex ${canYouTubeExport ? "text-red-400 hover:text-red-300" : "text-muted-foreground/40"}`}
               onClick={(e) => openYouTubeExport(movie, e)}
               title={canYouTubeExport ? "Export to Virelle Studios YouTube" : "Upgrade to export to YouTube"}
+              aria-label={canYouTubeExport ? `Export ${movie.title} to YouTube` : `Upgrade to export ${movie.title} to YouTube`}
             >
-              <Youtube className="h-4 w-4" />
+              <Youtube className="h-4 w-4" aria-hidden="true" />
             </Button>
           )}
           <Button
             size="icon"
             variant="ghost"
             className="h-9 w-9 sm:h-8 sm:w-8 text-destructive hover:text-destructive"
+            aria-label={`Delete ${movie.title}`}
             onClick={(e) => {
               e.stopPropagation();
               setDeleteConfirmId(movie.id);
@@ -682,16 +688,20 @@ export default function Movies() {
             size="icon"
             className="rounded-r-none"
             onClick={() => setViewMode("grid")}
+            aria-label="Grid view"
+            aria-pressed={viewMode === "grid"}
           >
-            <Grid3X3 className="h-4 w-4" />
+            <Grid3X3 className="h-4 w-4" aria-hidden="true" />
           </Button>
           <Button
             variant={viewMode === "list" ? "secondary" : "ghost"}
             size="icon"
             className="rounded-l-none"
             onClick={() => setViewMode("list")}
+            aria-label="List view"
+            aria-pressed={viewMode === "list"}
           >
-            <List className="h-4 w-4" />
+            <List className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
