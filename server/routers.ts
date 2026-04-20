@@ -1672,20 +1672,34 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           }
         );
 
-        // Get character photos for reference
+        // Get character photos + Signature Cast portraits for identity-locked reference.
+        // gpt-image-1-edit / Imagen lock the generated face to these references,
+        // so the same actor stays visually consistent across every scene.
+        const { getSignatureActorReferenceImage } = await import("./_core/signatureCast");
         const characterIds = (scene.characterIds as number[]) || [];
-        const originalImages: Array<{ url: string; mimeType: string }> = [];
+        const originalImages: Array<{ url?: string; b64Json?: string; mimeType: string }> = [];
+        const seenActorIds = new Set<string>();
+        const pushActorAnchor = (aiActorId: string | null | undefined) => {
+          if (!aiActorId || seenActorIds.has(aiActorId)) return;
+          const ref = getSignatureActorReferenceImage(aiActorId);
+          if (ref) {
+            originalImages.push({ b64Json: ref.b64Json, mimeType: ref.mimeType });
+            seenActorIds.add(aiActorId);
+          }
+        };
         for (const cId of characterIds) {
           const char = await db.getCharacterById(cId);
           if (char?.photoUrl) {
             originalImages.push({ url: char.photoUrl, mimeType: "image/jpeg" });
           }
+          pushActorAnchor((char as any)?.aiActorId);
         }
-        // Also include all project character photos for consistency
+        // Also include all project character photos + signature anchors for consistency
         for (const char of characters) {
           if (char.photoUrl && !originalImages.find(img => img.url === char.photoUrl)) {
             originalImages.push({ url: char.photoUrl, mimeType: "image/jpeg" });
           }
+          pushActorAnchor((char as any).aiActorId);
         }
 
         const result = await generateImage({

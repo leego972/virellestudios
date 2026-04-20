@@ -217,6 +217,41 @@ export async function createActorUnlockCheckoutSession(
 // ─── Seed Data: Initial Actor Registry ──────────────────────────────────────
   // Full cast — 4 Flagship, 7 Premium, 5 Standard actors.
   // Used by autoMigrate to seed the actor catalog on first boot.
+  /**
+   * Read a Signature Cast actor portrait directly from disk (client/public/portraits/<id>/master.png)
+   * and return it as a base64 reference suitable for `generateImage({ originalImages })`.
+   * Returns null if the actor id is unknown or the file isn't present.
+   *
+   * This is the "Identity Anchor" wiring: when a scene character has `aiActorId` set,
+   * the actor's master portrait is passed to gpt-image-1-edit / Imagen as a reference,
+   * locking face identity across generated stills and video frames.
+   */
+  export function getSignatureActorReferenceImage(
+    actorId: string | null | undefined
+  ): { b64Json: string; mimeType: string } | null {
+    if (!actorId) return null;
+    try {
+      // Lazy require to keep this module import-safe in browser bundles
+      const fs = require("fs") as typeof import("fs");
+      const path = require("path") as typeof import("path");
+      // Resolve relative to repo root — works in dev (tsx) and prod (esbuild bundle)
+      const candidates = [
+        path.resolve(process.cwd(), "client/public/portraits", actorId, "master.png"),
+        path.resolve(process.cwd(), "dist/public/portraits", actorId, "master.png"),
+        path.resolve(process.cwd(), "public/portraits", actorId, "master.png"),
+      ];
+      for (const file of candidates) {
+        if (fs.existsSync(file)) {
+          const buf = fs.readFileSync(file);
+          return { b64Json: buf.toString("base64"), mimeType: "image/png" };
+        }
+      }
+    } catch (e) {
+      console.warn(`[SignatureCast] Could not read portrait for actor ${actorId}:`, (e as Error).message);
+    }
+    return null;
+  }
+
   export const INITIAL_ACTORS = [
     // ── FLAGSHIP ──────────────────────────────────────────────────────────────
     {

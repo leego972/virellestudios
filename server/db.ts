@@ -1501,11 +1501,25 @@ export async function deductCredits(userId: number, amount: number, action: stri
     );
   }
 
+  // Atomic, race-safe deduction: single UPDATE guarded by balance check.
+  // Concurrent requests cannot double-spend — only the first to reach
+  // `balance >= amount` succeeds; the rest match 0 rows and we re-throw.
+  const updateResult: any = await db.execute(sql`
+    UPDATE users
+    SET creditBalance = creditBalance - ${amount}, updatedAt = NOW()
+    WHERE id = ${userId} AND creditBalance >= ${amount}
+  `);
+  const affected = (updateResult?.rowCount ?? updateResult?.affectedRows ?? updateResult?.[0]?.affectedRows ?? 0) as number;
+  if (!affected) {
+    // Re-read to give an accurate balance in the error
+    const [fresh] = await db.select({ creditBalance: users.creditBalance })
+      .from(users).where(eq(users.id, userId)).limit(1);
+    const liveBal = (fresh?.creditBalance as number) || 0;
+    throw new Error(
+      `INSUFFICIENT_CREDITS: This action requires ${amount} credit${amount !== 1 ? "s" : ""}. You have ${liveBal} credits remaining. Purchase a credit pack to continue.`
+    );
+  }
   const newBalance = currentBalance - amount;
-
-  await db.update(users)
-    .set({ creditBalance: newBalance } as any)
-    .where(eq(users.id, userId));
 
   // Log the transaction (non-critical)
   try {
@@ -1679,12 +1693,23 @@ export async function deleteUserSocialCredential(userId: number, platform: strin
 export async function assignBetaTier(userId: number, expiresAt: Date): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  // Use 'industry' tier for full access (beta ENUM value may not exist in live DB yet)
-  // Try with betaExpiresAt first; fall back to tier-only if column not yet migrated
+  // Beta users must persist as 'beta' so getEffectiveTier() honours the
+  // betaExpiresAt clock (subscription.ts looks for subscriptionTier === "beta").
+  // Fall back to 'industry' only if the live DB ENUM rejects the value.
+  const expiresAtIso = expiresAt.toISOString().slice(0, 19).replace("T", " ");
   try {
-    await db.execute(sql`UPDATE users SET subscriptionTier = 'industry', updatedAt = NOW() WHERE id = ${userId}`);
+    await db.execute(sql.raw(
+      `UPDATE users SET subscriptionTier = 'beta', betaExpiresAt = '${expiresAtIso}', updatedAt = NOW() WHERE id = ${userId}`
+    ));
   } catch (err) {
-    throw new Error(`Failed to assign beta tier: ${err}`);
+    console.warn("[Beta] 'beta' ENUM value not accepted, falling back to 'industry':", err);
+    try {
+      await db.execute(sql.raw(
+        `UPDATE users SET subscriptionTier = 'industry', betaExpiresAt = '${expiresAtIso}', updatedAt = NOW() WHERE id = ${userId}`
+      ));
+    } catch (fallbackErr) {
+      throw new Error(`Failed to assign beta tier: ${fallbackErr}`);
+    }
   }
 }
 

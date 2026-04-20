@@ -527,7 +527,7 @@ export default function Landing() {
                 { title: "What rights do I get?", answer: "You own 100% of all outputs commercially. No royalties, no licensing fees, no platform watermarks on exports." },
                 { title: "What AI models are used?", answer: "Runway Gen-4.5, Sora 2, Kling 3.0, Veo 3, and fal.ai for video. ElevenLabs v3 for voice. Suno v4 for scores." },
                 { title: "Do I need to pay to use it?", answer: "You can register for free and explore the platform. All AI generation features require an active subscription plan." },
-                { title: "Is there a mobile app?", answer: "Yes — Virelle Studios is available on iOS and Android. Download from the App Store or Google Play. Your subscription works across all platforms." },
+                { title: "Is there a mobile app?", answer: "Native mobile apps for iOS and Android are in development. In the meantime, virelle.life is fully responsive — generation, scene editing, and playback all work in mobile browsers. Your subscription will carry over to the apps the moment they ship." },
               ].map(q => (
                 <div key={q.title}>
                   <p className="text-sm font-bold mb-2 text-white">{q.title}</p>
