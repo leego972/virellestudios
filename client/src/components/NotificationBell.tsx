@@ -63,8 +63,11 @@ export default function NotificationBell() {
         onClick={() => setOpen(!open)}
         className="relative p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"
         title="Notifications"
+        aria-label={count > 0 ? `Notifications, ${count} unread` : "Notifications"}
+        aria-haspopup="dialog"
+        aria-expanded={open}
       >
-        <Bell className="h-5 w-5" />
+        <Bell className="h-5 w-5" aria-hidden="true" />
         {count > 0 && (
           <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-amber-500 text-black text-[10px] font-bold px-1">
             {count > 99 ? "99+" : count}
@@ -90,8 +93,8 @@ export default function NotificationBell() {
                   Mark all read
                 </Button>
               )}
-              <button onClick={() => setOpen(false)} className="p-1 text-white/40 hover:text-white">
-                <X className="h-4 w-4" />
+              <button onClick={() => setOpen(false)} className="p-1 text-white/40 hover:text-white" aria-label="Close notifications">
+                <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
           </div>

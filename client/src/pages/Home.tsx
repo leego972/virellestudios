@@ -177,6 +177,51 @@ export default function Home() {
     <div className="max-w-6xl mx-auto space-y-8">
       <SiteHead title="Dashboard" description="Your AI film production studio dashboard — projects, generations, funding and distribution all in one place." />
       <OnboardingOverlay forceShow={forceOnboarding} onClose={() => setForceOnboarding(false)} />
+
+      {/* Studio Status Widget — at-a-glance studio health */}
+      {user && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" aria-label="Studio status overview">
+          <Card className="bg-card/60 border-border/50">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                <Sparkles className="h-5 w-5 text-amber-400" aria-hidden="true" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Credits</div>
+                <div className="text-lg font-semibold tabular-nums">
+                  {(user as any).isAdmin || (user as any).creditBalance === -1 ? "Unlimited" : ((user as any).creditBalance ?? 0).toLocaleString()}
+                </div>
+              </div>
+              {!(user as any).isAdmin && ((user as any).creditBalance ?? 0) < 50 && (
+                <button onClick={() => setLocation("/pricing?tab=topup")} className="text-xs text-amber-400 hover:text-amber-300 underline shrink-0" aria-label="Top up credits">Top up</button>
+              )}
+            </CardContent>
+          </Card>
+          <Card className="bg-card/60 border-border/50">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+                <Loader2 className={`h-5 w-5 text-blue-400 ${stats.generating > 0 ? "animate-spin" : ""}`} aria-hidden="true" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Active Renders</div>
+                <div className="text-lg font-semibold tabular-nums">{stats.generating}{stats.generating > 0 ? <span className="text-xs text-muted-foreground font-normal ml-1">in progress</span> : <span className="text-xs text-muted-foreground font-normal ml-1">idle</span>}</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-card/60 border-border/50">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${hasApiKey ? "bg-emerald-500/10" : "bg-zinc-500/10"}`}>
+                <CheckCircle2 className={`h-5 w-5 ${hasApiKey ? "text-emerald-400" : "text-zinc-500"}`} aria-hidden="true" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Studio</div>
+                <div className="text-sm font-semibold capitalize">{(user as any).subscriptionTier || "free"} {hasApiKey ? <span className="text-emerald-400 text-xs font-normal ml-1">• ready</span> : <button onClick={() => setLocation("/settings?tab=api-keys")} className="text-amber-400 text-xs font-normal ml-1 underline hover:text-amber-300">add API key</button>}</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <WhatsNewPanel />
 
       {/* Header */}
