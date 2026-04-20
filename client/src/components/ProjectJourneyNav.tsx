@@ -215,7 +215,7 @@ export function ProjectJourneyNav({
             <Link key={stage.key} href={stage.hrefFor(projectId)}>
               <Card
                 className={[
-                  "cursor-pointer transition-all hover:border-amber-500/40 hover:shadow-md min-h-[44px]",
+                  "cursor-pointer transition-all duration-200 hover:border-amber-500/40 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] min-h-[44px]",
                   isActive
                     ? "border-amber-500/60 bg-amber-500/5 shadow-[0_0_0_1px_rgba(245,158,11,0.3)]"
                     : isDone
