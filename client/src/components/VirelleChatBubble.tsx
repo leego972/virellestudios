@@ -142,7 +142,8 @@ export default function VirelleChatBubble({
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
-      setTimeout(() => inputRef.current?.focus(), 100);
+      const t = setTimeout(() => inputRef.current?.focus(), 100);
+      return () => clearTimeout(t);
     }
   }, [isOpen, isMinimized]);
 
