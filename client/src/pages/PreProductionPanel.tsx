@@ -2092,7 +2092,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
                 onClick={() => fileRef2.current?.click()}>
                 {bgDataUrl ? (
                   <div className="flex items-center gap-2">
-                    <img src={bgDataUrl} className="h-10 w-16 object-cover rounded" />
+                    <img src={bgDataUrl} alt="Background reference" className="h-10 w-16 object-cover rounded" />
                     <div className="text-left">
                       <p className="text-xs font-medium">Image loaded</p>
                       <p className="text-[10px] text-muted-foreground">Click to change</p>
