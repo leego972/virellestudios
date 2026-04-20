@@ -2239,8 +2239,8 @@ export default function PreProductionPanel() {
       {/* Header */}
       <div className="border-b bg-card/50 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => navigate("/projects/" + projectId)}>
-            <ArrowLeft className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => navigate("/projects/" + projectId)} aria-label="Back to project">
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           </Button>
           <div className="flex-1 min-w-0">
             <h1 className="text-base sm:text-lg font-semibold truncate flex items-center gap-2">

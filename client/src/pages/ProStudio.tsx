@@ -29,8 +29,8 @@ export default function ProStudio() {
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
       <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}>
-          <ArrowLeft className="h-4 w-4" />
+        <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold">Pro Studio</h1>
@@ -187,7 +187,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
                       <Switch checked={!!v.isFinal} onCheckedChange={c => updateRow(i, { isFinal: c })} />
                       <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Final</span>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeRow(i)}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeRow(i)} aria-label="Remove version"><Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" /></Button>
                   </div>
                   <Input value={v.url || ""} onChange={e => updateRow(i, { url: e.target.value })} placeholder="https://...mp4 / .png — paste render URL" className="h-8 text-xs" />
                   <Textarea rows={2} value={v.prompt || ""} onChange={e => updateRow(i, { prompt: e.target.value })} placeholder="Prompt used for this version" className="text-xs" />
@@ -262,7 +262,7 @@ function VoiceConsentTab({ projectId }: { projectId: number }) {
                     });
                     setOpen(true);
                   }}>{consent ? "View / Edit" : "Add Consent"}</Button>
-                  {consent && <Button size="icon" variant="ghost" onClick={() => remove.mutate({ projectId, characterKey: String(c.id) })}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>}
+                  {consent && <Button size="icon" variant="ghost" onClick={() => remove.mutate({ projectId, characterKey: String(c.id) })} aria-label={`Remove consent for ${c.name || c.id}`}><Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" /></Button>}
                 </div>
               );
             })}

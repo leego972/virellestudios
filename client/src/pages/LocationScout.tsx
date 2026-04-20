@@ -96,8 +96,8 @@ export default function LocationScout() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Header */}
         <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8 flex-wrap">
-          <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </Button>
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">Location Scout</h1>
@@ -206,8 +206,8 @@ export default function LocationScout() {
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-base">{loc.name}</CardTitle>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteMutation.mutate({ id: loc.id })}>
-                      <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deleteMutation.mutate({ id: loc.id })} aria-label={`Delete location ${loc.name}`}>
+                      <Trash2 className="h-3.5 w-3.5 text-destructive" aria-hidden="true" />
                     </Button>
                   </div>
                   {loc.locationType && <Badge variant="outline" className="text-xs w-fit">{loc.locationType}</Badge>}

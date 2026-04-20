@@ -164,8 +164,8 @@ export default function DialogueEditor() {
       <div className="border-b border-border/40 bg-card/50 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
-              <ArrowLeft className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
               <h1 className="text-lg sm:text-xl font-semibold truncate">Dialogue Editor</h1>
@@ -313,8 +313,9 @@ export default function DialogueEditor() {
                                 size="icon"
                                 className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                                 onClick={(e) => { e.stopPropagation(); deleteMutation.mutate({ id: d.id }); }}
+                                aria-label="Delete dialogue line"
                               >
-                                <Trash2 className="h-4 w-4 text-destructive" />
+                                <Trash2 className="h-4 w-4 text-destructive" aria-hidden="true" />
                               </Button>
                             </div>
                           )}
