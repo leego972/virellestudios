@@ -66,7 +66,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { useLocation, useParams } from "wouter";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import {
   TIME_OF_DAY_OPTIONS, TIME_OF_DAY_LABELS,
@@ -326,6 +326,9 @@ export default function SceneEditor() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [form, setForm] = useState<SceneForm>(defaultScene);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const lastSavedSnapshotRef = useRef<string>("");
+  const [autosavedAt, setAutosavedAt] = useState<number | null>(null);
 
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: projectId > 0 });
   const { data: scenes, isLoading } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: projectId > 0 });
@@ -697,6 +700,45 @@ export default function SceneEditor() {
 
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
+  // Auto-save: debounce form changes when editing an existing scene
+  useEffect(() => {
+    if (!editDialogOpen || !selectedSceneId) return;
+    const snapshot = JSON.stringify(form);
+    if (!lastSavedSnapshotRef.current) {
+      lastSavedSnapshotRef.current = snapshot;
+      return;
+    }
+    if (snapshot === lastSavedSnapshotRef.current) return;
+    const timer = setTimeout(() => {
+      formRef.current?.requestSubmit();
+      lastSavedSnapshotRef.current = snapshot;
+      setAutosavedAt(Date.now());
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [form, editDialogOpen, selectedSceneId]);
+
+  // Reset autosave snapshot when opening a different scene
+  useEffect(() => {
+    if (editDialogOpen) {
+      lastSavedSnapshotRef.current = JSON.stringify(form);
+      setAutosavedAt(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSceneId, editDialogOpen]);
+
+  // Cmd/Ctrl + S to save while editor is open
+  useEffect(() => {
+    if (!editDialogOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        formRef.current?.requestSubmit();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [editDialogOpen]);
+
   // Collapsible section state
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     atmosphere: false,
@@ -1043,7 +1085,7 @@ export default function SceneEditor() {
             </DialogTitle>
             <p className="text-xs text-muted-foreground">Click any section header to expand or collapse it.</p>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-1 mt-2">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-1 mt-2">
             {/* ═══ Basic Info — always visible ═══ */}
             <div className="space-y-3 p-3 rounded-lg border border-border/60 bg-card/30">
               <div className="flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-medium">
@@ -2298,11 +2340,16 @@ export default function SceneEditor() {
                   </Button>
                 </>
               )}
-              <div className="flex gap-2 ml-auto">
+              <div className="flex items-center gap-2 ml-auto">
+                {selectedSceneId && (
+                  <span className="text-[11px] text-muted-foreground tabular-nums hidden sm:inline" aria-live="polite">
+                    {isSaving ? "Saving…" : autosavedAt ? `Saved ${new Date(autosavedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Auto-save on"}
+                  </span>
+                )}
                 <Button type="button" variant="ghost" size="sm" onClick={() => setEditDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" size="sm" disabled={isSaving}>
+                <Button type="submit" size="sm" disabled={isSaving} title="⌘S to save">
                   {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
                   {selectedSceneId ? "Save Changes" : "Create Scene"}
                 </Button>

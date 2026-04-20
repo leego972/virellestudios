@@ -21,6 +21,7 @@ import GoldWatermarkLaunch from "./components/GoldWatermarkLaunch";
 import { useContentProtection } from "./components/ContentProtection";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import CommandPaletteGlobal from "./components/CommandPaletteGlobal";
+import KeyboardShortcutsHelp from "./components/KeyboardShortcutsHelp";
 
 // Dashboard pages — lazy loaded
 const Projects = lazy(() => import("./pages/Projects"));
@@ -315,6 +316,7 @@ function App() {
           <Toaster />
           <Router />
           <CommandPaletteGlobal />
+          <KeyboardShortcutsHelp />
           <PWAInstallPrompt />
         </TooltipProvider>
       </ThemeProvider>

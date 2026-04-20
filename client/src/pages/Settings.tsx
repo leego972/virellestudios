@@ -252,6 +252,7 @@ const COUNTRIES = [
 ];
 
 export default function Settings() {
+  const [settingsTab, setSettingsTab] = useState<string>(() => useQueryParam("tab") || "profile");
   const [keyInputs, setKeyInputs] = useState<Record<string, string>>({});
   const [testingProvider, setTestingProvider] = useState<string | null>(null);
   const [savingProvider, setSavingProvider] = useState<string | null>(null);
@@ -372,7 +373,12 @@ export default function Settings() {
         </p>
       </div>
 
-      <Tabs defaultValue={useQueryParam("tab") || "profile"} className="w-full">
+      <Tabs value={settingsTab} onValueChange={(v) => {
+        setSettingsTab(v);
+        const url = new URL(window.location.href);
+        url.searchParams.set("tab", v);
+        window.history.replaceState({}, "", url.toString());
+      }} className="w-full">
         <TabsList className="flex w-full max-w-2xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-5 h-auto">
           <TabsTrigger value="profile" className="text-xs gap-1 flex-shrink-0 py-2"><User className="h-3 w-3" />Profile</TabsTrigger>
           <TabsTrigger value="security" className="text-xs gap-1 flex-shrink-0 py-2"><Lock className="h-3 w-3" />Security</TabsTrigger>
