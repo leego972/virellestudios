@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import MediaPlayer from "@/components/MediaPlayer";
 import StudioOpener from "@/components/StudioOpener";
+import CinematicEmptyState from "@/components/CinematicEmptyState";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -766,24 +767,24 @@ export default function Movies() {
       {!activeFolder && (
         <>
           {filteredFolderNames.length === 0 && filteredTopLevel.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Clapperboard className="h-12 w-12 text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-medium">No movies yet</h3>
-              <p className="text-sm text-muted-foreground mt-1 max-w-sm">
-                {searchQuery
-                  ? "No movies match your search. Try a different query."
-                  : "Create a project and generate your first film to see it here."}
-              </p>
-              {!searchQuery && (
-                <Button
-                  onClick={() => setLocation("/projects")}
-                  className="mt-4 gap-2"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  Create Your First Film
-                </Button>
-              )}
-            </div>
+            <CinematicEmptyState
+              quoteSeed="movies-library"
+              icon={<Clapperboard className="h-9 w-9 text-primary/70" />}
+              title={searchQuery ? "No matches in your library" : "Your library is waiting for its first cut"}
+              description={
+                searchQuery
+                  ? "Nothing matches that search. Try a different title, character, or keyword."
+                  : "Every film, trailer, and scene you generate lands here. Open a project, run a generation, and your first work will appear in this library."
+              }
+              action={
+                !searchQuery ? (
+                  <Button onClick={() => setLocation("/projects")} className="gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Open the Studio
+                  </Button>
+                ) : undefined
+              }
+            />
           ) : (
             <div className="space-y-6">
               {/* Movie Folders */}

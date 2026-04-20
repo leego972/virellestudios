@@ -281,6 +281,51 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           video.currentTime = video.duration;
           resetControlsTimeout();
           break;
+        case ",":
+          // Frame-step backward (industry standard, paused only)
+          e.preventDefault();
+          if (!video.paused) video.pause();
+          video.currentTime = Math.max(0, video.currentTime - 1 / 30);
+          resetControlsTimeout();
+          break;
+        case ".":
+          // Frame-step forward (industry standard, paused only)
+          e.preventDefault();
+          if (!video.paused) video.pause();
+          video.currentTime = Math.min(video.duration || 0, video.currentTime + 1 / 30);
+          resetControlsTimeout();
+          break;
+        case "<":
+          // Decrease playback speed
+          e.preventDefault();
+          {
+            const idx = PLAYBACK_SPEEDS.indexOf(playbackSpeed);
+            const next = PLAYBACK_SPEEDS[Math.max(0, (idx === -1 ? 3 : idx) - 1)];
+            video.playbackRate = next;
+            setPlaybackSpeed(next);
+            resetControlsTimeout();
+          }
+          break;
+        case ">":
+          // Increase playback speed
+          e.preventDefault();
+          {
+            const idx = PLAYBACK_SPEEDS.indexOf(playbackSpeed);
+            const next = PLAYBACK_SPEEDS[Math.min(PLAYBACK_SPEEDS.length - 1, (idx === -1 ? 3 : idx) + 1)];
+            video.playbackRate = next;
+            setPlaybackSpeed(next);
+            resetControlsTimeout();
+          }
+          break;
+        case "1": case "2": case "3": case "4": case "5":
+        case "6": case "7": case "8": case "9":
+          // YouTube-style percentage seek (1 = 10%, 5 = 50%, etc.)
+          e.preventDefault();
+          if (video.duration) {
+            video.currentTime = video.duration * (parseInt(e.key, 10) / 10);
+            resetControlsTimeout();
+          }
+          break;
       }
     };
 
