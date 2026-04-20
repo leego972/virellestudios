@@ -1397,7 +1397,7 @@ export async function saveDirectorInstructions(userId: number, instructions: str
 // ─── Notifications ───
 export async function createNotification(data: {
   userId: number;
-  type?: "generation_complete" | "export_complete" | "subscription_change" | "referral_reward" | "system" | "welcome" | "tip";
+  type?: "generation_complete" | "export_complete" | "subscription_change" | "referral_reward" | "system" | "welcome" | "tip" | "render_complete" | "funding_application" | "approval";
   title: string;
   message?: string;
   link?: string;

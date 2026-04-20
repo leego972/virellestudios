@@ -2024,6 +2024,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 sceneType: (scene as any).sceneType || undefined,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              try {
+                await db.createNotification({
+                  userId: ctx.user.id,
+                  type: "render_complete",
+                  title: `Scene "${scene.title || `#${scene.id}`}" video ready`,
+                  message: `Your ${scene.duration || 45}s scene render is complete. Review it in the editor.`,
+                  link: `/projects/${project.id}/scenes`,
+                });
+              } catch (_) { /* non-critical */ }
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
@@ -2057,6 +2066,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 seed: sceneSeed,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              try {
+                await db.createNotification({
+                  userId: ctx.user.id,
+                  type: "render_complete",
+                  title: `Scene "${scene.title || `#${scene.id}`}" video ready`,
+                  message: `Your ${scene.duration || 45}s scene render is complete. Review it in the editor.`,
+                  link: `/projects/${project.id}/scenes`,
+                });
+              } catch (_) { /* non-critical */ }
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
@@ -2092,6 +2110,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 seed: sceneSeed,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              try {
+                await db.createNotification({
+                  userId: ctx.user.id,
+                  type: "render_complete",
+                  title: `Scene "${scene.title || `#${scene.id}`}" video ready`,
+                  message: `Your ${scene.duration || 45}s scene render is complete. Review it in the editor.`,
+                  link: `/projects/${project.id}/scenes`,
+                });
+              } catch (_) { /* non-critical */ }
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
@@ -2128,6 +2155,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 seed: sceneSeed,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              try {
+                await db.createNotification({
+                  userId: ctx.user.id,
+                  type: "render_complete",
+                  title: `Scene "${scene.title || `#${scene.id}`}" video ready`,
+                  message: `Your ${scene.duration || 45}s scene render is complete. Review it in the editor.`,
+                  link: `/projects/${project.id}/scenes`,
+                });
+              } catch (_) { /* non-critical */ }
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
@@ -2252,6 +2288,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   seed: sceneSeed,
                 });
                 await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              try {
+                await db.createNotification({
+                  userId: ctx.user.id,
+                  type: "render_complete",
+                  title: `Scene "${scene.title || `#${scene.id}`}" video ready`,
+                  message: `Your ${scene.duration || 45}s scene render is complete. Review it in the editor.`,
+                  link: `/projects/${project.id}/scenes`,
+                });
+              } catch (_) { /* non-critical */ }
                 console.log(`[BulkVideo:fal] Extended generation completed for scene ${scene.id}: ${extResult.totalDuration}s, ${extResult.subClipCount} clips`);
                 generated++;
               } catch (e: any) {
@@ -2319,6 +2364,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   characterDescriptions: bulkOtherCharDescs.length > 0 ? bulkOtherCharDescs : undefined,
                 });
                 await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              try {
+                await db.createNotification({
+                  userId: ctx.user.id,
+                  type: "render_complete",
+                  title: `Scene "${scene.title || `#${scene.id}`}" video ready`,
+                  message: `Your ${scene.duration || 45}s scene render is complete. Review it in the editor.`,
+                  link: `/projects/${project.id}/scenes`,
+                });
+              } catch (_) { /* non-critical */ }
                 // Auto-set project thumbnail if project has none
                 if (extResult.thumbnailUrl && !project.thumbnailUrl) {
                   try {

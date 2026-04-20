@@ -641,11 +641,37 @@ export const fundingRouter = router({
       if (arr?.[0]) { try { apps = JSON.parse((arr[0].content as string).replace(/^\[FundingApplications\]\s*\n?/, "")) || []; } catch {} }
       const idx = apps.findIndex(a => a.id === input.applicationId);
       if (idx < 0) throw new TRPCError({ code: "NOT_FOUND", message: "Application not found" });
+      const previousStatus = apps[idx].status;
       apps[idx].status = input.status;
       if (input.notes !== undefined) apps[idx].notes = input.notes;
       apps[idx].updatedAt = new Date().toISOString();
       await db.execute(sql`DELETE FROM directorChats WHERE userId = ${ctx.user.id} AND content LIKE '[FundingApplications]%'`);
       await createChatMessage({ projectId: 0, userId: ctx.user.id, role: "user", content: `[FundingApplications]\n${JSON.stringify(apps)}` });
+
+      if (previousStatus !== input.status) {
+        try {
+          const dbInst = await getDb();
+          if (dbInst) {
+            const friendly: Record<string, string> = {
+              submitted: "Submitted",
+              under_review: "Under review",
+              accepted: "🎉 Accepted",
+              rejected: "Rejected",
+              waitlisted: "Waitlisted",
+              withdrawn: "Withdrawn",
+            };
+            const orgName = apps[idx].organization || apps[idx].fundingSource || "funding application";
+            const { createNotification } = await import("./db");
+            await createNotification({
+              userId: ctx.user.id,
+              type: "funding_application",
+              title: `Funding update: ${friendly[input.status] || input.status}`,
+              message: `${orgName} — status changed from ${friendly[previousStatus] || previousStatus || "new"} to ${friendly[input.status] || input.status}.`,
+              link: "/funding-pro?tab=applications",
+            });
+          }
+        } catch (_) { /* non-critical */ }
+      }
       return { success: true };
     }),
 
