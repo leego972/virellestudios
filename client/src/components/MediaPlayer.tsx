@@ -387,16 +387,16 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
           <p className="text-white/40 text-[10px]">{formatTime(currentTime)} / {formatTime(duration)}</p>
         </div>
         {/* Play/Pause */}
-        <Button size="icon" variant="ghost" className="text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={togglePlay}>
-          {isPlaying ? <Pause className="h-4 w-4 fill-white" /> : <Play className="h-4 w-4 fill-white ml-0.5" />}
+        <Button size="icon" variant="ghost" className="text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={togglePlay} aria-label={isPlaying ? "Pause" : "Play"}>
+          {isPlaying ? <Pause className="h-4 w-4 fill-white" aria-hidden="true" /> : <Play className="h-4 w-4 fill-white ml-0.5" aria-hidden="true" />}
         </Button>
         {/* Expand */}
-        <Button size="icon" variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={() => setIsMinimised(false)} title="Expand player">
-          <Maximize className="h-4 w-4" />
+        <Button size="icon" variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={() => setIsMinimised(false)} title="Expand player" aria-label="Expand player">
+          <Maximize className="h-4 w-4" aria-hidden="true" />
         </Button>
         {/* Close */}
-        <Button size="icon" variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={onClose} title="Close">
-          <X className="h-4 w-4" />
+        <Button size="icon" variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 h-9 w-9 shrink-0" onClick={onClose} title="Close" aria-label="Close player">
+          <X className="h-4 w-4" aria-hidden="true" />
         </Button>
         {/* Hidden video element keeps playback alive while minimised */}
         {movie.fileUrl && (

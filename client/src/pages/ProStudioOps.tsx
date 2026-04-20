@@ -78,7 +78,7 @@ export default function ProStudioOps() {
   if (!projectId) return <div className="p-8 text-sm text-muted-foreground">Invalid project.</div>;
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="container mx-auto px-4 py-6 max-w-7xl overflow-x-auto">
       <div className="flex items-center gap-3 mb-6">
         <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
         <div className="flex-1">
@@ -455,7 +455,7 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
       </CardHeader>
         <CardContent className="space-y-2">
           {live.jobs.map((j: any, i: number) => (
-            <div key={j.id} className="border rounded p-2 grid grid-cols-12 gap-2 items-center text-xs">
+            <div key={j.id} className="border rounded p-2 grid grid-cols-12 gap-2 min-w-[600px] items-center text-xs">
               <Input value={j.label} onChange={e => updateJob(i, { label: e.target.value })} className="h-8 text-xs col-span-3" />
               <Select value={j.sceneId == null ? "none" : String(j.sceneId)} onValueChange={v => updateJob(i, { sceneId: v === "none" ? null : Number(v) })}><SelectTrigger className="h-8 text-xs col-span-2"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="none" className="text-xs">— no scene —</SelectItem>{(scenes.data || []).map((s: any) => <SelectItem key={s.id} value={String(s.id)} className="text-xs">{s.title || `Scene ${s.id}`}</SelectItem>)}</SelectContent></Select>
               <Select value={j.priority} onValueChange={v => updateJob(i, { priority: v })}><SelectTrigger className="h-8 text-xs col-span-1"><SelectValue /></SelectTrigger><SelectContent>{["low","normal","high","urgent"].map(p => <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>)}</SelectContent></Select>
@@ -504,7 +504,7 @@ function DeliverablesTab({ projectId }: { projectId: number }) {
         <CardContent className="space-y-2">
           {live.length === 0 && <p className="text-xs text-muted-foreground">No deliverables.</p>}
           {live.map((d: any, i: number) => (
-            <div key={d.id} className="border rounded p-2 grid grid-cols-12 gap-2 items-center text-xs">
+            <div key={d.id} className="border rounded p-2 grid grid-cols-12 gap-2 min-w-[600px] items-center text-xs">
               <Badge className="col-span-2 justify-center text-[9px]">{d.profile}</Badge>
               <Input value={d.label} onChange={e => update(i, { label: e.target.value })} className="h-8 text-xs col-span-2" />
               <Input value={d.aspectRatio} onChange={e => update(i, { aspectRatio: e.target.value })} className="h-8 text-xs col-span-1" />
@@ -548,7 +548,7 @@ function ClearancesTab({ projectId }: { projectId: number }) {
           {live.length === 0 && <p className="text-xs text-muted-foreground">No clearances tracked.</p>}
           {live.map((c: any, i: number) => (
             <div key={c.id} className="border rounded p-2 space-y-1.5 text-xs">
-              <div className="grid grid-cols-12 gap-2 items-center">
+              <div className="grid grid-cols-12 gap-2 min-w-[600px] items-center">
                 <Badge variant="outline" className="col-span-2 justify-center text-[9px]">{c.kind}</Badge>
                 <Input value={c.title} onChange={e => update(i, { title: e.target.value })} placeholder="Title (song/location/talent name)" className="h-8 text-xs col-span-3" />
                 <Input value={c.counterparty} onChange={e => update(i, { counterparty: e.target.value })} placeholder="Rights holder" className="h-8 text-xs col-span-3" />
@@ -592,7 +592,7 @@ function DistributionTab({ projectId }: { projectId: number }) {
         <CardContent className="space-y-2">
           {live.length === 0 && <p className="text-xs text-muted-foreground">No targets yet.</p>}
           {live.map((t: any, i: number) => (
-            <div key={t.id} className="border rounded p-2 grid grid-cols-12 gap-2 items-center text-xs">
+            <div key={t.id} className="border rounded p-2 grid grid-cols-12 gap-2 min-w-[600px] items-center text-xs">
               <Badge variant="outline" className="col-span-2 justify-center text-[9px]">{t.platform}</Badge>
               <Input value={t.label} onChange={e => update(i, { label: e.target.value })} className="h-8 text-xs col-span-3" />
               <Input value={t.accountHandle || ""} onChange={e => update(i, { accountHandle: e.target.value })} placeholder="@handle" className="h-8 text-xs col-span-2" />
@@ -648,7 +648,7 @@ function ProxyTab({ projectId }: { projectId: number }) {
         {((scenes.data || []) as any[]).map(s => {
           const d = get(s.id); const dirty = drafts[s.id] != null;
           return (
-            <div key={s.id} className="border rounded p-2 grid grid-cols-12 gap-2 items-center text-xs">
+            <div key={s.id} className="border rounded p-2 grid grid-cols-12 gap-2 min-w-[600px] items-center text-xs">
               <div className="col-span-2 truncate font-medium">{s.title || `Scene ${s.id}`}</div>
               <Input value={d.proxyUrl || ""} onChange={e => update(s.id, { proxyUrl: e.target.value })} placeholder="Proxy URL" className="h-8 text-xs col-span-3" />
               <Input value={d.proxyResolution || ""} onChange={e => update(s.id, { proxyResolution: e.target.value })} placeholder="540p" className="h-8 text-xs col-span-1" />
@@ -685,7 +685,7 @@ function CutsTab({ projectId }: { projectId: number }) {
           return (
             <div key={s.id} className="border rounded p-2 space-y-2 text-xs">
               <div className="font-medium">{s.title || `Scene ${s.id}`}</div>
-              <div className="grid grid-cols-12 gap-2 items-end">
+              <div className="grid grid-cols-12 gap-2 min-w-[600px] items-end">
                 <div className="col-span-2"><Label className="text-[10px]">Trim In (s)</Label><Input type="number" step="0.1" value={d.trimInSec} onChange={e => update(s.id, { trimInSec: Number(e.target.value) })} className="h-7 text-xs font-mono" /></div>
                 <div className="col-span-2"><Label className="text-[10px]">Trim Out (s)</Label><Input type="number" step="0.1" value={d.trimOutSec} onChange={e => update(s.id, { trimOutSec: Number(e.target.value) })} className="h-7 text-xs font-mono" /></div>
                 <div className="col-span-2"><Label className="text-[10px]">In transition</Label>
@@ -787,7 +787,7 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
         <div className="text-xs text-muted-foreground">Director → Producer → Executive. When all three approve, scene <strong>auto-locks</strong> against further renders.</div>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="grid grid-cols-12 gap-2 px-2 text-[10px] uppercase text-muted-foreground tracking-wider">
+        <div className="grid grid-cols-12 gap-2 min-w-[600px] px-2 text-[10px] uppercase text-muted-foreground tracking-wider">
           <div className="col-span-4">Scene</div>
           <div className="col-span-2 text-center">Director</div>
           <div className="col-span-2 text-center">Producer</div>
@@ -798,7 +798,7 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
           const a = approvals[String(s.id)] || {};
           const all = a.director?.state === "approved" && a.producer?.state === "approved" && a.exec?.state === "approved";
           return (
-            <div key={s.id} className={`grid grid-cols-12 gap-2 items-center p-2 rounded border ${all ? "border-emerald-500/40 bg-emerald-500/5" : "border-border bg-card/50"}`}>
+            <div key={s.id} className={`grid grid-cols-12 gap-2 min-w-[600px] items-center p-2 rounded border ${all ? "border-emerald-500/40 bg-emerald-500/5" : "border-border bg-card/50"}`}>
               <div className="col-span-4 min-w-0">
                 <div className="text-sm font-medium truncate">Scene {s.order ?? s.id}: {s.title || s.description?.slice(0, 50) || "(untitled)"}</div>
                 {all && <div className="text-[10px] text-emerald-400 mt-0.5">🔒 fully approved → auto-locked</div>}
