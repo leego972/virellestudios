@@ -80,7 +80,7 @@ export default function ProStudioOps() {
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl overflow-x-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
+        <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project"><ArrowLeft className="h-4 w-4" aria-hidden="true" /></Button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold">Studio Operations</h1>
           <p className="text-xs text-muted-foreground">Pro production workflow · live multi-user collab · server-enforced render budget · NLE shortcuts (press ?)</p>
@@ -286,7 +286,7 @@ function FrameCommentsTab({ projectId }: { projectId: number }) {
                 <Button size="sm" variant={c.status === "open" ? "default" : "outline"} className="h-6 text-[10px] px-2" onClick={() => setStatus(i, "open")}>open</Button>
                 <Button size="sm" variant={c.status === "resolved" ? "default" : "outline"} className="h-6 text-[10px] px-2" onClick={() => setStatus(i, "resolved")}>resolved</Button>
                 <Button size="sm" variant={c.status === "approved" ? "default" : "outline"} className="h-6 text-[10px] px-2" onClick={() => setStatus(i, "approved")}>approved</Button>
-                <Button size="icon" variant="ghost" className="h-6 w-6 ml-auto" onClick={() => remove(i)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
+                <Button size="icon" variant="ghost" className="h-6 w-6 ml-auto" onClick={() => remove(i)} aria-label="Delete note"><Trash2 className="h-3 w-3 text-destructive" aria-hidden="true" /></Button>
               </div>
             </div>
           ))}
@@ -464,10 +464,10 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
               <Select value={j.status} onValueChange={v => updateJob(i, { status: v })}><SelectTrigger className="h-8 text-xs col-span-2"><SelectValue /></SelectTrigger><SelectContent>{["queued","running","done","failed","paused","skipped"].map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}</SelectContent></Select>
               <div className="flex gap-0.5 col-span-1 justify-end">
                 {(j.status === "queued" || j.status === "failed" || j.status === "paused") && (
-                  <Button size="icon" variant="ghost" className="h-7 w-7" title="Run now (charge & generate)" onClick={() => runNow(j)} disabled={runVid.isPending}><Sparkles className="h-3 w-3 text-violet-400" /></Button>
+                  <Button size="icon" variant="ghost" className="h-7 w-7" title="Run now (charge & generate)" onClick={() => runNow(j)} disabled={runVid.isPending} aria-label="Run job now (charge and generate)"><Sparkles className="h-3 w-3 text-violet-400" aria-hidden="true" /></Button>
                 )}
-                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => moveUp(i)}>↑</Button>
-                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeJob(i)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => moveUp(i)} aria-label="Move job up in queue"><span aria-hidden="true">↑</span></Button>
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => removeJob(i)} aria-label="Remove job from queue"><Trash2 className="h-3 w-3 text-destructive" aria-hidden="true" /></Button>
               </div>
             </div>
           ))}
@@ -514,7 +514,7 @@ function DeliverablesTab({ projectId }: { projectId: number }) {
               <Select value={d.status} onValueChange={v => update(i, { status: v })}><SelectTrigger className="h-8 text-xs col-span-2"><SelectValue /></SelectTrigger><SelectContent>{["pending","building","ready","failed"].map(c => <SelectItem key={c} value={c} className="text-xs">{c}</SelectItem>)}</SelectContent></Select>
               <div className="flex gap-1 col-span-2 justify-end items-center">
                 <label className="flex items-center gap-1 text-[10px]"><input type="checkbox" checked={d.captions} onChange={e => update(i, { captions: e.target.checked })} />CC</label>
-                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => remove(i)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => remove(i)} aria-label="Remove deliverable"><Trash2 className="h-3 w-3 text-destructive" aria-hidden="true" /></Button>
               </div>
             </div>
           ))}
@@ -554,7 +554,7 @@ function ClearancesTab({ projectId }: { projectId: number }) {
                 <Input value={c.counterparty} onChange={e => update(i, { counterparty: e.target.value })} placeholder="Rights holder" className="h-8 text-xs col-span-3" />
                 <Select value={c.status} onValueChange={v => update(i, { status: v })}><SelectTrigger className="h-8 text-xs col-span-2"><SelectValue /></SelectTrigger><SelectContent>{["needed","requested","negotiating","signed","denied","not_required"].map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}</SelectContent></Select>
                 <Input type="number" value={c.feeUsd ?? 0} onChange={e => update(i, { feeUsd: Number(e.target.value) })} placeholder="Fee USD" className="h-8 text-xs col-span-1 font-mono" />
-                <Button size="icon" variant="ghost" className="h-7 w-7 col-span-1" onClick={() => remove(i)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
+                <Button size="icon" variant="ghost" className="h-7 w-7 col-span-1" onClick={() => remove(i)} aria-label="Remove clearance"><Trash2 className="h-3 w-3 text-destructive" aria-hidden="true" /></Button>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <Input value={c.territory || ""} onChange={e => update(i, { territory: e.target.value })} placeholder="Territory" className="h-7 text-xs" />
@@ -598,7 +598,7 @@ function DistributionTab({ projectId }: { projectId: number }) {
               <Input value={t.accountHandle || ""} onChange={e => update(i, { accountHandle: e.target.value })} placeholder="@handle" className="h-8 text-xs col-span-2" />
               <Select value={t.status} onValueChange={v => update(i, { status: v })}><SelectTrigger className="h-8 text-xs col-span-2"><SelectValue /></SelectTrigger><SelectContent>{["draft","scheduled","submitted","live","rejected"].map(s => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}</SelectContent></Select>
               <Input value={t.liveUrl || ""} onChange={e => update(i, { liveUrl: e.target.value })} placeholder="Live URL" className="h-8 text-xs col-span-2" />
-              <Button size="icon" variant="ghost" className="h-7 w-7 col-span-1" onClick={() => remove(i)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
+              <Button size="icon" variant="ghost" className="h-7 w-7 col-span-1" onClick={() => remove(i)} aria-label="Remove takedown entry"><Trash2 className="h-3 w-3 text-destructive" aria-hidden="true" /></Button>
             </div>
           ))}
         </CardContent>
@@ -655,7 +655,7 @@ function ProxyTab({ projectId }: { projectId: number }) {
               <Select value={d.proxyStatus} onValueChange={v => update(s.id, { proxyStatus: v })}><SelectTrigger className="h-8 text-xs col-span-1"><SelectValue /></SelectTrigger><SelectContent>{["pending","ready","failed"].map(c => <SelectItem key={c} value={c} className="text-xs">{c}</SelectItem>)}</SelectContent></Select>
               <Input value={d.masterUrl || ""} onChange={e => update(s.id, { masterUrl: e.target.value })} placeholder="Master URL" className="h-8 text-xs col-span-3" />
               <Select value={d.masterStatus} onValueChange={v => update(s.id, { masterStatus: v })}><SelectTrigger className="h-8 text-xs col-span-1"><SelectValue /></SelectTrigger><SelectContent>{["pending","ready","failed"].map(c => <SelectItem key={c} value={c} className="text-xs">{c}</SelectItem>)}</SelectContent></Select>
-              <Button size="icon" variant={dirty ? "default" : "ghost"} className="h-7 w-7 col-span-1" onClick={() => persist(s.id)} disabled={!dirty}><Save className="h-3 w-3" /></Button>
+              <Button size="icon" variant={dirty ? "default" : "ghost"} className="h-7 w-7 col-span-1" onClick={() => persist(s.id)} disabled={!dirty} aria-label={`Save deliverables for scene ${s.title || s.order}`}><Save className="h-3 w-3" aria-hidden="true" /></Button>
             </div>
           );
         })}
@@ -811,8 +811,8 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
               <div className="col-span-2 flex justify-end gap-1 flex-wrap">
                 {(["director","producer","exec"] as const).map(role => (
                   <div key={role} className="flex gap-0.5">
-                    <Button size="icon" variant="ghost" className="h-6 w-6" title={`${role}: approve`} onClick={() => apply(s.id, role, "approved", s.title || `Scene ${s.order}`)} disabled={setOne.isPending}><ThumbsUp className="h-3 w-3 text-emerald-400" /></Button>
-                    <Button size="icon" variant="ghost" className="h-6 w-6" title={`${role}: reject`} onClick={() => apply(s.id, role, "rejected", s.title || `Scene ${s.order}`)} disabled={setOne.isPending}><ThumbsDown className="h-3 w-3 text-rose-400" /></Button>
+                    <Button size="icon" variant="ghost" className="h-6 w-6" title={`${role}: approve`} onClick={() => apply(s.id, role, "approved", s.title || `Scene ${s.order}`)} disabled={setOne.isPending} aria-label={`${role} approve scene ${s.title || s.order}`}><ThumbsUp className="h-3 w-3 text-emerald-400" aria-hidden="true" /></Button>
+                    <Button size="icon" variant="ghost" className="h-6 w-6" title={`${role}: reject`} onClick={() => apply(s.id, role, "rejected", s.title || `Scene ${s.order}`)} disabled={setOne.isPending} aria-label={`${role} reject scene ${s.title || s.order}`}><ThumbsDown className="h-3 w-3 text-rose-400" aria-hidden="true" /></Button>
                   </div>
                 ))}
               </div>
