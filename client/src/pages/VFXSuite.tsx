@@ -146,8 +146,8 @@ export default function VFXSuite() {
       <div className="border-b border-border/40 bg-black/20 px-4 py-3">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)}>
-              <ArrowLeft className="w-4 h-4" />
+            <Button variant="ghost" size="icon" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             </Button>
             <div>
               <h1 className="text-lg font-semibold flex items-center gap-2">

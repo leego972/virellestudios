@@ -305,8 +305,8 @@ export default function TVCommercial() {
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
         <div className="flex items-center justify-between px-4 py-3 gap-2 overflow-hidden">
           <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
-            <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setLocation(`/projects/${projectId}`)}>
-              <ArrowLeft className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setLocation(`/projects/${projectId}`)} aria-label="Back to project">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
               <h1 className="text-sm md:text-lg font-bold flex items-center gap-2">

@@ -68,8 +68,8 @@ export default function Storyboard() {
       <div className="border-b bg-card/50 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
-              <ArrowLeft className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
               <h1 className="text-base sm:text-lg font-semibold truncate">{project.title} — Storyboard</h1>
@@ -82,16 +82,20 @@ export default function Storyboard() {
               size="icon"
               className="h-8 w-8"
               onClick={() => setViewMode("grid")}
+              aria-label="Grid view"
+              aria-pressed={viewMode === "grid"}
             >
-              <Grid3X3 className="h-4 w-4" />
+              <Grid3X3 className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
               variant={viewMode === "list" ? "default" : "ghost"}
               size="icon"
               className="h-8 w-8"
               onClick={() => setViewMode("list")}
+              aria-label="List view"
+              aria-pressed={viewMode === "list"}
             >
-              <List className="h-4 w-4" />
+              <List className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Separator orientation="vertical" className="h-6" />
             <Button variant="outline" size="sm" onClick={() => {

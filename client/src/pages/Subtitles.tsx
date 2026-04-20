@@ -267,8 +267,8 @@ export default function Subtitles() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Header */}
         <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-          <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </Button>
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">Subtitles</h1>
