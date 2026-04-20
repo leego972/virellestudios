@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ArrowLeft, Printer, Download, FileText, Copy, Mail, Link as LinkIcon, Loader2 } from "lucide-react";
 import SiteHead from "@/components/SiteHead";
 import { toast } from "sonner";
@@ -43,9 +44,18 @@ export default function PressKit() {
     pressQuotes: "",
   });
 
+  const [emailDialog, setEmailDialog] = useState<{ open: boolean; recipients: string }>({ open: false, recipients: "" });
+
   function update<K extends keyof KitState>(k: K, v: KitState[K]) {
     setKit((prev) => ({ ...prev, [k]: v }));
   }
+
+  const submitEmailDialog = () => {
+    const list = emailDialog.recipients.split(/[,;\s]+/).map((s) => s.trim()).filter((s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
+    if (list.length === 0) { toast.error("No valid email addresses"); return; }
+    emailKit.mutate({ projectId: id, recipients: list, kit });
+    setEmailDialog({ open: false, recipients: "" });
+  };
 
   const emailKit = trpc.featureFilm.emailPressKit.useMutation({
     onSuccess: (r: any) => toast.success(r?.message || "Press kit sent"),
@@ -105,13 +115,7 @@ export default function PressKit() {
               <Button onClick={() => window.print()} className="min-h-[44px] bg-amber-600 hover:bg-amber-500 text-black"><Printer className="h-4 w-4 mr-2" />Print / Save as PDF</Button>
               <Button variant="outline" onClick={exportMarkdown} className="min-h-[44px]"><Download className="h-4 w-4 mr-2" />Export .md</Button>
               <Button variant="outline" onClick={copyAll} className="min-h-[44px]"><Copy className="h-4 w-4 mr-2" />Copy all</Button>
-              <Button variant="outline" onClick={() => {
-                const recipients = window.prompt("Send press kit to (comma-separated emails):", "");
-                if (!recipients) return;
-                const list = recipients.split(/[,;\s]+/).map(s => s.trim()).filter(s => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s));
-                if (list.length === 0) { toast.error("No valid email addresses"); return; }
-                emailKit.mutate({ projectId: id, recipients: list, kit });
-              }} disabled={emailKit.isPending} className="min-h-[44px]">
+              <Button variant="outline" onClick={() => setEmailDialog({ open: true, recipients: "" })} disabled={emailKit.isPending} className="min-h-[44px]" aria-label="Email press pack">
                 {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Mail className="h-4 w-4 mr-2" />}Email Press Pack
               </Button>
               <Button variant="outline" onClick={() => {
@@ -171,6 +175,33 @@ export default function PressKit() {
         </Card>
       </div>
   {!!id && <NextStageCTA projectId={id} currentStage={8} />}
+
+      <Dialog open={emailDialog.open} onOpenChange={(o) => setEmailDialog((s) => ({ ...s, open: o }))}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Email Press Pack</DialogTitle>
+            <DialogDescription>Enter one or more email addresses, separated by commas.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="press-email-recipients">Recipients</Label>
+            <Input
+              id="press-email-recipients"
+              value={emailDialog.recipients}
+              onChange={(e) => setEmailDialog((s) => ({ ...s, recipients: e.target.value }))}
+              placeholder="alice@example.com, bob@example.com"
+              autoFocus
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); submitEmailDialog(); } }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEmailDialog({ open: false, recipients: "" })}>Cancel</Button>
+            <Button onClick={submitEmailDialog} disabled={emailKit.isPending}>
+              {emailKit.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" /> : <Mail className="h-4 w-4 mr-2" aria-hidden="true" />}
+              Send
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

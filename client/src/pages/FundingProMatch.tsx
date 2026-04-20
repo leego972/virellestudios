@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ArrowLeft, Sparkles, Star, ExternalLink, Send, FileText, Trophy, Clock, CheckCircle2, XCircle, AlertCircle, Bookmark, BookmarkCheck, Wand2 } from "lucide-react";
 import SiteHead from "@/components/SiteHead";
 import { toast } from "sonner";
@@ -170,6 +171,12 @@ function AppsTab() {
   const setStatus = trpc.funding.setApplicationStatus.useMutation({
     onSuccess: () => { toast.success("Status updated"); apps.refetch(); },
   });
+  const [statusDialog, setStatusDialog] = useState<{ appId: number; status: string; label: string; notes: string } | null>(null);
+  const submitStatusDialog = () => {
+    if (!statusDialog) return;
+    setStatus.mutate({ applicationId: statusDialog.appId, status: statusDialog.status as any, notes: statusDialog.notes.trim() || undefined });
+    setStatusDialog(null);
+  };
   const list = (apps.data || []) as any[];
   if (list.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground">No applications submitted yet. Submitted applications will appear here automatically with status tracking.</CardContent></Card>;
   const counts = list.reduce((acc: any, a: any) => { acc[a.status] = (acc[a.status] || 0) + 1; return acc; }, {});
@@ -198,10 +205,7 @@ function AppsTab() {
                 </div>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {Object.keys(STATUS_META).map(k => k !== a.status && (
-                    <Button key={k} size="sm" variant="ghost" className="h-6 text-[10px] px-2" onClick={() => {
-                      const notes = window.prompt(`Add a note for status "${STATUS_META[k].label}" (optional):`, a.notes || "");
-                      setStatus.mutate({ applicationId: a.id, status: k as any, notes: notes ?? undefined });
-                    }}>→ {STATUS_META[k].label}</Button>
+                    <Button key={k} size="sm" variant="ghost" className="h-6 text-[10px] px-2" onClick={() => setStatusDialog({ appId: a.id, status: k, label: STATUS_META[k].label, notes: a.notes || "" })} aria-label={`Change status to ${STATUS_META[k].label}`}>→ {STATUS_META[k].label}</Button>
                   ))}
                 </div>
               </div>
@@ -209,6 +213,30 @@ function AppsTab() {
           })}
         </CardContent>
       </Card>
+
+      <Dialog open={!!statusDialog} onOpenChange={(o) => { if (!o) setStatusDialog(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change status to "{statusDialog?.label}"</DialogTitle>
+            <DialogDescription>Add an optional note explaining the status change.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="status-notes">Note (optional)</Label>
+            <Textarea
+              id="status-notes"
+              rows={3}
+              value={statusDialog?.notes || ""}
+              onChange={(e) => setStatusDialog((s) => s ? { ...s, notes: e.target.value } : s)}
+              placeholder="e.g. Funder asked for revisions, follow-up call scheduled, etc."
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setStatusDialog(null)}>Cancel</Button>
+            <Button onClick={submitStatusDialog} disabled={setStatus.isPending}>Update status</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

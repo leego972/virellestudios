@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ArrowLeft, Save, Plus, Trash2, MessageSquare, Palette, GitBranch, ListOrdered, Package, Scale, Send, ScrollText, Layers, Scissors, Download, Gauge, Users, Pause, Play, RotateCcw, Eraser, Zap, Lock, Unlock, Sparkles, Calculator, CheckCheck, DollarSign, Clock, TrendingUp, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -719,10 +720,21 @@ function LocksTab({ projectId }: { projectId: number }) {
   const audit = trpc.auditLog.append.useMutation();
   const locks = (list.data || []) as Array<{ sceneId: number; locked: boolean; reason?: string; lockedBy?: string; lockedAt?: number }>;
   const lockMap = new Map(locks.map(l => [l.sceneId, l]));
+  const [lockDialog, setLockDialog] = useState<{ sceneId: number; label: string; reason: string } | null>(null);
+  const submitLockDialog = () => {
+    if (!lockDialog) return;
+    const reason = lockDialog.reason.trim() || "approved";
+    toggle.mutate({ projectId, sceneId: lockDialog.sceneId, locked: true, reason });
+    audit.mutate({ projectId, event: { action: "sceneLock.lock", targetType: "scene", targetId: String(lockDialog.sceneId), summary: `Locked: ${lockDialog.label} — ${reason}` } });
+    setLockDialog(null);
+  };
   const onToggle = (sceneId: number, locked: boolean, label: string) => {
-    const reason = locked ? (window.prompt("Lock reason (e.g. 'approved by client', 'final cut')?", "approved") || "approved") : undefined;
-    toggle.mutate({ projectId, sceneId, locked, reason });
-    audit.mutate({ projectId, event: { action: locked ? "sceneLock.lock" : "sceneLock.unlock", targetType: "scene", targetId: String(sceneId), summary: `${locked ? "Locked" : "Unlocked"}: ${label}${reason ? ` — ${reason}` : ""}` } });
+    if (locked) {
+      setLockDialog({ sceneId, label, reason: "approved" });
+      return;
+    }
+    toggle.mutate({ projectId, sceneId, locked: false });
+    audit.mutate({ projectId, event: { action: "sceneLock.unlock", targetType: "scene", targetId: String(sceneId), summary: `Unlocked: ${label}` } });
   };
   if (!scenes.data?.length) return <Card><CardContent className="pt-6 text-sm text-muted-foreground">No scenes yet — create scenes first to lock approved renders.</CardContent></Card>;
   const lockedCount = locks.filter(l => l.locked).length;
@@ -755,6 +767,30 @@ function LocksTab({ projectId }: { projectId: number }) {
           );
         })}
       </CardContent>
+
+      <Dialog open={!!lockDialog} onOpenChange={(o) => { if (!o) setLockDialog(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Lock scene "{lockDialog?.label}"</DialogTitle>
+            <DialogDescription>Provide a reason — this is recorded in the audit log and shown next to the lock.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="lock-reason">Lock reason</Label>
+            <Input
+              id="lock-reason"
+              value={lockDialog?.reason || ""}
+              onChange={(e) => setLockDialog((s) => s ? { ...s, reason: e.target.value } : s)}
+              placeholder="e.g. approved by client, final cut"
+              autoFocus
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); submitLockDialog(); } }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLockDialog(null)}>Cancel</Button>
+            <Button onClick={submitLockDialog} disabled={toggle.isPending}>Lock scene</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
@@ -769,11 +805,22 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
   });
   const audit = trpc.auditLog.append.useMutation();
   const approvals = (list.data || {}) as any;
+  const [rejectDialog, setRejectDialog] = useState<{ sceneId: number; role: "director"|"producer"|"exec"; label: string; note: string } | null>(null);
+  const submitRejectDialog = () => {
+    if (!rejectDialog) return;
+    const note = rejectDialog.note.trim();
+    setOne.mutate({ projectId, sceneId: rejectDialog.sceneId, role: rejectDialog.role, state: "rejected", note });
+    audit.mutate({ projectId, event: { action: "approval.rejected", targetType: "scene", targetId: String(rejectDialog.sceneId), summary: `${rejectDialog.role.toUpperCase()} rejected: ${rejectDialog.label}${note ? ` — ${note}` : ""}` } });
+    setRejectDialog(null);
+  };
   if (!scenes.data?.length) return <Card><CardContent className="pt-6 text-sm text-muted-foreground">No scenes yet — create scenes first to route them through approval.</CardContent></Card>;
   const apply = (sceneId: number, role: "director"|"producer"|"exec", state: "approved"|"rejected"|"pending", label: string) => {
-    const note = state === "rejected" ? (window.prompt("Rejection reason?", "") || "") : undefined;
-    setOne.mutate({ projectId, sceneId, role, state, note });
-    audit.mutate({ projectId, event: { action: `approval.${state}`, targetType: "scene", targetId: String(sceneId), summary: `${role.toUpperCase()} ${state}: ${label}${note ? ` — ${note}` : ""}` } });
+    if (state === "rejected") {
+      setRejectDialog({ sceneId, role, label, note: "" });
+      return;
+    }
+    setOne.mutate({ projectId, sceneId, role, state });
+    audit.mutate({ projectId, event: { action: `approval.${state}`, targetType: "scene", targetId: String(sceneId), summary: `${role.toUpperCase()} ${state}: ${label}` } });
   };
   const pill = (s?: string) => {
     if (s === "approved") return <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40">approved</Badge>;
@@ -820,6 +867,30 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
           );
         })}
       </CardContent>
+
+      <Dialog open={!!rejectDialog} onOpenChange={(o) => { if (!o) setRejectDialog(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject as {rejectDialog?.role}</DialogTitle>
+            <DialogDescription>Add a rejection reason for "{rejectDialog?.label}". This is recorded in the audit log.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="reject-note">Rejection reason</Label>
+            <Textarea
+              id="reject-note"
+              rows={3}
+              value={rejectDialog?.note || ""}
+              onChange={(e) => setRejectDialog((s) => s ? { ...s, note: e.target.value } : s)}
+              placeholder="e.g. Continuity issue in shot 3, lighting needs grade pass…"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectDialog(null)}>Cancel</Button>
+            <Button onClick={submitRejectDialog} disabled={setOne.isPending} className="bg-rose-600 hover:bg-rose-500 text-white">Reject</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
