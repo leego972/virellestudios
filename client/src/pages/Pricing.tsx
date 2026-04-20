@@ -1,3 +1,4 @@
+import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -324,6 +325,7 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-amber-500/30">
+      <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios — from Free to Studio. AI film production from $0 to enterprise scale." />
       <GoldWatermarkLaunch />
       
       <div className="container mx-auto px-4 py-20">

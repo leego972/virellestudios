@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { Link } from "wouter";
+import SiteHead from "@/components/SiteHead";
 import { trpc } from "@/lib/trpc";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import { Play, Pause, Volume2, VolumeX, Maximize, Film, Clock, Layers, Eye, ChevronDown, ChevronUp, Sparkles, Star, TrendingUp, Zap, Users, Globe } from "lucide-react";
@@ -565,6 +566,7 @@ function DiscoveryFeed() {
 
   return (
     <div>
+      <SiteHead title="Public Showcase — Films & Reels" description="Watch films, reels, and promos created on Virelle Studios by indie filmmakers and major studios worldwide." />
       {/* Surface Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-thin scrollbar-thumb-neutral-800">
         {tabs.map((tab) => {

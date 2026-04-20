@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import SiteHead from "@/components/SiteHead";
 import {
   Zap, Layers, Users, Music, Palette, Camera,
   ArrowRight, Play, ShieldCheck,
@@ -103,6 +104,11 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-amber-500/30 relative">
+      <SiteHead
+        title="The unified AI film production studio"
+        description="Virelle Studios — script to screen in one platform. AI casting, scenes, scoring, VFX, distribution, and grant funding for indie filmmakers and major studios."
+        jsonLd={{ "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Virelle Studios", applicationCategory: "MultimediaApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: "Unified AI film production platform" }}
+      />
       <GoldWatermark />
 
       {/* ─── Navigation ─── */}

@@ -1,3 +1,4 @@
+import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -75,6 +76,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios — sales, support, partnerships, and press inquiries." />
       {/* Header */}
       <div className="border-b bg-card/50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">

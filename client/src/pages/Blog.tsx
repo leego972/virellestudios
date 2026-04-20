@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import SiteHead from "@/components/SiteHead";
 import { Link } from "wouter";
 import { ArrowLeft, Calendar, Eye, Tag, ChevronRight, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <SiteHead title="Filmmaker Blog & Insights" description="Articles, guides, and insights for AI-powered filmmaking — from script to screen." />
       {/* Header */}
       <header className="border-b border-white/10 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
