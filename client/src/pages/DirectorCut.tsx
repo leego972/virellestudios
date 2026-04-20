@@ -579,7 +579,7 @@ export default function DirectorCut() {
       {/* ── Top Bar ── */}
       <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-2.5 border-b border-white/10 bg-zinc-950/80 backdrop-blur shrink-0">
         <div className="flex items-center gap-2 md:gap-3 min-w-0">
-          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(`/projects/${projectId}`)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(`/projects/${projectId}`)} aria-label="Back to project">
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div className="min-w-0">
@@ -728,19 +728,20 @@ export default function DirectorCut() {
             {/* Playback Controls */}
           <div className="flex items-center justify-between px-2 md:px-4 py-1.5 md:py-2 bg-zinc-950 border-b border-white/10 shrink-0">
             <div className="flex items-center gap-0.5 md:gap-1">
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPlayheadTime(0)}>
-                <SkipBack className="w-3.5 h-3.5" />
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPlayheadTime(0)} aria-label="Skip to start">
+                <SkipBack className="w-3.5 h-3.5" aria-hidden="true" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 bg-white/5 hover:bg-white/10"
                 onClick={() => isPlaying ? stopPlayback() : startPlayback()}
+                aria-label={isPlaying ? "Pause playback" : "Play timeline"}
               >
-                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                {isPlaying ? <Pause className="w-4 h-4" aria-hidden="true" /> : <Play className="w-4 h-4" aria-hidden="true" />}
               </Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPlayheadTime(totalDuration)}>
-                <SkipForward className="w-3.5 h-3.5" />
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPlayheadTime(totalDuration)} aria-label="Skip to end">
+                <SkipForward className="w-3.5 h-3.5" aria-hidden="true" />
               </Button>
               <span className="text-[10px] md:text-xs font-mono text-zinc-400 ml-1 md:ml-2">
                 {formatTime(playheadTime)} / {formatTime(totalDuration)}
@@ -753,12 +754,12 @@ export default function DirectorCut() {
                 </Button>
               )}
               <span className="text-[10px] text-zinc-600 hidden sm:inline">Zoom</span>
-              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setZoom(z => Math.max(3, z - 2))}>
-                <ZoomOut className="w-3 h-3" />
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setZoom(z => Math.max(3, z - 2))} aria-label="Zoom out timeline">
+                <ZoomOut className="w-3 h-3" aria-hidden="true" />
               </Button>
-              <span className="text-[10px] text-zinc-500 w-6 text-center">{zoom}x</span>
-              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setZoom(z => Math.min(30, z + 2))}>
-                <ZoomIn className="w-3 h-3" />
+              <span className="text-[10px] text-zinc-500 w-6 text-center" aria-label={`Timeline zoom ${zoom}x`}>{zoom}x</span>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setZoom(z => Math.min(30, z + 2))} aria-label="Zoom in timeline">
+                <ZoomIn className="w-3 h-3" aria-hidden="true" />
               </Button>
             </div>
           </div>
@@ -1198,8 +1199,9 @@ export default function DirectorCut() {
                 className="h-6 w-6"
                 disabled={selectedIdx === 0}
                 onClick={() => setSelectedIdx((i) => Math.max(0, (i ?? 0) - 1))}
+                aria-label="Previous scene"
               >
-                <ChevronLeft className="w-3 h-3" />
+                <ChevronLeft className="w-3 h-3" aria-hidden="true" />
               </Button>
               <span className="text-[11px] text-zinc-500">
                 Scene {(selectedIdx ?? 0) + 1} of {scenes.length}
@@ -1210,8 +1212,9 @@ export default function DirectorCut() {
                 className="h-6 w-6"
                 disabled={selectedIdx === scenes.length - 1}
                 onClick={() => setSelectedIdx((i) => Math.min(scenes.length - 1, (i ?? 0) + 1))}
+                aria-label="Next scene"
               >
-                <ChevronRight className="w-3 h-3" />
+                <ChevronRight className="w-3 h-3" aria-hidden="true" />
               </Button>
             </div>
           )}
