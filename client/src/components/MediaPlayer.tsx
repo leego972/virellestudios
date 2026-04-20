@@ -846,8 +846,10 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                         variant="ghost"
                         className={`h-8 w-8 sm:h-9 sm:w-9 hover:bg-white/10 hidden sm:flex ${isLooping ? "text-primary" : "text-white/60 hover:text-white"}`}
                         onClick={() => setIsLooping(!isLooping)}
+                        aria-label={isLooping ? "Disable loop" : "Enable loop"}
+                        aria-pressed={isLooping}
                       >
-                        <Repeat className="h-4 w-4" />
+                        <Repeat className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="top"><p>{isLooping ? "Disable" : "Enable"} Loop</p></TooltipContent>
@@ -895,8 +897,9 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                         variant="ghost"
                         className="text-white/60 hover:text-white hover:bg-white/10 h-8 w-8 sm:h-9 sm:w-9 hidden sm:flex"
                         onClick={togglePiP}
+                        aria-label="Picture-in-picture"
                       >
-                        <PictureInPicture2 className="h-4 w-4" />
+                        <PictureInPicture2 className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="top"><p>Picture-in-Picture</p></TooltipContent>
