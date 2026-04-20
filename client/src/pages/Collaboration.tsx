@@ -156,8 +156,8 @@ export default function Collaboration() {
         <div className="container py-3">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => setLocation(`/projects/${projectId}`)}>
-                <ArrowLeft className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="h-10 w-10 sm:h-9 sm:w-9 shrink-0" onClick={() => setLocation(`/projects/${projectId}`)} aria-label="Back to project">
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               </Button>
               <div className="min-w-0">
                 <h1 className="text-base sm:text-lg font-semibold truncate">Project Collaboration</h1>
@@ -297,8 +297,9 @@ export default function Collaboration() {
                           onClick={() => {
                             setRemoveConfirmId(member.id);
                           }}
+                          aria-label={`Remove ${member.user?.email || "member"} from project`}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       </div>
                     </CardContent>
@@ -360,8 +361,9 @@ export default function Collaboration() {
                           size="icon"
                           className="h-8 w-8 text-destructive"
                           onClick={() => removeMutation.mutate({ id: invite.id })}
+                          aria-label={`Revoke invite for ${invite.email}`}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       </div>
                     </CardContent>
@@ -399,8 +401,9 @@ export default function Collaboration() {
                       size="icon"
                       className="h-8 w-8 text-destructive"
                       onClick={() => removeMutation.mutate({ id: invite.id })}
+                      aria-label={`Remove declined invite for ${invite.email}`}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </CardContent>
                 </Card>
@@ -496,8 +499,8 @@ export default function Collaboration() {
                 value={generatedLink}
                 readOnly
                 className="text-xs font-mono" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
-              <Button variant="outline" size="icon" onClick={copyLink}>
-                <Copy className="h-4 w-4" />
+              <Button variant="outline" size="icon" onClick={copyLink} aria-label="Copy invite link">
+                <Copy className="h-4 w-4" aria-hidden="true" />
               </Button>
             </div>
             <div className="flex gap-2 justify-end">
