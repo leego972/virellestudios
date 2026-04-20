@@ -1428,8 +1428,10 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
               className="size-8"
               onClick={() => setShowInstructions((prev) => !prev)}
               title="Director instructions"
+              aria-label="Toggle director instructions"
+              aria-expanded={showInstructions}
             >
-              <Settings className="size-4 text-muted-foreground" />
+              <Settings className="size-4 text-muted-foreground" aria-hidden="true" />
             </Button>
             <Button
               variant="ghost"
@@ -1437,8 +1439,10 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
               className="size-8"
               onClick={() => setShowShortcutHint((prev) => !prev)}
               title="Keyboard shortcuts (?)"
+              aria-label="Toggle keyboard shortcuts"
+              aria-expanded={showShortcutHint}
             >
-              <Keyboard className="size-4 text-muted-foreground" />
+              <Keyboard className="size-4 text-muted-foreground" aria-hidden="true" />
             </Button>
             <Button
               variant="ghost"
@@ -1446,8 +1450,9 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
               className="size-8"
               onClick={() => clearMutation.mutate({ projectId: projectId ?? 0 })}
               title="Clear chat"
+              aria-label="Clear chat history"
             >
-              <Trash2 className="size-4 text-muted-foreground" />
+              <Trash2 className="size-4 text-muted-foreground" aria-hidden="true" />
             </Button>
             {/* Minimize — collapses to pill, stays active */}
             <Button
@@ -1456,8 +1461,9 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
               className="size-8"
               onClick={() => setIsMinimized(true)}
               title="Minimize (stays active in background)"
+              aria-label="Minimize director chat"
             >
-              <ChevronDown className="size-4 text-muted-foreground" />
+              <ChevronDown className="size-4 text-muted-foreground" aria-hidden="true" />
             </Button>
             <Button
               variant="ghost"
@@ -1465,8 +1471,9 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
               className="size-8"
               onClick={() => setIsOpen(false)}
               title="Close"
+              aria-label="Close director chat"
             >
-              <X className="size-4" />
+              <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
