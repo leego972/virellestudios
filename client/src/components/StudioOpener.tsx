@@ -222,6 +222,12 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
   }, [handleSkip]);
 
   useEffect(() => {
+    // The RAF tick below drives the SVG fallback animation + its synthesised audio cues.
+    // When the real video is playing (videoError === false), the video's own onEnded handler
+    // owns completion (play → 2s gold-frame hold → fade out). Running the SVG's hard 9.5s
+    // timeout in parallel was firing onComplete prematurely and unmounting the opener
+    // mid-hold — so users never saw the final logo. Skip the RAF entirely on the video path.
+    if (!videoError) return;
     startTimeRef.current = performance.now();
     audioCtxRef.current = createAudioContext();
     const tick = (now: number) => {
@@ -246,7 +252,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
     };
     rafRef.current = requestAnimationFrame(tick);
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [onComplete]);
+  }, [onComplete, videoError]);
 
   // ── Animation values ──────────────────────────────────────────────────────
   const letterboxOpacity = t < 0.3 ? easeOutCubic(t / 0.3) : t < 8.0 ? 1 : Math.max(0, 1 - (t - 8.0) / 0.5);
