@@ -1,4 +1,40 @@
 import { ENV } from "./env";
+import { AsyncLocalStorage } from "async_hooks";
+
+/**
+ * Request-scoped LLM key context. Lets a top-level handler (e.g. quickGenerate's
+ * background pipeline) inject the user's BYOK OpenAI/Anthropic key once, and have
+ * EVERY nested invokeLLM call automatically prefer that key over the shared
+ * platform key — without threading `userApiKey` through 80+ callsites.
+ *
+ * Use:
+ *   await withUserLlmKey({ openaiKey, anthropicKey }, async () => {
+ *     // any code in here — including code in helper modules — that calls
+ *     // invokeLLM() will use the user's key first, falling back to the
+ *     // platform key only if the user's key is missing or fails.
+ *   });
+ */
+type UserLlmCtx = {
+  openaiKey?: string | null;
+  anthropicKey?: string | null;
+  veniceKey?: string | null;
+};
+const userLlmKeyStore = new AsyncLocalStorage<UserLlmCtx>();
+export function withUserLlmKey<T>(ctx: UserLlmCtx, fn: () => Promise<T>): Promise<T> {
+  const clean: UserLlmCtx = {
+    openaiKey: ctx?.openaiKey || null,
+    anthropicKey: ctx?.anthropicKey || null,
+    veniceKey: ctx?.veniceKey || null,
+  };
+  return userLlmKeyStore.run(clean, fn);
+}
+function getUserLlmCtx(): UserLlmCtx {
+  return userLlmKeyStore.getStore() || {};
+}
+
+/** Venice AI is OpenAI-compatible at api.venice.ai. Default to a strong general model. */
+const VENICE_URL = "https://api.venice.ai/api/v1/chat/completions";
+const VENICE_DEFAULT_MODEL = "llama-3.3-70b";
 
 export type Role = "system" | "user" | "assistant" | "tool" | "function";
 
@@ -320,18 +356,36 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     }
   }
 
-    // If caller provided a user-specific API key, use it first before falling back to the platform key.
-  // This ensures BYOK users always use their own quota, not the platform's.
-  if (params.userApiKey) {
+    // BYOK priority chain: TitanAI (above) → Venice → OpenAI → platform Forge fallback.
+  // Venice and OpenAI keys come from either explicit params.userApiKey OR the request-
+  // scoped withUserLlmKey() context (set once at the top of background pipelines).
+  const userCtx = getUserLlmCtx();
+  const veniceKey: string | null = userCtx.veniceKey || null;
+  const openaiKey: string | null = params.userApiKey || userCtx.openaiKey || null;
+
+  // 1) Venice AI (OpenAI-compatible) — preferred user provider
+  if (veniceKey) {
+    try {
+      return await invokeLLMWithProvider(params, {
+        url: VENICE_URL,
+        apiKey: veniceKey,
+        model: params.userModel || VENICE_DEFAULT_MODEL,
+      });
+    } catch (e: any) {
+      console.warn(`[LLM] Venice key failed (${e.message?.slice(0, 80)}), trying next provider...`);
+    }
+  }
+
+  // 2) User's OpenAI key
+  if (openaiKey) {
     try {
       return await invokeLLMWithProvider(params, {
         url: "https://api.openai.com/v1/chat/completions",
-        apiKey: params.userApiKey,
+        apiKey: openaiKey,
         model: params.userModel || "gpt-4.1",
       });
     } catch (e: any) {
-      // If user's own key fails (quota/invalid), log and fall through to platform key
-      console.warn(`[LLM] User BYOK key failed (${e.message?.slice(0, 80)}), falling back to platform provider...`);
+      console.warn(`[LLM] OpenAI BYOK key failed (${e.message?.slice(0, 80)}), falling back to platform provider...`);
     }
   }
   const provider = resolveProvider();

@@ -945,6 +945,15 @@ export interface ProviderInfo {
 
 export const VIDEO_PROVIDERS: ProviderInfo[] = [
   {
+    id: "venice" as any,
+    name: "Venice AI (LLM — preferred)",
+    description: "OpenAI-compatible LLM provider used for script & scene generation. Highest priority — used before OpenAI for all text generation.",
+    keyPrefix: "",
+    signupUrl: "https://venice.ai/settings/api",
+    pricing: "Pro plan includes API credits. Pay-as-you-go also available.",
+    models: "llama-3.3-70b, llama-3.1-405b, qwen-2.5-coder-32b, and more",
+  },
+  {
     id: "pollinations",
     name: "Pollinations.ai (Free)",
     description: "Free AI video generation using grok-video. Default for all users. No API key needed.",

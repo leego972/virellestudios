@@ -1328,6 +1328,7 @@ export async function getUserApiKeys(userId: number): Promise<{
   byteplusKey: string | null;
   anthropicKey: string | null;
   googleAiKey: string | null;
+  veniceKey: string | null;
   preferredProvider: string | null;
   preferredLlmProvider: string | null;
 }> {
@@ -1358,6 +1359,7 @@ export async function getUserApiKeys(userId: number): Promise<{
     byteplusKey: decode((user as any).userByteplusKey),
     anthropicKey: decode((user as any).userAnthropicKey),
     googleAiKey: decode((user as any).userGoogleAiKey),
+    veniceKey: decode((user as any).userVeniceKey),
     preferredProvider: (user as any).preferredVideoProvider || null,
     preferredLlmProvider: (user as any).preferredLlmProvider || null,
   };

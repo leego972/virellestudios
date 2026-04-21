@@ -6,7 +6,7 @@ import { z } from "zod";
 import * as db from "./db";
 import { sql } from "drizzle-orm";
 import { storagePut } from "./storage";
-import { invokeLLM } from "./_core/llm";
+import { invokeLLM, withUserLlmKey } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { generateNanoBananaImage, isNanoBananaAvailable } from "./_core/nanoBananaGeneration";
 import { generateVideo, generateVideoWithFallback, buildVideoPrompt } from "./_core/videoGeneration";
@@ -2824,12 +2824,19 @@ Available fields you can update:
         const ctxUser = ctx.user; // capture for background closure
 
         setImmediate(async () => {
-        try {
         // ── Fetch user BYOK keys early — used for both LLM and video generation ──
         // Must be done before Step 0 so user's own OpenAI key is used for LLM calls,
         // not the platform key (which may be quota-exhausted).
-        const earlyUserKeys = await db.getUserApiKeys(userId);
+        let earlyUserKeys: any = { openaiKey: null, anthropicKey: null, googleAiKey: null, falApiKey: null };
+        try { earlyUserKeys = await db.getUserApiKeys(userId); } catch (e: any) {
+          console.warn("[QuickGen] getUserApiKeys failed, continuing with platform keys:", e?.message);
+        }
         const userLlmApiKey: string | null = earlyUserKeys.openaiKey || null;
+        // Wrap entire background pipeline in a request-scoped LLM key context so EVERY
+        // nested invokeLLM call (compression, scene breakdown, beat-sheet, dialog, etc.)
+        // automatically prefers the user's saved OpenAI key over the platform's shared key.
+        await withUserLlmKey({ openaiKey: earlyUserKeys.openaiKey, anthropicKey: earlyUserKeys.anthropicKey, veniceKey: earlyUserKeys.veniceKey }, async () => {
+        try {
 
         // ── Step 0: Auto-generate photorealistic characters if none exist ──
         // This is the key to broadcast-quality output: consistent faces across all scenes
@@ -3349,6 +3356,7 @@ Break this into 8-15 scenes. For each scene, provide:
             });
           } catch { /* ignore */ }
         }
+        }); // end withUserLlmKey
         }); // end setImmediate
 
         // Return immediately — generation continues in background
@@ -8936,13 +8944,13 @@ Rules:
     // Save an API key for a specific provider
     saveApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3", "venice"]),
         key: z.string().min(1).max(500),
       }))
       .mutation(async ({ ctx, input }) => {
         const { provider, key } = input;
 
-        // Validate key format for video providers only (elevenlabs, suno, anthropic, google have no format validation)
+        // Validate key format for video providers only (elevenlabs, suno, anthropic, google, venice have no format validation)
         const videoOnlyProviders: string[] = ["openai", "runway", "replicate", "fal", "luma", "huggingface", "seedance", "veo3"];
         if (videoOnlyProviders.includes(provider)) {
           const validation = validateApiKey(provider as VideoProvider, key);
@@ -8965,6 +8973,7 @@ Rules:
           anthropic: "userAnthropicKey",
           google: "userGoogleAiKey",
           veo3: "userGoogleAiKey",  // veo3 uses the same Gemini key column
+          venice: "userVeniceKey",
         };
 
         const column = columnMap[provider];
@@ -8981,7 +8990,7 @@ Rules:
     // Remove an API key
     removeApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3", "venice"]),
       }))
       .mutation(async ({ ctx, input }) => {
         const columnMap: Record<string, string> = {
@@ -8997,6 +9006,7 @@ Rules:
           anthropic: "userAnthropicKey",
           google: "userGoogleAiKey",
           veo3: "userGoogleAiKey",
+          venice: "userVeniceKey",
         };
 
         const column = columnMap[input.provider];
@@ -9020,7 +9030,7 @@ Rules:
     // Test an API key to verify it works
     testApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "venice"]),
         key: z.string().min(1),
       }))
       .mutation(async ({ input }) => {
@@ -9028,6 +9038,13 @@ Rules:
 
         try {
           switch (provider) {
+            case "venice": {
+              const resp = await fetch("https://api.venice.ai/api/v1/models", {
+                headers: { "Authorization": `Bearer ${key}` },
+              });
+              if (resp.ok) return { valid: true, message: "Venice AI key is valid" };
+              return { valid: false, message: `Venice returned ${resp.status}` };
+            }
             case "anthropic": {
               const resp = await fetch("https://api.anthropic.com/v1/messages", {
                 method: "POST",

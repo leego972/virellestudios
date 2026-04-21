@@ -34,6 +34,7 @@ export const users = mysqlTable("users", {
   userByteplusKey: text("userByteplusKey"),       // BytePlus ModelArk API key (SeedDance video generation)
   userAnthropicKey: text("userAnthropicKey"),     // Anthropic API key (Claude for Virelle AI chat)
   userGoogleAiKey: text("userGoogleAiKey"),       // Google AI API key (Gemini for Virelle AI chat)
+  userVeniceKey: text("userVeniceKey"),           // Venice AI API key (OpenAI-compatible, preferred over OpenAI)
   preferredLlmProvider: varchar("preferredLlmProvider", { length: 32 }), // openai, anthropic, google — for Virelle chat
   directorInstructions: text("directorInstructions"), // Custom instructions for the Director's Assistant AI
   preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface, seedance
