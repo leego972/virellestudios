@@ -574,14 +574,17 @@ export default function ProjectDetail() {
             <Layers className="h-4 w-4 mr-1" />
             Scene Editor
           </Button>
-          {project.mode === "quick" && (project.status === "draft" || project.status === "completed") && (
+          {project.mode === "quick" && (project.status === "draft" || project.status === "completed" || project.status === "failed") && (
             <Button
               size="sm"
               variant={project.status === "completed" ? "outline" : "default"}
+              className={project.status === "failed" ? "bg-red-500 hover:bg-red-600 text-white" : undefined}
               onClick={() => {
                 if (project.status === "completed") {
                   setRegenConfirmOpen(true);
                 } else {
+                  // draft OR failed → kick off generation immediately (no confirm needed —
+                  // a failed run has no output to overwrite, and a draft has nothing to lose).
                   quickGenMutation.mutate({ projectId: project.id });
                 }
               }}
@@ -591,6 +594,8 @@ export default function ProjectDetail() {
                 <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Generating...</>
               ) : project.status === "completed" ? (
                 <><RefreshCw className="h-4 w-4 mr-1" />Re-generate Film</>
+              ) : project.status === "failed" ? (
+                <><RefreshCw className="h-4 w-4 mr-1" />Retry Generation</>
               ) : (
                 <><Sparkles className="h-4 w-4 mr-1" />Generate Film</>
               )}
@@ -654,24 +659,48 @@ export default function ProjectDetail() {
                         The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key — that's still fine.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        Quickest fix: open <span className="font-medium text-foreground">Settings → API Keys</span> and add your own <span className="font-medium text-foreground">OpenAI</span> or <span className="font-medium text-foreground">Anthropic</span> key (script generation will use it automatically). Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Re-generate Film</span> — the shared cap usually clears within the hour.
+                        Quickest fix: open <a href="/settings" className="font-medium text-foreground underline">Settings → API Keys</a> and add your own <span className="font-medium text-foreground">Venice AI</span> (cheapest, ~$5 = millions of tokens), <span className="font-medium text-foreground">OpenAI</span>, or <span className="font-medium text-foreground">Anthropic</span> key — script generation will use it automatically. Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Retry Generation</span> below — the shared cap usually clears within the hour.
                       </p>
                     </>
                   ) : isVideoQuota ? (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        Your video provider is rejecting requests for billing/quota reasons. Top up the provider account (e.g. fal.ai dashboard), then tap <span className="font-medium text-foreground">Re-generate Film</span>.
+                        Your video provider is rejecting requests for billing/quota reasons. Top up the provider account (e.g. fal.ai dashboard), then tap <span className="font-medium text-foreground">Retry Generation</span> below.
                       </p>
                     </>
                   ) : (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        If your API keys are funded and connected (<span className="font-medium text-foreground">Settings → API Keys</span>), this is usually a temporary provider issue — tap <span className="font-medium text-foreground">Re-generate Film</span> to retry. Make sure your preferred provider is selected.
+                        If your API keys are funded and connected (<a href="/settings" className="font-medium text-foreground underline">Settings → API Keys</a>), this is usually a temporary provider issue — tap <span className="font-medium text-foreground">Retry Generation</span> below to retry. Make sure your preferred provider is selected.
                       </p>
                     </>
                   )}
+
+                  {/* Inline action buttons — always present so the user is never stranded */}
+                  <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-red-500/20">
+                    <Button
+                      size="sm"
+                      className="bg-red-500 hover:bg-red-600 text-white h-8"
+                      onClick={() => quickGenMutation.mutate({ projectId: project.id })}
+                      disabled={quickGenMutation.isPending}
+                    >
+                      {quickGenMutation.isPending ? (
+                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Retrying…</>
+                      ) : (
+                        <><RefreshCw className="h-3.5 w-3.5 mr-1.5" />Retry Generation</>
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 border-red-500/40 text-red-300 hover:bg-red-500/10"
+                      onClick={() => setLocation("/settings")}
+                    >
+                      Open API Keys
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
