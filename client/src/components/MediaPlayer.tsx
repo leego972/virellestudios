@@ -461,12 +461,23 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
         className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between"
         style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}
       >
-        {/* Always-visible Back button — guarantees an exit even when controls fade */}
+        {/* Always-visible Back button — closes the player AND pops browser history so the user
+            actually returns to the previous page. Without history.back, onClose just unmounts the
+            overlay and the user lands on the same page they opened the player from, which they
+            (correctly) interpret as 'back didn't work'. */}
         <Button
           size="icon"
           variant="ghost"
           className="ml-2 mt-1 text-white bg-black/50 hover:bg-black/70 active:bg-black/80 backdrop-blur-sm rounded-full h-11 w-11 shrink-0 shadow-lg"
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            try { onClose(); } catch { /* ignore */ }
+            try {
+              if (typeof window !== "undefined" && window.history.length > 1) {
+                window.history.back();
+              }
+            } catch { /* ignore */ }
+          }}
           title="Back"
           aria-label="Back"
         >
@@ -711,7 +722,15 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
               <Button
                 variant="ghost"
                 className="text-white/80 hover:text-white hover:bg-white/10 w-full sm:w-auto"
-                onClick={onClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  try { onClose(); } catch { /* ignore */ }
+                  try {
+                    if (typeof window !== "undefined" && window.history.length > 1) {
+                      window.history.back();
+                    }
+                  } catch { /* ignore */ }
+                }}
               >
                 <ArrowLeft className="h-4 w-4 mr-1.5" />
                 Back
