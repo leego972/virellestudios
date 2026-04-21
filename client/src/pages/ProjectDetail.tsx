@@ -608,17 +608,49 @@ export default function ProjectDetail() {
       {jobs && jobs.some((j: any) => j.errorMessage) && project.status !== "generating" && (() => {
         const failedJob = jobs.find((j: any) => j.errorMessage);
         const rawMsg: string = String(failedJob?.errorMessage || "Video generation failed.");
+        // Detect the most common failure modes and tailor the guidance.
+        // The platform's shared LLM key occasionally hits quota; when this happens the
+        // generic message "recharge your API keys" was confusing because the user's OWN
+        // video key (e.g. fal.ai) is fine — it's the script-generation step that died.
+        const lower = rawMsg.toLowerCase();
+        const isLLMExhausted = lower.includes("llm fallback invoke failed")
+          || lower.includes("usage exhausted")
+          || lower.includes("insufficient_quota")
+          || (lower.includes("412") && lower.includes("precondition"));
+        const isVideoQuota = (lower.includes("402") || lower.includes("403") || lower.includes("payment required")) && !isLLMExhausted;
         return (
           <Card className="bg-red-500/5 border-red-500/30">
             <CardContent className="p-4 space-y-2">
               <div className="flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-red-400 break-words">Video generation failed</p>
-                  <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
-                  <p className="text-[11px] text-muted-foreground mt-2">
-                    If your API keys are funded and connected (Settings → API Keys), this is usually a temporary provider issue — tap <span className="font-medium text-foreground">Re-generate Film</span> to retry. Make sure your preferred provider is selected.
+                  <p className="text-sm font-medium text-red-400 break-words">
+                    {isLLMExhausted ? "Script generation paused — AI text quota reached" : "Video generation failed"}
                   </p>
+                  {isLLMExhausted ? (
+                    <>
+                      <p className="text-xs text-red-300/80 mt-1 break-words">
+                        The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key — that's still fine.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-2">
+                        Quickest fix: open <span className="font-medium text-foreground">Settings → API Keys</span> and add your own <span className="font-medium text-foreground">OpenAI</span> or <span className="font-medium text-foreground">Anthropic</span> key (script generation will use it automatically). Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Re-generate Film</span> — the shared cap usually clears within the hour.
+                      </p>
+                    </>
+                  ) : isVideoQuota ? (
+                    <>
+                      <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
+                      <p className="text-[11px] text-muted-foreground mt-2">
+                        Your video provider is rejecting requests for billing/quota reasons. Top up the provider account (e.g. fal.ai dashboard), then tap <span className="font-medium text-foreground">Re-generate Film</span>.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
+                      <p className="text-[11px] text-muted-foreground mt-2">
+                        If your API keys are funded and connected (<span className="font-medium text-foreground">Settings → API Keys</span>), this is usually a temporary provider issue — tap <span className="font-medium text-foreground">Re-generate Film</span> to retry. Make sure your preferred provider is selected.
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -660,29 +692,29 @@ export default function ProjectDetail() {
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-card/50 flex-nowrap sm:flex-wrap h-auto gap-1 p-1 overflow-x-auto overflow-y-hidden w-full justify-start scrollbar-thin [-webkit-overflow-scrolling:touch]">
+        <TabsList className="bg-card/50 flex flex-nowrap sm:flex-wrap h-auto gap-2 sm:gap-1 p-1.5 overflow-x-auto overflow-y-hidden w-full justify-start scrollbar-thin [-webkit-overflow-scrolling:touch] [&>*]:bg-background/40 [&>*]:border [&>*]:border-border/40 [&>*]:data-[state=active]:bg-primary/15 [&>*]:data-[state=active]:border-primary/40 [&>*]:data-[state=active]:text-primary">
           {/* Pipeline order: Overview → Story → Characters → Scenes → Soundtrack → Trailer → Export → Tools */}
-          <TabsTrigger value="journey" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
+          <TabsTrigger value="journey" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
             <Clapperboard className="h-3 w-3 mr-1" />Journey
           </TabsTrigger>
-          <TabsTrigger value="overview" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">Overview</TabsTrigger>
-          <TabsTrigger value="story" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
+          <TabsTrigger value="overview" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">Overview</TabsTrigger>
+          <TabsTrigger value="story" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
             <BookOpen className="h-3 w-3 mr-1" />Story
           </TabsTrigger>
-          <TabsTrigger value="characters" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
+          <TabsTrigger value="characters" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
             Characters {characters?.length ? `(${characters.length})` : ""}
           </TabsTrigger>
-          <TabsTrigger value="scenes" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
+          <TabsTrigger value="scenes" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
             Scenes {scenes?.length ? `(${scenes.length})` : ""}
           </TabsTrigger>
-          <TabsTrigger value="soundtrack" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
+          <TabsTrigger value="soundtrack" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
             <Music className="h-3 w-3 mr-1" />Soundtrack {soundtracks?.length ? `(${soundtracks.length})` : ""}
           </TabsTrigger>
-          <TabsTrigger value="trailer" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">Trailer</TabsTrigger>
-          <TabsTrigger value="export" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
+          <TabsTrigger value="trailer" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">Trailer</TabsTrigger>
+          <TabsTrigger value="export" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
             <Download className="h-3 w-3 mr-1" />Export
           </TabsTrigger>
-          <TabsTrigger value="tools" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
+          <TabsTrigger value="tools" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
             <Settings className="h-3 w-3 mr-1" />Tools
           </TabsTrigger>
         </TabsList>
