@@ -613,11 +613,13 @@ export default function ProjectDetail() {
         // generic message "recharge your API keys" was confusing because the user's OWN
         // video key (e.g. fal.ai) is fine — it's the script-generation step that died.
         const lower = rawMsg.toLowerCase();
-        const isLLMExhausted = lower.includes("llm fallback invoke failed")
+        const isNoVideoKey = lower.startsWith("no_video_key") || lower.includes("no_video_key:");
+        const isLLMExhausted = !isNoVideoKey && (lower.includes("llm fallback invoke failed")
           || lower.includes("usage exhausted")
           || lower.includes("insufficient_quota")
-          || (lower.includes("412") && lower.includes("precondition"));
-        const isVideoQuota = (lower.includes("402") || lower.includes("403") || lower.includes("payment required")) && !isLLMExhausted;
+          || (lower.includes("412") && lower.includes("precondition")));
+        const isVideoQuota = !isNoVideoKey && !isLLMExhausted && (lower.includes("402") || lower.includes("403") || lower.includes("payment required"));
+        const isProviderFailed = !isNoVideoKey && (lower.startsWith("video_provider_failed") || lower.includes("video_provider_failed:"));
         return (
           <Card className="bg-red-500/5 border-red-500/30">
             <CardContent className="p-4 space-y-2">
@@ -625,9 +627,28 @@ export default function ProjectDetail() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-red-400 break-words">
-                    {isLLMExhausted ? "Script generation paused — AI text quota reached" : "Video generation failed"}
+                    {isNoVideoKey ? "Add a video-generation API key to continue"
+                      : isLLMExhausted ? "Script generation paused — AI text quota reached"
+                      : isProviderFailed ? "Your video provider rejected every attempt"
+                      : "Video generation failed"}
                   </p>
-                  {isLLMExhausted ? (
+                  {isNoVideoKey ? (
+                    <>
+                      <p className="text-xs text-red-300/80 mt-1 break-words">
+                        You haven't connected a video provider yet. Virelle Studios is a Bring-Your-Own-Key platform for video — add a key once and you can generate as many films as your provider's credits allow.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-2">
+                        Open <a href="/settings" className="font-medium text-foreground underline">Settings → API Keys</a> and connect at least one of:
+                        <span className="block mt-1.5 ml-2 leading-relaxed">
+                          • <span className="text-foreground font-medium">fal.ai</span> — cheapest, ~$0.40/clip (recommended)<br/>
+                          • <span className="text-foreground font-medium">Runway</span> — best quality, ~$0.05–0.10/sec<br/>
+                          • <span className="text-foreground font-medium">Hugging Face</span> — free tier (300 req/hr)<br/>
+                          • <span className="text-foreground font-medium">Luma · Replicate · Google Veo 3</span> — alternatives
+                        </span>
+                        Once saved, return here and tap <span className="font-medium text-foreground">Re-generate Film</span>.
+                      </p>
+                    </>
+                  ) : isLLMExhausted ? (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words">
                         The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key — that's still fine.

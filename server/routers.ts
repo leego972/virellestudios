@@ -2856,6 +2856,33 @@ Available fields you can update:
           console.warn("[QuickGen] getUserApiKeys failed, continuing with platform keys:", e?.message);
         }
         const userLlmApiKey: string | null = earlyUserKeys.openaiKey || null;
+
+        // ── Pre-flight check: ensure user has at least ONE video provider key configured ──
+        // Without this guard the pipeline runs the full LLM script generation (burning credits +
+        // platform LLM quota), then dies at the video step with a vague error. Block early with
+        // a clear instructional message instead.
+        const hasAnyVideoKey = !!(
+          earlyUserKeys.falKey ||
+          earlyUserKeys.runwayKey ||
+          earlyUserKeys.replicateKey ||
+          earlyUserKeys.lumaKey ||
+          earlyUserKeys.hfToken ||
+          earlyUserKeys.byteplusKey ||
+          earlyUserKeys.openaiKey ||
+          earlyUserKeys.googleAiKey
+        );
+        if (!hasAnyVideoKey) {
+          const noKeyMsg =
+            "NO_VIDEO_KEY: Add a video-generation API key before generating a film. " +
+            "Open Settings → API Keys and connect at least one of: fal.ai (cheapest, ~$0.40/clip), " +
+            "Runway, Hugging Face (free tier), Luma, Replicate, or Google Veo 3. " +
+            "Once connected, return here and tap Re-generate Film.";
+          console.warn(`[QuickGen] Project ${projectId} blocked: user has no video API keys configured.`);
+          try { await db.updateJob(jobId, { status: "failed", progress: 0, errorMessage: noKeyMsg }); } catch {}
+          try { await db.updateProject(projectId, userId, { status: "failed", progress: 0 }); } catch {}
+          return;
+        }
+
         // Wrap entire background pipeline in a request-scoped LLM key context so EVERY
         // nested invokeLLM call (compression, scene breakdown, beat-sheet, dialog, etc.)
         // automatically prefers the user's saved OpenAI key over the platform's shared key.
@@ -3332,9 +3359,11 @@ Break this into 8-15 scenes. For each scene, provide:
         //    "completing" with an empty preview (which is what the user sees as "it pretends"). ──
         if (!outputUrl && generatedCount === 0) {
           const failMsg =
-            "No video was generated — every video provider attempt failed. " +
-            "Most often this is missing or rate-limited API keys. " +
-            "Open Settings → API Keys and make sure your Runway / Veo3 / OpenAI keys are valid, then hit Re-generate Film.";
+            "VIDEO_PROVIDER_FAILED: Every video provider attempt failed for this project. " +
+            "Common causes: (1) the API key for your selected provider is rate-limited or out of credit, " +
+            "(2) the provider is temporarily down, or (3) the prompt was rejected by the safety filter. " +
+            "Open Settings → API Keys, verify your fal.ai / Runway / Hugging Face / Luma key is valid and funded, " +
+            "then return here and tap Re-generate Film.";
           console.error(`[QuickGen] Project ${projectId} produced 0 videos — marking job/project failed.`);
           try { await db.updateJob(job.id, { status: "failed", progress: 0, errorMessage: failMsg }); } catch { /* ignore */ }
           try {
