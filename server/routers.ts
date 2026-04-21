@@ -3295,6 +3295,27 @@ Break this into 8-15 scenes. For each scene, provide:
           console.error("[QuickGen] Auto-stitch failed (non-fatal):", stitchErr.message);
           // Non-fatal — project still completes, user can manually export later
         }
+
+        // ── No-video guard: if zero scenes produced playable videos AND no stitched output,
+        //    mark the job + project as failed with an actionable message instead of silently
+        //    "completing" with an empty preview (which is what the user sees as "it pretends"). ──
+        if (!outputUrl && generatedCount === 0) {
+          const failMsg =
+            "No video was generated — every video provider attempt failed. " +
+            "Most often this is missing or rate-limited API keys. " +
+            "Open Settings → API Keys and make sure your Runway / Veo3 / OpenAI keys are valid, then hit Re-generate Film.";
+          console.error(`[QuickGen] Project ${projectId} produced 0 videos — marking job/project failed.`);
+          try { await db.updateJob(job.id, { status: "failed", progress: 0, errorMessage: failMsg }); } catch { /* ignore */ }
+          try {
+            await db.updateProject(projectId, userId, {
+              status: "failed",
+              progress: 0,
+            });
+          } catch { /* ignore */ }
+          console.log(`[QuickGen] Background generation halted for project ${projectId}: 0 videos produced`);
+          return;
+        }
+
         // Update job and project
         await db.updateJob(job.id, { status: "completed", progress: 100 });
         // Ensure project has a thumbnailUrl — use first scene's thumbnail if not already set
@@ -3315,11 +3336,15 @@ Break this into 8-15 scenes. For each scene, provide:
         console.log(`[QuickGen] Background generation complete for project ${projectId}: ${scenesData.length} scenes, ${generatedCount} videos`);
         } catch (error: any) {
           // Error recovery: ensure project doesn't get stuck in "generating" state
+          // AND surface the actual error message into the job so the red banner in the UI fires.
+          const fatalMsg =
+            (error?.message ? String(error.message) : "Unknown background generation error") +
+            " — please check Settings → API Keys and try Re-generate Film. If this keeps happening, the issue is on the AI provider side.";
           console.error("[QuickGen] Background generation failed:", error?.message, error?.stack);
-          try { await db.updateJob(jobId, { status: "failed", progress: 0 }); } catch { /* ignore */ }
+          try { await db.updateJob(jobId, { status: "failed", progress: 0, errorMessage: fatalMsg }); } catch { /* ignore */ }
           try {
             await db.updateProject(projectId, userId, {
-              status: "draft",
+              status: "failed",
               progress: 0,
             });
           } catch { /* ignore */ }
