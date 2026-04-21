@@ -1054,7 +1054,7 @@ export default function AdPosterMaker() {
         {/* ── Sidebar ── */}
         <div className="w-full lg:w-[380px] border-l border-border/50 bg-card overflow-y-auto flex-shrink-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
-            <TabsList className="w-full grid grid-cols-5 h-auto rounded-none border-b border-border/50 bg-muted/30 p-1 gap-0.5">
+            <TabsList className="w-full flex overflow-x-auto scrollbar-none sm:grid sm:grid-cols-5 h-auto rounded-none border-b border-border/50 bg-muted/30 p-1 gap-0.5 [&>*]:shrink-0 [&>*]:whitespace-nowrap">
               <TabsTrigger value="design" className="flex-col gap-0.5 h-14 text-[10px] rounded-md data-[state=active]:bg-background">
                 <LayoutTemplate className="h-4 w-4" />
                 Design

@@ -154,7 +154,7 @@ export default function PitchLab() {
       </Card>
 
       <Tabs value={activeKind as string} onValueChange={(v) => setActiveKind(v as keyof typeof PROMPTS)}>
-        <TabsList className="grid grid-cols-4 w-full">
+        <TabsList className="flex w-full overflow-x-auto scrollbar-none sm:grid sm:grid-cols-4 h-auto [&>*]:shrink-0 [&>*]:whitespace-nowrap">
           <TabsTrigger value="logline" className="text-xs"><Wand2 className="h-3 w-3 mr-1" />Loglines</TabsTrigger>
           <TabsTrigger value="synopsis" className="text-xs"><FileText className="h-3 w-3 mr-1" />Synopsis</TabsTrigger>
           <TabsTrigger value="treatment" className="text-xs"><FileText className="h-3 w-3 mr-1" />Treatment</TabsTrigger>

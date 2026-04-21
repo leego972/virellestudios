@@ -39,7 +39,7 @@ export default function ProStudio() {
       </div>
 
       <Tabs defaultValue="style">
-        <TabsList className="grid grid-cols-5 w-full max-w-3xl mb-4">
+        <TabsList className="flex w-full max-w-3xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-5 h-auto mb-4 [&>*]:shrink-0 [&>*]:whitespace-nowrap">
           <TabsTrigger value="style"><Palette className="h-3.5 w-3.5 mr-1.5" />Style Bible</TabsTrigger>
           <TabsTrigger value="versions"><Star className="h-3.5 w-3.5 mr-1.5" />Versions</TabsTrigger>
           <TabsTrigger value="voice"><Mic className="h-3.5 w-3.5 mr-1.5" />Voice Rights</TabsTrigger>

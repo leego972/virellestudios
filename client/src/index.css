@@ -249,6 +249,16 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Mobile safety net: prevent stray children (long URLs, wide cards, oversized inline media)
+       from causing the whole page to scroll horizontally on phones. Individual scrollable
+       containers (tab strips, tables) opt-in with their own overflow-x-auto and remain unaffected. */
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+  /* Long unbroken strings (URLs, hashes, IDs) shouldn't blow out card layouts on small screens. */
+  p, span, div, h1, h2, h3, h4, h5, h6, a, li, td {
+    overflow-wrap: break-word;
   }
 
   /* ── Cinematic smooth scrolling ── */

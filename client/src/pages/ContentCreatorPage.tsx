@@ -517,7 +517,7 @@ export default function ContentCreatorPage() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-5 w-full max-w-2xl">
+        <TabsList className="flex w-full max-w-2xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-5 h-auto [&>*]:shrink-0 [&>*]:whitespace-nowrap">
           <TabsTrigger value="studio">Studio</TabsTrigger>
           <TabsTrigger value="queue">Queue</TabsTrigger>
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
