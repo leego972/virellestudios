@@ -24,6 +24,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ArrowLeft,
   Repeat,
   Download,
   Save,
@@ -460,8 +461,19 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
         className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between"
         style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}
       >
+        {/* Always-visible Back button — guarantees an exit even when controls fade */}
+        <Button
+          size="icon"
+          variant="ghost"
+          className="ml-2 mt-1 text-white bg-black/50 hover:bg-black/70 active:bg-black/80 backdrop-blur-sm rounded-full h-11 w-11 shrink-0 shadow-lg"
+          onClick={onClose}
+          title="Back"
+          aria-label="Back"
+        >
+          <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+        </Button>
         {/* Left: title — fades with controls */}
-        <div className={`flex items-center gap-2 min-w-0 flex-1 px-4 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <div className={`flex items-center gap-2 min-w-0 flex-1 px-3 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
           <div className="min-w-0">
             <h2 className="text-white font-medium text-sm sm:text-base truncate drop-shadow">{movie.title}</h2>
             <div className="flex items-center gap-2 mt-0.5">
@@ -680,21 +692,31 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
 
         {/* Error State */}
         {hasError && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 text-white/70">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 text-white/70 px-6 text-center">
             <Film className="h-16 w-16 mb-4 text-red-400/50" />
             <p className="text-lg font-medium text-red-400">Failed to load video</p>
-            <p className="text-sm mt-1">The video file may be unavailable or in an unsupported format.</p>
-            <Button
-              variant="outline"
-              className="mt-4 border-white/20 text-white hover:bg-white/10"
-              onClick={() => {
-                setHasError(false);
-                setIsLoading(true);
-                videoRef.current?.load();
-              }}
-            >
-              Try Again
-            </Button>
+            <p className="text-sm mt-1 max-w-sm">The video file may be unavailable or in an unsupported format.</p>
+            <div className="mt-5 flex flex-col sm:flex-row items-center gap-2">
+              <Button
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10 w-full sm:w-auto"
+                onClick={() => {
+                  setHasError(false);
+                  setIsLoading(true);
+                  videoRef.current?.load();
+                }}
+              >
+                Try Again
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-white/80 hover:text-white hover:bg-white/10 w-full sm:w-auto"
+                onClick={onClose}
+              >
+                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                Back
+              </Button>
+            </div>
           </div>
         )}
 
