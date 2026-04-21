@@ -600,19 +600,31 @@ export default function ProjectDetail() {
       </div>
 
       {/* Generation Progress */}
-      {/* Generation Error Banner — shown when job has an errorMessage (all providers failed) */}
-      {jobs && jobs.some((j: any) => j.errorMessage) && project.status !== "generating" && (
-        <Card className="bg-red-500/5 border-red-500/30">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <div>
-                <p className="text-sm font-medium text-red-400">Video generation failed — please recharge your API keys, then Re-generate Film.</p>
+      {/* Generation Error Banner — surfaces the ACTUAL backend error message instead of a
+          generic "recharge your API keys" template (which was misleading users who had valid,
+          funded API keys: the real failure could be a model error, timeout, image-URL issue,
+          provider outage, etc.). The actionable hint now lives below in muted text so users
+          can quickly read what really went wrong. */}
+      {jobs && jobs.some((j: any) => j.errorMessage) && project.status !== "generating" && (() => {
+        const failedJob = jobs.find((j: any) => j.errorMessage);
+        const rawMsg: string = String(failedJob?.errorMessage || "Video generation failed.");
+        return (
+          <Card className="bg-red-500/5 border-red-500/30">
+            <CardContent className="p-4 space-y-2">
+              <div className="flex items-start gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-red-400 break-words">Video generation failed</p>
+                  <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
+                  <p className="text-[11px] text-muted-foreground mt-2">
+                    If your API keys are funded and connected (Settings → API Keys), this is usually a temporary provider issue — tap <span className="font-medium text-foreground">Re-generate Film</span> to retry. Make sure your preferred provider is selected.
+                  </p>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {(project.status === "generating" || quickGenMutation.isPending) && (
         <Card className="bg-primary/5 border-primary/20">

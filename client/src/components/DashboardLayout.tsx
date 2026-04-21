@@ -659,7 +659,7 @@ function DashboardLayoutContent({
             </div>
           </div>
         )}
-        <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
+        <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative" style={{ paddingBottom: 'max(6rem, calc(env(safe-area-inset-bottom) + 5.5rem))' }}>
           {/* Gold VS watermark branding — bottom-right corner, subtle and non-intrusive */}
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: soft golden logo */}
