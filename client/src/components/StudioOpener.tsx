@@ -299,7 +299,13 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
           muted
           playsInline
           preload="auto"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain transition-[filter] duration-700"
+          style={{
+            filter:
+              videoPhase === "hold"
+                ? "drop-shadow(0 0 32px rgba(212,175,55,0.85)) drop-shadow(0 0 72px rgba(212,175,55,0.55)) drop-shadow(0 0 140px rgba(212,175,55,0.32))"
+                : "none",
+          }}
           onEnded={() => {
             // Hold on the final golden logo frame for 3 full seconds, then fade out
             setVideoPhase("hold");
@@ -315,6 +321,25 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
           {/* Fallback: CDN */}
           <source src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663497651330/KKNwAtyzOOzGlBLQ.mp4" type="video/mp4" />
         </video>
+        {/* Gold glow halo that pulses across the held final frame */}
+        {videoPhase === "hold" && (
+          <div
+            className="pointer-events-none absolute inset-0 flex items-center justify-center"
+            style={{ mixBlendMode: "screen", animation: "vsGoldPulse 2.4s ease-in-out infinite" }}
+          >
+            <div
+              className="rounded-full"
+              style={{
+                width: "min(70vw, 70vh)",
+                height: "min(70vw, 70vh)",
+                background:
+                  "radial-gradient(circle, rgba(255,210,90,0.55) 0%, rgba(212,175,55,0.32) 28%, rgba(212,175,55,0.10) 55%, rgba(0,0,0,0) 75%)",
+                filter: "blur(8px)",
+              }}
+            />
+          </div>
+        )}
+        <style>{`@keyframes vsGoldPulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}`}</style>
         {skippable && (
           <button
             className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors"
