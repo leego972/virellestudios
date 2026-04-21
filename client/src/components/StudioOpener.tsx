@@ -307,12 +307,24 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
                 : "none",
           }}
           onEnded={() => {
-            // Hold on the final golden logo frame for 3 full seconds, then fade out
+            // iOS Safari + some Chrome builds reset <video> to the first frame the instant
+            // `ended` fires, so users see a black flash instead of the gold logo. Pin the
+            // playhead just before duration and explicitly pause to freeze the LAST frame
+            // on screen, then hold for 2 full seconds before fading out.
+            const v = videoRef.current;
+            if (v) {
+              try {
+                v.pause();
+                if (Number.isFinite(v.duration) && v.duration > 0.1) {
+                  v.currentTime = Math.max(0, v.duration - 0.04);
+                }
+              } catch { /* ignore */ }
+            }
             setVideoPhase("hold");
             setTimeout(() => {
               setVideoPhase("fadeout");
               setTimeout(onComplete, 700);
-            }, 3000);
+            }, 2000);
           }}
           onError={() => setVideoError(true)}
         >
