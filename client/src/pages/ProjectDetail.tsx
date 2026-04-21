@@ -648,29 +648,29 @@ export default function ProjectDetail() {
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-card/50 flex-nowrap sm:flex-wrap h-auto gap-1 p-1 overflow-x-auto w-full justify-start">
+        <TabsList className="bg-card/50 flex-nowrap sm:flex-wrap h-auto gap-1 p-1 overflow-x-auto overflow-y-hidden w-full justify-start scrollbar-thin [-webkit-overflow-scrolling:touch]">
           {/* Pipeline order: Overview → Story → Characters → Scenes → Soundtrack → Trailer → Export → Tools */}
-          <TabsTrigger value="journey" className="text-xs">
+          <TabsTrigger value="journey" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
             <Clapperboard className="h-3 w-3 mr-1" />Journey
           </TabsTrigger>
-          <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
-          <TabsTrigger value="story" className="text-xs">
+          <TabsTrigger value="overview" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">Overview</TabsTrigger>
+          <TabsTrigger value="story" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
             <BookOpen className="h-3 w-3 mr-1" />Story
           </TabsTrigger>
-          <TabsTrigger value="characters" className="text-xs">
+          <TabsTrigger value="characters" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
             Characters {characters?.length ? `(${characters.length})` : ""}
           </TabsTrigger>
-          <TabsTrigger value="scenes" className="text-xs">
+          <TabsTrigger value="scenes" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
             Scenes {scenes?.length ? `(${scenes.length})` : ""}
           </TabsTrigger>
-          <TabsTrigger value="soundtrack" className="text-xs">
+          <TabsTrigger value="soundtrack" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
             <Music className="h-3 w-3 mr-1" />Soundtrack {soundtracks?.length ? `(${soundtracks.length})` : ""}
           </TabsTrigger>
-          <TabsTrigger value="trailer" className="text-xs">Trailer</TabsTrigger>
-          <TabsTrigger value="export" className="text-xs">
+          <TabsTrigger value="trailer" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">Trailer</TabsTrigger>
+          <TabsTrigger value="export" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
             <Download className="h-3 w-3 mr-1" />Export
           </TabsTrigger>
-          <TabsTrigger value="tools" className="text-xs">
+          <TabsTrigger value="tools" className="text-xs shrink-0 whitespace-nowrap px-3 py-1.5">
             <Settings className="h-3 w-3 mr-1" />Tools
           </TabsTrigger>
         </TabsList>
