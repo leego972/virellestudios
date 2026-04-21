@@ -925,6 +925,37 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
 
               {/* Right Controls */}
               <div className="flex items-center gap-1">
+                {/* Download — mirrored here in the bottom bar so mobile users (whose top bar
+                    can be obscured by Safari/Chrome chrome) always have a visible Download. */}
+                {movie.fileUrl && (
+                  <TooltipProvider delayDuration={300}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 sm:h-9 sm:w-9 text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const a = document.createElement("a");
+                            a.href = movie.fileUrl!;
+                            a.download = movie.title;
+                            a.target = "_blank";
+                            a.rel = "noopener noreferrer";
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                          }}
+                          aria-label="Download video"
+                        >
+                          <Download className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top"><p>Download</p></TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+
                 {/* Loop */}
                 <TooltipProvider delayDuration={300}>
                   <Tooltip>
