@@ -2464,30 +2464,34 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         // Get user's API keys
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
 
-        // Determine which LLM provider to use
-        // Admins can use platform keys; regular users must provide their own
+        // Determine which LLM provider to use.
+        // Priority: Venice (preferred) → user's chosen → OpenAI → Anthropic → Google → admin platform key.
         const preferredLlm = userKeys.preferredLlmProvider;
         const isAdminChat = ctx.user.role === "admin";
-        let provider: "openai" | "anthropic" | "google" = "openai";
-        if (preferredLlm === "anthropic" && userKeys.anthropicKey) provider = "anthropic";
+        let provider: "openai" | "anthropic" | "google" | "venice" = "openai";
+        if (preferredLlm === "venice" && userKeys.veniceKey) provider = "venice";
+        else if (preferredLlm === "anthropic" && userKeys.anthropicKey) provider = "anthropic";
         else if (preferredLlm === "google" && userKeys.googleAiKey) provider = "google";
         else if (preferredLlm === "openai" && userKeys.openaiKey) provider = "openai";
+        else if (userKeys.veniceKey) provider = "venice";
         else if (userKeys.openaiKey) provider = "openai";
         else if (userKeys.anthropicKey) provider = "anthropic";
         else if (userKeys.googleAiKey) provider = "google";
-        else if (isAdminChat && ENV.openaiApiKey) {
-          // Admin fallback: use platform OpenAI key
+        else if (ENV.veniceApiKey) {
+          // Permanent platform Venice — works for ALL users with no own LLM key (until TitanAI trained)
+          provider = "venice";
+        } else if (isAdminChat && ENV.openaiApiKey) {
           provider = "openai";
         } else {
-          // Non-admin without any LLM key — require them to add their own
           throw new TRPCError({
             code: "FORBIDDEN",
-            message: "No AI API key found. Please add your own OpenAI, Anthropic (Claude), or Google (Gemini) API key in Settings → API Keys to use Virelle AI chat.",
+            message: "Director's Assistant is temporarily unavailable. Please try again shortly.",
           });
         }
 
         const apiKey =
-          provider === "openai" ? (userKeys.openaiKey || (isAdminChat ? ENV.openaiApiKey : ""))
+          provider === "venice" ? (userKeys.veniceKey || ENV.veniceApiKey)
+          : provider === "openai" ? (userKeys.openaiKey || (isAdminChat ? ENV.openaiApiKey : ""))
           : provider === "anthropic" ? userKeys.anthropicKey!
           : userKeys.googleAiKey!;
 
@@ -2549,7 +2553,27 @@ Available fields you can update:
         let aiResponse = "";
 
         try {
-          if (provider === "openai") {
+          if (provider === "venice") {
+            const resp = await fetch("https://api.venice.ai/api/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "llama-3.3-70b",
+                messages: [{ role: "system", content: systemPrompt }, ...chatMessages],
+                max_tokens: 1000,
+                temperature: 0.7,
+              }),
+            });
+            if (!resp.ok) {
+              const errText = await resp.text();
+              throw new Error(`Venice API error ${resp.status}: ${errText}`);
+            }
+            const data = await resp.json();
+            aiResponse = data.choices?.[0]?.message?.content || "";
+          } else if (provider === "openai") {
             const resp = await fetch("https://api.openai.com/v1/chat/completions", {
               method: "POST",
               headers: {
@@ -2656,7 +2680,7 @@ Available fields you can update:
     // Set preferred LLM provider for Virelle chat
     setPreferredLlm: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "anthropic", "google"]),
+        provider: z.enum(["openai", "anthropic", "google", "venice"]),
       }))
       .mutation(async ({ ctx, input }) => {
         await db.updateUserApiKey(ctx.user!.id, "preferredLlmProvider", input.provider);
@@ -8887,6 +8911,7 @@ Rules:
           anthropic: !!(u as any).userAnthropicKey,
           google: !!(u as any).userGoogleAiKey,
           veo3: !!(u as any).userGoogleAiKey,  // veo3 uses the same Gemini key
+          venice: !!(u as any).userVeniceKey,
         },
         preferredVideoProvider: u.preferredVideoProvider || null,
         preferredLlmProvider: (u as any).preferredLlmProvider || null,

@@ -123,4 +123,7 @@ export const ENV = {
   // Leave empty to disable — falls back to OpenAI/Forge routing as normal.
   titanApiUrl: process.env.TITAN_API_URL ?? "",
   titanApiKey: process.env.TITAN_API_KEY ?? "",
+  /** Venice AI permanent platform key — used as the default LLM for ALL users (Assistant, script gen, scene breakdowns) when no user-specific LLM key is set. OpenAI-compatible. */
+  veniceApiKey: process.env.VENICE_API_KEY ?? "",
+  veniceModel: process.env.VENICE_MODEL ?? "llama-3.3-70b",
 };

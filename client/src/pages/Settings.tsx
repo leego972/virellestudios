@@ -749,6 +749,58 @@ export default function Settings() {
             </CardContent>
           </Card>
 
+          {/* Language Model (LLM) API Key — Venice */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-violet-400" />
+              Language Model (LLM) API Key
+            </h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Powers script writing, scene breakdowns, the Director's Assistant chat, and acts as a graceful storyboard fallback when video providers fail. <strong className="text-foreground">Venice AI is preferred</strong> — it's tried before any other LLM provider.
+            </p>
+            <Card className="border from-violet-500/20 to-purple-600/10 border-violet-500/30 bg-gradient-to-br">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <span className="text-xl">🟣</span>
+                    Venice AI (preferred LLM)
+                    {configuredKeys['venice' as keyof typeof configuredKeys] && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
+                  </CardTitle>
+                  <a href="https://venice.ai/settings/api" target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+                    Get API Key <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+                <CardDescription>OpenAI-compatible LLM. Used for all script generation, scene breakdowns, and the Director's Assistant. Will be the primary LLM as soon as your key is saved.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Info className="w-3 h-3" />
+                  <span>Models: llama-3.3-70b, llama-3.1-405b, qwen-2.5-coder-32b</span>
+                  <span className="mx-1">•</span>
+                  <span>Pricing: Pro plan includes API credits; pay-as-you-go available</span>
+                </div>
+                <div className="flex gap-2">
+                  <Input type="password" placeholder={configuredKeys['venice' as keyof typeof configuredKeys] ? "••••••••••••••••" : "Paste your Venice AI API key here..."} value={keyInputs['venice'] || ''} onChange={(e) => setKeyInputs((prev) => ({ ...prev, venice: e.target.value }))} className="font-mono text-sm" />
+                  <Button size="sm" onClick={() => { const v = (keyInputs['venice'] || '').trim(); if (!v) return; setSavingProvider('venice'); saveKeyMutation.mutate({ provider: 'venice' as any, key: v }); }} disabled={!(keyInputs['venice'] || '').trim() || savingProvider === 'venice'}>
+                    {savingProvider === 'venice' ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                  </Button>
+                  {(keyInputs['venice'] || '').trim() && (
+                    <Button size="sm" variant="outline" onClick={() => { setTestingProvider('venice'); testKeyMutation.mutate({ provider: 'venice' as any, key: (keyInputs['venice'] || '').trim() }); }} disabled={testingProvider === 'venice'}>
+                      {testingProvider === 'venice' ? <Loader2 className="w-4 h-4 animate-spin" /> : "Test"}
+                    </Button>
+                  )}
+                </div>
+                {configuredKeys['venice' as keyof typeof configuredKeys] && (
+                  <div className="flex gap-2 pt-1">
+                    <Button size="sm" variant="outline" className="text-xs text-red-400 hover:text-red-300 border-red-500/30" onClick={() => removeKeyMutation.mutate({ provider: 'venice' as any })}>
+                      <XCircle className="w-3 h-3 mr-1" />Remove Key
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
           {/* API Key Cards */}
           <div>
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">

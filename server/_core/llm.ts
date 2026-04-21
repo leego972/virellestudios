@@ -264,20 +264,29 @@ const normalizeToolChoice = (
 
 /**
  * Resolve the API URL and key.
- * Priority: OpenAI API (user's key) > Forge API (built-in)
- * This ensures we don't hit Forge quota limits.
+ * Priority: Venice (permanent platform LLM) > OpenAI > Forge.
+ * Venice is the permanent default LLM for all users — set VENICE_API_KEY in env.
  */
 const resolveProvider = (): { url: string; apiKey: string; model: string } => {
-  // Primary: Use OpenAI API with user's key
+  // Primary: Permanent platform Venice LLM (used by all users when no BYOK LLM is set)
+  if (ENV.veniceApiKey) {
+    return {
+      url: VENICE_URL,
+      apiKey: ENV.veniceApiKey,
+      model: ENV.veniceModel || VENICE_DEFAULT_MODEL,
+    };
+  }
+
+  // Secondary: Platform OpenAI key (legacy fallback)
   if (ENV.openaiApiKey) {
     return {
       url: "https://api.openai.com/v1/chat/completions",
       apiKey: ENV.openaiApiKey,
-      model: "gpt-4.1",  // Full GPT-4.1 for maximum quality generation
+      model: "gpt-4.1",
     };
   }
 
-  // Fallback: Use Forge API (built-in)
+  // Final fallback: Forge API (built-in)
   if (ENV.forgeApiKey) {
     const baseUrl = ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
       ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
