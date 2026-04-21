@@ -300,46 +300,60 @@ export default function NewProject() {
                 </div>
               </div>
 
-              {/* Duration — now editable in Quick Generate */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <Label className="text-xs text-muted-foreground">Film Duration</Label>
-                  <span className="text-xs font-medium text-foreground">
-                    {duration >= 60 ? `${Math.floor(duration / 60)}h ${duration % 60 > 0 ? `${duration % 60}m` : ''}` : `${duration}m`}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Slider
-                    value={[duration]}
-                    onValueChange={(v) => setDuration(v[0])}
-                    min={1}
-                    max={maxDuration}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <Input
-                    type="number"
-                    min={1}
-                    max={maxDuration}
-                    value={duration}
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      if (!isNaN(val) && val >= 1 && val <= maxDuration) setDuration(val);
-                    }}
-                    className="bg-background/50 h-9 text-sm w-16 text-center"
-                  />
-                </div>
-                <div className="flex justify-between text-[10px] text-muted-foreground/60">
-                  <span>1 min</span>
-                  <span>{maxDuration >= 60 ? `${Math.floor(maxDuration / 60)}h${maxDuration % 60 > 0 ? ` ${maxDuration % 60}m` : ''}` : `${maxDuration}m`}</span>
-                </div>
-                {maxDuration < 180 && (
-                  <p className="text-[10px] text-amber-500 flex items-center gap-1 mt-1">
-                    <Lock className="h-3 w-3" />
-                    Upgrade to unlock up to 3 hours
-                  </p>
-                )}
-              </div>
+              {/* Duration — seconds for first minute, then minute-by-minute.
+                  Underlying `duration` is stored in MINUTES (fractional), e.g. 0.5 = 30 seconds. */}
+              {(() => {
+                // 12 ticks of 5s for the first minute (5s, 10s … 60s), then 1 tick per minute up to maxDuration
+                const tickToMinutes = (tick: number): number => {
+                  if (tick <= 11) return Math.round(((tick + 1) * 5) / 60 * 100) / 100;
+                  return tick - 10;
+                };
+                const minutesToTick = (min: number): number => {
+                  if (min < 1) return Math.max(0, Math.min(11, Math.round((min * 60) / 5) - 1));
+                  if (min <= 1) return 11;
+                  return Math.min(11 + maxDuration - 1, min + 10);
+                };
+                const formatDur = (min: number): string => {
+                  if (min < 1) return `${Math.round(min * 60)} sec`;
+                  if (min < 60) return `${min} min`;
+                  const h = Math.floor(min / 60);
+                  const m = min % 60;
+                  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+                };
+                const maxTick = 11 + (maxDuration - 1); // last tick = maxDuration minutes
+                return (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs text-muted-foreground">Film Duration</Label>
+                      <span className="text-xs font-medium text-foreground">{formatDur(duration)}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Slider
+                        value={[minutesToTick(duration)]}
+                        onValueChange={(v) => setDuration(tickToMinutes(v[0]))}
+                        min={0}
+                        max={maxTick}
+                        step={1}
+                        className="flex-1"
+                      />
+                      <span className="bg-background/50 h-9 text-sm min-w-[64px] text-center rounded-md border border-border flex items-center justify-center px-2 font-medium">
+                        {formatDur(duration)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-[10px] text-muted-foreground/60">
+                      <span>5 sec</span>
+                      <span className="text-muted-foreground/40">1 min</span>
+                      <span>{maxDuration >= 60 ? `${Math.floor(maxDuration / 60)}h${maxDuration % 60 > 0 ? ` ${maxDuration % 60}m` : ''}` : `${maxDuration} min`}</span>
+                    </div>
+                    {maxDuration < 180 && (
+                      <p className="text-[10px] text-amber-500 flex items-center gap-1 mt-1">
+                        <Lock className="h-3 w-3" />
+                        Upgrade to unlock up to 3 hours
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
 
               <p className="text-[10px] text-muted-foreground/40 flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
