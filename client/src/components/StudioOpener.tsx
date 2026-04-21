@@ -285,42 +285,11 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
     drift: (((i * 137.508) % 1) - 0.5) * 0.4,
   }));
 
-  // ── Video skip handler ─────────────────────────────────────────────────────
-  const handleVideoSkip = useCallback(() => {
-    if (videoRef.current) {
-      try { videoRef.current.pause(); } catch { /* ignore */ }
-    }
-    setVideoPhase("fadeout");
-    setTimeout(onComplete, 700);
-  }, [onComplete]);
-
-  // React to skip state changes (click-to-skip on overlay or button)
-  useEffect(() => {
-    if (isSkipped && !videoError) handleVideoSkip();
-  }, [isSkipped, videoError, handleVideoSkip]);
-
   // If video hasn't errored, show video player
   if (!videoError) {
-    // Pause-and-hold finaliser — runs once when we reach the logo hold frame.
-    // We pause the video (rather than letting it end) so the browser keeps the
-    // last visible frame painted without any end-of-stream flicker, then we
-    // hold for 3 full seconds before a smooth 1s fade.
-    const enterHold = () => {
-      if (videoPhase !== "playing") return;
-      const v = videoRef.current;
-      if (v) {
-        try { v.pause(); } catch { /* ignore */ }
-      }
-      setVideoPhase("hold");
-      setTimeout(() => {
-        setVideoPhase("fadeout");
-        setTimeout(onComplete, 1000);
-      }, 3000);
-    };
-
     return (
       <div
-        className="fixed inset-0 z-[9999] bg-black flex items-center justify-center transition-opacity duration-1000"
+        className="fixed inset-0 z-[9999] bg-black flex items-center justify-center transition-opacity duration-700"
         style={{ opacity: videoPhase === "fadeout" ? 0 : 1 }}
         onClick={() => skippable && setIsSkipped(true)}
       >
@@ -330,28 +299,14 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
           muted
           playsInline
           preload="auto"
-          disablePictureInPicture
-          {...({ "webkit-playsinline": "true" } as Record<string, string>)}
-          controlsList="nodownload nofullscreen noremoteplayback"
-          className="w-full h-full object-contain pointer-events-none"
-          onLoadedMetadata={(e) => {
-            // No-op: duration is read on each timeupdate. Keeps callback wired
-            // for future hooks (e.g. analytics on opener length).
-            void e;
-          }}
-          onTimeUpdate={(e) => {
-            // Pause on the last good visible frame BEFORE the browser reaches
-            // the natural end-of-stream — prevents end-frame flicker / control
-            // overlays on Safari and ensures the gold logo stays painted.
-            const v = e.currentTarget;
-            const dur = isFinite(v.duration) ? v.duration : 0;
-            if (dur > 1 && v.currentTime >= dur - 0.15 && videoPhase === "playing") {
-              enterHold();
-            }
-          }}
+          className="w-full h-full object-contain"
           onEnded={() => {
-            // Safety net: if timeupdate didn't fire pre-end, still hold.
-            enterHold();
+            // Hold on the final golden logo frame for 3 full seconds, then fade out
+            setVideoPhase("hold");
+            setTimeout(() => {
+              setVideoPhase("fadeout");
+              setTimeout(onComplete, 700);
+            }, 3000);
           }}
           onError={() => setVideoError(true)}
         >
@@ -362,10 +317,8 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
         </video>
         {skippable && (
           <button
-            type="button"
-            aria-label="Skip studio opener"
-            className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors text-sm tracking-wider"
-            onClick={(e) => { e.stopPropagation(); setIsSkipped(true); }}
+            className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors"
+            onClick={() => setIsSkipped(true)}
           >
             SKIP
           </button>
