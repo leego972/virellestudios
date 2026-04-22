@@ -742,30 +742,33 @@ export default function ProjectDetail() {
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-card/50 flex flex-nowrap sm:flex-wrap h-auto gap-2 sm:gap-1 p-1.5 overflow-x-auto overflow-y-hidden w-full justify-start scrollbar-thin [-webkit-overflow-scrolling:touch] [&>*]:bg-background/40 [&>*]:border [&>*]:border-border/40 [&>*]:data-[state=active]:bg-primary/15 [&>*]:data-[state=active]:border-primary/40 [&>*]:data-[state=active]:text-primary">
+        <TabsList className="bg-card/50 grid grid-cols-3 sm:flex sm:flex-wrap h-auto gap-1.5 p-1.5 w-full sm:justify-start [&>*]:bg-background/40 [&>*]:border [&>*]:border-border/40 [&>*]:data-[state=active]:bg-primary/15 [&>*]:data-[state=active]:border-primary/40 [&>*]:data-[state=active]:text-primary">
           {/* Pipeline order: Overview → Story → Characters → Scenes → Soundtrack → Trailer → Export → Tools */}
-          <TabsTrigger value="journey" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
-            <Clapperboard className="h-3 w-3 mr-1" />Journey
+          <TabsTrigger value="journey" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+            <Clapperboard className="h-3 w-3 hidden sm:inline" />Journey
           </TabsTrigger>
-          <TabsTrigger value="overview" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">Overview</TabsTrigger>
-          <TabsTrigger value="story" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
-            <BookOpen className="h-3 w-3 mr-1" />Story
+          <TabsTrigger value="overview" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center">Overview</TabsTrigger>
+          <TabsTrigger value="story" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+            <BookOpen className="h-3 w-3 hidden sm:inline" />Story
           </TabsTrigger>
-          <TabsTrigger value="characters" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
-            Characters {characters?.length ? `(${characters.length})` : ""}
+          <TabsTrigger value="characters" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center">
+            <span className="sm:hidden">Cast{characters?.length ? ` ${characters.length}` : ""}</span>
+            <span className="hidden sm:inline">Characters {characters?.length ? `(${characters.length})` : ""}</span>
           </TabsTrigger>
-          <TabsTrigger value="scenes" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
-            Scenes {scenes?.length ? `(${scenes.length})` : ""}
+          <TabsTrigger value="scenes" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center">
+            Scenes{scenes?.length ? ` ${scenes.length}` : ""}
           </TabsTrigger>
-          <TabsTrigger value="soundtrack" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
-            <Music className="h-3 w-3 mr-1" />Soundtrack {soundtracks?.length ? `(${soundtracks.length})` : ""}
+          <TabsTrigger value="soundtrack" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+            <Music className="h-3 w-3 hidden sm:inline" />
+            <span className="sm:hidden">Music{soundtracks?.length ? ` ${soundtracks.length}` : ""}</span>
+            <span className="hidden sm:inline">Soundtrack {soundtracks?.length ? `(${soundtracks.length})` : ""}</span>
           </TabsTrigger>
-          <TabsTrigger value="trailer" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">Trailer</TabsTrigger>
-          <TabsTrigger value="export" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
-            <Download className="h-3 w-3 mr-1" />Export
+          <TabsTrigger value="trailer" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center">Trailer</TabsTrigger>
+          <TabsTrigger value="export" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+            <Download className="h-3 w-3 hidden sm:inline" />Export
           </TabsTrigger>
-          <TabsTrigger value="tools" className="text-xs shrink-0 whitespace-nowrap px-3 py-2 rounded-md min-h-9">
-            <Settings className="h-3 w-3 mr-1" />Tools
+          <TabsTrigger value="tools" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1">
+            <Settings className="h-3 w-3 hidden sm:inline" />Tools
           </TabsTrigger>
         </TabsList>
 
