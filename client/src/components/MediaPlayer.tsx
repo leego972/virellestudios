@@ -30,7 +30,9 @@ import {
   Save,
   Film,
   Check,
+  MessageCircle,
 } from "lucide-react";
+import FrameCommentsPanel, { FrameCommentMarkers } from "./FrameCommentsPanel";
 
 type MovieItem = {
   id: number;
@@ -51,6 +53,11 @@ interface MediaPlayerProps {
   playlist?: MovieItem[];
   onClose: () => void;
   onNavigate?: (movieId: number) => void;
+  // v6.62 — When set, enables the Frame Comments panel + scrubber markers.
+  // Pass projectId + (sceneId OR movieId). Movies-list view typically only
+  // has movieId; in-project review views pass both.
+  projectId?: number;
+  sceneId?: number;
 }
 
 const PLAYBACK_SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -76,7 +83,10 @@ const TYPE_COLORS: Record<string, string> = {
   film: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
 };
 
-export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: MediaPlayerProps) {
+export default function MediaPlayer({ movie, playlist, onClose, onNavigate, projectId, sceneId }: MediaPlayerProps) {
+  // v6.62 — Frame comments panel toggle
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const commentsEnabled = !!projectId && (!!sceneId || !!movie.id);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -381,6 +391,15 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
     video.currentTime = value[0];
     setCurrentTime(value[0]);
   };
+
+  // v6.62 — Imperative seek used by frame-comment markers + comments panel.
+  const seekToSeconds = useCallback((sec: number) => {
+    const video = videoRef.current;
+    if (!video) return;
+    const clamped = Math.max(0, Math.min(sec, video.duration || sec));
+    video.currentTime = clamped;
+    setCurrentTime(clamped);
+  }, []);
 
   const handleVolumeChange = (value: number[]) => {
     const video = videoRef.current;
@@ -805,6 +824,16 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                   className="absolute top-1/2 -translate-y-1/2 w-4 h-4 sm:w-3 sm:h-3 bg-primary rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-lg"
                   style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, transform: "translate(-50%, -50%)" }}
                 />
+                {/* v6.62 — Frame comment markers (pinned to specific seconds) */}
+                {commentsEnabled && projectId && (
+                  <FrameCommentMarkers
+                    projectId={projectId}
+                    sceneId={sceneId}
+                    movieId={sceneId ? undefined : movie.id}
+                    duration={duration}
+                    onSeek={seekToSeconds}
+                  />
+                )}
               </div>
 
               {/* Invisible Slider for interaction */}
@@ -925,6 +954,26 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
 
               {/* Right Controls */}
               <div className="flex items-center gap-1">
+                {/* v6.62 — Frame comments toggle */}
+                {commentsEnabled && (
+                  <TooltipProvider delayDuration={300}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className={`h-8 w-8 sm:h-9 sm:w-9 ${commentsOpen ? "text-amber-400 bg-white/10" : "text-white/70 hover:text-white hover:bg-white/10"} active:bg-white/20`}
+                          onClick={(e) => { e.stopPropagation(); setCommentsOpen((v) => !v); }}
+                          aria-label={commentsOpen ? "Hide comments" : "Show frame comments"}
+                          aria-pressed={commentsOpen}
+                        >
+                          <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>{commentsOpen ? "Hide comments" : "Frame comments"}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
                 {/* Download — mirrored here in the bottom bar so mobile users (whose top bar
                     can be obscured by Safari/Chrome chrome) always have a visible Download. */}
                 {movie.fileUrl && (
@@ -1043,6 +1092,25 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate }: Me
                 </TooltipProvider>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* v6.62 — Frame comments side panel (overlay, slides in from right) */}
+        {commentsEnabled && commentsOpen && projectId && (
+          <div
+            data-controls
+            className="absolute top-0 right-0 bottom-0 w-full sm:w-80 max-w-full z-30 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FrameCommentsPanel
+              projectId={projectId}
+              sceneId={sceneId}
+              movieId={sceneId ? undefined : movie.id}
+              currentTime={currentTime}
+              duration={duration}
+              onSeek={seekToSeconds}
+              onClose={() => setCommentsOpen(false)}
+            />
           </div>
         )}
       </div>

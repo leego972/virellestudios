@@ -14,6 +14,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { ArrowLeft, Zap, Layers, Loader2, BookOpen, Film, Sparkles, Lock, Clapperboard, Crown, Users, Blend } from "lucide-react";
+import CostPreflight from "@/components/CostPreflight";
+import ProjectReferenceImageDrop from "@/components/ProjectReferenceImageDrop";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useLocation, useSearch } from "wouter";
 import { useState } from "react";
@@ -65,6 +67,11 @@ export default function NewProject() {
   const [openingScene, setOpeningScene] = useState("");
   const [climax, setClimax] = useState("");
   const [storyResolution, setStoryResolution] = useState("");
+  // v6.62 — Project-level reference images (style anchors). Held as data URLs
+  // until the project exists, then flushed via projectReferenceImage upload.
+  const [pendingRefImages, setPendingRefImages] = useState<string[]>([]);
+
+  const projectRefUploadMut = trpc.upload.projectReferenceImage.useMutation();
 
   // Trailer generation mutation — called after project is created in trailer mode
   const trailerMutation = trpc.generation.generateTrailer.useMutation({
@@ -74,9 +81,33 @@ export default function NewProject() {
     onError: (err) => toast.error(`Trailer: ${err.message}`),
   });
 
+  // Flush any queued reference images to the freshly-created project. Runs
+  // sequentially (rate-limited upload endpoint) and silently — failures here
+  // shouldn't block the user from getting into their project.
+  const flushPendingRefs = async (projectId: number) => {
+    for (const dataUrl of pendingRefImages) {
+      try {
+        const m = dataUrl.match(/^data:([^;]+);base64,(.*)$/);
+        if (!m) continue;
+        await projectRefUploadMut.mutateAsync({
+          base64: m[2],
+          filename: `style-anchor-${Date.now()}.${(m[1].split("/")[1] || "png").replace(/[^a-z0-9]/g, "")}`,
+          contentType: m[1],
+          projectId,
+        });
+      } catch (e) {
+        // best-effort — surfaces a toast but doesn't block project entry
+        console.warn("Reference image upload failed:", e);
+      }
+    }
+  };
+
   const createMutation = trpc.project.create.useMutation({
-    onSuccess: (project) => {
+    onSuccess: async (project) => {
       toast.success("Project created");
+      if (pendingRefImages.length > 0) {
+        await flushPendingRefs(project.id);
+      }
       if (mode === "manual") {
         setLocation(`/projects/${project.id}/scenes`);
       } else if (mode === "trailer") {
@@ -877,8 +908,30 @@ export default function NewProject() {
           </div>
         </div>
 
+        {/* v6.62 — Project-level reference images (style anchors) */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Style Anchors (optional)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ProjectReferenceImageDrop
+              pendingImages={pendingRefImages}
+              onPendingChange={setPendingRefImages}
+            />
+          </CardContent>
+        </Card>
+
         {/* Submit */}
         <div className="flex items-center justify-end gap-3 pt-2">
+          {/* v6.62 — Cost preflight chip. Quick mode + trailer mode trigger
+              automatic generation, so show what it'll cost before submitting. */}
+          {(mode === "quick" || mode === "trailer") && (
+            <CostPreflight
+              action={mode === "trailer" ? "generate_trailer" : "generate_film"}
+              verb={mode === "trailer" ? "Trailer" : "Film"}
+              variant="chip"
+            />
+          )}
           <Button
             type="button"
             variant="ghost"

@@ -63,6 +63,9 @@ export default function NLEExport() {
   const projectId = parseInt(params.projectId || "0");
 
   const [selectedFormat, setSelectedFormat] = useState("xml-premiere-pro");
+  // v6.62 — Aspect ratio preset. Embeds matching frame dimensions in the
+  // exported sequence header (FCPXML/Premiere XML) and adds metadata for EDL/CSV.
+  const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16" | "1:1" | "4:5" | "21:9" | "2.39:1">("16:9");
   const [includeOptions, setIncludeOptions] = useState({
     sceneMetadata: true,
     cameraSettings: true,
@@ -88,6 +91,7 @@ export default function NLEExport() {
       const result = await exportNLEMutation.mutateAsync({
         projectId,
         format: backendFormat,
+        aspectRatio,
         includeOptions: {
           videoClips: includeOptions.sceneMetadata,
           audioTracks: includeOptions.soundtrackRefs,
@@ -182,6 +186,49 @@ export default function NLEExport() {
                 </p>
               </button>
             ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* v6.62 — Aspect ratio presets */}
+        <div>
+          <h2 className="text-sm font-medium mb-3">Aspect Ratio</h2>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+            {([
+              { value: "16:9",   label: "16:9",   sub: "Widescreen", w: 1920, h: 1080, ar: 16/9 },
+              { value: "9:16",   label: "9:16",   sub: "Vertical",   w: 1080, h: 1920, ar: 9/16 },
+              { value: "1:1",    label: "1:1",    sub: "Square",     w: 1080, h: 1080, ar: 1 },
+              { value: "4:5",    label: "4:5",    sub: "Portrait",   w: 1080, h: 1350, ar: 4/5 },
+              { value: "21:9",   label: "21:9",   sub: "Ultrawide",  w: 2560, h: 1080, ar: 21/9 },
+              { value: "2.39:1", label: "2.39:1", sub: "Anamorphic", w: 2048, h: 858,  ar: 2.39 },
+            ] as const).map((opt) => {
+              const active = aspectRatio === opt.value;
+              const previewH = 32;
+              const previewW = Math.max(18, Math.min(64, Math.round(previewH * opt.ar)));
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setAspectRatio(opt.value)}
+                  className={`flex flex-col items-center gap-1 px-2 py-3 rounded-lg border transition-all ${
+                    active
+                      ? "border-amber-500 bg-amber-500/10"
+                      : "border-border/40 bg-black/20 hover:border-amber-500/40"
+                  }`}
+                  aria-pressed={active}
+                  aria-label={`${opt.label} ${opt.sub} ${opt.w}x${opt.h}`}
+                >
+                  <div
+                    className={`rounded-sm ${active ? "bg-amber-500" : "bg-white/30"}`}
+                    style={{ width: previewW, height: previewH }}
+                  />
+                  <div className="text-xs font-medium leading-none">{opt.label}</div>
+                  <div className="text-[10px] text-muted-foreground leading-none">{opt.sub}</div>
+                  <div className="text-[10px] font-mono text-muted-foreground/60 leading-none">{opt.w}x{opt.h}</div>
+                </button>
+              );
+            })}
           </div>
         </div>
 

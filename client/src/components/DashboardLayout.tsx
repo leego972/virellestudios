@@ -69,6 +69,7 @@ import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import NotificationBell from "./NotificationBell";
+import RenderQueueTray from "./RenderQueueTray";
 import { HollywoodIcon } from "./HollywoodIcon";
 import { ToolIconKey } from "@/constants/hollywoodIcons";
 
@@ -354,7 +355,12 @@ function DashboardLayoutContent({
                   </span>
                 </div>
               )}
-              {!isCollapsed && <NotificationBell />}
+              {!isCollapsed && (
+                <div className="flex items-center gap-1">
+                  <RenderQueueTray />
+                  <NotificationBell />
+                </div>
+              )}
             </div>
           </SidebarHeader>
 
@@ -628,6 +634,7 @@ function DashboardLayoutContent({
                 <span>Search…</span>
                 <kbd className="ml-2 px-1.5 py-0.5 text-[10px] font-mono rounded bg-background/80 border border-border/40">⌘K</kbd>
               </button>
+              <RenderQueueTray />
               <NotificationBell />
               {switchable && (
                 <button

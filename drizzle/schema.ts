@@ -111,6 +111,12 @@ export const projects = mysqlTable("projects", {
   openingScene: text("openingScene"), // description of the opening
   climax: text("climax"), // description of the climax
   storyResolution: text("storyResolution"), // how the story resolves
+  // v6.62 — project-level style anchors (logos, mood boards, concept art)
+  // propagate to every scene when scene.referenceImages is empty
+  referenceImages: json("referenceImages"), // array of S3 URLs
+  // v6.62 — last selected NLE export aspect ratio (sticky preference per project)
+  // values: "16:9" | "9:16" | "1:1" | "4:5" | "21:9" | "2.39:1"
+  exportAspectRatio: varchar("exportAspectRatio", { length: 16 }).default("16:9"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -323,6 +329,31 @@ export const generationJobs = mysqlTable("generationJobs", {
 
 export type GenerationJob = typeof generationJobs.$inferSelect;
 export type InsertGenerationJob = typeof generationJobs.$inferInsert;
+
+// v6.62 — Frame-timestamp comments on the media player
+// Allows directors and collaborators to leave notes pinned to a specific
+// second of a video (scene clip OR full-film cut). Modeled after Frame.io,
+// Vimeo Review, and Wipster — table-stakes for any pro film tool.
+export const frameComments = mysqlTable("frameComments", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  // sceneId is null when the comment lives on the full-film cut (movies table)
+  sceneId: int("sceneId"),
+  // movieId is null when the comment lives on a scene preview
+  movieId: int("movieId"),
+  userId: int("userId").notNull(), // author
+  // Position within the clip, in seconds (rounded to 0.1s precision client-side)
+  timestampSeconds: float("timestampSeconds").notNull(),
+  body: text("body").notNull(),
+  resolved: boolean("resolved").default(false).notNull(),
+  // Optional thread parent — null for top-level comments
+  parentId: int("parentId"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FrameComment = typeof frameComments.$inferSelect;
+export type InsertFrameComment = typeof frameComments.$inferInsert;
 
 // Movie scripts
 export const scripts = mysqlTable("scripts", {

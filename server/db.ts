@@ -7,6 +7,7 @@ import {
   InsertCharacter, characters,
   InsertScene, scenes,
   InsertGenerationJob, generationJobs,
+  InsertFrameComment, frameComments, FrameComment,
   InsertScript, scripts,
   InsertSoundtrack, soundtracks,
   InsertCredit, credits,
@@ -427,6 +428,210 @@ export async function getProjectJobs(projectId: number) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(generationJobs).where(eq(generationJobs.projectId, projectId)).orderBy(desc(generationJobs.createdAt));
+}
+
+/**
+ * Returns every in-flight render across ALL projects owned by the user —
+ * powers the global Render Queue tray in the top bar so users can see, at a
+ * glance, what is processing and (roughly) how long it's been running.
+ *
+ * Combines two work surfaces:
+ *  - generationJobs rows with status in (queued|processing|paused)
+ *  - scenes with status = "generating" (these are submitted-but-not-tracked-by-job
+ *    requests, e.g. direct Runway/Veo3 submissions handled by videoJobWorker)
+ */
+export async function getUserActiveRenders(userId: number) {
+  const db = await getDb();
+  if (!db) return [] as Array<any>;
+
+  const userProjects = await db
+    .select({ id: projects.id, title: projects.title })
+    .from(projects)
+    .where(eq(projects.userId, userId));
+  if (userProjects.length === 0) return [] as Array<any>;
+  const projectIds = userProjects.map((p) => p.id);
+  const titleById = new Map(userProjects.map((p) => [p.id, p.title]));
+
+  const [activeJobs, generatingScenes] = await Promise.all([
+    db
+      .select()
+      .from(generationJobs)
+      .where(
+        and(
+          inArray(generationJobs.projectId, projectIds),
+          inArray(generationJobs.status, ["queued", "processing", "paused"])
+        )
+      ),
+    db
+      .select({
+        id: scenes.id,
+        projectId: scenes.projectId,
+        title: scenes.title,
+        duration: scenes.duration,
+        status: scenes.status,
+        videoJobId: scenes.videoJobId,
+        updatedAt: scenes.updatedAt,
+        createdAt: scenes.createdAt,
+      })
+      .from(scenes)
+      .where(
+        and(inArray(scenes.projectId, projectIds), eq(scenes.status, "generating"))
+      ),
+  ]);
+
+  const now = Date.now();
+  const out: Array<any> = [];
+
+  for (const j of activeJobs) {
+    const startedMs = (j.createdAt as Date)?.getTime?.() ?? now;
+    out.push({
+      kind: "job" as const,
+      id: j.id,
+      projectId: j.projectId,
+      sceneId: j.sceneId,
+      projectTitle: titleById.get(j.projectId) || "Untitled project",
+      label:
+        j.type === "full-film"
+          ? "Full film render"
+          : j.type === "scene"
+            ? "Scene render"
+            : "Preview render",
+      status: j.status,
+      progress: typeof j.progress === "number" ? j.progress : 0,
+      estimatedSeconds: j.estimatedSeconds ?? null,
+      elapsedSeconds: Math.max(0, Math.floor((now - startedMs) / 1000)),
+      startedAt: j.createdAt,
+    });
+  }
+
+  for (const s of generatingScenes) {
+    // Scene-level generations don't carry a structured progress %, so we
+    // surface them as indeterminate but with elapsed time for honest signal.
+    const startedMs = (s.updatedAt as Date)?.getTime?.() ?? now;
+    out.push({
+      kind: "scene" as const,
+      id: s.id,
+      projectId: s.projectId,
+      sceneId: s.id,
+      projectTitle: titleById.get(s.projectId) || "Untitled project",
+      label: s.title || `Scene ${s.id}`,
+      status: "processing",
+      progress: null, // indeterminate
+      estimatedSeconds: s.duration ?? null,
+      elapsedSeconds: Math.max(0, Math.floor((now - startedMs) / 1000)),
+      startedAt: s.updatedAt,
+    });
+  }
+
+  // Newest first — matches user mental model ("the thing I just kicked off")
+  out.sort((a, b) => {
+    const at = a.startedAt ? new Date(a.startedAt).getTime() : 0;
+    const bt = b.startedAt ? new Date(b.startedAt).getTime() : 0;
+    return bt - at;
+  });
+
+  return out;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// Frame-timestamp comments (v6.62)
+// ──────────────────────────────────────────────────────────────────────────
+
+/** List comments for a clip — pass either sceneId OR movieId. */
+export async function listFrameComments(opts: {
+  projectId: number;
+  sceneId?: number | null;
+  movieId?: number | null;
+}): Promise<FrameComment[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const conds = [eq(frameComments.projectId, opts.projectId)];
+  if (opts.sceneId != null) conds.push(eq(frameComments.sceneId, opts.sceneId));
+  if (opts.movieId != null) conds.push(eq(frameComments.movieId, opts.movieId));
+  return db
+    .select()
+    .from(frameComments)
+    .where(and(...conds))
+    .orderBy(asc(frameComments.timestampSeconds), asc(frameComments.id));
+}
+
+export async function createFrameComment(payload: InsertFrameComment): Promise<FrameComment> {
+  const db = await getDb();
+  if (!db) throw new Error("DB unavailable");
+  const result = await db.insert(frameComments).values(payload);
+  const id = (result as any)[0]?.insertId ?? (result as any).insertId;
+  const rows = await db.select().from(frameComments).where(eq(frameComments.id, id)).limit(1);
+  return rows[0];
+}
+
+/** Update a comment — only the original author may edit body/resolved state. */
+export async function updateFrameComment(
+  id: number,
+  userId: number,
+  patch: Partial<Pick<FrameComment, "body" | "resolved">>
+): Promise<FrameComment | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const existing = await db.select().from(frameComments).where(eq(frameComments.id, id)).limit(1);
+  if (!existing[0]) return null;
+  // Owners of the project may resolve any comment, but only the author may edit body.
+  if (patch.body !== undefined && existing[0].userId !== userId) return null;
+  const project = await getProjectById(existing[0].projectId, userId);
+  if (!project) return null;
+  await db.update(frameComments).set(patch as any).where(eq(frameComments.id, id));
+  const rows = await db.select().from(frameComments).where(eq(frameComments.id, id)).limit(1);
+  return rows[0];
+}
+
+/** Delete a comment — author OR project owner may delete. */
+export async function deleteFrameComment(id: number, userId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  const existing = await db.select().from(frameComments).where(eq(frameComments.id, id)).limit(1);
+  if (!existing[0]) return false;
+  const project = await getProjectById(existing[0].projectId, userId);
+  if (!project && existing[0].userId !== userId) return false;
+  await db.delete(frameComments).where(eq(frameComments.id, id));
+  return true;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+
+/**
+ * Cancel a single in-flight render (one row in the queue tray).
+ * Validates ownership through the parent project before touching state.
+ * Returns { ok: true } regardless of whether the row was already finished
+ * — making the UI happy-path simple.
+ */
+export async function cancelUserRender(
+  userId: number,
+  kind: "job" | "scene",
+  id: number
+) {
+  const db = await getDb();
+  if (!db) return { ok: false };
+
+  if (kind === "job") {
+    const rows = await db.select().from(generationJobs).where(eq(generationJobs.id, id)).limit(1);
+    const job = rows[0];
+    if (!job) return { ok: false };
+    const project = await getProjectById(job.projectId, userId);
+    if (!project) return { ok: false };
+    await db
+      .update(generationJobs)
+      .set({ status: "failed", errorMessage: "Cancelled by user" })
+      .where(eq(generationJobs.id, id));
+    return { ok: true };
+  }
+
+  // kind === "scene"
+  const sceneRows = await db.select().from(scenes).where(eq(scenes.id, id)).limit(1);
+  const scene = sceneRows[0];
+  if (!scene) return { ok: false };
+  const project = await getProjectById(scene.projectId, userId);
+  if (!project) return { ok: false };
+  await db.update(scenes).set({ status: "failed" } as any).where(eq(scenes.id, id));
+  return { ok: true };
 }
 
 export async function getJobById(id: number) {

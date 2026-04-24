@@ -1990,6 +1990,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           sceneCharIds.length === 0 || sceneCharIds.includes(c.id)
         );
 
+        // v6.62 — Project-level style anchors (logos, mood boards) take priority
+        // over character photos when the scene has no explicit refs of its own.
+        // Order of precedence: scene.referenceImages → project.referenceImages → character photos.
+        if (sceneRefImages.length === 0) {
+          const projRefs = ((project as any).referenceImages as string[] | null) || [];
+          if (projRefs.length > 0) {
+            sceneRefImages.push(...projRefs.slice(0, 3));
+          }
+        }
         // Auto-include character photos as visual reference anchors when no manual refs are set
         if (sceneRefImages.length === 0) {
           const charPhotos = sceneActiveCharacters
@@ -2765,6 +2774,123 @@ Available fields you can update:
         const updated = existing.filter((url: string) => url !== input.imageUrl);
         await db.updateScene(input.sceneId, { referenceImages: updated } as any);
         return { referenceImages: updated };
+      }),
+
+    // v6.62 — Project-level reference image upload (style anchor for ALL scenes
+    // in the project). Falls back to scene-level refs first; this is the
+    // "set the look once, applied everywhere" lever directors expect.
+    projectReferenceImage: protectedProcedure
+      .input(z.object({
+        base64: z.string().max(50_000_000, "File too large. Max 10MB."),
+        filename: z.string(),
+        contentType: z.string().default("image/png"),
+        projectId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await rateLimitUpload(ctx.user.id);
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const buffer = Buffer.from(input.base64, "base64");
+        const key = `reference-images/${ctx.user.id}/project-${input.projectId}/${nanoid()}-${input.filename}`;
+        const { url } = await storagePut(key, buffer, input.contentType);
+        const existing = ((project as any).referenceImages as string[] | null) || [];
+        const updated = [...existing, url];
+        await db.updateProject(input.projectId, ctx.user.id, { referenceImages: updated } as any);
+        return { url, key, referenceImages: updated };
+      }),
+
+    removeProjectReferenceImage: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        imageUrl: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const existing = ((project as any).referenceImages as string[] | null) || [];
+        const updated = existing.filter((u: string) => u !== input.imageUrl);
+        await db.updateProject(input.projectId, ctx.user.id, { referenceImages: updated } as any);
+        return { referenceImages: updated };
+      }),
+  }),
+
+  // ─── Frame-timestamp comments (v6.62) ───
+  // Pinned notes at a specific second of a video clip — table-stakes review
+  // workflow for any pro film tool (Frame.io / Vimeo Review parity).
+  frameComment: router({
+    list: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().optional(),
+        movieId: z.number().optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        const rows = await db.listFrameComments({
+          projectId: input.projectId,
+          sceneId: input.sceneId ?? null,
+          movieId: input.movieId ?? null,
+        });
+        // Hydrate author names for the panel
+        const authorIds = Array.from(new Set(rows.map((r) => r.userId)));
+        const authors = await Promise.all(authorIds.map((id) => db.getUserById(id)));
+        const nameById = new Map<number, string>();
+        for (const a of authors) if (a) nameById.set(a.id, a.name || a.email || "User");
+        return rows.map((r) => ({
+          ...r,
+          authorName: nameById.get(r.userId) || "User",
+        }));
+      }),
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        sceneId: z.number().optional(),
+        movieId: z.number().optional(),
+        timestampSeconds: z.number().min(0),
+        body: z.string().trim().min(1).max(2000),
+        parentId: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+        if (!input.sceneId && !input.movieId) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "sceneId or movieId required" });
+        }
+        // Sanitize body — comments render as plain text in the panel
+        const cleanBody = sanitizeText(input.body).slice(0, 2000);
+        const created = await db.createFrameComment({
+          projectId: input.projectId,
+          sceneId: input.sceneId ?? null,
+          movieId: input.movieId ?? null,
+          userId: ctx.user.id,
+          timestampSeconds: Math.round(input.timestampSeconds * 10) / 10,
+          body: cleanBody,
+          resolved: false,
+          parentId: input.parentId ?? null,
+        } as any);
+        return created;
+      }),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        body: z.string().trim().min(1).max(2000).optional(),
+        resolved: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const patch: any = {};
+        if (input.body !== undefined) patch.body = sanitizeText(input.body).slice(0, 2000);
+        if (input.resolved !== undefined) patch.resolved = input.resolved;
+        const updated = await db.updateFrameComment(input.id, ctx.user.id, patch);
+        if (!updated) throw new TRPCError({ code: "FORBIDDEN", message: "Cannot edit this comment" });
+        return updated;
+      }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const ok = await db.deleteFrameComment(input.id, ctx.user.id);
+        if (!ok) throw new TRPCError({ code: "FORBIDDEN", message: "Cannot delete this comment" });
+        return { ok: true };
       }),
   }),
 
@@ -3887,6 +4013,28 @@ Break this into 8-15 scenes. For each scene, provide:
         logAuditEvent(ctx.user.id, "cancelGeneration", "system", true, { projectId: input.projectId, cancelledJobs: cancelledCount });
         logger.info("Generation cancelled", { userId: ctx.user.id, projectId: input.projectId, cancelledJobs: cancelledCount });
         return { success: true, cancelledJobs: cancelledCount };
+      }),
+
+    // v6.62 — Cross-project active render queue feed.
+    // Powers the global Render Queue tray in the dashboard top bar so users
+    // can see, at a glance, every job they have in flight regardless of which
+    // project page they're on. Polled every 5–15s by the tray component.
+    listActiveForUser: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserActiveRenders(ctx.user.id);
+    }),
+
+    // Cancel a single render row from the tray. Validates ownership through
+    // the parent project before mutating any state.
+    cancelRender: protectedProcedure
+      .input(z.object({
+        kind: z.enum(["job", "scene"]),
+        id: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const result = await db.cancelUserRender(ctx.user.id, input.kind, input.id);
+        if (!result.ok) throw new TRPCError({ code: "NOT_FOUND", message: "Render not found or not yours" });
+        logAuditEvent(ctx.user.id, "cancelRender", "system", true, { kind: input.kind, id: input.id });
+        return { ok: true };
       }),
   }),
   // ─── Scripts ────
@@ -7140,6 +7288,10 @@ Generate a detailed production budget estimate.`,
       .input(z.object({
         projectId: z.number(),
         format: z.enum(["fcpxml", "edl", "csv", "premiere_xml", "resolve_xml"]),
+        // v6.62 — aspect ratio preset; embeds matching frame dimensions in the
+        // sequence header (FCPXML / Premiere XML) and adds a metadata note for
+        // EDL/CSV. Defaults to project.exportAspectRatio if omitted.
+        aspectRatio: z.enum(["16:9", "9:16", "1:1", "4:5", "21:9", "2.39:1"]).optional(),
         includeOptions: z.object({
           videoClips: z.boolean().default(true),
           audioTracks: z.boolean().default(true),
@@ -7157,10 +7309,27 @@ Generate a detailed production budget estimate.`,
         if (completedScenes.length === 0) throw new TRPCError({ code: "BAD_REQUEST", message: "No completed scenes to export. Generate video for at least one scene first." });
 
         const fps = 24;
+        // v6.62 — Resolve aspect ratio: explicit param → project sticky → 16:9 default.
+        // Persist back to the project so the next export remembers the user's choice.
+        const aspectRatio = input.aspectRatio || ((project as any).exportAspectRatio as string) || "16:9";
+        const ASPECT_DIMS: Record<string, { width: number; height: number; label: string; formatName: string }> = {
+          "16:9":   { width: 1920, height: 1080, label: "16:9 Widescreen",      formatName: "FFVideoFormat1080p24" },
+          "9:16":   { width: 1080, height: 1920, label: "9:16 Vertical",        formatName: "FFVideoFormat1080p24Vertical" },
+          "1:1":    { width: 1080, height: 1080, label: "1:1 Square",           formatName: "FFVideoFormat1080p24Square" },
+          "4:5":    { width: 1080, height: 1350, label: "4:5 Portrait",         formatName: "FFVideoFormat1080p24Portrait" },
+          "21:9":   { width: 2560, height: 1080, label: "21:9 Ultrawide",       formatName: "FFVideoFormat1080p24Ultrawide" },
+          "2.39:1": { width: 2048, height: 858,  label: "2.39:1 Anamorphic",    formatName: "FFVideoFormat1080p24Cinema" },
+        };
+        const dims = ASPECT_DIMS[aspectRatio] || ASPECT_DIMS["16:9"];
+        if (input.aspectRatio && input.aspectRatio !== ((project as any).exportAspectRatio as string)) {
+          try { await db.updateProject(input.projectId, ctx.user.id, { exportAspectRatio: input.aspectRatio } as any); } catch { /* sticky-write best effort */ }
+        }
         const opts = input.includeOptions ?? { videoClips: true, audioTracks: true, subtitles: false, markers: false, colorMetadata: false };
         let content = "";
         let mimeType = "text/plain";
-        let filename = `${project.title.replace(/[^a-zA-Z0-9]/g, "_")}`;
+        // Suffix filename with aspect for clarity when exporting multiple cuts.
+        const aspectSuffix = aspectRatio.replace(":", "x").replace(".", "_");
+        let filename = `${project.title.replace(/[^a-zA-Z0-9]/g, "_")}_${aspectSuffix}`;
 
         if (input.format === "fcpxml" || input.format === "resolve_xml") {
           let offset = 0;
@@ -7183,13 +7352,13 @@ Generate a detailed production budget estimate.`,
           }).join("\n");
           const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 60) * fps), 0);
           const projTitle = project.title.replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
-          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n<fcpxml version="1.10">\n  <resources>\n    <format id="r1" name="FFVideoFormat1080p24" frameDuration="1/${fps}s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)" />\n${assetDefs}\n  </resources>\n  <library>\n    <event name="${projTitle}">\n      <project name="${projTitle} — Virelle Export">\n        <sequence format="r1" duration="${totalFrames}/${fps}s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">\n          <spine>\n${clipElements}\n          </spine>\n        </sequence>\n      </project>\n    </event>\n  </library>\n</fcpxml>`;
+          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n<fcpxml version="1.10">\n  <!-- Virelle Studios export — aspect ${aspectRatio} (${dims.label}), ${dims.width}x${dims.height} -->\n  <resources>\n    <format id="r1" name="${dims.formatName}" frameDuration="1/${fps}s" width="${dims.width}" height="${dims.height}" colorSpace="1-1-1 (Rec. 709)" />\n${assetDefs}\n  </resources>\n  <library>\n    <event name="${projTitle}">\n      <project name="${projTitle} — Virelle Export (${aspectRatio})">\n        <sequence format="r1" duration="${totalFrames}/${fps}s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">\n          <spine>\n${clipElements}\n          </spine>\n        </sequence>\n      </project>\n    </event>\n  </library>\n</fcpxml>`;
           mimeType = "application/xml";
           filename += ".fcpxml";
 
         } else if (input.format === "edl") {
           const toTC = (frames: number) => { const f=frames%fps,s=Math.floor(frames/fps)%60,m=Math.floor(frames/(fps*60))%60,h=Math.floor(frames/(fps*3600)); return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}:${String(f).padStart(2,"0")}`; };
-          const lines = [`TITLE: ${project.title}`, "FCM: NON-DROP FRAME", ""];
+          const lines = [`TITLE: ${project.title}`, "FCM: NON-DROP FRAME", `* ASPECT: ${aspectRatio} (${dims.width}x${dims.height} — ${dims.label})`, ""];
           let editNum = 1; let recIn = 0;
           completedScenes.forEach((scene: any, i: number) => {
             const df = Math.round((scene.duration ?? 60) * fps);
@@ -7215,17 +7384,19 @@ Generate a detailed production budget estimate.`,
           }).join("\n");
           const totalFrames = completedScenes.reduce((acc: number, s: any) => acc + Math.round((s.duration ?? 60) * fps), 0);
           const projTitle = project.title.replace(/[&<>]/g, (c: string) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c] ?? c));
-          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE xmeml>\n<xmeml version="4">\n  <sequence>\n    <name>${projTitle}</name>\n    <duration>${totalFrames}</duration>\n    <rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate>\n    <media><video><track>\n${clipItems}\n    </track></video></media>\n  </sequence>\n</xmeml>`;
+          content = `<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE xmeml>\n<xmeml version="4">\n  <!-- Virelle Studios export — aspect ${aspectRatio} (${dims.label}), ${dims.width}x${dims.height} -->\n  <sequence>\n    <name>${projTitle}</name>\n    <duration>${totalFrames}</duration>\n    <rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate>\n    <media>\n      <video>\n        <format><samplecharacteristics><width>${dims.width}</width><height>${dims.height}</height><pixelaspectratio>square</pixelaspectratio><rate><timebase>${fps}</timebase><ntsc>FALSE</ntsc></rate></samplecharacteristics></format>\n        <track>\n${clipItems}\n        </track>\n      </video>\n    </media>\n  </sequence>\n</xmeml>`;
           mimeType = "application/xml";
           filename += "_premiere.xml";
 
         } else {
           // CSV
-          const rows = [["Scene #","Title","Duration (s)","Video URL","Mood","Time of Day","Location","Status"]];
+          const rows = [["Scene #","Title","Duration (s)","Video URL","Mood","Time of Day","Location","Status","Aspect","Width","Height"]];
           completedScenes.forEach((scene: any, i: number) => {
-            rows.push([String(i+1), scene.title??`Scene ${i+1}`, String(scene.duration??60), scene.videoUrl??"", scene.mood??"", scene.timeOfDay??"", scene.location??"", scene.status??"completed"]);
+            rows.push([String(i+1), scene.title??`Scene ${i+1}`, String(scene.duration??60), scene.videoUrl??"", scene.mood??"", scene.timeOfDay??"", scene.location??"", scene.status??"completed", aspectRatio, String(dims.width), String(dims.height)]);
           });
-          content = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+          // Lead with a Virelle metadata header line that's compatible with most spreadsheet importers
+          const header = `# Virelle Studios export — ${project.title} — Aspect ${aspectRatio} (${dims.label}, ${dims.width}x${dims.height})`;
+          content = header + "\n" + rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
           mimeType = "text/csv";
           filename += "_scenes.csv";
         }
@@ -8252,6 +8423,62 @@ Rules:
         stripePublishableKey: ENV.stripePublishableKey,
       };
     }),
+
+    // v6.62 — Cost preflight.
+    // Returns { cost, balance, balanceAfter, sufficient, label } for ANY action
+    // before the user commits. Powers the <CostPreflight /> chip rendered next
+    // to every credit-spending button so the user never gets a surprise bill.
+    //
+    // For per-second video gen, pass `sceneDurationSeconds`; we apply the same
+    // duration scaling the actual deduction uses (getVideoCredits) so the
+    // estimate matches the real charge.
+    estimateCost: protectedProcedure
+      .input(z.object({
+        action: z.string().min(1).max(64),
+        // Multiplier — used for "bulk" actions like bulk_generate_previews where
+        // the cost scales by N scenes. Defaults to 1.
+        multiplier: z.number().int().min(1).max(500).default(1),
+        // Scene duration in seconds — only used for video gen actions to apply
+        // the per-second scaling (matches server's actual deduction logic).
+        sceneDurationSeconds: z.number().int().min(1).max(3600).optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        const entry = (CREDIT_COSTS as any)[input.action];
+        if (!entry) {
+          // Unknown action — return zero-cost so client doesn't block, but flag.
+          return {
+            ok: false,
+            cost: 0,
+            balance: ctx.user.creditBalance ?? 0,
+            balanceAfter: ctx.user.creditBalance ?? 0,
+            sufficient: true,
+            action: input.action,
+            label: input.action,
+            unknown: true,
+          };
+        }
+
+        // Match the server-side scaling for video actions
+        let cost = entry.cost as number;
+        if ((input.action === "generate_scene_video" || input.action === "regenerate_scene_video" || input.action === "bulk_generate_videos") && input.sceneDurationSeconds) {
+          cost = getVideoCredits(input.sceneDurationSeconds);
+          if (input.action === "regenerate_scene_video") cost = Math.ceil(cost * 0.8);
+        }
+        cost = Math.ceil(cost * (input.multiplier || 1));
+
+        const balance = (ctx.user.creditBalance as number | null) ?? 0;
+        const balanceAfter = balance - cost;
+        return {
+          ok: true,
+          cost,
+          balance,
+          balanceAfter,
+          sufficient: balance >= cost,
+          action: input.action,
+          label: entry.label as string,
+          unknown: false,
+        };
+      }),
 
     // Create a Stripe checkout session for subscription
     createCheckout: creationProcedure
