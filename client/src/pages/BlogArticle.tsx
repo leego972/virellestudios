@@ -62,9 +62,28 @@ export default function BlogArticle() {
     }
   };
 
-  // Simple Markdown to HTML renderer
+  // Simple Markdown to HTML renderer.
+  // Hardened against XSS: input is HTML-escaped FIRST, so any raw <script>,
+  // <iframe>, or on*= attributes in article content render as plain text.
+  // Link URLs are validated to allow only http(s)/mailto — `javascript:` and
+  // `data:` URIs become harmless "#" placeholders.
   const renderMarkdown = (md: string) => {
-    let html = md
+    const escapeHtml = (s: string) =>
+      s.replace(/&/g, "&amp;")
+       .replace(/</g, "&lt;")
+       .replace(/>/g, "&gt;")
+       .replace(/"/g, "&quot;")
+       .replace(/'/g, "&#39;");
+    const safeUrl = (raw: string) => {
+      const url = raw.trim();
+      // Allow same-origin / relative paths and explicit safe schemes only.
+      if (/^(https?:|mailto:|\/|#)/i.test(url)) return url.replace(/"/g, "%22");
+      return "#";
+    };
+
+    // 1. Escape EVERYTHING first so user content can never inject HTML.
+    let html = escapeHtml(md)
+      // 2. Apply markdown transforms on the safe, escaped string.
       // Headers
       .replace(/^### (.*$)/gm, '<h3 class="text-xl font-bold mt-8 mb-3 text-white">$1</h3>')
       .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold mt-10 mb-4 text-white">$1</h2>')
@@ -79,13 +98,15 @@ export default function BlogArticle() {
       // Ordered lists
       .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 mb-1 list-decimal">$1</li>')
       // Blockquotes
-      .replace(/^> (.*$)/gm, '<blockquote class="border-l-4 border-amber-500 pl-4 py-2 my-4 text-white/70 italic">$1</blockquote>')
+      .replace(/^&gt; (.*$)/gm, '<blockquote class="border-l-4 border-amber-500 pl-4 py-2 my-4 text-white/70 italic">$1</blockquote>')
       // Code blocks
       .replace(/```([\s\S]*?)```/g, '<pre class="bg-white/5 rounded-lg p-4 my-4 overflow-x-auto text-sm text-white/80"><code>$1</code></pre>')
       // Inline code
       .replace(/`(.*?)`/g, '<code class="bg-white/10 px-1.5 py-0.5 rounded text-amber-400 text-sm">$1</code>')
-      // Links
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener">$1</a>')
+      // Links — href is validated through safeUrl, label stays escaped
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label: string, url: string) =>
+        `<a href="${safeUrl(url)}" class="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">${label}</a>`
+      )
       // Horizontal rules
       .replace(/^---$/gm, '<hr class="border-white/10 my-8" />')
       // Paragraphs (double newlines)
