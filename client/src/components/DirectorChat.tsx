@@ -271,6 +271,17 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
   // Ref to handleSend so the voice path can call it without forward reference
   const handleSendRef = useRef<(overrideText?: string) => void>(() => {});
 
+  // ─── Web Speech API (free, on-device transcription) ───
+  // Runs in parallel with MediaRecorder. If it returns a transcript before the
+  // recorder stops, we use it directly and skip the server Whisper roundtrip,
+  // which means voice works even when OpenAI quota is exhausted. iOS Safari 14.5+
+  // and Chrome both support webkitSpeechRecognition.
+  const webSpeechRef = useRef<any>(null);
+  const webSpeechTextRef = useRef<string>("");
+  const webSpeechSupported = typeof window !== "undefined" && (
+    !!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition
+  );
+
   // Preset state
   const [showPresets, setShowPresets] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
@@ -849,6 +860,22 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
           voiceModeStateRef.current = "thinking";
           setVoiceModeTranscript("Transcribing...");
 
+          // ─── Prefer Web Speech API result if we got one ───
+          // Stop the recognizer and give it a brief moment to flush its final result.
+          if (webSpeechRef.current) {
+            try { webSpeechRef.current.stop(); } catch {}
+            await new Promise((r) => setTimeout(r, 250));
+            const localText = (webSpeechTextRef.current || "").trim();
+            webSpeechRef.current = null;
+            if (localText) {
+              setVoiceModeTranscript(localText);
+              setVoiceModeState("thinking");
+              voiceModeStateRef.current = "thinking";
+              handleSendRef.current(localText);
+              return;
+            }
+          }
+
           try {
             const base64 = await new Promise<string>((resolve, reject) => {
               const reader = new FileReader();
@@ -899,6 +926,43 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
         voiceModeStateRef.current = "listening";
         setVmRecordingDuration(0);
         vmRecordingTimerRef.current = setInterval(() => setVmRecordingDuration((p) => p + 1), 1000);
+
+        // ─── Web Speech API: start in PARALLEL with MediaRecorder ───
+        // Free, on-device, no quota. If it returns a transcript first, we use it
+        // and skip the upload→Whisper roundtrip. Failures are silent (we still have MediaRecorder).
+        webSpeechTextRef.current = "";
+        webSpeechRef.current = null;
+        if (webSpeechSupported) {
+          try {
+            const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+            const recog = new SR();
+            recog.lang = "en-US";
+            recog.continuous = true;
+            recog.interimResults = false;
+            recog.maxAlternatives = 1;
+            recog.onresult = (event: any) => {
+              let text = "";
+              for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i] && event.results[i][0] && event.results[i].isFinal) {
+                  text += event.results[i][0].transcript;
+                }
+              }
+              if (text.trim()) {
+                webSpeechTextRef.current = (webSpeechTextRef.current + " " + text).trim();
+              }
+            };
+            recog.onerror = (e: any) => {
+              console.warn("[Voice] Web Speech error:", e?.error || e);
+              // Don't clear webSpeechTextRef — partial text may still be usable
+            };
+            recog.onend = () => { /* recognition session ended naturally */ };
+            webSpeechRef.current = recog;
+            recog.start();
+          } catch (e) {
+            console.warn("[Voice] Web Speech start failed, falling back to Whisper:", e);
+            webSpeechRef.current = null;
+          }
+        }
 
         // ─── VAD: Titan-style auto-stop on silence ───
         vadHasSpokenRef.current = false;
@@ -975,6 +1039,8 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
     if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
     setVmRecordingDuration(0);
     if (voiceModeRef.current) { setVoiceModeState("thinking"); voiceModeStateRef.current = "thinking"; }
+    // Note: webSpeechRef is intentionally NOT stopped here — recorder.onstop will read
+    // its accumulated transcript and stop it then. Stopping it here would race the read.
     const recorder = voiceModeRecorderRef.current;
     if (recorder && recorder.state !== "inactive") {
       // iOS Safari sometimes doesn't fire onstop if stop() is called too quickly.
@@ -1003,6 +1069,12 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
     if (vadRafRef.current) { cancelAnimationFrame(vadRafRef.current); vadRafRef.current = null; }
     if (vadSilenceTimerRef.current) { clearTimeout(vadSilenceTimerRef.current); vadSilenceTimerRef.current = null; }
     if (vmRecordingTimerRef.current) { clearInterval(vmRecordingTimerRef.current); vmRecordingTimerRef.current = null; }
+    // Stop Web Speech API recognizer if running
+    if (webSpeechRef.current) {
+      try { webSpeechRef.current.abort(); } catch {}
+      webSpeechRef.current = null;
+      webSpeechTextRef.current = "";
+    }
     // Stop recording
     if (voiceModeRecorderRef.current && voiceModeRecorderRef.current.state !== "inactive") {
       voiceModeRecorderRef.current.onstop = null; // prevent onstop from restarting
