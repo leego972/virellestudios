@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +65,13 @@ export default function NLEExport() {
   const [selectedFormat, setSelectedFormat] = useState("xml-premiere-pro");
   // v6.62 — Aspect ratio preset. Embeds matching frame dimensions in the
   // exported sequence header (FCPXML/Premiere XML) and adds metadata for EDL/CSV.
-  const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16" | "1:1" | "4:5" | "21:9" | "2.39:1">("16:9");
+  // Initial value is 16:9 but we hydrate from the project's sticky preference
+  // (project.exportAspectRatio) once loaded — see useEffect below.
+  type AspectRatioValue = "16:9" | "9:16" | "1:1" | "4:5" | "21:9" | "2.39:1";
+  const [aspectRatio, setAspectRatio] = useState<AspectRatioValue>("16:9");
+  // Track whether the user has touched the chooser this session — once they
+  // have, we stop overwriting their choice with the project's stored value.
+  const [aspectTouched, setAspectTouched] = useState(false);
   const [includeOptions, setIncludeOptions] = useState({
     sceneMetadata: true,
     cameraSettings: true,
@@ -81,6 +87,17 @@ export default function NLEExport() {
 
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
   const exportNLEMutation = trpc.movie.exportNLE.useMutation();
+
+  // Hydrate aspect ratio from the project's sticky preference once the project
+  // loads, but never override an explicit user selection in this session.
+  useEffect(() => {
+    if (aspectTouched) return;
+    const stored = (project as any)?.exportAspectRatio as AspectRatioValue | undefined;
+    if (stored && stored !== aspectRatio && ["16:9","9:16","1:1","4:5","21:9","2.39:1"].includes(stored)) {
+      setAspectRatio(stored);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project, aspectTouched]);
 
   const handleExport = async () => {
     const backendFormat = FORMAT_MAP[selectedFormat];
@@ -210,7 +227,7 @@ export default function NLEExport() {
                 <button
                   key={opt.value}
                   type="button"
-                  onClick={() => setAspectRatio(opt.value)}
+                  onClick={() => { setAspectRatio(opt.value); setAspectTouched(true); }}
                   className={`flex flex-col items-center gap-1 px-2 py-3 rounded-lg border transition-all ${
                     active
                       ? "border-amber-500 bg-amber-500/10"

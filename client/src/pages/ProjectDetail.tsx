@@ -2467,6 +2467,8 @@ export default function ProjectDetail() {
           playlist={scenePlaylist}
           onClose={() => setVideoPreviewSceneId(null)}
           onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
+          projectId={projectId}
+          sceneId={activeVideoMovie.id}
         />
       )}
       {/* Professional Media Player — full stitched film */}
@@ -2480,6 +2482,7 @@ export default function ProjectDetail() {
             setShowFullFilm(false);
             setVideoPreviewSceneId(movieId);
           }}
+          projectId={projectId}
         />
       )}
 

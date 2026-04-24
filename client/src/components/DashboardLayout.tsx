@@ -355,12 +355,10 @@ function DashboardLayoutContent({
                   </span>
                 </div>
               )}
-              {!isCollapsed && (
-                <div className="flex items-center gap-1">
-                  <RenderQueueTray />
-                  <NotificationBell />
-                </div>
-              )}
+              {/* v6.62 — RenderQueueTray lives in the top bar only (see below)
+                  so we don't end up with two trays polling at the same time on
+                  desktop. The sidebar keeps just the NotificationBell. */}
+              {!isCollapsed && <NotificationBell />}
             </div>
           </SidebarHeader>
 

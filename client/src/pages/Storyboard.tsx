@@ -335,6 +335,8 @@ export default function Storyboard() {
             playlist={playlist}
             onClose={() => setVideoPreviewSceneId(null)}
             onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
+            projectId={projectId}
+            sceneId={activeMovie.id}
           />
         ) : null;
       })()}

@@ -2392,6 +2392,8 @@ export default function SceneEditor() {
           playlist={scenePlaylist}
           onClose={() => setVideoPreviewSceneId(null)}
           onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
+          projectId={projectId}
+          sceneId={activeVideoMovie.id}
         />
       )}
 

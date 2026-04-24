@@ -95,9 +95,11 @@ export default function NewProject() {
           contentType: m[1],
           projectId,
         });
-      } catch (e) {
-        // best-effort — surfaces a toast but doesn't block project entry
+      } catch (e: any) {
+        // Surface to the user — they specifically attached this anchor and
+        // will wonder why it's missing in scene-gen if we swallow it silently.
         console.warn("Reference image upload failed:", e);
+        toast.error(`Style anchor upload failed: ${e?.message || "unknown error"}. You can re-upload from the project page.`);
       }
     }
   };
@@ -927,7 +929,7 @@ export default function NewProject() {
               automatic generation, so show what it'll cost before submitting. */}
           {(mode === "quick" || mode === "trailer") && (
             <CostPreflight
-              action={mode === "trailer" ? "generate_trailer" : "generate_film"}
+              action={mode === "trailer" ? "trailer_gen" : "generate_film"}
               verb={mode === "trailer" ? "Trailer" : "Film"}
               variant="chip"
             />
