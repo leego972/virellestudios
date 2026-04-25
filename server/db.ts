@@ -34,6 +34,8 @@ import {
     shootDays, InsertShootDay, ShootDay,
     crewContacts, InsertCrewContact, CrewContact,
     activityLog, InsertActivityLogEntry, ActivityLogEntry,
+    // v6.68 Phase 6 — credit reservations
+    creditReservations, InsertCreditReservation, CreditReservation,
   } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1245,6 +1247,15 @@ export async function markTokenUsed(tokenId: number) {
   await db.update(passwordResetTokens)
     .set({ used: true })
     .where(eq(passwordResetTokens.id, tokenId));
+}
+
+// v6.68 — generic patch helper used by BYOK Control Center to persist
+// preferredVideoProvider / preferredLlmProvider without going through the
+// older role/password-specific helpers.
+export async function updateUser(userId: number, patch: Partial<InsertUser>) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users).set(patch as any).where(eq(users.id, userId));
 }
 
 export async function updateUserPassword(userId: number, passwordHash: string) {
@@ -2773,6 +2784,103 @@ export async function listRecapSegments(recapId: number): Promise<RecapSegment[]
   return db.select().from(recapSegments)
     .where(eq(recapSegments.recapId, recapId))
     .orderBy(recapSegments.sortOrder) as any;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+// v6.68 Phase 6 — Credit reservations
+// Pattern: reserve = deduct from balance + create reservation row;
+//          finalize = mark row completed (no balance change);
+//          release  = refund + mark row released.
+// Use getActiveReservation to prevent duplicate-click double-charges.
+
+export async function reserveCredits(
+  userId: number,
+  amount: number,
+  featureKey: string,
+  opts: { projectId?: number; referenceType?: string; referenceId?: number } = {},
+): Promise<number | null> {
+  const db = await getDb();
+  if (!db) return null;
+  if (amount <= 0) return null;
+  // Block duplicate reservations for the same reference.
+  if (opts.referenceType && opts.referenceId) {
+    const existing = await db.select().from(creditReservations).where(
+      and(
+        eq(creditReservations.userId, userId),
+        eq(creditReservations.referenceType, opts.referenceType),
+        eq(creditReservations.referenceId, opts.referenceId),
+        eq(creditReservations.status, "reserved"),
+      ),
+    ).limit(1);
+    if (existing.length > 0) return (existing[0] as any).id;
+  }
+  // Deduct first; throws if insufficient balance.
+  await deductCredits(userId, amount, featureKey, `Reserved for ${featureKey}`);
+  const inserted = await db.insert(creditReservations).values({
+    userId,
+    projectId: opts.projectId ?? null,
+    referenceType: opts.referenceType ?? null,
+    referenceId: opts.referenceId ?? null,
+    featureKey,
+    amount,
+    status: "reserved",
+  } as any);
+  const id = Number((inserted as any)?.[0]?.insertId ?? (inserted as any)?.insertId ?? 0);
+  return id || null;
+}
+
+export async function finalizeReservation(reservationId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(creditReservations).set({
+    status: "completed",
+    finalizedAt: new Date(),
+  } as any).where(
+    and(eq(creditReservations.id, reservationId), eq(creditReservations.status, "reserved")),
+  );
+}
+
+export async function releaseReservation(reservationId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  const rows = await db.select().from(creditReservations)
+    .where(eq(creditReservations.id, reservationId)).limit(1);
+  const row: any = rows[0];
+  if (!row || row.status !== "reserved") return;
+  // Refund the held amount back to the user.
+  await addCredits(row.userId, row.amount, "credits.refund",
+    `Released reservation #${reservationId} (${row.featureKey})`);
+  await db.update(creditReservations).set({
+    status: "released",
+    releasedAt: new Date(),
+  } as any).where(eq(creditReservations.id, reservationId));
+}
+
+export async function getActiveReservation(
+  userId: number,
+  referenceType: string,
+  referenceId: number,
+): Promise<any | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const rows = await db.select().from(creditReservations).where(
+    and(
+      eq(creditReservations.userId, userId),
+      eq(creditReservations.referenceType, referenceType),
+      eq(creditReservations.referenceId, referenceId),
+      eq(creditReservations.status, "reserved"),
+    ),
+  ).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function listUserReservations(userId: number, limit = 50): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(creditReservations)
+    .where(eq(creditReservations.userId, userId))
+    .orderBy(desc(creditReservations.createdAt))
+    .limit(limit) as any;
 }
 
 // v6.67 — mark a completed recap as attached to its target episode.

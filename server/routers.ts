@@ -631,6 +631,18 @@ export const appRouter = router({
         }));
         return { project, scenes: safeScenes };
       }),
+
+    // v6.68 Phase 2 — Project Command Center health summary.
+    // Pure read aggregation; no AI calls, no writes. Used to power the
+    // Command Center page and the Next Best Action prompt.
+    getHealthSummary: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const { getProjectHealthSummary } = await import("./_core/projectHealth");
+        const summary = await getProjectHealthSummary(input.projectId, ctx.user.id);
+        if (!summary) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found." });
+        return summary;
+      }),
   }),
   // ─── Characters ────
   character: router({
@@ -12108,6 +12120,141 @@ Return JSON ONLY in this exact shape:
         if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
         await db.unattachRecap(input.recapId, ctx.user.id);
         return { success: true };
+      }),
+  }),
+
+  // ============================================================================
+  // v6.68 Phase 5 — BYOK Provider Control Center.
+  // Returns ONLY masked status of each provider key (boolean → label). Never
+  // returns the raw key string to the client. Validation is shape-only by
+  // default; deeper provider pings can be added per-provider as needed.
+  // ============================================================================
+  byok: router({
+    getProviderStatus: protectedProcedure.query(async ({ ctx }) => {
+      const user: any = await db.getUserById(ctx.user.id);
+      const { getMaskedProviderStatus } = await import("./_core/providerPolicy");
+      const has = getMaskedProviderStatus(user);
+      const providers: Record<string, string> = {};
+      for (const k of Object.keys(has)) {
+        providers[k] = (has as any)[k] ? "configured" : "not_configured";
+      }
+      return {
+        providers,
+        preferredVideoProvider: user?.preferredVideoProvider ?? null,
+        preferredLlmProvider: user?.preferredLlmProvider ?? null,
+      };
+    }),
+
+    testProviderKey: protectedProcedure
+      .input(z.object({ provider: z.string().min(1).max(32) }))
+      .mutation(async ({ ctx, input }) => {
+        const user: any = await db.getUserById(ctx.user.id);
+        if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+        const { getMaskedProviderStatus } = await import("./_core/providerPolicy");
+        const has = getMaskedProviderStatus(user) as any;
+        const present = !!has[input.provider];
+        // Shape-only validation; we never return the key. Deeper validation
+        // would call the provider's cheapest endpoint with the decrypted key.
+        const status = present ? "configured" : "not_configured";
+        return { provider: input.provider, status };
+      }),
+
+    updateProviderPreferences: protectedProcedure
+      .input(z.object({
+        preferredVideoProvider: z.string().nullable().optional(),
+        preferredLlmProvider: z.string().nullable().optional(),
+        fallbackMode: z.enum(["byok-only", "byok-with-fallback", "credits-only"]).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const patch: any = {};
+        if (input.preferredVideoProvider !== undefined) {
+          patch.preferredVideoProvider = input.preferredVideoProvider || null;
+        }
+        if (input.preferredLlmProvider !== undefined) {
+          patch.preferredLlmProvider = input.preferredLlmProvider || null;
+        }
+        if (Object.keys(patch).length > 0) {
+          await db.updateUser(ctx.user.id, patch);
+        }
+        // fallbackMode is currently advisory; we surface the user's choice
+        // back to the UI but don't persist it as a column yet.
+        return { success: true, fallbackMode: input.fallbackMode ?? null };
+      }),
+  }),
+
+  // ============================================================================
+  // v6.68 Phase 4 — Production Elements (consistency layer).
+  // ============================================================================
+  elements: router({
+    listProjectElements: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const { listProjectElements } = await import("./_core/productionElements");
+        return listProjectElements(input.projectId, ctx.user.id);
+      }),
+    getPromptContextForScene: protectedProcedure
+      .input(z.object({ sceneId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const { getPromptContextForScene } = await import("./_core/productionElements");
+        const ctxScene = await getPromptContextForScene(input.sceneId, ctx.user.id);
+        if (!ctxScene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found." });
+        return ctxScene;
+      }),
+  }),
+
+  // ============================================================================
+  // v6.68 Phase 6 — Credit reservations (read-only listing for users).
+  // ============================================================================
+  reservations: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return db.listUserReservations(ctx.user.id);
+    }),
+  }),
+
+  // ============================================================================
+  // v6.68 Phase 10 — Pitch Deck assembly.
+  // ============================================================================
+  pitchDeck: router({
+    get: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const project: any = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found." });
+        const [characters, scenes, moodBoard] = await Promise.all([
+          db.getProjectCharacters(input.projectId).catch(() => []),
+          db.getProjectScenes(input.projectId).catch(() => []),
+          db.getProjectMoodBoard(input.projectId).catch(() => []),
+        ]);
+        const sortedScenes = (scenes as any[]).slice().sort((a, b) =>
+          Number(a.sceneNumber ?? 0) - Number(b.sceneNumber ?? 0),
+        );
+        return {
+          title: project.title ?? "Untitled film",
+          logline: project.description ?? null,
+          synopsis: project.plotSummary ?? project.mainPlot ?? null,
+          themes: project.themes ?? null,
+          genre: project.genre ?? null,
+          rating: project.rating ?? null,
+          tone: project.tone ?? null,
+          characters: (characters as any[]).map((c) => ({
+            id: c.id,
+            name: c.name,
+            description: c.description,
+            referenceImages: Array.isArray(c.referenceImages) ? c.referenceImages : [],
+          })),
+          moodBoard: (moodBoard as any[]).map((m) => ({
+            imageUrl: (m as any).imageUrl ?? (m as any).url ?? null,
+          })).filter((m) => !!m.imageUrl),
+          scenes: sortedScenes.map((s) => ({
+            id: s.id,
+            sceneNumber: s.sceneNumber,
+            title: s.title ?? s.sceneTitle ?? null,
+            description: s.description ?? null,
+            thumbnailUrl: s.thumbnailUrl ?? s.posterUrl ?? null,
+          })),
+          budgetEstimate: null,
+          productionPlan: null,
+        };
       }),
   }),
 });

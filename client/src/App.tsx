@@ -33,6 +33,10 @@ const TalentSearch = lazy(() => import("./pages/TalentSearch"));
 const SceneEditor = lazy(() => import("./pages/SceneEditor"));
 const Movies = lazy(() => import("./pages/Movies"));
 const AssistantPage = lazy(() => import("./pages/AssistantPage"));
+// v6.68 — Phase 2 / Phase 5 / Phase 10 surfaces.
+const ProjectCommandCenterPage = lazy(() => import("./pages/ProjectCommandCenterPage"));
+const BYOKControlCenterPage = lazy(() => import("./pages/BYOKControlCenterPage"));
+const PitchDeckPage = lazy(() => import("./pages/PitchDeckPage"));
 const AdPosterMaker = lazy(() => import("./pages/AdPosterMaker"));
 const CampaignManager = lazy(() => import("./pages/CampaignManager"));
 const ContentCreatorPage = lazy(() => import("./pages/ContentCreatorPage"));
@@ -276,6 +280,10 @@ function Router() {
               <Route path="/projects">{() => <Projects />}</Route>
               <Route path="/projects/new">{() => <NewProject />}</Route>
               <Route path="/projects/:id">{() => <ProjectDetail />}</Route>
+              {/* v6.68 — Project Command Center, BYOK, Pitch Deck */}
+              <Route path="/projects/:id/command-center">{() => <LazyPage><ProjectCommandCenterPage /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/pitch-deck">{() => <LazyPage><PitchDeckPage /></LazyPage>}</Route>
+              <Route path="/settings/byok">{() => <LazyPage><BYOKControlCenterPage /></LazyPage>}</Route>
               <Route path="/projects/:id/scenes">{() => <SceneEditor />}</Route>
               <Route path="/movies">{() => <Movies />}</Route>
               <Route path="/assistant">{() => <LazyPage><AssistantPage /></LazyPage>}</Route>

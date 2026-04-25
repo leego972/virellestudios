@@ -1750,3 +1750,21 @@ export const recapSegments = mysqlTable("recapSegments", {
 });
 export type RecapSegment = typeof recapSegments.$inferSelect;
 export type InsertRecapSegment = typeof recapSegments.$inferInsert;
+
+// v6.68 Phase 6 — Credit reservations for in-flight async jobs.
+export const creditReservations = mysqlTable("creditReservations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  projectId: int("projectId"),
+  referenceType: varchar("referenceType", { length: 64 }),
+  referenceId: int("referenceId"),
+  featureKey: varchar("featureKey", { length: 64 }).notNull(),
+  amount: int("amount").notNull(),
+  status: varchar("status", { length: 16 }).default("reserved").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  finalizedAt: timestamp("finalizedAt"),
+  releasedAt: timestamp("releasedAt"),
+});
+export type CreditReservation = typeof creditReservations.$inferSelect;
+export type InsertCreditReservation = typeof creditReservations.$inferInsert;
