@@ -60,6 +60,58 @@ import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_
 import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
 
+// v6.77 — Per-project brand allow/required/forbidden list, mapped into the
+// shape buildScenePrompt expects. Used by every scene/trailer/poster/storyboard
+// generator so the model knows which real-world brands may appear (Nike, Pepsi,
+// storefront signage, billboards, etc.) and which it must NEVER show.
+async function brandsForPrompt(projectId: number | null | undefined): Promise<Array<{
+  name: string;
+  category?: string | null;
+  policy: "allowed" | "required" | "forbidden";
+  notes?: string | null;
+}>> {
+  if (!projectId) return [];
+  try {
+    const rows = await db.getProjectBrands(projectId);
+    return rows.map((b: any) => ({
+      name: b.name,
+      category: b.category,
+      policy: (b.policy === "required" || b.policy === "forbidden" ? b.policy : "allowed") as
+        | "allowed"
+        | "required"
+        | "forbidden",
+      notes: b.notes,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// Render the brand list as a short directive block usable inside any LLM
+// prompt that builds free-form descriptions (trailers, posters, storyboards,
+// breakdowns) — anywhere we don't go through buildScenePrompt directly.
+function brandDirectiveBlock(brands: Awaited<ReturnType<typeof brandsForPrompt>>): string {
+  if (!brands || brands.length === 0) return "";
+  const required = brands.filter((b) => b.policy === "required");
+  const allowed = brands.filter((b) => b.policy === "allowed");
+  const forbidden = brands.filter((b) => b.policy === "forbidden");
+  const lines: string[] = [];
+  lines.push("PROJECT BRAND POLICY (real-world brands the director has set for this film):");
+  if (required.length > 0) {
+    lines.push(`- REQUIRED to appear (place them naturally on signage, packaging, vehicles, apparel, or background props): ${required.map((b) => b.name).join(", ")}.`);
+  }
+  if (allowed.length > 0) {
+    lines.push(`- APPROVED for placement (may appear on storefronts, billboards, road signs, drinks, clothing, vehicles when contextually appropriate): ${allowed.map((b) => b.name).join(", ")}.`);
+  }
+  if (forbidden.length > 0) {
+    lines.push(`- FORBIDDEN — must NEVER appear, be named, or be hinted at in any frame; replace with generic / unmarked alternatives: ${forbidden.map((b) => b.name).join(", ")}.`);
+  }
+  if (allowed.length === 0 && required.length === 0) {
+    lines.push("- All other background signage, packaging and apparel must be generic / unmarked unless explicitly listed above.");
+  }
+  return lines.join("\n");
+}
+
 // Build a rich, accurate prompt description for extended scene generation.
 // Placed at module scope (not inside router object) to satisfy TypeScript's strict checker.
 function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, effectiveDialogueText?: string): string {
@@ -1358,6 +1410,76 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       }),
   }),
 
+  // ─── v6.77 Brands ───
+  // Per-project allow / required / forbidden list of real-world commercial
+  // brands (Nike, Pepsi, storefronts, road signs, billboards, vehicles, etc.).
+  // Free to manage — every scene/trailer/poster/storyboard generator reads this
+  // list and feeds the constraints into the model so the right logos appear
+  // (and the wrong ones never do).
+  brand: router({
+    listByProject: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.getProjectBrands(input.projectId);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        name: z.string().min(1).max(128),
+        category: z.string().max(64).optional(),
+        policy: z.enum(["allowed", "required", "forbidden"]).default("allowed"),
+        notes: z.string().max(2000).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.createProjectBrand({
+          userId: ctx.user.id,
+          projectId: input.projectId,
+          name: input.name.trim(),
+          category: input.category?.trim() || null,
+          policy: input.policy,
+          notes: input.notes?.trim() || null,
+        } as any);
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        projectId: z.number(),
+        name: z.string().min(1).max(128).optional(),
+        category: z.string().max(64).nullish(),
+        policy: z.enum(["allowed", "required", "forbidden"]).optional(),
+        notes: z.string().max(2000).nullish(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const existing = await db.getProjectBrandById(input.id);
+        if (!existing || existing.projectId !== input.projectId) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Brand not found for this project" });
+        }
+        const patch: any = {};
+        if (input.name !== undefined) patch.name = input.name.trim();
+        if (input.category !== undefined) patch.category = input.category?.toString().trim() || null;
+        if (input.policy !== undefined) patch.policy = input.policy;
+        if (input.notes !== undefined) patch.notes = input.notes?.toString().trim() || null;
+        return db.updateProjectBrand(input.id, patch);
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const existing = await db.getProjectBrandById(input.id);
+        if (!existing) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Brand not found" });
+        }
+        await assertCanAccessProject(existing.projectId, ctx.user.id);
+        await db.deleteProjectBrand(input.id);
+        return { ok: true };
+      }),
+  }),
+
   // ─── Scenes ───
   scene: router({
     listByProject: protectedProcedure
@@ -1680,6 +1802,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             totalScenes: allScenes.length || 1,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
+                  brands: await brandsForPrompt(scene.projectId),
             characters: characters.map(c => ({ name: c.name, ageRange: c.dateOfBirth })),
           }
         );
@@ -1867,6 +1990,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   totalScenes: scenes.length,
                   previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
                   characterNames: characters.map(c => c.name),
+                  brands: await brandsForPrompt(scene.projectId),
                 }
               );
               const sceneCharacterIds = (scene.characterIds as number[]) || [];
@@ -1990,6 +2114,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             totalScenes: allScenes.length || 1,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
+                  brands: await brandsForPrompt(scene.projectId),
           }
         );
         // Use reference images from scene editor (first = promptImage for image-to-video)
@@ -2368,6 +2493,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                     totalScenes: scenes.length,
                     previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
                     characterNames: characters.map(c => c.name),
+                  brands: await brandsForPrompt(scene.projectId),
                   }
                 );
                 const sceneRefImages = (scene as any).referenceImages as string[] || [];
@@ -2450,6 +2576,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                     totalScenes: scenes.length,
                     previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
                     characterNames: characters.map(c => c.name),
+                  brands: await brandsForPrompt(scene.projectId),
                   }
                 );
                 await db.updateScene(scene.id, { status: "generating" } as any);
@@ -3196,12 +3323,18 @@ Available fields you can update:
         const hasCreativeLeeway = /be creative|use your judgment|surprise me|you decide|fill it in|add what you think|make it cinematic|your choice|go wild|improvise|creative freedom/i.test(directorText);
         const systemPrompt = buildSceneBreakdownSystemPrompt({ ...project, creativeLeeway: hasCreativeLeeway });
 
+        // v6.77 — Inject project brand policy so the AI scene breakdown places
+        // required brands into the right shots and never writes forbidden ones
+        // into a visual description.
+        const __sbBrands = await brandsForPrompt(projectId);
+        const __sbBrandBlock = brandDirectiveBlock(__sbBrands);
+
         const llmResult = await invokeLLM({
           userApiKey: userLlmApiKey,
           messages: [
             {
               role: "system",
-              content: systemPrompt,
+              content: systemPrompt + (__sbBrandBlock ? `\n\nWhen writing visualDescription for any scene, honor the BRAND POLICY supplied below: weave required brands into appropriate shots, allow approved brands where natural, and never mention or describe forbidden brands.` : ""),
             },
             {
               role: "user",
@@ -3209,7 +3342,7 @@ Available fields you can update:
 
 Characters:
 ${charDescriptions}
-
+${__sbBrandBlock ? `\n${__sbBrandBlock}\n` : ""}
 Break this into 8-15 scenes. For each scene, provide:
 - title: Scene title
 - description: What happens narratively (2-3 sentences)
@@ -3309,6 +3442,7 @@ Break this into 8-15 scenes. For each scene, provide:
                 totalScenes: allScenes.length,
                 previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
                 characterNames: characters.map(c => c.name),
+                  brands: await brandsForPrompt(scene.projectId),
               }
             );
 
@@ -3655,15 +3789,20 @@ Break this into 8-15 scenes. For each scene, provide:
           `Scene ${i + 1} "${s.title}": ${s.description} (${s.mood} mood, ${s.locationType})`
         ).join("\n");
 
+        // v6.77 — Inject per-project brand policy so the trailer cuts respect
+        // required / allowed / forbidden real-world brands when describing shots.
+        const __trailerBrands = await brandsForPrompt(project.id);
+        const __trailerBrandBlock = brandDirectiveBlock(__trailerBrands);
+
         const llmResult = await invokeLLM({
           messages: [
             {
               role: "system",
-              content: "You are a Hollywood trailer editor. Your STRICT rules:\n1. NEVER spoil key plot twists, endings, character deaths, major reveals, or surprise elements.\n2. ALL trailer content MUST be G-rated regardless of the film's actual rating — absolutely NO violence, gore, sexual content, strong language, drug use, or disturbing imagery.\n3. Focus on building intrigue, mystery, and excitement — tease the premise and characters without giving away what happens.\n4. Select scenes from the FIRST HALF of the film only to avoid late-story spoilers.\n5. Create a sense of wonder and anticipation that makes viewers want to see the film.\n6. Keep the trailer family-friendly and suitable for all audiences.\nReturn JSON.",
+              content: "You are a Hollywood trailer editor. Your STRICT rules:\n1. NEVER spoil key plot twists, endings, character deaths, major reveals, or surprise elements.\n2. ALL trailer content MUST be G-rated regardless of the film's actual rating — absolutely NO violence, gore, sexual content, strong language, drug use, or disturbing imagery.\n3. Focus on building intrigue, mystery, and excitement — tease the premise and characters without giving away what happens.\n4. Select scenes from the FIRST HALF of the film only to avoid late-story spoilers.\n5. Create a sense of wonder and anticipation that makes viewers want to see the film.\n6. Keep the trailer family-friendly and suitable for all audiences.\n7. Honor the project BRAND POLICY: keep required brands visible, allowed brands welcome, forbidden brands completely absent in every trailer-cut description you write.\nReturn JSON.",
             },
             {
               role: "user",
-              content: `Film: "${project.title}" (${project.genre || "Drama"}, rated ${project.rating || "PG-13"})\nPlot: ${project.plotSummary || project.description}\n\nAvailable scenes:\n${sceneDescriptions}\n\nSelect 4-6 scenes for a 2-minute trailer. IMPORTANT RULES:\n- ONLY select scenes from the first half of the film (scenes 1 through ${Math.ceil(allScenes.length / 2)}) to avoid spoilers\n- Do NOT reveal any plot twists, endings, or major surprises\n- Rewrite each scene description to be G-RATED and family-friendly even if the original scene contains mature content\n- Focus on establishing the world, characters, and central conflict without resolution\n- Build curiosity and excitement — leave the audience wanting more\n\nFor each scene, provide the scene index (0-based), a G-rated trailer-cut description, and the order they should appear in the trailer.`,
+              content: `Film: "${project.title}" (${project.genre || "Drama"}, rated ${project.rating || "PG-13"})\nPlot: ${project.plotSummary || project.description}\n${__trailerBrandBlock ? `\n${__trailerBrandBlock}\n` : ""}\nAvailable scenes:\n${sceneDescriptions}\n\nSelect 4-6 scenes for a 2-minute trailer. IMPORTANT RULES:\n- ONLY select scenes from the first half of the film (scenes 1 through ${Math.ceil(allScenes.length / 2)}) to avoid spoilers\n- Do NOT reveal any plot twists, endings, or major surprises\n- Rewrite each scene description to be G-RATED and family-friendly even if the original scene contains mature content\n- Respect the BRAND POLICY above: do not write any forbidden brand into a trailer description; weave required brands into the chosen shots when natural.\n- Focus on establishing the world, characters, and central conflict without resolution\n- Build curiosity and excitement — leave the audience wanting more\n\nFor each scene, provide the scene index (0-based), a G-rated trailer-cut description, and the order they should appear in the trailer.`,
             },
           ],
           response_format: {
@@ -5102,13 +5241,16 @@ FORMAT RULES (always apply):
       }),
 
     generateImage: protectedProcedure
-      .input(z.object({ prompt: z.string().min(1) }))
+      .input(z.object({ prompt: z.string().min(1), projectId: z.number().optional() }))
       .mutation(async ({ ctx, input }) => {
         // Deduct 1 credit for mood board image generation (same as preview image)
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_preview_image.cost, "generate_preview_image", `Mood board image: ${input.prompt.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
-        const { url } = await generateImage({
-          prompt: `Cinematic mood board reference: ${input.prompt}. Artistic, atmospheric, film production quality.`,
-        });
+        // v6.77 — Mood board references the same brand policy as the rest of
+        // the film so reference frames match what the actual scenes will draw.
+        const __mbBrands = await brandsForPrompt(input.projectId);
+        const __mbBrandBlock = brandDirectiveBlock(__mbBrands);
+        const fullPrompt = `Cinematic mood board reference: ${input.prompt}. Artistic, atmospheric, film production quality.${__mbBrandBlock ? ` ${__mbBrandBlock}` : ""}`;
+        const { url } = await generateImage({ prompt: fullPrompt });
         return { url };
       }),
   }),
@@ -8006,6 +8148,9 @@ Rules:
       .input(z.object({
         prompt: z.string().min(1).max(2000),
         templateType: z.string(),
+        // v6.77 — Optional projectId so the poster engine reads the same
+        // brand allow/required/forbidden list the scenes use.
+        projectId: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
@@ -8013,8 +8158,10 @@ Rules:
         requireGenerationQuota(ctx.user);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.ad_poster_gen.cost, "ad_poster_gen", `Ad/poster image generation`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         await db.incrementGenerationCount(ctx.user.id);
+        const __posterBrands = await brandsForPrompt(input.projectId);
+        const __posterBrandBlock = brandDirectiveBlock(__posterBrands);
         const result = await generateImage({
-          prompt: input.prompt,
+          prompt: __posterBrandBlock ? `${input.prompt}\n\n${__posterBrandBlock}` : input.prompt,
         });
         return { url: result.url || null };
       }),
@@ -8025,6 +8172,9 @@ Rules:
         genre: z.string(),
         description: z.string(),
         templateType: z.string(),
+        // v6.77 — Brand-aware copy so taglines + credits never name a forbidden
+        // brand and may reference required ones.
+        projectId: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
@@ -8043,15 +8193,18 @@ Rules:
         };
         const templateDesc = templateDescriptions[input.templateType] || "movie poster";
 
+        const __posterCopyBrands = await brandsForPrompt(input.projectId);
+        const __posterCopyBrandBlock = brandDirectiveBlock(__posterCopyBrands);
+
         const response = await invokeLLM({
           messages: [
             {
               role: "system",
-              content: `You are a professional film marketing copywriter. Generate compelling marketing copy for a ${templateDesc}. Return valid JSON only.`,
+              content: `You are a professional film marketing copywriter. Generate compelling marketing copy for a ${templateDesc}. Return valid JSON only.${__posterCopyBrandBlock ? " Honor the project BRAND POLICY supplied in the user message — never name a forbidden brand in the title, tagline or credits." : ""}`,
             },
             {
               role: "user",
-              content: `Generate marketing copy for a ${input.genre} film:\n\nTitle: ${input.title}\nGenre: ${input.genre}\nDescription: ${input.description}\n\nReturn JSON with these fields:\n- title: the film title, possibly stylized (max 40 chars)\n- tagline: a compelling tagline (max 80 chars)\n- credits: a credits line like "Directed by X • Starring Y, Z" (max 120 chars)`,
+              content: `Generate marketing copy for a ${input.genre} film:\n\nTitle: ${input.title}\nGenre: ${input.genre}\nDescription: ${input.description}${__posterCopyBrandBlock ? `\n\n${__posterCopyBrandBlock}` : ""}\n\nReturn JSON with these fields:\n- title: the film title, possibly stylized (max 40 chars)\n- tagline: a compelling tagline (max 80 chars)\n- credits: a credits line like "Directed by X • Starring Y, Z" (max 120 chars)`,
             },
           ],
           response_format: {

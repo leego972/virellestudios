@@ -36,6 +36,8 @@ import {
     activityLog, InsertActivityLogEntry, ActivityLogEntry,
     // v6.68 Phase 6 — credit reservations
     creditReservations, InsertCreditReservation, CreditReservation,
+    // v6.77 — Per-project brand allow/block list
+    projectBrands, InsertProjectBrand, ProjectBrand,
   } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -2933,4 +2935,48 @@ export async function unattachRecap(id: number, userId: number): Promise<void> {
   if (!db) return;
   await db.update(recaps).set({ attachedAt: null } as any)
     .where(and(eq(recaps.id, id), eq(recaps.userId, userId)));
+}
+
+// ─── v6.77 — Project Brands (real-world brand allow/block list per film) ───
+//
+// Free to manage. Consumed by buildScenePrompt + trailer + poster + storyboard
+// engines so the AI knows which real-world brand names / logos / signage may
+// (or must, or must NEVER) appear in generated shots.
+export async function getProjectBrands(projectId: number): Promise<ProjectBrand[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projectBrands)
+    .where(eq(projectBrands.projectId, projectId))
+    .orderBy(asc(projectBrands.name));
+}
+
+export async function getProjectBrandById(id: number): Promise<ProjectBrand | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(projectBrands).where(eq(projectBrands.id, id)).limit(1);
+  return result[0];
+}
+
+export async function createProjectBrand(data: InsertProjectBrand): Promise<ProjectBrand> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(projectBrands).values(data);
+  const id = result[0].insertId;
+  return (await db.select().from(projectBrands).where(eq(projectBrands.id, id)))[0];
+}
+
+export async function updateProjectBrand(
+  id: number,
+  data: Partial<InsertProjectBrand>,
+): Promise<ProjectBrand | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.update(projectBrands).set(data).where(eq(projectBrands.id, id));
+  return (await db.select().from(projectBrands).where(eq(projectBrands.id, id)))[0];
+}
+
+export async function deleteProjectBrand(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(projectBrands).where(eq(projectBrands.id, id));
 }

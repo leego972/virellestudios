@@ -705,6 +705,15 @@ export function buildScenePrompt(
     cameraMovement?: string;
     // Minor protection: pass character age ranges for automatic modesty enforcement
     characters?: Array<{ name: string; ageRange?: string | null }>;
+    // v6.77 — Per-project brand allow/block list. Real-world brand names that
+    // may, must, or must NEVER appear in this shot (Nike, Pepsi, storefront
+    // signage, billboards, road signs, etc.).
+    brands?: Array<{
+      name: string;
+      category?: string | null;
+      policy: "allowed" | "required" | "forbidden";
+      notes?: string | null;
+    }>;
   }
 ): string {
   const parts: string[] = [];
@@ -990,6 +999,42 @@ export function buildScenePrompt(
     parts.push(`Lighting style: ${industryProfile.lightingStyle}`);
     parts.push(`Color grade: ${industryProfile.colorGrade} — ${industryProfile.colorGradeDescription}`);
   }
+
+  // 17c. Brand directives — v6.77 per-project allow/required/forbidden brands.
+  // These are real-world commercial brands the director has whitelisted,
+  // mandated, or banned from this film. The model gets explicit, strongly
+  // worded guidance so storefronts, signage, billboards, vehicles, drinks
+  // and clothing render the right logos (and never the wrong ones).
+  if (options?.brands && options.brands.length > 0) {
+    const required = options.brands.filter((b) => b.policy === "required");
+    const allowed = options.brands.filter((b) => b.policy === "allowed");
+    const forbidden = options.brands.filter((b) => b.policy === "forbidden");
+    const fmt = (b: { name: string; category?: string | null; notes?: string | null }) => {
+      const tail = [b.category, b.notes].filter((x) => x && String(x).trim()).join(" — ");
+      return tail ? `${b.name} (${tail})` : b.name;
+    };
+    if (required.length > 0) {
+      parts.push(
+        `BRAND PLACEMENT — REQUIRED (must appear naturally in this shot if at all plausible — on signage, packaging, vehicles, apparel, or background props): ${required.map(fmt).join("; ")}.`,
+      );
+    }
+    if (allowed.length > 0) {
+      parts.push(
+        `BRAND PLACEMENT — APPROVED (these real-world brands MAY be shown on storefronts, billboards, road signs, drinks, clothing, vehicles when contextually appropriate; render their actual logos accurately): ${allowed.map(fmt).join("; ")}.`,
+      );
+    }
+    if (forbidden.length > 0) {
+      parts.push(
+        `BRAND EXCLUSION — STRICTLY FORBIDDEN (these brands MUST NOT appear, be named, hinted at, or have their logos visible anywhere in the frame — replace with generic equivalents or unmarked alternatives): ${forbidden.map(fmt).join("; ")}.`,
+      );
+    }
+    if (allowed.length === 0 && required.length === 0) {
+      parts.push(
+        `Background signage, packaging, and apparel should use generic / unmarked branding unless explicitly listed above.`,
+      );
+    }
+  }
+
   // 18. (Quality anchor moved to position 1 for maximum model attention weight)
 
   // 19. Minor Protection — auto-inject modesty directives for minor characters

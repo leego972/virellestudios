@@ -225,6 +225,12 @@ export default function ProjectCommandCenterPage() {
                   Open pitch deck →
                 </Link>
                 <Link
+                  href={`/projects/${projectId}/brands`}
+                  className="text-sm text-amber-300 hover:underline mb-2"
+                >
+                  Manage allowed brands →
+                </Link>
+                <Link
                   href={`/awaiting-review`}
                   className="text-sm text-amber-300 hover:underline"
                 >

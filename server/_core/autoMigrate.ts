@@ -1039,6 +1039,23 @@ export async function runAutoMigration(): Promise<void> {
           updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )`,
       },
+      {
+        // v6.77 — Per-project brand allow/block list. See drizzle/schema.ts.
+        name: "projectBrands",
+        createSQL: `CREATE TABLE IF NOT EXISTS projectBrands (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          userId INT NOT NULL,
+          projectId INT NOT NULL,
+          name VARCHAR(128) NOT NULL,
+          category VARCHAR(64) NULL,
+          policy VARCHAR(16) NOT NULL DEFAULT 'allowed',
+          notes TEXT NULL,
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_project_brands_project (projectId),
+          INDEX idx_project_brands_user (userId)
+        )`,
+      },
   ];
 
   // ─── Columns that may be missing from existing tables ───

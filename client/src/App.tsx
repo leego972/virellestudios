@@ -28,6 +28,8 @@ const Projects = lazy(() => import("./pages/Projects"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const NewProject = lazy(() => import("./pages/NewProject"));
 const Characters = lazy(() => import("./pages/Characters"));
+// v6.77 — Per-project brand allow/block list
+const ProjectBrands = lazy(() => import("./pages/ProjectBrands"));
 const SignatureCast = lazy(() => import("./pages/SignatureCast"));
 const TalentSearch = lazy(() => import("./pages/TalentSearch"));
 const SceneEditor = lazy(() => import("./pages/SceneEditor"));
@@ -288,7 +290,8 @@ function Router() {
               <Route path="/projects/:projectId/pitch-deck">{() => <LazyPage><PitchDeckPage /></LazyPage>}</Route>
               <Route path="/settings/byok">{() => <LazyPage><BYOKControlCenterPage /></LazyPage>}</Route>
               {/* v6.69 — Script breakdown wizard + Awaiting review queue */}
-              <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/brands">{() => <LazyPage><ProjectBrands /></LazyPage>}</Route>
+      <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
               <Route path="/awaiting-review">{() => <LazyPage><AwaitingReviewPage /></LazyPage>}</Route>
               <Route path="/projects/:id/scenes">{() => <SceneEditor />}</Route>
               <Route path="/movies">{() => <Movies />}</Route>

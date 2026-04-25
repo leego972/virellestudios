@@ -1783,3 +1783,28 @@ export const creditReservations = mysqlTable("creditReservations", {
 });
 export type CreditReservation = typeof creditReservations.$inferSelect;
 export type InsertCreditReservation = typeof creditReservations.$inferInsert;
+
+// v6.77 — Per-project brand list. Lets directors declare which real-world
+// brands the AI is permitted (or required, or forbidden) to surface in
+// shots — storefronts, billboards, road signs, products, clothing, etc.
+// Free to manage (no credits). Consumed by buildScenePrompt as a directive
+// block, and exposed read-only to the script-breakdown / poster engines.
+export const projectBrands = mysqlTable("projectBrands", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  projectId: int("projectId").notNull(),
+  name: varchar("name", { length: 128 }).notNull(),
+  // Free-form category so we don't lock the user into a fixed taxonomy.
+  // Suggested values surfaced in the UI: logo, storefront, billboard,
+  // road_sign, product, vehicle, clothing, food, other.
+  category: varchar("category", { length: 64 }),
+  // 'allowed'   — may appear if the scene calls for it
+  // 'required'  — should appear at least once when the scene allows
+  // 'forbidden' — must NEVER appear in any shot
+  policy: varchar("policy", { length: 16 }).default("allowed").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ProjectBrand = typeof projectBrands.$inferSelect;
+export type InsertProjectBrand = typeof projectBrands.$inferInsert;
