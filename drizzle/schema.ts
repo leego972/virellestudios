@@ -1706,3 +1706,46 @@ export const assetVersions = mysqlTable("asset_versions", {
 });
 export type AssetVersion = typeof assetVersions.$inferSelect;
 export type InsertAssetVersion = typeof assetVersions.$inferInsert;
+
+// ─── v6.66 Auto Recap ──────────────────────────────────────────────────────
+// "Previously On" generator for episodic projects. A project with
+// actStructure="episodic" treats each rendered film-type movie as one episode.
+export const recaps = mysqlTable("recaps", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  projectId: int("projectId").notNull(),
+  targetMovieId: int("targetMovieId").notNull(),
+  sourceMovieIds: json("sourceMovieIds").notNull(),
+  lengthSeconds: int("lengthSeconds").default(90).notNull(),
+  style: varchar("style", { length: 32 }).default("cinematic").notNull(),
+  resolution: varchar("resolution", { length: 16 }).default("1080p").notNull(),
+  includeVoiceover: boolean("includeVoiceover").default(false).notNull(),
+  includeSubtitles: boolean("includeSubtitles").default(true).notNull(),
+  includeOpeningCredits: boolean("includeOpeningCredits").default(false).notNull(),
+  overlayCreditsOnRecap: boolean("overlayCreditsOnRecap").default(false).notNull(),
+  status: varchar("status", { length: 32 }).default("pending").notNull(),
+  outputAssetId: int("outputAssetId"),
+  creditCost: int("creditCost").default(0).notNull(),
+  progress: int("progress").default(0).notNull(),
+  errorMessage: text("errorMessage"),
+  outline: json("outline"),
+  voiceoverScript: text("voiceoverScript"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Recap = typeof recaps.$inferSelect;
+export type InsertRecap = typeof recaps.$inferInsert;
+
+export const recapSegments = mysqlTable("recapSegments", {
+  id: int("id").autoincrement().primaryKey(),
+  recapId: int("recapId").notNull(),
+  sourceMovieId: int("sourceMovieId").notNull(),
+  startTimeSeconds: float("startTimeSeconds").default(0).notNull(),
+  endTimeSeconds: float("endTimeSeconds").default(0).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  caption: text("caption"),
+  reason: text("reason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type RecapSegment = typeof recapSegments.$inferSelect;
+export type InsertRecapSegment = typeof recapSegments.$inferInsert;

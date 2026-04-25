@@ -1609,6 +1609,17 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/auto-recap`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <RefreshCw className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Auto Recap</p>
+                    <p className="text-xs text-muted-foreground">"Previously On" for episodic projects</p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 

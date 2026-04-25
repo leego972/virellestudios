@@ -133,6 +133,7 @@ const BudgetFringes = lazy(() => import("./pages/BudgetFringesPage"));
 const AssetVersions = lazy(() => import("./pages/AssetVersionsPage"));
 const Sides = lazy(() => import("./pages/SidesPage"));
 const DailyReport = lazy(() => import("./pages/DailyReportPage"));
+const AutoRecap = lazy(() => import("./pages/AutoRecapPage"));
 const CastingBoard = lazy(() => import("./pages/CastingBoard"));
 const CuttingRoom = lazy(() => import("./pages/CuttingRoom"));
 const FilmPage = lazy(() => import("./pages/FilmPage"));
@@ -331,6 +332,7 @@ function Router() {
               <Route path="/projects/:id/sides/:dayId">{() => <LazyPage><Sides /></LazyPage>}</Route>
               <Route path="/projects/:id/daily-report">{() => <LazyPage><DailyReport /></LazyPage>}</Route>
               <Route path="/projects/:id/daily-report/:dayId">{() => <LazyPage><DailyReport /></LazyPage>}</Route>
+              <Route path="/projects/:id/auto-recap">{() => <LazyPage><AutoRecap /></LazyPage>}</Route>
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>

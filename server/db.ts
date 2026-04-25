@@ -2698,3 +2698,79 @@ export async function getProjectByIdRaw(projectId: number): Promise<any | null> 
   const [row] = await db.select().from(projects).where(eq(projects.id, projectId)).limit(1);
   return (row as any) || null;
 }
+
+// ─── v6.66 Auto Recap helpers ──────────────────────────────────────────────
+import { recaps, recapSegments } from "../drizzle/schema";
+import type { InsertRecap, Recap, InsertRecapSegment, RecapSegment } from "../drizzle/schema";
+
+export async function listMoviesByProject(projectId: number, userId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(movies)
+    .where(and(eq(movies.projectId, projectId), eq(movies.userId, userId)))
+    .orderBy(desc(movies.createdAt)) as any;
+}
+
+export async function createRecap(data: InsertRecap): Promise<Recap | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [result]: any = await db.insert(recaps).values(data);
+  const id = result?.insertId ?? (data as any).id;
+  if (!id) return null;
+  const [row] = await db.select().from(recaps).where(eq(recaps.id, id)).limit(1);
+  return (row as Recap) || null;
+}
+
+export async function getRecapById(id: number, userId: number): Promise<Recap | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db.select().from(recaps)
+    .where(and(eq(recaps.id, id), eq(recaps.userId, userId))).limit(1);
+  return (row as Recap) || null;
+}
+
+export async function listRecapsForMovie(movieId: number, userId: number): Promise<Recap[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(recaps)
+    .where(and(eq(recaps.targetMovieId, movieId), eq(recaps.userId, userId)))
+    .orderBy(desc(recaps.createdAt)) as any;
+}
+
+export async function findActiveRecap(
+  userId: number, projectId: number, targetMovieId: number
+): Promise<Recap | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const active = ["pending", "analyzing", "selecting_clips", "generating_voiceover", "rendering"];
+  const rows: any = await db.select().from(recaps).where(
+    and(
+      eq(recaps.userId, userId),
+      eq(recaps.projectId, projectId),
+      eq(recaps.targetMovieId, targetMovieId),
+    )
+  );
+  return rows.find((r: any) => active.includes(r.status)) || null;
+}
+
+export async function updateRecap(id: number, userId: number, data: Partial<InsertRecap>): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(recaps).set(data as any)
+    .where(and(eq(recaps.id, id), eq(recaps.userId, userId)));
+}
+
+export async function insertRecapSegments(rows: InsertRecapSegment[]): Promise<void> {
+  if (!rows.length) return;
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(recapSegments).values(rows);
+}
+
+export async function listRecapSegments(recapId: number): Promise<RecapSegment[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(recapSegments)
+    .where(eq(recapSegments.recapId, recapId))
+    .orderBy(recapSegments.sortOrder) as any;
+}

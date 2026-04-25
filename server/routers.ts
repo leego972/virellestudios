@@ -11836,5 +11836,249 @@ Rules:
         return { xml: exportFDX(scenes as any, (project as any)?.title || "Untitled"), count: scenes.length };
       }),
   }),
+
+  // ============================================================================
+  // v6.66 — Auto Recap ("Previously On" generator for episodic projects).
+  // Maps episode → movie of type "film" inside a project where
+  // actStructure="episodic". Generates outline + beats + voiceover script via
+  // OpenAI; segment selection from movie metadata. Charges credits only on
+  // successful AI completion.
+  // ============================================================================
+  recap: router({
+    estimate: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        targetMovieId: z.number(),
+        sourceMovieIds: z.array(z.number()).min(1),
+        lengthSeconds: z.union([z.literal(60), z.literal(90), z.literal(120)]).default(90),
+        style: z.enum(["cinematic", "suspenseful", "fast-cut", "emotional", "minimal"]).default("cinematic"),
+        resolution: z.enum(["720p", "1080p", "4k"]).default("1080p"),
+        includeVoiceover: z.boolean().default(false),
+        includeSubtitles: z.boolean().default(true),
+        includeOpeningCredits: z.boolean().default(false),
+        overlayCreditsOnRecap: z.boolean().default(false),
+      }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const project = await db.getProjectByIdRaw(input.projectId);
+        const isEpisodic = (project as any)?.actStructure === "episodic";
+        const breakdown = {
+          analysis: 5,
+          script: 4,
+          clipSelection: 8,
+          subtitles: input.includeSubtitles ? 3 : 0,
+          voiceover: input.includeVoiceover ? 8 : 0,
+          openingCreditsOverlay: (input.includeOpeningCredits || input.overlayCreditsOnRecap) ? 5 : 0,
+          render: input.resolution === "4k" ? 40 : input.resolution === "1080p" ? 18 : 10,
+          discount: 0,
+        };
+        let subtotal =
+          breakdown.analysis + breakdown.script + breakdown.clipSelection +
+          breakdown.subtitles + breakdown.voiceover +
+          breakdown.openingCreditsOverlay + breakdown.render;
+        if (input.sourceMovieIds.length > 1) subtotal = Math.ceil(subtotal * 1.25);
+        const total = Math.max(0, subtotal - breakdown.discount);
+        const balance = await db.getCreditBalance(ctx.user.id);
+        return {
+          allowed: isEpisodic,
+          isEpisodic,
+          estimatedCost: { total, breakdown },
+          membershipLimit: { maxLengthSeconds: 120, maxResolution: "1080p", watermarkRequired: false },
+          hasEnoughCredits: balance >= total,
+          creditBalance: balance,
+        };
+      }),
+
+    generate: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        targetMovieId: z.number(),
+        sourceMovieIds: z.array(z.number()).min(1),
+        lengthSeconds: z.union([z.literal(60), z.literal(90), z.literal(120)]).default(90),
+        style: z.enum(["cinematic", "suspenseful", "fast-cut", "emotional", "minimal"]).default("cinematic"),
+        resolution: z.enum(["720p", "1080p", "4k"]).default("1080p"),
+        includeVoiceover: z.boolean().default(false),
+        includeSubtitles: z.boolean().default(true),
+        includeOpeningCredits: z.boolean().default(false),
+        overlayCreditsOnRecap: z.boolean().default(false),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const project = await db.getProjectByIdRaw(input.projectId);
+        if ((project as any)?.actStructure !== "episodic") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Auto Recap is only available for episodic projects." });
+        }
+        const existing = await db.findActiveRecap(ctx.user.id, input.projectId, input.targetMovieId);
+        if (existing) return { recapId: existing.id, status: existing.status, reused: true };
+
+        const all = await db.listMoviesByProject(input.projectId, ctx.user.id);
+        const target = all.find((m: any) => m.id === input.targetMovieId);
+        const sources = input.sourceMovieIds.map((id: number) => all.find((m: any) => m.id === id)).filter(Boolean);
+        if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "Target episode not found." });
+        if (sources.length !== input.sourceMovieIds.length) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "One or more source episodes were not found." });
+        }
+        const missingVideo = sources.find((s: any) => !s.fileUrl);
+        if (missingVideo) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "A source episode video is required before generating an Auto Recap." });
+        }
+
+        const breakdownCost = (() => {
+          let s = 5 + 4 + 8 + (input.includeSubtitles ? 3 : 0) + (input.includeVoiceover ? 8 : 0) +
+            ((input.includeOpeningCredits || input.overlayCreditsOnRecap) ? 5 : 0) +
+            (input.resolution === "4k" ? 40 : input.resolution === "1080p" ? 18 : 10);
+          if (input.sourceMovieIds.length > 1) s = Math.ceil(s * 1.25);
+          return s;
+        })();
+        const balance = await db.getCreditBalance(ctx.user.id);
+        if (balance < breakdownCost) {
+          throw new TRPCError({ code: "FORBIDDEN", message: `You need ${breakdownCost - balance} more credits to generate this recap.` });
+        }
+
+        const recap = await db.createRecap({
+          userId: ctx.user.id,
+          projectId: input.projectId,
+          targetMovieId: input.targetMovieId,
+          sourceMovieIds: input.sourceMovieIds as any,
+          lengthSeconds: input.lengthSeconds,
+          style: input.style,
+          resolution: input.resolution,
+          includeVoiceover: input.includeVoiceover,
+          includeSubtitles: input.includeSubtitles,
+          includeOpeningCredits: input.includeOpeningCredits,
+          overlayCreditsOnRecap: input.overlayCreditsOnRecap,
+          status: "analyzing",
+          progress: 10,
+          creditCost: breakdownCost,
+        });
+        if (!recap) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Could not create recap." });
+
+        // Run synchronously — Virelle's pattern. Wrap in try so failures roll back.
+        try {
+          await db.updateRecap(recap.id, ctx.user.id, { status: "selecting_clips", progress: 35 });
+
+          // Build prompt context from cached movie metadata.
+          const sourceLines = sources.map((s: any, i: number) =>
+            `EPISODE ${i + 1}: "${s.title}"\n  Duration: ${s.duration ?? "unknown"}s\n  Description: ${s.description || "(no description)"}`
+          ).join("\n\n");
+
+          const prompt = `You are creating a short "Previously On" recap for an episodic film/TV project.
+
+Style: ${input.style}
+Target duration: ${input.lengthSeconds} seconds
+Number of beats: ${input.lengthSeconds <= 60 ? "5-7" : input.lengthSeconds <= 90 ? "7-10" : "9-12"}
+
+Use only the provided source episode metadata. Prioritize plot-critical events,
+character decisions, conflicts, reveals, and cliffhangers. Do not invent scenes.
+
+SOURCE EPISODES:
+${sourceLines}
+
+TARGET EPISODE (do NOT spoil): "${target.title}"
+${target.description ? `Target description: ${target.description}` : ""}
+
+Return JSON ONLY in this exact shape:
+{
+  "title": "Previously On",
+  "targetDurationSeconds": ${input.lengthSeconds},
+  "summary": "short recap summary (1-2 sentences)",
+  "beats": [
+    {
+      "order": number,
+      "sourceMovieId": number (one of [${input.sourceMovieIds.join(", ")}]),
+      "description": "what happens in this beat",
+      "preferredTimestampStart": number (seconds into source),
+      "preferredTimestampEnd": number,
+      "caption": "optional subtitle, <= 60 chars",
+      "importance": "high" | "medium" | "low"
+    }
+  ]${input.includeVoiceover ? ',\n  "voiceoverScript": "narration script, ~150 words per minute"' : ""}
+}`;
+
+          let outline: any = null;
+          const apiKey = process.env.OPENAI_API_KEY;
+          if (apiKey) {
+            try {
+              const { default: OpenAI } = await import("openai");
+              const client = new OpenAI({ apiKey });
+              const completion = await client.chat.completions.create({
+                model: "gpt-4o-mini",
+                messages: [
+                  { role: "system", content: "You write concise structured recap outlines. Return ONLY valid JSON." },
+                  { role: "user", content: prompt },
+                ],
+                response_format: { type: "json_object" },
+                temperature: 0.7,
+                max_tokens: 1500,
+              });
+              const raw = completion.choices?.[0]?.message?.content || "{}";
+              outline = JSON.parse(raw);
+            } catch (e: any) {
+              throw new Error(`AI outline generation failed: ${e?.message || "unknown error"}`);
+            }
+          } else {
+            // Deterministic fallback when no API key — still produces a usable recap from metadata.
+            const beats = sources.map((s: any, i: number) => ({
+              order: i + 1,
+              sourceMovieId: s.id,
+              description: s.description ? s.description.slice(0, 200) : `Events from ${s.title}`,
+              preferredTimestampStart: 0,
+              preferredTimestampEnd: Math.min(s.duration || 12, 12),
+              caption: s.title,
+              importance: "high" as const,
+            }));
+            outline = {
+              title: "Previously On",
+              targetDurationSeconds: input.lengthSeconds,
+              summary: `Previously, in ${sources.length} episode${sources.length === 1 ? "" : "s"}.`,
+              beats,
+              voiceoverScript: input.includeVoiceover ? `Previously on ${(project as any)?.title || "the show"}.` : undefined,
+            };
+          }
+
+          await db.updateRecap(recap.id, ctx.user.id, { status: "rendering", progress: 75, outline: outline as any, voiceoverScript: outline?.voiceoverScript || null });
+
+          // Persist segments
+          const beats: any[] = Array.isArray(outline?.beats) ? outline.beats : [];
+          if (beats.length) {
+            await db.insertRecapSegments(beats.map((b: any, i: number) => ({
+              recapId: recap.id,
+              sourceMovieId: Number(b.sourceMovieId) || sources[0].id,
+              startTimeSeconds: Number(b.preferredTimestampStart) || 0,
+              endTimeSeconds: Number(b.preferredTimestampEnd) || (Number(b.preferredTimestampStart) || 0) + 8,
+              sortOrder: Number(b.order) || (i + 1),
+              caption: b.caption || null,
+              reason: b.description || null,
+            })));
+          }
+
+          // Charge credits only after successful generation.
+          await db.deductCredits(ctx.user.id, breakdownCost, "auto_recap", `Auto Recap for movie #${input.targetMovieId} (${input.lengthSeconds}s)`);
+
+          await db.updateRecap(recap.id, ctx.user.id, { status: "completed", progress: 100 });
+          await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "recap.generate", { recapId: recap.id, lengthSeconds: input.lengthSeconds, beatCount: beats.length });
+
+          return { recapId: recap.id, status: "completed" as const, reused: false };
+        } catch (err: any) {
+          await db.updateRecap(recap.id, ctx.user.id, { status: "failed", progress: 0, errorMessage: err?.message || "unknown error" });
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Auto Recap generation failed: ${err?.message || "unknown"}. No credits were charged.` });
+        }
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ recapId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const recap = await db.getRecapById(input.recapId, ctx.user.id);
+        if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
+        const segments = await db.listRecapSegments(input.recapId);
+        return { recap, segments };
+      }),
+
+    listForMovie: protectedProcedure
+      .input(z.object({ movieId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        return db.listRecapsForMovie(input.movieId, ctx.user.id);
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;
