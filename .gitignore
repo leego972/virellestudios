@@ -121,3 +121,8 @@ client/public/virelle-logo-nav.png
 # Large binary assets - served from CDN
 client/public/virelle-logo-full.png
 client/public/virelle-logo-nav.png
+
+# Desktop app — generated artifacts (icon copied at build time, dist installers)
+desktop/build/
+desktop/dist/
+desktop/node_modules/

@@ -15,11 +15,12 @@
     "start": "electron .",
     "dev": "VIRELLE_TARGET=https://www.virelle.life electron .",
     "dev:local": "VIRELLE_TARGET=http://localhost:3000 electron .",
+    "prebuild": "node ./scripts/prepare-icon.js",
     "build": "electron-builder",
-    "build:mac": "electron-builder --mac",
-    "build:win": "electron-builder --win",
-    "build:linux": "electron-builder --linux",
-    "build:all": "electron-builder -mwl"
+    "build:mac": "node ./scripts/prepare-icon.js && electron-builder --mac",
+    "build:win": "node ./scripts/prepare-icon.js && electron-builder --win",
+    "build:linux": "node ./scripts/prepare-icon.js && electron-builder --linux",
+    "build:all": "node ./scripts/prepare-icon.js && electron-builder -mwl"
   },
   "devDependencies": {
     "electron": "^33.0.0",

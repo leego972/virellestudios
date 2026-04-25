@@ -466,9 +466,98 @@ async function startServer() {
 
   // ── MOBILE APP: App Download Links ─────────────────────────────────────────
   // Returns the latest iOS/Android/Desktop download URLs.
-  // Set IOS_DOWNLOAD_URL, ANDROID_DOWNLOAD_URL, DESKTOP_MAC_URL,
-  // DESKTOP_WIN_URL, DESKTOP_LINUX_URL env vars after each build.
-  app.get("/api/mobile/downloads", (_req, res) => {
+  //
+  // Resolution order per platform:
+  //   1. Explicit env var (IOS_DOWNLOAD_URL, ANDROID_DOWNLOAD_URL,
+  //      DESKTOP_MAC_URL, DESKTOP_WIN_URL, DESKTOP_LINUX_URL) — wins.
+  //   2. v6.73 — Auto-detect desktop installers from the latest
+  //      `desktop-v*` GitHub Release on leego972/virellestudios. As soon as
+  //      the desktop-release.yml workflow finishes after a tag push, the
+  //      Download page lights up automatically with no manual env-var step.
+  //   3. iOS falls back to the live App Store listing (always available).
+  //
+  // GitHub release lookup is cached in-process for 5 minutes to avoid rate
+  // limits and keep the endpoint snappy.
+  type DesktopAssets = {
+    mac: string | null;
+    win: string | null;
+    linux: string | null;
+    version: string | null;
+    fetchedAt: number;
+  };
+  let _desktopReleaseCache: DesktopAssets | null = null;
+  const DESKTOP_RELEASE_CACHE_MS = 5 * 60 * 1000;
+
+  async function fetchLatestDesktopRelease(): Promise<DesktopAssets> {
+    const now = Date.now();
+    if (_desktopReleaseCache && now - _desktopReleaseCache.fetchedAt < DESKTOP_RELEASE_CACHE_MS) {
+      return _desktopReleaseCache;
+    }
+    const empty: DesktopAssets = {
+      mac: null, win: null, linux: null, version: null, fetchedAt: now,
+    };
+    try {
+      // Public repo, no auth required for unauthenticated reads of releases.
+      // We pull the most recent 30 releases and pick the first whose tag
+      // starts with `desktop-v` so non-desktop tags (e.g. `v6.73`) don't
+      // shadow the desktop release.
+      const repo = process.env.DESKTOP_RELEASES_REPO || "leego972/virellestudios";
+      const headers: Record<string, string> = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "virelle-studios-server",
+      };
+      if (process.env.GITHUB_TOKEN) {
+        headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
+      }
+      const r = await fetch(`https://api.github.com/repos/${repo}/releases?per_page=30`, {
+        headers,
+        signal: AbortSignal.timeout(4000),
+      });
+      if (!r.ok) {
+        _desktopReleaseCache = empty;
+        return empty;
+      }
+      const releases: any[] = await r.json();
+      const desktopRel = releases.find((rel) =>
+        typeof rel?.tag_name === "string" &&
+        rel.tag_name.startsWith("desktop-v") &&
+        !rel.draft && !rel.prerelease,
+      );
+      if (!desktopRel) {
+        _desktopReleaseCache = empty;
+        return empty;
+      }
+      const version = String(desktopRel.tag_name).replace(/^desktop-v/, "");
+      const assets: any[] = Array.isArray(desktopRel.assets) ? desktopRel.assets : [];
+      // Match by extension. Prefer arm64 dmg if both exist (Apple Silicon
+      // first, the more common modern Mac); the universal DMG works on x64
+      // too via Rosetta-emulated electron-builder targets.
+      const findAsset = (predicate: (name: string) => boolean): string | null => {
+        const hit = assets.find((a) => typeof a?.name === "string" && typeof a?.browser_download_url === "string" && predicate(a.name));
+        return hit ? String(hit.browser_download_url) : null;
+      };
+      const macArm = findAsset((n) => n.toLowerCase().endsWith(".dmg") && n.toLowerCase().includes("arm64"));
+      const macAny = findAsset((n) => n.toLowerCase().endsWith(".dmg"));
+      const win = findAsset((n) => n.toLowerCase().endsWith(".exe"));
+      const linuxAppImage = findAsset((n) => n.toLowerCase().endsWith(".appimage"));
+      const linuxDeb = findAsset((n) => n.toLowerCase().endsWith(".deb"));
+      const result: DesktopAssets = {
+        mac: macArm || macAny,
+        win,
+        // AppImage is the most portable Linux format; deb is the fallback.
+        linux: linuxAppImage || linuxDeb,
+        version,
+        fetchedAt: now,
+      };
+      _desktopReleaseCache = result;
+      return result;
+    } catch (_err) {
+      _desktopReleaseCache = empty;
+      return empty;
+    }
+  }
+
+  app.get("/api/mobile/downloads", async (_req, res) => {
     // iOS: live App Store listing — always available.
     const IOS_LIVE_URL = "https://apps.apple.com/app/virelle-studios/id6761315616";
     const iosUrl = process.env.IOS_DOWNLOAD_URL || IOS_LIVE_URL;
@@ -477,11 +566,25 @@ async function startServer() {
     // Do NOT silently fall back to the EAS dev dashboard — that requires login and breaks user trust.
     const androidUrl = process.env.ANDROID_DOWNLOAD_URL || null;
 
-    // Desktop: only mark each platform available when its env var is set.
-    // Do NOT fall back to the website — clicking "Download for macOS" must not silently open the homepage.
-    const macUrl = process.env.DESKTOP_MAC_URL || null;
-    const winUrl = process.env.DESKTOP_WIN_URL || null;
-    const linuxUrl = process.env.DESKTOP_LINUX_URL || null;
+    // Desktop: env vars win, otherwise auto-detect from the latest GitHub release.
+    const envMac = process.env.DESKTOP_MAC_URL || null;
+    const envWin = process.env.DESKTOP_WIN_URL || null;
+    const envLinux = process.env.DESKTOP_LINUX_URL || null;
+    let macUrl = envMac;
+    let winUrl = envWin;
+    let linuxUrl = envLinux;
+    let desktopVersion = process.env.DESKTOP_VERSION || null;
+    let source: "env" | "github-release" | "none" = (envMac || envWin || envLinux) ? "env" : "none";
+
+    // If ANY desktop platform is missing an explicit env override, try GitHub.
+    if (!envMac || !envWin || !envLinux) {
+      const release = await fetchLatestDesktopRelease();
+      if (!envMac && release.mac) macUrl = release.mac;
+      if (!envWin && release.win) winUrl = release.win;
+      if (!envLinux && release.linux) linuxUrl = release.linux;
+      if (!desktopVersion && release.version) desktopVersion = release.version;
+      if (release.mac || release.win || release.linux) source = "github-release";
+    }
 
     res.json({
       ios: {
@@ -498,9 +601,10 @@ async function startServer() {
         mac: macUrl,
         win: winUrl,
         linux: linuxUrl,
-        version: process.env.DESKTOP_VERSION || "1.0.0",
+        version: desktopVersion || "1.0.0",
         available: !!(macUrl || winUrl || linuxUrl),
         availability: { mac: !!macUrl, win: !!winUrl, linux: !!linuxUrl },
+        source, // "env" | "github-release" | "none" — for debugging only.
       },
     });
   });
