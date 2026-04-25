@@ -2128,9 +2128,18 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
               console.log(`[SceneVideo] Extended Veo3 generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+              // v6.70 — async success: finalize the reservation. finalizeReservation
+              // is idempotent (only updates rows still in "reserved" state).
+              if (__sceneVideoResId) {
+                try { await db.finalizeReservation(__sceneVideoResId); } catch {}
+              }
             } catch (err: any) {
               console.error(`[SceneVideo] Extended Veo3 generation failed for scene ${scene.id}:`, err.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+              // v6.70 — async failure: refund. releaseReservation is idempotent.
+              if (__sceneVideoResId) {
+                try { await db.releaseReservation(__sceneVideoResId); } catch {}
+              }
             }
           })();
           } else if (activeProvider === "runway" && byokKeys.runwayKey) {
@@ -2170,9 +2179,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
               console.log(`[SceneVideo] Extended Runway generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+              if (__sceneVideoResId) {
+                try { await db.finalizeReservation(__sceneVideoResId); } catch {}
+              }
             } catch (err: any) {
               console.error(`[SceneVideo] Extended Runway generation failed for scene ${scene.id}:`, err.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+              if (__sceneVideoResId) {
+                try { await db.releaseReservation(__sceneVideoResId); } catch {}
+              }
             }
           })();
         } else if (activeProvider === "fal" && byokKeys.falKey) {
@@ -2214,9 +2229,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
               console.log(`[SceneVideo] Extended fal.ai generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+              if (__sceneVideoResId) {
+                try { await db.finalizeReservation(__sceneVideoResId); } catch {}
+              }
             } catch (err: any) {
               console.error(`[SceneVideo] Extended fal.ai generation failed for scene ${scene.id}:`, err.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+              if (__sceneVideoResId) {
+                try { await db.releaseReservation(__sceneVideoResId); } catch {}
+              }
             }
           })();
 
@@ -2259,21 +2280,26 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
               console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${extResult.videoUrl}`);
+              if (__sceneVideoResId) {
+                try { await db.finalizeReservation(__sceneVideoResId); } catch {}
+              }
             } catch (err: any) {
               console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
+              if (__sceneVideoResId) {
+                try { await db.releaseReservation(__sceneVideoResId); } catch {}
+              }
             }
           })();
         }
 
-        // v6.69 Phase 5 — Dispatch succeeded. Finalize the reservation so the
-        // duplicate-prevention key clears once the background job is queued.
-        // Background-worker failures still leave the user charged (matching
-        // pre-v6.69 behavior); refunding async failures is tracked separately
-        // in VIRELLE_V669_REPAIR_REPORT.md.
-        if (__sceneVideoResId) {
-          try { await db.finalizeReservation(__sceneVideoResId); } catch {}
-        }
+        // v6.70 — Dispatch succeeded; the reservation is now owned by the
+        // background IIFE that fired above. Each provider branch finalizes on
+        // success (post-completed) and releases on failure (post-failed). The
+        // reservation row's (referenceType, referenceId) key still blocks any
+        // duplicate click because reserveCredits returns the existing
+        // "reserved" row id without re-deducting. Finalize/release are both
+        // idempotent (status='reserved' guard) so a retry path is safe.
         // Return immediately — frontend will poll scene status
         return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete." };
       }),
@@ -12133,7 +12159,10 @@ Return JSON ONLY in this exact shape:
             };
           }
 
-          await db.updateRecap(recap.id, ctx.user.id, { status: "rendering", progress: 75, outline: outline as any, voiceoverScript: outline?.voiceoverScript || null });
+          // v6.70 — Honest status. We are about to persist the outline+segments
+          // but no MP4 has been rendered. Was previously "rendering" which
+          // implied an active MP4 render that does not exist yet.
+          await db.updateRecap(recap.id, ctx.user.id, { status: "render_pending", progress: 75, outline: outline as any, voiceoverScript: outline?.voiceoverScript || null });
 
           // Persist segments
           const beats: any[] = Array.isArray(outline?.beats) ? outline.beats : [];
@@ -12170,10 +12199,17 @@ Return JSON ONLY in this exact shape:
             try { await db.finalizeReservation(__recapResId); } catch {}
           }
 
-          await db.updateRecap(recap.id, ctx.user.id, { status: "completed", progress: 100 });
+          // v6.70 — Honest terminal status. The outline + voiceover script +
+          // segment list are saved but NO final MP4 has been rendered. We
+          // mark this as "outline_completed" so the UI can label it
+          // "Recap outline ready" instead of "Final recap video ready". A
+          // future MP4 render pass will move this to "render_completed" once
+          // outputAssetId/fileUrl is populated. See
+          // docs/AUTO_RECAP_MP4_RENDER_PLAN.md for the planned render flow.
+          await db.updateRecap(recap.id, ctx.user.id, { status: "outline_completed", progress: 100 });
           await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "recap.generate", { recapId: recap.id, lengthSeconds: input.lengthSeconds, beatCount: beats.length });
 
-          return { recapId: recap.id, status: "completed" as const, reused: false };
+          return { recapId: recap.id, status: "outline_completed" as const, reused: false };
         } catch (err: any) {
           await db.updateRecap(recap.id, ctx.user.id, { status: "failed", progress: 0, errorMessage: err?.message || "unknown error" });
           // v6.69 Phase 5 — If we managed to create a reservation before the
@@ -12209,7 +12245,10 @@ Return JSON ONLY in this exact shape:
       .mutation(async ({ ctx, input }) => {
         const recap = await db.getRecapById(input.recapId, ctx.user.id);
         if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
-        if (recap.status !== "completed") {
+        // v6.70 — Accept any of the legacy "completed" value (older rows)
+        // and the new honest "outline_completed" / "render_completed" values.
+        const ready = recap.status === "completed" || recap.status === "outline_completed" || recap.status === "render_completed";
+        if (!ready) {
           throw new TRPCError({ code: "BAD_REQUEST", message: "Recap is not ready to attach yet." });
         }
         await db.attachRecap(input.recapId, ctx.user.id);
@@ -12390,6 +12429,32 @@ Return JSON ONLY in this exact shape:
     list: protectedProcedure.query(async ({ ctx }) => {
       return db.listUserReservations(ctx.user.id);
     }),
+    // v6.70 — Observability helper. Given a (referenceType, referenceId)
+    // pair, returns every reservation row tied to that reference (all
+    // statuses) so we can debug scene/trailer/recap credit behavior. Scoped
+    // to the calling user — never returns sensitive data, only the public
+    // reservation lifecycle fields.
+    getForReference: protectedProcedure
+      .input(z.object({
+        referenceType: z.enum(["scene_video", "trailer", "recap"]),
+        referenceId: z.number().int().positive(),
+      }))
+      .query(async ({ ctx, input }) => {
+        const rows = await (db as any).getReservationsForReference(
+          input.referenceType,
+          input.referenceId,
+          ctx.user.id,
+        );
+        return (rows as any[]).map((r) => ({
+          id: r.id,
+          featureKey: r.featureKey,
+          amount: Number(r.amount ?? 0),
+          status: r.status,
+          createdAt: r.createdAt ?? null,
+          finalizedAt: r.finalizedAt ?? null,
+          releasedAt: r.releasedAt ?? null,
+        }));
+      }),
   }),
 
   // ============================================================================

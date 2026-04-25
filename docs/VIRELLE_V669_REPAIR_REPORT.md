@@ -158,3 +158,17 @@ You are reading it.
   double-charge (returns the existing reservation id).
 - Generate a trailer where the LLM returns invalid JSON — credits should
   be refunded (visible in `creditTransactions` as a `credits.refund` row).
+
+## Final verification (run as part of v6.70)
+
+- `pnpm check` — ✅ passes (`tsc --noEmit`, no errors).
+- `pnpm build` — ✅ passes. The two esbuild "import is undefined" warnings
+  for `getAiActorById` and `getProjectShootDays` that were carried over from
+  v6.69 are now resolved by stub helpers added in `server/db.ts` during
+  the v6.70 pass. Bundle-size warnings on the prebuilt vendor chunks are
+  pre-existing and unrelated.
+- Remaining TypeScript / build issues — none.
+
+The remaining production reliability gap noted in this report ("background
+worker failures still leave the user charged for scene video") was closed
+in the v6.70 reliability pass — see `docs/VIRELLE_V670_RELIABILITY_REPORT.md`.

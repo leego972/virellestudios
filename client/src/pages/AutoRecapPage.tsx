@@ -329,7 +329,11 @@ export default function AutoRecapPage() {
                   !estimateInput ||
                   !estimate.data?.hasEnoughCredits ||
                   generateMut.isPending ||
-                  !!recapDetail.data?.recap && recapDetail.data.recap.status !== "completed" && recapDetail.data.recap.status !== "failed"
+                  // v6.70 — A recap is "settled" when it is in any terminal
+                  // state (legacy "completed", honest "outline_completed",
+                  // future "render_completed", or "failed"). Block while a
+                  // generate is mid-flight.
+                  !!recapDetail.data?.recap && !["completed", "outline_completed", "render_completed", "failed"].includes(recapDetail.data.recap.status)
                 }
                 onClick={handleGenerate}
                 className="w-full bg-amber-500 hover:bg-amber-400 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-medium py-2.5 rounded transition-colors"
@@ -349,15 +353,35 @@ export default function AutoRecapPage() {
                     <div className="text-xs uppercase tracking-wider text-zinc-500">
                       Recap #{recapDetail.data.recap.id}
                     </div>
-                    <div className={`text-xs px-2 py-0.5 rounded ${
-                      recapDetail.data.recap.status === "completed"
-                        ? "bg-emerald-500/20 text-emerald-300"
-                        : recapDetail.data.recap.status === "failed"
-                        ? "bg-red-500/20 text-red-300"
-                        : "bg-zinc-700 text-zinc-300"
-                    }`}>
-                      {recapDetail.data.recap.status}
-                    </div>
+                    {(() => {
+                      // v6.70 — Honest status labels. We do NOT render a
+                      // final MP4 yet; the success state is "outline ready".
+                      // Only show "Final recap video ready" when the recap
+                      // actually has a downloadable asset.
+                      const s = recapDetail.data.recap.status;
+                      const hasAsset = !!(recapDetail.data.recap as any).outputAssetId
+                        || !!(recapDetail.data.recap as any).fileUrl;
+                      let label = s;
+                      let cls = "bg-zinc-700 text-zinc-300";
+                      if (s === "render_completed" || (s === "completed" && hasAsset)) {
+                        label = "Final recap video ready";
+                        cls = "bg-emerald-500/20 text-emerald-300";
+                      } else if (s === "outline_completed" || s === "completed") {
+                        label = "Recap outline ready";
+                        cls = "bg-amber-500/20 text-amber-300";
+                      } else if (s === "render_pending") {
+                        label = "Outline saving…";
+                        cls = "bg-zinc-700 text-zinc-300";
+                      } else if (s === "failed") {
+                        label = "Failed";
+                        cls = "bg-red-500/20 text-red-300";
+                      }
+                      return (
+                        <div className={`text-xs px-2 py-0.5 rounded ${cls}`}>
+                          {label}
+                        </div>
+                      );
+                    })()}
                   </div>
                   {recapDetail.data.recap.errorMessage && (
                     <div className="text-sm text-red-300">{recapDetail.data.recap.errorMessage}</div>
@@ -393,24 +417,52 @@ export default function AutoRecapPage() {
                       )}
                     </div>
                   )}
-                  {recapDetail.data.recap.status === "completed" && (
-                    <div className="pt-3 border-t border-zinc-800">
-                      {recapDetail.data.recap.attachedAt ? (
-                        <div className="text-xs text-emerald-300">
-                          Attached to episode on{" "}
-                          {new Date(recapDetail.data.recap.attachedAt as any).toLocaleString()}.
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => attachMut.mutate({ recapId: recapDetail.data.recap.id })}
-                          disabled={attachMut.isPending}
-                          className="text-xs bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded text-zinc-200 disabled:opacity-50"
-                        >
-                          {attachMut.isPending ? "Attaching…" : "Attach to episode intro"}
-                        </button>
-                      )}
-                    </div>
-                  )}
+                  {(() => {
+                    // v6.70 — Show the attach control for every terminal
+                    // success state (legacy "completed" + honest
+                    // "outline_completed" + future "render_completed").
+                    const s = recapDetail.data.recap.status;
+                    const ready = s === "completed" || s === "outline_completed" || s === "render_completed";
+                    if (!ready) return null;
+                    const hasAsset = !!(recapDetail.data.recap as any).outputAssetId
+                      || !!(recapDetail.data.recap as any).fileUrl;
+                    return (
+                      <div className="pt-3 border-t border-zinc-800 space-y-2">
+                        {/* v6.70 — Honest disclaimer when no MP4 exists yet. */}
+                        {!hasAsset && (
+                          <div className="text-[11px] text-zinc-500">
+                            Preview from source segments. The recap outline (beat list + voiceover script) is saved.
+                            Final MP4 export is not yet available — see the AUTO_RECAP_MP4_RENDER_PLAN doc for the planned render flow.
+                          </div>
+                        )}
+                        {/* v6.70 — Only render a download button when an actual file exists. */}
+                        {hasAsset && (recapDetail.data.recap as any).fileUrl && (
+                          <a
+                            href={(recapDetail.data.recap as any).fileUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-block text-xs bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded text-white"
+                          >
+                            Download MP4
+                          </a>
+                        )}
+                        {recapDetail.data.recap.attachedAt ? (
+                          <div className="text-xs text-emerald-300">
+                            Attached to episode on{" "}
+                            {new Date(recapDetail.data.recap.attachedAt as any).toLocaleString()}.
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => attachMut.mutate({ recapId: recapDetail.data.recap.id })}
+                            disabled={attachMut.isPending}
+                            className="text-xs bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded text-zinc-200 disabled:opacity-50"
+                          >
+                            {attachMut.isPending ? "Attaching…" : "Attach to episode intro"}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 

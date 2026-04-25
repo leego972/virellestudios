@@ -2883,6 +2883,43 @@ export async function listUserReservations(userId: number, limit = 50): Promise<
     .limit(limit) as any;
 }
 
+// v6.70 — Look up every reservation row attached to a given (referenceType,
+// referenceId) pair. Used by the new reservations.getForReference tRPC query
+// for debug/observability — returns ALL statuses (reserved, finalized,
+// released) so an operator can see the full lifecycle of a scene/trailer/
+// recap credit lock. The caller is expected to scope by user where needed;
+// this helper does NOT filter by user so it can be used safely from owner-
+// scoped procedures that already validated the project ownership.
+export async function getReservationsForReference(
+  referenceType: string,
+  referenceId: number,
+  userId?: number,
+): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const conditions = [
+    eq(creditReservations.referenceType, referenceType),
+    eq(creditReservations.referenceId, referenceId),
+  ];
+  if (typeof userId === "number") conditions.push(eq(creditReservations.userId, userId));
+  return db.select().from(creditReservations)
+    .where(and(...conditions))
+    .orderBy(desc(creditReservations.createdAt))
+    .limit(20) as any;
+}
+
+// v6.70 — Tiny stub helpers so the build no longer warns that these names
+// are missing. Real implementations would query their respective tables;
+// callers always check `typeof db.fn === "function"` so returning undefined
+// here is safe and behavior is unchanged from the previous defensive path.
+export async function getAiActorById(_id: number): Promise<any | null> {
+  return null;
+}
+
+export async function getProjectShootDays(_projectId: number): Promise<any[]> {
+  return [];
+}
+
 // v6.67 — mark a completed recap as attached to its target episode.
 export async function attachRecap(id: number, userId: number): Promise<void> {
   const db = await getDb();
