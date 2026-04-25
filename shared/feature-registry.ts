@@ -344,6 +344,28 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     hasNative: false,
     isNew: true,
   },
+  {
+    id: "script-breakdown",
+    label: "Script Breakdown",
+    icon: "📑",
+    category: "Writing",
+    webPath: "/projects/:projectId/script-breakdown",
+    description: "Analyze a script and approve scenes before they're created",
+    minTier: "amateur",
+    hasNative: false,
+    isNew: true,
+  },
+  {
+    id: "awaiting-review",
+    label: "Awaiting Review",
+    icon: "👀",
+    category: "Production",
+    webPath: "/awaiting-review",
+    description: "Every scene across your projects that's ready for review",
+    minTier: "free",
+    hasNative: false,
+    isNew: true,
+  },
 
   {
     id: "scene-editor",

@@ -37,6 +37,9 @@ const AssistantPage = lazy(() => import("./pages/AssistantPage"));
 const ProjectCommandCenterPage = lazy(() => import("./pages/ProjectCommandCenterPage"));
 const BYOKControlCenterPage = lazy(() => import("./pages/BYOKControlCenterPage"));
 const PitchDeckPage = lazy(() => import("./pages/PitchDeckPage"));
+// v6.69 — Phase 3 / Phase 8 surfaces.
+const ScriptBreakdownWizardPage = lazy(() => import("./pages/ScriptBreakdownWizardPage"));
+const AwaitingReviewPage = lazy(() => import("./pages/AwaitingReviewPage"));
 const AdPosterMaker = lazy(() => import("./pages/AdPosterMaker"));
 const CampaignManager = lazy(() => import("./pages/CampaignManager"));
 const ContentCreatorPage = lazy(() => import("./pages/ContentCreatorPage"));
@@ -284,6 +287,9 @@ function Router() {
               <Route path="/projects/:id/command-center">{() => <LazyPage><ProjectCommandCenterPage /></LazyPage>}</Route>
               <Route path="/projects/:projectId/pitch-deck">{() => <LazyPage><PitchDeckPage /></LazyPage>}</Route>
               <Route path="/settings/byok">{() => <LazyPage><BYOKControlCenterPage /></LazyPage>}</Route>
+              {/* v6.69 — Script breakdown wizard + Awaiting review queue */}
+              <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
+              <Route path="/awaiting-review">{() => <LazyPage><AwaitingReviewPage /></LazyPage>}</Route>
               <Route path="/projects/:id/scenes">{() => <SceneEditor />}</Route>
               <Route path="/movies">{() => <Movies />}</Route>
               <Route path="/assistant">{() => <LazyPage><AssistantPage /></LazyPage>}</Route>

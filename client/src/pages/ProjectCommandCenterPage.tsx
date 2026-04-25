@@ -6,6 +6,7 @@
 import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import SiteHead from "@/components/SiteHead";
+import ElementsPanel from "@/components/ElementsPanel";
 
 function statusDot(ok: boolean) {
   return (
@@ -200,6 +201,33 @@ export default function ProjectCommandCenterPage() {
                   </div>
                 )}
               </Card>
+            </div>
+            {/* v6.69 — Production Elements + Script Breakdown shortcuts. */}
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="md:col-span-2">
+                <ElementsPanel projectId={projectId} />
+              </div>
+              <div className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5 flex flex-col">
+                <h2 className="text-sm uppercase tracking-wider text-zinc-400 mb-3">Quick actions</h2>
+                <Link
+                  href={`/projects/${projectId}/script-breakdown`}
+                  className="text-sm text-amber-300 hover:underline mb-2"
+                >
+                  Run script-to-scene breakdown →
+                </Link>
+                <Link
+                  href={`/projects/${projectId}/pitch-deck`}
+                  className="text-sm text-amber-300 hover:underline mb-2"
+                >
+                  Open pitch deck →
+                </Link>
+                <Link
+                  href={`/awaiting-review`}
+                  className="text-sm text-amber-300 hover:underline"
+                >
+                  Awaiting your review →
+                </Link>
+              </div>
             </div>
           </>
         )}

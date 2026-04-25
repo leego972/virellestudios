@@ -5570,6 +5570,31 @@ Generate the full dialogue for this scene.`,
           };
         });
       }),
+
+    // v6.69 Phase 8 — Awaiting-review queue across all the user's projects.
+    // Pure read; surfaces scenes whose approvalStatus is "pending_review".
+    listAwaiting: protectedProcedure.query(async ({ ctx }) => {
+      const dbConn = await db.getDb();
+      if (!dbConn) return [];
+      const rows: any = await dbConn.execute(
+        sql`SELECT s.id, s.projectId, s.title, s.description, s.orderIndex,
+                   p.title AS projectTitle
+              FROM scenes s
+              JOIN projects p ON p.id = s.projectId
+             WHERE p.userId = ${ctx.user.id}
+               AND s.approvalStatus = 'pending_review'
+             ORDER BY s.updatedAt DESC LIMIT 100`,
+      );
+      const arr = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+      return (arr || []).map((r: any) => ({
+        id: r.id,
+        projectId: r.projectId,
+        projectTitle: r.projectTitle,
+        title: r.title,
+        description: r.description,
+        sceneNumber: r.orderIndex,
+      }));
+    }),
   }),
 
   // ─── Chain of Title — clearance / rights tracker ────
@@ -12124,6 +12149,74 @@ Return JSON ONLY in this exact shape:
   }),
 
   // ============================================================================
+  // v6.69 Phase 3 — Script-to-Storyboard breakdown wizard.
+  // Two procedures: analyze (returns proposal, NO writes) + apply (creates
+  // scenes only after the user has explicitly approved).
+  // ============================================================================
+  preproduction: router({
+    analyzeScriptForBreakdown: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        script: z.string().min(40).max(120000),
+        maxScenes: z.number().min(1).max(80).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Confirm the user owns the project before doing anything.
+        const project: any = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found." });
+        const { analyzeScript } = await import("./_core/scriptBreakdown");
+        return analyzeScript(ctx.user.id, input.script, { maxScenes: input.maxScenes });
+      }),
+
+    applyBreakdownToProject: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        scenes: z.array(z.object({
+          sceneNumber: z.number(),
+          title: z.string().max(200),
+          description: z.string().max(1500),
+          location: z.string().max(200).nullable().optional(),
+          timeOfDay: z.enum(["dawn","morning","afternoon","evening","night","golden-hour"]).nullable().optional(),
+          mood: z.string().max(120).nullable().optional(),
+          characters: z.array(z.string().max(80)).optional(),
+          estimatedDuration: z.number().min(5).max(600).optional(),
+        })).min(1).max(80),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const project: any = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found." });
+        // Find the current max orderIndex so we append, never overwrite.
+        const existing: any[] = await db.getProjectScenes(input.projectId).catch(() => []);
+        const baseOrder = existing.reduce((m, s: any) => Math.max(m, Number(s.orderIndex ?? 0)), 0);
+        let created = 0;
+        for (let i = 0; i < input.scenes.length; i++) {
+          const s = input.scenes[i];
+          try {
+            await db.createScene({
+              projectId: input.projectId,
+              orderIndex: baseOrder + i + 1,
+              title: s.title,
+              description: s.description,
+              timeOfDay: (s.timeOfDay ?? null) as any,
+              mood: s.mood ?? null,
+              locationDetail: s.location ?? null,
+              duration: Math.round(s.estimatedDuration ?? 30),
+              productionNotes: s.characters && s.characters.length
+                ? `Suggested cast: ${s.characters.join(", ")}`
+                : null,
+            } as any);
+            created++;
+          } catch (err: any) {
+            console.warn(`[applyBreakdownToProject] failed on scene ${s.sceneNumber}: ${err?.message}`);
+          }
+        }
+        await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null,
+          "preproduction.applyBreakdown", { created, total: input.scenes.length });
+        return { success: true, created, total: input.scenes.length };
+      }),
+  }),
+
+  // ============================================================================
   // v6.68 Phase 5 — BYOK Provider Control Center.
   // Returns ONLY masked status of each provider key (boolean → label). Never
   // returns the raw key string to the client. Validation is shape-only by
@@ -12150,13 +12243,11 @@ Return JSON ONLY in this exact shape:
       .mutation(async ({ ctx, input }) => {
         const user: any = await db.getUserById(ctx.user.id);
         if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
-        const { getMaskedProviderStatus } = await import("./_core/providerPolicy");
-        const has = getMaskedProviderStatus(user) as any;
-        const present = !!has[input.provider];
-        // Shape-only validation; we never return the key. Deeper validation
-        // would call the provider's cheapest endpoint with the decrypted key.
-        const status = present ? "configured" : "not_configured";
-        return { provider: input.provider, status };
+        // v6.69 — true cheap-call validation for the providers we have a
+        // safe ping for; shape-only fallback for the rest. Never returns
+        // the key string under any circumstance.
+        const { validateProviderKey } = await import("./_core/byokValidation");
+        return validateProviderKey(user, input.provider);
       }),
 
     updateProviderPreferences: protectedProcedure
@@ -12173,11 +12264,13 @@ Return JSON ONLY in this exact shape:
         if (input.preferredLlmProvider !== undefined) {
           patch.preferredLlmProvider = input.preferredLlmProvider || null;
         }
+        // v6.69 — fallback mode is now persisted on the users row.
+        if (input.fallbackMode !== undefined) {
+          patch.byokFallbackMode = input.fallbackMode;
+        }
         if (Object.keys(patch).length > 0) {
           await db.updateUser(ctx.user.id, patch);
         }
-        // fallbackMode is currently advisory; we surface the user's choice
-        // back to the UI but don't persist it as a column yet.
         return { success: true, fallbackMode: input.fallbackMode ?? null };
       }),
   }),

@@ -38,6 +38,8 @@ export const users = mysqlTable("users", {
   preferredLlmProvider: varchar("preferredLlmProvider", { length: 32 }), // openai, anthropic, google — for Virelle chat
   directorInstructions: text("directorInstructions"), // Custom instructions for the Director's Assistant AI
   preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface, seedance
+  // v6.69 Phase 5 — BYOK fallback policy: byok-only | byok-with-fallback | credits-only
+  byokFallbackMode: varchar("byokFallbackMode", { length: 32 }).default("byok-with-fallback"),
   apiKeysUpdatedAt: timestamp("apiKeysUpdatedAt"),
   // ─── Profile & Business Details ───
   phone: varchar("phone", { length: 32 }),
