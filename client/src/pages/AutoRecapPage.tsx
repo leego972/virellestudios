@@ -105,6 +105,14 @@ export default function AutoRecapPage() {
     onSuccess: () => recapDetail.refetch(),
   });
 
+  // v6.72 — Cancel an in-flight MP4 render. Refunds the reservation and
+  // flips the recap back to outline_completed. Does not abort the underlying
+  // ffmpeg process (the worker is fire-and-forget) but the safeFail path is
+  // idempotent so the late finish/fail does no harm.
+  const cancelRenderMut = trpc.recap.cancelRender.useMutation({
+    onSuccess: () => recapDetail.refetch(),
+  });
+
   const existingRecaps = trpc.recap.listForMovie.useQuery(
     { movieId: targetMovieId! },
     { enabled: !!targetMovieId }
@@ -451,10 +459,28 @@ export default function AutoRecapPage() {
                           </div>
                         )}
                         {/* v6.71 — Live rendering indicator while the worker runs. */}
+                        {/* v6.72 — Adds a Cancel button that refunds credits
+                            and flips the recap back to outline_completed. */}
                         {isRendering && (
-                          <div className="text-xs text-amber-300 flex items-center gap-2">
-                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse" />
-                            Rendering final MP4… (the page will refresh automatically)
+                          <div className="space-y-2">
+                            <div className="text-xs text-amber-300 flex items-center gap-2">
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse" />
+                              Rendering final MP4… (the page will refresh automatically)
+                            </div>
+                            <button
+                              onClick={() => {
+                                if (window.confirm("Cancel this render? Your credits will be refunded and you can retry from the recap outline.")) {
+                                  cancelRenderMut.mutate({ recapId: recapDetail.data.recap.id });
+                                }
+                              }}
+                              disabled={cancelRenderMut.isPending}
+                              className="text-xs bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 px-3 py-1.5 rounded text-zinc-200"
+                            >
+                              {cancelRenderMut.isPending ? "Cancelling…" : "Cancel render"}
+                            </button>
+                            {cancelRenderMut.error && (
+                              <div className="text-xs text-red-300">{cancelRenderMut.error.message}</div>
+                            )}
                           </div>
                         )}
                         {/* v6.71 — Render final MP4 button. Only available

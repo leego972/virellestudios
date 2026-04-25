@@ -12372,6 +12372,72 @@ Return JSON ONLY in this exact shape:
 
         return { recapId: input.recapId, status: "render_pending" as const, reservationId, reused: false };
       }),
+
+    // ────────────────────────────────────────────────────────────────────
+    // v6.72 — Cancel an in-flight MP4 render.
+    //
+    // The renderer is fire-and-forget so we cannot kill the ffmpeg process
+    // from here — but we *can* refund the user immediately, mark the recap
+    // as outline_completed, and the worker's safeFail path will simply find
+    // an already-released reservation when it tries to release on its own
+    // (releaseReservation is gated on status='reserved' so the second call
+    // is a no-op). Same goes for finalizeReservation if the render somehow
+    // finishes after cancel — the recap status will already be back to
+    // outline_completed and the credits will already be refunded.
+    // ────────────────────────────────────────────────────────────────────
+    cancelRender: protectedProcedure
+      .input(z.object({ recapId: z.number().int().positive() }))
+      .mutation(async ({ ctx, input }) => {
+        const recap: any = await db.getRecapById(input.recapId, ctx.user.id);
+        if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
+        if (recap.status !== "render_pending") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: `Cannot cancel a recap in status "${recap.status}".` });
+        }
+
+        // Find + release the active reservation (if any).
+        let releasedReservationId: number | null = null;
+        try {
+          const existing = await db.getActiveReservation(ctx.user.id, "recap_render", input.recapId);
+          if (existing && existing.id) {
+            releasedReservationId = existing.id;
+            try { await db.releaseReservation(existing.id); } catch (e: any) {
+              console.warn(`[recap.cancelRender] release reservation ${existing.id} failed:`, e?.message);
+            }
+          }
+        } catch (e: any) {
+          console.warn(`[recap.cancelRender] reservation lookup failed for recap ${input.recapId}:`, e?.message);
+        }
+
+        // Revert recap to the settled outline state with a clear message.
+        await db.updateRecap(input.recapId, ctx.user.id, {
+          status: "outline_completed",
+          errorMessage: "Render cancelled by user. Credits were released; you can retry the render.",
+        } as any);
+
+        await db.logActivity(recap.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "recap.cancelRender", { recapId: input.recapId, releasedReservationId });
+
+        return { success: true, releasedReservationId };
+      }),
+
+    // ────────────────────────────────────────────────────────────────────
+    // v6.72 — Admin/dev diagnostic. Releases reservations and reverts
+    // recaps stuck in `render_pending` for more than `olderThanMinutes`
+    // (default 30). `dryRun` reports what *would* happen without mutating.
+    //
+    // Admin-only — normal users use `cancelRender` for their own recaps.
+    // ────────────────────────────────────────────────────────────────────
+    sweepStuckRenders: adminProcedure
+      .input(z.object({
+        olderThanMinutes: z.number().int().positive().max(60 * 24 * 7).optional(),
+        dryRun: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { sweepStuckRecapRenders } = await import("./_core/recapRenderSweeper");
+        return await sweepStuckRecapRenders({
+          olderThanMinutes: input.olderThanMinutes,
+          dryRun: input.dryRun,
+        });
+      }),
   }),
 
   // ============================================================================

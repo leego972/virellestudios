@@ -989,6 +989,25 @@ async function startServer() {
     // Start persistent video job worker — polls Runway for pending tasks, survives restarts
     startVideoJobWorker();
     logger.info("[VideoWorker] Persistent video job worker started");
+
+    // v6.72 — One-shot sweep of stuck Auto Recap MP4 renders. If the
+    // process died mid-render last time (e.g. Railway redeploy), this
+    // releases the reserved credits and reverts the recap to
+    // outline_completed so the user can retry. Threshold of 60 minutes
+    // is intentionally conservative — anything younger is probably a
+    // healthy in-flight render on a sibling worker.
+    setTimeout(async () => {
+      try {
+        const { sweepStuckRecapRenders } = await import("./recapRenderSweeper");
+        const res = await sweepStuckRecapRenders({ olderThanMinutes: 60, dryRun: false });
+        if (res.checked > 0 || res.repaired > 0) {
+          logger.info(`[recapSweeper] boot sweep: checked=${res.checked} repaired=${res.repaired}`);
+        }
+      } catch (err: any) {
+        logger.warn(`[recapSweeper] boot sweep failed: ${err?.message}`);
+      }
+    }, 10_000).unref();
+    logger.info("[recapSweeper] Boot sweep scheduled (in 10s, threshold=60m)");
   });
 }
 
