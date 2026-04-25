@@ -58,6 +58,25 @@ export function validateProductionEnv(): void {
     errors.push("At least one AI provider key (OPENAI_API_KEY, GOOGLE_API_KEY, or HUGGING_FACE_API_KEY) is required in production");
   }
 
+  // v6.76 — Storage backend (non-fatal warning).
+  //
+  // Video/image generation persists artifacts via server/storage.ts. Without
+  // a configured storage backend, callers fall back to the raw provider URL
+  // (which can expire). This is a soft warning, not a hard fail, because
+  // the app boots and most read flows still work without storage.
+  const hasForge = !!(process.env.BUILT_IN_FORGE_API_URL && process.env.BUILT_IN_FORGE_API_KEY);
+  const hasS3 =
+    !!process.env.AWS_ACCESS_KEY_ID &&
+    !!process.env.AWS_SECRET_ACCESS_KEY &&
+    !!process.env.AWS_S3_BUCKET;
+  if (!hasForge && !hasS3) {
+    console.warn(
+      "⚠️  No storage backend configured. Generated videos/images will fall back to raw provider URLs (which can expire). " +
+      "Set AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET (and optionally AWS_REGION, AWS_S3_ENDPOINT, AWS_S3_PUBLIC_URL) " +
+      "or BUILT_IN_FORGE_API_URL + BUILT_IN_FORGE_API_KEY for the legacy Manus FORGE backend."
+    );
+  }
+
   // If any errors, fail startup
   if (errors.length > 0) {
     console.error("❌ PRODUCTION ENVIRONMENT VALIDATION FAILED");
