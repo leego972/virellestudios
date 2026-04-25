@@ -1,0 +1,153 @@
+-- ════════════════════════════════════════════════════════════════════
+-- v6.78 — Global Film & Cinema Funding Sources expansion
+-- ════════════════════════════════════════════════════════════════════
+--
+-- Canonical / documentation migration for the v6.78 funding sources
+-- expansion described in:
+--   docs/VIRELLE_V678_GLOBAL_FILM_FUNDING_SOURCES_BRIEF.md
+--
+-- ─────────── How this seed actually runs in production ─────────────
+--
+-- Virelle's runtime uses `server/_core/autoMigrate.ts` on boot — the
+-- raw drizzle/*.sql files in this folder are documentation only and
+-- are NOT auto-applied by Railway.
+--
+-- The actual seed for v6.78 is in:
+--   server/_core/fundingSourcesV678.ts
+--
+-- and is invoked from `runAutoMigration()` in autoMigrate.ts (Step 8).
+--
+-- ─────────── Idempotency contract ──────────────────────────────────
+--
+-- 1. The funding_sources table has a UNIQUE INDEX created by
+--    autoMigrate Step 2b:
+--        ALTER TABLE funding_sources
+--          ADD UNIQUE INDEX uq_funding_country_org
+--                            (country(100), organization(100));
+--
+-- 2. All inserts use INSERT IGNORE, so re-runs are no-ops on dupes.
+--
+-- 3. Before running ~150 inserts on every boot, the seed function
+--    fast-paths via a marker check:
+--        SELECT 1 FROM funding_sources
+--          WHERE country='Israel'
+--            AND organization='Makor Foundation for Israeli Films'
+--          LIMIT 1;
+--    If the marker is found, the v6.78 seed exits silently.
+--
+-- 4. The seed never UPDATEs, never DELETEs, and never overwrites
+--    user-added rows.
+--
+-- ─────────── What this seed adds ───────────────────────────────────
+--
+-- Approximately 150 official film/cinema funding sources covering:
+--
+--   • International / global labs and documentary funds
+--       (IDFA Bertha Fund, Sundance Doc Program, Doha Film Institute,
+--        World Cinema Fund, Hubert Bals, Visions Sud Est, Sørfond,
+--        Hot Docs–Blue Ice, Chicken & Egg, Catapult, Creative Europe
+--        MEDIA, Eurimages, TorinoFilmLab, Berlinale Co-Pro Market,
+--        Cannes La Cinef / Cinéfondation Atelier, Locarno Open Doors,
+--        CPH:FORUM, Sheffield DocFest MeetMarket, Tribeca,
+--        Documentary Campus Masterschool)
+--
+--   • North America — United States
+--       NEA Media Arts, PBS / POV / American Documentary,
+--       Sundance Feature Film Program, Film Independent Artist
+--       Development, Vision Maker Media, Firelight Media; plus state
+--       tax-incentive programs in CA, NY, GA, NM, LA, IL, TX.
+--
+--   • Canada (extras)
+--       National Film Board of Canada, Manitoba Film & Music,
+--       Screen Nova Scotia / NSF&TPI, NLFDC.
+--
+--   • United Kingdom & Ireland
+--       BFI Doc Society Fund, Screen Scotland, Northern Ireland
+--       Screen, Ffilm Cymru Wales, Screen Ireland.
+--
+--   • France
+--       CNC, Région Île-de-France, ARTE France Cinéma, Région PACA.
+--
+--   • Germany (extras)
+--       FFA, DFFF, Film- und Medienstiftung NRW, MOIN Filmförderung.
+--
+--   • Nordics
+--       Danish Film Institute, Swedish Film Institute, Norwegian
+--       Film Institute, Finnish Film Foundation, Icelandic Film
+--       Centre, Nordisk Film & TV Fond.
+--
+--   • Benelux
+--       Netherlands Film Fund, VAF, Screen Flanders, CCA Wallonie-
+--       Bruxelles, Film Fund Luxembourg.
+--
+--   • Southern Europe
+--       ICAA Spain, MiC / DG Cinema Italy, Istituto Luce Cinecittà,
+--       Greek Film Centre, Croatian Audiovisual Centre, Slovenian
+--       Film Centre, Film Center Serbia, Bulgarian National Film
+--       Center.
+--
+--   • Central / Eastern Europe
+--       Polish Film Institute, Czech Film Fund, Slovak Audiovisual
+--       Fund, Lithuanian Film Centre.
+--
+--   • Australia / NZ (extras)
+--       Screen Tasmania.
+--
+--   • East Asia
+--       KOFIC, Busan Asian Cinema Fund / APM, Bunka-cho (Japan
+--       cultural agency), Tokyo Gap-Financing Market, TAICCA, Create
+--       Hong Kong / Film Development Fund.
+--
+--   • South / Southeast Asia
+--       FDCP Philippines, Thailand Film Office, FINAS Malaysia,
+--       NFDC India / Film Facilitation Office, NFDC Film Bazaar.
+--
+--   • Middle East / North Africa (non-Israel)
+--       Red Sea Fund, Saudi Film Commission Daw'i, Abu Dhabi Film
+--       Commission, Dubai Film and TV Commission, Royal Film
+--       Commission – Jordan, AFAC, Atlas Workshops (Marrakech), CNCI
+--       Tunisia.
+--
+--   • Israel (REQUIRED — own country, neutral funding-only notes)
+--       Makor Foundation for Israeli Films, Yehoshua Rabinovich Tel
+--       Aviv Foundation – Cinema Project, Jerusalem Film & Television
+--       Fund, Haifa Film Fund, Israel Film Council (Ministry of
+--       Culture and Sport), Sam Spiegel International Film Lab, CoPro
+--       Documentary Marketing Foundation, Docaviv Industry.
+--
+--       (Israel Film Fund, Rabinovich Foundation – Cinema Project,
+--        New Fund for Cinema and Television, and Gesher Multicultural
+--        Film Fund are already in the existing v6.x seed.)
+--
+--   • Africa
+--       NFVF South Africa, KZN Film Commission, Gauteng Film
+--       Commission, FOPICA Senegal, Rwanda Film Office, Durban
+--       FilmMart, Realness Institute.
+--
+--   • Latin America / Caribbean
+--       FSA / ANCINE Brazil, Fondo Audiovisual Chile, Proimágenes
+--       Colombia / FDC, IMCINE Mexico, EFICINE, ICAU Uruguay, DAFO
+--       Peru, El Fauno Costa Rica, DGCINE Dominican Republic,
+--       Ibermedia.
+--
+-- ─────────── If you want to run this seed manually ─────────────────
+--
+-- The seed lives in TypeScript so it can share helpers and stay in
+-- sync with the application.  To run it manually against a database:
+--
+--   pnpm tsx -e \
+--     "import('./server/_core/fundingSourcesV678').then(async m => {
+--        const { getDb } = await import('./server/db');
+--        await m.seedGlobalFundingV678(await getDb());
+--      });"
+--
+-- ════════════════════════════════════════════════════════════════════
+
+-- Sanity check (read-only) — counts total funding sources after seed.
+-- SELECT COUNT(*) AS total_funding_sources FROM funding_sources;
+
+-- Sanity check (read-only) — confirm the v6.78 Israel marker is present.
+-- SELECT id, country, organization, officialSite
+--   FROM funding_sources
+--   WHERE country = 'Israel'
+--     AND organization = 'Makor Foundation for Israeli Films';

@@ -6,6 +6,7 @@
  */
 import { sql } from "drizzle-orm";
 import { getDb } from "../db";
+import { seedGlobalFundingV678 } from "./fundingSourcesV678";
 
 interface ColumnCheck {
   table: string;
@@ -1533,7 +1534,11 @@ export async function runAutoMigration(): Promise<void> {
   }
 
   // ─── Step 7: Seed global film funding sources (INSERT IGNORE — safe to run repeatedly) ───
-  // 94 funding sources from global_film_funding_database CSV with full pack metadata
+  // 94 funding sources from global_film_funding_database CSV with full pack metadata.
+  // Wrapped in an IIFE so the early `return;` (when rowCount === 94) only short-circuits
+  // this seed block, NOT the whole runAutoMigration — the v6.78 expansion seed below
+  // still needs to run on every boot.
+  await (async () => {
   try {
     // Dedup guard: if the table has more than 94 rows, it means INSERT IGNORE ran without a UNIQUE
     // constraint and created duplicates. Truncate and reseed cleanly.
@@ -1720,4 +1725,14 @@ export async function runAutoMigration(): Promise<void> {
   } catch (err: any) {
     console.error(`[AutoMigrate] Failed to seed funding sources:`, err.message);
   }
+  })();
+
+  // ─── Step 8 (v6.78): Seed global film funding sources expansion ───
+  // ~150 official film/cinema funding sources covering the brief's target regions
+  // (international labs, North America, UK/Ireland, France, Germany, Nordics,
+  //  Benelux, Southern Europe, Central/Eastern Europe, Australia/NZ, East Asia,
+  //  South/Southeast Asia, MENA + Israel, Africa, Latin America/Caribbean).
+  // Idempotent: INSERT IGNORE against the (country, organization) unique index,
+  // and a marker check that fast-paths boot when already applied.
+  await seedGlobalFundingV678(db);
 }
