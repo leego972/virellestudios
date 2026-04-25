@@ -7,6 +7,9 @@ import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import SiteHead from "@/components/SiteHead";
 import ElementsPanel from "@/components/ElementsPanel";
+// v6.74 — Continuity warnings rollup. Sits next to ElementsPanel so users
+// see what's missing per scene at a glance before spending video credits.
+import ContinuityWarningsPanel from "@/components/ContinuityWarningsPanel";
 
 function statusDot(ok: boolean) {
   return (
@@ -228,6 +231,12 @@ export default function ProjectCommandCenterPage() {
                   Awaiting your review →
                 </Link>
               </div>
+            </div>
+            {/* v6.74 Phase 4 — Continuity warnings panel. Sits BELOW the
+                Elements panel so the order is: what's there → what's missing.
+                The panel is a pure read; no expensive work is triggered. */}
+            <div className="mt-4">
+              <ContinuityWarningsPanel projectId={projectId} />
             </div>
           </>
         )}

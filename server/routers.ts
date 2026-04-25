@@ -12476,7 +12476,35 @@ Return JSON ONLY in this exact shape:
           mood: z.string().max(120).nullable().optional(),
           characters: z.array(z.string().max(80)).optional(),
           estimatedDuration: z.number().min(5).max(600).optional(),
+          // v6.74 — new richer per-scene fields. All optional so old wizard
+          // payloads still validate. The mutation lower down packs these
+          // into existing scene columns (props/shotList/continuityNotes/
+          // dialogueText) — no new tables, no new columns required.
+          dialogue: z.string().max(4000).nullable().optional(),
+          props: z.array(z.string().max(120)).max(40).optional(),
+          shotSuggestions: z.array(z.object({
+            shotType: z.string().max(64).nullable().optional(),
+            lens: z.string().max(128).nullable().optional(),
+            movement: z.string().max(128).nullable().optional(),
+            framing: z.string().max(64).nullable().optional(),
+            notes: z.string().max(400).nullable().optional(),
+            durationSec: z.number().min(1).max(600).nullable().optional(),
+          })).max(10).optional(),
+          continuityNotes: z.string().max(1500).nullable().optional(),
         })).min(1).max(80),
+        // v6.74 — top-level entities. The wizard can pass these so we create
+        // characters and locations alongside scenes. They're optional — when
+        // omitted, we behave exactly like v6.73 (count only, no creation).
+        characters: z.array(z.object({
+          name: z.string().max(128),
+          role: z.string().max(128).nullable().optional(),
+          description: z.string().max(1500).nullable().optional(),
+        })).max(60).optional(),
+        locations: z.array(z.object({
+          name: z.string().max(255),
+          locationType: z.string().max(128).nullable().optional(),
+          description: z.string().max(1500).nullable().optional(),
+        })).max(60).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const project: any = await db.getProjectById(input.projectId, ctx.user.id);
@@ -12511,9 +12539,11 @@ Return JSON ONLY in this exact shape:
         const baseOrder = remaining.reduce((m: number, s: any) => Math.max(m, Number(s.orderIndex ?? 0)), 0);
 
         // v6.73 — Pre-load existing characters + locations for case-insensitive
-        // reuse counting. We never write characters/locations from the wizard
-        // (out of scope per brief) — we only count which suggested names
-        // already exist so the post-apply summary can show the user.
+        // reuse counting + lookup.
+        // v6.74 — When the wizard sends top-level `characters` / `locations`,
+        // we now actually create the missing ones (no description-only ghosts)
+        // alongside scenes so the project ends up with a populated cast +
+        // locations list ready for the readiness panel.
         const projectChars: any[] = await db.getProjectCharacters(input.projectId).catch(() => []);
         const projectLocs: any[] = await db.getProjectLocations(input.projectId).catch(() => []);
         const charNameSet = new Set(projectChars.map((c: any) => String(c.name ?? "").trim().toLowerCase()).filter(Boolean));
@@ -12525,11 +12555,71 @@ Return JSON ONLY in this exact shape:
         const newLocations = new Set<string>();
         const missingReferences: string[] = [];
 
+        // v6.74 — Top-level entity creation. We create characters first so the
+        // per-scene character tally below sees them as "reused" rather than
+        // "new" (which is the right mental model — they've been added).
+        const createdCharacters: string[] = [];
+        const createdLocations: string[] = [];
+        const characterCreateFailures: Array<{ name: string; error: string }> = [];
+        const locationCreateFailures: Array<{ name: string; error: string }> = [];
+
+        if (input.characters && input.characters.length) {
+          for (const c of input.characters) {
+            const name = c.name?.trim();
+            if (!name) continue;
+            const k = name.toLowerCase();
+            if (charNameSet.has(k)) {
+              reusedCharacters.add(name);
+              continue;
+            }
+            try {
+              await db.createCharacter({
+                userId: ctx.user.id,
+                projectId: input.projectId,
+                name,
+                role: c.role ?? null,
+                description: c.description ?? null,
+              } as any);
+              charNameSet.add(k);
+              createdCharacters.push(name);
+            } catch (err: any) {
+              console.warn(`[applyBreakdownToProject] character create failed for "${name}": ${err?.message}`);
+              characterCreateFailures.push({ name, error: err?.message ?? "unknown" });
+            }
+          }
+        }
+        if (input.locations && input.locations.length) {
+          for (const l of input.locations) {
+            const name = l.name?.trim();
+            if (!name) continue;
+            const k = name.toLowerCase();
+            if (locNameSet.has(k)) {
+              reusedLocations.add(name);
+              continue;
+            }
+            try {
+              await db.createLocation({
+                userId: ctx.user.id,
+                projectId: input.projectId,
+                name,
+                locationType: l.locationType ?? null,
+                description: l.description ?? null,
+              } as any);
+              locNameSet.add(k);
+              createdLocations.push(name);
+            } catch (err: any) {
+              console.warn(`[applyBreakdownToProject] location create failed for "${name}": ${err?.message}`);
+              locationCreateFailures.push({ name, error: err?.message ?? "unknown" });
+            }
+          }
+        }
+
         let created = 0;
         const failures: Array<{ sceneNumber: number; error: string }> = [];
         for (let i = 0; i < input.scenes.length; i++) {
           const s = input.scenes[i];
-          // Tally character reuse vs new (we don't create characters here).
+          // Tally character reuse vs new (now reflects v6.74 top-level
+          // creation above — newly-created chars register as reused here).
           for (const cname of (s.characters ?? [])) {
             const k = cname.trim().toLowerCase();
             if (!k) continue;
@@ -12542,6 +12632,12 @@ Return JSON ONLY in this exact shape:
             if (locNameSet.has(lk)) reusedLocations.add(s.location.trim());
             else newLocations.add(s.location.trim());
           }
+          // v6.74 — Build the productionNotes string conservatively. We keep
+          // the v6.73 "Suggested cast" summary, then append the props list
+          // when present so users see it in the existing crew-notes textarea.
+          const noteParts: string[] = [];
+          if (s.characters && s.characters.length) noteParts.push(`Suggested cast: ${s.characters.join(", ")}`);
+          if (s.props && s.props.length) noteParts.push(`Props: ${s.props.join(", ")}`);
           try {
             await db.createScene({
               projectId: input.projectId,
@@ -12552,9 +12648,30 @@ Return JSON ONLY in this exact shape:
               mood: s.mood ?? null,
               locationDetail: s.location ?? null,
               duration: Math.round(s.estimatedDuration ?? 30),
-              productionNotes: s.characters && s.characters.length
-                ? `Suggested cast: ${s.characters.join(", ")}`
-                : null,
+              productionNotes: noteParts.length ? noteParts.join("\n") : null,
+              // v6.74 — pack rich fields into existing scene columns.
+              // props → scenes.props (json) — already provisioned by autoMigrate.
+              // shotSuggestions → scenes.shotList (json) — same shape as the
+              // existing structured shot list, so downstream consumers work.
+              // continuityNotes → scenes.continuityNotes (text) — already
+              // provisioned by autoMigrate.
+              // dialogue → scenes.dialogueText (text) — existing column.
+              ...(s.props && s.props.length ? { props: s.props } : {}),
+              ...(s.shotSuggestions && s.shotSuggestions.length
+                ? {
+                    shotList: s.shotSuggestions.map((sh, n) => ({
+                      number: n + 1,
+                      shotType: sh.shotType ?? null,
+                      lens: sh.lens ?? null,
+                      movement: sh.movement ?? null,
+                      framing: sh.framing ?? null,
+                      notes: sh.notes ?? null,
+                      durationSec: sh.durationSec ?? null,
+                    })),
+                  }
+                : {}),
+              ...(s.continuityNotes ? { continuityNotes: s.continuityNotes } : {}),
+              ...(s.dialogue ? { dialogueText: s.dialogue } : {}),
             } as any);
             created++;
           } catch (err: any) {
@@ -12565,17 +12682,38 @@ Return JSON ONLY in this exact shape:
 
         // v6.73 — Surface "missing references" so the post-apply summary
         // can nudge the user to add reference images / character details
-        // before they spend video credits.
+        // before they spend video credits. v6.74 — also flag freshly-created
+        // characters/locations that were imported from the breakdown but
+        // still need reference images.
+        for (const cname of createdCharacters) {
+          missingReferences.push(`Character "${cname}" was just imported — no reference images yet. Add one before generating video.`);
+        }
+        for (const lname of createdLocations) {
+          missingReferences.push(`Location "${lname}" was just imported — no reference images yet. Add one before generating video.`);
+        }
         for (const cname of newCharacters) {
-          missingReferences.push(`Character "${cname}" — no reference images yet. Add one before generating video.`);
+          if (!createdCharacters.includes(cname)) {
+            missingReferences.push(`Character "${cname}" appears in scenes but is not in your cast list. Add the character before generating video.`);
+          }
         }
         for (const lname of newLocations) {
-          missingReferences.push(`Location "${lname}" — no reference images yet. Add one before generating video.`);
+          if (!createdLocations.includes(lname)) {
+            missingReferences.push(`Location "${lname}" appears in scenes but is not in your locations list. Add the location before generating video.`);
+          }
         }
 
         await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null,
           "preproduction.applyBreakdown",
-          { created, total: input.scenes.length, mode, deleted, reusedCharacters: reusedCharacters.size, newCharacters: newCharacters.size },
+          {
+            created,
+            total: input.scenes.length,
+            mode,
+            deleted,
+            reusedCharacters: reusedCharacters.size,
+            newCharacters: newCharacters.size,
+            createdCharacters: createdCharacters.length,
+            createdLocations: createdLocations.length,
+          },
         );
 
         return {
@@ -12590,6 +12728,12 @@ Return JSON ONLY in this exact shape:
             newCharacters: Array.from(newCharacters).sort(),
             reusedLocations: Array.from(reusedLocations).sort(),
             newLocations: Array.from(newLocations).sort(),
+            // v6.74 — record what we actually wrote so the post-apply card
+            // can confirm to the user that characters/locations were created.
+            createdCharacters,
+            createdLocations,
+            characterCreateFailures,
+            locationCreateFailures,
             missingReferences,
           },
         };

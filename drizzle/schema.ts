@@ -220,6 +220,11 @@ export const scenes = mysqlTable("scenes", {
   transitionDuration: float("transitionDuration").default(0.5), // seconds
   colorGrading: varchar("colorGrading", { length: 128 }), // override project-level grading
   productionNotes: text("productionNotes"), // director notes for crew
+  // v6.74 — Continuity notes surfaced by the script breakdown wizard. Kept
+  // separate from productionNotes so the readiness panel can show them as
+  // a distinct continuity-risk category instead of mixing them with crew
+  // logistics. autoMigrate already provisions this column.
+  continuityNotes: text("continuityNotes"),
   soundtrackId: int("soundtrackId"), // per-scene soundtrack
   soundtrackVolume: int("soundtrackVolume").default(80), // 0-100
   // ─── Camera & Optics ───
