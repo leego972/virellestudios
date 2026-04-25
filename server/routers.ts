@@ -1956,7 +1956,25 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             }
           }
         } catch (e: any) { if (e instanceof TRPCError) throw e; /* fail open on guard errors */ }
-        try { await db.deductCredits(ctx.user.id, videoCredits, "generate_scene_video", `Video for scene ${input.sceneId} (${scene.duration || 45}s)`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        // v6.69 Phase 5 — Atomic reservation. reserveCredits dedupes by
+        // (referenceType, referenceId) — a duplicate click while the previous
+        // reservation is still "reserved" returns the existing reservation id
+        // without double-charging. Finalize happens just before this route
+        // returns; release happens in the route-level catch wrapper below.
+        let __sceneVideoResId: number | null = null;
+        try {
+          __sceneVideoResId = await db.reserveCredits(
+            ctx.user.id,
+            videoCredits,
+            "generate_scene_video",
+            { projectId: scene.projectId, referenceType: "scene", referenceId: input.sceneId },
+          );
+        } catch (e: any) {
+          if (e?.message?.includes("INSUFFICIENT_CREDITS")) {
+            throw new TRPCError({ code: "FORBIDDEN", message: e.message });
+          }
+          throw e;
+        }
         const project = await db.getProjectById(scene.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         const characters = await db.getProjectCharacters(project.id);
@@ -2248,6 +2266,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           })();
         }
 
+        // v6.69 Phase 5 — Dispatch succeeded. Finalize the reservation so the
+        // duplicate-prevention key clears once the background job is queued.
+        // Background-worker failures still leave the user charged (matching
+        // pre-v6.69 behavior); refunding async failures is tracked separately
+        // in VIRELLE_V669_REPAIR_REPORT.md.
+        if (__sceneVideoResId) {
+          try { await db.finalizeReservation(__sceneVideoResId); } catch {}
+        }
         // Return immediately — frontend will poll scene status
         return { status: "generating", sceneId: scene.id, message: "Video generation started. The scene will update when complete." };
       }),
@@ -3561,7 +3587,24 @@ Break this into 8-15 scenes. For each scene, provide:
         await rateLimitHeavyAI(ctx.user.id);
         requireFeature(ctx.user, "canUseTrailerGeneration", "Trailer Generation");
         requireGenerationQuota(ctx.user);
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.trailer_gen.cost, "trailer_gen", `Trailer generation for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        // v6.69 Phase 5 — Atomic reservation w/ release-on-failure.
+        // Trailer generation runs synchronously inside this handler, so we can
+        // wrap the entire body and release the reservation if anything throws.
+        let __trailerResId: number | null = null;
+        try {
+          __trailerResId = await db.reserveCredits(
+            ctx.user.id,
+            CREDIT_COSTS.trailer_gen.cost,
+            "trailer_gen",
+            { projectId: input.projectId, referenceType: "trailer", referenceId: input.projectId },
+          );
+        } catch (e: any) {
+          if (e?.message?.includes("INSUFFICIENT_CREDITS")) {
+            throw new TRPCError({ code: "FORBIDDEN", message: e.message });
+          }
+          throw e;
+        }
+        try {
         await db.incrementGenerationCount(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new Error("Project not found");
@@ -3685,6 +3728,10 @@ Break this into 8-15 scenes. For each scene, provide:
           },
         });
 
+        // v6.69 Phase 5 — Trailer dispatch succeeded; finalize the hold.
+        if (__trailerResId) {
+          try { await db.finalizeReservation(__trailerResId); } catch {}
+        }
         return {
           jobId: job.id,
           trailerTitle: trailerData.trailerTitle,
@@ -3692,6 +3739,13 @@ Break this into 8-15 scenes. For each scene, provide:
           scenes: trailerData.selectedScenes,
           images: trailerImages,
         };
+        } catch (err) {
+          // v6.69 Phase 5 — Refund the held credits if anything failed.
+          if (__trailerResId) {
+            try { await db.releaseReservation(__trailerResId); } catch {}
+          }
+          throw err;
+        }
       }),
 
     // Get generation job status
@@ -12095,8 +12149,26 @@ Return JSON ONLY in this exact shape:
             })));
           }
 
-          // Charge credits only after successful generation.
-          await db.deductCredits(ctx.user.id, breakdownCost, "auto_recap", `Auto Recap for movie #${input.targetMovieId} (${input.lengthSeconds}s)`);
+          // v6.69 Phase 5 — Atomic reservation. reserveCredits deducts the
+          // breakdownCost up front, then we finalize on success. Failure path
+          // releases the reservation so the user is refunded automatically.
+          let __recapResId: number | null = null;
+          try {
+            __recapResId = await db.reserveCredits(
+              ctx.user.id,
+              breakdownCost,
+              "auto_recap",
+              { projectId: input.projectId, referenceType: "recap", referenceId: recap.id },
+            );
+          } catch (e: any) {
+            if (e?.message?.includes("INSUFFICIENT_CREDITS")) {
+              throw new TRPCError({ code: "FORBIDDEN", message: e.message });
+            }
+            throw e;
+          }
+          if (__recapResId) {
+            try { await db.finalizeReservation(__recapResId); } catch {}
+          }
 
           await db.updateRecap(recap.id, ctx.user.id, { status: "completed", progress: 100 });
           await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "recap.generate", { recapId: recap.id, lengthSeconds: input.lengthSeconds, beatCount: beats.length });
@@ -12104,6 +12176,13 @@ Return JSON ONLY in this exact shape:
           return { recapId: recap.id, status: "completed" as const, reused: false };
         } catch (err: any) {
           await db.updateRecap(recap.id, ctx.user.id, { status: "failed", progress: 0, errorMessage: err?.message || "unknown error" });
+          // v6.69 Phase 5 — If we managed to create a reservation before the
+          // failure, refund it. Look up by referenceType/referenceId since the
+          // local variable may be out of scope here.
+          try {
+            const stale = await db.getActiveReservation(ctx.user.id, "recap", recap.id);
+            if (stale && stale.id) await db.releaseReservation(stale.id);
+          } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Auto Recap generation failed: ${err?.message || "unknown"}. No credits were charged.` });
         }
       }),
@@ -12231,10 +12310,13 @@ Return JSON ONLY in this exact shape:
       for (const k of Object.keys(has)) {
         providers[k] = (has as any)[k] ? "configured" : "not_configured";
       }
+      // v6.69 repair — surface the persisted fallback policy so the BYOK
+      // Control Center can render the user's saved choice without flicker.
       return {
         providers,
         preferredVideoProvider: user?.preferredVideoProvider ?? null,
         preferredLlmProvider: user?.preferredLlmProvider ?? null,
+        byokFallbackMode: user?.byokFallbackMode ?? "byok_with_consent",
       };
     }),
 
@@ -12254,7 +12336,13 @@ Return JSON ONLY in this exact shape:
       .input(z.object({
         preferredVideoProvider: z.string().nullable().optional(),
         preferredLlmProvider: z.string().nullable().optional(),
-        fallbackMode: z.enum(["byok-only", "byok-with-fallback", "credits-only"]).optional(),
+        // v6.69 repair — values match the spec used everywhere else.
+        fallbackMode: z.enum([
+          "credits_only",
+          "byok_only",
+          "byok_with_consent",
+          "byok_with_auto_fallback",
+        ]).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const patch: any = {};
@@ -12313,14 +12401,35 @@ Return JSON ONLY in this exact shape:
       .query(async ({ ctx, input }) => {
         const project: any = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found." });
-        const [characters, scenes, moodBoard] = await Promise.all([
+        // v6.69 Phase 7 — Pull every data source the pitch deck needs.
+        // Budgets and shootDays already have helpers in db.ts; if a helper
+        // is missing we fall back to an empty array rather than throwing.
+        const [characters, scenes, moodBoard, budgets] = await Promise.all([
           db.getProjectCharacters(input.projectId).catch(() => []),
           db.getProjectScenes(input.projectId).catch(() => []),
           db.getProjectMoodBoard(input.projectId).catch(() => []),
+          (db as any).getProjectBudgets ? (db as any).getProjectBudgets(input.projectId).catch(() => []) : Promise.resolve([]),
         ]);
+        let shootDays: any[] = [];
+        try {
+          if (typeof (db as any).getProjectShootDays === "function") {
+            shootDays = await (db as any).getProjectShootDays(input.projectId);
+          }
+        } catch { shootDays = []; }
+        // v6.69 Phase 7 — Scenes table has NO sceneNumber column. Sort by the
+        // actual orderIndex column and derive a 1-based scene number for the
+        // deck. Title falls back to "Scene N" when missing.
+        const { collectCharacterReferenceImages } = await import("./_core/productionElements");
         const sortedScenes = (scenes as any[]).slice().sort((a, b) =>
-          Number(a.sceneNumber ?? 0) - Number(b.sceneNumber ?? 0),
+          Number(a.orderIndex ?? 0) - Number(b.orderIndex ?? 0),
         );
+        // Aggregate budget across all categories.
+        const budgetTotal = (budgets as any[]).reduce((sum, b) => sum + Number(b.amount ?? 0), 0);
+        const budgetByCategory: Record<string, number> = {};
+        for (const b of budgets as any[]) {
+          const k = String(b.category ?? "other");
+          budgetByCategory[k] = (budgetByCategory[k] ?? 0) + Number(b.amount ?? 0);
+        }
         return {
           title: project.title ?? "Untitled film",
           logline: project.description ?? null,
@@ -12333,20 +12442,28 @@ Return JSON ONLY in this exact shape:
             id: c.id,
             name: c.name,
             description: c.description,
-            referenceImages: Array.isArray(c.referenceImages) ? c.referenceImages : [],
+            referenceImages: collectCharacterReferenceImages(c, null),
           })),
           moodBoard: (moodBoard as any[]).map((m) => ({
             imageUrl: (m as any).imageUrl ?? (m as any).url ?? null,
           })).filter((m) => !!m.imageUrl),
-          scenes: sortedScenes.map((s) => ({
+          scenes: sortedScenes.map((s, i) => ({
             id: s.id,
-            sceneNumber: s.sceneNumber,
-            title: s.title ?? s.sceneTitle ?? null,
+            sceneNumber: Number(s.orderIndex ?? i) + 1,
+            title: s.title ?? `Scene ${Number(s.orderIndex ?? i) + 1}`,
             description: s.description ?? null,
-            thumbnailUrl: s.thumbnailUrl ?? s.posterUrl ?? null,
+            thumbnailUrl: s.thumbnailUrl ?? s.heroFrameUrl ?? null,
           })),
-          budgetEstimate: null,
-          productionPlan: null,
+          budgetEstimate: budgets.length > 0
+            ? { total: budgetTotal, currency: (budgets[0] as any).currency ?? "USD", byCategory: budgetByCategory }
+            : null,
+          productionPlan: shootDays.length > 0
+            ? {
+                shootDays: shootDays.length,
+                shootDates: (shootDays as any[]).map((d) => d.date ?? d.dayDate).filter(Boolean),
+                locations: Array.from(new Set((shootDays as any[]).map((d) => d.locationName).filter(Boolean))),
+              }
+            : null,
         };
       }),
   }),

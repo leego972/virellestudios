@@ -102,9 +102,13 @@ export async function getProjectHealthSummary(
     const desc = (c as any)?.description;
     return typeof desc === "string" && desc.trim().length > 0;
   }).length;
+  // v6.69 repair — count every actual reference-image source on the characters
+  // row (photoUrl, attributes.referenceImages, attributes.imageUrl,
+  // attributes.photoUrl, attributes.headshotUrl) so the Command Center stops
+  // falsely warning about missing reference images when photoUrl is set.
+  const { collectCharacterReferenceImages } = await import("./productionElements");
   const charactersWithReferenceImages = (characters as any[]).filter((c) => {
-    const ri = (c as any)?.referenceImages;
-    return Array.isArray(ri) && ri.length > 0;
+    return collectCharacterReferenceImages(c, null).length > 0;
   }).length;
   const consistencyWarnings: string[] = [];
   if (characters.length > 0 && charactersWithReferenceImages === 0) {

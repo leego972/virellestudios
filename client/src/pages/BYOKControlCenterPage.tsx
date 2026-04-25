@@ -4,7 +4,7 @@
 // platform credits. The page never displays raw key strings — only masked
 // "configured / not configured / valid / invalid" status from the server.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import SiteHead from "@/components/SiteHead";
 
@@ -46,10 +46,17 @@ export default function BYOKControlCenterPage() {
 
   const [preferredVideo, setPreferredVideo] = useState<string>("");
   const [preferredLlm, setPreferredLlm] = useState<string>("");
-  type FallbackMode = "byok-only" | "byok-with-fallback" | "credits-only";
-  const [fallbackMode, setFallbackMode] = useState<FallbackMode>("byok-with-fallback");
+  // v6.69 repair — values match the persisted spec
+  // (credits_only | byok_only | byok_with_consent | byok_with_auto_fallback).
+  type FallbackMode = "credits_only" | "byok_only" | "byok_with_consent" | "byok_with_auto_fallback";
+  const [fallbackMode, setFallbackMode] = useState<FallbackMode>("byok_with_consent");
 
   const status: any = statusQ.data ?? {};
+  // v6.69 repair — hydrate the saved fallback mode once it loads.
+  useEffect(() => {
+    const saved = (status?.byokFallbackMode ?? null) as FallbackMode | null;
+    if (saved && saved !== fallbackMode) setFallbackMode(saved);
+  }, [status?.byokFallbackMode]);
   const providers: any = status.providers ?? {};
 
   return (
@@ -156,11 +163,14 @@ export default function BYOKControlCenterPage() {
             onChange={(e) => setFallbackMode(e.target.value as FallbackMode)}
             className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-sm mb-4"
           >
-            <option value="byok-only">Use my key only — never fall back</option>
-            <option value="byok-with-fallback">
-              Try my key first, then Virelle credits with my consent
+            <option value="byok_only">Use my key only — never fall back</option>
+            <option value="byok_with_consent">
+              Try my key first, then ask before using Virelle credits
             </option>
-            <option value="credits-only">Always use Virelle credits</option>
+            <option value="byok_with_auto_fallback">
+              Try my key first, silently fall back to Virelle credits
+            </option>
+            <option value="credits_only">Always use Virelle credits</option>
           </select>
 
           <button

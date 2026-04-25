@@ -38,8 +38,11 @@ export const users = mysqlTable("users", {
   preferredLlmProvider: varchar("preferredLlmProvider", { length: 32 }), // openai, anthropic, google — for Virelle chat
   directorInstructions: text("directorInstructions"), // Custom instructions for the Director's Assistant AI
   preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface, seedance
-  // v6.69 Phase 5 — BYOK fallback policy: byok-only | byok-with-fallback | credits-only
-  byokFallbackMode: varchar("byokFallbackMode", { length: 32 }).default("byok-with-fallback"),
+  // v6.69 Phase 3 — BYOK fallback policy.
+  // Allowed values: credits_only | byok_only | byok_with_consent | byok_with_auto_fallback
+  // Default is byok_with_consent so a configured key is preferred but the user
+  // is asked once before the platform falls back to Virelle credits.
+  byokFallbackMode: varchar("byokFallbackMode", { length: 32 }).default("byok_with_consent"),
   apiKeysUpdatedAt: timestamp("apiKeysUpdatedAt"),
   // ─── Profile & Business Details ───
   phone: varchar("phone", { length: 32 }),
