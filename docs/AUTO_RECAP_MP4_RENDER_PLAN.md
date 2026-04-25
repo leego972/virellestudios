@@ -1,5 +1,14 @@
 # Auto Recap — MP4 Render Plan (v6.70 deferred work)
 
+> **Status as of v6.71: SHIPPED.** The MP4 render pass described in this plan
+> is now implemented. See `docs/VIRELLE_V671_RECAP_RENDER_REPORT.md` for the
+> as-built notes (files changed, ffmpeg handling, credit lifecycle, QA
+> checklist, remaining blockers). This file is kept as the original design
+> intent; the implementation diverges from the plan only in two places:
+> (1) it is a fire-and-forget IIFE on the API server rather than a BullMQ
+> worker, and (2) voiceover muxing + subtitles + opening-credits overlay are
+> still deferred. Both are documented in the v6.71 report.
+
 Status as of v6.70: **outline only**. The Auto Recap pipeline produces a beat
 list, segment timing, and an optional voiceover script. It does **not** render
 a final MP4. The UI now reflects this honestly (`outline_completed` →

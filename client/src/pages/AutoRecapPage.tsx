@@ -84,15 +84,25 @@ export default function AutoRecapPage() {
     {
       enabled: !!generatedRecapId,
       // v6.67 — live status polling per upgrade-kit Phase 4 UX.
+      // v6.71 — Stop polling on every terminal state, including the new
+      // honest "outline_completed" / "render_completed".
       refetchInterval: (q) => {
         const status = (q.state.data as any)?.recap?.status;
-        return status && !["completed", "failed"].includes(status) ? 3000 : false;
+        const terminal = ["completed", "outline_completed", "render_completed", "failed"];
+        return status && !terminal.includes(status) ? 3000 : false;
       },
     }
   );
 
   const attachMut = trpc.recap.attach.useMutation({
     onSuccess: () => existingRecaps.refetch(),
+  });
+
+  // v6.71 — Render the final MP4 from a completed outline. The mutation
+  // returns immediately with status: "render_pending"; the polling above
+  // picks up the worker's progress.
+  const renderMp4Mut = trpc.recap.renderMp4.useMutation({
+    onSuccess: () => recapDetail.refetch(),
   });
 
   const existingRecaps = trpc.recap.listForMovie.useQuery(
@@ -370,8 +380,10 @@ export default function AutoRecapPage() {
                         label = "Recap outline ready";
                         cls = "bg-amber-500/20 text-amber-300";
                       } else if (s === "render_pending") {
-                        label = "Outline saving…";
-                        cls = "bg-zinc-700 text-zinc-300";
+                        // v6.71 — render_pending is now the live MP4 render
+                        // state, not the outline-saving state.
+                        label = "Rendering MP4…";
+                        cls = "bg-amber-500/20 text-amber-300";
                       } else if (s === "failed") {
                         label = "Failed";
                         cls = "bg-red-500/20 text-red-300";
@@ -418,22 +430,48 @@ export default function AutoRecapPage() {
                     </div>
                   )}
                   {(() => {
-                    // v6.70 — Show the attach control for every terminal
-                    // success state (legacy "completed" + honest
-                    // "outline_completed" + future "render_completed").
+                    // v6.70 — Show the attach + render controls for every
+                    // terminal success state (legacy "completed" + honest
+                    // "outline_completed" + "render_completed"). Also show
+                    // a live "rendering" indicator while render_pending.
                     const s = recapDetail.data.recap.status;
-                    const ready = s === "completed" || s === "outline_completed" || s === "render_completed";
+                    const ready = s === "completed" || s === "outline_completed" || s === "render_completed" || s === "render_pending";
                     if (!ready) return null;
                     const hasAsset = !!(recapDetail.data.recap as any).outputAssetId
                       || !!(recapDetail.data.recap as any).fileUrl;
+                    const isRendering = s === "render_pending";
+                    const canRender = !hasAsset && !isRendering && (s === "outline_completed" || s === "completed");
                     return (
                       <div className="pt-3 border-t border-zinc-800 space-y-2">
-                        {/* v6.70 — Honest disclaimer when no MP4 exists yet. */}
-                        {!hasAsset && (
+                        {/* v6.70/v6.71 — Honest disclaimer when no MP4 exists yet. */}
+                        {!hasAsset && !isRendering && (
                           <div className="text-[11px] text-zinc-500">
                             Preview from source segments. The recap outline (beat list + voiceover script) is saved.
-                            Final MP4 export is not yet available — see the AUTO_RECAP_MP4_RENDER_PLAN doc for the planned render flow.
+                            Click "Render final MP4" to cut, stitch, and export the final video.
                           </div>
+                        )}
+                        {/* v6.71 — Live rendering indicator while the worker runs. */}
+                        {isRendering && (
+                          <div className="text-xs text-amber-300 flex items-center gap-2">
+                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse" />
+                            Rendering final MP4… (the page will refresh automatically)
+                          </div>
+                        )}
+                        {/* v6.71 — Render final MP4 button. Only available
+                            when the outline is settled and no asset exists. */}
+                        {canRender && (
+                          <button
+                            onClick={() => renderMp4Mut.mutate({ recapId: recapDetail.data.recap.id })}
+                            disabled={renderMp4Mut.isPending}
+                            className="text-xs bg-amber-500 hover:bg-amber-400 disabled:bg-zinc-700 disabled:text-zinc-500 px-3 py-1.5 rounded text-black font-medium"
+                          >
+                            {renderMp4Mut.isPending ? "Starting render…" : "Render final MP4"}
+                          </button>
+                        )}
+                        {/* v6.71 — Surface render-mutation errors (insufficient
+                            credits, bad state, dispatch failure, etc.). */}
+                        {renderMp4Mut.error && (
+                          <div className="text-xs text-red-300">{renderMp4Mut.error.message}</div>
                         )}
                         {/* v6.70 — Only render a download button when an actual file exists. */}
                         {hasAsset && (recapDetail.data.recap as any).fileUrl && (
@@ -451,7 +489,7 @@ export default function AutoRecapPage() {
                             Attached to episode on{" "}
                             {new Date(recapDetail.data.recap.attachedAt as any).toLocaleString()}.
                           </div>
-                        ) : (
+                        ) : !isRendering ? (
                           <button
                             onClick={() => attachMut.mutate({ recapId: recapDetail.data.recap.id })}
                             disabled={attachMut.isPending}
@@ -459,7 +497,7 @@ export default function AutoRecapPage() {
                           >
                             {attachMut.isPending ? "Attaching…" : "Attach to episode intro"}
                           </button>
-                        )}
+                        ) : null}
                       </div>
                     );
                   })()}

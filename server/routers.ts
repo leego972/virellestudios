@@ -12162,7 +12162,11 @@ Return JSON ONLY in this exact shape:
           // v6.70 — Honest status. We are about to persist the outline+segments
           // but no MP4 has been rendered. Was previously "rendering" which
           // implied an active MP4 render that does not exist yet.
-          await db.updateRecap(recap.id, ctx.user.id, { status: "render_pending", progress: 75, outline: outline as any, voiceoverScript: outline?.voiceoverScript || null });
+          // v6.71 — Renamed from "render_pending" to "outline_pending" to
+          // avoid collision with the live MP4 render state introduced in
+          // recap.renderMp4. This intermediate state is brief (one update
+          // away from "outline_completed") and will rarely be observed.
+          await db.updateRecap(recap.id, ctx.user.id, { status: "outline_pending", progress: 75, outline: outline as any, voiceoverScript: outline?.voiceoverScript || null });
 
           // Persist segments
           const beats: any[] = Array.isArray(outline?.beats) ? outline.beats : [];
@@ -12263,6 +12267,110 @@ Return JSON ONLY in this exact shape:
         if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
         await db.unattachRecap(input.recapId, ctx.user.id);
         return { success: true };
+      }),
+
+    // ────────────────────────────────────────────────────────────────────
+    // v6.71 — Render the final MP4 for an Auto Recap.
+    //
+    // Reserves the `recap_render` credit, flips the recap to
+    // `render_pending`, and fires the background renderer
+    // (server/_core/recapRenderer.ts). The renderer finalizes the
+    // reservation on success and releases on failure (same pattern as
+    // v6.70 scene-video). The mutation itself returns immediately so the
+    // UI can poll for status.
+    // ────────────────────────────────────────────────────────────────────
+    renderMp4: creationProcedure
+      .input(z.object({ recapId: z.number().int().positive() }))
+      .mutation(async ({ ctx, input }) => {
+        // Auth + ownership.
+        const recap: any = await db.getRecapById(input.recapId, ctx.user.id);
+        if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
+
+        // Status gate. Only allow rendering from a settled outline state.
+        // Legacy "completed" rows are allowed if no asset has been attached.
+        const hasAsset = !!recap.fileUrl || !!recap.outputAssetId;
+        const eligible =
+          recap.status === "outline_completed" ||
+          (recap.status === "completed" && !hasAsset);
+        if (!eligible) {
+          if (recap.status === "render_pending") {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "A render is already in progress for this recap." });
+          }
+          if (recap.status === "render_completed" || hasAsset) {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "This recap already has a final MP4." });
+          }
+          throw new TRPCError({ code: "BAD_REQUEST", message: `Recap is not ready to render (status: ${recap.status}).` });
+        }
+
+        // Must have at least one segment to cut.
+        const segments = await db.listRecapSegments(input.recapId);
+        if (!segments.length) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Recap has no segments to render." });
+        }
+
+        // Dedupe duplicate clicks via the existing reservation lookup.
+        const existing = await db.getActiveReservation(ctx.user.id, "recap_render", input.recapId);
+        if (existing && existing.id) {
+          // Same-click protection: just kick the recap into render_pending
+          // (if it isn't already) and return the existing reservation.
+          if (recap.status !== "render_pending") {
+            await db.updateRecap(input.recapId, ctx.user.id, { status: "render_pending", progress: 0, errorMessage: null as any } as any);
+          }
+          return { recapId: input.recapId, status: "render_pending" as const, reservationId: existing.id, reused: true };
+        }
+
+        // Reserve credits. reserveCredits throws INSUFFICIENT_CREDITS which
+        // we surface as a clean tRPC error. It returns Promise<number | null>
+        // so we explicitly guard the null path (e.g. when the DB is offline).
+        const { CREDIT_COSTS } = await import("./_core/subscription");
+        const cost = CREDIT_COSTS.recap_render?.cost ?? 20;
+        let resId: number | null;
+        try {
+          resId = await db.reserveCredits(
+            ctx.user.id,
+            cost,
+            "recap_render",
+            { projectId: recap.projectId, referenceType: "recap_render", referenceId: input.recapId },
+          );
+        } catch (e: any) {
+          if (e?.message?.includes("INSUFFICIENT_CREDITS")) {
+            throw new TRPCError({ code: "FORBIDDEN", message: e.message });
+          }
+          throw e;
+        }
+        if (!resId) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Could not reserve credits for the render." });
+        }
+        const reservationId: number = resId;
+
+        // Flip to render_pending so the UI can poll honestly.
+        await db.updateRecap(input.recapId, ctx.user.id, {
+          status: "render_pending",
+          progress: 0,
+          errorMessage: null as any,
+        } as any);
+
+        // Fire the background renderer. Never await — the worker manages its
+        // own lifecycle (finalize on success, release on failure, status
+        // revert on failure).
+        (async () => {
+          try {
+            const { renderRecapMp4 } = await import("./_core/recapRenderer");
+            await renderRecapMp4({ recapId: input.recapId, reservationId, userId: ctx.user.id });
+          } catch (err: any) {
+            // renderRecapMp4 swallows its own errors, but guard the dynamic
+            // import too so a bad import never leaves the recap stuck.
+            console.error(`[recap.renderMp4] background dispatch failed for recap ${input.recapId}:`, err?.message);
+            try {
+              await db.updateRecap(input.recapId, ctx.user.id, { status: "outline_completed", errorMessage: err?.message || "Render dispatch failed." } as any);
+            } catch {}
+            try { await db.releaseReservation(reservationId); } catch {}
+          }
+        })();
+
+        await db.logActivity(recap.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "recap.renderMp4", { recapId: input.recapId, segmentCount: segments.length });
+
+        return { recapId: input.recapId, status: "render_pending" as const, reservationId, reused: false };
       }),
   }),
 

@@ -1730,6 +1730,11 @@ export const recaps = mysqlTable("recaps", {
   overlayCreditsOnRecap: boolean("overlayCreditsOnRecap").default(false).notNull(),
   status: varchar("status", { length: 32 }).default("pending").notNull(),
   outputAssetId: int("outputAssetId"),
+  // v6.71 — Final MP4 location after the render pass. fileUrl is the public
+  // (or signed) URL the UI shows on the "Download MP4" link; fileKey is the
+  // S3/Forge object key used for re-signing or deletion.
+  fileUrl: text("fileUrl"),
+  fileKey: varchar("fileKey", { length: 512 }),
   creditCost: int("creditCost").default(0).notNull(),
   progress: int("progress").default(0).notNull(),
   errorMessage: text("errorMessage"),

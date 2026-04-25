@@ -642,6 +642,12 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   budget_estimate_ai:      { cost: 5,   label: "AI Budget Estimate (multi-scene analysis)" },
   subtitle_gen_ai:         { cost: 8,   label: "AI Subtitle Generation (full film, large context)" },
   trailer_gen:             { cost: 20,  label: "Trailer Generation (4–6 video clips, ~2 min cinematic)" },
+  // v6.71 — Auto Recap MP4 render. Charged when the user clicks "Render
+  // final MP4" on a completed recap outline. The outline+segment generation
+  // already costs `auto_recap`; this is a separate per-render fee for the
+  // ffmpeg cut/concat/upload pass. Reserved at dispatch, finalized on
+  // worker success, released on worker failure.
+  recap_render:            { cost: 20,  label: "Render Auto Recap MP4 (cut + concat + upload final video)" },
   ad_poster_gen:           { cost: 5,   label: "Ad/Poster Image Generation (DALL-E 3 HD)" },
   ad_poster_copy_gen:      { cost: 3,   label: "Ad/Poster Copy Generation (AI tagline + description)" },
   ad_poster_video_gen:     { cost: 10,  label: "Ad/Poster Video Ad Generation (video clip via BYOK)" },
