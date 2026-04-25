@@ -574,11 +574,11 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
         // Check pollen balance before attempting generation
         const { balance, sufficient } = await checkPollenBalance(currentKey);
         if (!sufficient && balance >= 0) {
-          console.log(`[BYOK:Pollinations] Key ${currentKey.slice(0, 8)}... has insufficient pollen (${balance}), trying next key`);
+          console.log(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} has insufficient pollen (${balance}), trying next key`);
           continue;
         }
 
-        console.log(`[BYOK:Pollinations] Trying model: ${model} with key ${currentKey.slice(0, 8)}... (balance: ${balance})`);
+        console.log(`[BYOK:Pollinations] Trying model: ${model} with key ***${currentKey.slice(-4)} (balance: ${balance})`);
         params.set("model", model);
         
         // CORRECT API URL: /video/{prompt} — this is the video generation endpoint
@@ -597,12 +597,12 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
         });
 
         if (resp.status === 402) {
-          console.log(`[BYOK:Pollinations] Key ${currentKey.slice(0, 8)}... has insufficient pollen (402), trying next key`);
+          console.log(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} has insufficient pollen (402), trying next key`);
           continue; // Try next key
         }
 
         if (resp.status === 401) {
-          console.log(`[BYOK:Pollinations] Key ${currentKey.slice(0, 8)}... is invalid (401), trying next key`);
+          console.log(`[BYOK:Pollinations] Key ***${currentKey.slice(-4)} is invalid (401), trying next key`);
           continue; // Try next key
         }
 
@@ -647,9 +647,9 @@ async function generateWithPollinations(apiKey: string, req: VideoGenerationRequ
         console.log(`[BYOK:Pollinations] Model ${model} returned unexpected content-type: ${contentType}`);
       } catch (err: any) {
         if (err.name === "TimeoutError" || err.name === "AbortError") {
-          console.log(`[BYOK:Pollinations] Model ${model} timed out with key ${currentKey.slice(0, 8)}...`);
+          console.log(`[BYOK:Pollinations] Model ${model} timed out with key ***${currentKey.slice(-4)}`);
         } else {
-          console.log(`[BYOK:Pollinations] Model ${model} error with key ${currentKey.slice(0, 8)}...: ${err.message}`);
+          console.log(`[BYOK:Pollinations] Model ${model} error with key ***${currentKey.slice(-4)}: ${err.message}`);
         }
       }
     }
