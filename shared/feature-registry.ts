@@ -94,6 +94,20 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     minTier: "amateur", // canUseStoryboard is true from amateur (Creator)
     hasNative: true,
   },
+  // v6.73 — Script-to-Storyboard wizard. Lets a user paste a screenplay,
+  // review the proposed scene breakdown, then append or replace scenes on
+  // the project. No video credits are charged — pure pre-production.
+  {
+    id: "script-breakdown",
+    label: "Script Breakdown Wizard",
+    icon: "📑",
+    category: "Visual",
+    webPath: "/projects/:projectId/script-breakdown",
+    description: "Turn a screenplay into a reviewable scene list",
+    minTier: "indie", // free pre-production planner; same tier as Script Writer
+    hasNative: false,
+    isNew: true,
+  },
   {
     id: "mood-board",
     label: "Mood Board",
@@ -259,6 +273,20 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     description: "Find script inconsistencies",
     minTier: "amateur", // canUseContinuityCheck is true from amateur (Creator)
     hasNative: true,
+  },
+  // v6.73 — Generation-readiness rollup. Per-scene 0–100 score showing what
+  // is missing (description, location, characters, references, mood) before
+  // the user spends video credits. Pure read; no AI cost.
+  {
+    id: "continuity-readiness",
+    label: "Continuity Readiness",
+    icon: "✅",
+    category: "Post-Production",
+    webPath: "/projects/:projectId/command-center",
+    description: "Pre-flight check before generating video",
+    minTier: "indie", // available to anyone with a project
+    hasNative: false,
+    isNew: true,
   },
   {
     id: "nle-export",

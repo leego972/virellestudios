@@ -12463,6 +12463,10 @@ Return JSON ONLY in this exact shape:
     applyBreakdownToProject: protectedProcedure
       .input(z.object({
         projectId: z.number(),
+        // v6.73 — append (default, safe) or replace (destructive, requires
+        // explicit confirmReplace flag set by the wizard's UI prompt).
+        mode: z.enum(["append", "replace"]).optional(),
+        confirmReplace: z.boolean().optional(),
         scenes: z.array(z.object({
           sceneNumber: z.number(),
           title: z.string().max(200),
@@ -12477,12 +12481,67 @@ Return JSON ONLY in this exact shape:
       .mutation(async ({ ctx, input }) => {
         const project: any = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found." });
-        // Find the current max orderIndex so we append, never overwrite.
+
+        const mode = input.mode ?? "append";
         const existing: any[] = await db.getProjectScenes(input.projectId).catch(() => []);
-        const baseOrder = existing.reduce((m, s: any) => Math.max(m, Number(s.orderIndex ?? 0)), 0);
+
+        // v6.73 — Replace requires an explicit second confirmation so the
+        // wizard cannot silently destroy work. We never auto-replace.
+        let deleted = 0;
+        if (mode === "replace") {
+          if (!input.confirmReplace) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Replace mode requires an explicit confirmation from the user (confirmReplace=true).",
+            });
+          }
+          for (const s of existing) {
+            try {
+              await db.deleteScene(s.id);
+              deleted++;
+            } catch (err: any) {
+              console.warn(`[applyBreakdownToProject] delete failed on scene ${s.id}: ${err?.message}`);
+            }
+          }
+        }
+
+        // Find the current max orderIndex so we append, never overwrite (in
+        // replace mode `existing` is now drained so baseOrder is 0).
+        const remaining = mode === "replace" ? [] : existing;
+        const baseOrder = remaining.reduce((m: number, s: any) => Math.max(m, Number(s.orderIndex ?? 0)), 0);
+
+        // v6.73 — Pre-load existing characters + locations for case-insensitive
+        // reuse counting. We never write characters/locations from the wizard
+        // (out of scope per brief) — we only count which suggested names
+        // already exist so the post-apply summary can show the user.
+        const projectChars: any[] = await db.getProjectCharacters(input.projectId).catch(() => []);
+        const projectLocs: any[] = await db.getProjectLocations(input.projectId).catch(() => []);
+        const charNameSet = new Set(projectChars.map((c: any) => String(c.name ?? "").trim().toLowerCase()).filter(Boolean));
+        const locNameSet = new Set(projectLocs.map((l: any) => String(l.name ?? "").trim().toLowerCase()).filter(Boolean));
+
+        const reusedCharacters = new Set<string>();
+        const newCharacters = new Set<string>();
+        const reusedLocations = new Set<string>();
+        const newLocations = new Set<string>();
+        const missingReferences: string[] = [];
+
         let created = 0;
+        const failures: Array<{ sceneNumber: number; error: string }> = [];
         for (let i = 0; i < input.scenes.length; i++) {
           const s = input.scenes[i];
+          // Tally character reuse vs new (we don't create characters here).
+          for (const cname of (s.characters ?? [])) {
+            const k = cname.trim().toLowerCase();
+            if (!k) continue;
+            if (charNameSet.has(k)) reusedCharacters.add(cname.trim());
+            else newCharacters.add(cname.trim());
+          }
+          // Tally location reuse vs new.
+          if (s.location && s.location.trim()) {
+            const lk = s.location.trim().toLowerCase();
+            if (locNameSet.has(lk)) reusedLocations.add(s.location.trim());
+            else newLocations.add(s.location.trim());
+          }
           try {
             await db.createScene({
               projectId: input.projectId,
@@ -12500,11 +12559,40 @@ Return JSON ONLY in this exact shape:
             created++;
           } catch (err: any) {
             console.warn(`[applyBreakdownToProject] failed on scene ${s.sceneNumber}: ${err?.message}`);
+            failures.push({ sceneNumber: s.sceneNumber, error: err?.message ?? "unknown" });
           }
         }
+
+        // v6.73 — Surface "missing references" so the post-apply summary
+        // can nudge the user to add reference images / character details
+        // before they spend video credits.
+        for (const cname of newCharacters) {
+          missingReferences.push(`Character "${cname}" — no reference images yet. Add one before generating video.`);
+        }
+        for (const lname of newLocations) {
+          missingReferences.push(`Location "${lname}" — no reference images yet. Add one before generating video.`);
+        }
+
         await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null,
-          "preproduction.applyBreakdown", { created, total: input.scenes.length });
-        return { success: true, created, total: input.scenes.length };
+          "preproduction.applyBreakdown",
+          { created, total: input.scenes.length, mode, deleted, reusedCharacters: reusedCharacters.size, newCharacters: newCharacters.size },
+        );
+
+        return {
+          success: true,
+          created,
+          total: input.scenes.length,
+          mode,
+          deleted,
+          failures,
+          summary: {
+            reusedCharacters: Array.from(reusedCharacters).sort(),
+            newCharacters: Array.from(newCharacters).sort(),
+            reusedLocations: Array.from(reusedLocations).sort(),
+            newLocations: Array.from(newLocations).sort(),
+            missingReferences,
+          },
+        };
       }),
   }),
 
@@ -12593,6 +12681,53 @@ Return JSON ONLY in this exact shape:
         const ctxScene = await getPromptContextForScene(input.sceneId, ctx.user.id);
         if (!ctxScene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found." });
         return ctxScene;
+      }),
+
+    // ────────────────────────────────────────────────────────────────────
+    // v6.73 — Generation-readiness scoring per scene + per-project rollup.
+    //
+    // Returns a 0–100 score with weighted components (see scoreScene below)
+    // plus a list of warnings/missing items so the UI can show users what
+    // to fix BEFORE they spend video-generation credits.
+    //
+    // Pure read. No DB writes. No expensive AI calls.
+    // ────────────────────────────────────────────────────────────────────
+    getSceneReadiness: protectedProcedure
+      .input(z.object({ sceneId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const { computeSceneReadiness } = await import("./_core/productionElements");
+        const r = await computeSceneReadiness(input.sceneId, ctx.user.id);
+        if (!r) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found." });
+        return r;
+      }),
+
+    getProjectReadiness: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found." });
+        const scenes: any[] = await db.getProjectScenes(input.projectId).catch(() => []);
+        const { computeSceneReadiness } = await import("./_core/productionElements");
+        const items = await Promise.all(
+          scenes.map(async (s: any) => {
+            const r = await computeSceneReadiness(s.id, ctx.user.id);
+            return r ?? {
+              sceneId: s.id,
+              sceneNumber: Number(s.orderIndex ?? 0) + 1,
+              title: s.title ?? `Scene ${Number(s.orderIndex ?? 0) + 1}`,
+              score: 0,
+              warnings: ["Could not compute readiness for this scene."],
+              missing: [],
+            };
+          }),
+        );
+        const avg = items.length === 0 ? 0 : Math.round(items.reduce((a, b) => a + b.score, 0) / items.length);
+        return {
+          projectId: input.projectId,
+          totalScenes: items.length,
+          averageScore: avg,
+          scenes: items,
+        };
       }),
   }),
 

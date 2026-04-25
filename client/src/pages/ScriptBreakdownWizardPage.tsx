@@ -1,9 +1,14 @@
 // v6.69 Phase 3 — Script-to-Storyboard Breakdown Wizard.
+// v6.73 Phase 2 — Polish: append/replace mode (with destructive confirm),
+// post-apply summary (created / reused / new / missing references).
 //
 // Three steps:
 //   1. Load the project's existing script (or paste a new one).
 //   2. Review the proposed scene breakdown (with toggles to remove rows).
-//   3. Apply — creates scenes for the project, returns the count.
+//      If the project already has scenes, prompt for append vs replace.
+//   3. Apply — creates scenes for the project, then shows a rich summary
+//      (created scenes, reused/new characters & locations, missing
+//      references, next-action shortcuts).
 //
 // All AI calls are server-side; this page only renders proposals and lets the
 // user explicitly approve before any DB write happens.
@@ -35,6 +40,9 @@ export default function ScriptBreakdownWizardPage() {
   const [skipped, setSkipped] = useState<Record<number, boolean>>({});
   const [warnings, setWarnings] = useState<string[]>([]);
   const [source, setSource] = useState<string>("");
+  // v6.73 — append (default, safe) vs replace (destructive, requires
+  // explicit double-confirmation before we send the mutation).
+  const [mode, setMode] = useState<"append" | "replace">("append");
 
   const analyzeMut = trpc.preproduction.analyzeScriptForBreakdown.useMutation({
     onSuccess: (data: any) => {
@@ -63,6 +71,12 @@ export default function ScriptBreakdownWizardPage() {
   }, [project]);
 
   const accepted = proposed.filter((s) => !skipped[s.sceneNumber]);
+  // v6.73 — Surface the existing scene count so the user can decide between
+  // append and replace with full information.
+  const existingSceneCount: number =
+    Array.isArray(project?.scenes) ? project.scenes.length :
+    typeof project?.sceneCount === "number" ? project.sceneCount :
+    0;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-5xl">
@@ -185,6 +199,37 @@ export default function ScriptBreakdownWizardPage() {
               </label>
             ))}
           </div>
+          {/* v6.73 — Append vs replace prompt. Only shown when the project
+              already has scenes; in fresh projects there's nothing to
+              replace so we hide the choice entirely. */}
+          {existingSceneCount > 0 && (
+            <div className="mt-3 bg-zinc-900/40 border border-zinc-800 rounded p-3 space-y-2">
+              <div className="text-xs text-zinc-300">
+                This project already has <strong>{existingSceneCount}</strong> scene
+                {existingSceneCount === 1 ? "" : "s"}. How should these be applied?
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="flex items-center gap-2 text-xs text-zinc-200 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="mode"
+                    checked={mode === "append"}
+                    onChange={() => setMode("append")}
+                  />
+                  <span><strong>Append</strong> — add these as new scenes after the existing ones (safe).</span>
+                </label>
+                <label className="flex items-center gap-2 text-xs text-rose-200 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="mode"
+                    checked={mode === "replace"}
+                    onChange={() => setMode("replace")}
+                  />
+                  <span><strong>Replace</strong> — delete all existing scenes first, then create these (destructive).</span>
+                </label>
+              </div>
+            </div>
+          )}
           <div className="mt-3 flex items-center justify-between">
             <button
               onClick={() => setStep(1)}
@@ -193,13 +238,39 @@ export default function ScriptBreakdownWizardPage() {
               ← Back
             </button>
             <button
-              onClick={() =>
-                applyMut.mutate({ projectId, scenes: accepted as any })
-              }
+              onClick={() => {
+                // v6.73 — Replace requires an explicit destructive confirm
+                // before we even send the mutation. The backend also
+                // double-checks via confirmReplace, so this can't slip past
+                // a missed UI guard.
+                if (mode === "replace" && existingSceneCount > 0) {
+                  const ok = window.confirm(
+                    `Replace mode will permanently delete ${existingSceneCount} existing scene` +
+                    `${existingSceneCount === 1 ? "" : "s"} from this project before creating ` +
+                    `${accepted.length} new one${accepted.length === 1 ? "" : "s"}. ` +
+                    `This cannot be undone. Continue?`,
+                  );
+                  if (!ok) return;
+                }
+                applyMut.mutate({
+                  projectId,
+                  mode,
+                  confirmReplace: mode === "replace",
+                  scenes: accepted as any,
+                });
+              }}
               disabled={applyMut.isPending || accepted.length === 0}
-              className="bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded text-sm font-medium disabled:opacity-50"
+              className={`px-4 py-2 rounded text-sm font-medium disabled:opacity-50 ${
+                mode === "replace"
+                  ? "bg-rose-500 hover:bg-rose-400 text-white"
+                  : "bg-amber-500 hover:bg-amber-400 text-black"
+              }`}
             >
-              {applyMut.isPending ? "Applying…" : `Apply ${accepted.length} scene${accepted.length === 1 ? "" : "s"}`}
+              {applyMut.isPending
+                ? (mode === "replace" ? "Replacing…" : "Applying…")
+                : (mode === "replace"
+                    ? `Replace ${existingSceneCount} → ${accepted.length}`
+                    : `Apply ${accepted.length} scene${accepted.length === 1 ? "" : "s"}`)}
             </button>
           </div>
           {applyMut.error && (
@@ -209,19 +280,107 @@ export default function ScriptBreakdownWizardPage() {
       )}
 
       {step === 3 && (
-        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-6 text-center">
-          <div className="text-emerald-200 text-lg font-medium mb-2">
-            Breakdown applied.
+        // v6.73 — Rich post-apply summary: created + (if replace) deleted +
+        // reused vs new characters/locations + missing references + clear
+        // next-action call-outs. No expensive AI/video work is started
+        // automatically — every next step is a deliberate click.
+        <div className="space-y-4">
+          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-6">
+            <div className="text-emerald-200 text-lg font-medium mb-1">
+              Breakdown applied.
+            </div>
+            <div className="text-sm text-zinc-300">
+              {applyMut.data?.created ?? 0} new scene
+              {applyMut.data?.created === 1 ? "" : "s"} added to your project
+              {(applyMut.data?.deleted ?? 0) > 0
+                ? ` · ${applyMut.data!.deleted} previous scene${applyMut.data!.deleted === 1 ? "" : "s"} replaced`
+                : ""}.
+            </div>
+            {applyMut.data?.failures && applyMut.data.failures.length > 0 && (
+              <div className="mt-2 text-xs text-rose-300">
+                {applyMut.data.failures.length} scene{applyMut.data.failures.length === 1 ? "" : "s"} failed to save:
+                <ul className="list-disc ml-5 mt-1">
+                  {applyMut.data.failures.map((f) => (
+                    <li key={f.sceneNumber}>Scene {f.sceneNumber}: {f.error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-          <div className="text-sm text-zinc-300 mb-4">
-            {applyMut.data?.created ?? 0} new scene
-            {applyMut.data?.created === 1 ? "" : "s"} added to your project.
+
+          {applyMut.data?.summary && (
+            <div className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-4 space-y-3">
+              <div className="text-sm font-semibold text-zinc-100">Summary</div>
+              {(applyMut.data.summary.reusedCharacters.length > 0 ||
+                applyMut.data.summary.newCharacters.length > 0) && (
+                <div>
+                  <div className="text-[11px] uppercase tracking-wide text-amber-300/80 mb-1">
+                    Characters
+                  </div>
+                  {applyMut.data.summary.reusedCharacters.length > 0 && (
+                    <div className="text-xs text-emerald-200">
+                      Reused: {applyMut.data.summary.reusedCharacters.join(", ")}
+                    </div>
+                  )}
+                  {applyMut.data.summary.newCharacters.length > 0 && (
+                    <div className="text-xs text-amber-200">
+                      New (not yet in your project): {applyMut.data.summary.newCharacters.join(", ")}
+                    </div>
+                  )}
+                </div>
+              )}
+              {(applyMut.data.summary.reusedLocations.length > 0 ||
+                applyMut.data.summary.newLocations.length > 0) && (
+                <div>
+                  <div className="text-[11px] uppercase tracking-wide text-amber-300/80 mb-1">
+                    Locations
+                  </div>
+                  {applyMut.data.summary.reusedLocations.length > 0 && (
+                    <div className="text-xs text-emerald-200">
+                      Reused: {applyMut.data.summary.reusedLocations.join(", ")}
+                    </div>
+                  )}
+                  {applyMut.data.summary.newLocations.length > 0 && (
+                    <div className="text-xs text-amber-200">
+                      New (not yet in your project): {applyMut.data.summary.newLocations.join(", ")}
+                    </div>
+                  )}
+                </div>
+              )}
+              {applyMut.data.summary.missingReferences.length > 0 && (
+                <div>
+                  <div className="text-[11px] uppercase tracking-wide text-amber-300/80 mb-1">
+                    Missing references — fix these before generating video
+                  </div>
+                  <ul className="text-xs text-rose-200 list-disc ml-5 space-y-0.5">
+                    {applyMut.data.summary.missingReferences.map((m, i) => (
+                      <li key={i}>{m}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/projects/${projectId}`}>
+              <a className="inline-block bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded text-sm font-medium">
+                Open project
+              </a>
+            </Link>
+            <Link href={`/projects/${projectId}/storyboard`}>
+              <a className="inline-block bg-zinc-800 hover:bg-zinc-700 text-zinc-100 px-4 py-2 rounded text-sm">
+                Open storyboard
+              </a>
+            </Link>
+            {applyMut.data?.summary && applyMut.data.summary.newCharacters.length > 0 && (
+              <Link href={`/projects/${projectId}/characters`}>
+                <a className="inline-block bg-zinc-800 hover:bg-zinc-700 text-zinc-100 px-4 py-2 rounded text-sm">
+                  Add reference images
+                </a>
+              </Link>
+            )}
           </div>
-          <Link href={`/projects/${projectId}`}>
-            <a className="inline-block bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded text-sm font-medium">
-              Open project
-            </a>
-          </Link>
         </div>
       )}
     </div>

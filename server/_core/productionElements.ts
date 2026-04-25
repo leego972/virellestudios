@@ -302,3 +302,127 @@ export async function getPromptContextForScene(
     continuityNotes,
   };
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// v6.73 — Scene generation-readiness scoring.
+//
+// Returns a 0–100 score plus a `warnings` list (soft, recoverable) and a
+// `missing` list (hard, must-fix-for-good-output). Pure read. The score is
+// intentionally additive and capped at 100 so adding more weight later
+// cannot accidentally double-charge a category.
+//
+// Weights (must sum to 100):
+//   +20  description exists and is non-trivial (>= 30 chars)
+//   +15  location exists (real record OR scene's own location-ish fields)
+//   +15  at least one character attached to the scene
+//   +15  attached character has at least one reference image
+//   +10  scene props OR productionNotes present
+//   +10  shot list present (scene.shotList JSON has >= 1 entry)
+//   +15  visual style / camera context present (mood, timeOfDay, or any
+//        project-level style anchor)
+// ────────────────────────────────────────────────────────────────────────────
+
+export interface SceneReadiness {
+  sceneId: number;
+  sceneNumber: number;
+  title: string;
+  score: number;
+  warnings: string[];
+  missing: string[];
+}
+
+export async function computeSceneReadiness(
+  sceneId: number,
+  userId: number,
+): Promise<SceneReadiness | null> {
+  const scene: any = await db.getSceneById(sceneId);
+  if (!scene) return null;
+  const project = await db.getProjectById(scene.projectId, userId);
+  if (!project) return null;
+
+  const ctx = await getPromptContextForScene(sceneId, userId);
+  const sceneNumber = Number(scene.orderIndex ?? 0) + 1;
+  const title = String(scene.title ?? `Scene ${sceneNumber}`).slice(0, 200);
+
+  const warnings: string[] = [];
+  const missing: string[] = [];
+  let score = 0;
+
+  // 1. Description — +20.
+  const desc = String(scene.description ?? "").trim();
+  if (desc.length >= 30) {
+    score += 20;
+  } else if (desc.length > 0) {
+    score += 8;
+    warnings.push("Scene description is short (under 30 characters).");
+  } else {
+    missing.push("Scene has no description.");
+  }
+
+  // 2. Location — +15.
+  if (ctx?.location && ctx.location.name) {
+    score += 15;
+  } else {
+    missing.push("Scene has no location set.");
+  }
+
+  // 3. Character attached — +15.
+  const hasChar = (ctx?.characters?.length ?? 0) > 0;
+  if (hasChar) {
+    score += 15;
+  } else {
+    missing.push("No characters attached to this scene.");
+  }
+
+  // 4. Character reference image — +15. Only counts if a character is
+  //    attached at all (avoids double-penalty).
+  if (hasChar) {
+    const anyRef = (ctx!.characters).some(
+      (c: any) => Array.isArray(c.referenceImages) && c.referenceImages.length > 0,
+    );
+    if (anyRef) {
+      score += 15;
+    } else {
+      missing.push("Attached characters have no reference images yet.");
+    }
+  }
+
+  // 5. Props or production notes — +10.
+  const propsArr = asArray<string>((scene as any).props);
+  const notes = String((scene as any).productionNotes ?? "").trim();
+  if (propsArr.length > 0 || notes.length > 0) {
+    score += 10;
+  } else {
+    warnings.push("No props or production notes set for this scene.");
+  }
+
+  // 6. Shot list — +10.
+  const shotList = asArray<unknown>((scene as any).shotList);
+  if (shotList.length > 0) {
+    score += 10;
+  } else {
+    warnings.push("No shot list — generation will use a single default shot.");
+  }
+
+  // 7. Visual style / camera context — +15.
+  const mood = String((scene as any).mood ?? "").trim();
+  const tod = String((scene as any).timeOfDay ?? "").trim();
+  const hasStyleAnchor = (ctx?.styleAnchors?.length ?? 0) > 0;
+  if (mood || tod || hasStyleAnchor) {
+    score += 15;
+  } else {
+    warnings.push("No mood/time-of-day/style anchor — output may be visually inconsistent across scenes.");
+  }
+
+  if (score > 100) score = 100;
+  if (score < 0) score = 0;
+
+  return {
+    sceneId,
+    sceneNumber,
+    title,
+    score,
+    warnings,
+    missing,
+  };
+}
