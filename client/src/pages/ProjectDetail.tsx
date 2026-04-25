@@ -1587,6 +1587,28 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/sides`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <FileText className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Sides (PDF)</p>
+                    <p className="text-xs text-muted-foreground">Per-day printable actor sides</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/daily-report`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <ListOrdered className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Daily Production Report</p>
+                    <p className="text-xs text-muted-foreground">Wrap-of-day DPR · signatures</p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
