@@ -10,8 +10,8 @@ export default function DayOutOfDays() {
   const projectId = parseInt(id || "0");
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
   const { data: days = [] } = trpc.shootDay.list.useQuery({ projectId }, { enabled: !!projectId });
-  const { data: scenes = [] } = trpc.scene.list.useQuery({ projectId }, { enabled: !!projectId });
-  const { data: characters = [] } = trpc.character.list.useQuery({ projectId }, { enabled: !!projectId });
+  const { data: scenes = [] } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!projectId });
+  const { data: characters = [] } = trpc.character.listByProject.useQuery({ projectId }, { enabled: !!projectId });
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-4 md:p-6">

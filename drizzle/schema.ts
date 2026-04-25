@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, json, float, boolean, serial, decimal, date } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, json, float, boolean, serial, decimal, date, bigint } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -1664,3 +1664,45 @@ export const activityLog = mysqlTable("activityLog", {
 });
 export type ActivityLogEntry = typeof activityLog.$inferSelect;
 export type InsertActivityLogEntry = typeof activityLog.$inferInsert;
+
+// ============================================================================
+// v6.64 — Signed approval chain (tamper-evident audit log)
+// ============================================================================
+export const approvalChain = mysqlTable("approval_chain", {
+  id: int("id").primaryKey().autoincrement(),
+  projectId: int("projectId").notNull(),
+  kind: mysqlEnum("kind", ["scene", "movie"]).notNull(),
+  entityId: int("entityId").notNull(),
+  fromStatus: varchar("fromStatus", { length: 32 }),
+  toStatus: varchar("toStatus", { length: 32 }).notNull(),
+  actor: int("actor").notNull(),
+  actorName: varchar("actorName", { length: 255 }),
+  note: text("note"),
+  contentHash: varchar("contentHash", { length: 128 }).notNull(),
+  prevSignature: varchar("prevSignature", { length: 128 }),
+  signature: varchar("signature", { length: 128 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ApprovalChainEntry = typeof approvalChain.$inferSelect;
+export type InsertApprovalChainEntry = typeof approvalChain.$inferInsert;
+
+// ============================================================================
+// v6.64 — Asset version history
+// ============================================================================
+export const assetVersions = mysqlTable("asset_versions", {
+  id: int("id").primaryKey().autoincrement(),
+  projectId: int("projectId").notNull(),
+  ownerKind: varchar("ownerKind", { length: 32 }).notNull(),
+  ownerId: int("ownerId").notNull(),
+  fieldName: varchar("fieldName", { length: 64 }).notNull(),
+  label: varchar("label", { length: 255 }),
+  url: text("url").notNull(),
+  mimeType: varchar("mimeType", { length: 128 }),
+  sizeBytes: bigint("sizeBytes", { mode: "number" }),
+  notes: text("notes"),
+  createdBy: int("createdBy").notNull(),
+  createdByName: varchar("createdByName", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AssetVersion = typeof assetVersions.$inferSelect;
+export type InsertAssetVersion = typeof assetVersions.$inferInsert;

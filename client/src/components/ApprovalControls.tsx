@@ -32,7 +32,7 @@ export default function ApprovalControls({ kind, id, status, note, onChange }: P
     try {
       if (kind === "scene") {
         await sceneMut.mutateAsync({ sceneId: id, status: next, note: draftNote || null });
-        await utils.scene.list.invalidate();
+        await utils.scene.listByProject.invalidate();
         await utils.activity.list.invalidate().catch(() => {});
       } else {
         await movieMut.mutateAsync({ movieId: id, status: next, note: draftNote || null });

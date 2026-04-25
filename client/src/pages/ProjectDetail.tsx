@@ -89,6 +89,11 @@ import {
   Building2,
   Calendar,
   Activity,
+  CheckCircle2,
+  FileUp,
+  FileDown,
+  CalendarDays,
+  Calculator,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
@@ -1502,6 +1507,83 @@ export default function ProjectDetail() {
                   <div>
                     <p className="text-sm font-medium">Activity Timeline</p>
                     <p className="text-xs text-muted-foreground">Approvals · changes · audit trail</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/collaborators`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Collaborators</p>
+                    <p className="text-xs text-muted-foreground">Invite · roles · permissions</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/approvals`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Approval Chain</p>
+                    <p className="text-xs text-muted-foreground">Cryptographic audit · sha256</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/script-import`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <FileUp className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Script Import</p>
+                    <p className="text-xs text-muted-foreground">Fountain · Final Draft FDX</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/script-export`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <FileDown className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Script Export</p>
+                    <p className="text-xs text-muted-foreground">Fountain · FDX downloads</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/calendar-feed`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <CalendarDays className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Calendar Feed</p>
+                    <p className="text-xs text-muted-foreground">iCal · Google · Apple subscribe</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget-fringes`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Calculator className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Budget Fringes</p>
+                    <p className="text-xs text-muted-foreground">Union · payroll · taxes</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/asset-versions`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Layers className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Asset Versions</p>
+                    <p className="text-xs text-muted-foreground">Stack · diff · revert</p>
                   </div>
                 </CardContent>
               </Card>

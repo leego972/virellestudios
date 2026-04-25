@@ -11559,8 +11559,12 @@ Rules:
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
         await assertCanAccessProject((scene as any).projectId, ctx.user.id);
         const cleanNote = input.note ? sanitizeText(input.note) : null;
+        const prevStatus = (scene as any).approvalStatus || null;
         await db.setSceneApproval(input.sceneId, ctx.user.id, input.status, cleanNote);
         await db.logActivity((scene as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "scene.approval.set", { sceneId: input.sceneId, status: input.status, note: cleanNote });
+        // v6.64 — append signed chain entry
+        const snapshot = JSON.stringify({ id: input.sceneId, title: (scene as any).title, description: (scene as any).description, videoUrl: (scene as any).videoUrl, shotList: (scene as any).shotList });
+        await db.appendApprovalChain((scene as any).projectId, "scene", input.sceneId, prevStatus, input.status, ctx.user.id, ctx.user.name || ctx.user.email || null, cleanNote, snapshot);
         return { success: true };
       }),
   }),
@@ -11584,9 +11588,13 @@ Rules:
           }
         }
         const cleanNote = input.note ? sanitizeText(input.note) : null;
+        const prevStatus = (movie as any).approvalStatus || null;
         await db.setMovieApproval(input.movieId, ctx.user.id, input.status, cleanNote);
         if ((movie as any).projectId) {
           await db.logActivity((movie as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "movie.approval.set", { movieId: input.movieId, status: input.status, note: cleanNote });
+          // v6.64 — append signed chain entry
+          const snapshot = JSON.stringify({ id: input.movieId, title: (movie as any).title, prompt: (movie as any).prompt, videoUrl: (movie as any).videoUrl });
+          await db.appendApprovalChain((movie as any).projectId, "movie", input.movieId, prevStatus, input.status, ctx.user.id, ctx.user.name || ctx.user.email || null, cleanNote, snapshot);
         }
         return { success: true };
       }),
@@ -11662,6 +11670,170 @@ Rules:
         }
         await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "budget.update", { totalEstimate, currency: input.currency });
         return { success: true, totalEstimate };
+      }),
+  }),
+
+  // ============================================================================
+  // v6.64 — Signed approval chain (read + verify)
+  // ============================================================================
+  approvalChain: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number(), kind: z.enum(["scene", "movie"]).optional(), entityId: z.number().optional() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.listApprovalChain(input.projectId, input.kind, input.entityId);
+      }),
+    verify: protectedProcedure
+      .input(z.object({ projectId: z.number(), kind: z.enum(["scene", "movie"]), entityId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.verifyApprovalChain(input.projectId, input.kind, input.entityId);
+      }),
+  }),
+
+  // ============================================================================
+  // v6.64 — Asset version history
+  // ============================================================================
+  assetVersion: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number(), ownerKind: z.string().max(32), ownerId: z.number(), fieldName: z.string().max(64).optional() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.listAssetVersions(input.projectId, input.ownerKind, input.ownerId, input.fieldName);
+      }),
+    record: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        ownerKind: z.string().max(32),
+        ownerId: z.number(),
+        fieldName: z.string().max(64),
+        url: z.string().url(),
+        label: z.string().max(255).optional(),
+        mimeType: z.string().max(128).optional(),
+        sizeBytes: z.number().optional(),
+        notes: z.string().max(1000).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.recordAssetVersion({
+          projectId: input.projectId,
+          ownerKind: input.ownerKind,
+          ownerId: input.ownerId,
+          fieldName: input.fieldName,
+          label: input.label ? sanitizeText(input.label) : null,
+          url: input.url,
+          mimeType: input.mimeType || null,
+          sizeBytes: input.sizeBytes ?? null,
+          notes: input.notes ? sanitizeText(input.notes) : null,
+          createdBy: ctx.user.id,
+          createdByName: ctx.user.name || ctx.user.email || null,
+        } as any);
+      }),
+    delete: protectedProcedure
+      .input(z.object({ projectId: z.number(), id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.deleteAssetVersion(input.id);
+      }),
+  }),
+
+  // ============================================================================
+  // v6.64 — Collaborator list (admin/visibility — invite/remove already on
+  // collaboration router). This is a thin read-only convenience wrapper.
+  // ============================================================================
+  collaboratorView: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.listCollaboratorsByProject(input.projectId);
+      }),
+  }),
+
+  // ============================================================================
+  // v6.64 — Fountain / FDX script import + export (named scriptIO to avoid
+  // collision with the v6.0 `script` router which manages script documents).
+  // ============================================================================
+  scriptIO: router({
+    importFountain: protectedProcedure
+      .input(z.object({ projectId: z.number(), text: z.string().max(2_000_000), commit: z.boolean().default(false) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const { parseFountain } = await import("./_core/scriptFormats");
+        const parsed = parseFountain(input.text);
+        if (!input.commit) return { preview: parsed.slice(0, 50), total: parsed.length, committed: false };
+        // Commit: create scenes
+        let created = 0;
+        for (const s of parsed) {
+          await db.createScene({
+            projectId: input.projectId,
+            userId: ctx.user.id,
+            title: sanitizeText(s.heading).slice(0, 240),
+            description: sanitizeText(s.description || "").slice(0, 4000),
+            intExt: s.intExt || null,
+            location: s.location ? sanitizeText(s.location).slice(0, 240) : null,
+            timeOfDay: s.timeOfDay ? sanitizeText(s.timeOfDay).slice(0, 80) : null,
+          } as any);
+          created++;
+        }
+        await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "script.import.fountain", { count: created });
+        return { committed: true, created, total: parsed.length };
+      }),
+    importFDX: protectedProcedure
+      .input(z.object({ projectId: z.number(), xml: z.string().max(4_000_000), commit: z.boolean().default(false) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const { parseFDX } = await import("./_core/scriptFormats");
+        const parsed = parseFDX(input.xml);
+        if (!input.commit) return { preview: parsed.slice(0, 50), total: parsed.length, committed: false };
+        let created = 0;
+        for (const s of parsed) {
+          await db.createScene({
+            projectId: input.projectId,
+            userId: ctx.user.id,
+            title: sanitizeText(s.heading).slice(0, 240),
+            description: sanitizeText(s.description || "").slice(0, 4000),
+            intExt: s.intExt || null,
+            location: s.location ? sanitizeText(s.location).slice(0, 240) : null,
+            timeOfDay: s.timeOfDay ? sanitizeText(s.timeOfDay).slice(0, 80) : null,
+          } as any);
+          created++;
+        }
+        await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "script.import.fdx", { count: created });
+        return { committed: true, created, total: parsed.length };
+      }),
+    exportFountain: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const project = await db.getProjectByIdRaw(input.projectId);
+        const scenes = await db.getProjectScenes(input.projectId);
+        const { exportFountain } = await import("./_core/scriptFormats");
+        return { text: exportFountain(scenes as any, (project as any)?.title), count: scenes.length };
+      }),
+    iCalUrl: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const { createHmac } = await import("crypto");
+        const secret = process.env.SESSION_SECRET || "";
+        if (!secret) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Calendar feed unavailable" });
+        const token = createHmac("sha256", secret).update(`ical:${input.projectId}`).digest("hex").slice(0, 32);
+        const base = process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : "";
+        return {
+          path: `/api/ical/${input.projectId}.ics?token=${token}`,
+          url: `${base}/api/ical/${input.projectId}.ics?token=${token}`,
+          webcal: `${base.replace(/^https?:/, "webcal:")}/api/ical/${input.projectId}.ics?token=${token}`,
+        };
+      }),
+    exportFDX: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const project = await db.getProjectByIdRaw(input.projectId);
+        const scenes = await db.getProjectScenes(input.projectId);
+        const { exportFDX } = await import("./_core/scriptFormats");
+        return { xml: exportFDX(scenes as any, (project as any)?.title || "Untitled"), count: scenes.length };
       }),
   }),
 });

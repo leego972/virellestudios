@@ -123,6 +123,14 @@ const CallSheetPrint = lazy(() => import("./pages/CallSheetPrint"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const BudgetTracker = lazy(() => import("./pages/Budget"));
 const ActivityTimeline = lazy(() => import("./pages/ActivityTimeline"));
+// v6.64 — Pro Studio additions
+const Collaborators = lazy(() => import("./pages/CollaboratorsPage"));
+const ScriptImport = lazy(() => import("./pages/ScriptImportPage"));
+const ScriptExport = lazy(() => import("./pages/ScriptExportPage"));
+const CalendarFeed = lazy(() => import("./pages/CalendarFeedPage"));
+const ApprovalChain = lazy(() => import("./pages/ApprovalChainPage"));
+const BudgetFringes = lazy(() => import("./pages/BudgetFringesPage"));
+const AssetVersions = lazy(() => import("./pages/AssetVersionsPage"));
 const CastingBoard = lazy(() => import("./pages/CastingBoard"));
 const CuttingRoom = lazy(() => import("./pages/CuttingRoom"));
 const FilmPage = lazy(() => import("./pages/FilmPage"));
@@ -309,6 +317,14 @@ function Router() {
               <Route path="/projects/:id/contacts">{() => <LazyPage><Contacts /></LazyPage>}</Route>
               <Route path="/projects/:id/budget-tracker">{() => <LazyPage><BudgetTracker /></LazyPage>}</Route>
               <Route path="/projects/:id/activity">{() => <LazyPage><ActivityTimeline /></LazyPage>}</Route>
+              {/* v6.64 — Collaboration, script i/o, calendar, audit, fringes, versioning */}
+              <Route path="/projects/:id/collaborators">{() => <LazyPage><Collaborators /></LazyPage>}</Route>
+              <Route path="/projects/:id/script-import">{() => <LazyPage><ScriptImport /></LazyPage>}</Route>
+              <Route path="/projects/:id/script-export">{() => <LazyPage><ScriptExport /></LazyPage>}</Route>
+              <Route path="/projects/:id/calendar-feed">{() => <LazyPage><CalendarFeed /></LazyPage>}</Route>
+              <Route path="/projects/:id/approval-chain">{() => <LazyPage><ApprovalChain /></LazyPage>}</Route>
+              <Route path="/projects/:id/budget-fringes">{() => <LazyPage><BudgetFringes /></LazyPage>}</Route>
+              <Route path="/projects/:id/asset-versions">{() => <LazyPage><AssetVersions /></LazyPage>}</Route>
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>

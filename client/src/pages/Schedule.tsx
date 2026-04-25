@@ -20,8 +20,8 @@ export default function Schedule() {
   const utils = trpc.useUtils();
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
   const { data: days = [] } = trpc.shootDay.list.useQuery({ projectId }, { enabled: !!projectId });
-  const { data: scenes = [] } = trpc.scene.list.useQuery({ projectId }, { enabled: !!projectId });
-  const { data: locations = [] } = trpc.location.list.useQuery({ projectId }, { enabled: !!projectId });
+  const { data: scenes = [] } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!projectId });
+  const { data: locations = [] } = trpc.location.listByProject.useQuery({ projectId }, { enabled: !!projectId });
 
   const createMut = trpc.shootDay.create.useMutation();
   const updateMut = trpc.shootDay.update.useMutation();
@@ -82,7 +82,7 @@ export default function Schedule() {
     if (!confirm("Delete this shoot day? Any assigned scenes will be unscheduled.")) return;
     try {
       await deleteMut.mutateAsync({ id: dayId });
-      await Promise.all([utils.shootDay.list.invalidate(), utils.scene.list.invalidate()]);
+      await Promise.all([utils.shootDay.list.invalidate(), utils.scene.listByProject.invalidate()]);
       toast.success("Deleted");
     } catch (e: any) { toast.error(e?.message || "Failed"); }
   }

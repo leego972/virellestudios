@@ -414,6 +414,39 @@ async function startServer() {
     });
   });
 
+  // ── v6.64 — iCal subscribable shoot-day feed ─────────────────────────────
+  // Calendar apps (Apple Calendar, Google Calendar, Outlook) cannot send our
+  // session cookies, so this endpoint accepts a stateless HMAC token derived
+  // from SESSION_SECRET + projectId. The token is generated server-side via
+  // tRPC `script.iCalUrl` once the user has access to the project.
+  app.get("/api/ical/:projectId.ics", async (req, res) => {
+    try {
+      const { createHmac } = await import("crypto");
+      const projectId = parseInt(req.params.projectId, 10);
+      if (!Number.isFinite(projectId) || projectId <= 0) return res.status(400).send("Bad project id");
+      const token = String(req.query.token || "");
+      const secret = process.env.SESSION_SECRET || "";
+      if (!secret) return res.status(503).send("Calendar feed unavailable: server not configured.");
+      const expected = createHmac("sha256", secret).update(`ical:${projectId}`).digest("hex").slice(0, 32);
+      if (token !== expected) return res.status(403).send("Invalid token.");
+      const dbMod = await import("../db");
+      const project = await dbMod.getProjectByIdRaw(projectId);
+      const days = await dbMod.listShootDays(projectId);
+      const { exportICal } = await import("./scriptFormats");
+      const baseUrl = process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}/projects/${projectId}` : undefined;
+      const ics = exportICal((project as any)?.title || `Project ${projectId}`, (days as any[]).map((d) => ({
+        id: d.id, dayNumber: d.dayNumber, shootDate: d.shootDate, callTime: d.callTime, wrapTime: d.wrapTime,
+        locationName: d.locationName, generalNotes: d.generalNotes,
+      })), baseUrl);
+      res.setHeader("Content-Type", "text/calendar; charset=utf-8");
+      res.setHeader("Cache-Control", "private, max-age=300");
+      res.send(ics);
+    } catch (e: any) {
+      logger.error(`iCal feed error: ${e?.message}`);
+      res.status(500).send("Internal error");
+    }
+  });
+
   // ── MOBILE APP: Feature Registry ─────────────────────────────────────────
   // The mobile app polls this endpoint to discover all available features.
   // To add a new feature: edit shared/feature-registry.ts — it auto-appears in the app.

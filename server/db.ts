@@ -2601,3 +2601,100 @@ export async function getMovieByIdRaw(movieId: number): Promise<any | null> {
   const [row] = await db.select().from(movies).where(eq(movies.id, movieId)).limit(1);
   return (row as any) || null;
 }
+
+// ============================================================================
+// v6.64 — Signed approval chain helpers
+// ============================================================================
+import { createHash } from "crypto";
+import { approvalChain, InsertApprovalChainEntry, ApprovalChainEntry, assetVersions, InsertAssetVersion, AssetVersion } from "../drizzle/schema";
+
+function sha256(s: string): string {
+  return createHash("sha256").update(s).digest("hex");
+}
+
+export async function appendApprovalChain(
+  projectId: number,
+  kind: "scene" | "movie",
+  entityId: number,
+  fromStatus: string | null,
+  toStatus: string,
+  actor: number,
+  actorName: string | null,
+  note: string | null,
+  contentSnapshot: string,
+): Promise<ApprovalChainEntry | null> {
+  const db = await getDb();
+  if (!db) return null;
+  // Find previous signature in this entity's chain
+  const [prev] = await db.select().from(approvalChain)
+    .where(and(eq(approvalChain.projectId, projectId), eq(approvalChain.kind, kind), eq(approvalChain.entityId, entityId)))
+    .orderBy(desc(approvalChain.id))
+    .limit(1);
+  const prevSignature = prev ? prev.signature : null;
+  const contentHash = sha256(contentSnapshot);
+  const signature = sha256([prevSignature || "", contentHash, fromStatus || "", toStatus, actor, note || "", new Date().toISOString()].join("|"));
+  const data: InsertApprovalChainEntry = {
+    projectId, kind, entityId, fromStatus, toStatus, actor, actorName, note, contentHash, prevSignature, signature,
+  };
+  const [res] = await db.insert(approvalChain).values(data as any);
+  const [row] = await db.select().from(approvalChain).where(eq(approvalChain.id, (res as any).insertId)).limit(1);
+  return (row as ApprovalChainEntry) || null;
+}
+
+export async function listApprovalChain(projectId: number, kind?: "scene" | "movie", entityId?: number): Promise<ApprovalChainEntry[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const where = kind && entityId
+    ? and(eq(approvalChain.projectId, projectId), eq(approvalChain.kind, kind), eq(approvalChain.entityId, entityId))
+    : eq(approvalChain.projectId, projectId);
+  return db.select().from(approvalChain).where(where).orderBy(desc(approvalChain.createdAt)) as any;
+}
+
+export async function verifyApprovalChain(projectId: number, kind: "scene" | "movie", entityId: number): Promise<{ valid: boolean; entries: number; brokenAt: number | null }> {
+  const db = await getDb();
+  if (!db) return { valid: true, entries: 0, brokenAt: null };
+  const rows = await db.select().from(approvalChain)
+    .where(and(eq(approvalChain.projectId, projectId), eq(approvalChain.kind, kind), eq(approvalChain.entityId, entityId)))
+    .orderBy(asc(approvalChain.id));
+  let prevSig: string | null = null;
+  for (const r of rows as ApprovalChainEntry[]) {
+    if ((r.prevSignature || null) !== prevSig) return { valid: false, entries: rows.length, brokenAt: r.id };
+    prevSig = r.signature;
+  }
+  return { valid: true, entries: rows.length, brokenAt: null };
+}
+
+// ============================================================================
+// v6.64 — Asset version stack helpers
+// ============================================================================
+export async function recordAssetVersion(data: InsertAssetVersion): Promise<AssetVersion | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [res] = await db.insert(assetVersions).values(data as any);
+  const [row] = await db.select().from(assetVersions).where(eq(assetVersions.id, (res as any).insertId)).limit(1);
+  return (row as AssetVersion) || null;
+}
+
+export async function listAssetVersions(projectId: number, ownerKind: string, ownerId: number, fieldName?: string): Promise<AssetVersion[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const where = fieldName
+    ? and(eq(assetVersions.projectId, projectId), eq(assetVersions.ownerKind, ownerKind), eq(assetVersions.ownerId, ownerId), eq(assetVersions.fieldName, fieldName))
+    : and(eq(assetVersions.projectId, projectId), eq(assetVersions.ownerKind, ownerKind), eq(assetVersions.ownerId, ownerId));
+  return db.select().from(assetVersions).where(where).orderBy(desc(assetVersions.createdAt)) as any;
+}
+
+export async function deleteAssetVersion(id: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  await db.delete(assetVersions).where(eq(assetVersions.id, id));
+  return true;
+}
+
+// v6.64 — Raw project getter (no userId filter) for use after access has been asserted by caller
+export async function getProjectByIdRaw(projectId: number): Promise<any | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db.select().from(projects).where(eq(projects.id, projectId)).limit(1);
+  return (row as any) || null;
+}

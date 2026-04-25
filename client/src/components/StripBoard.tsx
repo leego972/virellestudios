@@ -59,7 +59,7 @@ export default function StripBoard({ projectId, scenes, days, locations = [] }: 
   async function assign(sceneId: number, dayId: number | null, order = 0) {
     try {
       await assignMut.mutateAsync({ sceneId, shootDayId: dayId, shootOrder: order });
-      await utils.scene.list.invalidate();
+      await utils.scene.listByProject.invalidate();
       await utils.shootDay.list.invalidate();
     } catch (e: any) { toast.error(e?.message || "Failed"); }
   }
