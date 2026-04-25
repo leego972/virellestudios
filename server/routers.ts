@@ -22,6 +22,7 @@ import { buildVisualDNA, buildScenePrompt, buildSceneBreakdownSystemPrompt, buil
 import bcrypt from "bcryptjs";
 import { rateLimitAI, rateLimitHeavyAI, rateLimitUpload } from "./_core/rateLimit";
 import { sanitizeText } from "./_core/sanitize";
+import type { WardrobeItem } from "../drizzle/schema";
 import {
   checkRegistrationFraud,
   trackLoginAttempt,
@@ -110,6 +111,159 @@ function brandDirectiveBlock(brands: Awaited<ReturnType<typeof brandsForPrompt>>
     lines.push("- All other background signage, packaging and apparel must be generic / unmarked unless explicitly listed above.");
   }
   return lines.join("\n");
+}
+
+// v6.77 — Designer Wardrobe prompt context helper.
+// For a given scene, returns a structured text block describing:
+//   - per-character wardrobe / costume references attached to the scene
+//   - scene-level set-dressing / shopfront / mood references
+//   - usage-mode directives (must_match, costume_accurate, period_accurate)
+//   - license / brand guardrails (no commercial logos unless allowed)
+// The block is fed to buildScenePrompt as `wardrobeContext` and to other
+// LLM-driven generators (trailer, breakdown, mood-board, poster) as a
+// free-form directive block. Returns an empty string when nothing is
+// attached, so call sites can pass it unconditionally.
+async function getWardrobePromptContextForScene(
+  sceneId: number,
+  userId: number,
+): Promise<string> {
+  if (!sceneId) return "";
+  try {
+    const scene = await db.getSceneById(sceneId);
+    if (!scene) return "";
+    // Ownership check: only emit context for scenes the caller can access.
+    const project = await db.getProjectById(scene.projectId, userId);
+    if (!project) return "";
+
+    // Pull every wardrobe assignment attached to this scene OR to any
+    // character that appears in this scene. Keeps a single round-trip
+    // cheap by reusing characters already on the scene record.
+    const sceneAssignments = await db.getWardrobeAssignmentsByScene(sceneId);
+    const characterIds: number[] = Array.isArray((scene as any).characterIds)
+      ? ((scene as any).characterIds as number[])
+      : [];
+    const characterAssignmentLists = await Promise.all(
+      characterIds.map((id) => db.getWardrobeAssignmentsByCharacter(id)),
+    );
+    const charAssignments = characterAssignmentLists.flat();
+
+    const allAssignments = [...sceneAssignments, ...charAssignments];
+    if (allAssignments.length === 0) return "";
+
+    // Resolve referenced wardrobe items + characters in batch.
+    const itemIds = Array.from(new Set(allAssignments.map((a) => a.wardrobeItemId)));
+    const items = await Promise.all(itemIds.map((id) => db.getWardrobeItemById(id)));
+    const itemById = new Map<number, NonNullable<typeof items[number]>>();
+    for (const it of items) {
+      if (it) itemById.set(it.id, it);
+    }
+    const charById = new Map<number, { id: number; name: string }>();
+    for (const cid of characterIds) {
+      const c = await db.getCharacterById(cid).catch(() => undefined);
+      if (c) charById.set(c.id, { id: c.id, name: c.name });
+    }
+
+    const characterLines: string[] = [];
+    const sceneLines: string[] = [];
+    let sawCommercialUseBlocked = false;
+    let sawNoLogo = false;
+
+    const fmtTags = (val: unknown): string => {
+      if (Array.isArray(val)) return val.filter(Boolean).join(", ");
+      if (val && typeof val === "string") return val;
+      return "";
+    };
+    const fmtItem = (it: any) => {
+      const bits: string[] = [];
+      if (it.referencePrompt && it.referencePrompt.trim()) bits.push(it.referencePrompt.trim());
+      if (it.description && it.description.trim() && bits.length === 0) bits.push(it.description.trim());
+      const colors = fmtTags(it.colors);
+      if (colors) bits.push(`colors: ${colors}`);
+      const materials = fmtTags(it.materials);
+      if (materials) bits.push(`materials: ${materials}`);
+      const tags = fmtTags(it.styleTags);
+      if (tags) bits.push(`style: ${tags}`);
+      if (it.era) bits.push(`era: ${it.era}`);
+      if (it.subcategory) bits.push(`type: ${it.subcategory}`);
+      return bits.join(" — ");
+    };
+
+    for (const a of allAssignments) {
+      const item = itemById.get(a.wardrobeItemId);
+      if (!item) continue;
+      // Visibility guard — never leak private items into prompts unless the
+      // item is owned by the caller or explicitly attached to this project.
+      const isOwner = item.userId === userId;
+      const isProjectLinked = item.projectId === scene.projectId;
+      const isPublicEnough = item.visibility === "public" || item.visibility === "unlisted";
+      if (!isOwner && !isProjectLinked && !isPublicEnough) continue;
+
+      if (!item.commercialUseAllowed) sawCommercialUseBlocked = true;
+      if (!item.brandPlacementAllowed) sawNoLogo = true;
+
+      const usage = a.usageMode || "reference";
+      const usageHint = (() => {
+        switch (usage) {
+          case "must_match": return "MUST match this exact look";
+          case "costume_accurate": return "render the COSTUME accurately (silhouette, era, materials, cultural details)";
+          case "period_accurate": return "PERIOD-ACCURATE — preserve era, fabric, silhouette, and cultural details";
+          case "brand_visible": return "brand/label may be visible";
+          case "background_only": return "background only — do not feature";
+          case "inspired_by": return "use as inspiration, not a strict match";
+          default: return "use as visual reference";
+        }
+      })();
+
+      if (a.characterId && (a.assignmentType === "character_wardrobe" || a.assignmentType === "character_costume")) {
+        const c = charById.get(a.characterId);
+        const who = c?.name || `Character #${a.characterId}`;
+        const desc = fmtItem(item);
+        const placement = a.placementNotes?.trim() ? ` Placement: ${a.placementNotes.trim()}.` : "";
+        characterLines.push(`- ${who} should wear "${item.name}"${desc ? ` — ${desc}` : ""}. (${usageHint}.)${placement}`);
+      } else {
+        const kind = (() => {
+          switch (a.assignmentType) {
+            case "scene_set_dressing": return "Set dressing";
+            case "shopfront_display": return "Shopfront / boutique display";
+            case "background_extra": return "Background extra wardrobe";
+            case "mood_reference": return "Mood reference";
+            case "period_reference": return "Period reference";
+            case "uniform_reference": return "Uniform reference";
+            default: return "Scene reference";
+          }
+        })();
+        const desc = fmtItem(item);
+        const placement = a.placementNotes?.trim() ? ` Placement: ${a.placementNotes.trim()}.` : "";
+        sceneLines.push(`- ${kind}: "${item.name}"${desc ? ` — ${desc}` : ""}. (${usageHint}.)${placement}`);
+      }
+    }
+
+    if (characterLines.length === 0 && sceneLines.length === 0) return "";
+
+    const out: string[] = [];
+    out.push("DESIGNER WARDROBE — director-attached references for this scene (treat as authoritative):");
+    if (characterLines.length > 0) {
+      out.push("Character wardrobe / costume:");
+      out.push(...characterLines);
+    }
+    if (sceneLines.length > 0) {
+      out.push("Scene set dressing / shopfront / mood:");
+      out.push(...sceneLines);
+    }
+    const guards: string[] = [];
+    if (sawNoLogo) {
+      guards.push("Do NOT show real-world brand logos on these wardrobe items unless brand_visible usage was set.");
+    }
+    if (sawCommercialUseBlocked) {
+      guards.push("These references are licensed for production use only — keep stylistic match without copying trademarked logos verbatim.");
+    }
+    guards.push("For costume_accurate / period_accurate: preserve era, materials, silhouette, and cultural details exactly.");
+    out.push("Wardrobe rules:");
+    for (const g of guards) out.push(`- ${g}`);
+    return out.join("\n");
+  } catch {
+    return "";
+  }
 }
 
 // Build a rich, accurate prompt description for extended scene generation.
@@ -1480,6 +1634,422 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       }),
   }),
 
+  // ─── v6.77 Designer Wardrobe ───
+  // Lets fashion / costume designers, brands, stylists, wardrobe departments
+  // and production designers manage their designer profile, collections, and
+  // wardrobe / costume items. Directors browse public collections, optionally
+  // upload private items into their own project, and attach items to
+  // characters or to scenes (set dressing / shopfront / mood / period
+  // references). Free to manage — no credits charged on any procedure here;
+  // expensive AI / video work only happens later when the director runs an
+  // actual scene generation. The buildScenePrompt engine reads attached
+  // wardrobe via the precomputed `wardrobeContext` block, so this router
+  // never has to reach into the prompt engine itself.
+  designerWardrobe: router({
+    // ─── Profile ───
+    getMyProfile: protectedProcedure.query(async ({ ctx }) => {
+      return db.getDesignerProfileByUserId(ctx.user.id);
+    }),
+
+    upsertProfile: protectedProcedure
+      .input(z.object({
+        brandName: z.string().min(1).max(255),
+        displayName: z.string().max(255).optional(),
+        profileType: z.enum([
+          "designer", "costume_designer", "stylist",
+          "wardrobe_department", "brand", "production_designer", "other",
+        ]).default("designer"),
+        bio: z.string().max(4000).optional(),
+        website: z.string().max(512).optional(),
+        instagram: z.string().max(255).optional(),
+        contactEmail: z.string().email().max(320).optional(),
+        logoUrl: z.string().max(2048).optional(),
+        visibility: z.enum(["public", "private", "unlisted"]).default("public"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const existing = await db.getDesignerProfileByUserId(ctx.user.id);
+        const patch: any = {
+          brandName: input.brandName.trim(),
+          displayName: input.displayName?.trim() || null,
+          profileType: input.profileType,
+          bio: input.bio?.trim() || null,
+          website: input.website?.trim() || null,
+          instagram: input.instagram?.trim() || null,
+          contactEmail: input.contactEmail?.trim() || null,
+          logoUrl: input.logoUrl?.trim() || null,
+          visibility: input.visibility,
+        };
+        if (existing) {
+          return db.updateDesignerProfile(existing.id, patch);
+        }
+        return db.createDesignerProfile({ ...patch, userId: ctx.user.id } as any);
+      }),
+
+    // ─── Collections ───
+    createCollection: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1).max(255),
+        description: z.string().max(4000).optional(),
+        collectionType: z.enum([
+          "wardrobe", "fashion_collection", "costume_collection",
+          "period_costumes", "uniforms", "fantasy_sci_fi",
+          "retail_shopfront", "textiles", "accessories",
+          "set_dressing", "other",
+        ]).default("wardrobe"),
+        season: z.string().max(128).optional(),
+        year: z.number().int().min(1800).max(2100).optional(),
+        styleTags: z.array(z.string().max(64)).max(40).optional(),
+        coverImageUrl: z.string().max(2048).optional(),
+        visibility: z.enum(["public", "private", "unlisted"]).default("public"),
+        licenseType: z.enum([
+          "reference_only", "editorial", "non_commercial",
+          "full_license", "custom",
+        ]).default("reference_only"),
+        licenseNotes: z.string().max(4000).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const profile = await db.getDesignerProfileByUserId(ctx.user.id);
+        if (!profile) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Create your designer profile first.",
+          });
+        }
+        return db.createDesignerCollection({
+          designerProfileId: profile.id,
+          userId: ctx.user.id,
+          name: input.name.trim(),
+          description: input.description?.trim() || null,
+          collectionType: input.collectionType,
+          season: input.season?.trim() || null,
+          year: input.year ?? null,
+          styleTags: input.styleTags ?? null,
+          coverImageUrl: input.coverImageUrl?.trim() || null,
+          visibility: input.visibility,
+          licenseType: input.licenseType,
+          licenseNotes: input.licenseNotes?.trim() || null,
+        } as any);
+      }),
+
+    listCollections: protectedProcedure
+      .input(z.object({
+        // 'mine' = my collections; 'public' = browse public library;
+        // omitted = both (mine first, then public).
+        scope: z.enum(["mine", "public", "all"]).default("all"),
+        limit: z.number().int().min(1).max(120).default(60),
+      }).optional())
+      .query(async ({ ctx, input }) => {
+        const scope = input?.scope ?? "all";
+        const limit = input?.limit ?? 60;
+        const profile = await db.getDesignerProfileByUserId(ctx.user.id);
+        const mine = profile ? await db.getDesignerCollectionsByDesigner(profile.id) : [];
+        if (scope === "mine") return mine;
+        const publicList = await db.getPublicDesignerCollections(limit);
+        if (scope === "public") {
+          // Hide my own collections from the public scope so directors who
+          // also designs see one canonical "Mine" tab + a clean public feed.
+          return publicList.filter((c) => c.userId !== ctx.user.id);
+        }
+        // 'all' — mine first, then public minus mine
+        const mineIds = new Set(mine.map((c) => c.id));
+        return [...mine, ...publicList.filter((c) => !mineIds.has(c.id))];
+      }),
+
+    // ─── Wardrobe items ───
+    createWardrobeItem: protectedProcedure
+      .input(z.object({
+        collectionId: z.number().int().optional(),
+        // Director path: upload a private item directly into their project.
+        projectId: z.number().int().optional(),
+        name: z.string().min(1).max(255),
+        description: z.string().max(4000).optional(),
+        category: z.string().max(64).optional(),
+        subcategory: z.string().max(128).optional(),
+        wardrobeType: z.enum([
+          "fashion", "costume", "period_costume", "uniform",
+          "fantasy_sci_fi", "character_signature", "background_extra",
+          "accessory", "jewellery", "bag", "shoes", "hat",
+          "textile", "shopfront_display", "set_dressing",
+          "wardrobe", "other",
+        ]).default("wardrobe"),
+        genderFit: z.string().max(64).optional(),
+        sizeRange: z.string().max(128).optional(),
+        era: z.string().max(128).optional(),
+        colors: z.array(z.string().max(64)).max(20).optional(),
+        materials: z.array(z.string().max(64)).max(20).optional(),
+        styleTags: z.array(z.string().max(64)).max(40).optional(),
+        imageUrls: z.array(z.string().max(2048)).max(12).optional(),
+        primaryImageUrl: z.string().max(2048).optional(),
+        referencePrompt: z.string().max(2000).optional(),
+        brandPlacementAllowed: z.boolean().default(false),
+        shopfrontPlacementAllowed: z.boolean().default(true),
+        characterWardrobeAllowed: z.boolean().default(true),
+        costumeUseAllowed: z.boolean().default(true),
+        commercialUseAllowed: z.boolean().default(false),
+        licenseType: z.enum([
+          "reference_only", "editorial", "non_commercial",
+          "full_license", "custom",
+        ]).default("reference_only"),
+        licenseNotes: z.string().max(4000).optional(),
+        visibility: z.enum(["public", "private", "project_only", "unlisted"]).default("public"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // If posting into a collection, the collection must be mine.
+        let designerProfileId: number | null = null;
+        if (input.collectionId) {
+          const col = await db.getDesignerCollectionById(input.collectionId);
+          if (!col || col.userId !== ctx.user.id) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Collection not yours" });
+          }
+          designerProfileId = col.designerProfileId;
+        } else {
+          // Director-uploaded private items don't need a profile.
+          const myProfile = await db.getDesignerProfileByUserId(ctx.user.id);
+          if (myProfile) designerProfileId = myProfile.id;
+        }
+        // If posting into a project, the project must be mine.
+        if (input.projectId) {
+          await assertCanAccessProject(input.projectId, ctx.user.id);
+        }
+        return db.createWardrobeItem({
+          collectionId: input.collectionId ?? null,
+          userId: ctx.user.id,
+          designerProfileId,
+          projectId: input.projectId ?? null,
+          name: input.name.trim(),
+          description: input.description?.trim() || null,
+          category: input.category?.trim() || null,
+          subcategory: input.subcategory?.trim() || null,
+          wardrobeType: input.wardrobeType,
+          genderFit: input.genderFit?.trim() || null,
+          sizeRange: input.sizeRange?.trim() || null,
+          era: input.era?.trim() || null,
+          colors: input.colors ?? null,
+          materials: input.materials ?? null,
+          styleTags: input.styleTags ?? null,
+          imageUrls: input.imageUrls ?? null,
+          primaryImageUrl: input.primaryImageUrl?.trim() || (input.imageUrls?.[0] ?? null),
+          referencePrompt: input.referencePrompt?.trim() || null,
+          brandPlacementAllowed: input.brandPlacementAllowed,
+          shopfrontPlacementAllowed: input.shopfrontPlacementAllowed,
+          characterWardrobeAllowed: input.characterWardrobeAllowed,
+          costumeUseAllowed: input.costumeUseAllowed,
+          commercialUseAllowed: input.commercialUseAllowed,
+          licenseType: input.licenseType,
+          licenseNotes: input.licenseNotes?.trim() || null,
+          visibility: input.visibility,
+          status: "active",
+        } as any);
+      }),
+
+    listWardrobeItems: protectedProcedure
+      .input(z.object({
+        // What slice to show:
+        scope: z.enum(["mine", "public", "project", "collection"]).default("public"),
+        collectionId: z.number().int().optional(),
+        projectId: z.number().int().optional(),
+        wardrobeType: z.string().max(64).optional(),
+        category: z.string().max(64).optional(),
+        limit: z.number().int().min(1).max(200).default(120),
+      }).optional())
+      .query(async ({ ctx, input }) => {
+        const scope = input?.scope ?? "public";
+        const limit = input?.limit ?? 120;
+        let items: WardrobeItem[] = [];
+        if (scope === "mine") {
+          items = await db.getWardrobeItemsByUser(ctx.user.id);
+        } else if (scope === "collection" && input?.collectionId) {
+          const col = await db.getDesignerCollectionById(input.collectionId);
+          if (!col) return [];
+          // Public collection OR my own collection.
+          if (col.visibility !== "public" && col.userId !== ctx.user.id) return [];
+          items = await db.getWardrobeItemsByCollection(input.collectionId);
+        } else if (scope === "project" && input?.projectId) {
+          await assertCanAccessProject(input.projectId, ctx.user.id);
+          items = await db.getProjectWardrobeItems(input.projectId);
+        } else {
+          items = await db.getPublicWardrobeItems(limit);
+        }
+        // Apply optional filters
+        if (input?.wardrobeType) {
+          items = items.filter((i) => i.wardrobeType === input.wardrobeType);
+        }
+        if (input?.category) {
+          items = items.filter((i) => i.category === input.category);
+        }
+        return items.slice(0, limit);
+      }),
+
+    updateWardrobeItem: protectedProcedure
+      .input(z.object({
+        id: z.number().int(),
+        name: z.string().min(1).max(255).optional(),
+        description: z.string().max(4000).nullish(),
+        primaryImageUrl: z.string().max(2048).nullish(),
+        referencePrompt: z.string().max(2000).nullish(),
+        visibility: z.enum(["public", "private", "project_only", "unlisted"]).optional(),
+        status: z.enum(["active", "hidden", "retired"]).optional(),
+        licenseNotes: z.string().max(4000).nullish(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const item = await db.getWardrobeItemById(input.id);
+        if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Item not found" });
+        if (item.userId !== ctx.user.id) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Not your item" });
+        }
+        const patch: any = {};
+        for (const k of [
+          "name", "description", "primaryImageUrl", "referencePrompt",
+          "visibility", "status", "licenseNotes",
+        ] as const) {
+          if ((input as any)[k] !== undefined) patch[k] = (input as any)[k];
+        }
+        return db.updateWardrobeItem(input.id, patch);
+      }),
+
+    deleteWardrobeItem: protectedProcedure
+      .input(z.object({ id: z.number().int() }))
+      .mutation(async ({ ctx, input }) => {
+        const item = await db.getWardrobeItemById(input.id);
+        if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Item not found" });
+        if (item.userId !== ctx.user.id) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Not your item" });
+        }
+        await db.deleteWardrobeItem(input.id);
+        return { ok: true };
+      }),
+
+    // ─── Assignments — attach to character or scene ───
+    attachToCharacter: protectedProcedure
+      .input(z.object({
+        projectId: z.number().int(),
+        characterId: z.number().int(),
+        wardrobeItemId: z.number().int(),
+        // 'character_wardrobe' (everyday) | 'character_costume' (period/special)
+        assignmentType: z.enum(["character_wardrobe", "character_costume"]).default("character_wardrobe"),
+        usageMode: z.enum([
+          "reference", "must_match", "inspired_by",
+          "background_only", "brand_visible",
+          "costume_accurate", "period_accurate",
+        ]).default("reference"),
+        placementNotes: z.string().max(2000).optional(),
+        promptWeight: z.number().int().min(0).max(100).default(50),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const item = await db.getWardrobeItemById(input.wardrobeItemId);
+        if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Item not found" });
+        // License gate: characterWardrobeAllowed / costumeUseAllowed.
+        if (input.assignmentType === "character_costume" && !item.costumeUseAllowed) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "This item is not licensed for costume use." });
+        }
+        if (input.assignmentType === "character_wardrobe" && !item.characterWardrobeAllowed) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "This item is not licensed for character wardrobe." });
+        }
+        if (input.usageMode === "brand_visible" && !item.brandPlacementAllowed) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Brand-visible usage is not allowed for this item." });
+        }
+        // Visibility: must be public, project-linked, or owned by caller.
+        const isOwner = item.userId === ctx.user.id;
+        const isProjectLinked = item.projectId === input.projectId;
+        const isPublicEnough = item.visibility === "public" || item.visibility === "unlisted";
+        if (!isOwner && !isProjectLinked && !isPublicEnough) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Item not accessible to this project." });
+        }
+        const character = await db.getCharacterById(input.characterId);
+        if (!character) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
+        return db.createWardrobeAssignment({
+          userId: ctx.user.id,
+          projectId: input.projectId,
+          wardrobeItemId: input.wardrobeItemId,
+          assignmentType: input.assignmentType,
+          characterId: input.characterId,
+          sceneId: null,
+          usageMode: input.usageMode,
+          placementNotes: input.placementNotes?.trim() || null,
+          promptWeight: input.promptWeight,
+          locked: false,
+        } as any);
+      }),
+
+    attachToScene: protectedProcedure
+      .input(z.object({
+        projectId: z.number().int(),
+        sceneId: z.number().int(),
+        wardrobeItemId: z.number().int(),
+        assignmentType: z.enum([
+          "scene_set_dressing", "shopfront_display", "background_extra",
+          "mood_reference", "period_reference", "uniform_reference",
+        ]).default("scene_set_dressing"),
+        usageMode: z.enum([
+          "reference", "must_match", "inspired_by",
+          "background_only", "brand_visible",
+          "costume_accurate", "period_accurate",
+        ]).default("reference"),
+        placementNotes: z.string().max(2000).optional(),
+        promptWeight: z.number().int().min(0).max(100).default(50),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const scene = await db.getSceneById(input.sceneId);
+        if (!scene || scene.projectId !== input.projectId) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found in this project" });
+        }
+        const item = await db.getWardrobeItemById(input.wardrobeItemId);
+        if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Item not found" });
+        if (input.assignmentType === "shopfront_display" && !item.shopfrontPlacementAllowed) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Item not licensed for shopfront display." });
+        }
+        if (input.usageMode === "brand_visible" && !item.brandPlacementAllowed) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Brand-visible usage is not allowed for this item." });
+        }
+        const isOwner = item.userId === ctx.user.id;
+        const isProjectLinked = item.projectId === input.projectId;
+        const isPublicEnough = item.visibility === "public" || item.visibility === "unlisted";
+        if (!isOwner && !isProjectLinked && !isPublicEnough) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Item not accessible to this project." });
+        }
+        return db.createWardrobeAssignment({
+          userId: ctx.user.id,
+          projectId: input.projectId,
+          wardrobeItemId: input.wardrobeItemId,
+          assignmentType: input.assignmentType,
+          characterId: null,
+          sceneId: input.sceneId,
+          usageMode: input.usageMode,
+          placementNotes: input.placementNotes?.trim() || null,
+          promptWeight: input.promptWeight,
+          locked: false,
+        } as any);
+      }),
+
+    listAssignmentsForProject: protectedProcedure
+      .input(z.object({ projectId: z.number().int() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        const assignments = await db.getWardrobeAssignmentsByProject(input.projectId);
+        // Hydrate with item names so the UI doesn't have to round-trip.
+        const itemIds = Array.from(new Set(assignments.map((a) => a.wardrobeItemId)));
+        const items = await Promise.all(itemIds.map((id) => db.getWardrobeItemById(id)));
+        const itemById = new Map<number, WardrobeItem>();
+        for (const it of items) if (it) itemById.set(it.id, it);
+        return assignments.map((a) => ({
+          ...a,
+          item: itemById.get(a.wardrobeItemId) || null,
+        }));
+      }),
+
+    removeAssignment: protectedProcedure
+      .input(z.object({ id: z.number().int() }))
+      .mutation(async ({ ctx, input }) => {
+        const a = await db.getWardrobeAssignmentById(input.id);
+        if (!a) throw new TRPCError({ code: "NOT_FOUND", message: "Assignment not found" });
+        await assertCanAccessProject(a.projectId, ctx.user.id);
+        await db.deleteWardrobeAssignment(input.id);
+        return { ok: true };
+      }),
+  }),
+
   // ─── Scenes ───
   scene: router({
     listByProject: protectedProcedure
@@ -1803,6 +2373,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
+                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
             characters: characters.map(c => ({ name: c.name, ageRange: c.dateOfBirth })),
           }
         );
@@ -1991,6 +2562,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
                   characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
+                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
                 }
               );
               const sceneCharacterIds = (scene.characterIds as number[]) || [];
@@ -2115,6 +2687,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
+                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
           }
         );
         // Use reference images from scene editor (first = promptImage for image-to-video)
@@ -2494,6 +3067,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                     previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
                     characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
+                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
                   }
                 );
                 const sceneRefImages = (scene as any).referenceImages as string[] || [];
@@ -2577,6 +3151,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                     previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
                     characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
+                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
                   }
                 );
                 await db.updateScene(scene.id, { status: "generating" } as any);
@@ -3443,6 +4018,7 @@ Break this into 8-15 scenes. For each scene, provide:
                 previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
                 characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
+                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
               }
             );
 

@@ -714,6 +714,12 @@ export function buildScenePrompt(
       policy: "allowed" | "required" | "forbidden";
       notes?: string | null;
     }>;
+    // v6.77 — Designer Wardrobe context. Precomputed structured text block
+    // describing wardrobe / costume / shopfront-display assignments the
+    // director has attached to this scene's characters or scene set-dressing.
+    // Built by getWardrobePromptContextForScene(sceneId, userId) so the
+    // engine itself stays decoupled from the wardrobe tables.
+    wardrobeContext?: string | null;
   }
 ): string {
   const parts: string[] = [];
@@ -1033,6 +1039,16 @@ export function buildScenePrompt(
         `Background signage, packaging, and apparel should use generic / unmarked branding unless explicitly listed above.`,
       );
     }
+  }
+
+  // 17d. Wardrobe / costume / shopfront context — v6.77 Designer Wardrobe.
+  // The text block is precomputed by getWardrobePromptContextForScene
+  // (router layer) so this engine stays decoupled from the wardrobe tables.
+  // It already lists per-character wardrobe/costume references, scene
+  // set-dressing/shopfront placements, license/brand guardrails, and
+  // usage-mode directives (must_match, costume_accurate, period_accurate).
+  if (options?.wardrobeContext && options.wardrobeContext.trim().length > 0) {
+    parts.push(options.wardrobeContext.trim());
   }
 
   // 18. (Quality anchor moved to position 1 for maximum model attention weight)

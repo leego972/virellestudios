@@ -38,6 +38,12 @@ import {
     creditReservations, InsertCreditReservation, CreditReservation,
     // v6.77 — Per-project brand allow/block list
     projectBrands, InsertProjectBrand, ProjectBrand,
+    // v6.77 — Designer Wardrobe section (designer profiles, collections,
+    // wardrobe items, and assignments-to-character/scene).
+    designerProfiles, InsertDesignerProfile, DesignerProfile,
+    designerCollections, InsertDesignerCollection, DesignerCollection,
+    wardrobeItems, InsertWardrobeItem, WardrobeItem,
+    wardrobeAssignments, InsertWardrobeAssignment, WardrobeAssignment,
   } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -2979,4 +2985,200 @@ export async function deleteProjectBrand(id: number): Promise<void> {
   const db = await getDb();
   if (!db) return;
   await db.delete(projectBrands).where(eq(projectBrands.id, id));
+}
+
+// ─── v6.77 — Designer Wardrobe (profiles, collections, items, assignments) ───
+// All public reads check visibility; assignment writes check project ownership
+// at the router layer. Database layer keeps it minimal — the router enforces
+// auth, ownership, and visibility rules.
+
+// ─── designerProfiles ───
+export async function getDesignerProfileByUserId(userId: number): Promise<DesignerProfile | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(designerProfiles).where(eq(designerProfiles.userId, userId)).limit(1);
+  return rows[0];
+}
+
+export async function getDesignerProfileById(id: number): Promise<DesignerProfile | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(designerProfiles).where(eq(designerProfiles.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function createDesignerProfile(data: InsertDesignerProfile): Promise<DesignerProfile> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(designerProfiles).values(data);
+  const id = (result as any)[0]?.insertId ?? (data as any).id;
+  return (await db.select().from(designerProfiles).where(eq(designerProfiles.id, id)))[0];
+}
+
+export async function updateDesignerProfile(
+  id: number,
+  data: Partial<InsertDesignerProfile>,
+): Promise<DesignerProfile | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.update(designerProfiles).set(data).where(eq(designerProfiles.id, id));
+  return (await db.select().from(designerProfiles).where(eq(designerProfiles.id, id)))[0];
+}
+
+// ─── designerCollections ───
+export async function getDesignerCollectionsByDesigner(designerProfileId: number): Promise<DesignerCollection[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(designerCollections)
+    .where(eq(designerCollections.designerProfileId, designerProfileId))
+    .orderBy(desc(designerCollections.createdAt));
+}
+
+export async function getPublicDesignerCollections(limit = 60): Promise<DesignerCollection[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(designerCollections)
+    .where(eq(designerCollections.visibility, "public"))
+    .orderBy(desc(designerCollections.createdAt))
+    .limit(limit);
+}
+
+export async function getDesignerCollectionById(id: number): Promise<DesignerCollection | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(designerCollections).where(eq(designerCollections.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function createDesignerCollection(data: InsertDesignerCollection): Promise<DesignerCollection> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(designerCollections).values(data);
+  const id = (result as any)[0]?.insertId ?? (data as any).id;
+  return (await db.select().from(designerCollections).where(eq(designerCollections.id, id)))[0];
+}
+
+export async function updateDesignerCollection(
+  id: number,
+  data: Partial<InsertDesignerCollection>,
+): Promise<DesignerCollection | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.update(designerCollections).set(data).where(eq(designerCollections.id, id));
+  return (await db.select().from(designerCollections).where(eq(designerCollections.id, id)))[0];
+}
+
+export async function deleteDesignerCollection(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(designerCollections).where(eq(designerCollections.id, id));
+}
+
+// ─── wardrobeItems ───
+export async function getWardrobeItemById(id: number): Promise<WardrobeItem | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(wardrobeItems).where(eq(wardrobeItems.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function getWardrobeItemsByCollection(collectionId: number): Promise<WardrobeItem[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeItems)
+    .where(and(eq(wardrobeItems.collectionId, collectionId), eq(wardrobeItems.status, "active")))
+    .orderBy(desc(wardrobeItems.createdAt));
+}
+
+export async function getPublicWardrobeItems(limit = 100): Promise<WardrobeItem[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeItems)
+    .where(and(eq(wardrobeItems.visibility, "public"), eq(wardrobeItems.status, "active")))
+    .orderBy(desc(wardrobeItems.createdAt))
+    .limit(limit);
+}
+
+export async function getWardrobeItemsByUser(userId: number): Promise<WardrobeItem[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeItems)
+    .where(eq(wardrobeItems.userId, userId))
+    .orderBy(desc(wardrobeItems.createdAt));
+}
+
+export async function getProjectWardrobeItems(projectId: number): Promise<WardrobeItem[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeItems)
+    .where(eq(wardrobeItems.projectId, projectId))
+    .orderBy(desc(wardrobeItems.createdAt));
+}
+
+export async function createWardrobeItem(data: InsertWardrobeItem): Promise<WardrobeItem> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(wardrobeItems).values(data);
+  const id = (result as any)[0]?.insertId ?? (data as any).id;
+  return (await db.select().from(wardrobeItems).where(eq(wardrobeItems.id, id)))[0];
+}
+
+export async function updateWardrobeItem(
+  id: number,
+  data: Partial<InsertWardrobeItem>,
+): Promise<WardrobeItem | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.update(wardrobeItems).set(data).where(eq(wardrobeItems.id, id));
+  return (await db.select().from(wardrobeItems).where(eq(wardrobeItems.id, id)))[0];
+}
+
+export async function deleteWardrobeItem(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(wardrobeItems).where(eq(wardrobeItems.id, id));
+}
+
+// ─── wardrobeAssignments ───
+export async function getWardrobeAssignmentsByProject(projectId: number): Promise<WardrobeAssignment[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeAssignments)
+    .where(eq(wardrobeAssignments.projectId, projectId))
+    .orderBy(desc(wardrobeAssignments.createdAt));
+}
+
+export async function getWardrobeAssignmentsByCharacter(characterId: number): Promise<WardrobeAssignment[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeAssignments)
+    .where(eq(wardrobeAssignments.characterId, characterId));
+}
+
+export async function getWardrobeAssignmentsByScene(sceneId: number): Promise<WardrobeAssignment[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeAssignments)
+    .where(eq(wardrobeAssignments.sceneId, sceneId));
+}
+
+export async function getWardrobeAssignmentById(id: number): Promise<WardrobeAssignment | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function createWardrobeAssignment(data: InsertWardrobeAssignment): Promise<WardrobeAssignment> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(wardrobeAssignments).values(data);
+  const id = (result as any)[0]?.insertId ?? (data as any).id;
+  return (await db.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.id, id)))[0];
+}
+
+export async function deleteWardrobeAssignment(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(wardrobeAssignments).where(eq(wardrobeAssignments.id, id));
 }

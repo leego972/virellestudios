@@ -1808,3 +1808,125 @@ export const projectBrands = mysqlTable("projectBrands", {
 });
 export type ProjectBrand = typeof projectBrands.$inferSelect;
 export type InsertProjectBrand = typeof projectBrands.$inferInsert;
+
+// ─── v6.77 Designer Wardrobe ─────────────────────────────────────────────
+// Lets fashion/costume designers, brands, stylists, wardrobe departments
+// and production designers upload wardrobe / costume / shopfront items
+// for directors to attach to characters and scenes. Read-only by the
+// generation engine — buildScenePrompt consumes a precomputed
+// `wardrobeContext` text block. Existing characters.wardrobe and
+// scenes.wardrobe (free-text columns) keep working; these tables only
+// add structured library functionality.
+
+export const designerProfiles = mysqlTable("designerProfiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  brandName: varchar("brandName", { length: 255 }).notNull(),
+  displayName: varchar("displayName", { length: 255 }),
+  // designer | costume_designer | stylist | wardrobe_department | brand | production_designer | other
+  profileType: varchar("profileType", { length: 64 }).default("designer").notNull(),
+  bio: text("bio"),
+  website: varchar("website", { length: 512 }),
+  instagram: varchar("instagram", { length: 255 }),
+  contactEmail: varchar("contactEmail", { length: 320 }),
+  logoUrl: text("logoUrl"),
+  verified: boolean("verified").default(false).notNull(),
+  // public | private | unlisted
+  visibility: varchar("visibility", { length: 32 }).default("public").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type DesignerProfile = typeof designerProfiles.$inferSelect;
+export type InsertDesignerProfile = typeof designerProfiles.$inferInsert;
+
+export const designerCollections = mysqlTable("designerCollections", {
+  id: int("id").autoincrement().primaryKey(),
+  designerProfileId: int("designerProfileId").notNull(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  // wardrobe | fashion_collection | costume_collection | period_costumes |
+  // uniforms | fantasy_sci_fi | retail_shopfront | textiles | accessories |
+  // set_dressing | other
+  collectionType: varchar("collectionType", { length: 64 }).default("wardrobe").notNull(),
+  season: varchar("season", { length: 128 }),
+  year: int("year"),
+  styleTags: json("styleTags"),
+  coverImageUrl: text("coverImageUrl"),
+  visibility: varchar("visibility", { length: 32 }).default("public").notNull(),
+  // reference_only | editorial | non_commercial | full_license | custom
+  licenseType: varchar("licenseType", { length: 64 }).default("reference_only").notNull(),
+  licenseNotes: text("licenseNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type DesignerCollection = typeof designerCollections.$inferSelect;
+export type InsertDesignerCollection = typeof designerCollections.$inferInsert;
+
+export const wardrobeItems = mysqlTable("wardrobeItems", {
+  id: int("id").autoincrement().primaryKey(),
+  collectionId: int("collectionId"),
+  userId: int("userId").notNull(),
+  designerProfileId: int("designerProfileId"),
+  // Optional: directors can upload private wardrobe items to a project
+  projectId: int("projectId"),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  // outerwear | top | bottom | dress | suit | shoes | accessory | jewellery |
+  // bag | hat | uniform | costume | armour | robe | fabric | set_dressing |
+  // shopfront_display | other
+  category: varchar("category", { length: 64 }),
+  subcategory: varchar("subcategory", { length: 128 }),
+  // fashion | costume | period_costume | uniform | fantasy_sci_fi |
+  // character_signature | background_extra | accessory | textile |
+  // shopfront_display | set_dressing | other
+  wardrobeType: varchar("wardrobeType", { length: 64 }).default("wardrobe").notNull(),
+  genderFit: varchar("genderFit", { length: 64 }),
+  sizeRange: varchar("sizeRange", { length: 128 }),
+  era: varchar("era", { length: 128 }),
+  colors: json("colors"),
+  materials: json("materials"),
+  styleTags: json("styleTags"),
+  imageUrls: json("imageUrls"),
+  primaryImageUrl: text("primaryImageUrl"),
+  referencePrompt: text("referencePrompt"),
+  brandPlacementAllowed: boolean("brandPlacementAllowed").default(false).notNull(),
+  shopfrontPlacementAllowed: boolean("shopfrontPlacementAllowed").default(true).notNull(),
+  characterWardrobeAllowed: boolean("characterWardrobeAllowed").default(true).notNull(),
+  costumeUseAllowed: boolean("costumeUseAllowed").default(true).notNull(),
+  commercialUseAllowed: boolean("commercialUseAllowed").default(false).notNull(),
+  licenseType: varchar("licenseType", { length: 64 }).default("reference_only").notNull(),
+  licenseNotes: text("licenseNotes"),
+  // public | private | project_only | unlisted
+  visibility: varchar("visibility", { length: 32 }).default("public").notNull(),
+  // active | hidden | retired
+  status: varchar("status", { length: 32 }).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type WardrobeItem = typeof wardrobeItems.$inferSelect;
+export type InsertWardrobeItem = typeof wardrobeItems.$inferInsert;
+
+export const wardrobeAssignments = mysqlTable("wardrobeAssignments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  projectId: int("projectId").notNull(),
+  wardrobeItemId: int("wardrobeItemId").notNull(),
+  // character_wardrobe | character_costume | scene_set_dressing |
+  // shopfront_display | background_extra | mood_reference |
+  // period_reference | uniform_reference
+  assignmentType: varchar("assignmentType", { length: 64 }).notNull(),
+  characterId: int("characterId"),
+  sceneId: int("sceneId"),
+  // reference | must_match | inspired_by | background_only | brand_visible |
+  // costume_accurate | period_accurate
+  usageMode: varchar("usageMode", { length: 64 }).default("reference").notNull(),
+  placementNotes: text("placementNotes"),
+  // 0-100 — how strongly the AI should weight this reference
+  promptWeight: int("promptWeight").default(50).notNull(),
+  locked: boolean("locked").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type WardrobeAssignment = typeof wardrobeAssignments.$inferSelect;
+export type InsertWardrobeAssignment = typeof wardrobeAssignments.$inferInsert;

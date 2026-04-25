@@ -231,6 +231,12 @@ export default function ProjectCommandCenterPage() {
                   Manage allowed brands →
                 </Link>
                 <Link
+                  href={`/projects/${projectId}/wardrobe`}
+                  className="text-sm text-amber-300 hover:underline mb-2"
+                >
+                  Designer Wardrobe (costumes, fashion, props) →
+                </Link>
+                <Link
                   href={`/awaiting-review`}
                   className="text-sm text-amber-300 hover:underline"
                 >
