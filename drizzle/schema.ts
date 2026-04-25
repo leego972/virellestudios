@@ -304,6 +304,19 @@ export const scenes = mysqlTable("scenes", {
   videoUrl: text("videoUrl"), // S3 URL for the generated video clip (MP4)
   videoJobId: varchar("videoJobId", { length: 255 }), // job ID for tracking
   status: mysqlEnum("status", ["draft", "generating", "completed", "failed"]).default("draft").notNull(),
+  // ─── v6.63 Production Spine ───
+  // Schedule assignment (day + order within day). Null = unscheduled.
+  shootDayId: int("shootDayId"),
+  shootOrder: int("shootOrder").notNull().default(0),
+  // Structured shot list (separate from AI-generated narrative shotList stored
+  // on the project chat). Array of { number, shotType, lens, movement, framing,
+  // notes, durationSec }.
+  shotList: json("shotList"),
+  // Approval workflow. "pending" | "approved" | "changes_requested"
+  approvalStatus: varchar("approvalStatus", { length: 32 }).notNull().default("pending"),
+  approvedBy: int("approvedBy"),
+  approvedAt: timestamp("approvedAt"),
+  approvalNote: text("approvalNote"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -583,6 +596,12 @@ export const movies = mysqlTable("movies", {
   fileSize: int("fileSize"), // in bytes
   mimeType: varchar("mimeType", { length: 128 }).default("video/mp4"),
   tags: json("tags"), // array of string tags
+  // ─── v6.63 Production Spine — approval workflow on rendered cuts ───
+  // "pending" | "approved" | "changes_requested"
+  approvalStatus: varchar("approvalStatus", { length: 32 }).notNull().default("pending"),
+  approvedBy: int("approvedBy"),
+  approvedAt: timestamp("approvedAt"),
+  approvalNote: text("approvalNote"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -1588,3 +1607,60 @@ export const characterArcs = mysqlTable("characterArcs", {
 });
 export type CharacterArc = typeof characterArcs.$inferSelect;
 export type InsertCharacterArc = typeof characterArcs.$inferInsert;
+
+// ───────────────────────────────────────────────────────────────────────
+// v6.63 — Production Spine
+// ───────────────────────────────────────────────────────────────────────
+
+// One row per shoot day on the schedule. Scenes link to a shoot day via
+// scenes.shootDayId; ordering within the day is scenes.shootOrder.
+export const shootDays = mysqlTable("shootDays", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  dayNumber: int("dayNumber").notNull().default(1),
+  shootDate: date("shootDate"),
+  callTime: varchar("callTime", { length: 16 }),
+  wrapTime: varchar("wrapTime", { length: 16 }),
+  locationId: int("locationId"), // FK -> locations.id
+  weatherNote: varchar("weatherNote", { length: 255 }),
+  hospitalInfo: text("hospitalInfo"),
+  parkingInfo: text("parkingInfo"),
+  generalNotes: text("generalNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ShootDay = typeof shootDays.$inferSelect;
+export type InsertShootDay = typeof shootDays.$inferInsert;
+
+// Crew & extra contact directory. (Cast pulled live from characters table.)
+export const crewContacts = mysqlTable("crewContacts", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  role: varchar("role", { length: 128 }),
+  department: varchar("department", { length: 128 }),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 64 }),
+  callTimeOverride: varchar("callTimeOverride", { length: 16 }),
+  notes: text("notes"),
+  sortOrder: int("sortOrder").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CrewContact = typeof crewContacts.$inferSelect;
+export type InsertCrewContact = typeof crewContacts.$inferInsert;
+
+// Append-only project audit log. Surfaces in Activity Timeline and inline.
+export const activityLog = mysqlTable("activityLog", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  userId: int("userId").notNull(),
+  actor: varchar("actor", { length: 255 }),
+  eventType: varchar("eventType", { length: 64 }).notNull(),
+  payload: json("payload"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ActivityLogEntry = typeof activityLog.$inferSelect;
+export type InsertActivityLogEntry = typeof activityLog.$inferInsert;

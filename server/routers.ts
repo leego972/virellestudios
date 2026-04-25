@@ -11312,5 +11312,357 @@ Rules:
         };
       }),
   }),
+
+  // ───────────────────────────────────────────────────────────────────────
+  // v6.63 — Production Spine
+  // Schedule, call sheets, crew, approvals, shot lists, activity timeline.
+  // ───────────────────────────────────────────────────────────────────────
+
+  shootDay: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.listShootDays(input.projectId);
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const day = await db.getShootDay(input.id);
+        if (!day) throw new TRPCError({ code: "NOT_FOUND", message: "Shoot day not found" });
+        await assertCanAccessProject((day as any).projectId, ctx.user.id);
+        return day;
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        dayNumber: z.number().min(1).max(999).default(1),
+        shootDate: z.string().optional().nullable(),
+        callTime: z.string().max(16).optional().nullable(),
+        wrapTime: z.string().max(16).optional().nullable(),
+        locationId: z.number().nullable().optional(),
+        weatherNote: z.string().max(255).optional().nullable(),
+        hospitalInfo: z.string().max(2000).optional().nullable(),
+        parkingInfo: z.string().max(2000).optional().nullable(),
+        generalNotes: z.string().max(4000).optional().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const day = await db.createShootDay({
+          projectId: input.projectId,
+          userId: ctx.user.id,
+          dayNumber: input.dayNumber,
+          shootDate: input.shootDate ? new Date(input.shootDate) as any : null,
+          callTime: input.callTime || null,
+          wrapTime: input.wrapTime || null,
+          locationId: input.locationId ?? null,
+          weatherNote: input.weatherNote ? sanitizeText(input.weatherNote) : null,
+          hospitalInfo: input.hospitalInfo ? sanitizeText(input.hospitalInfo) : null,
+          parkingInfo: input.parkingInfo ? sanitizeText(input.parkingInfo) : null,
+          generalNotes: input.generalNotes ? sanitizeText(input.generalNotes) : null,
+        } as any);
+        await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "shootday.create", { dayId: (day as any).id, dayNumber: input.dayNumber });
+        return day;
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        dayNumber: z.number().min(1).max(999).optional(),
+        shootDate: z.string().nullable().optional(),
+        callTime: z.string().max(16).nullable().optional(),
+        wrapTime: z.string().max(16).nullable().optional(),
+        locationId: z.number().nullable().optional(),
+        weatherNote: z.string().max(255).nullable().optional(),
+        hospitalInfo: z.string().max(2000).nullable().optional(),
+        parkingInfo: z.string().max(2000).nullable().optional(),
+        generalNotes: z.string().max(4000).nullable().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const day = await db.getShootDay(input.id);
+        if (!day) throw new TRPCError({ code: "NOT_FOUND", message: "Shoot day not found" });
+        await assertOwnsProject((day as any).projectId, ctx.user.id);
+        const patch: any = {};
+        if (input.dayNumber !== undefined) patch.dayNumber = input.dayNumber;
+        if (input.shootDate !== undefined) patch.shootDate = input.shootDate ? new Date(input.shootDate) : null;
+        if (input.callTime !== undefined) patch.callTime = input.callTime;
+        if (input.wrapTime !== undefined) patch.wrapTime = input.wrapTime;
+        if (input.locationId !== undefined) patch.locationId = input.locationId;
+        if (input.weatherNote !== undefined) patch.weatherNote = input.weatherNote ? sanitizeText(input.weatherNote) : null;
+        if (input.hospitalInfo !== undefined) patch.hospitalInfo = input.hospitalInfo ? sanitizeText(input.hospitalInfo) : null;
+        if (input.parkingInfo !== undefined) patch.parkingInfo = input.parkingInfo ? sanitizeText(input.parkingInfo) : null;
+        if (input.generalNotes !== undefined) patch.generalNotes = input.generalNotes ? sanitizeText(input.generalNotes) : null;
+        const updated = await db.updateShootDay(input.id, patch);
+        await db.logActivity((day as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "shootday.update", { dayId: input.id });
+        return updated;
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const day = await db.getShootDay(input.id);
+        if (!day) throw new TRPCError({ code: "NOT_FOUND", message: "Shoot day not found" });
+        await assertOwnsProject((day as any).projectId, ctx.user.id);
+        await db.deleteShootDay(input.id);
+        await db.logActivity((day as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "shootday.delete", { dayId: input.id });
+        return { success: true };
+      }),
+
+    assignScene: protectedProcedure
+      .input(z.object({ sceneId: z.number(), shootDayId: z.number().nullable(), shootOrder: z.number().min(0).max(9999).default(0) }))
+      .mutation(async ({ ctx, input }) => {
+        const scene = await db.getProjectSceneById(input.sceneId);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        await assertOwnsProject((scene as any).projectId, ctx.user.id);
+        if (input.shootDayId !== null) {
+          const day = await db.getShootDay(input.shootDayId);
+          if (!day || (day as any).projectId !== (scene as any).projectId) {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "Shoot day does not belong to this project" });
+          }
+        }
+        await db.assignSceneToShootDay(input.sceneId, input.shootDayId, input.shootOrder);
+        await db.logActivity((scene as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "scene.shootday.assign", { sceneId: input.sceneId, shootDayId: input.shootDayId, shootOrder: input.shootOrder });
+        return { success: true };
+      }),
+  }),
+
+  crewContact: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.listCrewContacts(input.projectId);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        name: z.string().min(1).max(255),
+        role: z.string().max(128).optional().nullable(),
+        department: z.string().max(128).optional().nullable(),
+        email: z.string().max(320).optional().nullable(),
+        phone: z.string().max(64).optional().nullable(),
+        callTimeOverride: z.string().max(16).optional().nullable(),
+        notes: z.string().max(2000).optional().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const created = await db.createCrewContact({
+          projectId: input.projectId,
+          userId: ctx.user.id,
+          name: sanitizeText(input.name),
+          role: input.role ? sanitizeText(input.role) : null,
+          department: input.department ? sanitizeText(input.department) : null,
+          email: input.email || null,
+          phone: input.phone || null,
+          callTimeOverride: input.callTimeOverride || null,
+          notes: input.notes ? sanitizeText(input.notes) : null,
+        } as any);
+        await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "crew.create", { id: (created as any).id, name: input.name });
+        return created;
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        projectId: z.number(),
+        name: z.string().min(1).max(255).optional(),
+        role: z.string().max(128).nullable().optional(),
+        department: z.string().max(128).nullable().optional(),
+        email: z.string().max(320).nullable().optional(),
+        phone: z.string().max(64).nullable().optional(),
+        callTimeOverride: z.string().max(16).nullable().optional(),
+        notes: z.string().max(2000).nullable().optional(),
+        sortOrder: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const patch: any = {};
+        if (input.name !== undefined) patch.name = sanitizeText(input.name);
+        if (input.role !== undefined) patch.role = input.role ? sanitizeText(input.role) : null;
+        if (input.department !== undefined) patch.department = input.department ? sanitizeText(input.department) : null;
+        if (input.email !== undefined) patch.email = input.email;
+        if (input.phone !== undefined) patch.phone = input.phone;
+        if (input.callTimeOverride !== undefined) patch.callTimeOverride = input.callTimeOverride;
+        if (input.notes !== undefined) patch.notes = input.notes ? sanitizeText(input.notes) : null;
+        if (input.sortOrder !== undefined) patch.sortOrder = input.sortOrder;
+        const updated = await db.updateCrewContact(input.id, patch);
+        return updated;
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number(), projectId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        await db.deleteCrewContact(input.id);
+        await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "crew.delete", { id: input.id });
+        return { success: true };
+      }),
+
+    reorder: protectedProcedure
+      .input(z.object({ projectId: z.number(), orderedIds: z.array(z.number()).max(500) }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        return db.reorderCrewContacts(input.projectId, input.orderedIds);
+      }),
+  }),
+
+  // Aggregator: returns everything the call sheet print page needs in one query.
+  callSheet: router({
+    get: protectedProcedure
+      .input(z.object({ shootDayId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const day = await db.getShootDay(input.shootDayId);
+        if (!day) throw new TRPCError({ code: "NOT_FOUND", message: "Shoot day not found" });
+        await assertCanAccessProject((day as any).projectId, ctx.user.id);
+        const project = await db.getProjectById((day as any).projectId, ctx.user.id);
+        const allScenes = await db.getProjectScenes((day as any).projectId);
+        const dayScenes = allScenes
+          .filter((s: any) => s.shootDayId === input.shootDayId)
+          .sort((a: any, b: any) => (a.shootOrder ?? 0) - (b.shootOrder ?? 0));
+        const characters = await db.getProjectCharacters((day as any).projectId);
+        const charById = new Map(characters.map((c: any) => [c.id, c]));
+        const usedCharIds = new Set<number>();
+        for (const s of dayScenes) {
+          for (const cid of (s.characterIds as number[] | null) || []) usedCharIds.add(cid);
+        }
+        const cast = Array.from(usedCharIds).map((id) => charById.get(id)).filter(Boolean);
+        const crew = await db.listCrewContacts((day as any).projectId);
+        let location: any = null;
+        if ((day as any).locationId) {
+          location = await db.getLocationById((day as any).locationId);
+        }
+        return { day, project, scenes: dayScenes, cast, crew, location };
+      }),
+  }),
+
+  activity: router({
+    list: protectedProcedure
+      .input(z.object({ projectId: z.number(), limit: z.number().min(1).max(500).default(200) }))
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
+        return db.listActivityLog(input.projectId, input.limit);
+      }),
+  }),
+
+  sceneApproval: router({
+    set: protectedProcedure
+      .input(z.object({
+        sceneId: z.number(),
+        status: z.enum(["pending", "approved", "changes_requested"]),
+        note: z.string().max(2000).optional().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const scene = await db.getProjectSceneById(input.sceneId);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        await assertCanAccessProject((scene as any).projectId, ctx.user.id);
+        const cleanNote = input.note ? sanitizeText(input.note) : null;
+        await db.setSceneApproval(input.sceneId, ctx.user.id, input.status, cleanNote);
+        await db.logActivity((scene as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "scene.approval.set", { sceneId: input.sceneId, status: input.status, note: cleanNote });
+        return { success: true };
+      }),
+  }),
+
+  movieApproval: router({
+    set: protectedProcedure
+      .input(z.object({
+        movieId: z.number(),
+        status: z.enum(["pending", "approved", "changes_requested"]),
+        note: z.string().max(2000).optional().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const movie = await db.getMovieByIdRaw(input.movieId);
+        if (!movie) throw new TRPCError({ code: "NOT_FOUND", message: "Movie not found" });
+        if ((movie as any).userId !== ctx.user.id) {
+          // Allow project collaborators to mark approval too if movie has a project link.
+          if ((movie as any).projectId) {
+            await assertCanAccessProject((movie as any).projectId, ctx.user.id);
+          } else {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Not authorized" });
+          }
+        }
+        const cleanNote = input.note ? sanitizeText(input.note) : null;
+        await db.setMovieApproval(input.movieId, ctx.user.id, input.status, cleanNote);
+        if ((movie as any).projectId) {
+          await db.logActivity((movie as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "movie.approval.set", { movieId: input.movieId, status: input.status, note: cleanNote });
+        }
+        return { success: true };
+      }),
+  }),
+
+  sceneShotList: router({
+    save: protectedProcedure
+      .input(z.object({
+        sceneId: z.number(),
+        shotList: z.array(z.object({
+          number: z.union([z.string().max(16), z.number()]),
+          shotType: z.string().max(64).optional(),
+          lens: z.string().max(64).optional(),
+          movement: z.string().max(64).optional(),
+          framing: z.string().max(64).optional(),
+          notes: z.string().max(1000).optional(),
+          durationSec: z.number().min(0).max(7200).optional(),
+        })).max(200),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const scene = await db.getProjectSceneById(input.sceneId);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        await assertOwnsProject((scene as any).projectId, ctx.user.id);
+        const cleaned = input.shotList.map((s) => ({
+          ...s,
+          notes: s.notes ? sanitizeText(s.notes) : undefined,
+        }));
+        await db.updateSceneShotList(input.sceneId, cleaned);
+        await db.logActivity((scene as any).projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "scene.shotlist.update", { sceneId: input.sceneId, count: cleaned.length });
+        return { success: true };
+      }),
+  }),
+
+  // Manual budget editing on top of the AI-generated breakdown stored on the
+  // existing `budgets` table. (The `budget` router above only exposes generate,
+  // setActuals, and AI helpers — this adds direct breakdown editing so users
+  // can build a budget from scratch without an AI call.)
+  budgetManual: router({
+    upsert: protectedProcedure
+      .input(z.object({
+        projectId: z.number(),
+        currency: z.string().max(8).default("USD"),
+        breakdown: z.record(z.string(), z.object({
+          label: z.string().max(120),
+          estimate: z.number().min(0),
+          actual: z.number().min(0).optional(),
+          items: z.array(z.object({
+            name: z.string().max(255),
+            cost: z.number().min(0),
+            notes: z.string().max(1000).optional(),
+          })).max(200).optional(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        const totalEstimate = Object.values(input.breakdown).reduce(
+          (sum: number, c: any) => sum + (typeof c?.estimate === "number" ? c.estimate : 0),
+          0,
+        );
+        // Find existing budget for this project (one row per project convention)
+        const existing = await db.getProjectBudgets(input.projectId);
+        if (existing && existing.length > 0) {
+          const id = (existing[0] as any).id;
+          await dbConn.execute(
+            sql`UPDATE budgets SET breakdown = ${JSON.stringify(input.breakdown)}, totalEstimate = ${totalEstimate}, currency = ${input.currency} WHERE id = ${id}`,
+          );
+        } else {
+          await dbConn.execute(
+            sql`INSERT INTO budgets (projectId, userId, totalEstimate, currency, breakdown, generatedAt) VALUES (${input.projectId}, ${ctx.user.id}, ${totalEstimate}, ${input.currency}, ${JSON.stringify(input.breakdown)}, NOW())`,
+          );
+        }
+        await db.logActivity(input.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "budget.update", { totalEstimate, currency: input.currency });
+        return { success: true, totalEstimate };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

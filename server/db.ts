@@ -30,6 +30,10 @@ import {
     featureCutScenes, InsertFeatureCutScene, FeatureCutScene,
     filmCompileJobs, InsertFilmCompileJob, FilmCompileJob,
     filmMixSettings, filmAdrTracks, filmFoleyTracks, filmScoreCues,
+    // ─── v6.63 Production Spine ───
+    shootDays, InsertShootDay, ShootDay,
+    crewContacts, InsertCrewContact, CrewContact,
+    activityLog, InsertActivityLogEntry, ActivityLogEntry,
   } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -2424,3 +2428,176 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
     await db.delete(filmScoreCues).where(and(eq(filmScoreCues.id, id), eq(filmScoreCues.userId, userId)));
     return { success: true };
   }
+
+// ───────────────────────────────────────────────────────────────────────
+// v6.63 — Production Spine: shoot days, crew, activity log, approvals,
+// shot lists. All helpers are ownership-checked at the router layer via
+// assertOwnsProject; here we focus on the data path only.
+// ───────────────────────────────────────────────────────────────────────
+
+export async function listShootDays(projectId: number): Promise<ShootDay[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(shootDays).where(eq(shootDays.projectId, projectId)).orderBy(asc(shootDays.dayNumber)) as any;
+}
+
+export async function getShootDay(id: number): Promise<ShootDay | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db.select().from(shootDays).where(eq(shootDays.id, id)).limit(1);
+  return (row as any) || null;
+}
+
+export async function createShootDay(data: InsertShootDay): Promise<ShootDay> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(shootDays).values(data as any);
+  const [row] = await db.select().from(shootDays).where(eq(shootDays.id, (result as any).insertId));
+  return row as any;
+}
+
+export async function updateShootDay(
+  id: number,
+  data: Partial<{ dayNumber: number; shootDate: any; callTime: string | null; wrapTime: string | null; locationId: number | null; weatherNote: string | null; hospitalInfo: string | null; parkingInfo: string | null; generalNotes: string | null }>,
+): Promise<ShootDay | null> {
+  const db = await getDb();
+  if (!db) return null;
+  await db.update(shootDays).set(data as any).where(eq(shootDays.id, id));
+  const [row] = await db.select().from(shootDays).where(eq(shootDays.id, id));
+  return (row as any) || null;
+}
+
+export async function deleteShootDay(id: number): Promise<{ success: true }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  // Unlink any scenes pointing at this day so they revert to "unscheduled".
+  await db.update(scenes).set({ shootDayId: null, shootOrder: 0 } as any).where(eq(scenes.shootDayId, id));
+  await db.delete(shootDays).where(eq(shootDays.id, id));
+  return { success: true };
+}
+
+export async function listCrewContacts(projectId: number): Promise<CrewContact[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(crewContacts).where(eq(crewContacts.projectId, projectId)).orderBy(asc(crewContacts.sortOrder), asc(crewContacts.id)) as any;
+}
+
+export async function createCrewContact(data: InsertCrewContact): Promise<CrewContact> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(crewContacts).values(data as any);
+  const [row] = await db.select().from(crewContacts).where(eq(crewContacts.id, (result as any).insertId));
+  return row as any;
+}
+
+export async function updateCrewContact(
+  id: number,
+  data: Partial<{ name: string; role: string | null; department: string | null; email: string | null; phone: string | null; callTimeOverride: string | null; notes: string | null; sortOrder: number }>,
+): Promise<CrewContact | null> {
+  const db = await getDb();
+  if (!db) return null;
+  await db.update(crewContacts).set(data as any).where(eq(crewContacts.id, id));
+  const [row] = await db.select().from(crewContacts).where(eq(crewContacts.id, id));
+  return (row as any) || null;
+}
+
+export async function deleteCrewContact(id: number): Promise<{ success: true }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(crewContacts).where(eq(crewContacts.id, id));
+  return { success: true };
+}
+
+export async function reorderCrewContacts(projectId: number, orderedIds: number[]): Promise<{ success: true }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  for (let i = 0; i < orderedIds.length; i++) {
+    await db.update(crewContacts).set({ sortOrder: i } as any).where(and(eq(crewContacts.id, orderedIds[i]), eq(crewContacts.projectId, projectId)));
+  }
+  return { success: true };
+}
+
+export async function logActivity(
+  projectId: number,
+  userId: number,
+  actor: string | null,
+  eventType: string,
+  payload: any,
+): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  try {
+    await db.insert(activityLog).values({ projectId, userId, actor: actor || null, eventType, payload } as any);
+  } catch (e) {
+    // Activity log is best-effort — never break the user action because of audit failure.
+    console.warn("[activityLog] insert failed:", e);
+  }
+}
+
+export async function listActivityLog(projectId: number, limit = 200): Promise<ActivityLogEntry[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(activityLog).where(eq(activityLog.projectId, projectId)).orderBy(desc(activityLog.createdAt)).limit(limit) as any;
+}
+
+export async function setSceneApproval(
+  sceneId: number,
+  approvedBy: number,
+  status: "pending" | "approved" | "changes_requested",
+  note: string | null,
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(scenes).set({
+    approvalStatus: status,
+    approvedBy: status === "pending" ? null : approvedBy,
+    approvedAt: status === "pending" ? null : new Date(),
+    approvalNote: note || null,
+  } as any).where(eq(scenes.id, sceneId));
+}
+
+export async function setMovieApproval(
+  movieId: number,
+  approvedBy: number,
+  status: "pending" | "approved" | "changes_requested",
+  note: string | null,
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(movies).set({
+    approvalStatus: status,
+    approvedBy: status === "pending" ? null : approvedBy,
+    approvedAt: status === "pending" ? null : new Date(),
+    approvalNote: note || null,
+  } as any).where(eq(movies.id, movieId));
+}
+
+export async function updateSceneShotList(sceneId: number, shotList: any): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(scenes).set({ shotList } as any).where(eq(scenes.id, sceneId));
+}
+
+export async function assignSceneToShootDay(
+  sceneId: number,
+  shootDayId: number | null,
+  shootOrder: number,
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(scenes).set({ shootDayId, shootOrder } as any).where(eq(scenes.id, sceneId));
+}
+
+export async function getProjectSceneById(sceneId: number): Promise<any | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db.select().from(scenes).where(eq(scenes.id, sceneId)).limit(1);
+  return (row as any) || null;
+}
+
+export async function getMovieByIdRaw(movieId: number): Promise<any | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db.select().from(movies).where(eq(movies.id, movieId)).limit(1);
+  return (row as any) || null;
+}

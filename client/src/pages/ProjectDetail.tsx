@@ -87,6 +87,8 @@ import {
   RefreshCw,
   Link2,
   Building2,
+  Calendar,
+  Activity,
 } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
@@ -1428,6 +1430,83 @@ export default function ProjectDetail() {
 
         {/* Tools Tab Content */}
         <TabsContent value="tools" className="space-y-6">
+
+          {/* v6.63 — Production Spine */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px flex-1 bg-border/40" />
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Production</span>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/schedule`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+                    <Calendar className="h-5 w-5 text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Schedule & Strip Board</p>
+                    <p className="text-xs text-muted-foreground">Shoot days · scene assignment · ordering</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/day-out-of-days`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <ListOrdered className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Day-Out-of-Days</p>
+                    <p className="text-xs text-muted-foreground">Cast working / hold day grid</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/call-sheets`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <FileText className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Call Sheets</p>
+                    <p className="text-xs text-muted-foreground">Per-day printable production sheets</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/contacts`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Crew & Contacts</p>
+                    <p className="text-xs text-muted-foreground">Department directory · call overrides</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget-tracker`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <DollarSign className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Budget</p>
+                    <p className="text-xs text-muted-foreground">Estimate vs actual · category tracking</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/activity`)}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Activity className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Activity Timeline</p>
+                    <p className="text-xs text-muted-foreground">Approvals · changes · audit trail</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
           {/* Pre-Production */}
           <div>

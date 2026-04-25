@@ -8,7 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Upload, Video, Film, Play, ImagePlus, X, Mic, UserPlus, Download, Save } from "lucide-react";
+import { Upload, Video, Film, Play, ImagePlus, X, Mic, UserPlus, Download, Save, Layers, ListChecks, ShieldCheck } from "lucide-react";
+import ApprovalControls from "@/components/ApprovalControls";
+import ShotListEditor from "@/components/ShotListEditor";
+import VersionCompareDrawer from "@/components/VersionCompareDrawer";
 import VirelleChatBubble from "@/components/VirelleChatBubble";
 import MediaPlayer from "@/components/MediaPlayer";
 import {
@@ -323,6 +326,9 @@ export default function SceneEditor() {
   const projectId = parseInt(id || "0");
   const [, setLocation] = useLocation();
   const [selectedSceneId, setSelectedSceneId] = useState<number | null>(null);
+  // v6.63 — Production Spine: per-scene approval + shot list + version compare
+  const [productionOpen, setProductionOpen] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -2311,6 +2317,48 @@ export default function SceneEditor() {
                 </div>
               </CollapsibleContent>
             </Collapsible>
+            {/* v6.63 — Production controls: approval, shot list, version compare */}
+            {selectedSceneId && (() => {
+              const currentScene: any = (scenes as any[])?.find((s: any) => s.id === selectedSceneId);
+              return (
+                <div className="space-y-2 pt-2 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setProductionOpen((v) => !v)}
+                    className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-1"
+                  >
+                    <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-amber-500" /> Production</span>
+                    <span className="text-[10px] text-muted-foreground/60">{productionOpen ? "Hide" : "Show"}</span>
+                  </button>
+                  {productionOpen && (
+                    <div className="space-y-3 pb-2">
+                      <ApprovalControls
+                        kind="scene"
+                        id={selectedSceneId}
+                        status={currentScene?.approvalStatus}
+                        note={currentScene?.approvalNote}
+                      />
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-xs font-semibold flex items-center gap-1.5 text-muted-foreground"><ListChecks className="w-3.5 h-3.5" /> Shot list</div>
+                          <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setCompareOpen(true)}>
+                            <Layers className="w-3 h-3 mr-1" /> Compare versions
+                          </Button>
+                        </div>
+                        <ShotListEditor sceneId={selectedSceneId} initial={currentScene?.shotList || []} />
+                      </div>
+                      <VersionCompareDrawer
+                        projectId={projectId}
+                        sceneId={selectedSceneId}
+                        open={compareOpen}
+                        onClose={() => setCompareOpen(false)}
+                        currentUrl={currentScene?.videoUrl || null}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
             {/* Actions */}
             <div className="flex items-center justify-between pt-2 border-t">
               {selectedSceneId && (

@@ -115,6 +115,14 @@ const ProductionOffice = lazy(() => import("./pages/ProductionOffice"));
 const ProStudio = lazy(() => import("./pages/ProStudio"));
 const ProStudioOps = lazy(() => import("./pages/ProStudioOps"));
 const SocialCutsFactory = lazy(() => import("./pages/SocialCutsFactory"));
+// v6.63 — Production Spine
+const Schedule = lazy(() => import("./pages/Schedule"));
+const DayOutOfDays = lazy(() => import("./pages/DayOutOfDays"));
+const CallSheets = lazy(() => import("./pages/CallSheets"));
+const CallSheetPrint = lazy(() => import("./pages/CallSheetPrint"));
+const Contacts = lazy(() => import("./pages/Contacts"));
+const BudgetTracker = lazy(() => import("./pages/Budget"));
+const ActivityTimeline = lazy(() => import("./pages/ActivityTimeline"));
 const CastingBoard = lazy(() => import("./pages/CastingBoard"));
 const CuttingRoom = lazy(() => import("./pages/CuttingRoom"));
 const FilmPage = lazy(() => import("./pages/FilmPage"));
@@ -244,6 +252,8 @@ function Router() {
       <Route path="/projects/:projectId/feature-timeline" component={GatedFeatureTimeline} />
       <Route path="/projects/:projectId/trailer-studio" component={GatedTrailerStudio} />
       <Route path="/projects/:projectId/tv-commercial" component={GatedTVCommercial} />
+      {/* v6.63 — Printable call sheet (full-screen, no dashboard chrome) */}
+      <Route path="/projects/:id/call-sheets/:dayId">{() => <LazyPage><CallSheetPrint /></LazyPage>}</Route>
 
       {/* Dashboard layout pages */}
       <Route>
@@ -292,6 +302,13 @@ function Router() {
               <Route path="/admin/outreach">{() => <LazyPage><AdminOutreach /></LazyPage>}</Route>
               <Route path="/admin/growth">{() => <LazyPage><AdminGrowthDashboard /></LazyPage>}</Route>
               <Route path="/admin/signature-cast">{() => <LazyPage><AdminSignatureCast /></LazyPage>}</Route>
+              {/* v6.63 — Production Spine */}
+              <Route path="/projects/:id/schedule">{() => <LazyPage><Schedule /></LazyPage>}</Route>
+              <Route path="/projects/:id/day-out-of-days">{() => <LazyPage><DayOutOfDays /></LazyPage>}</Route>
+              <Route path="/projects/:id/call-sheets">{() => <LazyPage><CallSheets /></LazyPage>}</Route>
+              <Route path="/projects/:id/contacts">{() => <LazyPage><Contacts /></LazyPage>}</Route>
+              <Route path="/projects/:id/budget-tracker">{() => <LazyPage><BudgetTracker /></LazyPage>}</Route>
+              <Route path="/projects/:id/activity">{() => <LazyPage><ActivityTimeline /></LazyPage>}</Route>
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>
