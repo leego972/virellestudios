@@ -1,3 +1,5 @@
+import LeegoLogo from "@/components/LeegoLogo";
+
 /**
  * LeegoFooter — production / launch version.
  * Clean, restrained footer with professional contact emails.
@@ -34,11 +36,9 @@ export default function LeegoFooter() {
         {/* Branding + legal links */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img
-              src="/leego-logo.png"
+            <LeegoLogo
               alt="Leego"
               className="h-8 w-8 object-contain opacity-90"
-              draggable={false}
             />
             <div>
               <p className="text-sm font-medium text-foreground/80">Powered by Leego</p>

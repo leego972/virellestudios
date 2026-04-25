@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff, Loader2, ArrowRight, UserPlus } from "lucide-react";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import StudioOpener from "@/components/StudioOpener";
+import LeegoLogo from "@/components/LeegoLogo";
 
 export default function Login() {
   const [, navigate] = useLocation();
@@ -231,11 +232,9 @@ export default function Login() {
 
         {/* Right side on desktop / Below on mobile: Leego logo */}
         <div className="flex-shrink-0 flex items-center justify-center">
-          <img
-            src="/leego-logo.png"
+          <LeegoLogo
             alt="Created by Leego"
             className="h-28 sm:h-32 lg:h-40 w-auto object-contain leego-glow"
-            draggable={false}
           />
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import LeegoFooter from "@/components/LeegoFooterLaunch";
+import LeegoLogo from "@/components/LeegoLogo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -460,19 +461,10 @@ function DashboardLayoutContent({
                 </div>
               </a>
             )}
-            {/* Leego branding — click to grow/shrink */}
+            {/* Leego branding — tap to pulse to ~2cm for 2s, then shrink back */}
             <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
-              <img
-                src="/leego-logo.png"
-                alt="Created by Leego"
-                className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow cursor-pointer"
-                draggable={false}
-                style={{ transition: "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)" }}
-                onClick={(e) => {
-                  const img = e.currentTarget;
-                  img.style.transform = "scale(3)";
-                  setTimeout(() => { img.style.transform = "scale(1)"; }, 800);
-                }}
+              <LeegoLogo
+                className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow"
               />
             </div>
             {/* Language Switcher */}
