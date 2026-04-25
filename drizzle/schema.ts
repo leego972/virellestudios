@@ -1730,6 +1730,7 @@ export const recaps = mysqlTable("recaps", {
   errorMessage: text("errorMessage"),
   outline: json("outline"),
   voiceoverScript: text("voiceoverScript"),
+  attachedAt: timestamp("attachedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

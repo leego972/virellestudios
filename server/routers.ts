@@ -11838,7 +11838,7 @@ Rules:
   }),
 
   // ============================================================================
-  // v6.66 — Auto Recap ("Previously On" generator for episodic projects).
+  // v6.66 + v6.67 — Auto Recap ("Previously On" generator for episodic projects).
   // Maps episode → movie of type "film" inside a project where
   // actStructure="episodic". Generates outline + beats + voiceover script via
   // OpenAI; segment selection from movie metadata. Charges credits only on
@@ -11877,7 +11877,12 @@ Rules:
           breakdown.subtitles + breakdown.voiceover +
           breakdown.openingCreditsOverlay + breakdown.render;
         if (input.sourceMovieIds.length > 1) subtotal = Math.ceil(subtotal * 1.25);
-        const total = Math.max(0, subtotal - breakdown.discount);
+        // v6.67 — apply membership tier discount per upgrade-kit policy.
+        const { creditDiscountForTier } = await import("./_core/providerPolicy");
+        const discountPct = creditDiscountForTier(ctx.user.subscriptionTier);
+        const discountAmount = discountPct > 0 ? Math.ceil(subtotal * (discountPct / 100)) : 0;
+        breakdown.discount = discountAmount;
+        const total = Math.max(0, subtotal - discountAmount);
         const balance = await db.getCreditBalance(ctx.user.id);
         return {
           allowed: isEpisodic,
@@ -11886,6 +11891,7 @@ Rules:
           membershipLimit: { maxLengthSeconds: 120, maxResolution: "1080p", watermarkRequired: false },
           hasEnoughCredits: balance >= total,
           creditBalance: balance,
+          tierDiscountPercentage: discountPct,
         };
       }),
 
@@ -12078,6 +12084,30 @@ Return JSON ONLY in this exact shape:
       .input(z.object({ movieId: z.number() }))
       .query(async ({ ctx, input }) => {
         return db.listRecapsForMovie(input.movieId, ctx.user.id);
+      }),
+
+    // v6.67 — attach a completed recap to its target episode so the project
+    // surface knows which recap to play before the episode starts.
+    attach: protectedProcedure
+      .input(z.object({ recapId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const recap = await db.getRecapById(input.recapId, ctx.user.id);
+        if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
+        if (recap.status !== "completed") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Recap is not ready to attach yet." });
+        }
+        await db.attachRecap(input.recapId, ctx.user.id);
+        await db.logActivity(recap.projectId, ctx.user.id, ctx.user.name || ctx.user.email || null, "recap.attach", { recapId: input.recapId, targetMovieId: recap.targetMovieId });
+        return { success: true };
+      }),
+
+    unattach: protectedProcedure
+      .input(z.object({ recapId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const recap = await db.getRecapById(input.recapId, ctx.user.id);
+        if (!recap) throw new TRPCError({ code: "NOT_FOUND", message: "Recap not found." });
+        await db.unattachRecap(input.recapId, ctx.user.id);
+        return { success: true };
       }),
   }),
 });

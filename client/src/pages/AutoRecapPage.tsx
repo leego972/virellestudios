@@ -81,8 +81,19 @@ export default function AutoRecapPage() {
 
   const recapDetail = trpc.recap.get.useQuery(
     { recapId: generatedRecapId! },
-    { enabled: !!generatedRecapId }
+    {
+      enabled: !!generatedRecapId,
+      // v6.67 — live status polling per upgrade-kit Phase 4 UX.
+      refetchInterval: (q) => {
+        const status = (q.state.data as any)?.recap?.status;
+        return status && !["completed", "failed"].includes(status) ? 3000 : false;
+      },
+    }
   );
+
+  const attachMut = trpc.recap.attach.useMutation({
+    onSuccess: () => existingRecaps.refetch(),
+  });
 
   const existingRecaps = trpc.recap.listForMovie.useQuery(
     { movieId: targetMovieId! },
@@ -379,6 +390,24 @@ export default function AutoRecapPage() {
                             {recapDetail.data.recap.voiceoverScript}
                           </div>
                         </div>
+                      )}
+                    </div>
+                  )}
+                  {recapDetail.data.recap.status === "completed" && (
+                    <div className="pt-3 border-t border-zinc-800">
+                      {recapDetail.data.recap.attachedAt ? (
+                        <div className="text-xs text-emerald-300">
+                          Attached to episode on{" "}
+                          {new Date(recapDetail.data.recap.attachedAt as any).toLocaleString()}.
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => attachMut.mutate({ recapId: recapDetail.data.recap.id })}
+                          disabled={attachMut.isPending}
+                          className="text-xs bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded text-zinc-200 disabled:opacity-50"
+                        >
+                          {attachMut.isPending ? "Attaching…" : "Attach to episode intro"}
+                        </button>
                       )}
                     </div>
                   )}

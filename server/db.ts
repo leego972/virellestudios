@@ -2774,3 +2774,18 @@ export async function listRecapSegments(recapId: number): Promise<RecapSegment[]
     .where(eq(recapSegments.recapId, recapId))
     .orderBy(recapSegments.sortOrder) as any;
 }
+
+// v6.67 — mark a completed recap as attached to its target episode.
+export async function attachRecap(id: number, userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(recaps).set({ attachedAt: new Date() } as any)
+    .where(and(eq(recaps.id, id), eq(recaps.userId, userId)));
+}
+
+export async function unattachRecap(id: number, userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(recaps).set({ attachedAt: null } as any)
+    .where(and(eq(recaps.id, id), eq(recaps.userId, userId)));
+}

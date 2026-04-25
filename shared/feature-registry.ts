@@ -300,6 +300,17 @@ export const FEATURE_REGISTRY: FeatureEntry[] = [
     minTier: "independent", // canUseVisualEffects is true from independent (Industry)
     hasNative: false,
   },
+  {
+    id: "auto-recap",
+    label: "Auto Recap",
+    icon: "⏮️",
+    category: "Post-Production",
+    webPath: "/projects/:id/auto-recap",
+    description: "Generate Previously On recaps for episodic projects",
+    minTier: "amateur", // v6.67 per upgrade-kit feature_registry_patch
+    hasNative: false,
+    isNew: true,
+  },
 
   {
     id: "scene-editor",
