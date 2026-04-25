@@ -1093,6 +1093,14 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "userVeniceKey", definition: "TEXT NULL" },
     { table: "users", column: "preferredLlmProvider", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "directorInstructions", definition: "TEXT NULL" }, // Custom instructions for the Director's Assistant AI
+    // v6.76 — BYOK fallback policy persisted per user. Was added in migration
+    // 0026_byok_fallback_mode_v669.sql but never registered with autoMigrate,
+    // so any production DB that skipped that migration file (or was provisioned
+    // afterwards from schema.ts alone) was missing the column. Drizzle's
+    // SELECT * still includes the field, which crashes EVERY users query —
+    // including the login flow — with "Unknown column 'byokFallbackMode'".
+    // Registering it here makes autoMigrate provision it on next boot.
+    { table: "users", column: "byokFallbackMode", definition: "VARCHAR(32) DEFAULT 'byok_with_consent'" },
     // Users table - profile/onboarding fields (sign-up flow)
     { table: "users", column: "phone", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "avatarUrl", definition: "TEXT NULL" },
