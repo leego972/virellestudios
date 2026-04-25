@@ -1,4 +1,5 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
+import type { Request, Response, NextFunction } from "express";
 import type { User } from "../../drizzle/schema";
 import { COOKIE_NAME } from "@shared/const";
 import { SignJWT, jwtVerify } from "jose";
@@ -138,3 +139,43 @@ export async function createContext(
     isExpiredTester,
   };
 }
+
+/**
+ * Express middleware that gates direct (non-tRPC) admin routes.
+ *
+ * Mounted in front of any `/api/admin/*` handler in `index.ts` so that
+ * unauthenticated callers — and authenticated non-admin users — are
+ * rejected with HTTP 403 *before* the handler runs. This is the
+ * non-tRPC counterpart to the `adminProcedure` guard used inside the
+ * tRPC routers.
+ *
+ * Behaviour:
+ *   - Builds a regular request context via `createContext` (cookie →
+ *     JWT → user lookup), so it shares the exact same auth path as
+ *     every other route in the app.
+ *   - 403 if there is no user, or `user.role !== "admin"`. Logs a
+ *     warning with the request path + IP for audit visibility.
+ *   - 500 if the auth path itself throws (e.g. database outage).
+ *   - On success, attaches the resolved user to `req.user` so the
+ *     downstream handler can read it without re-running auth.
+ */
+export const requireAdminExpress = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const ctx = await createContext({ req, res } as any);
+    if (!ctx.user || ctx.user.role !== "admin") {
+      console.warn(
+        `[Admin] Unauthorized access attempt to ${req.path} from ${req.ip}`,
+      );
+      res.status(403).json({ error: "Forbidden: Admin access required" });
+      return;
+    }
+    (req as any).user = ctx.user;
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error during admin check" });
+  }
+};

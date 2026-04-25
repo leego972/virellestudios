@@ -7,7 +7,7 @@ import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
-import { createContext } from "./context";
+import { createContext, requireAdminExpress } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { logger } from "./logger";
 import { stripe, priceIdToTier, TIER_LIMITS } from "./subscription";
@@ -610,20 +610,10 @@ async function startServer() {
   });
 
   // ─── Admin Protection Middleware ──────────────────────────────────────────
-  const requireAdmin = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-      const { createContext } = await import("./context");
-      const ctx = await createContext({ req, res } as any);
-      if (!ctx.user || ctx.user.role !== "admin") {
-        console.warn(`[Admin] Unauthorized access attempt to ${req.path} from ${req.ip}`);
-        return res.status(403).json({ error: "Forbidden: Admin access required" });
-      }
-      (req as any).user = ctx.user;
-      next();
-    } catch (err) {
-      res.status(500).json({ error: "Internal server error during admin check" });
-    }
-  };
+  // The middleware itself lives in ./context.ts as `requireAdminExpress`
+  // (imported at the top of this file) so the same guard can be reused
+  // anywhere outside the tRPC stack and so the auth path stays in one
+  // place. We only define the audit-logger helper inline here.
 
   const logAdminAction = async (req: express.Request, action: string, details: any) => {
     try {
@@ -642,7 +632,7 @@ async function startServer() {
   };
 
   // Manual migration trigger (admin only)
-  app.post("/api/admin/migrate", requireAdmin, async (req, res) => {
+  app.post("/api/admin/migrate", requireAdminExpress, async (req, res) => {
     try {
       await runAutoMigration();
       await logAdminAction(req, "MIGRATE", { status: "success" });
@@ -653,7 +643,7 @@ async function startServer() {
   });
 
   // Force-fix: directly add missing scene columns (bypasses INFORMATION_SCHEMA)
-  app.post("/api/admin/fix-scenes", requireAdmin, async (req, res) => {
+  app.post("/api/admin/fix-scenes", requireAdminExpress, async (req, res) => {
     const { getDb } = await import("../db");
     const { sql } = await import("drizzle-orm");
     const db = await getDb();
@@ -678,7 +668,7 @@ async function startServer() {
   });
 
   // Admin: Grant credits to a user
-  app.post("/api/admin/grant-credits", express.json(), requireAdmin, async (req, res) => {
+  app.post("/api/admin/grant-credits", requireAdminExpress, express.json(), async (req, res) => {
     try {
       const { userId, amount } = req.body;
       if (!userId || !amount) {
@@ -700,7 +690,7 @@ async function startServer() {
 
 
   // Admin: Reset project (delete scenes, update duration, reset status)
-  app.post("/api/admin/reset-project", express.json(), requireAdmin, async (req, res) => {
+  app.post("/api/admin/reset-project", requireAdminExpress, express.json(), async (req, res) => {
     try {
       const { projectId, duration } = req.body;
       if (!projectId) { res.status(400).json({ error: "projectId required" }); return; }
