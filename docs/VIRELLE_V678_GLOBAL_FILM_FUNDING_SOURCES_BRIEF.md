@@ -95,6 +95,8 @@ If the schema does not have separate fields, use existing broad fields such as n
 
 Add at least 120–180 high-quality funding sources globally, deduped by country + organization.
 
+**Israel must be explicitly included.** Do not rely only on a generic “Middle East” bucket. The funding section must show Israel as a country filter/listing with Israeli film/cinema sources.
+
 Minimum coverage:
 
 ### International / global
@@ -275,6 +277,29 @@ South / Southeast Asia:
 - Tunisia CNCI where official
 - Morocco CCM support funds
 
+Israel — required country coverage:
+
+- Israel Film Fund
+- Rabinovich Foundation for the Arts / Israeli Cinema Project
+- Gesher Multicultural Film Fund
+- New Fund for Cinema and Television
+- Makor Foundation for Israeli Films
+- Yehoshua Rabinovich Tel Aviv Foundation where relevant
+- Jerusalem Film & Television Fund
+- Haifa Film Fund / Haifa Film Office where official/current
+- Israel Film Council / Ministry of Culture and Sport cinema support where official/current
+- Israel Film Fund international co-production or development support where applicable
+- Sam Spiegel International Film Lab where relevant
+- CoPro Documentary Marketing Foundation / CoPro pitching forum where official/current
+- Docaviv industry / market support where official/current
+
+When implementing Israel entries:
+
+- country should be exactly `Israel` unless the existing country naming convention requires otherwise.
+- include official URLs where available.
+- mark supports/stage clearly: development, production, documentary, co-production, regional production, or market/lab.
+- do not make political claims or commentary in notes; keep entries neutral and funding-focused.
+
 ### Africa
 
 - National Film and Video Foundation South Africa
@@ -350,6 +375,7 @@ Include:
 - files changed
 - number of sources added
 - countries/regions added
+- explicit confirmation that Israel was added as a country with Israeli film/cinema sources
 - dedupe method
 - source quality rules
 - any sources skipped because official info was uncertain
@@ -364,10 +390,12 @@ Include:
 4. Official site links render for new entries.
 5. No duplicate country+organization rows shown.
 6. At least 100+ global sources visible.
-7. Existing funding application flow still works.
-8. Project matching/scoring still works.
-9. No logo/opener/watermark/designer wardrobe files touched.
-10. Run `pnpm check` and `pnpm build`.
+7. Israel appears in the country filter/list.
+8. Searching `Israel`, `Rabinovich`, `Gesher`, `New Fund`, and `Jerusalem Film Fund` returns relevant entries where implemented.
+9. Existing funding application flow still works.
+10. Project matching/scoring still works.
+11. No logo/opener/watermark/designer wardrobe files touched.
+12. Run `pnpm check` and `pnpm build`.
 
 ## Final verification
 
