@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
+import { LANDING_COPY } from "@/data/showrunnerShowcase";
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
 
@@ -240,6 +241,59 @@ export default function Landing() {
                   <p className="text-[10px] text-white/50 mt-1 uppercase tracking-wider font-bold">{s.label}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── 1.5 The Showrunner Showcase Proof ─── */}
+        <section
+          className="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-gradient-to-b from-black via-neutral-950 to-black"
+          data-testid="section-showrunner-proof"
+        >
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4 uppercase tracking-wider">
+                <Film className="h-3.5 w-3.5" />
+                Featured Showcase · The Showrunner
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-4 leading-tight">
+                {LANDING_COPY.headline}
+              </h2>
+              <p className="text-base md:text-lg text-neutral-400 max-w-3xl mx-auto leading-relaxed">
+                {LANDING_COPY.subheadline}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-amber-500/20 bg-black/50 p-6 md:p-8 mb-10">
+              <p className="text-center text-lg md:text-xl text-amber-300/90 italic font-medium">
+                "{LANDING_COPY.proofLine}"
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button
+                asChild
+                size="lg"
+                className="bg-gradient-to-r from-amber-500 to-amber-400 text-black hover:from-amber-400 hover:to-amber-300 font-semibold"
+                data-testid="button-watch-showcase"
+              >
+                <a href={LANDING_COPY.primaryCta.href}>
+                  <Play className="h-4 w-4 mr-2" />
+                  {LANDING_COPY.primaryCta.label}
+                </a>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10 hover:text-amber-200"
+                data-testid="button-start-production"
+              >
+                <a href={LANDING_COPY.secondaryCta.href}>
+                  {LANDING_COPY.secondaryCta.label}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </a>
+              </Button>
             </div>
           </div>
         </section>

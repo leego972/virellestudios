@@ -3,7 +3,8 @@ import { Link } from "wouter";
 import SiteHead from "@/components/SiteHead";
 import { trpc } from "@/lib/trpc";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
-import { Play, Pause, Volume2, VolumeX, Maximize, Film, Clock, Layers, Eye, ChevronDown, ChevronUp, Sparkles, Star, TrendingUp, Zap, Users, Globe } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize, Film, Clock, Layers, Eye, ChevronDown, ChevronUp, Sparkles, Star, TrendingUp, Zap, Users, Globe, Mail, FileText, X as XIcon, CheckCircle2, MessageSquare } from "lucide-react";
+import showrunner from "@/data/showrunnerShowcase";
 
 /**
  * Showcase / Demo Reel — Public page to display VirElle Studios film quality.
@@ -84,6 +85,9 @@ export default function Showcase() {
           </div>
         </div>
       </header>
+
+      {/* THE SHOWRUNNER — featured Virelle Studios showcase */}
+      <TheShowrunnerSection />
 
       {/* Film Grid */}
       <main className="relative z-10 max-w-7xl mx-auto px-4 pb-24">
@@ -683,5 +687,424 @@ function DiscoveryFeed() {
         </div>
       )}
     </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * THE SHOWRUNNER — featured Virelle Studios showcase
+ *
+ * Renders the full 10-section showcase package: hero, disclaimer, inciting
+ * email, character cards, full short-film script (collapsible), the
+ * SIGNAL BLACK show-within-show mini-trailer, the production-package
+ * checklist, the clips-vs-production comparison, the 3 social cuts, and the
+ * closing CTA. All copy lives in client/src/data/showrunnerShowcase.ts.
+ * ────────────────────────────────────────────────────────────────────────── */
+function TheShowrunnerSection() {
+  const [scriptOpen, setScriptOpen] = useState(false);
+
+  return (
+    <section
+      className="relative z-10 max-w-7xl mx-auto px-4 pb-24"
+      data-testid="section-showrunner"
+    >
+      {/* Title block */}
+      <div className="text-center pt-8 pb-12">
+        <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+          <Star className="w-3 h-3" />Featured Showcase
+        </div>
+        <h2
+          className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4"
+          style={{
+            background:
+              "linear-gradient(135deg, #d4af37 0%, #f5e6a3 30%, #d4af37 50%, #b8941f 70%, #d4af37 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
+          data-testid="text-showrunner-title"
+        >
+          {showrunner.title}
+        </h2>
+        <p className="text-lg md:text-xl text-amber-300/80 italic mb-6">
+          {showrunner.tagline}
+        </p>
+        <p className="text-sm md:text-base text-neutral-400 max-w-2xl mx-auto leading-relaxed">
+          {showrunner.logline}
+        </p>
+      </div>
+
+      {/* Disclaimer card */}
+      <div className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-5 mb-12 max-w-3xl mx-auto">
+        <div className="text-[10px] uppercase tracking-widest text-amber-400/70 font-semibold mb-2">
+          Disclaimer · Appears after opener, before film
+        </div>
+        <p className="text-xs text-neutral-400 leading-relaxed">
+          {showrunner.disclaimer.short}
+        </p>
+      </div>
+
+      {/* Inciting email from Sam */}
+      <div className="mb-16 max-w-3xl mx-auto">
+        <div className="text-center mb-6">
+          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+            The Inciting Email
+          </div>
+          <h3 className="text-2xl font-bold text-white">
+            One email reminded him.
+          </h3>
+        </div>
+        <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 overflow-hidden">
+          <div className="border-b border-neutral-800 bg-neutral-950 px-5 py-3 flex items-center gap-3">
+            <Mail className="w-4 h-4 text-amber-400/70" />
+            <div className="flex-1 text-xs">
+              <div className="text-neutral-300">
+                From: <span className="text-white font-medium">{showrunner.samEmail.from}</span>
+              </div>
+              <div className="text-neutral-400">
+                Subject: <span className="text-amber-300/80">{showrunner.samEmail.subject}</span>
+              </div>
+            </div>
+          </div>
+          <pre className="p-5 text-sm text-neutral-300 leading-relaxed font-sans whitespace-pre-wrap">
+{showrunner.samEmail.body}
+          </pre>
+        </div>
+      </div>
+
+      {/* Character cards */}
+      <div className="mb-16">
+        <div className="text-center mb-8">
+          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+            Cast
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold text-white">Main characters</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {showrunner.characters.map((c) => (
+            <div
+              key={c.name}
+              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-5 hover:border-amber-500/40 transition-colors"
+              data-testid={`card-character-${c.name.toLowerCase().replace(/\s+/g, '-')}`}
+            >
+              <div className="text-xs text-amber-400/70 uppercase tracking-wider mb-1 font-semibold">
+                {c.role}
+              </div>
+              <div className="text-lg font-bold text-white mb-2">{c.name}</div>
+              <p className="text-sm text-neutral-400 leading-relaxed">{c.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Full short film script (collapsible) */}
+      <div className="mb-16">
+        <div className="text-center mb-8">
+          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+            Short Film
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold text-white">Full script</h3>
+        </div>
+        <div className="rounded-lg border border-neutral-800 bg-neutral-950/60 overflow-hidden max-w-4xl mx-auto">
+          <button
+            type="button"
+            onClick={() => setScriptOpen((o) => !o)}
+            className="w-full flex items-center justify-between px-5 py-4 hover:bg-neutral-900/50 transition-colors"
+            data-testid="button-toggle-script"
+          >
+            <div className="flex items-center gap-3">
+              <FileText className="w-5 h-5 text-amber-400" />
+              <span className="text-white font-semibold">
+                {showrunner.fullScript.length} scenes — read the full script
+              </span>
+            </div>
+            {scriptOpen ? (
+              <ChevronUp className="w-5 h-5 text-neutral-400" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-neutral-400" />
+            )}
+          </button>
+          {scriptOpen && (
+            <div className="border-t border-neutral-800 p-6 space-y-10 max-h-[640px] overflow-y-auto">
+              {showrunner.fullScript.map((scene) => (
+                <div key={scene.id}>
+                  <div className="text-xs text-amber-400/70 uppercase tracking-widest font-semibold mb-1">
+                    {scene.heading}
+                  </div>
+                  <div className="text-xs text-neutral-500 italic mb-3">{scene.setting}</div>
+                  <div className="space-y-3">
+                    {scene.lines.map((line, i) => {
+                      if (line.type === "action") {
+                        return (
+                          <p key={i} className="text-sm text-neutral-300 leading-relaxed italic">
+                            {line.text}
+                          </p>
+                        );
+                      }
+                      if (line.type === "dialogue") {
+                        return (
+                          <div key={i} className="ml-6">
+                            <div className="text-xs font-bold text-amber-400/90 uppercase tracking-wider">
+                              {line.speaker}
+                            </div>
+                            <div className="text-sm text-neutral-200">{line.text}</div>
+                          </div>
+                        );
+                      }
+                      if (line.type === "on_screen") {
+                        return (
+                          <div
+                            key={i}
+                            className="text-center text-xs text-amber-300/80 uppercase tracking-widest font-semibold border-y border-neutral-800 py-2"
+                          >
+                            {line.text}
+                          </div>
+                        );
+                      }
+                      if (line.type === "transition") {
+                        return (
+                          <div
+                            key={i}
+                            className="text-xs text-neutral-500 uppercase tracking-widest text-right font-semibold"
+                          >
+                            {line.text}
+                          </div>
+                        );
+                      }
+                      if (line.type === "caption") {
+                        return (
+                          <div key={i} className="text-center text-sm text-amber-300/80 italic">
+                            {line.text}
+                          </div>
+                        );
+                      }
+                      if (line.type === "email") {
+                        return (
+                          <pre
+                            key={i}
+                            className="text-xs text-neutral-300 bg-neutral-900/80 border border-neutral-800 rounded p-3 whitespace-pre-wrap font-mono"
+                          >
+                            {line.text}
+                          </pre>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Signal Black mini-trailer — show within the show */}
+      <div className="mb-16">
+        <div className="text-center mb-6">
+          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+            Show Within The Show
+          </div>
+          <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+            {showrunner.signalBlackMiniTrailer.title}
+          </h3>
+          <p className="text-sm text-amber-300/80 italic mt-2">
+            {showrunner.signalBlackMiniTrailer.tagline}
+          </p>
+        </div>
+        <div className="rounded-lg border border-amber-500/30 bg-gradient-to-b from-neutral-950 to-black p-6 max-w-3xl mx-auto">
+          <div className="space-y-3">
+            {showrunner.signalBlackMiniTrailer.beats.map((b, i) => {
+              if (b.kind === "voiceover" || b.kind === "dialogue") {
+                return (
+                  <div key={i} className="border-l-2 border-amber-500/40 pl-4">
+                    <div className="text-[10px] font-bold text-amber-400/80 uppercase tracking-widest">
+                      {b.speaker}
+                    </div>
+                    <div className="text-sm text-neutral-200 italic">"{b.text}"</div>
+                  </div>
+                );
+              }
+              if (b.kind === "visual") {
+                return (
+                  <p key={i} className="text-xs text-neutral-500 italic">
+                    {b.text}
+                  </p>
+                );
+              }
+              if (b.kind === "on_screen") {
+                return (
+                  <div
+                    key={i}
+                    className="text-center text-xs text-amber-300/90 uppercase tracking-widest font-semibold py-1"
+                  >
+                    {b.text}
+                  </div>
+                );
+              }
+              if (b.kind === "title") {
+                return (
+                  <div
+                    key={i}
+                    className="text-center text-2xl font-bold text-amber-400 tracking-widest pt-3"
+                  >
+                    {b.text}
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Production package breakdown */}
+      <div className="mb-16">
+        <div className="text-center mb-8">
+          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+            What Virelle Built
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold text-white">
+            A complete production package
+          </h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {showrunner.productionPackageChecklist.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-start gap-3 rounded-lg border border-neutral-800 bg-neutral-950/40 p-4 hover:border-amber-500/30 transition-colors"
+              data-testid={`card-package-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+            >
+              <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+              <div>
+                <div className="text-sm font-semibold text-white">{item.label}</div>
+                <div className="text-xs text-neutral-400 mt-0.5">{item.description}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Comparison — clips vs production */}
+      <div className="mb-16">
+        <div className="text-center mb-8">
+          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+            The Difference
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold text-white">
+            {showrunner.comparisonCopy.headline}
+          </h3>
+          <p className="text-sm text-neutral-400 max-w-2xl mx-auto mt-3 leading-relaxed">
+            {showrunner.comparisonCopy.body}
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          <div className="rounded-lg border border-red-900/40 bg-red-950/10 p-5">
+            <div className="text-xs text-red-400/80 uppercase tracking-widest font-semibold mb-3">
+              {showrunner.comparisonCopy.rivalName} (fictional)
+            </div>
+            <ul className="space-y-2">
+              {showrunner.comparisonCopy.clipWizardCons.map((con) => (
+                <li
+                  key={con}
+                  className="flex items-start gap-2 text-sm text-neutral-300"
+                >
+                  <XIcon className="w-4 h-4 text-red-500/70 mt-0.5 shrink-0" />
+                  {con}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-lg border border-amber-500/30 bg-amber-950/10 p-5">
+            <div className="text-xs text-amber-400 uppercase tracking-widest font-semibold mb-3">
+              Virelle Studios
+            </div>
+            <ul className="space-y-2">
+              {showrunner.comparisonCopy.virellePros.map((pro) => (
+                <li
+                  key={pro}
+                  className="flex items-start gap-2 text-sm text-neutral-200"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  {pro}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <p className="text-[11px] text-neutral-600 italic text-center mt-4 max-w-xl mx-auto">
+          {showrunner.comparisonCopy.rivalNote}
+        </p>
+      </div>
+
+      {/* Social cuts */}
+      <div className="mb-16">
+        <div className="text-center mb-8">
+          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+            Social Cuts
+          </div>
+          <h3 className="text-2xl md:text-3xl font-bold text-white">
+            3 ready-to-post versions
+          </h3>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {showrunner.socialCuts.map((cut) => (
+            <div
+              key={cut.length}
+              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-5"
+              data-testid={`card-cut-${cut.length}`}
+            >
+              <div className="flex items-baseline gap-2 mb-3">
+                <MessageSquare className="w-4 h-4 text-amber-400" />
+                <span className="text-2xl font-bold text-amber-400">{cut.length}</span>
+                <span className="text-xs text-neutral-500 uppercase tracking-wider">
+                  {cut.label}
+                </span>
+              </div>
+              <ol className="space-y-1.5 mb-4">
+                {cut.beats.map((beat, i) => (
+                  <li
+                    key={i}
+                    className="text-xs text-neutral-300 leading-relaxed flex gap-2"
+                  >
+                    <span className="text-amber-400/50 font-mono shrink-0">{i + 1}.</span>
+                    <span>{beat}</span>
+                  </li>
+                ))}
+              </ol>
+              <div className="text-xs text-amber-300/80 font-semibold border-t border-neutral-800 pt-3">
+                → {cut.cta}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="text-center pt-8 pb-12">
+        <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
+          {showrunner.landingCopy.headline}
+        </h3>
+        <p className="text-sm md:text-base text-neutral-400 max-w-2xl mx-auto mb-8 leading-relaxed">
+          {showrunner.landingCopy.subheadline}
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Link href={showrunner.landingCopy.secondaryCta.href}>
+            <button
+              type="button"
+              className="px-8 py-3 rounded-md font-semibold text-black transition-transform hover:scale-105"
+              style={{
+                background:
+                  "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
+              }}
+              data-testid="button-cta-start-production"
+            >
+              {showrunner.landingCopy.secondaryCta.label}
+            </button>
+          </Link>
+        </div>
+        <p className="text-xs text-neutral-500 mt-6 italic">
+          Built as a Virelle Studios showcase.
+        </p>
+      </div>
+    </section>
   );
 }
