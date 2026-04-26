@@ -299,4 +299,26 @@ Before promoting a new commit to production:
 
 ---
 
+## Final production-readiness gate
+
+Before returning to product work or launching public paid traffic:
+
+- Security CI must pass.
+- `pnpm check` must pass.
+- `pnpm build` must pass.
+- `pnpm audit --audit-level high` must exit 0.
+- No hardcoded provider secrets may exist in source. (Existing
+  documented exceptions, such as the Pollinations rotation pool in
+  `server/_core/byokVideoEngine.ts`, must be tracked as launch risks
+  in `RUNBOOK.md` with a rotation procedure.)
+- Direct `/api/admin` routes must require `requireAdminExpress`.
+- Maintenance routes must be disabled in production unless explicitly
+  enabled for a short maintenance window.
+- Admin authority must be database-role only.
+- Stripe webhook must stay above global `express.json`.
+- Rollback plan must be documented.
+- Smoke test checklist must be completed after every deploy.
+
+---
+
 _Last reviewed: 2026-04-26_
