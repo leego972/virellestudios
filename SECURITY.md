@@ -200,6 +200,33 @@ Emergency admin recovery:
 
 If all admin access is lost, restore one admin directly in the database with an owner-approved manual operation, then audit the action in deployment notes. Do not add automatic bootstrap logic back into source code.
 
+### 9. Dependency audit policy
+
+The `Security CI` workflow runs `pnpm audit --audit-level high` on every push to `main` and on every PR. The build fails on any unignored advisory at high or critical severity.
+
+Two mechanisms keep the audit honest:
+
+- **Overrides** in `package.json > pnpm.overrides` force a patched version of a transitive dependency. Used only when the patched version is API-compatible with the parent package's expected range.
+- **Allowlist** in `package.json > pnpm.auditConfig.ignoreGhsas` explicitly accepts an advisory. Every entry must be justified below and revisited at each `Last reviewed` date.
+
+Currently overridden (forced to patched versions):
+
+- `fast-xml-parser ^5.3.5` — clears GHSA-p9ff-h696-f583 (critical, regex injection in DOCTYPE entity names) for the AWS SDK v3 chain.
+- `path-to-regexp ^0.1.13` — clears GHSA-37ch-88jc-xwx2 (ReDoS) for the `express@4` chain.
+- `axios ^1.13.5` — clears GHSA-43fc-jf86-j433 (DoS via `__proto__`) for direct usage.
+
+Currently allowlisted (with rationale and planned action):
+
+- `GHSA-r5fr-rjxr-66jc` — `lodash`/`lodash-es` "Code Injection via `_.template`". The advisory lists patched versions as `>=4.18.0`, but no such version exists on npm; `4.17.21` is the latest. False positive. Revisit if upstream republishes the advisory or if `recharts`/`mermaid` drop their lodash dependency.
+- `GHSA-43p4-m455-4f4j` — `@trpc/server` prototype pollution, patched in `>=11.8.0`. We are on `11.6.0`. Server does not parse untrusted JSON through the affected path; upgrade is scheduled with the next coordinated tRPC client+server bump.
+- `GHSA-rcmh-qjqh-p98v` — `nodemailer` addressparser DoS, patched in `>=7.0.11`. We are on `6.10.1`. The `6.x → 7.x` jump is a major API change; deferring to a dedicated mail-stack upgrade.
+- `GHSA-379q-355j-w6rj`, `GHSA-7vhp-vf5g-r2fw`, `GHSA-2phv-j68v-wwqx` — three `pnpm` CLI advisories against a transitive `pnpm@10.18.0`. We invoke pnpm via `packageManager` (`pnpm@10.4.1`) and CI's setup-pnpm pin, not the transitive copy. Will bump `packageManager` to `>=10.27.0` in a focused tooling PR.
+- `GHSA-34x7-hfp2-rc4v`, `GHSA-8qq5-rm4j-mr97`, `GHSA-83g3-92jg-28cx`, `GHSA-qffp-2rhf-9h96`, `GHSA-9ppj-qmqm-q256`, `GHSA-r6q2-hw4h-h46w` — six `node-tar` advisories pulled in via `@tailwindcss/vite > lightningcss-cli`. Affects build tooling only, never runs on production server traffic. Forcing `tar@^7.5.11` risks breaking the lightningcss build chain; revisit when `@tailwindcss/vite` ships an updated tarball-handling release.
+- `GHSA-mw96-cpmx-2vgc` — `rollup@<4.59.0` arbitrary file write via path traversal. Affects build tooling only, never runs on production traffic. Tracking upstream `vite` to ship a newer rollup pin.
+- `GHSA-c2c7-rcm5-vvqj` — `picomatch@<4.0.4` ReDoS. Affects build tooling only. The `picomatch@3 → 4` major bump cannot be forced globally without verifying every consumer.
+
+If an entry above is no longer accurate (advisory withdrawn, fix shipped upstream, attack surface changed), remove it from the allowlist and re-run `pnpm audit --audit-level high`.
+
 ---
 
 ## Operational checklist for deploys
@@ -236,4 +263,4 @@ Before promoting a new commit to production:
 
 ---
 
-_Last reviewed: 2026-04-25_
+_Last reviewed: 2026-04-26_
