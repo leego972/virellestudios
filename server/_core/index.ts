@@ -10,7 +10,8 @@ import { appRouter } from "../routers";
 import { createContext, requireAdminExpress } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { logger } from "./logger";
-import { stripe, priceIdToTier, TIER_LIMITS } from "./subscription";
+import { stripe, priceIdToTier, TIER_LIMITS, TOP_UP_PACKS } from "./subscription";
+import { billingActions } from "./billingLog";
 import { sql } from "drizzle-orm";
 import { ENV } from "./env";
 import { validateProductionEnv } from "./envValidation";
@@ -128,7 +129,16 @@ async function startServer() {
   const { securityHeaders } = await import("./securityHeaders");
   app.use(securityHeaders());
 
-  // Stripe webhook endpoint — MUST be before json body parser
+  // Stripe webhook endpoint — MUST be before json body parser.
+  //
+  // v6.85 hardening: every event is recorded in stripe_webhook_events keyed
+  // on the unique event.id. Stripe retries (which reuse the same event.id)
+  // are atomically deduplicated at the database layer — duplicate deliveries
+  // become no-ops. invoice.paid additionally checks per-invoice-id idempotency
+  // before granting renewal credits, so even a NEW event.id for the same
+  // invoice (manual dashboard re-fire, void/repay) cannot double-grant.
+  // resolveUserId treats the customerId-based lookup as the canonical source;
+  // metadata.userId is a hint that is logged + overridden on mismatch.
   app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
     if (!stripe) {
       res.status(500).json({ error: "Stripe not configured" });
@@ -136,7 +146,7 @@ async function startServer() {
     }
 
     const sig = req.headers["stripe-signature"] as string;
-    let event;
+    let event: any;
 
     try {
       if (ENV.stripeWebhookSecret) {
@@ -151,16 +161,70 @@ async function startServer() {
       return;
     }
 
-    // Helper: resolve userId from metadata or fallback to stripeCustomerId lookup
-    async function resolveUserId(metadata: any, customerId?: string): Promise<number> {
-      const fromMeta = parseInt(metadata?.userId || "0");
-      if (fromMeta) return fromMeta;
-      // Fallback: look up user by Stripe customer ID
+    // Compute (resourceType, resourceId) for the underlying Stripe object so
+    // the audit row in stripe_webhook_events lets us answer "has this invoice
+    // / session / subscription already been processed?" across event ids.
+    const { resourceType, resourceId } = (() => {
+      const obj: any = event?.data?.object;
+      if (!obj?.id) return { resourceType: null, resourceId: null };
+      switch (event.type) {
+        case "checkout.session.completed":
+          return { resourceType: "session", resourceId: String(obj.id) };
+        case "invoice.paid":
+        case "invoice.payment_failed":
+          return { resourceType: "invoice", resourceId: String(obj.id) };
+        case "customer.subscription.updated":
+        case "customer.subscription.deleted":
+          return { resourceType: "subscription", resourceId: String(obj.id) };
+        default:
+          return { resourceType: null, resourceId: String(obj.id) };
+      }
+    })();
+
+    // Layer 1 idempotency: atomically claim this event.id. Returns false if
+    // it was already processed (Stripe retry of a successful delivery, or
+    // another worker still in flight). Re-allows processing if the prior
+    // attempt errored, so legitimate Stripe retries can recover.
+    const isFirstSeen = await db.claimStripeWebhookEvent(
+      event.id,
+      event.type,
+      resourceType,
+      resourceId,
+    );
+    if (!isFirstSeen) {
+      logger.info(`[StripeWebhook] Duplicate event skipped: ${event.type} (id=${event.id})`);
+      res.json({ received: true, idempotent: true });
+      return;
+    }
+
+    // Audit trail — set as we discover the user / grant credits, then
+    // recorded on the stripe_webhook_events row at the end.
+    let creditsGrantedThisEvent = 0;
+    let resolvedUserIdForAudit: number | null = null;
+
+    // Helper: resolve userId. The customerId-based lookup is canonical (we
+    // create the Stripe customer server-side and store stripeCustomerId on
+    // the user — see subscription.ts:createOrGetStripeCustomer). metadata.userId
+    // is a hint that should agree; if it doesn't, log a warning and trust
+    // the customer-owned mapping. Falling back to metadata is only allowed
+    // when no customerId is present (e.g., orphan checkout without a saved
+    // customer record).
+    async function resolveUserId(metadata: any, customerId?: string | null): Promise<number> {
+      let canonical = 0;
       if (customerId) {
         const user = await db.getUserByStripeCustomerId(customerId);
-        if (user) return user.id;
+        if (user) canonical = user.id;
       }
-      return 0;
+      const fromMeta = parseInt(metadata?.userId || "0");
+      if (canonical && fromMeta && canonical !== fromMeta) {
+        logger.warn(
+          `[StripeWebhook] metadata.userId=${fromMeta} mismatches customer-owned ` +
+          `userId=${canonical} for customer=${customerId} (event ${event.id}); ` +
+          `trusting customer-owned mapping`,
+        );
+        return canonical;
+      }
+      return canonical || fromMeta;
     }
 
     try {
@@ -169,6 +233,7 @@ async function startServer() {
           const session = event.data.object;
           const customerId = session.customer as string;
           const userId = await resolveUserId(session.metadata, customerId);
+          if (userId) resolvedUserIdForAudit = userId;
 
           // Check if this is a Signature Cast actor unlock
           if (session.metadata?.type === "signature_cast_unlock" && userId) {
@@ -177,7 +242,8 @@ async function startServer() {
             try {
               const dbConn = await db.getDb();
               if (dbConn) {
-                // Idempotent insert — skip if already fulfilled for this session
+                // Idempotent insert — skip if already fulfilled for this session.
+                // Defense in depth on top of the universal event.id claim above.
                 const existing = await dbConn.execute(sql`
                   SELECT id FROM signatureCastEntitlements
                   WHERE stripeSessionId = ${session.id} LIMIT 1
@@ -208,52 +274,66 @@ async function startServer() {
               }
             } catch (err: any) {
               logger.error(`[SignatureCast] Webhook fulfillment failed: ${err.message}`);
+              await billingActions.error(userId, "webhook_event",
+                `signature_cast_unlock fulfillment (event ${event.id}, session ${session.id})`,
+                err.message).catch(() => {});
             }
             break;
           }
 
-          // Check if this is a film production package purchase
+          // Check if this is a film production package purchase.
+          //
+          // NOTE (v6.85 audit): Only `short_film` and `feature_film` are
+          // defined in FILM_PACKAGES (subscription.ts). The other ids
+          // (full_feature, premium, vfx_*) below are dead branches kept for
+          // safety in case a legacy session metadata still references them —
+          // there is no checkout flow today that creates them. See SECURITY.md
+          // §10 for the consolidation roadmap.
           if (session.metadata?.type === "film_production" && userId) {
             const packageId = session.metadata.packageId;
             // Film packages grant massive bonus credits based on package size
             const filmPackageCredits: Record<string, number> = {
-              short_film: 200,       // 30-min film: ~100 scenes × 2 credits
-              feature_film: 400,     // 60-min film: ~200 scenes × 2 credits
-              full_feature: 600,     // 90-min film: ~300 scenes × 2 credits
-              premium: 1200,         // 180-min film: ~600 scenes × 2 credits
-              vfx_single: 10,        // Single VFX scene
-              vfx_pack_5: 50,        // 5 VFX scenes
-              vfx_pack_15: 150,      // 15 VFX scenes
-              vfx_unlimited: 10000,  // Unlimited VFX for a year
+              short_film: 200,       // 30-min film: ~100 scenes × 2 credits  (matches FILM_PACKAGES.short_film)
+              feature_film: 400,     // 90-min film: ~200 scenes × 2 credits  (matches FILM_PACKAGES.feature_film, was incorrectly labelled "60-min" pre-v6.85)
+              full_feature: 600,     // 90-min film — legacy, not in FILM_PACKAGES
+              premium: 1200,         // 180-min film — legacy, not in FILM_PACKAGES
+              vfx_single: 10,        // Single VFX scene — legacy, not in FILM_PACKAGES
+              vfx_pack_5: 50,        // 5 VFX scenes — legacy, not in FILM_PACKAGES
+              vfx_pack_15: 150,      // 15 VFX scenes — legacy, not in FILM_PACKAGES
+              vfx_unlimited: 10000,  // Unlimited VFX for a year — legacy, not in FILM_PACKAGES
             };
             const credits = filmPackageCredits[packageId] || 100;
             await db.addBonusGenerations(userId, credits);
             // Also add to creditBalance so deductCredits() works
-            await db.addCredits(userId, credits, "film_package_purchase", `Film package ${packageId} — ${credits} credits added`);
-            logger.info(`Film package ${packageId} (+${credits} credits) applied for user ${userId}`);
+            await db.addCredits(userId, credits, "film_package_purchase",
+              `Film package ${packageId} — ${credits} credits added (event ${event.id}, session ${session.id})`);
+            creditsGrantedThisEvent += credits;
+            await billingActions.creditGrant(userId, credits,
+              `film_package_purchase: ${packageId} (event ${event.id}, session ${session.id})`).catch(() => {});
+            logger.info(`Film package ${packageId} (+${credits} credits) applied for user ${userId} (event ${event.id})`);
             break;
           }
 
-          // Check if this is a generation top-up pack purchase (one-time payment)
+          // Check if this is a generation top-up pack purchase (one-time payment).
+          // Source of truth is TOP_UP_PACKS in subscription.ts — see SECURITY.md §10.
           if (session.metadata?.type === "generation_topup" && userId) {
             const packId = session.metadata.packId;
-            // Credit amounts MUST match TOP_UP_PACKS in subscription.ts
-            const packAmounts: Record<string, number> = {
-              topup_10:   100,    // Starter Pack     — 100 credits
-              topup_50:   300,    // Producer Pack    — 300 credits
-              topup_100:  750,    // Director Pack    — 750 credits
-              topup_200:  2000,   // Filmmaker Pack   — 2,000 credits
-              topup_500:  5000,   // Blockbuster Pack — 5,000 credits
-              topup_1000: 12000,  // Mogul Pack       — 12,000 credits
-            };
-            const credits = packAmounts[packId] || 0;
+            const pack = TOP_UP_PACKS.find(p => p.id === packId);
+            const credits = pack?.credits ?? 0;
             if (credits > 0) {
               await db.addBonusGenerations(userId, credits);
               // Also add to creditBalance so deductCredits() works
-              await db.addCredits(userId, credits, "credit_pack_purchase", `Top-up pack ${packId} — ${credits} credits added`);
-              logger.info(`Top-up pack ${packId} (+${credits} credits) applied for user ${userId}`);
+              await db.addCredits(userId, credits, "credit_pack_purchase",
+                `Top-up pack ${packId} — ${credits} credits added (event ${event.id}, session ${session.id})`);
+              creditsGrantedThisEvent += credits;
+              await billingActions.creditGrant(userId, credits,
+                `credit_pack_purchase: ${packId} (event ${event.id}, session ${session.id})`).catch(() => {});
+              logger.info(`Top-up pack ${packId} (+${credits} credits) applied for user ${userId} (event ${event.id})`);
             } else {
-              logger.warn(`Unknown top-up pack ID: ${packId} — no credits granted for user ${userId}`);
+              logger.warn(`Unknown top-up pack ID: ${packId} — no credits granted for user ${userId} (event ${event.id})`);
+              await billingActions.error(userId, "credit_grant",
+                `credit_pack_purchase: unknown packId (event ${event.id}, session ${session.id})`,
+                `Unknown packId=${packId}`).catch(() => {});
             }
             break;
           }
@@ -277,10 +357,14 @@ async function startServer() {
             // Grant monthly credits to creditBalance based on tier
             const tierLimits = TIER_LIMITS[tier as keyof typeof TIER_LIMITS];
             if (tierLimits?.monthlyCredits) {
-              await db.addCredits(userId, tierLimits.monthlyCredits, "subscription_activated", `${tier} subscription activated — ${tierLimits.monthlyCredits} monthly credits granted`);
-              logger.info(`Granted ${tierLimits.monthlyCredits} credits to user ${userId} for ${tier} subscription`);
+              await db.addCredits(userId, tierLimits.monthlyCredits, "subscription_activated",
+                `${tier} subscription activated — ${tierLimits.monthlyCredits} monthly credits granted (event ${event.id}, session ${session.id})`);
+              creditsGrantedThisEvent += tierLimits.monthlyCredits;
+              await billingActions.creditGrant(userId, tierLimits.monthlyCredits,
+                `subscription_activated: ${tier} (event ${event.id}, session ${session.id})`).catch(() => {});
+              logger.info(`Granted ${tierLimits.monthlyCredits} credits to user ${userId} for ${tier} subscription (event ${event.id})`);
             }
-            logger.info(`Subscription activated for user ${userId}: ${tier}`);
+            logger.info(`Subscription activated for user ${userId}: ${tier} (event ${event.id})`);
             // Send subscription confirmation email to user + studio notification
             try {
               const newSubUser = await db.getUserById(userId);
@@ -300,6 +384,7 @@ async function startServer() {
           const customerId = sub.customer as string;
           const userId = await resolveUserId(sub.metadata, customerId);
           if (userId) {
+            resolvedUserIdForAudit = userId;
             const priceId = sub.items.data[0]?.price?.id || "";
             const tier = priceIdToTier(priceId);
             const status = sub.status === "active" ? "active" 
@@ -319,7 +404,7 @@ async function startServer() {
             if (isUpgrade && (status === "active" || status === "trialing")) {
               await db.resetGenerationCounter(userId);
             }
-            logger.info(`Subscription updated for user ${userId}: ${tier} (${status})`);
+            logger.info(`Subscription updated for user ${userId}: ${tier} (${status}) (event ${event.id})`);
           }
           break;
         }
@@ -328,41 +413,75 @@ async function startServer() {
           const customerId = sub.customer as string;
           const userId = await resolveUserId(sub.metadata, customerId);
           if (userId) {
+            resolvedUserIdForAudit = userId;
             await db.updateUserSubscription(userId, {
               subscriptionTier: "independent",
               subscriptionStatus: "canceled",
               stripeSubscriptionId: null,
               subscriptionCurrentPeriodEnd: null,
             });
-            logger.info(`Subscription canceled for user ${userId}`);
+            logger.info(`Subscription canceled for user ${userId} (event ${event.id})`);
           }
           break;
         }
         case "invoice.paid": {
-          // Successful payment — confirm subscription is active and update period end
+          // Successful payment — confirm subscription is active and update period end.
           const invoice = event.data.object;
           const customerId = invoice.customer as string;
           const subscriptionId = invoice.subscription as string;
           if (customerId && subscriptionId) {
             const user = await db.getUserByStripeCustomerId(customerId);
             if (user) {
+              resolvedUserIdForAudit = user.id;
               const sub = await stripe.subscriptions.retrieve(subscriptionId);
               const priceId = sub.items.data[0]?.price?.id || "";
               const tier = priceIdToTier(priceId);
+              // Subscription state updates are SET ops — safe to repeat across
+              // legitimate retries.
               await db.updateUserSubscription(user.id, {
                 subscriptionTier: tier as any,
                 subscriptionStatus: "active",
                 subscriptionCurrentPeriodEnd: new Date((sub as any).current_period_end * 1000),
               });
-              // Reset generation counter on renewal (new billing period = fresh quota)
-              await db.resetGenerationCounter(user.id);
-              // Grant monthly credits to creditBalance for the new billing period
+
+              // Layer 2 idempotency: per-invoice credit grant dedup.
+              //
+              // Layer 1 (event.id claim) above already prevents Stripe retries
+              // of THIS event from re-running. This second check additionally
+              // prevents a NEW event.id for the SAME invoice (manual dashboard
+              // re-fire, or void-then-repay cycles) from double-granting renewal
+              // credits. Subscription state is set unconditionally above; only
+              // the credit grant + counter reset are gated.
               const renewTierLimits = TIER_LIMITS[tier as keyof typeof TIER_LIMITS];
               if (renewTierLimits?.monthlyCredits) {
-                await db.addCredits(user.id, renewTierLimits.monthlyCredits, "subscription_renewal", `${tier} subscription renewed — ${renewTierLimits.monthlyCredits} monthly credits granted`);
-                logger.info(`Granted ${renewTierLimits.monthlyCredits} credits to user ${user.id} for ${tier} renewal`);
+                const alreadyCredited = await db.hasStripeInvoiceBeenCredited(invoice.id, event.id);
+                if (alreadyCredited) {
+                  logger.warn(
+                    `[StripeWebhook] invoice ${invoice.id} already credited by a prior event — ` +
+                    `skipping renewal credit grant for user ${user.id} (event ${event.id})`,
+                  );
+                } else {
+                  // Reset the generation counter for the new billing period.
+                  // Inside the dedup so a duplicate invoice doesn't reset usage twice.
+                  await db.resetGenerationCounter(user.id);
+                  await db.addCredits(
+                    user.id,
+                    renewTierLimits.monthlyCredits,
+                    "subscription_renewal",
+                    `${tier} subscription renewed — ${renewTierLimits.monthlyCredits} monthly credits granted (invoice ${invoice.id}, event ${event.id})`,
+                  );
+                  creditsGrantedThisEvent += renewTierLimits.monthlyCredits;
+                  await billingActions.creditGrant(
+                    user.id,
+                    renewTierLimits.monthlyCredits,
+                    `subscription_renewal: ${tier} (invoice ${invoice.id}, event ${event.id})`,
+                  ).catch(() => {});
+                  logger.info(
+                    `Granted ${renewTierLimits.monthlyCredits} credits to user ${user.id} for ${tier} renewal (invoice ${invoice.id}, event ${event.id})`,
+                  );
+                }
               }
-              logger.info(`Invoice paid for user ${user.id}: ${tier} renewed`);
+              logger.info(`Invoice paid for user ${user.id}: ${tier} renewed (invoice ${invoice.id}, event ${event.id})`);
             }
           }
           break;
@@ -372,20 +491,38 @@ async function startServer() {
           const customerId = invoice.customer as string;
           const user = await db.getUserByStripeCustomerId(customerId);
           if (user) {
+            resolvedUserIdForAudit = user.id;
             await db.updateUserSubscription(user.id, {
               subscriptionStatus: "past_due",
             });
             // Track payment failure in security engine
             trackPaymentFailure(user.id, "invoice_payment_failed");
-            logger.warn(`Payment failed for user ${user.id}`);
+            logger.warn(`Payment failed for user ${user.id} (event ${event.id})`);
           }
           break;
         }
       }
 
+      await db.markStripeWebhookEventResult(event.id, "processed", {
+        userId: resolvedUserIdForAudit,
+        creditsGranted: creditsGrantedThisEvent,
+      });
       res.json({ received: true });
     } catch (err: any) {
-      logger.error(`Stripe webhook handler error: ${err.message}`);
+      logger.error(`Stripe webhook handler error (event ${event.id}): ${err.message}`);
+      await db.markStripeWebhookEventResult(event.id, "error", {
+        userId: resolvedUserIdForAudit,
+        creditsGranted: creditsGrantedThisEvent,
+        errorMessage: err.message,
+      }).catch(() => {});
+      if (resolvedUserIdForAudit) {
+        await billingActions.error(
+          resolvedUserIdForAudit,
+          "webhook_event",
+          `${event.type} (event ${event.id})`,
+          err.message,
+        ).catch(() => {});
+      }
       res.status(500).json({ error: "Webhook handler failed" });
     }
   });

@@ -1812,6 +1812,149 @@ export async function getCreditBalance(userId: number): Promise<number> {
   return (user?.creditBalance as number) || 0;
 }
 
+// ─── Stripe webhook idempotency (v6.85) ───
+//
+// Universal idempotency for the Stripe webhook handler. Every event we
+// receive is recorded in stripe_webhook_events keyed on the unique
+// stripeEventId. INSERT IGNORE atomically claims the event for processing;
+// if the row already exists with status='processed' we skip; if status='error'
+// we re-allow processing so a Stripe retry can succeed after a transient
+// failure. resourceType + resourceId let us additionally answer
+// "has this invoice already been credited?" across event-id boundaries.
+
+/**
+ * Try to claim a Stripe webhook event for processing.
+ *
+ * Returns true if this caller should process the event, false if it was
+ * already processed by an earlier delivery (or is currently being processed
+ * by another concurrent worker).
+ *
+ * Concurrency model: relies on the UNIQUE index on stripeEventId. The
+ * INSERT IGNORE is atomic at the database layer.
+ */
+export async function claimStripeWebhookEvent(
+  eventId: string,
+  eventType: string,
+  resourceType?: string | null,
+  resourceId?: string | null,
+): Promise<boolean> {
+  const dbConn = await getDb();
+  if (!dbConn) {
+    // Fail open in dev / when DB is unavailable — process the event rather
+    // than silently dropping it. The handler itself should be resilient to
+    // duplicate calls in this degraded mode.
+    return true;
+  }
+  try {
+    const insertResult: any = await dbConn.execute(sql`
+      INSERT IGNORE INTO stripe_webhook_events
+        (stripeEventId, eventType, resourceType, resourceId, status)
+      VALUES
+        (${eventId}, ${eventType}, ${resourceType ?? null}, ${resourceId ?? null}, 'processing')
+    `);
+    const affected = Array.isArray(insertResult)
+      ? (insertResult[0]?.affectedRows ?? 0)
+      : (insertResult?.affectedRows ?? 0);
+    if (affected > 0) {
+      // We won the race — first time seeing this event.
+      return true;
+    }
+    // A row already exists. Re-allow processing only if the prior attempt
+    // errored — otherwise this is a true duplicate (Stripe retry of a
+    // successful delivery, or another worker still in flight).
+    const existing: any = await dbConn.execute(sql`
+      SELECT status FROM stripe_webhook_events
+      WHERE stripeEventId = ${eventId}
+      LIMIT 1
+    `);
+    const rows = Array.isArray(existing) ? existing : (existing[0] ?? []);
+    const row = Array.isArray(rows) ? rows[0] : null;
+    if (row?.status === "error") {
+      await dbConn.execute(sql`
+        UPDATE stripe_webhook_events
+        SET status = 'processing', errorMessage = NULL
+        WHERE stripeEventId = ${eventId}
+      `);
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.warn(`[StripeWebhook] claimStripeWebhookEvent failed for ${eventId}:`, e);
+    // Fail open: prefer at-least-once processing over silently dropping.
+    return true;
+  }
+}
+
+/**
+ * Mark a previously claimed Stripe webhook event with its final processing
+ * status. Records userId + creditsGranted for the audit trail.
+ */
+export async function markStripeWebhookEventResult(
+  eventId: string,
+  status: "processed" | "error",
+  opts: { userId?: number | null; creditsGranted?: number; errorMessage?: string } = {},
+): Promise<void> {
+  const dbConn = await getDb();
+  if (!dbConn) return;
+  try {
+    await dbConn.execute(sql`
+      UPDATE stripe_webhook_events
+      SET status = ${status},
+          userId = COALESCE(${opts.userId ?? null}, userId),
+          creditsGranted = ${opts.creditsGranted ?? 0},
+          errorMessage = ${opts.errorMessage ?? null}
+      WHERE stripeEventId = ${eventId}
+    `);
+  } catch (e) {
+    console.warn(`[StripeWebhook] markStripeWebhookEventResult failed for ${eventId}:`, e);
+  }
+}
+
+/**
+ * Belt-and-suspenders check used in invoice.paid: has any prior webhook
+ * event already credited this Stripe invoice? Excludes the currently-claimed
+ * event so we don't see ourselves.
+ *
+ * Most duplicate deliveries are caught at the event.id layer (claim returns
+ * false). This catches the rarer case where Stripe sends a different event.id
+ * for the same invoice (e.g., a manual re-fire from the dashboard, or a
+ * void-then-repay cycle that we don't want to credit twice).
+ */
+export async function hasStripeInvoiceBeenCredited(
+  invoiceId: string,
+  excludeEventId?: string,
+): Promise<boolean> {
+  const dbConn = await getDb();
+  if (!dbConn) return false;
+  try {
+    const result: any = await dbConn.execute(excludeEventId
+      ? sql`
+          SELECT id FROM stripe_webhook_events
+          WHERE resourceType = 'invoice'
+            AND resourceId = ${invoiceId}
+            AND eventType = 'invoice.paid'
+            AND status = 'processed'
+            AND creditsGranted > 0
+            AND stripeEventId != ${excludeEventId}
+          LIMIT 1
+        `
+      : sql`
+          SELECT id FROM stripe_webhook_events
+          WHERE resourceType = 'invoice'
+            AND resourceId = ${invoiceId}
+            AND eventType = 'invoice.paid'
+            AND status = 'processed'
+            AND creditsGranted > 0
+          LIMIT 1
+        `);
+    const rows = Array.isArray(result) ? result : (result[0] ?? []);
+    return Array.isArray(rows) ? rows.length > 0 : false;
+  } catch (e) {
+    console.warn(`[StripeWebhook] hasStripeInvoiceBeenCredited failed for ${invoiceId}:`, e);
+    return false;
+  }
+}
+
 // ─── Project Samples ───
 export async function createProjectSample(data: InsertProjectSample): Promise<ProjectSample> {
   const db = await getDb();

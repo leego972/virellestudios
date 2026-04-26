@@ -227,6 +227,22 @@ Currently allowlisted (with rationale and planned action):
 
 If an entry above is no longer accurate (advisory withdrawn, fix shipped upstream, attack surface changed), remove it from the allowlist and re-run `pnpm audit --audit-level high`.
 
+### 10. Billing and credit integrity
+
+The Stripe webhook handler is the only path through which paid-tier credits enter user balances. Two layers of idempotency, plus a tightened user-resolution policy, prevent the duplicate-grant and impersonation classes of bug.
+
+**Layer 1 — universal event idempotency.** Every Stripe event we receive is recorded in `stripe_webhook_events` keyed on the unique `stripeEventId` column (UNIQUE index). Before doing any work, the handler calls `claimStripeWebhookEvent(event.id, ...)`, which performs an atomic `INSERT IGNORE` and returns `false` if the row already exists with status `processed` (a Stripe retry of a successful delivery, or a concurrent worker still in flight). Duplicate deliveries return `200 { received: true, idempotent: true }` and exit immediately — no credits granted, no state mutated. If the prior attempt errored, the row's status is reset to `processing` so the legitimate retry can recover.
+
+**Layer 2 — per-invoice credit-grant idempotency.** Subscription renewal credits in `invoice.paid` are additionally gated on `hasStripeInvoiceBeenCredited(invoice.id, event.id)`. Layer 1 catches Stripe retries of the same `event.id`; Layer 2 catches the rarer case where Stripe sends a NEW `event.id` for the SAME invoice — for example, a manual re-fire from the Stripe dashboard, or a void-then-repay cycle. Subscription state (tier, period end) is set unconditionally because those are SET ops; only the credit grant and the `resetGenerationCounter` call are gated, so a duplicate invoice cannot zero out a user's mid-cycle usage.
+
+**User identity resolution.** Stripe customers are created server-side at `subscription.ts:createOrGetStripeCustomer`, which both tags the customer with `metadata.userId` AND persists the resulting `customerId` on the user row. The customer-owned mapping is therefore the canonical source of truth. The webhook's `resolveUserId(metadata, customerId)` always looks up the user via `getUserByStripeCustomerId(customerId)` first; if `metadata.userId` disagrees with that result, the discrepancy is logged as a warning and the customer-owned mapping wins. Falling back to `metadata.userId` is only allowed when no `customerId` is present (orphan checkout). This prevents a tampered or replayed event with a forged `metadata.userId` from crediting the wrong account.
+
+**Single source of truth for pack credit amounts.** Top-up pack credit amounts are read from `TOP_UP_PACKS` in `subscription.ts` — the same list the checkout UI uses. The webhook no longer carries an inline duplicate of the pack-id → credits map, so a future edit to `TOP_UP_PACKS` cannot drift from what the webhook actually grants. Subscription monthly credits come from `TIER_LIMITS[tier].monthlyCredits`, also defined in `subscription.ts`.
+
+**Audit trail.** Every credit grant in the webhook calls `billingActions.creditGrant(userId, amount, reason)`, which logs to `billingLog` alongside the `credit_transactions` row written by `addCredits`. The `stripe_webhook_events` row records the resolved userId, total `creditsGranted`, and final `status` (`processed` / `error` with the error message). Together this gives three independent ledgers that should always reconcile: `credit_transactions`, `billingLog`, and `stripe_webhook_events`.
+
+**Known consolidation debt.** `FILM_PACKAGES` in `subscription.ts` defines only `short_film` and `feature_film`; the webhook's `filmPackageCredits` map additionally includes `full_feature`, `premium`, `vfx_single`, `vfx_pack_5`, `vfx_pack_15`, `vfx_unlimited`. There is no checkout flow today that creates sessions with those legacy ids — they are dead branches kept defensively. Future work: migrate the canonical list into `FILM_PACKAGES` (with credit amounts) and have the webhook read from there, mirroring the `TOP_UP_PACKS` pattern.
+
 ---
 
 ## Operational checklist for deploys

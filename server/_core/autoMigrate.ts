@@ -406,6 +406,34 @@ export async function runAutoMigration(): Promise<void> {
       )`,
     },
     {
+      // v6.85: Stripe webhook event idempotency ledger.
+      // Every Stripe webhook event we receive is recorded here, keyed on the
+      // unique stripeEventId. The unique index lets us safely INSERT IGNORE
+      // to atomically claim an event for processing — Stripe retries (which
+      // reuse the same event.id) become no-ops.
+      // resourceType / resourceId capture the underlying object (session,
+      // invoice, subscription) so we can additionally answer "has this
+      // invoice already been credited?" across event-id boundaries.
+      name: "stripe_webhook_events",
+      createSQL: `CREATE TABLE IF NOT EXISTS stripe_webhook_events (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        stripeEventId VARCHAR(255) NOT NULL UNIQUE,
+        eventType VARCHAR(128) NOT NULL,
+        resourceType VARCHAR(64) NULL,
+        resourceId VARCHAR(255) NULL,
+        userId INT NULL,
+        creditsGranted INT NOT NULL DEFAULT 0,
+        status ENUM('processing','processed','error') NOT NULL DEFAULT 'processing',
+        errorMessage TEXT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_stripe_evt_type (eventType),
+        INDEX idx_stripe_evt_resource (resourceType, resourceId),
+        INDEX idx_stripe_evt_user (userId),
+        INDEX idx_stripe_evt_status (status)
+      )`,
+    },
+    {
       name: "projectSamples",
       createSQL: `CREATE TABLE IF NOT EXISTS projectSamples (
         id INT AUTO_INCREMENT PRIMARY KEY,
