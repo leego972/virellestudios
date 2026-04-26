@@ -51,7 +51,7 @@ if (!JWT_SECRET_KEY) {
 **Issues:**
 - Multiple critical secrets have empty string defaults (`??` operator)
 - Hardcoded fallback for `adminEmail` (line 75): `"studiosvirelle@gmail.com"`
-- Hardcoded fallback for `pollinationsApiKey` (line 66): `"sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP"`
+- Hardcoded fallback for `pollinationsApiKey` (line 66): `"sk_<REDACTED — see RUNBOOK.md §'Rotate exposed Pollinations keys'>"`
 - No validation that required production keys are actually set
 
 **Vulnerable Lines:**
