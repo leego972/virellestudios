@@ -243,6 +243,26 @@ The Stripe webhook handler is the only path through which paid-tier credits ente
 
 **Known consolidation debt.** `FILM_PACKAGES` in `subscription.ts` defines only `short_film` and `feature_film`; the webhook's `filmPackageCredits` map additionally includes `full_feature`, `premium`, `vfx_single`, `vfx_pack_5`, `vfx_pack_15`, `vfx_unlimited`. There is no checkout flow today that creates sessions with those legacy ids — they are dead branches kept defensively. Future work: migrate the canonical list into `FILM_PACKAGES` (with credit amounts) and have the webhook read from there, mirroring the `TOP_UP_PACKS` pattern.
 
+### 11. File upload and storage safety
+
+Two attack surfaces handle user-supplied bytes: HTTP upload routes and the storage helper that pushes them to S3/R2. Each has size, type, and access-control guards.
+
+**HTTP upload routes — request size.** The global JSON parser caps every request at `25 MB` (`server/_core/index.ts:534`). Per-route Zod schemas tighten that further: `upload.image` caps base64 at 14 MB (~10 MB binary), `upload.footage` at 200 MB base64 (~150 MB binary), and so on. The Stripe webhook is mounted with `express.raw()` BEFORE the JSON parser, so the 25 MB cap does not apply to it; signature verification on the raw body is what protects that route. The two admin-only `express.json()` mounts (`/api/admin/grant-credits`, `/api/admin/reset-project`) use the Express default 100 KB limit — they only accept tiny JSON payloads.
+
+**HTTP upload routes — auth.** All tRPC upload mutations are wrapped in `protectedProcedure` (auth required). The single non-tRPC upload route, `POST /api/voice/upload`, calls `createContext` and rejects unauthenticated requests with `401`.
+
+**HTTP upload routes — content type allowlist.** `POST /api/voice/upload` enforces an audio MIME allowlist (`audio/webm`, `audio/ogg`, `audio/wav`, `audio/x-wav`, `audio/wave`, `audio/mp4`, `audio/x-m4a`, `audio/mpeg`, `audio/mp3`, `audio/aac`, `audio/flac`); anything else returns `415`. tRPC upload routes pass `input.contentType` straight through to S3 — those routes are gated by auth and per-route size caps and are not enumerated to the public, so we do not enforce a server-side allowlist there beyond the schema.
+
+**HTTP upload routes — size enforcement.** `POST /api/voice/upload` honours `Content-Length` to short-circuit oversized uploads before reading any body bytes, then re-enforces the 16 MB cap as bytes arrive. If the streaming total exceeds the cap, the connection is destroyed and the response is `413`. (Earlier behaviour silently truncated the buffer, which would have stored a corrupt audio file under the user's account.)
+
+**Temporary asset access.** Voice uploads land in an in-memory store keyed on a 128-bit crypto-random id (`/api/voice/temp/:id`) with a 10-minute TTL and a 5-minute background sweep. The fetch route requires auth AND verifies that the entry's stored `userId` matches the requester — so even a leaked temp URL cannot be replayed by another account. Cache-Control on the response is `private, no-store`.
+
+**Storage layer — size cap.** `storagePut` enforces a hard `MAX_STORAGE_OBJECT_BYTES` (env-overridable; default 256 MB) on every call. This is a defensive cap intended to catch programming errors that would buffer something huge into memory; per-route Zod schemas remain the primary size guard.
+
+**Storage layer — public vs private objects.** `storagePut(key, data, contentType, opts?)` accepts an optional `opts.public` flag. Public-read is the default to preserve long-standing behaviour for assets that are embedded directly in the UI (generated images, generated videos, soundtracks, etc.), but callers handling user-private content can pass `{ public: false }` to omit the public ACL. Object keys for user uploads are namespaced by `${ctx.user.id}` (eg. `uploads/${userId}/...`, `footage/${userId}/...`) so even a directory listing leak would not cross-mix users; for stricter cases, `{ public: false }` plus a server-side signed-URL hand-off is the right pattern. The legacy Manus FORGE backend always returns a public URL and ignores the flag.
+
+**Path traversal.** All upload keys are constructed server-side from `${ctx.user.id}` plus a `nanoid()` plus a sanitised filename — user input never determines the directory. `storagePut` strips leading slashes from the relative key for safety.
+
 ---
 
 ## Operational checklist for deploys

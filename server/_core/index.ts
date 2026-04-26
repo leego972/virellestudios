@@ -1100,8 +1100,32 @@ async function startServer() {
   });
 
   // ── Voice Upload & TTS HTTP Routes (Safari iOS safe — no base64 overhead) ────
-  // In-memory temp store for voice recordings (id -> { buffer, mimeType, expires })
-  const voiceTempStore = new Map<string, { buffer: Buffer; mimeType: string; expires: number }>();
+  // In-memory temp store for voice recordings.
+  // Each entry is owned by the user that uploaded it; only that user can fetch
+  // it back from /api/voice/temp/:id. The id is 128-bit unguessable but we
+  // still enforce ownership as defence-in-depth.
+  const VOICE_MAX_SIZE = 16 * 1024 * 1024; // 16 MB raw audio
+  const VOICE_TEMP_TTL_MS = 10 * 60 * 1000; // 10 minutes
+  // Allowlist of audio MIME types. Anything else is rejected with 415.
+  // Browsers commonly emit one of these; everything else (text/*, image/*,
+  // application/*, video/*) has no business hitting this route.
+  const VOICE_ALLOWED_MIMES = new Set<string>([
+    "audio/webm",
+    "audio/ogg",
+    "audio/wav",
+    "audio/x-wav",
+    "audio/wave",
+    "audio/mp4",
+    "audio/x-m4a",
+    "audio/mpeg",
+    "audio/mp3",
+    "audio/aac",
+    "audio/flac",
+  ]);
+  const voiceTempStore = new Map<
+    string,
+    { buffer: Buffer; mimeType: string; expires: number; userId: number }
+  >();
   setInterval(() => {
     const now = Date.now();
     for (const [id, entry] of voiceTempStore.entries()) {
@@ -1109,43 +1133,97 @@ async function startServer() {
     }
   }, 5 * 60 * 1000);
 
-  // POST /api/voice/upload — accepts multipart audio, returns temp URL
+  // POST /api/voice/upload — accepts raw audio body, returns temp URL.
+  // Auth required; size capped at VOICE_MAX_SIZE; MIME must be in allowlist.
   app.post("/api/voice/upload", async (req, res) => {
     try {
       const ctx = await createContext({ req, res, info: {} } as any);
       if (!ctx.user) return res.status(401).json({ error: "Authentication required" });
-      const MAX_SIZE = 16 * 1024 * 1024;
-      const contentType = req.headers["content-type"] || "";
-      const saveTemp = (buf: Buffer, mime: string) => {
-        const id = crypto.randomBytes(16).toString('hex');
-        voiceTempStore.set(id, { buffer: buf, mimeType: mime, expires: Date.now() + 10 * 60 * 1000 });
+      const userId = ctx.user.id;
+      const contentType = String(req.headers["content-type"] || "");
+      const mime = contentType.split(";")[0].trim().toLowerCase() || "audio/webm";
+      if (!VOICE_ALLOWED_MIMES.has(mime)) {
+        return res
+          .status(415)
+          .json({ error: `Unsupported audio type: ${mime}` });
+      }
+      // Honour Content-Length when present so oversized uploads short-circuit
+      // before any bytes are read.
+      const declared = Number(req.headers["content-length"] || 0);
+      if (Number.isFinite(declared) && declared > VOICE_MAX_SIZE) {
+        return res
+          .status(413)
+          .json({ error: `Audio too large (max ${VOICE_MAX_SIZE} bytes)` });
+      }
+      const saveTemp = (buf: Buffer) => {
+        const id = crypto.randomBytes(16).toString("hex");
+        voiceTempStore.set(id, {
+          buffer: buf,
+          mimeType: mime,
+          expires: Date.now() + VOICE_TEMP_TTL_MS,
+          userId,
+        });
         return `/api/voice/temp/${id}`;
       };
-      // Parse raw body (works for both multipart and raw binary)
-      // We read the raw body and extract the audio blob from the multipart boundary
-      {
-        const chunks: Buffer[] = [];
-        let total = 0;
-        req.on("data", (c: Buffer) => { total += c.length; if (total <= MAX_SIZE) chunks.push(c); });
-        req.on("end", () => {
-          if (res.headersSent) return;
-          const buf = Buffer.concat(chunks);
-          if (!buf.length) return res.status(400).json({ error: "No audio data" });
-          const mime = contentType.split(";")[0].trim() || "audio/webm";
-          res.json({ url: saveTemp(buf, mime), mimeType: mime });
-        });
-      }
+      // Stream the body, enforcing the size cap as bytes arrive. If we cross
+      // the cap we destroy the connection and respond 413 — previous version
+      // silently truncated the buffer, which would have stored a corrupt
+      // audio file under the user's account.
+      const chunks: Buffer[] = [];
+      let total = 0;
+      let aborted = false;
+      req.on("data", (c: Buffer) => {
+        if (aborted) return;
+        total += c.length;
+        if (total > VOICE_MAX_SIZE) {
+          aborted = true;
+          if (!res.headersSent) {
+            res
+              .status(413)
+              .json({ error: `Audio too large (max ${VOICE_MAX_SIZE} bytes)` });
+          }
+          req.destroy();
+          return;
+        }
+        chunks.push(c);
+      });
+      req.on("end", () => {
+        if (aborted || res.headersSent) return;
+        const buf = Buffer.concat(chunks);
+        if (!buf.length) return res.status(400).json({ error: "No audio data" });
+        res.json({ url: saveTemp(buf), mimeType: mime });
+      });
+      req.on("error", () => {
+        if (!res.headersSent) res.status(400).json({ error: "Upload failed" });
+      });
     } catch (err) {
       if (!res.headersSent) res.status(500).json({ error: "Internal server error" });
     }
   });
 
-  // GET /api/voice/temp/:id — serve temp audio for transcription
-  app.get("/api/voice/temp/:id", (req, res) => {
-    const entry = voiceTempStore.get(req.params.id);
-    if (!entry) return res.status(404).json({ error: "Not found" });
-    res.setHeader("Content-Type", entry.mimeType);
-    res.end(entry.buffer);
+  // GET /api/voice/temp/:id — serve temp audio for transcription.
+  // Auth required + ownership check: only the uploader may fetch their audio.
+  // The id is 128 bits of crypto-random entropy; the ownership check is
+  // defence-in-depth so a leaked URL cannot be replayed by another account.
+  app.get("/api/voice/temp/:id", async (req, res) => {
+    try {
+      const ctx = await createContext({ req, res, info: {} } as any);
+      if (!ctx.user) return res.status(401).json({ error: "Authentication required" });
+      const entry = voiceTempStore.get(req.params.id);
+      if (!entry) return res.status(404).json({ error: "Not found" });
+      if (entry.userId !== ctx.user.id) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+      if (entry.expires < Date.now()) {
+        voiceTempStore.delete(req.params.id);
+        return res.status(404).json({ error: "Not found" });
+      }
+      res.setHeader("Content-Type", entry.mimeType);
+      res.setHeader("Cache-Control", "private, no-store");
+      res.end(entry.buffer);
+    } catch {
+      if (!res.headersSent) res.status(500).json({ error: "Internal server error" });
+    }
   });
 
   // POST /api/voice/tts — ElevenLabs (user key) → OpenAI TTS fallback, returns audio/mpeg
