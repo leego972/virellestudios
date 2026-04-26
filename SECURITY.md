@@ -103,10 +103,82 @@ that moves the webhook below the JSON parser, or swaps `raw` for
 
 ### 5. Audit logging on admin actions
 
-Successful admin actions through the four direct routes above are
-logged to the `auditLog` table via `logAuditEvent` with the
-`ADMIN_<ACTION>` event name. Unauthorized attempts are logged to the
-process console with the request path and source IP for SOC review.
+Every admin action through the four direct routes above is logged via
+`logAuditEvent` with the `ADMIN_<ACTION>` event name. Both **successful
+and failed** attempts are captured, including:
+
+- The acting admin's user ID and email
+- The HTTP method and path (`/api/admin/...`)
+- The source IP address (`req.ip`)
+- A timestamp (recorded inside `logAuditEvent`)
+- The target resource ID where applicable (`targetUserId`, `projectId`)
+- The success flag, and the error message on failure
+
+Unauthorized attempts (no admin session) are logged to the process
+console with the request path and source IP for SOC review. Production
+maintenance attempts that are blocked by `ENABLE_MAINTENANCE_ROUTES`
+are logged as `ADMIN_MAINTENANCE_BLOCKED` with `success=false`.
+
+### 6. Admin maintenance routes
+
+Three of the four direct admin routes are **destructive maintenance**
+operations and are gated by an additional `requireMaintenanceEnabled`
+middleware on top of `requireAdminExpress`:
+
+| Route                      | Maintenance? | What it does                                  |
+| -------------------------- | ------------ | --------------------------------------------- |
+| `/api/admin/migrate`       | YES          | Runs `runAutoMigration()` — schema changes    |
+| `/api/admin/fix-scenes`    | YES          | `ALTER TABLE scenes ADD COLUMN …`             |
+| `/api/admin/reset-project` | YES          | Deletes scenes + resets a project to `draft`  |
+| `/api/admin/grant-credits` | NO           | Routine support — adjusts a user's balance    |
+
+**Behaviour in production** (`NODE_ENV=production`):
+
+- If `ENABLE_MAINTENANCE_ROUTES` is anything other than the exact
+  string `"true"`, the three maintenance routes return **HTTP 403**
+  with `{"error":"Maintenance routes are disabled in production",...}`.
+- An `ADMIN_MAINTENANCE_BLOCKED` audit event is recorded for the
+  acting admin and the blocked path.
+- `grant-credits` is **always** available to authenticated admins;
+  it is not affected by this gate.
+
+**Behaviour in development** (`NODE_ENV !== "production"`):
+
+- The gate is a no-op. All four routes are reachable by any
+  authenticated admin.
+
+**How to safely enable in production:**
+
+1. In Railway → service → Variables, add `ENABLE_MAINTENANCE_ROUTES`
+   with value `true` (case-sensitive).
+2. Redeploy or restart the service so the env var is picked up.
+3. Hit the maintenance route from an admin session (cookie-based JWT).
+4. **Immediately delete `ENABLE_MAINTENANCE_ROUTES`** from Railway
+   Variables and redeploy. Leaving it on returns the routes to a
+   permanently-callable state, which defeats the safety gate.
+
+If you find `ENABLE_MAINTENANCE_ROUTES=true` set in production and
+nobody on the team remembers enabling it, treat it as a security
+incident and follow the reporting process at the top of this document.
+
+### 7. Input validation on admin DB-write routes
+
+`grant-credits` and `reset-project` accept a JSON body with numeric
+IDs and amounts. Both routes:
+
+- Reject any value that is not a positive integer (`Number.isInteger`).
+- Clamp `amount` to `±1,000,000` credits to stop fat-finger billing
+  errors. Out-of-range values return HTTP 400 and are audit-logged.
+- Clamp `duration` to 1..600 minutes on `reset-project`.
+- Use Drizzle's parameterised `sql\`...\`` template — no `sql.raw`
+  with user input, no string interpolation into SQL text. The
+  database driver binds values as prepared-statement parameters.
+
+The `fix-scenes` route uses `sql.raw` because every column name and
+DDL fragment is hardcoded in the source — there is no untrusted input.
+If new columns are ever added to that route, they MUST stay
+hardcoded in the same way; never accept column names from request
+bodies.
 
 ---
 

@@ -614,8 +614,27 @@ async function startServer() {
   // (imported at the top of this file) so the same guard can be reused
   // anywhere outside the tRPC stack and so the auth path stays in one
   // place. We only define the audit-logger helper inline here.
+  //
+  // v6.79 — Secure Admin Operations Layer:
+  //   - `requireMaintenanceEnabled` blocks destructive maintenance
+  //     routes (migrate, fix-scenes, reset-project) in production
+  //     unless ENABLE_MAINTENANCE_ROUTES=true. Grant-credits is NOT
+  //     gated by this — it is a routine support action.
+  //   - `logAdminAction` now accepts an explicit success flag and an
+  //     errorMessage so we record both successful AND failed admin
+  //     actions, including the acting admin's email and target id.
+  //   - grant-credits and reset-project use Drizzle's parameterised
+  //     `sql\`...\`` template instead of `sql.raw(...)` with string
+  //     interpolation, with strict numeric validation + range clamping
+  //     before the DB call.
 
-  const logAdminAction = async (req: express.Request, action: string, details: any) => {
+  const logAdminAction = async (
+    req: express.Request,
+    action: string,
+    details: Record<string, any> = {},
+    success: boolean = true,
+    errorMessage?: string,
+  ): Promise<void> => {
     try {
       const { logAuditEvent } = await import("./securityEngine");
       const user = (req as any).user;
@@ -623,91 +642,284 @@ async function startServer() {
         user?.id || 0,
         `ADMIN_${action}`,
         req.ip || "unknown",
-        true,
-        { ...details, path: req.path }
+        success,
+        {
+          ...details,
+          path: req.path,
+          method: req.method,
+          adminEmail: user?.email,
+          ...(errorMessage ? { error: errorMessage } : {}),
+        },
       );
     } catch (err) {
       console.error("[Admin] Failed to log audit event:", err);
     }
   };
 
-  // Manual migration trigger (admin only)
-  app.post("/api/admin/migrate", requireAdminExpress, async (req, res) => {
-    try {
-      await runAutoMigration();
-      await logAdminAction(req, "MIGRATE", { status: "success" });
-      res.json({ status: "ok", message: "Migration completed" });
-    } catch (err: any) {
-      res.status(500).json({ status: "error", message: err.message });
+  // Production safety gate for destructive maintenance routes. In
+  // production these routes are off by default and only enable when
+  // ENABLE_MAINTENANCE_ROUTES=true. The intended workflow is:
+  //   1. Set ENABLE_MAINTENANCE_ROUTES=true in Railway → Variables
+  //   2. Hit the route from an admin session
+  //   3. Unset / delete ENABLE_MAINTENANCE_ROUTES immediately after
+  // This stops accidental schema changes or project wipes against the
+  // live DB. Auth still runs first via requireAdminExpress, so this
+  // gate only fires for already-authenticated admins.
+  const requireMaintenanceEnabled = (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ): void => {
+    if (
+      process.env.NODE_ENV === "production" &&
+      process.env.ENABLE_MAINTENANCE_ROUTES !== "true"
+    ) {
+      const user = (req as any).user;
+      console.warn(
+        `[Admin] Maintenance route blocked in production: ${req.path} ` +
+          `(admin=${user?.email || user?.id || "unknown"})`,
+      );
+      // Best-effort audit log — never block the response if logging fails.
+      void logAdminAction(
+        req,
+        "MAINTENANCE_BLOCKED",
+        { route: req.path },
+        false,
+        "ENABLE_MAINTENANCE_ROUTES is not 'true' in production",
+      );
+      res.status(403).json({
+        error: "Maintenance routes are disabled in production",
+        hint:
+          "Set ENABLE_MAINTENANCE_ROUTES=true on the Railway service " +
+          "to enable temporarily, then unset it after use.",
+      });
+      return;
     }
-  });
+    next();
+  };
+
+  // Manual migration trigger (admin only, maintenance-gated in prod)
+  app.post(
+    "/api/admin/migrate",
+    requireAdminExpress,
+    requireMaintenanceEnabled,
+    async (req, res) => {
+      try {
+        await runAutoMigration();
+        await logAdminAction(req, "MIGRATE", { status: "success" });
+        res.json({ status: "ok", message: "Migration completed" });
+      } catch (err: any) {
+        await logAdminAction(req, "MIGRATE", {}, false, err?.message);
+        res.status(500).json({ status: "error", message: err.message });
+      }
+    },
+  );
 
   // Force-fix: directly add missing scene columns (bypasses INFORMATION_SCHEMA)
-  app.post("/api/admin/fix-scenes", requireAdminExpress, async (req, res) => {
-    const { getDb } = await import("../db");
-    const { sql } = await import("drizzle-orm");
-    const db = await getDb();
-    if (!db) return res.status(500).json({ error: "No DB" });
-    const cols: [string, string][] = [
-      ["transitionType", "VARCHAR(64) NULL DEFAULT 'cut'"],
-      ["transitionDuration", "FLOAT NULL DEFAULT 0.5"],
-      ["colorGrading", "VARCHAR(128) NULL"],
-      ["productionNotes", "TEXT NULL"],
-    ];
-    const results: string[] = [];
-    for (const [col, def] of cols) {
+  // (admin only, maintenance-gated in prod)
+  app.post(
+    "/api/admin/fix-scenes",
+    requireAdminExpress,
+    requireMaintenanceEnabled,
+    async (req, res) => {
       try {
-        await db.execute(sql.raw(`ALTER TABLE scenes ADD COLUMN \`${col}\` ${def}`));
-        results.push(`Added ${col}`);
+        const { getDb } = await import("../db");
+        const { sql } = await import("drizzle-orm");
+        const db = await getDb();
+        if (!db) {
+          await logAdminAction(req, "FIX_SCENES", {}, false, "No DB");
+          res.status(500).json({ error: "No DB" });
+          return;
+        }
+        // Column names + DDL fragments are hardcoded here, not user-supplied,
+        // so sql.raw is safe — there is no untrusted input on this route.
+        const cols: [string, string][] = [
+          ["transitionType", "VARCHAR(64) NULL DEFAULT 'cut'"],
+          ["transitionDuration", "FLOAT NULL DEFAULT 0.5"],
+          ["colorGrading", "VARCHAR(128) NULL"],
+          ["productionNotes", "TEXT NULL"],
+        ];
+        const results: string[] = [];
+        for (const [col, def] of cols) {
+          try {
+            await db.execute(sql.raw(`ALTER TABLE scenes ADD COLUMN \`${col}\` ${def}`));
+            results.push(`Added ${col}`);
+          } catch (e: any) {
+            results.push(`${col}: ${e.message?.slice(0, 100)}`);
+          }
+        }
+        await logAdminAction(req, "FIX_SCENES", { results });
+        res.json({ status: "ok", results });
       } catch (e: any) {
-        results.push(`${col}: ${e.message?.slice(0, 100)}`);
+        await logAdminAction(req, "FIX_SCENES", {}, false, e?.message);
+        res.status(500).json({ error: e.message });
       }
-    }
-    await logAdminAction(req, "FIX_SCENES", { results });
-    res.json({ status: "ok", results });
-  });
+    },
+  );
 
-  // Admin: Grant credits to a user
-  app.post("/api/admin/grant-credits", requireAdminExpress, express.json(), async (req, res) => {
-    try {
-      const { userId, amount } = req.body;
-      if (!userId || !amount) {
-        res.status(400).json({ error: "userId and amount required" });
-        return;
+  // Admin: Grant credits to a user.
+  // Routine support action — NOT gated by requireMaintenanceEnabled.
+  // Validates IDs, clamps amount to ±MAX_GRANT, parameterised SQL.
+  const MAX_CREDIT_GRANT = 1_000_000;
+  app.post(
+    "/api/admin/grant-credits",
+    requireAdminExpress,
+    express.json(),
+    async (req, res) => {
+      try {
+        const userIdNum = Number(req.body?.userId);
+        const amountNum = Number(req.body?.amount);
+        if (!Number.isInteger(userIdNum) || userIdNum <= 0) {
+          await logAdminAction(
+            req,
+            "GRANT_CREDITS",
+            { reason: "invalid_userId", userId: req.body?.userId },
+            false,
+            "userId must be a positive integer",
+          );
+          res.status(400).json({ error: "userId must be a positive integer" });
+          return;
+        }
+        if (!Number.isInteger(amountNum) || amountNum === 0) {
+          await logAdminAction(
+            req,
+            "GRANT_CREDITS",
+            { reason: "invalid_amount", amount: req.body?.amount },
+            false,
+            "amount must be a non-zero integer",
+          );
+          res.status(400).json({ error: "amount must be a non-zero integer" });
+          return;
+        }
+        if (amountNum < -MAX_CREDIT_GRANT || amountNum > MAX_CREDIT_GRANT) {
+          await logAdminAction(
+            req,
+            "GRANT_CREDITS",
+            { reason: "amount_out_of_range", amount: amountNum },
+            false,
+            `amount outside ±${MAX_CREDIT_GRANT}`,
+          );
+          res.status(400).json({
+            error: `amount must be between -${MAX_CREDIT_GRANT} and ${MAX_CREDIT_GRANT}`,
+          });
+          return;
+        }
+        const { getDb } = await import("../db");
+        const { sql } = await import("drizzle-orm");
+        const db = await getDb();
+        if (!db) {
+          await logAdminAction(req, "GRANT_CREDITS", { targetUserId: userIdNum }, false, "No DB");
+          res.status(500).json({ error: "No DB" });
+          return;
+        }
+        // Parameterised — values bound by the driver, not interpolated as text.
+        await db.execute(
+          sql`UPDATE users SET creditBalance = creditBalance + ${amountNum} WHERE id = ${userIdNum}`,
+        );
+        const [rows] = await db.execute(
+          sql`SELECT creditBalance FROM users WHERE id = ${userIdNum}`,
+        );
+        const newBalance = (rows as any)?.[0]?.creditBalance ?? 0;
+        await logAdminAction(req, "GRANT_CREDITS", {
+          targetUserId: userIdNum,
+          amount: amountNum,
+          newBalance,
+        });
+        res.json({
+          status: "ok",
+          userId: userIdNum,
+          creditsAdded: amountNum,
+          newBalance,
+        });
+      } catch (e: any) {
+        await logAdminAction(
+          req,
+          "GRANT_CREDITS",
+          { targetUserId: req.body?.userId, amount: req.body?.amount },
+          false,
+          e?.message,
+        );
+        res.status(500).json({ error: e.message });
       }
-      const { getDb } = await import("../db");
-      const { sql } = await import("drizzle-orm");
-      const db = await getDb();
-      await db!.execute(sql.raw(`UPDATE users SET creditBalance = creditBalance + ${parseInt(amount)} WHERE id = ${parseInt(userId)}`));
-      const [rows] = await db!.execute(sql.raw(`SELECT creditBalance FROM users WHERE id = ${parseInt(userId)}`));
-      const newBalance = (rows as any)?.[0]?.creditBalance || 0;
-      await logAdminAction(req, "GRANT_CREDITS", { targetUserId: userId, amount, newBalance });
-      res.json({ status: "ok", userId: parseInt(userId), creditsAdded: parseInt(amount), newBalance });
-    } catch (e: any) {
-      res.status(500).json({ error: e.message });
-    }
-  });
+    },
+  );
 
-
-  // Admin: Reset project (delete scenes, update duration, reset status)
-  app.post("/api/admin/reset-project", requireAdminExpress, express.json(), async (req, res) => {
-    try {
-      const { projectId, duration } = req.body;
-      if (!projectId) { res.status(400).json({ error: "projectId required" }); return; }
-      const { getDb } = await import("../db");
-      const { sql } = await import("drizzle-orm");
-      const db = await getDb();
-      // Delete all scenes for this project
-      await db!.execute(sql.raw(`DELETE FROM scenes WHERE projectId = ${parseInt(projectId)}`));
-      // Update duration and reset status
-      const dur = duration ? parseInt(duration) : 1;
-      await db!.execute(sql.raw(`UPDATE projects SET duration = ${dur}, status = 'draft' WHERE id = ${parseInt(projectId)}`));
-      await logAdminAction(req, "RESET_PROJECT", { projectId, duration: dur });
-      res.json({ status: "ok", projectId: parseInt(projectId), duration: dur, scenesDeleted: true });
-    } catch (e: any) {
-      res.status(500).json({ error: e.message });
-    }
-  });
+  // Admin: Reset project (delete scenes, update duration, reset status).
+  // Destructive — gated by requireMaintenanceEnabled in production.
+  // Validates IDs + duration, parameterised SQL.
+  const MAX_PROJECT_DURATION_MIN = 600; // 10h cap
+  app.post(
+    "/api/admin/reset-project",
+    requireAdminExpress,
+    requireMaintenanceEnabled,
+    express.json(),
+    async (req, res) => {
+      try {
+        const projectIdNum = Number(req.body?.projectId);
+        if (!Number.isInteger(projectIdNum) || projectIdNum <= 0) {
+          await logAdminAction(
+            req,
+            "RESET_PROJECT",
+            { reason: "invalid_projectId", projectId: req.body?.projectId },
+            false,
+            "projectId must be a positive integer",
+          );
+          res.status(400).json({ error: "projectId must be a positive integer" });
+          return;
+        }
+        let durationNum = 1;
+        if (req.body?.duration !== undefined && req.body?.duration !== null) {
+          const d = Number(req.body.duration);
+          if (!Number.isInteger(d) || d < 1 || d > MAX_PROJECT_DURATION_MIN) {
+            await logAdminAction(
+              req,
+              "RESET_PROJECT",
+              { reason: "invalid_duration", duration: req.body?.duration },
+              false,
+              `duration must be 1..${MAX_PROJECT_DURATION_MIN}`,
+            );
+            res.status(400).json({
+              error: `duration must be an integer between 1 and ${MAX_PROJECT_DURATION_MIN}`,
+            });
+            return;
+          }
+          durationNum = d;
+        }
+        const { getDb } = await import("../db");
+        const { sql } = await import("drizzle-orm");
+        const db = await getDb();
+        if (!db) {
+          await logAdminAction(req, "RESET_PROJECT", { projectId: projectIdNum }, false, "No DB");
+          res.status(500).json({ error: "No DB" });
+          return;
+        }
+        // Parameterised — values bound by the driver.
+        await db.execute(sql`DELETE FROM scenes WHERE projectId = ${projectIdNum}`);
+        await db.execute(
+          sql`UPDATE projects SET duration = ${durationNum}, status = 'draft' WHERE id = ${projectIdNum}`,
+        );
+        await logAdminAction(req, "RESET_PROJECT", {
+          projectId: projectIdNum,
+          duration: durationNum,
+        });
+        res.json({
+          status: "ok",
+          projectId: projectIdNum,
+          duration: durationNum,
+          scenesDeleted: true,
+        });
+      } catch (e: any) {
+        await logAdminAction(
+          req,
+          "RESET_PROJECT",
+          { projectId: req.body?.projectId, duration: req.body?.duration },
+          false,
+          e?.message,
+        );
+        res.status(500).json({ error: e.message });
+      }
+    },
+  );
 
   // Rate limiting on auth endpoints (stricter: 10 requests per minute)
   app.use("/api/trpc/auth.login", rateLimit(60_000, 10));
