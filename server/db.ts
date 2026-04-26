@@ -45,7 +45,6 @@ import {
     wardrobeItems, InsertWardrobeItem, WardrobeItem,
     wardrobeAssignments, InsertWardrobeAssignment, WardrobeAssignment,
   } from "../drizzle/schema";
-import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -80,19 +79,19 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     textFields.forEach(assignNullable);
     if (user.lastSignedIn !== undefined) { values.lastSignedIn = user.lastSignedIn; updateSet.lastSignedIn = user.lastSignedIn; }
-    // Role assignment: strictly database-backed or OWNER_OPEN_ID bootstrap
+    // v6.82: Role authority is database-backed only.
+    // Never auto-promote a user to admin from OWNER_OPEN_ID or email.
+    // Admin role changes must happen through the protected admin role mutation
+    // or a deliberate direct database operation during emergency recovery.
     if (user.role !== undefined) {
       values.role = user.role;
       updateSet.role = user.role;
-    } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
     }
     if (!values.lastSignedIn) values.lastSignedIn = new Date();
     if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
     await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
-    if (user.openId === ENV.ownerOpenId || user.role === 'admin') {
-      console.log(`[Auth] Admin role assigned/confirmed for ${user.email || user.openId}`);
+    if (user.role === 'admin') {
+      console.log(`[Auth] Admin role confirmed for ${user.email || user.openId}`);
     }
   } catch (error) { console.error("[Database] Failed to upsert user:", error); throw error; }
 }
@@ -143,8 +142,9 @@ export async function createEmailUser(data: {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const openId = `email_${data.email}`; // generate a stable openId from email
-  // Role assignment: strictly database-backed or OWNER_OPEN_ID bootstrap
-  const initialRole = openId === ENV.ownerOpenId ? "admin" : "user";
+  // v6.82: New email users are always standard users.
+  // Admin role must be granted through protected admin tooling or direct DB recovery.
+  const initialRole = "user";
   
   await db.insert(users).values({
     openId,

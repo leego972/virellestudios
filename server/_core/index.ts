@@ -102,8 +102,9 @@ async function startServer() {
     // Continue starting — the server may still work with existing schema
   }
 
-  // Admin roles are now managed via OWNER_OPEN_ID in db.ts upsertUser/createEmailUser
-  // No bulk email-based promotion on startup for better security and auditability.
+  // v6.82: Admin authority is database-role only. Server startup performs NO
+  // promotion. Admin role changes go through admin.updateUserRole or a
+  // deliberate direct database recovery action. See SECURITY.md §8.
 
   // Auto-provision Stripe products and prices on startup
   try {

@@ -1,0 +1,12 @@
+# Owner review required for security-sensitive changes.
+
+* @leego972
+
+/.github/ @leego972
+/server/_core/ @leego972
+/server/db.ts @leego972
+/server/routers.ts @leego972
+/drizzle/ @leego972
+/SECURITY.md @leego972
+/package.json @leego972
+/pnpm-lock.yaml @leego972

@@ -480,12 +480,8 @@ export const appRouter = router({
         // Mark login as successful
         trackLoginAttempt(user.id, clientIP, true);
         logAuditEvent(user.id, "login_success", clientIP, true);
-        // Role assignment: owner gets admin role automatically
-        const isOwner = user.openId === ENV.ownerOpenId;
-        if (isOwner && user.role !== "admin") {
-          await db.updateUserRole(user.id, "admin");
-          user = { ...user, role: "admin" } as typeof user;
-        }
+        // v6.82: Login must NEVER promote a user to admin. Admin authority
+        // is database-role only — see SECURITY.md §8 "Admin authority model".
         // Update last signed in
         await db.upsertUser({ openId: user.openId, lastSignedIn: new Date() });
         // Start 48-hour expiry clock on first login for temporary tester accounts

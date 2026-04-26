@@ -180,6 +180,26 @@ If new columns are ever added to that route, they MUST stay
 hardcoded in the same way; never accept column names from request
 bodies.
 
+### 8. Admin authority model
+
+Admin authority is database-role only.
+
+Rules:
+
+- A user is admin only when `users.role === "admin"`.
+- Login must never promote a user to admin.
+- Signup must never promote a user to admin.
+- Server startup must never bulk-promote users to admin.
+- `OWNER_OPEN_ID` is intentionally ignored for admin promotion.
+- `ADMIN_EMAIL` is notification/config metadata only. It must not grant admin access.
+- Admin role changes must happen through the protected `admin.updateUserRole` procedure or through a deliberate direct database recovery action.
+- All admin role changes must be audit logged.
+- Admin users should use strong passwords. Add 2FA before public paid launch.
+
+Emergency admin recovery:
+
+If all admin access is lost, restore one admin directly in the database with an owner-approved manual operation, then audit the action in deployment notes. Do not add automatic bootstrap logic back into source code.
+
 ---
 
 ## Operational checklist for deploys
