@@ -22,7 +22,8 @@ export async function setupVite(app: Express, server: Server) {
   });
 
   app.use(vite.middlewares);
-  app.use("*", async (req, res, next) => {
+  // Express 5: bare "*" is no longer a valid path — use "/{*path}" instead
+  app.use("/{*path}", async (req, res, next) => {
     const url = req.originalUrl;
 
     try {
@@ -61,13 +62,14 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
-  // Inject per-page SEO meta tags (canonical, title, description, OG) based on request path
-  app.use("*", (req, res) => {
+  // fall through to index.html if the file does not exist.
+  // Inject per-page SEO meta tags (canonical, title, description, OG) based on request path.
+  // Express 5: bare "*" is no longer a valid path — use "/{*path}" instead.
+  app.use("/{*path}", (req, res) => {
     const indexPath = path.resolve(distPath, "index.html");
     try {
       const html = fs.readFileSync(indexPath, "utf-8");
-      // req.path is "/" for all routes in app.use("*") — use originalUrl instead
+      // Use originalUrl (not req.path) to get the full path including any subpath
       const requestPath = req.originalUrl.split("?")[0].split("#")[0] || "/";
       const injected = injectMetaTags(html, requestPath);
       res.status(200).set({ "Content-Type": "text/html" }).end(injected);
@@ -76,3 +78,4 @@ export function serveStatic(app: Express) {
     }
   });
 }
+
