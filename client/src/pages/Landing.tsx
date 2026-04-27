@@ -431,11 +431,11 @@ export default function Landing() {
                 Virelle Signature Cast
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
-                Create your own cast — or cast a{" "}
-                <span className="text-amber-400">Virelle Star</span>
+                Create your cast before you{" "}
+                <span className="text-amber-400">create the film.</span>
               </h2>
               <p className="text-white/60 max-w-2xl mx-auto">
-                Build original characters from scratch, or cast premium AI-born digital talent with continuity, screen presence, and commercial-ready identity built in. Both lanes are open in every project.
+                Build original characters or use Virelle Signature Cast talent with structured Character DNA for scripts, scene cards, trailers, posters, and future generated shots.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-10">
@@ -458,7 +458,7 @@ export default function Landing() {
                 onClick={() => setLocation("/signature-cast")}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm transition-colors"
               >
-                Browse the Signature Cast
+                Browse Signature Cast
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>

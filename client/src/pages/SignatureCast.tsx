@@ -1,67 +1,298 @@
 import { useState } from "react";
-import { trpc } from "@/lib/trpc";
+  import { trpc } from "@/lib/trpc";
   import { useLocation } from "wouter";
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Card, CardContent } from "@/components/ui/card";
   import {
     Star, Zap, Shield, Film, Users, ArrowRight, Play, Crown,
-    Sparkles, CheckCircle2, ChevronRight,
+    Sparkles, CheckCircle2, ChevronRight, Fingerprint, GitBranch, Layers, AlertTriangle,
   } from "lucide-react";
 
-  // ─── Full cast roster (flagship + premium featured on marketing page) ─────
+  // ─── Full cast roster with Character DNA ──────────────────────────────────────
   const FLAGSHIP_STARS = [
-    { id: "julian-vance",    name: "Julian Vance",        tier: "flagship", category: "Male Lead",       initials: "JV", accentColor: "amber",  gradient: "from-amber-900/50 via-zinc-900 to-zinc-950",  hook: "Sharp, dangerous charisma built for thrillers, prestige drama, and high-stakes romance.", tags: ["Crime Thriller", "Prestige Drama", "Romantic Lead"], chemistry: ["Elena Rostova", "Sofia Reyes"] , portraitUrl: "/portraits/julian-vance/master.png" },
-    { id: "elena-rostova",   name: "Elena Rostova",       tier: "flagship", category: "Female Lead",     initials: "ER", accentColor: "cyan",   gradient: "from-cyan-900/35 via-zinc-900 to-zinc-950",   hook: "Precise, composed, and quietly devastating. The most dangerous person in any room.", tags: ["Prestige Drama", "Thriller", "High Fashion"], chemistry: ["Julian Vance", "Kofi Adebayo"] , portraitUrl: "/portraits/elena-rostova/master.png" },
-    { id: "sofia-reyes",     name: "Sofia Reyes",         tier: "flagship", category: "Female Lead",     initials: "SR", accentColor: "rose",   gradient: "from-rose-900/40 via-zinc-900 to-zinc-950",   hook: "Warmth that disarms. Intelligence that surprises. The most versatile lead in the cast.", tags: ["Drama", "Romance", "Crime"], chemistry: ["Julian Vance", "Marcus Osei"] , portraitUrl: "/portraits/sofia-reyes/master.png" },
-    { id: "kofi-adebayo",    name: "Kofi Adebayo",        tier: "flagship", category: "Male Lead",       initials: "KA", accentColor: "emerald",gradient: "from-emerald-900/40 via-zinc-900 to-zinc-950", hook: "Immediate, undeniable physical authority. The room changes when he enters it.", tags: ["Action", "Prestige Drama", "Crime"], chemistry: ["Elena Rostova", "Sofia Reyes"] , portraitUrl: "/portraits/kofi-adebayo/master.png" },
-    { id: "kenji-sato",      name: "Kenji Sato",          tier: "premium",  category: "Male Lead",       initials: "KS", accentColor: "blue",   gradient: "from-blue-900/40 via-zinc-900 to-zinc-950",   hook: "Neo-noir's perfect face. Stillness that reads as danger under dramatic lighting.", tags: ["Noir", "Thriller", "Drama"], chemistry: ["Elena Rostova", "Yuki Tanaka"] , portraitUrl: "/portraits/kenji-sato/master.png" },
-    { id: "marcus-osei",     name: "Marcus Osei",         tier: "premium",  category: "Male Lead",       initials: "MO", accentColor: "orange", gradient: "from-orange-900/35 via-zinc-900 to-zinc-950", hook: "Grounded, emotionally complex. The kind of face audiences trust and follow.", tags: ["Drama", "Crime", "Action"], chemistry: ["Sofia Reyes", "Amara Diallo"] , portraitUrl: "/portraits/marcus-osei/master.png" },
-    { id: "amara-diallo",    name: "Amara Diallo",        tier: "premium",  category: "Female Lead",     initials: "AD", accentColor: "violet", gradient: "from-violet-900/35 via-zinc-900 to-zinc-950", hook: "Still on the outside. Relentless underneath. Audiences underestimate her exactly once.", tags: ["Drama", "Thriller", "Action"], chemistry: ["Marcus Osei", "Kofi Adebayo"] , portraitUrl: "/portraits/amara-diallo/master.png" },
-    { id: "yuki-tanaka",     name: "Yuki Tanaka",         tier: "premium",  category: "Female Lead",     initials: "YT", accentColor: "indigo", gradient: "from-indigo-900/35 via-zinc-900 to-zinc-950", hook: "Controlled, exact, and quietly magnetic. Every gesture is intentional.", tags: ["Noir", "Thriller", "Drama"], chemistry: ["Kenji Sato", "Elena Rostova"] , portraitUrl: "/portraits/yuki-tanaka/master.png" },
-    { id: "viktor-vale",     name: "Viktor Vale",         tier: "premium",  category: "Character Actor", initials: "VV", accentColor: "stone",  gradient: "from-stone-700/40 via-zinc-900 to-zinc-950",  hook: "Quiet authority that doesn't need to announce itself. The most dangerous man at the table.", tags: ["Crime", "Prestige Drama", "Thriller"], chemistry: ["Celeste Vale", "Elena Rostova"] , portraitUrl: "/portraits/viktor-vale/master.png" },
-    { id: "tariq-haddad",    name: "Tariq Haddad",        tier: "premium",  category: "Character Actor", initials: "TH", accentColor: "amber",  gradient: "from-amber-800/30 via-zinc-900 to-zinc-950",  hook: "Warm, expansive, and unpredictable. The most dangerous man at the dinner table.", tags: ["Crime", "Drama", "Thriller"], chemistry: ["Viktor Vale", "Kofi Adebayo"] , portraitUrl: "/portraits/tariq-haddad/master.png" },
-    { id: "gallagher-twins", name: "The Gallagher Twins", tier: "premium",  category: "Twin Unit",       initials: "GT", accentColor: "purple", gradient: "from-purple-900/35 via-zinc-900 to-zinc-950", hook: "Two faces, one alibi. The most visually distinctive unit in the cast.", tags: ["Thriller", "Crime", "Dark Comedy"], chemistry: ["Elena Rostova", "Kenji Sato"] , portraitUrl: "/portraits/gallagher-twins/master.png" },
-    { id: "daniel-cross",    name: "Daniel Cross",        tier: "standard", category: "Male Lead",       initials: "DC", accentColor: "slate",  gradient: "from-slate-700/30 via-zinc-900 to-zinc-950",  hook: "Suburban everyman energy that makes moral compromise feel real and earned.", tags: ["Drama", "Thriller", "Crime"], chemistry: ["Mavis Whitlock", "Celeste Vale"] , portraitUrl: "/portraits/daniel-cross/master.png" },
-    { id: "mavis-whitlock",  name: "Mavis Whitlock",      tier: "standard", category: "Female Lead",     initials: "MW", accentColor: "yellow", gradient: "from-yellow-900/30 via-zinc-900 to-zinc-950", hook: "Sees everything. Says less than she knows. The most dangerous witness in any scene.", tags: ["Drama", "Dark Comedy", "Crime"], chemistry: ["Daniel Cross", "Celeste Vale"] , portraitUrl: "/portraits/mavis-whitlock/master.png" },
-    { id: "celeste-vale",    name: "Celeste Vale",        tier: "standard", category: "Female Lead",     initials: "CV", accentColor: "teal",   gradient: "from-teal-900/30 via-zinc-900 to-zinc-950",   hook: "Immaculate, composed, and impossible to read. The most unsettling neighbour you'll ever meet.", tags: ["Thriller", "Drama", "Crime"], chemistry: ["Daniel Cross", "Mavis Whitlock"] , portraitUrl: "/portraits/celeste-vale/master.png" },
-    { id: "big-sasha",       name: "Big Sasha",           tier: "standard", category: "Character Actor", initials: "BS", accentColor: "zinc",   gradient: "from-zinc-700/40 via-zinc-900 to-zinc-950",   hook: "The harder edge. More silent, more suspicious, more final. His presence does the threatening.", tags: ["Crime", "Thriller", "Drama"], chemistry: ["Little Sasha", "Viktor Vale"] , portraitUrl: "/portraits/big-sasha/master.png" },
-    { id: "little-sasha",    name: "Little Sasha",        tier: "standard", category: "Character Actor", initials: "LS", accentColor: "slate",  gradient: "from-slate-600/30 via-zinc-900 to-zinc-950",  hook: "More talkative, more disarming, more likely to smile. Warmth as a security function.", tags: ["Crime", "Thriller", "Dark Comedy"], chemistry: ["Big Sasha", "Viktor Vale"] , portraitUrl: "/portraits/little-sasha/master.png" },
+    {
+      id: "julian-vance", name: "Julian Vance", tier: "flagship", category: "Male Lead",
+      initials: "JV", accentColor: "amber", gradient: "from-amber-900/50 via-zinc-900 to-zinc-950",
+      hook: "Sharp, dangerous charisma built for thrillers, prestige drama, and high-stakes romance.",
+      tags: ["Crime Thriller", "Prestige Drama", "Romantic Lead"],
+      chemistry: ["Elena Rostova", "Sofia Reyes"],
+      portraitUrl: "/portraits/julian-vance/master.png",
+      archetype: "Charismatic Operator",
+      genreFit: "Crime thriller · Prestige drama · High-stakes romance",
+      visualIdentity: "Tailored dark suit, controlled expression, silver-touched hair, restrained menace.",
+      personality: "Calculating, magnetic, emotionally guarded.",
+      voiceDirection: "Low and deliberate. Every word costs something.",
+      continuityNotes: "Best in interrogation rooms, private clubs, rooftop standoffs, luxury interiors.",
+    },
+    {
+      id: "elena-rostova", name: "Elena Rostova", tier: "flagship", category: "Female Lead",
+      initials: "ER", accentColor: "cyan", gradient: "from-cyan-900/35 via-zinc-900 to-zinc-950",
+      hook: "Precise, composed, and quietly devastating. The most dangerous person in any room.",
+      tags: ["Prestige Drama", "Thriller", "High Fashion"],
+      chemistry: ["Julian Vance", "Kofi Adebayo"],
+      portraitUrl: "/portraits/elena-rostova/master.png",
+      archetype: "Ice-Cold Power Lead",
+      genreFit: "Prestige drama · Thriller · High fashion editorial",
+      visualIdentity: "Angular cheekbones, cool undertones, monochrome wardrobe, minimal jewelry.",
+      personality: "Precise, composed, dangerously self-controlled.",
+      voiceDirection: "Measured, clipped. Cold intelligence with rare emotional breaks.",
+      continuityNotes: "Best in boardrooms, clinical environments, power corridors, cold interrogation scenes.",
+    },
+    {
+      id: "sofia-reyes", name: "Sofia Reyes", tier: "flagship", category: "Female Lead",
+      initials: "SR", accentColor: "rose", gradient: "from-rose-900/40 via-zinc-900 to-zinc-950",
+      hook: "Warmth that disarms. Intelligence that surprises. The most versatile lead in the cast.",
+      tags: ["Drama", "Romance", "Crime"],
+      chemistry: ["Julian Vance", "Marcus Osei"],
+      portraitUrl: "/portraits/sofia-reyes/master.png",
+      archetype: "Resilient Romantic Lead",
+      genreFit: "Drama · Romance · Crime ensemble",
+      visualIdentity: "Warm brown tones, expressive eyes, wardrobe ranging from street to elegant.",
+      personality: "Warmth that disarms, intelligence that surprises, resilience under pressure.",
+      voiceDirection: "Genuine, emotionally present. Cadence that builds naturally.",
+      continuityNotes: "Best in intimate scenes, moral dilemmas, romance tension, domestic environments.",
+    },
+    {
+      id: "kofi-adebayo", name: "Kofi Adebayo", tier: "flagship", category: "Male Lead",
+      initials: "KA", accentColor: "emerald", gradient: "from-emerald-900/40 via-zinc-900 to-zinc-950",
+      hook: "Immediate, undeniable physical authority. The room changes when he enters it.",
+      tags: ["Action", "Prestige Drama", "Crime"],
+      chemistry: ["Elena Rostova", "Sofia Reyes"],
+      portraitUrl: "/portraits/kofi-adebayo/master.png",
+      archetype: "Physical Authority Lead",
+      genreFit: "Action · Prestige drama · Crime ensemble",
+      visualIdentity: "Commanding build, clean sharp edges, understated wardrobe, stillness as power.",
+      personality: "Immediate authority, moral depth, protective instinct.",
+      voiceDirection: "Grounded, controlled. Phrases that land with weight.",
+      continuityNotes: "Best in standoffs, leadership scenes, physical confrontations, ensemble anchoring.",
+    },
+    {
+      id: "kenji-sato", name: "Kenji Sato", tier: "premium", category: "Male Lead",
+      initials: "KS", accentColor: "blue", gradient: "from-blue-900/40 via-zinc-900 to-zinc-950",
+      hook: "Neo-noir's perfect face. Stillness that reads as danger under dramatic lighting.",
+      tags: ["Noir", "Thriller", "Drama"],
+      chemistry: ["Elena Rostova", "Yuki Tanaka"],
+      portraitUrl: "/portraits/kenji-sato/master.png",
+      archetype: "Neo-Noir Protagonist",
+      genreFit: "Neo-noir · Thriller · Psychological drama",
+      visualIdentity: "Sharp jawline, minimal dark wardrobe, stillness reads as danger.",
+      personality: "Reserved, analytical, emotionally contained with rare explosive moments.",
+      voiceDirection: "Quiet, measured. Rarely rises above a murmur.",
+      continuityNotes: "Best in rain scenes, low-light investigation, urban environments, night exteriors.",
+    },
+    {
+      id: "marcus-osei", name: "Marcus Osei", tier: "premium", category: "Male Lead",
+      initials: "MO", accentColor: "orange", gradient: "from-orange-900/35 via-zinc-900 to-zinc-950",
+      hook: "Grounded, emotionally complex. The kind of face audiences trust and follow.",
+      tags: ["Drama", "Crime", "Action"],
+      chemistry: ["Sofia Reyes", "Amara Diallo"],
+      portraitUrl: "/portraits/marcus-osei/master.png",
+      archetype: "Trusted Complex Lead",
+      genreFit: "Drama · Crime ensemble · Action",
+      visualIdentity: "Grounded physicality, approachable features, tactical or casual wardrobe.",
+      personality: "Emotionally complex, loyal, principled under pressure.",
+      voiceDirection: "Warm but firm. Cadence that builds trust instinctively.",
+      continuityNotes: "Best in community scenes, loyalty tests, physical support roles, slow-burn reveals.",
+    },
+    {
+      id: "amara-diallo", name: "Amara Diallo", tier: "premium", category: "Female Lead",
+      initials: "AD", accentColor: "violet", gradient: "from-violet-900/35 via-zinc-900 to-zinc-950",
+      hook: "Still on the outside. Relentless underneath. Audiences underestimate her exactly once.",
+      tags: ["Drama", "Thriller", "Action"],
+      chemistry: ["Marcus Osei", "Kofi Adebayo"],
+      portraitUrl: "/portraits/amara-diallo/master.png",
+      archetype: "Silent Storm",
+      genreFit: "Drama · Thriller · Action",
+      visualIdentity: "Still exterior, expressive eyes, minimal adornment, controlled posture.",
+      personality: "Determined, observant, dangerous when provoked.",
+      voiceDirection: "Minimal words. Every syllable intentional.",
+      continuityNotes: "Best in surveillance scenes, silent pursuit, confrontation buildup, emotional turns.",
+    },
+    {
+      id: "yuki-tanaka", name: "Yuki Tanaka", tier: "premium", category: "Female Lead",
+      initials: "YT", accentColor: "indigo", gradient: "from-indigo-900/35 via-zinc-900 to-zinc-950",
+      hook: "Controlled, exact, and quietly magnetic. Every gesture is intentional.",
+      tags: ["Noir", "Thriller", "Drama"],
+      chemistry: ["Kenji Sato", "Elena Rostova"],
+      portraitUrl: "/portraits/yuki-tanaka/master.png",
+      archetype: "Precise Enigma",
+      genreFit: "Noir · Thriller · Drama",
+      visualIdentity: "Exact styling, monochrome palette, refined detail in every frame.",
+      personality: "Controlled, exact, magnetic without effort.",
+      voiceDirection: "Deliberate, understated. Tonal shifts carry all meaning.",
+      continuityNotes: "Best in close-up tension, stylised noir lighting, psychological scenes, late-night interiors.",
+    },
+    {
+      id: "viktor-vale", name: "Viktor Vale", tier: "premium", category: "Character Actor",
+      initials: "VV", accentColor: "stone", gradient: "from-stone-700/40 via-zinc-900 to-zinc-950",
+      hook: "Quiet authority that doesn't need to announce itself. The most dangerous man at the table.",
+      tags: ["Crime", "Prestige Drama", "Thriller"],
+      chemistry: ["Celeste Vale", "Elena Rostova"],
+      portraitUrl: "/portraits/viktor-vale/master.png",
+      archetype: "Elder Patriarch",
+      genreFit: "Crime · Prestige drama · Thriller",
+      visualIdentity: "Heavy-set authority, silver hair, expensive but worn wardrobe.",
+      personality: "Quiet authority. Dangerous in stillness.",
+      voiceDirection: "Low, deliberate. Uses silence as punctuation.",
+      continuityNotes: "Best at a table, in a study, in council scenes where his words end things.",
+    },
+    {
+      id: "tariq-haddad", name: "Tariq Haddad", tier: "premium", category: "Character Actor",
+      initials: "TH", accentColor: "amber", gradient: "from-amber-800/30 via-zinc-900 to-zinc-950",
+      hook: "Warm, expansive, and unpredictable. The most dangerous man at the dinner table.",
+      tags: ["Crime", "Drama", "Thriller"],
+      chemistry: ["Viktor Vale", "Kofi Adebayo"],
+      portraitUrl: "/portraits/tariq-haddad/master.png",
+      archetype: "Warm Menace",
+      genreFit: "Crime · Drama · Thriller",
+      visualIdentity: "Open-faced warmth masking hidden depth, casual authority.",
+      personality: "Charming, unpredictable. Warm until he isn't.",
+      voiceDirection: "Expansive, jovial. Edges only visible in the subtext.",
+      continuityNotes: "Best at dinner tables, social gatherings, negotiations disguised as hospitality.",
+    },
+    {
+      id: "gallagher-twins", name: "The Gallagher Twins", tier: "premium", category: "Twin Unit",
+      initials: "GT", accentColor: "purple", gradient: "from-purple-900/35 via-zinc-900 to-zinc-950",
+      hook: "Two faces, one alibi. The most visually distinctive unit in the cast.",
+      tags: ["Thriller", "Crime", "Dark Comedy"],
+      chemistry: ["Elena Rostova", "Kenji Sato"],
+      portraitUrl: "/portraits/gallagher-twins/master.png",
+      archetype: "Twin Wildcard",
+      genreFit: "Thriller · Crime · Dark comedy",
+      visualIdentity: "Identical exteriors with opposite styling to differentiate.",
+      personality: "One disarms; one threatens. Together a complete system.",
+      voiceDirection: "Contrast is the direction — one warm, one clipped.",
+      continuityNotes: "Best in unreliable-identity scenes, mirrored sequences, misdirection beats.",
+    },
+    {
+      id: "daniel-cross", name: "Daniel Cross", tier: "standard", category: "Male Lead",
+      initials: "DC", accentColor: "slate", gradient: "from-slate-700/30 via-zinc-900 to-zinc-950",
+      hook: "Suburban everyman energy that makes moral compromise feel real and earned.",
+      tags: ["Drama", "Thriller", "Crime"],
+      chemistry: ["Mavis Whitlock", "Celeste Vale"],
+      portraitUrl: "/portraits/daniel-cross/master.png",
+      archetype: "Suburban Everyman",
+      genreFit: "Drama · Suburban thriller · Crime",
+      visualIdentity: "Unremarkable by design — the face moral compromise looks through.",
+      personality: "Ordinary, anxious, slowly compromised.",
+      voiceDirection: "Familiar cadence, escalating tension.",
+      continuityNotes: "Best in home environments, neighborhood scenes, slow-burn decisions.",
+    },
+    {
+      id: "mavis-whitlock", name: "Mavis Whitlock", tier: "standard", category: "Female Lead",
+      initials: "MW", accentColor: "yellow", gradient: "from-yellow-900/30 via-zinc-900 to-zinc-950",
+      hook: "Sees everything. Says less than she knows. The most dangerous witness in any scene.",
+      tags: ["Drama", "Dark Comedy", "Crime"],
+      chemistry: ["Daniel Cross", "Celeste Vale"],
+      portraitUrl: "/portraits/mavis-whitlock/master.png",
+      archetype: "The Witness",
+      genreFit: "Drama · Dark comedy · Crime",
+      visualIdentity: "Domestic precision, sharp eyes, suburban staging.",
+      personality: "Observant, measured. Knows more than she says.",
+      voiceDirection: "Pleasant surface. Subtext doing all the work.",
+      continuityNotes: "Best as an observer, in shared spaces, wherever someone is being watched.",
+    },
+    {
+      id: "celeste-vale", name: "Celeste Vale", tier: "standard", category: "Female Lead",
+      initials: "CV", accentColor: "teal", gradient: "from-teal-900/30 via-zinc-900 to-zinc-950",
+      hook: "Immaculate, composed, and impossible to read. The most unsettling neighbour you'll ever meet.",
+      tags: ["Thriller", "Drama", "Crime"],
+      chemistry: ["Daniel Cross", "Mavis Whitlock"],
+      portraitUrl: "/portraits/celeste-vale/master.png",
+      archetype: "Immaculate Neighbor",
+      genreFit: "Thriller · Drama · Suburban crime",
+      visualIdentity: "Perfect surface, curated wardrobe, impossible to read.",
+      personality: "Controlled, unknowable, unsettling.",
+      voiceDirection: "Polished, warm on the surface. Hollow underneath.",
+      continuityNotes: "Best in shared domestic spaces where everything is wrong but nothing is said.",
+    },
+    {
+      id: "big-sasha", name: "Big Sasha", tier: "standard", category: "Character Actor",
+      initials: "BS", accentColor: "zinc", gradient: "from-zinc-700/40 via-zinc-900 to-zinc-950",
+      hook: "The harder edge. More silent, more suspicious, more final. His presence does the threatening.",
+      tags: ["Crime", "Thriller", "Drama"],
+      chemistry: ["Little Sasha", "Viktor Vale"],
+      portraitUrl: "/portraits/big-sasha/master.png",
+      archetype: "Enforcer",
+      genreFit: "Crime · Thriller · Drama",
+      visualIdentity: "Physical mass, minimal expression, presence as warning.",
+      personality: "Sparse communication, total conviction.",
+      voiceDirection: "Few words, low register. Finality.",
+      continuityNotes: "Best as presence — entering rooms, standing at doors, saying the last word.",
+    },
+    {
+      id: "little-sasha", name: "Little Sasha", tier: "standard", category: "Character Actor",
+      initials: "LS", accentColor: "slate", gradient: "from-slate-600/30 via-zinc-900 to-zinc-950",
+      hook: "More talkative, more disarming, more likely to smile. Warmth as a security function.",
+      tags: ["Crime", "Thriller", "Dark Comedy"],
+      chemistry: ["Big Sasha", "Viktor Vale"],
+      portraitUrl: "/portraits/little-sasha/master.png",
+      archetype: "Warm Operator",
+      genreFit: "Crime · Thriller · Dark comedy",
+      visualIdentity: "Approachable warmth deployed as a tactic.",
+      personality: "Disarming, smile-forward. More dangerous for it.",
+      voiceDirection: "Friendly cadence, cheerful. Hiding intent.",
+      continuityNotes: "Best in entry scenes, reassurance before betrayal, audience misdirection.",
+    },
   ];
 
   const CHEMISTRY_PAIRS = [
-    { label: "Adversarial Romance",    actors: ["Julian Vance", "Sofia Reyes"],    description: "Combustible tension. Every scene is a negotiation." },
-    { label: "Prestige Power Duo",     actors: ["Julian Vance", "Elena Rostova"],  description: "Two people who are equally dangerous and know it." },
-    { label: "Crime Pair",             actors: ["Kofi Adebayo", "Kenji Sato"],     description: "Physical authority meets psychological precision." },
-    { label: "Rival Patriarchs",       actors: ["Viktor Vale", "Tariq Haddad"],    description: "Same table, different kingdoms. The tension is permanent." },
-    { label: "Twin Unit",              actors: ["The Gallagher Twins"],             description: "Same face, opposite souls. The narrative wildcard." },
-    { label: "The Neighbourhood",      actors: ["Daniel Cross", "Celeste Vale", "Mavis Whitlock"], description: "Suburban noir. Everyone is hiding something." },
+    { label: "Adversarial Romance",  actors: ["Julian Vance", "Sofia Reyes"],    description: "Combustible tension. Every scene is a negotiation." },
+    { label: "Prestige Power Duo",   actors: ["Julian Vance", "Elena Rostova"],  description: "Two people who are equally dangerous and know it." },
+    { label: "Crime Pair",           actors: ["Kofi Adebayo", "Kenji Sato"],     description: "Physical authority meets psychological precision." },
+    { label: "Rival Patriarchs",     actors: ["Viktor Vale", "Tariq Haddad"],    description: "Same table, different kingdoms. The tension is permanent." },
+    { label: "Twin Unit",            actors: ["The Gallagher Twins"],             description: "Same face, opposite souls. The narrative wildcard." },
+    { label: "The Neighbourhood",    actors: ["Daniel Cross", "Celeste Vale", "Mavis Whitlock"], description: "Suburban noir. Everyone is hiding something." },
   ];
 
   const VALUE_PROPS = [
-    { icon: Zap,          title: "No setup. Just cast.",        description: "Every Virelle Star is already built, tested, and ready. No character sheets, no prompt refinement loops, no wasted sessions.", color: "text-amber-400",  bg: "bg-amber-500/10" },
-    { icon: Shield,       title: "Continuity that holds.",      description: "The same face, expression range, and identity across stills, scenes, trailers, and campaign assets — without drift.",           color: "text-blue-400",   bg: "bg-blue-500/10" },
-    { icon: Film,         title: "Built for close-ups.",        description: "Stronger expression handling, better dramatic lighting response, and screen presence that reads as premium — not generated.",   color: "text-purple-400", bg: "bg-purple-500/10" },
-    { icon: Star,         title: "Easier to market.",           description: "Defined personas, established visual identities, and chemistry pairings that make trailers, posters, and campaigns easier to build.", color: "text-rose-400", bg: "bg-rose-500/10" },
-    { icon: CheckCircle2, title: "Commercially clean.",         description: "Platform-owned talent with clear licensing. Safe for public releases, branded work, and commercial campaigns without legal ambiguity.", color: "text-green-400", bg: "bg-green-500/10" },
-    { icon: Users,        title: "Shared across your team.",    description: "One cast layer that every collaborator on your project can use consistently — not a different face every time someone generates.", color: "text-cyan-400",  bg: "bg-cyan-500/10" },
+    { icon: Zap,          title: "No setup. Just cast.",     description: "Every Virelle Star is already built, tested, and ready. No character sheets, no prompt loops, no wasted sessions.",                color: "text-amber-400",  bg: "bg-amber-500/10" },
+    { icon: Shield,       title: "Designed for continuity.", description: "Consistent cast references across stills, scenes, trailers, and campaign assets — built for repeatable production identity.",      color: "text-blue-400",   bg: "bg-blue-500/10" },
+    { icon: Film,         title: "Built for close-ups.",     description: "Stronger expression handling, better dramatic lighting response, and screen presence that reads as premium — not generated.",      color: "text-purple-400", bg: "bg-purple-500/10" },
+    { icon: Star,         title: "Easier to market.",        description: "Defined personas, visual identities, and chemistry pairings that make trailers, posters, and campaigns faster to build.",          color: "text-rose-400",   bg: "bg-rose-500/10" },
+    { icon: CheckCircle2, title: "Commercially clean.",      description: "Platform-owned talent with clear licensing. Safe for public releases, branded work, and commercial campaigns.",                     color: "text-green-400",  bg: "bg-green-500/10" },
+    { icon: Users,        title: "Shared across your team.", description: "One cast layer every collaborator uses consistently — not a different face every time someone generates.",                          color: "text-cyan-400",   bg: "bg-cyan-500/10" },
+  ];
+
+  const CHARACTER_DNA_ITEMS = [
+    { title: "Visual Identity",        description: "Face shape, hair, wardrobe, posture, lighting preferences, color palette." },
+    { title: "Personality",            description: "Motivation, fears, humor style, emotional restraint, moral code." },
+    { title: "Voice Direction",        description: "Tone, pace, accent notes, emotional delivery, dialogue rhythm." },
+    { title: "Scene Behavior",         description: "How the character moves, reacts, enters rooms, handles conflict, holds silence." },
+    { title: "Continuity References",  description: "Recurring props, wardrobe anchors, camera preferences, environment fit." },
+    { title: "Production Usage",       description: "Scripts, scene cards, trailers, posters, pitch packages, and future generated shots." },
+  ];
+
+  const WORKFLOW_STEPS = [
+    { step: "01", title: "Choose or create a character",         description: "Start with Virelle Signature Cast talent or build an original character from scratch." },
+    { step: "02", title: "Add Character DNA",                    description: "Define visual identity, personality, voice direction, scene behavior, and continuity references." },
+    { step: "03", title: "Attach the character to a project",   description: "Link your cast to a script, scene card, or production package." },
+    { step: "04", title: "Generate scenes with cast references", description: "Your character DNA travels with the project — consistent reference points across every scene." },
+    { step: "05", title: "Carry cast across the full package",   description: "Use the same cast in your trailer, poster, pitch, and production package." },
+  ];
+
+  const USE_CASES = [
+    "Indie films", "AI short films", "Pitch trailers", "Proof-of-concept scenes",
+    "Web series", "Branded entertainment", "Commercials", "Creator-led shows",
+    "Previsualization", "Casting exploration",
   ];
 
   const ACCENT_CLASSES: Record<string, { bg: string; text: string; border: string }> = {
-    amber:  { bg: "bg-amber-500/15",  text: "text-amber-300",  border: "border-amber-500/30" },
-    cyan:   { bg: "bg-cyan-500/15",   text: "text-cyan-300",   border: "border-cyan-500/30" },
-    rose:   { bg: "bg-rose-500/15",   text: "text-rose-300",   border: "border-rose-500/30" },
-    emerald:{ bg: "bg-emerald-500/15",text: "text-emerald-300",border: "border-emerald-500/30" },
-    blue:   { bg: "bg-blue-500/15",   text: "text-blue-300",   border: "border-blue-500/30" },
-    orange: { bg: "bg-orange-500/15", text: "text-orange-300", border: "border-orange-500/30" },
-    violet: { bg: "bg-violet-500/15", text: "text-violet-300", border: "border-violet-500/30" },
-    indigo: { bg: "bg-indigo-500/15", text: "text-indigo-300", border: "border-indigo-500/30" },
-    stone:  { bg: "bg-stone-500/15",  text: "text-stone-300",  border: "border-stone-500/30" },
-    purple: { bg: "bg-purple-500/15", text: "text-purple-300", border: "border-purple-500/30" },
-    teal:   { bg: "bg-teal-500/15",   text: "text-teal-300",   border: "border-teal-500/30" },
-    yellow: { bg: "bg-yellow-500/15", text: "text-yellow-300", border: "border-yellow-500/30" },
-    slate:  { bg: "bg-slate-500/15",  text: "text-slate-300",  border: "border-slate-500/30" },
-    zinc:   { bg: "bg-zinc-500/15",   text: "text-zinc-300",   border: "border-zinc-500/30" },
+    amber:   { bg: "bg-amber-500/15",   text: "text-amber-300",   border: "border-amber-500/30" },
+    cyan:    { bg: "bg-cyan-500/15",    text: "text-cyan-300",    border: "border-cyan-500/30" },
+    rose:    { bg: "bg-rose-500/15",    text: "text-rose-300",    border: "border-rose-500/30" },
+    emerald: { bg: "bg-emerald-500/15", text: "text-emerald-300", border: "border-emerald-500/30" },
+    blue:    { bg: "bg-blue-500/15",    text: "text-blue-300",    border: "border-blue-500/30" },
+    orange:  { bg: "bg-orange-500/15",  text: "text-orange-300",  border: "border-orange-500/30" },
+    violet:  { bg: "bg-violet-500/15",  text: "text-violet-300",  border: "border-violet-500/30" },
+    indigo:  { bg: "bg-indigo-500/15",  text: "text-indigo-300",  border: "border-indigo-500/30" },
+    stone:   { bg: "bg-stone-500/15",   text: "text-stone-300",   border: "border-stone-500/30" },
+    purple:  { bg: "bg-purple-500/15",  text: "text-purple-300",  border: "border-purple-500/30" },
+    teal:    { bg: "bg-teal-500/15",    text: "text-teal-300",    border: "border-teal-500/30" },
+    yellow:  { bg: "bg-yellow-500/15",  text: "text-yellow-300",  border: "border-yellow-500/30" },
+    slate:   { bg: "bg-slate-500/15",   text: "text-slate-300",   border: "border-slate-500/30" },
+    zinc:    { bg: "bg-zinc-500/15",    text: "text-zinc-300",    border: "border-zinc-500/30" },
   };
 
   function TierBadge({ tier }: { tier: string }) {
@@ -79,81 +310,168 @@ import { trpc } from "@/lib/trpc";
   }
 
   export default function SignatureCast() {
-  const { data: liveActors } = trpc.signatureCast.listActors.useQuery(undefined, { staleTime: 5 * 60 * 1000 });
-  // Portrait paths — new subdirectory structure with master/neutral/warm/intense variants
-  const STATIC_PORTRAITS: Record<string, string> = {
-    "julian-vance": "/portraits/julian-vance/master.png",
-    "elena-rostova": "/portraits/elena-rostova/master.png",
-    "sofia-reyes": "/portraits/sofia-reyes/master.png",
-    "kofi-adebayo": "/portraits/kofi-adebayo/master.png",
-    "kenji-sato": "/portraits/kenji-sato/master.png",
-    "marcus-osei": "/portraits/marcus-osei/master.png",
-    "amara-diallo": "/portraits/amara-diallo/master.png",
-    "yuki-tanaka": "/portraits/yuki-tanaka/master.png",
-    "viktor-vale": "/portraits/viktor-vale/master.png",
-    "tariq-haddad": "/portraits/tariq-haddad/master.png",
-    "gallagher-twins": "/portraits/gallagher-twins/master.png",
-    "daniel-cross": "/portraits/daniel-cross/master.png",
-    "mavis-whitlock": "/portraits/mavis-whitlock/master.png",
-    "celeste-vale": "/portraits/celeste-vale/master.png",
-    "big-sasha": "/portraits/big-sasha/master.png",
-    "little-sasha": "/portraits/little-sasha/master.png",
-  };
-  function actorPortrait(id: string): string | null {
-    return (liveActors?.find((a: any) => a.id === id) as any)?.portraitUrl
-      ?? STATIC_PORTRAITS[id]
-      ?? null;
-  }
+    const { data: liveActors } = trpc.signatureCast.listActors.useQuery(undefined, { staleTime: 5 * 60 * 1000 });
+
+    const STATIC_PORTRAITS: Record<string, string> = {
+      "julian-vance":    "/portraits/julian-vance/master.png",
+      "elena-rostova":   "/portraits/elena-rostova/master.png",
+      "sofia-reyes":     "/portraits/sofia-reyes/master.png",
+      "kofi-adebayo":    "/portraits/kofi-adebayo/master.png",
+      "kenji-sato":      "/portraits/kenji-sato/master.png",
+      "marcus-osei":     "/portraits/marcus-osei/master.png",
+      "amara-diallo":    "/portraits/amara-diallo/master.png",
+      "yuki-tanaka":     "/portraits/yuki-tanaka/master.png",
+      "viktor-vale":     "/portraits/viktor-vale/master.png",
+      "tariq-haddad":    "/portraits/tariq-haddad/master.png",
+      "gallagher-twins": "/portraits/gallagher-twins/master.png",
+      "daniel-cross":    "/portraits/daniel-cross/master.png",
+      "mavis-whitlock":  "/portraits/mavis-whitlock/master.png",
+      "celeste-vale":    "/portraits/celeste-vale/master.png",
+      "big-sasha":       "/portraits/big-sasha/master.png",
+      "little-sasha":    "/portraits/little-sasha/master.png",
+    };
+
+    function actorPortrait(id: string): string | null {
+      return (liveActors?.find((a: any) => a.id === id) as any)?.portraitUrl
+        ?? STATIC_PORTRAITS[id]
+        ?? null;
+    }
 
     const [, navigate] = useLocation();
-    const [hoveredActor, setHoveredActor] = useState<string | null>(null);
+    const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
     const flagshipActors = FLAGSHIP_STARS.filter(a => a.tier === "flagship");
-    const premiumActors = FLAGSHIP_STARS.filter(a => a.tier === "premium");
+    const premiumActors  = FLAGSHIP_STARS.filter(a => a.tier === "premium");
     const standardActors = FLAGSHIP_STARS.filter(a => a.tier === "standard");
 
     return (
       <div className="min-h-screen bg-zinc-950 text-white">
-        {/* HERO */}
+
+        {/* ── HERO ─────────────────────────────────────────────────────────── */}
         <section className="relative overflow-hidden border-b border-white/5">
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-950/20 via-zinc-950 to-zinc-950" />
-          <div className="relative max-w-6xl mx-auto px-6 py-20 text-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-950/25 via-zinc-950 to-zinc-950" />
+          {/* Film-frame corners */}
+          <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-amber-500/30 pointer-events-none" />
+          <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-amber-500/30 pointer-events-none" />
+          <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-amber-500/30 pointer-events-none" />
+          <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-amber-500/30 pointer-events-none" />
+          <div className="relative max-w-6xl mx-auto px-6 py-24 text-center">
             <Badge className="mb-6 bg-amber-500/10 text-amber-300 border border-amber-500/20 text-sm px-4 py-1.5">
-              Virelle Signature Cast
+              Virelle Digital Cast
             </Badge>
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
-              Your next film needs a{" "}
+              Build Your Digital Cast{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">
-                real cast.
+                Before You Shoot.
               </span>
             </h1>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-4">
-              {FLAGSHIP_STARS.length} premium digital actors — continuity-tuned, screen-tested, and ready to cast into any project without setup.
+              Design original characters or cast Virelle Signature talent with structured character DNA, scene continuity references, visual style notes, and production-ready profiles.
             </p>
             <p className="text-zinc-500 max-w-xl mx-auto mb-10">
-              Use them in films, trailers, campaigns, and series. Or build your own cast from scratch. Both lanes are open inside every project.
+              Your cast should carry through the script, scene cards, trailer, posters, and future generated shots.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Button size="lg" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8"
-                onClick={() => navigate("/talent-search")}>
-                Browse the Full Cast
+                onClick={() => navigate("/app")}>
+                Create a Character
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
+              <Button size="lg" variant="outline" className="border-amber-500/30 text-amber-300 hover:bg-amber-500/5"
+                onClick={() => navigate("/signature-cast")}>
+                Browse Signature Cast
+              </Button>
               <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5"
-                onClick={() => navigate("/projects/new")}>
-                <Play className="mr-2 w-4 h-4" />Cast in Your Project
+                onClick={() => navigate("/register")}>
+                <Play className="mr-2 w-4 h-4" />Start Production
               </Button>
             </div>
-            {/* Tier count summary */}
             <div className="mt-12 flex flex-wrap gap-6 justify-center text-sm text-zinc-500">
               <span><span className="text-amber-400 font-semibold">{flagshipActors.length}</span> Flagship Stars</span>
               <span><span className="text-purple-400 font-semibold">{premiumActors.length}</span> Premium Cast</span>
               <span><span className="text-zinc-400 font-semibold">{standardActors.length}</span> Standard Cast</span>
+              <span><span className="text-white font-semibold">+</span> Original characters</span>
             </div>
           </div>
         </section>
 
-        {/* WHY VIRELLE STARS */}
+        {/* ── TWO PATHS ────────────────────────────────────────────────────── */}
+        <section className="border-b border-white/5 bg-white/[0.01]">
+          <div className="max-w-6xl mx-auto px-6 py-20">
+            <h2 className="text-3xl font-bold text-center mb-3">Two ways to build your cast.</h2>
+            <p className="text-zinc-400 text-center mb-12 max-w-xl mx-auto">
+              Create the cast before you create the film.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {/* Path 1: Create Your Own */}
+              <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-8 flex flex-col">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                    <Layers className="w-4 h-4 text-zinc-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white">Create Your Own Cast</h3>
+                </div>
+                <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
+                  Build original characters for your film from scratch. Define their look, personality, wardrobe, voice direction, backstory, emotional range, and scene role before generation begins.
+                </p>
+                <ul className="space-y-2.5 text-sm text-zinc-400 mb-8 flex-1">
+                  {[
+                    "Original character profiles",
+                    "Visual DNA",
+                    "Wardrobe and styling notes",
+                    "Voice and emotion direction",
+                    "Scene role and relationship map",
+                    "Reusable across scripts and scenes",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <Button className="w-full border border-white/10 bg-white/5 hover:bg-white/10 text-white"
+                  onClick={() => navigate("/app")}>
+                  Create Original Character
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </div>
+              {/* Path 2: Signature Cast */}
+              <div className="rounded-xl border border-amber-500/25 bg-amber-950/10 p-8 flex flex-col">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                    <Crown className="w-4 h-4 text-amber-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-amber-300">Virelle Signature Cast</h3>
+                </div>
+                <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
+                  Use premium AI-born cinematic talent designed for repeatable production identity. Signature Cast profiles help creators start faster with screen-ready digital performers.
+                </p>
+                <ul className="space-y-2.5 text-sm text-zinc-400 mb-8 flex-1">
+                  {[
+                    "Ready-made cinematic talent",
+                    "Consistent cast references",
+                    "Character cards",
+                    "Screen presence notes",
+                    "Genre suitability",
+                    "Faster project setup",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-amber-500/60 mt-0.5 shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <Button className="w-full bg-amber-500 hover:bg-amber-400 text-black font-semibold"
+                  onClick={() => navigate("/talent-search")}>
+                  Browse Signature Cast
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── WHY VIRELLE STARS ────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Why cast a Virelle Star?</h2>
@@ -177,105 +495,82 @@ import { trpc } from "@/lib/trpc";
           </div>
         </section>
 
-        {/* TWO WAYS TO CAST */}
-        <section className="border-y border-white/5 bg-white/[0.01]">
+        {/* ── FLAGSHIP STARS ───────────────────────────────────────────────── */}
+        <section className="border-t border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
-            <h2 className="text-3xl font-bold text-center mb-12">Two ways to cast. Both fully supported.</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              <div className="rounded-xl border border-white/10 bg-zinc-900/50 p-8">
-                <h3 className="text-lg font-semibold mb-2 text-zinc-300">Create Your Own Character</h3>
-                <p className="text-sm text-zinc-500 mb-6">Full creative freedom for original concepts.</p>
-                <ul className="space-y-3 text-sm text-zinc-400">
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" /> Fully original, one-of-a-kind</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" /> Upload your own face or generate from scratch</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" /> Best for personal and experimental projects</li>
-                  <li className="flex items-start gap-2 text-zinc-600"><CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" /> Requires more manual tuning</li>
-                  <li className="flex items-start gap-2 text-zinc-600"><CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" /> More variable continuity across scenes</li>
-                </ul>
-              </div>
-              <div className="rounded-xl border border-amber-500/20 bg-amber-950/10 p-8">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-lg font-semibold text-amber-300">Cast a Virelle Star</h3>
-                  <Crown className="w-4 h-4 text-amber-400" />
-                </div>
-                <p className="text-sm text-zinc-400 mb-6">Premium talent, ready to cast immediately.</p>
-                <ul className="space-y-3 text-sm text-zinc-300">
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" /> Continuity-tuned across all scenes</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" /> Screen-tested and promo-ready</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" /> Premium identity and wardrobe out of the box</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" /> Chemistry pairings and family units available</li>
-                  <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" /> Commercially clean for public releases</li>
-                </ul>
-              </div>
+            <div className="text-center mb-12">
+              <Badge className="mb-4 bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                <Crown className="w-3 h-3 mr-1" />Flagship Stars
+              </Badge>
+              <h2 className="text-3xl font-bold mb-4">The headline cast</h2>
+              <p className="text-zinc-400 max-w-xl mx-auto">
+                Four breakout leads built for prestige drama, crime, and high-stakes romance — with full Character DNA and production-ready profiles.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              {flagshipActors.map((actor) => {
+                const ac = ACCENT_CLASSES[actor.accentColor] ?? ACCENT_CLASSES.zinc;
+                const isExpanded = expandedCard === actor.id;
+                return (
+                  <Card key={actor.id}
+                    className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer group`}
+                    onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
+                    <CardContent className="p-5">
+                      <div className={`w-full aspect-[3/4] rounded-xl mb-4 overflow-hidden relative bg-gradient-to-b ${actor.gradient}`}>
+                        {actorPortrait(actor.id) ? (
+                          <img src={actorPortrait(actor.id)!} alt={actor.name}
+                            className="absolute inset-0 w-full h-full object-cover object-top"
+                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        ) : null}
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent" />
+                        <div className="absolute top-3 left-3">
+                          <TierBadge tier={actor.tier} />
+                        </div>
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <span className={`text-[10px] ${ac.text} font-semibold tracking-widest uppercase bg-zinc-950/60 rounded px-1.5 py-0.5`}>{actor.archetype}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-white">{actor.name}</h3>
+                        <p className={`text-[10px] ${ac.text} font-medium`}>{actor.genreFit}</p>
+                        <p className="text-xs text-zinc-400 leading-relaxed">{actor.hook}</p>
+                        {isExpanded && (
+                          <div className="mt-3 pt-3 border-t border-white/5 space-y-2 text-xs">
+                            <div>
+                              <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Visual Identity</span>
+                              <p className="text-zinc-300 mt-0.5">{actor.visualIdentity}</p>
+                            </div>
+                            <div>
+                              <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Personality</span>
+                              <p className="text-zinc-300 mt-0.5">{actor.personality}</p>
+                            </div>
+                            <div>
+                              <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Voice Direction</span>
+                              <p className="text-zinc-300 mt-0.5">{actor.voiceDirection}</p>
+                            </div>
+                            <div>
+                              <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Continuity Notes</span>
+                              <p className="text-zinc-300 mt-0.5">{actor.continuityNotes}</p>
+                            </div>
+                          </div>
+                        )}
+                        <div className="flex flex-wrap gap-1">
+                          {actor.tags.slice(0, 2).map((tag) => (
+                            <span key={tag} className={`text-xs px-2 py-0.5 rounded-full ${ac.bg} ${ac.text} border ${ac.border}`}>{tag}</span>
+                          ))}
+                        </div>
+                        <p className={`text-[10px] ${ac.text} text-center opacity-60 mt-1`}>{isExpanded ? "Tap to collapse" : "Tap to view Character DNA"}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* FLAGSHIP STARS */}
-        <section className="max-w-6xl mx-auto px-6 py-20">
-          <div className="text-center mb-12">
-            <Badge className="mb-4 bg-amber-500/10 text-amber-300 border border-amber-500/20">
-              <Crown className="w-3 h-3 mr-1" />Flagship Stars
-            </Badge>
-            <h2 className="text-3xl font-bold mb-4">The headline cast</h2>
-            <p className="text-zinc-400 max-w-xl mx-auto">
-              Four breakout leads built for prestige drama, crime, and high-stakes romance. Every franchise-level production needs at least one.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {flagshipActors.map((actor) => {
-              const ac = ACCENT_CLASSES[actor.accentColor] ?? ACCENT_CLASSES.zinc;
-              return (
-                <Card key={actor.id}
-                  className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer group`}
-                  onMouseEnter={() => setHoveredActor(actor.id)}
-                  onMouseLeave={() => setHoveredActor(null)}
-                  onClick={() => navigate(`/talent-search?actor=${actor.id}`)}>
-                  <CardContent className="p-5">
-                    {/* Actor identity avatar */}
-                    <div className={`w-full aspect-[3/4] rounded-xl mb-4 overflow-hidden relative bg-gradient-to-b ${actor.gradient}`}>
-                      {actorPortrait(actor.id) ? (
-                        <img src={actorPortrait(actor.id)!} alt={actor.name}
-                          className="absolute inset-0 w-full h-full object-cover object-top"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                      ) : null}
-                      {/* Cinematic gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent" />
-                      {/* Tier badge on portrait */}
-                      <div className="absolute top-3 left-3">
-                        <TierBadge tier={actor.tier} />
-                      </div>
-                      {/* Category label bottom */}
-                      <div className="absolute bottom-3 left-3">
-                        <span className={`text-[10px] ${ac.text} font-semibold tracking-widest uppercase opacity-80 bg-zinc-950/60 rounded px-1.5 py-0.5`}>{actor.category}</span>
-                      </div>
-                    </div>
-                    <div className="space-y-2.5">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-semibold text-white">{actor.name}</h3>
-                        <TierBadge tier={actor.tier} />
-                      </div>
-                      <p className="text-xs text-zinc-400 leading-relaxed line-clamp-3">{actor.hook}</p>
-                      <div className="flex flex-wrap gap-1">
-                        {actor.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className={`text-xs px-2 py-0.5 rounded-full ${ac.bg} ${ac.text} border ${ac.border}`}>{tag}</span>
-                        ))}
-                      </div>
-                      <Button size="sm" className="w-full bg-amber-500 hover:bg-amber-400 text-black text-xs font-semibold"
-                        onClick={(e) => { e.stopPropagation(); navigate("/talent-search"); }}>
-                        View Full Profile
-                        <ChevronRight className="ml-1 w-3 h-3" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* PREMIUM CAST */}
-        <section className="border-t border-white/5 bg-white/[0.01]">
+        {/* ── PREMIUM CAST ─────────────────────────────────────────────────── */}
+        <section className="border-t border-white/5">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="text-center mb-12">
               <Badge className="mb-4 bg-purple-500/10 text-purple-300 border border-purple-500/20">
@@ -283,7 +578,7 @@ import { trpc } from "@/lib/trpc";
               </Badge>
               <h2 className="text-3xl font-bold mb-4">Supporting leads and character actors</h2>
               <p className="text-zinc-400 max-w-xl mx-auto">
-                Seven premium actors covering noir, drama, crime ensemble, psychological thriller, and the Gallagher Twins — the cast's most technically demanding unit.
+                Seven premium cast members covering noir, drama, crime ensemble, psychological thriller, and the Gallagher Twins — the cast's most technically demanding unit.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -291,7 +586,7 @@ import { trpc } from "@/lib/trpc";
                 const ac = ACCENT_CLASSES[actor.accentColor] ?? ACCENT_CLASSES.zinc;
                 return (
                   <div key={actor.id}
-                    className="rounded-xl border border-white/5 hover:border-purple-500/20 bg-zinc-900/30 p-5 cursor-pointer transition-all group"
+                    className="rounded-xl border border-white/5 hover:border-purple-500/20 bg-zinc-900/30 p-5 cursor-pointer transition-all"
                     onClick={() => navigate(`/talent-search?actor=${actor.id}`)}>
                     <div className="flex items-center gap-3 mb-3">
                       <div className={`w-10 h-10 rounded-full ${ac.bg} ${ac.border} border flex items-center justify-center text-sm font-bold ${ac.text} overflow-hidden`}>
@@ -303,9 +598,10 @@ import { trpc } from "@/lib/trpc";
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-white">{actor.name}</p>
-                        <p className="text-xs text-zinc-500">{actor.category}</p>
+                        <p className={`text-[10px] ${ac.text}`}>{actor.archetype}</p>
                       </div>
                     </div>
+                    <p className="text-xs text-zinc-500 mb-1">{actor.genreFit}</p>
                     <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2 mb-3">{actor.hook}</p>
                     <div className="flex flex-wrap gap-1">
                       {actor.tags.slice(0, 2).map((tag) => (
@@ -319,8 +615,8 @@ import { trpc } from "@/lib/trpc";
           </div>
         </section>
 
-        {/* STANDARD CAST (Next Door ensemble) */}
-        <section className="max-w-6xl mx-auto px-6 py-16 border-t border-white/5">
+        {/* ── STANDARD CAST ────────────────────────────────────────────────── */}
+        <section className="border-t border-white/5 max-w-6xl mx-auto px-6 py-16">
           <div className="flex items-center justify-between mb-8">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -349,14 +645,14 @@ import { trpc } from "@/lib/trpc";
                     )}
                   </div>
                   <p className="text-xs font-semibold text-zinc-300">{actor.name}</p>
-                  <p className="text-[10px] text-zinc-600 mt-0.5">{actor.category}</p>
+                  <p className="text-[10px] text-zinc-600 mt-0.5">{actor.archetype}</p>
                 </div>
               );
             })}
           </div>
         </section>
 
-        {/* CHEMISTRY PAIRINGS */}
+        {/* ── CHEMISTRY PAIRINGS ───────────────────────────────────────────── */}
         <section className="border-y border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="text-center mb-12">
@@ -367,7 +663,8 @@ import { trpc } from "@/lib/trpc";
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {CHEMISTRY_PAIRS.map((pair) => (
-                <div key={pair.label} className="rounded-xl border border-white/5 bg-zinc-900/30 p-5 hover:border-white/10 transition-colors cursor-pointer"
+                <div key={pair.label}
+                  className="rounded-xl border border-white/5 bg-zinc-900/30 p-5 hover:border-white/10 transition-colors cursor-pointer"
                   onClick={() => navigate("/talent-search")}>
                   <h3 className="font-semibold text-white mb-1">{pair.label}</h3>
                   <p className="text-xs text-zinc-500 mb-3">{pair.description}</p>
@@ -382,24 +679,114 @@ import { trpc } from "@/lib/trpc";
           </div>
         </section>
 
-        {/* CTA */}
+        {/* ── WHAT IS CHARACTER DNA ─────────────────────────────────────────── */}
+        <section className="max-w-6xl mx-auto px-6 py-20">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <Fingerprint className="w-5 h-5 text-amber-400" />
+              <h2 className="text-3xl font-bold">What is Character DNA?</h2>
+            </div>
+            <p className="text-zinc-400 max-w-2xl mx-auto">
+              Character DNA is the structured production profile that keeps a digital performer usable across a project. It gives the story engine and generation workflow consistent reference points instead of treating every scene like a fresh prompt.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {CHARACTER_DNA_ITEMS.map((item, i) => (
+              <div key={item.title} className="rounded-xl border border-white/5 bg-white/[0.02] p-6 hover:border-amber-500/15 transition-colors">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-amber-500/50 text-xs font-mono">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="font-semibold text-white">{item.title}</h3>
+                </div>
+                <p className="text-sm text-zinc-400">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── WORKFLOW ─────────────────────────────────────────────────────── */}
+        <section className="border-y border-white/5 bg-white/[0.01]">
+          <div className="max-w-6xl mx-auto px-6 py-20">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 mb-4">
+                <GitBranch className="w-5 h-5 text-amber-400" />
+                <h2 className="text-3xl font-bold">How Digital Cast fits the Virelle workflow.</h2>
+              </div>
+              <p className="text-zinc-400 max-w-xl mx-auto">
+                Digital Cast connects story planning with generation. Build characters once, then carry them through the production workflow.
+              </p>
+            </div>
+            <div className="max-w-3xl mx-auto space-y-4">
+              {WORKFLOW_STEPS.map((step, i) => (
+                <div key={step.step} className="flex items-start gap-5 rounded-xl border border-white/5 bg-zinc-900/30 p-5 hover:border-amber-500/15 transition-colors">
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">
+                    {step.step}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white mb-1">{step.title}</h3>
+                    <p className="text-sm text-zinc-400">{step.description}</p>
+                  </div>
+                  {i < WORKFLOW_STEPS.length - 1 && (
+                    <ChevronRight className="ml-auto shrink-0 w-4 h-4 text-zinc-700 self-center" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── USE CASES ────────────────────────────────────────────────────── */}
+        <section className="max-w-6xl mx-auto px-6 py-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Built for real production use.</h2>
+            <p className="text-zinc-400 max-w-xl mx-auto">
+              Digital Cast is the character layer for every format a modern production touches.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3 justify-center max-w-3xl mx-auto">
+            {USE_CASES.map((uc) => (
+              <span key={uc} className="px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] text-sm text-zinc-300 hover:border-amber-500/25 hover:text-amber-200 transition-colors">
+                {uc}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        {/* ── SAFETY ───────────────────────────────────────────────────────── */}
+        <section className="border-t border-white/5 bg-white/[0.01]">
+          <div className="max-w-4xl mx-auto px-6 py-12">
+            <div className="rounded-xl border border-white/5 bg-zinc-900/30 p-6 flex items-start gap-4">
+              <div className="shrink-0 w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center mt-0.5">
+                <AlertTriangle className="w-4 h-4 text-zinc-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-zinc-300 mb-2">Digital Cast Safety</h3>
+                <p className="text-sm text-zinc-500 leading-relaxed">
+                  Virelle Digital Cast is designed for original fictional characters and platform-created Signature Cast talent. Do not create or imply unauthorized replicas of real people, celebrities, private individuals, or protected likenesses. Always confirm you have rights to any uploaded reference material.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── CTA ──────────────────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-6 py-20 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to cast?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to build your cast?</h2>
           <p className="text-zinc-400 max-w-lg mx-auto mb-8">
-            Browse the full cast, build your shortlist, and cast your first Virelle Star into a project — in minutes.
+            Create original characters, browse Signature Cast talent, and carry your cast through the full production workflow — scripts, scenes, trailers, and beyond.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Button size="lg" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8"
               onClick={() => navigate("/talent-search")}>
-              Browse the Cast
+              Browse Signature Cast
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
             <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5"
-              onClick={() => navigate("/pricing")}>
-              View Pricing
+              onClick={() => navigate("/register")}>
+              Start Production
             </Button>
           </div>
         </section>
+
       </div>
     );
   }
