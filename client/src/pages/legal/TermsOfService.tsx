@@ -256,8 +256,7 @@ export default function TermsOfService() {
                 organisations.
               </li>
               <li>
-                <strong className="text-foreground">Incitement to violence or terrorism:</strong> Content
-                that promotes, glorifies, or incites violence, terrorism, or hate crimes.
+                <strong className="text-foreground">Incitement to violence or terrorism:</strong> Content that promotes, glorifies, or incites violence, terrorism, or hate crimes, or that constitutes terrorism propaganda or recruitment material under applicable law. This does not restrict fictional action films, thriller narratives featuring antagonists, or dramatic re-enactments of historical events.
               </li>
               <li>
                 <strong className="text-foreground">Illegal content:</strong> Any content that violates
