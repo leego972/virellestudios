@@ -235,7 +235,7 @@ export default function Landing() {
             </div>
 
             {/* Trust bar */}
-            <div className=flex flex-wrap items-center justify-center gap-x-8 gap-y-2 max-w-4xl mx-auto">
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 max-w-4xl mx-auto">
                 {[
                   "BYOK Ready",
                   "Commercial Workflow",
@@ -250,8 +250,6 @@ export default function Landing() {
                   </span>
                 ))}
               </div>
-              ))}
-            </div>
           </div>
         </section>
 
@@ -508,8 +506,7 @@ export default function Landing() {
           </div>
         </section>
 
-        
-          {/* ─── 4b. Clips are not a production ─── */}
+                {/* ─── 4b. Clips are not a production ─── */}
           <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
@@ -524,7 +521,7 @@ export default function Landing() {
                   <ul className="space-y-3">
                     {["Random clips", "Inconsistent characters", "Limited story structure", "Weak continuity", "No pitch package"].map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm text-white/35">
-                        <span className="w-4 h-4 rounded-full border border-white/10 flex items-center justify-center text-white/20 text-[10px] shrink-0">✕</span>
+                        <span className="w-4 h-4 rounded-full border border-white/10 flex items-center justify-center text-white/20 text-[10px] shrink-0">x</span>
                         {item}
                       </li>
                     ))}
@@ -535,7 +532,7 @@ export default function Landing() {
                   <ul className="space-y-3">
                     {["Structured story", "Digital Cast", "Character DNA", "Scene cards", "Trailer and pitch assets", "Production package"].map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm text-white/80">
-                        <span className="w-4 h-4 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-400 text-[10px] shrink-0">✓</span>
+                        <span className="w-4 h-4 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-400 text-[10px] shrink-0">v</span>
                         {item}
                       </li>
                     ))}
