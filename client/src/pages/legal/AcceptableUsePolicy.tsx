@@ -44,7 +44,7 @@ export default function AcceptableUsePolicy() {
               <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
                 <li><strong className="text-foreground">Child Sexual Abuse Material (CSAM):</strong> Any sexually explicit content involving minors, whether real or AI-generated. This is a criminal offence. We will report all violations to NCMEC and relevant law enforcement immediately.</li>
                 <li><strong className="text-foreground">Non-consensual intimate imagery:</strong> Generating sexual content depicting real, identifiable people without their explicit consent ("deepfake pornography").</li>
-                <li><strong className="text-foreground">Terrorism and violent extremism:</strong> Content promoting, glorifying, or recruiting for terrorist organisations or violent extremist groups.</li>
+                <li><strong className="text-foreground">Terrorism and violent extremism:</strong> Content that constitutes terrorism propaganda or recruitment material as defined under applicable law. This restriction does not apply to fictional action or thriller films featuring terrorist characters or antagonists, nor to dramatic re-enactments or fictionalised portrayals of historical events — only to material that would be legally classified as propaganda or recruitment content.</li>
               </ul>
             </div>
           </section>
