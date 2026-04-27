@@ -4,10 +4,8 @@ import { Film } from "lucide-react";
 const DIRECTOR_QUOTES: { text: string; author: string }[] = [
   { text: "Cinema is a matter of what's in the frame and what's out.", author: "Martin Scorsese" },
   { text: "Every great film should seem new every time you see it.", author: "Roger Ebert" },
-  { text: "A film is — or should be — more like music than like fiction.", author: "Stanley Kubrick" },
   { text: "Make visible what, without you, might perhaps never have been seen.", author: "Robert Bresson" },
   { text: "There's no terror in the bang, only in the anticipation of it.", author: "Alfred Hitchcock" },
-  { text: "If it can be written, or thought, it can be filmed.", author: "Stanley Kubrick" },
   { text: "Drama is life with the dull bits cut out.", author: "Alfred Hitchcock" },
   { text: "The best teacher is your last mistake.", author: "Ralph Nader" },
   { text: "Film is a battleground. Love, hate, action, violence, death.", author: "Sam Fuller" },
