@@ -930,7 +930,10 @@ export async function createCheckoutSession(
   if (!stripe) throw new Error("Stripe is not configured");
 
   // Card-only — us_bank_account (ACH) requires explicit Stripe account activation
-  const paymentMethodTypes: Stripe.Checkout.SessionCreateParams.PaymentMethodType[] = ["card"];
+  // Cast to any: Stripe 22 re-exports SessionCreateParams as a type alias, losing the
+  // PaymentMethodType sub-namespace — runtime value and Stripe API behavior are identical.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const paymentMethodTypes: any[] = ["card"];
 
   // If a promo code is provided, create/find a 50% off once coupon and apply it
   if (promoCode) {
