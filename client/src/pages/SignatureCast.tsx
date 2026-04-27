@@ -950,7 +950,7 @@ import { useState } from "react";
                                 <p className="text-zinc-300 mt-0.5">{actor.continuityNotes}</p>
                               </div>
                               <Button size="sm" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold text-xs mt-2"
-                                onClick={(e) => { e.stopPropagation(); navigate("/talent-search"); }}>
+                                onClick={(e) => { e.stopPropagation(); navigate(`/talent-search?actor=${actor.id}`); }}>
                                 View Full Profile
                                 <ArrowRight className="ml-1 w-3 h-3" />
                               </Button>
