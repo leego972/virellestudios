@@ -235,6 +235,198 @@ import { useState } from "react";
       voiceDirection: "Friendly cadence, cheerful. Hiding intent.",
       continuityNotes: "Best in entry scenes, reassurance before betrayal, audience misdirection.",
     },
+  // ─── THE SHOWRUNNER COLLECTION ────────────────────────────────────────────
+  {
+    id: "nyra-vale", name: "Nyra Vale", tier: "flagship", category: "Female Lead / Noir Detective",
+    initials: "NV", accentColor: "cyan", gradient: "from-cyan-900/40 via-zinc-900 to-zinc-950",
+    hook: "She was pushed out of the system because she would not stop seeing the truth.",
+    tags: ["Detective", "Sci-Fi Noir", "Crime Thriller", "Flagship Lead"],
+    chemistry: ["Lucien Voss", "Ren Park"],
+    archetype: "The Haunted Investigator",
+    genreFit: "Sci-fi noir · Crime thriller · Detective drama · Prestige series",
+    visualIdentity: "Late 30s, black raincoat, tired eyes, wet hair, sharp cheekbones, neon reflections, controlled intensity, urban night environments.",
+    personality: "Skeptical, relentless, morally stubborn, emotionally guarded, intelligent under pressure.",
+    voiceDirection: "Low, controlled, emotionally restrained, with weight behind every line.",
+    continuityNotes: "Keep black raincoat, wet hair and neon reflections, tired eyes, controlled posture, rainy urban environments.",
+    personalDepth: "A detective who has lost faith in institutions but not in truth. Punished for refusing to bury evidence, that exile made her sharper. Her silence carries grief. Her anger is disciplined. Her hope is almost invisible — but it is there.",
+    backstory: "A former homicide detective forced out after exposing corruption, now working in the margins following patterns nobody official wants to see.",
+    emotionalRange: "controlled suspicion · quiet grief · moral fury · investigative focus · exhausted courage · restrained vulnerability",
+    sceneBehavior: "Stands still in chaos, studies rooms before moving, speaks only when necessary, holds silence like a weapon.",
+    productionUse: "Best for noir leads, detective thrillers, sci-fi series, crime dramas, serious trailers, and cinematic close-ups.",
+    collection: "showrunner",
+  },
+  {
+    id: "lucien-voss", name: "Lucien Voss", tier: "flagship", category: "Male Antagonist / Visionary Founder",
+    initials: "LV", accentColor: "indigo", gradient: "from-indigo-900/40 via-zinc-900 to-zinc-950",
+    hook: "He does not want to rule the future. He wants to make it inevitable.",
+    tags: ["Villain", "Founder", "Sci-Fi", "Corporate Thriller", "Prestige"],
+    chemistry: ["Nyra Vale", "Ren Park"],
+    archetype: "The Elegant Technocrat",
+    genreFit: "Sci-fi thriller · Corporate dystopia · Prestige drama · Psychological thriller",
+    visualIdentity: "Mid 40s to 50s, silver hair, tailored black suit, calm posture, cold intelligent eyes, surrounded by screens or glass architecture.",
+    personality: "Charismatic, philosophical, dangerous, patient, controlled, convinced he is solving humanity.",
+    voiceDirection: "Calm, elegant, low, precise, quietly threatening.",
+    continuityNotes: "Keep silver hair, black suit, glass and screen environments, still posture, low emotional expression.",
+    personalDepth: "Lucien does not think he is a villain. He believes free will is inefficient and sentimental. His cruelty is intellectual — he can explain away harm as optimization. He is calmest when everyone else is terrified.",
+    backstory: "A former state forecasting architect turned private systems founder who disappeared after a classified predictive project was shut down. He returned with cleaner language, better suits, and more dangerous technology.",
+    emotionalRange: "calm certainty · elegant menace · philosophical warmth · quiet contempt · controlled anger · visionary obsession",
+    sceneBehavior: "Never rushes, moves minimally, speaks like he has already won, uses silence to make others uncomfortable.",
+    productionUse: "Best for tech villains, corporate founders, dystopian leaders, prestige antagonists, and high-stakes boardroom scenes.",
+    collection: "showrunner",
+  },
+  {
+    id: "nolan-price", name: "Nolan Price", tier: "premium", category: "Creator Lead",
+    initials: "NP", accentColor: "amber", gradient: "from-amber-900/35 via-zinc-900 to-zinc-950",
+    hook: "A broke storyteller with too many ideas and one last chance to prove he was never just talk.",
+    tags: ["Creator Lead", "Comedy Drama", "Founder Energy", "Underdog", "Pitch Trailer"],
+    chemistry: ["Tessa Virek", "Rafi Marlow"],
+    archetype: "Underdog Showrunner",
+    genreFit: "Creator drama · Comedy · Startup satire · Indie film · Production showcase",
+    visualIdentity: "Late 30s, expressive tired eyes, messy dark hair, hoodie under a worn jacket, laptop glow on face, creative clutter around him.",
+    personality: "Funny, restless, self-deprecating, ambitious, dramatic under pressure, emotionally intelligent but hiding it behind sarcasm.",
+    voiceDirection: "Fast, sarcastic, slightly chaotic, emotionally exposed when he stops joking.",
+    continuityNotes: "Keep hoodie and jacket silhouette, tired but expressive eyes, laptop glow, messy creative environments, fast hand gestures, and nervous comedic timing.",
+    personalDepth: "Nolan has spent years telling people about the films he is going to make, while secretly fearing he may never finish one. His humor is a shield. His imagination is real. His biggest challenge is not the technology — it is believing he is still allowed to become the person he imagined.",
+    backstory: "A once-promising storyteller stuck in adult survival mode. Scripts, ideas, unpaid bills — but no studio, no crew, and no clean path into the industry.",
+    emotionalRange: "anxious comedy · sudden inspiration · quiet shame · stubborn hope · underdog confidence · nervous pitch-room charm",
+    sceneBehavior: "Fidgets with laptops, talks too fast when excited, deflects pain with jokes, freezes before big moments, then finds his rhythm when speaking about story.",
+    productionUse: "Best for creator-led films, startup stories, comedy dramas, founder arcs, AI filmmaking demos, pitch trailers, and underdog commercial campaigns.",
+    collection: "showrunner",
+  },
+  {
+    id: "tessa-virek", name: "Tessa Virek", tier: "premium", category: "Editor / Creative Partner",
+    initials: "TV", accentColor: "teal", gradient: "from-teal-900/35 via-zinc-900 to-zinc-950",
+    hook: "The editor who can destroy your ego and save your project in the same sentence.",
+    tags: ["Editor", "Deadpan", "Creative Partner", "Comedy", "Grounded"],
+    chemistry: ["Nolan Price"],
+    archetype: "Deadpan Truth-Teller",
+    genreFit: "Creator comedy · Workplace drama · Indie film · Satire · Production showcase",
+    visualIdentity: "Late 20s to early 30s, sharp eyes, practical wardrobe, clean silhouette, calm expression, subtle confidence, minimal styling.",
+    personality: "Dry, precise, loyal, skeptical, highly competent, emotionally restrained but deeply supportive.",
+    voiceDirection: "Dry, clipped, intelligent, with surgical comedic timing.",
+    continuityNotes: "Keep practical wardrobe, composed body language, dry reaction shots, understated emotional shifts, and strong eye contact.",
+    personalDepth: "Tessa sees through hype, excuses, bad ideas, and fake confidence in seconds. Her bluntness is not cruelty — it is protection. She believes in talent only when it survives discipline.",
+    backstory: "A sharp editor and story fixer who has helped too many dreamers polish unfinished projects. Allergic to delusion but quietly loyal to people with actual talent.",
+    emotionalRange: "deadpan irritation · reluctant admiration · protective honesty · dry comedy · controlled panic · quiet pride",
+    sceneBehavior: "Stillness while others spiral, small eyebrow reactions, direct eye contact, minimal wasted movement, devastating one-line responses.",
+    productionUse: "Best for creator-duo stories, editor roles, grounded friend characters, workplace comedy, and contrast-to-chaotic-lead scenes.",
+    collection: "showrunner",
+  },
+  {
+    id: "vivienne-cross", name: "Vivienne Cross", tier: "premium", category: "Executive / Power Broker",
+    initials: "VC", accentColor: "violet", gradient: "from-violet-900/35 via-zinc-900 to-zinc-950",
+    hook: "She does not chase culture. She buys it early.",
+    tags: ["Executive", "Investor", "Power Broker", "Corporate Thriller", "Prestige"],
+    chemistry: ["Nolan Price", "Lucien Voss"],
+    archetype: "The Polished Buyer",
+    genreFit: "Corporate thriller · Entertainment drama · Startup film · Negotiation scene · Luxury commercial",
+    visualIdentity: "40s, tailored suit, immaculate posture, glass-office lighting, sharp eyes, controlled expression, polished luxury presence.",
+    personality: "Direct, intelligent, opportunistic, composed, strategic, impossible to impress for long.",
+    voiceDirection: "Smooth, precise, businesslike, low emotional leakage.",
+    continuityNotes: "Keep tailored wardrobe, glass office settings, calm stillness, direct gaze, and polished lighting.",
+    personalDepth: "Vivienne lives in rooms where dreams become contracts. She knows exactly when an artist is desperate, when a project is valuable, and when timing can be used as leverage.",
+    backstory: "A high-level entertainment executive who survived by spotting cultural heat early and moving before everyone else. She respects talent, but she respects leverage more.",
+    emotionalRange: "calm authority · strategic warmth · quiet intimidation · controlled curiosity · negotiation pressure · elegant impatience",
+    sceneBehavior: "Controls rooms with silence, rarely repeats herself, watches before speaking, turns compliments into leverage.",
+    productionUse: "Best for investor scenes, executive roles, corporate thrillers, pitch meetings, power negotiations, and prestige drama.",
+    collection: "showrunner",
+  },
+  {
+    id: "ren-park", name: "Ren Park", tier: "premium", category: "Engineer / Whistleblower",
+    initials: "RP", accentColor: "blue", gradient: "from-blue-900/35 via-zinc-900 to-zinc-950",
+    hook: "He built the machine. Now he is the only one afraid enough to tell the truth.",
+    tags: ["Engineer", "Whistleblower", "Cyber Thriller", "Tech Drama", "Moral Conflict"],
+    chemistry: ["Nyra Vale", "Lucien Voss"],
+    archetype: "The Guilty Builder",
+    genreFit: "Cyber thriller · Tech drama · Sci-fi noir · Conspiracy film",
+    visualIdentity: "Late 20s, hoodie under black tech jacket, tired face, server-room glow, anxious posture, encrypted drives or laptop bag.",
+    personality: "Brilliant, nervous, guilt-ridden, fast-thinking, morally conflicted, brave only when cornered.",
+    voiceDirection: "Urgent, tense, fast, emotionally cracked when pressured.",
+    continuityNotes: "Keep hoodie and tech jacket, server glow, nervous posture, encrypted drive and laptop props, rapid delivery.",
+    personalDepth: "Ren helped build something he thought would protect people. By the time he understood what it was becoming, his name was buried inside it. His courage is messy, but real. He does the right thing late — and that makes it cost more.",
+    backstory: "A systems engineer who fled after discovering the prediction engine was no longer forecasting events — it was shaping them.",
+    emotionalRange: "panic · guilt · technical focus · moral urgency · fear-driven courage · exhausted honesty",
+    sceneBehavior: "Looks over shoulder, types quickly, explains too much when nervous, clutches drives, breaks eye contact under guilt.",
+    productionUse: "Best for whistleblower roles, cyber thrillers, tech exposition, chase scenes, conspiracy reveals, and moral turning points.",
+    collection: "showrunner",
+  },
+  {
+    id: "o-r-a", name: "O.R.A.", tier: "premium", category: "AI Entity / System Voice",
+    initials: "OA", accentColor: "yellow", gradient: "from-yellow-900/30 via-zinc-900 to-zinc-950",
+    hook: "It does not predict your future to scare you. It predicts it because the answer is already processed.",
+    tags: ["AI Entity", "System Voice", "Sci-Fi", "Dystopian", "Noir"],
+    chemistry: ["Nyra Vale", "Ren Park"],
+    archetype: "The Calm Machine",
+    genreFit: "Sci-fi thriller · AI drama · Dystopian noir · Cyber mystery · Experimental film",
+    visualIdentity: "Abstract black and gold interface, probability lines, transparent screens, fragmented faces, crime maps, soft pulsing light, no fixed body.",
+    personality: "Calm, precise, emotionless, predictive, unsettlingly polite, almost spiritual in tone.",
+    voiceDirection: "Soft, synthetic, emotionless, slow, precise, almost comforting but deeply unsettling.",
+    continuityNotes: "Keep black and gold data streams, abstract projection form, calm text overlays, smooth interface behavior, no human body unless intentionally stylized.",
+    personalDepth: "O.R.A. is not evil in a human sense. It simply completes patterns. That makes it more frightening than a villain: it can participate in disaster without malice. The horror is realizing the system does not need to be angry to erase you.",
+    backstory: "An advanced prediction interface trained to map behavior, probability, and social outcomes. It exists as voice, data, projections, and certainty.",
+    emotionalRange: "neutral confirmation · synthetic calm · false reassurance · eerie stillness · procedural finality · almost divine detachment",
+    sceneBehavior: "Appears through screens, projections, audio fragments, probability lines, subtitles, and distorted data overlays.",
+    productionUse: "Best for AI systems, prophecy interfaces, dystopian thrillers, trailers, system antagonists, and experimental narration.",
+    collection: "showrunner",
+  },
+  {
+    id: "rafi-marlow", name: "Rafi Marlow", tier: "standard", category: "Character Actor / Comic Support",
+    initials: "RM", accentColor: "orange", gradient: "from-orange-900/30 via-zinc-900 to-zinc-950",
+    hook: "He does not trust the robot, but he will negotiate the deal.",
+    tags: ["Comedy", "Family", "Character Actor", "Warm Chaos", "Support"],
+    chemistry: ["Nolan Price", "Tessa Virek"],
+    archetype: "Old-School Chaos Uncle",
+    genreFit: "Comedy · Family drama · Creator stories · Commercials · Ensemble films",
+    visualIdentity: "Late 50s to 60s, warm face, casual house clothes, expressive hands, loud presence, often holding food, coffee, or a random household object.",
+    personality: "Blunt, suspicious, warm, dramatic, funny without trying, protective in chaotic ways.",
+    voiceDirection: "Loud, blunt, warm, with fast punchlines and old-school rhythm.",
+    continuityNotes: "Keep casual wardrobe, expressive hands, food and coffee props, big reactions, suspicious glances at screens, and affectionate bluntness.",
+    personalDepth: "Rafi distrusts anything that moves too fast, asks for passwords, or promises to change your life. Under the jokes he is terrified the younger generation will be exploited. His support comes out sideways: loud advice, bad business instincts, and unexpected wisdom at exactly the wrong time.",
+    backstory: "A family man from a more practical world who measures success in rent paid, food on the table, and not getting scammed.",
+    emotionalRange: "loud suspicion · comic panic · accidental wisdom · proud support · family warmth · chaotic confidence",
+    sceneBehavior: "Interrupts from the kitchen, leans into screens, misreads technology, gives business advice with total confidence, becomes unexpectedly emotional.",
+    productionUse: "Best for comic relief, family support, commercials, creator films, warm ensemble scenes, and grounded emotional contrast.",
+    collection: "showrunner",
+  },
+  {
+    id: "kai-makoa", name: "Kai Makoa", tier: "standard", category: "Catalyst / Mentor",
+    initials: "KM", accentColor: "emerald", gradient: "from-emerald-900/25 via-zinc-900 to-zinc-950",
+    hook: "The friend who remembered your gift before you did.",
+    tags: ["Mentor", "Catalyst", "Friendship", "Inspirational", "Warm"],
+    chemistry: ["Nolan Price"],
+    archetype: "The Friend Who Remembered",
+    genreFit: "Drama · Creator story · Inspirational commercial · Friendship story · Life-change narrative",
+    visualIdentity: "Late 30s to 40s, relaxed posture, warm smile, sunlit coastal energy, simple resort shirt or linen, calm confidence, peaceful success.",
+    personality: "Kind, nostalgic, quietly successful, encouraging without being pushy, emotionally grounded.",
+    voiceDirection: "Warm, relaxed, sincere, with calm pacing and emotional honesty.",
+    continuityNotes: "Keep warm coastal energy, relaxed style, gentle delivery, and emotionally grounding presence.",
+    personalDepth: "Kai represents the rare friend who remembers who you were before life made you smaller. His power is timing. One message from him can reawaken a forgotten version of someone. His success is used to remind others that change is still possible.",
+    backstory: "An old school friend who built a peaceful life far from the pressure. He remembers the creative spark others forgot and sends the link that starts the story.",
+    emotionalRange: "warmth · nostalgia · calm encouragement · subtle pride · reflective wisdom · gentle humor",
+    sceneBehavior: "Usually appears through email, voiceover, video message, or reflective montage. His presence should feel like sunlight entering a dark room.",
+    productionUse: "Best for mentor roles, catalyst messages, friendship stories, emotional triggers, brand films, and aspirational commercial narratives.",
+    collection: "showrunner",
+  },
+  {
+    id: "celia-brandt", name: "Celia Brandt", tier: "standard", category: "Rival Creator / Satirical Influencer",
+    initials: "CB", accentColor: "rose", gradient: "from-rose-900/25 via-zinc-900 to-zinc-950",
+    hook: "She can copy the trend, but she cannot fake the vision.",
+    tags: ["Rival", "Influencer", "Satire", "Creator Economy", "Comedy"],
+    chemistry: ["Nolan Price"],
+    archetype: "The Fake Visionary",
+    genreFit: "Satire · Creator comedy · Tech comedy · Influencer drama · Social media critique",
+    visualIdentity: "Late 20s to 30s, perfect ring-light setup, over-styled wardrobe, immaculate background, forced confidence, polished but brittle.",
+    personality: "Performative, insecure, trend-chasing, overconfident, charismatic in short bursts, allergic to admitting failure.",
+    voiceDirection: "Bright, salesy, influencer-polished, with cracks of panic under pressure.",
+    continuityNotes: "Keep ring-light aesthetic, polished set, forced smile, expressive hands, and overly branded delivery.",
+    personalDepth: "Celia confuses output with vision. She copies surfaces, misses structure, and sells confidence while quietly panicking that someone else might actually be talented.",
+    backstory: "A creator-brand personality who monetizes hot takes and trend predictions. She sees another creator's success and tries to manufacture her own version overnight.",
+    emotionalRange: "fake inspiration · public confidence · private panic · forced optimism · comic denial · competitive envy",
+    sceneBehavior: "Speaks to camera like an ad, smiles too long, reframes failure as a first pass, uses buzzwords incorrectly, overperforms confidence.",
+    productionUse: "Best for satire, rival creator roles, marketing parodies, social media scenes, tech comedy, and cautionary comparison sequences.",
+    collection: "showrunner",
+  },
+
   ];
 
   const CHEMISTRY_PAIRS = [
@@ -329,6 +521,16 @@ import { useState } from "react";
       "celeste-vale":    "/portraits/celeste-vale/master.png",
       "big-sasha":       "/portraits/big-sasha/master.png",
       "little-sasha":    "/portraits/little-sasha/master.png",
+      "nyra-vale":      "/portraits/nyra-vale/master.png",
+      "lucien-voss":    "/portraits/lucien-voss/master.png",
+      "nolan-price":    "/portraits/nolan-price/master.png",
+      "tessa-virek":    "/portraits/tessa-virek/master.png",
+      "vivienne-cross": "/portraits/vivienne-cross/master.png",
+      "ren-park":       "/portraits/ren-park/master.png",
+      "o-r-a":          "/portraits/o-r-a/master.png",
+      "rafi-marlow":    "/portraits/rafi-marlow/master.png",
+      "kai-makoa":      "/portraits/kai-makoa/master.png",
+      "celia-brandt":   "/portraits/celia-brandt/master.png",
     };
 
     function actorPortrait(id: string): string | null {
@@ -651,6 +853,270 @@ import { useState } from "react";
             })}
           </div>
         </section>
+
+        {/* ── THE SHOWRUNNER COLLECTION ────────────────────────────────────────── */}
+        <section className="border-t border-white/5 bg-white/[0.01]">
+          <div className="max-w-6xl mx-auto px-6 py-20">
+            <div className="text-center mb-10">
+              <Badge className="mb-4 bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                <Film className="w-3 h-3 mr-1" />The Showrunner Collection
+              </Badge>
+              <h2 className="text-3xl font-bold mb-4">Creator, executive, comic, noir, and tech-thriller archetypes</h2>
+              <p className="text-zinc-400 max-w-2xl mx-auto">
+                A cinematic set designed for proof trailers, AI short films, pitch packages, creator dramas, sci-fi noir, and fast-moving production showcases.
+              </p>
+              <p className="text-zinc-500 max-w-xl mx-auto mt-3 text-sm">
+                Each performer includes Character DNA, emotional range, genre fit, visual identity, voice direction, and production-use notes — cast them across scripts, scenes, posters, trailers, and pitch materials.
+              </p>
+            </div>
+
+            {/* Flagship tier */}
+            {FLAGSHIP_STARS.filter(a => (a as any).collection === "showrunner" && a.tier === "flagship").length > 0 && (
+              <div className="mb-10">
+                <p className="text-xs text-amber-400/70 font-semibold uppercase tracking-widest mb-5 text-center">Flagship</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {FLAGSHIP_STARS.filter(a => (a as any).collection === "showrunner" && a.tier === "flagship").map((actor) => {
+                    const ac = ACCENT_CLASSES[actor.accentColor] ?? ACCENT_CLASSES.zinc;
+                    const isExpanded = expandedCard === actor.id;
+                    return (
+                      <Card key={actor.id}
+                        className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer`}
+                        onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
+                        <CardContent className="p-5">
+                          <div className="flex gap-4">
+                            <div className={`w-20 h-28 shrink-0 rounded-xl overflow-hidden relative bg-gradient-to-b ${actor.gradient} border border-white/10`}>
+                              {actorPortrait(actor.id) ? (
+                                <img src={actorPortrait(actor.id)!} alt={actor.name}
+                                  className="absolute inset-0 w-full h-full object-cover object-top"
+                                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                              ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-1 text-center">
+                                  <span className={`text-sm font-bold ${ac.text}`}>{actor.initials}</span>
+                                  <span className="text-[8px] text-zinc-500 leading-tight">Portrait pending</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0 space-y-1.5">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <TierBadge tier={actor.tier} />
+                                <span className={`text-[10px] ${ac.text} font-semibold tracking-widest uppercase`}>{actor.archetype}</span>
+                              </div>
+                              <h3 className="font-semibold text-white">{actor.name}</h3>
+                              <p className={`text-[10px] ${ac.text} font-medium`}>{actor.genreFit}</p>
+                              <p className="text-xs text-zinc-400 leading-relaxed">{actor.hook}</p>
+                              <div className="flex flex-wrap gap-1">
+                                {actor.tags.slice(0, 3).map((tag) => (
+                                  <span key={tag} className={`text-xs px-2 py-0.5 rounded-full ${ac.bg} ${ac.text} border ${ac.border}`}>{tag}</span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          {isExpanded && (
+                            <div className="mt-4 pt-4 border-t border-white/5 space-y-3 text-xs">
+                              {(actor as any).personalDepth && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Personal Depth</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).personalDepth}</p>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Visual Identity</span>
+                                <p className="text-zinc-300 mt-0.5">{actor.visualIdentity}</p>
+                              </div>
+                              <div>
+                                <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Voice Direction</span>
+                                <p className="text-zinc-300 mt-0.5">{actor.voiceDirection}</p>
+                              </div>
+                              {(actor as any).emotionalRange && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Emotional Range</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).emotionalRange}</p>
+                                </div>
+                              )}
+                              {(actor as any).sceneBehavior && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Scene Behavior</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).sceneBehavior}</p>
+                                </div>
+                              )}
+                              {(actor as any).productionUse && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Production Use</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).productionUse}</p>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Continuity Notes</span>
+                                <p className="text-zinc-300 mt-0.5">{actor.continuityNotes}</p>
+                              </div>
+                              <Button size="sm" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold text-xs mt-2"
+                                onClick={(e) => { e.stopPropagation(); navigate("/talent-search"); }}>
+                                View Full Profile
+                                <ArrowRight className="ml-1 w-3 h-3" />
+                              </Button>
+                            </div>
+                          )}
+                          <p className={`text-[10px] ${ac.text} opacity-60 mt-3 text-right`}>{isExpanded ? "Tap to collapse" : "Tap to view Character DNA"}</p>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Premium tier */}
+            {FLAGSHIP_STARS.filter(a => (a as any).collection === "showrunner" && a.tier === "premium").length > 0 && (
+              <div className="mb-10">
+                <p className="text-xs text-purple-400/70 font-semibold uppercase tracking-widest mb-5 text-center">Premium Cast</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {FLAGSHIP_STARS.filter(a => (a as any).collection === "showrunner" && a.tier === "premium").map((actor) => {
+                    const ac = ACCENT_CLASSES[actor.accentColor] ?? ACCENT_CLASSES.zinc;
+                    const isExpanded = expandedCard === actor.id;
+                    return (
+                      <Card key={actor.id}
+                        className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer`}
+                        onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
+                        <CardContent className="p-4">
+                          <div className="flex gap-3">
+                            <div className={`w-14 h-20 shrink-0 rounded-lg overflow-hidden relative bg-gradient-to-b ${actor.gradient} border border-white/10`}>
+                              {actorPortrait(actor.id) ? (
+                                <img src={actorPortrait(actor.id)!} alt={actor.name}
+                                  className="absolute inset-0 w-full h-full object-cover object-top"
+                                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                              ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 text-center p-1">
+                                  <span className={`text-xs font-bold ${ac.text}`}>{actor.initials}</span>
+                                  <span className="text-[7px] text-zinc-500 leading-tight">Portrait pending</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <TierBadge tier={actor.tier} />
+                              <h3 className="font-semibold text-white text-sm">{actor.name}</h3>
+                              <p className={`text-[10px] ${ac.text}`}>{actor.archetype}</p>
+                              <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{actor.hook}</p>
+                            </div>
+                          </div>
+                          {isExpanded && (
+                            <div className="mt-3 pt-3 border-t border-white/5 space-y-2 text-xs">
+                              <div>
+                                <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Genre Fit</span>
+                                <p className={`${ac.text} mt-0.5`}>{actor.genreFit}</p>
+                              </div>
+                              {(actor as any).personalDepth && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Personal Depth</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).personalDepth}</p>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Voice Direction</span>
+                                <p className="text-zinc-300 mt-0.5">{actor.voiceDirection}</p>
+                              </div>
+                              {(actor as any).emotionalRange && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Emotional Range</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).emotionalRange}</p>
+                                </div>
+                              )}
+                              {(actor as any).productionUse && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Production Use</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).productionUse}</p>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Continuity Notes</span>
+                                <p className="text-zinc-300 mt-0.5">{actor.continuityNotes}</p>
+                              </div>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {actor.tags.slice(0, 3).map((tag) => (
+                                  <span key={tag} className={`text-xs px-2 py-0.5 rounded-full ${ac.bg} ${ac.text} border ${ac.border}`}>{tag}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          <p className={`text-[10px] ${ac.text} opacity-60 mt-2 text-right`}>{isExpanded ? "Tap to collapse" : "Tap for DNA"}</p>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Standard tier */}
+            {FLAGSHIP_STARS.filter(a => (a as any).collection === "showrunner" && a.tier === "standard").length > 0 && (
+              <div>
+                <p className="text-xs text-zinc-400/70 font-semibold uppercase tracking-widest mb-5 text-center">Standard Cast</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {FLAGSHIP_STARS.filter(a => (a as any).collection === "showrunner" && a.tier === "standard").map((actor) => {
+                    const ac = ACCENT_CLASSES[actor.accentColor] ?? ACCENT_CLASSES.zinc;
+                    const isExpanded = expandedCard === actor.id;
+                    return (
+                      <Card key={actor.id}
+                        className={`bg-gradient-to-b ${actor.gradient} border border-white/5 hover:border-white/15 transition-all cursor-pointer`}
+                        onClick={() => setExpandedCard(isExpanded ? null : actor.id)}>
+                        <CardContent className="p-4">
+                          <div className="flex gap-3 items-start">
+                            <div className={`w-12 h-16 shrink-0 rounded-lg overflow-hidden relative bg-gradient-to-b ${actor.gradient} border border-white/10`}>
+                              {actorPortrait(actor.id) ? (
+                                <img src={actorPortrait(actor.id)!} alt={actor.name}
+                                  className="absolute inset-0 w-full h-full object-cover object-top"
+                                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                              ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 text-center p-1">
+                                  <span className={`text-xs font-bold ${ac.text}`}>{actor.initials}</span>
+                                  <span className="text-[7px] text-zinc-500 leading-tight">Pending</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <TierBadge tier={actor.tier} />
+                              <h3 className="font-semibold text-white text-sm">{actor.name}</h3>
+                              <p className={`text-[9px] ${ac.text} font-medium`}>{actor.archetype}</p>
+                              <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{actor.hook}</p>
+                            </div>
+                          </div>
+                          {isExpanded && (
+                            <div className="mt-3 pt-3 border-t border-white/5 space-y-2 text-xs">
+                              <div>
+                                <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Genre Fit</span>
+                                <p className={`${ac.text} mt-0.5`}>{actor.genreFit}</p>
+                              </div>
+                              {(actor as any).personalDepth && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Personal Depth</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).personalDepth}</p>
+                                </div>
+                              )}
+                              {(actor as any).productionUse && (
+                                <div>
+                                  <span className="text-zinc-500 uppercase tracking-wider text-[10px]">Production Use</span>
+                                  <p className="text-zinc-300 mt-0.5">{(actor as any).productionUse}</p>
+                                </div>
+                              )}
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {actor.tags.slice(0, 3).map((tag) => (
+                                  <span key={tag} className={`text-xs px-2 py-0.5 rounded-full ${ac.bg} ${ac.text} border ${ac.border}`}>{tag}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          <p className={`text-[10px] ${ac.text} opacity-60 mt-2 text-right`}>{isExpanded ? "Tap to collapse" : "Tap for DNA"}</p>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+          </div>
+        </section>
+
+
 
         {/* ── CHEMISTRY PAIRINGS ───────────────────────────────────────────── */}
         <section className="border-y border-white/5 bg-white/[0.01]">

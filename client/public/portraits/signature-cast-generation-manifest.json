@@ -1,0 +1,226 @@
+{
+  "status": "pending_paid_generation",
+  "note": "Portrait prompts prepared. Lee will generate missing portraits using his chosen paid API.",
+  "requiredOutput": "client/public/portraits/<actor-id>/master.png",
+  "generatedAt": "2026-04-27",
+  "actors": [
+    {
+      "id": "julian-vance",
+      "name": "Julian Vance",
+      "status": "existing",
+      "outputPath": "/portraits/julian-vance/master.png",
+      "prompt": "Realistic cinematic casting portrait of a sharp male lead with dangerous charisma, late 30s to early 40s, refined features, intense eyes, controlled confidence, tailored dark wardrobe, prestige crime thriller energy, high-stakes romantic lead presence. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "elena-rostova",
+      "name": "Elena Rostova",
+      "status": "existing",
+      "outputPath": "/portraits/elena-rostova/master.png",
+      "prompt": "Realistic cinematic casting portrait of a composed female lead, precise and quietly devastating, early 30s to early 40s, elegant bone structure, cool intelligence, restrained expression, high fashion noir styling, dangerous calm. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "sofia-reyes",
+      "name": "Sofia Reyes",
+      "status": "existing",
+      "outputPath": "/portraits/sofia-reyes/master.png",
+      "prompt": "Realistic cinematic casting portrait of a warm versatile female lead, early 30s, expressive eyes, emotionally intelligent presence, natural beauty, approachable but powerful, drama and romance lead energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "kofi-adebayo",
+      "name": "Kofi Adebayo",
+      "status": "existing",
+      "outputPath": "/portraits/kofi-adebayo/master.png",
+      "prompt": "Realistic cinematic casting portrait of a physically authoritative male lead, 30s to early 40s, strong presence, grounded confidence, athletic build, intense but human expression, action and prestige drama energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "kenji-sato",
+      "name": "Kenji Sato",
+      "status": "existing",
+      "outputPath": "/portraits/kenji-sato/master.png",
+      "prompt": "Realistic cinematic casting portrait of a neo-noir male lead, 30s to early 40s, controlled stillness, precise expression, dramatic lighting, psychological thriller energy, quiet danger. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "marcus-osei",
+      "name": "Marcus Osei",
+      "status": "existing",
+      "outputPath": "/portraits/marcus-osei/master.png",
+      "prompt": "Realistic cinematic casting portrait of a grounded male lead, 30s to early 40s, emotionally complex, trustworthy face, calm strength, crime drama and action energy, natural warmth. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "amara-diallo",
+      "name": "Amara Diallo",
+      "status": "existing",
+      "outputPath": "/portraits/amara-diallo/master.png",
+      "prompt": "Realistic cinematic casting portrait of a female lead with quiet restraint and inner force, 30s, composed face, strong eyes, elegant but practical styling, thriller and action drama energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "yuki-tanaka",
+      "name": "Yuki Tanaka",
+      "status": "existing",
+      "outputPath": "/portraits/yuki-tanaka/master.png",
+      "prompt": "Realistic cinematic casting portrait of a controlled and magnetic female lead, late 20s to late 30s, exact gestures, quiet intensity, noir thriller styling, intelligent and emotionally contained. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "viktor-vale",
+      "name": "Viktor Vale",
+      "status": "existing",
+      "outputPath": "/portraits/viktor-vale/master.png",
+      "prompt": "Realistic cinematic casting portrait of a character actor with quiet authority, 50s to 60s, composed face, dangerous calm, tailored dark wardrobe, crime family patriarch energy, prestige drama mood. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "tariq-haddad",
+      "name": "Tariq Haddad",
+      "status": "existing",
+      "outputPath": "/portraits/tariq-haddad/master.png",
+      "prompt": "Realistic cinematic casting portrait of a warm but unpredictable character actor, 40s to 60s, expressive face, expansive presence, intelligent eyes, dinner-table danger, crime drama energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "gallagher-twins",
+      "name": "The Gallagher Twins",
+      "status": "existing",
+      "outputPath": "/portraits/gallagher-twins/master.png",
+      "prompt": "Realistic cinematic dual casting portrait of identical twin character actors, 30s to 40s, visually distinctive, one slightly warmer and one colder, thriller and dark comedy energy, same face with opposite souls, premium film still. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "daniel-cross",
+      "name": "Daniel Cross",
+      "status": "existing",
+      "outputPath": "/portraits/daniel-cross/master.png",
+      "prompt": "Realistic cinematic casting portrait of a suburban everyman male lead, late 30s to 40s, morally conflicted, approachable face, quiet tension, drama thriller energy, natural clothing. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "mavis-whitlock",
+      "name": "Mavis Whitlock",
+      "status": "existing",
+      "outputPath": "/portraits/mavis-whitlock/master.png",
+      "prompt": "Realistic cinematic casting portrait of an observant female lead and witness archetype, 50s to 60s, intelligent eyes, reserved expression, subtle danger, dark comedy and crime drama energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "celeste-vale",
+      "name": "Celeste Vale",
+      "status": "existing",
+      "outputPath": "/portraits/celeste-vale/master.png",
+      "prompt": "Realistic cinematic casting portrait of an immaculate composed female lead, 40s to 50s, impossible to read, unsettling calm, elegant wardrobe, thriller and prestige drama energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "big-sasha",
+      "name": "Big Sasha",
+      "status": "existing",
+      "outputPath": "/portraits/big-sasha/master.png",
+      "prompt": "Realistic cinematic casting portrait of a large quiet character actor, 40s to 60s, hard edge, suspicious eyes, physically imposing but realistic, silent threat, crime thriller energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "little-sasha",
+      "name": "Little Sasha",
+      "status": "existing",
+      "outputPath": "/portraits/little-sasha/master.png",
+      "prompt": "Realistic cinematic casting portrait of a talkative disarming character actor, 40s to 60s, warmer expression, smiling but ambiguous, streetwise charm, dark comedy crime energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter."
+    },
+    {
+      "id": "nyra-vale",
+      "name": "Nyra Vale",
+      "status": "pending_generation",
+      "outputPath": "/portraits/nyra-vale/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a female noir detective, late 30s, black raincoat, tired but intensely focused eyes, wet dark hair, sharp cheekbones catching neon light, controlled intensity, urban night environment, rain-soaked atmosphere. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter, science fiction costume, futuristic gear, bright colors."
+    },
+    {
+      "id": "lucien-voss",
+      "name": "Lucien Voss",
+      "status": "pending_generation",
+      "outputPath": "/portraits/lucien-voss/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a male tech antagonist and visionary founder, mid 40s to 50s, distinguished silver hair perfectly groomed, tailored all-black suit, cold intelligent eyes with philosophical depth, surrounded by glass architecture and soft screen glow, calm posture, quiet menace. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter, casual clothing, messy hair, friendly smile."
+    },
+    {
+      "id": "nolan-price",
+      "name": "Nolan Price",
+      "status": "pending_generation",
+      "outputPath": "/portraits/nolan-price/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a male creator and underdog storyteller, late 30s, expressive tired eyes with warmth underneath, messy dark hair, worn hoodie under a jacket, laptop glow softly illuminating his face, creative clutter in background, underdog energy with cinematic warmth. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter, suit, formal attire, polished appearance."
+    },
+    {
+      "id": "tessa-virek",
+      "name": "Tessa Virek",
+      "status": "pending_generation",
+      "outputPath": "/portraits/tessa-virek/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a female editor and creative partner, late 20s to early 30s, sharp intelligent eyes, practical minimal wardrobe, clean composed silhouette, calm confident expression, deadpan watchfulness, editor-at-midnight realism. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter, dramatic makeup, glamorous styling, emotional expression."
+    },
+    {
+      "id": "vivienne-cross",
+      "name": "Vivienne Cross",
+      "status": "pending_generation",
+      "outputPath": "/portraits/vivienne-cross/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a female entertainment executive and power broker, 40s, tailored luxury suit, immaculate posture, glass-office lighting, sharp eyes with controlled expression, polished luxury presence, quiet intimidation. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter, casual clothing, emotional warmth, relaxed posture."
+    },
+    {
+      "id": "ren-park",
+      "name": "Ren Park",
+      "status": "pending_generation",
+      "outputPath": "/portraits/ren-park/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a male systems engineer and whistleblower, late 20s, hoodie under black tech jacket, tired anxious face, server-room green glow on skin, nervous posture, encrypted drive or laptop bag visible, fear and guilt behind the eyes. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter, confident posture, formal clothing, relaxed expression."
+    },
+    {
+      "id": "o-r-a",
+      "name": "O.R.A.",
+      "status": "pending_generation",
+      "outputPath": "/portraits/o-r-a/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of an AI entity system voice, abstract black and gold digital interface, probability data streams, fragmented humanoid form visible through transparent screens, soft gold pulsing light, crime mapping overlays, no fixed biological face, eerie calm. Premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, high-end film production style, AI system visual, dystopian noir aesthetic.",
+      "negativePrompt": "plastic skin, waxy face, realistic human portrait, human body, celebrity likeness, real person, cartoon, anime, cheap AI look, oversaturated, text artifacts, watermark, logo, low resolution, beauty filter, bright primary colors, friendly warmth."
+    },
+    {
+      "id": "rafi-marlow",
+      "name": "Rafi Marlow",
+      "status": "pending_generation",
+      "outputPath": "/portraits/rafi-marlow/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a male character actor in a warm chaos uncle role, late 50s to 60s, warm expressive face with laugh lines, casual house clothes, big expressive hands, coffee mug or food nearby, loud cheerful presence, suspicious glance at something off-camera. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter, formal attire, polished appearance, stern expression."
+    },
+    {
+      "id": "kai-makoa",
+      "name": "Kai Makoa",
+      "status": "pending_generation",
+      "outputPath": "/portraits/kai-makoa/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a male catalyst and mentor, late 30s to 40s, relaxed warm posture, genuine warm smile, sunlit coastal energy, simple linen resort shirt, calm confident energy, peaceful successful aura, emotionally grounding presence. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, warm cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, fake smile, warped teeth, extra limbs, text, watermark, logo, low resolution, cheap AI look, oversaturated, beauty filter, dark environment, tense expression, formal suit."
+    },
+    {
+      "id": "celia-brandt",
+      "name": "Celia Brandt",
+      "status": "pending_generation",
+      "outputPath": "/portraits/celia-brandt/master.png",
+      "collection": "showrunner",
+      "prompt": "Realistic cinematic casting portrait of a female rival creator and satirical influencer, late 20s to 30s, ring-light aesthetic clearly visible, over-styled hair and makeup, immaculate branded background, forced confident smile showing too much effort, polished but brittle energy. Natural human skin texture, subtle pores, believable facial asymmetry, expressive eyes, realistic hair, premium film publicity still, shallow depth of field, cinematic lighting, black and gold Virelle studio color grade, emotionally believable, professional actor headshot, high-end film production style.",
+      "negativePrompt": "plastic skin, waxy face, over-smoothed skin, glass eyes, uncanny valley, cartoon, anime, avatar, celebrity likeness, real person likeness, distorted face, bad anatomy, warped teeth, extra limbs, text watermark, logo, low resolution, cheap AI look, oversaturated, genuine warmth, natural lighting, casual styling."
+    }
+  ]
+}
