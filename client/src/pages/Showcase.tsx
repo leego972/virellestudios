@@ -1566,7 +1566,16 @@ function DiscoveryFeed() {
                 </button>
               </Link>
 
-              <div className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-amber-500/30 text-amber-400 text-sm font-semibold">
+              <Link href="/signature-cast">
+                  <button
+                    type="button"
+                    className="px-7 py-3.5 rounded-xl font-semibold text-amber-300 text-sm border border-amber-500/30 hover:bg-amber-500/10 transition-all"
+                  >
+                    Browse Digital Cast
+                  </button>
+                </Link>
+
+                <div className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-amber-500/30 text-amber-400 text-sm font-semibold">
                 <Sparkles className="w-4 h-4" />
                 Ready for API Generation
               </div>

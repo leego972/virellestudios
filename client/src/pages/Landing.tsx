@@ -189,8 +189,11 @@ export default function Landing() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-500">CINEMATIC REALITY.</span>
             </h1>
 
-            <p className="max-w-2xl mx-auto text-lg sm:text-xl text-white/60 leading-relaxed mb-12">
-              The professional orchestration platform for AI cinema. Generate full-length films with screenplay, scene continuity, voice acting, and original scores in a unified production pipeline.
+            <p className="max-w-2xl mx-auto text-lg sm:text-xl text-white/60 leading-relaxed mb-4">
+              Virelle connects story, characters, scenes, AI generation, trailers, posters, funding targets, and production packages in one controlled film workflow.
+            </p>
+            <p className="max-w-xl mx-auto text-sm text-white/35 italic leading-relaxed mb-12">
+              Generic AI tools make clips. Virelle helps you build the show.
             </p>
 
             {/* CTA buttons */}
@@ -201,7 +204,10 @@ export default function Landing() {
               </Button>
               <Button size="lg" variant="outline" onClick={() => setLocation("/showcase")} className="h-13 text-base px-8 gap-2 border-white/20 hover:bg-white/5 text-white">
                 <Play className="h-4 w-4" />
-                Watch Showcase
+                Watch The Showrunner
+              </Button>
+              <Button size="lg" variant="ghost" onClick={() => setLocation("/signature-cast")} className="h-13 text-base px-6 gap-2 text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/5">
+                Browse Digital Cast
               </Button>
             </div>
 
@@ -229,17 +235,21 @@ export default function Landing() {
             </div>
 
             {/* Trust bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto opacity-60">
-              {[
-                { value: "Active", label: "Production Pipeline", color: "text-amber-400" },
-                { value: "Global", label: "Filmmaker Community", color: "text-green-400" },
-                { value: "Reliable", label: "Cloud Infrastructure", color: "text-blue-400" },
-                { value: "Premium", label: "User Experience", color: "text-purple-400" },
-              ].map(s => (
-                <div key={s.label} className="text-center">
-                  <p className={`text-xl sm:text-2xl font-black ${s.color}`}>{s.value}</p>
-                  <p className="text-[10px] text-white/50 mt-1 uppercase tracking-wider font-bold">{s.label}</p>
-                </div>
+            <div className=flex flex-wrap items-center justify-center gap-x-8 gap-y-2 max-w-4xl mx-auto">
+                {[
+                  "BYOK Ready",
+                  "Commercial Workflow",
+                  "Digital Cast",
+                  "Funding Targets",
+                  "Production Packages",
+                  "Security-Hardened",
+                ].map((label) => (
+                  <span key={label} className="text-[11px] font-bold uppercase tracking-widest text-white/35 flex items-center gap-1.5">
+                    <span className="w-1 h-1 rounded-full bg-amber-500/50 inline-block" />
+                    {label}
+                  </span>
+                ))}
+              </div>
               ))}
             </div>
           </div>
@@ -498,7 +508,44 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── 5. Pricing Preview ─── */}
+        
+          {/* ─── 4b. Clips are not a production ─── */}
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
+            <div className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Clips are not a production.</h2>
+                <p className="text-white/50 max-w-2xl mx-auto text-sm leading-relaxed">
+                  AI video generators can create individual shots. Virelle is built for the full production workflow — story, cast, scene continuity, trailer structure, poster direction, music notes, funding targets, and export-ready production packages.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+                <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-7">
+                  <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-5">Generic clip tools</h3>
+                  <ul className="space-y-3">
+                    {["Random clips", "Inconsistent characters", "Limited story structure", "Weak continuity", "No pitch package"].map(item => (
+                      <li key={item} className="flex items-center gap-3 text-sm text-white/35">
+                        <span className="w-4 h-4 rounded-full border border-white/10 flex items-center justify-center text-white/20 text-[10px] shrink-0">✕</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-2xl border border-amber-500/20 bg-amber-950/10 p-7">
+                  <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-5">Virelle</h3>
+                  <ul className="space-y-3">
+                    {["Structured story", "Digital Cast", "Character DNA", "Scene cards", "Trailer and pitch assets", "Production package"].map(item => (
+                      <li key={item} className="flex items-center gap-3 text-sm text-white/80">
+                        <span className="w-4 h-4 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-400 text-[10px] shrink-0">✓</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ─── 5. Pricing Preview ─── */}
         <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-t border-white/10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">

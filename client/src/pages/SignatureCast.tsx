@@ -768,6 +768,25 @@ import { useState } from "react";
           </div>
         </section>
 
+        {/* ── SHOWCASE CROSS-LINK ── */}
+        <section className="max-w-4xl mx-auto px-6 pb-2">
+          <div className="rounded-xl border border-white/5 bg-zinc-900/30 p-6 flex flex-col sm:flex-row items-center gap-5 justify-between">
+            <div>
+              <p className="text-sm font-semibold text-zinc-300 mb-1">See Digital Cast in context.</p>
+              <p className="text-xs text-zinc-500 leading-relaxed max-w-sm">
+                Inside THE SHOWRUNNER showcase, Digital Cast is used to build a complete character-driven production package.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate("/showcase")}
+              className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-amber-500/30 text-amber-300 text-sm font-semibold hover:bg-amber-500/10 transition-colors whitespace-nowrap"
+            >
+              Watch Showcase
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </section>
+
         {/* ── CTA ──────────────────────────────────────────────────────────── */}
         <section className="max-w-6xl mx-auto px-6 py-20 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to build your cast?</h2>
