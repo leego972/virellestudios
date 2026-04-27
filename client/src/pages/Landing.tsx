@@ -246,57 +246,92 @@ export default function Landing() {
         </section>
 
         {/* ─── 1.5 The Showrunner Showcase Proof ─── */}
-        <section
-          className="py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-gradient-to-b from-black via-neutral-950 to-black"
-          data-testid="section-showrunner-proof"
-        >
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4 uppercase tracking-wider">
-                <Film className="h-3.5 w-3.5" />
-                Featured Showcase · The Showrunner
+          <section
+            className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10"
+            style={{ background: "linear-gradient(180deg, #000 0%, #0a0800 40%, #000 100%)" }}
+            data-testid="section-showrunner-proof"
+          >
+            {/* Gold top rule */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[1px]"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, #d4af37 25%, #f5e6a3 50%, #d4af37 75%, transparent 100%)",
+              }}
+            />
+
+            <div className="max-w-5xl mx-auto">
+              {/* Label */}
+              <div className="flex justify-center mb-8">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+                  <Film className="h-3.5 w-3.5" />
+                  Featured Showcase · The Showrunner
+                </div>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-4 leading-tight">
-                {LANDING_COPY.headline}
-              </h2>
-              <p className="text-base md:text-lg text-neutral-400 max-w-3xl mx-auto leading-relaxed">
-                {LANDING_COPY.subheadline}
-              </p>
-            </div>
 
-            <div className="rounded-xl border border-amber-500/20 bg-black/50 p-6 md:p-8 mb-10">
-              <p className="text-center text-lg md:text-xl text-amber-300/90 italic font-medium">
-                "{LANDING_COPY.proofLine}"
-              </p>
-            </div>
+              {/* Headline */}
+              <div className="text-center mb-10">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white mb-5 leading-tight">
+                  {LANDING_COPY.headline}
+                </h2>
+                <p className="text-base md:text-lg text-neutral-400 max-w-3xl mx-auto leading-relaxed">
+                  {LANDING_COPY.subheadline}
+                </p>
+              </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="bg-gradient-to-r from-amber-500 to-amber-400 text-black hover:from-amber-400 hover:to-amber-300 font-semibold"
-                data-testid="button-watch-showcase"
+              {/* Proof line — high-contrast quote card */}
+              <div
+                className="relative rounded-2xl border border-amber-500/25 p-8 md:p-10 mb-10 text-center overflow-hidden"
+                style={{ background: "linear-gradient(160deg, #0c0c0c 0%, #110f05 100%)" }}
               >
-                <a href={LANDING_COPY.primaryCta.href}>
-                  <Play className="h-4 w-4 mr-2" />
-                  {LANDING_COPY.primaryCta.label}
-                </a>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10 hover:text-amber-200"
-                data-testid="button-start-production"
-              >
-                <a href={LANDING_COPY.secondaryCta.href}>
-                  {LANDING_COPY.secondaryCta.label}
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </a>
-              </Button>
+                {/* Film-frame corners */}
+                <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-amber-500/40 pointer-events-none" />
+                <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-amber-500/40 pointer-events-none" />
+                <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-amber-500/40 pointer-events-none" />
+                <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-amber-500/40 pointer-events-none" />
+
+                <p
+                  className="text-xl md:text-2xl lg:text-3xl font-bold italic leading-snug"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #d4af37 0%, #f5e6a3 40%, #d4af37 70%, #b8941f 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  "{LANDING_COPY.proofLine}"
+                </p>
+              </div>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-gradient-to-r from-amber-500 to-amber-400 text-black hover:from-amber-400 hover:to-amber-300 font-bold shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
+                  data-testid="button-watch-showcase"
+                >
+                  <a href={LANDING_COPY.primaryCta.href}>
+                    <Play className="h-4 w-4 mr-2" />
+                    {LANDING_COPY.primaryCta.label}
+                  </a>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10 hover:text-amber-200 font-semibold"
+                  data-testid="button-start-production"
+                >
+                  <a href={LANDING_COPY.secondaryCta.href}>
+                    {LANDING_COPY.secondaryCta.label}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </a>
+                </Button>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
         {/* ─── 2. How It Works ─── */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">

@@ -700,686 +700,884 @@ function DiscoveryFeed() {
  * checklist, the clips-vs-production comparison, the 3 social cuts, and the
  * closing CTA. All copy lives in client/src/data/showrunnerShowcase.ts.
  * ────────────────────────────────────────────────────────────────────────── */
-function TheShowrunnerSection() {
-  const [scriptOpen, setScriptOpen] = useState(false);
 
-  return (
-    <section
-      className="relative z-10 max-w-7xl mx-auto px-4 pb-24"
-      data-testid="section-showrunner"
-    >
-      {/* Title block */}
-      <div className="text-center pt-8 pb-12">
-        <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
-          <Star className="w-3 h-3" />Featured Showcase
-        </div>
-        <h2
-          className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4"
+  /* ─────────────────────────────────────────────────────────────────────────
+   * TheShowrunnerSection
+   * Full cinematic showcase for THE SHOWRUNNER — premium black/gold styling.
+   * All copy lives in client/src/data/showrunnerShowcase.ts and showrunnerMovie.ts
+   * ────────────────────────────────────────────────────────────────────────── */
+  function TheShowrunnerSection() {
+    const [scriptOpen, setScriptOpen] = useState(false);
+
+    return (
+      <section
+        className="relative z-10 max-w-7xl mx-auto px-4 pb-24"
+        data-testid="section-showrunner"
+      >
+        {/* ── CINEMATIC HERO ── */}
+        <div
+          className="relative overflow-hidden rounded-2xl border border-amber-500/25 mb-16 text-center"
           style={{
             background:
-              "linear-gradient(135deg, #d4af37 0%, #f5e6a3 30%, #d4af37 50%, #b8941f 70%, #d4af37 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+              "linear-gradient(160deg, #0c0c0c 0%, #110f05 45%, #0c0c0c 100%)",
           }}
-          data-testid="text-showrunner-title"
         >
-          {showrunner.title}
-        </h2>
-        <p className="text-lg md:text-xl text-amber-300/80 italic mb-6">
-          {showrunner.tagline}
-        </p>
-        <p className="text-sm md:text-base text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-          {showrunner.logline}
-        </p>
-      </div>
+          {/* Film-frame corner brackets */}
+          <div className="absolute top-4 left-4 w-7 h-7 border-t-2 border-l-2 border-amber-500/50 pointer-events-none" />
+          <div className="absolute top-4 right-4 w-7 h-7 border-t-2 border-r-2 border-amber-500/50 pointer-events-none" />
+          <div className="absolute bottom-4 left-4 w-7 h-7 border-b-2 border-l-2 border-amber-500/50 pointer-events-none" />
+          <div className="absolute bottom-4 right-4 w-7 h-7 border-b-2 border-r-2 border-amber-500/50 pointer-events-none" />
 
-      {/* Disclaimer card */}
-      <div className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-5 mb-12 max-w-3xl mx-auto">
-        <div className="text-[10px] uppercase tracking-widest text-amber-400/70 font-semibold mb-2">
-          Disclaimer · Appears after opener, before film
-        </div>
-        <p className="text-xs text-neutral-400 leading-relaxed">
-          {showrunner.disclaimer.short}
-        </p>
-      </div>
+          {/* Gold top rule */}
+          <div
+            className="h-[2px] w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 0%, #d4af37 30%, #f5e6a3 50%, #d4af37 70%, transparent 100%)",
+            }}
+          />
 
-      {/* Inciting email from Sam */}
-      <div className="mb-16 max-w-3xl mx-auto">
-        <div className="text-center mb-6">
-          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
-            The Inciting Email
-          </div>
-          <h3 className="text-2xl font-bold text-white">
-            One email reminded him.
-          </h3>
-        </div>
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 overflow-hidden">
-          <div className="border-b border-neutral-800 bg-neutral-950 px-5 py-3 flex items-center gap-3">
-            <Mail className="w-4 h-4 text-amber-400/70" />
-            <div className="flex-1 text-xs">
-              <div className="text-neutral-300">
-                From: <span className="text-white font-medium">{showrunner.samEmail.from}</span>
-              </div>
-              <div className="text-neutral-400">
-                Subject: <span className="text-amber-300/80">{showrunner.samEmail.subject}</span>
-              </div>
+          <div className="px-6 py-14 md:py-20 relative z-10">
+            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+              <Star className="w-3 h-3" />
+              Featured Showcase · VirElle Studios Original
             </div>
-          </div>
-          <pre className="p-5 text-sm text-neutral-300 leading-relaxed font-sans whitespace-pre-wrap">
-{showrunner.samEmail.body}
-          </pre>
-        </div>
-      </div>
 
-      {/* Character cards */}
-      <div className="mb-16">
-        <div className="text-center mb-8">
-          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
-            Cast
-          </div>
-          <h3 className="text-2xl md:text-3xl font-bold text-white">Main characters</h3>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {showrunner.characters.map((c) => (
-            <div
-              key={c.name}
-              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-5 hover:border-amber-500/40 transition-colors"
-              data-testid={`card-character-${c.name.toLowerCase().replace(/\s+/g, '-')}`}
+            <h2
+              className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter mb-5 leading-none"
+              style={{
+                background:
+                  "linear-gradient(135deg, #d4af37 0%, #f5e6a3 30%, #fffbe8 50%, #d4af37 70%, #b8941f 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+              data-testid="text-showrunner-title"
             >
-              <div className="text-xs text-amber-400/70 uppercase tracking-wider mb-1 font-semibold">
-                {c.role}
-              </div>
-              <div className="text-lg font-bold text-white mb-2">{c.name}</div>
-              <p className="text-sm text-neutral-400 leading-relaxed">{c.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+              {showrunner.title}
+            </h2>
 
-      {/* Full short film script (collapsible) */}
-      <div className="mb-16">
-        <div className="text-center mb-8">
-          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
-            Short Film
-          </div>
-          <h3 className="text-2xl md:text-3xl font-bold text-white">Full script</h3>
-        </div>
-        <div className="rounded-lg border border-neutral-800 bg-neutral-950/60 overflow-hidden max-w-4xl mx-auto">
-          <button
-            type="button"
-            onClick={() => setScriptOpen((o) => !o)}
-            className="w-full flex items-center justify-between px-5 py-4 hover:bg-neutral-900/50 transition-colors"
-            data-testid="button-toggle-script"
-          >
-            <div className="flex items-center gap-3">
-              <FileText className="w-5 h-5 text-amber-400" />
-              <span className="text-white font-semibold">
-                {showrunner.fullScript.length} scenes — read the full script
-              </span>
-            </div>
-            {scriptOpen ? (
-              <ChevronUp className="w-5 h-5 text-neutral-400" />
-            ) : (
-              <ChevronDown className="w-5 h-5 text-neutral-400" />
-            )}
-          </button>
-          {scriptOpen && (
-            <div className="border-t border-neutral-800 p-6 space-y-10 max-h-[640px] overflow-y-auto">
-              {showrunner.fullScript.map((scene) => (
-                <div key={scene.id}>
-                  <div className="text-xs text-amber-400/70 uppercase tracking-widest font-semibold mb-1">
-                    {scene.heading}
-                  </div>
-                  <div className="text-xs text-neutral-500 italic mb-3">{scene.setting}</div>
-                  <div className="space-y-3">
-                    {scene.lines.map((line, i) => {
-                      if (line.type === "action") {
-                        return (
-                          <p key={i} className="text-sm text-neutral-300 leading-relaxed italic">
-                            {line.text}
-                          </p>
-                        );
-                      }
-                      if (line.type === "dialogue") {
-                        return (
-                          <div key={i} className="ml-6">
-                            <div className="text-xs font-bold text-amber-400/90 uppercase tracking-wider">
-                              {line.speaker}
-                            </div>
-                            <div className="text-sm text-neutral-200">{line.text}</div>
-                          </div>
-                        );
-                      }
-                      if (line.type === "on_screen") {
-                        return (
-                          <div
-                            key={i}
-                            className="text-center text-xs text-amber-300/80 uppercase tracking-widest font-semibold border-y border-neutral-800 py-2"
-                          >
-                            {line.text}
-                          </div>
-                        );
-                      }
-                      if (line.type === "transition") {
-                        return (
-                          <div
-                            key={i}
-                            className="text-xs text-neutral-500 uppercase tracking-widest text-right font-semibold"
-                          >
-                            {line.text}
-                          </div>
-                        );
-                      }
-                      if (line.type === "caption") {
-                        return (
-                          <div key={i} className="text-center text-sm text-amber-300/80 italic">
-                            {line.text}
-                          </div>
-                        );
-                      }
-                      if (line.type === "email") {
-                        return (
-                          <pre
-                            key={i}
-                            className="text-xs text-neutral-300 bg-neutral-900/80 border border-neutral-800 rounded p-3 whitespace-pre-wrap font-mono"
-                          >
-                            {line.text}
-                          </pre>
-                        );
-                      }
-                      return null;
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+            <p className="text-xl md:text-2xl text-amber-300/70 italic mb-6 tracking-wide">
+              "{showrunner.tagline}"
+            </p>
 
-      {/* Signal Black mini-trailer — show within the show */}
-      <div className="mb-16">
-        <div className="text-center mb-6">
-          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
-            Show Within The Show
+            <p className="text-sm md:text-base text-neutral-400 max-w-2xl mx-auto leading-relaxed mb-10">
+              {showrunner.logline}
+            </p>
+
+            <div className="flex items-center justify-center flex-wrap gap-3 md:gap-6">
+              {["9 SCENES", "4–5 MIN", "COMEDY · DRAMA", "MELBOURNE", "AI SHOWCASE"].map(
+                (tag, i, arr) => (
+                  <span key={tag} className="flex items-center gap-3 md:gap-6">
+                    <span className="text-[11px] text-neutral-500 uppercase tracking-widest font-semibold">
+                      {tag}
+                    </span>
+                    {i < arr.length - 1 && (
+                      <span className="text-amber-500/30 hidden sm:inline">·</span>
+                    )}
+                  </span>
+                )
+              )}
+            </div>
           </div>
-          <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
-            {showrunner.signalBlackMiniTrailer.title}
-          </h3>
-          <p className="text-sm text-amber-300/80 italic mt-2">
-            {showrunner.signalBlackMiniTrailer.tagline}
+
+          {/* Gold bottom rule */}
+          <div
+            className="h-[1px] w-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 0%, #d4af37 30%, #f5e6a3 50%, #d4af37 70%, transparent 100%)",
+            }}
+          />
+        </div>
+
+        {/* ── DISCLAIMER ── */}
+        <div className="rounded-lg border border-neutral-800 bg-neutral-950/80 p-5 mb-12 max-w-3xl mx-auto relative">
+          <div className="absolute -top-2.5 left-6 px-2 bg-neutral-950 text-[10px] uppercase tracking-widest text-amber-400/70 font-semibold">
+            Disclaimer · Appears after opener, before film
+          </div>
+          <p className="text-xs text-neutral-400 leading-relaxed">
+            {showrunner.disclaimer.short}
           </p>
         </div>
-        <div className="rounded-lg border border-amber-500/30 bg-gradient-to-b from-neutral-950 to-black p-6 max-w-3xl mx-auto">
-          <div className="space-y-3">
-            {showrunner.signalBlackMiniTrailer.beats.map((b, i) => {
-              if (b.kind === "voiceover" || b.kind === "dialogue") {
-                return (
-                  <div key={i} className="border-l-2 border-amber-500/40 pl-4">
-                    <div className="text-[10px] font-bold text-amber-400/80 uppercase tracking-widest">
-                      {b.speaker}
+
+        {/* ── INCITING EMAIL FROM SAM ── */}
+        <div className="mb-16 max-w-3xl mx-auto">
+          <div className="text-center mb-6">
+            <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+              The Inciting Email
+            </div>
+            <h3 className="text-2xl font-bold text-white">
+              One email reminded him he was a storyteller.
+            </h3>
+          </div>
+          <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 overflow-hidden shadow-xl shadow-black/40">
+            <div className="border-b border-neutral-800 bg-neutral-950 px-5 py-3 flex items-center gap-3">
+              <Mail className="w-4 h-4 text-amber-400/70" />
+              <div className="flex-1 text-xs">
+                <div className="text-neutral-300">
+                  From:{" "}
+                  <span className="text-white font-medium">
+                    {showrunner.samEmail.from}
+                  </span>
+                </div>
+                <div className="text-neutral-400">
+                  Subject:{" "}
+                  <span className="text-amber-300/80">
+                    {showrunner.samEmail.subject}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <pre className="p-5 text-sm text-neutral-300 leading-relaxed font-sans whitespace-pre-wrap">
+  {showrunner.samEmail.body}
+            </pre>
+          </div>
+        </div>
+
+        {/* ── CHARACTER CARDS ── */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+              Cast
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white">
+              Main characters
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {showrunner.characters.map((c) => {
+              const initial = c.name.charAt(0).toUpperCase();
+              const colors = [
+                "from-amber-600 to-amber-900",
+                "from-neutral-600 to-neutral-900",
+                "from-stone-600 to-stone-900",
+                "from-zinc-600 to-zinc-900",
+                "from-orange-700 to-orange-950",
+              ];
+              const colorIdx = c.name.charCodeAt(0) % colors.length;
+              return (
+                <div
+                  key={c.name}
+                  className="rounded-xl border border-neutral-800 bg-neutral-950/60 p-5 hover:border-amber-500/50 hover:bg-neutral-900/60 transition-all group"
+                  data-testid={`card-character-${c.name.toLowerCase().replace(/\s+/g, "-")}`}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div
+                      className={`w-10 h-10 rounded-full bg-gradient-to-br ${colors[colorIdx]} flex items-center justify-center text-white font-black text-lg shrink-0 shadow-md`}
+                    >
+                      {initial}
                     </div>
-                    <div className="text-sm text-neutral-200 italic">"{b.text}"</div>
+                    <div>
+                      <div className="text-base font-bold text-white leading-tight">
+                        {c.name}
+                      </div>
+                      <div className="text-[10px] text-amber-400/80 uppercase tracking-wider font-semibold">
+                        {c.role}
+                      </div>
+                    </div>
                   </div>
-                );
-              }
-              if (b.kind === "visual") {
-                return (
-                  <p key={i} className="text-xs text-neutral-500 italic">
-                    {b.text}
+                  <p className="text-sm text-neutral-400 leading-relaxed">
+                    {c.description}
                   </p>
-                );
-              }
-              if (b.kind === "on_screen") {
-                return (
-                  <div
-                    key={i}
-                    className="text-center text-xs text-amber-300/90 uppercase tracking-widest font-semibold py-1"
-                  >
-                    {b.text}
-                  </div>
-                );
-              }
-              if (b.kind === "title") {
-                return (
-                  <div
-                    key={i}
-                    className="text-center text-2xl font-bold text-amber-400 tracking-widest pt-3"
-                  >
-                    {b.text}
-                  </div>
-                );
-              }
-              return null;
+                </div>
+              );
             })}
           </div>
         </div>
-      </div>
 
-      {/* Production package breakdown */}
-      <div className="mb-16">
-        <div className="text-center mb-8">
-          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
-            What Virelle Built
+        {/* ── FULL SCRIPT (COLLAPSIBLE) ── */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+              Short Film
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white">
+              Full script
+            </h3>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold text-white">
-            A complete production package
-          </h3>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {showrunner.productionPackageChecklist.map((item) => (
-            <div
-              key={item.label}
-              className="flex items-start gap-3 rounded-lg border border-neutral-800 bg-neutral-950/40 p-4 hover:border-amber-500/30 transition-colors"
-              data-testid={`card-package-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+          <div className="rounded-xl border border-neutral-800 bg-neutral-950/60 overflow-hidden max-w-4xl mx-auto shadow-lg shadow-black/30">
+            <button
+              type="button"
+              onClick={() => setScriptOpen((o) => !o)}
+              className="w-full flex items-center justify-between px-5 py-4 hover:bg-neutral-900/50 transition-colors"
+              data-testid="button-toggle-script"
             >
-              <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-              <div>
-                <div className="text-sm font-semibold text-white">{item.label}</div>
-                <div className="text-xs text-neutral-400 mt-0.5">{item.description}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Comparison — clips vs production */}
-      <div className="mb-16">
-        <div className="text-center mb-8">
-          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
-            The Difference
-          </div>
-          <h3 className="text-2xl md:text-3xl font-bold text-white">
-            {showrunner.comparisonCopy.headline}
-          </h3>
-          <p className="text-sm text-neutral-400 max-w-2xl mx-auto mt-3 leading-relaxed">
-            {showrunner.comparisonCopy.body}
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-          <div className="rounded-lg border border-red-900/40 bg-red-950/10 p-5">
-            <div className="text-xs text-red-400/80 uppercase tracking-widest font-semibold mb-3">
-              {showrunner.comparisonCopy.rivalName} (fictional)
-            </div>
-            <ul className="space-y-2">
-              {showrunner.comparisonCopy.clipWizardCons.map((con) => (
-                <li
-                  key={con}
-                  className="flex items-start gap-2 text-sm text-neutral-300"
-                >
-                  <XIcon className="w-4 h-4 text-red-500/70 mt-0.5 shrink-0" />
-                  {con}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-lg border border-amber-500/30 bg-amber-950/10 p-5">
-            <div className="text-xs text-amber-400 uppercase tracking-widest font-semibold mb-3">
-              Virelle Studios
-            </div>
-            <ul className="space-y-2">
-              {showrunner.comparisonCopy.virellePros.map((pro) => (
-                <li
-                  key={pro}
-                  className="flex items-start gap-2 text-sm text-neutral-200"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  {pro}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <p className="text-[11px] text-neutral-600 italic text-center mt-4 max-w-xl mx-auto">
-          {showrunner.comparisonCopy.rivalNote}
-        </p>
-      </div>
-
-      {/* Social cuts */}
-      <div className="mb-16">
-        <div className="text-center mb-8">
-          <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
-            Social Cuts
-          </div>
-          <h3 className="text-2xl md:text-3xl font-bold text-white">
-            3 ready-to-post versions
-          </h3>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {showrunner.socialCuts.map((cut) => (
-            <div
-              key={cut.length}
-              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-5"
-              data-testid={`card-cut-${cut.length}`}
-            >
-              <div className="flex items-baseline gap-2 mb-3">
-                <MessageSquare className="w-4 h-4 text-amber-400" />
-                <span className="text-2xl font-bold text-amber-400">{cut.length}</span>
-                <span className="text-xs text-neutral-500 uppercase tracking-wider">
-                  {cut.label}
+              <div className="flex items-center gap-3">
+                <FileText className="w-5 h-5 text-amber-400" />
+                <span className="text-white font-semibold">
+                  {showrunner.fullScript.length} scenes — read the full script
                 </span>
               </div>
-              <ol className="space-y-1.5 mb-4">
-                {cut.beats.map((beat, i) => (
+              {scriptOpen ? (
+                <ChevronUp className="w-5 h-5 text-neutral-400" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-neutral-400" />
+              )}
+            </button>
+            {scriptOpen && (
+              <div className="border-t border-neutral-800 p-6 space-y-10 max-h-[640px] overflow-y-auto">
+                {showrunner.fullScript.map((scene) => (
+                  <div key={scene.id}>
+                    <div className="text-xs text-amber-400/70 uppercase tracking-widest font-semibold mb-1">
+                      {scene.heading}
+                    </div>
+                    <div className="text-xs text-neutral-500 italic mb-3">
+                      {scene.setting}
+                    </div>
+                    <div className="space-y-3">
+                      {scene.lines.map((line, i) => {
+                        if (line.type === "action") {
+                          return (
+                            <p
+                              key={i}
+                              className="text-sm text-neutral-300 leading-relaxed italic"
+                            >
+                              {line.text}
+                            </p>
+                          );
+                        }
+                        if (line.type === "dialogue") {
+                          return (
+                            <div key={i} className="ml-6">
+                              <div className="text-xs font-bold text-amber-400/90 uppercase tracking-wider">
+                                {line.speaker}
+                              </div>
+                              <div className="text-sm text-neutral-200">
+                                {line.text}
+                              </div>
+                            </div>
+                          );
+                        }
+                        if (line.type === "on_screen") {
+                          return (
+                            <div
+                              key={i}
+                              className="text-center text-xs text-amber-300/80 uppercase tracking-widest font-semibold border-y border-neutral-800 py-2"
+                            >
+                              {line.text}
+                            </div>
+                          );
+                        }
+                        if (line.type === "transition") {
+                          return (
+                            <div
+                              key={i}
+                              className="text-xs text-neutral-500 uppercase tracking-widest text-right font-semibold"
+                            >
+                              {line.text}
+                            </div>
+                          );
+                        }
+                        if (line.type === "caption") {
+                          return (
+                            <div
+                              key={i}
+                              className="text-center text-sm text-amber-300/80 italic"
+                            >
+                              {line.text}
+                            </div>
+                          );
+                        }
+                        if (line.type === "email") {
+                          return (
+                            <pre
+                              key={i}
+                              className="text-xs text-neutral-300 bg-neutral-900/80 border border-neutral-800 rounded p-3 whitespace-pre-wrap font-mono"
+                            >
+                              {line.text}
+                            </pre>
+                          );
+                        }
+                        return null;
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── SIGNAL BLACK — SCI-FI NOIR (show within the show) ── */}
+        <div className="mb-16">
+          <div className="text-center mb-6">
+            <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+              Show Within The Show
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+              {showrunner.signalBlackMiniTrailer.title}
+            </h3>
+            <p className="text-sm text-amber-300/70 italic mt-2">
+              {showrunner.signalBlackMiniTrailer.tagline}
+            </p>
+          </div>
+
+          {/* Distinct sci-fi noir card */}
+          <div
+            className="relative overflow-hidden rounded-xl border border-blue-900/50 max-w-3xl mx-auto"
+            style={{
+              background:
+                "linear-gradient(160deg, #03050f 0%, #060918 50%, #020408 100%)",
+            }}
+          >
+            {/* Sci-fi corner badge */}
+            <div className="absolute top-0 right-0 px-3 py-1.5 text-[10px] font-mono font-bold text-blue-400/80 bg-blue-500/10 border-l border-b border-blue-500/20 rounded-bl-lg uppercase tracking-widest">
+              SCI-FI NOIR
+            </div>
+
+            {/* Blue top accent */}
+            <div
+              className="h-[1px] w-full"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, #1d4ed8 30%, #60a5fa 50%, #1d4ed8 70%, transparent 100%)",
+              }}
+            />
+
+            <div className="p-6 space-y-3">
+              {showrunner.signalBlackMiniTrailer.beats.map((b, i) => {
+                if (b.kind === "voiceover" || b.kind === "dialogue") {
+                  return (
+                    <div key={i} className="border-l-2 border-blue-700/50 pl-4">
+                      <div className="text-[10px] font-bold text-blue-400/80 uppercase tracking-widest">
+                        {b.speaker}
+                      </div>
+                      <div className="text-sm text-blue-100/90 italic">
+                        "{b.text}"
+                      </div>
+                    </div>
+                  );
+                }
+                if (b.kind === "visual") {
+                  return (
+                    <p key={i} className="text-xs text-blue-900/80 italic">
+                      {b.text}
+                    </p>
+                  );
+                }
+                if (b.kind === "on_screen") {
+                  return (
+                    <div
+                      key={i}
+                      className="text-center text-xs text-blue-300/90 uppercase tracking-widest font-semibold py-1 border-y border-blue-900/40"
+                    >
+                      {b.text}
+                    </div>
+                  );
+                }
+                if (b.kind === "title") {
+                  return (
+                    <div
+                      key={i}
+                      className="text-center text-2xl font-black text-blue-300 tracking-widest pt-3"
+                      style={{
+                        textShadow: "0 0 20px rgba(96,165,250,0.4)",
+                      }}
+                    >
+                      {b.text}
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            </div>
+
+            <div
+              className="h-[1px] w-full"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, #1d4ed8 30%, #60a5fa 50%, #1d4ed8 70%, transparent 100%)",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* ── PRODUCTION PACKAGE ── */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+              What Virelle Built
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white">
+              A complete production package
+            </h3>
+            <p className="text-sm text-neutral-500 mt-2 max-w-xl mx-auto">
+              Everything a show needs — built from one idea, no crew, no budget.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {showrunner.productionPackageChecklist.map((item) => (
+              <div
+                key={item.label}
+                className="flex items-start gap-3 rounded-lg border border-neutral-800 bg-neutral-950/40 p-4 hover:border-amber-500/30 hover:bg-neutral-900/40 transition-all"
+                data-testid={`card-package-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+              >
+                <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                <div>
+                  <div className="text-sm font-semibold text-white">
+                    {item.label}
+                  </div>
+                  <div className="text-xs text-neutral-400 mt-0.5">
+                    {item.description}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── CLIPWIZARD COMPARISON ── */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+              The Difference
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white">
+              {showrunner.comparisonCopy.headline}
+            </h3>
+            <p className="text-sm text-neutral-400 max-w-2xl mx-auto mt-3 leading-relaxed">
+              {showrunner.comparisonCopy.body}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            {/* Rival — clearly fictional */}
+            <div className="rounded-xl border border-red-900/30 bg-red-950/10 p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="text-xs text-red-400/80 uppercase tracking-widest font-semibold">
+                  {showrunner.comparisonCopy.rivalName}
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-900/30 text-red-400/60 border border-red-900/30 uppercase tracking-wider font-mono">
+                  fictional
+                </span>
+              </div>
+              <ul className="space-y-2">
+                {showrunner.comparisonCopy.clipWizardCons.map((con) => (
                   <li
-                    key={i}
-                    className="text-xs text-neutral-300 leading-relaxed flex gap-2"
+                    key={con}
+                    className="flex items-start gap-2 text-sm text-neutral-400"
                   >
-                    <span className="text-amber-400/50 font-mono shrink-0">{i + 1}.</span>
-                    <span>{beat}</span>
+                    <XIcon className="w-4 h-4 text-red-500/60 mt-0.5 shrink-0" />
+                    {con}
                   </li>
                 ))}
-              </ol>
-              <div className="text-xs text-amber-300/80 font-semibold border-t border-neutral-800 pt-3">
-                → {cut.cta}
-              </div>
+              </ul>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Film Structure */}
-      <div className="mb-16">
-        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
-          Film Structure
-        </h3>
-        <p className="text-xs text-neutral-500 mb-6">
-          Order of elements in the final cut.
-        </p>
-        <ol className="space-y-3">
-          {movie.filmStructure.map((item) => (
-            <li
-              key={item.order}
-              className="flex gap-4 rounded-lg border border-neutral-800 bg-neutral-950/60 p-4 items-start"
+            {/* Virelle Studios */}
+            <div
+              className="rounded-xl border border-amber-500/30 p-5"
+              style={{ background: "linear-gradient(160deg, #100e03 0%, #0c0a02 100%)" }}
             >
-              <span className="text-amber-400 font-mono font-bold text-lg shrink-0 w-6 text-right">
-                {item.order}
-              </span>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-baseline gap-2 mb-1">
-                  <span className="text-sm font-semibold text-white">
-                    {item.label}
+              <div className="text-xs text-amber-400 uppercase tracking-widest font-bold mb-4">
+                Virelle Studios
+              </div>
+              <ul className="space-y-2">
+                {showrunner.comparisonCopy.virellePros.map((pro) => (
+                  <li
+                    key={pro}
+                    className="flex items-start gap-2 text-sm text-neutral-200"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                    {pro}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <p className="text-[11px] text-neutral-600 italic text-center mt-4 max-w-xl mx-auto">
+            {showrunner.comparisonCopy.rivalNote}
+          </p>
+        </div>
+
+        {/* ── SOCIAL CUTS ── */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
+              Social Cuts
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white">
+              3 ready-to-post versions
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {showrunner.socialCuts.map((cut) => (
+              <div
+                key={cut.length}
+                className="rounded-xl border border-neutral-800 bg-neutral-950/60 p-5"
+                data-testid={`card-cut-${cut.length}`}
+              >
+                <div className="flex items-baseline gap-2 mb-3">
+                  <MessageSquare className="w-4 h-4 text-amber-400" />
+                  <span className="text-2xl font-bold text-amber-400">
+                    {cut.length}
                   </span>
+                  <span className="text-xs text-neutral-500 uppercase tracking-wider">
+                    {cut.label}
+                  </span>
+                </div>
+                <ol className="space-y-1.5 mb-4">
+                  {cut.beats.map((beat, i) => (
+                    <li
+                      key={i}
+                      className="text-xs text-neutral-300 leading-relaxed flex gap-2"
+                    >
+                      <span className="text-amber-400/50 font-mono shrink-0">
+                        {i + 1}.
+                      </span>
+                      <span>{beat}</span>
+                    </li>
+                  ))}
+                </ol>
+                <div className="text-xs text-amber-300/80 font-semibold border-t border-neutral-800 pt-3">
+                  → {cut.cta}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── FILM STRUCTURE ── */}
+        <div className="mb-16">
+          <div className="flex items-center gap-3 mb-6">
+            <div>
+              <h3 className="text-xl font-bold text-white tracking-tight">
+                Film Structure
+              </h3>
+              <p className="text-xs text-neutral-500">
+                Order of elements in the final cut.
+              </p>
+            </div>
+          </div>
+          <ol className="space-y-3">
+            {movie.filmStructure.map((item) => (
+              <li
+                key={item.order}
+                className="flex gap-4 rounded-lg border border-neutral-800 bg-neutral-950/60 p-4 items-start"
+              >
+                <span className="text-amber-400 font-mono font-bold text-lg shrink-0 w-6 text-right">
+                  {item.order}
+                </span>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                    <span className="text-sm font-semibold text-white">
+                      {item.label}
+                    </span>
+                    <span className="text-xs text-amber-400/70 font-mono">
+                      {item.durationNote}
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-400 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* ── SCENE GENERATION PROMPTS ── */}
+        <div className="mb-16">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-white tracking-tight">
+              Scene Generation Prompts
+            </h3>
+            <p className="text-xs text-neutral-500 mt-1">
+              Visual prompts for each scene — ready for generation via Lee's API.
+            </p>
+          </div>
+          <div className="space-y-4">
+            {movie.generationPrompts.map((prompt) => (
+              <div
+                key={prompt.sceneId}
+                className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-5"
+              >
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="text-amber-400 font-bold text-sm">
+                    {prompt.heading}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 font-mono uppercase tracking-wider">
+                    Ready for Generation · Lee's API
+                  </span>
+                </div>
+                <p className="text-xs text-neutral-300 leading-relaxed mb-3">
+                  {prompt.visualPrompt}
+                </p>
+                <p className="text-[11px] text-neutral-500 italic border-t border-neutral-800 pt-2">
+                  Style: {prompt.styleNotes}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── VOICE DIRECTION ── */}
+        <div className="mb-16">
+          <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+            Voice Direction
+          </h3>
+          <p className="text-xs text-neutral-500 mb-6">
+            Per-character voice notes for casting and voiceover direction.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {movie.voiceDirection.map((v) => (
+              <div
+                key={v.character}
+                className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-4"
+              >
+                <div className="text-sm font-bold text-amber-400 mb-2">
+                  {v.character}
+                </div>
+                <div className="text-xs text-neutral-400 mb-1">
+                  <span className="text-neutral-500">Voice: </span>
+                  {v.voiceType}
+                </div>
+                <div className="text-xs text-neutral-400 mb-1">
+                  <span className="text-neutral-500">Delivery: </span>
+                  {v.delivery}
+                </div>
+                <div className="text-xs text-neutral-400 mb-2">
+                  <span className="text-neutral-500">Pace: </span>
+                  {v.pace}
+                </div>
+                <p className="text-xs text-neutral-500 italic border-t border-neutral-800 pt-2 leading-relaxed">
+                  {v.notes}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── MUSIC DIRECTION ── */}
+        <div className="mb-16">
+          <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+            Music Direction
+          </h3>
+          <p className="text-xs text-neutral-500 mb-6">
+            Per-act scoring guide for the composer.
+          </p>
+          <div className="space-y-3">
+            {movie.musicDirection.map((m) => (
+              <div
+                key={m.act}
+                className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-4"
+              >
+                <div className="flex flex-wrap items-baseline gap-2 mb-2">
+                  <span className="text-sm font-bold text-white">{m.act}</span>
                   <span className="text-xs text-amber-400/70 font-mono">
-                    {item.durationNote}
+                    {m.scenes}
+                  </span>
+                </div>
+                <div className="text-xs text-neutral-400 mb-1">
+                  <span className="text-neutral-500">Tone: </span>
+                  {m.tone}
+                </div>
+                <div className="text-xs text-neutral-400 mb-1">
+                  <span className="text-neutral-500">Instrumentation: </span>
+                  {m.instrumentation}
+                </div>
+                <p className="text-xs text-neutral-500 italic border-t border-neutral-800 pt-2 mt-2">
+                  {m.cue}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── SOUND DESIGN ── */}
+        <div className="mb-16">
+          <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+            Sound Design
+          </h3>
+          <p className="text-xs text-neutral-500 mb-6">
+            Key audio elements and placement notes.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {movie.soundDesign.map((s) => (
+              <div
+                key={s.element}
+                className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-4"
+              >
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-sm font-semibold text-amber-400">
+                    {s.element}
+                  </span>
+                  <span className="text-[10px] text-neutral-600 font-mono">
+                    {s.scene}
                   </span>
                 </div>
                 <p className="text-xs text-neutral-400 leading-relaxed">
-                  {item.description}
+                  {s.description}
                 </p>
               </div>
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      {/* Generation Prompts */}
-      <div className="mb-16">
-        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
-          Scene Generation Prompts
-        </h3>
-        <p className="text-xs text-neutral-500 mb-6">
-          Visual prompts for each scene — ready for generation via Lee's API.
-        </p>
-        <div className="space-y-4">
-          {movie.generationPrompts.map((prompt) => (
-            <div
-              key={prompt.sceneId}
-              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-5"
-            >
-              <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="text-amber-400 font-bold text-sm">
-                  {prompt.heading}
-                </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20 font-mono uppercase tracking-wider">
-                  Ready for Generation
-                </span>
-              </div>
-              <p className="text-xs text-neutral-300 leading-relaxed mb-3">
-                {prompt.visualPrompt}
-              </p>
-              <p className="text-[11px] text-neutral-500 italic border-t border-neutral-800 pt-2">
-                Style: {prompt.styleNotes}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Voice Direction */}
-      <div className="mb-16">
-        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
-          Voice Direction
-        </h3>
-        <p className="text-xs text-neutral-500 mb-6">
-          Per-character voice notes for casting and voiceover direction.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {movie.voiceDirection.map((v) => (
-            <div
-              key={v.character}
-              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-4"
-            >
-              <div className="text-sm font-bold text-amber-400 mb-2">
-                {v.character}
-              </div>
-              <div className="text-xs text-neutral-400 mb-1">
-                <span className="text-neutral-500">Voice: </span>
-                {v.voiceType}
-              </div>
-              <div className="text-xs text-neutral-400 mb-1">
-                <span className="text-neutral-500">Delivery: </span>
-                {v.delivery}
-              </div>
-              <div className="text-xs text-neutral-400 mb-2">
-                <span className="text-neutral-500">Pace: </span>
-                {v.pace}
-              </div>
-              <p className="text-xs text-neutral-500 italic border-t border-neutral-800 pt-2 leading-relaxed">
-                {v.notes}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Music Direction */}
-      <div className="mb-16">
-        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
-          Music Direction
-        </h3>
-        <p className="text-xs text-neutral-500 mb-6">
-          Per-act scoring guide for the composer.
-        </p>
-        <div className="space-y-3">
-          {movie.musicDirection.map((m) => (
-            <div
-              key={m.act}
-              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-4"
-            >
-              <div className="flex flex-wrap items-baseline gap-2 mb-2">
-                <span className="text-sm font-bold text-white">{m.act}</span>
-                <span className="text-xs text-amber-400/70 font-mono">
-                  {m.scenes}
-                </span>
-              </div>
-              <div className="text-xs text-neutral-400 mb-1">
-                <span className="text-neutral-500">Tone: </span>
-                {m.tone}
-              </div>
-              <div className="text-xs text-neutral-400 mb-1">
-                <span className="text-neutral-500">Instrumentation: </span>
-                {m.instrumentation}
-              </div>
-              <p className="text-xs text-neutral-500 italic border-t border-neutral-800 pt-2 mt-2">
-                {m.cue}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Sound Design */}
-      <div className="mb-16">
-        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
-          Sound Design
-        </h3>
-        <p className="text-xs text-neutral-500 mb-6">
-          Key audio elements and placement notes.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {movie.soundDesign.map((s) => (
-            <div
-              key={s.element}
-              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-4"
-            >
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-sm font-semibold text-amber-400">
-                  {s.element}
-                </span>
-                <span className="text-[10px] text-neutral-600 font-mono">
-                  {s.scene}
-                </span>
-              </div>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                {s.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Edit Plan */}
-      <div className="mb-16">
-        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
-          Edit Plan
-        </h3>
-        <p className="text-xs text-neutral-500 mb-6">
-          Runtime targets and pacing notes for each segment.
-        </p>
-        <div className="rounded-lg border border-neutral-800 bg-neutral-950/60 overflow-hidden">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-neutral-800">
-                <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider">
-                  Segment
-                </th>
-                <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider">
-                  Target
-                </th>
-                <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider hidden md:table-cell">
-                  Pacing
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {movie.editPlan.map((e, i) => (
-                <tr
-                  key={e.scene}
-                  className={`border-b border-neutral-800/50 ${
-                    i % 2 === 0 ? "bg-neutral-950/20" : ""
-                  }`}
-                >
-                  <td className="p-3 text-neutral-300 font-medium">
-                    {e.scene}
-                  </td>
-                  <td className="p-3 text-amber-400 font-mono whitespace-nowrap">
-                    {e.targetRuntime}
-                  </td>
-                  <td className="p-3 text-neutral-500 hidden md:table-cell leading-relaxed">
-                    {e.pacingNotes}
-                  </td>
+        {/* ── EDIT PLAN ── */}
+        <div className="mb-16">
+          <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+            Edit Plan
+          </h3>
+          <p className="text-xs text-neutral-500 mb-6">
+            Runtime targets and pacing notes for each segment.
+          </p>
+          <div className="rounded-lg border border-neutral-800 bg-neutral-950/60 overflow-hidden">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-neutral-800">
+                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider">
+                    Segment
+                  </th>
+                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider">
+                    Target
+                  </th>
+                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider hidden md:table-cell">
+                    Pacing
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {movie.editPlan.map((e, i) => (
+                  <tr
+                    key={e.scene}
+                    className={`border-b border-neutral-800/50 ${
+                      i % 2 === 0 ? "bg-neutral-950/20" : ""
+                    }`}
+                  >
+                    <td className="p-3 text-neutral-300 font-medium">
+                      {e.scene}
+                    </td>
+                    <td className="p-3 text-amber-400 font-mono whitespace-nowrap">
+                      {e.targetRuntime}
+                    </td>
+                    <td className="p-3 text-neutral-500 hidden md:table-cell leading-relaxed">
+                      {e.pacingNotes}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      {/* Asset Placeholders */}
-      <div className="mb-16">
-        <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
-          Asset Placeholders
-        </h3>
-        <p className="text-xs text-neutral-500 mb-6">
-          All assets are ready for generation via Lee's API. No media has been
-          produced yet.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {movie.assetPlaceholders.map((a) => (
-            <div
-              key={a.filename}
-              className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-4 flex flex-col gap-2"
-            >
-              <div className="flex items-center gap-2">
-                <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded font-mono uppercase font-bold ${
-                    a.type === "video"
-                      ? "bg-blue-400/10 text-blue-400 border border-blue-400/20"
-                      : a.type === "image"
-                        ? "bg-purple-400/10 text-purple-400 border border-purple-400/20"
-                        : a.type === "subtitle"
-                          ? "bg-green-400/10 text-green-400 border border-green-400/20"
-                          : "bg-neutral-400/10 text-neutral-400 border border-neutral-400/20"
-                  }`}
-                >
-                  {a.type}
-                </span>
-                <span className="text-xs font-mono text-neutral-300 truncate">
-                  {a.filename}
-                </span>
-              </div>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                {a.description}
+        {/* ── ASSET PLACEHOLDERS ── */}
+        <div className="mb-16">
+          <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
+            <div>
+              <h3 className="text-xl font-bold text-white tracking-tight">
+                Asset Placeholders
+              </h3>
+              <p className="text-xs text-neutral-500 mt-1">
+                No media produced yet — all ready for generation via Lee's API.
               </p>
-              <div className="flex items-center justify-between mt-auto pt-2 border-t border-neutral-800">
-                <span className="text-[10px] text-neutral-600 font-mono">
-                  {a.specs}
-                </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20 font-mono uppercase tracking-wider">
-                  Ready for Generation
-                </span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/30 bg-amber-400/5 text-amber-400 text-xs font-semibold">
+              <Sparkles className="w-3 h-3" />
+              Ready for Lee's API Generation
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {movie.assetPlaceholders.map((a) => (
+              <div
+                key={a.filename}
+                className="rounded-lg border border-neutral-800 bg-neutral-950/60 p-4 flex flex-col gap-2 hover:border-neutral-700 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono uppercase font-bold ${
+                      a.type === "video"
+                        ? "bg-blue-400/10 text-blue-400 border border-blue-400/20"
+                        : a.type === "image"
+                          ? "bg-purple-400/10 text-purple-400 border border-purple-400/20"
+                          : a.type === "subtitle"
+                            ? "bg-green-400/10 text-green-400 border border-green-400/20"
+                            : "bg-neutral-400/10 text-neutral-400 border border-neutral-400/20"
+                    }`}
+                  >
+                    {a.type}
+                  </span>
+                  <span className="text-xs font-mono text-neutral-300 truncate flex-1">
+                    {a.filename}
+                  </span>
+                </div>
+                <p className="text-xs text-neutral-400 leading-relaxed">
+                  {a.description}
+                </p>
+                <div className="flex items-center justify-between mt-auto pt-2 border-t border-neutral-800">
+                  <span className="text-[10px] text-neutral-600 font-mono">
+                    {a.specs}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20 font-mono uppercase tracking-wider">
+                    Ready for Generation
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-neutral-600 mt-4 italic text-center">
+            Assets will be placed at{" "}
+            <code className="font-mono text-neutral-500">
+              public/showcase/the-showrunner/
+            </code>{" "}
+            once generated.
+          </p>
+        </div>
+
+        {/* ── CTA ── */}
+        <div
+          className="relative overflow-hidden rounded-2xl border border-amber-500/25 text-center px-6 py-14 md:py-20"
+          style={{
+            background:
+              "linear-gradient(160deg, #0c0c0c 0%, #110f05 45%, #0c0c0c 100%)",
+          }}
+        >
+          {/* Corner brackets */}
+          <div className="absolute top-4 left-4 w-7 h-7 border-t-2 border-l-2 border-amber-500/40 pointer-events-none" />
+          <div className="absolute top-4 right-4 w-7 h-7 border-t-2 border-r-2 border-amber-500/40 pointer-events-none" />
+          <div className="absolute bottom-4 left-4 w-7 h-7 border-b-2 border-l-2 border-amber-500/40 pointer-events-none" />
+          <div className="absolute bottom-4 right-4 w-7 h-7 border-b-2 border-r-2 border-amber-500/40 pointer-events-none" />
+
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+              <Zap className="w-3 h-3" />
+              Start building your show
+            </div>
+
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 tracking-tight">
+              {showrunner.landingCopy.headline}
+            </h3>
+            <p className="text-sm md:text-base text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+              {showrunner.landingCopy.subheadline}
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link href="/register">
+                <button
+                  type="button"
+                  className="px-8 py-3.5 rounded-xl font-bold text-black text-base transition-all hover:scale-105 active:scale-95 shadow-xl shadow-amber-500/20"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
+                  }}
+                  data-testid="button-cta-start-production"
+                >
+                  Start Your Production
+                </button>
+              </Link>
+
+              <div className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-amber-500/30 text-amber-400 text-sm font-semibold">
+                <Sparkles className="w-4 h-4" />
+                Ready for API Generation
               </div>
             </div>
-          ))}
-        </div>
-        <p className="text-xs text-neutral-600 mt-4 italic text-center">
-          Assets will be placed at{" "}
-          <code className="font-mono text-neutral-500">
-            public/showcase/the-showrunner/
-          </code>{" "}
-          once generated.
-        </p>
-      </div>
 
-      {/* CTA */}
-      <div className="text-center pt-8 pb-12">
-        <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
-          {showrunner.landingCopy.headline}
-        </h3>
-        <p className="text-sm md:text-base text-neutral-400 max-w-2xl mx-auto mb-8 leading-relaxed">
-          {showrunner.landingCopy.subheadline}
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link href={showrunner.landingCopy.secondaryCta.href}>
-            <button
-              type="button"
-              className="px-8 py-3 rounded-md font-semibold text-black transition-transform hover:scale-105"
-              style={{
-                background:
-                  "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
-              }}
-              data-testid="button-cta-start-production"
-            >
-              {showrunner.landingCopy.secondaryCta.label}
-            </button>
-          </Link>
+            <p className="text-xs text-neutral-600 mt-8 italic">
+              Built as a VirElle Studios showcase. No generation credits were spent.
+            </p>
+          </div>
         </div>
-        <p className="text-xs text-neutral-500 mt-6 italic">
-          Built as a Virelle Studios showcase.
-        </p>
-      </div>
-    </section>
-  );
-}
+      </section>
+    );
+  }
+  

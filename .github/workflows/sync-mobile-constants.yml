@@ -1,120 +1,119 @@
 name: Sync Mobile Constants
 
-  # Runs automatically whenever subscription.ts changes on main.
-  # Generates shared/_core/subscription-constants.ts in virellestudios-mobile
-  # and opens a PR (or auto-merges if the branch is clean).
-  #
-  # Requires:
-  #   secrets.MOBILE_REPO_PAT  — fine-grained PAT with Contents + Pull-requests
-  #                               write access to leego972/virellestudios-mobile.
-  #   If the secret is absent the job skips gracefully (no failure).
+# Runs automatically whenever subscription.ts changes on main.
+# Generates shared/_core/subscription-constants.ts in virellestudios-mobile
+# and opens a PR (or auto-merges if the branch is clean).
+#
+# Requires:
+#   secrets.MOBILE_REPO_PAT — fine-grained PAT with Contents + Pull-requests
+#                             write access to leego972/virellestudios-mobile.
+#   If the secret is absent the job skips gracefully (no failure).
 
-  on:
-    push:
-      branches: [main, master]
-      paths:
-        - "server/_core/subscription.ts"
-        - "scripts/sync-mobile-constants.ts"
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "server/_core/subscription.ts"
+      - "scripts/sync-mobile-constants.ts"
 
-  jobs:
-    sync:
-      name: Generate and PR subscription-constants.ts
-      runs-on: ubuntu-latest
-      permissions:
-        contents: write
-        pull-requests: write
+jobs:
+  sync:
+    name: Generate and PR subscription-constants.ts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
-      steps:
-        - name: Checkout virellestudios (web)
-          uses: actions/checkout@v4
-          with:
-            path: virellestudios
+    steps:
+      - name: Checkout virellestudios (web)
+        uses: actions/checkout@v4
+        with:
+          path: virellestudios
 
-        # Guard: skip the rest if MOBILE_REPO_PAT is not configured
-        - name: Check if MOBILE_REPO_PAT is configured
-          id: pat
-          env:
-            PAT: ${{ secrets.MOBILE_REPO_PAT }}
-          run: |
-            if [ -z "$PAT" ]; then
-              echo "available=false" >> "$GITHUB_OUTPUT"
-              echo "::notice::MOBILE_REPO_PAT secret is not set — skipping virellestudios-mobile sync."
-            else
-              echo "available=true" >> "$GITHUB_OUTPUT"
-            fi
+      # Guard: skip the rest if MOBILE_REPO_PAT is not configured
+      - name: Check if MOBILE_REPO_PAT is configured
+        id: pat
+        env:
+          PAT: ${{ secrets.MOBILE_REPO_PAT }}
+        run: |
+          if [ -z "$PAT" ]; then
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::MOBILE_REPO_PAT secret is not set — skipping virellestudios-mobile sync."
+          else
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          fi
 
-        - name: Checkout virellestudios-mobile
-          if: steps.pat.outputs.available == 'true'
-          uses: actions/checkout@v4
-          with:
-            repository: leego972/virellestudios-mobile
-            token: ${{ secrets.MOBILE_REPO_PAT }}
-            path: virellestudios-mobile
+      - name: Checkout virellestudios-mobile
+        if: steps.pat.outputs.available == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: leego972/virellestudios-mobile
+          token: ${{ secrets.MOBILE_REPO_PAT }}
+          path: virellestudios-mobile
 
-        - uses: pnpm/action-setup@v4
-          if: steps.pat.outputs.available == 'true'
-          with:
-            version: 10
+      - uses: pnpm/action-setup@v4
+        if: steps.pat.outputs.available == 'true'
+        with:
+          version: 10
 
-        - uses: actions/setup-node@v4
-          if: steps.pat.outputs.available == 'true'
-          with:
-            node-version: 22
-            cache: pnpm
-            cache-dependency-path: virellestudios/pnpm-lock.yaml
+      - uses: actions/setup-node@v4
+        if: steps.pat.outputs.available == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: virellestudios/pnpm-lock.yaml
 
-        - name: Install web dependencies
-          if: steps.pat.outputs.available == 'true'
-          working-directory: virellestudios
-          run: pnpm install --frozen-lockfile
+      - name: Install web dependencies
+        if: steps.pat.outputs.available == 'true'
+        working-directory: virellestudios
+        run: pnpm install --frozen-lockfile
 
-        - name: Run sync script
-          if: steps.pat.outputs.available == 'true'
-          working-directory: virellestudios
-          run: pnpm sync-mobile
+      - name: Run sync script
+        if: steps.pat.outputs.available == 'true'
+        working-directory: virellestudios
+        run: pnpm sync-mobile
 
-        - name: Check for changes in mobile repo
-          if: steps.pat.outputs.available == 'true'
-          id: diff
-          working-directory: virellestudios-mobile
-          run: |
-            git diff --quiet shared/_core/subscription-constants.ts \
-              && echo "changed=false" >> $GITHUB_OUTPUT \
-              || echo "changed=true" >> $GITHUB_OUTPUT
+      - name: Check for changes in mobile repo
+        if: steps.pat.outputs.available == 'true'
+        id: diff
+        working-directory: virellestudios-mobile
+        run: |
+          git diff --quiet shared/_core/subscription-constants.ts \
+            && echo "changed=false" >> $GITHUB_OUTPUT \
+            || echo "changed=true" >> $GITHUB_OUTPUT
 
-        - name: Commit and push to mobile repo
-          if: steps.pat.outputs.available == 'true' && steps.diff.outputs.changed == 'true'
-          working-directory: virellestudios-mobile
-          run: |
-            git config user.name  "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git checkout -b chore/sync-subscription-constants-${{ github.sha }}
-            git add shared/_core/subscription-constants.ts
-            git commit -m "chore: sync subscription-constants from virellestudios@${{ github.sha }}"
-            git push origin chore/sync-subscription-constants-${{ github.sha }}
+      - name: Commit and push to mobile repo
+        if: steps.pat.outputs.available == 'true' && steps.diff.outputs.changed == 'true'
+        working-directory: virellestudios-mobile
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b chore/sync-subscription-constants-${{ github.sha }}
+          git add shared/_core/subscription-constants.ts
+          git commit -m "chore: sync subscription-constants from virellestudios@${{ github.sha }}"
+          git push origin chore/sync-subscription-constants-${{ github.sha }}
 
-        - name: Create Pull Request in mobile repo
-          if: steps.pat.outputs.available == 'true' && steps.diff.outputs.changed == 'true'
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ secrets.MOBILE_REPO_PAT }}
-            script: |
-              await github.rest.pulls.create({
-                owner: "leego972",
-                repo: "virellestudios-mobile",
-                head: "chore/sync-subscription-constants-${{ github.sha }}",
-                base: "main",
-                title: "chore: sync subscription-constants from virellestudios",
-                body: [
-                  "## Auto-generated by sync-mobile-constants workflow",
-                  "",
-                  "This PR was created automatically because `server/_core/subscription.ts`",
-                  "was updated in the [virellestudios](https://github.com/leego972/virellestudios) repo.",
-                  "",
-                  "**Do not edit `shared/_core/subscription-constants.ts` by hand.**",
-                  "Run `pnpm sync-mobile` in the virellestudios repo instead.",
-                  "",
-                  `Triggered by commit: ${{ github.sha }}`,
-                ].join("\n"),
-              });
-  
+      - name: Create Pull Request in mobile repo
+        if: steps.pat.outputs.available == 'true' && steps.diff.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.MOBILE_REPO_PAT }}
+          script: |
+            await github.rest.pulls.create({
+              owner: "leego972",
+              repo: "virellestudios-mobile",
+              head: "chore/sync-subscription-constants-${{ github.sha }}",
+              base: "main",
+              title: "chore: sync subscription-constants from virellestudios",
+              body: [
+                "## Auto-generated by sync-mobile-constants workflow",
+                "",
+                "This PR was created automatically because `server/_core/subscription.ts`",
+                "was updated in the [virellestudios](https://github.com/leego972/virellestudios) repo.",
+                "",
+                "**Do not edit `shared/_core/subscription-constants.ts` by hand.**",
+                "Run `pnpm sync-mobile` in the virellestudios repo instead.",
+                "",
+                `Triggered by commit: ${{ github.sha }}`,
+              ].join("\n"),
+            });
