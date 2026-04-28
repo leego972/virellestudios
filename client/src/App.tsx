@@ -351,6 +351,7 @@ function Router() {
             <Route path="/admin/growth/audiences">{() => <LazyPage><AdminGrowthDashboard defaultTab="audiences" /></LazyPage>}</Route>
             <Route path="/admin/growth/assets">{() => <LazyPage><AdminGrowthDashboard defaultTab="assets" /></LazyPage>}</Route>
             <Route path="/admin/growth/analytics">{() => <LazyPage><AdminGrowthDashboard defaultTab="analytics" /></LazyPage>}</Route>
+            <Route path="/admin/growth/report">{() => <LazyPage><AdminGrowthDashboard defaultTab="report" /></LazyPage>}</Route>
               <Route path="/admin/signature-cast">{() => <LazyPage><AdminSignatureCast /></LazyPage>}</Route>
               {/* v6.63 — Production Spine */}
               <Route path="/projects/:id/schedule">{() => <LazyPage><Schedule /></LazyPage>}</Route>
