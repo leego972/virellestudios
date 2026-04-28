@@ -53,6 +53,7 @@ import { advertisingRouter } from "./advertising-router";
 import { mailingListRouter } from "./mailing-list-router";
 import { fundingRouter } from "./funding-router";
 import { filmPostRouter } from "./film-post-router";
+import { growthRouter } from "./growth-router";
 import { featureFilmRouter } from "./feature-film-router";
 import { productionAssetsRouter } from "./production-assets-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
@@ -9667,6 +9668,7 @@ Rules:
   mailingList: mailingListRouter,
   funding: fundingRouter,
   filmPost: filmPostRouter,
+  growth: growthRouter,
   featureFilm: featureFilmRouter,
   productionAssets: productionAssetsRouter,
   blog: router({

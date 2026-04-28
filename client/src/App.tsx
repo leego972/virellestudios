@@ -51,6 +51,12 @@ const AdminOutreach = lazy(() => import("./pages/AdminOutreach"));
 const SecurityDashboard = lazy(() => import("./pages/SecurityDashboard"));
 const AdminAutonomous = lazy(() => import("./pages/AdminAutonomous"));
 const AdminGrowthDashboard = lazy(() => import("./pages/AdminGrowthDashboard"));
+const ArtistsPage        = lazy(() => import("./pages/segments/ArtistsPage"));
+const FilmmakersPage     = lazy(() => import("./pages/segments/FilmmakersPage"));
+const AgenciesPage       = lazy(() => import("./pages/segments/AgenciesPage"));
+const SmallBusinessPage  = lazy(() => import("./pages/segments/SmallBusinessPage"));
+const CreatorsSegPage    = lazy(() => import("./pages/segments/CreatorsPage"));
+const GameDevelopersPage = lazy(() => import("./pages/segments/GameDevelopersPage"));
 const AdminSignatureCast = lazy(() => import("./pages/AdminSignatureCast"));
 const AdvertisingDashboard = lazy(() => import("./pages/AdvertisingDashboard"));
 const SeoDashboard = lazy(() => import("./pages/SeoDashboard"));
@@ -326,7 +332,14 @@ function Router() {
               <Route path="/projects/:projectId/cutting-room">{() => <LazyPage><CuttingRoom /></LazyPage>}</Route>
               <Route path="/projects/:projectId/pro-studio">{() => <LazyPage><ProStudio /></LazyPage>}</Route>
               <Route path="/projects/:projectId/studio-ops">{() => <LazyPage><ProStudioOps /></LazyPage>}</Route>
-              <Route path="/admin/users">{() => <AdminUsers />}</Route>
+                        <Route path="/artists">{() => <LazyPage><ArtistsPage /></LazyPage>}</Route>
+          <Route path="/filmmakers">{() => <LazyPage><FilmmakersPage /></LazyPage>}</Route>
+          <Route path="/agencies">{() => <LazyPage><AgenciesPage /></LazyPage>}</Route>
+          <Route path="/small-business-video">{() => <LazyPage><SmallBusinessPage /></LazyPage>}</Route>
+          <Route path="/creators-studio">{() => <LazyPage><CreatorsSegPage /></LazyPage>}</Route>
+          <Route path="/game-trailers">{() => <LazyPage><GameDevelopersPage /></LazyPage>}</Route>
+
+          <Route path="/admin/users">{() => <AdminUsers />}</Route>
               <Route path="/admin/security">{() => <SecurityDashboard />}</Route>
               <Route path="/admin/autonomous">{() => <LazyPage><AdminAutonomous /></LazyPage>}</Route>
               <Route path="/admin/advertising">{() => <LazyPage><AdvertisingDashboard /></LazyPage>}</Route>

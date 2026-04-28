@@ -164,3 +164,91 @@ export const shootingDays = mysqlTable("shootingDays", {
 });
 export type ShootingDay   = typeof shootingDays.$inferSelect;
 export type InsertShootingDay = typeof shootingDays.$inferInsert;
+
+
+  // ─── Growth Engine Tables (zero-budget v1) ───────────────────────────────────
+
+  export const growthAudiences = mysqlTable("growth_audiences", {
+    id:          int("id").autoincrement().primaryKey(),
+    segment:     varchar("segment", { length: 64 }).notNull(), // artists|filmmakers|agencies|small_business|creators|game_dev
+    name:        varchar("name", { length: 255 }),
+    email:       varchar("email", { length: 255 }),
+    company:     varchar("company", { length: 255 }),
+    source:      varchar("source", { length: 64 }).notNull().default("manual"), // csv|manual|landing_page
+    utmSource:   varchar("utm_source", { length: 128 }),
+    utmMedium:   varchar("utm_medium", { length: 128 }),
+    utmCampaign: varchar("utm_campaign", { length: 128 }),
+    score:       int("score").default(0).notNull(),
+    tags:        json("tags"), // string[]
+    notes:       text("notes"),
+    status:      varchar("status", { length: 32 }).default("new").notNull(), // new|contacted|converted|unsubscribed
+    createdAt:   timestamp("created_at").defaultNow().notNull(),
+    updatedAt:   timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  });
+  export type GrowthAudience = typeof growthAudiences.$inferSelect;
+  export type InsertGrowthAudience = typeof growthAudiences.$inferInsert;
+
+  export const growthCampaigns = mysqlTable("growth_campaigns", {
+    id:           int("id").autoincrement().primaryKey(),
+    name:         varchar("name", { length: 255 }).notNull(),
+    segment:      varchar("segment", { length: 64 }).notNull(), // artists|filmmakers|agencies|small_business|creators|game_dev
+    objective:    varchar("objective", { length: 255 }).notNull(), // awareness|signups|trial|referral
+    channels:     json("channels"), // string[] — reddit|discord|facebook|linkedin|youtube_comments|tiktok|instagram
+    status:       varchar("status", { length: 32 }).default("draft").notNull(), // draft|active|paused|completed
+    adSpend:      int("ad_spend").default(0).notNull(), // ALWAYS 0 for zero-budget
+    packIdeas:    json("pack_ideas"), // AI-generated idea list
+    startDate:    timestamp("start_date"),
+    endDate:      timestamp("end_date"),
+    metrics:      json("metrics"), // { impressions, clicks, signups, conversions }
+    createdAt:    timestamp("created_at").defaultNow().notNull(),
+    updatedAt:    timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  });
+  export type GrowthCampaign = typeof growthCampaigns.$inferSelect;
+  export type InsertGrowthCampaign = typeof growthCampaigns.$inferInsert;
+
+  export const growthAssets = mysqlTable("growth_assets", {
+    id:           int("id").autoincrement().primaryKey(),
+    campaignId:   int("campaign_id"),
+    segment:      varchar("segment", { length: 64 }).notNull(),
+    platform:     varchar("platform", { length: 64 }).notNull(), // reddit|discord|facebook|linkedin|email|tiktok|instagram
+    assetType:    varchar("asset_type", { length: 64 }).notNull(), // post|comment|dm_template|story|reel|banner
+    headline:     varchar("headline", { length: 512 }),
+    body:         text("body").notNull(),
+    imagePrompt:  text("image_prompt"),
+    mediaUrl:     text("media_url"),
+    utmUrl:       text("utm_url"), // final CTA link with UTM params
+    status:       varchar("status", { length: 32 }).default("pending").notNull(), // pending|approved|rejected|published|archived
+    rejectionNote: text("rejection_note"),
+    publishedAt:  timestamp("published_at"),
+    publishedUrl: text("published_url"),
+    qualityScore: int("quality_score").default(0).notNull(),
+    impressions:  int("impressions").default(0).notNull(),
+    clicks:       int("clicks").default(0).notNull(),
+    conversions:  int("conversions").default(0).notNull(),
+    createdAt:    timestamp("created_at").defaultNow().notNull(),
+    updatedAt:    timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  });
+  export type GrowthAsset = typeof growthAssets.$inferSelect;
+  export type InsertGrowthAsset = typeof growthAssets.$inferInsert;
+
+  export const growthEvents = mysqlTable("growth_events", {
+    id:          int("id").autoincrement().primaryKey(),
+    eventType:   varchar("event_type", { length: 64 }).notNull(), // page_view|cta_click|signup|trial_start|referral
+    segment:     varchar("segment", { length: 64 }),
+    utmSource:   varchar("utm_source", { length: 128 }),
+    utmMedium:   varchar("utm_medium", { length: 128 }),
+    utmCampaign: varchar("utm_campaign", { length: 128 }),
+    utmContent:  varchar("utm_content", { length: 128 }),
+    utmTerm:     varchar("utm_term", { length: 128 }),
+    page:        varchar("page", { length: 255 }),
+    referrer:    text("referrer"),
+    userId:      int("user_id"),
+    assetId:     int("asset_id"),
+    campaignId:  int("campaign_id"),
+    metadata:    json("metadata"),
+    ip:          varchar("ip", { length: 45 }),
+    createdAt:   timestamp("created_at").defaultNow().notNull(),
+  });
+  export type GrowthEvent = typeof growthEvents.$inferSelect;
+  export type InsertGrowthEvent = typeof growthEvents.$inferInsert;
+  

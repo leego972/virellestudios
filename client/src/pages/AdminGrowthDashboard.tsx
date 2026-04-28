@@ -1,410 +1,785 @@
-import { useState } from "react";
-import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
-import {
-  BarChart3, Film, Users, TrendingUp, Star, Eye, Play, Share2,
-  CheckCircle2, XCircle, Clock, AlertTriangle, Loader2, Megaphone,
-  Shield, Zap, RefreshCw,
-} from "lucide-react";
+import { useState, useRef } from "react";
+  import { trpc } from "@/lib/trpc";
+  import { useAuth } from "@/_core/hooks/useAuth";
+  import { Button } from "@/components/ui/button";
+  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  import { Badge } from "@/components/ui/badge";
+  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  import { Input } from "@/components/ui/input";
+  import { Label } from "@/components/ui/label";
+  import { Textarea } from "@/components/ui/textarea";
+  import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select";
+  import { toast } from "sonner";
+  import {
+    BarChart3, Users, TrendingUp, Star, CheckCircle2, XCircle,
+    Clock, Loader2, Megaphone, Zap, RefreshCw, Globe, Download,
+    Upload, Plus, Eye, ExternalLink, Target, Activity, Calendar,
+    ChevronUp, ChevronDown, Minus,
+  } from "lucide-react";
 
-// ─── Stat card ───────────────────────────────────────────────────────────────
-function StatCard({ label, value, icon: Icon, color }: { label: string; value: number | string; icon: any; color: string }) {
-  return (
-    <Card className="bg-neutral-900 border-neutral-800">
-      <CardContent className="pt-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-neutral-400">{label}</p>
-            <p className="text-2xl font-bold mt-1" style={{ color }}>{value}</p>
-          </div>
-          <Icon className="w-8 h-8 opacity-30" style={{ color }} />
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+  // ─── Constants ────────────────────────────────────────────────────────────────
 
-// ─── Submission Review Panel ──────────────────────────────────────────────────
-function SubmissionsPanel() {
-  const utils = trpc.useUtils();
-  const { data: pending, isLoading } = trpc.submissions.listPending.useQuery();
-  const reviewMutation = trpc.submissions.review.useMutation({
-    onSuccess: () => {
-      utils.submissions.listPending.invalidate();
-      toast.success("Submission reviewed");
-    },
-    onError: (err) => toast.error(err.message || "Failed to review submission"),
-  });
+  const SEGMENTS = [
+    { value: "artists",       label: "Visual Artists & Illustrators" },
+    { value: "filmmakers",    label: "Independent Filmmakers" },
+    { value: "agencies",      label: "Creative Agencies" },
+    { value: "small_business",label: "Small Business Video" },
+    { value: "creators",      label: "Content Creators" },
+    { value: "game_dev",      label: "Game Developers" },
+  ];
 
-  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading submissions...</div>;
+  const CHANNELS = [
+    "reddit", "discord", "facebook", "linkedin",
+    "youtube_comments", "tiktok", "instagram", "email",
+  ];
 
-  if (!pending?.length) return (
-    <div className="text-center py-12 text-neutral-500">
-      <CheckCircle2 className="w-10 h-10 mx-auto mb-3 opacity-40" />
-      <p>No pending submissions</p>
-    </div>
-  );
-
-  return (
-    <div className="space-y-3">
-      {pending.map((sub: any) => (
-        <Card key={sub.id} className="bg-neutral-900 border-neutral-800">
-          <CardContent className="pt-4">
-            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-white truncate">{sub.projectTitle || `Project #${sub.projectId}`}</p>
-                <p className="text-sm text-neutral-400 mt-0.5">{sub.creatorName} · {sub.creatorEmail}</p>
-                {sub.genre && <Badge variant="outline" className="mt-1 text-xs border-neutral-700 text-neutral-400">{sub.genre}</Badge>}
-                <p className="text-xs text-neutral-500 mt-1">Submitted {new Date(sub.createdAt).toLocaleDateString()}</p>
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  className="bg-amber-600 hover:bg-amber-500 text-white"
-                  disabled={reviewMutation.isPending}
-                  onClick={() => reviewMutation.mutate({ submissionId: sub.id, status: "featured" })}
-                >
-                  <Star className="w-3 h-3 mr-1" /> Feature
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-green-700 text-green-400 hover:bg-green-900/20"
-                  disabled={reviewMutation.isPending}
-                  onClick={() => reviewMutation.mutate({ submissionId: sub.id, status: "approved" })}
-                >
-                  <CheckCircle2 className="w-3 h-3 mr-1" /> Approve
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-red-800 text-red-400 hover:bg-red-900/20"
-                  disabled={reviewMutation.isPending}
-                  onClick={() => reviewMutation.mutate({ submissionId: sub.id, status: "declined" })}
-                >
-                  <XCircle className="w-3 h-3 mr-1" /> Decline
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-// ─── Abuse Flags Panel ────────────────────────────────────────────────────────
-function AbuseFlagsPanel() {
-  const utils = trpc.useUtils();
-  const { data: flags, isLoading } = trpc.abuse.listPending.useQuery();
-  const actionMutation = trpc.abuse.action.useMutation({
-    onSuccess: () => {
-      utils.abuse.listPending.invalidate();
-      toast.success("Flag actioned");
-    },
-    onError: (err) => toast.error(err.message || "Failed to action flag"),
-  });
-
-  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading flags...</div>;
-
-  if (!flags?.length) return (
-    <div className="text-center py-12 text-neutral-500">
-      <Shield className="w-10 h-10 mx-auto mb-3 opacity-40" />
-      <p>No pending abuse flags</p>
-    </div>
-  );
-
-  return (
-    <div className="space-y-3">
-      {flags.map((flag: any) => (
-        <Card key={flag.id} className="bg-neutral-900 border-neutral-800">
-          <CardContent className="pt-4">
-            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs border-red-800 text-red-400">{flag.entityType}</Badge>
-                  <span className="text-sm text-neutral-300">#{flag.entityId}</span>
-                </div>
-                <p className="text-sm text-neutral-300 mt-1">{flag.reason}</p>
-                <p className="text-xs text-neutral-500 mt-1">
-                  Reported by {flag.reporterName || "Anonymous"} · {new Date(flag.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-red-800 text-red-400 hover:bg-red-900/20"
-                  disabled={actionMutation.isPending}
-                  onClick={() => actionMutation.mutate({ flagId: flag.id, status: "actioned" })}
-                >
-                  <AlertTriangle className="w-3 h-3 mr-1" /> Action
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-neutral-700 text-neutral-400 hover:bg-neutral-800"
-                  disabled={actionMutation.isPending}
-                  onClick={() => actionMutation.mutate({ flagId: flag.id, status: "dismissed" })}
-                >
-                  Dismiss
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-// ─── Showcase Curation Panel ──────────────────────────────────────────────────
-function ShowcaseCurationPanel() {
-  const utils = trpc.useUtils();
-  const { data: topFilms, isLoading } = trpc.conversion.getTopFilms.useQuery({ limit: 20 });
-  const setHeroMutation = trpc.showcase.setHero.useMutation({
-    onSuccess: () => {
-      utils.conversion.getTopFilms.invalidate();
-      toast.success("Homepage hero updated");
-    },
-    onError: (err) => toast.error(err.message || "Failed to set hero"),
-  });
-  const setCurationMutation = trpc.analytics.setCurationFlag.useMutation({
-    onSuccess: () => {
-      utils.conversion.getTopFilms.invalidate();
-      toast.success("Curation flag updated");
-    },
-    onError: (err) => toast.error(err.message || "Failed to update flag"),
-  });
-  const removeCurationMutation = trpc.analytics.removeCurationFlag.useMutation({
-    onSuccess: () => {
-      utils.conversion.getTopFilms.invalidate();
-      toast.success("Flag removed");
-    },
-    onError: (err) => toast.error(err.message || "Failed to remove flag"),
-  });
-
-  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading films...</div>;
-
-  if (!topFilms?.length) return (
-    <div className="text-center py-12 text-neutral-500">
-      <Film className="w-10 h-10 mx-auto mb-3 opacity-40" />
-      <p>No public films yet</p>
-    </div>
-  );
-
-  return (
-    <div className="space-y-3">
-      {topFilms.map((film: any) => (
-        <Card key={film.id} className="bg-neutral-900 border-neutral-800">
-          <CardContent className="pt-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              {film.thumbnailUrl && (
-                <img src={film.thumbnailUrl} alt={film.title} className="w-24 h-14 object-cover rounded" />
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-white truncate">{film.title || `Film #${film.id}`}</p>
-                <p className="text-sm text-neutral-400">{film.creatorName}</p>
-                <div className="flex items-center gap-3 mt-1 text-xs text-neutral-500">
-                  <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{film.viewCount}</span>
-                  <span className="flex items-center gap-1"><Play className="w-3 h-3" />{film.playCount}</span>
-                  <span className="flex items-center gap-1"><Share2 className="w-3 h-3" />{film.shareCount}</span>
-                </div>
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  className="bg-amber-600 hover:bg-amber-500 text-white text-xs"
-                  disabled={setHeroMutation.isPending}
-                  onClick={() => setHeroMutation.mutate({ filmPageId: film.id })}
-                >
-                  <Star className="w-3 h-3 mr-1" /> Set Hero
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-blue-700 text-blue-400 hover:bg-blue-900/20 text-xs"
-                  disabled={setCurationMutation.isPending}
-                  onClick={() => setCurationMutation.mutate({ entityType: "project", entityId: film.projectId ?? film.id, flagType: "staff_pick" })}
-                >
-                  Staff Pick
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-red-800 text-red-400 hover:bg-red-900/20 text-xs"
-                  disabled={removeCurationMutation.isPending}
-                  onClick={() => removeCurationMutation.mutate({ entityType: "project", entityId: film.projectId ?? film.id, flagType: "featured" })}
-                >
-                  Remove Flag
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-// ─── Conversion Funnel Panel ──────────────────────────────────────────────────
-function ConversionFunnelPanel() {
-  const { data: funnel, isLoading } = trpc.conversion.getFunnelStats.useQuery({ days: 30 });
-  const { data: topCreators } = trpc.conversion.getTopCreators.useQuery({ limit: 10 });
-
-  const eventLabels: Record<string, string> = {
-    showcase_to_film: "Showcase → Film Page",
-    view_to_watch: "Film Page → Watch",
-    watch_to_profile: "Watch → Creator Profile",
-    profile_to_signup: "Profile → Sign Up",
-    film_to_create: "Film Page → Create Account",
+  const STATUS_COLORS: Record<string, string> = {
+    draft:     "bg-neutral-700 text-neutral-300",
+    active:    "bg-amber-900/60 text-amber-300",
+    paused:    "bg-neutral-700 text-neutral-400",
+    completed: "bg-green-900/60 text-green-300",
+    pending:   "bg-yellow-900/60 text-yellow-300",
+    approved:  "bg-green-900/60 text-green-300",
+    rejected:  "bg-red-900/60 text-red-400",
+    published: "bg-blue-900/60 text-blue-300",
+    archived:  "bg-neutral-700 text-neutral-500",
+    new:       "bg-neutral-700 text-neutral-300",
+    contacted: "bg-amber-900/60 text-amber-300",
+    converted: "bg-green-900/60 text-green-300",
   };
 
-  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading funnel data...</div>;
+  // ─── Stat card ────────────────────────────────────────────────────────────────
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-sm font-semibold text-neutral-300 mb-3">Conversion Funnel (Last 30 Days)</h3>
-        {!funnel ? (
-          <p className="text-neutral-500 text-sm">No conversion data yet. Events will appear as users navigate public pages.</p>
-        ) : (
-          <div className="space-y-2">
-            {([
-              { label: "Page Views", value: funnel.views },
-              { label: "Video Plays", value: funnel.plays },
-              { label: "Share Clicks", value: funnel.shares },
-              { label: "Signup CTA Clicks", value: funnel.signupClicks },
-              { label: "New Registrations", value: funnel.newUsers },
-            ] as { label: string; value: number }[]).map((row) => {
-              const maxVal = Math.max(funnel.views, funnel.plays, funnel.shares, funnel.signupClicks, funnel.newUsers, 1);
-              return (
-                <div key={row.label} className="flex items-center gap-3">
-                  <span className="text-sm text-neutral-400 w-52 shrink-0">{row.label}</span>
-                  <div className="flex-1 bg-neutral-800 rounded-full h-2">
-                    <div
-                      className="h-2 rounded-full"
-                      style={{
-                        width: `${Math.min(100, (row.value / maxVal) * 100)}%`,
-                        background: "linear-gradient(90deg, #d4af37, #f5e6a3)",
-                      }}
-                    />
+  function StatCard({ label, value, icon: Icon, color, sub }: {
+    label: string; value: number | string; icon: any; color: string; sub?: string;
+  }) {
+    return (
+      <Card className="bg-neutral-900 border-neutral-800">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-neutral-400">{label}</p>
+              <p className="text-2xl font-bold mt-1" style={{ color }}>{value}</p>
+              {sub && <p className="text-xs text-neutral-500 mt-1">{sub}</p>}
+            </div>
+            <Icon className="w-8 h-8 opacity-30" style={{ color }} />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // ─── WoW badge ────────────────────────────────────────────────────────────────
+
+  function WoWBadge({ pct }: { pct: number | null }) {
+    if (pct === null) return <span className="text-neutral-500 text-xs">—</span>;
+    if (pct > 0)  return <span className="flex items-center gap-1 text-green-400 text-xs"><ChevronUp className="w-3 h-3" />{pct}%</span>;
+    if (pct < 0)  return <span className="flex items-center gap-1 text-red-400 text-xs"><ChevronDown className="w-3 h-3" />{Math.abs(pct)}%</span>;
+    return <span className="flex items-center gap-1 text-neutral-500 text-xs"><Minus className="w-3 h-3" />0%</span>;
+  }
+
+  // ─── Overview Tab ─────────────────────────────────────────────────────────────
+
+  function OverviewTab() {
+    const { data, isLoading, refetch } = trpc.growth.getDashboard.useQuery();
+    const { data: report } = trpc.growth.getWeeklyReport.useQuery();
+
+    if (isLoading) return (
+      <div className="flex items-center gap-2 text-neutral-400 py-12 justify-center">
+        <Loader2 className="w-5 h-5 animate-spin" /> Loading dashboard...
+      </div>
+    );
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-white">Growth Overview</h2>
+          <div className="flex items-center gap-2">
+            <Badge className="bg-neutral-800 text-green-400 border-0 text-xs">
+              $0 ad spend
+            </Badge>
+            <Button size="sm" variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800" onClick={() => refetch()}>
+              <RefreshCw className="w-3 h-3 mr-1" /> Refresh
+            </Button>
+          </div>
+        </div>
+
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <StatCard label="Campaigns"      value={data?.campaigns ?? 0}     icon={Megaphone}  color="#f59e0b" />
+          <StatCard label="Audiences"      value={data?.audiences ?? 0}     icon={Users}      color="#a78bfa" />
+          <StatCard label="Assets"         value={data?.assets ?? 0}        icon={Star}       color="#60a5fa" />
+          <StatCard label="Pending Review" value={data?.pendingAssets ?? 0} icon={Clock}      color="#fbbf24" sub="need approval" />
+          <StatCard label="Events (30d)"   value={data?.events30d ?? 0}     icon={Activity}   color="#34d399" />
+          <StatCard label="Signups (30d)"  value={data?.signups30d ?? 0}    icon={TrendingUp} color="#f87171" />
+        </div>
+
+        {/* Weekly report */}
+        {report && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="bg-neutral-900 border-neutral-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm text-neutral-300 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-amber-500" /> Weekly Report
+                  <span className="text-xs text-neutral-500 font-normal ml-auto">{report.period.from} → {report.period.to}</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-400">Events this week</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-semibold">{report.events.thisWeek}</span>
+                    <WoWBadge pct={report.events.wow} />
                   </div>
-                  <span className="text-sm font-semibold text-white w-12 text-right">{row.value}</span>
                 </div>
-              );
-            })}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-400">Signups this week</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-semibold">{report.signups.thisWeek}</span>
+                    <WoWBadge pct={report.signups.wow} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-400">Published assets</span>
+                  <span className="text-white font-semibold">{report.assets.published}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-400">Awaiting approval</span>
+                  <span className="text-yellow-400 font-semibold">{report.assets.pending}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-400">Ad spend</span>
+                  <span className="text-green-400 font-semibold">$0</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-neutral-900 border-neutral-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm text-neutral-300 flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-blue-400" /> Top Traffic Sources
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {report.topSources.length === 0 && (
+                  <p className="text-neutral-500 text-sm">No data yet — share UTM links to start tracking</p>
+                )}
+                {report.topSources.map((s: any) => (
+                  <div key={s.source} className="flex items-center justify-between text-sm">
+                    <span className="text-neutral-400 capitalize">{s.source || "direct"}</span>
+                    <span className="text-white font-semibold">{Number(s.total)}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           </div>
         )}
-      </div>
 
-      <div>
-        <h3 className="text-sm font-semibold text-neutral-300 mb-3">Top Creators by Views</h3>
-        {!topCreators?.length ? (
-          <p className="text-neutral-500 text-sm">No creator data yet.</p>
-        ) : (
-          <div className="space-y-2">
-            {topCreators.map((creator: any, i: number) => (
-              <div key={creator.id} className="flex items-center gap-3 py-1.5 border-b border-neutral-800 last:border-0">
-                <span className="text-neutral-500 text-sm w-5">{i + 1}.</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white truncate">{creator.displayName}</p>
-                  <p className="text-xs text-neutral-500">{creator.filmCount} films</p>
+        {/* Assets by segment */}
+        {data?.assetsBySegment && data.assetsBySegment.length > 0 && (
+          <Card className="bg-neutral-900 border-neutral-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-neutral-300">Assets by Segment</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {data.assetsBySegment.map((s: any) => (
+                  <div key={s.segment} className="flex items-center gap-1.5 bg-neutral-800 rounded-full px-3 py-1 text-xs">
+                    <span className="text-neutral-400 capitalize">{s.segment}</span>
+                    <span className="text-amber-400 font-semibold">{Number(s.total)}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  }
+
+  // ─── Campaigns Tab ────────────────────────────────────────────────────────────
+
+  function CampaignsTab() {
+    const utils = trpc.useUtils();
+    const [showCreate, setShowCreate] = useState(false);
+    const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+    const [form, setForm] = useState({ name: "", segment: "", objective: "", startDate: "", endDate: "" });
+    const [generatingId, setGeneratingId] = useState<number | null>(null);
+
+    const { data, isLoading, refetch } = trpc.growth.listCampaigns.useQuery({});
+    const createMutation = trpc.growth.createCampaign.useMutation({
+      onSuccess: () => {
+        utils.growth.listCampaigns.invalidate();
+        utils.growth.getDashboard.invalidate();
+        setShowCreate(false);
+        setForm({ name: "", segment: "", objective: "", startDate: "", endDate: "" });
+        setSelectedChannels([]);
+        toast.success("Campaign created");
+      },
+      onError: (e) => toast.error(e.message),
+    });
+    const generatePackMutation = trpc.growth.generateCampaignPack.useMutation({
+      onSuccess: (d) => {
+        utils.growth.listCampaigns.invalidate();
+        utils.growth.listAssets.invalidate();
+        utils.growth.getDashboard.invalidate();
+        setGeneratingId(null);
+        toast.success(`Generated ${d.generated} draft content pieces — review in Assets tab`);
+      },
+      onError: (e) => { setGeneratingId(null); toast.error(e.message); },
+    });
+
+    const toggleChannel = (ch: string) =>
+      setSelectedChannels((prev) => prev.includes(ch) ? prev.filter((c) => c !== ch) : [...prev, ch]);
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-white">Campaigns</h2>
+          <Button size="sm" className="bg-amber-600 hover:bg-amber-500 text-white" onClick={() => setShowCreate(!showCreate)}>
+            <Plus className="w-3 h-3 mr-1" /> New Campaign
+          </Button>
+        </div>
+
+        {showCreate && (
+          <Card className="bg-neutral-900 border-amber-800/40">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm text-amber-400">Create Campaign</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-neutral-400 text-xs mb-1 block">Campaign Name</Label>
+                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="e.g. Artists Q3 2025" className="bg-neutral-800 border-neutral-700 text-white" />
                 </div>
-                <div className="flex items-center gap-1 text-sm text-neutral-300">
-                  <Eye className="w-3 h-3" /> {creator.totalViews}
+                <div>
+                  <Label className="text-neutral-400 text-xs mb-1 block">Target Segment</Label>
+                  <Select value={form.segment} onValueChange={(v) => setForm({ ...form, segment: v })}>
+                    <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white">
+                      <SelectValue placeholder="Select segment" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-neutral-800 border-neutral-700">
+                      {SEGMENTS.map((s) => (
+                        <SelectItem key={s.value} value={s.value} className="text-neutral-200">{s.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            ))}
+              <div>
+                <Label className="text-neutral-400 text-xs mb-1 block">Objective</Label>
+                <Input value={form.objective} onChange={(e) => setForm({ ...form, objective: e.target.value })}
+                  placeholder="e.g. Awareness + beta signups" className="bg-neutral-800 border-neutral-700 text-white" />
+              </div>
+              <div>
+                <Label className="text-neutral-400 text-xs mb-2 block">Channels (select all that apply)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {CHANNELS.map((ch) => (
+                    <button key={ch} onClick={() => toggleChannel(ch)}
+                      className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                        selectedChannels.includes(ch)
+                          ? "bg-amber-600 border-amber-500 text-white"
+                          : "bg-neutral-800 border-neutral-700 text-neutral-400 hover:border-neutral-500"
+                      }`}>
+                      {ch}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" className="bg-amber-600 hover:bg-amber-500 text-white"
+                  disabled={createMutation.isPending || !form.name || !form.segment || !form.objective || selectedChannels.length === 0}
+                  onClick={() => createMutation.mutate({ ...form, channels: selectedChannels as any[] })}>
+                  {createMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Plus className="w-3 h-3 mr-1" />}
+                  Create
+                </Button>
+                <Button size="sm" variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800"
+                  onClick={() => setShowCreate(false)}>Cancel</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {isLoading && (
+          <div className="flex items-center gap-2 text-neutral-400 py-8 justify-center">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading campaigns...
           </div>
         )}
-      </div>
-    </div>
-  );
-}
 
-// ─── Main Component ───────────────────────────────────────────────────────────
-export default function AdminGrowthDashboard() {
-  const { user } = useAuth();
+        {!isLoading && (!data || data.length === 0) && (
+          <div className="text-center py-12 text-neutral-500">
+            <Megaphone className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p>No campaigns yet — create one above</p>
+          </div>
+        )}
 
-  if (!user || (user as any).role !== "admin") {
-    return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
-        <div className="text-center text-neutral-400">
-          <Shield className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p>Admin access required</p>
+        <div className="space-y-3">
+          {(data ?? []).map((c: any) => (
+            <Card key={c.id} className="bg-neutral-900 border-neutral-800">
+              <CardContent className="pt-4">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-semibold text-white">{c.name}</p>
+                      <Badge className={`text-xs border-0 ${STATUS_COLORS[c.status] ?? "bg-neutral-700 text-neutral-400"}`}>{c.status}</Badge>
+                      <Badge className="text-xs border-0 bg-neutral-800 text-neutral-400">{c.segment}</Badge>
+                      <Badge className="text-xs border-0 bg-green-900/40 text-green-400">$0 spend</Badge>
+                    </div>
+                    <p className="text-sm text-neutral-400 mt-1">{c.objective}</p>
+                    {c.channels && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {(c.channels as string[]).map((ch: string) => (
+                          <span key={ch} className="text-xs bg-neutral-800 text-neutral-500 px-2 py-0.5 rounded">{ch}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-amber-600 hover:bg-amber-500 text-white shrink-0"
+                    disabled={generatePackMutation.isPending && generatingId === c.id}
+                    onClick={() => { setGeneratingId(c.id); generatePackMutation.mutate({ campaignId: c.id }); }}>
+                    {generatePackMutation.isPending && generatingId === c.id
+                      ? <><Loader2 className="w-3 h-3 animate-spin mr-1" /> Generating...</>
+                      : <><Zap className="w-3 h-3 mr-1" /> Generate Pack</>}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );
   }
 
-  const { data: topFilms } = trpc.conversion.getTopFilms.useQuery({ limit: 5 });
-  const { data: topCreators } = trpc.conversion.getTopCreators.useQuery({ limit: 5 });
-  const { data: pending } = trpc.submissions.listPending.useQuery();
-  const { data: abuseFlags } = trpc.abuse.listPending.useQuery();
+  // ─── Assets Tab ───────────────────────────────────────────────────────────────
 
-  return (
-    <div className="min-h-screen bg-neutral-950 text-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <BarChart3 className="w-6 h-6" style={{ color: "#d4af37" }} />
-            <h1 className="text-2xl font-bold">Growth Dashboard</h1>
+  function AssetsTab() {
+    const utils = trpc.useUtils();
+    const [statusFilter, setStatusFilter] = useState("pending");
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+    const { data, isLoading, refetch } = trpc.growth.listAssets.useQuery({ status: statusFilter || undefined });
+    const approveMutation = trpc.growth.approveAsset.useMutation({
+      onSuccess: () => { utils.growth.listAssets.invalidate(); utils.growth.getDashboard.invalidate(); refetch(); },
+      onError: (e) => toast.error(e.message),
+    });
+    const bulkMutation = trpc.growth.bulkApprove.useMutation({
+      onSuccess: (d) => {
+        utils.growth.listAssets.invalidate();
+        utils.growth.getDashboard.invalidate();
+        setSelectedIds([]);
+        toast.success(`${d.updated} assets updated`);
+      },
+      onError: (e) => toast.error(e.message),
+    });
+    const publishMutation = trpc.growth.markPublished.useMutation({
+      onSuccess: () => { utils.growth.listAssets.invalidate(); toast.success("Marked as published"); },
+      onError: (e) => toast.error(e.message),
+    });
+
+    const toggleSelect = (id: number) =>
+      setSelectedIds((prev) => prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]);
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h2 className="text-lg font-semibold text-white">Content Assets</h2>
+          <div className="flex items-center gap-2 flex-wrap">
+            {selectedIds.length > 0 && (
+              <>
+                <Button size="sm" className="bg-green-700 hover:bg-green-600 text-white"
+                  onClick={() => bulkMutation.mutate({ ids: selectedIds, decision: "approved" })}
+                  disabled={bulkMutation.isPending}>
+                  <CheckCircle2 className="w-3 h-3 mr-1" /> Approve {selectedIds.length}
+                </Button>
+                <Button size="sm" variant="outline" className="border-red-800 text-red-400 hover:bg-red-900/20"
+                  onClick={() => bulkMutation.mutate({ ids: selectedIds, decision: "rejected" })}
+                  disabled={bulkMutation.isPending}>
+                  <XCircle className="w-3 h-3 mr-1" /> Reject {selectedIds.length}
+                </Button>
+              </>
+            )}
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white w-36 h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-neutral-800 border-neutral-700">
+                <SelectItem value="" className="text-neutral-200 text-xs">All statuses</SelectItem>
+                {["pending","approved","rejected","published"].map((s) => (
+                  <SelectItem key={s} value={s} className="text-neutral-200 text-xs capitalize">{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <p className="text-neutral-400 text-sm">Showcase curation, submission review, abuse moderation, and conversion analytics.</p>
         </div>
 
-        {/* Summary Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Public Films" value={topFilms?.length ?? "—"} icon={Film} color="#d4af37" />
-          <StatCard label="Public Creators" value={topCreators?.length ?? "—"} icon={Users} color="#60a5fa" />
-          <StatCard label="Pending Submissions" value={pending?.length ?? 0} icon={Clock} color="#f59e0b" />
-          <StatCard label="Abuse Flags" value={abuseFlags?.length ?? 0} icon={AlertTriangle} color="#ef4444" />
+        {isLoading && (
+          <div className="flex items-center gap-2 text-neutral-400 py-8 justify-center">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading assets...
+          </div>
+        )}
+
+        {!isLoading && data?.rows.length === 0 && (
+          <div className="text-center py-12 text-neutral-500">
+            <Star className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p>No assets with status "{statusFilter || "any"}"</p>
+            <p className="text-xs mt-1">Generate a campaign pack to create content pieces</p>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {(data?.rows ?? []).map((a: any) => (
+            <Card key={a.id} className={`bg-neutral-900 border-neutral-800 ${selectedIds.includes(a.id) ? "ring-1 ring-amber-500" : ""}`}>
+              <CardContent className="pt-4">
+                <div className="flex items-start gap-3">
+                  <input type="checkbox" className="mt-1 accent-amber-500"
+                    checked={selectedIds.includes(a.id)}
+                    onChange={() => toggleSelect(a.id)} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <Badge className={`text-xs border-0 ${STATUS_COLORS[a.status] ?? "bg-neutral-700 text-neutral-400"}`}>{a.status}</Badge>
+                      <Badge className="text-xs border-0 bg-neutral-800 text-neutral-500">{a.platform}</Badge>
+                      <Badge className="text-xs border-0 bg-neutral-800 text-neutral-500">{a.assetType}</Badge>
+                      <span className="text-xs text-neutral-600 ml-auto">Q: {a.qualityScore}</span>
+                    </div>
+                    {a.headline && <p className="text-sm font-semibold text-white mb-1">{a.headline}</p>}
+                    <p className="text-sm text-neutral-400 line-clamp-3 whitespace-pre-wrap">{a.body}</p>
+                    {a.utmUrl && (
+                      <p className="text-xs text-blue-500 mt-1 truncate">{a.utmUrl}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1 shrink-0">
+                    {a.status === "pending" && (
+                      <>
+                        <Button size="sm" className="bg-green-800 hover:bg-green-700 text-green-100 h-7 text-xs"
+                          onClick={() => { approveMutation.mutate({ id: a.id, decision: "approved" }); toast.success("Approved"); }}>
+                          <CheckCircle2 className="w-3 h-3 mr-1" /> Approve
+                        </Button>
+                        <Button size="sm" variant="outline" className="border-red-800 text-red-400 hover:bg-red-900/20 h-7 text-xs"
+                          onClick={() => { approveMutation.mutate({ id: a.id, decision: "rejected" }); toast.success("Rejected"); }}>
+                          <XCircle className="w-3 h-3 mr-1" /> Reject
+                        </Button>
+                      </>
+                    )}
+                    {a.status === "approved" && (
+                      <Button size="sm" className="bg-blue-700 hover:bg-blue-600 text-white h-7 text-xs"
+                        onClick={() => publishMutation.mutate({ id: a.id })}>
+                        <ExternalLink className="w-3 h-3 mr-1" /> Mark Published
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-
-        {/* Main Tabs */}
-        <Tabs defaultValue="showcase">
-          <TabsList className="bg-neutral-900 border border-neutral-800 mb-6 flex-wrap h-auto gap-1 p-1">
-            <TabsTrigger value="showcase" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
-              <Star className="w-3.5 h-3.5 mr-1.5" /> Showcase Curation
-            </TabsTrigger>
-            <TabsTrigger value="submissions" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
-              <Megaphone className="w-3.5 h-3.5 mr-1.5" /> Submissions
-              {(pending?.length ?? 0) > 0 && (
-                <Badge className="ml-1.5 bg-amber-600 text-white text-[10px] px-1.5 py-0">{pending!.length}</Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="abuse" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
-              <Shield className="w-3.5 h-3.5 mr-1.5" /> Abuse Flags
-              {(abuseFlags?.length ?? 0) > 0 && (
-                <Badge className="ml-1.5 bg-red-600 text-white text-[10px] px-1.5 py-0">{abuseFlags!.length}</Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="funnel" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
-              <TrendingUp className="w-3.5 h-3.5 mr-1.5" /> Conversion Funnel
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="showcase">
-            <ShowcaseCurationPanel />
-          </TabsContent>
-          <TabsContent value="submissions">
-            <SubmissionsPanel />
-          </TabsContent>
-          <TabsContent value="abuse">
-            <AbuseFlagsPanel />
-          </TabsContent>
-          <TabsContent value="funnel">
-            <ConversionFunnelPanel />
-          </TabsContent>
-        </Tabs>
+        {data && <p className="text-xs text-neutral-600 text-right">{data.total} total</p>}
       </div>
-    </div>
-  );
-}
+    );
+  }
+
+  // ─── Audiences Tab ────────────────────────────────────────────────────────────
+
+  function AudiencesTab() {
+    const utils = trpc.useUtils();
+    const [csvText, setCsvText] = useState("");
+    const [csvSegment, setCsvSegment] = useState("filmmakers");
+    const [showImport, setShowImport] = useState(false);
+    const [search, setSearch] = useState("");
+    const fileRef = useRef<HTMLInputElement>(null);
+
+    const { data, isLoading } = trpc.growth.listAudiences.useQuery({ search: search || undefined, limit: 100 });
+    const importMutation = trpc.growth.importAudienceCsv.useMutation({
+      onSuccess: (d) => {
+        utils.growth.listAudiences.invalidate();
+        utils.growth.getDashboard.invalidate();
+        setCsvText("");
+        setShowImport(false);
+        toast.success(`Imported ${d.imported} contacts`);
+      },
+      onError: (e) => toast.error(e.message),
+    });
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => setCsvText(ev.target?.result as string ?? "");
+      reader.readAsText(file);
+    };
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h2 className="text-lg font-semibold text-white">Audiences</h2>
+          <Button size="sm" className="bg-amber-600 hover:bg-amber-500 text-white" onClick={() => setShowImport(!showImport)}>
+            <Upload className="w-3 h-3 mr-1" /> Import CSV
+          </Button>
+        </div>
+
+        {showImport && (
+          <Card className="bg-neutral-900 border-amber-800/40">
+            <CardContent className="pt-4 space-y-3">
+              <div>
+                <Label className="text-neutral-400 text-xs mb-1 block">Segment</Label>
+                <Select value={csvSegment} onValueChange={setCsvSegment}>
+                  <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-neutral-800 border-neutral-700">
+                    {SEGMENTS.map((s) => (
+                      <SelectItem key={s.value} value={s.value} className="text-neutral-200">{s.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-neutral-400 text-xs mb-1 block">CSV file (columns: name, email, company, utm_source)</Label>
+                <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />
+                <Button size="sm" variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800 mb-2"
+                  onClick={() => fileRef.current?.click()}>
+                  <Upload className="w-3 h-3 mr-1" /> Choose file
+                </Button>
+                <Textarea value={csvText} onChange={(e) => setCsvText(e.target.value)}
+                  placeholder="name,email,company\nJane Doe,jane@example.com,Indie Films Co"
+                  className="bg-neutral-800 border-neutral-700 text-white text-xs font-mono h-24" />
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" className="bg-amber-600 hover:bg-amber-500 text-white"
+                  disabled={importMutation.isPending || !csvText.trim()}
+                  onClick={() => importMutation.mutate({ csvContent: csvText, segment: csvSegment as any, source: "csv" })}>
+                  {importMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Upload className="w-3 h-3 mr-1" />}
+                  Import
+                </Button>
+                <Button size="sm" variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800"
+                  onClick={() => setShowImport(false)}>Cancel</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="flex">
+          <Input value={search} onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, email, or company..."
+            className="bg-neutral-800 border-neutral-700 text-white" />
+        </div>
+
+        {isLoading && (
+          <div className="flex items-center gap-2 text-neutral-400 py-8 justify-center">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading audiences...
+          </div>
+        )}
+
+        {!isLoading && data?.rows.length === 0 && (
+          <div className="text-center py-12 text-neutral-500">
+            <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p>No audience records yet</p>
+            <p className="text-xs mt-1">Import a CSV or contacts will appear when users visit landing pages</p>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          {(data?.rows ?? []).map((a: any) => (
+            <Card key={a.id} className="bg-neutral-900 border-neutral-800">
+              <CardContent className="py-3 flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-semibold text-white">{a.name || a.email || "Unknown"}</p>
+                    <Badge className={`text-xs border-0 ${STATUS_COLORS[a.status] ?? "bg-neutral-700 text-neutral-400"}`}>{a.status}</Badge>
+                    <Badge className="text-xs border-0 bg-neutral-800 text-neutral-500">{a.segment}</Badge>
+                  </div>
+                  <div className="flex items-center gap-3 mt-0.5">
+                    {a.email && <span className="text-xs text-neutral-500">{a.email}</span>}
+                    {a.company && <span className="text-xs text-neutral-500">{a.company}</span>}
+                    {a.utmSource && <span className="text-xs text-blue-500">via {a.utmSource}</span>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="text-xs text-neutral-500">Score:</span>
+                  <span className="text-xs font-semibold text-amber-400">{a.score}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        {data && <p className="text-xs text-neutral-600 text-right">{data.total} total</p>}
+      </div>
+    );
+  }
+
+  // ─── Analytics Tab ────────────────────────────────────────────────────────────
+
+  function AnalyticsTab() {
+    const [days, setDays] = useState(30);
+    const { data, isLoading } = trpc.growth.getAnalytics.useQuery({ days });
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-white">Analytics</h2>
+          <Select value={String(days)} onValueChange={(v) => setDays(Number(v))}>
+            <SelectTrigger className="bg-neutral-800 border-neutral-700 text-white w-32 h-8 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-neutral-800 border-neutral-700">
+              {[7, 14, 30, 60, 90].map((d) => (
+                <SelectItem key={d} value={String(d)} className="text-neutral-200 text-xs">Last {d} days</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {isLoading && (
+          <div className="flex items-center gap-2 text-neutral-400 py-8 justify-center">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading analytics...
+          </div>
+        )}
+
+        {data && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="bg-neutral-900 border-neutral-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm text-neutral-300">Events by Type</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.eventsByType.length === 0 && <p className="text-neutral-500 text-sm">No events yet</p>}
+                {data.eventsByType.map((e: any) => (
+                  <div key={e.eventType} className="flex items-center justify-between text-sm">
+                    <span className="text-neutral-400 capitalize">{e.eventType?.replace(/_/g, " ") || "unknown"}</span>
+                    <span className="text-white font-semibold">{Number(e.total)}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card className="bg-neutral-900 border-neutral-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm text-neutral-300">Events by Source</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.eventsBySource.length === 0 && <p className="text-neutral-500 text-sm">No data yet</p>}
+                {data.eventsBySource.map((e: any) => (
+                  <div key={e.utmSource ?? "direct"} className="flex items-center justify-between text-sm">
+                    <span className="text-neutral-400 capitalize">{e.utmSource || "direct"}</span>
+                    <span className="text-white font-semibold">{Number(e.total)}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card className="bg-neutral-900 border-neutral-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm text-neutral-300">Events by Segment</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.eventsBySegment.length === 0 && <p className="text-neutral-500 text-sm">No segment data yet</p>}
+                {data.eventsBySegment.map((e: any) => (
+                  <div key={e.segment ?? "unknown"} className="flex items-center justify-between text-sm">
+                    <span className="text-neutral-400 capitalize">{e.segment || "unknown"}</span>
+                    <span className="text-white font-semibold">{Number(e.total)}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card className="bg-neutral-900 border-neutral-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm text-neutral-300">Assets by Status</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.assetsByStatus.map((e: any) => (
+                  <div key={e.status} className="flex items-center justify-between text-sm">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_COLORS[e.status] ?? "bg-neutral-700 text-neutral-400"}`}>{e.status}</span>
+                    <span className="text-white font-semibold">{Number(e.total)}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {data.eventsByDay.length > 0 && (
+              <Card className="bg-neutral-900 border-neutral-800 md:col-span-2">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm text-neutral-300">Daily Events (last {days} days)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-end gap-1 h-24">
+                    {data.eventsByDay.map((e: any) => {
+                      const max = Math.max(...data.eventsByDay.map((x: any) => Number(x.total)));
+                      const h = max > 0 ? Math.round((Number(e.total) / max) * 96) : 2;
+                      return (
+                        <div key={e.day} className="flex-1 flex flex-col items-center gap-1 group relative">
+                          <div className="bg-amber-600 rounded-sm w-full transition-all" style={{ height: `${h}px` }} />
+                          <div className="absolute bottom-full mb-1 hidden group-hover:block bg-neutral-800 text-xs text-white rounded px-1.5 py-0.5 whitespace-nowrap">
+                            {e.day}: {e.total}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ─── Main page ────────────────────────────────────────────────────────────────
+
+  export default function AdminGrowthDashboard() {
+    const { user, isLoading: authLoading } = useAuth();
+
+    if (authLoading) return (
+      <div className="flex items-center justify-center h-screen bg-neutral-950">
+        <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+      </div>
+    );
+
+    if (!user || user.role !== "admin") return (
+      <div className="flex items-center justify-center h-screen bg-neutral-950">
+        <p className="text-neutral-400">Access denied</p>
+      </div>
+    );
+
+    return (
+      <div className="min-h-screen bg-neutral-950 text-white">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+              <Target className="w-6 h-6 text-amber-500" />
+              Growth Engine
+            </h1>
+            <p className="text-neutral-400 text-sm mt-1">
+              Zero-budget organic growth — all community posts require human approval before publishing
+            </p>
+          </div>
+
+          <Tabs defaultValue="overview">
+            <TabsList className="bg-neutral-900 border border-neutral-800 mb-6">
+              <TabsTrigger value="overview"   className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-neutral-400">Overview</TabsTrigger>
+              <TabsTrigger value="campaigns"  className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-neutral-400">Campaigns</TabsTrigger>
+              <TabsTrigger value="assets"     className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-neutral-400">Assets</TabsTrigger>
+              <TabsTrigger value="audiences"  className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-neutral-400">Audiences</TabsTrigger>
+              <TabsTrigger value="analytics"  className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-neutral-400">Analytics</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview">  <OverviewTab /></TabsContent>
+            <TabsContent value="campaigns"> <CampaignsTab /></TabsContent>
+            <TabsContent value="assets">    <AssetsTab /></TabsContent>
+            <TabsContent value="audiences"> <AudiencesTab /></TabsContent>
+            <TabsContent value="analytics"> <AnalyticsTab /></TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    );
+  }
+  
