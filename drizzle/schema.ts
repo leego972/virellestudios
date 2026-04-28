@@ -1930,3 +1930,5 @@ export const wardrobeAssignments = mysqlTable("wardrobeAssignments", {
 });
 export type WardrobeAssignment = typeof wardrobeAssignments.$inferSelect;
 export type InsertWardrobeAssignment = typeof wardrobeAssignments.$inferInsert;
+
+export * from "./schema_additions";
