@@ -26,7 +26,8 @@ ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/drizzle ./drizzle
+COPY --from=build /app/drizzle.config.ts ./drizzle.config.ts
 COPY package.json ./
 
 EXPOSE 3000
-CMD ["node", "dist/index.js"]
+CMD ["sh", "-c", "node_modules/.bin/drizzle-kit migrate 2>/dev/null || true && node dist/index.js"]
