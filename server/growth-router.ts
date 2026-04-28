@@ -14,6 +14,13 @@
   import { invokeLLM } from "./_core/llm";
   import { logger } from "./_core/logger";
 
+  type NonNullDb = NonNullable<Awaited<ReturnType<typeof getDb>>>;
+  async function requireDb(): Promise<NonNullDb> {
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
+    return db;
+  }
+
   // ─── Constants ────────────────────────────────────────────────────────────────
 
   const SEGMENTS = ["artists", "filmmakers", "agencies", "small_business", "creators", "game_dev"] as const;
@@ -125,7 +132,6 @@
           { role: "user",   content: userPrompt },
         ],
         model: "gpt-4o",
-        temperature: 0.8,
         max_tokens: 14000,
       });
 
@@ -149,7 +155,7 @@
         qualityScore: Math.min(100, Math.max(1, Number(p.quality_score) || 65)),
       }));
     } catch (err) {
-      logger.error("[GrowthRouter] generateAiCampaignPack failed:", err);
+      logger.error("[GrowthRouter] generateAiCampaignPack failed:", { error: err instanceof Error ? err.message : String(err) });
       // Fallback: template-based content so feature works without LLM
       return campaign.channels.flatMap((platform, ci) =>
         Array.from({ length: 3 }, (_, pi) => ({
@@ -233,10 +239,10 @@
         audienceId:  z.number().int().optional(),
         assetId:     z.number().int().optional(),
         campaignId:  z.number().int().optional(),
-        metadata:    z.record(z.unknown()).optional(),
+        metadata:    z.record(z.string(), z.unknown()).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const db = await getDb();
+        const db = await requireDb();
         await db.insert(growthEvents).values({
           eventType:   input.eventType,
           segment:     input.segment ?? null,
@@ -259,7 +265,7 @@
 
     // ADMIN — Dashboard
     getDashboard: adminProcedure.query(async () => {
-      const db = await getDb();
+      const db = await requireDb();
       const since30d = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
       const [
@@ -331,7 +337,7 @@
         endDate:   z.string().optional(),
       }))
       .mutation(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const [result] = await db.insert(growthCampaigns).values({
           name:      input.name,
           segment:   input.segment,
@@ -357,7 +363,7 @@
         offset:  z.number().min(0).default(0),
       }))
       .query(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const conditions = [];
         if (input.status)  conditions.push(eq(growthCampaigns.status, input.status));
         if (input.segment) conditions.push(eq(growthCampaigns.segment, input.segment));
@@ -378,7 +384,7 @@
         platforms: z.array(z.enum(CHANNELS)).optional(),
       }))
       .mutation(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const [campaign] = await db.select().from(growthCampaigns).where(eq(growthCampaigns.id, input.campaignId));
         if (!campaign) throw new Error("Campaign not found");
 
@@ -433,7 +439,7 @@
         source:     z.string().max(128).default("csv"),
       }))
       .mutation(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const rows = parseCsv(input.csvContent);
         if (!rows.length) return { imported: 0 };
         let imported = 0;
@@ -464,7 +470,7 @@
         offset:  z.number().min(0).default(0),
       }))
       .query(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const conditions = [];
         if (input.segment) conditions.push(eq(growthAudiences.segment, input.segment));
         if (input.status)  conditions.push(eq(growthAudiences.status, input.status));
@@ -488,7 +494,7 @@
         notes:  z.string().max(2048).optional(),
       }))
       .mutation(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const update: Record<string, unknown> = {};
         if (input.status !== undefined) update.status = input.status;
         if (input.score  !== undefined) update.score  = input.score;
@@ -506,7 +512,7 @@
         offset:     z.number().min(0).default(0),
       }))
       .query(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const conditions = [];
         if (input.status)     conditions.push(eq(growthAssets.status, input.status));
         if (input.platform)   conditions.push(eq(growthAssets.platform, input.platform));
@@ -527,7 +533,7 @@
         rejectionNote: z.string().max(1024).optional(),
       }))
       .mutation(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         await db.update(growthAssets)
           .set({ status: input.decision, rejectionNote: input.decision === "rejected" ? (input.rejectionNote ?? null) : null })
           .where(eq(growthAssets.id, input.id));
@@ -540,7 +546,7 @@
         decision: z.enum(["approved", "rejected"]),
       }))
       .mutation(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         await db.update(growthAssets).set({ status: input.decision }).where(inArray(growthAssets.id, input.ids));
         return { updated: input.ids.length };
       }),
@@ -551,7 +557,7 @@
         publishedUrl: z.string().max(2048).optional(),
       }))
       .mutation(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         // Get asset info for event logging
         const [asset] = await db.select().from(growthAssets).where(eq(growthAssets.id, input.id));
         await db.update(growthAssets)
@@ -575,7 +581,7 @@
     getAnalytics: adminProcedure
       .input(z.object({ days: z.number().min(1).max(365).default(30) }))
       .query(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const since = new Date(Date.now() - input.days * 24 * 60 * 60 * 1000);
         const [eventsByType, eventsBySource, eventsBySegment, eventsByDay, assetsByStatus] = await Promise.all([
           db.select({ eventType: growthEvents.eventType, total: count() }).from(growthEvents).where(gte(growthEvents.createdAt, since)).groupBy(growthEvents.eventType),
@@ -589,7 +595,7 @@
 
     // ADMIN — Weekly report with recommended actions
     getWeeklyReport: adminProcedure.query(async () => {
-      const db = await getDb();
+      const db = await requireDb();
       const since7d  = new Date(Date.now() -  7 * 24 * 60 * 60 * 1000);
       const since14d = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
@@ -653,7 +659,7 @@
         limit:      z.number().min(1).max(200).default(100),
       }))
       .query(async ({ input }) => {
-        const db = await getDb();
+        const db = await requireDb();
         const conditions = [eq(growthAssets.status, input.status)];
         if (input.platform)   conditions.push(eq(growthAssets.platform, input.platform));
         if (input.campaignId) conditions.push(eq(growthAssets.campaignId, input.campaignId));
@@ -674,7 +680,7 @@
           )].join("\n");
           return { format: "csv", data: csv, count: rows.length };
         }
-        return { format: "json", data: formatted.map((f, i) => ({ ...f, id: rows[i]?.id })), count: rows.length };
+        return { format: "json", data: formatted.map((f: Record<string, unknown>, i: number) => ({ ...f, id: rows[i]?.id })), count: rows.length };
       }),
   });
   
