@@ -40,18 +40,22 @@ import { useState, useRef } from "react";
   ];
 
   const STATUS_COLORS: Record<string, string> = {
-    draft:     "bg-neutral-700 text-neutral-300",
-    active:    "bg-amber-900/60 text-amber-300",
-    paused:    "bg-neutral-700 text-neutral-400",
-    completed: "bg-green-900/60 text-green-300",
-    pending:   "bg-yellow-900/60 text-yellow-300",
-    approved:  "bg-green-900/60 text-green-300",
-    rejected:  "bg-red-900/60 text-red-400",
-    published: "bg-blue-900/60 text-blue-300",
-    archived:  "bg-neutral-700 text-neutral-500",
-    new:       "bg-neutral-700 text-neutral-300",
-    contacted: "bg-amber-900/60 text-amber-300",
-    converted: "bg-green-900/60 text-green-300",
+    // campaign statuses
+    draft:      "bg-neutral-700 text-neutral-300",
+    active:     "bg-amber-900/60 text-amber-300",
+    paused:     "bg-neutral-700 text-neutral-400",
+    completed:  "bg-green-900/60 text-green-300",
+    // asset statuses (spec)
+    approved:   "bg-green-900/60 text-green-300",
+    rejected:   "bg-red-900/60 text-red-400",
+    published:  "bg-blue-900/60 text-blue-300",
+    archived:   "bg-neutral-700 text-neutral-500",
+    // audience statuses (spec)
+    discovered: "bg-neutral-700 text-neutral-300",
+    reviewed:   "bg-sky-900/60 text-sky-300",
+    queued:     "bg-amber-900/60 text-amber-300",
+    engaged:    "bg-purple-900/60 text-purple-300",
+    converted:  "bg-green-900/60 text-green-300",
   };
 
   // ─── Stat card ────────────────────────────────────────────────────────────────
@@ -115,7 +119,7 @@ import { useState, useRef } from "react";
           <StatCard label="Campaigns"      value={data?.campaigns ?? 0}     icon={Megaphone}  color="#f59e0b" />
           <StatCard label="Audiences"      value={data?.audiences ?? 0}     icon={Users}      color="#a78bfa" />
           <StatCard label="Assets"         value={data?.assets ?? 0}        icon={Star}       color="#60a5fa" />
-          <StatCard label="Pending Review" value={data?.pendingAssets ?? 0} icon={Clock}      color="#fbbf24" sub="need approval" />
+          <StatCard label="Draft / Review" value={data?.draftAssets ?? 0} icon={Clock}      color="#fbbf24" sub="need approval" />
           <StatCard label="Events (30d)"   value={data?.events30d ?? 0}     icon={Activity}   color="#34d399" />
           <StatCard label="Signups (30d)"  value={data?.signups30d ?? 0}    icon={TrendingUp} color="#f87171" />
         </div>
@@ -150,8 +154,8 @@ import { useState, useRef } from "react";
                   <span className="text-white font-semibold">{report.assets.published}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-neutral-400">Awaiting approval</span>
-                  <span className="text-yellow-400 font-semibold">{report.assets.pending}</span>
+                  <span className="text-neutral-400">Draft / awaiting approval</span>
+                  <span className="text-yellow-400 font-semibold">{report.assets.draft}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-neutral-400">Ad spend</span>
@@ -359,11 +363,53 @@ import { useState, useRef } from "react";
     );
   }
 
+  
+  // ─── Platform Export Button ───────────────────────────────────────────────────
+
+  const PLATFORM_LABELS: Record<string, string> = {
+    tiktok:        "TikTok",
+    youtube_shorts:"YouTube Shorts",
+    instagram:     "Instagram",
+    x:             "X / Twitter",
+    linkedin:      "LinkedIn",
+    reddit:        "Reddit (draft)",
+    email:         "Email / Newsletter",
+    product_hunt:  "Product Hunt",
+    indie_hackers: "Indie Hackers",
+  };
+
+  function ExportButton({ platform }: { platform: string }) {
+    const { data, isLoading, refetch } = trpc.growth.exportPlatformAssets.useQuery(
+      { platform, status: "approved", format: "text" },
+      { enabled: false }
+    );
+
+    const handleExport = async () => {
+      const result = await refetch();
+      if (!result.data?.data) return;
+      const blob = new Blob([String(result.data.data)], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `virelle-${platform}-assets.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Exported ${result.data.count} ${PLATFORM_LABELS[platform] ?? platform} assets`);
+    };
+
+    return (
+      <Button size="sm" variant="outline" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800 text-xs h-7"
+        onClick={handleExport} disabled={isLoading}>
+        <Download className="w-3 h-3 mr-1" /> {PLATFORM_LABELS[platform] ?? platform}
+      </Button>
+    );
+  }
+
   // ─── Assets Tab ───────────────────────────────────────────────────────────────
 
   function AssetsTab() {
     const utils = trpc.useUtils();
-    const [statusFilter, setStatusFilter] = useState("pending");
+    const [statusFilter, setStatusFilter] = useState("draft");
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
     const { data, isLoading, refetch } = trpc.growth.listAssets.useQuery({ status: statusFilter || undefined });
@@ -413,13 +459,33 @@ import { useState, useRef } from "react";
               </SelectTrigger>
               <SelectContent className="bg-neutral-800 border-neutral-700">
                 <SelectItem value="" className="text-neutral-200 text-xs">All statuses</SelectItem>
-                {["pending","approved","rejected","published"].map((s) => (
+                {["draft","approved","rejected","published"].map((s) => (
                   <SelectItem key={s} value={s} className="text-neutral-200 text-xs capitalize">{s}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
         </div>
+
+  
+        {/* Platform export section */}
+        <Card className="bg-neutral-900 border-neutral-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-neutral-300 flex items-center gap-2">
+              <Download className="w-4 h-4 text-amber-500" /> Export for Publishing
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-neutral-500 mb-3">
+              Export approved assets pre-formatted for each platform — TikTok, YouTube Shorts, Instagram, LinkedIn, X, Reddit, Product Hunt, email, and more.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {["tiktok","youtube_shorts","instagram","x","linkedin","reddit","email","product_hunt","indie_hackers"].map((pl) => (
+                <ExportButton key={pl} platform={pl} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {isLoading && (
           <div className="flex items-center gap-2 text-neutral-400 py-8 justify-center">
@@ -457,7 +523,7 @@ import { useState, useRef } from "react";
                     )}
                   </div>
                   <div className="flex flex-col gap-1 shrink-0">
-                    {a.status === "pending" && (
+                    {a.status === "draft" && (
                       <>
                         <Button size="sm" className="bg-green-800 hover:bg-green-700 text-green-100 h-7 text-xs"
                           onClick={() => { approveMutation.mutate({ id: a.id, decision: "approved" }); toast.success("Approved"); }}>
@@ -494,9 +560,11 @@ import { useState, useRef } from "react";
     const [csvSegment, setCsvSegment] = useState("filmmakers");
     const [showImport, setShowImport] = useState(false);
     const [search, setSearch] = useState("");
+    const [segFilter, setSegFilter] = useState("");
+    const [statusAudFilter, setStatusAudFilter] = useState("");
     const fileRef = useRef<HTMLInputElement>(null);
 
-    const { data, isLoading } = trpc.growth.listAudiences.useQuery({ search: search || undefined, limit: 100 });
+    const { data, isLoading } = trpc.growth.listAudiences.useQuery({ search: search || undefined, segment: segFilter || undefined, status: statusAudFilter || undefined, limit: 100 });
     const importMutation = trpc.growth.importAudienceCsv.useMutation({
       onSuccess: (d) => {
         utils.growth.listAudiences.invalidate();
@@ -598,8 +666,8 @@ import { useState, useRef } from "react";
                   </div>
                   <div className="flex items-center gap-3 mt-0.5">
                     {a.email && <span className="text-xs text-neutral-500">{a.email}</span>}
-                    {a.company && <span className="text-xs text-neutral-500">{a.company}</span>}
-                    {a.utmSource && <span className="text-xs text-blue-500">via {a.utmSource}</span>}
+                    {a.organisation && <span className="text-xs text-neutral-500">{a.organisation}</span>}
+                    {a.source && <span className="text-xs text-blue-500">via {a.source}</span>}
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
@@ -735,7 +803,7 @@ import { useState, useRef } from "react";
 
   // ─── Main page ────────────────────────────────────────────────────────────────
 
-  export default function AdminGrowthDashboard() {
+  export default function AdminGrowthDashboard({ defaultTab = "overview" }: { defaultTab?: string }) {
     const { user, isLoading: authLoading } = useAuth();
 
     if (authLoading) return (
@@ -763,7 +831,7 @@ import { useState, useRef } from "react";
             </p>
           </div>
 
-          <Tabs defaultValue="overview">
+          <Tabs defaultValue={defaultTab}>
             <TabsList className="bg-neutral-900 border border-neutral-800 mb-6">
               <TabsTrigger value="overview"   className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-neutral-400">Overview</TabsTrigger>
               <TabsTrigger value="campaigns"  className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-neutral-400">Campaigns</TabsTrigger>

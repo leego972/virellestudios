@@ -240,7 +240,8 @@ function Router() {
       <Route path="/showcase">{() => <LazyPage><Showcase /></LazyPage>}</Route>
       <Route path="/share/:projectId/:token">{() => <LazyPage><SharePreview /></LazyPage>}</Route>
       <Route path="/films/:slug">{() => <LazyPage><FilmPage /></LazyPage>}</Route>
-      <Route path="/creators/:slug">{() => <LazyPage><CreatorProfile /></LazyPage>}</Route>
+      <Route path="/creators">{() => <LazyPage><CreatorsSegPage /></LazyPage>}</Route>
+            <Route path="/creators/:slug">{() => <LazyPage><CreatorProfile /></LazyPage>}</Route>
       <Route path="/collections/:slug">{() => <LazyPage><Collections /></LazyPage>}</Route>
       <Route path="/how-it-works">{() => <LazyPage><HowItWorks /></LazyPage>}</Route>
       <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
@@ -346,6 +347,10 @@ function Router() {
               <Route path="/admin/seo">{() => <LazyPage><SeoDashboard /></LazyPage>}</Route>
               <Route path="/admin/outreach">{() => <LazyPage><AdminOutreach /></LazyPage>}</Route>
               <Route path="/admin/growth">{() => <LazyPage><AdminGrowthDashboard /></LazyPage>}</Route>
+            <Route path="/admin/growth/campaigns">{() => <LazyPage><AdminGrowthDashboard defaultTab="campaigns" /></LazyPage>}</Route>
+            <Route path="/admin/growth/audiences">{() => <LazyPage><AdminGrowthDashboard defaultTab="audiences" /></LazyPage>}</Route>
+            <Route path="/admin/growth/assets">{() => <LazyPage><AdminGrowthDashboard defaultTab="assets" /></LazyPage>}</Route>
+            <Route path="/admin/growth/analytics">{() => <LazyPage><AdminGrowthDashboard defaultTab="analytics" /></LazyPage>}</Route>
               <Route path="/admin/signature-cast">{() => <LazyPage><AdminSignatureCast /></LazyPage>}</Route>
               {/* v6.63 — Production Spine */}
               <Route path="/projects/:id/schedule">{() => <LazyPage><Schedule /></LazyPage>}</Route>

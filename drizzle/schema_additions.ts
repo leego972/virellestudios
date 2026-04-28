@@ -166,24 +166,29 @@ export type ShootingDay   = typeof shootingDays.$inferSelect;
 export type InsertShootingDay = typeof shootingDays.$inferInsert;
 
 
-  // ─── Growth Engine Tables (zero-budget v1) ───────────────────────────────────
+  // ─── Growth Engine Tables (zero-budget v1) ─────────────────────────────────
+  // Aligns with VIRELLE_ZERO_BUDGET_GROWTH_ENGINE_V1.md spec
 
   export const growthAudiences = mysqlTable("growth_audiences", {
-    id:          int("id").autoincrement().primaryKey(),
-    segment:     varchar("segment", { length: 64 }).notNull(), // artists|filmmakers|agencies|small_business|creators|game_dev
-    name:        varchar("name", { length: 255 }),
-    email:       varchar("email", { length: 255 }),
-    company:     varchar("company", { length: 255 }),
-    source:      varchar("source", { length: 64 }).notNull().default("manual"), // csv|manual|landing_page
-    utmSource:   varchar("utm_source", { length: 128 }),
-    utmMedium:   varchar("utm_medium", { length: 128 }),
-    utmCampaign: varchar("utm_campaign", { length: 128 }),
-    score:       int("score").default(0).notNull(),
-    tags:        json("tags"), // string[]
-    notes:       text("notes"),
-    status:      varchar("status", { length: 32 }).default("new").notNull(), // new|contacted|converted|unsubscribed
-    createdAt:   timestamp("created_at").defaultNow().notNull(),
-    updatedAt:   timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+    id:               int("id").autoincrement().primaryKey(),
+    segment:          varchar("segment", { length: 64 }).notNull(), // artists|filmmakers|agencies|small_business|creators|game_dev
+    name:             varchar("name", { length: 255 }),
+    organisation:     varchar("organisation", { length: 255 }),
+    website:          varchar("website", { length: 500 }),
+    publicProfileUrl: varchar("public_profile_url", { length: 500 }),
+    country:          varchar("country", { length: 128 }),
+    email:            varchar("email", { length: 255 }), // optional, only if publicly available
+    source:           varchar("source", { length: 128 }).notNull().default("manual"), // csv|manual|landing_page|discovered
+    utmSource:        varchar("utm_source", { length: 128 }),
+    utmMedium:        varchar("utm_medium", { length: 128 }),
+    utmCampaign:      varchar("utm_campaign", { length: 128 }),
+    score:            int("score").default(0).notNull(), // 0-100 per scoring rubric
+    tags:             json("tags"), // string[]
+    notes:            text("notes"),
+    status:           varchar("status", { length: 32 }).default("discovered").notNull(),
+    // status values: discovered | reviewed | queued | engaged | converted | archived
+    createdAt:        timestamp("created_at").defaultNow().notNull(),
+    updatedAt:        timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   });
   export type GrowthAudience = typeof growthAudiences.$inferSelect;
   export type InsertGrowthAudience = typeof growthAudiences.$inferInsert;
@@ -191,12 +196,15 @@ export type InsertShootingDay = typeof shootingDays.$inferInsert;
   export const growthCampaigns = mysqlTable("growth_campaigns", {
     id:           int("id").autoincrement().primaryKey(),
     name:         varchar("name", { length: 255 }).notNull(),
-    segment:      varchar("segment", { length: 64 }).notNull(), // artists|filmmakers|agencies|small_business|creators|game_dev
-    objective:    varchar("objective", { length: 255 }).notNull(), // awareness|signups|trial|referral
-    channels:     json("channels"), // string[] — reddit|discord|facebook|linkedin|youtube_comments|tiktok|instagram
-    status:       varchar("status", { length: 32 }).default("draft").notNull(), // draft|active|paused|completed
-    adSpend:      int("ad_spend").default(0).notNull(), // ALWAYS 0 for zero-budget
-    packIdeas:    json("pack_ideas"), // AI-generated idea list
+    segment:      varchar("segment", { length: 64 }).notNull(),
+    offer:        varchar("offer", { length: 500 }),
+    cta:          varchar("cta", { length: 255 }),
+    objective:    varchar("objective", { length: 255 }).notNull().default("awareness"),
+    channels:     json("channels"), // string[] — reddit|discord|facebook|linkedin|tiktok|instagram|email|x|youtube_shorts
+    status:       varchar("status", { length: 32 }).default("draft").notNull(),
+    // status: draft | active | paused | completed
+    adSpend:      int("ad_spend").default(0).notNull(), // always 0 — zero-budget
+    packIdeas:    json("pack_ideas"), // AI-generated headline list
     startDate:    timestamp("start_date"),
     endDate:      timestamp("end_date"),
     metrics:      json("metrics"), // { impressions, clicks, signups, conversions }
@@ -207,42 +215,48 @@ export type InsertShootingDay = typeof shootingDays.$inferInsert;
   export type InsertGrowthCampaign = typeof growthCampaigns.$inferInsert;
 
   export const growthAssets = mysqlTable("growth_assets", {
-    id:           int("id").autoincrement().primaryKey(),
-    campaignId:   int("campaign_id"),
-    segment:      varchar("segment", { length: 64 }).notNull(),
-    platform:     varchar("platform", { length: 64 }).notNull(), // reddit|discord|facebook|linkedin|email|tiktok|instagram
-    assetType:    varchar("asset_type", { length: 64 }).notNull(), // post|comment|dm_template|story|reel|banner
-    headline:     varchar("headline", { length: 512 }),
-    body:         text("body").notNull(),
-    imagePrompt:  text("image_prompt"),
-    mediaUrl:     text("media_url"),
-    utmUrl:       text("utm_url"), // final CTA link with UTM params
-    status:       varchar("status", { length: 32 }).default("pending").notNull(), // pending|approved|rejected|published|archived
+    id:            int("id").autoincrement().primaryKey(),
+    campaignId:    int("campaign_id"),
+    segment:       varchar("segment", { length: 64 }).notNull(),
+    platform:      varchar("platform", { length: 64 }).notNull(),
+    // platform: reddit|discord|facebook|linkedin|email|tiktok|instagram|x|youtube_shorts|product_hunt|indie_hackers
+    assetType:     varchar("asset_type", { length: 64 }).notNull(),
+    // assetType: post|comment|dm_template|story|reel|thread|newsletter|cta_variant|video_prompt|banner
+    title:         varchar("title", { length: 255 }),
+    headline:      varchar("headline", { length: 512 }),
+    body:          text("body").notNull(),
+    visualPrompt:  text("visual_prompt"), // Stable Diffusion / DALL-E prompt for any visual
+    mediaUrl:      text("media_url"),
+    utmUrl:        text("utm_url"), // final CTA link with UTM params
+    status:        varchar("status", { length: 32 }).default("draft").notNull(),
+    // status: draft | approved | published | rejected
     rejectionNote: text("rejection_note"),
-    publishedAt:  timestamp("published_at"),
-    publishedUrl: text("published_url"),
-    qualityScore: int("quality_score").default(0).notNull(),
-    impressions:  int("impressions").default(0).notNull(),
-    clicks:       int("clicks").default(0).notNull(),
-    conversions:  int("conversions").default(0).notNull(),
-    createdAt:    timestamp("created_at").defaultNow().notNull(),
-    updatedAt:    timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+    publishedAt:   timestamp("published_at"),
+    publishedUrl:  text("published_url"),
+    qualityScore:  int("quality_score").default(0).notNull(),
+    impressions:   int("impressions").default(0).notNull(),
+    clicks:        int("clicks").default(0).notNull(),
+    conversions:   int("conversions").default(0).notNull(),
+    createdAt:     timestamp("created_at").defaultNow().notNull(),
+    updatedAt:     timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   });
   export type GrowthAsset = typeof growthAssets.$inferSelect;
   export type InsertGrowthAsset = typeof growthAssets.$inferInsert;
 
   export const growthEvents = mysqlTable("growth_events", {
     id:          int("id").autoincrement().primaryKey(),
-    eventType:   varchar("event_type", { length: 64 }).notNull(), // page_view|cta_click|signup|trial_start|referral
-    segment:     varchar("segment", { length: 64 }),
-    utmSource:   varchar("utm_source", { length: 128 }),
+    eventType:   varchar("event_type", { length: 64 }).notNull(),
+    // eventType: page_view | cta_click | signup | trial_start | referral | email_open | email_click
+    source:      varchar("source", { length: 128 }), // utm_source value or channel name
     utmMedium:   varchar("utm_medium", { length: 128 }),
     utmCampaign: varchar("utm_campaign", { length: 128 }),
     utmContent:  varchar("utm_content", { length: 128 }),
     utmTerm:     varchar("utm_term", { length: 128 }),
+    segment:     varchar("segment", { length: 64 }),
     page:        varchar("page", { length: 255 }),
     referrer:    text("referrer"),
     userId:      int("user_id"),
+    audienceId:  int("audience_id"),
     assetId:     int("asset_id"),
     campaignId:  int("campaign_id"),
     metadata:    json("metadata"),
