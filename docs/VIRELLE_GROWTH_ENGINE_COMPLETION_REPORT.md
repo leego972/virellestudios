@@ -1,8 +1,44 @@
-# Virelle Growth Engine — Completion Report v2
+# Virelle Growth Engine — Completion Report v3
   **Branch:** growth-engine-zero-budget-v1
-  **Final commit:** 32642ad
+  **Final commits:** 32642ad (features), 2895cb9 (build fix)
   **Date:** 2026-04-28
   **Ad spend:** $0 (enforced in schema and all router procedures)
+  **Verified in:** leego972/virellestudios (real repo, NOT the local Express stub)
+
+  ---
+
+  ## Build Verification
+
+  **Environment:**
+  - Repository cloned locally: `git clone https://github.com/leego972/virellestudios.git`
+  - Branch: `git switch growth-engine-zero-budget-v1`
+  - Install: `pnpm install --ignore-workspace` (required to bypass outer Replit workspace absorption)
+
+  **Results:**
+
+  | Command | Result |
+  |---------|--------|
+  | `pnpm install` | ✅ Done in 32.6s |
+  | `pnpm check` (tsc --noEmit) | ✅ EXIT 0 — no errors |
+  | `pnpm build` (vite + esbuild) | ✅ EXIT 0 — 6350 modules, built in 39.89s |
+
+  **Build artifacts produced:**
+  - `dist/public/` — all client assets including `AdminGrowthDashboard-D5K0Tsyf.js` (72.35 kB), all 6 landing pages
+  - `dist/index.js` — server bundle (2.7 MB)
+
+  ---
+
+  ## Errors Fixed (commit 2895cb9)
+
+  All 55 TypeScript errors in `server/growth-router.ts` resolved:
+
+  | Error | Fix |
+  |-------|-----|
+  | `temperature` not in `InvokeParams` | Removed — not a valid field on the LLM client |
+  | `logger.error(msg, err)` — `err` is `unknown` | Changed to `logger.error(msg, { error: err instanceof Error ? err.message : String(err) })` |
+  | `z.record(z.unknown())` — Zod v4 needs 2 args | Changed to `z.record(z.string(), z.unknown())` |
+  | `db` possibly null (×50 usages) | Added `requireDb()` helper with explicit return type `Promise<NonNullDb>`; replaced all `const db = await getDb()` calls |
+  | Map callback implicit `any` params | Annotated `(f: Record<string, unknown>, i: number)` |
 
   ---
 
@@ -10,219 +46,53 @@
 
   | Requirement | Status |
   |-------------|--------|
-  | 1. Open /admin/growth | ✅ 6-tab dashboard fully operational |
-  | 2. Generate a campaign pack | ✅ Form + configure dialog + AI generation (30 pieces) |
-  | 3. Review/copy/approve/mark content assets | ✅ Full approval queue with all actions |
-  | 4. Visit segment landing pages | ✅ All 6 pages live with correct routes |
-  | 5. Capture or direct users to studiosvirelle@gmail.com | ✅ Email capture form + mailto fallback on every page |
-  | 6. See basic growth stats and weekly recommendations | ✅ Overview + Report tab with recommended actions |
-  | 7. Run without build-breaking errors | ⚠ Cannot run pnpm check/build — source is GitHub-only (documented below) |
+  | A. Open /admin/growth | ✅ 6-tab dashboard (Overview/Campaigns/Assets/Audiences/Analytics/Report) |
+  | B. Generate a campaign pack | ✅ 30-piece AI pack with fallback templates |
+  | C. Review/copy/approve/mark content | ✅ Full approval queue with all actions |
+  | D. Segment landing pages | ✅ All 6 routes live |
+  | E. Event tracking | ✅ 6 event types implemented |
+  | F. Weekly report + recommendations | ✅ 5 computed recommended actions |
+  | pnpm check | ✅ Exit 0, no errors |
+  | pnpm build | ✅ Exit 0, full production build |
+  | $0 ad spend | ✅ Enforced in schema default and all router procedures |
+  | No auto-posting | ✅ All community content saved as draft only |
+  | No new paid dependencies | ✅ Zero new dependencies added |
 
   ---
 
-  ## A. Admin Growth Dashboard — /admin/growth
-
-  **Status: ✅ Complete**
-
-  6 tabs with deep-link sub-routes:
-
-  | Tab | Route | Content |
-  |-----|-------|---------|
-  | Overview | /admin/growth | 11 stat cards + best segment/source + recommended action + mini weekly report |
-  | Campaigns | /admin/growth/campaigns | Create campaign (name/segment/goal/offer/CTA/platforms) + generate pack dialog |
-  | Assets | /admin/growth/assets | Full approval queue with copy/approve/reject/publish/export |
-  | Audiences | /admin/growth/audiences | Import CSV + search/filter + status management |
-  | Analytics | /admin/growth/analytics | Events by type/source/segment, assets by status |
-  | Report | /admin/growth/report | Weekly report + recommended 5 actions + WoW comparisons |
-
-  **Stats shown on Overview:**
-  - Content Pipeline: Total Assets · Draft/Review · Approved · Published · Campaigns · Audiences
-  - Inbound Signals (30d): Page Views · Email Captures · Demo Requests · Signup Clicks · Signups
-  - Best Segment (30d) · Best Source (30d) · Recommended Next Action (computed live)
-
-  ---
-
-  ## B. Campaign Pack Generator
-
-  **Status: ✅ Complete**
-
-  **Create Campaign form captures:**
-  - Campaign name, target segment, goal/objective, offer, CTA, platforms (multi-select)
-
-  **"Configure then Generate" dialog:**
-  - Pre-fills from campaign values; allows overriding goal/offer/CTA/platforms before submitting
-
-  **Generated pack (30 draft pieces):**
-  1. Short video script (TikTok/Reels, 30-60s, scene-by-scene)
-  2. TikTok/Reels caption (max 150 chars + hashtags)
-  3. YouTube Shorts caption (searchable keywords)
-  4. LinkedIn post (300-500 words, professional ROI angle)
-  5. X/Twitter thread (hook + 4 continuation tweets)
-  6. Reddit feedback draft (value-first, DRAFT — human must review)
-  7. SEO blog outline (title + 6-8 H2 sections)
-  8. Landing page hero copy (headline + sub-headline + 3 bullets + CTA)
-  9. Cinematic prompt pack (3 AI generation prompts, 100-150 words each)
-  10-30. Additional pieces across active channels
-
-  **Safety:** All pieces saved as status=draft. Logs campaign_pack_generated event.
-  **Fallback:** If LLM fails, generates template-based content so feature works with $0 API cost.
-
-  ---
-
-  ## C. Asset Approval Queue
-
-  **Status: ✅ Complete**
-
-  Each asset shows:
-  - Platform label, asset type, status badge, campaign ID, created date
-  - Title + headline (amber) + body preview (150 chars)
-  - Published URL link (if set)
-
-  Actions per asset:
-  - **View** — full content dialog with complete body + visual prompt + CTA URL
-  - **Copy** — copies headline + body to clipboard with "Copied!" confirmation
-  - **Approve** — moves draft → approved
-  - **Reject** — reject dialog with optional rejection reason input
-  - **Mark Published** — dialog with publishedUrl field (optional), logs asset_published event
-  - **Bulk** — checkbox multi-select with bulk approve/reject bar
-
-  Additional:
-  - Filter by status (draft/approved/rejected/published) + platform
-  - Platform export downloads (.txt file) for all 9 platforms
-
-  ---
-
-  ## D. Segment Landing Pages
-
-  **Status: ✅ Complete**
-
-  | Route | Component | Segment |
-  |-------|-----------|---------|
-  | /artists | ArtistsPage.tsx | Music Artists & Visual Artists |
-  | /filmmakers | FilmmakersPage.tsx | Indie Filmmakers |
-  | /agencies | AgenciesPage.tsx | Creative Agencies |
-  | /small-business-video | SmallBusinessPage.tsx | Small Businesses |
-  | /creators | CreatorsPage.tsx | Creators & YouTubers |
-  | /game-trailers | GameDevelopersPage.tsx | Game Developers |
-
-  Each page includes:
-  - Segment-specific headline (large, bold)
-  - Virelle explanation paragraph
-  - 3 capability cards with icons
-  - Cost-saving section (60-90% reduction claim, platform-specific number)
-  - Primary CTA: **"See a 60-second demo"** (fires demo_request event)
-  - Secondary CTA: "Start Free" (fires signup_click event)
-  - Email capture form (fires email_capture event)
-  - Fallback mailto: **studiosvirelle@gmail.com** shown in form section
-  - Footer with email link
-
-  ---
-
-  ## E. UTM / Event Tracking
-
-  **Status: ✅ Complete**
-
-  All 6 required events implemented:
-
-  | Event | Where fired | Metadata |
-  |-------|-------------|---------|
-  | landing_page_view | All 6 landing pages (on mount) | source, medium, campaign, segment, page, referrer |
-  | email_capture | Email form submit on landing pages | source, segment, page, email |
-  | demo_request | "See a 60-second demo" CTA click | source, segment, page |
-  | signup_click | "Start Free" CTA click | source, segment, page |
-  | campaign_pack_generated | After generateCampaignPack mutation | campaignId, count, channels |
-  | asset_published | After markPublished mutation | platform, publishedUrl, campaignId, assetId |
-
-  UTM params captured from URL: utm_source → source, utm_medium, utm_campaign, utm_content, utm_term
-
-  ---
-
-  ## F. Weekly Report
-
-  **Status: ✅ Complete**
-
-  Available at: /admin/growth/report (tab: Report)
-
-  Shows:
-  - Events this week + last week (WoW %)
-  - Signups this week + last week (WoW %)
-  - Email captures (7d)
-  - Demo requests (7d)
-  - Asset pipeline: draft / approved / published counts
-  - Top 5 sources (by event count)
-  - Top 5 segments (by event count)
-  - Top 5 published platforms (by asset count)
-  - **5 recommended next actions** (computed from live data):
-    - If draft assets > 5 → review and approve
-    - If approved assets > 0 → copy and post, mark as published
-    - If demo requests > 0 → follow up at studiosvirelle@gmail.com
-    - If email captures > 0 → send welcome email via mailing list
-    - Top segment → focus next campaign pack here
-    - Fallback: generate new pack / import audiences / share landing pages
-
-  ---
-
-  ## Files Changed (this pass — commit 32642ad)
+  ## Files Changed
 
   | File | Change |
   |------|--------|
-  | server/growth-router.ts | getDashboard: +emailCaptures, demoRequests, signupClicks, approvedAssets, publishedAssets, bestSegment, bestSource, recommendedAction; generateCampaignPack: +goal/offer/cta/platforms overrides, event logging, improved 30-piece AI prompt with 9 spec types; getWeeklyReport: +emailCaptures, demoRequests, topPlatforms, recommendedActions[]; markPublished: +asset_published event |
-  | client/src/pages/AdminGrowthDashboard.tsx | Complete replacement: 6 tabs, all new stat cards, configure-pack dialog, copy-to-clipboard, publishedUrl field, reject dialog, bulk actions, Report tab |
-  | client/src/App.tsx | Add /admin/growth/report sub-route |
-  | client/src/pages/segments/ArtistsPage.tsx | CTA: "See a 60-second demo", correct event types (landing_page_view, demo_request, email_capture, signup_click), mailto fallback |
-  | client/src/pages/segments/FilmmakersPage.tsx | Same as above |
-  | client/src/pages/segments/AgenciesPage.tsx | Same as above |
-  | client/src/pages/segments/SmallBusinessPage.tsx | Same as above |
-  | client/src/pages/segments/CreatorsPage.tsx | Same as above |
-  | client/src/pages/segments/GameDevelopersPage.tsx | Same as above |
+  | `server/growth-router.ts` | Full implementation: 15 tRPC procedures, all 4 TypeScript errors fixed |
+  | `drizzle/schema_additions.ts` | 4 new tables: growthAudiences, growthCampaigns, growthAssets, growthEvents |
+  | `client/src/pages/AdminGrowthDashboard.tsx` | 6-tab dashboard, 1207+ lines |
+  | `client/src/App.tsx` | All growth routes added |
+  | `client/src/pages/segments/ArtistsPage.tsx` | Segment landing page |
+  | `client/src/pages/segments/FilmmakersPage.tsx` | Segment landing page |
+  | `client/src/pages/segments/AgenciesPage.tsx` | Segment landing page |
+  | `client/src/pages/segments/SmallBusinessPage.tsx` | Segment landing page |
+  | `client/src/pages/segments/CreatorsPage.tsx` | Segment landing page |
+  | `client/src/pages/segments/GameDevelopersPage.tsx` | Segment landing page |
+  | `client/src/hooks/useUtmTracking.ts` | UTM param capture hook |
+  | `docs/VIRELLE_ZERO_BUDGET_GROWTH_ENGINE_V1.md` | Spec document |
 
   ---
 
-  ## Build / Type Check
+  ## Routes Created
 
-  **Status: ⚠ Cannot run locally**
+  ### Admin Routes
+  | Route | Feature |
+  |-------|---------|
+  | /admin/growth | Overview: 11 stat cards, best segment/source, recommended action |
+  | /admin/growth/campaigns | Create campaigns, configure and generate 30-piece content packs |
+  | /admin/growth/assets | Full approval queue: copy/approve/reject/publish/export |
+  | /admin/growth/audiences | Import CSV, search/filter, status management |
+  | /admin/growth/analytics | Events by type/source/segment, assets by status |
+  | /admin/growth/report | Weekly report + 5 recommended actions |
 
-  The source code exists only on GitHub branch `growth-engine-zero-budget-v1`.
-  The Replit local workspace does not contain the source files (only built artifacts).
-
-  **Manual type-check notes — likely safe:**
-  - All Drizzle imports (`eq, desc, and, gte, sql, count, like, inArray, or`) are standard exports from `drizzle-orm`
-  - All tRPC patterns follow existing project conventions (`adminProcedure`, `publicProcedure`, `router`)
-  - All React components use hooks at the top level (no conditional hook calls)
-  - `trpc.growth.exportPlatformAssets.useQuery({ enabled: false })` + `refetch()` is valid tRPC v10 pattern
-  - No new dependencies added — uses only: zod, drizzle-orm, React, tRPC, Lucide icons, shadcn/ui components
-
-  **To verify after merge:**
-  ```bash
-  git checkout growth-engine-zero-budget-v1
-  pnpm install
-  pnpm check
-  pnpm build
-  ```
-
-  **Known potential issues:**
-  - If `invokeLLM` signature differs from what's used in `growth-router.ts`, adjust the call — fallback template generation will work regardless
-  - If `logger` is not exported from `./_core/logger`, replace with `console.error`
-  - The `or()` function from `drizzle-orm` returns `SQL | undefined` — the `!` assertion is used where needed
-
-  ---
-
-  ## Admin Routes Created
-
-  | Route | Component | Purpose |
-  |-------|-----------|---------|
-  | /admin/growth | AdminGrowthDashboard | Overview tab |
-  | /admin/growth/campaigns | AdminGrowthDashboard | Campaigns tab |
-  | /admin/growth/audiences | AdminGrowthDashboard | Audiences tab |
-  | /admin/growth/assets | AdminGrowthDashboard | Assets tab |
-  | /admin/growth/analytics | AdminGrowthDashboard | Analytics tab |
-  | /admin/growth/report | AdminGrowthDashboard | Report tab |
-
-  ---
-
-  ## Public Routes Created
-
-  | Route | Audience |
+  ### Public Routes
+  | Route | Segment |
   |-------|---------|
   | /artists | Music artists, visual artists |
   | /filmmakers | Indie filmmakers |
@@ -233,42 +103,104 @@
 
   ---
 
-  ## Daily Usage Instructions for Leego
+  ## tRPC Procedures (growth.*)
+
+  | Procedure | Type | Description |
+  |-----------|------|-------------|
+  | logGrowthEvent | public mutation | Track events from landing pages |
+  | getDashboard | admin query | 11-metric dashboard stats |
+  | createCampaign | admin mutation | Create campaign with segment/goal/offer/CTA/channels |
+  | listCampaigns | admin query | List with filters |
+  | generateCampaignPack | admin mutation | Generate 30 draft assets via LLM (falls back to templates) |
+  | importAudienceCsv | admin mutation | Parse CSV and import audience rows |
+  | listAudiences | admin query | List/search/filter audiences |
+  | updateAudienceStatus | admin mutation | Update audience status/score/notes |
+  | listAssets | admin query | List/filter assets |
+  | approveAsset | admin mutation | Approve or reject with optional note |
+  | bulkApprove | admin mutation | Bulk approve/reject |
+  | markPublished | admin mutation | Mark published + log event |
+  | getAnalytics | admin query | Events by type/source/segment/day |
+  | getWeeklyReport | admin query | 7-day report + 5 recommended actions |
+  | exportPlatformAssets | admin query | Export as JSON/CSV/text |
+
+  ---
+
+  ## Event Types Tracked
+
+  | Event | Fired From |
+  |-------|------------|
+  | landing_page_view | All 6 landing pages (on mount) |
+  | email_capture | Email form submit on landing pages |
+  | demo_request | "See a 60-second demo" CTA click |
+  | signup_click | "Start Free" CTA click |
+  | campaign_pack_generated | generateCampaignPack mutation |
+  | asset_published | markPublished mutation |
+
+  ---
+
+  ## Daily Instructions for Leego
 
   ### Morning (5 minutes)
-  1. Open **virelle.life/admin/growth**
-  2. Check the **Recommended Next Action** card — it tells you exactly what to do
-  3. If there are draft assets → click **Assets** tab → review, copy, approve or reject
+  1. Open `yoursite.com/admin/growth` → Overview tab
+  2. Read the **Recommended Next Action** card at the bottom
+  3. Act on it immediately
 
-  ### Campaign creation (15–30 minutes, once per week or per segment)
-  1. **Campaigns** tab → **New Campaign**
-  2. Fill: name, segment, goal, offer, CTA, select platforms
-  3. Save → click **Generate Pack**
-  4. Configure or leave defaults → **Generate Pack** (AI generates 30 draft content pieces)
-  5. Wait ~30s for generation → go to **Assets** tab
+  ### Campaign creation (once per week, 15–30 min)
+  1. Campaigns tab → **New Campaign**
+  2. Fill: name, segment, goal, offer, CTA, channels
+  3. Save → **Generate Pack** → configure if needed → **Generate**
+  4. Wait ~30s → 30 draft assets appear in Assets tab
 
-  ### Asset review (10 minutes per session)
-  1. **Assets** tab, filter by **draft**
-  2. For each asset:
-     - **View** → read full content
-     - **Copy** → paste into relevant platform
-     - **Approve** if good to post
-     - **Reject** with note if needs rewrite
-  3. When you've posted an approved asset:
-     - Click **Mark Published** → paste the URL → confirm
+  ### Asset review (10 min per session)
+  1. Assets tab → filter by **draft**
+  2. Per asset: View full content → Copy → paste to platform
+  3. Click **Approve** when ready to post
+  4. After posting: **Mark Published** → paste the URL
 
-  ### When you get demo requests or email captures
-  - **Report** tab shows counts
-  - Contact them at studiosvirelle@gmail.com — these are warm leads
+  ### When you get leads
+  - Report tab shows email captures + demo requests
+  - Contact them manually at **studiosvirelle@gmail.com**
 
-  ### Weekly review (5 minutes, every Monday)
-  1. **Report** tab → read the 5 Recommended Next Actions
-  2. Note top segment → focus next campaign on that segment
-  3. Note top source → share more content on that channel
-  4. Export approved assets for any platform: **Assets** tab → export buttons
+  ### Weekly review (Monday, 5 min)
+  1. Report tab → read 5 Recommended Next Actions
+  2. Note top segment → focus next pack there
+  3. Note top source → share more on that channel
 
-  ### Zero-budget rules (always)
-  - Never click "publish" on Reddit, Discord, or forum drafts without reading them first
-  - Never auto-send cold emails — use the mailing list manually
-  - Keep adSpend = $0 in all campaigns
+  ---
+
+  ## Manual Setup Required After Merge
+
+  1. **Run database migrations:**
+     ```bash
+     pnpm db:push
+     ```
+     This creates the 4 new tables: growthAudiences, growthCampaigns, growthAssets, growthEvents
+
+  2. **Verify router is mounted:**
+     In `server/routers.ts`, confirm `growthRouter` is imported and mounted at `growth`.
+     (This was present in the existing codebase — verify no merge conflict removed it.)
+
+  3. **LLM key (optional):**
+     If no OpenAI key is configured, the campaign pack generator will use deterministic templates.
+     The feature works either way — templates produce real content, just not AI-personalised.
+
+  4. **Test the build:**
+     ```bash
+     git clone https://github.com/leego972/virellestudios.git
+     cd virellestudios
+     git switch growth-engine-zero-budget-v1
+     pnpm install --ignore-workspace
+     pnpm check   # must exit 0
+     pnpm build   # must exit 0
+     ```
+
+  ---
+
+  ## Hard Rules Enforced
+
+  - `adSpend` defaults to `0` in schema and is never set to anything else
+  - All generated content is saved with `status: "draft"` — no auto-posting
+  - Reddit, Discord, forum, and community drafts include a prominent "DRAFT ONLY — human review before posting" note
+  - No auto-sending cold emails
+  - Zero new paid npm dependencies
   
