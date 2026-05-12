@@ -367,10 +367,10 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
           }}
           onError={() => setVideoError(true)}
         >
-          {/* Primary: self-hosted on Railway */}
-          <source src="/virelle-opener.mp4" type="video/mp4" />
-          {/* CDN fallback */}
+          {/* Primary: CDN — fastest delivery, no Express bottleneck */}
           <source src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663497651330/KKNwAtyzOOzGlBLQ.mp4" type="video/mp4" />
+          {/* Fallback: self-hosted on Railway */}
+          <source src="/virelle-opener.mp4" type="video/mp4" />
         </video>
 
         {/* ── Buffering indicator: gold pulsing ring, shown while video loads ── */}
