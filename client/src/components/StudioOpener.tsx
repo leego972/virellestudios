@@ -189,6 +189,7 @@ const easeOutBack = (t: number) => {
 // ─── Component ─────────────────────────────────────────────────────────────
 export function StudioOpener({ onComplete, mode = "login", skippable = true }: StudioOpenerProps) {
   const [videoError, setVideoError] = useState(false);
+  const [videoBuffering, setVideoBuffering] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [phase, setPhase] = useState<"playing" | "fadeout">("playing");
   const [videoPhase, setVideoPhase] = useState<"playing" | "hold" | "fadeout">("playing");
@@ -198,25 +199,33 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioFiredRef = useRef({ whoosh: false, flaps: false, choir: false, metal: false, boom: false, shimmer: false, sustain: false });
   const videoLoadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const completionFiredRef = useRef(false);
   const TOTAL = 9500;
 
-  // ── Video skip: fade out the video container then fire onComplete ──────────
-  const handleVideoSkip = useCallback(() => {
+  // Single, safe path to fire onComplete — can only run once
+  const fireComplete = useCallback(() => {
+    if (completionFiredRef.current) return;
+    completionFiredRef.current = true;
     if (videoLoadTimerRef.current) clearTimeout(videoLoadTimerRef.current);
+    onComplete();
+  }, [onComplete]);
+
+  // ── Video skip ────────────────────────────────────────────────────────────
+  const handleVideoSkip = useCallback(() => {
     const v = videoRef.current;
     if (v) { try { v.pause(); } catch { /* ignore */ } }
     setVideoPhase("fadeout");
-    setTimeout(onComplete, 700);
-  }, [onComplete]);
+    setTimeout(fireComplete, 700);
+  }, [fireComplete]);
 
   // ── SVG fallback skip ─────────────────────────────────────────────────────
   const handleSkip = useCallback(() => {
     setPhase("fadeout");
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    setTimeout(onComplete, 600);
-  }, [onComplete]);
+    setTimeout(fireComplete, 600);
+  }, [fireComplete]);
 
-  // ── Keyboard skip — works for both video and SVG paths ───────────────────
+  // ── Keyboard skip ────────────────────────────────────────────────────────
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" || e.key === " " || e.key === "Enter") {
@@ -228,12 +237,17 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
     return () => window.removeEventListener("keydown", handleKey);
   }, [handleSkip, handleVideoSkip, videoError]);
 
-  // ── Load-timeout fallback: if video hasn't started within 6 s → SVG ──────
+  // ── Safety net: if video hasn't loaded in 20 s, switch to SVG fallback ───
+  // ── Absolute cap: force-complete after 90 s no matter what ───────────────
   useEffect(() => {
     if (videoError) return;
-    videoLoadTimerRef.current = setTimeout(() => setVideoError(true), 6000);
-    return () => { if (videoLoadTimerRef.current) clearTimeout(videoLoadTimerRef.current); };
-  }, [videoError]);
+    // 20 s without canplay → fall back to animated logo
+    const loadTimer = setTimeout(() => setVideoError(true), 20000);
+    // 90 s absolute cap — the opener must never hang the whole app
+    const absoluteTimer = setTimeout(() => fireComplete(), 90000);
+    videoLoadTimerRef.current = loadTimer;
+    return () => { clearTimeout(loadTimer); clearTimeout(absoluteTimer); };
+  }, [videoError, fireComplete]);
 
   useEffect(() => {
     // The RAF tick below drives the SVG fallback animation + its synthesised audio cues.
@@ -326,12 +340,16 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
                 ? "drop-shadow(0 0 32px rgba(212,175,55,0.85)) drop-shadow(0 0 72px rgba(212,175,55,0.55)) drop-shadow(0 0 140px rgba(212,175,55,0.32))"
                 : "none",
           }}
-          onCanPlay={() => { if (videoLoadTimerRef.current) { clearTimeout(videoLoadTimerRef.current); videoLoadTimerRef.current = null; } }}
+          onCanPlay={() => {
+            // Video has enough data to start — cancel the load-failure timer
+            if (videoLoadTimerRef.current) { clearTimeout(videoLoadTimerRef.current); videoLoadTimerRef.current = null; }
+            setVideoBuffering(false);
+          }}
+          onPlaying={() => setVideoBuffering(false)}
+          onWaiting={() => setVideoBuffering(true)}
           onEnded={() => {
             // iOS Safari + some Chrome builds reset <video> to the first frame the instant
-            // `ended` fires, so users see a black flash instead of the gold logo. Pin the
-            // playhead just before duration and explicitly pause to freeze the LAST frame
-            // on screen, then hold for 2 full seconds before fading out.
+            // `ended` fires — pin to last frame and pause before the gold hold.
             const v = videoRef.current;
             if (v) {
               try {
@@ -344,17 +362,41 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
             setVideoPhase("hold");
             setTimeout(() => {
               setVideoPhase("fadeout");
-              setTimeout(onComplete, 700);
+              setTimeout(fireComplete, 700);
             }, 2000);
           }}
           onError={() => setVideoError(true)}
         >
-          {/* Primary: self-hosted on Railway for reliable delivery */}
+          {/* Primary: self-hosted on Railway */}
           <source src="/virelle-opener.mp4" type="video/mp4" />
-          {/* Fallback: CDN */}
+          {/* CDN fallback */}
           <source src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663497651330/KKNwAtyzOOzGlBLQ.mp4" type="video/mp4" />
         </video>
-        {/* Gold glow halo that pulses across the held final frame */}
+
+        {/* ── Buffering indicator: gold pulsing ring, shown while video loads ── */}
+        {videoBuffering && videoPhase === "playing" && (
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-6">
+            <div style={{ animation: "vsRingPulse 1.6s ease-in-out infinite" }}>
+              <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+                <circle cx="36" cy="36" r="30" stroke="rgba(212,175,55,0.25)" strokeWidth="3" />
+                <circle cx="36" cy="36" r="30" stroke="url(#vsRingGold)" strokeWidth="3"
+                  strokeLinecap="round" strokeDasharray="48 140"
+                  style={{ animation: "vsRingSpin 1.2s linear infinite", transformOrigin: "36px 36px" }} />
+                <defs>
+                  <linearGradient id="vsRingGold" x1="0" y1="0" x2="72" y2="72" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#f5e070" />
+                    <stop offset="100%" stopColor="#d4af37" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <p style={{ color: "rgba(212,175,55,0.6)", fontSize: "11px", letterSpacing: "0.2em", fontFamily: "serif" }}>
+              LOADING
+            </p>
+          </div>
+        )}
+
+        {/* Gold glow halo on the held final frame */}
         {videoPhase === "hold" && (
           <div
             className="pointer-events-none absolute inset-0 flex items-center justify-center"
@@ -372,8 +414,12 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
             />
           </div>
         )}
-        <style>{`@keyframes vsGoldPulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}`}</style>
-        {skippable && (
+        <style>{`
+          @keyframes vsGoldPulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+          @keyframes vsRingSpin{to{transform:rotate(360deg)}}
+          @keyframes vsRingPulse{0%,100%{opacity:.7}50%{opacity:1}}
+        `}</style>
+        {skippable && !videoBuffering && (
           <button
             className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors"
             onClick={(e) => { e.stopPropagation(); handleVideoSkip(); }}
