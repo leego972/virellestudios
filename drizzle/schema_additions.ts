@@ -266,3 +266,38 @@ export type InsertShootingDay = typeof shootingDays.$inferInsert;
   export type GrowthEvent = typeof growthEvents.$inferSelect;
   export type InsertGrowthEvent = typeof growthEvents.$inferInsert;
   
+
+  // ─── BYOK Workflow Tables (v6.90) ────────────────────────────────────────────
+  import { decimal as _decimal } from "drizzle-orm/mysql-core";
+
+  export const renderJobs = mysqlTable("renderJobs", {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    projectId: int("projectId").notNull(),
+    sceneId: int("sceneId"),
+    provider: varchar("provider", { length: 64 }).notNull(),
+    taskType: mysqlEnum("taskType", ["llm", "image", "video", "voice", "music"]).notNull(),
+    status: mysqlEnum("status", ["queued", "submitted", "processing", "completed", "failed"]).default("queued").notNull(),
+    externalJobId: varchar("externalJobId", { length: 255 }),
+    outputUrl: text("outputUrl"),
+    estimatedCostStr: varchar("estimatedCostStr", { length: 32 }),
+    actualCostStr: varchar("actualCostStr", { length: 32 }),
+    errorMessage: text("errorMessage"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type RenderJob = typeof renderJobs.$inferSelect;
+  export type InsertRenderJob = typeof renderJobs.$inferInsert;
+
+  export const promptPacks = mysqlTable("promptPacks", {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    projectId: int("projectId").notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
+    packData: json("packData").notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type PromptPack = typeof promptPacks.$inferSelect;
+  export type InsertPromptPack = typeof promptPacks.$inferInsert;
+  
