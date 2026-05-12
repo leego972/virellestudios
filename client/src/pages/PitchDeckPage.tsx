@@ -139,12 +139,45 @@ export default function PitchDeckPage() {
             )}
 
             {d.productionPlan && (
-              <Section title="Production plan">
-                <p className="text-zinc-700 whitespace-pre-wrap">{d.productionPlan}</p>
-              </Section>
-            )}
+                <Section title="Production plan">
+                  <p className="text-zinc-700 whitespace-pre-wrap">
+                    {typeof d.productionPlan === "string"
+                      ? d.productionPlan
+                      : d.productionPlan?.shootDays != null
+                      ? `${d.productionPlan.shootDays} shoot day${d.productionPlan.shootDays !== 1 ? "s" : ""}.`
+                      : "See project for details."}
+                  </p>
+                </Section>
+              )}
 
-            <footer className="text-center text-xs text-zinc-400 pt-8 border-t border-zinc-200">
+              {d.budget && (
+                <Section title="Budget estimate">
+                  <p className="font-semibold text-zinc-700 mb-2">
+                    Total: {new Intl.NumberFormat("en-US", { style: "currency", currency: d.budget.currency ?? "USD" }).format(Number(d.budget.total ?? 0))}
+                  </p>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-zinc-500">
+                    {Object.entries(d.budget.byCategory ?? {}).map(([k, v]: any) => (
+                      <div key={k} className="flex justify-between">
+                        <span className="capitalize">{k}</span>
+                        <span>{new Intl.NumberFormat("en-US", { style: "currency", currency: d.budget.currency ?? "USD" }).format(Number(v))}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+              )}
+
+              {d.providerStack && (
+                <Section title="AI Provider Stack">
+                  <div className="grid grid-cols-2 gap-3 text-sm text-zinc-700">
+                    <div><span className="text-zinc-400">Video: </span>{d.providerStack.video ?? "Platform default"}</div>
+                    <div><span className="text-zinc-400">LLM: </span>{d.providerStack.llm ?? "Platform default"}</div>
+                    <div><span className="text-zinc-400">Fallback: </span>{d.providerStack.fallbackMode ?? "byok_with_consent"}</div>
+                    <div><span className="text-zinc-400">Keys: </span>{d.providerStack.configuredCount ?? 0} configured</div>
+                  </div>
+                </Section>
+              )}
+
+              <footer className="text-center text-xs text-zinc-400 pt-8 border-t border-zinc-200">
               Generated with Virelle Studios — virelle.studio
             </footer>
           </>
