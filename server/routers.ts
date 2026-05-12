@@ -14,6 +14,7 @@ import { generateUnifiedVideo, generateScenesParallel, buildUnifiedVideoPrompt, 
 import { generateVideo as generateBYOKVideo, VIDEO_PROVIDERS, validateApiKey, type UserApiKeys, type VideoProvider } from "./_core/byokVideoEngine";
 import { nanoid } from "nanoid";
 import { processDirectorMessage } from "./directorAssistant";
+import { titanRouter } from "./titan-router";
 import { transcribeAudio } from "./_core/voiceTranscription";
 import { TRPCError } from "@trpc/server";
 import { assertOwnsProject, assertCanAccessProject } from "./_core/ownership";
@@ -292,6 +293,7 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
 }
 
 export const appRouter = router({
+  titan: titanRouter,
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(({ ctx }) => {
