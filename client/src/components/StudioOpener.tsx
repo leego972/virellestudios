@@ -189,37 +189,51 @@ const easeOutBack = (t: number) => {
 // ─── Component ─────────────────────────────────────────────────────────────
 export function StudioOpener({ onComplete, mode = "login", skippable = true }: StudioOpenerProps) {
   const [videoError, setVideoError] = useState(false);
-  const [isSkipped, setIsSkipped] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [phase, setPhase] = useState<"playing" | "fadeout">("playing");
   const [videoPhase, setVideoPhase] = useState<"playing" | "hold" | "fadeout">("playing");
-  const [showSkip, setShowSkip] = useState(false);
   const [t, setT] = useState(0);
   const rafRef = useRef<number>(0);
   const startTimeRef = useRef<number>(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioFiredRef = useRef({ whoosh: false, flaps: false, choir: false, metal: false, boom: false, shimmer: false, sustain: false });
+  const videoLoadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const TOTAL = 9500;
 
-  useEffect(() => {
-    if (!skippable) return;
-    const timer = setTimeout(() => setShowSkip(true), 2500);
-    return () => clearTimeout(timer);
-  }, [skippable]);
+  // ── Video skip: fade out the video container then fire onComplete ──────────
+  const handleVideoSkip = useCallback(() => {
+    if (videoLoadTimerRef.current) clearTimeout(videoLoadTimerRef.current);
+    const v = videoRef.current;
+    if (v) { try { v.pause(); } catch { /* ignore */ } }
+    setVideoPhase("fadeout");
+    setTimeout(onComplete, 700);
+  }, [onComplete]);
 
+  // ── SVG fallback skip ─────────────────────────────────────────────────────
   const handleSkip = useCallback(() => {
     setPhase("fadeout");
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     setTimeout(onComplete, 600);
   }, [onComplete]);
 
+  // ── Keyboard skip — works for both video and SVG paths ───────────────────
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === " " || e.key === "Enter") { e.preventDefault(); handleSkip(); }
+      if (e.key === "Escape" || e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        if (!videoError) { handleVideoSkip(); } else { handleSkip(); }
+      }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [handleSkip]);
+  }, [handleSkip, handleVideoSkip, videoError]);
+
+  // ── Load-timeout fallback: if video hasn't started within 6 s → SVG ──────
+  useEffect(() => {
+    if (videoError) return;
+    videoLoadTimerRef.current = setTimeout(() => setVideoError(true), 6000);
+    return () => { if (videoLoadTimerRef.current) clearTimeout(videoLoadTimerRef.current); };
+  }, [videoError]);
 
   useEffect(() => {
     // The RAF tick below drives the SVG fallback animation + its synthesised audio cues.
@@ -297,7 +311,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
       <div
         className="fixed inset-0 z-[9999] bg-black flex items-center justify-center transition-opacity duration-700"
         style={{ opacity: videoPhase === "fadeout" ? 0 : 1 }}
-        onClick={() => skippable && setIsSkipped(true)}
+        onClick={() => skippable && handleVideoSkip()}
       >
         <video
           ref={videoRef}
@@ -312,6 +326,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
                 ? "drop-shadow(0 0 32px rgba(212,175,55,0.85)) drop-shadow(0 0 72px rgba(212,175,55,0.55)) drop-shadow(0 0 140px rgba(212,175,55,0.32))"
                 : "none",
           }}
+          onCanPlay={() => { if (videoLoadTimerRef.current) { clearTimeout(videoLoadTimerRef.current); videoLoadTimerRef.current = null; } }}
           onEnded={() => {
             // iOS Safari + some Chrome builds reset <video> to the first frame the instant
             // `ended` fires, so users see a black flash instead of the gold logo. Pin the
@@ -361,7 +376,7 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
         {skippable && (
           <button
             className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors"
-            onClick={() => setIsSkipped(true)}
+            onClick={(e) => { e.stopPropagation(); handleVideoSkip(); }}
           >
             SKIP
           </button>
