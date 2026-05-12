@@ -13707,14 +13707,26 @@ Return JSON ONLY in this exact shape:
             ? { total: budgetTotal, currency: (budgets[0] as any).currency ?? "USD", byCategory: budgetByCategory }
             : null,
           productionPlan: shootDays.length > 0
-            ? {
-                shootDays: shootDays.length,
-                shootDates: (shootDays as any[]).map((d) => d.date ?? d.dayDate).filter(Boolean),
-                locations: Array.from(new Set((shootDays as any[]).map((d) => d.locationName).filter(Boolean))),
-              }
-            : null,
-        };
-      }),
+              ? {
+                  shootDays: shootDays.length,
+                  shootDates: (shootDays as any[]).map((d) => d.date ?? d.dayDate).filter(Boolean),
+                  locations: Array.from(new Set((shootDays as any[]).map((d) => d.locationName).filter(Boolean))),
+                }
+              : null,
+            // v6.90 — provider stack for Pitch Deck
+            providerStack: {
+              video: (project as any).preferredVideoProvider ?? null,
+              llm: (project as any).preferredLlmProvider ?? null,
+              fallbackMode: (project as any).byokFallbackMode ?? "byok_with_consent",
+              configuredCount: [
+                (project as any).userOpenaiKey, (project as any).userRunwayKey,
+                (project as any).userReplicateKey, (project as any).userFalKey,
+                (project as any).userLumaKey, (project as any).userElevenlabsKey,
+                (project as any).userAnthropicKey, (project as any).userGoogleAiKey,
+              ].filter(Boolean).length,
+            },
+          };
+        }),
   }),
 });
 export type AppRouter = typeof appRouter;
