@@ -11,6 +11,44 @@ import { useState, useMemo } from "react";
 import MediaPlayer from "@/components/MediaPlayer";
 import { getLoginUrl } from "@/const";
 
+  function ProviderPreflightBanner({ projectId }: { projectId: number }) {
+    const statusQ = trpc.byok.getProviderStatus.useQuery(undefined, { refetchOnWindowFocus: false });
+    const readinessQ = trpc.elements.getProjectReadiness.useQuery(
+      { projectId }, { enabled: !!projectId, refetchOnWindowFocus: false }
+    );
+    const status: any = statusQ.data ?? {};
+    const readiness: any = readinessQ.data ?? null;
+    const provider = status.preferredVideoProvider ?? "platform";
+    const fallback = status.byokFallbackMode ?? "byok_with_consent";
+    const configured = Object.values(status.providers ?? {}).filter((v) => v !== "not_configured").length;
+    const score = readiness?.averageScore ?? null;
+    const warnings = readiness?.totalWarnings ?? 0;
+    const fallbackLabel: Record<string, string> = {
+      byok_only: "BYOK only", credits_only: "Platform credits only",
+      byok_with_consent: "BYOK, confirm fallback", byok_with_auto_fallback: "BYOK + auto-fallback",
+    };
+    if (statusQ.isLoading) return null;
+    return (
+      <div className="mb-5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3 flex flex-wrap gap-x-6 gap-y-2 items-center text-xs text-zinc-300">
+        <span className="text-amber-400 font-bold uppercase tracking-wider">Pre-flight</span>
+        <span className="flex items-center gap-1.5"><span className="text-zinc-500">Video provider:</span><code className="bg-zinc-800 px-1.5 py-0.5 rounded font-mono">{provider}</code></span>
+        <span className="flex items-center gap-1.5"><span className="text-zinc-500">Fallback:</span><span>{fallbackLabel[fallback] ?? fallback}</span></span>
+        <span className="flex items-center gap-1.5"><span className="text-zinc-500">Keys:</span><span className={configured > 0 ? "text-emerald-400" : "text-red-400"}>{configured} configured</span></span>
+        {score !== null && (
+          <span className="flex items-center gap-1.5">
+            <span className="text-zinc-500">Readiness:</span>
+            <span className={score >= 70 ? "text-emerald-400" : score >= 40 ? "text-amber-400" : "text-red-400"}>
+              {score}/100{warnings > 0 ? ` (${warnings} warnings)` : ""}
+            </span>
+          </span>
+        )}
+        {configured === 0 && (
+          <a href="/byok-control-center" className="ml-auto text-amber-400 underline text-xs hover:text-amber-300">Connect providers →</a>
+        )}
+      </div>
+    );
+  }
+
 const TRANSITION_LABELS: Record<string, string> = {
   cut: "CUT", fade: "FADE", dissolve: "DISSOLVE", wipe: "WIPE",
   "iris-in": "IRIS IN", "iris-out": "IRIS OUT", "smash-cut": "SMASH CUT",
@@ -149,7 +187,8 @@ export default function Storyboard() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {!scenes || scenes.length === 0 ? (
+        <ProviderPreflightBanner projectId={projectId} />
+          {!scenes || scenes.length === 0 ? (
           <CinematicEmptyState
             quoteSeed="storyboard"
             icon={<Grid3X3 className="h-9 w-9 text-primary/70" />}
@@ -196,7 +235,10 @@ export default function Storyboard() {
                       {formatTime(scene.duration || 30)}
                     </Badge>
                   </div>
-                  {/* Transition indicator */}
+                  {(scene as any).aiPromptOverride && (
+                      <div className="absolute top-2 right-2"><span className="text-[9px] bg-emerald-900/80 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ CTX</span></div>
+                    )}
+                    {/* Transition indicator */}
                   {idx < scenes.length - 1 && scene.transitionType && scene.transitionType !== "cut" && (
                     <div className="absolute bottom-2 left-2">
                       <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/80 text-primary-foreground border-0">
