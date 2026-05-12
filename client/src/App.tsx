@@ -316,6 +316,7 @@ function Router() {
               <Route path="/credits">{() => <LazyPage><CreditsPage /></LazyPage>}</Route>
               <Route path="/marketplace">{() => <LazyPage><AssetMarketplace /></LazyPage>}</Route>
               <Route path="/settings">{() => <SettingsPage />}</Route>
+              <Route path="/byok-studio">{() => <LazyPage><BYOKStudioPage /></LazyPage>}</Route>
               <Route path="/funding">{() => <LazyPage><FundingDirectory /></LazyPage>}</Route>
               <Route path="/funding-directory">{() => <LazyPage><FundingDirectory /></LazyPage>}</Route>
               <Route path="/funding-pro">{() => <LazyPage><FundingProMatch /></LazyPage>}</Route>
