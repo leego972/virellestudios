@@ -30,4 +30,4 @@ COPY --from=build /app/drizzle.config.ts ./drizzle.config.ts
 COPY package.json ./
 
 EXPOSE 3000
-CMD ["sh", "-c", "node_modules/.bin/drizzle-kit migrate 2>/dev/null || true && node dist/index.js"]
+CMD ["node", "dist/index.js"]
