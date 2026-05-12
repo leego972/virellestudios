@@ -1,713 +1,490 @@
 import { useLocation } from "wouter";
-import SiteHead from "@/components/SiteHead";
-import {
-  Zap, Layers, Users, Music, Palette, Camera,
-  ArrowRight, Play, ShieldCheck,
-  Globe, Sparkles, Video, Eye, Cpu, CreditCard,
-  Zap as ZapIcon, Film, Smartphone, Download, Crown,
-  Menu, X,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { useState, useEffect, useRef } from "react";
-import { LANDING_COPY } from "@/data/showrunnerShowcase";
+  import SiteHead from "@/components/SiteHead";
+  import {
+    ArrowRight, Play, Key, Layers, Route, DollarSign, FileText,
+    ShieldCheck, Film, CheckCircle2, XCircle, Settings2,
+    Cpu, Music, Mic, BarChart3, Download, Menu, X, Zap,
+  } from "lucide-react";
+  import { Button } from "@/components/ui/button";
+  import { Card, CardContent } from "@/components/ui/card";
+  import { useState, useEffect, useRef } from "react";
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
+  const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
 
-/* Cinematic particle canvas */
-function CinematicBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let animId: number;
-    const particles: { x: number; y: number; vx: number; vy: number; size: number; opacity: number; color: string }[] = [];
-    const colors = ["#d4af37", "#f5e6a3", "#a855f7", "#6366f1", "#ffffff"];
-    const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    for (let i = 0; i < 80; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.6 + 0.1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      });
-    }
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.opacity;
-        ctx.fill();
-      });
-      ctx.globalAlpha = 1;
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
-  }, []);
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-40"
-    />
-  );
-}
+  function CinematicBackground() {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    useEffect(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      let animId: number;
+      const particles: { x: number; y: number; vx: number; vy: number; size: number; opacity: number; color: string }[] = [];
+      const colors = ["#d4af37", "#f5e6a3", "#a855f7", "#6366f1", "#ffffff"];
+      const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+      resize();
+      window.addEventListener("resize", resize);
+      for (let i = 0; i < 80; i++) {
+        particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+          size: Math.random() * 2 + 0.5, opacity: Math.random() * 0.6 + 0.1,
+          color: colors[Math.floor(Math.random() * colors.length)] });
+      }
+      const draw = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0) p.x = canvas.width; if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height; if (p.y > canvas.height) p.y = 0;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color; ctx.globalAlpha = p.opacity; ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+        animId = requestAnimationFrame(draw);
+      };
+      draw();
+      return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+    }, []);
+    return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-40" />;
+  }
 
-/* Gold watermark — large, fixed, perfectly centered, stays on screen while scrolling */
-function GoldWatermark() {
-  return (
-    <div
-      className="fixed inset-0 flex items-center justify-center pointer-events-none select-none"
-      style={{ zIndex: 0 }}
-    >
-      <img
-        src={LOGO_URL}
-        alt=""
-        className="w-[380px] h-[380px] sm:w-[520px] sm:h-[520px] lg:w-[660px] lg:h-[660px] object-contain"
-        style={{
-          opacity: 0.06,
-          filter: "sepia(1) saturate(4) brightness(1.4) hue-rotate(5deg)",
-        }}
-        draggable={false}
-      />
-    </div>
-  );
-}
+  function GoldWatermark() {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center pointer-events-none select-none" style={{ zIndex: 0 }}>
+        <img src={LOGO_URL} alt=""
+          className="w-[380px] h-[380px] sm:w-[520px] sm:h-[520px] lg:w-[660px] lg:h-[660px] object-contain"
+          style={{ opacity: 0.025, filter: "sepia(1) saturate(4) brightness(1.4) hue-rotate(5deg)" }}
+          draggable={false} />
+      </div>
+    );
+  }
 
-export default function Landing() {
-  const [, setLocation] = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const WORKFLOW_STEPS = [
+    "Concept", "Screenplay", "Character Bible", "Scene Plan",
+    "Shot List", "Prompt Pack", "Provider Routing", "Render Tracking",
+    "Review & Approval", "Export",
+  ];
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const PROVIDER_CATEGORIES = [
+    { icon: <Cpu className="h-4 w-4" />, label: "Script / LLM", examples: "OpenAI · Anthropic · Google · Custom" },
+    { icon: <Film className="h-4 w-4" />, label: "Image", examples: "Stability · Replicate · Fal · Custom" },
+    { icon: <Play className="h-4 w-4" />, label: "Video", examples: "Runway · Kling · Pika · Veo · Custom" },
+    { icon: <Mic className="h-4 w-4" />, label: "Voice", examples: "ElevenLabs · PlayHT · Custom" },
+    { icon: <Music className="h-4 w-4" />, label: "Music", examples: "Suno · Udio · Custom" },
+    { icon: <FileText className="h-4 w-4" />, label: "Subtitles", examples: "OpenAI Whisper · Custom" },
+    { icon: <Zap className="h-4 w-4" />, label: "Upscaling", examples: "Topaz · Real-ESRGAN · Custom" },
+    { icon: <Settings2 className="h-4 w-4" />, label: "Custom API", examples: "Any endpoint you own" },
+  ];
 
-  return (
-    <div className="min-h-screen bg-black text-white selection:bg-amber-500/30 relative">
-      <SiteHead
-        title="The unified AI film production studio"
-        description="Virelle Studios — script to screen in one platform. AI casting, scenes, scoring, VFX, distribution, and grant funding for indie filmmakers and major studios."
-        jsonLd={{ "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Virelle Studios", applicationCategory: "MultimediaApplication", operatingSystem: "Web", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: "Unified AI film production platform" }}
-      />
-      <GoldWatermark />
+  const ROUTING_CARDS = [
+    { task: "Script", providers: ["OpenAI", "Anthropic", "Google", "Custom LLM"] },
+    { task: "Images", providers: ["Stability", "Replicate", "Fal", "Custom model"] },
+    { task: "Video", providers: ["Runway", "Kling", "Pika", "Veo", "Custom endpoint"] },
+    { task: "Voice", providers: ["ElevenLabs", "PlayHT", "Custom voice API"] },
+    { task: "Music", providers: ["Suno", "Udio", "Custom music API"] },
+    { task: "Export", providers: ["Prompt packs", "Scripts", "Shot lists", "Metadata"] },
+  ];
 
-      {/* ─── Navigation ─── */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/90 backdrop-blur-xl border-b border-white/10 py-3" : "bg-transparent py-6"}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setLocation("/")}>
-            <img
-              src={LOGO_URL}
-              alt="Virelle Studios"
-              className="h-9 w-9 rounded-lg object-contain shadow-lg shadow-amber-500/20"
-            />
-            <span className="text-xl font-black tracking-tighter uppercase italic text-white">
-              Virelle <span className="text-amber-400">Studios</span>
-            </span>
-          </div>
+  const BYOK_REASONS = [
+    { title: "No vendor lock-in", desc: "Switch providers anytime without losing your project." },
+    { title: "Best model per job", desc: "Use the right tool for each task — not a one-size-fits-all approach." },
+    { title: "Control your spend", desc: "Your API budget goes directly to your chosen providers." },
+    { title: "Switch mid-project", desc: "Change your video provider between scenes without starting over." },
+    { title: "Centralized workflow", desc: "All your providers managed in one production cockpit." },
+    { title: "Compare versions", desc: "Run the same scene through multiple providers and pick the winner." },
+  ];
 
-          {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-8">
-            <button onClick={() => setLocation("/showcase")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Showcase</button>
-            <button onClick={() => setLocation("/pricing")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Pricing</button>
-            <button onClick={() => setLocation("/download")} className="text-sm font-bold text-white/60 hover:text-white transition-colors flex items-center gap-1">
-              <Smartphone className="h-3.5 w-3.5" />
-              Get the App
+  const DASHBOARD_PANELS = [
+    { label: "Projects", icon: <Film className="h-5 w-5 text-amber-400" /> },
+    { label: "Providers", icon: <Key className="h-5 w-5 text-amber-400" /> },
+    { label: "Characters", icon: <Cpu className="h-5 w-5 text-amber-400" /> },
+    { label: "Scenes", icon: <Layers className="h-5 w-5 text-amber-400" /> },
+    { label: "Prompts", icon: <FileText className="h-5 w-5 text-amber-400" /> },
+    { label: "Costs", icon: <DollarSign className="h-5 w-5 text-amber-400" /> },
+    { label: "Render Jobs", icon: <Play className="h-5 w-5 text-amber-400" /> },
+    { label: "Exports", icon: <Download className="h-5 w-5 text-amber-400" /> },
+  ];
+
+  const COMPARISON_ROWS = [
+    { feature: "Bring your own keys", generators: false, closed: false, virelle: true },
+    { feature: "Choose any provider", generators: false, closed: false, virelle: true },
+    { feature: "Full screenplay-to-shot workflow", generators: false, closed: "partial", virelle: true },
+    { feature: "Track per-scene costs", generators: false, closed: false, virelle: true },
+    { feature: "Lock approved scenes", generators: false, closed: false, virelle: true },
+    { feature: "Export prompt packs", generators: false, closed: false, virelle: true },
+    { feature: "Switch models mid-project", generators: false, closed: false, virelle: true },
+    { feature: "Keep production assets organized", generators: false, closed: "partial", virelle: true },
+  ];
+
+  const FAQS = [
+    { q: "What does BYOK mean?", a: "Bring Your Own Key. You connect your own API keys for the providers you already use. Virelle never resells AI generation — it orchestrates your own accounts." },
+    { q: "Does Virelle generate video itself?", a: "No. Virelle is the workflow layer above generators. You connect Runway, Kling, Pika, Veo, or any custom endpoint. Virelle manages the prompts, routing, and tracking." },
+    { q: "Can I use Runway, Kling, Pika, or Veo?", a: "Yes. Add your API key under Settings → Providers. Virelle routes your scene prompts to whichever provider you select." },
+    { q: "Do I need API keys to start?", a: "No. You can build your screenplay, character bible, scene plan, and prompt pack without any API keys. Keys are only needed when you want to submit render jobs." },
+    { q: "Can I control project costs?", a: "Yes. Set budget caps per project and per provider. Virelle warns you before any expensive operation and shows cost estimates before you submit." },
+    { q: "Who owns the generated output?", a: "Your output rights depend on the provider you use. Virelle stores metadata and prompt packs. Always review your chosen provider's commercial terms." },
+    { q: "Can I switch providers mid-project?", a: "Yes. Each scene can be assigned a different provider. You can re-render a single scene with a new provider without touching the rest of the film." },
+    { q: "Can I export my prompts and shot lists?", a: "Yes. Export your full prompt pack as JSON, your screenplay as TXT, or your shot list as CSV from any project workspace." },
+  ];
+
+  function Check() { return <CheckCircle2 className="h-4 w-4 text-amber-400 flex-shrink-0" />; }
+  function Cross() { return <XCircle className="h-4 w-4 text-white/20 flex-shrink-0" />; }
+  function Partial() { return <div className="h-4 w-4 rounded-full border border-white/30 flex-shrink-0" />; }
+
+  export default function Landing() {
+    const [, setLocation] = useLocation();
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    useEffect(() => {
+      const handleScroll = () => setIsScrolled(window.scrollY > 50);
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    return (
+      <div className="min-h-screen bg-black text-white selection:bg-amber-500/30 relative">
+        <SiteHead
+          title="BYOK AI Film Production OS — Virelle Studios"
+          description="Bring your own AI keys. Virelle is the production cockpit for AI filmmaking — screenplay, scene planning, provider routing, cost control, and export-ready assets."
+        />
+        <GoldWatermark />
+
+        {/* ─── Nav ─── */}
+        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/90 backdrop-blur-xl border-b border-white/10" : "bg-transparent"}`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <button onClick={() => setLocation("/")} className="flex items-center gap-2.5 group">
+              <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" />
+              <span className="text-sm font-black tracking-tighter uppercase italic">Virelle <span className="text-amber-400">Studios</span></span>
             </button>
-            <button onClick={() => setLocation("/contact")} className="text-sm font-bold text-white/60 hover:text-white transition-colors">Industry</button>
-          </div>
-
-          {/* Auth buttons */}
-          <div className="flex items-center gap-3">
-            <button onClick={() => setLocation("/login")} className="hidden sm:block text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Login</button>
-            <Button onClick={() => setLocation("/register")} className="hidden sm:flex bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-6 shadow-lg shadow-amber-500/20">
-              Get Started
-            </Button>
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setMobileMenuOpen(o => !o)}
-              className="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-white/60">
+              <button onClick={() => setLocation("/pricing")} className="hover:text-white transition-colors">Pricing</button>
+              <button onClick={() => setLocation("/how-it-works")} className="hover:text-white transition-colors">How It Works</button>
+              <button onClick={() => setLocation("/showcase")} className="hover:text-white transition-colors">Showcase</button>
+              <button onClick={() => setLocation("/blog")} className="hover:text-white transition-colors">Blog</button>
+            </nav>
+            <div className="hidden md:flex items-center gap-3">
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/login")} className="text-white/70 hover:text-white">Sign In</Button>
+              <Button size="sm" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-5">Open Studio</Button>
+            </div>
+            <button className="md:hidden p-2 rounded text-white/60 hover:text-white" onClick={() => setMobileMenuOpen(v => !v)}>
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
-        </div>
-
-        {/* Mobile dropdown menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 py-4 px-6 space-y-1 shadow-2xl">
-            <button onClick={() => { setLocation("/showcase"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Showcase</button>
-            <button onClick={() => { setLocation("/pricing"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Pricing</button>
-            <button onClick={() => { setLocation("/download"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all flex items-center gap-2"><Smartphone className="h-4 w-4 text-amber-400" />Get the App</button>
-            <button onClick={() => { setLocation("/contact"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Industry</button>
-            <div className="border-t border-white/10 pt-3 mt-1 flex flex-col gap-2">
-              <button onClick={() => { setLocation("/login"); setMobileMenuOpen(false); }} className="w-full py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all text-left">Login</button>
-              <Button onClick={() => { setLocation("/register"); setMobileMenuOpen(false); }} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl py-3">Get Started Free</Button>
+          {mobileMenuOpen && (
+            <div className="md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10 px-4 py-4 flex flex-col gap-3 text-sm font-semibold">
+              {["pricing", "how-it-works", "showcase", "blog", "login"].map(p => (
+                <button key={p} onClick={() => { setLocation(`/${p}`); setMobileMenuOpen(false); }}
+                  className="text-left text-white/60 hover:text-white transition-colors capitalize">{p.replace(/-/g, " ")}</button>
+              ))}
+              <Button size="sm" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold w-full mt-2">Open Studio</Button>
             </div>
-          </div>
-        )}
-      </nav>
+          )}
+        </header>
 
-      <main>
-        {/* ─── 1. Hero Section ─── */}
-        <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-black">
-          <CinematicBackground />
-          {/* Subtle radial glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(212,175,55,0.06)_0%,transparent_70%)] pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black pointer-events-none" />
-
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-8">
-              <Sparkles className="h-3.5 w-3.5" />
-              Professional AI Film Orchestration
-            </div>
-
-            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 text-white">
-              CONCEPT TO <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-500">CINEMATIC REALITY.</span>
-            </h1>
-
-            <p className="max-w-2xl mx-auto text-lg sm:text-xl text-white/60 leading-relaxed mb-4">
-              Virelle connects story, characters, scenes, AI generation, trailers, posters, funding targets, and production packages in one controlled film workflow.
-            </p>
-            <p className="max-w-xl mx-auto text-sm text-white/35 italic leading-relaxed mb-12">
-              Generic AI tools make clips. Virelle helps you build the show.
-            </p>
-
-            {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
-              <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 h-13 text-base gap-2 shadow-lg shadow-amber-500/20">
-                Start Production
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => setLocation("/showcase")} className="h-13 text-base px-8 gap-2 border-white/20 hover:bg-white/5 text-white">
-                <Play className="h-4 w-4" />
-                Watch The Showrunner
-              </Button>
-              <Button size="lg" variant="ghost" onClick={() => setLocation("/signature-cast")} className="h-13 text-base px-6 gap-2 text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/5">
-                Browse Digital Cast
-              </Button>
-            </div>
-
-            {/* App download strip */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
-              <p className="text-xs text-white/40 font-semibold uppercase tracking-widest">Also available on</p>
-              <button
-                onClick={() => setLocation("/download")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition-all text-sm font-semibold text-white/80"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                iOS App
-              </button>
-              <button
-                onClick={() => setLocation("/download")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 transition-all text-sm font-semibold text-white/80"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.99-2.54-2.54-10.57 9.39zm-1.9-20.1C1.1 3.96 1 4.32 1 4.71v14.58c0 .39.1.75.28 1.05l.07.07 8.17-8.17v-.19L1.35 3.59l-.07.07zM20.13 10.4l-2.35-1.36-2.84 2.84 2.84 2.84 2.37-1.37c.68-.39.68-1.03-.02-1.95zM4.17.24L16.29 7.23l-2.54 2.54L3.18.38C3.53.3 3.87.07 4.17.24z"/>
-                </svg>
-                Android App
-              </button>
-            </div>
-
-            {/* Trust bar */}
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 max-w-4xl mx-auto">
-                {[
-                  "BYOK Ready",
-                  "Commercial Workflow",
-                  "Digital Cast",
-                  "Funding Targets",
-                  "Production Packages",
-                  "Security-Hardened",
-                ].map((label) => (
+        <main>
+          {/* ─── 1. Hero ─── */}
+          <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(212,175,55,0.08)_0%,transparent_70%)] pointer-events-none" />
+            <CinematicBackground />
+            <div className="relative z-10 max-w-5xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-widest mb-8">
+                <Key className="h-3 w-3" />
+                BYOK AI Film Production OS
+              </div>
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-none mb-6 text-white">
+                Bring your own AI keys.
+                <br />
+                <span className="text-amber-400">Direct your film</span>
+                <br />
+                from concept to final cut.
+              </h1>
+              <p className="max-w-2xl mx-auto text-lg text-white/50 leading-relaxed mb-4">
+                Virelle is the BYOK production cockpit for AI filmmaking. Manage the full workflow across your preferred models — screenplay, character bible, scene planning, prompt control, provider routing, budget tracking, approvals, and export-ready production assets.
+              </p>
+              <p className="text-sm text-white/30 italic mb-10">
+                No model lock-in. No forced provider. Your workflow, your keys.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
+                <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 h-13 text-base gap-2 shadow-lg shadow-amber-500/20">
+                  Open Studio <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button size="lg" variant="outline" onClick={() => setLocation("/settings?tab=api-keys")} className="h-13 text-base px-8 gap-2 border-white/20 hover:bg-white/5 text-white">
+                  <Key className="h-4 w-4" />
+                  Connect Providers
+                </Button>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+                {["BYOK Ready", "No Generation Fees", "Provider Freedom", "Full Screenplay Workflow", "Cost-Aware Production"].map(label => (
                   <span key={label} className="text-[11px] font-bold uppercase tracking-widest text-white/35 flex items-center gap-1.5">
-                    <span className="w-1 h-1 rounded-full bg-amber-500/50 inline-block" />
-                    {label}
+                    <span className="w-1 h-1 rounded-full bg-amber-500/50 inline-block" />{label}
                   </span>
                 ))}
               </div>
-          </div>
-        </section>
-
-        {/* ─── 1.5 The Showrunner Showcase Proof ─── */}
-          <section
-            className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10"
-            style={{ background: "linear-gradient(180deg, #000 0%, #0a0800 40%, #000 100%)" }}
-            data-testid="section-showrunner-proof"
-          >
-            {/* Gold top rule */}
-            <div
-              className="absolute top-0 left-0 right-0 h-[1px]"
-              style={{
-                background:
-                  "linear-gradient(90deg, transparent 0%, #d4af37 25%, #f5e6a3 50%, #d4af37 75%, transparent 100%)",
-              }}
-            />
-
-            <div className="max-w-5xl mx-auto">
-              {/* Label */}
-              <div className="flex justify-center mb-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-semibold uppercase tracking-wider">
-                  <Film className="h-3.5 w-3.5" />
-                  Featured Showcase · The Showrunner
-                </div>
-              </div>
-
-              {/* Headline */}
-              <div className="text-center mb-10">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white mb-5 leading-tight">
-                  {LANDING_COPY.headline}
-                </h2>
-                <p className="text-base md:text-lg text-neutral-400 max-w-3xl mx-auto leading-relaxed">
-                  {LANDING_COPY.subheadline}
-                </p>
-              </div>
-
-              {/* Proof line — high-contrast quote card */}
-              <div
-                className="relative rounded-2xl border border-amber-500/25 p-8 md:p-10 mb-10 text-center overflow-hidden"
-                style={{ background: "linear-gradient(160deg, #0c0c0c 0%, #110f05 100%)" }}
-              >
-                {/* Film-frame corners */}
-                <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-amber-500/40 pointer-events-none" />
-                <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-amber-500/40 pointer-events-none" />
-                <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-amber-500/40 pointer-events-none" />
-                <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-amber-500/40 pointer-events-none" />
-
-                <p
-                  className="text-xl md:text-2xl lg:text-3xl font-bold italic leading-snug"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #d4af37 0%, #f5e6a3 40%, #d4af37 70%, #b8941f 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  "{LANDING_COPY.proofLine}"
-                </p>
-              </div>
-
-              {/* CTAs */}
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-gradient-to-r from-amber-500 to-amber-400 text-black hover:from-amber-400 hover:to-amber-300 font-bold shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95"
-                  data-testid="button-watch-showcase"
-                >
-                  <a href={LANDING_COPY.primaryCta.href}>
-                    <Play className="h-4 w-4 mr-2" />
-                    {LANDING_COPY.primaryCta.label}
-                  </a>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10 hover:text-amber-200 font-semibold"
-                  data-testid="button-start-production"
-                >
-                  <a href={LANDING_COPY.secondaryCta.href}>
-                    {LANDING_COPY.secondaryCta.label}
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </a>
-                </Button>
-              </div>
             </div>
           </section>
 
-        {/* ─── 2. How It Works ─── */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
-                <ZapIcon className="h-3.5 w-3.5" />
-                The Pipeline
+          {/* ─── 2. Production Workflow Pipeline ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-14">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-3">Production Workflow</p>
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white">Concept to export in one cockpit</h2>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-                Concept to Complete Film —{" "}
-                <span className="text-amber-400">4 Steps</span>
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { step: "01", time: "5 min", title: "Write Your Concept", desc: "Describe your film in plain language. Genre, tone, characters, story arc.", color: "amber" },
-                { step: "02", time: "10 min", title: "AI Writes the Screenplay", desc: "Full Hollywood-format script with scene breakdowns, dialogue, and stage directions.", color: "purple" },
-                { step: "03", time: "3–8 hrs", title: "Scenes Generate", desc: "60–90 scenes rendered with clip chaining, voice acting, and an original score.", color: "blue" },
-                { step: "04", time: "Instant", title: "Export Final Cut", desc: "Download your complete film as MP4 or ProRes. 100% commercially yours.", color: "green" },
-              ].map((s) => (
-                <div key={s.step} className="relative text-center">
-                  <div className={`w-16 h-16 rounded-2xl bg-${s.color}-500/10 border border-${s.color}-500/20 flex items-center justify-center mx-auto mb-4`}>
-                    <span className={`text-${s.color}-400 font-black text-lg`}>{s.step}</span>
-                  </div>
-                  <div className={`inline-block px-2.5 py-1 rounded-full bg-${s.color}-500/10 text-${s.color}-400 text-[11px] font-bold mb-3 uppercase tracking-wider`}>{s.time}</div>
-                  <h3 className="text-base font-bold mb-2 text-white">{s.title}</h3>
-                  <p className="text-xs text-white/60 leading-relaxed">{s.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ─── 3. Two Core Use Cases ─── */}
-        <section id="use-cases" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-y border-white/10">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-                Two Ways to Use{" "}
-                <span className="text-amber-400">Virelle Studios</span>
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="bg-white/[0.03] border-white/10 hover:border-amber-500/40 transition-all duration-300 group overflow-hidden">
-                <div className="h-1.5 bg-gradient-to-r from-amber-400 to-orange-500" />
-                <CardContent className="p-8">
-                  <div className="h-14 w-14 rounded-xl bg-amber-500/10 flex items-center justify-center mb-5 group-hover:bg-amber-500/20 transition-colors">
-                    <Film className="h-7 w-7 text-amber-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-white">Full AI Film Generation</h3>
-                  <p className="text-sm text-white/60 leading-relaxed mb-6">
-                    Describe your movie concept and Virelle generates the entire film — screenplay, 60–90 cinematic scenes with clip chaining, AI voice-acted dialogue, original soundtrack, and scene-to-scene continuity.
-                  </p>
-                  <div className="space-y-3 mb-8">
-                    {["Up to 90-minute feature films", "4–8 AI video clips per scene, stitched seamlessly", "AI voice acting for all dialogue with 35 emotions", "AI-generated film score matched to every scene", "Character consistency across all scenes via DNA Lock"].map(f => (
-                      <div key={f} className="flex items-start gap-2 text-sm">
-                        <Sparkles className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-                        <span className="text-white/80">{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-xs font-semibold text-amber-400">Perfect for: Indie filmmakers, content creators, YouTube channels</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/[0.03] border-white/10 hover:border-purple-500/40 transition-all duration-300 group overflow-hidden">
-                <div className="h-1.5 bg-gradient-to-r from-purple-400 to-violet-500" />
-                <CardContent className="p-8">
-                  <div className="h-14 w-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5 group-hover:bg-purple-500/20 transition-colors">
-                    <Sparkles className="h-7 w-7 text-purple-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-white">VFX Scene Studio</h3>
-                  <p className="text-sm text-white/60 leading-relaxed mb-6">
-                    Shooting a live-action film with a real cast? Use Virelle to generate the scenes that would be cost-prohibitive to shoot. Export individual scenes to composite into your production.
-                  </p>
-                  <div className="space-y-3 mb-8">
-                    {["Generate impossible locations and VFX", "Upload cast photos for character matching", "Precise art direction and camera control", "Export in ProRes for professional NLEs", "Multi-provider pipeline (Runway, Sora, fal.ai)"].map(f => (
-                      <div key={f} className="flex items-start gap-2 text-sm">
-                        <Sparkles className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" />
-                        <span className="text-white/80">{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-xs font-semibold text-purple-400">Perfect for: VFX supervisors, commercial directors, production houses</p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* ─── 3b. Signature Cast Teaser ─── */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
-                <Crown className="h-3.5 w-3.5" />
-                Virelle Signature Cast
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
-                Create your cast before you{" "}
-                <span className="text-amber-400">create the film.</span>
-              </h2>
-              <p className="text-white/60 max-w-2xl mx-auto">
-                Build original characters or use Virelle Signature Cast talent with structured Character DNA for scripts, scene cards, trailers, posters, and future generated shots.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto mb-10">
-              {[
-                { label: "Skip setup", sub: "Cast immediately" },
-                { label: "Stronger continuity", sub: "Across every scene" },
-                { label: "Cinematic close-ups", sub: "Premium screen presence" },
-                { label: "Promo-ready", sub: "Trailers, films, ads" },
-                { label: "Commercially clean", sub: "Platform-owned talent" },
-                { label: "Better for teams", sub: "Shared repeatable cast" },
-              ].map(item => (
-                <div key={item.label} className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center">
-                  <p className="text-sm font-semibold text-amber-300 mb-0.5">{item.label}</p>
-                  <p className="text-xs text-white/40">{item.sub}</p>
-                </div>
-              ))}
-            </div>
-            <div className="text-center">
-              <button
-                onClick={() => setLocation("/signature-cast")}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm transition-colors"
-              >
-                Browse Signature Cast
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* ─── 4. Key Differentiators ─── */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">Professional Infrastructure.</h2>
-              <p className="mt-4 text-white/60 max-w-2xl mx-auto">Virelle is built for the rigorous demands of professional film production.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
-                <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
-                  <ShieldCheck className="h-6 w-6 text-blue-400" />
-                </div>
-                <h4 className="text-lg font-bold mb-3 text-white">100% Commercial Ownership</h4>
-                <p className="text-sm text-white/50 leading-relaxed">You own all outputs commercially. No royalties, no licensing fees, and no platform watermarks on your exports.</p>
-              </div>
-              <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
-                <div className="h-12 w-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-6">
-                  <Cpu className="h-6 w-6 text-amber-400" />
-                </div>
-                <h4 className="text-lg font-bold mb-3 text-white">BYOK Architecture</h4>
-                <p className="text-sm text-white/50 leading-relaxed">Bring Your Own Key. Connect your own AI provider accounts (Runway, Sora, fal.ai) for zero markup on generation costs.</p>
-              </div>
-              <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
-                <div className="h-12 w-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-6">
-                  <Globe className="h-6 w-6 text-purple-400" />
-                </div>
-                <h4 className="text-lg font-bold mb-3 text-white">Global Distribution Ready</h4>
-                <p className="text-sm text-white/50 leading-relaxed">Context-aware AI translation for subtitles in 130+ languages and a global directory of 94 film funders.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-                {/* ─── 4b. Clips are not a production ─── */}
-          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
-            <div className="max-w-5xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">Clips are not a production.</h2>
-                <p className="text-white/50 max-w-2xl mx-auto text-sm leading-relaxed">
-                  AI video generators can create individual shots. Virelle is built for the full production workflow — story, cast, scene continuity, trailer structure, poster direction, music notes, funding targets, and export-ready production packages.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
-                <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-7">
-                  <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-5">Generic clip tools</h3>
-                  <ul className="space-y-3">
-                    {["Random clips", "Inconsistent characters", "Limited story structure", "Weak continuity", "No pitch package"].map(item => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-white/35">
-                        <span className="w-4 h-4 rounded-full border border-white/10 flex items-center justify-center text-white/20 text-[10px] shrink-0">x</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-2xl border border-amber-500/20 bg-amber-950/10 p-7">
-                  <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-5">Virelle</h3>
-                  <ul className="space-y-3">
-                    {["Structured story", "Digital Cast", "Character DNA", "Scene cards", "Trailer and pitch assets", "Production package"].map(item => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-white/80">
-                        <span className="w-4 h-4 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-400 text-[10px] shrink-0">v</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ─── 5. Pricing Preview ─── */}
-        <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-t border-white/10">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-4">
-                <CreditCard className="h-3.5 w-3.5" />
-                Transparent Pricing
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">Production Tiers</h2>
-              <p className="mt-3 text-sm text-white/50">Register free. Features unlock when you subscribe.</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {[
-                { tier: "Indie",    price: "A$149",   credits: "500 credits/mo",   desc: "Solo filmmakers and students.",          cta: "Select Indie" },
-                { tier: "Creator",  price: "A$490",   credits: "2,000 credits/mo",  desc: "Serious indie producers.",               cta: "Select Creator", highlight: true },
-                { tier: "Industry", price: "A$1,490", credits: "6,000 credits/mo",  desc: "Boutique studios and agencies.",         cta: "Select Industry" },
-                { tier: "Industry+", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.",         cta: "Contact Sales" },
-              ].map(plan => (
-                <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-white/10 hover:border-amber-500/30 bg-white/[0.02]"}`}>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-2 text-white">{plan.tier}</h3>
-                    <div className="mb-1">
-                      <span className="text-3xl font-black text-white">{plan.price}</span>
-                      {plan.price !== "Custom" && <span className="text-xs text-white/40 ml-1">/mo</span>}
+              <div className="flex flex-wrap justify-center gap-2">
+                {WORKFLOW_STEPS.map((step, i) => (
+                  <div key={step} className="flex items-center gap-2">
+                    <div className="px-4 py-2 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-sm font-bold">
+                      {i + 1}. {step}
                     </div>
-                    <p className="text-[11px] font-semibold text-amber-400 mb-3">{plan.credits}</p>
-                    <p className="text-xs text-white/50 mb-6 leading-relaxed">{plan.desc}</p>
-                    <Button
-                      className={`w-full font-semibold ${plan.highlight ? "bg-amber-500 hover:bg-amber-600 text-black" : "bg-white/10 hover:bg-white/20 text-white"}`}
-                      size="sm"
-                      onClick={() => setLocation(plan.tier === "Industry+" ? "/contact" : "/register")}
-                    >
-                      {plan.cta}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                    {i < WORKFLOW_STEPS.length - 1 && <ArrowRight className="h-3 w-3 text-white/20 hidden sm:block" />}
+                  </div>
+                ))}
+              </div>
             </div>
-            {/* Signature Cast Tier Callout */}
-            <div className="mt-10 rounded-2xl border border-amber-500/15 bg-amber-500/5 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Crown className="h-5 w-5 text-amber-400 shrink-0" />
+          </section>
+
+          {/* ─── 3. BYOK Provider Freedom ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-zinc-950/40">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-14">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-3">Provider Freedom</p>
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white mb-4">Connect any provider, own every key</h2>
+                <p className="text-white/40 max-w-xl mx-auto">You choose which AI handles each part of your production. Virelle routes your workflow — not your budget.</p>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {PROVIDER_CATEGORIES.map(cat => (
+                  <Card key={cat.label} className="bg-zinc-900/60 border-zinc-800 hover:border-amber-500/30 transition-colors">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2 mb-2 text-amber-400">{cat.icon}<span className="text-sm font-bold text-white">{cat.label}</span></div>
+                      <p className="text-xs text-white/40">{cat.examples}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ─── 4. Provider Routing ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-14">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-3">Provider Routing</p>
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white mb-4">Right model for every task</h2>
+                <p className="text-white/40 max-w-xl mx-auto">Assign a different provider to each production task. Mix and match. Switch anytime.</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {ROUTING_CARDS.map(card => (
+                  <Card key={card.task} className="bg-zinc-900/60 border-zinc-800">
+                    <CardContent className="p-5">
+                      <div className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3">{card.task}</div>
+                      <div className="space-y-1.5">
+                        {card.providers.map(p => (
+                          <div key={p} className="text-sm text-white/70 flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500/50 flex-shrink-0" />{p}
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <p className="text-center text-xs text-white/25 mt-6">All provider labels are independent projects. No official partnerships implied.</p>
+            </div>
+          </section>
+
+          {/* ─── 5. Why BYOK ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-zinc-950/40">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-14">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-3">Why BYOK</p>
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white mb-4">Your keys. Your workflow. Your film.</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {BYOK_REASONS.map(r => (
+                  <Card key={r.title} className="bg-zinc-900/60 border-zinc-800">
+                    <CardContent className="p-5">
+                      <div className="flex items-start gap-3">
+                        <Key className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-bold text-white mb-1">{r.title}</p>
+                          <p className="text-xs text-white/45 leading-relaxed">{r.desc}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ─── 6. Cost Control ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div>
-                  <p className="text-sm font-semibold text-white">Unlock the Virelle Signature Cast</p>
-                  <p className="text-xs text-white/50 mt-0.5">Standard cast on Creator. Premium and Flagship Stars on Industry and above. Higher fidelity, better continuity, exclusive looks.</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-3">Cost Control</p>
+                  <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white mb-5">Know your budget before you render</h2>
+                  <p className="text-white/45 leading-relaxed mb-6">Virelle helps you estimate costs per scene, set provider-level caps, and get warnings before any expensive job runs.</p>
+                  <ul className="space-y-3">
+                    {["Estimate cost per scene and total project", "Draft mode vs. final mode", "Provider-level budget caps", "Warnings before expensive jobs", "Usage history per project"].map(item => (
+                      <li key={item} className="flex items-center gap-3 text-sm text-white/65">
+                        <DollarSign className="h-4 w-4 text-amber-400 flex-shrink-0" />{item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: "Script cost", value: "~$0.02" },
+                    { label: "Image per scene", value: "~$0.05" },
+                    { label: "Video per scene", value: "~$0.50" },
+                    { label: "Voice per scene", value: "~$0.10" },
+                    { label: "Music per project", value: "~$0.20" },
+                    { label: "Total estimate", value: "Your call" },
+                  ].map(item => (
+                    <div key={item.label} className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-4">
+                      <p className="text-xs text-white/40 mb-1">{item.label}</p>
+                      <p className="text-lg font-black text-amber-400">{item.value}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <button
-                onClick={() => setLocation("/signature-cast")}
-                className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/30 text-amber-300 text-xs font-semibold hover:bg-amber-500/10 transition-colors"
-              >
-                View the Cast <ArrowRight className="h-3.5 w-3.5" />
-              </button>
             </div>
-            <div className="text-center mt-6">
-              <button onClick={() => setLocation("/pricing")} className="text-sm font-bold text-amber-400 hover:text-amber-300 transition-colors">
-                View Full Pricing & Feature Comparison →
-              </button>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        {/* ─── 6. Download App Section ─── */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold mb-6">
-              <Smartphone className="h-3.5 w-3.5" />
-              Mobile Apps
+          {/* ─── 7. Prompt & Continuity System ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-zinc-950/40">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-14">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-3">Prompt & Continuity</p>
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white mb-4">Your film stays consistent — scene to scene</h2>
+                <p className="text-white/40 max-w-xl mx-auto">Character bibles, style bibles, camera instructions, and locked approved scenes keep every provider rendering in the same world.</p>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {["Character Bible", "Style Bible", "Visual Prompts", "Negative Prompts", "Camera Instructions", "Dialogue Prompts", "Music Direction", "Locked Approved Scenes"].map(item => (
+                  <div key={item} className="border border-zinc-800 bg-zinc-900/60 rounded-xl p-4 text-center">
+                    <p className="text-sm font-bold text-white/70">{item}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4">
-              Take Your Studio Everywhere
-            </h2>
-            <p className="text-white/60 mb-10 max-w-xl mx-auto">
-              The full Virelle Studios experience on iOS and Android. Monitor renders, review scenes, manage projects, and export — all from your phone.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
-                onClick={() => setLocation("/download")}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 transition-all w-full sm:w-auto"
-              >
-                <svg viewBox="0 0 24 24" className="h-8 w-8 fill-white shrink-0" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                <div className="text-left">
-                  <p className="text-[10px] text-white/50 uppercase tracking-widest">Download on the</p>
-                  <p className="text-lg font-bold text-white leading-tight">App Store</p>
+          </section>
+
+          {/* ─── 8. Dashboard Preview ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-14">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-3">Studio Dashboard</p>
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white mb-4">Everything in one production cockpit</h2>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {DASHBOARD_PANELS.map(panel => (
+                  <div key={panel.label} className="bg-zinc-900/80 border border-zinc-800 hover:border-amber-500/30 rounded-xl p-5 flex flex-col items-center gap-3 transition-colors">
+                    {panel.icon}
+                    <p className="text-sm font-bold text-white/70">{panel.label}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="text-center mt-8">
+                <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 h-12 gap-2">
+                  Open Studio <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </section>
+
+          {/* ─── 9. Comparison Table ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-zinc-950/40">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-14">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-400/80 mb-3">Why Virelle</p>
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white mb-4">Not another generator — the workflow layer above them.</h2>
+              </div>
+              <div className="border border-zinc-800 rounded-2xl overflow-hidden">
+                <div className="grid grid-cols-4 bg-zinc-900/60 text-xs font-bold uppercase tracking-widest text-white/40 border-b border-zinc-800">
+                  <div className="p-4">Feature</div>
+                  <div className="p-4 text-center">Clip generators</div>
+                  <div className="p-4 text-center">Closed platforms</div>
+                  <div className="p-4 text-center text-amber-400">Virelle BYOK</div>
                 </div>
-              </button>
-              <button
-                onClick={() => setLocation("/download")}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 transition-all w-full sm:w-auto"
-              >
-                <svg viewBox="0 0 24 24" className="h-8 w-8 fill-white shrink-0" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.99-2.54-2.54-10.57 9.39zm-1.9-20.1C1.1 3.96 1 4.32 1 4.71v14.58c0 .39.1.75.28 1.05l.07.07 8.17-8.17v-.19L1.35 3.59l-.07.07zM20.13 10.4l-2.35-1.36-2.84 2.84 2.84 2.84 2.37-1.37c.68-.39.68-1.03-.02-1.95zM4.17.24L16.29 7.23l-2.54 2.54L3.18.38C3.53.3 3.87.07 4.17.24z"/>
-                </svg>
-                <div className="text-left">
-                  <p className="text-[10px] text-white/50 uppercase tracking-widest">Get it on</p>
-                  <p className="text-lg font-bold text-white leading-tight">Google Play</p>
-                </div>
-              </button>
+                {COMPARISON_ROWS.map((row, i) => (
+                  <div key={row.feature} className={`grid grid-cols-4 text-sm border-b border-zinc-800/60 last:border-b-0 ${i % 2 === 0 ? "bg-zinc-900/20" : ""}`}>
+                    <div className="p-4 text-white/60">{row.feature}</div>
+                    <div className="p-4 flex items-center justify-center">{row.generators ? <Check /> : <Cross />}</div>
+                    <div className="p-4 flex items-center justify-center">{row.closed === true ? <Check /> : row.closed === "partial" ? <Partial /> : <Cross />}</div>
+                    <div className="p-4 flex items-center justify-center">{row.virelle ? <Check /> : <Cross />}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <p className="text-xs text-white/30 mt-6">Subscription required. Register free, then choose a plan to unlock all features.</p>
-          </div>
-        </section>
+          </section>
 
-        {/* ─── 7. FAQ ─── */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight text-white">Frequently Asked Questions</h2>
+          {/* ─── 10. Rights / Provider Terms ─── */}
+          <section className="relative py-16 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+            <div className="max-w-3xl mx-auto">
+              <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-8 text-center">
+                <ShieldCheck className="h-8 w-8 text-amber-400 mx-auto mb-4" />
+                <h3 className="text-lg font-black text-white mb-3">Your output rights depend on your providers</h3>
+                <p className="text-sm text-white/45 leading-relaxed">
+                  Because Virelle is BYOK, commercial usage rights depend entirely on the providers and models you connect. Virelle stores your prompt packs, metadata, and production assets — not generated media. Review your chosen provider's commercial terms before exporting for distribution.
+                </p>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                { title: "How long does it take?", answer: "A full 90-minute film takes 4–8 hours to generate from a written concept. Individual scenes generate in 3–6 minutes each." },
-                { title: "What exactly does it generate?", answer: "Screenplay, scene-by-scene video clips, AI voice acting, original film score, scene-to-scene continuity, and a final stitched cut." },
-                { title: "What rights do I get?", answer: "You own 100% of all outputs commercially. No royalties, no licensing fees, no platform watermarks on exports." },
-                { title: "What AI models are used?", answer: "Runway Gen-4.5, Sora 2, Kling 3.0, Veo 3, and fal.ai for video. ElevenLabs v3 for voice. Suno v4 for scores." },
-                { title: "Do I need to pay to use it?", answer: "You can register for free and explore the platform. All AI generation features require an active subscription plan." },
-                { title: "Is there a mobile app?", answer: "Yes — Virelle Studios for iOS is live on the App Store. The Android app and a native desktop client are in active development. Your subscription works across every platform, and the web app at virelle.life is fully responsive in the meantime." },
-              ].map(q => (
-                <div key={q.title}>
-                  <p className="text-sm font-bold mb-2 text-white">{q.title}</p>
-                  <p className="text-xs text-white/50 leading-relaxed">{q.answer}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+          </section>
 
-        {/* ─── 8. Final CTA ─── */}
-        <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10 bg-black">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />
-          <div className="relative z-10 max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-8 text-white">READY TO PRODUCE?</h2>
-            <p className="text-lg text-white/50 mb-12">Join the next generation of filmmakers building the future of cinema on Virelle Studios.</p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" onClick={() => setLocation("/register")} className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 h-14 text-base shadow-xl shadow-amber-500/20">
-                Start Production
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => setLocation("/pricing")} className="w-full sm:w-auto h-14 px-10 text-base border-white/10 hover:bg-white/5 text-white">
-                View Pricing
-              </Button>
+          {/* ─── 11. FAQ ─── */}
+          <section className="relative py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-zinc-950/40">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-14">
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tighter text-white">Common questions</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {FAQS.map(faq => (
+                  <div key={faq.q}>
+                    <p className="text-sm font-bold mb-2 text-white">{faq.q}</p>
+                    <p className="text-xs text-white/50 leading-relaxed">{faq.answer ?? faq.a}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-2.5">
-            <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" />
-            <span className="text-sm font-black tracking-tighter uppercase italic text-white">Virelle <span className="text-amber-400">Studios</span></span>
+          {/* ─── 12. Final CTA ─── */}
+          <section className="relative py-32 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />
+            <div className="relative z-10 max-w-4xl mx-auto text-center">
+              <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 text-white">YOUR KEYS.<br />YOUR FILM.</h2>
+              <p className="text-lg text-white/45 mb-10">Build the full production workflow on your own AI stack. Virelle orchestrates everything else.</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button size="lg" onClick={() => setLocation("/register")} className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 h-14 text-base shadow-xl shadow-amber-500/20">
+                  Open Studio
+                </Button>
+                <Button size="lg" variant="outline" onClick={() => setLocation("/pricing")} className="w-full sm:w-auto h-14 px-10 text-base border-white/10 hover:bg-white/5 text-white">
+                  View Pricing
+                </Button>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* ─── Footer ─── */}
+        <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex items-center gap-2.5">
+              <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" />
+              <span className="text-sm font-black tracking-tighter uppercase italic text-white">Virelle <span className="text-amber-400">Studios</span></span>
+            </div>
+            <div className="flex gap-8 text-xs font-bold text-white/40">
+              <button onClick={() => setLocation("/terms")} className="hover:text-white transition-colors">Terms</button>
+              <button onClick={() => setLocation("/privacy")} className="hover:text-white transition-colors">Privacy</button>
+              <button onClick={() => setLocation("/contact")} className="hover:text-white transition-colors">Contact</button>
+              <button onClick={() => setLocation("/blog")} className="hover:text-white transition-colors">Blog</button>
+            </div>
+            <p className="text-[10px] text-white/30 font-medium">© 2026 Virelle Studios. All rights reserved.</p>
           </div>
-          <div className="flex gap-8 text-xs font-bold text-white/40">
-            <button onClick={() => setLocation("/terms")} className="hover:text-white transition-colors">Terms</button>
-            <button onClick={() => setLocation("/privacy")} className="hover:text-white transition-colors">Privacy</button>
-            <button onClick={() => setLocation("/download")} className="hover:text-white transition-colors flex items-center gap-1">
-              <Smartphone className="h-3 w-3" />
-              Download App
-            </button>
-            <button onClick={() => setLocation("/contact")} className="hover:text-white transition-colors">Contact</button>
-          </div>
-          <p className="text-[10px] text-white/30 font-medium">© 2026 Virelle Studios. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
-  );
-}
+        </footer>
+      </div>
+    );
+  }
+  
