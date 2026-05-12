@@ -11,6 +11,37 @@ import ElementsPanel from "@/components/ElementsPanel";
 // see what's missing per scene at a glance before spending video credits.
 import ContinuityWarningsPanel from "@/components/ContinuityWarningsPanel";
 
+  // v6.90 — Production Binder export helper
+  function dlJson(filename: string, data: unknown) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+    a.download = filename; a.click();
+  }
+
+  function ProductionBinderButton({ project, h }: { project: any; h: any }) {
+    return (
+      <section className="border border-zinc-800 bg-zinc-900/40 rounded-lg p-5 mt-4">
+        <div className="flex items-start justify-between flex-wrap gap-3">
+          <div>
+            <h2 className="text-sm font-semibold text-zinc-200">Export Production Binder</h2>
+            <p className="text-xs text-zinc-500 mt-1">
+              Download a JSON snapshot of this project's scenes, health, and production status.
+            </p>
+          </div>
+          <button
+            onClick={() => dlJson(
+              `${(project?.title ?? "project").replace(/[^a-zA-Z0-9]/g, "_")}_binder.json`,
+              { exportFormat: "virelle-production-binder-v1", exportedAt: new Date().toISOString(), project: { id: project?.id, title: project?.title, genre: project?.genre, tone: project?.tone, rating: project?.rating, plotSummary: project?.plotSummary }, health: h ?? null }
+            )}
+            className="shrink-0 bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold px-4 py-2 rounded transition-colors"
+          >
+            Export Production Binder
+          </button>
+        </div>
+      </section>
+    );
+  }
+
 function statusDot(ok: boolean) {
   return (
     <span
