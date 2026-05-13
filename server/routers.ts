@@ -681,6 +681,89 @@ export const appRouter = router({
         return db.createProject(sanitized as any);
       }),
 
+
+      // One-button demo short: creates project + 5 scenes + fires video generation automatically
+      createDemoShort: protectedProcedure
+        .mutation(async ({ ctx }) => {
+          await rateLimitHeavyAI(ctx.user.id);
+          requireGenerationQuota(ctx.user);
+          const projectCount = await db.getUserProjectCount(ctx.user.id);
+          requireResourceQuota(ctx.user, "maxProjects", projectCount, "projects");
+          const stamp = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" });
+          const project = await db.createProject({
+            userId: ctx.user.id,
+            title: `Virelle Demo Short — ${stamp}`,
+            description: "A showcase demo generated entirely by Virelle Studios. Five cinematic scenes — golden-hour chase, rooftop standoff, rain-soaked revelation, underground rave, sunrise epilogue.",
+            mode: "manual",
+            genre: "Thriller",
+            rating: "PG-13",
+            duration: 5,
+            tone: "Cinematic, tense, visually rich",
+            plotSummary: "A courier discovers a package holding the last copy of a stolen AI model. Chased through a neon-lit city, she must decide whether to deliver it or destroy it before dawn.",
+            setting: "Near-future metropolis, golden hour through to dawn",
+            mainPlot: "Courier Elena receives a package with no sender. Two factions chase her across the city. By sunrise she must choose a side.",
+            themes: "Technology, identity, trust, sacrifice",
+          } as any);
+          const DEMO_SCENES = [
+            { orderIndex: 0, title: "The Drop", description: "Elena sprints through a crowded golden-hour market as two black SUVs screech around the corner behind her.", timeOfDay: "golden hour", weather: "clear", lighting: "warm golden backlight, long shadows, lens flares", mood: "urgent, kinetic", emotionalBeat: "fear turning into determination", cameraAngle: "low angle", cameraMovement: "tracking shot", colorGrading: "golden orange tones, high contrast", locationType: "outdoor market", duration: 60, transitionType: "smash-cut", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman in a leather jacket sprints through a crowded golden-hour street market in a near-future city. Warm amber light floods through market awnings, long dramatic shadows. Two black SUVs screech around the corner in pursuit. Low tracking shot through the stalls. Shallow depth of field. Golden orange color grading, high contrast." },
+            { orderIndex: 1, title: "Rooftop Standoff", description: "Elena reaches a rain-slicked rooftop, cornered. A corporate agent steps from the stairwell — calm, unhurried. The city glitters 40 floors below.", timeOfDay: "dusk", weather: "rain", lighting: "cool blue ambient, neon reflections on wet concrete", mood: "tense, confrontational", emotionalBeat: "defiance", cameraAngle: "eye level", cameraMovement: "slow push in", colorGrading: "cool teal tones, neon accents", locationType: "rooftop", duration: 60, transitionType: "dissolve", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A rain-soaked rooftop 40 floors above a neon-lit near-future city at dusk. A young woman backs toward the edge, cornered. A suited corporate agent steps from the stairwell, unhurried. Neon reflections on wet concrete. Slow cinematic push-in. Cool teal color grading, neon orange and blue accents." },
+            { orderIndex: 2, title: "The Revelation", description: "In a rain-soaked alley, Elena opens the package. Inside: a holographic message from her missing sister.", timeOfDay: "night", weather: "rain", lighting: "single overhead sodium lamp, holographic blue glow", mood: "emotional, revelatory", emotionalBeat: "grief into resolve", cameraAngle: "close up", cameraMovement: "slow zoom", colorGrading: "desaturated with holographic blue bloom", locationType: "alley", duration: 60, transitionType: "fade", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman crouches in a rain-drenched alley at night, opening a mysterious package under a flickering sodium lamp. Holographic blue light spills from inside, illuminating her face. Tears form. Close-up, slow zoom. Desaturated palette with holographic blue bloom. Rain in soft slow motion." },
+            { orderIndex: 3, title: "Underground", description: "Elena descends into an underground rave — the handoff point. Strobing lights, bodies, bass. She scans for her contact in the chaos.", timeOfDay: "night", weather: "clear", lighting: "strobe lights, UV, laser grid, smoke haze", mood: "disorienting, electric", emotionalBeat: "controlled panic", cameraAngle: "dutch angle", cameraMovement: "handheld", colorGrading: "high contrast neon, UV purple and electric blue", locationType: "interior nightclub", duration: 60, transitionType: "match-cut", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman pushes through a packed underground rave in a near-future city. Strobing white light, UV glow, laser grid cutting through smoke haze. Hundreds of bodies. She scans faces urgently. Handheld camera, dutch angle. UV purple, electric blue, hot white strobes." },
+            { orderIndex: 4, title: "Sunrise", description: "Dawn. Elena sits alone on a concrete bridge above the waking city, the package delivered. Whatever she sacrificed — it mattered.", timeOfDay: "dawn", weather: "clear", lighting: "soft pink-gold sunrise, long warm rays, lens flare", mood: "bittersweet, hopeful", emotionalBeat: "quiet triumph", cameraAngle: "wide shot", cameraMovement: "slow crane up", colorGrading: "warm rose gold, soft bloom", locationType: "bridge", duration: 60, transitionType: "fade", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman sits alone on the edge of a concrete bridge above a waking near-future city at dawn. Pink-gold sunrise light spills across the skyline. Slow crane up revealing the full cityscape. Warm rose-gold color grading, soft bloom, anamorphic lens flares." },
+          ];
+          const createdScenes = await Promise.all(
+            DEMO_SCENES.map((s) => db.createScene({ ...s, projectId: project.id, userId: ctx.user.id } as any))
+          );
+          await db.updateProject(project.id, ctx.user.id, { status: "generating", progress: 0 });
+          const userId = ctx.user.id;
+          const ctxUser = ctx.user;
+          const projectId = project.id;
+          setImmediate(async () => {
+            try {
+              const rawUserKeys = await db.getUserApiKeys(userId);
+              const isAdmin = ctxUser.role === "admin";
+              const byokKeys: UserApiKeys = {
+                openaiKey: rawUserKeys.openaiKey || (isAdmin ? ENV.openaiApiKey : undefined),
+                runwayKey: rawUserKeys.runwayKey || (isAdmin ? ENV.runwayApiKey : undefined),
+                replicateKey: rawUserKeys.replicateKey,
+                falKey: rawUserKeys.falKey || (isAdmin ? ENV.falApiKey : undefined),
+                lumaKey: rawUserKeys.lumaKey,
+                hfToken: rawUserKeys.hfToken,
+                byteplusKey: rawUserKeys.byteplusKey,
+                googleAiKey: rawUserKeys.googleAiKey || (isAdmin ? ENV.googleApiKey : undefined),
+                preferredProvider: rawUserKeys.preferredProvider,
+              };
+              await Promise.allSettled(
+                createdScenes.map(async (scene: any, idx: number) => {
+                  try {
+                    await db.updateScene(scene.id, { status: "generating" });
+                    const prompt = (scene.aiPromptOverride as string) || scene.description || scene.title;
+                    const videoResult = await generateBYOKVideo(byokKeys, { prompt, duration: 10, aspectRatio: "16:9", resolution: "720p" });
+                    const isAsync = videoResult.videoUrl.startsWith("runway-pending:") || videoResult.videoUrl.startsWith("fal-pending") || videoResult.videoUrl.startsWith("veo3-pending:");
+                    if (isAsync && videoResult.jobId) {
+                      await db.createGenerationJob({ projectId, sceneId: scene.id, type: "scene", status: "processing", progress: 0, estimatedSeconds: 60, metadata: JSON.stringify({ provider: videoResult.provider, sceneId: scene.id, projectId, userId, prompt }) } as any);
+                      await db.updateScene(scene.id, { videoUrl: videoResult.videoUrl, status: "generating" });
+                    } else {
+                      await db.updateScene(scene.id, { videoUrl: videoResult.videoUrl, thumbnailUrl: videoResult.thumbnailUrl || undefined, status: "completed" });
+                      if (idx === 0 && videoResult.thumbnailUrl) await db.updateProject(projectId, userId, { thumbnailUrl: videoResult.thumbnailUrl }).catch(() => {});
+                    }
+                  } catch (e: any) {
+                    console.error(`[DemoShort] Scene ${idx + 1} failed:`, e.message);
+                    await db.updateScene(scene.id, { status: "failed" }).catch(() => {});
+                  }
+                })
+              );
+              const finalScenes = await db.getProjectScenes(projectId);
+              const allDone = finalScenes.every((s: any) => s.status === "completed" || s.status === "failed");
+              if (allDone) await db.updateProject(projectId, userId, { status: "completed", progress: 100 }).catch(() => {});
+            } catch (err: any) {
+              console.error("[DemoShort] Background error:", err.message);
+              await db.updateProject(projectId, userId, { status: "failed" }).catch(() => {});
+            }
+          });
+          logger.info("Demo short generation started", { userId, projectId: project.id });
+          return { projectId: project.id, sceneCount: createdScenes.length, status: "generating" };
+        }),
     update: creationProcedure
       .input(z.object({
         id: z.number(),
