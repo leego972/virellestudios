@@ -2,13 +2,17 @@ name: Update lockfile
 
   on:
     workflow_dispatch:
+    push:
+      branches: [main]
+      paths:
+        - package.json
 
   permissions:
     contents: write
 
   jobs:
     update-lockfile:
-      name: Apply pnpm.overrides and commit updated lockfile
+      name: Regenerate pnpm-lock.yaml and commit
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
@@ -16,13 +20,15 @@ name: Update lockfile
             token: ${{ secrets.GITHUB_TOKEN }}
 
         - uses: pnpm/action-setup@v4
+          with:
+            version: 10
 
         - uses: actions/setup-node@v4
           with:
             node-version: 22
             cache: pnpm
 
-        - name: Install (update lockfile)
+        - name: Install (regenerate lockfile)
           run: pnpm install --no-frozen-lockfile
 
         - name: Commit updated lockfile
@@ -30,6 +36,5 @@ name: Update lockfile
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add pnpm-lock.yaml
-            git diff --staged --quiet && echo "No lockfile changes" || git commit -m "chore: update lockfile — apply fast-xml-builder>=1.1.7 override (fix GHSA-5wm8-gmm8-39j9)"
-            git push
+            git diff --staged --quiet && echo "No lockfile changes" || git commit -m "chore: regenerate lockfile" && git push
   
