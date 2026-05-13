@@ -1497,6 +1497,7 @@ export async function runAutoMigration(): Promise<void> {
     { table: "directorVision", column: "productionSetting",  definition: "TEXT NULL" },
     { table: "directorVision", column: "architecturalStyle", definition: "VARCHAR(128) NULL" },
     { table: "wardrobeItems", column: "sceneRef", definition: "INT NULL" },
+    { table: "scenes", column: "userId", definition: "INT NULL" },
     // ── users (auto-added missing columns) ──
     { table: "users", column: "openId", definition: "VARCHAR(64) NOT NULL" },
     { table: "users", column: "name", definition: "TEXT NULL" },
