@@ -95,26 +95,6 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
-  // Auto-migrate database schema on startup — adds missing columns and tables
-  try {
-    await runAutoMigration();
-  } catch (err: any) {
-    console.error("[AutoMigrate] Migration failed:", err.message);
-    // Continue starting — the server may still work with existing schema
-  }
-
-  // v6.82: Admin authority is database-role only. Server startup performs NO
-  // promotion. Admin role changes go through admin.updateUserRole or a
-  // deliberate direct database recovery action. See SECURITY.md §8.
-
-  // Auto-provision Stripe products and prices on startup
-  try {
-    await runStripeProvisioning();
-  } catch (err: any) {
-    console.error("[StripeProvisioning] Failed:", err.message);
-    // Continue starting — existing price IDs from ENV will still work
-  }
-
   const app = express();
   const server = createServer(app);
 
@@ -123,6 +103,41 @@ async function startServer() {
   server.timeout = 0;          // disable socket inactivity timeout
   server.keepAliveTimeout = 0; // disable keep-alive timeout
   server.headersTimeout = 0;   // disable headers timeout
+
+  // ── Bind port immediately so Railway health check passes without delay ─────
+  // /api/healthz is first — before any async init that could block.
+  // DB migration + Stripe provisioning both run in the background.
+  app.get("/api/healthz", (_req, res) => {
+    res.json({ ok: true, uptime: process.uptime() });
+  });
+
+  const preferredPort = parseInt(process.env.PORT || "3000");
+  const port = await findAvailablePort(preferredPort);
+  if (port !== preferredPort) {
+    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
+  }
+  await new Promise<void>(resolve => server.listen(port, resolve));
+  logger.info(`Server running on http://localhost:${port}/`, { port });
+
+  // v6.82: Admin authority is database-role only. Server startup performs NO
+  // promotion. Admin role changes go through admin.updateUserRole or a
+  // deliberate direct database recovery action. See SECURITY.md §8.
+
+  // Run DB migration + Stripe provisioning in background — server is already
+  // listening so Railway's health check never times out waiting for these.
+  (async () => {
+    try {
+      await runAutoMigration();
+    } catch (err: any) {
+      console.error("[AutoMigrate] Migration failed:", err.message);
+    }
+    try {
+      await runStripeProvisioning();
+    } catch (err: any) {
+      console.error("[StripeProvisioning] Failed:", err.message);
+    }
+    logger.info("[Server] Background init (migrate + provision) complete");
+  })();
 
   // Hardened security headers (CSP, HSTS, frame-options, permissions-policy)
   // applied to every response before route handlers run.
@@ -1467,70 +1482,60 @@ async function startServer() {
     serveStatic(app);
   }
 
-  const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
-
-  if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
-  }
-
-  server.listen(port, () => {
-    logger.info(`Server running on http://localhost:${port}/`, { port });
-
-    // Start autonomous blog engine - generates and publishes SEO articles every 8 hours
-    startBlogScheduler(async (article) => {
-      try {
-        await db.createBlogArticle({
-          slug: article.slug,
-          title: article.title,
-          subtitle: article.subtitle,
-          content: article.content,
-          excerpt: article.excerpt,
-          category: article.category,
-          tags: article.tags,
-          metaTitle: article.metaTitle,
-          metaDescription: article.metaDescription,
-          generationPrompt: article.generationPrompt,
-          coverImageUrl: article.coverImageUrl || null,
-          generatedByAI: true,
-          status: "published",
-          publishedAt: new Date(),
-        });
-        logger.info(`[BlogEngine] Auto-published: "${article.title}"`);
-      } catch (err: any) {
-        logger.error(`[BlogEngine] Failed to save article: ${err.message}`);
-      }
-    });
-    logger.info("[BlogEngine] Autonomous blog scheduler initialized");
-
-    // Start autonomous advertising engine - generates text, image, and video ads every 8 hours
-    startAdScheduler();
-    startAutonomousPipelineScheduler();
-    logger.info("[AdEngine] Autonomous advertising scheduler initialized");
-
-    // Start persistent video job worker — polls Runway for pending tasks, survives restarts
-    startVideoJobWorker();
-    logger.info("[VideoWorker] Persistent video job worker started");
-
-    // v6.72 — One-shot sweep of stuck Auto Recap MP4 renders. If the
-    // process died mid-render last time (e.g. Railway redeploy), this
-    // releases the reserved credits and reverts the recap to
-    // outline_completed so the user can retry. Threshold of 60 minutes
-    // is intentionally conservative — anything younger is probably a
-    // healthy in-flight render on a sibling worker.
-    setTimeout(async () => {
-      try {
-        const { sweepStuckRecapRenders } = await import("./recapRenderSweeper");
-        const res = await sweepStuckRecapRenders({ olderThanMinutes: 60, dryRun: false });
-        if (res.checked > 0 || res.repaired > 0) {
-          logger.info(`[recapSweeper] boot sweep: checked=${res.checked} repaired=${res.repaired}`);
-        }
-      } catch (err: any) {
-        logger.warn(`[recapSweeper] boot sweep failed: ${err?.message}`);
-      }
-    }, 10_000).unref();
-    logger.info("[recapSweeper] Boot sweep scheduled (in 10s, threshold=60m)");
+  // ── Schedulers (server already listening above) ──────────────────────────────
+  // Start autonomous blog engine - generates and publishes SEO articles every 8 hours
+  startBlogScheduler(async (article) => {
+    try {
+      await db.createBlogArticle({
+        slug: article.slug,
+        title: article.title,
+        subtitle: article.subtitle,
+        content: article.content,
+        excerpt: article.excerpt,
+        category: article.category,
+        tags: article.tags,
+        metaTitle: article.metaTitle,
+        metaDescription: article.metaDescription,
+        generationPrompt: article.generationPrompt,
+        coverImageUrl: article.coverImageUrl || null,
+        generatedByAI: true,
+        status: "published",
+        publishedAt: new Date(),
+      });
+      logger.info(`[BlogEngine] Auto-published: "${article.title}"`);
+    } catch (err: any) {
+      logger.error(`[BlogEngine] Failed to save article: ${err.message}`);
+    }
   });
+  logger.info("[BlogEngine] Autonomous blog scheduler initialized");
+
+  // Start autonomous advertising engine - generates text, image, and video ads every 8 hours
+  startAdScheduler();
+  startAutonomousPipelineScheduler();
+  logger.info("[AdEngine] Autonomous advertising scheduler initialized");
+
+  // Start persistent video job worker — polls Runway for pending tasks, survives restarts
+  startVideoJobWorker();
+  logger.info("[VideoWorker] Persistent video job worker started");
+
+  // v6.72 — One-shot sweep of stuck Auto Recap MP4 renders. If the
+  // process died mid-render last time (e.g. Railway redeploy), this
+  // releases the reserved credits and reverts the recap to
+  // outline_completed so the user can retry. Threshold of 60 minutes
+  // is intentionally conservative — anything younger is probably a
+  // healthy in-flight render on a sibling worker.
+  setTimeout(async () => {
+    try {
+      const { sweepStuckRecapRenders } = await import("./recapRenderSweeper");
+      const res = await sweepStuckRecapRenders({ olderThanMinutes: 60, dryRun: false });
+      if (res.checked > 0 || res.repaired > 0) {
+        logger.info(`[recapSweeper] boot sweep: checked=${res.checked} repaired=${res.repaired}`);
+      }
+    } catch (err: any) {
+      logger.warn(`[recapSweeper] boot sweep failed: ${err?.message}`);
+    }
+  }, 10_000).unref();
+  logger.info("[recapSweeper] Boot sweep scheduled (in 10s, threshold=60m)");
 }
 
 startServer().catch(console.error);
