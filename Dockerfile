@@ -30,6 +30,6 @@ COPY package.json ./
 
 EXPOSE 3000
 COPY gateway.mjs start.sh ./
-  RUN chmod +x start.sh
+RUN chmod +x start.sh
 
-  CMD ["./start.sh"]
+CMD ["./start.sh"]
