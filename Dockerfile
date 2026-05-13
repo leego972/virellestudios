@@ -15,7 +15,7 @@ FROM base AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm run build
+RUN pnpm run build && ls -la dist/public/index.html
 
 # ─── Production ───
 FROM base AS production
