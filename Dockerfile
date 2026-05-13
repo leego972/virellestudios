@@ -13,8 +13,10 @@ RUN pnpm install --frozen-lockfile
 # ─── Build ───
 FROM base AS build
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/node_modules ./node_modules
 COPY . .
+# Re-run install in full workspace context so router@2.2.0 gets path-to-regexp@8
+RUN pnpm install --frozen-lockfile
 RUN pnpm run build
 
 # ─── Production ───
