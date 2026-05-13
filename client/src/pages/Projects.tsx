@@ -78,7 +78,7 @@ export default function Projects() {
       onSuccess: (data) => {
         utils.project.list.invalidate();
         toast.success("Demo short generating — 5 scenes firing now!");
-        navigate(`/projects/${data.projectId}`);
+        setLocation(`/projects/${data.projectId}`);
       },
       onError: (err) => toast.error(err.message ?? "Could not create demo short"),
     });
