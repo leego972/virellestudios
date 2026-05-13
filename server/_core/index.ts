@@ -75,25 +75,6 @@ function rateLimit(windowMs: number, max: number) {
   };
 }
 
-function isPortAvailable(port: number): Promise<boolean> {
-  return new Promise(resolve => {
-    const server = net.createServer();
-    server.listen(port, () => {
-      server.close(() => resolve(true));
-    });
-    server.on("error", () => resolve(false));
-  });
-}
-
-async function findAvailablePort(startPort: number = 3000): Promise<number> {
-  for (let port = startPort; port < startPort + 20; port++) {
-    if (await isPortAvailable(port)) {
-      return port;
-    }
-  }
-  throw new Error(`No available port found starting from ${startPort}`);
-}
-
 async function startServer() {
   const app = express();
   const server = createServer(app);
@@ -1450,20 +1431,16 @@ async function startServer() {
   // Production: register static serving BEFORE server.listen() so Railway's
   // health check at "/" returns 200 from the very first request.
   // Development: bind first (Vite HMR needs the http.Server reference).
-  const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
-  if (port !== preferredPort) {
-    logger.info(`Port ${preferredPort} is busy, using port ${port} instead`);
-  }
+  const port = parseInt(process.env.PORT || "3000");
 
   if (process.env.NODE_ENV === "development") {
-    await new Promise<void>(resolve => server.listen(port, resolve));
+    await new Promise<void>(resolve => server.listen(port, "0.0.0.0", resolve));
     logger.info(`Server running on http://localhost:${port}/`, { port });
     await setupVite(app, server);
   } else {
     // Production: serveStatic registers "/" BEFORE listen — matches proven 617477a pattern
     serveStatic(app);
-    await new Promise<void>(resolve => server.listen(port, resolve));
+    await new Promise<void>(resolve => server.listen(port, "0.0.0.0", resolve));
     logger.info(`Server running on http://localhost:${port}/`, { port });
   }
 
