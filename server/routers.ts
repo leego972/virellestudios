@@ -686,6 +686,40 @@ export const appRouter = router({
         return db.createProject(sanitized as any);
       }),
 
+      // v6.90 — One-click demo short: project + 5 pre-written cinematic scenes
+      createDemoShort: protectedProcedure
+        .mutation(async ({ ctx }) => {
+          const projectCount = await db.getUserProjectCount(ctx.user.id);
+          requireResourceQuota(ctx.user, "maxProjects", projectCount, "projects");
+          const stamp = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" });
+          const project = await db.createProject({
+            userId: ctx.user.id,
+            title: `Virelle Demo Short — ${stamp}`,
+            description: "A showcase demo generated entirely by Virelle Studios. Five cinematic scenes — golden-hour chase, rooftop standoff, rain-soaked revelation, underground rave, sunrise epilogue. Hit Generate on each scene to produce real video.",
+            mode: "manual",
+            genre: "Thriller",
+            rating: "PG-13",
+            duration: 5,
+            tone: "Cinematic, tense, visually rich",
+            plotSummary: "A courier discovers a package holding the last copy of a stolen AI model. Chased through a neon-lit city at golden hour, she must decide whether to deliver it or destroy it before dawn.",
+            setting: "Near-future metropolis, golden hour through to dawn",
+            mainPlot: "Courier Elena receives a package with no sender. Within minutes, two factions are chasing her. By sunrise she must choose a side.",
+            themes: "Technology, identity, trust, sacrifice",
+            targetAudience: "18-35, thriller fans, AI enthusiasts",
+            actStructure: "Three-act",
+          } as any);
+          const DEMO_SCENES = [
+            { orderIndex: 0, title: "The Drop", description: "Elena sprints through a crowded golden-hour market, package under her arm, as two black SUVs screech around the corner behind her.", timeOfDay: "golden hour", weather: "clear", lighting: "warm golden backlight, long shadows, lens flares through market awnings", mood: "urgent, kinetic", emotionalBeat: "fear turning into determination", cameraAngle: "low angle", cameraMovement: "tracking shot", colorGrading: "golden orange tones, high contrast", locationType: "outdoor market", actionDescription: "protagonist sprinting through crowd, glancing back, package clutched tight", duration: 60, transitionType: "smash-cut", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman in a leather jacket sprints through a crowded golden-hour street market in a near-future city. Warm amber light floods through market awnings, long dramatic shadows. Two black SUVs screech around the corner in pursuit. Low tracking shot through the stalls. Shallow depth of field. Golden orange color grading, high contrast." },
+            { orderIndex: 1, title: "Rooftop Standoff", description: "Elena reaches a rain-slicked rooftop, cornered. A corporate agent steps from the stairwell — calm, unhurried. The city glitters 40 floors below.", timeOfDay: "dusk", weather: "rain", lighting: "cool blue ambient, neon reflections on wet concrete", mood: "tense, confrontational", emotionalBeat: "defiance", cameraAngle: "eye level", cameraMovement: "slow push in", colorGrading: "cool teal tones, neon accents", locationType: "rooftop", actionDescription: "two figures facing each other, wind and rain, city below", duration: 60, transitionType: "dissolve", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A rain-soaked rooftop 40 floors above a neon-lit near-future city at dusk. A young woman backs toward the edge, cornered. A suited corporate agent steps from the stairwell, unhurried. Neon reflections on wet concrete. Wind whips rain sideways. Slow cinematic push-in. Cool teal color grading, neon orange and blue accents." },
+            { orderIndex: 2, title: "The Revelation", description: "In a rain-soaked alley, Elena opens the package. Inside: not hardware — a holographic message from her missing sister. The world stops.", timeOfDay: "night", weather: "rain", lighting: "single overhead sodium lamp, holographic blue glow", mood: "emotional, revelatory", emotionalBeat: "grief into resolve", cameraAngle: "close up", cameraMovement: "slow zoom", colorGrading: "desaturated with holographic blue bloom", locationType: "alley", actionDescription: "character opens package, holographic light plays across face, tears forming", duration: 60, transitionType: "fade", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman crouches in a rain-drenched alley at night, opening a mysterious package under a flickering sodium lamp. Holographic blue light spills from inside, illuminating her face. Tears form. Close-up, slow zoom. Desaturated palette with holographic blue bloom. Rain in soft slow motion." },
+            { orderIndex: 3, title: "Underground", description: "Elena descends into an underground rave — the handoff point. Strobing lights, bodies, bass. She scans for her contact in the chaos.", timeOfDay: "night", weather: "clear", lighting: "strobe lights, UV, laser grid, smoke haze", mood: "disorienting, electric", emotionalBeat: "controlled panic", cameraAngle: "dutch angle", cameraMovement: "handheld", colorGrading: "high contrast neon, UV purple and electric blue", locationType: "interior nightclub", actionDescription: "protagonist moving through crowded rave floor, searching faces", duration: 60, transitionType: "match-cut", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman pushes through a packed underground rave in a near-future city. Strobing white light, UV glow, laser grid cutting through smoke haze. Hundreds of bodies. She scans faces urgently. Handheld camera, dutch angle. UV purple, electric blue, hot white strobes." },
+            { orderIndex: 4, title: "Sunrise", description: "Dawn. Elena sits alone on a concrete bridge above the waking city, the package delivered. Whatever she sacrificed — it mattered.", timeOfDay: "dawn", weather: "clear", lighting: "soft pink-gold sunrise, long warm rays, lens flare", mood: "bittersweet, hopeful", emotionalBeat: "quiet triumph", cameraAngle: "wide shot", cameraMovement: "slow crane up", colorGrading: "warm rose gold, soft bloom", locationType: "bridge", actionDescription: "protagonist sitting alone on bridge edge, watching sunrise over city", duration: 60, transitionType: "fade", aiPromptOverride: "Photorealistic cinematic footage, ARRI ALEXA 65, 24fps. A young woman sits alone on the edge of a concrete bridge above a waking near-future city at dawn. Pink-gold sunrise light spills across the skyline. Slow crane up revealing the full cityscape. Warm rose-gold color grading, soft bloom, anamorphic lens flares." },
+          ];
+          await Promise.all(DEMO_SCENES.map((s) => db.createScene({ ...s, projectId: project.id, userId: ctx.user.id } as any)));
+          logger.info("Demo short created", { userId: ctx.user.id, projectId: project.id });
+          return { projectId: project.id, sceneCount: DEMO_SCENES.length };
+        }),
+
     update: creationProcedure
       .input(z.object({
         id: z.number(),
