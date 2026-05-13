@@ -74,6 +74,16 @@ export default function Projects() {
     onError: () => toast.error("Couldn't delete that project — please try again, or refresh if it persists."),
   });
 
+    // v6.90 — One-click demo short
+    const createDemoMut = trpc.project.createDemoShort.useMutation({
+      onSuccess: (data: { projectId: number; sceneCount: number }) => {
+        utils.project.list.invalidate();
+        toast.success(`Demo project ready — ${data.sceneCount} cinematic scenes waiting to generate!`);
+        setLocation(`/projects/${data.projectId}`);
+      },
+      onError: (e: any) => toast.error(e.message || "Couldn't create the demo project."),
+    });
+
   const filtered = useMemo(() => {
     if (!projects) return [];
     let result = [...projects];
@@ -134,6 +144,17 @@ export default function Projects() {
           <Plus className="h-4 w-4 mr-1" />
           New Project
         </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={createDemoMut.isPending}
+            onClick={() => createDemoMut.mutate()}
+            title="Creates a 5-scene pre-configured demo project. Open it and hit Generate on each scene."
+          >
+            {createDemoMut.isPending
+              ? <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Creating…</>
+              : <><Film className="h-4 w-4 mr-1" />Demo Short</>}
+          </Button>
       </div>
 
       {/* Filters & Search */}
