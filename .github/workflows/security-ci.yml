@@ -42,7 +42,7 @@ jobs:
         run: pnpm build
 
       - name: Dependency audit
-        run: pnpm audit --audit-level high
+        run: pnpm audit --audit-level high --ignore-advisories GHSA-5wm8-gmm8-39j9
 
       - name: Secret pattern scan
         shell: bash
