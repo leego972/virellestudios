@@ -15,7 +15,7 @@ FROM base AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm run build && ls -la dist/public/index.html
+RUN pnpm run build
 
 # ─── Production ───
 FROM base AS production
@@ -29,4 +29,7 @@ COPY --from=build /app/drizzle ./drizzle
 COPY package.json ./
 
 EXPOSE 3000
-CMD ["node", "dist/index.js"]
+COPY gateway.mjs start.sh ./
+  RUN chmod +x start.sh
+
+  CMD ["./start.sh"]
