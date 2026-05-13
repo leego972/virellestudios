@@ -3,9 +3,9 @@
   APP_PORT="$((GW_PORT + 1))"
   echo "[start] Gateway=:$GW_PORT  App=:$APP_PORT"
 
-  # Start Express app on APP_PORT in background
-  PORT="$APP_PORT" node dist/index.js &
+  # Capture Express app stdout+stderr so gateway can expose it at /debug-app-log
+  PORT="$APP_PORT" node dist/index.js > /tmp/app.log 2>&1 &
 
-  # Gateway runs in foreground
+  # Gateway in foreground
   PORT="$GW_PORT" exec node gateway.mjs
   
