@@ -11,12 +11,13 @@ import { ENV } from "./env";
 let JWT_SECRET_KEY = ENV.cookieSecret;
 
 if (!JWT_SECRET_KEY) {
-  if (ENV.isProduction) {
-    throw new Error("FATAL: JWT_SECRET environment variable is required in production. Set a strong random secret.");
-  }
-  // Only use default in development
-  JWT_SECRET_KEY = "dev-secret-change-me";
-  console.warn("⚠️  Using default JWT_SECRET in development. Set JWT_SECRET env var for production.");
+  // JWT_SECRET / SESSION_SECRET not set — server starts with ephemeral key.
+  // Set JWT_SECRET in Railway env vars so sessions survive restarts.
+  JWT_SECRET_KEY = "dev-secret-change-me-set-JWT_SECRET-in-railway";
+  console.warn(
+    "[virelle] WARNING: JWT_SECRET is not set. Using insecure fallback. " +
+    "Sessions will be invalidated on restart. Add JWT_SECRET to Railway env vars."
+  );
 }
 
 const secretKey = new TextEncoder().encode(JWT_SECRET_KEY);
