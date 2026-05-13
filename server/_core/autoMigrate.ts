@@ -1324,6 +1324,10 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "creditsResetAt", definition: "TIMESTAMP NULL" },
     // Projects table - cinema industry
     { table: "projects", column: "cinemaIndustry", definition: "VARCHAR(128) NULL DEFAULT 'Hollywood'" },
+    // v6.62 — project-level style anchors
+    { table: "projects", column: "referenceImages", definition: "JSON NULL" },
+    // v6.62 — sticky NLE export aspect ratio preference per project
+    { table: "projects", column: "exportAspectRatio", definition: "VARCHAR(16) NULL DEFAULT '16:9'" },
     // Scenes table - soundtrack fields
     { table: "scenes", column: "soundtrackId", definition: "INT NULL" },
     { table: "scenes", column: "soundtrackVolume", definition: "INT NOT NULL DEFAULT 80" },
