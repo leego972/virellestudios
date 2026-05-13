@@ -74,6 +74,15 @@ export default function Projects() {
     onError: () => toast.error("Couldn't delete that project — please try again, or refresh if it persists."),
   });
 
+    const createDemoMut = trpc.project.createDemoShort.useMutation({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: [["project", "list"]] });
+        toast({ title: "Demo Short generating!", description: "5 cinematic scenes are being generated now." });
+        navigate(`/projects/${data.projectId}`);
+      },
+      onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
+    });
+
   const filtered = useMemo(() => {
     if (!projects) return [];
     let result = [...projects];
@@ -134,6 +143,15 @@ export default function Projects() {
           <Plus className="h-4 w-4 mr-1" />
           New Project
         </Button>
+          <Button
+            variant="outline"
+            disabled={createDemoMut.isPending}
+            onClick={() => createDemoMut.mutate()}
+          >
+            {createDemoMut.isPending
+              ? <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Generating…</>
+              : <><Film className="h-4 w-4 mr-1" />Demo Short</>}
+          </Button>
       </div>
 
       {/* Filters & Search */}
