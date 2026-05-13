@@ -79,11 +79,6 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Film generation can take 30-90 minutes — disable Node.js HTTP server timeouts
-  // so long-running tRPC mutations are never dropped mid-generation.
-  server.timeout = 0;          // disable socket inactivity timeout
-  server.keepAliveTimeout = 0; // disable keep-alive timeout
-  server.headersTimeout = 0;   // disable headers timeout
 
   // Health check — registered before any other middleware.
   // healthcheckPath = "/" in railway.toml; this also satisfies explicit /api/healthz checks.
@@ -1434,13 +1429,13 @@ async function startServer() {
   const port = parseInt(process.env.PORT || "3000");
 
   if (process.env.NODE_ENV === "development") {
-    await new Promise<void>(resolve => server.listen(port, "0.0.0.0", resolve));
+    await new Promise<void>(resolve => server.listen(port, resolve));
     logger.info(`Server running on http://localhost:${port}/`, { port });
     await setupVite(app, server);
   } else {
     // Production: serveStatic registers "/" BEFORE listen — matches proven 617477a pattern
     serveStatic(app);
-    await new Promise<void>(resolve => server.listen(port, "0.0.0.0", resolve));
+    await new Promise<void>(resolve => server.listen(port, resolve));
     logger.info(`Server running on http://localhost:${port}/`, { port });
   }
 
