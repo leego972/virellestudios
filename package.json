@@ -129,7 +129,6 @@
     "overrides": {
       "tailwindcss>nanoid": "3.3.7",
       "fast-xml-parser": "^5.3.5",
-      "path-to-regexp": "^0.1.13",
       "axios": "^1.13.5",
       "fast-xml-builder": ">=1.1.7"
     },
