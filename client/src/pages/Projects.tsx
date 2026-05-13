@@ -1,18 +1,86 @@
+import { trpc } from "@/lib/trpc";
+import CinematicEmptyState from "@/components/CinematicEmptyState";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import SiteHead from "@/components/SiteHead";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Film,
+  Plus,
+  Search,
+  Loader2,
+  Trash2,
+  ArrowUpDown,
+  Calendar,
+  LayoutGrid,
+  List,
+  Globe,
+} from "lucide-react";
+import { useLocation } from "wouter";
+import { JOURNEY_STAGES, computeProjectStage } from "@/lib/journeyStages";
+import { useState, useMemo } from "react";
+import { toast } from "sonner";
 
-  const createDemoMut = trpc.project.createDemoShort.useMutation({
+function timeAgo(date: string | Date) {
+  const now = new Date();
+  const d = new Date(date);
+  const diff = now.getTime() - d.getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 30) return `${days}d ago`;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+export default function Projects() {
+  const [, setLocation] = useLocation();
+  const [search, setSearch] = useState("");
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "name" | "status">("newest");
+  const [filterStatus, setFilterStatus] = useState<"all" | "draft" | "generating" | "completed" | "failed">("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const { data: projects, isLoading, isError } = trpc.project.list.useQuery(
+    undefined,
+    {
+      // Poll every 10 seconds while any project is still generating
+      refetchInterval: (query) =>
+        Array.isArray((query.state.data as any)) && (query.state.data as any[]).some((p: any) => p.status === "generating") ? 10000 : false,
+    }
+  );
+  const utils = trpc.useUtils();
+
+  const deleteMutation = trpc.project.delete.useMutation({
+    onSuccess: () => {
+      utils.project.list.invalidate();
+      toast.success("Project deleted");
+      setDeleteId(null);
+    },
+    onError: () => toast.error("Couldn't delete that project — please try again, or refresh if it persists."),
+  });
+
+    const createDemoMut = trpc.project.createDemoShort.useMutation({
       onSuccess: (data) => {
         utils.project.list.invalidate();
         toast.success("Demo short generating — 5 scenes firing now!");
         navigate(`/projects/${data.projectId}`);
       },
       onError: (err) => toast.error(err.message ?? "Could not create demo short"),
-    }); const createDemoMut = trpc.project.createDemoShort.useMutation({
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: [["project", "list"]] });
-        toast({ title: "Demo Short generating!", description: "5 cinematic scenes are being generated now." });
-        navigate(`/projects/${data.projectId}`);
-      },
-      onError: (err) => toast({ title: "Error", description: err.message, variant: "destructive" }),
     });
 
   const filtered = useMemo(() => {
