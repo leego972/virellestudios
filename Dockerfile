@@ -8,7 +8,7 @@ FROM node:22-slim AS base
   WORKDIR /app
   COPY package.json pnpm-lock.yaml ./
   COPY patches/ ./patches/
-  RUN pnpm install --no-frozen-lockfile
+  RUN pnpm install --frozen-lockfile
 
   # ─── Build ───
   FROM base AS build
