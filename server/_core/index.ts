@@ -104,40 +104,11 @@ async function startServer() {
   server.keepAliveTimeout = 0; // disable keep-alive timeout
   server.headersTimeout = 0;   // disable headers timeout
 
-  // ── Bind port immediately so Railway health check passes without delay ─────
-  // /api/healthz is first — before any async init that could block.
-  // DB migration + Stripe provisioning both run in the background.
+  // Health check — registered before any other middleware.
+  // healthcheckPath = "/" in railway.toml; this also satisfies explicit /api/healthz checks.
   app.get("/api/healthz", (_req, res) => {
     res.json({ ok: true, uptime: process.uptime() });
   });
-
-  const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
-  if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
-  }
-  await new Promise<void>(resolve => server.listen(port, resolve));
-  logger.info(`Server running on http://localhost:${port}/`, { port });
-
-  // v6.82: Admin authority is database-role only. Server startup performs NO
-  // promotion. Admin role changes go through admin.updateUserRole or a
-  // deliberate direct database recovery action. See SECURITY.md §8.
-
-  // Run DB migration + Stripe provisioning in background — server is already
-  // listening so Railway's health check never times out waiting for these.
-  (async () => {
-    try {
-      await runAutoMigration();
-    } catch (err: any) {
-      console.error("[AutoMigrate] Migration failed:", err.message);
-    }
-    try {
-      await runStripeProvisioning();
-    } catch (err: any) {
-      console.error("[StripeProvisioning] Failed:", err.message);
-    }
-    logger.info("[Server] Background init (migrate + provision) complete");
-  })();
 
   // Hardened security headers (CSP, HSTS, frame-options, permissions-policy)
   // applied to every response before route handlers run.
@@ -1475,14 +1446,44 @@ async function startServer() {
     })
   );
 
-  // development mode uses Vite, production mode uses static files
-  if (process.env.NODE_ENV === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+  // ── Port binding + static files ─────────────────────────────────────────────
+  // Production: register static serving BEFORE server.listen() so Railway's
+  // health check at "/" returns 200 from the very first request.
+  // Development: bind first (Vite HMR needs the http.Server reference).
+  const preferredPort = parseInt(process.env.PORT || "3000");
+  const port = await findAvailablePort(preferredPort);
+  if (port !== preferredPort) {
+    logger.info(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
-  // ── Schedulers (server already listening above) ──────────────────────────────
+  if (process.env.NODE_ENV === "development") {
+    await new Promise<void>(resolve => server.listen(port, resolve));
+    logger.info(`Server running on http://localhost:${port}/`, { port });
+    await setupVite(app, server);
+  } else {
+    // Production: serveStatic registers "/" BEFORE listen — matches proven 617477a pattern
+    serveStatic(app);
+    await new Promise<void>(resolve => server.listen(port, resolve));
+    logger.info(`Server running on http://localhost:${port}/`, { port });
+  }
+
+  // Background: DB migration + Stripe provisioning after server is listening.
+  // v6.82: Admin authority is database-role only — no promotion at startup.
+  (async () => {
+    try {
+      await runAutoMigration();
+    } catch (err: any) {
+      console.error("[AutoMigrate] Migration failed:", err.message);
+    }
+    try {
+      await runStripeProvisioning();
+    } catch (err: any) {
+      console.error("[StripeProvisioning] Failed:", err.message);
+    }
+    logger.info("[Server] Background init (migrate + provision) complete");
+  })();
+
+  // ── Schedulers ──────────────────────────────────────────────────────────────────
   // Start autonomous blog engine - generates and publishes SEO articles every 8 hours
   startBlogScheduler(async (article) => {
     try {
