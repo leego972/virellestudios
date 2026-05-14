@@ -741,7 +741,26 @@ export const appRouter = router({
                     const videoResult = await generateBYOKVideo(byokKeys, { prompt, duration: 10, aspectRatio: "16:9", resolution: "720p" });
                     const isAsync = videoResult.videoUrl.startsWith("runway-pending:") || videoResult.videoUrl.startsWith("fal-pending") || videoResult.videoUrl.startsWith("veo3-pending:");
                     if (isAsync && videoResult.jobId) {
-                      await db.createGenerationJob({ projectId, sceneId: scene.id, type: "scene", status: "processing", progress: 0, estimatedSeconds: 60, metadata: JSON.stringify({ provider: videoResult.provider, sceneId: scene.id, projectId, userId, prompt }) } as any);
+                      // Build provider-specific metadata so the worker knows which task to poll and has the API key
+                        const jobProvider = videoResult.provider;
+                        const jobMeta: Record<string, any> = { provider: jobProvider, sceneId: scene.id, projectId, userId, prompt };
+                        if (jobProvider === "runway") {
+                          jobMeta.runwayTaskId = videoResult.jobId;
+                          jobMeta.runwayApiKey = byokKeys.runwayKey;
+                          jobMeta.ratio = "1280:768";
+                          jobMeta.duration = 10;
+                        } else if (jobProvider === "veo3") {
+                          jobMeta.veo3OperationName = videoResult.jobId;
+                          jobMeta.veo3ApiKey = byokKeys.googleAiKey;
+                        } else if (jobProvider === "fal") {
+                          jobMeta.falRequestId = videoResult.jobId;
+                          jobMeta.falApiKey = byokKeys.falKey;
+                          jobMeta.falModel = "fal-ai/wan-pro";
+                        } else if (jobProvider === "seedance") {
+                          jobMeta.seedanceTaskId = videoResult.jobId;
+                          jobMeta.seedanceApiKey = byokKeys.byteplusKey;
+                        }
+                        await db.createGenerationJob({ projectId, sceneId: scene.id, type: "scene", status: "processing", progress: 0, estimatedSeconds: 120, metadata: JSON.stringify(jobMeta) } as any);
                       await db.updateScene(scene.id, { videoUrl: videoResult.videoUrl, status: "generating" });
                     } else {
                       await db.updateScene(scene.id, { videoUrl: videoResult.videoUrl, thumbnailUrl: videoResult.thumbnailUrl || undefined, status: "completed" });
