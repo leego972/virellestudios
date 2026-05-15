@@ -526,4 +526,15 @@ export const advertisingRouter = router({
       const { autoApproveHighQualityContent } = await import("./content-creator-engine");
       return autoApproveHighQualityContent(input?.threshold ?? 75);
     }),
-});
+
+    /**
+     * Manually trigger the video ad pipeline (TikTok + YouTube).
+     * Generates video clips via Pollinations/Runway and posts them — or queues if no credentials.
+     */
+    triggerVideoAdCampaign: adminProcedure
+      .input(z.object({ platform: z.enum(["tiktok", "youtube", "both"]).default("both") }).optional())
+      .mutation(async ({ input }) => {
+        const { generateAndPostVideoAd } = await import("./video-ad-pipeline");
+        return generateAndPostVideoAd(input?.platform ?? "both");
+      }),
+  });
