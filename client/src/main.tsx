@@ -109,20 +109,4 @@ createRoot(document.getElementById("root")!).render(
   </trpc.Provider>
 );
 
-  // Web Vitals — reports CLS, LCP, FID, TTFB, INP to GA4 (requires web-vitals package)
-  if (import.meta.env.PROD) {
-    import("web-vitals").then(({ onCLS, onLCP, onFID, onTTFB, onINP }) => {
-      const report = (m: { name: string; value: number }) => {
-        if (typeof gtag !== "undefined") {
-          gtag("event", "web_vitals", {
-            metric_name: m.name,
-            metric_value: Math.round(m.value),
-            non_interaction: true,
-          });
-        }
-      };
-      onCLS(report); onLCP(report); onFID(report); onTTFB(report); onINP(report);
-    }).catch(() => { /* web-vitals package not installed — safe no-op */ });
-  }
-  
-// Build: 1778849512532
+// Build: 1772659094
