@@ -571,8 +571,18 @@ export default function Home() {
             </div>
           ) : activityItems.length === 0 ? (
             <Card className="bg-card/40 border-dashed">
-              <CardContent className="p-6 text-center">
-                <p className="text-xs text-muted-foreground">No recent activity</p>
+              <CardContent className="p-6 flex flex-col items-center text-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-muted/60 flex items-center justify-center">
+                  <Clapperboard className="h-4 w-4 text-muted-foreground/50" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">No activity yet</p>
+                  <p className="text-[11px] text-muted-foreground/60 mt-0.5">Create a project to start your first production.</p>
+                </div>
+                <Button size="sm" variant="outline" className="h-7 text-xs gap-1.5 border-border/50" onClick={() => setLocation("/projects/new")}>
+                  <Plus className="h-3 w-3" />
+                  New Project
+                </Button>
               </CardContent>
             </Card>
           ) : (

@@ -361,6 +361,34 @@ export default function Landing() {
             </div>
           </section>
 
+        {/* ─── 1b. Platform Stats / Trust Strip ─── */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8 border-y border-white/[0.06] bg-white/[0.015]">
+          <div className="max-w-5xl mx-auto">
+            <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/20 font-semibold mb-8">
+              Built on the world's leading AI video infrastructure
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 text-center mb-8">
+              {([
+                { stat: "5+",   label: "AI video providers",   sub: "Runway · Sora · Veo3 · Kling · fal.ai" },
+                { stat: "130+", label: "Export languages",     sub: "Context-aware professional subtitles" },
+                { stat: "100%", label: "Commercial ownership", sub: "No royalties, no licensing fees" },
+                { stat: "4K",   label: "Max export res",       sub: "Plus ProRes for professional NLEs" },
+              ] as const).map(item => (
+                <div key={item.stat} className="space-y-1.5">
+                  <div className="text-3xl sm:text-4xl font-black text-amber-400 tracking-tighter">{item.stat}</div>
+                  <div className="text-xs font-bold text-white/70">{item.label}</div>
+                  <div className="text-[10px] text-white/25 leading-snug hidden sm:block">{item.sub}</div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5">
+              {["Runway Gen-4.5", "OpenAI Sora 2", "Google Veo 3", "Kling 3.0", "ElevenLabs v3", "Suno v4"].map(name => (
+                <span key={name} className="text-[11px] font-semibold text-white/20 hover:text-white/40 transition-colors cursor-default">{name}</span>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ─── 2. How It Works ─── */}
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
           <div className="max-w-5xl mx-auto">
