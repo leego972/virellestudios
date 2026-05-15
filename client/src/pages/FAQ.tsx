@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
+import SiteHead from "@/components/SiteHead";
   ChevronDown, ChevronUp, ArrowRight, Clapperboard,
   CreditCard, Shield, Video, Mic, Globe, Zap, Users
 } from "lucide-react";
@@ -167,6 +168,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="border-b border-border/40 last:border-0">
+      <SiteHead title="FAQ — Virelle Studios" description="Answers to common questions about Virelle Studios pricing, credits, AI film generation, script tools, subtitle export, and the funding directory." />
       <button
         className="w-full flex items-start justify-between gap-4 py-5 text-left hover:text-amber-400 transition-colors"
         onClick={() => setOpen(!open)}
