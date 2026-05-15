@@ -1,8 +1,8 @@
+import SiteHead from "@/components/SiteHead";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-import SiteHead from "@/components/SiteHead";
   ArrowRight, CheckCircle2, Film, Sparkles, FileText, Image,
   Video, Music, Download, Users, Clock, Shield, RefreshCw,
   Layers, Mic, Clapperboard, Play, Star, ChevronRight,

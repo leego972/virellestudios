@@ -1,8 +1,8 @@
+import SiteHead from "@/components/SiteHead";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
-import SiteHead from "@/components/SiteHead";
   ChevronDown, ChevronUp, ArrowRight, Clapperboard,
   CreditCard, Shield, Video, Mic, Globe, Zap, Users
 } from "lucide-react";

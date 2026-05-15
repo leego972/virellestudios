@@ -1,8 +1,8 @@
+import SiteHead from "@/components/SiteHead";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-import SiteHead from "@/components/SiteHead";
   ArrowRight, Film, Sparkles, Shield, Globe, Zap,
   Target, Eye, Heart, Star, ChevronRight, Users,
   Clapperboard, Award, Lightbulb, Code2
