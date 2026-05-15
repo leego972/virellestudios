@@ -1,6 +1,6 @@
 import { useState } from "react";
   import { useParams, useLocation } from "wouter";
-  import { ArrowLeft, FileSearch, Wand2, Loader2, Star, TrendingUp, Users, MessageSquare, AlertTriangle, CheckCircle, Download, Copy, BarChart3 } from "lucide-react";
+  import { ArrowLeft, FileSearch, Wand2, Loader2, Star, TrendingUp, Users, MessageSquare, AlertTriangle, CheckCircle, Download, Copy, BarChart3, Coins } from "lucide-react";
   import { Button } from "@/components/ui/button";
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
   import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +11,8 @@ import { useState } from "react";
   import { Separator } from "@/components/ui/separator";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { toast } from "sonner";
+  import { trpc } from "@/lib/trpc";
+  import { useSubscription } from "@/hooks/useSubscription";
 
   interface CoverageReport {
     title: string;
@@ -58,65 +60,25 @@ import { useState } from "react";
     const [scriptTitle, setScriptTitle] = useState("");
     const [genre, setGenre] = useState("");
     const [format, setFormat] = useState("Feature");
-    const [analyzing, setAnalyzing] = useState(false);
     const [report, setReport] = useState<CoverageReport | null>(null);
     const [apiKey, setApiKey] = useState(() => localStorage.getItem("virelle_openai_key") ?? localStorage.getItem("virelle_anthropic_key") ?? "");
 
-    const analyze = async () => {
+    const { generationsUsed, generationsLimit } = useSubscription();
+
+    const analyzeMutation = trpc.coverage.analyze.useMutation({
+      onSuccess: (data) => {
+        setReport(data as CoverageReport);
+        toast.success("Coverage report generated — 5 credits deducted");
+      },
+      onError: (err) => {
+        toast.error("Analysis failed: " + err.message);
+      },
+    });
+
+    const analyze = () => {
       if (!scriptText.trim() || scriptText.trim().length < 500) { toast.error("Please paste at least 500 characters of script text"); return; }
       if (!apiKey.trim()) { toast.error("Add your OpenAI or Anthropic API key in Settings → API Keys, or paste it temporarily above"); return; }
-      setAnalyzing(true);
-      try {
-        const prompt = `You are a professional Hollywood script reader. Provide coverage for the following script excerpt.
-
-  Title: ${scriptTitle || "Untitled"}
-  Genre: ${genre || "Unknown"}
-  Format: ${format}
-
-  Script (excerpt):
-  ${scriptText.slice(0, 8000)}
-
-  Respond with a JSON object matching this exact schema:
-  {
-    "logline": "one sentence",
-    "premise": "2-3 sentence premise analysis",
-    "scores": { "premise": 0-100, "structure": 0-100, "characters": 0-100, "dialogue": 0-100, "pacing": 0-100, "originality": 0-100, "marketability": 0-100 },
-    "recommendation": "Pass" | "Consider" | "Recommend",
-    "synopsisNotes": "2-3 sentences on overall story",
-    "strengths": ["string", "string", "string", "string"],
-    "weaknesses": ["string", "string", "string", "string"],
-    "notes": "closing reader notes paragraph"
-  }`;
-
-        const isAnthropic = apiKey.startsWith("sk-ant");
-        let data: any;
-        if (isAnthropic) {
-          const res = await fetch("https://api.anthropic.com/v1/messages", {
-            method: "POST",
-            headers: { "x-api-key": apiKey, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-            body: JSON.stringify({ model: "claude-3-haiku-20240307", max_tokens: 1024, messages: [{ role: "user", content: prompt }] }),
-          });
-          data = await res.json();
-          const text = data.content?.[0]?.text ?? "";
-          const json = text.match(/\{[\s\S]*\}/)?.[0];
-          if (json) setReport({ ...JSON.parse(json), title: scriptTitle || "Untitled", genre: genre || "Unknown", format });
-          else throw new Error("Could not parse response");
-        } else {
-          const res = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${apiKey}`, "content-type": "application/json" },
-            body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" } }),
-          });
-          data = await res.json();
-          const text = data.choices?.[0]?.message?.content ?? "";
-          setReport({ ...JSON.parse(text), title: scriptTitle || "Untitled", genre: genre || "Unknown", format });
-        }
-        toast.success("Coverage report generated");
-      } catch (e: any) {
-        toast.error("Analysis failed: " + (e.message ?? "Unknown error"));
-      } finally {
-        setAnalyzing(false);
-      }
+      analyzeMutation.mutate({ scriptText, title: scriptTitle || undefined, genre: genre || undefined, format, byokKey: apiKey });
     };
 
     const showSample = () => { setReport(SAMPLE_REPORT); toast.info("Showing sample coverage report"); };
@@ -160,14 +122,22 @@ import { useState } from "react";
       URL.revokeObjectURL(url);
     };
 
+    const analyzing = analyzeMutation.isPending;
+
     return (
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2"><FileSearch className="h-6 w-6 text-primary" /> Script Coverage</h1>
-            <p className="text-sm text-muted-foreground">AI-powered script analysis — logline, scores, strengths, and a professional reader's report</p>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
+            <div>
+              <h1 className="text-2xl font-bold flex items-center gap-2"><FileSearch className="h-6 w-6 text-primary" /> Script Coverage</h1>
+              <p className="text-sm text-muted-foreground">AI-powered script analysis — logline, scores, strengths, and a professional reader's report</p>
+            </div>
           </div>
+          <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
+            <Coins className="h-3 w-3 text-amber-500" />
+            5 credits per analysis · {generationsLimit - generationsUsed} remaining
+          </Badge>
         </div>
 
         {!report ? (
@@ -181,12 +151,22 @@ import { useState } from "react";
                     <div className="space-y-1.5"><Label>Genre</Label><Input placeholder="Drama, Thriller…" value={genre} onChange={e => setGenre(e.target.value)} /></div>
                     <div className="space-y-1.5"><Label>Format</Label><Select value={format} onValueChange={setFormat}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Feature","Short Film","TV Pilot","Web Series Episode","Documentary"].map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent></Select></div>
                   </div>
-                  <div className="space-y-1.5"><Label>OpenAI or Anthropic API Key</Label><Input type="password" placeholder="sk-… or sk-ant-…" value={apiKey} onChange={e => setApiKey(e.target.value)} /><p className="text-[10px] text-muted-foreground">Used only for this analysis. Manage keys permanently in Settings → API Keys.</p></div>
+                  <div className="space-y-1.5">
+                    <Label>OpenAI or Anthropic API Key (BYOK)</Label>
+                    <Input type="password" placeholder="sk-… or sk-ant-…" value={apiKey} onChange={e => setApiKey(e.target.value)} />
+                    <p className="text-[10px] text-muted-foreground">Your key is sent to Virelle's server for this analysis only and never stored. Manage keys permanently in Settings → API Keys.</p>
+                  </div>
                 </CardContent>
               </Card>
-              <div className="space-y-1.5"><Label>Paste Script Text (minimum 500 characters)</Label><Textarea className="h-48 font-mono text-xs" placeholder="FADE IN:\n\nINT. DETECTIVE'S OFFICE - NIGHT\n\nPaste your script or excerpt here..." value={scriptText} onChange={e => setScriptText(e.target.value)} /><p className="text-xs text-muted-foreground">{scriptText.length.toLocaleString()} characters</p></div>
+              <div className="space-y-1.5">
+                <Label>Paste Script Text (minimum 500 characters)</Label>
+                <Textarea className="h-48 font-mono text-xs" placeholder={"FADE IN:\n\nINT. DETECTIVE'S OFFICE - NIGHT\n\nPaste your script or excerpt here..."} value={scriptText} onChange={e => setScriptText(e.target.value)} />
+                <p className="text-xs text-muted-foreground">{scriptText.length.toLocaleString()} characters</p>
+              </div>
               <div className="flex gap-3">
-                <Button className="flex-1" onClick={analyze} disabled={analyzing}>{analyzing ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Analysing…</> : <><Wand2 className="h-4 w-4 mr-2" />Generate Coverage</>}</Button>
+                <Button className="flex-1" onClick={analyze} disabled={analyzing}>
+                  {analyzing ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Analysing…</> : <><Wand2 className="h-4 w-4 mr-2" />Generate Coverage · 5 credits</>}
+                </Button>
                 <Button variant="outline" onClick={showSample}>View Sample</Button>
               </div>
             </div>
@@ -194,6 +174,7 @@ import { useState } from "react";
               <FileSearch className="h-12 w-12 text-muted-foreground/30 mb-4" />
               <p className="font-medium">Your coverage report will appear here</p>
               <p className="text-sm text-muted-foreground mt-1">Paste your script and click Generate Coverage, or view a sample report to see what to expect.</p>
+              <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1"><Coins className="h-3 w-3 text-amber-500" />5 credits per analysis — uses your BYOK key</p>
             </Card>
           </div>
         ) : (
@@ -230,7 +211,8 @@ import { useState } from "react";
                   <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-green-500"><CheckCircle className="h-4 w-4" />Strengths</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.strengths.map((s, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-green-500 shrink-0">+</span>{s}</li>)}</ul></CardContent></Card>
                   <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 text-amber-500"><AlertTriangle className="h-4 w-4" />Weaknesses</CardTitle></CardHeader><CardContent><ul className="space-y-1.5">{report.weaknesses.map((w, i) => <li key={i} className="text-xs text-muted-foreground flex gap-2"><span className="text-amber-500 shrink-0">−</span>{w}</li>)}</ul></CardContent></Card>
                 </div>
-                <Card><CardHeader><CardTitle className="text-sm">Reader Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.notes}</p></CardContent></Card>
+                <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><MessageSquare className="h-4 w-4 text-primary" />Synopsis Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.synopsisNotes}</p></CardContent></Card>
+                <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><Star className="h-4 w-4 text-primary" />Reader Notes</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{report.notes}</p></CardContent></Card>
               </div>
             </div>
           </div>
@@ -238,4 +220,3 @@ import { useState } from "react";
       </div>
     );
   }
-  
