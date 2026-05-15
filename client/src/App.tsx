@@ -216,6 +216,11 @@ function GatedTVCommercial() { return <LazyPage><SubscriptionGate feature="TV Co
   function GatedScriptCoverage() { return <LazyPage><SubscriptionGate feature="Script Coverage" featureKey="canUseScriptWriter" requiredTier="indie"><ScriptCoverage /></SubscriptionGate></LazyPage>; }
   function GatedTableRead() { return <LazyPage><SubscriptionGate feature="AI Table Read" featureKey="canUseDialogueEditor" requiredTier="indie"><TableRead /></SubscriptionGate></LazyPage>; }
   function GatedEquipment() { return <LazyPage><SubscriptionGate feature="Equipment & Props" featureKey="canUseLocationScout" requiredTier="indie"><Equipment /></SubscriptionGate></LazyPage>; }
+    function GatedLegalDocs() { return <LazyPage><SubscriptionGate feature="Legal Documents" featureKey="canUseBudgetEstimator" requiredTier="indie"><LegalDocs /></SubscriptionGate></LazyPage>; }
+    function GatedTaxIncentives() { return <LazyPage><SubscriptionGate feature="Tax Incentives" featureKey="canUseBudgetEstimator" requiredTier="indie"><TaxIncentives /></SubscriptionGate></LazyPage>; }
+    function GatedSeriesBible() { return <LazyPage><SubscriptionGate feature="Series Bible" featureKey="canUseScriptWriter" requiredTier="indie"><SeriesBible /></SubscriptionGate></LazyPage>; }
+    function GatedFilmComps() { return <LazyPage><SubscriptionGate feature="Film Comps" featureKey="canUseBudgetEstimator" requiredTier="indie"><FilmComps /></SubscriptionGate></LazyPage>; }
+    function GatedCommunity() { return <LazyPage><SubscriptionGate feature="Community" featureKey="canUseDirectorAssistant" requiredTier="indie"><Community /></SubscriptionGate></LazyPage>; }
 
 function Router() {
   return (
@@ -372,11 +377,11 @@ function Router() {
                 <Route path="/projects/:id/coverage" component={GatedScriptCoverage} />
                 <Route path="/projects/:id/table-read" component={GatedTableRead} />
                 <Route path="/projects/:id/equipment" component={GatedEquipment} />
-                <Route path="/legal-docs">{() => <LazyPage><LegalDocs /></LazyPage>}</Route>
-                <Route path="/tax-incentives">{() => <LazyPage><TaxIncentives /></LazyPage>}</Route>
-                <Route path="/series">{() => <LazyPage><SeriesBible /></LazyPage>}</Route>
-                <Route path="/film-comps">{() => <LazyPage><FilmComps /></LazyPage>}</Route>
-                <Route path="/community">{() => <LazyPage><Community /></LazyPage>}</Route>
+                <Route path="/legal-docs" component={GatedLegalDocs} />
+                <Route path="/tax-incentives" component={GatedTaxIncentives} />
+                <Route path="/series" component={GatedSeriesBible} />
+                <Route path="/film-comps" component={GatedFilmComps} />
+                <Route path="/community" component={GatedCommunity} />
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
             </Switch>
