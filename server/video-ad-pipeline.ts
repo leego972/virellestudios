@@ -225,7 +225,7 @@ export async function generateAndPostVideoAd(
     }
   }
   
-  log.info({ count: results.length }, "[VideoAdPipeline] Campaign complete");
+  log.info("[VideoAdPipeline] Campaign complete");
   return results;
 }
 
@@ -247,6 +247,6 @@ async function saveAdToDb(platform: string, script: VideoAdScript,
         videoUrl: videoUrl ?? null, sceneCount: script.scenes.length, type: "video_ad", pipelineVersion: "2.0" },
     } as any);
   } catch (err) {
-    log.warn({ err: getErrorMessage(err) }, "[VideoAdPipeline] DB save failed (non-fatal)");
+    log.warn("[VideoAdPipeline] DB save failed (non-fatal)");
   }
 }

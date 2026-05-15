@@ -158,8 +158,8 @@ import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
     const isDevServer = command === "serve";
 
     const plugins: Plugin[] = [
-      react(),
-      tailwindcss(),
+      ...react(),
+      ...tailwindcss(),
       ...(isDevServer ? [jsxLocPlugin(), vitePluginManusRuntime()] : []),
       vitePluginManusDebugCollector(),
     ];
