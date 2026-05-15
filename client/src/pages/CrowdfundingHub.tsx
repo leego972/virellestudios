@@ -9,7 +9,7 @@ import { useMemo, useState } from "react";
   import { Textarea } from "@/components/ui/textarea";
   import { Badge } from "@/components/ui/badge";
   import { Progress } from "@/components/ui/progress";
-  import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+  import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
   import {
     Select,
     SelectContent,
@@ -35,6 +35,7 @@ import { useMemo, useState } from "react";
     CheckCircle2,
     AlertCircle,
     Video,
+    Settings,
   } from "lucide-react";
   import { toast } from "sonner";
 
@@ -66,16 +67,16 @@ import { useMemo, useState } from "react";
   Format: ${b.format}. Genre: ${b.genre}. Target audience: ${b.audience}. Tone: ${b.tone}.
   Premise: ${b.premise}
   Funding goal: ${b.goal} ${b.currency}. Campaign length: ${b.duration} days.
-  Include: hook paragraph, story summary (3-4 sentences), director statement, how funds will be used (3-4 bullet points), call-to-action. Keep it under 500 words.`,
+  Include: hook paragraph, story summary (3-4 sentences), director statement, how funds will be used (3-4 bullet points), and a CTA.`,
     rewards: (b, t) =>
       `Design 5-7 reward tiers for the crowdfunding campaign "${t}".
   Format: ${b.format}. Genre: ${b.genre}. Goal: ${b.goal} ${b.currency}.
-  Tiers should escalate from $5 to $5,000+. For each tier: name, dollar amount, 1-line description, estimated delivery month, fulfillment cost note. Output as a clean markdown table.`,
+  Tiers should escalate from $5 to $5,000+. For each tier: name, dollar amount, 1-line description, estimated delivery.`,
     videoScript: (b, t) =>
       `Write a 90-second pitch-video script for the "${t}" crowdfunding campaign.
   Format: ${b.format}. Genre: ${b.genre}. Tone: ${b.tone}. Premise: ${b.premise}
   Goal: ${b.goal} ${b.currency}.
-  Two columns: VISUAL | AUDIO. Open with a 5-second hook. Include filmmaker on-camera moment, story tease, ask, thank-you beat. End with on-screen URL + date.`,
+  Two columns: VISUAL | AUDIO. Open with a 5-second hook. Include filmmaker on-camera moment, story tease, ask, and a URL CTA.`,
   };
 
   interface BriefState {
@@ -116,13 +117,14 @@ import { useMemo, useState } from "react";
     const { data: myCampaigns, isLoading: myCampaignsLoading, refetch: refetchCampaigns } =
       trpc.crowdfund.campaign.listMine.useQuery();
 
+    // ── Campaign mutations ────────────────────────────────────────────────────
     const createCampaignMutation = trpc.crowdfund.campaign.create.useMutation({
       onSuccess: ({ slug }) => {
-        toast.success("Campaign created!");
+        toast.success("Campaign created! Next: set up your payouts.");
         setShowCreateModal(false);
         setCreating(false);
         void refetchCampaigns();
-        navigate(`/campaigns/${slug}`);
+        navigate(`/crowdfund/c/${slug}`);
       },
       onError: (err) => {
         toast.error(err.message);
@@ -130,6 +132,22 @@ import { useMemo, useState } from "react";
       },
     });
 
+    const createConnectAccountMutation = trpc.crowdfund.connect.createAccount.useMutation();
+    const getOnboardingUrlMutation = trpc.crowdfund.connect.getOnboardingUrl.useMutation();
+
+    const launchMutation = trpc.crowdfund.campaign.launch.useMutation({
+      onSuccess: () => {
+        toast.success("Campaign is now live!");
+        setShowLaunchModal(false);
+        setLaunchingId(null);
+        void refetchCampaigns();
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    });
+
+    // ── Platforms ─────────────────────────────────────────────────────────────
     const platforms = useMemo(
       () => (sources ?? []).filter(isCrowdfundingSource),
       [sources]
@@ -147,6 +165,7 @@ import { useMemo, useState } from "react";
       );
     }, [platforms, search]);
 
+    // ── AI Campaign Builder state ─────────────────────────────────────────────
     const [brief, setBrief] = useState<BriefState>({
       format: "Feature",
       genre: "",
@@ -159,6 +178,7 @@ import { useMemo, useState } from "react";
     });
     const [generating, setGenerating] = useState<Kind | null>(null);
 
+    // ── Create modal state ────────────────────────────────────────────────────
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [creating, setCreating] = useState(false);
     const [newCampaign, setNewCampaign] = useState<NewCampaignState>({
@@ -170,6 +190,13 @@ import { useMemo, useState } from "react";
       genre: "",
     });
 
+    // ── Launch modal state ────────────────────────────────────────────────────
+    const [showLaunchModal, setShowLaunchModal] = useState(false);
+    const [launchingId, setLaunchingId] = useState<number | null>(null);
+    const [deadlineDays, setDeadlineDays] = useState(30);
+    const [settingUpPayoutsId, setSettingUpPayoutsId] = useState<number | null>(null);
+
+    // ── Director AI ───────────────────────────────────────────────────────────
     const sendMessage = trpc.directorChat.send.useMutation();
     const { data: history, refetch: refetchHistory } = trpc.directorChat.history.useQuery(
       { projectId },
@@ -187,6 +214,7 @@ import { useMemo, useState } from "react";
       return out;
     }, [history]);
 
+    // ── Handlers ──────────────────────────────────────────────────────────────
     async function generate(kind: Kind) {
       if (!hasProject) {
         toast.error("Open this from a project to generate AI copy.");
@@ -230,6 +258,33 @@ import { useMemo, useState } from "react";
         genre: newCampaign.genre.trim() || undefined,
         projectId: hasProject ? projectId : undefined,
       });
+    }
+
+    async function handleSetupPayouts(campaign: { id: number; stripeConnectAccountId: string | null }) {
+      setSettingUpPayoutsId(campaign.id);
+      try {
+        // Step 1: create or retrieve Connect account
+        const { accountId } = await createConnectAccountMutation.mutateAsync({ campaignId: campaign.id });
+        // Step 2: get onboarding URL and redirect
+        const returnUrl = `${window.location.origin}/crowdfunding`;
+        const { url } = await getOnboardingUrlMutation.mutateAsync({ campaignId: campaign.id, returnUrl });
+        window.location.href = url;
+      } catch (e: any) {
+        toast.error(e?.message || "Failed to start payout setup.");
+      } finally {
+        setSettingUpPayoutsId(null);
+      }
+    }
+
+    function openLaunchModal(id: number) {
+      setLaunchingId(id);
+      setDeadlineDays(30);
+      setShowLaunchModal(true);
+    }
+
+    function confirmLaunch() {
+      if (!launchingId) return;
+      launchMutation.mutate({ id: launchingId, deadlineDays });
     }
 
     const statusColors: Record<string, string> = {
@@ -293,7 +348,7 @@ import { useMemo, useState } from "react";
             ) : !myCampaigns || myCampaigns.length === 0 ? (
               <div className="text-center py-8 space-y-3">
                 <Film className="w-10 h-10 text-muted-foreground/30 mx-auto" />
-                <p className="text-sm text-muted-foreground">No campaigns yet. Launch your first one and fund your film through the Virelle community.</p>
+                <p className="text-sm text-muted-foreground">No campaigns yet. Launch your first one and fund your film through your audience.</p>
                 <Button size="sm" variant="outline" onClick={() => setShowCreateModal(true)}>
                   <Plus className="h-3.5 w-3.5 mr-1.5" /> Create your first campaign
                 </Button>
@@ -305,30 +360,39 @@ import { useMemo, useState } from "react";
                   const days = campaign.deadline
                     ? Math.max(0, Math.ceil((new Date(campaign.deadline).getTime() - Date.now()) / 86400000))
                     : null;
+                  const isSettingUp = settingUpPayoutsId === campaign.id;
                   return (
                     <Card
                       key={campaign.id}
-                      className="overflow-hidden hover:border-amber-500/40 transition-colors cursor-pointer group"
-                      onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
+                      className="overflow-hidden hover:border-amber-500/40 transition-colors group"
                     >
                       {campaign.posterUrl ? (
-                        <div className="h-32 overflow-hidden">
+                        <div
+                          className="h-32 overflow-hidden cursor-pointer"
+                          onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
+                        >
                           <img
                             src={campaign.posterUrl}
                             alt={campaign.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
                       ) : (
-                        <div className="h-20 bg-gradient-to-br from-amber-900/20 to-black/40 flex items-center justify-center">
+                        <div
+                          className="h-20 bg-gradient-to-br from-amber-900/20 to-black/40 flex items-center justify-center cursor-pointer"
+                          onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
+                        >
                           <Film className="w-8 h-8 text-amber-500/30" />
                         </div>
                       )}
                       <CardContent className="p-3 space-y-2">
-                        <div className="flex items-start justify-between gap-2">
+                        <div
+                          className="flex items-start justify-between gap-2 cursor-pointer"
+                          onClick={() => navigate(`/crowdfund/c/${campaign.slug}`)}
+                        >
                           <p className="font-semibold text-sm line-clamp-1 flex-1">{campaign.title}</p>
                           <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded font-medium capitalize ${statusColors[campaign.status] ?? "bg-zinc-500/20 text-zinc-400"}`}
+                            className={`text-[10px] px-1.5 py-0.5 rounded font-medium capitalize ${statusColors[campaign.status] ?? ""}`}
                           >
                             {campaign.status.replace("_", " ")}
                           </span>
@@ -351,14 +415,46 @@ import { useMemo, useState } from "react";
                             {campaign.fundingModel === "all_or_nothing" ? "All-or-Nothing" : "Keep-it-All"}
                           </Badge>
                         </div>
-                        {campaign.status === "draft" && !campaign.stripeConnectOnboarded && (
-                          <div className="flex items-center gap-1.5 text-xs text-amber-400 bg-amber-500/10 rounded px-2 py-1">
-                            <AlertCircle className="w-3 h-3 shrink-0" />Payout setup required
-                          </div>
-                        )}
-                        {campaign.status === "draft" && campaign.stripeConnectOnboarded && (
-                          <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
-                            <CheckCircle2 className="w-3 h-3 shrink-0" />Ready to launch
+
+                        {/* ── Draft actions ──────────────────────────────────── */}
+                        {campaign.status === "draft" && (
+                          <div className="flex flex-col gap-1.5 pt-1">
+                            {!campaign.stripeConnectOnboarded ? (
+                              <>
+                                <div className="flex items-center gap-1.5 text-xs text-amber-400 bg-amber-500/10 rounded px-2 py-1">
+                                  <AlertCircle className="w-3 h-3 shrink-0" />
+                                  Payout setup required before launch
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="w-full h-7 text-xs gap-1.5 border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+                                  disabled={isSettingUp}
+                                  onClick={(e) => { e.stopPropagation(); void handleSetupPayouts(campaign); }}
+                                >
+                                  {isSettingUp
+                                    ? <Loader2 className="w-3 h-3 animate-spin" />
+                                    : <Settings className="w-3 h-3" />
+                                  }
+                                  {isSettingUp ? "Redirecting…" : "Set up payouts"}
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
+                                  <CheckCircle2 className="w-3 h-3 shrink-0" />
+                                  Payouts configured · ready to launch
+                                </div>
+                                <Button
+                                  size="sm"
+                                  className="w-full h-7 text-xs gap-1.5 bg-amber-500 hover:bg-amber-400 text-black font-semibold"
+                                  onClick={(e) => { e.stopPropagation(); openLaunchModal(campaign.id); }}
+                                >
+                                  <Rocket className="w-3 h-3" />
+                                  Launch Campaign
+                                </Button>
+                              </>
+                            )}
                           </div>
                         )}
                       </CardContent>
@@ -440,17 +536,17 @@ import { useMemo, useState } from "react";
                       <SelectItem value="Short">Short</SelectItem>
                       <SelectItem value="Series">Series</SelectItem>
                       <SelectItem value="Documentary">Documentary</SelectItem>
-                      <SelectItem value="Web3 / NFT">Web3 / NFT</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
                   <Label className="text-xs">Genre</Label>
-                  <Input value={brief.genre} onChange={(e) => setBrief({ ...brief, genre: e.target.value })} placeholder="Sci-fi thriller" />
+                  <Input value={brief.genre} onChange={(e) => setBrief({ ...brief, genre: e.target.value })} placeholder="Drama, Sci-Fi, Horror…" />
                 </div>
                 <div>
                   <Label className="text-xs">Audience</Label>
-                  <Input value={brief.audience} onChange={(e) => setBrief({ ...brief, audience: e.target.value })} placeholder="Indie genre fans 18-34" />
+                  <Input value={brief.audience} onChange={(e) => setBrief({ ...brief, audience: e.target.value })} placeholder="e.g. 25–45 indie film fans" />
                 </div>
                 <div>
                   <Label className="text-xs">Tone</Label>
@@ -498,10 +594,10 @@ import { useMemo, useState } from "react";
               </div>
 
               {brief.goal && (
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 text-xs">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
                   <Rocket className="h-4 w-4 text-amber-400 shrink-0" />
                   <div className="flex flex-wrap gap-x-4 gap-y-1">
-                    <span><span className="text-muted-foreground">Goal</span> <span className="font-medium">{brief.currency} {Number(brief.goal || 0).toLocaleString()}</span></span>
+                    <span><span className="text-muted-foreground">Goal</span> <span className="font-medium">{brief.goal} {brief.currency}</span></span>
                     <span><span className="text-muted-foreground">Duration</span> <span className="font-medium">{brief.duration} days</span></span>
                     <span><span className="text-muted-foreground">Format</span> <span className="font-medium">{brief.format}</span></span>
                     {brief.genre && <span><span className="text-muted-foreground">Genre</span> <span className="font-medium">{brief.genre}</span></span>}
@@ -514,11 +610,11 @@ import { useMemo, useState } from "react";
                   {generating === "campaign" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Rocket className="h-3 w-3" />}
                   Pitch
                 </Button>
-                <Button onClick={() => generate("rewards")} disabled={!!generating || !hasProject} className="gap-2" size="sm" variant="secondary">
+                <Button onClick={() => generate("rewards")} disabled={!!generating || !hasProject} className="gap-2" size="sm" variant="outline">
                   {generating === "rewards" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Gift className="h-3 w-3" />}
                   Rewards
                 </Button>
-                <Button onClick={() => generate("videoScript")} disabled={!!generating || !hasProject} className="gap-2" size="sm" variant="secondary">
+                <Button onClick={() => generate("videoScript")} disabled={!!generating || !hasProject} className="gap-2" size="sm" variant="outline">
                   {generating === "videoScript" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Video className="h-3 w-3" />}
                   Video
                 </Button>
@@ -541,7 +637,7 @@ import { useMemo, useState } from "react";
           </Card>
         </div>
 
-        {/* ── Create Campaign Modal ────────────────────────────────────── */}
+        {/* ── Create Campaign Modal ────────────────────────────────────────── */}
         <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
@@ -608,7 +704,7 @@ import { useMemo, useState } from "react";
                   <Input placeholder="Drama, Sci-Fi…" value={newCampaign.genre} onChange={e => setNewCampaign(p => ({ ...p, genre: e.target.value }))} />
                 </div>
               </div>
-              <div className="rounded-lg bg-amber-500/5 border border-amber-500/20 p-3 text-xs text-muted-foreground space-y-1.5">
+              <div className="rounded-lg bg-amber-500/5 border border-amber-500/20 p-3 text-xs text-muted-foreground space-y-1">
                 <p className="font-medium text-amber-400 flex items-center gap-1.5">
                   <CreditCard className="w-3 h-3" />7% Platform Fee
                 </p>
@@ -636,6 +732,53 @@ import { useMemo, useState } from "react";
               >
                 {creating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
                 Create Campaign
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* ── Launch Campaign Modal ────────────────────────────────────────── */}
+        <Dialog open={showLaunchModal} onOpenChange={(open) => { if (!open) { setShowLaunchModal(false); setLaunchingId(null); } }}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Rocket className="w-5 h-5 text-amber-400" /> Launch Campaign
+              </DialogTitle>
+              <DialogDescription>
+                Choose a deadline. Once live, backers can discover and fund your campaign.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              <div>
+                <Label className="text-xs">Campaign Duration</Label>
+                <Select value={String(deadlineDays)} onValueChange={(v) => setDeadlineDays(parseInt(v))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15">15 days — Sprint</SelectItem>
+                    <SelectItem value="21">21 days — Short</SelectItem>
+                    <SelectItem value="30">30 days — Standard</SelectItem>
+                    <SelectItem value="45">45 days — Extended</SelectItem>
+                    <SelectItem value="60">60 days — Long</SelectItem>
+                    <SelectItem value="90">90 days — Maximum</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="rounded-lg bg-zinc-500/5 border border-zinc-500/20 p-3 text-xs text-muted-foreground">
+                <CalendarDays className="w-3 h-3 inline mr-1" />
+                Deadline: <span className="text-foreground font-medium">
+                  {new Date(Date.now() + deadlineDays * 86400000).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}
+                </span>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => { setShowLaunchModal(false); setLaunchingId(null); }}>Cancel</Button>
+              <Button
+                className="bg-amber-500 hover:bg-amber-400 text-black font-semibold gap-2"
+                disabled={launchMutation.isPending}
+                onClick={confirmLaunch}
+              >
+                {launchMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Rocket className="w-4 h-4" />}
+                Go Live
               </Button>
             </DialogFooter>
           </DialogContent>
