@@ -13812,5 +13812,103 @@ Return JSON ONLY in this exact shape:
         };
       }),
   }),
-});
+  // ============================================================================
+    // Script Coverage — AI-powered coverage report (uses caller-supplied BYOK key)
+    // Deducts 5 credits (script_coverage_ai) server-side; refunds on AI failure.
+    // ============================================================================
+    coverage: router({
+      analyze: protectedProcedure
+        .input(z.object({
+          scriptText: z.string().min(100).max(50000),
+          title:      z.string().max(200).optional(),
+          genre:      z.string().max(100).optional(),
+          format:     z.string().max(100).optional(),
+          byokKey:    z.string().min(10).max(200),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          requireFeature(ctx.user, "canUseScriptWriter");
+
+          // Deduct 5 credits up-front; refund if the AI call fails.
+          try {
+            await db.deductCredits(
+              ctx.user.id,
+              CREDIT_COSTS.script_coverage_ai.cost,
+              "script_coverage_ai",
+              `Script coverage: ${input.title || "Untitled"}`,
+            );
+          } catch (e: any) {
+            if (e.message?.includes("INSUFFICIENT_CREDITS"))
+              throw new TRPCError({ code: "FORBIDDEN", message: e.message });
+            throw e;
+          }
+
+          const prompt = `You are a professional Hollywood script reader. Provide coverage for the following script excerpt.
+
+  Title: ${input.title || "Untitled"}
+  Genre: ${input.genre || "Unknown"}
+  Format: ${input.format || "Feature"}
+
+  Script (excerpt):
+  ${input.scriptText.slice(0, 8000)}
+
+  Respond with ONLY a JSON object matching this exact schema (no markdown fences):
+  {
+    "logline": "one sentence",
+    "premise": "2-3 sentence premise analysis",
+    "scores": { "premise": 0-100, "structure": 0-100, "characters": 0-100, "dialogue": 0-100, "pacing": 0-100, "originality": 0-100, "marketability": 0-100 },
+    "recommendation": "Pass" | "Consider" | "Recommend",
+    "synopsisNotes": "2-3 sentences on overall story",
+    "strengths": ["string","string","string","string"],
+    "weaknesses": ["string","string","string","string"],
+    "notes": "closing reader notes paragraph"
+  }`;
+
+          const isAnthropic = input.byokKey.startsWith("sk-ant");
+          let result: any;
+          try {
+            if (isAnthropic) {
+              const res = await fetch("https://api.anthropic.com/v1/messages", {
+                method: "POST",
+                headers: { "x-api-key": input.byokKey, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+                body: JSON.stringify({ model: "claude-3-haiku-20240307", max_tokens: 1024, messages: [{ role: "user", content: prompt }] }),
+              });
+              const data = await res.json() as any;
+              if (!res.ok) throw new Error(data.error?.message ?? `Anthropic error ${res.status}`);
+              const text: string = data.content?.[0]?.text ?? "";
+              const jsonStr = text.match(/\{[\s\S]*\}/)?.[0];
+              if (!jsonStr) throw new Error("Could not parse AI response");
+              result = JSON.parse(jsonStr);
+            } else {
+              const res = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${input.byokKey}`, "content-type": "application/json" },
+                body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" } }),
+              });
+              const data = await res.json() as any;
+              if (!res.ok) throw new Error(data.error?.message ?? `OpenAI error ${res.status}`);
+              result = JSON.parse(data.choices?.[0]?.message?.content ?? "{}");
+            }
+          } catch (e: any) {
+            // Refund credits on AI failure
+            try {
+              await db.addCredits(
+                ctx.user.id,
+                CREDIT_COSTS.script_coverage_ai.cost,
+                "script_coverage_ai_refund",
+                "Coverage AI call failed — credits refunded",
+              );
+            } catch { /* best-effort refund */ }
+            throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Coverage analysis failed: ${e.message}` });
+          }
+
+          return {
+            ...result,
+            title:  input.title  || "Untitled",
+            genre:  input.genre  || "Unknown",
+            format: input.format || "Feature",
+          };
+        }),
+    }),
+
+  });
 export type AppRouter = typeof appRouter;
