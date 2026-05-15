@@ -1,4 +1,5 @@
 import "@/lib/sentry";
+import "@/lib/analytics";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from '@shared/const';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -40,6 +41,24 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
       .register("/sw.js", { scope: "/" })
       .catch((err) => console.warn("[SW] Registration failed:", err));
   });
+}
+
+// Web Vitals — report CLS, LCP, INP, FCP, TTFB to GA4 (prod only, non-blocking)
+if (import.meta.env.PROD) {
+  import("web-vitals").then(({ onCLS, onFCP, onINP, onLCP, onTTFB }) => {
+    const report = ({ name, value, id }: { name: string; value: number; id: string }) => {
+      const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
+      if (typeof g === "function") {
+        g("event", name, {
+          event_category: "Web Vitals",
+          value: Math.round(name === "CLS" ? value * 1000 : value),
+          event_label: id,
+          non_interaction: true,
+        });
+      }
+    };
+    onCLS(report); onFCP(report); onINP(report); onLCP(report); onTTFB(report);
+  }).catch(() => {/* web-vitals unavailable — analytics degraded gracefully */});
 }
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {

@@ -356,6 +356,7 @@ export default function Pricing() {
                 { icon: "✓", label: "Credits never expire" },
                 { icon: "✓", label: "100% commercial ownership" },
                 { icon: "✓", label: "BYOK support" },
+              { icon: "🛡", label: "14-day money-back guarantee" },
               ].map(({ icon, label }) => (
                 <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="text-emerald-400 font-bold">{icon}</span>
