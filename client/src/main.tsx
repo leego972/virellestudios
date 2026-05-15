@@ -109,4 +109,19 @@ createRoot(document.getElementById("root")!).render(
   </trpc.Provider>
 );
 
-// Build: 1772659094
+  // Web Vitals — zero-dependency CLS/LCP/FID/TTFB reporting to GA4 (PROD only)
+  if (import.meta.env.PROD) {
+    type Win = Window & { gtag?: (...a: unknown[]) => void };
+    const sendVital = (name: string, value: number) => {
+      const g = (window as Win).gtag;
+      if (typeof g === "function") g("event", "web_vitals", { metric_name: name, metric_value: Math.round(value), non_interaction: true });
+    };
+    if (typeof PerformanceObserver !== "undefined") {
+      try { new PerformanceObserver(l => l.getEntries().forEach(e => sendVital("LCP", (e as PerformanceEntry & { startTime: number }).startTime))).observe({ type: "largest-contentful-paint", buffered: true }); } catch {}
+      try { let cls = 0; new PerformanceObserver(l => l.getEntries().forEach(e => { if (!(e as PerformanceEntry & { hadRecentInput?: boolean }).hadRecentInput) { cls += (e as PerformanceEntry & { value?: number }).value ?? 0; sendVital("CLS", cls); } })).observe({ type: "layout-shift", buffered: true }); } catch {}
+      try { new PerformanceObserver(l => l.getEntries().forEach(e => sendVital("FID", (e as PerformanceEventTiming).processingStart - e.startTime))).observe({ type: "first-input", buffered: true }); } catch {}
+      try { const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined; if (nav) sendVital("TTFB", nav.responseStart); } catch {}
+    }
+  }
+  
+// Build: 1778849767174
