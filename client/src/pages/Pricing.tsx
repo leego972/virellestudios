@@ -371,7 +371,7 @@ export default function Pricing() {
             30-day satisfaction guarantee — if Virelle isn’t right for you, we’ll refund your first month.
           </div>
 
-          {/* Billing Toggle */
+          {/* Billing Toggle */}
           <div className="mt-10 flex items-center justify-center gap-4">
             <span className={`text-sm ${billingCycle === "monthly" ? "text-white" : "text-muted-foreground"}`}>Monthly</span>
             <button
