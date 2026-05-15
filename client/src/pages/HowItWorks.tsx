@@ -1,3 +1,4 @@
+import SiteHead from "@/components/SiteHead";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -156,6 +157,7 @@ export default function HowItWorks() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SiteHead title="How It Works — Virelle Studios" description="See how Virelle Studios turns your concept into a complete film in minutes — script, storyboard, characters, sound, subtitles, and funding application in one platform." />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

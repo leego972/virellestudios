@@ -494,18 +494,26 @@ export default function Home() {
             </div>
           ) : inProgressProjects.length === 0 ? (
             <Card className="border-dashed bg-card/40">
-              <CardContent className="p-8 flex flex-col items-center text-center gap-3">
+              <CardContent className="p-6 flex flex-col items-center text-center gap-4">
                 <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Film className="h-6 w-6 text-primary" />
+                  <Clapperboard className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">No films in progress</p>
-                  <p className="text-xs text-muted-foreground mt-1">Start your first film — it only takes a few minutes</p>
+                  <p className="text-sm font-semibold">Your first film starts here</p>
+                  <p className="text-xs text-muted-foreground mt-1.5 max-w-xs mx-auto leading-relaxed">
+                    Name your project, choose a genre, build characters, write scenes — Virelle’s 8-stage pipeline guides you from concept to screen.
+                  </p>
                 </div>
-                <Button size="sm" onClick={() => setLocation("/projects")} className="gap-1.5 mt-1">
-                  <Plus className="h-3.5 w-3.5" />
-                  Start a New Film
-                </Button>
+                <div className="flex flex-col sm:flex-row items-center gap-2">
+                  <Button size="sm" onClick={() => setLocation("/projects/new")} className="gap-1.5">
+                    <Plus className="h-3.5 w-3.5" />
+                    Create Your First Film
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => setLocation("/showcase")} className="gap-1.5 text-muted-foreground">
+                    <PlayCircle className="h-3.5 w-3.5" />
+                    Watch the Showrunner
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ) : (

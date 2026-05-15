@@ -18,6 +18,7 @@ import { validateProductionEnv } from "./envValidation";
 import * as db from "../db";
 import { trackPaymentFailure } from "./securityEngine";
 import { startBlogScheduler } from "./blogEngine";
+import { seedBlogPosts } from "../blog-seed";
 import { startAutonomousPipelineScheduler } from "../autonomous-pipeline";
 import { startAdScheduler } from "./advertisingEngine";
 import { startVideoJobWorker } from "./videoJobWorker";
@@ -1040,6 +1041,7 @@ async function startServer() {
 
   // Register SEO Engine routes (sitemap, robots.txt, etc.)
   registerSeoRoutes(app);
+  seedBlogPosts().catch((e) => log.warn({ err: e?.message }, "[BlogSeed] Seed failed"));
   registerSeoV4Routes(app);
 
   // Dynamic blog sitemap — auto-includes all published articles

@@ -1,4 +1,5 @@
 import "@/lib/sentry";
+import "@/lib/analytics";
 import { trpc } from "@/lib/trpc";
 import { UNAUTHED_ERR_MSG } from '@shared/const';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -42,6 +43,31 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
   });
 }
 
+// Web Vitals — native PerformanceObserver (no extra dependency), prod only
+  if (import.meta.env.PROD && typeof PerformanceObserver !== "undefined") {
+    const sendVital = (name: string, value: number) => {
+      const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
+      if (typeof g === "function") {
+        g("event", name, { event_category: "Web Vitals", value: Math.round(value), non_interaction: true });
+      }
+    };
+    try { new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) sendVital("LCP", e.startTime);
+    }).observe({ type: "largest-contentful-paint", buffered: true }); } catch { /* unsupported */ }
+    try { let cls = 0;
+      new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) if (!(e as PerformanceEntry & { hadRecentInput: boolean }).hadRecentInput)
+          cls += (e as PerformanceEntry & { value: number }).value;
+      }).observe({ type: "layout-shift", buffered: true });
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") sendVital("CLS", cls * 1000);
+      }, { once: true });
+    } catch { /* unsupported */ }
+    try { new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) sendVital("INP", (e as PerformanceEntry & { processingStart: number }).processingStart - e.startTime);
+    }).observe({ type: "event", durationThreshold: 16, buffered: true }); } catch { /* unsupported */ }
+  }
+
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
@@ -60,7 +86,7 @@ queryClient.getQueryCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.query.state.error;
     redirectToLoginIfUnauthorized(error);
-    console.error("[API Query Error]", error);
+    if (import.meta.env.DEV) console.error("[API Query Error]", error);
   }
 });
 
@@ -82,7 +108,7 @@ queryClient.getMutationCache().subscribe(event => {
         });
       }
     }
-    console.error("[API Mutation Error]", error);
+    if (import.meta.env.DEV) console.error("[API Mutation Error]", error);
   }
 });
 
@@ -109,4 +135,3 @@ createRoot(document.getElementById("root")!).render(
   </trpc.Provider>
 );
 
-// Build: 1772659094

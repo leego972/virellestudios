@@ -94,5 +94,21 @@
       "id": "id6761315616"
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663446819082/CAkcwNccSUcizneMbEWnnU/virelle-og-image-Qh4eXQVhsEMQW9syLK6aSw.png",
+      "sizes": "2752x1536",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Virelle Studios — AI Film Production Studio"
+    }
+  ],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "id": "/"
 }

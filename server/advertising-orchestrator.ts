@@ -55,6 +55,7 @@ import {
 // use inline fallbacks below.
 import { eq, desc, and, gte, sql, count } from "drizzle-orm";
 import { runTikTokContentPipeline, getTikTokContentStats, isTikTokContentConfigured } from "./tiktok-content-service";
+import { generateAndPostVideoAd } from "./video-ad-pipeline";
 import { logger as _logger } from "./_core/logger";
 const createLogger = (name: string) => ({
   info:  (msg: string, meta?: Record<string, unknown>) => _logger.info(`[${name}] ${msg}`, meta),
@@ -65,7 +66,7 @@ const createLogger = (name: string) => ({
 import { getErrorMessage } from "./_core/errors.js";
 import { generateVideo, generateVideoWithFallback } from "./_core/videoGeneration";
 // Compatibility shims for missing exports
-const isVideoGenerationAvailable = () => !!(process.env.FAL_KEY || process.env.REPLICATE_API_TOKEN || process.env.RUNWAY_API_KEY);
+const isVideoGenerationAvailable = () => true; // Pollinations built-in keys — always available
 const generateShortFormVideo = async (hook: string, script: string) => generateVideoWithFallback({ prompt: `${hook}\n${script}`, seconds: 15 });
 const generateSocialClip = async (topic: string, _platform: string) => generateVideoWithFallback({ prompt: topic, seconds: 30 });
 const generateMarketingVideo = async (prompt: string) => generateVideoWithFallback({ prompt, seconds: 30 });
@@ -1661,66 +1662,29 @@ Return JSON: { "hook": "...", "script": "...", "visualDirections": ["..."], "has
  * Uses Pollinations.ai free tier — zero cost.
  */
 async function generateVideoAd(): Promise<AdvertisingAction> {
-  try {
-    if (!isVideoGenerationAvailable()) {
+    try {
+      log.info("[VideoAd] Running video ad pipeline (TikTok + YouTube)...");
+      const adResults = await generateAndPostVideoAd("both");
+      const posted  = adResults.filter(r => r.status === "posted");
+      const pending = adResults.filter(r => r.status === "no_credentials");
+      const summary = adResults.map(r => r.platform + ":" + r.status).join(" | ");
+      return {
+        channel: "tiktok_organic" as FreeChannel,
+        action: "generate_video_ad",
+        status: posted.length > 0 ? "success" : pending.length > 0 ? "skipped" : "failed",
+        details: summary || "Video ad pipeline ran",
+        cost: 0,
+      };
+    } catch (err: unknown) {
       return {
         channel: "social_organic" as FreeChannel,
         action: "generate_video_ad",
-        status: "skipped",
-        details: "Video generation not available",
+        status: "failed",
+        details: "Video ad pipeline error: " + getErrorMessage(err),
         cost: 0,
       };
     }
-
-    const pillar = CONTENT_PILLARS[Math.floor(Math.random() * CONTENT_PILLARS.length)];
-    const topic = pillar.blogTopics[Math.floor(Math.random() * pillar.blogTopics.length)];
-    const platforms = ["tiktok", "youtube", "linkedin", "twitter"] as const;
-    const platform = platforms[Math.floor(Math.random() * platforms.length)];
-
-    log.info(`Generating ${platform} video ad about: ${topic}`);
-
-    const videoResult = await generateSocialClip(
-      `${pillar.pillar}: ${topic}`,
-      platform
-    );
-
-    // Store in content queue
-    const db = await getDb();
-    if (db) {
-      await db.insert(marketingContent).values({
-        channel: "content_seo" as any,
-        contentType: "video" as any,
-        title: `[AD] ${topic}`,
-        body: (videoResult as any).url ?? videoResult.videoUrl,
-        platform,
-        status: "approved",
-        metadata: {
-          pillar: (pillar as any).pillar,
-          model: (videoResult as any).model,
-          duration: videoResult.duration,
-          aspectRatio: (videoResult as any).aspectRatio,
-          type: "video_ad",
-        },
-      } as any);
-    }
-
-    return {
-      channel: (platform === "tiktok" ? "tiktok_organic" : platform === "youtube" ? "youtube_shorts" : "social_organic") as FreeChannel,
-      action: "generate_video_ad",
-      status: "success",
-      details: `Generated ${platform} video ad: "${topic}" (${(videoResult as any).model ?? 'unknown'}, ${videoResult.duration}s) → ${(videoResult as any).url ?? videoResult.videoUrl}`,
-      cost: 0,
-    };
-  } catch (err: unknown) {
-    return {
-      channel: "social_organic" as FreeChannel,
-      action: "generate_video_ad",
-      status: "failed",
-      details: `Video ad generation failed: ${getErrorMessage(err)}`,
-      cost: 0,
-    };
   }
-}
 
 // ============================================
 // CONTENT QUEUE FOR MANUAL-POST CHANNELS
