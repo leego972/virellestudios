@@ -78,7 +78,7 @@ import { useState } from "react";
       if (!newBody.trim() || newBody.trim().length < 20) { toast.error("Add at least 20 characters of content"); return; }
       setSubmitting(true);
       setTimeout(() => {
-        const displayName = user?.displayName || user?.email?.split("@")[0] || "You";
+        const displayName = (user as any)?.displayName || user?.name || user?.email?.split("@")[0] || "You";
         const initials = displayName.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0,2);
         setPosts(prev => [{
           id: Date.now(), author: displayName, avatar: initials, role: "Filmmaker",

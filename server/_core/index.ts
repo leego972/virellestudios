@@ -1041,7 +1041,7 @@ async function startServer() {
 
   // Register SEO Engine routes (sitemap, robots.txt, etc.)
   registerSeoRoutes(app);
-  seedBlogPosts().catch((e) => log.warn({ err: e?.message }, "[BlogSeed] Seed failed"));
+  seedBlogPosts().catch((e) => logger.warn("[BlogSeed] Seed failed: " + e?.message));
   registerSeoV4Routes(app);
 
   // Dynamic blog sitemap — auto-includes all published articles

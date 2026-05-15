@@ -1543,11 +1543,11 @@ const seedData: SeedPost[] = [
         // Skip duplicates silently
         if ((err as any)?.code === "ER_DUP_ENTRY") continue;
         if ((err as any)?.code === "23505") continue; // pg unique violation
-        log.warn({ err: getErrorMessage(err), slug: post.slug }, "[BlogSeed] Failed to insert post");
+        log.warn("[BlogSeed] Failed to insert post: " + getErrorMessage(err));
       }
     }
 
-  log.info({ inserted, total: posts.length }, "[BlogSeed] Seeding complete");
+  log.info("[BlogSeed] Seeding complete");
     return inserted;
   }
   

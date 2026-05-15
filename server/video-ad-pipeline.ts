@@ -116,7 +116,7 @@ async function generateAdScript(
       },
   });
   
-  const raw = response.choices[0].message.content ?? "{}";
+  const raw = String(response.choices[0].message.content ?? "{}");
   const parsed = JSON.parse(raw) as VideoAdScript;
   parsed.platform = platform;
   return parsed;
@@ -137,10 +137,10 @@ async function generateAdVideo(
       googleAiKey:  process.env.GOOGLE_AI_API_KEY   ?? null,
     };
     const result = await byokGenerateVideo(keys, { prompt, duration: Math.min(durationSeconds, 10), aspectRatio, resolution: "720p" });
-    log.info({ provider: result.provider, videoUrl: result.videoUrl }, "[VideoAdPipeline] Video generated");
+    log.info("[VideoAdPipeline] Video generated");
     return result.videoUrl;
   } catch (err) {
-    log.warn({ err: getErrorMessage(err) }, "[VideoAdPipeline] Video generation failed — using carousel fallback");
+    log.warn("[VideoAdPipeline] Video generation failed — using carousel fallback");
     return null;
   }
 }
@@ -152,7 +152,7 @@ export async function generateAndPostVideoAd(
 ): Promise<VideoAdResult[]> {
   const results: VideoAdResult[] = [];
   const theme = AD_THEMES[Math.floor(Math.random() * AD_THEMES.length)];
-  log.info({ theme: theme.theme, targetPlatform }, "[VideoAdPipeline] Starting video ad campaign");
+  log.info("[VideoAdPipeline] Starting video ad campaign");
   
   const platforms: Array<"tiktok" | "youtube"> =
     targetPlatform === "both" ? ["tiktok", "youtube"] : [targetPlatform];
@@ -220,7 +220,7 @@ export async function generateAndPostVideoAd(
       }
     } catch (err) {
       const msg = getErrorMessage(err);
-      log.error({ err: msg, platform }, "[VideoAdPipeline] Platform pipeline failed");
+      log.error("[VideoAdPipeline] Platform pipeline failed");
       results.push({ status: "failed", platform, details: "Pipeline error: " + msg, error: msg });
     }
   }

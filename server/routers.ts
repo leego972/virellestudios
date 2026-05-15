@@ -13826,7 +13826,7 @@ Return JSON ONLY in this exact shape:
           byokKey:    z.string().min(10).max(200),
         }))
         .mutation(async ({ ctx, input }) => {
-          requireFeature(ctx.user, "canUseScriptWriter");
+          requireFeature(ctx.user, "canUseScriptWriter", "Script Coverage AI");
 
           // Deduct 5 credits up-front; refund if the AI call fails.
           try {
