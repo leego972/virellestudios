@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
+import SiteHead from "@/components/SiteHead";
   ArrowRight, Film, Sparkles, Shield, Globe, Zap,
   Target, Eye, Heart, Star, ChevronRight, Users,
   Clapperboard, Award, Lightbulb, Code2
@@ -86,6 +87,7 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SiteHead title="About Virelle Studios" description="Learn how Virelle Studios is building the world's most powerful AI film production platform — from script to screen in one unified studio." />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
