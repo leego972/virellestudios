@@ -1,24 +1,24 @@
 import { getDb } from "./db";
-  import { blogArticles } from "../drizzle/schema";
-  import { eq } from "drizzle-orm";
-  import { logger } from "./_core/logger";
-  import { getErrorMessage } from "./_core/errors.js";
-  const log = logger;
+import { blogArticles } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
+import { logger } from "./_core/logger";
+import { getErrorMessage } from "./_core/errors.js";
+const log = logger;
 
-  interface SeedPost {
-    slug: string;
-    title: string;
-    excerpt: string;
-    category: string;
-    focusKeyword: string;
-    tags: string[];
-    secondaryKeywords: string[];
-    metaTitle: string;
-    metaDescription: string;
-    content: string;
-  }
+interface SeedPost {
+slug: string;
+title: string;
+excerpt: string;
+category: string;
+focusKeyword: string;
+tags: string[];
+secondaryKeywords: string[];
+metaTitle: string;
+metaDescription: string;
+content: string;
+}
 
-  const seedData: SeedPost[] = [
+const seedData: SeedPost[] = [
     {
       slug: "how-to-make-a-film-with-ai",
       title: "How to Make a Film With AI in 2026: Complete Guide for Independent Filmmakers",
@@ -1489,7 +1489,7 @@ import { getDb } from "./db";
    * Returns the number of newly inserted posts.
    */
   export async function seedBlogPosts(): Promise<number> {
-    const db = await getDb();
+  const db = await getDb();
     if (!db) {
       log.info("[BlogSeed] DB not available, skipping");
       return 0;
@@ -1547,7 +1547,7 @@ import { getDb } from "./db";
       }
     }
 
-    log.info({ inserted, total: posts.length }, "[BlogSeed] Seeding complete");
+  log.info({ inserted, total: posts.length }, "[BlogSeed] Seeding complete");
     return inserted;
   }
   
