@@ -81,6 +81,7 @@ export interface TierLimits {
   maxDurationMinutes: number;
   maxClipsPerScene: number;
   monthlyCredits: number;  // Credits granted each month with subscription
+  canUseCrowdfunding: boolean; // Can create and launch crowdfunding campaigns
 }
 
 /**
@@ -182,6 +183,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAPIAccess: false,
     canUseCustomFineTuning: false,
     canUsePriorityRendering: false,
+    canUseCrowdfunding: false,
     resolution: "720p",
     quality: ["standard"],
     maxDurationMinutes: 0,
@@ -243,6 +245,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAPIAccess: false,
     canUseCustomFineTuning: false,
     canUsePriorityRendering: false,
+    canUseCrowdfunding: true,
     resolution: "720p",
     quality: ["standard"],
     maxDurationMinutes: 0,
@@ -302,6 +305,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAPIAccess: false,
     canUseCustomFineTuning: false,
     canUsePriorityRendering: false,
+    canUseCrowdfunding: true,
     resolution: "1080p",
     quality: ["standard", "high"],
     maxDurationMinutes: 90,
@@ -361,6 +365,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAPIAccess: false,
     canUseCustomFineTuning: false,
     canUsePriorityRendering: true,
+    canUseCrowdfunding: true,
     resolution: "4k",
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 90,
@@ -392,6 +397,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseLiveActionPlate: true, canUseNLEExport: true, canUseAICasting: true,
     canExportUltraHD: true, canUseWhiteLabel: false, canUseAPIAccess: false,
     canUseCustomFineTuning: false, canUsePriorityRendering: true,
+    canUseCrowdfunding: true,
     resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 90, maxClipsPerScene: 10,
     monthlyCredits: 6000,
   },
@@ -420,6 +426,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseLiveActionPlate: true, canUseNLEExport: true, canUseAICasting: true,
     canExportUltraHD: true, canUseWhiteLabel: true, canUseAPIAccess: true,
     canUseCustomFineTuning: false, canUsePriorityRendering: true,
+    canUseCrowdfunding: true,
     resolution: "4k", quality: ["standard", "high", "ultra"], maxDurationMinutes: 150, maxClipsPerScene: 20,
     monthlyCredits: 15500,
   },
@@ -476,6 +483,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseAPIAccess: true,
     canUseCustomFineTuning: true,
     canUsePriorityRendering: true,
+    canUseCrowdfunding: true,
     resolution: "4k",
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
@@ -507,6 +515,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
     canUseLiveActionPlate: true, canUseNLEExport: true, canUseAICasting: true,
     canExportUltraHD: true, canUseWhiteLabel: true, canUseAPIAccess: true,
     canUseCustomFineTuning: true, canUsePriorityRendering: true,
+    canUseCrowdfunding: true,
     resolution: "4k",
     quality: ["standard", "high", "ultra"],
     maxDurationMinutes: 180,
@@ -674,6 +683,10 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   create_project:          { cost: 0,   label: "Create New Project (FREE — no friction on start)" },
   movie_export:            { cost: 5,   label: "Movie Export (scenes/trailer export)" },
     script_coverage_ai:      { cost: 5,   label: "AI Script Coverage (logline, scores, reader notes — BYOK)" },
+  // ── Crowdfunding ────────────────────────────────────────────────────────────
+  crowdfund_campaign_launch: { cost: 0,   label: "Launch Crowdfunding Campaign (FREE — tier-gated, no credit fee)" },
+  crowdfund_ai_copy:         { cost: 3,   label: "AI Crowdfunding Copy (tagline + pitch description via Director AI)" },
+  crowdfund_reward_gen:      { cost: 2,   label: "AI Reward Tier Suggestions (4 tiered reward ideas for campaign)" },
 };
 
 /**
