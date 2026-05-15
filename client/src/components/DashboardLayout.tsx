@@ -83,6 +83,7 @@ const menuGroups = [
       { icon: Film, label: "Projects", path: "/projects" },
       { icon: Clapperboard, label: "My Movies", path: "/movies" },
       { icon: MessageSquare, label: "Director's Assistant", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
+        { icon: Tv, label: "Series Bible", path: "/series" },
     ],
   },
   {
@@ -116,7 +117,11 @@ const menuGroups = [
       { icon: DollarSign, label: "Funding Directory", path: "/funding" },
       { icon: Rocket, label: "Crowdfunding Hub", path: "/crowdfunding" },
       { icon: Building2, label: "Brand Outreach", path: "/brand-outreach" },
+        { icon: Users, label: "Community", path: "/community" },
       { icon: BookOpen, label: "Blog", path: "/blog" },
+        { icon: BarChart3, label: "Film Comps", path: "/film-comps" },
+        { icon: FileText, label: "Legal Docs", path: "/legal-docs" },
+        { icon: Calculator, label: "Tax Incentives", path: "/tax-incentives" },
     ],
   },
   {
