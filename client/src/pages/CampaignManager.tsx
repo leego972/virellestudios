@@ -15,7 +15,7 @@ import {
   Megaphone, Plus, Rocket, Globe, Users, Sparkles, Copy, ExternalLink,
   Trash2, Play, Pause, CheckCircle, Clock, AlertCircle, RefreshCw,
   Target, TrendingUp, Zap, Film, Palette, Monitor, MessageSquare,
-  BarChart3, Share2, Twitter, Linkedin, Facebook, Code2, Calendar,
+  BarChart3, Share2, X, AtSign, ThumbsUp, Code2, Calendar,
   Award, Handshake, BookOpen, Star, Briefcase,
 } from "lucide-react";
 
@@ -84,10 +84,10 @@ function SocialShareButtons({ content, platforms }: { content: any; platforms: a
   const encodedTitle = encodeURIComponent(content.title || "Virelle Studios");
 
   const shareLinks = [
-    { label: "Twitter/X", icon: Twitter, url: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`, color: "hover:text-sky-400" },
-    { label: "LinkedIn", icon: Linkedin, url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&summary=${encodedText}`, color: "hover:text-blue-500" },
+    { label: "X/X", icon: X, url: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`, color: "hover:text-sky-400" },
+    { label: "LinkedIn", icon: AtSign, url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&summary=${encodedText}`, color: "hover:text-blue-500" },
     { label: "Reddit", icon: Globe, url: `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`, color: "hover:text-orange-500" },
-    { label: "Facebook", icon: Facebook, url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`, color: "hover:text-blue-600" },
+    { label: "ThumbsUp", icon: ThumbsUp, url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`, color: "hover:text-blue-600" },
   ];
 
   return (
@@ -968,7 +968,7 @@ export default function CampaignManager() {
                       { tip: "Post on Reddit film communities during weekday evenings (6-9pm EST) for maximum engagement" },
                       { tip: "LinkedIn posts with industry insights get 3x more reach than promotional content" },
                       { tip: "Use 3-5 hashtags on Instagram — more than 10 actually reduces reach" },
-                      { tip: "Twitter/X threads about AI filmmaking consistently outperform single tweets" },
+                      { tip: "X/X threads about AI filmmaking consistently outperform single tweets" },
                       { tip: "Engage with comments within the first hour of posting to boost algorithm ranking" },
                       { tip: "Cross-post to multiple subreddits but customize the title for each community" },
                     ].map((item, i) => (

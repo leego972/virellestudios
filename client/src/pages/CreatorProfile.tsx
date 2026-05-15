@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { Film, Globe, Instagram, Youtube, Twitter, Linkedin, ExternalLink, Play, Layers, User } from "lucide-react";
+import { Film, Globe, Camera, PlayCircle, X, Briefcase, ExternalLink, Play, Layers, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -151,22 +151,22 @@ export default function CreatorProfile() {
               <div className="flex flex-wrap items-center gap-3">
                 {socialLinks.instagram && (
                   <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-                    <Instagram className="w-4 h-4" />
+                    <Camera className="w-4 h-4" />
                   </a>
                 )}
                 {socialLinks.youtube && (
                   <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-                    <Youtube className="w-4 h-4" />
+                    <PlayCircle className="w-4 h-4" />
                   </a>
                 )}
                 {socialLinks.twitter && (
                   <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-                    <Twitter className="w-4 h-4" />
+                    <X className="w-4 h-4" />
                   </a>
                 )}
                 {socialLinks.linkedin && (
                   <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-white transition-colors">
-                    <Linkedin className="w-4 h-4" />
+                    <Briefcase className="w-4 h-4" />
                   </a>
                 )}
                 {socialLinks.website && (

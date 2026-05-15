@@ -22,19 +22,19 @@ import { toast } from "sonner";
 import {
   Loader2, Shield, Play, RefreshCw, Video, Share2, Zap, Clock,
   CheckCircle2, XCircle, AlertCircle, BarChart3, TrendingUp,
-  Instagram, Twitter, Facebook, Linkedin, Youtube, Image,
+  Camera, X, ThumbsUp, Briefcase, PlayCircle, Image,
   Target, DollarSign, Eye, MousePointer, Activity, Megaphone,
   Film, Sparkles, ExternalLink, Copy, ChevronDown, ChevronUp,
 } from "lucide-react";
 
 // ─── Platform Meta ─────────────────────────────────────────────────────────
 const PLATFORM_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  instagram: { label: "Instagram", color: "text-purple-400", icon: <Instagram className="w-4 h-4" /> },
+  instagram: { label: "Camera", color: "text-purple-400", icon: <Camera className="w-4 h-4" /> },
   tiktok: { label: "TikTok", color: "text-pink-400", icon: <Video className="w-4 h-4" /> },
-  facebook: { label: "Facebook", color: "text-blue-400", icon: <Facebook className="w-4 h-4" /> },
-  x_twitter: { label: "X / Twitter", color: "text-sky-400", icon: <Twitter className="w-4 h-4" /> },
-  linkedin: { label: "LinkedIn", color: "text-blue-500", icon: <Linkedin className="w-4 h-4" /> },
-  youtube_shorts: { label: "YouTube Shorts", color: "text-red-400", icon: <Youtube className="w-4 h-4" /> },
+  facebook: { label: "ThumbsUp", color: "text-blue-400", icon: <ThumbsUp className="w-4 h-4" /> },
+  x_twitter: { label: "X / X", color: "text-sky-400", icon: <X className="w-4 h-4" /> },
+  linkedin: { label: "LinkedIn", color: "text-blue-500", icon: <Briefcase className="w-4 h-4" /> },
+  youtube_shorts: { label: "YouTube Shorts", color: "text-red-400", icon: <PlayCircle className="w-4 h-4" /> },
   pinterest: { label: "Pinterest", color: "text-rose-400", icon: <Share2 className="w-4 h-4" /> },
 };
 

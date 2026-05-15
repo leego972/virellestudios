@@ -22,7 +22,7 @@ import {
   ExternalLink,
   Film,
   Globe,
-  Instagram,
+  Camera,
   Loader2,
   Megaphone,
   RefreshCw,
@@ -30,7 +30,7 @@ import {
   Sparkles,
   Star,
   User,
-  Youtube,
+  PlayCircle,
   Zap,
 } from "lucide-react";
 
@@ -54,8 +54,8 @@ const PLATFORM_CONFIGS = [
   },
   {
     key: "instagram" as const,
-    label: "Instagram Reels",
-    icon: Instagram,
+    label: "Camera Reels",
+    icon: Camera,
     description: "Vertical 9:16 · 90s max",
     color: "text-purple-500",
     bg: "bg-purple-500/10 border-purple-500/20",
@@ -63,7 +63,7 @@ const PLATFORM_CONFIGS = [
   {
     key: "youtubeShorts" as const,
     label: "YouTube Shorts",
-    icon: Youtube,
+    icon: PlayCircle,
     description: "Vertical 9:16 · 60s max",
     color: "text-red-500",
     bg: "bg-red-500/10 border-red-500/20",
@@ -192,7 +192,7 @@ export default function Distribute() {
   const readinessItems = [
     { label: "Trailer exported", done: !!exports.trailer },
     { label: "TikTok cut exported", done: !!exports.tiktok },
-    { label: "Instagram Reels cut exported", done: !!exports.instagram },
+    { label: "Camera Reels cut exported", done: !!exports.instagram },
     { label: "YouTube Shorts cut exported", done: !!exports.youtubeShorts },
     { label: "Promo captions & hashtags generated", done: !!promoStatus?.promoAssetsGenerated },
     { label: "Film page published", done: !!promoStatus?.isPublished },

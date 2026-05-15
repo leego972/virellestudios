@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Share2, Copy, Check, Twitter, Facebook, Linkedin, Link2 } from "lucide-react";
+import { Share2, Copy, Check, X, ThumbsUp, Briefcase, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ShareButtonProps {
@@ -34,18 +34,18 @@ export default function ShareButton({ title, description, url, compact = false }
 
   const socialLinks = [
     {
-      name: "Twitter / X",
-      icon: <Twitter className="h-4 w-4" />,
+      name: "X / X",
+      icon: <X className="h-4 w-4" />,
       url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
     },
     {
-      name: "Facebook",
-      icon: <Facebook className="h-4 w-4" />,
+      name: "ThumbsUp",
+      icon: <ThumbsUp className="h-4 w-4" />,
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
     },
     {
       name: "LinkedIn",
-      icon: <Linkedin className="h-4 w-4" />,
+      icon: <Briefcase className="h-4 w-4" />,
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
     },
   ];

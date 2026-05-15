@@ -46,7 +46,7 @@ import {
   ChevronLeft,
   Folder,
   Sparkles,
-  Youtube,
+  PlayCircle,
   ExternalLink,
   Lock,
 } from "lucide-react";
@@ -160,7 +160,7 @@ function YouTubeExportModal({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Youtube className="h-5 w-5 text-red-500" />
+            <PlayCircle className="h-5 w-5 text-red-500" />
             Export to Virelle Studios YouTube
           </DialogTitle>
           <DialogDescription>
@@ -233,7 +233,7 @@ function YouTubeExportModal({
                 })
               }
             >
-              <Youtube className="h-4 w-4" />
+              <PlayCircle className="h-4 w-4" />
               {exportMutation.isPending ? "Uploading…" : "Upload to YouTube"}
             </Button>
           )}
@@ -415,7 +415,7 @@ export default function Movies() {
               onClick={(e) => openYouTubeExport(movie, e)}
               title={canYouTubeExport ? "Export to Virelle Studios YouTube" : "Upgrade to Studio plan to export to YouTube"}
             >
-              {canYouTubeExport ? <Youtube className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+              {canYouTubeExport ? <PlayCircle className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
               {canYouTubeExport ? "Export to YouTube" : "YouTube (Upgrade)"}
             </Button>
           )}
@@ -594,7 +594,7 @@ export default function Movies() {
               title={canYouTubeExport ? "Export to Virelle Studios YouTube" : "Upgrade to export to YouTube"}
               aria-label={canYouTubeExport ? `Export ${movie.title} to YouTube` : `Upgrade to export ${movie.title} to YouTube`}
             >
-              <Youtube className="h-4 w-4" aria-hidden="true" />
+              <PlayCircle className="h-4 w-4" aria-hidden="true" />
             </Button>
           )}
           <Button

@@ -65,7 +65,7 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
     } catch { /* unsupported */ }
     try { new PerformanceObserver((list) => {
       for (const e of list.getEntries()) sendVital("INP", (e as PerformanceEntry & { processingStart: number }).processingStart - e.startTime);
-    }).observe({ type: "event", durationThreshold: 16, buffered: true }); } catch { /* unsupported */ }
+    }).observe({ type: "event", buffered: true }); } catch { /* unsupported */ }
   }
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {

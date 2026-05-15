@@ -27,7 +27,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import {
   PenTool, Sparkles, Plus, RefreshCw, Send, Clock, CheckCircle,
   XCircle, Eye, BarChart3, TrendingUp, Target, Zap, Film,
-  Instagram, Twitter, Linkedin, Facebook, Globe, Mail, BookOpen,
+  Camera, X, Briefcase, ThumbsUp, Globe, Mail, BookOpen,
   Calendar, Copy, ExternalLink, Trash2, Play, Pause, AlertCircle,
   ChevronDown, ChevronUp, Image, Video, FileText, Hash, Star,
   ArrowUpRight, Users, MessageSquare, Heart, Share2, Bookmark,
@@ -37,10 +37,10 @@ import {
 // ─── Platform Icons & Labels ──────────────────────────────────────────────────
 const PLATFORM_META: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
   tiktok: { label: "TikTok", color: "text-pink-400", bg: "bg-pink-500/10 border-pink-500/20", icon: <Video className="h-4 w-4" /> },
-  instagram: { label: "Instagram", color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20", icon: <Instagram className="h-4 w-4" /> },
-  x_twitter: { label: "X (Twitter)", color: "text-sky-400", bg: "bg-sky-500/10 border-sky-500/20", icon: <Twitter className="h-4 w-4" /> },
-  linkedin: { label: "LinkedIn", color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", icon: <Linkedin className="h-4 w-4" /> },
-  facebook: { label: "Facebook", color: "text-blue-500", bg: "bg-blue-600/10 border-blue-600/20", icon: <Facebook className="h-4 w-4" /> },
+  instagram: { label: "Camera", color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20", icon: <Camera className="h-4 w-4" /> },
+  x_twitter: { label: "X (X)", color: "text-sky-400", bg: "bg-sky-500/10 border-sky-500/20", icon: <X className="h-4 w-4" /> },
+  linkedin: { label: "LinkedIn", color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", icon: <Briefcase className="h-4 w-4" /> },
+  facebook: { label: "ThumbsUp", color: "text-blue-500", bg: "bg-blue-600/10 border-blue-600/20", icon: <ThumbsUp className="h-4 w-4" /> },
   youtube_shorts: { label: "YouTube Shorts", color: "text-red-400", bg: "bg-red-500/10 border-red-500/20", icon: <Video className="h-4 w-4" /> },
   blog: { label: "Blog", color: "text-green-400", bg: "bg-green-500/10 border-green-500/20", icon: <BookOpen className="h-4 w-4" /> },
   email: { label: "Email", color: "text-yellow-400", bg: "bg-yellow-500/10 border-yellow-500/20", icon: <Mail className="h-4 w-4" /> },

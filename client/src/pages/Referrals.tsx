@@ -1,7 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import {
   Copy, Gift, Users, TrendingUp, Share2, Check,
-  Trophy, Zap, ChevronRight, Linkedin, MessageCircle, Tag,
+  Trophy, Zap, ChevronRight, Briefcase, MessageCircle, Tag,
 } from "lucide-react";
 import { HollywoodIcon } from "@/components/HollywoodIcon";
 import { Button } from "@/components/ui/button";
@@ -164,7 +164,7 @@ export default function Referrals() {
                     Share
                   </Button>
                   <Button onClick={shareLinkedIn} size="sm" variant="outline" className="border-blue-500/30 hover:bg-blue-600/20 text-blue-400">
-                    <Linkedin className="h-3.5 w-3.5 mr-1.5" />
+                    <Briefcase className="h-3.5 w-3.5 mr-1.5" />
                     LinkedIn
                   </Button>
                   <Button onClick={shareWhatsApp} size="sm" variant="outline" className="border-green-500/30 hover:bg-green-600/20 text-green-400">

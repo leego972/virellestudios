@@ -63,6 +63,9 @@ import {
   Calendar,
   ClipboardList,
   Scissors,
+  Tv,
+  FileText,
+  Calculator,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
