@@ -5,9 +5,15 @@ import { useState } from "react";
   import { Badge } from "@/components/ui/badge";
   import { Card, CardContent } from "@/components/ui/card";
   import {
+    Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+  } from "@/components/ui/dialog";
+  import {
     Star, Zap, Shield, Film, Users, ArrowRight, Play, Crown,
     Sparkles, CheckCircle2, ChevronRight, Fingerprint, GitBranch, Layers, AlertTriangle,
+    Lock, ShoppingCart, XCircle, Info,
   } from "lucide-react";
+  import { useAuth } from "@/_core/hooks/useAuth";
+  import { toast } from "sonner";
 
   // ─── Full cast roster with Character DNA ──────────────────────────────────────
   const FLAGSHIP_STARS = [
@@ -470,6 +476,22 @@ import { useState } from "react";
     "Previsualization", "Casting exploration",
   ];
 
+  // ─── Unlock pricing (mirrors server config, AUD) ────────────────────────────
+  const BASE_PRICE: Record<string, number> = { standard: 15, premium: 39, flagship: 99 };
+
+  function getUnlockPrice(tier: string, licenseType: string): number {
+    const base = BASE_PRICE[tier] ?? 15;
+    if (licenseType === "commercial") return base + 79;
+    if (licenseType === "episodic") return base * 4;
+    return base;
+  }
+
+  const LICENSE_OPTIONS = [
+    { type: "creator" as const,    label: "Creator License",    description: "One public release — YouTube, socials, indie film, or festival submission." },
+    { type: "commercial" as const, label: "Commercial License", description: "Client work, branded content, ads, or any monetised campaign." },
+    { type: "episodic" as const,   label: "Episodic License",   description: "Recurring series or multi-part installments." },
+  ];
+
   const ACCENT_CLASSES: Record<string, { bg: string; text: string; border: string }> = {
     amber:   { bg: "bg-amber-500/15",   text: "text-amber-300",   border: "border-amber-500/30" },
     cyan:    { bg: "bg-cyan-500/15",    text: "text-cyan-300",    border: "border-cyan-500/30" },
@@ -541,6 +563,31 @@ import { useState } from "react";
 
     const [, navigate] = useLocation();
     const [expandedCard, setExpandedCard] = useState<string | null>(null);
+    const [unlockActor, setUnlockActor] = useState<(typeof FLAGSHIP_STARS)[0] | null>(null);
+    const [selectedLicense, setSelectedLicense] = useState<"creator" | "commercial" | "episodic">("creator");
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const { user } = useAuth();
+
+    const checkoutMutation = trpc.signatureCast.createUnlockCheckout.useMutation({
+      onSuccess: (data: any) => { if (data?.url) window.location.href = data.url; },
+      onError: (err: any) => {
+        setIsCheckingOut(false);
+        toast.error(err.message ?? "Checkout failed. Please try again.");
+      },
+    });
+
+    function openUnlock(e: React.MouseEvent, actor: (typeof FLAGSHIP_STARS)[0]) {
+      e.stopPropagation();
+      setUnlockActor(actor);
+      setSelectedLicense("creator");
+    }
+
+    function handleUnlockCheckout() {
+      if (!unlockActor) return;
+      if (!user) { navigate("/login"); return; }
+      setIsCheckingOut(true);
+      checkoutMutation.mutate({ actorId: unlockActor.id, licenseType: selectedLicense });
+    }
 
     const flagshipActors = FLAGSHIP_STARS.filter(a => a.tier === "flagship");
     const premiumActors  = FLAGSHIP_STARS.filter(a => a.tier === "premium");
@@ -761,6 +808,7 @@ import { useState } from "react";
                             <span key={tag} className={`text-xs px-2 py-0.5 rounded-full ${ac.bg} ${ac.text} border ${ac.border}`}>{tag}</span>
                           ))}
                         </div>
+                        <Button size="sm" className="w-full mt-2 bg-amber-500/90 hover:bg-amber-400 text-black text-xs font-semibold h-7 rounded-lg" onClick={(e) => openUnlock(e, actor)}><Lock className="w-3 h-3 mr-1.5" />Unlock — A${BASE_PRICE[actor.tier]}</Button>
                         <p className={`text-[10px] ${ac.text} text-center opacity-60 mt-1`}>{isExpanded ? "Tap to collapse" : "Tap to view Character DNA"}</p>
                       </div>
                     </CardContent>
@@ -809,6 +857,10 @@ import { useState } from "react";
                       {actor.tags.slice(0, 2).map((tag) => (
                         <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/5 text-zinc-500 border border-white/5">{tag}</span>
                       ))}
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-white/5 flex gap-2" onClick={e => e.stopPropagation()}>
+                      <Button size="sm" className="flex-1 bg-amber-500/90 hover:bg-amber-400 text-black text-xs font-semibold h-7 rounded-lg" onClick={(e) => openUnlock(e, actor)}><Lock className="w-3 h-3 mr-1" />Unlock</Button>
+                      <Button size="sm" variant="outline" className="border-white/10 text-zinc-400 hover:bg-white/5 text-xs h-7 px-2" onClick={(e) => { e.stopPropagation(); navigate(`/talent-search?actor=${actor.id}`); }}>Details</Button>
                     </div>
                   </div>
                 );
@@ -1272,6 +1324,68 @@ import { useState } from "react";
           </div>
         </section>
 
+
+        {/* ── UNLOCK MODAL ─────────────────────────────────────────────────────────────────── */}
+        {unlockActor && (
+          <Dialog open={!!unlockActor} onOpenChange={() => { setUnlockActor(null); setIsCheckingOut(false); }}>
+            <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold">Unlock {unlockActor.name}</DialogTitle>
+                <DialogDescription className="text-zinc-400">Choose a license type and complete checkout via Stripe.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 mt-2">
+                {/* Value props */}
+                <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-4 space-y-1.5">
+                  {["Continuity-tuned portrait for consistent face across scenes", "Ready to cast directly into any Virelle project", "Built for films, trailers, campaigns, and series"].map(p => (
+                    <div key={p} className="flex items-start gap-2 text-xs text-zinc-300"><Zap className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />{p}</div>
+                  ))}
+                </div>
+                {/* License picker */}
+                <div>
+                  <p className="text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-3">License Type</p>
+                  <div className="space-y-2">
+                    {LICENSE_OPTIONS.map(opt => {
+                      const price = getUnlockPrice(unlockActor.tier, opt.type);
+                      const isSel = selectedLicense === opt.type;
+                      return (
+                        <button key={opt.type} className={`w-full text-left rounded-lg border p-3 transition-all ${isSel ? "border-amber-500/50 bg-amber-500/10" : "border-white/10 bg-white/5 hover:border-white/20"}`} onClick={() => setSelectedLicense(opt.type)}>
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className={`text-sm font-medium ${isSel ? "text-amber-300" : "text-zinc-200"}`}>{opt.label}</span>
+                            <span className={`text-sm font-bold ${isSel ? "text-amber-400" : "text-zinc-300"}`}>A${price}</span>
+                          </div>
+                          <p className="text-xs text-zinc-500">{opt.description}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Terms */}
+                <div className="rounded-lg border border-white/5 bg-zinc-950/60 p-3 space-y-1.5">
+                  <div className="flex items-start gap-2 text-xs text-zinc-500"><CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />Films, trailers, series, campaigns, prestige digital content</div>
+                  <div className="flex items-start gap-2 text-xs text-zinc-500"><XCircle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />Pornography, explicit content, adult-industry use — prohibited</div>
+                </div>
+                {/* What happens next */}
+                <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-3 flex gap-2">
+                  <Info className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+                  <p className="text-xs text-blue-300">After unlocking, open any project, add this character to a scene, and generate. Generation credits apply separately.</p>
+                </div>
+                {/* CTA */}
+                {!user ? (
+                  <Button className="w-full bg-amber-500 hover:bg-amber-400 text-black font-semibold" onClick={() => navigate("/login")}>Sign in to License Talent</Button>
+                ) : (
+                  <div className="flex gap-3">
+                    <Button className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-semibold" onClick={handleUnlockCheckout} disabled={isCheckingOut}>
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      {isCheckingOut ? "Opening checkout…" : `License — A$${getUnlockPrice(unlockActor.tier, selectedLicense)}`}
+                    </Button>
+                    <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5" onClick={() => { setUnlockActor(null); setIsCheckingOut(false); }}>Cancel</Button>
+                  </div>
+                )}
+                <p className="text-xs text-zinc-600 text-center">Secure checkout via Stripe. Generation credits apply after unlock.</p>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     );
   }

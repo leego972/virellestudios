@@ -417,7 +417,7 @@ export default function SceneEditor() {
           } else if (scene && (scene as any).status === "failed") {
             clearInterval(pollInterval);
             utils.scene.listByProject.invalidate({ projectId });
-            toast.error("Video generation failed. Please try again.");
+            toast.error("Scene generation failed — check your credits or provider status in Settings.", { duration: 6000 });
           }
         }, 10000);
         // Stop polling after 10 minutes max
@@ -426,7 +426,20 @@ export default function SceneEditor() {
         toast.success(`Video generated via ${result.provider} (${result.duration}s)`);
       }
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: any) => {
+      const msg = err?.message ?? "";
+      if (msg.includes("no_video_key") || msg.includes("No video generation key")) {
+        toast.error("No video provider configured. Add an API key in Settings → Providers.", { duration: 8000 });
+      } else if (msg.includes("402") || msg.includes("insufficient") || msg.includes("credits")) {
+        toast.error("Insufficient credits. Top up your generation credits to continue.", { duration: 8000 });
+      } else if (msg.includes("403") || msg.includes("quota") || msg.includes("rate limit")) {
+        toast.error("Provider quota exceeded. Try again shortly or switch providers in Settings.", { duration: 8000 });
+      } else if (msg.includes("401") || msg.includes("invalid_api_key") || msg.includes("Unauthorized")) {
+        toast.error("Invalid API key. Check your provider credentials in Settings → Providers.", { duration: 8000 });
+      } else {
+        toast.error(msg || "Video generation failed. Please try again.", { duration: 6000 });
+      }
+    },
   });
 
   const bulkVideoMutation = trpc.scene.bulkGenerateVideos.useMutation({
@@ -434,7 +447,7 @@ export default function SceneEditor() {
       utils.scene.listByProject.invalidate({ projectId });
       toast.success(`Generated ${result.generated} videos (${result.total} total scenes)`);
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err: any) => toast.error(err?.message?.includes("credits") ? "Insufficient credits for bulk generation." : (err?.message || "Bulk video generation failed.")),
   });
 
   const resetStatusMutation = trpc.scene.resetStatus.useMutation({
