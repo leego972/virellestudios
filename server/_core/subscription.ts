@@ -673,6 +673,7 @@ export const CREDIT_COSTS: Record<string, { cost: number; label: string }> = {
   export_final_film:       { cost: 8,   label: "Export Final Film (full assembly + render)" },
   create_project:          { cost: 0,   label: "Create New Project (FREE — no friction on start)" },
   movie_export:            { cost: 5,   label: "Movie Export (scenes/trailer export)" },
+    script_coverage_ai:      { cost: 5,   label: "AI Script Coverage (logline, scores, reader notes — BYOK)" },
 };
 
 /**
