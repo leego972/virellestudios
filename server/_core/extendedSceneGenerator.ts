@@ -169,6 +169,7 @@ export interface ExtendedSceneResult {
   totalDuration: number;      // Actual duration in seconds
   subClipCount: number;       // Number of sub-clips generated
   lastFrameUrl?: string;      // Last frame URL for next scene continuity
+  clipsRequested: number;     // Number of sub-clips originally planned
   provider: string;
 }
 
@@ -849,9 +850,27 @@ export async function generateExtendedScene(
       onProgress?.(i + 1, subShots.length, videoResult.videoUrl);
     } catch (err: any) {
       console.error(`[ExtendedScene] Sub-clip ${i + 1} failed:`, err.message);
-      // Continue with remaining clips — partial scene is better than no scene
+      // Attempt a Pollinations still-frame as a last-resort fallback so the scene
+      // is not entirely empty — a static frame is better than a hard gap.
+      try {
+        const fbPrompt = encodeURIComponent(
+          `${subShot.prompt.replace(/[^\x20-\x7E]/g, "").substring(0, 500)}, cinematic film still, professional lighting`
+        );
+        const fbUrl = `https://image.pollinations.ai/prompt/${fbPrompt}?width=1280&height=720&nologo=true&enhance=true&model=flux&seed=${Date.now()}`;
+        const fbCheck = await fetch(fbUrl, { method: "HEAD", signal: AbortSignal.timeout(10000) });
+        if (fbCheck.ok) {
+          generatedClipUrls.push(fbUrl);
+          console.warn(`[ExtendedScene] Sub-clip ${i + 1} replaced with Pollinations still-frame fallback`);
+        }
+      } catch {
+        // Fallback also failed — continue with fewer clips
+      }
       onProgress?.(i + 1, subShots.length, undefined);
     }
+  }
+
+  if (generatedClipUrls.length > 0 && generatedClipUrls.length < subShots.length) {
+    console.warn(`[ExtendedScene] Scene ${request.sceneId}: partial render — ${generatedClipUrls.length}/${subShots.length} clips succeeded`);
   }
 
   if (generatedClipUrls.length === 0) {
@@ -872,6 +891,7 @@ export async function generateExtendedScene(
     thumbnailUrl,
     totalDuration: duration,
     subClipCount: generatedClipUrls.length,
+    clipsRequested: subShots.length,
     lastFrameUrl,
     provider: "byok",
   };

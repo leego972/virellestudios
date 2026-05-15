@@ -292,6 +292,19 @@ export default function CrowdfundingHub() {
                   </SelectContent>
                 </Select>
               </div>
+              <div>
+                <Label className="text-xs">Campaign Duration</Label>
+                <Select value={brief.duration} onValueChange={(v) => setBrief({ ...brief, duration: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15">15 days — Sprint</SelectItem>
+                    <SelectItem value="21">21 days — Short</SelectItem>
+                    <SelectItem value="30">30 days — Standard</SelectItem>
+                    <SelectItem value="45">45 days — Extended</SelectItem>
+                    <SelectItem value="60">60 days — Long</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="md:col-span-2">
                 <Label className="text-xs">Premise (1–3 sentences)</Label>
                 <Textarea
@@ -303,7 +316,19 @@ export default function CrowdfundingHub() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            {brief.goal && (
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 text-xs">
+                  <Rocket className="h-4 w-4 text-amber-400 shrink-0" />
+                  <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    <span><span className="text-muted-foreground">Goal</span> <span className="font-medium">{brief.currency} {Number(brief.goal || 0).toLocaleString()}</span></span>
+                    <span><span className="text-muted-foreground">Duration</span> <span className="font-medium">{brief.duration} days</span></span>
+                    <span><span className="text-muted-foreground">Format</span> <span className="font-medium">{brief.format}</span></span>
+                    {brief.genre && <span><span className="text-muted-foreground">Genre</span> <span className="font-medium">{brief.genre}</span></span>}
+                  </div>
+                </div>
+              )}
+
+                          <div className="grid grid-cols-3 gap-2">
               <Button onClick={() => generate("campaign")} disabled={!!generating || !hasProject} className="gap-2" size="sm">
                 {generating === "campaign" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Rocket className="h-3 w-3" />}
                 Pitch

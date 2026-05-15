@@ -29,10 +29,10 @@ import {
 
 // ─── Platform Meta ─────────────────────────────────────────────────────────
 const PLATFORM_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  instagram: { label: "Camera", color: "text-purple-400", icon: <Camera className="w-4 h-4" /> },
+  instagram: { label: "Instagram", color: "text-purple-400", icon: <Camera className="w-4 h-4" /> },
   tiktok: { label: "TikTok", color: "text-pink-400", icon: <Video className="w-4 h-4" /> },
-  facebook: { label: "ThumbsUp", color: "text-blue-400", icon: <ThumbsUp className="w-4 h-4" /> },
-  x_twitter: { label: "X / X", color: "text-sky-400", icon: <X className="w-4 h-4" /> },
+  facebook: { label: "Facebook", color: "text-blue-400", icon: <ThumbsUp className="w-4 h-4" /> },
+  x_twitter: { label: "X (Twitter)", color: "text-sky-400", icon: <X className="w-4 h-4" /> },
   linkedin: { label: "LinkedIn", color: "text-blue-500", icon: <Briefcase className="w-4 h-4" /> },
   youtube_shorts: { label: "YouTube Shorts", color: "text-red-400", icon: <PlayCircle className="w-4 h-4" /> },
   pinterest: { label: "Pinterest", color: "text-rose-400", icon: <Share2 className="w-4 h-4" /> },
@@ -719,7 +719,54 @@ export default function AdvertisingDashboard() {
             </CardContent>
           </Card>
 
-          {/* Strategy Overview from Advertising Orchestrator */}
+
+            {/* ─── Platform Playbook ────────────────────────────────────────── */}
+            <Card className="border-border/50 bg-card/80">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-amber-400" />
+                  Platform Playbook
+                </CardTitle>
+                <CardDescription>
+                  Recommended posting cadence and content mix per channel
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {[
+                    { platform: "tiktok",        freq: "2–3× / day",  formats: ["60s vertical", "trending audio", "behind-the-scenes"],  ctr: "1.6%" },
+                    { platform: "instagram",     freq: "1× / day",    formats: ["Reels", "Carousel", "Story poll"],                      ctr: "0.9%" },
+                    { platform: "youtube_shorts",freq: "4–5× / week", formats: ["Shorts < 60s", "Trailer teaser", "Process reveal"],     ctr: "0.5%" },
+                    { platform: "facebook",      freq: "1× / day",    formats: ["Video post", "Event promo", "Link + image"],            ctr: "0.7%" },
+                    { platform: "x_twitter",     freq: "3–5× / day",  formats: ["Thread", "GIF clip", "Poll"],                          ctr: "0.4%" },
+                    { platform: "linkedin",      freq: "3× / week",   formats: ["Article", "Milestone post", "Behind-the-lens"],        ctr: "0.6%" },
+                  ].map(({ platform, freq, formats, ctr }) => {
+                    const meta = PLATFORM_META[platform] || { label: platform, color: "text-zinc-400", icon: null };
+                    return (
+                      <div key={platform} className="flex items-start justify-between gap-3 py-2 border-b border-border/30 last:border-0">
+                        <div className="flex items-center gap-2 w-32 shrink-0">
+                          <span className={meta.color}>{meta.icon}</span>
+                          <span className="text-sm font-medium">{meta.label}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap gap-1">
+                            {formats.map(f => (
+                              <span key={f} className="text-xs bg-zinc-800/50 text-zinc-400 px-1.5 py-0.5 rounded">{f}</span>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-xs font-medium text-amber-400">{freq}</p>
+                          <p className="text-xs text-muted-foreground">avg CTR {ctr}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Strategy Overview from Advertising Orchestrator */}
           {dashboard?.strategy && (
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
@@ -754,7 +801,20 @@ export default function AdvertisingDashboard() {
                   <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
                 </div>
               ) : activityQuery.data && activityQuery.data.length > 0 ? (
-                <div className="space-y-2">
+              <div className="flex items-center gap-4 mb-4 p-3 bg-background/50 rounded-lg">
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <Activity className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="font-medium">{activityQuery.data?.length ?? 0}</span>
+                    <span className="text-muted-foreground">events logged</span>
+                  </div>
+                  {activityQuery.data && activityQuery.data.length > 0 && (
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Last: {new Date(activityQuery.data[0].createdAt).toLocaleString()}</span>
+                    </div>
+                  )}
+                </div>
+                  <div className="space-y-2">
                   {activityQuery.data.map((item: any, i: number) => (
                     <div key={i} className="flex items-start gap-3 py-3 border-b border-border/30 last:border-0">
                       <div className="w-2 h-2 rounded-full bg-amber-400 mt-2 flex-shrink-0" />
