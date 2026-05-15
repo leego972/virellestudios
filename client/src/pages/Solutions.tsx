@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
+import SiteHead from "@/components/SiteHead";
   ArrowRight, Film, Sparkles, Music, Megaphone, BookOpen,
   Building2, Users, CheckCircle2, ChevronRight, Clapperboard,
   Globe, Tv, Camera, Star
@@ -126,6 +127,7 @@ export default function Solutions() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SiteHead title="Solutions — Virelle Studios" description="Whether you're an independent filmmaker, TV showrunner, brand, or studio — Virelle Studios has the AI production tools to take your project from concept to screen." />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
