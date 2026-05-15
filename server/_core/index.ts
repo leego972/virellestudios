@@ -18,7 +18,7 @@ import { validateProductionEnv } from "./envValidation";
 import * as db from "../db";
 import { trackPaymentFailure } from "./securityEngine";
 import { startBlogScheduler } from "./blogEngine";
-  import { seedBlogPosts } from "../blog-seed";
+import { seedBlogPosts } from "../blog-seed";
 import { startAutonomousPipelineScheduler } from "../autonomous-pipeline";
 import { startAdScheduler } from "./advertisingEngine";
 import { startVideoJobWorker } from "./videoJobWorker";
