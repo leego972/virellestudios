@@ -211,6 +211,11 @@ export default function Landing() {
               </Button>
             </div>
 
+            {/* No-risk micro-copy */}
+            <p className="text-xs text-white/30 mb-10 -mt-6 tracking-wide">
+              Free to explore · No credit card required · Cancel anytime
+            </p>
+
             {/* App download strip */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
               <p className="text-xs text-white/40 font-semibold uppercase tracking-widest">Also available on</p>
