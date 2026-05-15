@@ -2,7 +2,7 @@ import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer, Coins, ShoppingCart, Camera, PhoneCall, CalendarDays } from "lucide-react";
+import { Check, X, Crown, Zap, Building2, Film, Loader2, Gift, Lock, Sparkles, Clapperboard, Wand2, Timer, Coins, ShoppingCart, Camera, PhoneCall, CalendarDays, ShieldCheck } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
@@ -364,7 +364,14 @@ export default function Pricing() {
               ))}
             </div>
 
-          {/* Billing Toggle */}
+
+            {/* 30-day satisfaction guarantee */}
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+              30-day satisfaction guarantee — if Virelle isn't right for you, we'll refund your first month.
+            </div>
+
+            {/* Billing Toggle */
           <div className="mt-10 flex items-center justify-center gap-4">
             <span className={`text-sm ${billingCycle === "monthly" ? "text-white" : "text-muted-foreground"}`}>Monthly</span>
             <button
