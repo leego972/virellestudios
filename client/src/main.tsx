@@ -43,23 +43,30 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
   });
 }
 
-// Web Vitals — report CLS, LCP, INP, FCP, TTFB to GA4 (prod only, non-blocking)
-if (import.meta.env.PROD) {
-  import("web-vitals").then(({ onCLS, onFCP, onINP, onLCP, onTTFB }) => {
-    const report = ({ name, value, id }: { name: string; value: number; id: string }) => {
+// Web Vitals — native PerformanceObserver (no extra dependency), prod only
+  if (import.meta.env.PROD && typeof PerformanceObserver !== "undefined") {
+    const sendVital = (name: string, value: number) => {
       const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
       if (typeof g === "function") {
-        g("event", name, {
-          event_category: "Web Vitals",
-          value: Math.round(name === "CLS" ? value * 1000 : value),
-          event_label: id,
-          non_interaction: true,
-        });
+        g("event", name, { event_category: "Web Vitals", value: Math.round(value), non_interaction: true });
       }
     };
-    onCLS(report); onFCP(report); onINP(report); onLCP(report); onTTFB(report);
-  }).catch(() => {/* web-vitals unavailable — analytics degraded gracefully */});
-}
+    try { new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) sendVital("LCP", e.startTime);
+    }).observe({ type: "largest-contentful-paint", buffered: true }); } catch { /* unsupported */ }
+    try { let cls = 0;
+      new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) if (!(e as PerformanceEntry & { hadRecentInput: boolean }).hadRecentInput)
+          cls += (e as PerformanceEntry & { value: number }).value;
+      }).observe({ type: "layout-shift", buffered: true });
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") sendVital("CLS", cls * 1000);
+      }, { once: true });
+    } catch { /* unsupported */ }
+    try { new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) sendVital("INP", (e as PerformanceEntry & { processingStart: number }).processingStart - e.startTime);
+    }).observe({ type: "event", durationThreshold: 16, buffered: true }); } catch { /* unsupported */ }
+  }
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
