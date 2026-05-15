@@ -199,7 +199,7 @@ export default function Landing() {
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
               <Button size="lg" onClick={() => setLocation("/register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-8 h-13 text-base gap-2 shadow-lg shadow-amber-500/20">
-                Start Production
+                Start Free
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button size="lg" variant="outline" onClick={() => setLocation("/showcase")} className="h-13 text-base px-8 gap-2 border-white/20 hover:bg-white/5 text-white">
@@ -590,7 +590,57 @@ export default function Landing() {
             </div>
           </section>
 
-          {/* ─── 5. Pricing Preview ─── */}
+        {/* ─── 4c. What filmmakers build ─── */}
+          <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/[0.015] border-t border-white/10">
+            <div className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-amber-500/70 mb-3">Production range</p>
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">What filmmakers build here</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  {
+                    type: "Indie Short",
+                    tag: "5–12 min",
+                    ring: false,
+                    border: "border-amber-500/20",
+                    items: ["AI cast + character continuity", "Scene generation + storyboard", "Trailer + poster package", "Funding directory match"],
+                  },
+                  {
+                    type: "Series Pilot",
+                    tag: "22–45 min",
+                    ring: true,
+                    border: "border-purple-500/20",
+                    items: ["Series bible + character arcs", "Multi-episode script breakdown", "Production schedule + budget", "Pitch deck export"],
+                  },
+                  {
+                    type: "Brand Commercial",
+                    tag: "15–60 sec",
+                    ring: false,
+                    border: "border-sky-500/20",
+                    items: ["AI voice acting + sound design", "Colour grade + VFX pass", "Multi-platform ad export", "Campaign manager"],
+                  },
+                ].map(card => (
+                  <div key={card.type} className={`rounded-2xl border ${card.border} bg-white/[0.02] p-7 ${card.ring ? "ring-1 ring-amber-500/10" : ""}`}>
+                    <div className="flex items-center justify-between mb-5">
+                      <h3 className="text-base font-bold text-white">{card.type}</h3>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/60 bg-amber-500/5 border border-amber-500/15 px-2 py-0.5 rounded-full">{card.tag}</span>
+                    </div>
+                    <ul className="space-y-2.5">
+                      {card.items.map(item => (
+                        <li key={item} className="flex items-start gap-2.5 text-sm text-white/55">
+                          <span className="w-1 h-1 rounded-full bg-amber-500/50 mt-2 shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+            {/* ─── 5. Pricing Preview ─── */}
         <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-t border-white/10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -724,10 +774,11 @@ export default function Landing() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />
           <div className="relative z-10 max-w-4xl mx-auto text-center">
             <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-8 text-white">READY TO PRODUCE?</h2>
-            <p className="text-lg text-white/50 mb-12">Join the next generation of filmmakers building the future of cinema on Virelle Studios.</p>
+            <p className="text-lg text-white/50 mb-8">Your next production starts with a single click.</p>
+            <p className="text-sm text-white/30 mb-12">No credit card required to explore every tool. Cancel anytime.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => setLocation("/register")} className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 h-14 text-base shadow-xl shadow-amber-500/20">
-                Start Production
+                Start Free
               </Button>
               <Button size="lg" variant="outline" onClick={() => setLocation("/pricing")} className="w-full sm:w-auto h-14 px-10 text-base border-white/10 hover:bg-white/5 text-white">
                 View Pricing
