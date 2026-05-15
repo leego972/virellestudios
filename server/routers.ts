@@ -52,6 +52,7 @@ import { contentCreatorRouter } from "./content-creator-router";
 import { advertisingRouter } from "./advertising-router";
 import { mailingListRouter } from "./mailing-list-router";
 import { fundingRouter } from "./funding-router";
+  import { crowdfundRouter } from "./crowdfund-router";
 import { filmPostRouter } from "./film-post-router";
 import { featureFilmRouter } from "./feature-film-router";
 import { productionAssetsRouter } from "./production-assets-router";
@@ -9768,6 +9769,7 @@ Rules:
   contentCreator: contentCreatorRouter,
   mailingList: mailingListRouter,
   funding: fundingRouter,
+    crowdfund: crowdfundRouter,
   filmPost: filmPostRouter,
   featureFilm: featureFilmRouter,
   productionAssets: productionAssetsRouter,

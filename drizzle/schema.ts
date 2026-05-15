@@ -1930,3 +1930,90 @@ export const wardrobeAssignments = mysqlTable("wardrobeAssignments", {
 });
 export type WardrobeAssignment = typeof wardrobeAssignments.$inferSelect;
 export type InsertWardrobeAssignment = typeof wardrobeAssignments.$inferInsert;
+
+
+  // ─── Native Crowdfunding (v6.80) ─────────────────────────────────────────────
+
+  export const crowdfundCampaigns = mysqlTable("crowdfundCampaigns", {
+    id: int("id").autoincrement().primaryKey(),
+    userId: int("userId").notNull(),
+    projectId: int("projectId"),
+    title: varchar("title", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+    tagline: varchar("tagline", { length: 512 }),
+    description: text("description"),
+    posterUrl: text("posterUrl"),
+    videoUrl: text("videoUrl"),
+    genre: varchar("genre", { length: 128 }),
+    format: varchar("format", { length: 64 }),
+    goalAmountCents: int("goalAmountCents").notNull(),
+    raisedAmountCents: int("raisedAmountCents").default(0).notNull(),
+    backerCount: int("backerCount").default(0).notNull(),
+    fundingModel: mysqlEnum("fundingModel", ["all_or_nothing", "keep_it_all"]).default("all_or_nothing").notNull(),
+    status: mysqlEnum("status", ["draft", "active", "funded", "failed", "paid_out", "cancelled"]).default("draft").notNull(),
+    deadline: timestamp("deadline"),
+    launchedAt: timestamp("launchedAt"),
+    closedAt: timestamp("closedAt"),
+    platformFeeBps: int("platformFeeBps").default(700).notNull(),
+    stripeConnectAccountId: varchar("stripeConnectAccountId", { length: 255 }),
+    stripeConnectOnboarded: boolean("stripeConnectOnboarded").default(false).notNull(),
+    payoutEmail: varchar("payoutEmail", { length: 320 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type CrowdfundCampaign = typeof crowdfundCampaigns.$inferSelect;
+  export type InsertCrowdfundCampaign = typeof crowdfundCampaigns.$inferInsert;
+
+  export const crowdfundRewards = mysqlTable("crowdfundRewards", {
+    id: int("id").autoincrement().primaryKey(),
+    campaignId: int("campaignId").notNull(),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    amountCents: int("amountCents").notNull(),
+    limitCount: int("limitCount"),
+    claimedCount: int("claimedCount").default(0).notNull(),
+    estimatedDelivery: varchar("estimatedDelivery", { length: 128 }),
+    sortOrder: int("sortOrder").default(0).notNull(),
+    isActive: boolean("isActive").default(true).notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type CrowdfundReward = typeof crowdfundRewards.$inferSelect;
+  export type InsertCrowdfundReward = typeof crowdfundRewards.$inferInsert;
+
+  export const crowdfundContributions = mysqlTable("crowdfundContributions", {
+    id: int("id").autoincrement().primaryKey(),
+    campaignId: int("campaignId").notNull(),
+    userId: int("userId"),
+    backerEmail: varchar("backerEmail", { length: 320 }),
+    backerName: varchar("backerName", { length: 255 }),
+    rewardId: int("rewardId"),
+    amountCents: int("amountCents").notNull(),
+    platformFeeCents: int("platformFeeCents").notNull(),
+    message: text("message"),
+    isAnonymous: boolean("isAnonymous").default(false).notNull(),
+    status: mysqlEnum("status", ["pending", "paid", "failed", "refunded", "captured", "cancelled"]).default("pending").notNull(),
+    stripeSessionId: varchar("stripeSessionId", { length: 255 }),
+    stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+    stripeTransferId: varchar("stripeTransferId", { length: 255 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type CrowdfundContribution = typeof crowdfundContributions.$inferSelect;
+  export type InsertCrowdfundContribution = typeof crowdfundContributions.$inferInsert;
+
+  export const crowdfundPayouts = mysqlTable("crowdfundPayouts", {
+    id: int("id").autoincrement().primaryKey(),
+    campaignId: int("campaignId").notNull(),
+    grossAmountCents: int("grossAmountCents").notNull(),
+    platformFeeCents: int("platformFeeCents").notNull(),
+    netAmountCents: int("netAmountCents").notNull(),
+    stripeTransferId: varchar("stripeTransferId", { length: 255 }),
+    status: mysqlEnum("status", ["pending", "processing", "paid", "failed"]).default("pending").notNull(),
+    notes: text("notes"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type CrowdfundPayout = typeof crowdfundPayouts.$inferSelect;
+  export type InsertCrowdfundPayout = typeof crowdfundPayouts.$inferInsert;
+  
