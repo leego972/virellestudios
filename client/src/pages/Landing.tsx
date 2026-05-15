@@ -258,24 +258,7 @@ export default function Landing() {
           </div>
         </section>
 
-
-          {/* ─── 1.2 Social Proof Stats ─── */}
-          <section className="relative py-8 px-4 border-b border-white/[0.06] bg-black">
-            <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center sm:divide-x divide-white/[0.08]">
-              {[
-                { stat: "150+", label: "Filmmakers in early access" },
-                { stat: "94", label: "Film funding countries" },
-                { stat: "130+", label: "Subtitle languages" },
-              ].map(({ stat, label }) => (
-                <div key={label} className="flex-1 text-center px-8 py-3">
-                  <p className="text-2xl sm:text-3xl font-black text-amber-400 tabular-nums">{stat}</p>
-                  <p className="text-[11px] font-semibold text-white/35 uppercase tracking-widest mt-1">{label}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ─── 1.5 The Showrunner Showcase Proof ─── */}
+        {/* ─── 1.5 The Showrunner Showcase Proof ─── */}
           <section
             className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10"
             style={{ background: "linear-gradient(180deg, #000 0%, #0a0800 40%, #000 100%)" }}
