@@ -326,6 +326,13 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-black text-white selection:bg-amber-500/30">
       <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios — from Free to Studio. AI film production from $0 to enterprise scale." />
+
+          {/* ── Founding Director urgency banner ── */}
+          <div className="sticky top-0 z-40 bg-amber-500 text-black py-2 px-4 text-center text-xs font-bold tracking-wide">
+            <span className="mr-2">🎬</span>
+            Founding Director Offer — 50% off your first year on any annual Creator or Industry plan.
+            <span className="ml-2 opacity-70">Early access pricing · Limited availability.</span>
+          </div>
       <GoldWatermarkLaunch />
       
       <div className="container mx-auto px-4 py-20">
@@ -340,6 +347,22 @@ export default function Pricing() {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             From screenplay to final mix. Choose the membership that fits your production volume.
           </p>
+
+          
+            {/* Trust badges */}
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-6 mb-2">
+              {[
+                { icon: "✓", label: "Cancel anytime" },
+                { icon: "✓", label: "Credits never expire" },
+                { icon: "✓", label: "100% commercial ownership" },
+                { icon: "✓", label: "BYOK support" },
+              ].map(({ icon, label }) => (
+                <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="text-emerald-400 font-bold">{icon}</span>
+                  {label}
+                </span>
+              ))}
+            </div>
 
           {/* Billing Toggle */}
           <div className="mt-10 flex items-center justify-center gap-4">
