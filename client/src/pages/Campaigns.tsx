@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-  import { trpc } from "../_core/trpc";
+  import { trpc } from "@/lib/trpc";
   import { Badge } from "@/components/ui/badge";
   import { Button } from "@/components/ui/button";
   import { Card, CardContent } from "@/components/ui/card";
