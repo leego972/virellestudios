@@ -236,7 +236,7 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {/* Funding button — paid users only */}
-          {user && ["independent", "creator", "studio", "pro", "industry", "beta"].includes((user as any).subscriptionTier || "") && (
+          {user && ["indie", "amateur", "independent", "creator", "studio", "industry", "beta"].includes((user as any).subscriptionTier || "") && (
             <Button
               variant="outline"
               onClick={() => setLocation("/funding")}

@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 import SiteHead from "@/components/SiteHead";
 import {
   Zap, Layers, Users, Music, Palette, Camera,
@@ -94,6 +95,7 @@ function GoldWatermark() {
 
 export default function Landing() {
   const [, setLocation] = useLocation();
+  const { user } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -140,10 +142,18 @@ export default function Landing() {
 
           {/* Auth buttons */}
           <div className="flex items-center gap-3">
-            <button onClick={() => setLocation("/login")} className="hidden sm:block text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Login</button>
-            <Button onClick={() => setLocation("/register")} className="hidden sm:flex bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-6 shadow-lg shadow-amber-500/20">
-              Get Started
-            </Button>
+            {user ? (
+              <Button onClick={() => setLocation("/")} className="hidden sm:flex bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-6 shadow-lg shadow-amber-500/20">
+                Dashboard
+              </Button>
+            ) : (
+              <>
+                <button onClick={() => setLocation("/login")} className="hidden sm:block text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Login</button>
+                <Button onClick={() => setLocation("/register")} className="hidden sm:flex bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-6 shadow-lg shadow-amber-500/20">
+                  Get Started
+                </Button>
+              </>
+            )}
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(o => !o)}

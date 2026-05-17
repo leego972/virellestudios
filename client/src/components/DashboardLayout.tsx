@@ -233,6 +233,8 @@ export default function DashboardLayout({
     '/ai-content-policy', '/ip-policy', '/dmca', '/showcase',
     '/forgot-password', '/reset-password', '/subscription',
     '/signature-cast', '/talent-search',
+    // Publicly shareable content — accessible without login
+    '/share', '/films', '/creators', '/crowdfund', '/collections',
   ];
   // Use window.location.pathname as the authoritative path — wouter's useLocation()
   // may not reflect the actual URL during the initial render on hard page load.
