@@ -839,6 +839,7 @@ export default function AdvertisingDashboard() {
                     </div>
                   ))}
                 </div>
+              </>
               ) : (
                 <div className="text-center py-8">
                   <Activity className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
