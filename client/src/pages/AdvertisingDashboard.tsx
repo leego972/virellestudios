@@ -702,6 +702,7 @@ export default function AdvertisingDashboard() {
                     );
                   })}
                 </div>
+              </>
               ) : (
                 <div className="text-center py-8">
                   <Target className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
@@ -801,6 +802,7 @@ export default function AdvertisingDashboard() {
                   <Loader2 className="w-5 h-5 animate-spin text-amber-400" />
                 </div>
               ) : activityQuery.data && activityQuery.data.length > 0 ? (
+              <>
               <div className="flex items-center gap-4 mb-4 p-3 bg-background/50 rounded-lg">
                   <div className="flex items-center gap-1.5 text-sm">
                     <Activity className="w-3.5 h-3.5 text-amber-400" />
