@@ -107,7 +107,7 @@ export default function CuttingRoom() {
 
   // AI mastering notes
   const sendMessage = trpc.directorChat.send.useMutation();
-  const exportMovie = trpc.movie.export.useMutation();
+  const exportMovie = trpc.movie.exportFromProject.useMutation();
   const { data: history, refetch: refetchHistory } = trpc.directorChat.history.useQuery(
     { projectId },
     { enabled: hasProject, refetchInterval: 4000 }
