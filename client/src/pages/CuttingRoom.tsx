@@ -165,6 +165,52 @@ Output: a markdown table with columns | t | scene # | beat | text overlay (if an
     }
   }
 
+
+function TrailerCutOutput({ content }: { content: string }) {
+  const parts = content.split("\n");
+  const tableLines = parts.filter(l => l.trim().startsWith("|"));
+  const extraLines = parts.filter(l => l.trim() && !l.trim().startsWith("|"));
+  const rows = tableLines
+    .filter(l => !l.replace(/[|\s-]/g, ""))
+    .concat(tableLines.filter(l => !!l.replace(/[|\s-]/g, "")))
+    .filter(l => !l.split("|").slice(1,-1).every(c => /^[-\s]+$/.test(c)))
+    .map(l => l.split("|").slice(1,-1).map(c => c.trim()));
+  const [header, ...body] = rows;
+  return (
+    <div className="space-y-3 max-h-72 overflow-y-auto">
+      {header && (
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-border">
+                {header.map((h, i) => (
+                  <th key={i} className="text-left py-1.5 px-2 font-semibold text-amber-400/80 whitespace-nowrap">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {body.map((row, ri) => (
+                <tr key={ri} className="border-b border-border/30 last:border-0 hover:bg-muted/20">
+                  {row.map((cell, ci) => (
+                    <td key={ci} className="py-1.5 px-2 text-foreground/80">{cell || "—"}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {extraLines.length > 0 && (
+        <div className="space-y-1 pt-2 border-t border-border/40">
+          {extraLines.map((l, i) => (
+            <p key={i} className="text-xs text-muted-foreground italic">{l}</p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
   return (
     <div className="container max-w-7xl py-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -296,9 +342,9 @@ Output: a markdown table with columns | t | scene # | beat | text overlay (if an
                   {last ? "Regenerate" : "Generate"}
                 </Button>
                 {last && (
-                  <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed max-h-72 overflow-y-auto p-2 bg-muted/30 border rounded">
-                    {last}
-                  </pre>
+                  k === "trailerCut"
+                    ? <TrailerCutOutput content={last} />
+                    : <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed max-h-72 overflow-y-auto p-2 bg-muted/30 border rounded">{last}</pre>
                 )}
               </CardContent>
             </Card>
