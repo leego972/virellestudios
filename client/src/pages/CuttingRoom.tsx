@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "wouter";
+import { Link, useLocation, useParams } from "wouter";
 import { NextStageCTA } from "@/components/NextStageCTA";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ import {
   Subtitles,
   Palette,
   CircleCheck,
+  ExternalLink,
+  Clapperboard,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -105,11 +107,14 @@ export default function CuttingRoom() {
 
   // AI mastering notes
   const sendMessage = trpc.directorChat.send.useMutation();
+  const exportMovie = trpc.movie.export.useMutation();
   const { data: history, refetch: refetchHistory } = trpc.directorChat.history.useQuery(
     { projectId },
     { enabled: hasProject, refetchInterval: 4000 }
   );
-  const [generating, setGenerating] = useState<"masteringNotes" | "trailerCut" | null>(null);
+  const [generating, setGenerating] = useState<"masteringNotes" | null>(null);
+  const [exportingTrailer, setExportingTrailer] = useState(false);
+  const [trailerMovieId, setTrailerMovieId] = useState<number | null>(null);
 
   function lastByTag(tag: string): string | null {
     const arr = (history ?? []) as any[];
@@ -124,40 +129,20 @@ export default function CuttingRoom() {
     return null;
   }
 
-  async function generate(kind: "masteringNotes" | "trailerCut") {
+  async function generateMasteringNotes() {
     if (!hasProject) return;
-    if (sortedScenes.length === 0) {
-      toast.error("Add scenes first.");
-      return;
-    }
-    setGenerating(kind);
+    if (sortedScenes.length === 0) { toast.error("Add scenes first."); return; }
+    setGenerating("masteringNotes");
     try {
-      const summary = sortedScenes
-        .map(
-          (s: any, i: number) =>
-            `${s.orderIndex ?? i + 1}. ${s.title || "Untitled"} — ${fmtSeconds(s.duration || 0)} — ${s.mood || "?"} — ${s.locationType || "?"}`
-        )
-        .join("\n");
-
-      const prompts: Record<typeof kind, string> = {
-        masteringNotes: `Write a final-mastering punch list for "${project?.title || "Untitled"}" (total runtime ${fmtSeconds(totalRuntime)}).
-Scene list:
-${summary}
-
-Output a clean checklist grouped under: Picture, Sound (dialogue/music/SFX), Color, Captions, Deliverables (DCP, ProRes, h264, audio stems). Keep each item terse and specific.`,
-        trailerCut: `Plan a 90-second trailer cut from these scenes. Pick 6-9 beats from the FIRST HALF only (no spoilers).
-Scenes:
-${summary}
-
-Output: a markdown table with columns | t | scene # | beat | text overlay (if any) |. End with a 1-line music brief and a tagline (≤8 words).`,
-      };
-
+      const summary = (sortedScenes as any[]).map((s: any, i: number) =>
+        `${s.orderIndex ?? i + 1}. ${s.title || "Untitled"} — ${fmtSeconds(s.duration || 0)} — ${s.mood || "?"} — ${s.locationType || "?"}`,
+      ).join("\n");
       await sendMessage.mutateAsync({
         projectId,
-        message: `[CuttingRoom:${kind}]\n\n${prompts[kind]}`,
+        message: `[CuttingRoom:masteringNotes]\n\nWrite a final-mastering punch list for "${project?.title || "Untitled"}" (total runtime ${fmtSeconds(totalRuntime)}).\nScene list:\n${summary}\n\nOutput a clean checklist grouped under: Picture, Sound (dialogue/music/SFX), Color, Captions, Deliverables (DCP, ProRes, h264, audio stems). Keep each item terse and specific.`,
       });
       await refetchHistory();
-      toast.success("Drafted.");
+      toast.success("Mastering notes ready.");
     } catch (e: any) {
       toast.error(e?.message || "Generation failed.");
     } finally {
@@ -165,48 +150,40 @@ Output: a markdown table with columns | t | scene # | beat | text overlay (if an
     }
   }
 
+  async function generateTrailer() {
+    if (!hasProject) return;
+    const videoScenes = (sortedScenes as any[]).filter((s: any) => s.videoUrl);
+    if (videoScenes.length === 0) {
+      toast.error("No scene videos yet — generate at least one scene video first.");
+      return;
+    }
+    setExportingTrailer(true);
+    try {
+      const result = await exportMovie.mutateAsync({ projectId, exportType: "trailer" });
+      setTrailerMovieId((result as any).movieIds?.[0] ?? null);
+      toast.success("Trailer compiled! Opening My Movies…");
+    } catch (e: any) {
+      toast.error(e?.message || "Trailer failed — make sure your scenes have generated videos.");
+    } finally {
+      setExportingTrailer(false);
+    }
+  }
 
-function TrailerCutOutput({ content }: { content: string }) {
-  const parts = content.split("\n");
-  const tableLines = parts.filter(l => l.trim().startsWith("|"));
-  const extraLines = parts.filter(l => l.trim() && !l.trim().startsWith("|"));
-  const rows = tableLines
-    .filter(l => !l.replace(/[|\s-]/g, ""))
-    .concat(tableLines.filter(l => !!l.replace(/[|\s-]/g, "")))
-    .filter(l => !l.split("|").slice(1,-1).every(c => /^[-\s]+$/.test(c)))
-    .map(l => l.split("|").slice(1,-1).map(c => c.trim()));
-  const [header, ...body] = rows;
+
+function MarkdownContent({ content }: { content: string }) {
   return (
-    <div className="space-y-3 max-h-72 overflow-y-auto">
-      {header && (
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-border">
-                {header.map((h, i) => (
-                  <th key={i} className="text-left py-1.5 px-2 font-semibold text-amber-400/80 whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {body.map((row, ri) => (
-                <tr key={ri} className="border-b border-border/30 last:border-0 hover:bg-muted/20">
-                  {row.map((cell, ci) => (
-                    <td key={ci} className="py-1.5 px-2 text-foreground/80">{cell || "—"}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {extraLines.length > 0 && (
-        <div className="space-y-1 pt-2 border-t border-border/40">
-          {extraLines.map((l, i) => (
-            <p key={i} className="text-xs text-muted-foreground italic">{l}</p>
-          ))}
-        </div>
-      )}
+    <div className="space-y-1 max-h-72 overflow-y-auto text-xs leading-relaxed">
+      {content.split("\n").map((line, i) => {
+        if (line.startsWith("### ")) return <p key={i} className="font-bold text-amber-400/90 mt-2 first:mt-0">{line.slice(4)}</p>;
+        if (line.startsWith("## ")) return <p key={i} className="font-bold text-amber-400/70 mt-2 first:mt-0">{line.slice(3)}</p>;
+        if (line.startsWith("- ") || line.startsWith("* ")) {
+          const txt = line.slice(2).replace(/\*\*(.+?)\*\*/g, "$1");
+          return <p key={i} className="pl-3 before:content-['·'] before:mr-1.5 before:text-muted-foreground text-foreground/80">{txt}</p>;
+        }
+        if (line.trim() === "") return <div key={i} className="h-1" />;
+        const txt = line.replace(/\*\*(.+?)\*\*/g, "$1");
+        return <p key={i} className="text-foreground/80">{txt}</p>;
+      })}
     </div>
   );
 }
@@ -319,38 +296,77 @@ function TrailerCutOutput({ content }: { content: string }) {
         </CardContent>
       </Card>
 
-      {/* AI mastering + trailer cut */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {(["masteringNotes", "trailerCut"] as const).map((k) => {
-          const last = lastByTag(k);
-          const titleMap = { masteringNotes: "Mastering punch-list", trailerCut: "90-second trailer cut" };
-          return (
-            <Card key={k}>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" /> {titleMap[k]}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button
-                  size="sm"
-                  onClick={() => generate(k)}
-                  disabled={!!generating}
-                  className="gap-2"
-                >
-                  {generating === k ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-                  {last ? "Regenerate" : "Generate"}
+      {/* AI mastering notes */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Sparkles className="h-4 w-4" /> Mastering punch-list
+          </CardTitle>
+          <CardDescription>AI-generated final-delivery checklist for picture, sound, color, captions &amp; deliverables.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Button
+            size="sm"
+            onClick={generateMasteringNotes}
+            disabled={!!generating}
+            className="gap-2"
+          >
+            {generating === "masteringNotes" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+            {lastByTag("masteringNotes") ? "Regenerate" : "Generate"}
+          </Button>
+          {lastByTag("masteringNotes") && (
+            <MarkdownContent content={lastByTag("masteringNotes")!} />
+          )}
+        </CardContent>
+      </Card>
+
+      {/* 90-second trailer cut — real video */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Clapperboard className="h-4 w-4" /> 90-second trailer
+          </CardTitle>
+          <CardDescription>
+            Stitches your scene videos into a real MP4 trailer with the Virelle Studios intro.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {/* Scene video status */}
+          <div className="flex flex-wrap gap-1.5">
+            {(sortedScenes as any[]).map((s: any, i: number) => (
+              <div key={s.id} className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border ${s.videoUrl ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400" : "border-border text-muted-foreground"}`}>
+                {s.videoUrl ? "✓" : "○"} Scene {s.orderIndex ?? i + 1}
+              </div>
+            ))}
+            {sortedScenes.length === 0 && (
+              <p className="text-xs text-muted-foreground">No scenes yet.</p>
+            )}
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              size="sm"
+              onClick={generateTrailer}
+              disabled={exportingTrailer}
+              className="gap-2 bg-amber-600 hover:bg-amber-500 text-white"
+            >
+              {exportingTrailer ? <Loader2 className="h-3 w-3 animate-spin" /> : <Video className="h-3 w-3" />}
+              {exportingTrailer ? "Compiling trailer…" : "Generate trailer video"}
+            </Button>
+            {trailerMovieId && (
+              <Link href="/movies">
+                <Button size="sm" variant="outline" className="gap-2 border-amber-500/40 text-amber-400 hover:bg-amber-500/10">
+                  <ExternalLink className="h-3 w-3" /> Watch in My Movies
                 </Button>
-                {last && (
-                  k === "trailerCut"
-                    ? <TrailerCutOutput content={last} />
-                    : <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed max-h-72 overflow-y-auto p-2 bg-muted/30 border rounded">{last}</pre>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+              </Link>
+            )}
+          </div>
+          {(sortedScenes as any[]).filter((s: any) => s.videoUrl).length === 0 && sortedScenes.length > 0 && (
+            <p className="text-xs text-amber-400/80">
+              ⚠ No scene videos yet. Generate scene videos in the Scene Editor first, then come back to compile the trailer.
+            </p>
+          )}
+        </CardContent>
+      </Card>
   {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
   );
