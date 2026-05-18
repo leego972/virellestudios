@@ -1350,7 +1350,7 @@ async function startServer() {
           messages: llmMessages as any,
           tools: DIRECTOR_TOOLS,
           tool_choice: "auto",
-          maxTokens: 1500,
+          maxTokens: 4096,
         });
       } catch (err: any) {
         sseRes.write(`data: ${JSON.stringify({ type: "error", message: err.message || "AI request failed" })}\n\n`);
@@ -1367,7 +1367,7 @@ async function startServer() {
 
       // If the AI wants to call tools
       if (choice.finish_reason === "tool_calls" && assistantMsg.tool_calls?.length) {
-        llmMessages.push({ role: "assistant", content: assistantMsg.content || "", tool_calls: assistantMsg.tool_calls });
+        llmMessages.push({ role: "assistant", content: assistantMsg.content ?? null, tool_calls: assistantMsg.tool_calls });
 
         for (const toolCall of assistantMsg.tool_calls) {
           const toolName = toolCall.function?.name;
@@ -1375,7 +1375,7 @@ async function startServer() {
           try { toolArgs = JSON.parse(toolCall.function?.arguments || "{}"); } catch {}
 
           const description = getDirectorToolDescription(toolName, toolArgs);
-          sseRes.write(`data: ${JSON.stringify({ type: "tool_start", toolName, description })}\n\n`);
+          sseRes.write(`data: ${JSON.stringify({ type: "tool_start", toolName, toolCallId: toolCall.id, description })}\n\n`);
 
           const toolResult = await executeDirectorTool(toolName, toolArgs, {
             userId: toolCtx.user!.id,
@@ -1387,7 +1387,7 @@ async function startServer() {
             sseRes.write(`data: ${JSON.stringify({ type: "action", action: (toolResult.data as any).action })}\n\n`);
           }
 
-          sseRes.write(`data: ${JSON.stringify({ type: "tool_done", toolName, success: toolResult.success, data: toolResult.success ? toolResult.data : null, error: !toolResult.success ? (toolResult as any).error : null })}\n\n`);
+          sseRes.write(`data: ${JSON.stringify({ type: "tool_done", toolName, toolCallId: toolCall.id, success: toolResult.success, data: toolResult.success ? toolResult.data : null, error: !toolResult.success ? (toolResult as any).error : null })}\n\n`);
 
           llmMessages.push({
             role: "tool",
@@ -1405,7 +1405,7 @@ async function startServer() {
         for (let i = 0; i < words.length; i++) {
           const token = (i === 0 ? "" : " ") + words[i];
           sseRes.write(`data: ${JSON.stringify({ type: "token", token })}\n\n`);
-          await new Promise((r) => setTimeout(r, 15));
+          await new Promise((r) => setTimeout(r, 8));
         }
       }
       sseRes.write(`data: ${JSON.stringify({ type: "done", text: finalText })}\n\n`);
