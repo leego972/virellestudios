@@ -225,8 +225,29 @@ export async function deleteProject(id: number, userId: number) {
   await db.delete(collaborators).where(eq(collaborators.projectId, id));
   await db.delete(directorChats).where(eq(directorChats.projectId, id));
   await db.delete(visualEffects).where(eq(visualEffects.projectId, id));
-  // Finally delete the project itself (ownership check)
-  await db.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, userId)));
+    // v6.x tables: film pipeline, production spine, wardrobe, credit reservations
+    await db.delete(frameComments).where(eq(frameComments.projectId, id));
+    await db.delete(filmMixSettings).where(eq(filmMixSettings.projectId, id));
+    await db.delete(filmAdrTracks).where(eq(filmAdrTracks.projectId, id));
+    await db.delete(filmFoleyTracks).where(eq(filmFoleyTracks.projectId, id));
+    await db.delete(filmScoreCues).where(eq(filmScoreCues.projectId, id));
+    await db.delete(filmCompileJobs).where(eq(filmCompileJobs.projectId, id));
+    // featureCutScenes are keyed by cutId — cascade through featureCuts
+    await db.delete(featureCutScenes).where(
+      inArray(featureCutScenes.cutId,
+        db.select({ id: featureCuts.id }).from(featureCuts).where(eq(featureCuts.projectId, id))
+      )
+    );
+    await db.delete(featureCuts).where(eq(featureCuts.projectId, id));
+    await db.delete(shootDays).where(eq(shootDays.projectId, id));
+    await db.delete(crewContacts).where(eq(crewContacts.projectId, id));
+    await db.delete(activityLog).where(eq(activityLog.projectId, id));
+    await db.delete(creditReservations).where(eq(creditReservations.projectId, id));
+    await db.delete(projectBrands).where(eq(projectBrands.projectId, id));
+    await db.delete(wardrobeAssignments).where(eq(wardrobeAssignments.projectId, id));
+    await db.delete(wardrobeItems).where(eq(wardrobeItems.projectId, id));
+    // Finally delete the project itself (ownership check)
+    await db.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, userId)));
 }
 
 // ─── Characters ───
@@ -1771,6 +1792,11 @@ export async function addCredits(userId: number, amount: number, action: string,
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
+  // Atomic increment — prevents read-modify-write race condition under concurrent requests
+  await db.update(users)
+    .set({ creditBalance: sql`COALESCE(creditBalance, 0) + ${amount}` } as any)
+    .where(eq(users.id, userId));
+
   const [user] = await db.select({ creditBalance: users.creditBalance })
     .from(users)
     .where(eq(users.id, userId))
@@ -1778,12 +1804,7 @@ export async function addCredits(userId: number, amount: number, action: string,
 
   if (!user) throw new Error("User not found");
 
-  const currentBalance = (user.creditBalance as number) || 0;
-  const newBalance = currentBalance + amount;
-
-  await db.update(users)
-    .set({ creditBalance: newBalance } as any)
-    .where(eq(users.id, userId));
+  const newBalance = (user.creditBalance as number) || 0;
 
   try {
     await db.execute(sql.raw(
