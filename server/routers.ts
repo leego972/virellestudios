@@ -631,27 +631,27 @@ export const appRouter = router({
     create: creationProcedure
       .input(z.object({
         title: z.string().min(1).max(255),
-        description: z.string().optional(),
+        description: z.string().max(5000).optional(),
         mode: z.enum(["quick", "manual", "trailer"]),
         rating: z.enum(["G", "PG", "PG-13", "R"]).optional(),
         duration: z.number().min(1).max(360).optional(),
         genre: z.string().optional(),
-        plotSummary: z.string().optional(),
+        plotSummary: z.string().max(5000).optional(),
         resolution: z.string().optional(),
         quality: z.enum(["standard", "high", "ultra"]).optional(),
         // Story & Narrative
-        mainPlot: z.string().optional(),
-        sidePlots: z.string().optional(),
-        plotTwists: z.string().optional(),
-        characterArcs: z.string().optional(),
-        themes: z.string().optional(),
-        setting: z.string().optional(),
-        actStructure: z.string().optional(),
-        tone: z.string().optional(),
-        targetAudience: z.string().optional(),
-        openingScene: z.string().optional(),
-        climax: z.string().optional(),
-        storyResolution: z.string().optional(),
+        mainPlot: z.string().max(5000).optional(),
+        sidePlots: z.string().max(5000).optional(),
+        plotTwists: z.string().max(2000).optional(),
+        characterArcs: z.string().max(2000).optional(),
+        themes: z.string().max(1000).optional(),
+        setting: z.string().max(1000).optional(),
+        actStructure: z.string().max(500).optional(),
+        tone: z.string().max(500).optional(),
+        targetAudience: z.string().max(500).optional(),
+        openingScene: z.string().max(2000).optional(),
+        climax: z.string().max(2000).optional(),
+        storyResolution: z.string().max(2000).optional(),
         cinemaIndustry: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -952,7 +952,8 @@ export const appRouter = router({
   // ─── Characters ────
   character: router({
     list: protectedProcedure.query(async ({ ctx }) => {
-      return db.getUserLibraryCharacters(ctx.user.id);
+      const chars = await db.getUserLibraryCharacters(ctx.user.id);
+      return chars.slice(0, 500);
     }),
 
     listByProject: protectedProcedure
@@ -997,10 +998,10 @@ export const appRouter = router({
         arcType: z.string().optional(),
         moralAlignment: z.string().optional(),
         emotionalRange: z.any().optional(),
-        backstory: z.string().optional(),
-        motivations: z.string().optional(),
-        fears: z.string().optional(),
-        secrets: z.string().optional(),
+        backstory: z.string().max(5000).optional(),
+        motivations: z.string().max(2000).optional(),
+        fears: z.string().max(2000).optional(),
+        secrets: z.string().max(2000).optional(),
         strengths: z.any().optional(),
         weaknesses: z.any().optional(),
         speechPattern: z.string().optional(),
@@ -2266,6 +2267,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         externalFootageLabel: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Ownership guard: caller must own the target project
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         // Content moderation scan on scene description and dialogue
         const scanText = [input.title, input.description, input.dialogueText, input.aiPromptOverride].filter(Boolean).join(' ');
         if (scanText.trim()) {

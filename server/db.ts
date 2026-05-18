@@ -1542,10 +1542,19 @@ export async function addBonusGenerations(userId: number, amount: number) {
 
 // ─── BYOK API Key Management ───
 
+const ALLOWED_API_KEY_COLUMNS: ReadonlySet<string> = new Set([
+  "openaiKey", "stabilityKey", "elevenLabsKey", "runwayKey", "replicateKey",
+  "googleAiKey", "falKey", "anthropicKey", "mistralKey", "pikaKey",
+  "lumaKey", "hedraKey", "klingKey", "hailuoKey",
+]);
+
 export async function updateUserApiKey(userId: number, column: string, value: string | null) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  // Use raw SQL since column name is dynamic
+  if (!ALLOWED_API_KEY_COLUMNS.has(column)) {
+    throw new Error(`Rejected: "${column}" is not a permitted API key column`);
+  }
+  // Use raw SQL since column name is dynamic (validated against allowlist above)
   if (value === null) {
     await db.execute(
       sql`UPDATE users SET ${sql.raw(column)} = NULL, apiKeysUpdatedAt = NOW() WHERE id = ${userId}`
