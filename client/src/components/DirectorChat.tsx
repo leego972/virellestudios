@@ -59,6 +59,7 @@ interface EditHistoryEntry {
 }
 interface ToolBadge {
   toolName: string;
+  toolCallId?: string;
   description: string;
   status: "pending" | "done" | "error";
   data?: any;
@@ -411,7 +412,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
     es.addEventListener("tool_start", (e: MessageEvent) => {
       try {
         const d = JSON.parse(e.data);
-        const badge: ToolBadge = { toolName: d.toolName, description: d.description, status: "pending" };
+        const badge: ToolBadge = { toolName: d.toolName, toolCallId: d.toolCallId, description: d.description, status: "pending" };
         currentToolBadges = [...currentToolBadges, badge];
         updateLastAssistantMsg({ content: "__loading__", toolBadges: [...currentToolBadges] });
       } catch {}
@@ -420,11 +421,15 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
     es.addEventListener("tool_done", (e: MessageEvent) => {
       try {
         const d = JSON.parse(e.data);
-        currentToolBadges = currentToolBadges.map((b) =>
-          b.toolName === d.toolName && b.status === "pending"
-            ? { ...b, status: d.success ? "done" : "error", data: d.data, error: d.error }
-            : b
-        );
+        // Match by toolCallId first (unique per call), then fallback to first pending name match
+        let matched = false;
+        currentToolBadges = currentToolBadges.map((b) => {
+          if (matched) return b;
+          const isMatch = d.toolCallId ? b.toolCallId === d.toolCallId : (b.toolName === d.toolName && b.status === "pending");
+          if (!isMatch) return b;
+          matched = true;
+          return { ...b, status: d.success ? "done" : "error", data: d.data, error: d.error };
+        });
         updateLastAssistantMsg({ toolBadges: [...currentToolBadges] });
       } catch {}
     });
@@ -1237,8 +1242,11 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
       .filter((m) => m.role !== "system" && m.content !== "__loading__")
       .slice(0, -1) // remove last assistant
       .map((m) => ({ role: m.role, content: m.content }));
-    void sendViaSSE(allMsgs);
-  }, [localMessages, sendViaSSE]);
+    const projectCtx = projectId
+      ? `Active project ID: ${projectId}. Call get_project(${projectId}) to load scenes, characters, and project details before taking action.`
+      : undefined;
+    void sendViaSSE(allMsgs, projectCtx);
+  }, [localMessages, sendViaSSE, projectId]);
 
   // ─── Preset Edit Commands ───
   const applyPreset = useCallback((command: string, label: string) => {
@@ -1391,12 +1399,21 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
     c.cmd.slice(1).startsWith(slashFilter) || c.desc.toLowerCase().includes(slashFilter)
   );
 
-  const suggestedPrompts = [
-    "Generate me a 2 minute film about...",
-    "I want a scene where...",
-    "Add a fade to black transition to the last scene",
-    "Review my project and suggest improvements",
-  ];
+  const suggestedPrompts = projectId
+    ? [
+        "Review my project and suggest the next production step",
+        "Add a new opening scene to my film",
+        "Generate a professional shot list for all scenes",
+        "Write dialogue for the first scene",
+        "Scout locations for this project",
+      ]
+    : [
+        "Create a new psychological thriller about...",
+        "I want to make a short film about two strangers who meet on a train",
+        "Help me develop a compelling villain character",
+        "What's the best way to structure a non-linear narrative?",
+        "Show me my projects",
+      ];
 
   return (
     <>
@@ -1602,7 +1619,8 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
           </div>
         )}
 
-        {/* Messages area */}
+        {/* Messages area + scroll-to-bottom */}
+        <div className="relative flex-1 min-h-0">
         <div className="flex-1 overflow-y-auto min-h-0" ref={scrollRef} style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" as any }}>
           {displayMessages.length === 0 && !historyLoading ? (
             <div className="flex flex-col items-center justify-center h-full p-6 text-center gap-4">
@@ -1641,12 +1659,28 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
                     <div key={i} className="flex items-start gap-2.5">
                       <div className="size-7 shrink-0 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center">
                         <Sparkles className="size-3.5 text-amber-500" />
-                      </div>
-                      <div className="rounded-xl bg-muted px-3.5 py-2.5">
+                      <div className="rounded-xl bg-muted px-3.5 py-2.5 min-w-[140px]">
                         <div className="flex items-center gap-2">
-                          <Loader2 className="size-3.5 animate-spin text-amber-500" />
-                          <span className="text-xs text-muted-foreground">Thinking...</span>
+                          <Loader2 className="size-3.5 animate-spin text-amber-500 shrink-0" />
+                          <span className="text-xs text-muted-foreground italic">
+                            {msg.toolBadges?.some(b => b.status === "pending") ? "Executing…" : "Thinking…"}
+                          </span>
                         </div>
+                        {msg.toolBadges && msg.toolBadges.length > 0 && (
+                          <div className="mt-1.5 flex flex-col gap-1">
+                            {msg.toolBadges.map((b, bi) => (
+                              <div key={bi} className={cn(
+                                "flex items-center gap-1.5 text-[11px] rounded px-1.5 py-0.5",
+                                b.status === "pending" ? "text-amber-400" : b.status === "done" ? "text-emerald-400" : "text-red-400"
+                              )}>
+                                {b.status === "pending" && <Loader2 className="size-2.5 animate-spin shrink-0" />}
+                                {b.status === "done" && <CheckCircle2 className="size-2.5 shrink-0" />}
+                                {b.status === "error" && <XCircle className="size-2.5 shrink-0" />}
+                                <span className="truncate">{b.description}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -1973,6 +2007,17 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
               </button>
             ))}
           </div>
+        )}
+
+        {/* Scroll to bottom — appears when user has scrolled up */}
+        {userScrolledUp && (
+          <button
+            onClick={() => { setUserScrolledUp(false); scrollToBottom(true); }}
+            className="absolute bottom-[72px] right-4 z-20 flex items-center justify-center size-7 rounded-full bg-background border border-amber-500/40 shadow-md hover:bg-amber-500/10 transition-colors"
+            aria-label="Scroll to latest message"
+          >
+            <ChevronDown className="size-3.5 text-amber-400" />
+          </button>
         )}
 
         {/* Input area — wide, comfortable, Titan-style */}
