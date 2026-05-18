@@ -10214,6 +10214,29 @@ Rules:
 
         await db.updateUserApiKey(ctx.user!.id, column, encoded);
 
+        // Auto-set preferred video provider when saving a video-specific key and the
+        // user hasn't already chosen a preferred provider. This prevents the common
+        // confusion where a user adds a Runway or fal.ai key but generation silently
+        // uses Veo3 because a Google AI key (saved for LLM/scripts) takes priority.
+        // Excluded: google (LLM only), anthropic (LLM only), venice (LLM only),
+        //           elevenlabs/suno (audio), huggingface (low-quality video).
+        const videoProviderAutoSet: Record<string, string> = {
+          runway: "runway",
+          fal: "fal",
+          luma: "luma",
+          replicate: "replicate",
+          seedance: "seedance",
+          veo3: "veo3",
+          openai: "openai",
+        };
+        const autoSetProvider = videoProviderAutoSet[provider];
+        if (autoSetProvider) {
+          const existingKeys = await db.getUserApiKeys(ctx.user!.id);
+          if (!existingKeys.preferredProvider) {
+            await db.updateUserPreferredProvider(ctx.user!.id, autoSetProvider);
+          }
+        }
+
         return { success: true, provider, message: `${provider} API key saved successfully` };
       }),
 

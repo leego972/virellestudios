@@ -850,8 +850,15 @@ export async function generateExtendedScene(
       onProgress?.(i + 1, subShots.length, videoResult.videoUrl);
     } catch (err: any) {
       console.error(`[ExtendedScene] Sub-clip ${i + 1} failed:`, err.message);
-      // Attempt a Pollinations still-frame as a last-resort fallback so the scene
-      // is not entirely empty — a static frame is better than a hard gap.
+      // When the user has configured a paid API key, propagate the error immediately
+      // so the scene is marked failed with a clear, actionable message (e.g. "Invalid API key",
+      // "Quota exceeded"). Silently substituting a Pollinations still-frame would hide the
+      // failure and give the user Pollinations content they didn't ask for.
+      if (activeProvider !== "pollinations") {
+        throw new Error(`[${activeProvider}] Sub-clip ${i + 1}/${subShots.length} failed: ${err.message}`);
+      }
+      // Pollinations free-tier only: replace failed clip with a still-frame so the
+      // scene is not entirely empty (a static frame is better than a hard gap).
       try {
         const fbPrompt = encodeURIComponent(
           `${subShot.prompt.replace(/[^\x20-\x7E]/g, "").substring(0, 500)}, cinematic film still, professional lighting`
