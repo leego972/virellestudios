@@ -492,7 +492,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
             e.stopPropagation();
             try { onClose(); } catch { /* ignore */ }
             try {
-              if (typeof window !== "undefined" && window.history.length > 1) {
+              if (typeof window !== "undefined") {
                 window.history.back();
               }
             } catch { /* ignore */ }
@@ -745,7 +745,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
                   e.stopPropagation();
                   try { onClose(); } catch { /* ignore */ }
                   try {
-                    if (typeof window !== "undefined" && window.history.length > 1) {
+                    if (typeof window !== "undefined") {
                       window.history.back();
                     }
                   } catch { /* ignore */ }
