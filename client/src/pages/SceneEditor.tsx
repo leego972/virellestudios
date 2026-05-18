@@ -337,6 +337,16 @@ export default function SceneEditor() {
   const lastSavedSnapshotRef = useRef<string>("");
   const [autosavedAt, setAutosavedAt] = useState<number | null>(null);
   const isAutosaveSubmitRef = useRef<boolean>(false);
+  // Tracks the active video-generation poll so we can cancel it on unmount
+  const videoGenPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  useEffect(() => {
+    return () => {
+      if (videoGenPollRef.current) {
+        clearInterval(videoGenPollRef.current);
+        videoGenPollRef.current = null;
+      }
+    };
+  }, []);
 
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: projectId > 0 });
   const { data: scenes, isLoading } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: projectId > 0 });
@@ -406,22 +416,27 @@ export default function SceneEditor() {
       utils.scene.listByProject.invalidate({ projectId });
       if (result.status === "generating") {
         toast.success("Video generation started! This may take 2-5 minutes. The page will auto-refresh.");
-        // Poll every 10 seconds until scene status changes
-        const pollInterval = setInterval(async () => {
+        // Poll every 10 seconds until scene status changes (ref enables cleanup on unmount)
+        if (videoGenPollRef.current) clearInterval(videoGenPollRef.current);
+        videoGenPollRef.current = setInterval(async () => {
           const data = await utils.scene.listByProject.fetch({ projectId });
           const scene = data?.find((s: any) => s.id === result.sceneId);
           if (scene && (scene as any).status === "completed") {
-            clearInterval(pollInterval);
+            clearInterval(videoGenPollRef.current!);
+            videoGenPollRef.current = null;
             utils.scene.listByProject.invalidate({ projectId });
             toast.success("Video generation complete!");
           } else if (scene && (scene as any).status === "failed") {
-            clearInterval(pollInterval);
+            clearInterval(videoGenPollRef.current!);
+            videoGenPollRef.current = null;
             utils.scene.listByProject.invalidate({ projectId });
             toast.error("Scene generation failed — check your credits or provider status in Settings.", { duration: 6000 });
           }
         }, 10000);
         // Stop polling after 10 minutes max
-        setTimeout(() => clearInterval(pollInterval), 600000);
+        setTimeout(() => {
+          if (videoGenPollRef.current) { clearInterval(videoGenPollRef.current); videoGenPollRef.current = null; }
+        }, 600000);
       } else {
         toast.success(`Video generated via ${result.provider} (${result.duration}s)`);
       }
