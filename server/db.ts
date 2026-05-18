@@ -209,45 +209,48 @@ export async function updateProject(id: number, userId: number, data: Partial<In
 export async function deleteProject(id: number, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  // Cascade-delete all project-related data before removing the project itself
-  await db.delete(scenes).where(eq(scenes.projectId, id));
-  await db.delete(characters).where(eq(characters.projectId, id));
-  await db.delete(generationJobs).where(eq(generationJobs.projectId, id));
-  await db.delete(scripts).where(eq(scripts.projectId, id));
-  await db.delete(soundtracks).where(eq(soundtracks.projectId, id));
-  await db.delete(credits).where(eq(credits.projectId, id));
-  await db.delete(locations).where(eq(locations.projectId, id));
-  await db.delete(moodBoardItems).where(eq(moodBoardItems.projectId, id));
-  await db.delete(subtitles).where(eq(subtitles.projectId, id));
-  await db.delete(dialogues).where(eq(dialogues.projectId, id));
-  await db.delete(budgets).where(eq(budgets.projectId, id));
-  await db.delete(soundEffects).where(eq(soundEffects.projectId, id));
-  await db.delete(collaborators).where(eq(collaborators.projectId, id));
-  await db.delete(directorChats).where(eq(directorChats.projectId, id));
-  await db.delete(visualEffects).where(eq(visualEffects.projectId, id));
+  // Wrap all cascade-deletes in a single transaction so a mid-flight failure
+  // never leaves orphaned rows without also leaving the project row intact.
+  await db.transaction(async (tx) => {
+    await tx.delete(scenes).where(eq(scenes.projectId, id));
+    await tx.delete(characters).where(eq(characters.projectId, id));
+    await tx.delete(generationJobs).where(eq(generationJobs.projectId, id));
+    await tx.delete(scripts).where(eq(scripts.projectId, id));
+    await tx.delete(soundtracks).where(eq(soundtracks.projectId, id));
+    await tx.delete(credits).where(eq(credits.projectId, id));
+    await tx.delete(locations).where(eq(locations.projectId, id));
+    await tx.delete(moodBoardItems).where(eq(moodBoardItems.projectId, id));
+    await tx.delete(subtitles).where(eq(subtitles.projectId, id));
+    await tx.delete(dialogues).where(eq(dialogues.projectId, id));
+    await tx.delete(budgets).where(eq(budgets.projectId, id));
+    await tx.delete(soundEffects).where(eq(soundEffects.projectId, id));
+    await tx.delete(collaborators).where(eq(collaborators.projectId, id));
+    await tx.delete(directorChats).where(eq(directorChats.projectId, id));
+    await tx.delete(visualEffects).where(eq(visualEffects.projectId, id));
     // v6.x tables: film pipeline, production spine, wardrobe, credit reservations
-    await db.delete(frameComments).where(eq(frameComments.projectId, id));
-    await db.delete(filmMixSettings).where(eq(filmMixSettings.projectId, id));
-    await db.delete(filmAdrTracks).where(eq(filmAdrTracks.projectId, id));
-    await db.delete(filmFoleyTracks).where(eq(filmFoleyTracks.projectId, id));
-    await db.delete(filmScoreCues).where(eq(filmScoreCues.projectId, id));
-    await db.delete(filmCompileJobs).where(eq(filmCompileJobs.projectId, id));
+    await tx.delete(frameComments).where(eq(frameComments.projectId, id));
+    await tx.delete(filmMixSettings).where(eq(filmMixSettings.projectId, id));
+    await tx.delete(filmAdrTracks).where(eq(filmAdrTracks.projectId, id));
+    await tx.delete(filmFoleyTracks).where(eq(filmFoleyTracks.projectId, id));
+    await tx.delete(filmScoreCues).where(eq(filmScoreCues.projectId, id));
+    await tx.delete(filmCompileJobs).where(eq(filmCompileJobs.projectId, id));
     // featureCutScenes are keyed by cutId — cascade through featureCuts
-    await db.delete(featureCutScenes).where(
+    await tx.delete(featureCutScenes).where(
       inArray(featureCutScenes.cutId,
         db.select({ id: featureCuts.id }).from(featureCuts).where(eq(featureCuts.projectId, id))
       )
     );
-    await db.delete(featureCuts).where(eq(featureCuts.projectId, id));
-    await db.delete(shootDays).where(eq(shootDays.projectId, id));
-    await db.delete(crewContacts).where(eq(crewContacts.projectId, id));
-    await db.delete(activityLog).where(eq(activityLog.projectId, id));
-    await db.delete(creditReservations).where(eq(creditReservations.projectId, id));
-    await db.delete(projectBrands).where(eq(projectBrands.projectId, id));
-    await db.delete(wardrobeAssignments).where(eq(wardrobeAssignments.projectId, id));
-    await db.delete(wardrobeItems).where(eq(wardrobeItems.projectId, id));
+    await tx.delete(featureCuts).where(eq(featureCuts.projectId, id));
+    await tx.delete(shootDays).where(eq(shootDays.projectId, id));
+    await tx.delete(crewContacts).where(eq(crewContacts.projectId, id));
+    await tx.delete(activityLog).where(eq(activityLog.projectId, id));
+    await tx.delete(creditReservations).where(eq(creditReservations.projectId, id));
+    await tx.delete(projectBrands).where(eq(projectBrands.projectId, id));
+    await tx.delete(wardrobeAssignments).where(eq(wardrobeAssignments.projectId, id));
+    await tx.delete(wardrobeItems).where(eq(wardrobeItems.projectId, id));
     // Finally delete the project itself (ownership check)
-    await db.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, userId)));
+    await tx.delete(projects).where(and(eq(projects.id, id), eq(projects.userId, userId)));
+  });
 }
 
 // ─── Characters ───
@@ -807,8 +810,9 @@ export async function duplicateProject(projectId: number, userId: number) {
   // Get original project
   const original = await getProjectById(projectId, userId);
   if (!original) throw new Error("Project not found");
-  
-  // Create new project
+
+  // Create new project (then duplicate children); if any step fails, clean up the
+  // partially-created project so the user is never left with a broken copy.
   const newProject = await createProject({
     userId,
     title: `${original.title} (Copy)`,
