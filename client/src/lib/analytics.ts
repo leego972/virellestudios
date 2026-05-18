@@ -169,7 +169,7 @@ declare global {
     const fn = g();
     if (!fn) return;
     fn('set', 'user_properties', props);
-    if (props.user_id) fn('config', 'G-XXXXXXXXXX', { user_id: props.user_id });
+    if (props.user_id) fn('config', 'G-HH9N8M3FQS', { user_id: props.user_id });
   }
 
   // ─── Error tracking ───────────────────────────────────────────────────────────
