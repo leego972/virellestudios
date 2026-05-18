@@ -1659,6 +1659,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
                     <div key={i} className="flex items-start gap-2.5">
                       <div className="size-7 shrink-0 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center">
                         <Sparkles className="size-3.5 text-amber-500" />
+                      </div>
                       <div className="rounded-xl bg-muted px-3.5 py-2.5 min-w-[140px]">
                         <div className="flex items-center gap-2">
                           <Loader2 className="size-3.5 animate-spin text-amber-500 shrink-0" />
@@ -1794,6 +1795,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
             <ChevronDown className="size-4" />
           </button>
         )}
+        </div>
 
         {/* Voice recording overlay — dictation mode (red) */}
         {voiceState === "recording" && (
