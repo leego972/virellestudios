@@ -1284,9 +1284,23 @@ async function startServer() {
   // ── SSE Streaming Director Chat ─────────────────────────────────────────
   // Maps sessionId -> SSE Response so the POST handler can write to it
   const activeDirectorStreams = new Map<string, import('express').Response>();
+  const MAX_DIRECTOR_STREAMS = 200; // Global cap to prevent memory exhaustion
 
   app.get("/api/director/stream/:sessionId", (_req, res) => {
     const { sessionId } = _req.params;
+
+    // Reject malformed session IDs
+    if (!/^[a-zA-Z0-9_-]{8,128}$/.test(sessionId)) {
+      res.status(400).json({ error: "Invalid session ID" });
+      return;
+    }
+
+    // Enforce global stream cap to prevent memory exhaustion
+    if (activeDirectorStreams.size >= MAX_DIRECTOR_STREAMS) {
+      res.status(503).json({ error: "Server busy. Please try again shortly." });
+      return;
+    }
+
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");

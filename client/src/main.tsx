@@ -77,7 +77,8 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 
   // Don't redirect if already on login/register/pricing/public pages
   const path = window.location.pathname;
-  if (path === "/login" || path === "/register" || path === "/pricing" || path === "/subscription" || path === "/welcome") return;
+  const PUBLIC_PATHS = ["/login", "/register", "/pricing", "/subscription", "/welcome", "/blog", "/about", "/contact", "/download", "/how-it-works", "/showcase", "/legal", "/share", "/terms", "/privacy"];
+    if (PUBLIC_PATHS.some(p => path === p || path.startsWith(p + "/"))) return;
 
   window.location.href = "/login";
 };

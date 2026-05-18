@@ -311,11 +311,11 @@ export const appRouter = router({
     }),
     register: publicProcedure
       .input(z.object({
-        email: z.string().email().max(320),
+        email: z.string().email().max(320).trim(),
         password: z.string().min(8).max(128),
-        name: z.string().min(1).max(255),
-        referralCode: z.string().optional(),
-        promoCode: z.string().optional(),
+        name: z.string().min(1).max(255).trim(),
+        referralCode: z.string().max(64).optional(),
+        promoCode: z.string().max(64).optional(),
         // Profile & Business
         phone: z.string().max(32).optional(),
         companyName: z.string().max(255).optional(),
