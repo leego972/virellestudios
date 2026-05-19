@@ -125,14 +125,14 @@ export function selectProvider(keys: UserApiKeys): VideoProvider {
     if (hasKey) return pref;
   }
 
-  // Default priority order when no preference is set: Veo3 → Runway → OpenAI → fal → SeedDance → Replicate → Luma → HuggingFace → Pollinations
-  if (keys.googleAiKey) return "veo3";
+  // Default priority order when no preference is set: Luma → Runway → OpenAI → fal → SeedDance → Replicate → Veo3 → HuggingFace → Pollinations
+  if (keys.lumaKey) return "luma";
   if (keys.runwayKey) return "runway";
   if (keys.openaiKey) return "openai";
   if (keys.falKey) return "fal";
   if (keys.byteplusKey) return "seedance";
   if (keys.replicateKey) return "replicate";
-  if (keys.lumaKey) return "luma";
+  if (keys.googleAiKey) return "veo3";
   if (keys.hfToken) return "huggingface";
   // DEFAULT: Always use Pollinations (free) when user has no keys
   return "pollinations";
@@ -882,8 +882,8 @@ export async function generateVideo(
   };
 
   // Build ordered cascade: preferred first, then all others with keys, then pollinations last
-  // Default fallback order: veo3 → runway → openai → fal → seedance → replicate → luma → huggingface → pollinations
-  const allOrdered: VideoProvider[] = ["veo3", "runway", "openai", "fal", "seedance", "replicate", "luma", "huggingface", "pollinations"];
+  // Default fallback order: luma → runway → openai → fal → seedance → replicate → veo3 → huggingface → pollinations
+  const allOrdered: VideoProvider[] = ["luma", "runway", "openai", "fal", "seedance", "replicate", "veo3", "huggingface", "pollinations"];
   const cascade: { provider: VideoProvider; key: string }[] = [];
 
   // Add preferred first

@@ -1547,9 +1547,14 @@ export async function addBonusGenerations(userId: number, amount: number) {
 // ─── BYOK API Key Management ───
 
 const ALLOWED_API_KEY_COLUMNS: ReadonlySet<string> = new Set([
+  // Legacy column names (kept for backward compatibility)
   "openaiKey", "stabilityKey", "elevenLabsKey", "runwayKey", "replicateKey",
   "googleAiKey", "falKey", "anthropicKey", "mistralKey", "pikaKey",
   "lumaKey", "hedraKey", "klingKey", "hailuoKey",
+  // Current user-prefixed column names used by routers.ts columnMap
+  "userOpenaiKey", "userRunwayKey", "userReplicateKey", "userFalKey",
+  "userLumaKey", "userHfToken", "userElevenlabsKey", "userSunoKey",
+  "userByteplusKey", "userAnthropicKey", "userGoogleAiKey", "userVeniceKey",
 ]);
 
 export async function updateUserApiKey(userId: number, column: string, value: string | null) {
