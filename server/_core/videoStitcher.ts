@@ -65,6 +65,8 @@ export interface SceneInput {
   soundEffects?: SceneSoundEffect[];
   /** Subtitles for this scene */
   subtitles?: SceneSubtitle[];
+  /** Pre-generated Auslan signing avatar video URL for this scene */
+  auslanVideoUrl?: string;
   /** Transition to next scene: "cut" | "fade" | "dissolve" | "fade-to-black" */
   transition?: string;
   /** Transition duration in seconds (default 1) */
@@ -87,6 +89,10 @@ export interface StitchInput {
   soundtrackVolume?: number;
   /** Enable subtitle burn-in */
   burnSubtitles?: boolean;
+  /** Enable Auslan signing interpreter overlay (circular PIP) */
+  auslanEnabled?: boolean;
+  /** Position of the Auslan interpreter circle: "bottom-left" | "bottom-right" (default "bottom-right") */
+  auslanPosition?: string;
   /** Generate opening title card */
   showTitleCard?: boolean;
   /** Title card duration in seconds (default 5) */
@@ -363,6 +369,70 @@ async function processSceneAudio(
 
 // ─── Subtitle Burn-in ───
 
+// ─── Auslan Interpreter Overlay ───
+
+/**
+ * Composite an Auslan signing interpreter as a circular picture-in-picture
+ * in the bottom-left or bottom-right corner of a scene.
+ *
+ * Uses ffmpeg's geq filter to create a circular alpha mask on the avatar video,
+ * then overlays it on the main scene using the overlay filter.
+ */
+async function overlayAuslanOnScene(
+  tmpDir: string,
+  sceneVideoPath: string,
+  sceneIndex: number,
+  auslanVideoPath: string,
+  position: string,
+  resolution: { width: number; height: number },
+): Promise<string> {
+  const outputPath = path.join(tmpDir, `scene_auslan_${String(sceneIndex).padStart(3, "0")}.mp4`);
+
+  // Circle size: ~14% of video height, minimum 200px
+  const circleSize = Math.max(200, Math.round(resolution.height * 0.14));
+  const halfSize = circleSize / 2;
+  const margin = Math.round(resolution.height * 0.025);
+
+  // x/y position for the overlay (bottom-left or bottom-right)
+  const xPos = position === "bottom-left"
+    ? `${margin}`
+    : `W-${circleSize + margin}`;
+  const yPos = `H-${circleSize + margin}`;
+
+  // filter_complex:
+  // 1. Scale the avatar to the circle size
+  // 2. Apply circular alpha mask via geq (format=rgba required)
+  // 3. Overlay the circle on the main video
+  const filterComplex = [
+    `[1:v]scale=${circleSize}:${circleSize},format=rgba,`,
+    `geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':`,
+    `a='if(lt(sqrt(pow(X-${halfSize}\\,2)+pow(Y-${halfSize}\\,2)),${halfSize - 4}),255,0)'[auslan_circle]`,
+    `;[0:v][auslan_circle]overlay=x=${xPos}:y=${yPos}`,
+  ].join("");
+
+  try {
+    await execFileAsync("ffmpeg", [
+      "-i", sceneVideoPath,
+      "-i", auslanVideoPath,
+      "-filter_complex", filterComplex,
+      "-map", "0:a?",
+      "-c:v", "libx264",
+      "-preset", "slow",
+      "-crf", "18",
+      "-c:a", "copy",
+      "-shortest",
+      "-y",
+      outputPath,
+    ], { timeout: 180_000 });
+
+    console.log(`[VideoStitcher] Scene ${sceneIndex}: Auslan overlay applied (${position})`);
+    return outputPath;
+  } catch (e) {
+    console.warn(`[VideoStitcher] Warning: Auslan overlay failed for scene ${sceneIndex}, skipping:`, e);
+    return sceneVideoPath;
+  }
+}
+
 async function burnSubtitlesIntoScene(
   tmpDir: string,
   sceneVideoPath: string,
@@ -512,6 +582,39 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
     }
 
     // ═══════════════════════════════════════════════════════
+    // PHASE 3.5: Auslan interpreter overlay (if enabled)
+    // ═══════════════════════════════════════════════════════
+    let auslanOverlaidFiles = subtitledFiles;
+    if (input.auslanEnabled) {
+      console.log(`[VideoStitcher] Phase 3.5: Applying Auslan interpreter overlay (${input.auslanPosition ?? "bottom-right"})...`);
+      auslanOverlaidFiles = [];
+      for (let i = 0; i < subtitledFiles.length; i++) {
+        const scene = scenesWithVideo[i];
+        if (scene.auslanVideoUrl) {
+          // Download the avatar video locally
+          const auslanLocalPath = path.join(tmpDir, `auslan_avatar_${String(i).padStart(3, "0")}.mp4`);
+          try {
+            await downloadFile(scene.auslanVideoUrl, auslanLocalPath);
+            const overlaid = await overlayAuslanOnScene(
+              tmpDir,
+              subtitledFiles[i],
+              i,
+              auslanLocalPath,
+              input.auslanPosition ?? "bottom-right",
+              resolution,
+            );
+            auslanOverlaidFiles.push(overlaid);
+          } catch (err: any) {
+            console.warn(`[VideoStitcher] Auslan avatar download failed for scene ${i}, skipping:`, err.message);
+            auslanOverlaidFiles.push(subtitledFiles[i]);
+          }
+        } else {
+          auslanOverlaidFiles.push(subtitledFiles[i]);
+        }
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════
     // PHASE 4: Normalize all clips to consistent format + apply transitions
     // ═══════════════════════════════════════════════════════
     console.log(`[VideoStitcher] Phase 4: Normalizing clips and applying transitions...`);
@@ -563,10 +666,10 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
     }
 
     // Normalize each scene clip
-    for (let i = 0; i < subtitledFiles.length; i++) {
+    for (let i = 0; i < auslanOverlaidFiles.length; i++) {
       const normalized = path.join(tmpDir, `norm_${String(i).padStart(3, "0")}.ts`);
       const scene = scenesWithVideo[i];
-      const sceneDuration = await getVideoDuration(subtitledFiles[i]);
+      const sceneDuration = await getVideoDuration(auslanOverlaidFiles[i]);
 
       // Build video filter with transitions
       let vf = `scale=${resolution.width}:${resolution.height}:force_original_aspect_ratio=decrease,pad=${resolution.width}:${resolution.height}:(ow-iw)/2:(oh-ih)/2,setsar=1`;
@@ -584,7 +687,7 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       }
 
       await execFileAsync("ffmpeg", [
-        "-i", subtitledFiles[i],
+        "-i", auslanOverlaidFiles[i],
         "-c:v", "libx264", "-preset", "slow", "-crf", "18",
         "-vf", vf,
         "-r", "24", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-b:a", "320k",

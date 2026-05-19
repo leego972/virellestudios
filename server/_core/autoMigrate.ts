@@ -1343,6 +1343,7 @@ export async function runAutoMigration(): Promise<void> {
     { table: "users", column: "userAnthropicKey", definition: "TEXT NULL" },
     { table: "users", column: "userGoogleAiKey", definition: "TEXT NULL" },
     { table: "users", column: "userVeniceKey", definition: "TEXT NULL" },
+    { table: "users", column: "userDidKey", definition: "TEXT NULL" },
     { table: "users", column: "preferredLlmProvider", definition: "VARCHAR(32) NULL" },
     { table: "users", column: "directorInstructions", definition: "TEXT NULL" }, // Custom instructions for the Director's Assistant AI
     // v6.76 — BYOK fallback policy persisted per user. Was added in migration
@@ -1419,6 +1420,10 @@ export async function runAutoMigration(): Promise<void> {
     { table: "projects", column: "referenceImages", definition: "JSON NULL" },
     // v6.62 — sticky NLE export aspect ratio preference per project
     { table: "projects", column: "exportAspectRatio", definition: "VARCHAR(16) NULL DEFAULT '16:9'" },
+    // Accessibility — optional subtitle burn-in and Auslan interpreter overlay
+    { table: "projects", column: "subtitlesEnabled", definition: "TINYINT(1) NOT NULL DEFAULT 0" },
+    { table: "projects", column: "auslanEnabled", definition: "TINYINT(1) NOT NULL DEFAULT 0" },
+    { table: "projects", column: "auslanPosition", definition: "VARCHAR(16) NULL DEFAULT 'bottom-right'" },
     // Scenes table - soundtrack fields
     { table: "scenes", column: "soundtrackId", definition: "INT NULL" },
     { table: "scenes", column: "soundtrackVolume", definition: "INT NOT NULL DEFAULT 80" },

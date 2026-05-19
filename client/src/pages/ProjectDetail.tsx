@@ -38,6 +38,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 import {
   ArrowLeft,
   Film,
@@ -1370,13 +1371,72 @@ export default function ProjectDetail() {
               <div className="space-y-3">
                 <Label className="text-xs text-muted-foreground">Include in Export</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {["Subtitles", "Soundtrack", "Credits Sequence", "Opening Titles", "Color Grading", "Sound Effects"].map((item) => (
+                  {["Soundtrack", "Credits Sequence", "Opening Titles", "Color Grading", "Sound Effects"].map((item) => (
                     <label key={item} className="flex items-center gap-2 text-sm cursor-pointer">
                       <input type="checkbox" defaultChecked className="rounded border-border" />
                       {item}
                     </label>
                   ))}
                 </div>
+              </div>
+
+              <Separator />
+
+              {/* Accessibility Options */}
+              <div className="space-y-4">
+                <Label className="text-xs text-muted-foreground">Accessibility</Label>
+
+                {/* Subtitles toggle */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Subtitles</p>
+                    <p className="text-xs text-muted-foreground">Burns scene dialogue as timed captions into the exported film</p>
+                  </div>
+                  <Switch
+                    checked={!!((project as any)?.subtitlesEnabled)}
+                    onCheckedChange={(checked) =>
+                      updateMutation.mutate({ id: projectId, subtitlesEnabled: checked })
+                    }
+                  />
+                </div>
+
+                {/* Auslan overlay toggle */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Auslan Sign Language Interpreter</p>
+                    <p className="text-xs text-muted-foreground">
+                      AI-generated signing interpreter in a circle overlay — optional, requires a D-ID API key in your BYOK settings
+                    </p>
+                  </div>
+                  <Switch
+                    checked={!!((project as any)?.auslanEnabled)}
+                    onCheckedChange={(checked) =>
+                      updateMutation.mutate({ id: projectId, auslanEnabled: checked })
+                    }
+                  />
+                </div>
+
+                {/* Auslan position — only shown when Auslan is enabled */}
+                {(project as any)?.auslanEnabled && (
+                  <div className="flex items-center gap-4 pl-1">
+                    <Label className="text-xs text-muted-foreground shrink-0">Interpreter position</Label>
+                    <div className="flex gap-3">
+                      {(["bottom-right", "bottom-left"] as const).map((pos) => (
+                        <label key={pos} className="flex items-center gap-1.5 text-xs cursor-pointer">
+                          <input
+                            type="radio"
+                            name="auslanPosition"
+                            value={pos}
+                            checked={((project as any)?.auslanPosition || "bottom-right") === pos}
+                            onChange={() => updateMutation.mutate({ id: projectId, auslanPosition: pos })}
+                            className="accent-amber-500"
+                          />
+                          {pos === "bottom-right" ? "Bottom right" : "Bottom left"}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">

@@ -1555,6 +1555,7 @@ const ALLOWED_API_KEY_COLUMNS: ReadonlySet<string> = new Set([
   "userOpenaiKey", "userRunwayKey", "userReplicateKey", "userFalKey",
   "userLumaKey", "userHfToken", "userElevenlabsKey", "userSunoKey",
   "userByteplusKey", "userAnthropicKey", "userGoogleAiKey", "userVeniceKey",
+  "userDidKey",
 ]);
 
 export async function updateUserApiKey(userId: number, column: string, value: string | null) {
@@ -1590,6 +1591,7 @@ export async function getUserApiKeys(userId: number): Promise<{
   falKey: string | null;
   lumaKey: string | null;
   hfToken: string | null;
+  didKey: string | null;
   elevenlabsKey: string | null;
   sunoKey: string | null;
   byteplusKey: string | null;
@@ -1627,6 +1629,7 @@ export async function getUserApiKeys(userId: number): Promise<{
     anthropicKey: decode((user as any).userAnthropicKey),
     googleAiKey: decode((user as any).userGoogleAiKey),
     veniceKey: decode((user as any).userVeniceKey),
+    didKey: decode((user as any).userDidKey),
     preferredProvider: (user as any).preferredVideoProvider || null,
     preferredLlmProvider: (user as any).preferredLlmProvider || null,
   };

@@ -813,6 +813,10 @@ export const appRouter = router({
         climax: z.string().optional(),
         storyResolution: z.string().optional(),
         cinemaIndustry: z.string().optional(),
+        // Accessibility
+        subtitlesEnabled: z.boolean().optional(),
+        auslanEnabled: z.boolean().optional(),
+        auslanPosition: z.enum(["bottom-left", "bottom-right"]).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const { id, ...data } = input;
@@ -7924,18 +7928,69 @@ Generate a detailed production budget estimate.`,
           }
 
           // Parse subtitle entries and map to scenes
-          const subtitleEntries: any[] = [];
+          let subtitleEntries: any[] = [];
           if (projectSubtitles.length > 0) {
             const primarySub = projectSubtitles[0];
             const entries = (primarySub.entries as any[]) || [];
             subtitleEntries.push(...entries);
           }
+
+          // Auto-generate subtitle entries from scene dialogueText when project.subtitlesEnabled is on
+          // and no existing subtitle track is present (avoids double-burning)
+          if ((project as any).subtitlesEnabled && subtitleEntries.length === 0) {
+            for (const scene of scenesWithVideo) {
+              const text: string = (scene as any).dialogueText || (scene as any).subtitleText || "";
+              if (!text.trim()) continue;
+              // Split into ~12-word chunks, each ~4 seconds
+              const words = text.trim().split(/\s+/);
+              const chunkSize = 12;
+              let cursor = 0;
+              for (let wi = 0; wi < words.length; wi += chunkSize) {
+                const chunk = words.slice(wi, wi + chunkSize).join(" ");
+                subtitleEntries.push({
+                  sceneId: (scene as any).id,
+                  text: chunk,
+                  startTime: cursor,
+                  endTime: cursor + 4,
+                });
+                cursor += 4;
+              }
+            }
+          }
+
           const sceneSubMap = new Map<number, any[]>();
           for (const entry of subtitleEntries) {
             const sid = entry.sceneId;
             if (sid) {
               if (!sceneSubMap.has(sid)) sceneSubMap.set(sid, []);
               sceneSubMap.get(sid)!.push(entry);
+            }
+          }
+
+          // ── Auslan signing interpreter overlay ────────────────────────────
+          // If the project has auslanEnabled, generate a D-ID avatar video for
+          // each scene that has dialogue text and map it by scene ID.
+          const auslanAvatarMap = new Map<number, string>();
+          if ((project as any).auslanEnabled) {
+            const userKeys = await db.getUserApiKeys(ctx.user.id);
+            if (userKeys.didKey) {
+              const { generateAuslanAvatar } = await import("./_core/auslanEngine");
+              for (const scene of scenesWithVideo) {
+                const dialogueText: string = (scene as any).dialogueText || (scene as any).subtitleText || "";
+                if (!dialogueText.trim()) continue;
+                try {
+                  console.log(`[Export] Generating Auslan avatar for scene ${(scene as any).id}...`);
+                  const avatar = await generateAuslanAvatar({
+                    dialogueText: dialogueText.trim(),
+                    apiKey: userKeys.didKey,
+                  });
+                  auslanAvatarMap.set((scene as any).id, avatar.videoUrl);
+                } catch (auslanErr: any) {
+                  console.warn(`[Export] Auslan avatar generation failed for scene ${(scene as any).id}:`, auslanErr.message);
+                }
+              }
+            } else {
+              console.warn("[Export] Auslan overlay enabled but no D-ID API key set — skipping avatar generation");
             }
           }
 
@@ -7968,6 +8023,7 @@ Generate a detailed production budget estimate.`,
                     endTime: x.endTime || 3,
                     text: x.text || "",
                   })),
+                  auslanVideoUrl: auslanAvatarMap.get(s.id) || undefined,
                   transition: "fade",
                   transitionDuration: 0.8,
                 };
@@ -7982,6 +8038,8 @@ Generate a detailed production budget estimate.`,
                 soundtrackUrl: mainSoundtrack?.fileUrl || undefined,
                 soundtrackVolume: 20,
                 burnSubtitles: subtitleEntries.length > 0,
+                auslanEnabled: !!(project as any).auslanEnabled && auslanAvatarMap.size > 0,
+                auslanPosition: (project as any).auslanPosition || "bottom-right",
                 showTitleCard: true,
                 titleCardDuration: 5,
                 showCredits: projectCredits.length > 0,
@@ -10174,7 +10232,7 @@ Rules:
     // Save an API key for a specific provider
     saveApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3", "venice"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3", "venice", "did"]),
         key: z.string().min(1).max(500),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -10204,6 +10262,7 @@ Rules:
           google: "userGoogleAiKey",
           veo3: "userGoogleAiKey",  // veo3 uses the same Gemini key column
           venice: "userVeniceKey",
+          did: "userDidKey",         // D-ID avatar API for Auslan interpreter overlay
         };
 
         const column = columnMap[provider];
@@ -10243,7 +10302,7 @@ Rules:
     // Remove an API key
     removeApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3", "venice"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3", "venice", "did"]),
       }))
       .mutation(async ({ ctx, input }) => {
         const columnMap: Record<string, string> = {
@@ -10260,6 +10319,7 @@ Rules:
           google: "userGoogleAiKey",
           veo3: "userGoogleAiKey",
           venice: "userVeniceKey",
+          did: "userDidKey",
         };
 
         const column = columnMap[input.provider];
