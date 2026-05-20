@@ -371,6 +371,22 @@ export default function Characters() {
         </div>
       </div>
 
+        {/* ── Wardrobe warning banner ────────────────────────────────────── */}
+        {(characters?.length || 0) > 0 && (
+          <div className="flex items-start gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm">
+            <span className="text-lg leading-none mt-0.5">⚠️</span>
+            <p className="text-amber-800 dark:text-amber-300">
+              <span className="font-semibold">Wardrobe not assigned.</span>
+              {" "}Characters without a wardrobe assignment will render wearing a plain all-black outfit.
+              Lease costumes from the{" "}
+              <a href="/wardrobe" className="underline font-medium hover:text-amber-900 dark:hover:text-amber-200">
+                Virelle Wardrobe Marketplace
+              </a>{" "}
+              and assign them to your cast.
+            </p>
+          </div>
+        )}
+  
       {/* Search */}
       {(characters?.length || 0) > 3 && (
         <div className="relative max-w-sm">
