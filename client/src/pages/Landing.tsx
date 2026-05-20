@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import { LANDING_COPY } from "@/data/showrunnerShowcase";
+import { trpc } from "@/lib/trpc";
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
 
@@ -95,6 +96,7 @@ function GoldWatermark() {
 
 export default function Landing() {
   const [, setLocation] = useLocation();
+  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
   const { user } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -790,7 +792,11 @@ export default function Landing() {
               {/* Header */}
               <div className="text-center mb-16">
                 <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/40 rounded-full px-4 py-1.5 text-amber-400 text-xs font-black uppercase tracking-widest mb-6">
-                  ★ Limited — Founding Designer Partner Program
+                  {foundingStatus?.foundingActive === false
+                      ? "✓ Founding Program Closed — Now Standard Membership"
+                      : foundingStatus?.spotsRemaining !== undefined
+                        ? `★ Founding Partner — ${foundingStatus.spotsRemaining} of ${foundingStatus.totalSpots} spots left`
+                        : "★ Limited — Founding Designer Partner Program"}
                 </div>
                 <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 text-white leading-none">
                   GET IN <span className="text-amber-400">FIRST.</span>
@@ -809,12 +815,27 @@ export default function Landing() {
                   </div>
                   <div className="flex items-end justify-center gap-3 mt-2 mb-3">
                     <span className="text-white/25 text-2xl line-through font-bold">A$299</span>
-                    <span className="text-amber-400 text-6xl font-black leading-none">A$150</span>
+                  {foundingStatus?.foundingActive === false ? (
+                      <span className="text-white text-6xl font-black leading-none">A$299</span>
+                    ) : (
+                      <>
+                        <span className="text-white/25 text-2xl line-through font-bold">A$299</span>
+                        <span className="text-amber-400 text-6xl font-black leading-none">A$150</span>
+                      </>
+                    )}
                     <span className="text-white/40 text-xl mb-1">/year</span>
                   </div>
-                  <p className="text-white/35 text-sm">First year only · Renews at standard rate · Cancel anytime</p>
+                  {foundingStatus?.foundingActive === false
+                      ? "Standard annual membership · Cancel anytime"
+                      : "Founding price · First year only · Renews at standard rate · Cancel anytime"}
                 </div>
               </div>
+                {foundingStatus?.foundingActive !== false && foundingStatus?.spotsRemaining !== undefined && (
+                  <div className="mt-3 w-full bg-white/5 rounded-full overflow-hidden h-1.5">
+                    <div className="h-full bg-amber-400 rounded-full transition-all duration-700"
+                      style={{ width: `${Math.round((foundingStatus.taken / foundingStatus.totalSpots) * 100)}%` }} />
+                  </div>
+                )}
 
               {/* 8-benefit grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
@@ -842,7 +863,7 @@ export default function Landing() {
                   onClick={() => setLocation("/designer-register")}
                   className="bg-amber-500 hover:bg-amber-600 text-black font-black px-12 h-14 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
                 >
-                  Apply as Founding Partner — A$150/yr
+                Apply as Founding Partner — {foundingStatus?.foundingActive === false ? "A$299/yr" : "A$150/yr"}
                 </Button>
                 <p className="text-white/30 text-xs mt-4">
                   Limited spots · First come, first served · Direct Stripe Connect bank payouts
