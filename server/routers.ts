@@ -2165,8 +2165,10 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
 
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getSceneById(input.id);
+      .query(async ({ ctx, input }) => {
+        const scene = await db.getSceneById(input.id);
+        if (scene) await assertCanAccessProject(scene.projectId, ctx.user.id);
+        return scene;
       }),
 
     create: creationProcedure
@@ -3601,8 +3603,11 @@ Available fields you can update:
         const key = `footage/${ctx.user.id}/${nanoid()}-${input.filename}`;
         const { url } = await storagePut(key, buffer, input.contentType);
 
-        // If a sceneId is provided, update the scene with the footage URL
+        // If a sceneId is provided, verify ownership then update the scene
         if (input.sceneId) {
+          const targetScene = await db.getSceneById(input.sceneId);
+          if (!targetScene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+          await assertCanAccessProject(targetScene.projectId, ctx.user.id);
           await db.updateScene(input.sceneId, {
             externalFootageUrl: url,
             externalFootageType: input.footageType,
@@ -5438,8 +5443,10 @@ FORMAT RULES (always apply):
 
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getSoundtrackById(input.id);
+      .query(async ({ ctx, input }) => {
+        const soundtrack = await db.getSoundtrackById(input.id);
+        if (soundtrack) await assertCanAccessProject(soundtrack.projectId, ctx.user.id);
+        return soundtrack;
       }),
 
     create: creationProcedure
@@ -5741,8 +5748,10 @@ FORMAT RULES (always apply):
 
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getLocationById(input.id);
+      .query(async ({ ctx, input }) => {
+        const location = await db.getLocationById(input.id);
+        if (location) await assertCanAccessProject(location.projectId, ctx.user.id);
+        return location;
       }),
 
     create: creationProcedure
@@ -5947,8 +5956,10 @@ FORMAT RULES (always apply):
 
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getSubtitleById(input.id);
+      .query(async ({ ctx, input }) => {
+        const subtitle = await db.getSubtitleById(input.id);
+        if (subtitle) await assertCanAccessProject(subtitle.projectId, ctx.user.id);
+        return subtitle;
       }),
 
     create: creationProcedure
@@ -7114,8 +7125,10 @@ Generate the full dialogue for this scene.`,
 
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getBudgetById(input.id);
+      .query(async ({ ctx, input }) => {
+        const budget = await db.getBudgetById(input.id);
+        if (budget) await assertCanAccessProject(budget.projectId, ctx.user.id);
+        return budget;
       }),
 
     /**
