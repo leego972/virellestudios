@@ -12,35 +12,93 @@ import { useState } from "react";
   import { Plus, Film, Palette, Edit2, Trash2, Layers, Lock } from "lucide-react";
 
   function ActForm({ initial, onSave, onClose }: { initial?: any; onSave: (v: any) => void; onClose: () => void }) {
-    const [form, setForm] = useState({
-      name:        initial?.name        ?? "",
-      description: initial?.description ?? "",
-      orderIndex:  initial?.orderIndex  ?? 1,
-    });
-    return (
-      <div className="space-y-4">
-        <div>
-          <Label>Act Name</Label>
-          <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-            placeholder="e.g. Act I — Setup, Act II — Confrontation" />
+      const [form, setForm] = useState({
+        name:              initial?.name              ?? "",
+        description:       initial?.description       ?? "",
+        orderIndex:        initial?.orderIndex        ?? 1,
+        actType:           initial?.actType           ?? "act",
+        colorHex:          initial?.colorHex          ?? "#6366f1",
+        isEpisodeBoundary: initial?.isEpisodeBoundary ?? false,
+        episodeNumber:     initial?.episodeNumber     ?? "",
+        episodeTitle:      initial?.episodeTitle      ?? "",
+      });
+      return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Act Name</Label>
+              <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                placeholder="e.g. Act I, Episode 1" />
+            </div>
+            <div>
+              <Label>Order</Label>
+              <Input type="number" value={form.orderIndex}
+                onChange={e => setForm(f => ({ ...f, orderIndex: parseInt(e.target.value) || 1 }))} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Type</Label>
+              <select
+                className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+                value={form.actType}
+                onChange={e => setForm(f => ({ ...f, actType: e.target.value }))}
+              >
+                <option value="act">Act</option>
+                <option value="episode">Episode</option>
+                <option value="chapter">Chapter</option>
+                <option value="sequence">Sequence</option>
+              </select>
+            </div>
+            <div>
+              <Label>Color</Label>
+              <div className="flex gap-2 items-center mt-1">
+                <input type="color" value={form.colorHex}
+                  onChange={e => setForm(f => ({ ...f, colorHex: e.target.value }))}
+                  className="h-9 w-12 rounded border border-input cursor-pointer" />
+                <span className="text-xs text-muted-foreground">{form.colorHex}</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <Label>Description</Label>
+            <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+              placeholder="Story beats, themes, arc..." rows={3} />
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="episodeBoundary" checked={form.isEpisodeBoundary}
+              onChange={e => setForm(f => ({ ...f, isEpisodeBoundary: e.target.checked }))}
+              className="rounded border-input" />
+            <label htmlFor="episodeBoundary" className="text-sm">Episode boundary</label>
+          </div>
+          {form.isEpisodeBoundary && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Episode #</Label>
+                <Input type="number" value={form.episodeNumber}
+                  onChange={e => setForm(f => ({ ...f, episodeNumber: e.target.value }))}
+                  placeholder="1" />
+              </div>
+              <div>
+                <Label>Episode Title</Label>
+                <Input value={form.episodeTitle}
+                  onChange={e => setForm(f => ({ ...f, episodeTitle: e.target.value }))}
+                  placeholder="Pilot" />
+              </div>
+            </div>
+          )}
+          <div className="flex gap-2 pt-2">
+            <Button onClick={() => onSave({
+              ...form,
+              orderIndex: Number(form.orderIndex),
+              episodeNumber: form.episodeNumber ? Number(form.episodeNumber) : undefined,
+              episodeTitle: form.episodeTitle || undefined,
+            })} className="flex-1">Save</Button>
+            <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
+          </div>
         </div>
-        <div>
-          <Label>Order</Label>
-          <Input type="number" value={form.orderIndex}
-            onChange={e => setForm(f => ({ ...f, orderIndex: parseInt(e.target.value) || 1 }))} />
-        </div>
-        <div>
-          <Label>Description</Label>
-          <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-            placeholder="Story beats, themes, arc…" rows={3} />
-        </div>
-        <div className="flex gap-2 pt-2">
-          <Button onClick={() => onSave(form)} className="flex-1">Save</Button>
-          <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
-        </div>
-      </div>
-    );
-  }
+      );
+    }
 
   function VisualDNAPanel({ projectId }: { projectId: number }) {
     const { data: vdna, refetch } = (trpc as any).narrative?.getVisualDNA?.useQuery?.({ projectId }) ?? {};
