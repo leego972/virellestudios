@@ -288,7 +288,7 @@
   // ─── Seed runner ─────────────────────────────────────────────────────────────
 
   export async function runLamaloSeed(userId: number): Promise<{ created: boolean; collections: number; items: number }> {
-    const db = getDb();
+    const db = await getDb();
 
     // Idempotency check
     const existing = await db
@@ -298,7 +298,7 @@
       .limit(1);
 
     if (existing.length > 0) {
-      log.info({ designerProfileId: existing[0].id }, "Lamalo Fashion already seeded — skipping");
+      log.info("Lamalo Fashion already seeded — skipping");
       return { created: false, collections: 0, items: 0 };
     }
 
@@ -387,10 +387,10 @@
         totalItems++;
       }
 
-      log.info({ collection: col.name, items: col.items.length }, "Lamalo collection seeded");
+      log.info("Lamalo collection seeded");
     }
 
-    log.info({ designerProfileId, collections: ALL_COLLECTIONS.length, items: totalItems }, "Lamalo Fashion seed complete");
+    log.info("Lamalo Fashion seed complete");
     return { created: true, collections: ALL_COLLECTIONS.length, items: totalItems };
   }
   
