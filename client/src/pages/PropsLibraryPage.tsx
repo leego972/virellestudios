@@ -75,7 +75,7 @@ import { useState } from "react";
     });
 
     const filtered = filterCat === "all" ? props : props.filter((p: any) => p.category === filterCat);
-    const usedCats = [...new Set(props.map((p: any) => p.category as string))];
+    const usedCats = [...new Set<string>(props.map((p: any) => p.category as string))];
 
     return (
       <div className="p-6 space-y-6 max-w-6xl mx-auto">
