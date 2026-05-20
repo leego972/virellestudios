@@ -38,6 +38,12 @@ export interface CharacterDNA {
   physicalDescription: string;
   /** Reference image URL (uploaded photo or AI-generated reference) */
   referenceImageUrl?: string;
+  /** true = non-human: creature/animal/robot. No human actor. */
+  isNonHuman?: boolean;
+  /** animal | creature | robot | monster | puppet | mutant | alien | supernatural | fantasy */
+  costumeType?: string;
+  /** Hard-lock: AI must match referenceImageUrl exactly every frame */
+  referenceImageLocked?: boolean;
   /** Specific attributes for prompt injection */
   attributes: {
     gender: string;
@@ -113,6 +119,9 @@ export function buildCharacterDNA(character: {
   clothing?: string | null;
   referenceImageUrl?: string | null;
   thumbnailUrl?: string | null;
+  isNonHuman?: boolean | null;
+  costumeType?: string | null;
+  referenceImageLocked?: boolean | null;
   // Deep profile fields
   faceDnaPrompt?: string | null;
   bodyDnaPrompt?: string | null;
@@ -226,13 +235,30 @@ export function buildCharacterDNA(character: {
     "NOT CGI, NOT AI-generated look, NOT plastic skin"
   );
 
-  const promptAnchor = `[CHARACTER ${character.name}: ${sections.join(" || ")}]`;
+  // Non-human/creature/animal: Mystique=mutant, Babe=pig, T-800=robot.
+  // No human actor needed. Reference image IS their identity.
+  let promptAnchor: string;
+  if (character.isNonHuman) {
+    const typeLabel = character.costumeType
+      ? character.costumeType.charAt(0).toUpperCase() + character.costumeType.slice(1)
+      : 'Creature';
+    const baseDesc = character.description || sections.join(' || ') || 'unique appearance';
+    const lockNote = character.referenceImageLocked
+      ? ' APPEARANCE HARD-LOCKED — match reference image EXACTLY every frame. Zero deviation.'
+      : ' Maintain this creature/animal/robot appearance consistently across all scenes.';
+    promptAnchor = `[${typeLabel.toUpperCase()} "${character.name}": ${baseDesc}.${lockNote}]`;
+  } else {
+    promptAnchor = `[CHARACTER ${character.name}: ${sections.join(' || ')}]`;
+  }
 
   return {
     characterId: character.id,
     name: character.name,
     physicalDescription: character.description || promptAnchor,
     referenceImageUrl: character.referenceImageUrl || character.thumbnailUrl || undefined,
+    isNonHuman: character.isNonHuman ?? false,
+    costumeType: character.costumeType ?? undefined,
+    referenceImageLocked: character.referenceImageLocked ?? false,
     attributes: attrs,
     promptAnchor,
   };
@@ -534,7 +560,8 @@ export function buildContinuityChain(
   export function generateConsistentScenePrompt(
   chain: ContinuityChain,
   sceneIndex: number,
-  basePrompt: string
+  basePrompt: string,
+  coherenceCtx?: SceneCoherenceContext
 ): {
   enhancedPrompt: string;
   referenceImageUrl?: string;
@@ -556,19 +583,35 @@ export function buildContinuityChain(
     lighting: scene.lighting,
   });
 
-  // 3. Get reference image from previous scene (if available)
-  const referenceImageUrl = previousScene?.lastFrameUrl;
+  // 3. Inject coherence context (both quick-generate & manual scenes)
+  //    Covers: location/vehicle locks, props, creatures/animals, character
+  //    states, Visual DNA, wardrobe assignments.
+  const coherenceSections: string[] = [withContinuity];
+  if (coherenceCtx) {
+    for (const s of [
+      buildBackgroundSection(coherenceCtx.background),
+      buildPropsSection(coherenceCtx.props),
+      buildCharacterStateSection(coherenceCtx.characterStates, scene.characterIds),
+      buildWardrobeSection(coherenceCtx.wardrobeByCharacter, scene.characterIds),
+      buildVisualDNASection(coherenceCtx.visualDNA),
+    ]) { if (s) coherenceSections.push(s); }
+  }
+  const enhancedPrompt = coherenceSections.filter(Boolean).join('\n\n');
 
-  // 4. Get character prompt anchors for this scene
+  // 4. Reference image: creature/animal hard-lock takes priority over last frame
+  //    (Babe stays a pig, not a warthog)
+  const nonHumanRef = chain.characters
+    .filter(c => scene.characterIds.includes(c.characterId)
+      && (c as any).referenceImageLocked && c.referenceImageUrl)
+    .map(c => c.referenceImageUrl)[0];
+  const referenceImageUrl = nonHumanRef || previousScene?.lastFrameUrl;
+
+  // 5. Character prompt anchors
   const characterPromptAnchors = chain.characters
     .filter(c => scene.characterIds.includes(c.characterId))
     .map(c => c.promptAnchor);
 
-  return {
-    enhancedPrompt: withContinuity,
-    referenceImageUrl,
-    characterPromptAnchors,
-  };
+  return { enhancedPrompt, referenceImageUrl, characterPromptAnchors };
 }
 
 /**
