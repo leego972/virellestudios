@@ -7975,18 +7975,28 @@ Generate a detailed production budget estimate.`,
             const userKeys = await db.getUserApiKeys(ctx.user.id);
             if (userKeys.didKey) {
               const { generateAuslanAvatar } = await import("./_core/auslanEngine");
-              for (const scene of scenesWithVideo) {
-                const dialogueText: string = (scene as any).dialogueText || (scene as any).subtitleText || "";
-                if (!dialogueText.trim()) continue;
-                try {
-                  console.log(`[Export] Generating Auslan avatar for scene ${(scene as any).id}...`);
+              // Generate all avatar renders in parallel — D-ID renders take 30-60s each;
+              // sequential awaiting across many scenes would blow past the export timeout.
+              const scenesWithDialogue = scenesWithVideo.filter((s: any) => {
+                const text = (s.dialogueText || s.subtitleText || "").trim();
+                return text.length > 0;
+              });
+              console.log(`[Export] Generating ${scenesWithDialogue.length} Auslan avatar(s) in parallel...`);
+              const avatarResults = await Promise.allSettled(
+                scenesWithDialogue.map(async (scene: any) => {
+                  const dialogueText = (scene.dialogueText || scene.subtitleText || "").trim();
                   const avatar = await generateAuslanAvatar({
-                    dialogueText: dialogueText.trim(),
-                    apiKey: userKeys.didKey,
+                    dialogueText,
+                    apiKey: userKeys.didKey!,
                   });
-                  auslanAvatarMap.set((scene as any).id, avatar.videoUrl);
-                } catch (auslanErr: any) {
-                  console.warn(`[Export] Auslan avatar generation failed for scene ${(scene as any).id}:`, auslanErr.message);
+                  return { sceneId: scene.id as number, videoUrl: avatar.videoUrl };
+                }),
+              );
+              for (const result of avatarResults) {
+                if (result.status === "fulfilled") {
+                  auslanAvatarMap.set(result.value.sceneId, result.value.videoUrl);
+                } else {
+                  console.warn("[Export] An Auslan avatar generation failed:", result.reason?.message ?? result.reason);
                 }
               }
             } else {
@@ -10175,6 +10185,7 @@ Rules:
           google: !!(u as any).userGoogleAiKey,
           veo3: !!(u as any).userGoogleAiKey,  // veo3 uses the same Gemini key
           venice: !!(u as any).userVeniceKey,
+          did: !!(u as any).userDidKey,
         },
         preferredVideoProvider: u.preferredVideoProvider || null,
         preferredLlmProvider: (u as any).preferredLlmProvider || null,

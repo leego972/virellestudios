@@ -1025,6 +1025,15 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
     pricing: "Pay-per-use via Google AI Studio. ~$0.35 per video (720p 8s).",
     models: "Veo 3.1 Preview — text-to-video, image-to-video, native audio",
   },
+  {
+    id: "did",
+    name: "D-ID (Auslan Interpreter)",
+    description: "Generates a realistic AI signing avatar video for each scene that has dialogue text. The avatar is composited as a circular picture-in-picture overlay on your exported film — enabling Auslan (Australian Sign Language) accessibility. Enable the overlay per-project in the Accessibility section of the export panel.",
+    keyPrefix: "",
+    signupUrl: "https://studio.d-id.com/account-settings",
+    pricing: "Pay-per-use. Free trial credits included. ~$0.01–0.05 per avatar clip.",
+    models: "D-ID Talks API — realistic presenter avatars with Microsoft Neural TTS",
+  },
 ];
 
 export function getProviderInfo(id: VideoProvider): ProviderInfo | undefined {

@@ -402,12 +402,15 @@ async function overlayAuslanOnScene(
   // filter_complex:
   // 1. Scale the avatar to the circle size
   // 2. Apply circular alpha mask via geq (format=rgba required)
-  // 3. Overlay the circle on the main video
+  // 3. Overlay the circle on the main video with eof_action=pass so the
+  //    main scene continues playing after the avatar finishes (not truncated)
+  // Label the final output [out] so we can explicitly -map it — required
+  // because any explicit -map disables FFmpeg's auto-mapping.
   const filterComplex = [
     `[1:v]scale=${circleSize}:${circleSize},format=rgba,`,
     `geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':`,
     `a='if(lt(sqrt(pow(X-${halfSize}\\,2)+pow(Y-${halfSize}\\,2)),${halfSize - 4}),255,0)'[auslan_circle]`,
-    `;[0:v][auslan_circle]overlay=x=${xPos}:y=${yPos}`,
+    `;[0:v][auslan_circle]overlay=x=${xPos}:y=${yPos}:eof_action=pass[out]`,
   ].join("");
 
   try {
@@ -415,12 +418,13 @@ async function overlayAuslanOnScene(
       "-i", sceneVideoPath,
       "-i", auslanVideoPath,
       "-filter_complex", filterComplex,
-      "-map", "0:a?",
+      "-map", "[out]",   // video: labelled filtergraph output
+      "-map", "0:a?",    // audio: from scene (optional — not all clips have audio at this stage)
       "-c:v", "libx264",
       "-preset", "slow",
       "-crf", "18",
       "-c:a", "copy",
-      "-shortest",
+      // No -shortest: scene must play to its full length after avatar ends
       "-y",
       outputPath,
     ], { timeout: 180_000 });
