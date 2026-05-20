@@ -1,4 +1,5 @@
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { rateLimitAI } from "./_core/rateLimit";
 import { z } from "zod";
 import { getDb, deductCredits, getProjectById, getProjectScenes, getProjectCharacters, createChatMessage } from "./db";
 import { fundingSources } from "../drizzle/schema";
@@ -679,6 +680,7 @@ export const fundingRouter = router({
   autofillDraft: protectedProcedure
     .input(z.object({ projectId: z.number(), fundingSourceId: z.number() }))
     .mutation(async ({ input, ctx }) => {
+      await rateLimitAI(ctx.user.id);
       const { project, scenes, characters } = await getProjectContext(input.projectId, ctx.user.id);
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });

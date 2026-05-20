@@ -14,6 +14,7 @@
  */
 import { z } from "zod";
 import { router, protectedProcedure, creationProcedure } from "./_core/trpc";
+import { rateLimitAI } from "./_core/rateLimit";
 import { getDb } from "./db";
 import { directorVision, productionVehicles, wardrobeItems, shotListItems, shootingDays } from "../drizzle/schema_additions";
 import { storagePut } from "./storage";
@@ -641,6 +642,7 @@ export const productionAssetsRouter = router({
     generateDNA: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
         const [vision] = await db.select().from(directorVision)
@@ -776,6 +778,7 @@ export const productionAssetsRouter = router({
     enrich: creationProcedure
       .input(z.object({ locationId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
 
@@ -933,6 +936,7 @@ Your job is to produce a cinematographic location dossier satisfying FOUR non-ne
     generatePrompt: creationProcedure
       .input(z.object({ vehicleId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
         const [vehicle] = await db.select().from(productionVehicles)
@@ -1016,6 +1020,7 @@ Your job is to produce a cinematographic location dossier satisfying FOUR non-ne
     generate: creationProcedure
       .input(AtmosphereInput)
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const context = [
           `Time of day: ${input.timeOfDay.replace(/-/g," ")}`,
           `Weather/conditions: ${input.weather.replace(/-/g," ")}`,
@@ -1149,6 +1154,7 @@ CRITICAL REQUIREMENTS:
   analyseGarment: creationProcedure
     .input(z.object({ itemId: z.number() }))
     .mutation(async ({ ctx, input }) => {
+      await rateLimitAI(ctx.user.id);
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
 
@@ -1294,11 +1300,12 @@ Analyse the provided garment photo with expert precision. Return only valid JSON
     generate: creationProcedure
       .input(z.object({
         projectId:   z.number(),
-        sceneName:   z.string().min(1),
-        sceneNumber: z.string().optional(),
-        scriptText:  z.string().min(1),
+        sceneName:   z.string().min(1).max(255),
+        sceneNumber: z.string().max(32).optional(),
+        scriptText:  z.string().min(1).max(20000),
       }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
         const [vision] = await db.select().from(directorVision)
@@ -1421,6 +1428,7 @@ Analyse the provided garment photo with expert precision. Return only valid JSON
     generate: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
         const [locs, shots, visionArr] = await Promise.all([
@@ -1535,6 +1543,7 @@ Analyse the provided garment photo with expert precision. Return only valid JSON
     run: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
         const [locsArr, wardrobeArr, visionArr] = await Promise.all([

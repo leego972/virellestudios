@@ -13,6 +13,7 @@
 import { safeJsonExtract } from "./_core/safeParse";
 import { z } from "zod";
 import { router, protectedProcedure } from "./_core/trpc";
+import { rateLimitAI } from "./_core/rateLimit";
 import { getDb } from "./db";
 import { eq, and, asc, desc, sql } from "drizzle-orm";
 import {
@@ -587,6 +588,7 @@ export const featureFilmRouter = router({
       actStructure: z.enum(["three-act", "five-act", "heros-journey", "nonlinear", "episodic", "two-act"]),
     }))
     .mutation(async ({ input, ctx }) => {
+      await rateLimitAI(ctx.user.id);
       const project = await requireProjectAccess(input.projectId, ctx.user.id);
       const db = await getDb();
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -719,6 +721,7 @@ export const featureFilmRouter = router({
       shotDurationSeconds: z.number().min(5).max(30).default(10), // each sub-shot
     }))
     .mutation(async ({ input, ctx }) => {
+      await rateLimitAI(ctx.user.id);
       const db = await getDb();
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const [scene] = await db
@@ -924,6 +927,7 @@ export const featureFilmRouter = router({
   generateContinuityRecords: protectedProcedure
     .input(z.object({ projectId: z.number() }))
     .mutation(async ({ input, ctx }) => {
+      await rateLimitAI(ctx.user.id);
       const project = await requireProjectAccess(input.projectId, ctx.user.id);
       const db = await getDb();
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -1149,6 +1153,7 @@ export const featureFilmRouter = router({
   generateCharacterArcs: protectedProcedure
     .input(z.object({ projectId: z.number() }))
     .mutation(async ({ input, ctx }) => {
+      await rateLimitAI(ctx.user.id);
       const project = await requireProjectAccess(input.projectId, ctx.user.id);
       const db = await getDb();
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });

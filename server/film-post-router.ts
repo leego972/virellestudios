@@ -21,6 +21,7 @@ import { eq, and, asc } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { CREDIT_COSTS } from "./_core/subscription";
 import { deductCredits } from "./db";
+import { rateLimitAI } from "./_core/rateLimit";
 
 // ─── Mix Settings ─────────────────────────────────────────────────────────────
 
@@ -316,12 +317,13 @@ export const filmPostRouter = router({
   generateAdrSuggestions: protectedProcedure
     .input(z.object({
       projectId: z.number(),
-      context: z.string().optional(), // extra context from user
+      context: z.string().max(1000).optional(), // extra context from user
     }))
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
+      await rateLimitAI(ctx.user.id);
       // Deduct credits before generation
       await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_adr_suggest.cost, "film_post_adr_suggest", `AI ADR suggestions for project ${input.projectId}`);
 
@@ -370,12 +372,13 @@ Return JSON: { "suggestions": [ { "characterName": "...", "dialogueLine": "...",
   generateFoleySuggestions: protectedProcedure
     .input(z.object({
       projectId: z.number(),
-      context: z.string().optional(),
+      context: z.string().max(1000).optional(),
     }))
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
+      await rateLimitAI(ctx.user.id);
       // Deduct credits before generation
       await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_foley_suggest.cost, "film_post_foley_suggest", `AI Foley suggestions for project ${input.projectId}`);
 
@@ -424,12 +427,13 @@ Return JSON: { "suggestions": [ { "name": "...", "foleyType": "...", "descriptio
     .input(z.object({
       projectId: z.number(),
       style: z.string().optional(), // e.g. "orchestral", "electronic", "minimal piano"
-      context: z.string().optional(),
+      context: z.string().max(1000).optional(),
     }))
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
+      await rateLimitAI(ctx.user.id);
       // Deduct credits before generation
       await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_score_gen.cost, "film_post_score_gen", `AI Score cues for project ${input.projectId}`);
 
