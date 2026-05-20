@@ -62,111 +62,193 @@ function StatusBadge({ status }: { status: string }) {
     </Badge>
   );
 }
+const ITEM_TIERS = [
+    { label: "Accessories", min: 8, max: 20 },
+    { label: "Garments", min: 15, max: 40 },
+    { label: "Hero / Costume", min: 35, max: 80 },
+  ];
+  const COLLECTION_PRESETS = [
+    { label: "Starter", desc: "5–10 items", price: 60 },
+    { label: "Standard", desc: "10–20 items", price: 100 },
+    { label: "Signature", desc: "20+ items", price: 180 },
+    { label: "Luxury", desc: "20+ premium", price: 300 },
+  ];
+  const MEMBERSHIP_FEE_AUD = 299;
 
-function PriceDialog({
-  open,
-  onClose,
-  title,
-  retailPrice,
-  leasePrice,
-  onSave,
-  isCollection,
-}: {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  retailPrice?: number;
-  leasePrice?: number;
-  onSave: (retail: number, lease: number) => void;
-  isCollection?: boolean;
-}) {
-  const [retail, setRetail] = useState(String((retailPrice ?? 0) / 100));
-  const [lease, setLease] = useState(String((leasePrice ?? 0) / 100));
-  const suggestedLease = parseFloat(retail) * 0.02;
+  function PriceDialog({
+    open,
+    onClose,
+    title,
+    retailPrice,
+    leasePrice,
+    onSave,
+    isCollection,
+  }: {
+    open: boolean;
+    onClose: () => void;
+    title: string;
+    retailPrice?: number;
+    leasePrice?: number;
+    onSave: (retail: number, lease: number) => void;
+    isCollection?: boolean;
+  }) {
+    const [retail, setRetail] = useState(String((retailPrice ?? 0) / 100));
+    const [lease, setLease] = useState(String((leasePrice ?? 0) / 100));
+    const leaseNum = parseFloat(lease || "0");
+    const youEarn = leaseNum * 0.95;
+    const suggestedLease = parseFloat(retail) * 0.02;
+    const leasesNeeded = youEarn > 0 ? Math.ceil(MEMBERSHIP_FEE_AUD / youEarn) : null;
 
-  return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="bg-zinc-900 border-white/15 text-white max-w-sm">
-        <DialogHeader>
-          <DialogTitle className="text-base font-bold">Set Pricing</DialogTitle>
-          <p className="text-xs text-white/50 mt-0.5 truncate">{title}</p>
-        </DialogHeader>
+    return (
+      <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+        <DialogContent className="bg-zinc-900 border-white/15 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold">Set Pricing</DialogTitle>
+            <p className="text-xs text-white/50 mt-0.5 truncate">{title}</p>
+          </DialogHeader>
 
-        <div className="space-y-4 py-2">
-          {!isCollection && (
+          <div className="space-y-4 py-2">
+            {/* Pricing guidance panel */}
+            <div className="rounded-xl bg-amber-500/8 border border-amber-500/20 p-3 space-y-2">
+              <p className="text-[11px] font-bold text-amber-400/80 uppercase tracking-wider">
+                {isCollection ? "Recommended collection prices — tap to apply" : "Recommended item prices — tap to apply"}
+              </p>
+              {isCollection ? (
+                <div className="grid grid-cols-2 gap-1.5">
+                  {COLLECTION_PRESETS.map((p) => (
+                    <button
+                      key={p.label}
+                      type="button"
+                      onClick={() => setLease(String(p.price))}
+                      className={`text-left rounded-lg px-2.5 py-1.5 border transition-all ${
+                        leaseNum === p.price
+                          ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
+                          : "bg-white/3 border-white/10 text-white/70 hover:border-amber-500/30 hover:text-white"
+                      }`}
+                    >
+                      <span className="text-xs font-bold block">A${p.price} · {p.label}</span>
+                      <span className="text-[10px] text-white/40">{p.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {ITEM_TIERS.map((t) => (
+                    <div key={t.label} className="flex items-center justify-between">
+                      <span className="text-[11px] text-white/60 w-28">{t.label}</span>
+                      <div className="flex gap-1">
+                        {[t.min, Math.round((t.min + t.max) / 2), t.max].map((v) => (
+                          <button
+                            key={v}
+                            type="button"
+                            onClick={() => setLease(String(v))}
+                            className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
+                              leaseNum === v
+                                ? "bg-amber-500/20 border-amber-500/50 text-amber-300"
+                                : "bg-white/5 border-white/10 hover:border-amber-500/30 hover:text-amber-400"
+                            }`}
+                          >
+                            A${v}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {!isCollection && (
+              <div>
+                <Label className="text-xs text-white/70 mb-1 block">Real-world Retail Value (A$) — optional</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">$</span>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={retail}
+                    onChange={(e) => setRetail(e.target.value)}
+                    className="pl-7 bg-white/5 border-white/15 text-white"
+                    placeholder="e.g. 800"
+                  />
+                </div>
+                {suggestedLease > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setLease(suggestedLease.toFixed(2))}
+                    className="text-xs text-amber-400/70 hover:text-amber-400 mt-1 transition-colors"
+                  >
+                    Use 2% of retail → A${suggestedLease.toFixed(2)}
+                  </button>
+                )}
+              </div>
+            )}
+
             <div>
-              <Label className="text-xs text-white/70 mb-1 block">Real-world Retail Value (A$)</Label>
+              <Label className="text-xs text-white/70 mb-1 block">
+                {isCollection ? "Your asking price (A$)" : "Lease price per item (A$)"}
+              </Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">$</span>
                 <Input
                   type="number"
-                  min="0"
-                  step="1"
-                  value={retail}
-                  onChange={(e) => setRetail(e.target.value)}
-                  className="pl-7 bg-white/5 border-white/15 text-white"
+                  min="0.50"
+                  step="0.50"
+                  value={lease}
+                  onChange={(e) => setLease(e.target.value)}
+                  className="pl-7 bg-white/5 border-white/15 text-white text-base font-bold"
                   placeholder="0.00"
                 />
               </div>
-              <p className="text-xs text-white/30 mt-1">Used to suggest a lease price (~2% of retail)</p>
             </div>
-          )}
 
-          <div>
-            <Label className="text-xs text-white/70 mb-1 block">
-              {isCollection ? "Collection Bundle Price (A$)" : "Lease Price per Item (A$)"}
-            </Label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">$</span>
-              <Input
-                type="number"
-                min="0.50"
-                step="0.50"
-                value={lease}
-                onChange={(e) => setLease(e.target.value)}
-                className="pl-7 bg-white/5 border-white/15 text-white"
-                placeholder="0.00"
-              />
-            </div>
-            {!isCollection && suggestedLease > 0 && (
-              <button
-                type="button"
-                onClick={() => setLease(suggestedLease.toFixed(2))}
-                className="text-xs text-amber-400/70 hover:text-amber-400 mt-1 transition-colors"
-              >
-                Use suggested: A${suggestedLease.toFixed(2)} (2% of retail)
-              </button>
+            {/* Live earnings + breakeven */}
+            {leaseNum > 0 && (
+              <div className="rounded-xl bg-white/3 border border-white/8 p-3 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/50">You earn per lease</span>
+                  <span className="text-sm font-bold text-green-400">A${youEarn.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/40">Platform fee (5%)</span>
+                  <span className="text-xs text-white/30">−A${(leaseNum * 0.05).toFixed(2)}</span>
+                </div>
+                {leasesNeeded !== null && (
+                  <div className="pt-1.5 border-t border-white/8 flex items-center justify-between">
+                    <span className="text-xs text-white/50">Leases to cover A$299 membership</span>
+                    <span className={`text-sm font-black ${leasesNeeded <= 6 ? "text-amber-400" : leasesNeeded <= 12 ? "text-amber-300/60" : "text-white/40"}`}>
+                      {leasesNeeded}×
+                    </span>
+                  </div>
+                )}
+              </div>
             )}
-            <p className="text-xs text-white/30 mt-1">
-              You receive {isCollection ? "95% = A$" : "95% = A$"}
-              {((parseFloat(lease || "0") * 0.95) || 0).toFixed(2)} per lease
-            </p>
           </div>
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose} className="border-white/15 text-white/70 hover:bg-white/5">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              const r = Math.round(parseFloat(retail || "0") * 100);
-              const l = Math.round(parseFloat(lease || "0") * 100);
-              if (l < 50) {
-                toast.error("Lease price must be at least A$0.50");
-                return;
-              }
-              onSave(r, l);
-            }}
-            className="bg-amber-500 hover:bg-amber-600 text-black font-bold"
-          >
-            Save Pricing
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose} className="border-white/15 text-white/70 hover:bg-white/5">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                const r = Math.round(parseFloat(retail || "0") * 100);
+                const l = Math.round(parseFloat(lease || "0") * 100);
+                if (l < 50) {
+                  toast.error("Lease price must be at least A$0.50");
+                  return;
+                }
+                onSave(r, l);
+              }}
+              className="bg-amber-500 hover:bg-amber-600 text-black font-bold"
+            >
+              Save Pricing
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
 export default function DesignerStudioPage() {
   const [, setLocation] = useLocation();
