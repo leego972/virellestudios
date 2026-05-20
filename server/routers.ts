@@ -62,6 +62,7 @@ import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGener
 import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_STATES, type VoiceActingKeys } from "./_core/voiceActingEngine";
 import { generateSoundtrack, MUSIC_PROVIDERS, type SoundtrackKeys } from "./_core/soundtrackEngine";
 import { scanContent, handleModerationViolation } from "./_core/contentModerationEngine";
+import { runLamaloSeed } from "./lamalo-seed";
 
 // v6.77 — Per-project brand allow/required/forbidden list, mapped into the
 // shape buildScenePrompt expects. Used by every scene/trailer/poster/storyboard
@@ -9968,6 +9969,15 @@ Rules:
   funding: fundingRouter,
   crowdfund: crowdfundRouter,
   wardrobeMarket: wardrobeMarketplaceRouter,
+  admin: router({
+    /** Seed Lamalo Fashion in-house designer. Admin-only. Idempotent. */
+    seedLamalo: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+      }
+      return runLamaloSeed(ctx.user.id);
+    }),
+  }),
   filmPost: filmPostRouter,
   featureFilm: featureFilmRouter,
   productionAssets: productionAssetsRouter,
