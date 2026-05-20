@@ -610,13 +610,15 @@ export const wardrobeMarketplaceRouter = router({
               )
             ).catch(()=>{});
             const res = await _db.insert(wardrobeAssignments).values({
+              userId: ctx.user.id,
+              assignmentType: "character_wardrobe",
               projectId: input.projectId,
               characterId: input.characterId,
               wardrobeItemId: input.wardrobeItemId,
               fromSceneOrder: input.fromSceneOrder,
               toSceneOrder: input.toSceneOrder,
-              notes: input.notes,
-            });
+              placementNotes: input.notes,
+            );
             return { id: (res as any).insertId, success: true };
           }),
 
