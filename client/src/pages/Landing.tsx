@@ -779,61 +779,96 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── 7.5 — Designer Marketplace CTA ─── */}
-        <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10 bg-gradient-to-br from-black to-amber-950/10">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_30%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />
-          <div className="relative z-10 max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              {/* Left: For productions */}
-              <div>
-                <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-3 py-1 text-amber-400 text-xs font-bold mb-4">
-                  Wardrobe Marketplace
+        {/* ─── 7.5 — Founding Designer Partner Program ─── */}
+          <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-black via-amber-950/10 to-black" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(212,175,55,0.07)_0%,transparent_70%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_70%,rgba(212,175,55,0.04)_0%,transparent_60%)] pointer-events-none" />
+
+            <div className="relative z-10 max-w-6xl mx-auto">
+
+              {/* Header */}
+              <div className="text-center mb-16">
+                <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/40 rounded-full px-4 py-1.5 text-amber-400 text-xs font-black uppercase tracking-widest mb-6">
+                  ★ Limited — Founding Designer Partner Program
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4 text-white">
-                  LEASE REAL DESIGNER <span className="text-amber-400">COLLECTIONS</span>
+                <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 text-white leading-none">
+                  GET IN <span className="text-amber-400">FIRST.</span>
                 </h2>
-                <p className="text-white/50 text-sm leading-relaxed mb-6">
-                  Browse fashion and costume designers worldwide. Lease individual items or full collections — they appear directly in your character's wardrobe for AI generation.
+                <p className="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
+                  For the first group of approved designers, Virelle.life is offering an exclusive founding membership —
+                  reduced entry cost, priority placement, and a front-row seat inside the AI production economy.
                 </p>
+              </div>
+
+              {/* Pricing card */}
+              <div className="flex justify-center mb-16">
+                <div className="relative bg-gradient-to-br from-amber-500/10 to-amber-900/5 border border-amber-500/30 rounded-3xl px-16 py-10 text-center shadow-2xl shadow-amber-500/5">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-xs font-black px-5 py-1.5 rounded-full tracking-wide uppercase">
+                    Founding Partner Price
+                  </div>
+                  <div className="flex items-end justify-center gap-3 mt-2 mb-3">
+                    <span className="text-white/25 text-2xl line-through font-bold">A$299</span>
+                    <span className="text-amber-400 text-6xl font-black leading-none">A$150</span>
+                    <span className="text-white/40 text-xl mb-1">/year</span>
+                  </div>
+                  <p className="text-white/35 text-sm">First year only · Renews at standard rate · Cancel anytime</p>
+                </div>
+              </div>
+
+              {/* 8-benefit grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+                {([
+                  { icon: "💰", title: "50% Off First Year", desc: "A$150 instead of A$299 — your lowest cost to enter the marketplace ever." },
+                  { icon: "📈", title: "95% of Every Lease", desc: "Keep 95 cents from every dollar earned. Just a 5% platform commission." },
+                  { icon: "⭐", title: "Priority Placement", desc: "Founding designers appear first in the directory — ahead of all standard members." },
+                  { icon: "🎬", title: "Featured Spotlights", desc: "Your brand featured across Virelle.life campaigns and production newsletters." },
+                  { icon: "👗", title: "Pieces or Collections", desc: "Upload individual items or entire collections — mix and match as you like." },
+                  { icon: "🤖", title: "Early AI Access", desc: "First access to AI-assisted production briefs and automated wardrobe casting calls." },
+                  { icon: "🎖", title: "Production Credits", desc: "Get credited when your pieces are used in eligible Virelle.life productions." },
+                  { icon: "🌐", title: "Global Reach, Day One", desc: "Discoverable by film productions worldwide from the moment you publish." },
+                ] as const).map((b) => (
+                  <div key={b.title} className="bg-white/3 border border-white/8 rounded-2xl p-5 hover:border-amber-500/25 hover:bg-white/5 transition-all">
+                    <div className="text-2xl mb-3">{b.icon}</div>
+                    <h4 className="text-sm font-black text-white mb-1.5">{b.title}</h4>
+                    <p className="text-xs text-white/45 leading-relaxed">{b.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA */}
+              <div className="text-center mb-24">
+                <Button
+                  onClick={() => setLocation("/designer-register")}
+                  className="bg-amber-500 hover:bg-amber-600 text-black font-black px-12 h-14 text-base shadow-2xl shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
+                >
+                  Apply as Founding Partner — A$150/yr
+                </Button>
+                <p className="text-white/30 text-xs mt-4">
+                  Limited spots · First come, first served · Direct Stripe Connect bank payouts
+                </p>
+              </div>
+
+              {/* For productions — compact divider */}
+              <div className="border-t border-white/8 pt-16 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div>
+                  <p className="text-white/35 text-xs font-bold uppercase tracking-wider mb-1">Already a filmmaker?</p>
+                  <h3 className="text-xl font-black text-white">Browse the Wardrobe Marketplace</h3>
+                  <p className="text-white/40 text-sm mt-1">
+                    Lease designer collections — they appear in your characters for AI scene generation.
+                  </p>
+                </div>
                 <Button
                   onClick={() => setLocation("/wardrobe-marketplace")}
-                  className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-6 h-11"
+                  variant="outline"
+                  className="shrink-0 border-white/15 text-white/70 hover:bg-white/5 font-bold px-8 h-11"
                 >
                   Browse the Marketplace
                 </Button>
               </div>
 
-              {/* Right: For designers */}
-              <div className="bg-white/3 border border-white/10 rounded-2xl p-6">
-                <p className="text-xs text-white/40 font-bold uppercase tracking-wider mb-3">For Designers</p>
-                <h3 className="text-xl font-black tracking-tight mb-2 text-white">Join as a Designer</h3>
-                <p className="text-white/50 text-sm leading-relaxed mb-4">
-                  List your fashion or costume collections and earn 95% of every lease. A$299/year — unlimited collections, direct Stripe payouts.
-                </p>
-                <ul className="space-y-1.5 mb-5">
-                  {[
-                    "Unlimited item and collection listings",
-                    "95% of every lease goes directly to you",
-                    "Stripe Connect — instant bank payouts",
-                    "Discovered by productions on every budget",
-                  ].map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-xs text-white/60">
-                      <span className="text-amber-400 mt-0.5">✓</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  onClick={() => setLocation("/designer-register")}
-                  variant="outline"
-                  className="w-full border-amber-500/40 text-amber-400 hover:bg-amber-500/10 font-bold h-10"
-                >
-                  Join as Designer — A$299/yr
-                </Button>
-              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
         {/* ─── 8. Final CTA ─── */}
         <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10 bg-black">
