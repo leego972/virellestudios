@@ -23,13 +23,17 @@ import {
   BookOpen,
   Sparkles,
   ChevronRight,
+  Trash2,
+  Play,
+  Square,
   PlayCircle,
   Layers,
   Download,
   Mic2,
   DollarSign,
 } from "lucide-react";
-import { useLocation, Link } from "wouter";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+  import { useLocation, Link } from "wouter";
 import { toast } from "sonner";
 import { JOURNEY_STAGES } from "@/lib/journeyStages";
 
@@ -130,6 +134,16 @@ export default function Home() {
   }, []);
 
   const { data: projects, isLoading } = trpc.project.list.useQuery(undefined, { enabled: !showOpener });
+    const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+    const utils = trpc.useUtils();
+    const deleteMutation = trpc.project.delete.useMutation({
+      onSuccess: () => { toast.success("Project deleted"); setDeleteConfirmId(null); utils.project.list.invalidate(); },
+      onError: () => toast.error("Failed to delete project"),
+    });
+    const cancelMutation = trpc.project.cancelGeneration.useMutation({
+      onSuccess: () => { toast.success("Generation stopped"); utils.project.list.invalidate(); },
+      onError: () => toast.error("Couldn't stop generation"),
+    });
   const { data: characters } = trpc.character.list.useQuery(undefined, { enabled: !showOpener });
   const { data: providers } = trpc.settings.getProviders.useQuery(undefined, { enabled: !showOpener });
   const hasApiKey = providers && (providers as any[]).some((p: any) => p.isConfigured);
@@ -552,7 +566,32 @@ export default function Home() {
                         <span className="text-[10px] text-muted-foreground">{timeAgo(project.updatedAt || project.createdAt)}</span>
                       </div>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+                    <div className="flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setLocation(`/projects/${project.id}`); }}
+                          className="p-1.5 rounded hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                          title="Open project"
+                        >
+                          <Play className="h-3.5 w-3.5 fill-current" />
+                        </button>
+                        {project.status === "generating" && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); cancelMutation.mutate({ id: project.id }); }}
+                            className="p-1.5 rounded hover:bg-amber-500/10 text-amber-500/70 hover:text-amber-500 transition-colors"
+                            title="Stop generation"
+                            disabled={cancelMutation.isPending}
+                          >
+                            <Square className="h-3.5 w-3.5 fill-current" />
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(project.id); }}
+                          className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground/50 hover:text-destructive transition-colors"
+                          title="Delete project"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                   </CardContent>
                 </Card>
               ))}
