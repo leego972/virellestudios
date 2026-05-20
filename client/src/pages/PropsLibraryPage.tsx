@@ -81,7 +81,7 @@ import { useState } from "react";
         </div>
 
         <div className="flex gap-2 flex-wrap">
-          {['all', ...usedCats].map(c=>(
+          {['all', ...usedCats as string[]].map(c=>(
             <Button key={c} variant={filterCat===c?'default':'outline'} size="sm" onClick={()=>setFilterCat(c)}>
               {c === 'all' ? 'All' : c.charAt(0).toUpperCase()+c.slice(1)}
             </Button>
