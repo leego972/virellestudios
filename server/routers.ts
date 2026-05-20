@@ -54,6 +54,10 @@ import { mailingListRouter } from "./mailing-list-router";
 import { fundingRouter } from "./funding-router";
 import { crowdfundRouter } from "./crowdfund-router";
 import { wardrobeMarketplaceRouter } from "./wardrobe-marketplace-router";
+  import { backgroundsRouter } from "./backgrounds-router";
+  import { propsRouter } from "./props-router";
+  import { narrativeRouter } from "./narrative-router";
+  import { lamaloGiftsRouter } from "./lamalo-gifts-router";
 import { filmPostRouter } from "./film-post-router";
 import { featureFilmRouter } from "./feature-film-router";
 import { productionAssetsRouter } from "./production-assets-router";
@@ -9969,6 +9973,10 @@ Rules:
   funding: fundingRouter,
   crowdfund: crowdfundRouter,
   wardrobeMarket: wardrobeMarketplaceRouter,
+    backgrounds: backgroundsRouter,
+    props: propsRouter,
+    narrative: narrativeRouter,
+    lamaloGifts: lamaloGiftsRouter,
   admin: router({
     /** Seed Lamalo Fashion in-house designer. Admin-only. Idempotent. */
     seedLamalo: protectedProcedure.mutation(async ({ ctx }) => {
