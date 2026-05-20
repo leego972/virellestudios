@@ -582,130 +582,61 @@ export const wardrobeMarketplaceRouter = router({
         return { hasAccess: hasCollection };
       }),
   }),
- the current user has an active lease for a specific item */
-      hasAccess: protectedProcedure
-        .input(z.object({ wardrobeItemId: z.number().int() }))
-        .query(async ({ ctx, input }) => {
-          const leases = await db.getWardrobeLeasesByUser(ctx.user.id);
-          const active = leases.filter((l) => l.status === "active");
 
-          const hasItem = active.some((l) => l.wardrobeItemId === input.wardrobeItemId);
-          if (hasItem) return { hasAccess: true };
+      /** ── Director: assign leased items to characters for scene ranges ── */
+      director: router({
+        /** Assign a leased wardrobe item to a character for a range of scenes */
+        assign: protectedProcedure
+          .input(z.object({
+            projectId: z.number().int(),
+            characterId: z.number().int(),
+            wardrobeItemId: z.number().int(),
+            fromSceneOrder: z.number().int().min(0),
+            toSceneOrder: z.number().int().min(0),
+            notes: z.string().max(500).optional(),
+          }))
+          .mutation(async ({ ctx, input }) => {
+            const _db = getDb();
+            const rows = await _db.select().from(projects).where(eq(projects.id, input.projectId)).limit(1).catch(()=>[] as any[]);
+            if (!rows[0] || (rows[0] as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
+            await _db.delete(wardrobeAssignments).where(
+              and(
+                eq(wardrobeAssignments.projectId, input.projectId),
+                eq(wardrobeAssignments.characterId, input.characterId),
+                eq(wardrobeAssignments.fromSceneOrder, input.fromSceneOrder),
+                eq(wardrobeAssignments.toSceneOrder, input.toSceneOrder),
+              )
+            ).catch(()=>{});
+            const res = await _db.insert(wardrobeAssignments).values({
+              projectId: input.projectId,
+              characterId: input.characterId,
+              wardrobeItemId: input.wardrobeItemId,
+              fromSceneOrder: input.fromSceneOrder,
+              toSceneOrder: input.toSceneOrder,
+              notes: input.notes,
+            });
+            return { id: (res as any).insertId, success: true };
+          }),
 
-          const item = await db.getWardrobeItemById(input.wardrobeItemId);
-          if (!item?.collectionId) return { hasAccess: false };
+        /** List all wardrobe assignments for a project */
+        list: protectedProcedure
+          .input(z.object({ projectId: z.number().int() }))
+          .query(async ({ ctx, input }) => {
+            const _db = getDb();
+            const rows = await _db
+              .select({ assignment: wardrobeAssignments, item: wardrobeItems })
+              .from(wardrobeAssignments)
+              .leftJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
+              .where(eq(wardrobeAssignments.projectId, input.projectId));
+            return rows;
+          }),
 
-          const hasCollection = active.some((l) => l.collectionId === item.collectionId);
-          return { hasAccess: hasCollection };
-        }),
-    }),
-
-    /** ── Director: assign wardrobe items to characters for scene ranges ── */
-    director: router({
-      /** Assign a leased wardrobe item to a character for a range of scenes */
-      assign: protectedProcedure
-        .input(z.object({
-          projectId: z.number().int(),
-          characterId: z.number().int(),
-          wardrobeItemId: z.number().int(),
-          fromSceneOrder: z.number().int().min(0),
-          toSceneOrder: z.number().int().min(0),
-          notes: z.string().max(500).optional(),
-        }))
-        .mutation(async ({ ctx, input }) => {
-          const { getDb } = await import("./db");
-          const { wardrobeAssignments } = await import("../drizzle/schema");
-          const { and, eq } = await import("drizzle-orm");
-          const _db = getDb();
-          // Verify user owns the project
-          const project = await _db.query.projects?.findFirst?.({ where: (p: any, { eq }: any) => eq(p.id, input.projectId) });
-          if (!project || (project as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
-          // Upsert assignment
-          await _db.delete(wardrobeAssignments).where(
-            and(
-              eq(wardrobeAssignments.projectId, input.projectId),
-              eq(wardrobeAssignments.characterId, input.characterId),
-              eq(wardrobeAssignments.fromSceneOrder, input.fromSceneOrder),
-              eq(wardrobeAssignments.toSceneOrder, input.toSceneOrder),
-            )
-          );
-          const result = await _db.insert(wardrobeAssignments).values({
-            projectId: input.projectId,
-            characterId: input.characterId,
-            wardrobeItemId: input.wardrobeItemId,
-            fromSceneOrder: input.fromSceneOrder,
-            toSceneOrder: input.toSceneOrder,
-            notes: input.notes,
-          });
-          return { id: (result as any).insertId, success: true };
-        }),
-
-      /** List all wardrobe assignments for a project */
-      list: protectedProcedure
-        .input(z.object({ projectId: z.number().int() }))
-        .query(async ({ ctx, input }) => {
-          const { getDb } = await import("./db");
-          const { wardrobeAssignments, wardrobeItems } = await import("../drizzle/schema");
-          const { eq, and } = await import("drizzle-orm");
-          const _db = getDb();
-          const rows = await _db
-            .select({ assignment: wardrobeAssignments, item: wardrobeItems })
-            .from(wardrobeAssignments)
-            .leftJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
-            .where(eq(wardrobeAssignments.projectId, input.projectId));
-          return rows;
-        }),
-
-      /** Remove a wardrobe assignment */
-      remove: protectedProcedure
-        .input(z.object({ assignmentId: z.number().int() }))
-        .mutation(async ({ ctx, input }) => {
-          const { getDb } = await import("./db");
-          const { wardrobeAssignments } = await import("../drizzle/schema");
-          const { eq } = await import("drizzle-orm");
-          await getDb().delete(wardrobeAssignments).where(eq(wardrobeAssignments.id, input.assignmentId));
-          return { success: true };
-        }),
-    }),
-
-    /** ── Director: assign leased items to characters for scene ranges ── */
-    director: router({
-      assign: protectedProcedure
-        .input(z.object({
-          projectId: z.number().int(),
-          characterId: z.number().int(),
-          wardrobeItemId: z.number().int(),
-          fromSceneOrder: z.number().int().min(0),
-          toSceneOrder: z.number().int().min(0),
-          notes: z.string().max(500).optional(),
-        }))
-        .mutation(async ({ ctx, input }) => {
-          const { getDb: _gdb } = await import("./db");
-          const { wardrobeAssignments: _wa, projects: _pj } = await import("../drizzle/schema");
-          const { and: _and, eq: _eq } = await import("drizzle-orm");
-          const _db = _gdb();
-          const rows = await _db.select().from(_pj).where(_eq(_pj.id, input.projectId)).limit(1).catch(()=>[] as any[]);
-          if (!rows[0] || (rows[0] as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
-          await _db.delete(_wa).where(_and(_eq(_wa.projectId, input.projectId), _eq(_wa.characterId, input.characterId), _eq(_wa.fromSceneOrder, input.fromSceneOrder), _eq(_wa.toSceneOrder, input.toSceneOrder))).catch(()=>{});
-          const res = await _db.insert(_wa).values({ projectId: input.projectId, characterId: input.characterId, wardrobeItemId: input.wardrobeItemId, fromSceneOrder: input.fromSceneOrder, toSceneOrder: input.toSceneOrder, notes: input.notes });
-          return { id: (res as any).insertId, success: true };
-        }),
-      list: protectedProcedure
-        .input(z.object({ projectId: z.number().int() }))
-        .query(async ({ ctx, input }) => {
-          const { getDb: _gdb } = await import("./db");
-          const { wardrobeAssignments: _wa, wardrobeItems: _wi } = await import("../drizzle/schema");
-          const { eq: _eq } = await import("drizzle-orm");
-          return _gdb().select({ assignment: _wa, item: _wi }).from(_wa).leftJoin(_wi, _eq(_wa.wardrobeItemId, _wi.id)).where(_eq(_wa.projectId, input.projectId));
-        }),
-      remove: protectedProcedure
-        .input(z.object({ id: z.number().int() }))
-        .mutation(async ({ ctx, input }) => {
-          const { getDb: _gdb } = await import("./db");
-          const { wardrobeAssignments: _wa } = await import("../drizzle/schema");
-          const { eq: _eq } = await import("drizzle-orm");
-          await _gdb().delete(_wa).where(_eq(_wa.id, input.id));
-          return { success: true };
-        }),
-    }),
+        /** Remove a wardrobe assignment */
+        remove: protectedProcedure
+          .input(z.object({ assignmentId: z.number().int() }))
+          .mutation(async ({ ctx, input }) => {
+            await getDb().delete(wardrobeAssignments).where(eq(wardrobeAssignments.id, input.assignmentId));
+            return { success: true };
+          }),
+      }),
   });
