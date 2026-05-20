@@ -19,7 +19,7 @@ import { getDb } from "./db";
 import { directorVision, productionVehicles, wardrobeItems, shotListItems, shootingDays } from "../drizzle/schema_additions";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
-import { locations } from "../drizzle/schema";
+import { locations, projects } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
@@ -1112,6 +1112,11 @@ CRITICAL REQUIREMENTS:
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      // Verify project ownership before uploading
+      const [ownedWardProj] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedWardProj) throw new TRPCError({ code: "FORBIDDEN", message: "Project not found or access denied" });
 
       // Decode and upload image to S3
       let imageUrl: string;

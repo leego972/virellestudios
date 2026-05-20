@@ -67,15 +67,19 @@ export const filmPostRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database not available");
       const { projectId, ...data } = input;
+      // Verify project ownership before mutating mix settings
+      const [ownedProj] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.id, projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedProj) throw new Error("Project not found or access denied");
       const [existing] = await db
         .select({ id: filmMixSettings.id })
         .from(filmMixSettings)
-        .where(eq(filmMixSettings.projectId, projectId));
+        .where(and(eq(filmMixSettings.projectId, projectId), eq(filmMixSettings.userId, ctx.user.id)));
       if (existing) {
         await db
           .update(filmMixSettings)
           .set({ ...data })
-          .where(eq(filmMixSettings.projectId, projectId));
+          .where(and(eq(filmMixSettings.projectId, projectId), eq(filmMixSettings.userId, ctx.user.id)));
       } else {
         await db.insert(filmMixSettings).values({
           projectId,
@@ -86,18 +90,18 @@ export const filmPostRouter = router({
       const [row] = await db
         .select()
         .from(filmMixSettings)
-        .where(eq(filmMixSettings.projectId, projectId));
+        .where(and(eq(filmMixSettings.projectId, projectId), eq(filmMixSettings.userId, ctx.user.id)));
       return row;
     }),
 
   resetMixSettings: protectedProcedure
     .input(z.object({ projectId: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
       await db
         .delete(filmMixSettings)
-        .where(eq(filmMixSettings.projectId, input.projectId));
+        .where(and(eq(filmMixSettings.projectId, input.projectId), eq(filmMixSettings.userId, ctx.user.id)));
       return { success: true };
     }),
 
@@ -126,6 +130,9 @@ export const filmPostRouter = router({
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+      const [ownedProject] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedProject) throw new Error("Project not found or access denied");
       const [result] = await db.insert(filmAdrTracks).values({
         ...input,
         userId: ctx.user.id,
@@ -149,21 +156,21 @@ export const filmPostRouter = router({
       fileKey: z.string().optional(),
       notes: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
       const { id, ...data } = input;
-      await db.update(filmAdrTracks).set(data).where(eq(filmAdrTracks.id, id));
+      await db.update(filmAdrTracks).set(data).where(and(eq(filmAdrTracks.id, id), eq(filmAdrTracks.userId, ctx.user.id)));
       const [row] = await db.select().from(filmAdrTracks).where(eq(filmAdrTracks.id, id));
       return row;
     }),
 
   deleteAdrTrack: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      await db.delete(filmAdrTracks).where(eq(filmAdrTracks.id, input.id));
+      await db.delete(filmAdrTracks).where(and(eq(filmAdrTracks.id, input.id), eq(filmAdrTracks.userId, ctx.user.id)));
       return { success: true };
     }),
 
@@ -194,6 +201,9 @@ export const filmPostRouter = router({
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+      const [ownedProjectF] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedProjectF) throw new Error("Project not found or access denied");
       const [result] = await db.insert(filmFoleyTracks).values({
         ...input,
         userId: ctx.user.id,
@@ -218,21 +228,21 @@ export const filmPostRouter = router({
       notes: z.string().optional(),
       status: z.enum(["pending", "recorded", "approved"]).optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
       const { id, ...data } = input;
-      await db.update(filmFoleyTracks).set(data).where(eq(filmFoleyTracks.id, id));
+      await db.update(filmFoleyTracks).set(data).where(and(eq(filmFoleyTracks.id, id), eq(filmFoleyTracks.userId, ctx.user.id)));
       const [row] = await db.select().from(filmFoleyTracks).where(eq(filmFoleyTracks.id, id));
       return row;
     }),
 
   deleteFoleyTrack: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      await db.delete(filmFoleyTracks).where(eq(filmFoleyTracks.id, input.id));
+      await db.delete(filmFoleyTracks).where(and(eq(filmFoleyTracks.id, input.id), eq(filmFoleyTracks.userId, ctx.user.id)));
       return { success: true };
     }),
 
@@ -267,6 +277,9 @@ export const filmPostRouter = router({
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+      const [ownedProjectS] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedProjectS) throw new Error("Project not found or access denied");
       const [result] = await db.insert(filmScoreCues).values({
         ...input,
         userId: ctx.user.id,
@@ -294,21 +307,21 @@ export const filmPostRouter = router({
       duration: z.number().optional(),
       notes: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
       const { id, ...data } = input;
-      await db.update(filmScoreCues).set(data).where(eq(filmScoreCues.id, id));
+      await db.update(filmScoreCues).set(data).where(and(eq(filmScoreCues.id, id), eq(filmScoreCues.userId, ctx.user.id)));
       const [row] = await db.select().from(filmScoreCues).where(eq(filmScoreCues.id, id));
       return row;
     }),
 
   deleteScoreCue: protectedProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
-      await db.delete(filmScoreCues).where(eq(filmScoreCues.id, input.id));
+      await db.delete(filmScoreCues).where(and(eq(filmScoreCues.id, input.id), eq(filmScoreCues.userId, ctx.user.id)));
       return { success: true };
     }),
 
@@ -324,6 +337,10 @@ export const filmPostRouter = router({
       if (!db) throw new Error("Database not available");
 
       await rateLimitAI(ctx.user.id);
+      // Verify project ownership before charging credits or reading data
+      const [ownedAdrProj] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedAdrProj) throw new Error("Project not found or access denied");
       // Deduct credits before generation
       try { await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_adr_suggest.cost, "film_post_adr_suggest", `AI ADR suggestions for project ${input.projectId}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }
 
@@ -379,6 +396,10 @@ Return JSON: { "suggestions": [ { "characterName": "...", "dialogueLine": "...",
       if (!db) throw new Error("Database not available");
 
       await rateLimitAI(ctx.user.id);
+      // Verify project ownership before charging credits or reading data
+      const [ownedFoleyProj] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedFoleyProj) throw new Error("Project not found or access denied");
       // Deduct credits before generation
       try { await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_foley_suggest.cost, "film_post_foley_suggest", `AI Foley suggestions for project ${input.projectId}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }
 
@@ -434,6 +455,10 @@ Return JSON: { "suggestions": [ { "name": "...", "foleyType": "...", "descriptio
       if (!db) throw new Error("Database not available");
 
       await rateLimitAI(ctx.user.id);
+      // Verify project ownership before charging credits or reading data
+      const [ownedScoreProj] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedScoreProj) throw new Error("Project not found or access denied");
       // Deduct credits before generation
       try { await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_score_gen.cost, "film_post_score_gen", `AI Score cues for project ${input.projectId}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }
 
@@ -487,6 +512,11 @@ Return JSON: { "cues": [ { "cueNumber": "...", "title": "...", "cueType": "...",
       await rateLimitAI(ctx.user.id);
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+
+      // Verify project ownership before charging credits
+      const [ownedExportProj] = await db.select({ id: projects.id, title: projects.title }).from(projects)
+        .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id))).limit(1);
+      if (!ownedExportProj) throw new Error("Project not found or access denied");
 
       // Deduct credits for export
       try { await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_mix_export.cost, "film_post_mix_export", `Mix summary export for project ${input.projectId}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }

@@ -13,6 +13,7 @@ import {
   InsertCredit, credits,
   InsertLocation, locations,
   InsertMoodBoardItem, moodBoardItems,
+  creditTransactions,
   InsertSubtitle, subtitles,
   InsertDialogue, dialogues,
   InsertBudget, budgets,
@@ -1771,9 +1772,13 @@ export async function deductCredits(userId: number, amount: number, action: stri
     const currentBalance = (user.creditBalance as number) || 0;
     // Log the exempt transaction for auditing
     try {
-      await db.execute(sql.raw(
-        `INSERT INTO credit_transactions (userId, amount, action, description, balanceAfter, createdAt) VALUES (${userId}, 0, '${action.replace(/'/g, "''")}', 'EXEMPT: ${(description || action).replace(/'/g, "''")}', ${currentBalance}, NOW())`
-      ));
+      await db.insert(creditTransactions).values({
+        userId,
+        amount: 0,
+        action,
+        description: `EXEMPT: ${description || action}`,
+        balanceAfter: currentBalance,
+      });
     } catch (e) {
       console.warn("[Credits] Failed to log exempt transaction:", e);
     }
@@ -1809,9 +1814,13 @@ export async function deductCredits(userId: number, amount: number, action: stri
 
   // Log the transaction (non-critical)
   try {
-    await db.execute(sql.raw(
-      `INSERT INTO credit_transactions (userId, amount, action, description, balanceAfter, createdAt) VALUES (${userId}, ${-amount}, '${action.replace(/'/g, "''")}', '${(description || action).replace(/'/g, "''")}', ${newBalance}, NOW())`
-    ));
+    await db.insert(creditTransactions).values({
+      userId,
+      amount: -amount,
+      action,
+      description: description || action,
+      balanceAfter: newBalance,
+    });
   } catch (e) {
     console.warn("[Credits] Failed to log transaction:", e);
   }
@@ -1842,9 +1851,13 @@ export async function addCredits(userId: number, amount: number, action: string,
   const newBalance = (user.creditBalance as number) || 0;
 
   try {
-    await db.execute(sql.raw(
-      `INSERT INTO credit_transactions (userId, amount, action, description, balanceAfter, createdAt) VALUES (${userId}, ${amount}, '${action.replace(/'/g, "''")}', '${(description || action).replace(/'/g, "''")}', ${newBalance}, NOW())`
-    ));
+    await db.insert(creditTransactions).values({
+      userId,
+      amount,
+      action,
+      description: description || action,
+      balanceAfter: newBalance,
+    });
   } catch (e) {
     console.warn("[Credits] Failed to log transaction:", e);
   }
