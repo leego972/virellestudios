@@ -20,7 +20,7 @@ import { z } from "zod";
   export const lamaloGiftsRouter = router({
     /** Check if this user (non-designer) has already claimed their 2 free outfits */
     hasClaimedGift: protectedProcedure.query(async ({ ctx }) => {
-      const db = await getDb();
+      const db = (await getDb())!;
       // Designers are not eligible
       const designer = await db.select({ id: designerProfiles.id })
         .from(designerProfiles).where(eq(designerProfiles.userId, ctx.user.id)).limit(1);
@@ -36,7 +36,7 @@ import { z } from "zod";
         .where(and(
           eq(wardrobeLeases.userId, ctx.user.id),
           eq(wardrobeLeases.designerProfileId, lamalo[0].id),
-          eq(wardrobeLeases.leasePriceAud, 0),
+          eq(wardrobeLeases.amountPaidAud, 0),
         ));
 
       return { eligible: true, claimed: freeLeases.length >= 2 };
@@ -44,7 +44,7 @@ import { z } from "zod";
 
     /** Returns curated Lamalo Fashion starter items for the picker */
     getStarterOutfits: protectedProcedure.query(async ({ ctx }) => {
-      const db = await getDb();
+      const db = (await getDb())!;
       // Must not be a designer
       const designer = await db.select({ id: designerProfiles.id })
         .from(designerProfiles).where(eq(designerProfiles.userId, ctx.user.id)).limit(1);
@@ -60,7 +60,7 @@ import { z } from "zod";
         genderFit: wardrobeItems.genderFit,
         colors: wardrobeItems.colors,
         referencePrompt: wardrobeItems.referencePrompt,
-        thumbnailUrl: wardrobeItems.thumbnailUrl,
+        primaryImageUrl: wardrobeItems.primaryImageUrl,
       }).from(wardrobeItems)
         .leftJoin(designerCollections, eq(wardrobeItems.collectionId, designerCollections.id))
         .leftJoin(designerProfiles, eq(designerCollections.designerProfileId, designerProfiles.id))
@@ -80,7 +80,7 @@ import { z } from "zod";
         itemId2: z.number().int(),
       }))
       .mutation(async ({ ctx, input }) => {
-        const db = await getDb();
+        const db = (await getDb())!;
 
         // Block designers
         const designer = await db.select({ id: designerProfiles.id })
@@ -96,7 +96,7 @@ import { z } from "zod";
         // Block double-claims
         const existing = await db.select({ id: wardrobeLeases.id })
           .from(wardrobeLeases)
-          .where(and(eq(wardrobeLeases.userId, ctx.user.id), eq(wardrobeLeases.designerProfileId, lamaloId), eq(wardrobeLeases.leasePriceAud, 0)));
+          .where(and(eq(wardrobeLeases.userId, ctx.user.id), eq(wardrobeLeases.designerProfileId, lamaloId), eq(wardrobeLeases.amountPaidAud, 0)));
         if (existing.length >= 2) throw new TRPCError({ code: "CONFLICT", message: "Welcome gift already claimed." });
 
         // Verify both items belong to Lamalo Fashion
@@ -112,8 +112,8 @@ import { z } from "zod";
         // Grant 2 permanent free leases
         const expiresAt = new Date(Date.UTC(2099, 11, 31));
         await db.insert(wardrobeLeases).values([
-          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId1, leasePriceAud: 0, status: "active", leasedAt: new Date(), expiresAt },
-          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId2, leasePriceAud: 0, status: "active", leasedAt: new Date(), expiresAt },
+          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId1, amountPaidAud: 0, status: "active", leasedAt: new Date(), expiresAt },
+          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId2, amountPaidAud: 0, status: "active", leasedAt: new Date(), expiresAt },
         ]);
 
         return { success: true, message: "Welcome outfits unlocked! They are available in your wardrobe inventory." };
