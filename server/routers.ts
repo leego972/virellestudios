@@ -598,6 +598,73 @@ export const appRouter = router({
         logAuditEvent(ctx.user.id, "admin_grant_credits", ctx.req.ip || "unknown", true, { targetUserId: input.userId, amount: input.amount, reason: input.reason });
         return { success: true };
       }),
+    provisionBetaTester: adminProcedure
+        .mutation(async ({ ctx }) => {
+          const BETA_EMAIL = "tester@virelle.life";
+          const BETA_NAME  = "Virelle Beta Tester";
+          const BETA_PASS  = "Hello123";
+
+          // Already exists — sync API keys from admin caller
+          const existing = await db.getUserByEmail(BETA_EMAIL);
+          if (existing) {
+            await db.updateUser(existing.id, {
+              userOpenaiKey:     ctx.user.userOpenaiKey    ?? undefined,
+              userRunwayKey:     ctx.user.userRunwayKey    ?? undefined,
+              userReplicateKey:  ctx.user.userReplicateKey ?? undefined,
+              userFalKey:        ctx.user.userFalKey       ?? undefined,
+              userLumaKey:       ctx.user.userLumaKey      ?? undefined,
+              userHfToken:       ctx.user.userHfToken      ?? undefined,
+              userElevenlabsKey: ctx.user.userElevenlabsKey ?? undefined,
+              userSunoKey:       ctx.user.userSunoKey      ?? undefined,
+              userByteplusKey:   ctx.user.userByteplusKey  ?? undefined,
+              userAnthropicKey:  ctx.user.userAnthropicKey ?? undefined,
+              userGoogleAiKey:   ctx.user.userGoogleAiKey  ?? undefined,
+              userVeniceKey:     ctx.user.userVeniceKey    ?? undefined,
+              userDidKey:        ctx.user.userDidKey       ?? undefined,
+              preferredVideoProvider: ctx.user.preferredVideoProvider ?? undefined,
+              preferredLlmProvider:   ctx.user.preferredLlmProvider   ?? undefined,
+              subscriptionTier:   "studio",
+              subscriptionStatus: "active",
+              bonusGenerations:   9999,
+              creditBalance:      50000,
+              apiKeysUpdatedAt:   new Date(),
+            } as any);
+            logAuditEvent(ctx.user.id, "beta_tester_api_keys_synced", ctx.req.ip || "unknown", true, { targetEmail: BETA_EMAIL });
+            return { created: false, synced: true, email: BETA_EMAIL };
+          }
+
+          // Create fresh account
+          const passwordHash = await bcrypt.hash(BETA_PASS, 12);
+          const newUser = await db.createEmailUser({ email: BETA_EMAIL, name: BETA_NAME, passwordHash, howDidYouHear: "beta_provision" });
+          if (!newUser) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create beta tester account" });
+
+          // Copy admin's API keys + set studio-level access
+          await db.updateUser(newUser.id, {
+            userOpenaiKey:     ctx.user.userOpenaiKey    ?? undefined,
+            userRunwayKey:     ctx.user.userRunwayKey    ?? undefined,
+            userReplicateKey:  ctx.user.userReplicateKey ?? undefined,
+            userFalKey:        ctx.user.userFalKey       ?? undefined,
+            userLumaKey:       ctx.user.userLumaKey      ?? undefined,
+            userHfToken:       ctx.user.userHfToken      ?? undefined,
+            userElevenlabsKey: ctx.user.userElevenlabsKey ?? undefined,
+            userSunoKey:       ctx.user.userSunoKey      ?? undefined,
+            userByteplusKey:   ctx.user.userByteplusKey  ?? undefined,
+            userAnthropicKey:  ctx.user.userAnthropicKey ?? undefined,
+            userGoogleAiKey:   ctx.user.userGoogleAiKey  ?? undefined,
+            userVeniceKey:     ctx.user.userVeniceKey    ?? undefined,
+            userDidKey:        ctx.user.userDidKey       ?? undefined,
+            preferredVideoProvider: ctx.user.preferredVideoProvider ?? undefined,
+            preferredLlmProvider:   ctx.user.preferredLlmProvider   ?? undefined,
+            subscriptionTier:   "studio",
+            subscriptionStatus: "active",
+            bonusGenerations:   9999,
+            creditBalance:      50000,
+            apiKeysUpdatedAt:   new Date(),
+          } as any);
+
+          logAuditEvent(ctx.user.id, "beta_tester_provisioned", ctx.req.ip || "unknown", true, { targetEmail: BETA_EMAIL, newUserId: newUser.id });
+          return { created: true, synced: false, email: BETA_EMAIL, userId: newUser.id };
+        }),
   }),
 
   // ─── Projects ───
