@@ -431,7 +431,7 @@ export default function ProjectDetail() {
       const reader = new FileReader();
       reader.onload = async () => {
         const base64 = (reader.result as string).split(",")[1];
-        const result = await uploadAudioMutation.mutateAsync({ base64, filename: file.name, contentType: file.type });
+        const result = await uploadAudioMutation.mutateAsync({ base64, filename: file.name, contentType: (file.type as any) });
         setSoundtrackForm((prev) => ({ ...prev, title: prev.title || file.name.replace(/\.[^.]+$/, "") }));
         // Store the URL temporarily for submission
         (window as any).__pendingAudioUrl = result.url;
