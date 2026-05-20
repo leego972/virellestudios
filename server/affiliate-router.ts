@@ -359,7 +359,7 @@ export const affiliateRouter = router({
   // ─── Public: Contextual Recommendations ─────────────────────────
   getRecommendations: publicProcedure
     .input(z.object({
-      context: z.string(),
+      context: z.string().max(500),
       limit: z.number().min(1).max(10).default(3),
     }))
     .query(async ({ input }) => {
@@ -462,7 +462,7 @@ export const affiliateRouter = router({
   // ─── Public: Smart Recommendations (EPC-weighted) ─────────────────
   getSmartRecommendations: publicProcedure
     .input(z.object({
-      context: z.string(),
+      context: z.string().max(500),
       limit: z.number().min(1).max(10).default(3),
       userId: z.number().optional(),
     }))
@@ -497,7 +497,7 @@ export const affiliateRouter = router({
   // ─── Public: Conversion Signals ───────────────────────────────────
   getConversionSignals: publicProcedure
     .input(z.object({
-      context: z.string(),
+      context: z.string().max(500),
       userId: z.number().optional(),
     }))
     .query(async ({ input }) => {

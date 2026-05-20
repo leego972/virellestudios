@@ -995,7 +995,7 @@ export const appRouter = router({
       .input(z.object({
         projectId: z.number().nullable().optional(),
         name: z.string().min(1).max(128),
-        description: z.string().optional(),
+        description: z.string().max(2000).optional(),
         photoUrl: z.string().optional(),
         attributes: z.any().optional(),
         // Extended profile fields
@@ -1069,7 +1069,7 @@ export const appRouter = router({
       .input(z.object({
         id: z.number(),
         name: z.string().min(1).max(128).optional(),
-        description: z.string().optional(),
+        description: z.string().max(2000).optional(),
         photoUrl: z.string().optional(),
         attributes: z.any().optional(),
         // Extended profile fields
@@ -2192,7 +2192,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         projectId: z.number(),
         orderIndex: z.number().optional(),
         title: z.string().optional(),
-        description: z.string().optional(),
+        description: z.string().max(2000).optional(),
         // Atmosphere
         timeOfDay: z.string().optional(),
         weather: z.string().optional(),
@@ -2315,7 +2315,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       .input(z.object({
         id: z.number(),
         title: z.string().optional(),
-        description: z.string().optional(),
+        description: z.string().max(2000).optional(),
         orderIndex: z.number().optional(),
         // Atmosphere
         timeOfDay: z.string().optional(),
@@ -3351,8 +3351,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         message: z.string().min(1).max(2000),
         chatHistory: z.array(z.object({
           role: z.enum(["user", "assistant"]),
-          content: z.string(),
-        })).optional(),
+          content: z.string().max(10000),
+        })).max(50).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Credits: deduct for Virelle chat message
@@ -3595,7 +3595,7 @@ Available fields you can update:
       .input(z.object({
         base64: z.string().max(14_000_000, "File too large. Max 10MB."),
         filename: z.string(),
-        contentType: z.string().default("image/jpeg"),
+        contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/jpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
         const buffer = Buffer.from(input.base64, "base64");
@@ -3610,7 +3610,7 @@ Available fields you can update:
       .input(z.object({
         base64: z.string().max(200_000_000, "File too large. Max 150MB."),
         filename: z.string(),
-        contentType: z.string().default("video/mp4"),
+        contentType: z.enum(["video/mp4", "video/quicktime", "video/x-msvideo", "video/x-matroska", "video/webm"]).default("video/mp4"),
         sceneId: z.number().optional(),
         footageType: z.enum(["replace", "overlay", "reference"]).default("replace"),
         label: z.string().max(255).optional(),
@@ -3641,7 +3641,7 @@ Available fields you can update:
       .input(z.object({
         base64: z.string().max(50_000_000, "File too large. Max 10MB."),
         filename: z.string(),
-        contentType: z.string().default("image/png"),
+        contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/png"),
         sceneId: z.number(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -3682,7 +3682,7 @@ Available fields you can update:
       .input(z.object({
         base64: z.string().max(50_000_000, "File too large. Max 10MB."),
         filename: z.string(),
-        contentType: z.string().default("image/png"),
+        contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/png"),
         projectId: z.number(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -5539,7 +5539,7 @@ FORMAT RULES (always apply):
       .input(z.object({
         base64: z.string().max(70_000_000, "File too large. Max 50MB."),
         filename: z.string(),
-        contentType: z.string().default("audio/mpeg"),
+        contentType: z.enum(["audio/mpeg", "audio/wav", "audio/ogg", "audio/aac", "audio/mp4", "audio/webm"]).default("audio/mpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
         const buffer = Buffer.from(input.base64, "base64");
@@ -5801,7 +5801,7 @@ FORMAT RULES (always apply):
         name: z.string().min(1).max(255),
         address: z.string().max(512).optional(),
         locationType: z.string().max(128).optional(),
-        description: z.string().optional(),
+        description: z.string().max(2000).optional(),
         referenceImages: z.array(z.string()).optional(),
         notes: z.string().optional(),
         tags: z.array(z.string()).optional(),
@@ -5822,7 +5822,7 @@ FORMAT RULES (always apply):
         name: z.string().min(1).max(255).optional(),
         address: z.string().max(512).optional(),
         locationType: z.string().max(128).optional(),
-        description: z.string().optional(),
+        description: z.string().max(2000).optional(),
         referenceImages: z.array(z.string()).optional(),
         notes: z.string().optional(),
         tags: z.array(z.string()).optional(),
@@ -5912,6 +5912,7 @@ FORMAT RULES (always apply):
     generateImage: protectedProcedure
       .input(z.object({ description: z.string().min(1).max(1000) }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.location_scout_ai.cost, "location_scout_ai", `Location image: ${input.description.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         try {
           const { url } = await generateImage({
@@ -5986,6 +5987,7 @@ FORMAT RULES (always apply):
     generateImage: protectedProcedure
       .input(z.object({ prompt: z.string().min(1).max(2000), projectId: z.number().optional() }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         // Deduct 1 credit for mood board image generation (same as preview image)
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_preview_image.cost, "generate_preview_image", `Mood board image: ${input.prompt.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // v6.77 — Mood board references the same brand policy as the rest of
@@ -6028,8 +6030,8 @@ FORMAT RULES (always apply):
           sceneId: z.number().optional(),
           startTime: z.number(),
           endTime: z.number(),
-          text: z.string(),
-        })).optional(),
+          text: z.string().max(1000),
+        })).max(2000).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         return db.createSubtitle({
@@ -6046,8 +6048,8 @@ FORMAT RULES (always apply):
           sceneId: z.number().optional(),
           startTime: z.number(),
           endTime: z.number(),
-          text: z.string(),
-        })).optional(),
+          text: z.string().max(1000),
+        })).max(2000).optional(),
         language: z.string().min(1).max(32).optional(),
         languageName: z.string().min(1).max(128).optional(),
       }))
@@ -6454,15 +6456,16 @@ Generate the full dialogue for this scene.`,
       .input(z.object({
         projectId: z.number(),
         sceneId: z.number().optional(),
-        characterName: z.string(),
-        line: z.string(),
+        characterName: z.string().max(128),
+        line: z.string().max(2000),
         previousLines: z.array(z.object({
-          characterName: z.string(),
-          line: z.string(),
-          emotion: z.string().optional(),
-        })).optional(),
+          characterName: z.string().max(128),
+          line: z.string().max(2000),
+          emotion: z.string().max(64).optional(),
+        })).max(20).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const scene = input.sceneId ? await db.getSceneById(input.sceneId) : null;
         const project = await db.getProjectById(input.projectId, 0).catch(() => null);
         const characters = await db.getProjectCharacters(input.projectId).catch(() => []);
@@ -6617,7 +6620,7 @@ Generate the full dialogue for this scene.`,
           status: z.enum(["pending", "in_progress", "cleared", "na"]),
           notes: z.string().max(2000).optional(),
           docUrl: z.string().max(500).optional(),
-        })),
+        })).max(500),
       }))
       .mutation(async ({ ctx, input }) => {
         await assertOwnsProject(input.projectId, ctx.user.id);
@@ -6671,7 +6674,7 @@ Generate the full dialogue for this scene.`,
           notes: z.string().max(1000).optional(),
           isFinal: z.boolean().optional(),
           createdAt: z.string().optional(),
-        })),
+        })).max(100),
       }))
       .mutation(async ({ ctx, input }) => {
         await assertOwnsProject(input.projectId, ctx.user.id);
@@ -7407,9 +7410,9 @@ Generate a detailed production budget estimate.`,
     upload: protectedProcedure
       .input(z.object({
         projectId: z.number(),
-        fileName: z.string(),
+        fileName: z.string().max(255),
         fileData: z.string().max(70_000_000, "File too large. Max 50MB."), // base64
-        contentType: z.string(),
+        contentType: z.enum(["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "audio/mp4", "audio/webm", "audio/x-m4a", "audio/aac", "audio/flac"]),
       }))
       .mutation(async ({ ctx, input }) => {
         const buffer = Buffer.from(input.fileData, "base64");
@@ -8300,7 +8303,7 @@ Generate a detailed production budget estimate.`,
         movieId: z.number(),
         fileName: z.string(),
         fileBase64: z.string().max(70_000_000, "File too large. Max 50MB."),
-        contentType: z.string().default("video/mp4"),
+        contentType: z.enum(["video/mp4", "video/quicktime", "video/x-msvideo", "video/x-matroska", "video/webm"]).default("video/mp4"),
         fileSize: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -8321,7 +8324,7 @@ Generate a detailed production budget estimate.`,
         movieId: z.number(),
         fileName: z.string(),
         fileBase64: z.string().max(14_000_000, "File too large. Max 10MB."),
-        contentType: z.string().default("image/jpeg"),
+        contentType: z.enum(["image/jpeg", "image/png", "image/webp"]).default("image/jpeg"),
       }))
       .mutation(async ({ ctx, input }) => {
         const suffix = nanoid(8);
@@ -8777,7 +8780,7 @@ Generate a detailed production budget estimate.`,
         projectId: z.number(),
         fileName: z.string(),
         fileData: z.string().max(70_000_000, "File too large. Max 50MB."), // base64 encoded
-        mimeType: z.string(),
+        mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf", "video/mp4", "audio/mpeg", "audio/wav", "audio/ogg", "text/plain"]),
       }))
       .mutation(async ({ ctx, input }) => {
         const buffer = Buffer.from(input.fileData, "base64");
@@ -8798,7 +8801,7 @@ Generate a detailed production budget estimate.`,
       .input(z.object({
         projectId: z.number(),
         audioData: z.string().max(70_000_000, "File too large. Max 50MB."), // base64 encoded audio
-        mimeType: z.string(),
+        mimeType: z.enum(["audio/webm", "audio/mp4", "audio/wav", "audio/ogg", "audio/mpeg", "audio/aac"]),
       }))
       .mutation(async ({ ctx, input }) => {
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_transcription", `Voice transcription`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -8836,6 +8839,7 @@ Generate a detailed production budget estimate.`,
         editCommand: z.string().min(1).max(2000),
       }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_edit_text", `Voice edit text`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({
           messages: [
@@ -10804,6 +10808,7 @@ Rules:
     generatePromoAssets: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         

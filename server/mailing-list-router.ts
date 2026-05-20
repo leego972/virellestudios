@@ -253,7 +253,7 @@ export const mailingListRouter = router({
   uploadAdImage: protectedProcedure
     .input(z.object({
       imageBase64: z.string(),
-      contentType: z.string().default("image/jpeg"),
+      contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]).default("image/jpeg"),
       fileName: z.string().default("ad.jpg"),
     }))
     .mutation(async ({ ctx, input }) => {
