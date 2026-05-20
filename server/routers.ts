@@ -973,8 +973,10 @@ export const appRouter = router({
 
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getCharacterById(input.id);
+      .query(async ({ ctx, input }) => {
+        const character = await db.getCharacterById(input.id);
+        if (character) await assertCanAccessProject(character.projectId, ctx.user.id);
+        return character;
       }),
 
     create: creationProcedure
@@ -4607,13 +4609,16 @@ Break this into 8-15 scenes. For each scene, provide:
     // Get generation job status
     getJob: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getJobById(input.id);
+      .query(async ({ ctx, input }) => {
+        const job = await db.getJobById(input.id);
+        if (job) await assertCanAccessProject((job as any).projectId, ctx.user.id);
+        return job;
       }),
 
     listJobs: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectJobs(input.projectId);
       }),
 
@@ -4963,14 +4968,17 @@ Break this into 8-15 scenes. For each scene, provide:
   script: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectScripts(input.projectId);
       }),
 
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .query(async ({ input }) => {
-        return db.getScriptById(input.id);
+      .query(async ({ ctx, input }) => {
+        const script = await db.getScriptById(input.id);
+        if (script) await assertCanAccessProject(script.projectId, ctx.user.id);
+        return script;
       }),
 
     create: creationProcedure
@@ -5441,7 +5449,9 @@ FORMAT RULES (always apply):
 
     listByScene: protectedProcedure
       .input(z.object({ sceneId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const scene = await db.getSceneById(input.sceneId);
+        if (scene) await assertCanAccessProject(scene.projectId, ctx.user.id);
         return db.getSceneSoundtracks(input.sceneId);
       }),
 
@@ -5523,7 +5533,8 @@ FORMAT RULES (always apply):
   credit: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectCredits(input.projectId);
       }),
 
@@ -5746,7 +5757,8 @@ FORMAT RULES (always apply):
   location: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectLocations(input.projectId);
       }),
 
@@ -5954,7 +5966,8 @@ FORMAT RULES (always apply):
   subtitle: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectSubtitles(input.projectId);
       }),
 
@@ -6172,7 +6185,8 @@ FORMAT RULES (always apply):
   dialogue: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number(), sceneId: z.number().optional() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         if (input.sceneId) return db.getSceneDialogues(input.sceneId);
         return db.getProjectDialogues(input.projectId);
       }),
@@ -7123,7 +7137,8 @@ Generate the full dialogue for this scene.`,
   budget: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectBudgets(input.projectId);
       }),
 
@@ -7311,12 +7326,15 @@ Generate a detailed production budget estimate.`,
   soundEffect: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.listSoundEffectsByProject(input.projectId);
       }),
     listByScene: protectedProcedure
       .input(z.object({ sceneId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const scene = await db.getSceneById(input.sceneId);
+        if (scene) await assertCanAccessProject(scene.projectId, ctx.user.id);
         return db.listSoundEffectsByScene(input.sceneId);
       }),
     create: creationProcedure
@@ -7622,12 +7640,15 @@ Generate a detailed production budget estimate.`,
   visualEffect: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.listVisualEffectsByProject(input.projectId);
       }),
     listByScene: protectedProcedure
       .input(z.object({ sceneId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const scene = await db.getSceneById(input.sceneId);
+        if (scene) await assertCanAccessProject(scene.projectId, ctx.user.id);
         return db.listVisualEffectsByScene(input.sceneId);
       }),
     create: creationProcedure
@@ -7761,7 +7782,8 @@ Generate a detailed production budget estimate.`,
   collaboration: router({
     list: protectedProcedure
       .input(z.object({ projectId: z.number() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.listCollaboratorsByProject(input.projectId);
       }),
     invite: protectedProcedure
