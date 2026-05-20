@@ -800,31 +800,31 @@ export const appRouter = router({
       .input(z.object({
         id: z.number(),
         title: z.string().min(1).max(255).optional(),
-        description: z.string().optional(),
+        description: z.string().max(5000).optional(),
         rating: z.enum(["G", "PG", "PG-13", "R"]).optional(),
         duration: z.number().min(1).max(180).optional(),
-        genre: z.string().optional(),
-        plotSummary: z.string().optional(),
+        genre: z.string().max(128).optional(),
+        plotSummary: z.string().max(5000).optional(),
         status: z.enum(["draft", "generating", "paused", "completed", "failed"]).optional(),
         thumbnailUrl: z.string().optional(),
-        resolution: z.string().optional(),
+        resolution: z.string().max(64).optional(),
         quality: z.enum(["standard", "high", "ultra"]).optional(),
-        colorGrading: z.string().optional(),
+        colorGrading: z.string().max(256).optional(),
         colorGradingSettings: z.any().optional(),
         // Story & Narrative
-        mainPlot: z.string().optional(),
-        sidePlots: z.string().optional(),
-        plotTwists: z.string().optional(),
-        characterArcs: z.string().optional(),
-        themes: z.string().optional(),
-        setting: z.string().optional(),
-        actStructure: z.string().optional(),
-        tone: z.string().optional(),
-        targetAudience: z.string().optional(),
-        openingScene: z.string().optional(),
-        climax: z.string().optional(),
-        storyResolution: z.string().optional(),
-        cinemaIndustry: z.string().optional(),
+        mainPlot: z.string().max(5000).optional(),
+        sidePlots: z.string().max(5000).optional(),
+        plotTwists: z.string().max(2000).optional(),
+        characterArcs: z.string().max(2000).optional(),
+        themes: z.string().max(1000).optional(),
+        setting: z.string().max(1000).optional(),
+        actStructure: z.string().max(500).optional(),
+        tone: z.string().max(500).optional(),
+        targetAudience: z.string().max(500).optional(),
+        openingScene: z.string().max(2000).optional(),
+        climax: z.string().max(2000).optional(),
+        storyResolution: z.string().max(2000).optional(),
+        cinemaIndustry: z.string().max(256).optional(),
         // Accessibility
         subtitlesEnabled: z.boolean().optional(),
         auslanEnabled: z.boolean().optional(),
@@ -1196,7 +1196,12 @@ export const appRouter = router({
           "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin, NOT doll-like, NOT overly smooth — a REAL PHOTOGRAPH of a REAL PERSON"
         );
 
-        const result = await generateImage({ prompt: promptParts.join(" ") });
+        let result: { url: string };
+        try {
+          result = await generateImage({ prompt: promptParts.join(" ") });
+        } catch (e: any) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Character image generation failed. Please try again." });
+        }
 
         // Save to character library
         const character = await db.createCharacter({
@@ -2530,10 +2535,15 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           pushActorAnchor((char as any).aiActorId);
         }
 
-        const result = await generateImage({
-          prompt,
-          originalImages: originalImages.length > 0 ? originalImages : undefined,
-        });
+        let result: { url: string };
+        try {
+          result = await generateImage({
+            prompt,
+            originalImages: originalImages.length > 0 ? originalImages : undefined,
+          });
+        } catch (e: any) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Preview image generation failed. Please try again." });
+        }
 
         // Update scene with preview thumbnail
         await db.updateScene(scene.id, { thumbnailUrl: result.url });
