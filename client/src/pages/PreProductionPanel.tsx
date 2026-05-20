@@ -1201,7 +1201,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
                   if (!imageBase64) { toast.error("Please select a photo first"); return; }
                   if (!uName.trim()) { toast.error("Please enter a garment name"); return; }
                   uploadMutation.mutate({
-                    projectId, name: uName, imageBase64, mimeType: imageMime,
+                    projectId, name: uName, imageBase64, mimeType: (imageMime as any),
                     category: uCat || undefined, color: uColor || undefined,
                     secondaryColor: uColor2 || undefined, fabric: uFabric || undefined,
                     condition: uCondition || undefined, brand: uBrand || undefined,
