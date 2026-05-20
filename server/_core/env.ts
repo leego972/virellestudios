@@ -38,6 +38,11 @@ export const ENV = {
   stripeEnterpriseMonthlyPriceId: process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID ?? "",
   stripeEnterpriseAnnualPriceId: process.env.STRIPE_ENTERPRISE_ANNUAL_PRICE_ID ?? "",
 
+  // ─── Designer Marketplace membership — AUD (v7.0) ──────────────────────────
+  stripeDesignerYearlyPriceId: process.env.STRIPE_DESIGNER_YEARLY_PRICE_ID ?? "",
+  stripeConnectReturnUrl: process.env.STRIPE_CONNECT_RETURN_URL ?? "",
+  stripeConnectRefreshUrl: process.env.STRIPE_CONNECT_REFRESH_URL ?? "",
+
   // ─── Backward-compat aliases (old USD keys — kept so existing webhooks work) ─
   stripeProPriceId: process.env.STRIPE_PRO_PRICE_ID ?? "",
   stripeIndustryPriceId: process.env.STRIPE_INDUSTRY_PRICE_ID ?? "",

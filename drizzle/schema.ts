@@ -1838,6 +1838,14 @@ export const designerProfiles = mysqlTable("designerProfiles", {
   verified: boolean("verified").default(false).notNull(),
   // public | private | unlisted
   visibility: varchar("visibility", { length: 32 }).default("public").notNull(),
+  // ─── Designer Marketplace v7.0 ─────────────────────────────────────────────
+  stripeAccountId: varchar("stripeAccountId", { length: 255 }),
+  stripeAccountStatus: varchar("stripeAccountStatus", { length: 32 }).default("none"),
+  // none | pending | active | cancelled | expired
+  membershipStatus: varchar("membershipStatus", { length: 32 }).default("none").notNull(),
+  membershipSubscriptionId: varchar("membershipSubscriptionId", { length: 255 }),
+  membershipCurrentPeriodEnd: timestamp("membershipCurrentPeriodEnd"),
+  brandingImages: json("brandingImages"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -1862,6 +1870,10 @@ export const designerCollections = mysqlTable("designerCollections", {
   // reference_only | editorial | non_commercial | full_license | custom
   licenseType: varchar("licenseType", { length: 64 }).default("reference_only").notNull(),
   licenseNotes: text("licenseNotes"),
+  // ─── Marketplace pricing v7.0 ─────────────────────────────────────────────
+  collectionPriceAud: int("collectionPriceAud"),
+  published: boolean("published").default(false).notNull(),
+  publishedAt: timestamp("publishedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -1906,6 +1918,9 @@ export const wardrobeItems = mysqlTable("wardrobeItems", {
   visibility: varchar("visibility", { length: 32 }).default("public").notNull(),
   // active | hidden | retired
   status: varchar("status", { length: 32 }).default("active").notNull(),
+  // ─── Marketplace pricing v7.0 ─────────────────────────────────────────────
+  retailPriceAud: int("retailPriceAud"),
+  leasePriceAud: int("leasePriceAud"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -1935,6 +1950,30 @@ export const wardrobeAssignments = mysqlTable("wardrobeAssignments", {
 });
 export type WardrobeAssignment = typeof wardrobeAssignments.$inferSelect;
 export type InsertWardrobeAssignment = typeof wardrobeAssignments.$inferInsert;
+
+// ─── v7.0 Wardrobe Leases ────────────────────────────────────────────────────
+// Records when a user leases an item or collection from a designer.
+// Money flows via Stripe Connect: platform takes 5%, designer gets 95%.
+export const wardrobeLeases = mysqlTable("wardrobeLeases", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  designerProfileId: int("designerProfileId").notNull(),
+  wardrobeItemId: int("wardrobeItemId"),
+  collectionId: int("collectionId"),
+  // item | collection
+  leaseType: varchar("leaseType", { length: 32 }).notNull(),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  stripeTransferId: varchar("stripeTransferId", { length: 255 }),
+  amountPaidAud: int("amountPaidAud").notNull(),
+  designerAmountAud: int("designerAmountAud").notNull(),
+  platformFeeAud: int("platformFeeAud").notNull(),
+  // pending | active | refunded
+  status: varchar("status", { length: 32 }).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type WardrobeLease = typeof wardrobeLeases.$inferSelect;
+export type InsertWardrobeLease = typeof wardrobeLeases.$inferInsert;
 
 
   // ─── Native Crowdfunding (v6.80) ─────────────────────────────────────────────

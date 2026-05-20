@@ -45,6 +45,7 @@ import {
     designerCollections, InsertDesignerCollection, DesignerCollection,
     wardrobeItems, InsertWardrobeItem, WardrobeItem,
     wardrobeAssignments, InsertWardrobeAssignment, WardrobeAssignment,
+    wardrobeLeases, InsertWardrobeLease, WardrobeLease,
   } from "../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -3407,4 +3408,57 @@ export async function deleteWardrobeAssignment(id: number): Promise<void> {
   const db = await getDb();
   if (!db) return;
   await db.delete(wardrobeAssignments).where(eq(wardrobeAssignments.id, id));
+}
+
+// ─── wardrobeLeases ───
+export async function createWardrobeLease(data: InsertWardrobeLease): Promise<WardrobeLease> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(wardrobeLeases).values(data);
+  const id = (result as any)[0]?.insertId;
+  return (await db.select().from(wardrobeLeases).where(eq(wardrobeLeases.id, id)))[0];
+}
+
+export async function getWardrobeLeasesByUser(userId: number): Promise<WardrobeLease[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeLeases)
+    .where(eq(wardrobeLeases.userId, userId))
+    .orderBy(desc(wardrobeLeases.createdAt));
+}
+
+export async function getWardrobeLeaseById(id: number): Promise<WardrobeLease | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(wardrobeLeases).where(eq(wardrobeLeases.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function updateWardrobeLease(
+  id: number,
+  data: Partial<InsertWardrobeLease>,
+): Promise<WardrobeLease | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.update(wardrobeLeases).set(data).where(eq(wardrobeLeases.id, id));
+  return (await db.select().from(wardrobeLeases).where(eq(wardrobeLeases.id, id)))[0];
+}
+
+export async function getWardrobeLeasesByDesigner(designerProfileId: number): Promise<WardrobeLease[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wardrobeLeases)
+    .where(eq(wardrobeLeases.designerProfileId, designerProfileId))
+    .orderBy(desc(wardrobeLeases.createdAt));
+}
+
+export async function getWardrobeLeaseByPaymentIntent(
+  stripePaymentIntentId: string,
+): Promise<WardrobeLease | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(wardrobeLeases)
+    .where(eq(wardrobeLeases.stripePaymentIntentId, stripePaymentIntentId))
+    .limit(1);
+  return rows[0];
 }

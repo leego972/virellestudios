@@ -31,6 +31,9 @@ const Characters = lazy(() => import("./pages/Characters"));
 // v6.77 — Per-project brand allow/block list
 const ProjectBrands = lazy(() => import("./pages/ProjectBrands"));
 const DesignerWardrobePage = lazy(() => import("./pages/DesignerWardrobePage"));
+const WardrobeMarketplacePage = lazy(() => import("./pages/WardrobeMarketplacePage"));
+const DesignerStudioPage = lazy(() => import("./pages/DesignerStudioPage"));
+const DesignerRegisterPage = lazy(() => import("./pages/DesignerRegisterPage"));
 const SignatureCast = lazy(() => import("./pages/SignatureCast"));
 const TalentSearch = lazy(() => import("./pages/TalentSearch"));
 const SceneEditor = lazy(() => import("./pages/SceneEditor"));
@@ -233,6 +236,8 @@ function Router() {
       {/* Auth pages (no layout) */}
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/designer-register">{() => <Suspense fallback={<PageLoader />}><DesignerRegisterPage /></Suspense>}</Route>
+      <Route path="/wardrobe-marketplace">{() => <Suspense fallback={<PageLoader />}><WardrobeMarketplacePage /></Suspense>}</Route>
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/billing/success">{() => <LazyPage><BillingSuccess /></LazyPage>}</Route>
@@ -317,6 +322,10 @@ function Router() {
               {/* v6.77 — Designer Wardrobe (umbrella library) */}
               <Route path="/designer-wardrobe">{() => <LazyPage><DesignerWardrobePage /></LazyPage>}</Route>
               <Route path="/projects/:projectId/wardrobe">{() => <LazyPage><DesignerWardrobePage /></LazyPage>}</Route>
+              {/* v7.0 — Wardrobe Marketplace */}
+              <Route path="/wardrobe-marketplace">{() => <LazyPage><WardrobeMarketplacePage /></LazyPage>}</Route>
+              <Route path="/wardrobe-marketplace/designer/:id">{() => <LazyPage><WardrobeMarketplacePage /></LazyPage>}</Route>
+              <Route path="/designer/studio">{() => <LazyPage><DesignerStudioPage /></LazyPage>}</Route>
       <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
               <Route path="/awaiting-review">{() => <LazyPage><AwaitingReviewPage /></LazyPage>}</Route>
               <Route path="/projects/:id/scenes">{() => <SceneEditor />}</Route>

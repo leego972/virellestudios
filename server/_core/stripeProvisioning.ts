@@ -408,6 +408,23 @@ const SIGNATURE_CAST_PRICES: PriceDefinition[] = [
   },
 ];
 
+// ─── Designer Marketplace Membership (v7.0) ──────────────────────────────────
+// A$299/year — gives designers access to list collections on the marketplace.
+// One-time yearly subscription; designer receives 95% of each lease payment.
+const DESIGNER_MEMBERSHIP_PRICES: PriceDefinition[] = [
+  {
+    key: "designer_yearly",
+    envKey: "stripeDesignerYearlyPriceId",
+    productName: "Virelle Studios — Designer Marketplace Membership",
+    productDesc: "Annual membership for fashion and costume designers to list collections on the Virelle Studios wardrobe marketplace. Renews yearly.",
+    unitAmount: 29900, // A$299/year
+    currency: "aud",
+    recurring: { interval: "year" },
+    metadata: { type: "designer_membership", display_name: "Designer Membership", billing: "annual" },
+    paymentMethodTypes: ["card"],
+  },
+];
+
 // ─── Provisioning Logic ───────────────────────────────────────────────────────
 
 async function findOrCreateProduct(name: string, description: string): Promise<string> {
@@ -508,7 +525,7 @@ export async function runStripeProvisioning(): Promise<void> {
 
   await ensureFounderCoupon();
 
-  const allPrices = [...SUBSCRIPTION_PRICES, ...TOPUP_PRICES, ...SIGNATURE_CAST_PRICES];
+  const allPrices = [...SUBSCRIPTION_PRICES, ...TOPUP_PRICES, ...SIGNATURE_CAST_PRICES, ...DESIGNER_MEMBERSHIP_PRICES];
   let created = 0;
   let existing = 0;
 

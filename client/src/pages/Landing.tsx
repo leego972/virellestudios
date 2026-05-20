@@ -779,6 +779,62 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ─── 7.5 — Designer Marketplace CTA ─── */}
+        <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10 bg-gradient-to-br from-black to-amber-950/10">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_30%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />
+          <div className="relative z-10 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              {/* Left: For productions */}
+              <div>
+                <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-3 py-1 text-amber-400 text-xs font-bold mb-4">
+                  Wardrobe Marketplace
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4 text-white">
+                  LEASE REAL DESIGNER <span className="text-amber-400">COLLECTIONS</span>
+                </h2>
+                <p className="text-white/50 text-sm leading-relaxed mb-6">
+                  Browse fashion and costume designers worldwide. Lease individual items or full collections — they appear directly in your character's wardrobe for AI generation.
+                </p>
+                <Button
+                  onClick={() => setLocation("/wardrobe-marketplace")}
+                  className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-6 h-11"
+                >
+                  Browse the Marketplace
+                </Button>
+              </div>
+
+              {/* Right: For designers */}
+              <div className="bg-white/3 border border-white/10 rounded-2xl p-6">
+                <p className="text-xs text-white/40 font-bold uppercase tracking-wider mb-3">For Designers</p>
+                <h3 className="text-xl font-black tracking-tight mb-2 text-white">Join as a Designer</h3>
+                <p className="text-white/50 text-sm leading-relaxed mb-4">
+                  List your fashion or costume collections and earn 95% of every lease. A$299/year — unlimited collections, direct Stripe payouts.
+                </p>
+                <ul className="space-y-1.5 mb-5">
+                  {[
+                    "Unlimited item and collection listings",
+                    "95% of every lease goes directly to you",
+                    "Stripe Connect — instant bank payouts",
+                    "Discovered by productions on every budget",
+                  ].map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-xs text-white/60">
+                      <span className="text-amber-400 mt-0.5">✓</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  onClick={() => setLocation("/designer-register")}
+                  variant="outline"
+                  className="w-full border-amber-500/40 text-amber-400 hover:bg-amber-500/10 font-bold h-10"
+                >
+                  Join as Designer — A$299/yr
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ─── 8. Final CTA ─── */}
         <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10 bg-black">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />

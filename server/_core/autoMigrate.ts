@@ -1201,6 +1201,29 @@ export async function runAutoMigration(): Promise<void> {
         )`,
       },
     {
+        name: "wardrobeLeases",
+        createSQL: `CREATE TABLE IF NOT EXISTS wardrobeLeases (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          userId INT NOT NULL,
+          designerProfileId INT NOT NULL,
+          wardrobeItemId INT NULL,
+          collectionId INT NULL,
+          leaseType VARCHAR(32) NOT NULL,
+          stripePaymentIntentId VARCHAR(255) NULL,
+          stripeTransferId VARCHAR(255) NULL,
+          amountPaidAud INT NOT NULL,
+          designerAmountAud INT NOT NULL,
+          platformFeeAud INT NOT NULL,
+          status VARCHAR(32) NOT NULL DEFAULT 'pending',
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_wardrobe_leases_user (userId),
+          INDEX idx_wardrobe_leases_designer (designerProfileId),
+          INDEX idx_wardrobe_leases_item (wardrobeItemId),
+          INDEX idx_wardrobe_leases_collection (collectionId)
+        )`,
+      },
+    {
         name: "crowdfundCampaigns",
         createSQL: `CREATE TABLE IF NOT EXISTS crowdfundCampaigns (
           id INT AUTO_INCREMENT PRIMARY KEY,
@@ -2505,6 +2528,19 @@ export async function runAutoMigration(): Promise<void> {
     { table: "wardrobeItems", column: "licenseNotes", definition: "TEXT NULL" },
     { table: "wardrobeItems", column: "visibility", definition: "VARCHAR(32) NOT NULL DEFAULT 'public'" },
     { table: "wardrobeItems", column: "status", definition: "VARCHAR(32) NOT NULL DEFAULT 'active'" },
+    { table: "wardrobeItems", column: "retailPriceAud", definition: "INT NULL" },
+    { table: "wardrobeItems", column: "leasePriceAud", definition: "INT NULL" },
+    // ── designerProfiles marketplace columns (v7.0) ──
+    { table: "designerProfiles", column: "stripeAccountId", definition: "VARCHAR(255) NULL" },
+    { table: "designerProfiles", column: "stripeAccountStatus", definition: "VARCHAR(32) NULL DEFAULT 'none'" },
+    { table: "designerProfiles", column: "membershipStatus", definition: "VARCHAR(32) NOT NULL DEFAULT 'none'" },
+    { table: "designerProfiles", column: "membershipSubscriptionId", definition: "VARCHAR(255) NULL" },
+    { table: "designerProfiles", column: "membershipCurrentPeriodEnd", definition: "TIMESTAMP NULL" },
+    { table: "designerProfiles", column: "brandingImages", definition: "JSON NULL" },
+    // ── designerCollections marketplace columns (v7.0) ──
+    { table: "designerCollections", column: "collectionPriceAud", definition: "INT NULL" },
+    { table: "designerCollections", column: "published", definition: "TINYINT(1) NOT NULL DEFAULT 0" },
+    { table: "designerCollections", column: "publishedAt", definition: "TIMESTAMP NULL" },
     // ── wardrobeAssignments (auto-added missing columns) ──
     { table: "wardrobeAssignments", column: "userId", definition: "INT NOT NULL" },
     { table: "wardrobeAssignments", column: "projectId", definition: "INT NOT NULL" },
