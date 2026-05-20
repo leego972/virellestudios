@@ -87,7 +87,7 @@ export default function VFXSuite() {
       const result = await uploadRefImageMutation.mutateAsync({
         base64,
         filename: file.name,
-        contentType: file.type,
+        contentType: (file.type as any),
         sceneId,
       });
       setUploadedFrameUrl(result.url);
