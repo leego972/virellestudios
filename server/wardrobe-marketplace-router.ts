@@ -116,7 +116,7 @@ export const wardrobeMarketplaceRouter = router({
           throw new TRPCError({ code: "BAD_REQUEST", message: "Payment has not completed yet" });
         }
 
-        const sub = session.subscription as Stripe.Subscription | null;
+        const sub = session.subscription as any;
         const periodEnd = sub?.current_period_end
           ? new Date(sub.current_period_end * 1000)
           : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
@@ -474,7 +474,7 @@ export const wardrobeMarketplaceRouter = router({
           designerAmountCents: String(designerAmountCents),
         };
 
-        const paymentIntentData: Stripe.Checkout.SessionCreateParams.PaymentIntentData = {
+        const paymentIntentData =
           metadata: sessionMeta,
           ...(designerAccountId
             ? { application_fee_amount: platformFeeCents, transfer_data: { destination: designerAccountId } }
@@ -617,8 +617,8 @@ export const wardrobeMarketplaceRouter = router({
               wardrobeItemId: input.wardrobeItemId,
               fromSceneOrder: input.fromSceneOrder,
               toSceneOrder: input.toSceneOrder,
-              placementNotes: input.notes,
-            );
+              placementNotes: input.notes ?? undefined,
+            });
             return { id: (res as any).insertId, success: true };
           }),
 
