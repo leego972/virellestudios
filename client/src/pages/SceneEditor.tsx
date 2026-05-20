@@ -2262,7 +2262,7 @@ export default function SceneEditor() {
                             refImageUploadMutation.mutate({
                               base64,
                               filename: file.name,
-                              contentType: file.type,
+                              contentType: (file.type as any),
                               sceneId: selectedSceneId,
                             }, {
                               onSuccess: (result) => setField("referenceImages", result.referenceImages),
