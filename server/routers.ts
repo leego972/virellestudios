@@ -494,7 +494,7 @@ export const appRouter = router({
         return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     requestPasswordReset: publicProcedure
-      .input(z.object({ email: z.string().email().max(320), origin: z.string().url() }))
+      .input(z.object({ email: z.string().email().max(320), origin: z.string().url().max(256) }))
       .mutation(async ({ input }) => {
         const user = await db.getUserByEmail(input.email.toLowerCase());
         if (!user) {
@@ -504,9 +504,21 @@ export const appRouter = router({
         const token = nanoid(64);
         const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
         await db.createPasswordResetToken(user.id, token, expiresAt);
+        // Validate origin against known-good domains to prevent phishing via open-redirect
+        // in password reset emails. If the client supplies an unrecognised origin we fall
+        // back to the canonical production domain so the email still works.
+        const ALLOWED_ORIGIN_PATTERNS = [
+          /^https:\/\/(www\.)?virelle\.life$/,
+          /^https:\/\/[a-z0-9-]+\.replit\.dev$/,
+          /^https:\/\/[a-z0-9-]+\.repl\.co$/,
+          /^http:\/\/localhost(:[0-9]+)?$/,
+        ];
+        const safeOrigin = ALLOWED_ORIGIN_PATTERNS.some(re => re.test(input.origin))
+          ? input.origin
+          : "https://www.virelle.life";
         // Send password reset email via Gmail SMTP
         const { sendPasswordResetEmail } = await import("./email");
-        const sent = await sendPasswordResetEmail(user.email!, token, input.origin);
+        const sent = await sendPasswordResetEmail(user.email!, token, safeOrigin);
         if (!sent) {
           console.error("Failed to send password reset email to", user.email);
         }
@@ -1127,21 +1139,21 @@ export const appRouter = router({
         name: z.string().min(1).max(128),
         projectId: z.number().nullable().optional(),
         features: z.object({
-          ageRange: z.string(), // "20s", "30s", "40s", etc.
-          gender: z.string(),
-          ethnicity: z.string(),
-          skinTone: z.string().optional(),
-          build: z.string().optional(), // slim, athletic, average, heavy
-          height: z.string().optional(), // short, average, tall
-          hairColor: z.string(),
-          hairStyle: z.string(),
-          eyeColor: z.string(),
-          facialFeatures: z.string().optional(), // sharp jawline, round face, etc.
-          facialHair: z.string().optional(),
-          distinguishingMarks: z.string().optional(), // scars, tattoos, freckles
-          clothingStyle: z.string().optional(),
-          expression: z.string().optional(), // serious, warm, mysterious
-          additionalNotes: z.string().optional(),
+          ageRange: z.string().max(64), // "20s", "30s", "40s", etc.
+          gender: z.string().max(64),
+          ethnicity: z.string().max(128),
+          skinTone: z.string().max(64).optional(),
+          build: z.string().max(64).optional(), // slim, athletic, average, heavy
+          height: z.string().max(64).optional(), // short, average, tall
+          hairColor: z.string().max(64),
+          hairStyle: z.string().max(128),
+          eyeColor: z.string().max(64),
+          facialFeatures: z.string().max(256).optional(), // sharp jawline, round face, etc.
+          facialHair: z.string().max(128).optional(),
+          distinguishingMarks: z.string().max(256).optional(), // scars, tattoos, freckles
+          clothingStyle: z.string().max(256).optional(),
+          expression: z.string().max(128).optional(), // serious, warm, mysterious
+          additionalNotes: z.string().max(500).optional(),
         }),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -2541,7 +2553,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
     // Generate image using Nano Banana (Google Gemini native image generation)
     generateNanoBananaImage: protectedProcedure
       .input(z.object({
-        prompt: z.string(),
+        prompt: z.string().min(1).max(2000),
         model: z.enum(["nano-banana-2", "nano-banana-pro"]).optional(),
         referenceImageUrl: z.string().optional(),
         aspectRatio: z.enum(["1:1", "16:9", "9:16", "4:3", "3:4"]).optional(),
@@ -5894,13 +5906,17 @@ FORMAT RULES (always apply):
       }),
 
     generateImage: protectedProcedure
-      .input(z.object({ description: z.string().min(1) }))
+      .input(z.object({ description: z.string().min(1).max(1000) }))
       .mutation(async ({ ctx, input }) => {
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.location_scout_ai.cost, "location_scout_ai", `Location image: ${input.description.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
-        const { url } = await generateImage({
-          prompt: `Professional film location reference photo: ${input.description}. Photorealistic, cinematic lighting, wide establishing shot, ARRI ALEXA camera quality, golden hour atmosphere.`,
-        });
-        return { url };
+        try {
+          const { url } = await generateImage({
+            prompt: `Professional film location reference photo: ${input.description}. Photorealistic, cinematic lighting, wide establishing shot, ARRI ALEXA camera quality, golden hour atmosphere.`,
+          });
+          return { url };
+        } catch (e: any) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Image generation failed. Please try again." });
+        }
       }),
   }),
 
@@ -5964,7 +5980,7 @@ FORMAT RULES (always apply):
       }),
 
     generateImage: protectedProcedure
-      .input(z.object({ prompt: z.string().min(1), projectId: z.number().optional() }))
+      .input(z.object({ prompt: z.string().min(1).max(2000), projectId: z.number().optional() }))
       .mutation(async ({ ctx, input }) => {
         // Deduct 1 credit for mood board image generation (same as preview image)
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_preview_image.cost, "generate_preview_image", `Mood board image: ${input.prompt.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
@@ -5973,8 +5989,12 @@ FORMAT RULES (always apply):
         const __mbBrands = await brandsForPrompt(input.projectId);
         const __mbBrandBlock = brandDirectiveBlock(__mbBrands);
         const fullPrompt = `Cinematic mood board reference: ${input.prompt}. Artistic, atmospheric, film production quality.${__mbBrandBlock ? ` ${__mbBrandBlock}` : ""}`;
-        const { url } = await generateImage({ prompt: fullPrompt });
-        return { url };
+        try {
+          const { url } = await generateImage({ prompt: fullPrompt });
+          return { url };
+        } catch (e: any) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Image generation failed. Please try again." });
+        }
       }),
   }),
 
@@ -8956,7 +8976,7 @@ Rules:
     generateImage: protectedProcedure
       .input(z.object({
         prompt: z.string().min(1).max(2000),
-        templateType: z.string(),
+        templateType: z.string().max(128),
         // v6.77 — Optional projectId so the poster engine reads the same
         // brand allow/required/forbidden list the scenes use.
         projectId: z.number().optional(),
@@ -8977,10 +8997,10 @@ Rules:
 
     generateCopy: protectedProcedure
       .input(z.object({
-        title: z.string(),
-        genre: z.string(),
-        description: z.string(),
-        templateType: z.string(),
+        title: z.string().max(256),
+        genre: z.string().max(128),
+        description: z.string().max(2000),
+        templateType: z.string().max(128),
         // v6.77 — Brand-aware copy so taglines + credits never name a forbidden
         // brand and may reference required ones.
         projectId: z.number().optional(),
