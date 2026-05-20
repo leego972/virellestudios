@@ -39,7 +39,7 @@ import { buildContinuityChain, generateConsistentScenePrompt, updateContinuityCh
 import { type UserApiKeys } from "./byokVideoEngine";
 import { storagePut } from "../storage";
 import { getDb } from "../db";
-import { projectBackgrounds, propAssignments, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
+import { projectBackgrounds, propAssignments, projectProps, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { execFile } from "child_process";
 import { promisify } from "util";
