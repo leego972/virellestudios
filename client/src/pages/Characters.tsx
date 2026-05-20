@@ -68,6 +68,9 @@ type CharacterForm = {
   hairColor: string;
   role: string;
   deepProfile: DeepProfile;
+  isNonHuman: boolean;
+  costumeType: string;
+  referenceImageLocked: boolean;
 };
 
 const emptyForm: CharacterForm = {
@@ -81,6 +84,9 @@ const emptyForm: CharacterForm = {
   hairColor: "",
   role: "",
   deepProfile: {},
+  isNonHuman: false,
+  costumeType: "",
+  referenceImageLocked: false,
 };
 
 const emptyAiForm = {
@@ -308,6 +314,9 @@ export default function Characters() {
       hairColor: form.hairColor || undefined,
       role: form.role || undefined,
       deepProfile: Object.keys(form.deepProfile).length > 0 ? form.deepProfile : undefined,
+      isNonHuman: form.isNonHuman,
+      costumeType: form.costumeType || undefined,
+      referenceImageLocked: form.referenceImageLocked,
     };
 
     if (editingId) {
@@ -1003,7 +1012,46 @@ export default function Characters() {
               <Textarea placeholder="Personality, background, motivations, wardrobe..." value={form.description} onChange={(e) => setField("description", e.target.value)} className="min-h-[80px] text-sm bg-background/50 resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
             </div>
 
-            <Separator />
+            {/* ── Non-Human / Creature / Animal Toggle ───────────────────────── */}
+              <div className="space-y-3 rounded-lg border border-orange-200 dark:border-orange-900/50 bg-orange-50/50 dark:bg-orange-950/20 p-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Non-Human Character</p>
+                    <p className="text-xs text-muted-foreground">Animal, creature, robot, mutant — no human actor needed.</p>
+                  </div>
+                  <button type="button"
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.isNonHuman ? 'bg-orange-500' : 'bg-muted-foreground/30'}`}
+                    onClick={() => setField("isNonHuman", !form.isNonHuman)}
+                  >
+                    <span className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${form.isNonHuman ? 'translate-x-6' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+                {form.isNonHuman && (<>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Type</p>
+                    <select className="w-full text-sm border rounded-md px-2 py-1.5 bg-background" value={form.costumeType} onChange={e=>setField("costumeType", e.target.value)}>
+                      <option value="">Select type…</option>
+                      {["animal","creature","monster","robot","alien","mutant","puppet","fantasy","supernatural","other"].map(t=>(
+                        <option key={t} value={t}>{t.charAt(0).toUpperCase()+t.slice(1)}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium">Hard-lock reference image</p>
+                      <p className="text-xs text-muted-foreground">AI must match this character's reference exactly every frame.</p>
+                    </div>
+                    <button type="button"
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${form.referenceImageLocked ? 'bg-red-500' : 'bg-muted-foreground/30'}`}
+                      onClick={() => setField("referenceImageLocked", !form.referenceImageLocked)}
+                    >
+                      <span className={`inline-block h-3 w-3 rounded-full bg-white shadow-sm transition-transform ${form.referenceImageLocked ? 'translate-x-5' : 'translate-x-1'}`} />
+                    </button>
+                  </div>
+                </>)}
+              </div>
+
+              <Separator />
 
             {/* ── DEEP CHARACTER PROFILE ─────────────────────────────── */}
             <div className="space-y-2">
