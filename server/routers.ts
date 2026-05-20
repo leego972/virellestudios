@@ -1196,12 +1196,9 @@ export const appRouter = router({
           "NOT a painting, NOT CGI, NOT illustration, NOT cartoon, NOT 3D render, NOT AI-looking, NOT plastic skin, NOT doll-like, NOT overly smooth — a REAL PHOTOGRAPH of a REAL PERSON"
         );
 
-        let result: { url: string };
-        try {
-          result = await generateImage({ prompt: promptParts.join(" ") });
-        } catch (e: any) {
+        const result = await generateImage({ prompt: promptParts.join(" ") }).catch((_e: unknown) => {
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Character image generation failed. Please try again." });
-        }
+        });
 
         // Save to character library
         const character = await db.createCharacter({
@@ -2535,15 +2532,12 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           pushActorAnchor((char as any).aiActorId);
         }
 
-        let result: { url: string };
-        try {
-          result = await generateImage({
-            prompt,
-            originalImages: originalImages.length > 0 ? originalImages : undefined,
-          });
-        } catch (e: any) {
+        const result = await generateImage({
+          prompt,
+          originalImages: originalImages.length > 0 ? originalImages : undefined,
+        }).catch((_e: unknown) => {
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Preview image generation failed. Please try again." });
-        }
+        });
 
         // Update scene with preview thumbnail
         await db.updateScene(scene.id, { thumbnailUrl: result.url });
