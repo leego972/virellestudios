@@ -110,10 +110,10 @@ import { z } from "zod";
         if (items.length < 2) throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid items selected." });
 
         // Grant 2 permanent free leases
-        const expiresAt = new Date(Date.UTC(2099, 11, 31));
+
         await db.insert(wardrobeLeases).values([
-          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId1, amountPaidAud: 0, status: "active", leasedAt: new Date(), expiresAt },
-          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId2, amountPaidAud: 0, status: "active", leasedAt: new Date(), expiresAt },
+          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId1, leaseType: "item", amountPaidAud: 0, designerAmountAud: 0, platformFeeAud: 0, status: "active" },
+          { userId: ctx.user.id, designerProfileId: lamaloId, wardrobeItemId: input.itemId2, leaseType: "item", amountPaidAud: 0, designerAmountAud: 0, platformFeeAud: 0, status: "active" },
         ]);
 
         return { success: true, message: "Welcome outfits unlocked! They are available in your wardrobe inventory." };
