@@ -598,7 +598,7 @@ export const wardrobeMarketplaceRouter = router({
             notes: z.string().max(500).optional(),
           }))
           .mutation(async ({ ctx, input }) => {
-            const _db = await getDb();
+            const _db = (await getDb())!;
             const rows = await _db.select().from(projects).where(eq(projects.id, input.projectId)).limit(1).catch(()=>[] as any[]);
             if (!rows[0] || (rows[0] as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
             await _db.delete(wardrobeAssignments).where(
@@ -624,7 +624,7 @@ export const wardrobeMarketplaceRouter = router({
         list: protectedProcedure
           .input(z.object({ projectId: z.number().int() }))
           .query(async ({ ctx, input }) => {
-            const _db = await getDb();
+            const _db = (await getDb())!;
             const rows = await _db
               .select({ assignment: wardrobeAssignments, item: wardrobeItems })
               .from(wardrobeAssignments)
@@ -637,7 +637,7 @@ export const wardrobeMarketplaceRouter = router({
         remove: protectedProcedure
           .input(z.object({ assignmentId: z.number().int() }))
           .mutation(async ({ ctx, input }) => {
-            (await getDb()).delete(wardrobeAssignments).where(eq(wardrobeAssignments.id, input.assignmentId));
+            (await getDb())!.delete(wardrobeAssignments).where(eq(wardrobeAssignments.id, input.assignmentId));
             return { success: true };
           }),
       }),
