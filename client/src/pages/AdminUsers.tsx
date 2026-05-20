@@ -63,6 +63,21 @@ export default function AdminUsers() {
   });
   const [grantAmount, setGrantAmount] = useState<Record<number, number>>({});
 
+    // ─── Beta tester provisioning ──────────────────────────────────────────────
+    const [betaProvisioning, setBetaProvisioning] = useState(false);
+    const provisionBetaTesterMutation = trpc.admin.provisionBetaTester.useMutation({
+      onSuccess: (data) => {
+        setBetaProvisioning(false);
+        if (data.created) {
+          toast.success("Beta tester account created! Email: tester@virelle.life · Password: Hello123");
+        } else {
+          toast.success("API keys synced to existing tester@virelle.life account");
+        }
+        utils.admin.listUsers.invalidate();
+      },
+      onError: (err) => { setBetaProvisioning(false); toast.error(err.message || "Failed to provision beta tester"); },
+    });
+
   // ─── Projects state ────────────────────────────────────────────────────────
   const [projectSearch, setProjectSearch] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<{ id: number; title: string } | null>(null);
@@ -172,8 +187,33 @@ export default function AdminUsers() {
         </Card>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="users">
+      {/* Quick Actions */}
+        <Card className="border-amber-500/20 bg-amber-500/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Gift className="w-4 h-4 text-amber-500" />
+              Beta Tester Account
+            </CardTitle>
+            <CardDescription>
+              Creates <strong>tester@virelle.life</strong> / <strong>Hello123</strong> with Studio-tier access and copies your saved API keys to their account. Safe to run multiple times — re-running just syncs your latest API keys.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+              disabled={provisionBetaTesterMutation.isPending || betaProvisioning}
+              onClick={() => { setBetaProvisioning(true); provisionBetaTesterMutation.mutate(); }}
+            >
+              {provisionBetaTesterMutation.isPending || betaProvisioning
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> Provisioning…</>
+                : <><Zap className="w-4 h-4" /> Provision / Sync Beta Tester</>}
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">Studio tier · 50,000 credits · 9,999 bonus generations · all your BYOK keys copied</p>
+          </CardContent>
+        </Card>
+
+        {/* Tabs */}
+        <Tabs defaultValue="users">
         <TabsList className="bg-muted/50">
           <TabsTrigger value="users" className="gap-2">
             <Users className="w-4 h-4" /> Users
