@@ -3818,8 +3818,13 @@ Available fields you can update:
         // Subscription: check feature access and generation quota
         requireFeature(ctx.user, "canUseQuickGenerate", "Quick Generate");
         requireGenerationQuota(ctx.user);
-        await db.incrementGenerationCount(ctx.user.id);
 
+        // Ownership: verify project belongs to caller before spending any resources
+        logger.aiGeneration("quickGenerate started", ctx.user.id, { projectId: input.projectId });
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+
+        await db.incrementGenerationCount(ctx.user.id);
         // Credits: deduct for film generation
         try {
           await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_film.cost, "generate_film", `Generate Film for project ${input.projectId}`);
@@ -3830,10 +3835,6 @@ Available fields you can update:
           // Non-credit errors don't block generation for now
           console.warn("[Credits] Deduction warning:", e.message);
         }
-
-        logger.aiGeneration("quickGenerate started", ctx.user.id, { projectId: input.projectId });
-        const project = await db.getProjectById(input.projectId, ctx.user.id);
-        if (!project) throw new Error("Project not found");
 
         // ── Reset: clear existing scenes and OLD jobs BEFORE creating the new job ──
         // IMPORTANT: must happen before createGenerationJob so we don't delete the new job.
@@ -7974,11 +7975,12 @@ Generate a detailed production budget estimate.`,
       }))
       .mutation(async ({ ctx, input }) => {
         requireFeature(ctx.user, "canExportMovies", "Movie Export");
+        // Ownership: verify project belongs to caller before spending credits
+        const project = await db.getProjectById(input.projectId, ctx.user.id);
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         // Credits: deduct for export
         const exportCost = input.exportType === "film" ? CREDIT_COSTS.export_final_film.cost : CREDIT_COSTS.movie_export.cost;
         try { await db.deductCredits(ctx.user.id, exportCost, input.exportType === "film" ? "export_final_film" : "movie_export", `Export ${input.exportType} for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
-        const project = await db.getProjectById(input.projectId, ctx.user.id);
-        if (!project) throw new Error("Project not found");
         const scenes = await db.getProjectScenes(project.id);
         const created: number[] = [];
 
