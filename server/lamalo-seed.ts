@@ -288,7 +288,7 @@
   // ─── Seed runner ─────────────────────────────────────────────────────────────
 
   export async function runLamaloSeed(userId: number): Promise<{ created: boolean; collections: number; items: number }> {
-    const db = await getDb();
+    const db = (await getDb())!;
 
     // Idempotency check
     const existing = await db
