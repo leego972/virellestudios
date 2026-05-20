@@ -5,7 +5,7 @@
  *
  * Steps:
  *  1 — Brand info (name, type, bio)
- *  2 — Membership payment (A$299/year via Stripe Checkout redirect)
+ *  2 — Membership payment (A$150/year Founding Partner price via Stripe Checkout redirect)
  *  3 — Stripe Connect onboarding (to receive payouts from leases)
  *  4 — Done + CTA to Designer Studio
  */
@@ -229,7 +229,7 @@ export default function DesignerRegisterPage() {
             </h1>
             <p className="text-white/50 text-sm leading-relaxed max-w-sm mx-auto">
               Fashion and costume designers earn recurring income by licensing their
-              work to film productions worldwide. A$299/year, 95% of every lease goes to you.
+              work to film productions worldwide. A$150/year founding price — 95% of every lease goes to you.
             </p>
           </div>
 
@@ -304,7 +304,8 @@ export default function DesignerRegisterPage() {
               <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-white/70">Yearly membership</span>
-                  <span className="font-bold text-amber-400">A$299 / year</span>
+                  <span className="font-bold text-amber-400">A$150 <span className="text-xs font-normal text-white/40 line-through ml-1">was A$299</span></span>
+                  <span className="ml-1 bg-amber-500/20 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-full">FOUNDING PRICE</span>
                 </div>
                 <div className="flex justify-between text-xs text-white/40">
                   <span>Your earnings per lease</span>
@@ -335,7 +336,7 @@ export default function DesignerRegisterPage() {
                   Back
                 </Button>
                 <Button onClick={handleSubscribe} className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold">
-                  Subscribe — A$299/yr
+                  Join as Founding Partner — A$150/yr
                 </Button>
               </div>
               <p className="text-center text-xs text-white/30">
