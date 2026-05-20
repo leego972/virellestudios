@@ -500,7 +500,7 @@ export default function SoundEffects() {
         projectId,
         fileName: file.name,
         fileData: base64,
-        contentType: file.type,
+        contentType: (file.type as any),
       });
       // Now create the sound effect entry with the uploaded URL
       addMutation.mutate({
