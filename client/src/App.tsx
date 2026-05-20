@@ -34,6 +34,7 @@ const DesignerWardrobePage = lazy(() => import("./pages/DesignerWardrobePage"));
 const WardrobeMarketplacePage = lazy(() => import("./pages/WardrobeMarketplacePage"));
 const DesignerStudioPage = lazy(() => import("./pages/DesignerStudioPage"));
 const DesignerRegisterPage = lazy(() => import("./pages/DesignerRegisterPage"));
+  const UserInventoryPage = lazy(() => import("./pages/UserInventoryPage"));
 const SignatureCast = lazy(() => import("./pages/SignatureCast"));
 const TalentSearch = lazy(() => import("./pages/TalentSearch"));
 const SceneEditor = lazy(() => import("./pages/SceneEditor"));
@@ -325,6 +326,7 @@ function Router() {
               <Route path="/projects/:projectId/wardrobe">{() => <LazyPage><DesignerWardrobePage /></LazyPage>}</Route>
               {/* v7.0 — Designer Studio (auth-required dashboard page) */}
               <Route path="/designer/studio">{() => <LazyPage><DesignerStudioPage /></LazyPage>}</Route>
+                <Route path="/wardrobe-inventory">{() => <LazyPage><UserInventoryPage /></LazyPage>}</Route>
       <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
               <Route path="/awaiting-review">{() => <LazyPage><AwaitingReviewPage /></LazyPage>}</Route>
               <Route path="/projects/:id/scenes">{() => <SceneEditor />}</Route>
