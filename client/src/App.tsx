@@ -1,6 +1,3 @@
-const BackgroundLibraryPage = lazy(() => import("./pages/BackgroundLibraryPage"));
-const PropsLibraryPage = lazy(() => import("./pages/PropsLibraryPage"));
-const NarrativeStructurePage = lazy(() => import("./pages/NarrativeStructurePage"));
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
@@ -171,6 +168,9 @@ const BillingPortal = lazy(() => import("./pages/BillingPortal"));
   const Equipment = lazy(() => import("./pages/Equipment"));
   const Community = lazy(() => import("./pages/Community"));
 
+const BackgroundLibraryPage = lazy(() => import("./pages/BackgroundLibraryPage"));
+const PropsLibraryPage = lazy(() => import("./pages/PropsLibraryPage"));
+const NarrativeStructurePage = lazy(() => import("./pages/NarrativeStructurePage"));
 // ─── Loading fallback ───
 function PageLoader() {
   return (
