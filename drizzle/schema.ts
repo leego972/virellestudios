@@ -35,6 +35,7 @@ export const users = mysqlTable("users", {
   userAnthropicKey: text("userAnthropicKey"),     // Anthropic API key (Claude for Virelle AI chat)
   userGoogleAiKey: text("userGoogleAiKey"),       // Google AI API key (Gemini for Virelle AI chat)
   userVeniceKey: text("userVeniceKey"),           // Venice AI API key (OpenAI-compatible, preferred over OpenAI)
+  userDidKey: text("userDidKey"),                 // D-ID API key for Auslan signing interpreter overlay
   preferredLlmProvider: varchar("preferredLlmProvider", { length: 32 }), // openai, anthropic, google — for Virelle chat
   directorInstructions: text("directorInstructions"), // Custom instructions for the Director's Assistant AI
   preferredVideoProvider: varchar("preferredVideoProvider", { length: 32 }), // runway, openai, replicate, fal, luma, huggingface, seedance
@@ -122,6 +123,10 @@ export const projects = mysqlTable("projects", {
   // v6.62 — last selected NLE export aspect ratio (sticky preference per project)
   // values: "16:9" | "9:16" | "1:1" | "4:5" | "21:9" | "2.39:1"
   exportAspectRatio: varchar("exportAspectRatio", { length: 16 }).default("16:9"),
+  // Accessibility — subtitle burn-in and Auslan sign-language interpreter overlay
+  subtitlesEnabled: boolean("subtitlesEnabled").default(false),
+  auslanEnabled: boolean("auslanEnabled").default(false),
+  auslanPosition: varchar("auslanPosition", { length: 16 }).default("bottom-right"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

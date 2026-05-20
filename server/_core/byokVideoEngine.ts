@@ -934,7 +934,8 @@ export async function generateVideo(
 // ─── Provider Info (for frontend display) ───
 
 export interface ProviderInfo {
-  id: VideoProvider;
+  /** Provider ID. May be a VideoProvider value or a non-generation provider such as "did". */
+  id: string;
   name: string;
   description: string;
   keyPrefix: string;
