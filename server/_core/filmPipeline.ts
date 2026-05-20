@@ -35,9 +35,12 @@
 import { generateExtendedScene, estimateFilmGenerationCalls, type ExtendedSceneRequest, type ExtendedSceneResult } from "./extendedSceneGenerator";
 import { generateSceneDialogue, type VoiceActingKeys, type DialogueLine, type SceneDialogueRequest } from "./voiceActingEngine";
 import { generateSoundtrack, type SoundtrackKeys, type SoundtrackRequest, type SoundtrackResult, getGenreMusicPreset } from "./soundtrackEngine";
-import { buildContinuityChain, generateConsistentScenePrompt, updateContinuityChainAfterGeneration, extractContinuityFrame, type ContinuityChain, type CharacterDNA } from "./characterConsistency";
+import { buildContinuityChain, generateConsistentScenePrompt, updateContinuityChainAfterGeneration, extractContinuityFrame, type ContinuityChain, type CharacterDNA, type SceneCoherenceContext } from "./characterConsistency";
 import { type UserApiKeys } from "./byokVideoEngine";
 import { storagePut } from "../storage";
+  import { db as _coherenceDb } from "../db";
+  import { projectBackgrounds, propAssignments, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
+  import { eq } from "drizzle-orm";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import * as fs from "fs";
@@ -540,6 +543,18 @@ export async function generateFullFilm(
     lastFrameUrl?: string;
   }> = [];
 
+  // ── Pre-load all coherence data for this project ──────────────────────────
+  // Locks locations/vehicles, props, character states, wardrobe, Visual DNA
+  // across every scene — covers both quick-generate and manual generate.
+  const [_bgRows, _propRows, _stateRows, _wardRows, _vdnaRows] = await Promise.all([
+    _coherenceDb.select().from(projectBackgrounds).where(eq(projectBackgrounds.projectId, project.id)).catch(()=>[] as any[]),
+    _coherenceDb.select().from(propAssignments).where(eq(propAssignments.projectId, project.id)).catch(()=>[] as any[]),
+    _coherenceDb.select().from(characterStates).where(eq(characterStates.projectId, project.id)).catch(()=>[] as any[]),
+    _coherenceDb.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.projectId, project.id)).catch(()=>[] as any[]),
+    _coherenceDb.select().from(projectVisualDNA).where(eq(projectVisualDNA.projectId, project.id)).limit(1).catch(()=>[] as any[]),
+  ]);
+  const _visualDNA = _vdnaRows[0] || null;
+
   // Sort scenes by order
   const sortedScenes = [...scenes].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
@@ -562,7 +577,24 @@ export async function generateFullFilm(
         let referenceImageUrl: string | undefined;
 
         if (continuityChain) {
-          const consistent = generateConsistentScenePrompt(continuityChain, sceneIdx, scenePrompt);
+          // Build per-scene coherence context for wardrobe, location, props,
+          // character states, and Visual DNA — wires both quick & manual generate.
+          const _ord = scene.orderIndex || sceneIdx;
+          const coherenceCtx: SceneCoherenceContext = {
+            background: _bgRows.find((b: any) => b.sceneId === scene.id) ?? null,
+            props: _propRows.filter((p: any) =>
+              p.sceneId === scene.id ||
+              (p.fromSceneOrder != null && p.fromSceneOrder <= _ord && (p.toSceneOrder ?? 9999) >= _ord)),
+            characterStates: _stateRows.filter((s: any) =>
+              (s.fromSceneOrder ?? 0) <= _ord && (s.toSceneOrder ?? 9999) >= _ord),
+            wardrobeByCharacter: Object.fromEntries(
+              _wardRows
+                .filter((w: any) => (w.fromSceneOrder ?? 0) <= _ord && (w.toSceneOrder ?? 9999) >= _ord)
+                .map((w: any) => [w.characterId, w])
+            ),
+            visualDNA: _visualDNA,
+          };
+          const consistent = generateConsistentScenePrompt(continuityChain, sceneIdx, scenePrompt, coherenceCtx);
           scenePrompt = consistent.enhancedPrompt;
           referenceImageUrl = consistent.referenceImageUrl;
         }
