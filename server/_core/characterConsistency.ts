@@ -450,7 +450,88 @@ export function buildContinuityChain(
  * Generate a consistency-enhanced prompt for a specific scene.
  * Combines character DNA + scene continuity + cinematic prompt.
  */
-export function generateConsistentScenePrompt(
+
+  // ─── Scene Coherence Context (v6.32+) ─────────────────────────────────────────
+  // Injected into every scene prompt so backgrounds, vehicles, props, animals,
+  // creatures and character states remain locked across both quick-generate
+  // and manual scene-by-scene generation.
+  export interface SceneCoherenceContext {
+    background?: {
+      name: string;
+      backgroundType?: string | null; // 'location'|'vehicle'|'vessel'|'aircraft'
+      description?: string | null;
+      styleNotes?: string | null;
+      vehicleMake?: string | null;
+      vehicleModel?: string | null;
+      vehicleYear?: number | null;
+      vehicleColor?: string | null;
+      vehicleInterior?: string | null;
+      vehicleCondition?: string | null;
+      locationTags?: any[] | null;
+    } | null;
+    props?: Array<{
+      name: string; description?: string | null; category?: string | null;
+      colors?: any[] | null; characterId?: number | null; usageNotes?: string | null;
+    }> | null;
+    characterStates?: Array<{
+      characterId: number; label: string; stateType: string;
+      description: string; promptOverride?: string | null;
+    }> | null;
+    wardrobeByCharacter?: Record<number, string> | null;
+    visualDNA?: {
+      genreProfile?: string | null; lensProfile?: string | null;
+      lightingStyle?: string | null; colorPalette?: string | null;
+      filmStock?: string | null; globalColorGrade?: string | null;
+      globalColorGradeLocked?: boolean | null; cinematographer?: string | null;
+    } | null;
+  }
+
+  function buildBackgroundSection(bg: SceneCoherenceContext['background']): string {
+    if (!bg) return '';
+    const t = (bg.backgroundType || 'location').toLowerCase();
+    if (t === 'vehicle') {
+      const tag = [bg.vehicleYear?String(bg.vehicleYear):'', bg.vehicleColor||'',
+        `${bg.vehicleMake||''} ${bg.vehicleModel||''}`.trim()].filter(Boolean).join(' ');
+      const interior  = bg.vehicleInterior  ? `, ${bg.vehicleInterior} interior`  : '';
+      const condition = bg.vehicleCondition ? `, ${bg.vehicleCondition} condition` : '';
+      return `[VEHICLE LOCK — "${bg.name}": ${tag}${interior}${condition}. Character operates THIS specific vehicle. NEVER substitute another make, model or colour.]`;
+    }
+    if (t === 'vessel') return `[VESSEL LOCK — "${bg.name}"${bg.description?' — '+bg.description:''}. Maintain exact hull, rigging and deck condition in all shots.]`;
+    if (t === 'aircraft') return `[AIRCRAFT LOCK — "${bg.name}"${bg.description?' — '+bg.description:''}. Maintain livery, registration and interior consistently.]`;
+    const parts:string[]=[];
+    if(bg.description)parts.push(bg.description);if(bg.styleNotes)parts.push(`Style: ${bg.styleNotes}`);
+    if(Array.isArray(bg.locationTags)&&bg.locationTags.length)parts.push(`Tags: ${bg.locationTags.join(', ')}`);
+    return `[LOCATION LOCK — "${bg.name}": ${parts.join('. ')}. Visual consistency required across all scenes set here.]`;
+  }
+  function buildPropsSection(props:SceneCoherenceContext['props']):string{
+    if(!props?.length)return'';
+    return `[LOCKED PROPS — maintain exact visual identity: ${props.map(p=>[p.name,p.category?`(${p.category})`:'',p.description?`— ${p.description}`:'',Array.isArray(p.colors)&&p.colors.length?`color:${p.colors.join('/')}`:'',p.usageNotes?`[${p.usageNotes}]`:''].filter(Boolean).join(' ')).join(' | ')}]`;
+  }
+  function buildCharacterStateSection(states:SceneCoherenceContext['characterStates'],charIds:number[]):string{
+    if(!states?.length)return'';
+    const rel=states.filter(s=>charIds.includes(s.characterId));
+    if(!rel.length)return'';
+    return `[CHARACTER STATES THIS SCENE: ${rel.map(s=>s.promptOverride||(`${s.label}: ${s.description}`)).join(' | ')}]`;
+  }
+  function buildWardrobeSection(map:Record<number,string>|null|undefined,charIds:number[]):string{
+    if(!map)return'';
+    const e=charIds.filter(id=>map[id]).map(id=>map[id]);
+    return e.length?`[COSTUME LOCK: ${e.join(' | ')}]`:'';
+  }
+  function buildVisualDNASection(dna:SceneCoherenceContext['visualDNA']):string{
+    if(!dna)return'';
+    const p:string[]=[];
+    if(dna.genreProfile)p.push(`Genre: ${dna.genreProfile}`);
+    if(dna.cinematographer)p.push(`Cinematography after: ${dna.cinematographer}`);
+    if(dna.lensProfile)p.push(`Lens: ${dna.lensProfile}`);
+    if(dna.lightingStyle)p.push(`Lighting: ${dna.lightingStyle}`);
+    if(dna.colorPalette)p.push(`Palette: ${dna.colorPalette}`);
+    if(dna.filmStock)p.push(`Film stock: ${dna.filmStock}`);
+    if(dna.globalColorGrade&&dna.globalColorGradeLocked)p.push(`Color grade LOCKED: ${dna.globalColorGrade}`);
+    return p.length?`[VISUAL DNA LOCK — apply every frame: ${p.join(' | ')}]`:'';
+  }
+
+  export function generateConsistentScenePrompt(
   chain: ContinuityChain,
   sceneIndex: number,
   basePrompt: string
