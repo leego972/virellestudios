@@ -842,6 +842,15 @@ export const appRouter = router({
         await db.deleteProject(input.id, ctx.user.id);
         return { success: true };
       }),
+
+      cancelGeneration: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ ctx, input }) => {
+          const project = await db.getProjectById(input.id, ctx.user.id);
+          if (!project) throw new TRPCError({ code: "NOT_FOUND" });
+          await db.updateProject(input.id, ctx.user.id, { status: "draft" });
+          return { success: true };
+        }),
     // Admin only: list all projects across all users
     adminListAll: adminProcedure
       .input(z.object({
