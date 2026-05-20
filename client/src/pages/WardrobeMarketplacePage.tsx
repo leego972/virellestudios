@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const LOGO_URL = "https://storage.googleapis.com/virelle-assets/virelle-logo.png";
+const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
 
 const PROFILE_TYPE_LABELS: Record<string, string> = {
   designer: "Fashion Designer",
