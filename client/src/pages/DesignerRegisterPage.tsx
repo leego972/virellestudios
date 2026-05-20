@@ -80,6 +80,7 @@ export default function DesignerRegisterPage() {
   const [bio, setBio] = useState("");
 
   const subscribeMutation = trpc.wardrobeMarket.designer.subscribeMembership.useMutation();
+  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
   const activateMutation = trpc.wardrobeMarket.designer.activateMembership.useMutation();
   const onboardMutation = trpc.wardrobeMarket.designer.onboardConnect.useMutation();
   const updateBrandMutation = trpc.wardrobeMarket.designer.updateBrandProfile.useMutation();
@@ -304,8 +305,20 @@ export default function DesignerRegisterPage() {
               <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-white/70">Yearly membership</span>
-                  <span className="font-bold text-amber-400">A$150 <span className="text-xs font-normal text-white/40 line-through ml-1">was A$299</span></span>
-                  <span className="ml-1 bg-amber-500/20 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-full">FOUNDING PRICE</span>
+                  {foundingStatus?.foundingActive === false ? (
+                    <span className="font-bold text-white">A$299</span>
+                  ) : (
+                    <span className="font-bold text-amber-400">
+                      A$150 <span className="text-xs font-normal text-white/40 line-through ml-1">was A$299</span>
+                    </span>
+                  )}
+                  {foundingStatus?.foundingActive !== false && (
+                    <span className="bg-amber-500/20 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-full">
+                      {foundingStatus?.spotsRemaining !== undefined
+                        ? `${foundingStatus.spotsRemaining} spots left`
+                        : "FOUNDING PRICE"}
+                    </span>
+                  )}
                 </div>
                 <div className="flex justify-between text-xs text-white/40">
                   <span>Your earnings per lease</span>
@@ -336,7 +349,7 @@ export default function DesignerRegisterPage() {
                   Back
                 </Button>
                 <Button onClick={handleSubscribe} className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold">
-                  Join as Founding Partner — A$150/yr
+                  {foundingStatus?.foundingActive === false ? "Subscribe — A$299/yr" : "Join as Founding Partner — A$150/yr"}
                 </Button>
               </div>
               <p className="text-center text-xs text-white/30">
