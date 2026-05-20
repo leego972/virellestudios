@@ -57,7 +57,7 @@ export const filmPostRouter = router({
       const [row] = await db
         .select()
         .from(filmMixSettings)
-        .where(eq(filmMixSettings.projectId, input.projectId));
+        .where(and(eq(filmMixSettings.projectId, input.projectId), eq(filmMixSettings.userId, ctx.user.id)));
       return row ?? null;
     }),
 
@@ -104,13 +104,13 @@ export const filmPostRouter = router({
   // ─── ADR Tracks ─────────────────────────────────────────────────────────────
   listAdrTracks: protectedProcedure
     .input(z.object({ projectId: z.number() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) return [];
       return db
         .select()
         .from(filmAdrTracks)
-        .where(eq(filmAdrTracks.projectId, input.projectId))
+        .where(and(eq(filmAdrTracks.projectId, input.projectId), eq(filmAdrTracks.userId, ctx.user.id)))
         .orderBy(asc(filmAdrTracks.createdAt));
     }),
 
@@ -170,13 +170,13 @@ export const filmPostRouter = router({
   // ─── Foley Tracks ───────────────────────────────────────────────────────────
   listFoleyTracks: protectedProcedure
     .input(z.object({ projectId: z.number() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) return [];
       return db
         .select()
         .from(filmFoleyTracks)
-        .where(eq(filmFoleyTracks.projectId, input.projectId))
+        .where(and(eq(filmFoleyTracks.projectId, input.projectId), eq(filmFoleyTracks.userId, ctx.user.id)))
         .orderBy(asc(filmFoleyTracks.createdAt));
     }),
 
@@ -239,13 +239,13 @@ export const filmPostRouter = router({
   // ─── Score Cues ─────────────────────────────────────────────────────────────
   listScoreCues: protectedProcedure
     .input(z.object({ projectId: z.number() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) return [];
       return db
         .select()
         .from(filmScoreCues)
-        .where(eq(filmScoreCues.projectId, input.projectId))
+        .where(and(eq(filmScoreCues.projectId, input.projectId), eq(filmScoreCues.userId, ctx.user.id)))
         .orderBy(asc(filmScoreCues.cueNumber));
     }),
 
@@ -325,7 +325,7 @@ export const filmPostRouter = router({
 
       await rateLimitAI(ctx.user.id);
       // Deduct credits before generation
-      await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_adr_suggest.cost, "film_post_adr_suggest", `AI ADR suggestions for project ${input.projectId}`);
+      try { await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_adr_suggest.cost, "film_post_adr_suggest", `AI ADR suggestions for project ${input.projectId}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }
 
       // Fetch project + scenes for context
       const [project] = await db.select().from(projects).where(eq(projects.id, input.projectId));
@@ -380,7 +380,7 @@ Return JSON: { "suggestions": [ { "characterName": "...", "dialogueLine": "...",
 
       await rateLimitAI(ctx.user.id);
       // Deduct credits before generation
-      await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_foley_suggest.cost, "film_post_foley_suggest", `AI Foley suggestions for project ${input.projectId}`);
+      try { await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_foley_suggest.cost, "film_post_foley_suggest", `AI Foley suggestions for project ${input.projectId}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }
 
       const [project] = await db.select().from(projects).where(eq(projects.id, input.projectId));
       const projectScenes = await db.select().from(scenes).where(eq(scenes.projectId, input.projectId)).orderBy(asc(scenes.orderIndex));
@@ -435,7 +435,7 @@ Return JSON: { "suggestions": [ { "name": "...", "foleyType": "...", "descriptio
 
       await rateLimitAI(ctx.user.id);
       // Deduct credits before generation
-      await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_score_gen.cost, "film_post_score_gen", `AI Score cues for project ${input.projectId}`);
+      try { await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_score_gen.cost, "film_post_score_gen", `AI Score cues for project ${input.projectId}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }
 
       const [project] = await db.select().from(projects).where(eq(projects.id, input.projectId));
       const projectScenes = await db.select().from(scenes).where(eq(scenes.projectId, input.projectId)).orderBy(asc(scenes.orderIndex));
@@ -484,11 +484,12 @@ Return JSON: { "cues": [ { "cueNumber": "...", "title": "...", "cueType": "...",
   exportMixSummary: protectedProcedure
     .input(z.object({ projectId: z.number() }))
     .mutation(async ({ input, ctx }) => {
+      await rateLimitAI(ctx.user.id);
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
       // Deduct credits for export
-      await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_mix_export.cost, "film_post_mix_export", `Mix summary export for project ${input.projectId}`);
+      try { await deductCredits(ctx.user.id, CREDIT_COSTS.film_post_mix_export.cost, "film_post_mix_export", `Mix summary export for project ${input.projectId}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }
 
       const [project] = await db.select().from(projects).where(eq(projects.id, input.projectId));
       const [mixSettings] = await db.select().from(filmMixSettings).where(eq(filmMixSettings.projectId, input.projectId));

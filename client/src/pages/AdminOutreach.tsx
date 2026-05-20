@@ -180,7 +180,7 @@ export default function AdminOutreach() {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const base64 = (ev.target?.result as string).split(",")[1];
-      uploadAdMutation.mutate({ imageBase64: base64, fileName: file.name, contentType: file.type });
+      uploadAdMutation.mutate({ imageBase64: base64, fileName: file.name, contentType: file.type as "image/jpeg" | "image/png" | "image/webp" | "image/gif" });
     };
     reader.readAsDataURL(file);
     e.target.value = "";

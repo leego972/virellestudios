@@ -66,7 +66,7 @@ export default function LiveActionPlate() {
       const result = await uploadFootageMutation.mutateAsync({
         base64,
         filename: file.name,
-        contentType: file.type,
+        contentType: file.type as "video/mp4" | "video/quicktime" | "video/x-msvideo" | "video/x-matroska" | "video/webm",
         sceneId: sceneId || undefined,
         footageType: "reference",
         label: "Live Action Plate",

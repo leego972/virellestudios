@@ -204,7 +204,7 @@ export function DeepCharacterProfile({ profile, onChange, characterName }: Props
         const result = await uploadMutation.mutateAsync({
           base64,
           filename: file.name,
-          contentType: file.type,
+          contentType: file.type as "image/jpeg" | "image/png" | "image/webp" | "image/gif",
         });
         updateWardrobeItem(wardrobeId, { photoUrl: result.url });
         setUploadingWardrobeId(null);

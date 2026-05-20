@@ -77,7 +77,7 @@ export default function ProjectReferenceImageDrop({
         const result = await uploadMut.mutateAsync({
           base64,
           filename: file.name,
-          contentType: file.type || "image/png",
+          contentType: (file.type || "image/png") as "image/jpeg" | "image/png" | "image/webp" | "image/gif",
           projectId: projectId!,
         });
         setPersisted(result.referenceImages);

@@ -890,7 +890,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
             });
             const baseMime = mimeType.split(";")[0];
             transcribeMutation.mutate(
-              { projectId: projectId ?? 0, audioData: base64, mimeType: baseMime },
+              { projectId: projectId ?? 0, audioData: base64, mimeType: baseMime as "audio/mpeg" | "audio/wav" | "audio/mp4" | "audio/webm" | "audio/ogg" | "audio/aac" },
               {
                 onSuccess: (data) => {
                   if (!voiceModeRef.current) return;
@@ -1127,7 +1127,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64 = (reader.result as string).split(",")[1];
-          transcribeMutation.mutate({ projectId: projectId ?? 0, audioData: base64, mimeType: baseMime });
+          transcribeMutation.mutate({ projectId: projectId ?? 0, audioData: base64, mimeType: baseMime as "audio/mpeg" | "audio/wav" | "audio/mp4" | "audio/webm" | "audio/ogg" | "audio/aac" });
         };
         reader.readAsDataURL(audioBlob);
       };
@@ -1290,7 +1290,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
           reader.onerror = reject;
           reader.readAsDataURL(file);
         });
-        const result = await uploadMutation.mutateAsync({ projectId: projectId ?? 0, fileName: file.name, fileData: base64, mimeType: file.type });
+        const result = await uploadMutation.mutateAsync({ projectId: projectId ?? 0, fileName: file.name, fileData: base64, mimeType: file.type as "video/mp4" | "audio/mpeg" | "audio/wav" | "application/pdf" | "image/jpeg" | "image/png" | "audio/ogg" | "text/plain" | "image/webp" | "image/gif" });
         setAttachments((prev) => [...prev, { url: result.url, name: result.fileName, mimeType: file.type }]);
         toast.success(`Attached: ${file.name}`);
       }

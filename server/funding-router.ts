@@ -522,9 +522,10 @@ export const fundingRouter = router({
     .input(applicationInputSchema)
     .mutation(async ({ input, ctx }) => {
       const user = ctx.user;
+      await rateLimitAI(user.id);
 
       // Deduct credits before compiling and sending the application
-      await deductCredits(user.id, CREDIT_COSTS.funding_app_submit.cost, "funding_app_submit", `Funding application: ${input.projectTitle} → ${input.fundingOrganization}`);
+      try { await deductCredits(user.id, CREDIT_COSTS.funding_app_submit.cost, "funding_app_submit", `Funding application: ${input.projectTitle} → ${input.fundingOrganization}`); } catch (e: any) { if (String(e?.message || "").includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); throw e; }
 
       const htmlBody = buildHtmlEmail(input, user.name ?? user.email, user.id);
 

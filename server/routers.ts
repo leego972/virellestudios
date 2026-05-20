@@ -3355,6 +3355,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         })).max(50).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         // Credits: deduct for Virelle chat message
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "virelle_chat", `Virelle chat for scene ${input.sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
 
@@ -8804,6 +8805,7 @@ Generate a detailed production budget estimate.`,
         mimeType: z.enum(["audio/webm", "audio/mp4", "audio/wav", "audio/ogg", "audio/mpeg", "audio/aac"]),
       }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_transcription", `Voice transcription`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // Upload audio to S3 first
         const buffer = Buffer.from(input.audioData, "base64");
@@ -8926,6 +8928,7 @@ Rules:
         text: z.string().min(1).max(5000),
       }))
       .mutation(async ({ ctx, input }) => {
+        await rateLimitAI(ctx.user.id);
         // Deduct 1 credit for AI voice synthesis (same cost as a chat message)
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_speak", `AI voice synthesis: ${input.text.substring(0, 40)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // Get user's ElevenLabs API key

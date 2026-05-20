@@ -234,7 +234,7 @@ export default function Characters() {
         const result = await uploadMutation.mutateAsync({
           base64,
           filename: file.name,
-          contentType: file.type,
+          contentType: file.type as "image/jpeg" | "image/png" | "image/webp" | "image/gif",
         });
         setForm((prev) => ({ ...prev, photoUrl: result.url }));
         setUploading(false);

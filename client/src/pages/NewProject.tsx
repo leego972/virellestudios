@@ -92,7 +92,7 @@ export default function NewProject() {
         await projectRefUploadMut.mutateAsync({
           base64: m[2],
           filename: `style-anchor-${Date.now()}.${(m[1].split("/")[1] || "png").replace(/[^a-z0-9]/g, "")}`,
-          contentType: m[1],
+          contentType: m[1] as "image/jpeg" | "image/png" | "image/webp" | "image/gif",
           projectId,
         });
       } catch (e: any) {

@@ -414,7 +414,7 @@ export default function ProjectDetail() {
       const reader = new FileReader();
       reader.onload = async () => {
         const base64 = (reader.result as string).split(",")[1];
-        const result = await uploadMutation.mutateAsync({ base64, filename: file.name, contentType: file.type });
+        const result = await uploadMutation.mutateAsync({ base64, filename: file.name, contentType: file.type as "image/jpeg" | "image/png" | "image/webp" | "image/gif" });
         setCharForm((prev) => ({ ...prev, photoUrl: result.url }));
         setUploading(false);
       };
