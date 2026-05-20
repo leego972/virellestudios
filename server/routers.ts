@@ -10354,7 +10354,7 @@ Rules:
     // Test an API key to verify it works
     testApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "venice"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "venice", "did"]),
         key: z.string().min(1),
       }))
       .mutation(async ({ input }) => {
@@ -10453,6 +10453,22 @@ Rules:
                 // If we can't reach BytePlus, accept the key and let generation verify it
                 if (key.length > 10) return { valid: true, message: "BytePlus key format accepted (will be verified on first use)" };
                 return { valid: false, message: "BytePlus API key appears too short" };
+              }
+            }
+            case "did": {
+              // Validate D-ID key by hitting the credits endpoint (lightweight, read-only)
+              try {
+                const authHeader = `Basic ${Buffer.from(key + ":").toString("base64")}`;
+                const resp = await fetch("https://api.d-id.com/credits", {
+                  headers: { Authorization: authHeader, Accept: "application/json" },
+                  signal: AbortSignal.timeout(10_000),
+                });
+                if (resp.ok) return { valid: true, message: "D-ID key is valid — Auslan interpreter ready" };
+                if (resp.status === 401) return { valid: false, message: "D-ID key is invalid or expired" };
+                return { valid: true, message: `D-ID key accepted (status ${resp.status} — will be verified on first use)` };
+              } catch {
+                if (key.length > 10) return { valid: true, message: "D-ID key format accepted (will be verified on first use)" };
+                return { valid: false, message: "D-ID key appears too short" };
               }
             }
             default:

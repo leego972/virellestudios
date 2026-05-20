@@ -942,6 +942,13 @@ export interface ProviderInfo {
   signupUrl: string;
   pricing: string;
   models: string;
+  /**
+   * Whether this provider can be set as the preferred VIDEO generation provider.
+   * Non-generation providers (e.g. D-ID for Auslan overlay) must set this to false
+   * so the UI hides the "Set as Preferred" button, which would otherwise corrupt
+   * the preferredVideoProvider setting with a non-video ID.
+   */
+  canSetPreferred?: boolean;
 }
 
 export const VIDEO_PROVIDERS: ProviderInfo[] = [
@@ -1034,10 +1041,11 @@ export const VIDEO_PROVIDERS: ProviderInfo[] = [
     signupUrl: "https://studio.d-id.com/account-settings",
     pricing: "Pay-per-use. Free trial credits included. ~$0.01–0.05 per avatar clip.",
     models: "D-ID Talks API — realistic presenter avatars with Microsoft Neural TTS",
+    canSetPreferred: false,
   },
 ];
 
-export function getProviderInfo(id: VideoProvider): ProviderInfo | undefined {
+export function getProviderInfo(id: string): ProviderInfo | undefined {
   return VIDEO_PROVIDERS.find(p => p.id === id);
 }
 

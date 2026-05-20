@@ -25,7 +25,7 @@ function useQueryParam(key: string) {
 
 const PROVIDER_ICONS: Record<string, string> = {
   runway: "🎬", fal: "⚡", replicate: "🔄", openai: "🤖", luma: "🌙", huggingface: "🤗",
-  elevenlabs: "🎙️", suno: "🎵", seedance: "🌊", google: "🍌", veo3: "🎥",
+  elevenlabs: "🎙️", suno: "🎵", seedance: "🌊", google: "🍌", veo3: "🎥", did: "🧏",
 };
 const PROVIDER_COLORS: Record<string, string> = {
   runway: "from-purple-500/20 to-purple-600/10 border-purple-500/30",
@@ -39,6 +39,7 @@ const PROVIDER_COLORS: Record<string, string> = {
   seedance: "from-cyan-500/20 to-cyan-600/10 border-cyan-500/30",
   google: "from-amber-500/20 to-amber-600/10 border-amber-500/30",
   veo3: "from-red-500/20 to-red-600/10 border-red-500/30",
+  did: "from-teal-500/20 to-teal-600/10 border-teal-500/30",
 };
 
 const VOICE_MUSIC_PROVIDERS = [
@@ -849,7 +850,8 @@ export default function Settings() {
                       </div>
                       {isConfigured && (
                         <div className="flex gap-2 pt-1">
-                          {!isPreferred && (
+                          {/* Only show Set as Preferred for actual video-generation providers */}
+                          {!isPreferred && provider.canSetPreferred !== false && (
                             <Button size="sm" variant="outline" className="text-xs" onClick={() => setPreferredMutation.mutate({ provider: provider.id as any })}>
                               <Star className="w-3 h-3 mr-1" />Set as Preferred
                             </Button>
