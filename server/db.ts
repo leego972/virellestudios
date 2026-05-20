@@ -1127,6 +1127,13 @@ export async function listSoundEffectsByScene(sceneId: number) {
   return db.select().from(soundEffects).where(eq(soundEffects.sceneId, sceneId)).orderBy(soundEffects.startTime);
 }
 
+export async function getSoundEffectById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(soundEffects).where(eq(soundEffects.id, id)).limit(1);
+  return rows[0];
+}
+
 export async function updateSoundEffect(id: number, data: Partial<InsertSoundEffect>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -1160,6 +1167,13 @@ export async function listVisualEffectsByScene(sceneId: number) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(visualEffects).where(eq(visualEffects.sceneId, sceneId)).orderBy(visualEffects.startTime);
+}
+
+export async function getVisualEffectById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(visualEffects).where(eq(visualEffects.id, id)).limit(1);
+  return rows[0];
 }
 
 export async function updateVisualEffect(id: number, data: Partial<InsertVisualEffect>) {

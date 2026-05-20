@@ -5814,6 +5814,7 @@ FORMAT RULES (always apply):
         tags: z.array(z.string()).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.createLocation({
           ...input,
           userId: ctx.user.id,
@@ -5956,6 +5957,7 @@ FORMAT RULES (always apply):
         height: z.number().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.createMoodBoardItem({
           ...input,
           userId: ctx.user.id,
@@ -7412,6 +7414,7 @@ Generate a detailed production budget estimate.`,
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user!.id);
         return db.createSoundEffect({ ...input, userId: ctx.user!.id });
       }),
     upload: protectedProcedure
@@ -7438,12 +7441,16 @@ Generate a detailed production budget estimate.`,
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        const sfxRecord = await db.getSoundEffectById(input.id);
+        if (!sfxRecord || sfxRecord.userId !== ctx.user!.id) throw new TRPCError({ code: "FORBIDDEN", message: "Access denied" });
         const { id, ...data } = input;
-        return db.updateScene(id, data as any);
+        return db.updateSoundEffect(id, data as any);
       }),
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        const sfxRecord = await db.getSoundEffectById(input.id);
+        if (!sfxRecord || sfxRecord.userId !== ctx.user!.id) throw new TRPCError({ code: "FORBIDDEN", message: "Access denied" });
         await db.deleteSoundEffect(input.id);
         return { success: true };
       }),
@@ -7732,6 +7739,7 @@ Generate a detailed production budget estimate.`,
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         requireFeature(ctx.user, "canUseVisualEffects", "VFX Scene Studio");
         return db.createVisualEffect({
           ...input,
@@ -7758,6 +7766,8 @@ Generate a detailed production budget estimate.`,
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        const vfx = await db.getVisualEffectById(input.id);
+        if (!vfx || vfx.userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "Access denied" });
         requireFeature(ctx.user, "canUseVisualEffects", "VFX Scene Studio");
         const { id, ...data } = input;
         return db.updateVisualEffect(id, data);
@@ -7765,6 +7775,8 @@ Generate a detailed production budget estimate.`,
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        const vfx = await db.getVisualEffectById(input.id);
+        if (!vfx || vfx.userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN", message: "Access denied" });
         await db.deleteVisualEffect(input.id);
         return { success: true };
       }),
