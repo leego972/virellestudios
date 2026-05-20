@@ -38,9 +38,9 @@ import { generateSoundtrack, type SoundtrackKeys, type SoundtrackRequest, type S
 import { buildContinuityChain, generateConsistentScenePrompt, updateContinuityChainAfterGeneration, extractContinuityFrame, type ContinuityChain, type CharacterDNA, type SceneCoherenceContext } from "./characterConsistency";
 import { type UserApiKeys } from "./byokVideoEngine";
 import { storagePut } from "../storage";
-  import { db as _coherenceDb } from "../db";
-  import { projectBackgrounds, propAssignments, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
-  import { eq } from "drizzle-orm";
+import { getDb } from "../db";
+import { projectBackgrounds, propAssignments, characterStates, wardrobeAssignments, projectVisualDNA } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import * as fs from "fs";
@@ -543,6 +543,7 @@ export async function generateFullFilm(
     lastFrameUrl?: string;
   }> = [];
 
+  const _coherenceDb = await getDb();
   // ── Pre-load all coherence data for this project ──────────────────────────
   // Locks locations/vehicles, props, character states, wardrobe, Visual DNA
   // across every scene — covers both quick-generate and manual generate.
