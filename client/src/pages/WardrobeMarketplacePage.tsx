@@ -15,15 +15,12 @@ import {
   Store,
   Search,
   Shirt,
-  VenetianMask,
-  Crown,
   Sparkles,
   ArrowRight,
   Package,
   Users,
   Building2,
 } from "lucide-react";
-import { toast } from "sonner";
 
 const LOGO_URL = "https://storage.googleapis.com/virelle-assets/virelle-logo.png";
 

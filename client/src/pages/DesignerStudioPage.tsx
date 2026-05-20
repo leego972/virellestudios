@@ -4,8 +4,8 @@
  * Designer dashboard: membership status, Stripe Connect payouts,
  * collection management (publish/unpublish, pricing), and earnings overview.
  */
-import { useState } from "react";
-import { useLocation, Link } from "wouter";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -204,7 +204,7 @@ export default function DesignerStudioPage() {
   const publishMut = trpc.wardrobeMarket.designer.publishCollection.useMutation({
     onSuccess: () => {
       toast.success("Collection updated");
-      utils.designerWardrobe?.invalidate?.();
+      utils.designerWardrobe.listCollections.invalidate();
     },
     onError: (e) => toast.error(e.message),
   });
@@ -216,18 +216,27 @@ export default function DesignerStudioPage() {
     onError: (e) => toast.error(e.message),
   });
 
-  const profile = membership?.profile as any;
-  const designerProfileId = profile?.id as number | undefined;
+  const isMember = membership?.status === "active";
+  const isConnected = connectStatus?.chargesEnabled && connectStatus?.payoutsEnabled;
 
-  const { data: collectionsRaw } = (trpc as any).designerWardrobe?.getCollections?.useQuery(
-    { designerProfileId: designerProfileId ?? 0 },
-    { enabled: !!designerProfileId },
-  ) ?? {};
+  const profile = membership?.profile as any;
+
+  const { data: collectionsRaw } = trpc.designerWardrobe.listCollections.useQuery(
+    { scope: "mine" },
+    { enabled: isMember },
+  );
 
   const collections: any[] = collectionsRaw ?? [];
 
-  const isMember = membership?.status === "active";
-  const isConnected = connectStatus?.chargesEnabled && connectStatus?.payoutsEnabled;
+  // Handle return from Stripe Connect onboarding
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const connectStatus = params.get("connect");
+    if (connectStatus === "done") {
+      toast.success("Payout setup complete! You're ready to receive lease payments.");
+      window.history.replaceState({}, "", "/designer/studio");
+    }
+  }, []);
 
   if (memberLoading) {
     return (

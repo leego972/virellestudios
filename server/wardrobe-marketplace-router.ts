@@ -119,6 +119,30 @@ export const wardrobeMarketplaceRouter = router({
         } as any);
       }),
 
+    /** Save brand profile info (name, type, bio) to the designer profile */
+    updateBrandProfile: protectedProcedure
+      .input(z.object({
+        brandName: z.string().min(1).max(255),
+        profileType: z.string().max(64).optional(),
+        bio: z.string().max(2000).optional().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const existing = await db.getDesignerProfileByUserId(ctx.user.id);
+        if (existing) {
+          return db.updateDesignerProfile(existing.id, {
+            brandName: input.brandName,
+            profileType: input.profileType ?? undefined,
+            bio: input.bio ?? undefined,
+          } as any);
+        }
+        return db.createDesignerProfile({
+          userId: ctx.user.id,
+          brandName: input.brandName,
+          profileType: input.profileType ?? "designer",
+          bio: input.bio ?? undefined,
+        } as any);
+      }),
+
     /** Get current membership status for the authenticated user */
     getMembershipStatus: protectedProcedure.query(async ({ ctx }) => {
       const profile = await db.getDesignerProfileByUserId(ctx.user.id);

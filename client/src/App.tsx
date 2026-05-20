@@ -238,6 +238,7 @@ function Router() {
       <Route path="/register" component={Register} />
       <Route path="/designer-register">{() => <Suspense fallback={<PageLoader />}><DesignerRegisterPage /></Suspense>}</Route>
       <Route path="/wardrobe-marketplace">{() => <Suspense fallback={<PageLoader />}><WardrobeMarketplacePage /></Suspense>}</Route>
+      <Route path="/wardrobe-marketplace/designer/:id">{() => <Suspense fallback={<PageLoader />}><WardrobeMarketplacePage /></Suspense>}</Route>
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/billing/success">{() => <LazyPage><BillingSuccess /></LazyPage>}</Route>
@@ -322,9 +323,7 @@ function Router() {
               {/* v6.77 — Designer Wardrobe (umbrella library) */}
               <Route path="/designer-wardrobe">{() => <LazyPage><DesignerWardrobePage /></LazyPage>}</Route>
               <Route path="/projects/:projectId/wardrobe">{() => <LazyPage><DesignerWardrobePage /></LazyPage>}</Route>
-              {/* v7.0 — Wardrobe Marketplace */}
-              <Route path="/wardrobe-marketplace">{() => <LazyPage><WardrobeMarketplacePage /></LazyPage>}</Route>
-              <Route path="/wardrobe-marketplace/designer/:id">{() => <LazyPage><WardrobeMarketplacePage /></LazyPage>}</Route>
+              {/* v7.0 — Designer Studio (auth-required dashboard page) */}
               <Route path="/designer/studio">{() => <LazyPage><DesignerStudioPage /></LazyPage>}</Route>
       <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
               <Route path="/awaiting-review">{() => <LazyPage><AwaitingReviewPage /></LazyPage>}</Route>

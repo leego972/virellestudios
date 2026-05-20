@@ -52,8 +52,8 @@ import { contentCreatorRouter } from "./content-creator-router";
 import { advertisingRouter } from "./advertising-router";
 import { mailingListRouter } from "./mailing-list-router";
 import { fundingRouter } from "./funding-router";
-  import { crowdfundRouter } from "./crowdfund-router";
-  import { wardrobeMarketplaceRouter } from "./wardrobe-marketplace-router";
+import { crowdfundRouter } from "./crowdfund-router";
+import { wardrobeMarketplaceRouter } from "./wardrobe-marketplace-router";
 import { filmPostRouter } from "./film-post-router";
 import { featureFilmRouter } from "./feature-film-router";
 import { productionAssetsRouter } from "./production-assets-router";
@@ -9957,8 +9957,8 @@ Rules:
   contentCreator: contentCreatorRouter,
   mailingList: mailingListRouter,
   funding: fundingRouter,
-    crowdfund: crowdfundRouter,
-    wardrobeMarket: wardrobeMarketplaceRouter,
+  crowdfund: crowdfundRouter,
+  wardrobeMarket: wardrobeMarketplaceRouter,
   filmPost: filmPostRouter,
   featureFilm: featureFilmRouter,
   productionAssets: productionAssetsRouter,

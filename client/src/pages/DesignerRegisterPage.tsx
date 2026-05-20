@@ -23,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import {
   CheckCircle2,
   CreditCard,
@@ -84,8 +83,11 @@ export default function DesignerRegisterPage() {
   const subscribeMutation = trpc.wardrobeMarket.designer.subscribeMembership.useMutation();
   const activateMutation = trpc.wardrobeMarket.designer.activateMembership.useMutation();
   const onboardMutation = trpc.wardrobeMarket.designer.onboardConnect.useMutation();
+  const updateBrandMutation = trpc.wardrobeMarket.designer.updateBrandProfile.useMutation();
   const { data: membershipData } = trpc.wardrobeMarket.designer.getMembershipStatus.useQuery();
   const { data: connectData } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();
+
+  const BRAND_STORAGE_KEY = "virelle_designer_brand_draft";
 
   const returnUrl = `${window.location.origin}/designer-register`;
 
@@ -101,6 +103,24 @@ export default function DesignerRegisterPage() {
         { sessionId },
         {
           onSuccess: () => {
+            // Restore brand info saved before the Stripe redirect and persist it
+            try {
+              const saved = localStorage.getItem(BRAND_STORAGE_KEY);
+              if (saved) {
+                const draft = JSON.parse(saved) as { brandName: string; profileType: string; bio: string };
+                setBrandName(draft.brandName);
+                setProfileType(draft.profileType);
+                setBio(draft.bio);
+                updateBrandMutation.mutate({
+                  brandName: draft.brandName,
+                  profileType: draft.profileType,
+                  bio: draft.bio || null,
+                });
+                localStorage.removeItem(BRAND_STORAGE_KEY);
+              }
+            } catch {
+              // ignore storage errors
+            }
             toast.success("Designer membership activated!");
             window.history.replaceState({}, "", "/designer-register");
             setStep(3);
@@ -140,10 +160,12 @@ export default function DesignerRegisterPage() {
     setStep(2);
   }
 
-  // Step 2 → create Stripe Checkout session and redirect
+  // Step 2 → save brand info to localStorage then redirect to Stripe Checkout
   async function handleSubscribe() {
     setLoading(true);
     try {
+      // Persist brand data so it survives the Stripe redirect
+      localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify({ brandName, profileType, bio }));
       const result = await subscribeMutation.mutateAsync({ returnUrl });
       if (result.checkoutUrl) {
         window.location.href = result.checkoutUrl;
