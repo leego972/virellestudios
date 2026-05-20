@@ -2475,7 +2475,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
 
         // Get project and characters for Visual DNA
         const project = await db.getProjectById(scene.projectId, ctx.user.id);
-        const characters = project ? await db.getProjectCharacters(project.id) : [];
+        if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        const characters = await db.getProjectCharacters(project.id);
 
         // Build Visual DNA for consistent style
         const userTier = getEffectiveTier(ctx.user) as QualityTier;
@@ -7459,6 +7460,7 @@ Generate a detailed production budget estimate.`,
         volume: z.number().min(0).max(1).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         // Credits: deduct for AI sound effect generation
         requireFeature(ctx.user, "canUseSoundEffects", "AI Sound Effect Generation");
         requireGenerationQuota(ctx.user);
@@ -7614,6 +7616,7 @@ Generate a detailed production budget estimate.`,
         volume: z.number().min(0).max(1).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertCanAccessProject(input.projectId, ctx.user.id);
         // Credits: deduct for AI voice choir generation
         requireFeature(ctx.user, "canUseSoundEffects", "AI Voice Choir Generation");
         requireGenerationQuota(ctx.user);

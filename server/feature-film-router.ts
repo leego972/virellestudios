@@ -282,7 +282,7 @@ export const featureFilmRouter = router({
         .set({ isDefault: false })
         .where(and(eq(featureCuts.projectId, input.projectId), eq(featureCuts.userId, ctx.user.id)));
       // Set new default
-      await db.update(featureCuts).set({ isDefault: true }).where(eq(featureCuts.id, input.cutId));
+      await db.update(featureCuts).set({ isDefault: true }).where(and(eq(featureCuts.id, input.cutId), eq(featureCuts.userId, ctx.user.id)));
       return { success: true };
     }),
 
