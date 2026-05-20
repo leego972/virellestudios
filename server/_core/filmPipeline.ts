@@ -39,7 +39,7 @@ import { buildContinuityChain, generateConsistentScenePrompt, updateContinuityCh
 import { type UserApiKeys } from "./byokVideoEngine";
 import { storagePut } from "../storage";
 import { getDb } from "../db";
-import { projectBackgrounds, propAssignments, projectProps, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
+import { projectBackgrounds, propAssignments, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { execFile } from "child_process";
 import { promisify } from "util";
@@ -547,14 +547,20 @@ export async function generateFullFilm(
   // ── Pre-load all coherence data for this project ──────────────────────────
   // Locks locations/vehicles, props, character states, wardrobe, Visual DNA
   // across every scene — covers both quick-generate and manual generate.
-  const [_bgRows, _propRows, _stateRows, _wardRows, _vdnaRows] = await Promise.all([
+  const [_bgRows, _rawPropAssign, _propLibRows, _stateRows, _wardRows, _vdnaRows] = await Promise.all([
     _coherenceDb.select().from(projectBackgrounds).where(eq(projectBackgrounds.projectId, project.id)).catch(()=>[] as any[]),
     _coherenceDb.select().from(propAssignments).where(eq(propAssignments.projectId, project.id)).catch(()=>[] as any[]),
+    _coherenceDb.select().from(projectProps).where(eq(projectProps.projectId, project.id)).catch(()=>[] as any[]),
     _coherenceDb.select().from(characterStates).where(eq(characterStates.projectId, project.id)).catch(()=>[] as any[]),
     _coherenceDb.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.projectId, project.id)).catch(()=>[] as any[]),
     _coherenceDb.select().from(projectVisualDNA).where(eq(projectVisualDNA.projectId, project.id)).limit(1).catch(()=>[] as any[]),
   ]);
   const _visualDNA = _vdnaRows[0] || null;
+  // Enrich prop assignments with library details (name, description, colors, category)
+  const _propRows = (_rawPropAssign as any[]).map((a: any) => {
+    const lib = (_propLibRows as any[]).find((p: any) => p.id === a.propId) ?? {};
+    return { ...a, name: lib.name ?? `Prop #${a.propId}`, category: lib.category, description: lib.description, colors: lib.colors };
+  });
 
   // Sort scenes by order
   const sortedScenes = [...scenes].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
@@ -582,20 +588,7 @@ export async function generateFullFilm(
           // character states, and Visual DNA — wires both quick & manual generate.
           const _ord = scene.orderIndex || sceneIdx;
           const coherenceCtx: SceneCoherenceContext = {
-            background: (() => {
-                // projectBackgrounds is a project-level library — match to scene by type/name
-                if (!_bgRows.length) return null;
-                const _vt = (scene as any).vehicleType;
-                const _lt = ((scene as any).locationType ?? '').toLowerCase();
-                if (_vt) {
-                  const vMatch = (_bgRows as any[]).find((b: any) => /vehicle|vessel|aircraft/.test(b.backgroundType ?? ''));
-                  if (vMatch) return vMatch;
-                }
-                const lMatch = (_bgRows as any[]).find((b: any) =>
-                  _lt && (b.name?.toLowerCase().includes(_lt) || (b.locationTags ?? []).includes(_lt))
-                );
-                return lMatch ?? (_bgRows as any[])[0] ?? null;
-              })(),
+            background: _bgRows.find((b: any) => b.sceneId === scene.id) ?? null,
             props: _propRows.filter((p: any) =>
               p.sceneId === scene.id ||
               (p.fromSceneOrder != null && p.fromSceneOrder <= _ord && (p.toSceneOrder ?? 9999) >= _ord)),
