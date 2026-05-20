@@ -215,6 +215,9 @@ export default function Characters() {
       hairColor: attrs.hairColor || "",
       role: attrs.role || attrs.characterRole || "",
       deepProfile: attrs.deepProfile || {},
+      isNonHuman: attrs.isNonHuman ?? false,
+      costumeType: attrs.costumeType || "",
+      referenceImageLocked: attrs.referenceImageLocked ?? false,
     });
     setEditingId(char.id);
     setDialogOpen(true);
