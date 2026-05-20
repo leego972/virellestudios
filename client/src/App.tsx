@@ -1,6 +1,10 @@
+const BackgroundLibraryPage = lazy(() => import("./pages/BackgroundLibraryPage"));
+const PropsLibraryPage = lazy(() => import("./pages/PropsLibraryPage"));
+const NarrativeStructurePage = lazy(() => import("./pages/NarrativeStructurePage"));
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
+import WelcomeOutfitPicker from "./components/WelcomeOutfitPicker";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import DashboardLayout from "./components/DashboardLayout";
@@ -184,6 +188,7 @@ function LazyPage({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>{children}</Suspense>
+          <WelcomeOutfitPicker />
     </ErrorBoundary>
   );
 }
@@ -398,6 +403,9 @@ function Router() {
                 <Route path="/community" component={GatedCommunity} />
               <Route path="/404" component={NotFound} />
               <Route component={NotFound} />
+              <Route path="/projects/:id/backgrounds" component={BackgroundLibraryPage} />
+              <Route path="/projects/:id/props" component={PropsLibraryPage} />
+              <Route path="/projects/:id/narrative" component={NarrativeStructurePage} />
             </Switch>
           </Suspense>
         </DashboardLayout>
