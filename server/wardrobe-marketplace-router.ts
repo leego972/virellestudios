@@ -10,7 +10,7 @@
 import Stripe from "stripe";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { eq, and, desc, isNotNull } from "drizzle-orm";
+import { eq, and, desc, isNotNull, sql } from "drizzle-orm";
 import { ENV } from "./_core/env";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
@@ -28,6 +28,7 @@ const stripe: Stripe | null = ENV.stripeSecretKey
 const PLATFORM_COMMISSION = 0.05; // 5%
 const DESIGNER_YEARLY_CENTS = 29900; // A$299.00 — standard annual membership
 const FOUNDING_DESIGNER_YEARLY_CENTS = 15000; // A$150.00 — Founding Designer Partner price
+  const FOUNDING_MEMBER_LIMIT = 50;                // promo closes automatically at this count
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -56,6 +57,22 @@ export const wardrobeMarketplaceRouter = router({
           throw new TRPCError({ code: "BAD_REQUEST", message: "You already have an active designer membership." });
         }
 
+        // Auto-select founding vs standard price based on live paying-designer count
+        const dbConn = await getDb();
+        const [countRow] = dbConn
+          ? await dbConn.select({ n: sql<number>`count(*)` }).from(designerProfiles)
+              .where(and(eq(designerProfiles.membershipStatus, "active"), isNotNull(designerProfiles.membershipSubscriptionId)))
+          : [{ n: 0 }];
+        const payingCount = Number(countRow?.n ?? 0);
+        const isFounding = payingCount < FOUNDING_MEMBER_LIMIT;
+        const priceToCharge = isFounding ? FOUNDING_DESIGNER_YEARLY_CENTS : DESIGNER_YEARLY_CENTS;
+        const productName = isFounding
+          ? `Virelle Studios — Founding Designer Partner Membership`
+          : "Virelle Studios — Designer Marketplace Membership";
+        const productDesc = isFounding
+          ? `Founding Partner (spot ${payingCount + 1} of ${FOUNDING_MEMBER_LIMIT}): A$150/yr. Priority placement, 95% of every lease.`
+          : "Designer Marketplace Membership: A$299/year. Unlimited collections, 95% of every lease, direct Stripe payouts.";
+
         const session = await s.checkout.sessions.create({
           mode: "subscription",
           payment_method_types: ["card"],
@@ -63,11 +80,11 @@ export const wardrobeMarketplaceRouter = router({
             price_data: {
               currency: "aud",
               product_data: {
-                name: "Virelle Studios — Founding Designer Partner Membership",
-                description: "Founding Partner price: A$150/year (standard A$299). Priority placement, featured spotlights, 95% of every lease. Renews yearly.",
+                name: productName,
+                description: productDesc,
                 metadata: { type: "designer_membership" },
               },
-              unit_amount: FOUNDING_DESIGNER_YEARLY_CENTS,
+              unit_amount: priceToCharge,
               recurring: { interval: "year" },
             },
             quantity: 1,
@@ -311,6 +328,18 @@ export const wardrobeMarketplaceRouter = router({
   // ═══════════════════════════════════════════════════════════════════════════
   marketplace: router({
 
+
+    /** Returns live founding-program status so the frontend can show spots remaining */
+    foundingStatus: publicProcedure.query(async () => {
+      const dbConn = await getDb();
+      const [row] = dbConn
+        ? await dbConn.select({ n: sql<number>`count(*)` }).from(designerProfiles)
+            .where(and(eq(designerProfiles.membershipStatus, "active"), isNotNull(designerProfiles.membershipSubscriptionId)))
+        : [{ n: 0 }];
+      const taken = Number(row?.n ?? 0);
+      const spotsRemaining = Math.max(0, FOUNDING_MEMBER_LIMIT - taken);
+      return { foundingActive: taken < FOUNDING_MEMBER_LIMIT, spotsRemaining, taken, totalSpots: FOUNDING_MEMBER_LIMIT };
+    }),
     /** List all designers with an active membership */
     browseDesigners: publicProcedure
       .input(z.object({
