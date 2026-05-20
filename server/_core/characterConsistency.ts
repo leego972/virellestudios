@@ -203,6 +203,13 @@ export function buildCharacterDNA(character: {
     sections.push(wardrobeParts.join(", "));
   } else if (attrs.clothing) {
     sections.push(`wearing ${attrs.clothing}`);
+  } else {
+    // ── Default wardrobe: plain black until clothing is purchased & assigned ──
+    sections.push(
+      "wearing a plain all-black outfit — solid black top, black trousers or skirt, " +
+      "black shoes; no visible branding, no pattern, no colour accent; " +
+      "placeholder wardrobe — upgrade by leasing from the Virelle wardrobe marketplace"
+    );
   }
 
   // ── Director consistency notes ──
