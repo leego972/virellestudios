@@ -19,6 +19,8 @@ import {
   designerProfiles,
   designerCollections,
   wardrobeItems,
+  wardrobeAssignments,
+  projects,
 } from "../drizzle/schema";
 
 const stripe: Stripe | null = ENV.stripeSecretKey
