@@ -39,7 +39,7 @@ import { buildContinuityChain, generateConsistentScenePrompt, updateContinuityCh
 import { type UserApiKeys } from "./byokVideoEngine";
 import { storagePut } from "../storage";
 import { getDb } from "../db";
-import { projectBackgrounds, propAssignments, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
+import { projectBackgrounds, propAssignments, projectProps, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { execFile } from "child_process";
 import { promisify } from "util";
@@ -582,7 +582,20 @@ export async function generateFullFilm(
           // character states, and Visual DNA — wires both quick & manual generate.
           const _ord = scene.orderIndex || sceneIdx;
           const coherenceCtx: SceneCoherenceContext = {
-            background: _bgRows.find((b: any) => b.sceneId === scene.id) ?? null,
+            background: (() => {
+                // projectBackgrounds is a project-level library — match to scene by type/name
+                if (!_bgRows.length) return null;
+                const _vt = (scene as any).vehicleType;
+                const _lt = ((scene as any).locationType ?? '').toLowerCase();
+                if (_vt) {
+                  const vMatch = (_bgRows as any[]).find((b: any) => /vehicle|vessel|aircraft/.test(b.backgroundType ?? ''));
+                  if (vMatch) return vMatch;
+                }
+                const lMatch = (_bgRows as any[]).find((b: any) =>
+                  _lt && (b.name?.toLowerCase().includes(_lt) || (b.locationTags ?? []).includes(_lt))
+                );
+                return lMatch ?? (_bgRows as any[])[0] ?? null;
+              })(),
             props: _propRows.filter((p: any) =>
               p.sceneId === scene.id ||
               (p.fromSceneOrder != null && p.fromSceneOrder <= _ord && (p.toSceneOrder ?? 9999) >= _ord)),
