@@ -474,7 +474,7 @@ export const wardrobeMarketplaceRouter = router({
           designerAmountCents: String(designerAmountCents),
         };
 
-        const paymentIntentData =
+        const paymentIntentData = {
           metadata: sessionMeta,
           ...(designerAccountId
             ? { application_fee_amount: platformFeeCents, transfer_data: { destination: designerAccountId } }
