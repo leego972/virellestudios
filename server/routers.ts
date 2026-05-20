@@ -3631,8 +3631,10 @@ Available fields you can update:
         const buffer = Buffer.from(input.base64, "base64");
         const key = `reference-images/${ctx.user.id}/${nanoid()}-${input.filename}`;
         const { url } = await storagePut(key, buffer, input.contentType);
-        // Get existing reference images and append
+        // Verify ownership, then append to existing reference images
         const scene = await db.getSceneById(input.sceneId);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        await assertCanAccessProject(scene.projectId, ctx.user.id);
         const existing = (scene?.referenceImages as string[] || []);
         existing.push(url);
         await db.updateScene(input.sceneId, { referenceImages: existing } as any);
@@ -3647,6 +3649,8 @@ Available fields you can update:
       }))
       .mutation(async ({ ctx, input }) => {
         const scene = await db.getSceneById(input.sceneId);
+        if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        await assertCanAccessProject(scene.projectId, ctx.user.id);
         const existing = (scene?.referenceImages as string[] || []);
         const updated = existing.filter((url: string) => url !== input.imageUrl);
         await db.updateScene(input.sceneId, { referenceImages: updated } as any);

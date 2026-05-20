@@ -25,11 +25,26 @@ const t = initTRPC.context<TrpcContext>().create({
       return {
         ...shape,
         message: "An unexpected error occurred. Please try again.",
-        data: {
-          ...shape.data,
-        },
+        data: { ...shape.data },
       };
     }
+
+    // In production, never leak raw internal error messages (filesystem paths,
+    // bucket names, library stack traces, etc.) for unexpected 500s.
+    // Intentional TRPCErrors (NOT_FOUND, FORBIDDEN, BAD_REQUEST …) carry their
+    // own message which is safe to forward — only opaque INTERNAL_SERVER_ERRORs
+    // need sanitising.
+    const isProduction = process.env.NODE_ENV === "production";
+    const isUnexpected500 = shape.data?.httpStatus === 500 && !(error.cause instanceof TRPCError);
+    if (isProduction && isUnexpected500) {
+      console.error('[tRPC] Internal error (hidden from client):', error.message);
+      return {
+        ...shape,
+        message: "An unexpected error occurred. Please try again.",
+        data: { ...shape.data },
+      };
+    }
+
     return shape;
   },
 });
