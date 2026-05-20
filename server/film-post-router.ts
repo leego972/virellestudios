@@ -7,7 +7,7 @@
  * - Score cue placement and management
  */
 import { z } from "zod";
-import { router, protectedProcedure } from "./_core/trpc";
+import { router, protectedProcedure, TRPCError } from "./_core/trpc";
 import { getDb } from "./db";
 import {
   filmMixSettings,
