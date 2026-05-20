@@ -783,6 +783,13 @@ export async function getProjectCredits(projectId: number) {
   return db.select().from(credits).where(eq(credits.projectId, projectId)).orderBy(asc(credits.orderIndex));
 }
 
+export async function getCreditById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(credits).where(eq(credits.id, id)).limit(1);
+  return result[0];
+}
+
 export async function updateCredit(id: number, data: Partial<InsertCredit>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -959,6 +966,13 @@ export async function getProjectMoodBoard(projectId: number) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(moodBoardItems).where(eq(moodBoardItems.projectId, projectId)).orderBy(desc(moodBoardItems.createdAt));
+}
+
+export async function getMoodBoardItemById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(moodBoardItems).where(eq(moodBoardItems.id, id)).limit(1);
+  return result[0];
 }
 
 export async function updateMoodBoardItem(id: number, data: Partial<InsertMoodBoardItem>) {

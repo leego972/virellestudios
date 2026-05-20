@@ -975,7 +975,7 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .query(async ({ ctx, input }) => {
         const character = await db.getCharacterById(input.id);
-        if (character) await assertCanAccessProject(character.projectId, ctx.user.id);
+        if (character?.projectId) await assertCanAccessProject(character.projectId, ctx.user.id);
         return character;
       }),
 
@@ -4906,13 +4906,17 @@ Break this into 8-15 scenes. For each scene, provide:
     // Pause/resume generation
     pauseJob: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const job = await db.getJobById(input.id);
+        if (job) await assertCanAccessProject(job.projectId, ctx.user.id);
         return db.updateJob(input.id, { status: "paused" });
       }),
 
     resumeJob: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const job = await db.getJobById(input.id);
+        if (job) await assertCanAccessProject(job.projectId, ctx.user.id);
         return db.updateJob(input.id, { status: "processing" });
       }),
 
@@ -5560,14 +5564,18 @@ FORMAT RULES (always apply):
         orderIndex: z.number().optional(),
         section: z.enum(["opening", "closing"]).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const credit = await db.getCreditById(input.id);
+        if (credit) await assertCanAccessProject(credit.projectId, ctx.user.id);
         const { id, ...data } = input;
         return db.updateCredit(id, data);
       }),
 
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const credit = await db.getCreditById(input.id);
+        if (credit) await assertOwnsProject(credit.projectId, ctx.user.id);
         await db.deleteCredit(input.id);
         return { success: true };
       }),
@@ -5804,14 +5812,18 @@ FORMAT RULES (always apply):
         tags: z.array(z.string()).optional(),
         sceneId: z.number().nullable().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const location = await db.getLocationById(input.id);
+        if (location) await assertCanAccessProject(location.projectId, ctx.user.id);
         const { id, ...data } = input;
         return db.updateLocation(id, data);
       }),
 
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const location = await db.getLocationById(input.id);
+        if (location) await assertOwnsProject(location.projectId, ctx.user.id);
         await db.deleteLocation(input.id);
         return { success: true };
       }),
@@ -5935,14 +5947,18 @@ FORMAT RULES (always apply):
         width: z.number().optional(),
         height: z.number().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const item = await db.getMoodBoardItemById(input.id);
+        if (item) await assertCanAccessProject(item.projectId, ctx.user.id);
         const { id, ...data } = input;
         return db.updateMoodBoardItem(id, data);
       }),
 
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const item = await db.getMoodBoardItemById(input.id);
+        if (item) await assertOwnsProject(item.projectId, ctx.user.id);
         await db.deleteMoodBoardItem(input.id);
         return { success: true };
       }),
@@ -6011,14 +6027,18 @@ FORMAT RULES (always apply):
         language: z.string().min(1).max(32).optional(),
         languageName: z.string().min(1).max(128).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const subtitle = await db.getSubtitleById(input.id);
+        if (subtitle) await assertCanAccessProject(subtitle.projectId, ctx.user.id);
         const { id, ...data } = input;
         return db.updateSubtitle(id, data);
       }),
 
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const subtitle = await db.getSubtitleById(input.id);
+        if (subtitle) await assertOwnsProject(subtitle.projectId, ctx.user.id);
         await db.deleteSubtitle(input.id);
         return { success: true };
       }),
@@ -6216,14 +6236,18 @@ FORMAT RULES (always apply):
         pacing: z.string().optional(),
         orderIndex: z.number().optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const dialogue = await db.getDialogueById(input.id);
+        if (dialogue) await assertCanAccessProject(dialogue.projectId, ctx.user.id);
         const { id, ...data } = input;
         return db.updateDialogue(id, data);
       }),
 
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const dialogue = await db.getDialogueById(input.id);
+        if (dialogue) await assertOwnsProject(dialogue.projectId, ctx.user.id);
         await db.deleteDialogue(input.id);
         return { success: true };
       }),
