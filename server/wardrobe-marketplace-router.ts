@@ -108,7 +108,7 @@ export const wardrobeMarketplaceRouter = router({
 
         const existing = await db.getDesignerProfileByUserId(ctx.user.id);
         if (existing) {
-          await db.updateDesignerProfile(existing.id, patch as any);
+          await db.updateDesignerProfile(existing.id, patch);
           return db.getDesignerProfileByUserId(ctx.user.id);
         }
 
@@ -116,7 +116,7 @@ export const wardrobeMarketplaceRouter = router({
           userId: ctx.user.id,
           brandName: "My Brand",
           ...patch,
-        } as any);
+        });
       }),
 
     /** Save brand profile info (name, type, bio) to the designer profile */
@@ -133,22 +133,22 @@ export const wardrobeMarketplaceRouter = router({
             brandName: input.brandName,
             profileType: input.profileType ?? undefined,
             bio: input.bio ?? undefined,
-          } as any);
+          });
         }
         return db.createDesignerProfile({
           userId: ctx.user.id,
           brandName: input.brandName,
           profileType: input.profileType ?? "designer",
           bio: input.bio ?? undefined,
-        } as any);
+        });
       }),
 
     /** Get current membership status for the authenticated user */
     getMembershipStatus: protectedProcedure.query(async ({ ctx }) => {
       const profile = await db.getDesignerProfileByUserId(ctx.user.id);
       return {
-        status: (profile as any)?.membershipStatus ?? "none",
-        expiresAt: (profile as any)?.membershipCurrentPeriodEnd ?? null,
+        status: profile?.membershipStatus ?? "none",
+        expiresAt: profile?.membershipCurrentPeriodEnd ?? null,
         profile: profile ?? null,
       };
     }),
@@ -162,11 +162,11 @@ export const wardrobeMarketplaceRouter = router({
       .mutation(async ({ ctx, input }) => {
         const s = requireStripe();
         const profile = await db.getDesignerProfileByUserId(ctx.user.id);
-        if (!profile || (profile as any).membershipStatus !== "active") {
+        if (!profile || profile.membershipStatus !== "active") {
           throw new TRPCError({ code: "FORBIDDEN", message: "Active designer membership required to set up payouts" });
         }
 
-        let accountId: string = (profile as any).stripeAccountId ?? "";
+        let accountId: string = profile.stripeAccountId ?? "";
 
         if (!accountId) {
           const account = await s.accounts.create({
@@ -186,7 +186,7 @@ export const wardrobeMarketplaceRouter = router({
           await db.updateDesignerProfile(profile.id, {
             stripeAccountId: accountId,
             stripeAccountStatus: "pending",
-          } as any);
+          });
         }
 
         const link = await s.accountLinks.create({
@@ -202,15 +202,15 @@ export const wardrobeMarketplaceRouter = router({
     /** Check whether the designer's Connect account is fully enabled */
     getConnectStatus: protectedProcedure.query(async ({ ctx }) => {
       const profile = await db.getDesignerProfileByUserId(ctx.user.id);
-      const accountId = (profile as any)?.stripeAccountId as string | undefined;
+      const accountId = profile?.stripeAccountId ?? undefined;
       if (!accountId || !stripe) {
         return { connected: false, chargesEnabled: false, payoutsEnabled: false };
       }
       try {
         const account = await stripe.accounts.retrieve(accountId);
         if (account.charges_enabled && account.payouts_enabled &&
-            (profile as any)?.stripeAccountStatus !== "active") {
-          await db.updateDesignerProfile(profile!.id, { stripeAccountStatus: "active" } as any);
+            profile?.stripeAccountStatus !== "active") {
+          await db.updateDesignerProfile(profile!.id, { stripeAccountStatus: "active" });
         }
         return {
           connected: true,
@@ -238,7 +238,7 @@ export const wardrobeMarketplaceRouter = router({
         return db.updateWardrobeItem(input.itemId, {
           retailPriceAud: input.retailPriceAud,
           leasePriceAud: input.leasePriceAud,
-        } as any);
+        });
       }),
 
     /** Set bundle lease price on a collection */
@@ -256,7 +256,7 @@ export const wardrobeMarketplaceRouter = router({
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
         await dbConn
           .update(designerCollections)
-          .set({ collectionPriceAud: input.collectionPriceAud } as any)
+          .set({ collectionPriceAud: input.collectionPriceAud })
           .where(eq(designerCollections.id, input.collectionId));
         return db.getDesignerCollectionById(input.collectionId);
       }),
@@ -273,7 +273,7 @@ export const wardrobeMarketplaceRouter = router({
           throw new TRPCError({ code: "FORBIDDEN", message: "Not your collection" });
         }
         const profile = await db.getDesignerProfileByUserId(ctx.user.id);
-        if (!profile || (profile as any).membershipStatus !== "active") {
+        if (!profile || profile.membershipStatus !== "active") {
           throw new TRPCError({ code: "FORBIDDEN", message: "Active designer membership required to publish" });
         }
         const dbConn = await getDb();
@@ -284,7 +284,7 @@ export const wardrobeMarketplaceRouter = router({
             published: input.published,
             publishedAt: input.published ? new Date() : null,
             visibility: input.published ? "public" : "private",
-          } as any)
+          })
           .where(eq(designerCollections.id, input.collectionId));
         return db.getDesignerCollectionById(input.collectionId);
       }),
@@ -294,8 +294,8 @@ export const wardrobeMarketplaceRouter = router({
       const profile = await db.getDesignerProfileByUserId(ctx.user.id);
       if (!profile) return { totalEarned: 0, leaseCount: 0, pendingPayout: 0 };
       const leases = await db.getWardrobeLeasesByDesigner(profile.id);
-      const active = leases.filter((l) => (l as any).status === "active");
-      const totalEarned = active.reduce((sum, l) => sum + ((l as any).designerAmountAud ?? 0), 0);
+      const active = leases.filter((l) => l.status === "active");
+      const totalEarned = active.reduce((sum, l) => sum + (l.designerAmountAud ?? 0), 0);
       return {
         totalEarned,
         totalEarnedDisplay: (totalEarned / 100).toFixed(2),
@@ -324,7 +324,7 @@ export const wardrobeMarketplaceRouter = router({
           .where(
             and(
               eq(designerProfiles.visibility, "public"),
-              eq(designerProfiles.membershipStatus as any, "active"),
+              eq(designerProfiles.membershipStatus, "active"),
             ),
           )
           .orderBy(desc(designerProfiles.createdAt))
@@ -339,7 +339,7 @@ export const wardrobeMarketplaceRouter = router({
         const profile = await db.getDesignerProfileById(input.id);
         if (!profile || profile.visibility !== "public") return null;
         const collections = await db.getDesignerCollectionsByDesigner(profile.id);
-        const published = collections.filter((c) => (c as any).published);
+        const published = collections.filter((c) => c.published);
         return { profile, collections: published };
       }),
 
@@ -348,11 +348,11 @@ export const wardrobeMarketplaceRouter = router({
       .input(z.object({ id: z.number().int() }))
       .query(async ({ input }) => {
         const col = await db.getDesignerCollectionById(input.id);
-        if (!col || !(col as any).published) return null;
+        if (!col || !col.published) return null;
         const designer = await db.getDesignerProfileById(col.designerProfileId);
         const items = await db.getWardrobeItemsByCollection(input.id);
         const leasable = items.filter(
-          (i) => i.visibility === "public" && i.status === "active" && (i as any).leasePriceAud,
+          (i) => i.visibility === "public" && i.status === "active" && i.leasePriceAud,
         );
         return { collection: col, designer, items: leasable };
       }),
@@ -376,7 +376,7 @@ export const wardrobeMarketplaceRouter = router({
             and(
               eq(wardrobeItems.visibility, "public"),
               eq(wardrobeItems.status, "active"),
-              isNotNull(wardrobeItems.leasePriceAud as any),
+              isNotNull(wardrobeItems.leasePriceAud),
             ),
           )
           .orderBy(desc(wardrobeItems.createdAt))
@@ -391,70 +391,84 @@ export const wardrobeMarketplaceRouter = router({
   leasing: router({
 
     /**
-     * Create a Stripe PaymentIntent for leasing an item or collection.
-     * Returns the client_secret for Stripe.js to complete the payment.
+     * Create a Stripe Checkout Session for leasing an item or collection.
+     * Redirects the user to Stripe-hosted checkout — no Stripe.js needed on the client.
      */
     checkout: protectedProcedure
       .input(z.object({
         type: z.enum(["item", "collection"]),
         id: z.number().int(),
+        returnUrl: z.string().url().max(512),
       }))
       .mutation(async ({ ctx, input }) => {
         const s = requireStripe();
 
         let amountCents: number;
         let designerProfileId: number;
-        let description: string;
+        let productName: string;
 
         if (input.type === "item") {
           const item = await db.getWardrobeItemById(input.id);
           if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Item not found" });
-          if (!(item as any).leasePriceAud) {
+          if (!item.leasePriceAud) {
             throw new TRPCError({ code: "BAD_REQUEST", message: "Item has no lease price set" });
           }
-          amountCents = (item as any).leasePriceAud as number;
+          amountCents = item.leasePriceAud;
           designerProfileId = item.designerProfileId!;
-          description = `Lease: ${item.name} — Virelle Studios`;
+          productName = `Lease: ${item.name} — Virelle Studios`;
         } else {
           const col = await db.getDesignerCollectionById(input.id);
-          if (!col || !(col as any).collectionPriceAud) {
+          if (!col || !col.collectionPriceAud) {
             throw new TRPCError({ code: "NOT_FOUND", message: "Collection not found or not priced" });
           }
-          amountCents = (col as any).collectionPriceAud as number;
+          amountCents = col.collectionPriceAud;
           designerProfileId = col.designerProfileId;
-          description = `Lease collection: ${col.name} — Virelle Studios`;
+          productName = `Lease collection: ${col.name} — Virelle Studios`;
         }
 
         const designer = await db.getDesignerProfileById(designerProfileId);
-        const designerAccountId: string | null = (designer as any)?.stripeAccountId ?? null;
+        const designerAccountId: string | null = designer?.stripeAccountId ?? null;
 
         const platformFeeCents = Math.round(amountCents * PLATFORM_COMMISSION);
         const designerAmountCents = amountCents - platformFeeCents;
 
-        const piParams: Stripe.PaymentIntentCreateParams = {
-          amount: amountCents,
-          currency: "aud",
-          description,
-          metadata: {
-            userId: String(ctx.user.id),
-            type: input.type,
-            itemOrCollectionId: String(input.id),
-            designerProfileId: String(designerProfileId),
-            platformFeeCents: String(platformFeeCents),
-            designerAmountCents: String(designerAmountCents),
-          },
+        const sessionMeta: Record<string, string> = {
+          userId: String(ctx.user.id),
+          leaseType: input.type,
+          itemOrCollectionId: String(input.id),
+          designerProfileId: String(designerProfileId),
+          platformFeeCents: String(platformFeeCents),
+          designerAmountCents: String(designerAmountCents),
         };
 
-        if (designerAccountId) {
-          piParams.application_fee_amount = platformFeeCents;
-          piParams.transfer_data = { destination: designerAccountId };
-        }
+        const paymentIntentData: Stripe.Checkout.SessionCreateParams.PaymentIntentData = {
+          metadata: sessionMeta,
+          ...(designerAccountId
+            ? { application_fee_amount: platformFeeCents, transfer_data: { destination: designerAccountId } }
+            : {}),
+        };
 
-        const pi = await s.paymentIntents.create(piParams);
+        const session = await s.checkout.sessions.create({
+          mode: "payment",
+          payment_method_types: ["card"],
+          line_items: [{
+            price_data: {
+              currency: "aud",
+              product_data: { name: productName },
+              unit_amount: amountCents,
+            },
+            quantity: 1,
+          }],
+          success_url: `${input.returnUrl}?lease_session={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${input.returnUrl}?lease_cancelled=1`,
+          metadata: sessionMeta,
+          payment_intent_data: paymentIntentData,
+          customer_email: (ctx.user as any).email ?? undefined,
+        });
 
         return {
-          clientSecret: pi.client_secret,
-          paymentIntentId: pi.id,
+          checkoutUrl: session.url,
+          sessionId: session.id,
           amountAud: (amountCents / 100).toFixed(2),
           platformFeeAud: (platformFeeCents / 100).toFixed(2),
           designerAmountAud: (designerAmountCents / 100).toFixed(2),
@@ -462,34 +476,43 @@ export const wardrobeMarketplaceRouter = router({
       }),
 
     /**
-     * Called from the client after Stripe confirms the payment.
+     * Called from the client after Stripe Checkout succeeds (via ?lease_session=).
      * Creates the lease record in the DB and marks it as active.
      */
     confirmLease: protectedProcedure
-      .input(z.object({ paymentIntentId: z.string().max(255) }))
+      .input(z.object({ sessionId: z.string().max(255) }))
       .mutation(async ({ ctx, input }) => {
         const s = requireStripe();
-        const pi = await s.paymentIntents.retrieve(input.paymentIntentId);
+        const session = await s.checkout.sessions.retrieve(input.sessionId, {
+          expand: ["payment_intent"],
+        });
 
-        if (pi.metadata?.userId !== String(ctx.user.id)) {
+        if (session.metadata?.userId !== String(ctx.user.id)) {
           throw new TRPCError({ code: "FORBIDDEN" });
         }
-        if (pi.status !== "succeeded") {
+        if (session.payment_status !== "paid") {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: `Payment not yet complete (status: ${pi.status})`,
+            message: `Payment not yet complete (status: ${session.payment_status})`,
           });
         }
 
-        // Guard: don't create duplicate leases for the same payment intent
-        const existing = await db.getWardrobeLeaseByPaymentIntent(input.paymentIntentId);
-        if (existing) return existing;
+        const pi = session.payment_intent as Stripe.PaymentIntent | null;
+        const piId = pi?.id ?? null;
 
-        const leaseType = pi.metadata?.type as "item" | "collection";
-        const itemOrCollectionId = parseInt(pi.metadata?.itemOrCollectionId ?? "0", 10);
-        const designerProfileId = parseInt(pi.metadata?.designerProfileId ?? "0", 10);
-        const platformFeeCents = parseInt(pi.metadata?.platformFeeCents ?? "0", 10);
-        const designerAmountCents = parseInt(pi.metadata?.designerAmountCents ?? "0", 10);
+        // Guard: don't create duplicate leases for the same payment intent
+        if (piId) {
+          const existing = await db.getWardrobeLeaseByPaymentIntent(piId);
+          if (existing) return existing;
+        }
+
+        const meta = session.metadata ?? {};
+        const leaseType = (meta.leaseType ?? "item") as "item" | "collection";
+        const itemOrCollectionId = parseInt(meta.itemOrCollectionId ?? "0", 10);
+        const designerProfileId = parseInt(meta.designerProfileId ?? "0", 10);
+        const platformFeeCents = parseInt(meta.platformFeeCents ?? "0", 10);
+        const designerAmountCents = parseInt(meta.designerAmountCents ?? "0", 10);
+        const amountCents = session.amount_total ?? 0;
 
         return db.createWardrobeLease({
           userId: ctx.user.id,
@@ -497,9 +520,9 @@ export const wardrobeMarketplaceRouter = router({
           wardrobeItemId: leaseType === "item" ? itemOrCollectionId : null,
           collectionId: leaseType === "collection" ? itemOrCollectionId : null,
           leaseType,
-          stripePaymentIntentId: pi.id,
-          stripeTransferId: (pi.transfer_data as any)?.destination ?? null,
-          amountPaidAud: pi.amount,
+          stripePaymentIntentId: piId,
+          stripeTransferId: null,
+          amountPaidAud: amountCents,
           designerAmountAud: designerAmountCents,
           platformFeeAud: platformFeeCents,
           status: "active",
@@ -516,15 +539,15 @@ export const wardrobeMarketplaceRouter = router({
       .input(z.object({ wardrobeItemId: z.number().int() }))
       .query(async ({ ctx, input }) => {
         const leases = await db.getWardrobeLeasesByUser(ctx.user.id);
-        const active = leases.filter((l) => (l as any).status === "active");
+        const active = leases.filter((l) => l.status === "active");
 
-        const hasItem = active.some((l) => (l as any).wardrobeItemId === input.wardrobeItemId);
+        const hasItem = active.some((l) => l.wardrobeItemId === input.wardrobeItemId);
         if (hasItem) return { hasAccess: true };
 
         const item = await db.getWardrobeItemById(input.wardrobeItemId);
         if (!item?.collectionId) return { hasAccess: false };
 
-        const hasCollection = active.some((l) => (l as any).collectionId === item.collectionId);
+        const hasCollection = active.some((l) => l.collectionId === item.collectionId);
         return { hasAccess: hasCollection };
       }),
   }),

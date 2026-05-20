@@ -27,7 +27,6 @@ import {
   CheckCircle2,
   CreditCard,
   Store,
-  Building2,
   Sparkles,
   ArrowRight,
   Loader2,

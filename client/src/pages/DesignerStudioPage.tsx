@@ -231,8 +231,8 @@ export default function DesignerStudioPage() {
   // Handle return from Stripe Connect onboarding
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const connectStatus = params.get("connect");
-    if (connectStatus === "done") {
+    const connectParam = params.get("connect");
+    if (connectParam === "done") {
       toast.success("Payout setup complete! You're ready to receive lease payments.");
       window.history.replaceState({}, "", "/designer/studio");
     }
