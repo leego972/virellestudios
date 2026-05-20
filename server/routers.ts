@@ -2582,8 +2582,12 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           userApiKey: userGoogleKey,
         });
 
-        // If sceneId provided, update scene thumbnail
+        // If sceneId provided, verify ownership then update scene thumbnail
         if (input.sceneId && result.url) {
+          const targetNbScene = await db.getSceneById(input.sceneId);
+          if (targetNbScene) {
+            await assertCanAccessProject(targetNbScene.projectId, ctx.user.id);
+          }
           await db.updateScene(input.sceneId, { thumbnailUrl: result.url });
           // Auto-set project thumbnail if project doesn't have one yet
           if (input.projectId) {
@@ -3356,12 +3360,12 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
-        // Credits: deduct for Virelle chat message
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "virelle_chat", `Virelle chat for scene ${input.sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
-
-        // Get the scene data
+        // Get the scene data and verify ownership BEFORE deducting credits
         const scene = await db.getSceneById(input.sceneId);
         if (!scene) throw new TRPCError({ code: "NOT_FOUND", message: "Scene not found" });
+        await assertCanAccessProject(scene.projectId, ctx.user.id);
+        // Credits: deduct for Virelle chat message
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "virelle_chat", `Virelle chat for scene ${input.sceneId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
 
         // Get user's API keys
         const userKeys = await db.getUserApiKeys(ctx.user!.id);
@@ -11651,10 +11655,10 @@ Rules:
         let exportId: number | null = null;
         try {
           if (conn) {
-            const ins = await (conn as any).execute(sqlRaw.raw(`
+            const ins = await (conn as any).execute(sqlRaw`
               INSERT INTO youtubeExports (userId, movieId, projectId, videoUrl, youtubeVideoId, youtubeUrl, title, description, privacyStatus, status)
-              VALUES (${ytUser.id}, ${input.movieId ?? "NULL"}, ${input.projectId ?? "NULL"}, '${input.videoUrl.replace(/'/g, "\\'")}',' ', ' ', '${input.title.replace(/'/g, "\\'").substring(0, 255)}', '${(input.description || "").replace(/'/g, "\\'").substring(0, 4999)}', '${input.privacyStatus}', 'uploading')
-            `)) as any;
+              VALUES (${ytUser.id}, ${input.movieId ?? null}, ${input.projectId ?? null}, ${input.videoUrl}, ${' '}, ${' '}, ${input.title.substring(0, 255)}, ${(input.description || "").substring(0, 4999)}, ${input.privacyStatus}, ${'uploading'})
+            `) as any;
             exportId = ins?.insertId ?? null;
           }
         } catch (_) {}
@@ -11671,7 +11675,7 @@ Rules:
         } catch (err: any) {
           // Mark as failed
           if (conn && exportId) {
-            await conn.execute(sqlRaw.raw(`UPDATE youtubeExports SET status='failed', errorMessage='${String(err.message).substring(0, 500).replace(/'/g, "\\'")}'  WHERE id=${exportId}`)).catch(() => {});
+            await conn.execute(sqlRaw`UPDATE youtubeExports SET status=${'failed'}, errorMessage=${String(err.message).substring(0, 500)} WHERE id=${exportId}`).catch(() => {});
           }
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
@@ -11682,10 +11686,10 @@ Rules:
         // Mark export as done and update the movie record
         if (conn) {
           if (exportId) {
-            await conn.execute(sqlRaw.raw(`UPDATE youtubeExports SET status='done', youtubeVideoId='${result.youtubeVideoId}', youtubeUrl='${result.youtubeUrl}' WHERE id=${exportId}`)).catch(() => {});
+            await conn.execute(sqlRaw`UPDATE youtubeExports SET status=${'done'}, youtubeVideoId=${result.youtubeVideoId}, youtubeUrl=${result.youtubeUrl} WHERE id=${exportId}`).catch(() => {});
           }
           if (input.movieId) {
-            await conn.execute(sqlRaw.raw(`UPDATE movies SET youtubeVideoId='${result.youtubeVideoId}', youtubeUrl='${result.youtubeUrl}', youtubeExportedAt=NOW() WHERE id=${input.movieId}`)).catch(() => {});
+            await conn.execute(sqlRaw`UPDATE movies SET youtubeVideoId=${result.youtubeVideoId}, youtubeUrl=${result.youtubeUrl}, youtubeExportedAt=NOW() WHERE id=${input.movieId}`).catch(() => {});
           }
         }
 
