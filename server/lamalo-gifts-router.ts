@@ -1,5 +1,5 @@
 import { z } from "zod";
-  import { router, protectedProcedure } from "./trpc";
+  import { router, protectedProcedure } from "./_core/trpc";
   import { TRPCError } from "@trpc/server";
   import { getDb } from "./db";
   import { wardrobeItems, wardrobeLeases, designerProfiles, designerCollections, users } from "../drizzle/schema";
