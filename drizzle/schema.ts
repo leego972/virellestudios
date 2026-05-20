@@ -194,7 +194,16 @@ export const characters = mysqlTable("characters", {
   voiceDescription: text("voiceDescription"), // detailed voice description for TTS
   isAiActor: boolean("isAiActor").default(false), // true = from AI casting library
   aiActorId: varchar("aiActorId", { length: 128 }), // reference to AI actor library entry
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+    // ─── Non-Human / Creature / Costume Characters (v6.38+) ──────────────────
+    // Gremlins, monsters, robots, aliens — no human actor needed.
+    // The costume/creature IS the character. Upload or AI-generate a reference
+    // image and lock it — AI MUST match that appearance in every single scene.
+    isNonHuman:                boolean("isNonHuman").notNull().default(false),
+    costumeType:               varchar("costumeType", { length: 64 }),
+    referenceImageUrl:         text("referenceImageUrl"),
+    referenceImageLocked:      boolean("referenceImageLocked").notNull().default(false),
+    referenceGenerationPrompt: text("referenceGenerationPrompt"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
