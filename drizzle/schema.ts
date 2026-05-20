@@ -332,7 +332,13 @@ export const scenes = mysqlTable("scenes", {
   approvedBy: int("approvedBy"),
   approvedAt: timestamp("approvedAt"),
   approvalNote: text("approvalNote"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+    // ─── v6.32+ Coherence: location/vehicle lock, acts, story clock ───
+    lockedBackgroundId: int("lockedBackgroundId"),  // → projectBackgrounds.id
+    actId: int("actId"),                             // → projectActs.id
+    storyBeat: varchar("storyBeat", { length: 64 }),
+    storyDay: int("storyDay"),
+    storyTimeOfDay: varchar("storyTimeOfDay", { length: 32 }),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
@@ -1938,6 +1944,9 @@ export const wardrobeAssignments = mysqlTable("wardrobeAssignments", {
   assignmentType: varchar("assignmentType", { length: 64 }).notNull(),
   characterId: int("characterId"),
   sceneId: int("sceneId"),
+  // ─── v6.31 scene-range assignment ───
+  fromSceneOrder: int("fromSceneOrder"),  // NULL = all scenes
+  toSceneOrder: int("toSceneOrder"),      // NULL = open-ended
   // reference | must_match | inspired_by | background_only | brand_visible |
   // costume_accurate | period_accurate
   usageMode: varchar("usageMode", { length: 64 }).default("reference").notNull(),
@@ -2060,4 +2069,136 @@ export type InsertWardrobeLease = typeof wardrobeLeases.$inferInsert;
   });
   export type CrowdfundPayout = typeof crowdfundPayouts.$inferSelect;
   export type InsertCrowdfundPayout = typeof crowdfundPayouts.$inferInsert;
+
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // v6.32+ — Project Coherence Layer
+  // Backgrounds · Props · Narrative Acts · Character States · Visual DNA
+  // ═══════════════════════════════════════════════════════════════════════════════
+
+  // ─── Project Background / Vehicle / Vessel / Aircraft Library ─────────────────
+  // Locks recurring locations AND vehicles across scenes.
+  // A Ferrari in scene 1 will never become a Toyota in scene 2.
+  // backgroundType: 'location' | 'vehicle' | 'vessel' | 'aircraft'
+  export const projectBackgrounds = mysqlTable("projectBackgrounds", {
+    id:                int("id").autoincrement().primaryKey(),
+    projectId:         int("projectId").notNull(),
+    userId:            int("userId").notNull(),
+    name:              varchar("name", { length: 255 }).notNull(),
+    backgroundType:    varchar("backgroundType", { length: 32 }).notNull().default("location"),
+    description:       text("description"),
+    referenceImageUrl: text("referenceImageUrl"),
+    thumbnailUrl:      text("thumbnailUrl"),
+    styleNotes:        text("styleNotes"),
+    locationTags:      json("locationTags"),
+    // Vehicle / vessel / aircraft specific
+    vehicleMake:       varchar("vehicleMake", { length: 128 }),
+    vehicleModel:      varchar("vehicleModel", { length: 128 }),
+    vehicleYear:       int("vehicleYear"),
+    vehicleColor:      varchar("vehicleColor", { length: 128 }),
+    vehicleInterior:   text("vehicleInterior"),
+    vehicleCondition:  varchar("vehicleCondition", { length: 128 }),
+    locked:            boolean("locked").notNull().default(true),
+    createdAt:         timestamp("createdAt").defaultNow().notNull(),
+    updatedAt:         timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type ProjectBackground = typeof projectBackgrounds.$inferSelect;
+  export type InsertProjectBackground = typeof projectBackgrounds.$inferInsert;
+
+  // ─── Project Props Library ─────────────────────────────────────────────────────
+  export const projectProps = mysqlTable("projectProps", {
+    id:                int("id").autoincrement().primaryKey(),
+    projectId:         int("projectId").notNull(),
+    userId:            int("userId").notNull(),
+    name:              varchar("name", { length: 255 }).notNull(),
+    category:          varchar("category", { length: 64 }),
+    description:       text("description"),
+    referenceImageUrl: text("referenceImageUrl"),
+    thumbnailUrl:      text("thumbnailUrl"),
+    colors:            json("colors"),
+    era:               varchar("era", { length: 128 }),
+    styleTags:         json("styleTags"),
+    locked:            boolean("locked").notNull().default(true),
+    createdAt:         timestamp("createdAt").defaultNow().notNull(),
+    updatedAt:         timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type ProjectProp = typeof projectProps.$inferSelect;
+  export type InsertProjectProp = typeof projectProps.$inferInsert;
+
+  export const propAssignments = mysqlTable("propAssignments", {
+    id:             int("id").autoincrement().primaryKey(),
+    userId:         int("userId").notNull(),
+    projectId:      int("projectId").notNull(),
+    propId:         int("propId").notNull(),
+    characterId:    int("characterId"),
+    fromSceneOrder: int("fromSceneOrder"),
+    toSceneOrder:   int("toSceneOrder"),
+    usageNotes:     text("usageNotes"),
+    createdAt:      timestamp("createdAt").defaultNow().notNull(),
+  });
+  export type PropAssignment = typeof propAssignments.$inferSelect;
+  export type InsertPropAssignment = typeof propAssignments.$inferInsert;
+
+  // ─── Narrative Acts / Episodes ─────────────────────────────────────────────────
+  export const projectActs = mysqlTable("projectActs", {
+    id:                int("id").autoincrement().primaryKey(),
+    projectId:         int("projectId").notNull(),
+    userId:            int("userId").notNull(),
+    name:              varchar("name", { length: 255 }).notNull(),
+    orderIndex:        int("orderIndex").notNull().default(0),
+    actType:           varchar("actType", { length: 64 }).notNull().default("act"),
+    description:       text("description"),
+    colorHex:          varchar("colorHex", { length: 7 }),
+    isEpisodeBoundary: boolean("isEpisodeBoundary").notNull().default(false),
+    episodeNumber:     int("episodeNumber"),
+    episodeTitle:      varchar("episodeTitle", { length: 255 }),
+    createdAt:         timestamp("createdAt").defaultNow().notNull(),
+    updatedAt:         timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type ProjectAct = typeof projectActs.$inferSelect;
+  export type InsertProjectAct = typeof projectActs.$inferInsert;
+
+  // ─── Character State Tracker ───────────────────────────────────────────────────
+  // Tracks injuries, beard growth, costume damage, emotional arcs per scene range.
+  // stateType: 'appearance' | 'injury' | 'emotional' | 'costume_damage' | 'beard' | 'makeup' | 'other'
+  export const characterStates = mysqlTable("characterStates", {
+    id:             int("id").autoincrement().primaryKey(),
+    userId:         int("userId").notNull(),
+    projectId:      int("projectId").notNull(),
+    characterId:    int("characterId").notNull(),
+    fromSceneOrder: int("fromSceneOrder").notNull(),
+    toSceneOrder:   int("toSceneOrder"),
+    label:          varchar("label", { length: 255 }).notNull(),
+    stateType:      varchar("stateType", { length: 64 }).notNull().default("appearance"),
+    description:    text("description").notNull(),
+    promptOverride: text("promptOverride"),
+    createdAt:      timestamp("createdAt").defaultNow().notNull(),
+    updatedAt:      timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type CharacterState = typeof characterStates.$inferSelect;
+  export type InsertCharacterState = typeof characterStates.$inferInsert;
+
+  // ─── Project Visual DNA Lock ───────────────────────────────────────────────────
+  // Locks cinematography style at project level so it cannot drift scene-by-scene.
+  export const projectVisualDNA = mysqlTable("projectVisualDNA", {
+    id:                     int("id").autoincrement().primaryKey(),
+    projectId:              int("projectId").notNull(),
+    userId:                 int("userId").notNull(),
+    genreProfile:           varchar("genreProfile", { length: 128 }),
+    cinematographer:        varchar("cinematographer", { length: 255 }),
+    referenceFilms:         json("referenceFilms"),
+    lensProfile:            varchar("lensProfile", { length: 128 }),
+    lightingStyle:          varchar("lightingStyle", { length: 128 }),
+    colorPalette:           varchar("colorPalette", { length: 255 }),
+    colorTemperature:       varchar("colorTemperature", { length: 64 }),
+    filmStock:              varchar("filmStock", { length: 128 }),
+    aspectRatio:            varchar("aspectRatio", { length: 16 }),
+    visualNotes:            text("visualNotes"),
+    locked:                 boolean("locked").notNull().default(false),
+    globalColorGrade:       varchar("globalColorGrade", { length: 128 }),
+    globalColorGradeLocked: boolean("globalColorGradeLocked").notNull().default(false),
+    createdAt:              timestamp("createdAt").defaultNow().notNull(),
+    updatedAt:              timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type ProjectVisualDNA = typeof projectVisualDNA.$inferSelect;
+  export type InsertProjectVisualDNA = typeof projectVisualDNA.$inferInsert;
   
