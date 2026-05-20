@@ -26,7 +26,8 @@ const stripe: Stripe | null = ENV.stripeSecretKey
   : null;
 
 const PLATFORM_COMMISSION = 0.05; // 5%
-const DESIGNER_YEARLY_CENTS = 29900; // A$299.00
+const DESIGNER_YEARLY_CENTS = 29900; // A$299.00 — standard annual membership
+const FOUNDING_DESIGNER_YEARLY_CENTS = 15000; // A$150.00 — Founding Designer Partner price
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -44,7 +45,8 @@ export const wardrobeMarketplaceRouter = router({
   // ═══════════════════════════════════════════════════════════════════════════
   designer: router({
 
-    /** Create a Stripe Checkout Session for the A$299/year designer membership */
+    /** Create a Stripe Checkout Session for the designer membership.
+     * Currently charges the Founding Partner price (A$150/year). */
     subscribeMembership: protectedProcedure
       .input(z.object({ returnUrl: z.string().url().max(512) }))
       .mutation(async ({ ctx, input }) => {
@@ -61,11 +63,11 @@ export const wardrobeMarketplaceRouter = router({
             price_data: {
               currency: "aud",
               product_data: {
-                name: "Virelle Studios — Designer Marketplace Membership",
-                description: "List your fashion & costume collections for film productions worldwide. Renews yearly.",
+                name: "Virelle Studios — Founding Designer Partner Membership",
+                description: "Founding Partner price: A$150/year (standard A$299). Priority placement, featured spotlights, 95% of every lease. Renews yearly.",
                 metadata: { type: "designer_membership" },
               },
-              unit_amount: DESIGNER_YEARLY_CENTS,
+              unit_amount: FOUNDING_DESIGNER_YEARLY_CENTS,
               recurring: { interval: "year" },
             },
             quantity: 1,
