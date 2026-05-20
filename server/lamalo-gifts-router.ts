@@ -20,7 +20,7 @@ import { z } from "zod";
   export const lamaloGiftsRouter = router({
     /** Check if this user (non-designer) has already claimed their 2 free outfits */
     hasClaimedGift: protectedProcedure.query(async ({ ctx }) => {
-      const db = getDb();
+      const db = await getDb();
       // Designers are not eligible
       const designer = await db.select({ id: designerProfiles.id })
         .from(designerProfiles).where(eq(designerProfiles.userId, ctx.user.id)).limit(1);
@@ -44,7 +44,7 @@ import { z } from "zod";
 
     /** Returns curated Lamalo Fashion starter items for the picker */
     getStarterOutfits: protectedProcedure.query(async ({ ctx }) => {
-      const db = getDb();
+      const db = await getDb();
       // Must not be a designer
       const designer = await db.select({ id: designerProfiles.id })
         .from(designerProfiles).where(eq(designerProfiles.userId, ctx.user.id)).limit(1);
@@ -80,7 +80,7 @@ import { z } from "zod";
         itemId2: z.number().int(),
       }))
       .mutation(async ({ ctx, input }) => {
-        const db = getDb();
+        const db = await getDb();
 
         // Block designers
         const designer = await db.select({ id: designerProfiles.id })
