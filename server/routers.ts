@@ -5292,7 +5292,8 @@ Write the COMPLETE screenplay from FADE IN: to FADE OUT. Include:
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.dialogue_editor_ai.cost, "dialogue_editor_ai", `AI script assist: ${input.action}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         await db.incrementGenerationCount(ctx.user.id);
         const script = await db.getScriptById(input.scriptId);
-        if (!script) throw new Error("Script not found");
+        if (!script) throw new TRPCError({ code: "NOT_FOUND", message: "Script not found" });
+        if (script.userId !== ctx.user.id) throw new TRPCError({ code: "NOT_FOUND", message: "Script not found" });
 
         const contextWindow = (script.content || "").slice(-3000);
         const selectedOrContext = input.selectedText || contextWindow.slice(-800);
