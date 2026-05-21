@@ -282,8 +282,8 @@ export const discordAdapter = {
         body: JSON.stringify({
           content: params.content,
           embeds: params.embeds,
-          username: params.username || "Archibald Titan",
-          avatar_url: params.avatarUrl || "https://archibaldtitan.com/favicon.ico",
+          username: params.username || "Virelle Studios",
+          avatar_url: params.avatarUrl || "https://virellestudios.com/favicon.ico",
         }),
       });
 
