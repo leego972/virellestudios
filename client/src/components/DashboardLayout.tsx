@@ -115,6 +115,8 @@ const menuGroups = [
       { icon: Globe, label: "Film Showcase", path: "/showcase" },
       { icon: ShoppingBag, label: "Asset Marketplace", path: "/marketplace", hollywoodKey: "asset_marketplace" as ToolIconKey },
       { icon: Calendar, label: "Festival Tracker", path: "/festivals" },
+      { icon: Shirt, label: "Wardrobe Marketplace", path: "/wardrobe-marketplace" },
+      { icon: TrendingUp, label: "Browse Campaigns", path: "/crowdfund/browse" },
     ],
   },
   {
@@ -122,6 +124,7 @@ const menuGroups = [
     items: [
       { icon: DollarSign, label: "Funding Directory", path: "/funding" },
       { icon: Rocket, label: "Crowdfunding Hub", path: "/crowdfunding" },
+      { icon: Zap, label: "Pro Funding Match", path: "/funding-pro" },
       { icon: Building2, label: "Brand Outreach", path: "/brand-outreach" },
         { icon: Users, label: "Community", path: "/community" },
       { icon: BookOpen, label: "Blog", path: "/blog" },
@@ -137,6 +140,7 @@ const menuGroups = [
       { icon: Coins, label: "Credits & History", path: "/credits", hollywoodKey: "credits" as ToolIconKey },
       { icon: Gift, label: "Referrals", path: "/referrals", hollywoodKey: "referrals" as ToolIconKey },
       { icon: Key, label: "API Keys", path: "/settings?tab=api-keys" },
+      { icon: Store, label: "Designer Studio", path: "/designer/studio" },
       { icon: Smartphone, label: "Download App", path: "/download" },
       { icon: Settings, label: "Settings", path: "/settings", hollywoodKey: "settings" as ToolIconKey },
     ],
@@ -154,6 +158,7 @@ const adminMenuItems = [
   { icon: BarChart3, label: "Advertising", path: "/admin/advertising" },
   { icon: Search, label: "SEO Dashboard", path: "/admin/seo" },
   { icon: Mail, label: "Outreach & Email", path: "/admin/outreach" },
+  { icon: Star, label: "Signature Cast", path: "/admin/signature-cast" },
 ];
 
 const SUPPORTED_LANGUAGES = [
