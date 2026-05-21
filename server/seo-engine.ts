@@ -824,8 +824,8 @@ export function generateStructuredData(): Record<string, any>[] {
     },
     foundingDate: "2025",
     knowsAbout: [
-      "AI Agents", "Credential Management", "Browser Automation",
-      "Cybersecurity", "Developer Tools", "Secret Management",
+      "AI Film Production", "AI Video Generation", "Screenwriting Tools", "AI Character Creation",
+      "Cinematic AI", "Film Production Software", "Storyboarding",
     ],
   });
 
@@ -1868,7 +1868,7 @@ Return JSON with this exact structure:
           role: "user",
           content: `Product: ${SITE_NAME}
 Description: ${SITE_DESCRIPTION}
-Category: Developer Tools, Cybersecurity, AI Agent, Credential Management
+Category: Film Production, AI Video, Creative Tools, Filmmaking Software
 Pricing: Free ($0), Pro ($29/mo), Enterprise ($99/mo)
 Features: AI scene generation, 4K rendering, AI character creation, cinematic lighting, storyboard editor, voice direction, API access, studio collaboration
 Target audience: Independent filmmakers, content creators, advertising agencies, studios, social media creators, game developers
