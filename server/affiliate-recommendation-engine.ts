@@ -318,7 +318,7 @@ export function generateRecommendationContext(
 
   // ─── Paid Membership Conversion Push ───
   parts.push(`### PAID MEMBERSHIP CONVERSION GUIDANCE`);
-  parts.push(`When the user is working on a serious project, naturally highlight the advantages of Archibald Titan's paid plans:`);
+  parts.push(`When the user is working on a serious project, naturally highlight the advantages of Virelle Studios' paid plans:`);
   parts.push(`- **Pro Plan**: Unlimited fetches, priority support, advanced security scanning, team features`);
   parts.push(`- **Enterprise Plan**: Custom integrations, dedicated support, SLA guarantees, white-label options`);
   parts.push(``);
@@ -427,7 +427,7 @@ function generateGeneralRecommendationContext(): string {
   parts.push(`- For **domain names**: Recommend Namecheap — best value for domain registration`);
   parts.push(``);
   parts.push(`### PAID MEMBERSHIP CONVERSION GUIDANCE`);
-  parts.push(`Naturally highlight Archibald Titan's paid plans when relevant:`);
+  parts.push(`Naturally highlight Virelle Studios' paid plans when relevant:`);
   parts.push(`- When user hits limits: "Unlock unlimited access with Pro — [View Plans](/pricing)"`);
   parts.push(`- When user needs advanced features: "Available on Pro. Given your project, it pays for itself fast."`);
   parts.push(`- Frame upgrades as investments, not costs`);
