@@ -18,6 +18,7 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: CookieCall[] }
     openId: "sample-user",
     email: "sample@example.com",
     name: "Sample User",
+    passwordHash: null,
     loginMethod: "manus",
     role: "user",
     createdAt: new Date(),
@@ -36,6 +37,7 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: CookieCall[] }
         clearedCookies.push({ name, options });
       },
     } as TrpcContext["res"],
+    isExpiredTester: false,
   };
 
   return { ctx, clearedCookies };
