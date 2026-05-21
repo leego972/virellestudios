@@ -64,7 +64,7 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
       }, { once: true });
     } catch { /* unsupported */ }
     try { new PerformanceObserver((list) => {
-      for (const e of list.getEntries()) sendVital("INP", (e as PerformanceEntry & { processingStart: number }).processingStart - e.startTime);
+      for (const e of list.getEntries()) sendVital("INP", (e as PerformanceEntry & { duration: number }).duration);
     }).observe({ type: "event", buffered: true }); } catch { /* unsupported */ }
   }
 
