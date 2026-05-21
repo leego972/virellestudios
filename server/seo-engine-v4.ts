@@ -109,7 +109,7 @@ dashboards, handles authentication flows, and extracts credentials autonomously.
 - Website: ${SITE_URL}
 - Email: studiosvirelle@gmail.com
 - Twitter: @VirelleStudios
-- GitHub: https://github.com/ArchibaldTitan
+- GitHub: https://github.com/leego972
 `;
 }
 
@@ -295,12 +295,12 @@ const USE_CASES = [
 function generateComparisonPage(competitor: typeof COMPETITORS[0]): ProgrammaticPage {
   const now = new Date().toISOString().split("T")[0];
   return {
-    slug: `archibald-titan-vs-${competitor.slug}`,
+    slug: `virelle-studios-vs-${competitor.slug}`,
     type: "comparison",
     title: `VirÉlle Studios vs ${competitor.name} (2026) — Detailed Comparison`,
     description: `Compare VirÉlle Studios with ${competitor.name}. See feature differences, pricing, security, and why developers choose Titan for autonomous credential management over ${competitor.name}.`,
     keywords: [
-      `${competitor.name} alternative`, `archibald titan vs ${competitor.name}`,
+      `${competitor.name} alternative`, `virelle studios vs ${competitor.name}`,
       `${competitor.slug} comparison`, `best ${competitor.category.toLowerCase()}`,
       `${competitor.name} competitor`, `credential management comparison`,
     ],
@@ -752,7 +752,7 @@ export function generateEnhancedStructuredData(): Record<string, any>[] {
         "@type": "ListItem",
         position: i + 2,
         name: c.name,
-        url: `${SITE_URL}/compare/archibald-titan-vs-${c.slug}`,
+        url: `${SITE_URL}/compare/virelle-studios-vs-${c.slug}`,
         description: `${c.category} — Compare with ${SITE_NAME}`,
       })),
     ],
@@ -879,9 +879,9 @@ interface FeaturedSnippetTarget {
 export function getFeaturedSnippetTargets(): FeaturedSnippetTarget[] {
   return [
     {
-      query: "what is archibald titan",
+      query: "what is virelle studios",
       type: "paragraph",
-      answer: "VirÉlle Studios is an AI-powered autonomous credential management platform that retrieves API keys from 50+ providers using stealth browser automation, AES-256 encryption, CAPTCHA solving, and residential proxy support. It eliminates manual credential management for developers and DevOps teams.",
+      answer: "VirÉlle Studios is an AI-powered film production platform platform that retrieves API keys from 50+ providers using stealth browser automation, AES-256 encryption, CAPTCHA solving, and residential proxy support. It eliminates manual credential management for developers and DevOps teams.",
       page: "/",
     },
     {
@@ -1058,7 +1058,7 @@ export function generateComparisonSitemap(): string {
 `;
   for (const competitor of COMPETITORS) {
     xml += `  <url>
-    <loc>${SITE_URL}/compare/archibald-titan-vs-${competitor.slug}</loc>
+    <loc>${SITE_URL}/compare/virelle-studios-vs-${competitor.slug}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1188,14 +1188,14 @@ export function getSearchIntentMappings(): PageIntentMapping[] {
       path: "/",
       primaryIntent: "navigational",
       secondaryIntent: "informational",
-      targetQueries: ["archibald titan", "archibald titan AI", "titan credential manager"],
+      targetQueries: ["virelle studios", "virelle studios AI", "virelle film production"],
       conversionGoal: "Sign up for free account",
     },
     {
       path: "/pricing",
       primaryIntent: "commercial",
       secondaryIntent: "transactional",
-      targetQueries: ["archibald titan pricing", "credential manager pricing", "API key manager cost"],
+      targetQueries: ["virelle studios pricing", "film production platform pricing", "film production software cost"],
       conversionGoal: "Subscribe to Pro or Enterprise plan",
     },
     {
@@ -1208,7 +1208,7 @@ export function getSearchIntentMappings(): PageIntentMapping[] {
       path: "/docs",
       primaryIntent: "informational",
       secondaryIntent: "navigational",
-      targetQueries: ["archibald titan docs", "archibald titan API", "titan setup guide"],
+      targetQueries: ["virelle studios docs", "virelle studios API", "virelle studios setup guide"],
       conversionGoal: "Complete onboarding flow",
     },
     {
@@ -1221,7 +1221,7 @@ export function getSearchIntentMappings(): PageIntentMapping[] {
     {
       path: "/register",
       primaryIntent: "transactional",
-      targetQueries: ["archibald titan sign up", "create titan account", "try archibald titan free"],
+      targetQueries: ["virelle studios sign up", "create virelle account", "try virelle studios free"],
       conversionGoal: "Complete registration",
     },
   ];
