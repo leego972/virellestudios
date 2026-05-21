@@ -1211,7 +1211,7 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         const char = await db.getCharacterById(input.id);
         if (!char || char.userId !== ctx.user.id) throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
-        await db.deleteCharacter(input.id);
+        await db.deleteCharacter(input.id, ctx.user.id);
         return { success: true };
       }),
 
