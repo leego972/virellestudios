@@ -290,10 +290,18 @@ export async function updateCharacter(id: number, data: Partial<InsertCharacter>
   return (await db.select().from(characters).where(eq(characters.id, id)))[0];
 }
 
-export async function deleteCharacter(id: number) {
+export async function deleteCharacter(id: number, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  await db.delete(characters).where(eq(characters.id, id));
+  // Ownership check: only delete if the character belongs to a project owned by userId
+  await db.delete(characters).where(
+    and(
+      eq(characters.id, id),
+      inArray(characters.projectId,
+        db.select({ id: projects.id }).from(projects).where(eq(projects.userId, userId))
+      )
+    )
+  );
 }
 
 // ─── Scenes ───
