@@ -11202,7 +11202,7 @@ Rules:
 
         // Only the owner can view draft pages; everyone else requires isPublic = true
         const ownerId = filmPage.userId;
-        const requesterId = (ctx as any)?.user?.id ?? null;
+        const requesterId = ctx.user?.id ?? null;
         const isOwner = requesterId !== null && requesterId === ownerId;
         if (!filmPage.isPublic && !isOwner) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Film page not found or not public" });
@@ -11538,7 +11538,7 @@ Rules:
         const dbConn = await db.getDb();
         if (!dbConn) return { success: false };
         try {
-          const reporterId = (ctx as any).user?.id ?? null;
+          const reporterId = ctx.user?.id ?? null;
           if (reporterId) {
             const rateRows = await dbConn.execute(
               sql`SELECT COUNT(*) as cnt FROM abuseFlags WHERE entityId = ${input.entityId} AND entityType = ${input.entityType} AND reporterId = ${reporterId} AND createdAt >= DATE_SUB(NOW(), INTERVAL 1 DAY)`
@@ -11687,7 +11687,7 @@ Rules:
         const dbConn = await db.getDb();
         if (!dbConn) return { success: false };
         try {
-          const userId = (ctx as any).user?.id ?? null;
+          const userId = ctx.user?.id ?? null;
           await dbConn.execute(
             sql`INSERT INTO conversionEvents (userId, sessionId, sourcePath, targetPath, eventType)
                 VALUES (${userId}, ${input.sessionId || null}, ${input.sourcePath}, ${input.targetPath}, ${input.eventType})`
