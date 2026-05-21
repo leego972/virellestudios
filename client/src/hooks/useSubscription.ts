@@ -3,7 +3,7 @@ import { trpc } from "@/lib/trpc";
 // All DB tier keys in ascending order of access level.
 // Three public tiers: Indie (indie), Creator (amateur), Industry (independent/creator/studio).
 // "industry" DB key = custom/sales-led enterprise, same display name "Industry".
-export type SubscriptionTier = "none" | "indie" | "amateur" | "independent" | "creator" | "studio" | "industry";
+export type SubscriptionTier = "none" | "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
 
 // Tier order for hasAccess() comparisons (higher = more access)
 const TIER_ORDER: Record<string, number> = {
