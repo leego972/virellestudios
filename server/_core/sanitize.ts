@@ -8,9 +8,6 @@ export function stripHtml(input: string): string {
   return input
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<[^>]*>/g, "")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&amp;/g, "&")
     .replace(/javascript:/gi, "")
     .replace(/on\w+\s*=/gi, "");
 }
