@@ -404,33 +404,39 @@ export default function SoundEffects() {
   const generateAdrMutation = trpc.filmPost.generateAdrSuggestions.useMutation({
     onSuccess: async (data) => {
       if (!data.suggestions?.length) { toast.info("No ADR suggestions generated"); return; }
-      for (const s of data.suggestions) {
-        await createAdr.mutateAsync({ projectId, characterName: s.characterName, dialogueLine: s.dialogueLine, trackType: s.trackType as any, notes: s.notes });
-      }
-      adrTracks.refetch();
-      toast.success(`${data.suggestions.length} ADR tracks added by AI`);
+      try {
+        for (const s of data.suggestions) {
+          await createAdr.mutateAsync({ projectId, characterName: s.characterName, dialogueLine: s.dialogueLine, trackType: s.trackType as any, notes: s.notes });
+        }
+        adrTracks.refetch();
+        toast.success(`${data.suggestions.length} ADR tracks added by AI`);
+      } catch (e: any) { toast.error(e.message || "Failed to save some ADR tracks"); }
     },
     onError: (e) => toast.error(e.message),
   });
   const generateFoleyMutation = trpc.filmPost.generateFoleySuggestions.useMutation({
     onSuccess: async (data) => {
       if (!data.suggestions?.length) { toast.info("No Foley suggestions generated"); return; }
-      for (const s of data.suggestions) {
-        await createFoley.mutateAsync({ projectId, name: s.name, foleyType: s.foleyType as any, description: s.description, notes: s.notes });
-      }
-      foleyTracks.refetch();
-      toast.success(`${data.suggestions.length} Foley tracks added by AI`);
+      try {
+        for (const s of data.suggestions) {
+          await createFoley.mutateAsync({ projectId, name: s.name, foleyType: s.foleyType as any, description: s.description, notes: s.notes });
+        }
+        foleyTracks.refetch();
+        toast.success(`${data.suggestions.length} Foley tracks added by AI`);
+      } catch (e: any) { toast.error(e.message || "Failed to save some Foley tracks"); }
     },
     onError: (e) => toast.error(e.message),
   });
   const generateScoreMutation = trpc.filmPost.generateScoreCues.useMutation({
     onSuccess: async (data) => {
       if (!data.cues?.length) { toast.info("No score cues generated"); return; }
-      for (const c of data.cues) {
-        await createCue.mutateAsync({ projectId, cueNumber: c.cueNumber, title: c.title, cueType: c.cueType as any, description: c.description, duration: c.duration, notes: c.notes });
-      }
-      scoreCues.refetch();
-      toast.success(`${data.cues.length} score cues added by AI`);
+      try {
+        for (const c of data.cues) {
+          await createCue.mutateAsync({ projectId, cueNumber: c.cueNumber, title: c.title, cueType: c.cueType as any, description: c.description, duration: c.duration, notes: c.notes });
+        }
+        scoreCues.refetch();
+        toast.success(`${data.cues.length} score cues added by AI`);
+      } catch (e: any) { toast.error(e.message || "Failed to save some score cues"); }
     },
     onError: (e) => toast.error(e.message),
   });
