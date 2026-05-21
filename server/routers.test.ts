@@ -31,6 +31,7 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: any[] } {
         clearedCookies.push({ name, options });
       },
     } as TrpcContext["res"],
+    isExpiredTester: false,
   };
 
   return { ctx, clearedCookies };
@@ -46,6 +47,7 @@ function createUnauthContext(): TrpcContext {
     res: {
       clearCookie: () => {},
     } as TrpcContext["res"],
+    isExpiredTester: false,
   };
 }
 
@@ -937,6 +939,7 @@ describe("auth access control", () => {
       user: null,
       req: { protocol: "https", headers: {} } as TrpcContext["req"],
       res: { clearCookie: () => {} } as TrpcContext["res"],
+      isExpiredTester: false,
     };
     const caller = appRouter.createCaller(ctx);
     await expect(caller.movie.list()).rejects.toThrow();
@@ -1516,6 +1519,7 @@ function createAdminContext(): { ctx: TrpcContext; clearedCookies: any[] } {
         clearedCookies.push({ name, options });
       },
     } as TrpcContext["res"],
+    isExpiredTester: false,
   };
   return { ctx, clearedCookies };
 }
@@ -1534,6 +1538,7 @@ function createPublicContext(): { ctx: TrpcContext; setCookies: any[] } {
         setCookies.push({ name, value, options });
       },
     } as unknown as TrpcContext["res"],
+    isExpiredTester: false,
   };
   return { ctx, setCookies };
 }
