@@ -42,10 +42,14 @@ export function useAuth(options?: UseAuthOptions) {
   }, [logoutMutation, utils]);
 
   const state = useMemo(() => {
-    localStorage.setItem(
-      "virelle:user-info",
-      JSON.stringify(meQuery.data)
-    );
+    if (meQuery.data) {
+      localStorage.setItem(
+        "virelle:user-info",
+        JSON.stringify(meQuery.data)
+      );
+    } else if (meQuery.data === null) {
+      localStorage.removeItem("virelle:user-info");
+    }
     return {
       user: meQuery.data ?? null,
       loading: meQuery.isLoading || logoutMutation.isPending,
