@@ -38,7 +38,7 @@ function wrapInTemplate(title: string, bodyHtml: string): string {
           <tr>
             <td style="padding:32px 40px 24px;text-align:center;border-bottom:1px solid #1e293b;">
               <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;">
-                <span style="color:#3b82f6;">⬡</span> Archibald Titan
+                <span style="color:#d4a843;">🎬</span> Virelle Studios
               </h1>
             </td>
           </tr>
@@ -52,10 +52,10 @@ function wrapInTemplate(title: string, bodyHtml: string): string {
           <tr>
             <td style="padding:24px 40px;text-align:center;border-top:1px solid #1e293b;">
               <p style="margin:0;font-size:12px;color:#6b7280;">
-                This email was sent by Archibald Titan. If you didn't request this, you can safely ignore it.
+                This email was sent by Virelle Studios. If you didn't request this, you can safely ignore it.
               </p>
               <p style="margin:8px 0 0;font-size:12px;color:#4b5563;">
-                &copy; ${new Date().getFullYear()} Archibald Titan. All rights reserved.
+                &copy; ${new Date().getFullYear()} Virelle Studios. All rights reserved.
               </p>
             </td>
           </tr>
@@ -128,7 +128,7 @@ export async function sendVerificationEmail(
     <h2 style="margin:0 0 16px;font-size:20px;font-weight:600;color:#ffffff;">Verify Your Email</h2>
     <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#d1d5db;">
       Hi ${name || "there"},<br><br>
-      Welcome to Archibald Titan! Please verify your email address by clicking the button below. This link will expire in 24 hours.
+      Welcome to Virelle Studios! Please verify your email address by clicking the button below. This link will expire in 24 hours.
     </p>
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
@@ -173,10 +173,10 @@ export async function sendWelcomeEmail(
   dashboardUrl: string
 ): Promise<boolean> {
   const bodyHtml = `
-    <h2 style="margin:0 0 16px;font-size:20px;font-weight:600;color:#ffffff;">Welcome to Archibald Titan!</h2>
+    <h2 style="margin:0 0 16px;font-size:20px;font-weight:600;color:#ffffff;">Welcome to Virelle Studios!</h2>
     <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#d1d5db;">
       Hi ${name || "there"},<br><br>
-      Your email has been verified and your account is now active. You're ready to start using Archibald Titan — the world's most advanced local AI agent.
+      Your email has been verified and your account is now active. You're ready to start creating with Virelle Studios — AI-powered film production.
     </p>
     <h3 style="margin:0 0 12px;font-size:16px;font-weight:600;color:#ffffff;">What you can do:</h3>
     <ul style="margin:0 0 24px;padding-left:20px;font-size:14px;line-height:1.8;color:#d1d5db;">
@@ -195,7 +195,7 @@ export async function sendWelcomeEmail(
       </tr>
     </table>`;
 
-  const html = wrapInTemplate("Welcome to Archibald Titan", bodyHtml);
+  const html = wrapInTemplate("Welcome to Virelle Studios", bodyHtml);
 
   try {
     await notifyOwner({
