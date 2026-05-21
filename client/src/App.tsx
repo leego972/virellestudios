@@ -188,7 +188,6 @@ function LazyPage({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>{children}</Suspense>
-          <WelcomeOutfitPicker />
     </ErrorBoundary>
   );
 }
@@ -429,7 +428,8 @@ function App() {
           <Router />
           <CommandPaletteGlobal />
           <KeyboardShortcutsHelp />
-          <PWAInstallPrompt />
+          <WelcomeOutfitPicker />
+      <PWAInstallPrompt />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
