@@ -304,8 +304,10 @@ export const appRouter = router({
       if (!ctx.user) return null;
       // Admin status is determined solely by database role
       const isAdmin = ctx.user.role === "admin";
+      // Explicitly omit passwordHash — never send credential material to the client
+      const { passwordHash: _ph, ...safeUser } = ctx.user;
       return {
-        ...ctx.user,
+        ...safeUser,
         isAdmin,
         creditBalance: isAdmin ? -1 : (ctx.user.creditBalance ?? 0),
       };
