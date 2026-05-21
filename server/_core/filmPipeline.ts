@@ -543,18 +543,22 @@ export async function generateFullFilm(
     lastFrameUrl?: string;
   }> = [];
 
-  const _coherenceDb = (await getDb())!;
+  const _coherenceDb = await getDb();
   // ── Pre-load all coherence data for this project ──────────────────────────
   // Locks locations/vehicles, props, character states, wardrobe, Visual DNA
   // across every scene — covers both quick-generate and manual generate.
-  const [_bgRows, _rawPropAssign, _propLibRows, _stateRows, _wardRows, _vdnaRows] = await Promise.all([
-    _coherenceDb.select().from(projectBackgrounds).where(eq(projectBackgrounds.projectId, project.id)).catch(()=>[] as any[]),
-    _coherenceDb.select().from(propAssignments).where(eq(propAssignments.projectId, project.id)).catch(()=>[] as any[]),
-    _coherenceDb.select().from(projectProps).where(eq(projectProps.projectId, project.id)).catch(()=>[] as any[]),
-    _coherenceDb.select().from(characterStates).where(eq(characterStates.projectId, project.id)).catch(()=>[] as any[]),
-    _coherenceDb.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.projectId, project.id)).catch(()=>[] as any[]),
-    _coherenceDb.select().from(projectVisualDNA).where(eq(projectVisualDNA.projectId, project.id)).limit(1).catch(()=>[] as any[]),
-  ]);
+  // Guard: if db is unavailable (no DATABASE_URL) fall back to empty arrays
+  // so film generation degrades gracefully instead of throwing a TypeError.
+  const [_bgRows, _rawPropAssign, _propLibRows, _stateRows, _wardRows, _vdnaRows] = _coherenceDb
+    ? await Promise.all([
+        _coherenceDb.select().from(projectBackgrounds).where(eq(projectBackgrounds.projectId, project.id)).catch(()=>[] as any[]),
+        _coherenceDb.select().from(propAssignments).where(eq(propAssignments.projectId, project.id)).catch(()=>[] as any[]),
+        _coherenceDb.select().from(projectProps).where(eq(projectProps.projectId, project.id)).catch(()=>[] as any[]),
+        _coherenceDb.select().from(characterStates).where(eq(characterStates.projectId, project.id)).catch(()=>[] as any[]),
+        _coherenceDb.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.projectId, project.id)).catch(()=>[] as any[]),
+        _coherenceDb.select().from(projectVisualDNA).where(eq(projectVisualDNA.projectId, project.id)).limit(1).catch(()=>[] as any[]),
+      ])
+    : [[], [], [], [], [], []];
   const _visualDNA = _vdnaRows[0] || null;
   // Enrich prop assignments with library details (name, description, colors, category)
   const _propRows = (_rawPropAssign as any[]).map((a: any) => {
