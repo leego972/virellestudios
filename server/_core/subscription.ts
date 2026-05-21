@@ -823,8 +823,8 @@ export function getEffectiveTier(user: User): SubscriptionTier {
   if (isAdmin) {
     return "industry";
   }
-  if ((user as any).subscriptionTier === "beta") {
-    const betaExpiry = (user as any).betaExpiresAt;
+  if (user.subscriptionTier === "beta") {
+    const betaExpiry = user.betaExpiresAt;
     if (!betaExpiry || new Date(betaExpiry) > new Date()) {
       return "beta";
     }
