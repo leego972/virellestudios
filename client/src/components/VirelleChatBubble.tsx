@@ -36,7 +36,7 @@ export default function VirelleChatBubble({
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Archibald Titan: ElevenLabs TTS mutation
+  // Virelle Studios: ElevenLabs TTS mutation
   const speakResponseMutation = trpc.directorChat.speakResponse.useMutation();
 
   /** Play ElevenLabs audio from base64 */
@@ -75,7 +75,7 @@ export default function VirelleChatBubble({
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  /** Speak AI response using ElevenLabs (Archibald Titan) with browser fallback */
+  /** Speak AI response using ElevenLabs (Virelle Studios) with browser fallback */
   const speakResponse = useCallback((text: string) => {
     if (!voiceEnabled || !text.trim()) return;
     // Strip JSON code blocks before speaking
@@ -117,7 +117,7 @@ export default function VirelleChatBubble({
       setChatHistory((prev) => [...prev, assistantMsg]);
       setIsTyping(false);
 
-      // Auto-speak the AI response (Archibald Titan voice)
+      // Auto-speak the AI response (Virelle Studios voice)
       speakResponse(data.response);
 
       if (data.updatedFieldCount > 0) {
