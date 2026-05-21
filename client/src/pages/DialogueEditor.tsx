@@ -128,20 +128,22 @@ export default function DialogueEditor() {
   const aiSceneMutation = trpc.dialogue.aiGenerateScene.useMutation({
     onSuccess: async (data) => {
       if (data.dialogues) {
-        for (let i = 0; i < data.dialogues.length; i++) {
-          const d = data.dialogues[i];
-          await createMutation.mutateAsync({
-            projectId,
-            sceneId: selectedSceneId,
-            characterName: d.characterName,
-            line: d.line,
-            emotion: d.emotion,
-            direction: d.direction,
-            orderIndex: (dialogues.data?.length || 0) + i,
-          });
-        }
-        toast.success(`Generated ${data.dialogues.length} dialogue lines`);
-        setShowAiScene(false);
+        try {
+          for (let i = 0; i < data.dialogues.length; i++) {
+            const d = data.dialogues[i];
+            await createMutation.mutateAsync({
+              projectId,
+              sceneId: selectedSceneId,
+              characterName: d.characterName,
+              line: d.line,
+              emotion: d.emotion,
+              direction: d.direction,
+              orderIndex: (dialogues.data?.length || 0) + i,
+            });
+          }
+          toast.success(`Generated ${data.dialogues.length} dialogue lines`);
+          setShowAiScene(false);
+        } catch (e: any) { toast.error(e.message || "Failed to save some dialogue lines"); }
       }
     },
     onError: () => toast.error("AI scene generation failed"),
