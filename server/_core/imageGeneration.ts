@@ -14,7 +14,7 @@
  *     prompt: "A cinematic wide shot of a detective in a rain-soaked city"
  *   });
  */
-import { storagePut } from "server/storage";
+import { storagePut } from "../storage";
 import { ENV } from "./env";
 
 /**
