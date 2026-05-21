@@ -1314,6 +1314,105 @@ export async function runAutoMigration(): Promise<void> {
           INDEX idx_cf_payouts_campaign (campaignId)
         )`,
       },
+    {
+        name: "projectBackgrounds",
+        createSQL: `CREATE TABLE IF NOT EXISTS projectBackgrounds (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          projectId INT NOT NULL,
+          userId INT NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          backgroundType VARCHAR(32) NOT NULL DEFAULT 'location',
+          description TEXT,
+          referenceImageUrl TEXT,
+          thumbnailUrl TEXT,
+          styleNotes TEXT,
+          locationTags JSON,
+          vehicleMake VARCHAR(128),
+          vehicleModel VARCHAR(128),
+          vehicleYear INT,
+          vehicleColor VARCHAR(128),
+          vehicleInterior TEXT,
+          vehicleCondition VARCHAR(128),
+          locked BOOLEAN NOT NULL DEFAULT TRUE,
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`,
+      },
+      {
+        name: "projectProps",
+        createSQL: `CREATE TABLE IF NOT EXISTS projectProps (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          projectId INT NOT NULL,
+          userId INT NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          category VARCHAR(64),
+          description TEXT,
+          referenceImageUrl TEXT,
+          thumbnailUrl TEXT,
+          colors JSON,
+          era VARCHAR(128),
+          styleTags JSON,
+          locked BOOLEAN NOT NULL DEFAULT TRUE,
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`,
+      },
+      {
+        name: "propAssignments",
+        createSQL: `CREATE TABLE IF NOT EXISTS propAssignments (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          userId INT NOT NULL,
+          projectId INT NOT NULL,
+          propId INT NOT NULL,
+          characterId INT,
+          fromSceneOrder INT,
+          toSceneOrder INT,
+          usageNotes TEXT,
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )`,
+      },
+      {
+        name: "projectActs",
+        createSQL: `CREATE TABLE IF NOT EXISTS projectActs (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          projectId INT NOT NULL,
+          userId INT NOT NULL,
+          name VARCHAR(255) NOT NULL,
+          orderIndex INT NOT NULL DEFAULT 0,
+          actType VARCHAR(64) NOT NULL DEFAULT 'act',
+          description TEXT,
+          colorHex VARCHAR(7),
+          isEpisodeBoundary BOOLEAN NOT NULL DEFAULT FALSE,
+          episodeNumber INT,
+          episodeTitle VARCHAR(255),
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`,
+      },
+      {
+        name: "projectVisualDNA",
+        createSQL: `CREATE TABLE IF NOT EXISTS projectVisualDNA (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          projectId INT NOT NULL,
+          userId INT NOT NULL,
+          genreProfile VARCHAR(128),
+          cinematographer VARCHAR(255),
+          referenceFilms JSON,
+          lensProfile VARCHAR(128),
+          lightingStyle VARCHAR(128),
+          colorPalette VARCHAR(255),
+          colorTemperature VARCHAR(64),
+          filmStock VARCHAR(128),
+          aspectRatio VARCHAR(16),
+          visualNotes TEXT,
+          locked BOOLEAN NOT NULL DEFAULT FALSE,
+          globalColorGrade VARCHAR(128),
+          globalColorGradeLocked BOOLEAN NOT NULL DEFAULT FALSE,
+          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`,
+      },
+  
   ];
 
   // ─── Columns that may be missing from existing tables ───
