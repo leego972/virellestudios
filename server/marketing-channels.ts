@@ -1281,7 +1281,7 @@ const redditAdapter = {
       headers: {
         Authorization: `Basic ${auth}`,
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "ArchibaldTitan/1.0",
+        "User-Agent": "VirellStudios/1.0",
       },
       body: `grant_type=refresh_token&refresh_token=${(ENV as any).redditRefreshToken}`,
     });
@@ -1325,7 +1325,7 @@ const redditAdapter = {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          "User-Agent": "ArchibaldTitan/1.0",
+          "User-Agent": "VirellStudios/1.0",
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: body.toString(),
@@ -1347,7 +1347,7 @@ const redditAdapter = {
     try {
       const token = await this.getAccessToken();
       const response = await fetch(`https://oauth.reddit.com/r/${subreddit}/about`, {
-        headers: { Authorization: `Bearer ${token}`, "User-Agent": "ArchibaldTitan/1.0" },
+        headers: { Authorization: `Bearer ${token}`, "User-Agent": "VirellStudios/1.0" },
       });
       const data = await response.json() as any;
       return {
@@ -1753,7 +1753,7 @@ export async function postToAllChannels(params: {
     results.pinterest = await pinterestAdapter.createPin({
       title: params.message.substring(0, 100),
       description: params.message,
-      link: params.link || "https://archibaldtitan.com",
+      link: params.link || "https://virellestudios.com",
       imageUrl: params.imageUrl,
     });
   }
