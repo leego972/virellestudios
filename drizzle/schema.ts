@@ -74,6 +74,7 @@ export const users = mysqlTable("users", {
   totalCreditsEarned: int("totalCreditsEarned").default(0).notNull(), // Lifetime credits earned (subscription + purchases)
   totalCreditsSpent: int("totalCreditsSpent").default(0).notNull(),   // Lifetime credits spent
   creditsResetAt: timestamp("creditsResetAt"),                       // When monthly credits were last granted
+  betaExpiresAt: timestamp("betaExpiresAt"),                         // When the beta tester trial expires (null for non-beta users)
   // ─── Content Moderation ───
   isFrozen: boolean("isFrozen").default(false).notNull(),
   frozenReason: text("frozenReason"),
