@@ -1541,4 +1541,12 @@ function gracefulShutdown(signal: string) {
 }
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
+  // Prevent unhandled promise rejections from crashing the server (Node.js 15+)
+  // Log the error and keep the process alive — individual request handlers own their try/catch.
+  process.on("unhandledRejection", (reason, promise) => {
+    logger.error("[Server] Unhandled promise rejection:", { reason: String(reason), promise: String(promise) });
+  });
+  process.on("uncaughtException", (err) => {
+    logger.error("[Server] Uncaught exception (non-fatal):", { error: err.message, stack: err.stack });
+  });
 
