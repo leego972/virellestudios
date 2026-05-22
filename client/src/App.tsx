@@ -17,6 +17,7 @@ import Register from "./pages/Register";
 import Landing from "./pages/Landing";
 import OpenerPreview from "./pages/OpenerPreview";
 import Admin from "./pages/Admin";
+import LocationRecreation from "./pages/LocationRecreation";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
 import GoldWatermarkLaunch from "./components/GoldWatermarkLaunch";
@@ -372,6 +373,7 @@ function Router() {
               <Route path="/admin/outreach">{() => <LazyPage><AdminOutreach /></LazyPage>}</Route>
               <Route path="/admin/growth">{() => <LazyPage><AdminGrowthDashboard /></LazyPage>}</Route>
               <Route path="/admin/signature-cast">{() => <LazyPage><AdminSignatureCast /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/locations/recreate">{() => <LazyPage><LocationRecreation /></LazyPage>}</Route>
               {/* v6.63 — Production Spine */}
               <Route path="/projects/:id/schedule">{() => <LazyPage><Schedule /></LazyPage>}</Route>
               <Route path="/projects/:id/day-out-of-days">{() => <LazyPage><DayOutOfDays /></LazyPage>}</Route>

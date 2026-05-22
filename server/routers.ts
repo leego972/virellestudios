@@ -65,6 +65,7 @@ import { featureFilmRouter } from "./feature-film-router";
 import { productionAssetsRouter } from "./production-assets-router";
 import { productionDocumentsRouter } from "./production-documents-router";
 import { epkGeneratorRouter } from "./epk-generator-router";
+import { locationRecreationRouter } from "./location-recreation-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
 import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_STATES, type VoiceActingKeys } from "./_core/voiceActingEngine";
@@ -10126,6 +10127,7 @@ Rules:
   productionAssets: productionAssetsRouter,
   productionDocuments: productionDocumentsRouter,
   epkGenerator: epkGeneratorRouter,
+  locationRecreation: locationRecreationRouter,
   blog: router({
     // Public: list published articles
     list: publicProcedure

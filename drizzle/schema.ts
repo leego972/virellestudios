@@ -484,6 +484,9 @@ export const locations = mysqlTable("locations", {
   shootingConstraints: text("shootingConstraints"),
   seasonalNotes: text("seasonalNotes"),
   aiVisualPrompt: text("aiVisualPrompt"),
+  videoReference: text("videoReference"), // S3 URL for location video
+  isAiRecreation: boolean("isAiRecreation").default(false),
+  aiRecreationStatus: varchar("aiRecreationStatus", { length: 32 }).default("none"), // none, processing, completed, failed
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
