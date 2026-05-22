@@ -614,24 +614,26 @@ export default function AssetMarketplace() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-border/40 bg-black/20 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} aria-label="Back to dashboard">
+      <div className="border-b border-border/40 bg-black/20 px-4 py-3 sticky top-0 z-40 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} aria-label="Back to dashboard" className="shrink-0 h-8 w-8">
               <ArrowLeft className="w-4 h-4" />
             </Button>
-            <div>
-              <h1 className="text-lg font-semibold flex items-center gap-2">
-                <ShoppingCart className="w-5 h-5 text-amber-400" />
-                Asset Marketplace
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-base sm:text-lg font-semibold flex items-center gap-2 min-w-0">
+                  <ShoppingCart className="w-4 h-4 sm:w-5 h-5 text-amber-400 shrink-0" />
+                  <span className="truncate">Marketplace</span>
+                </h1>
                 {isAdmin && (
-                  <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 text-xs ml-1">
-                    <Crown className="w-3 h-3 mr-1" /> Admin — All Unlocked
+                  <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 text-[9px] sm:text-[10px] px-1.5 py-0 h-5">
+                    <Crown className="w-2.5 h-2.5 mr-1 shrink-0" /> Admin
                   </Badge>
                 )}
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                {ASSETS.length} assets · {freeCount} free · {premiumCount} premium · {savedIds.length} saved
+              </div>
+              <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                {ASSETS.length} assets · {freeCount} free · {premiumCount} premium
               </p>
             </div>
           </div>
@@ -664,18 +666,18 @@ export default function AssetMarketplace() {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-3 no-scrollbar scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0">
           {(Object.keys(CATEGORY_LABELS) as AssetCategory[]).map((cat) => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all shrink-0 ${
                 category === cat
-                  ? "bg-amber-500 text-black font-medium"
-                  : "border border-border/40 text-muted-foreground hover:border-amber-500/40 hover:text-amber-400"
+                  ? "bg-amber-500 text-black font-medium shadow-lg shadow-amber-500/20"
+                  : "bg-black/40 border border-border/40 text-muted-foreground hover:border-amber-500/40 hover:text-amber-400"
               }`}
             >
-              {CATEGORY_ICONS[cat]}
+              <span className="shrink-0 opacity-80">{CATEGORY_ICONS[cat]}</span>
               {CATEGORY_LABELS[cat]}
             </button>
           ))}

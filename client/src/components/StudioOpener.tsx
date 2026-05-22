@@ -209,13 +209,23 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
 
   const handleSkip = useCallback(() => {
     setPhase("fadeout");
+    setVideoPhase("fadeout");
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    
+    // Stop video if playing
+    if (videoRef.current) {
+      try { videoRef.current.pause(); } catch (e) {}
+    }
+    
     setTimeout(onComplete, 600);
   }, [onComplete]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === " " || e.key === "Enter") { e.preventDefault(); handleSkip(); }
+      if (e.key === "Escape" || e.key === " " || e.key === "Enter") { 
+        e.preventDefault(); 
+        handleSkip(); 
+      }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
@@ -360,8 +370,11 @@ export function StudioOpener({ onComplete, mode = "login", skippable = true }: S
         <style>{`@keyframes vsGoldPulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}`}</style>
         {skippable && (
           <button
-            className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors"
-            onClick={() => setIsSkipped(true)}
+            className="absolute bottom-8 right-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors z-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSkip();
+            }}
           >
             SKIP
           </button>

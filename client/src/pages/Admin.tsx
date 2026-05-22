@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, CheckCircle2, Loader2, Zap, Users } from "lucide-react";
-import { trpc } from "@/_core/trpc";
+import { trpc } from "@/lib/trpc";
 
 export default function Admin() {
   const { user } = useAuth();

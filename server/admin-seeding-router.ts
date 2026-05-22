@@ -6,7 +6,7 @@
 
 import { z } from "zod";
 import { router, adminProcedure } from "./_core/trpc";
-import { db } from "./db";
+import { getDb } from "./db";
 import {
   wardrobeItems,
   wardrobeCollections,
@@ -14,7 +14,7 @@ import {
   users,
 } from "../drizzle/schema";
 import { nanoid } from "nanoid";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 // Import seed data
@@ -28,6 +28,7 @@ export const adminSeedingRouter = router({
    */
   seedMarketplace: adminProcedure.mutation(async ({ ctx }) => {
     try {
+      const db = await getDb();
       let collectionCount = 0;
       let itemCount = 0;
 
@@ -89,6 +90,7 @@ export const adminSeedingRouter = router({
    */
   seedFundingSources: adminProcedure.mutation(async ({ ctx }) => {
     try {
+      const db = await getDb();
       let sourceCount = 0;
 
       for (const source of FUNDING_SOURCES_DATA) {
@@ -126,6 +128,7 @@ export const adminSeedingRouter = router({
    */
   seedEverything: adminProcedure.mutation(async ({ ctx }) => {
     try {
+      const db = await getDb();
       const marketplaceResult = await db.transaction(async (tx) => {
         let collectionCount = 0;
         let itemCount = 0;
@@ -205,6 +208,7 @@ export const adminSeedingRouter = router({
    */
   getStatus: adminProcedure.query(async () => {
     try {
+      const db = await getDb();
       const [collectionCount, itemCount, sourceCount, userCount] = await Promise.all([
         db
           .select()
@@ -247,6 +251,7 @@ export const adminSeedingRouter = router({
    */
   createBetaAccounts: adminProcedure.mutation(async () => {
     try {
+      const db = await getDb();
       const betaAccounts = [
         { email: "beta1@virelle.life", name: "Beta Tester One" },
         { email: "beta2@virelle.life", name: "Beta Tester Two" },
