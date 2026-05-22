@@ -1,693 +1,673 @@
 /**
-   * lamalo-seed.ts
-   * Lamalo Fashion — Virelle Studios in-house brand
-   * 22 collections · 223 items
-   * Men · Women · Kids · Elderly/Comfort · Swimwear · Footwear · Watches · Eyewear · Headwear · Bags · Accessories
-   *
-   * Run via: admin.lamaloAdmin.seedLamalo (idempotent — additive per collection)
-   */
+ * lamalo-seed.ts  — Lamalo Fashion · Virelle Studios in-house brand
+ * 23 collections · 1 400+ items
+ *
+ * Rules:
+ *  - Every color variant = a separate purchasable item (white tee ≠ black tee)
+ *  - Every base item has ≥ 7 color options
+ *  - Price = 30 AUD cents per item (PRICE constant)
+ *  - Collection bundle = item_count × PRICE × 0.85  (15 % discount, auto-calculated)
+ *  - No lease price — one purchase, use forever across all projects/scenes
+ *  - Seed is additive: skips collections that already exist by name
+ */
 
-  import { and, eq } from "drizzle-orm";
-  import { getDb } from "./db";
-  import { designerProfiles, designerCollections, wardrobeItems } from "../drizzle/schema";
-  import { logger } from "./_core/logger";
+import { and, eq } from "drizzle-orm";
+import { getDb } from "./db";
+import { designerProfiles, designerCollections, wardrobeItems } from "../drizzle/schema";
+import { logger } from "./_core/logger";
 
-  const log = logger.child({ module: "lamalo-seed" });
+const log = logger.child({ module: "lamalo-seed" });
 
-  interface SeedItem {
-    name: string;
-    description: string;
-    category: string;
-    subcategory: string;
-    genderFit: string;
-    colors: string[];
-    materials: string[];
-    styleTags: string[];
-    leasePriceAud: number; // cents
-    retailPriceAud: number; // cents
-    referencePrompt: string;
-    primaryImageUrl?: string | null;
-    sizeRange?: string;
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const PRICE = 30; // AUD cents per item
+
+/** 15 % off when buying the whole collection */
+function cp(items: SeedItem[]): number {
+  return Math.floor(items.length * PRICE * 0.85);
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface SeedItem {
+  name: string;
+  description: string;
+  category: string;
+  subcategory: string;
+  genderFit: string;
+  colors: string[];
+  materials: string[];
+  styleTags: string[];
+  retailPriceAud: number;
+  referencePrompt: string;
+  primaryImageUrl?: string | null;
+  sizeRange?: string;
+}
+
+interface BaseItem {
+  name: string;
+  description: string;
+  category: string;
+  subcategory: string;
+  genderFit: string;
+  materials: string[];
+  styleTags: string[];
+  referencePrompt: string;
+  primaryImageUrl?: string | null;
+  sizeRange?: string;
+}
+
+interface SeedCollection {
+  name: string;
+  description: string;
+  collectionType: string;
+  season: string;
+  year: number;
+  styleTags: string[];
+  collectionPriceAud: number;
+  items: SeedItem[];
+}
+
+// ─── Helper: expand one base item into one item per color ────────────────────
+
+function cc(base: BaseItem, colors: string[]): SeedItem[] {
+  return colors.map(color => ({
+    ...base,
+    name: `${base.name} — ${color}`,
+    colors: [color],
+    retailPriceAud: PRICE,
+    referencePrompt: `${base.referencePrompt}, ${color.toLowerCase()} colorway`,
+  }));
+}
+
+// ─── Standard colour palettes ─────────────────────────────────────────────────
+
+const TOPS     = ["White","Black","Navy","Charcoal Grey","Sage Green","Burgundy","Cobalt Blue","Forest Green","Camel","Dusty Rose"];
+const POLO     = ["White","Black","Navy","Cobalt Blue","Sage Green","Burgundy","Charcoal","Red","Camel","Forest Green"];
+const BOTTOMS  = ["Black","Navy","Camel","Stone","Olive","Charcoal","Cream","Burgundy"];
+const DENIM    = ["Indigo","Mid-Wash Blue","Black","Dark Rinse","Light Blue","Stone Wash","Raw Denim"];
+const OUTER    = ["Black","Navy","Olive","Camel","Charcoal","Forest Green","Sand","Burgundy"];
+const HOODIE   = ["White","Black","Navy","Charcoal Grey","Forest Green","Burgundy","Sand","Cobalt Blue"];
+const SPORT    = ["Black","White","Navy","Red","Royal Blue","Forest Green","Gold","Burgundy","Grey","Orange"];
+const SWIM_M   = ["Navy","Black","Cobalt Blue","Teal","Coral Red","Olive","Burgundy","White"];
+const SWIM_F   = ["Black","Navy","Cobalt Blue","Coral Pink","Teal","Burgundy","White","Sage Green"];
+const DRESS    = ["White","Black","Navy","Sage Green","Blush Pink","Cobalt Blue","Dusty Rose","Olive"];
+const NEUTRAL  = ["Black","Navy","Olive","Camel","Charcoal","Brown","Cream","Burgundy"];
+const HAT      = ["Black","Navy","White","Olive","Camel","Charcoal","Burgundy","Forest Green"];
+const SHOE_M   = ["White","Black","Brown","Navy","Grey","Tan","Olive"];
+const SHOE_F   = ["White","Black","Nude Beige","Navy","Blush Pink","Silver","Camel"];
+const EYEWEAR  = ["Black Frame","Tortoiseshell","Clear Frame","Brown Frame","Gold Frame","Navy Frame","White Frame"];
+const WATCH_M  = ["Silver/White Dial","Gold/Black Dial","All Black","Silver/Blue Dial","Rose Gold/White Dial","Gunmetal/Green Dial","Bronze/Brown Dial"];
+const WATCH_F  = ["Silver/White Dial","Gold/White Dial","Rose Gold/Pink Dial","All Black","Gold/Champagne Dial","Silver/Blue Dial","Two-Tone/Pearlescent Dial"];
+const SHORTS   = ["Black","Navy","Khaki","Olive","Charcoal","Cobalt Blue","Forest Green","Burgundy"];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 1 — Men's Everyday
+// ─────────────────────────────────────────────────────────────────────────────
+
+const mensEverydayItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Premium Tee", description:"Supima cotton crew-neck tee, medium weight, relaxed silhouette. The daily essential.", category:"tops", subcategory:"t-shirts", genderFit:"male", materials:["100% Supima Cotton"], styleTags:["tee","essential","relaxed"], referencePrompt:"Men's premium Supima cotton crew-neck t-shirt relaxed fit", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, TOPS),
+  ...cc({ name:"Lamalo Linen Overshirt", description:"Relaxed-fit linen-blend overshirt with chest pockets and split hem.", category:"tops", subcategory:"shirts", genderFit:"male", materials:["55% Linen","45% Cotton"], styleTags:["linen","relaxed","coastal","layering"], referencePrompt:"Men's relaxed linen overshirt chest pockets split hem", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, TOPS.slice(0,8)),
+  ...cc({ name:"Lamalo Classic Polo", description:"Pique cotton polo with two-button placket and contrast tipping.", category:"tops", subcategory:"polos", genderFit:"male", materials:["100% Cotton Pique"], styleTags:["polo","smart-casual","preppy"], referencePrompt:"Men's classic pique cotton polo two-button placket", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, POLO),
+  ...cc({ name:"Lamalo Cotton Henley", description:"Three-button henley in soft pima cotton with a relaxed fit.", category:"tops", subcategory:"t-shirts", genderFit:"male", materials:["100% Pima Cotton"], styleTags:["henley","casual","coastal"], referencePrompt:"Men's three-button henley pima cotton relaxed", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, TOPS.slice(0,8)),
+  ...cc({ name:"Lamalo Slim Chino", description:"Slim-fit cotton twill chino with clean front and belt loops.", category:"bottoms", subcategory:"chinos", genderFit:"male", materials:["98% Cotton","2% Elastane"], styleTags:["chino","smart-casual","versatile"], referencePrompt:"Men's slim-fit cotton twill chino trouser clean front", primaryImageUrl:"/lamalo/men-chino-trouser.jpg" }, BOTTOMS),
+  ...cc({ name:"Lamalo Straight Denim", description:"Mid-rise straight-leg selvedge denim, classic five-pocket construction.", category:"bottoms", subcategory:"jeans", genderFit:"male", materials:["98% Cotton Denim","2% Elastane"], styleTags:["denim","classic","everyday"], referencePrompt:"Men's straight-leg selvedge denim jeans five-pocket mid-rise", primaryImageUrl:"/lamalo/men-denim-jean.jpg" }, DENIM),
+  ...cc({ name:"Lamalo Linen Short", description:"Mid-length linen-blend short with elastic-back waist and side pockets.", category:"bottoms", subcategory:"shorts", genderFit:"male", materials:["55% Linen","45% Cotton"], styleTags:["linen","summer","casual"], referencePrompt:"Men's mid-length linen blend shorts elastic waist relaxed", primaryImageUrl:"/lamalo/men-chino-trouser.jpg" }, SHORTS),
+  ...cc({ name:"Lamalo Woven Short", description:"Casual woven short in durable cotton with cargo-style pocket detail.", category:"bottoms", subcategory:"shorts", genderFit:"male", materials:["100% Cotton"], styleTags:["shorts","casual","utility"], referencePrompt:"Men's casual cotton woven shorts cargo pocket detail", primaryImageUrl:"/lamalo/men-chino-trouser.jpg" }, SHORTS.slice(0,7)),
+  ...cc({ name:"Lamalo Full-Zip Hoodie", description:"Heavyweight cotton-fleece full-zip hoodie with structured hood.", category:"tops", subcategory:"hoodies", genderFit:"male", materials:["80% Cotton","20% Polyester Fleece"], styleTags:["hoodie","casual","layering"], referencePrompt:"Men's heavyweight cotton-fleece full-zip hoodie structured hood", primaryImageUrl:"/lamalo/men-zip-hoodie.jpg" }, HOODIE),
+  ...cc({ name:"Lamalo Bomber Jacket", description:"Classic satin-shell bomber with ribbed cuffs, collar and hem.", category:"outerwear", subcategory:"jackets", genderFit:"male", materials:["Nylon Shell","Polyester Lining","Ribbed Knit Trim"], styleTags:["bomber","streetwear","minimal"], referencePrompt:"Men's classic bomber jacket satin shell ribbed cuffs collar", primaryImageUrl:"/lamalo/men-bomber-jacket.jpg" }, OUTER),
+];
+
+const mensEveryday: SeedCollection = { name:"Lamalo Men's Everyday", description:"Relaxed daily-wear for men built on natural fabrics and clean silhouettes.", collectionType:"core", season:"All-Season", year:2026, styleTags:["casual","everyday","linen","sustainable","relaxed"], collectionPriceAud:cp(mensEverydayItems), items:mensEverydayItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 2 — Men's Performance + Sport
+// ─────────────────────────────────────────────────────────────────────────────
+
+const mensPerformanceItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Track Jacket", description:"Lightweight full-zip track jacket with contrast side stripe.", category:"outerwear", subcategory:"track-jackets", genderFit:"male", materials:["100% Polyester Tricot"], styleTags:["sport","track","retro-athletic"], referencePrompt:"Men's retro athletic track jacket contrast side stripe full-zip", primaryImageUrl:"/lamalo/men-track-jacket.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Tapered Jogger", description:"Tapered performance jogger with ribbed ankle cuffs and drawstring waist.", category:"bottoms", subcategory:"joggers", genderFit:"male", materials:["60% Cotton","40% Polyester"], styleTags:["jogger","sport","athleisure"], referencePrompt:"Men's tapered performance jogger ribbed ankle cuffs drawstring", primaryImageUrl:"/lamalo/men-jogger-pant.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Dri-Lite Running Tee", description:"Ultra-lightweight moisture-wicking tee with flatlock seams.", category:"tops", subcategory:"t-shirts", genderFit:"male", materials:["Recycled Polyester"], styleTags:["running","technical","lightweight"], referencePrompt:"Men's lightweight moisture-wicking running tee flatlock seams", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Performance Short", description:"5-inch inseam training short with built-in mesh liner and key pocket.", category:"bottoms", subcategory:"shorts", genderFit:"male", materials:["Nylon","Mesh Lining"], styleTags:["training","shorts","athletic"], referencePrompt:"Men's 5-inch training shorts built-in mesh liner", primaryImageUrl:"/lamalo/men-jogger-pant.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Zip Sport Hoodie", description:"Performance full-zip hoodie with moisture-wicking cotton-blend fleece.", category:"tops", subcategory:"hoodies", genderFit:"male", materials:["60% Cotton","40% Polyester"], styleTags:["hoodie","sport","training"], referencePrompt:"Men's performance full-zip sport hoodie moisture-wicking fleece", primaryImageUrl:"/lamalo/men-zip-hoodie.jpg" }, HOODIE),
+  ...cc({ name:"Lamalo Wind-Lite Jacket", description:"Packable wind and light-rain jacket in ripstop nylon.", category:"outerwear", subcategory:"jackets", genderFit:"male", materials:["Ripstop Nylon"], styleTags:["windbreaker","packable","running"], referencePrompt:"Men's packable ripstop nylon windbreaker light rain jacket", primaryImageUrl:"/lamalo/men-track-jacket.jpg" }, OUTER),
+  ...cc({ name:"Lamalo Training Tank", description:"Open-back mesh training tank with sweat-wicking fabric.", category:"tops", subcategory:"t-shirts", genderFit:"male", materials:["100% Polyester Mesh"], styleTags:["tank","training","gym"], referencePrompt:"Men's open-back mesh training tank sweat-wicking", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Compression Tight", description:"Full-length compression tight with graduated compression and wide waistband.", category:"bottoms", subcategory:"tights", genderFit:"male", materials:["78% Nylon","22% Elastane"], styleTags:["compression","running","training"], referencePrompt:"Men's full-length graduated compression tights wide waistband", primaryImageUrl:"/lamalo/men-jogger-pant.jpg" }, ["Black","Navy","Charcoal","Forest Green","Cobalt Blue","Burgundy","Royal Blue"]),
+  // ── Soccer/Football ──
+  ...cc({ name:"Lamalo Soccer Jersey", description:"Lightweight performance soccer jersey with moisture-wicking fabrication and mesh ventilation panels. Team-sport cut.", category:"tops", subcategory:"sport-jerseys", genderFit:"male", materials:["100% Recycled Polyester"], styleTags:["soccer","football","sport","jersey","team"], referencePrompt:"Men's soccer football jersey lightweight mesh ventilation performance fit", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Soccer Short", description:"Lightweight soccer short with elastic waistband and side splits for full range of motion.", category:"bottoms", subcategory:"sport-shorts", genderFit:"male", materials:["100% Polyester"], styleTags:["soccer","football","sport","shorts"], referencePrompt:"Men's soccer shorts elastic waistband side splits athletic", primaryImageUrl:"/lamalo/men-jogger-pant.jpg" }, SPORT),
+  // ── Basketball ──
+  ...cc({ name:"Lamalo Basketball Jersey", description:"Sleeveless NBA-style basketball jersey with wide armholes, mesh fabrication and bold number-ready front.", category:"tops", subcategory:"sport-jerseys", genderFit:"male", materials:["100% Polyester Mesh"], styleTags:["basketball","sport","jersey","NBA-style"], referencePrompt:"Men's sleeveless basketball jersey mesh wide armhole NBA-style", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Basketball Short", description:"Baggy-cut basketball short with elastic waist, side pockets and knee-length hem.", category:"bottoms", subcategory:"sport-shorts", genderFit:"male", materials:["100% Polyester"], styleTags:["basketball","sport","shorts","baggy"], referencePrompt:"Men's basketball shorts baggy knee-length elastic waist", primaryImageUrl:"/lamalo/men-jogger-pant.jpg" }, SPORT),
+  // ── Hockey ──
+  ...cc({ name:"Lamalo Hockey Jersey", description:"Durable padded-shoulder hockey-style jersey with reinforced elbows and moisture-wicking inner layer.", category:"tops", subcategory:"sport-jerseys", genderFit:"male", materials:["Polyester","Reinforced Mesh"], styleTags:["hockey","sport","jersey","team"], referencePrompt:"Men's hockey jersey padded shoulder reinforced elbows moisture-wicking", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, SPORT),
+  // ── AFL / Aussie Rules ──
+  ...cc({ name:"Lamalo AFL Guernsey", description:"Traditional Australian Rules Football guernsey with V-neck collar, sleeveless cut and stretch performance fabric.", category:"tops", subcategory:"sport-jerseys", genderFit:"male", materials:["Stretch Polyester"], styleTags:["AFL","australian-rules","guernsey","sport","team"], referencePrompt:"Men's AFL Aussie rules guernsey sleeveless V-neck stretch performance", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, SPORT),
+  // ── American Football ──
+  ...cc({ name:"Lamalo Football Jersey", description:"American football-style jersey with wide-shoulder seam, number-ready front and durable mesh construction.", category:"tops", subcategory:"sport-jerseys", genderFit:"male", materials:["100% Polyester"], styleTags:["american-football","sport","jersey","team"], referencePrompt:"Men's American football jersey wide shoulder mesh number-ready", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, SPORT),
+  // ── Rugby ──
+  ...cc({ name:"Lamalo Rugby Jersey", description:"Traditional short-sleeve rugby jersey with reinforced collar, rubberised buttons and durable cotton-poly blend.", category:"tops", subcategory:"sport-jerseys", genderFit:"male", materials:["60% Cotton","40% Polyester"], styleTags:["rugby","sport","jersey","team"], referencePrompt:"Men's rugby jersey reinforced collar rubberised buttons short-sleeve", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, SPORT),
+];
+
+const mensPerformance: SeedCollection = { name:"Lamalo Men's Performance", description:"High-function athletic wear and team-sport kits built for training and beyond.", collectionType:"sport", season:"All-Season", year:2026, styleTags:["athletic","performance","training","sport","soccer","basketball","hockey","AFL","football"], collectionPriceAud:cp(mensPerformanceItems), items:mensPerformanceItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 3 — Men's Originals (Retro Heritage)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const mensOriginalsItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Retro Track Jacket", description:"Heritage track jacket in smooth polyester tricot with contrast side stripe.", category:"outerwear", subcategory:"track-jackets", genderFit:"male", materials:["100% Polyester Tricot"], styleTags:["retro","track","originals"], referencePrompt:"Men's retro heritage track jacket contrast side stripe tricot", primaryImageUrl:"/lamalo/men-track-jacket.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Retro Track Pant", description:"Matching tricot track pant with side stripe and ankle zip.", category:"bottoms", subcategory:"track-pants", genderFit:"male", materials:["100% Polyester Tricot"], styleTags:["retro","track","originals"], referencePrompt:"Men's retro track pants matching side stripe ankle zip tricot", primaryImageUrl:"/lamalo/men-jogger-pant.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Heritage Tee", description:"Cotton tee with minimal Lamalo Originals graphic at the chest.", category:"tops", subcategory:"t-shirts", genderFit:"male", materials:["100% Cotton"], styleTags:["graphic-tee","originals","heritage"], referencePrompt:"Men's heritage minimal graphic tee cotton originals", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, TOPS.slice(0,8)),
+  ...cc({ name:"Lamalo Originals Hoodie", description:"Relaxed-fit cotton-fleece hoodie with large kangaroo pocket and Originals embroidery.", category:"tops", subcategory:"hoodies", genderFit:"male", materials:["80% Cotton","20% Polyester"], styleTags:["hoodie","originals","relaxed"], referencePrompt:"Men's originals relaxed hoodie kangaroo pocket embroidery", primaryImageUrl:"/lamalo/men-zip-hoodie.jpg" }, HOODIE),
+  ...cc({ name:"Lamalo Originals Polo", description:"Classic pique polo with retro tipping and Originals emblem on chest.", category:"tops", subcategory:"polos", genderFit:"male", materials:["100% Cotton Pique"], styleTags:["polo","retro","originals"], referencePrompt:"Men's retro originals polo pique retro tipping chest emblem", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, POLO.slice(0,8)),
+  ...cc({ name:"Lamalo Athletic Short", description:"Retro athletic short with mesh liner and side stripe.", category:"bottoms", subcategory:"shorts", genderFit:"male", materials:["Polyester","Mesh Lining"], styleTags:["retro","athletic","originals"], referencePrompt:"Men's retro athletic shorts mesh liner side stripe", primaryImageUrl:"/lamalo/men-jogger-pant.jpg" }, SPORT.slice(0,7)),
+];
+
+const mensOriginals: SeedCollection = { name:"Lamalo Men's Originals", description:"Retro athletic heritage reimagined for the streets.", collectionType:"lifestyle", season:"All-Season", year:2026, styleTags:["retro","originals","streetwear","heritage"], collectionPriceAud:cp(mensOriginalsItems), items:mensOriginalsItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 4 — Men's Luxury
+// ─────────────────────────────────────────────────────────────────────────────
+
+const mensLuxuryItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Suit Jacket", description:"Single-breasted suit jacket in Italian wool blend with notch lapel.", category:"tops", subcategory:"suits", genderFit:"male", materials:["70% Wool","30% Polyester"], styleTags:["suit","formal","luxury"], referencePrompt:"Men's single-breasted Italian wool suit jacket notch lapel tailored", primaryImageUrl:"/lamalo/men-suit-jacket.jpg" }, ["Charcoal","Navy","Black","Mid-Grey","Light Grey","Olive","Camel","Cream"]),
+  ...cc({ name:"Lamalo Dress Trouser", description:"Slim tailored dress trouser with flat front and side seam pockets.", category:"bottoms", subcategory:"trousers", genderFit:"male", materials:["70% Wool","30% Polyester"], styleTags:["formal","tailored","smart"], referencePrompt:"Men's tailored flat-front dress trouser slim cut formal", primaryImageUrl:"/lamalo/men-chino-trouser.jpg" }, ["Charcoal","Navy","Black","Mid-Grey","Camel","Olive","Stone","Cream"]),
+  ...cc({ name:"Lamalo Egyptian Cotton Dress Shirt", description:"Fine 2-ply Egyptian cotton dress shirt with barrel cuffs and spread collar.", category:"tops", subcategory:"shirts", genderFit:"male", materials:["100% Egyptian Cotton"], styleTags:["formal","luxury","dress-shirt"], referencePrompt:"Men's Egyptian cotton dress shirt barrel cuffs spread collar formal", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, ["White","Pale Blue","Pale Pink","Lavender","Cream","Sky Blue","Sage","Charcoal"]),
+  ...cc({ name:"Lamalo Merino V-Neck", description:"Fine-gauge merino wool V-neck in a slim fit.", category:"tops", subcategory:"knitwear", genderFit:"male", materials:["100% Merino Wool"], styleTags:["knitwear","luxury","smart-casual"], referencePrompt:"Men's fine-gauge merino wool V-neck slim fit knitwear", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, ["Charcoal","Navy","Camel","Forest Green","Burgundy","Cobalt Blue","Grey Marle","Cream"]),
+  ...cc({ name:"Lamalo Tailored Blazer", description:"Two-button blazer in Italian wool blend, slim fit.", category:"outerwear", subcategory:"blazers", genderFit:"male", materials:["65% Wool","35% Polyester"], styleTags:["blazer","tailored","smart"], referencePrompt:"Men's Italian wool two-button blazer slim fit tailored", primaryImageUrl:"/lamalo/men-suit-jacket.jpg" }, ["Navy","Charcoal","Black","Olive","Camel","Mid-Grey","Cobalt Blue","Burgundy"]),
+  ...cc({ name:"Lamalo Cashmere Overcoat", description:"Long cashmere-blend overcoat with notch lapel and single-breast button closure.", category:"outerwear", subcategory:"coats", genderFit:"male", materials:["80% Wool","20% Cashmere"], styleTags:["coat","luxury","formal"], referencePrompt:"Men's long cashmere-blend overcoat notch lapel single-breast", primaryImageUrl:"/lamalo/men-bomber-jacket.jpg" }, ["Camel","Charcoal","Navy","Black","Cream","Stone","Olive","Mid-Grey"]),
+];
+
+const mensLuxury: SeedCollection = { name:"Lamalo Men's Luxury", description:"Elevated tailoring in premium natural fibres.", collectionType:"luxury", season:"All-Season", year:2026, styleTags:["luxury","tailored","formal","merino","cashmere"], collectionPriceAud:cp(mensLuxuryItems), items:mensLuxuryItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 5 — Men's Swimwear
+// ─────────────────────────────────────────────────────────────────────────────
+
+const mensSwimwearItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Classic Board Short", description:"18-inch quick-dry board short with Velcro fly and side pocket.", category:"swimwear", subcategory:"board-shorts", genderFit:"male", materials:["100% Recycled Polyester"], styleTags:["swim","beach","surf"], referencePrompt:"Men's 18-inch quick-dry board shorts Velcro fly beach swim", primaryImageUrl:"/lamalo/swim-board-short.jpg" }, SWIM_M),
+  ...cc({ name:"Lamalo Floral Swim Trunk", description:"Mid-length swim trunk with allover tropical floral print.", category:"swimwear", subcategory:"swim-trunks", genderFit:"male", materials:["100% Polyester"], styleTags:["swim","tropical","beach","floral"], referencePrompt:"Men's floral print mid-length swim trunks tropical beach", primaryImageUrl:"/lamalo/swim-board-short.jpg" }, ["Blue Floral","Navy Floral","Green Floral","Coral Floral","Black Floral","Teal Floral","Burgundy Floral"]),
+  ...cc({ name:"Lamalo Essential Swim Short", description:"5-inch swim short with mesh liner and flat waistband — minimal and versatile.", category:"swimwear", subcategory:"swim-shorts", genderFit:"male", materials:["Nylon","Mesh Lining"], styleTags:["swim","minimal","versatile"], referencePrompt:"Men's 5-inch minimal swim short mesh liner flat waistband", primaryImageUrl:"/lamalo/swim-board-short.jpg" }, SWIM_M),
+  ...cc({ name:"Lamalo Retro Swim Brief", description:"Competition-cut swim brief in durable nylon-elastane blend.", category:"swimwear", subcategory:"swim-briefs", genderFit:"male", materials:["78% Nylon","22% Elastane"], styleTags:["swim","retro","competition"], referencePrompt:"Men's retro competition swim brief nylon-elastane durable", primaryImageUrl:"/lamalo/swim-board-short.jpg" }, SWIM_M),
+  ...cc({ name:"Lamalo UPF50+ Rash Guard", description:"Long-sleeve UPF50+ rash guard for sun protection in and out of water.", category:"swimwear", subcategory:"rash-guards", genderFit:"male", materials:["Recycled Nylon","Elastane"], styleTags:["swim","UPF50+","sun-protection","surf"], referencePrompt:"Men's long-sleeve UPF50+ rash guard sun protection surf", primaryImageUrl:"/lamalo/swim-rash-guard.jpg" }, ["Navy","Black","White","Cobalt Blue","Forest Green","Teal","Burgundy","Coral Red"]),
+];
+
+const mensSwimsear: SeedCollection = { name:"Lamalo Men's Swimwear", description:"Beach-ready swim for every body and style.", collectionType:"swimwear", season:"Summer", year:2026, styleTags:["swim","beach","surf","UPF50+"], collectionPriceAud:cp(mensSwimwearItems), items:mensSwimwearItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 6 — Men's Comfort Series (Active Seniors)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const mensComfortItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Heritage Flannel Shirt", description:"Soft brushed-cotton flannel shirt with double chest pockets.", category:"tops", subcategory:"shirts", genderFit:"male", materials:["100% Brushed Cotton"], styleTags:["flannel","comfort","casual","seniors"], referencePrompt:"Men's soft brushed-cotton flannel shirt double chest pockets", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, ["Red/Black Check","Blue Check","Green Check","Navy","Burgundy","Forest Green","Grey Check","Camel"]),
+  ...cc({ name:"Lamalo Button Cardigan", description:"Chunky-knit button cardigan with patch pockets and a relaxed fit.", category:"tops", subcategory:"knitwear", genderFit:"male", materials:["60% Cotton","40% Acrylic"], styleTags:["cardigan","comfort","seniors","knitwear"], referencePrompt:"Men's chunky-knit button cardigan patch pockets relaxed fit", primaryImageUrl:"/lamalo/men-zip-hoodie.jpg" }, NEUTRAL),
+  ...cc({ name:"Lamalo Anti-Pill Fleece Jacket", description:"Zip-through anti-pill fleece jacket with two zip hand pockets.", category:"outerwear", subcategory:"fleece", genderFit:"male", materials:["100% Anti-Pill Polyester Fleece"], styleTags:["fleece","comfort","casual","warm"], referencePrompt:"Men's anti-pill fleece zip jacket two hand pockets warm comfort", primaryImageUrl:"/lamalo/men-zip-hoodie.jpg" }, NEUTRAL),
+  ...cc({ name:"Lamalo Elastic-Waist Trouser", description:"Comfort-fit trouser with full elastic waist, straight leg and side pockets.", category:"bottoms", subcategory:"trousers", genderFit:"male", materials:["65% Polyester","35% Cotton"], styleTags:["comfort","elastic-waist","seniors","easy-fit"], referencePrompt:"Men's comfort elastic-waist straight-leg trouser easy fit", primaryImageUrl:"/lamalo/men-chino-trouser.jpg" }, BOTTOMS),
+  ...cc({ name:"Lamalo Puffer Gilet", description:"Lightweight down-fill gilet with baffled construction and zip front.", category:"outerwear", subcategory:"gilets", genderFit:"male", materials:["Recycled Nylon Shell","Down Fill"], styleTags:["gilet","warm","layering","comfort"], referencePrompt:"Men's lightweight down-fill puffer gilet baffled zip front", primaryImageUrl:"/lamalo/men-bomber-jacket.jpg" }, OUTER),
+  ...cc({ name:"Lamalo Relaxed Polo", description:"Soft-touch cotton polo with generous comfort fit — easy on and off.", category:"tops", subcategory:"polos", genderFit:"male", materials:["100% Cotton Jersey"], styleTags:["polo","comfort","easy-fit","seniors"], referencePrompt:"Men's soft-touch cotton polo comfort fit generous cut easy", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, POLO.slice(0,8)),
+  ...cc({ name:"Lamalo Cotton Pyjama Set", description:"Two-piece cotton pyjama set with elastic-waist pants and button-front top.", category:"sleepwear", subcategory:"pyjamas", genderFit:"male", materials:["100% Cotton"], styleTags:["sleepwear","comfort","pyjamas"], referencePrompt:"Men's two-piece cotton pyjama set elastic-waist button-front top", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, ["Blue/White Stripe","Navy/White Stripe","Red/White Stripe","Grey Marle","Pale Blue","Pale Green","White","Camel"]),
+];
+
+const mensComfort: SeedCollection = { name:"Lamalo Men's Comfort Series", description:"Soft fabrics, forgiving fits, and easy-care construction for everyday comfort.", collectionType:"comfort", season:"All-Season", year:2026, styleTags:["comfort","seniors","easy-fit","relaxed"], collectionPriceAud:cp(mensComfortItems), items:mensComfortItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 7 — Women's Everyday
+// ─────────────────────────────────────────────────────────────────────────────
+
+const womensEverydayItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Linen Midi Dress", description:"Relaxed A-line midi dress in linen-blend fabric with adjustable waist tie.", category:"dresses", subcategory:"midi-dresses", genderFit:"female", materials:["55% Linen","45% Cotton"], styleTags:["dress","midi","relaxed","coastal"], referencePrompt:"Women's relaxed A-line linen midi dress adjustable waist tie", primaryImageUrl:"/lamalo/women-linen-dress.jpg" }, DRESS),
+  ...cc({ name:"Lamalo Silk-Touch Blouse", description:"Lightweight woven blouse with subtle sheen and relaxed tuck-in hem.", category:"tops", subcategory:"blouses", genderFit:"female", materials:["100% Viscose"], styleTags:["blouse","feminine","versatile"], referencePrompt:"Women's lightweight silk-touch woven blouse subtle sheen tuck-in hem", primaryImageUrl:"/lamalo/women-blouse.jpg" }, DRESS),
+  ...cc({ name:"Lamalo Fitted Blazer", description:"Tailored single-button blazer with a nipped waist and flap pockets.", category:"outerwear", subcategory:"blazers", genderFit:"female", materials:["65% Polyester","35% Viscose"], styleTags:["blazer","tailored","smart"], referencePrompt:"Women's tailored single-button blazer nipped waist flap pockets", primaryImageUrl:"/lamalo/women-blazer.jpg" }, ["Black","Navy","Camel","Cobalt Blue","Sage Green","Cream","Charcoal","Dusty Rose"]),
+  ...cc({ name:"Lamalo Wide-Leg Trouser", description:"High-rise wide-leg trouser in fluid fabric with front pleat.", category:"bottoms", subcategory:"trousers", genderFit:"female", materials:["100% Viscose"], styleTags:["wide-leg","formal","feminine"], referencePrompt:"Women's high-rise wide-leg trouser fluid fabric front pleat", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg" }, BOTTOMS),
+  ...cc({ name:"Lamalo Linen Jumpsuit", description:"Wide-leg linen jumpsuit with V-neck and adjustable waist tie.", category:"dresses", subcategory:"jumpsuits", genderFit:"female", materials:["55% Linen","45% Cotton"], styleTags:["jumpsuit","relaxed","coastal","summer"], referencePrompt:"Women's wide-leg linen jumpsuit V-neck adjustable waist tie", primaryImageUrl:"/lamalo/women-linen-dress.jpg" }, DRESS),
+  ...cc({ name:"Lamalo Wrap Midi Skirt", description:"Wrap-front midi skirt in fluid fabric with slight flare.", category:"bottoms", subcategory:"skirts", genderFit:"female", materials:["100% Viscose"], styleTags:["skirt","midi","feminine","wrap"], referencePrompt:"Women's wrap-front midi skirt fluid slight flare feminine", primaryImageUrl:"/lamalo/women-skirt.jpg" }, DRESS),
+  ...cc({ name:"Lamalo Ribbed Tee", description:"Stretch-rib cotton tee in a fitted silhouette with a crew neck.", category:"tops", subcategory:"t-shirts", genderFit:"female", materials:["95% Cotton","5% Elastane"], styleTags:["tee","fitted","ribbed","essential"], referencePrompt:"Women's stretch-rib cotton crew-neck tee fitted silhouette", primaryImageUrl:"/lamalo/women-blouse.jpg" }, TOPS),
+  ...cc({ name:"Lamalo Classic Denim", description:"Mid-rise straight-leg denim with authentic five-pocket construction.", category:"bottoms", subcategory:"jeans", genderFit:"female", materials:["98% Cotton","2% Elastane"], styleTags:["denim","classic","everyday"], referencePrompt:"Women's mid-rise straight-leg denim jeans five-pocket classic", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg" }, DENIM),
+  ...cc({ name:"Lamalo High-Waist Legging", description:"Full-length high-waist legging in sculpting four-way stretch fabric.", category:"bottoms", subcategory:"leggings", genderFit:"female", materials:["75% Nylon","25% Elastane"], styleTags:["leggings","everyday","comfort","fitted"], referencePrompt:"Women's full-length high-waist sculpting leggings four-way stretch", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg" }, ["Black","Navy","Charcoal","Forest Green","Burgundy","Cobalt Blue","Camel","Dusty Rose"]),
+];
+
+const womensEveryday: SeedCollection = { name:"Lamalo Women's Everyday", description:"Effortlessly wearable women's essentials built for every day.", collectionType:"core", season:"All-Season", year:2026, styleTags:["casual","everyday","linen","versatile","feminine"], collectionPriceAud:cp(womensEverydayItems), items:womensEverydayItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 8 — Women's Active
+// ─────────────────────────────────────────────────────────────────────────────
+
+const womensActiveItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Sport Bra", description:"Medium-impact sport bra with removable cups and racerback design.", category:"tops", subcategory:"sport-bras", genderFit:"female", materials:["75% Nylon","25% Elastane"], styleTags:["sport-bra","training","medium-impact"], referencePrompt:"Women's medium-impact sport bra removable cups racerback", primaryImageUrl:"/lamalo/women-sport-bra.jpg" }, ["Black","Navy","Sage Green","Cobalt Blue","Coral Pink","Forest Green","Burgundy","White"]),
+  ...cc({ name:"Lamalo Seamless Crop Top", description:"Seamless cropped training top with built-in support and ventilation cutouts.", category:"tops", subcategory:"crop-tops", genderFit:"female", materials:["Seamless Nylon-Elastane"], styleTags:["crop","training","seamless","gym"], referencePrompt:"Women's seamless crop training top built-in support ventilation", primaryImageUrl:"/lamalo/women-sport-bra.jpg" }, ["Black","Navy","Sage Green","Dusty Rose","Cobalt Blue","Forest Green","White","Burgundy"]),
+  ...cc({ name:"Lamalo High-Waist Active Short", description:"4-inch active short with hidden waistband pocket and quick-dry fabric.", category:"bottoms", subcategory:"shorts", genderFit:"female", materials:["90% Polyester","10% Elastane"], styleTags:["shorts","active","gym","running"], referencePrompt:"Women's 4-inch active short hidden waistband pocket quick-dry", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg" }, ["Black","Navy","Sage Green","Cobalt Blue","Forest Green","Burgundy","Coral Pink","Charcoal"]),
+  ...cc({ name:"Lamalo Active Running Tank", description:"Relaxed-fit running tank with open back and moisture-wicking fabric.", category:"tops", subcategory:"tanks", genderFit:"female", materials:["100% Recycled Polyester"], styleTags:["tank","running","training"], referencePrompt:"Women's relaxed open-back running tank moisture-wicking performance", primaryImageUrl:"/lamalo/women-blouse.jpg" }, ["Black","White","Navy","Sage Green","Cobalt Blue","Forest Green","Coral Pink","Dusty Rose"]),
+  ...cc({ name:"Lamalo Performance Tracksuit Top", description:"Quarter-zip performance fleece top with thumb holes and side pockets.", category:"tops", subcategory:"fleece", genderFit:"female", materials:["60% Cotton","40% Polyester"], styleTags:["tracksuit","training","zip","sport"], referencePrompt:"Women's quarter-zip performance fleece tracksuit top thumb holes", primaryImageUrl:"/lamalo/women-blazer.jpg" }, HOODIE),
+  ...cc({ name:"Lamalo Yoga Tight", description:"Full-length high-waist yoga tight in buttery-soft fabric with inner pocket.", category:"bottoms", subcategory:"tights", genderFit:"female", materials:["72% Nylon","28% Elastane"], styleTags:["yoga","tight","training","full-length"], referencePrompt:"Women's full-length high-waist yoga tights buttery-soft inner pocket", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg" }, ["Black","Navy","Charcoal","Forest Green","Burgundy","Sage Green","Cobalt Blue","Dusty Rose"]),
+  ...cc({ name:"Lamalo Windbreaker", description:"Packable women's windbreaker in ripstop nylon with hood and zip pockets.", category:"outerwear", subcategory:"jackets", genderFit:"female", materials:["Ripstop Nylon"], styleTags:["windbreaker","packable","sport"], referencePrompt:"Women's packable windbreaker ripstop nylon hood zip pockets", primaryImageUrl:"/lamalo/women-blazer.jpg" }, OUTER),
+  // ── Women's sport jerseys ──
+  ...cc({ name:"Lamalo Women's Soccer Jersey", description:"Women's cut soccer jersey with moisture-wicking mesh panels and athletic fit.", category:"tops", subcategory:"sport-jerseys", genderFit:"female", materials:["100% Recycled Polyester"], styleTags:["soccer","sport","jersey","team"], referencePrompt:"Women's soccer jersey moisture-wicking mesh panels athletic fit", primaryImageUrl:"/lamalo/women-blouse.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Women's Basketball Jersey", description:"Women's sleeveless basketball jersey with wide armholes and mesh fabrication.", category:"tops", subcategory:"sport-jerseys", genderFit:"female", materials:["100% Polyester Mesh"], styleTags:["basketball","sport","jersey","sleeveless"], referencePrompt:"Women's sleeveless basketball jersey mesh wide armhole", primaryImageUrl:"/lamalo/women-blouse.jpg" }, SPORT),
+];
+
+const womensActive: SeedCollection = { name:"Lamalo Women's Active", description:"Performance activewear for training, running and beyond.", collectionType:"sport", season:"All-Season", year:2026, styleTags:["athletic","performance","training","yoga","running","soccer","basketball"], collectionPriceAud:cp(womensActiveItems), items:womensActiveItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 9 — Women's Originals
+// ─────────────────────────────────────────────────────────────────────────────
+
+const womensOriginalsItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Women's Retro Tracksuit Top", description:"Heritage tricot tracksuit top with contrast stripe and side zip.", category:"tops", subcategory:"track-jackets", genderFit:"female", materials:["100% Polyester Tricot"], styleTags:["retro","track","originals","heritage"], referencePrompt:"Women's retro tricot tracksuit top contrast stripe side zip", primaryImageUrl:"/lamalo/women-blazer.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Women's Retro Tracksuit Pant", description:"Matching tricot track pant with side stripe and ankle zip.", category:"bottoms", subcategory:"track-pants", genderFit:"female", materials:["100% Polyester Tricot"], styleTags:["retro","track","originals"], referencePrompt:"Women's retro tricot track pants matching side stripe ankle zip", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Women's Heritage Hoodie", description:"Relaxed cotton-fleece hoodie with kangaroo pocket and Originals embroidery.", category:"tops", subcategory:"hoodies", genderFit:"female", materials:["80% Cotton","20% Polyester"], styleTags:["hoodie","originals","relaxed"], referencePrompt:"Women's originals relaxed hoodie kangaroo pocket embroidery", primaryImageUrl:"/lamalo/women-blazer.jpg" }, HOODIE),
+  ...cc({ name:"Lamalo Women's Classic Tee", description:"Unisex-feel classic cotton tee with relaxed box silhouette.", category:"tops", subcategory:"t-shirts", genderFit:"female", materials:["100% Cotton"], styleTags:["tee","originals","relaxed","classic"], referencePrompt:"Women's classic cotton tee relaxed box silhouette originals", primaryImageUrl:"/lamalo/women-blouse.jpg" }, TOPS.slice(0,8)),
+  ...cc({ name:"Lamalo Women's Retro Zip Jacket", description:"Full-zip tricot jacket with chest patch pocket and Originals branding.", category:"outerwear", subcategory:"jackets", genderFit:"female", materials:["100% Polyester Tricot"], styleTags:["retro","jacket","originals","zip"], referencePrompt:"Women's full-zip tricot jacket chest patch pocket originals branding", primaryImageUrl:"/lamalo/women-blazer.jpg" }, SPORT.slice(0,7)),
+  ...cc({ name:"Lamalo Women's Athletic Skort", description:"Retro athletic skort with built-in shorts and pleated skirt overlay.", category:"bottoms", subcategory:"skorts", genderFit:"female", materials:["100% Polyester"], styleTags:["skort","retro","athletic","tennis"], referencePrompt:"Women's retro athletic skort built-in shorts pleated overlay", primaryImageUrl:"/lamalo/women-skirt.jpg" }, ["White","Black","Navy","Cobalt Blue","Red","Forest Green","Gold","Burgundy"]),
+];
+
+const womensOriginals: SeedCollection = { name:"Lamalo Women's Originals", description:"Retro sport-heritage pieces for women, reimagined for everyday wear.", collectionType:"lifestyle", season:"All-Season", year:2026, styleTags:["retro","originals","heritage","sport","women"], collectionPriceAud:cp(womensOriginalsItems), items:womensOriginalsItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 10 — Women's Luxury
+// ─────────────────────────────────────────────────────────────────────────────
+
+const womensLuxuryItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Structured Blazer", description:"Tailored double-breasted blazer with peak lapels and a strong shoulder.", category:"outerwear", subcategory:"blazers", genderFit:"female", materials:["70% Wool","30% Polyester"], styleTags:["blazer","luxury","tailored","formal"], referencePrompt:"Women's tailored double-breasted blazer peak lapels strong shoulder", primaryImageUrl:"/lamalo/women-blazer.jpg" }, ["Black","Navy","Cream","Camel","Cobalt Blue","Charcoal","Dusty Rose","Sage Green"]),
+  ...cc({ name:"Lamalo Wide-Leg Formal Trouser", description:"High-rise wide-leg formal trouser in Italian fabric with front crease.", category:"bottoms", subcategory:"trousers", genderFit:"female", materials:["100% Italian Polyester"], styleTags:["formal","wide-leg","luxury"], referencePrompt:"Women's high-rise wide-leg formal trouser Italian fabric front crease", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg" }, ["Black","Navy","Camel","Cream","Charcoal","Cobalt Blue","Dusty Rose","Stone"]),
+  ...cc({ name:"Lamalo Pure Silk Blouse", description:"Woven silk blouse with a V-neck and delicate button front.", category:"tops", subcategory:"blouses", genderFit:"female", materials:["100% Silk"], styleTags:["silk","luxury","feminine","blouse"], referencePrompt:"Women's pure silk woven blouse V-neck delicate button front", primaryImageUrl:"/lamalo/women-blouse.jpg" }, ["White","Black","Dusty Rose","Cobalt Blue","Sage Green","Cream","Pale Gold","Lavender"]),
+  ...cc({ name:"Lamalo Cashmere Sweater", description:"Fine-knit cashmere sweater with crew neck and relaxed fit.", category:"tops", subcategory:"knitwear", genderFit:"female", materials:["100% Cashmere"], styleTags:["cashmere","luxury","knitwear"], referencePrompt:"Women's fine-knit cashmere crew-neck sweater relaxed fit", primaryImageUrl:"/lamalo/women-blouse.jpg" }, ["Camel","White","Black","Dusty Rose","Cobalt Blue","Sage Green","Cream","Burgundy"]),
+  ...cc({ name:"Lamalo Tailored Coat", description:"Knee-length tailored coat with notch lapel and single-breast button closure.", category:"outerwear", subcategory:"coats", genderFit:"female", materials:["80% Wool","20% Cashmere"], styleTags:["coat","tailored","luxury","formal"], referencePrompt:"Women's knee-length tailored coat notch lapel single-breast", primaryImageUrl:"/lamalo/women-blazer.jpg" }, ["Camel","Black","Navy","Cream","Charcoal","Cobalt Blue","Dusty Rose","Olive"]),
+  ...cc({ name:"Lamalo Satin Slip Dress", description:"Bias-cut satin slip dress with adjustable spaghetti straps.", category:"dresses", subcategory:"evening", genderFit:"female", materials:["100% Polyester Satin"], styleTags:["slip-dress","evening","luxury","minimal"], referencePrompt:"Women's bias-cut satin slip dress adjustable spaghetti straps", primaryImageUrl:"/lamalo/women-linen-dress.jpg" }, ["Black","Navy","Champagne","Dusty Rose","Cobalt Blue","Sage Green","Red","Cream"]),
+  ...cc({ name:"Lamalo Pleated Midi Skirt", description:"Knife-pleated midi skirt in fluid fabric, waist-elastic back.", category:"bottoms", subcategory:"skirts", genderFit:"female", materials:["100% Polyester"], styleTags:["skirt","midi","pleated","elegant"], referencePrompt:"Women's knife-pleated midi skirt fluid fabric elastic-back waist", primaryImageUrl:"/lamalo/women-skirt.jpg" }, ["Black","Navy","Camel","Dusty Rose","Sage Green","Cobalt Blue","Cream","Burgundy"]),
+];
+
+const womensLuxury: SeedCollection = { name:"Lamalo Women's Luxury", description:"Elevated womenswear in premium natural and luxury fabrics.", collectionType:"luxury", season:"All-Season", year:2026, styleTags:["luxury","tailored","formal","silk","cashmere","women"], collectionPriceAud:cp(womensLuxuryItems), items:womensLuxuryItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 11 — Women's Swimwear
+// ─────────────────────────────────────────────────────────────────────────────
+
+const womensSwimwearItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Classic One-Piece", description:"Scoop-neck one-piece swimsuit with moderate coverage and adjustable straps.", category:"swimwear", subcategory:"one-pieces", genderFit:"female", materials:["80% Nylon","20% Elastane"], styleTags:["swimsuit","one-piece","classic","beach"], referencePrompt:"Women's scoop-neck one-piece swimsuit adjustable straps classic", primaryImageUrl:"/lamalo/women-swimsuit.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Triangle Bikini Set", description:"Classic triangle bikini top and tie-side brief — adjustable for the perfect fit.", category:"swimwear", subcategory:"bikinis", genderFit:"female", materials:["82% Nylon","18% Elastane"], styleTags:["bikini","beach","triangle","adjustable"], referencePrompt:"Women's triangle bikini top tie-side brief adjustable swimwear", primaryImageUrl:"/lamalo/women-swimsuit.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Ruched One-Piece", description:"Ruched front one-piece with tummy-control lining and wide straps.", category:"swimwear", subcategory:"one-pieces", genderFit:"female", materials:["80% Nylon","20% Elastane"], styleTags:["swimsuit","ruched","tummy-control","flattering"], referencePrompt:"Women's ruched front one-piece tummy-control wide straps", primaryImageUrl:"/lamalo/women-swimsuit.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Sporty Bikini Set", description:"Cross-back sporty bikini top with full-coverage brief for active beach days.", category:"swimwear", subcategory:"bikinis", genderFit:"female", materials:["80% Nylon","20% Elastane"], styleTags:["bikini","sporty","active","cross-back"], referencePrompt:"Women's sporty cross-back bikini full-coverage brief active", primaryImageUrl:"/lamalo/women-swimsuit.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Swimwear Cover-Up", description:"Lightweight linen-blend beach cover-up with side splits and drop hem.", category:"swimwear", subcategory:"cover-ups", genderFit:"female", materials:["55% Linen","45% Cotton"], styleTags:["cover-up","beach","casual","resort"], referencePrompt:"Women's linen beach cover-up side splits drop hem resort", primaryImageUrl:"/lamalo/women-linen-dress.jpg" }, DRESS),
+  ...cc({ name:"Lamalo Long-Sleeve Swimsuit", description:"Long-sleeve modest swimsuit with UPF50+ fabrication and full-length coverage.", category:"swimwear", subcategory:"swimsuits", genderFit:"female", materials:["Recycled Nylon","Elastane"], styleTags:["modest","UPF50+","long-sleeve","beach"], referencePrompt:"Women's long-sleeve UPF50+ modest swimsuit full coverage", primaryImageUrl:"/lamalo/swim-rash-guard.jpg" }, ["Navy","Black","Cobalt Blue","Forest Green","Burgundy","Teal","White","Sage Green"]),
+];
+
+const womensSwimwear: SeedCollection = { name:"Lamalo Women's Swimwear", description:"Beach-confident swimwear for every shape and preference.", collectionType:"swimwear", season:"Summer", year:2026, styleTags:["swim","beach","bikini","one-piece","resort","UPF50+"], collectionPriceAud:cp(womensSwimwearItems), items:womensSwimwearItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 12 — Women's Comfort Series
+// ─────────────────────────────────────────────────────────────────────────────
+
+const womensComfortItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Wrap Midi Dress", description:"Easy-wear wrap midi dress with adjustable tie and flutter sleeves.", category:"dresses", subcategory:"midi-dresses", genderFit:"female", materials:["100% Viscose"], styleTags:["dress","wrap","comfort","easy-wear","seniors"], referencePrompt:"Women's easy-wear wrap midi dress adjustable tie flutter sleeves", primaryImageUrl:"/lamalo/women-linen-dress.jpg" }, DRESS),
+  ...cc({ name:"Lamalo Elastic-Waist Trouser", description:"Comfort trouser with full elastic waist, straight leg and side pockets.", category:"bottoms", subcategory:"trousers", genderFit:"female", materials:["65% Polyester","35% Cotton"], styleTags:["comfort","elastic","easy-fit","seniors"], referencePrompt:"Women's comfort elastic-waist straight-leg trouser easy fit", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg" }, BOTTOMS),
+  ...cc({ name:"Lamalo Long Wrap Cardigan", description:"Longline wrap cardigan with side pockets and a soft-touch knit.", category:"tops", subcategory:"knitwear", genderFit:"female", materials:["60% Cotton","40% Acrylic"], styleTags:["cardigan","longline","comfort","wrap"], referencePrompt:"Women's longline wrap cardigan soft-touch knit side pockets", primaryImageUrl:"/lamalo/women-blazer.jpg" }, NEUTRAL),
+  ...cc({ name:"Lamalo Button Blouse", description:"Relaxed-fit cotton blouse with short sleeves and tonal buttons.", category:"tops", subcategory:"blouses", genderFit:"female", materials:["100% Cotton"], styleTags:["blouse","relaxed","comfort","classic"], referencePrompt:"Women's relaxed cotton button blouse short sleeves tonal buttons", primaryImageUrl:"/lamalo/women-blouse.jpg" }, TOPS.slice(0,8)),
+  ...cc({ name:"Lamalo Quilted Zip Jacket", description:"Lightweight quilted jacket with zip front, stand collar and side pockets.", category:"outerwear", subcategory:"jackets", genderFit:"female", materials:["Polyester Shell","Polyester Fill"], styleTags:["quilted","jacket","comfort","warm"], referencePrompt:"Women's lightweight quilted jacket zip front stand collar", primaryImageUrl:"/lamalo/women-blazer.jpg" }, OUTER),
+  ...cc({ name:"Lamalo A-Line Midi Skirt", description:"Pull-on A-line midi skirt with elasticated waist and fluid drape.", category:"bottoms", subcategory:"skirts", genderFit:"female", materials:["100% Polyester"], styleTags:["skirt","A-line","comfort","seniors","easy"], referencePrompt:"Women's pull-on A-line midi skirt elasticated waist fluid drape", primaryImageUrl:"/lamalo/women-skirt.jpg" }, DRESS),
+  ...cc({ name:"Lamalo Floral Cotton Nightgown", description:"Knee-length cotton nightgown with floral print, button placket and short sleeves.", category:"sleepwear", subcategory:"nightwear", genderFit:"female", materials:["100% Cotton"], styleTags:["sleepwear","comfort","nightgown","floral"], referencePrompt:"Women's knee-length cotton nightgown floral print short sleeves button", primaryImageUrl:"/lamalo/women-linen-dress.jpg" }, ["Blue Floral","Pink Floral","Green Floral","Lavender Floral","Yellow Floral","Red Floral","Cream Floral","Navy Floral"]),
+];
+
+const womensComfort: SeedCollection = { name:"Lamalo Women's Comfort Series", description:"Soft, easy-to-wear styles designed for everyday comfort and confidence.", collectionType:"comfort", season:"All-Season", year:2026, styleTags:["comfort","seniors","easy-fit","relaxed","women"], collectionPriceAud:cp(womensComfortItems), items:womensComfortItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 13 — Kids' Everyday
+// ─────────────────────────────────────────────────────────────────────────────
+
+const kidsEverydayItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Kids' Graphic Tee", description:"Soft cotton kids' tee with fun Lamalo graphic print and crew neck.", category:"tops", subcategory:"t-shirts", genderFit:"unisex", materials:["100% Cotton"], styleTags:["kids","tee","graphic","casual"], referencePrompt:"Kids' graphic print cotton tee crew neck colourful Lamalo", primaryImageUrl:"/lamalo/kids-graphic-tee.jpg" }, ["White","Navy","Red","Yellow","Forest Green","Cobalt Blue","Burgundy","Orange","Grey","Pink"]),
+  ...cc({ name:"Lamalo Kids' School Polo", description:"Classic kids' pique polo with three-button placket — school-ready.", category:"tops", subcategory:"polos", genderFit:"unisex", materials:["100% Cotton Pique"], styleTags:["kids","polo","school","classic"], referencePrompt:"Kids' classic pique polo three-button placket school uniform", primaryImageUrl:"/lamalo/kids-polo-shirt.jpg" }, ["White","Navy","Royal Blue","Forest Green","Red","Burgundy","Black","Grey"]),
+  ...cc({ name:"Lamalo Kids' Slim Denim", description:"Slim-fit kids' denim with adjustable inner waistband and five-pocket design.", category:"bottoms", subcategory:"jeans", genderFit:"unisex", materials:["98% Cotton","2% Elastane"], styleTags:["kids","denim","school","casual"], referencePrompt:"Kids' slim-fit denim jeans adjustable waistband five-pocket", primaryImageUrl:"/lamalo/kids-denim-jean.jpg" }, ["Indigo","Mid-Wash Blue","Black","Dark Rinse","Light Blue","Stone Wash","Raw Denim"]),
+  ...cc({ name:"Lamalo Kids' Fleece Hoodie", description:"Soft-fleece kids' hoodie with kangaroo pocket and coloured drawstring.", category:"tops", subcategory:"hoodies", genderFit:"unisex", materials:["80% Cotton","20% Polyester"], styleTags:["kids","hoodie","casual","layering"], referencePrompt:"Kids' soft-fleece hoodie kangaroo pocket coloured drawstring", primaryImageUrl:"/lamalo/kids-hoodie.jpg" }, ["Navy","Red","Forest Green","Grey","Orange","Royal Blue","Burgundy","Pink"]),
+  ...cc({ name:"Lamalo Girls' Linen Dress", description:"A-line linen dress for girls with smocked bodice and puff sleeves.", category:"dresses", subcategory:"dresses", genderFit:"female", materials:["55% Linen","45% Cotton"], styleTags:["kids","girls","dress","summer","linen"], referencePrompt:"Girls' A-line linen dress smocked bodice puff sleeves summer", primaryImageUrl:"/lamalo/kids-dress.jpg" }, ["White","Sage Green","Dusty Rose","Cobalt Blue","Yellow","Lavender","Navy","Coral"]),
+  ...cc({ name:"Lamalo Kids' Cotton Shorts", description:"Pull-on kids' cotton shorts with adjustable inner waistband.", category:"bottoms", subcategory:"shorts", genderFit:"unisex", materials:["100% Cotton"], styleTags:["kids","shorts","casual","summer"], referencePrompt:"Kids' pull-on cotton shorts adjustable inner waistband casual", primaryImageUrl:"/lamalo/kids-denim-jean.jpg" }, ["Navy","Black","Khaki","Red","Forest Green","Cobalt Blue","Grey","Orange"]),
+  ...cc({ name:"Lamalo Kids' Puffer Jacket", description:"Baffled puffer jacket for kids with zip front and hood.", category:"outerwear", subcategory:"jackets", genderFit:"unisex", materials:["Recycled Nylon Shell","Polyester Fill"], styleTags:["kids","puffer","winter","warm"], referencePrompt:"Kids' baffled puffer jacket zip front hood warm winter", primaryImageUrl:"/lamalo/kids-hoodie.jpg" }, ["Navy","Red","Black","Forest Green","Royal Blue","Orange","Burgundy","Coral Pink"]),
+];
+
+const kidsEveryday: SeedCollection = { name:"Lamalo Kids' Everyday", description:"Durable, fun everyday kids' clothing for school and play.", collectionType:"core", season:"All-Season", year:2026, styleTags:["kids","casual","school","everyday","durable"], collectionPriceAud:cp(kidsEverydayItems), items:kidsEverydayItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 14 — Kids' Active
+// ─────────────────────────────────────────────────────────────────────────────
+
+const kidsActiveItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Kids' Retro Tracksuit", description:"Two-piece kids' retro tracksuit with contrast stripe — zip top and elasticated pants.", category:"tops", subcategory:"tracksuits", genderFit:"unisex", materials:["100% Polyester Tricot"], styleTags:["kids","tracksuit","retro","sport"], referencePrompt:"Kids' retro two-piece tracksuit contrast stripe zip top elasticated pants", primaryImageUrl:"/lamalo/kids-hoodie.jpg" }, ["Navy/White","Red/White","Black/White","Green/White","Royal Blue/White","Burgundy/Gold","Grey/Black","Orange/White"]),
+  ...cc({ name:"Lamalo Kids' Sport Shorts", description:"Lightweight kids' sport shorts with elastic waist and side pockets.", category:"bottoms", subcategory:"shorts", genderFit:"unisex", materials:["100% Polyester"], styleTags:["kids","sport","shorts","training"], referencePrompt:"Kids' lightweight sport shorts elastic waist side pockets", primaryImageUrl:"/lamalo/kids-denim-jean.jpg" }, ["Black","Navy","Red","Forest Green","Royal Blue","Grey","Orange","White"]),
+  ...cc({ name:"Lamalo Kids' Soccer Jersey", description:"Kids' performance soccer jersey with mesh ventilation and athletic fit.", category:"tops", subcategory:"sport-jerseys", genderFit:"unisex", materials:["100% Polyester"], styleTags:["kids","soccer","jersey","sport","team"], referencePrompt:"Kids' performance soccer jersey mesh ventilation athletic fit", primaryImageUrl:"/lamalo/kids-polo-shirt.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Kids' Basketball Jersey", description:"Kids' sleeveless mesh basketball jersey with number-ready front.", category:"tops", subcategory:"sport-jerseys", genderFit:"unisex", materials:["100% Polyester Mesh"], styleTags:["kids","basketball","jersey","sleeveless","sport"], referencePrompt:"Kids' sleeveless mesh basketball jersey number-ready sporty", primaryImageUrl:"/lamalo/kids-polo-shirt.jpg" }, SPORT),
+  ...cc({ name:"Lamalo Kids' Waterproof Rain Jacket", description:"Kids' packable waterproof jacket with sealed seams and adjustable hood.", category:"outerwear", subcategory:"jackets", genderFit:"unisex", materials:["Waterproof Nylon","Taped Seams"], styleTags:["kids","rain","waterproof","packable"], referencePrompt:"Kids' packable waterproof rain jacket sealed seams adjustable hood", primaryImageUrl:"/lamalo/kids-hoodie.jpg" }, ["Yellow","Navy","Red","Forest Green","Royal Blue","Orange","Black","Coral Pink"]),
+];
+
+const kidsActive: SeedCollection = { name:"Lamalo Kids' Active", description:"Sport and activity wear built tough for energetic kids.", collectionType:"sport", season:"All-Season", year:2026, styleTags:["kids","sport","active","soccer","basketball","running"], collectionPriceAud:cp(kidsActiveItems), items:kidsActiveItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 15 — Kids' Swimwear
+// ─────────────────────────────────────────────────────────────────────────────
+
+const kidsSwimwearItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Kids' UPF50+ One-Piece", description:"One-piece kids' swimsuit with UPF50+ protection and crossback design.", category:"swimwear", subcategory:"swimsuits", genderFit:"female", materials:["80% Nylon","20% Elastane"], styleTags:["kids","swimsuit","UPF50+","girls"], referencePrompt:"Kids' girls UPF50+ one-piece swimsuit crossback beach protection", primaryImageUrl:"/lamalo/kids-swimsuit.jpg" }, ["Navy","Black","Cobalt Blue","Coral Pink","Teal","Sage Green","Burgundy","Yellow"]),
+  ...cc({ name:"Lamalo Kids' Rashguard Set", description:"Two-piece UPF50+ rashguard set — long-sleeve top and board short.", category:"swimwear", subcategory:"rashguards", genderFit:"unisex", materials:["Recycled Nylon","Elastane"], styleTags:["kids","rashguard","UPF50+","surf"], referencePrompt:"Kids' two-piece UPF50+ rashguard set long-sleeve board short surf", primaryImageUrl:"/lamalo/kids-swimsuit.jpg" }, ["Navy","Black","Red","Forest Green","Royal Blue","Cobalt Blue","Teal","Orange"]),
+  ...cc({ name:"Lamalo Boys' Swim Short", description:"Mid-length boys' board short with quick-dry fabric and Velcro fly.", category:"swimwear", subcategory:"board-shorts", genderFit:"male", materials:["100% Polyester"], styleTags:["kids","boys","swim","board-short"], referencePrompt:"Boys' mid-length board shorts quick-dry Velcro fly beach swim", primaryImageUrl:"/lamalo/kids-swimsuit.jpg" }, SWIM_M),
+  ...cc({ name:"Lamalo Girls' Frill Swimsuit", description:"Girls' frill-trim one-piece with adjustable straps and cute print.", category:"swimwear", subcategory:"swimsuits", genderFit:"female", materials:["80% Nylon","20% Elastane"], styleTags:["kids","girls","swimsuit","frill","cute"], referencePrompt:"Girls' frill-trim one-piece swimsuit adjustable straps cute print", primaryImageUrl:"/lamalo/kids-swimsuit.jpg" }, ["Coral Pink","Navy","Teal","Yellow","Cobalt Blue","Sage Green","Purple","Red"]),
+];
+
+const kidsSwimwear: SeedCollection = { name:"Lamalo Kids' Swimwear", description:"Fun and protective swimwear for kids at the beach and pool.", collectionType:"swimwear", season:"Summer", year:2026, styleTags:["kids","swim","beach","UPF50+","fun"], collectionPriceAud:cp(kidsSwimwearItems), items:kidsSwimwearItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 16 — Men's Footwear  (10 types × 7 colours)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const mensFootwearItems: SeedItem[] = [
+  // 1. Canvas Lo Sneaker
+  ...cc({ name:"Lamalo Canvas Lo Sneaker", description:"Clean low-top canvas sneaker with vulcanised rubber sole — court-inspired.", category:"footwear", subcategory:"sneakers", genderFit:"male", materials:["Canvas Upper","Vulcanised Rubber Sole"], styleTags:["sneaker","canvas","minimal","casual"], referencePrompt:"Men's low-top canvas sneaker vulcanised rubber sole minimal court", primaryImageUrl:"/lamalo/shoe-canvas-sneaker.jpg" }, SHOE_M),
+  // 2. Performance Runner
+  ...cc({ name:"Lamalo Performance Runner", description:"Cushioned performance running shoe with breathable mesh upper and EVA midsole.", category:"footwear", subcategory:"runners", genderFit:"male", materials:["Mesh Upper","EVA Midsole","Rubber Outsole"], styleTags:["running","performance","athletic","trainer"], referencePrompt:"Men's cushioned performance running shoe mesh upper EVA midsole", primaryImageUrl:"/lamalo/shoe-running.jpg" }, SHOE_M),
+  // 3. Oxford Dress Shoe
+  ...cc({ name:"Lamalo Oxford Dress Shoe", description:"Classic cap-toe Oxford in polished leather with leather sole and stacked heel.", category:"footwear", subcategory:"dress-shoes", genderFit:"male", materials:["Full-Grain Leather","Leather Sole"], styleTags:["Oxford","dress","formal","leather"], referencePrompt:"Men's cap-toe Oxford leather dress shoe polished formal", primaryImageUrl:"/lamalo/shoe-dress-oxford.jpg" }, ["Black","Dark Brown","Tan","Burgundy","Navy","Cognac","Chestnut"]),
+  // 4. Penny Loafer
+  ...cc({ name:"Lamalo Penny Loafer", description:"Slip-on penny loafer in premium leather with a classic saddle strap.", category:"footwear", subcategory:"loafers", genderFit:"male", materials:["Premium Leather","Leather Sole"], styleTags:["loafer","smart-casual","slip-on","classic"], referencePrompt:"Men's slip-on penny loafer premium leather saddle strap classic", primaryImageUrl:"/lamalo/shoe-loafer.jpg" }, ["Black","Dark Brown","Tan","Burgundy","Navy","Cognac","Cream"]),
+  // 5. Chelsea Boot
+  ...cc({ name:"Lamalo Chelsea Boot", description:"Sleek Chelsea boot in smooth leather with elastic side gussets.", category:"footwear", subcategory:"boots", genderFit:"male", materials:["Leather Upper","Leather Sole"], styleTags:["boot","Chelsea","smart","versatile"], referencePrompt:"Men's Chelsea boot smooth leather elastic gussets sleek", primaryImageUrl:"/lamalo/shoe-chelsea-boot.jpg" }, ["Black","Dark Brown","Tan","Burgundy","Navy","Cognac","Grey"]),
+  // 6. Flip Flop / Thong
+  ...cc({ name:"Lamalo Classic Flip Flop", description:"Lightweight EVA flip flop with contoured footbed and textured strap.", category:"footwear", subcategory:"flip-flops", genderFit:"male", materials:["EVA Footbed","Rubber Sole","TPU Strap"], styleTags:["flip-flop","thong","beach","summer","casual"], referencePrompt:"Men's lightweight EVA flip flop contoured footbed textured strap beach", primaryImageUrl:"/lamalo/shoe-slide.jpg" }, ["Navy","Black","White","Cobalt Blue","Forest Green","Tan","Red"]),
+  // 7. Sport Sandal
+  ...cc({ name:"Lamalo Sport Sandal", description:"Adjustable sport sandal with hook-and-loop straps, toe loop and contoured EVA footbed.", category:"footwear", subcategory:"sandals", genderFit:"male", materials:["Synthetic Upper","EVA Footbed","Rubber Outsole"], styleTags:["sandal","sport","adjustable","outdoor"], referencePrompt:"Men's adjustable sport sandal hook-and-loop straps toe loop EVA contoured", primaryImageUrl:"/lamalo/shoe-slide.jpg" }, ["Black","Brown","Navy","Olive","Grey","Tan","Forest Green"]),
+  // 8. Recovery Slide
+  ...cc({ name:"Lamalo Recovery Slide", description:"Cushioned recovery slide with wide strap and contoured foam footbed.", category:"footwear", subcategory:"slides", genderFit:"male", materials:["Foam Footbed","Wide Synthetic Strap"], styleTags:["slide","recovery","casual","pool","gym"], referencePrompt:"Men's cushioned recovery slide wide strap contoured foam footbed pool", primaryImageUrl:"/lamalo/shoe-slide.jpg" }, SHOE_M),
+  // 9. Hiking Boot
+  ...cc({ name:"Lamalo Hiking Boot", description:"Mid-cut waterproof hiking boot with ankle support and aggressive rubber outsole.", category:"footwear", subcategory:"boots", genderFit:"male", materials:["Waterproof Leather","Rubber Outsole","Padded Collar"], styleTags:["hiking","boot","waterproof","outdoor","trail"], referencePrompt:"Men's mid-cut waterproof hiking boot ankle support aggressive outsole trail", primaryImageUrl:"/lamalo/shoe-chelsea-boot.jpg" }, ["Brown/Tan","Black/Grey","Olive/Brown","Tan/Sand","Grey/Black","Navy/Orange","Forest Green/Tan"]),
+  // 10. Chukka / Work Boot
+  ...cc({ name:"Lamalo Chukka Boot", description:"Desert-style chukka boot in suede with two-eyelet lacing and crepe sole.", category:"footwear", subcategory:"boots", genderFit:"male", materials:["Suede Upper","Crepe Rubber Sole"], styleTags:["chukka","boot","casual","desert","versatile"], referencePrompt:"Men's desert-style suede chukka boot two-eyelet lacing crepe sole", primaryImageUrl:"/lamalo/shoe-chelsea-boot.jpg" }, ["Sand","Black","Dark Brown","Cobalt Blue","Olive","Charcoal","Tan"]),
+];
+
+const mensFootwear: SeedCollection = { name:"Lamalo Men's Footwear", description:"10 footwear types for men — from Oxford to flip flop, in 7 colours each.", collectionType:"footwear", season:"All-Season", year:2026, styleTags:["footwear","shoes","sneakers","boots","sandals","flip-flops","men"], collectionPriceAud:cp(mensFootwearItems), items:mensFootwearItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 17 — Women's Footwear  (11 types × 7 colours)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const womensFootwearItems: SeedItem[] = [
+  // 1. Platform Sneaker
+  ...cc({ name:"Lamalo Platform Sneaker", description:"Chunky-sole platform sneaker in faux leather with lace-up front.", category:"footwear", subcategory:"sneakers", genderFit:"female", materials:["Faux Leather Upper","Platform Rubber Sole"], styleTags:["sneaker","platform","streetwear","chunky"], referencePrompt:"Women's platform sneaker chunky sole faux leather lace-up streetwear", primaryImageUrl:"/lamalo/shoe-platform-sneaker.jpg" }, SHOE_F),
+  // 2. Running Shoe
+  ...cc({ name:"Lamalo Women's Runner", description:"Lightweight women's running shoe with breathable mesh upper and responsive cushioning.", category:"footwear", subcategory:"runners", genderFit:"female", materials:["Mesh Upper","Foam Midsole","Rubber Outsole"], styleTags:["running","athletic","lightweight","trainer"], referencePrompt:"Women's lightweight running shoe mesh upper responsive cushioning", primaryImageUrl:"/lamalo/shoe-running.jpg" }, SHOE_F),
+  // 3. Strappy Heel Sandal
+  ...cc({ name:"Lamalo Strappy Heel Sandal", description:"Thin-strap heeled sandal with adjustable ankle wrap and stiletto heel.", category:"footwear", subcategory:"heels", genderFit:"female", materials:["Synthetic Strap","Block-Heel or Stiletto"], styleTags:["sandal","heel","strappy","evening","feminine"], referencePrompt:"Women's strappy heeled sandal adjustable ankle wrap stiletto elegant", primaryImageUrl:"/lamalo/shoe-heel.jpg" }, ["Black","Nude Beige","Silver","Gold","Navy","Blush Pink","Red"]),
+  // 4. Ballet Flat
+  ...cc({ name:"Lamalo Ballet Flat", description:"Classic pointed-toe ballet flat in soft leather with elastic topline.", category:"footwear", subcategory:"flats", genderFit:"female", materials:["Soft Leather","Leather Insole"], styleTags:["flat","ballet","classic","versatile","feminine"], referencePrompt:"Women's pointed-toe ballet flat soft leather elastic topline classic", primaryImageUrl:"/lamalo/shoe-flat.jpg" }, ["Black","Nude Beige","Navy","Blush Pink","Red","Camel","White"]),
+  // 5. Kitten Heel Pump
+  ...cc({ name:"Lamalo Kitten Heel Pump", description:"Closed-toe kitten heel pump in premium leather with V-cut vamp.", category:"footwear", subcategory:"heels", genderFit:"female", materials:["Premium Leather","Leather Lining"], styleTags:["pump","kitten-heel","classic","office","elegant"], referencePrompt:"Women's closed-toe kitten heel pump V-cut vamp leather classic office", primaryImageUrl:"/lamalo/shoe-heel.jpg" }, ["Black","Nude Beige","Navy","Blush Pink","Red","Camel","Silver"]),
+  // 6. Ankle Boot
+  ...cc({ name:"Lamalo Ankle Boot", description:"Side-zip ankle boot in smooth leather with block heel and pointed toe.", category:"footwear", subcategory:"boots", genderFit:"female", materials:["Leather Upper","Block Heel","Side Zip"], styleTags:["boot","ankle","block-heel","versatile"], referencePrompt:"Women's side-zip ankle boot smooth leather block heel pointed toe", primaryImageUrl:"/lamalo/shoe-ankle-boot.jpg" }, ["Black","Dark Brown","Tan","Burgundy","Navy","Cognac","Camel"]),
+  // 7. Knee-High Boot
+  ...cc({ name:"Lamalo Knee-High Boot", description:"Pull-on knee-high boot in smooth leather with a block heel and inside zip.", category:"footwear", subcategory:"boots", genderFit:"female", materials:["Smooth Leather","Inside Zip","Block Heel"], styleTags:["boot","knee-high","statement","autumn","winter"], referencePrompt:"Women's pull-on knee-high leather boot block heel inside zip statement", primaryImageUrl:"/lamalo/shoe-ankle-boot.jpg" }, ["Black","Dark Brown","Tan","Burgundy","Navy","Cognac","Camel"]),
+  // 8. Flip Flop
+  ...cc({ name:"Lamalo Women's Flip Flop", description:"Slim-strap women's flip flop with soft EVA footbed and rubber outsole.", category:"footwear", subcategory:"flip-flops", genderFit:"female", materials:["Soft EVA Footbed","Slim TPU Strap","Rubber Outsole"], styleTags:["flip-flop","beach","summer","casual","minimal"], referencePrompt:"Women's slim-strap EVA flip flop beach summer casual minimal", primaryImageUrl:"/lamalo/shoe-slide.jpg" }, ["White","Black","Nude Beige","Navy","Blush Pink","Coral","Silver"]),
+  // 9. Slide Sandal
+  ...cc({ name:"Lamalo Slide Sandal", description:"Single-band slide sandal in padded faux leather for everyday comfort.", category:"footwear", subcategory:"slides", genderFit:"female", materials:["Faux Leather Band","Cushioned Footbed"], styleTags:["slide","sandal","minimal","casual","easy"], referencePrompt:"Women's single-band faux leather slide sandal cushioned footbed casual", primaryImageUrl:"/lamalo/shoe-slide.jpg" }, SHOE_F),
+  // 10. Cork Wedge Sandal
+  ...cc({ name:"Lamalo Cork Wedge Sandal", description:"Espadrille-inspired cork wedge sandal with ankle wrap strap.", category:"footwear", subcategory:"wedges", genderFit:"female", materials:["Cork Wedge","Ankle Wrap Strap","Leather Insole"], styleTags:["wedge","sandal","cork","summer","resort"], referencePrompt:"Women's cork wedge sandal ankle wrap strap espadrille summer resort", primaryImageUrl:"/lamalo/shoe-wedge.jpg" }, ["Natural Cork/Tan","Black/Black","White/White","Navy/Gold","Camel/Tan","Nude/Natural","Coral/Tan"]),
+  // 11. Women's Loafer
+  ...cc({ name:"Lamalo Women's Loafer", description:"Polished slip-on loafer with gold-tone hardware detail on the vamp.", category:"footwear", subcategory:"loafers", genderFit:"female", materials:["Premium Leather","Leather Sole"], styleTags:["loafer","smart","classic","office","elegant"], referencePrompt:"Women's polished loafer gold-tone hardware vamp leather smart office", primaryImageUrl:"/lamalo/shoe-flat.jpg" }, ["Black","Tan","Navy","Burgundy","Camel","White","Cobalt Blue"]),
+];
+
+const womensFootwear: SeedCollection = { name:"Lamalo Women's Footwear", description:"11 footwear styles for women — from flip flop to knee-high boot, in 7 colours.", collectionType:"footwear", season:"All-Season", year:2026, styleTags:["footwear","shoes","heels","boots","sandals","flats","women"], collectionPriceAud:cp(womensFootwearItems), items:womensFootwearItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 18 — Watches
+// ─────────────────────────────────────────────────────────────────────────────
+
+const watchItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Men's Classic Dress Watch", description:"36mm stainless steel dress watch with slim profile and leather strap.", category:"accessories", subcategory:"watches", genderFit:"male", materials:["316L Stainless Steel","Leather Strap","Mineral Crystal"], styleTags:["watch","dress","classic","formal"], referencePrompt:"Men's slim 36mm dress watch stainless steel leather strap formal", primaryImageUrl:"/lamalo/watch-dress.jpg" }, WATCH_M),
+  ...cc({ name:"Lamalo Men's Sport Chronograph", description:"42mm sport chronograph with tachymeter bezel and rubber strap.", category:"accessories", subcategory:"watches", genderFit:"male", materials:["316L Stainless Steel","Rubber Strap","Mineral Crystal"], styleTags:["watch","sport","chronograph","athletic"], referencePrompt:"Men's 42mm sport chronograph tachymeter bezel rubber strap", primaryImageUrl:"/lamalo/watch-sport.jpg" }, WATCH_M),
+  ...cc({ name:"Lamalo Men's Minimalist Watch", description:"38mm ultra-thin watch with mesh bracelet and clean dial.", category:"accessories", subcategory:"watches", genderFit:"male", materials:["Stainless Steel Mesh Bracelet","Mineral Crystal"], styleTags:["watch","minimalist","everyday","mesh"], referencePrompt:"Men's 38mm ultra-thin minimalist watch mesh bracelet clean dial", primaryImageUrl:"/lamalo/watch-dress.jpg" }, WATCH_M),
+  ...cc({ name:"Lamalo Men's Field Watch", description:"40mm military field watch with canvas strap and luminous hands.", category:"accessories", subcategory:"watches", genderFit:"male", materials:["Steel Case","Canvas Strap","Luminous Hands"], styleTags:["watch","field","military","rugged","casual"], referencePrompt:"Men's 40mm military field watch canvas strap luminous hands rugged", primaryImageUrl:"/lamalo/watch-sport.jpg" }, WATCH_M),
+  ...cc({ name:"Lamalo Women's Elegant Watch", description:"32mm women's watch with a slim case and satin-finish bracelet.", category:"accessories", subcategory:"watches", genderFit:"female", materials:["316L Stainless Steel","Satin Bracelet","Sapphire-Coated Crystal"], styleTags:["watch","elegant","women","slim"], referencePrompt:"Women's 32mm slim elegant watch satin bracelet sapphire crystal", primaryImageUrl:"/lamalo/watch-ladies.jpg" }, WATCH_F),
+  ...cc({ name:"Lamalo Women's Fashion Watch", description:"36mm fashion watch with a two-tone case and mesh bracelet.", category:"accessories", subcategory:"watches", genderFit:"female", materials:["Two-Tone Steel","Mesh Bracelet","Mineral Crystal"], styleTags:["watch","fashion","two-tone","women"], referencePrompt:"Women's 36mm two-tone fashion watch mesh bracelet mineral crystal", primaryImageUrl:"/lamalo/watch-ladies.jpg" }, WATCH_F),
+  ...cc({ name:"Lamalo Women's Sport Watch", description:"38mm women's sport watch with silicone strap and step-counter display.", category:"accessories", subcategory:"watches", genderFit:"female", materials:["Polymer Case","Silicone Strap"], styleTags:["watch","sport","active","women"], referencePrompt:"Women's 38mm sport watch silicone strap step-counter active", primaryImageUrl:"/lamalo/watch-sport.jpg" }, WATCH_F),
+];
+
+const watches: SeedCollection = { name:"Lamalo Watches", description:"Precision timekeeping for every occasion — dress to sport.", collectionType:"accessories", season:"All-Season", year:2026, styleTags:["watch","accessories","luxury","sport","minimalist"], collectionPriceAud:cp(watchItems), items:watchItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 19 — Eyewear
+// ─────────────────────────────────────────────────────────────────────────────
+
+const eyewearItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Sport Shield", description:"Wrap-around sport shield with UV400 and anti-fog lens.", category:"accessories", subcategory:"eyewear", genderFit:"unisex", materials:["TR90 Frame","Polycarbonate Lens"], styleTags:["sunglasses","sport","athletic","UV400"], referencePrompt:"Wrap-around sport shield sunglasses UV400 anti-fog athletic", primaryImageUrl:"/lamalo/eyewear-sport.jpg" }, EYEWEAR),
+  ...cc({ name:"Lamalo Oversized Fashion", description:"Bold oversized square frame sunglasses — fashion statement.", category:"accessories", subcategory:"eyewear", genderFit:"female", materials:["Acetate Frame","Gradient Lens"], styleTags:["sunglasses","oversized","fashion","bold"], referencePrompt:"Oversized square frame fashion sunglasses gradient lens bold", primaryImageUrl:"/lamalo/eyewear-fashion.jpg" }, EYEWEAR),
+  ...cc({ name:"Lamalo Retro Round", description:"Retro round keyhole-bridge sunglasses in acetate.", category:"accessories", subcategory:"eyewear", genderFit:"unisex", materials:["Acetate Frame","Mineral Glass Lens"], styleTags:["sunglasses","retro","round","vintage"], referencePrompt:"Retro round keyhole-bridge acetate sunglasses vintage", primaryImageUrl:"/lamalo/eyewear-fashion.jpg" }, EYEWEAR),
+  ...cc({ name:"Lamalo Classic Aviator", description:"Teardrop aviator with metal frame and polarised lens.", category:"accessories", subcategory:"eyewear", genderFit:"unisex", materials:["Metal Frame","Polarised Lens"], styleTags:["sunglasses","aviator","classic","polarised"], referencePrompt:"Classic teardrop aviator metal frame polarised lens timeless", primaryImageUrl:"/lamalo/eyewear-fashion.jpg" }, EYEWEAR),
+  ...cc({ name:"Lamalo Minimal Rectangle", description:"Slim rectangular sunglasses with thin metal temples.", category:"accessories", subcategory:"eyewear", genderFit:"unisex", materials:["Metal Frame","UV400 Lens"], styleTags:["sunglasses","rectangle","minimal","modern"], referencePrompt:"Slim rectangular sunglasses thin metal temples minimalist", primaryImageUrl:"/lamalo/eyewear-fashion.jpg" }, EYEWEAR),
+  ...cc({ name:"Lamalo Cat-Eye", description:"Upswept cat-eye frame in acetate — feminine and bold.", category:"accessories", subcategory:"eyewear", genderFit:"female", materials:["Acetate Frame","Tinted Lens"], styleTags:["sunglasses","cat-eye","feminine","retro"], referencePrompt:"Upswept cat-eye acetate sunglasses feminine bold retro", primaryImageUrl:"/lamalo/eyewear-fashion.jpg" }, EYEWEAR),
+  ...cc({ name:"Lamalo Sport Wrap", description:"Lightweight sport wrap with rubberised nose pads and UV400 lens.", category:"accessories", subcategory:"eyewear", genderFit:"unisex", materials:["TR90 Frame","UV400 Lens","Rubberised Nosepads"], styleTags:["sunglasses","sport","wrap","lightweight","UV400"], referencePrompt:"Lightweight sport wrap sunglasses rubberised nose pads UV400", primaryImageUrl:"/lamalo/eyewear-sport.jpg" }, EYEWEAR),
+  ...cc({ name:"Lamalo Vintage Browline", description:"Retro browline glasses with bold upper frame and thin lower wire.", category:"accessories", subcategory:"eyewear", genderFit:"unisex", materials:["Mixed Acetate/Metal Frame","Mineral Lens"], styleTags:["glasses","browline","vintage","retro"], referencePrompt:"Retro browline glasses bold upper frame thin wire lower vintage", primaryImageUrl:"/lamalo/eyewear-fashion.jpg" }, EYEWEAR),
+];
+
+const eyewear: SeedCollection = { name:"Lamalo Eyewear", description:"Frames for every face — sport to fashion, minimal to bold.", collectionType:"accessories", season:"All-Season", year:2026, styleTags:["eyewear","sunglasses","fashion","sport","UV400"], collectionPriceAud:cp(eyewearItems), items:eyewearItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 20 — Headwear
+// ─────────────────────────────────────────────────────────────────────────────
+
+const headwearItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Structured Baseball Cap", description:"Six-panel structured baseball cap with pre-curved brim and snap closure.", category:"accessories", subcategory:"hats", genderFit:"unisex", materials:["100% Cotton","Snap Closure"], styleTags:["cap","baseball","casual","streetwear"], referencePrompt:"Six-panel structured baseball cap pre-curved brim snap closure", primaryImageUrl:"/lamalo/hat-baseball-cap.jpg" }, HAT),
+  ...cc({ name:"Lamalo Bucket Hat", description:"Unstructured cotton bucket hat with downturned brim.", category:"accessories", subcategory:"hats", genderFit:"unisex", materials:["100% Cotton"], styleTags:["hat","bucket","summer","casual","beach"], referencePrompt:"Unstructured cotton bucket hat downturned brim beach summer", primaryImageUrl:"/lamalo/hat-bucket.jpg" }, HAT),
+  ...cc({ name:"Lamalo Wide-Brim Sun Hat", description:"Packable wide-brim sun hat in woven paper straw with ribbon trim.", category:"accessories", subcategory:"hats", genderFit:"female", materials:["Paper Straw","Ribbon Trim"], styleTags:["hat","sun","wide-brim","beach","summer"], referencePrompt:"Packable wide-brim paper straw sun hat ribbon trim beach", primaryImageUrl:"/lamalo/hat-bucket.jpg" }, ["Natural Straw/Navy Ribbon","Natural Straw/Black Ribbon","Natural Straw/Red Ribbon","Black Straw","White Straw","Natural Straw/Camel","Natural Straw/Cobalt Ribbon"]),
+  ...cc({ name:"Lamalo Ribbed Knit Beanie", description:"Snug-fit ribbed knit beanie with a folded cuff.", category:"accessories", subcategory:"beanies", genderFit:"unisex", materials:["100% Acrylic Knit"], styleTags:["beanie","knit","winter","casual"], referencePrompt:"Ribbed knit beanie folded cuff warm winter casual", primaryImageUrl:"/lamalo/hat-beanie.jpg" }, HAT),
+  ...cc({ name:"Lamalo Dad Cap", description:"Unstructured six-panel dad cap with a low-profile and Velcro closure.", category:"accessories", subcategory:"hats", genderFit:"unisex", materials:["100% Cotton","Velcro Closure"], styleTags:["cap","dad","unstructured","casual"], referencePrompt:"Unstructured low-profile dad cap six-panel Velcro closure", primaryImageUrl:"/lamalo/hat-baseball-cap.jpg" }, HAT),
+  ...cc({ name:"Lamalo Trucker Cap", description:"Five-panel trucker cap with mesh back and snap closure.", category:"accessories", subcategory:"hats", genderFit:"unisex", materials:["Cotton Front","Polyester Mesh Back","Snap Closure"], styleTags:["cap","trucker","mesh","casual"], referencePrompt:"Five-panel trucker cap mesh back snap closure casual", primaryImageUrl:"/lamalo/hat-baseball-cap.jpg" }, HAT),
+  ...cc({ name:"Lamalo Wool Flat Cap", description:"Heritage wool flat cap with a short peak and button detail.", category:"accessories", subcategory:"hats", genderFit:"male", materials:["Wool Blend","Lining"], styleTags:["cap","flat","wool","heritage","classic"], referencePrompt:"Heritage wool flat cap short peak button detail classic", primaryImageUrl:"/lamalo/hat-flat-cap.jpg" }, ["Charcoal","Camel","Grey Herringbone","Black","Navy","Brown Herringbone","Cream Herringbone"]),
+  ...cc({ name:"Lamalo Wool Beret", description:"Classic French-style beret in boiled wool.", category:"accessories", subcategory:"hats", genderFit:"female", materials:["Boiled Wool"], styleTags:["beret","french","classic","autumn","women"], referencePrompt:"Classic French boiled wool beret autumn fashion", primaryImageUrl:"/lamalo/hat-bucket.jpg" }, ["Black","Camel","Navy","Burgundy","Cobalt Blue","Forest Green","Grey"]),
+  ...cc({ name:"Lamalo Performance Visor", description:"Lightweight performance visor with moisture-wicking sweatband.", category:"accessories", subcategory:"visors", genderFit:"unisex", materials:["Polyester","Moisture-Wicking Sweatband"], styleTags:["visor","sport","running","tennis"], referencePrompt:"Lightweight performance visor moisture-wicking sweatband sport", primaryImageUrl:"/lamalo/hat-baseball-cap.jpg" }, ["White","Black","Navy","Red","Forest Green","Cobalt Blue","Camel"]),
+];
+
+const headwear: SeedCollection = { name:"Lamalo Headwear", description:"Hats, caps and beanies for every head and every season.", collectionType:"accessories", season:"All-Season", year:2026, styleTags:["headwear","hat","cap","beanie","sun","sport"], collectionPriceAud:cp(headwearItems), items:headwearItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 21 — Bags & Handbags
+// ─────────────────────────────────────────────────────────────────────────────
+
+const bagsItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Canvas Tote", description:"Oversized cotton canvas tote with interior slip pocket and sturdy handles.", category:"bags", subcategory:"totes", genderFit:"unisex", materials:["Heavy Canvas","Cotton Handles"], styleTags:["tote","casual","beach","everyday"], referencePrompt:"Large canvas tote bag interior slip pocket sturdy handles casual", primaryImageUrl:"/lamalo/bag-tote.jpg" }, NEUTRAL),
+  ...cc({ name:"Lamalo Leather Crossbody", description:"Compact zip-top crossbody in premium leather with adjustable strap.", category:"bags", subcategory:"crossbody", genderFit:"female", materials:["Premium Leather","Adjustable Strap"], styleTags:["crossbody","leather","compact","everyday"], referencePrompt:"Compact leather zip-top crossbody bag adjustable strap premium", primaryImageUrl:"/lamalo/bag-handbag.jpg" }, NEUTRAL),
+  ...cc({ name:"Lamalo Evening Clutch", description:"Slim envelope clutch in faux leather with wrist strap.", category:"bags", subcategory:"clutches", genderFit:"female", materials:["Faux Leather","Chain Wrist Strap"], styleTags:["clutch","evening","formal","slim"], referencePrompt:"Slim envelope clutch faux leather chain wrist strap evening formal", primaryImageUrl:"/lamalo/bag-handbag.jpg" }, ["Black","Gold","Silver","Navy","Dusty Rose","Cobalt Blue","Champagne","Burgundy"]),
+  ...cc({ name:"Lamalo Sport Duffel", description:"Weekend duffel with shoe compartment, wet pocket and padded straps.", category:"bags", subcategory:"duffels", genderFit:"unisex", materials:["Nylon","Padded Carry Strap"], styleTags:["duffel","sport","travel","gym","weekend"], referencePrompt:"Sport weekend duffel shoe compartment wet pocket padded straps gym", primaryImageUrl:"/lamalo/bag-tote.jpg" }, NEUTRAL),
+  ...cc({ name:"Lamalo Quilted Shoulder Bag", description:"Quilted faux leather shoulder bag with chain strap and flip-lock closure.", category:"bags", subcategory:"shoulder-bags", genderFit:"female", materials:["Quilted Faux Leather","Chain Strap"], styleTags:["shoulder-bag","quilted","feminine","everyday"], referencePrompt:"Quilted faux leather shoulder bag chain strap flip-lock closure", primaryImageUrl:"/lamalo/bag-handbag.jpg" }, ["Black","Camel","Navy","Dusty Rose","Cobalt Blue","Cream","Burgundy"]),
+  ...cc({ name:"Lamalo Structured Leather Tote", description:"Rigid top-handle tote in full-grain leather with zip closure.", category:"bags", subcategory:"totes", genderFit:"female", materials:["Full-Grain Leather","Metal Feet"], styleTags:["tote","leather","structured","professional"], referencePrompt:"Structured full-grain leather top-handle tote zip closure professional", primaryImageUrl:"/lamalo/bag-handbag.jpg" }, ["Black","Tan","Navy","Camel","Burgundy","Cognac","Cream"]),
+  ...cc({ name:"Lamalo Mini Shoulder Bag", description:"Mini chain shoulder bag with flap and magnetic closure.", category:"bags", subcategory:"shoulder-bags", genderFit:"female", materials:["Faux Leather","Chain Strap","Magnetic Closure"], styleTags:["mini","shoulder","chain","fashion","going-out"], referencePrompt:"Mini chain shoulder bag flap magnetic closure going-out fashion", primaryImageUrl:"/lamalo/bag-handbag.jpg" }, ["Black","Gold","Silver","Cobalt Blue","Dusty Rose","White","Burgundy"]),
+  ...cc({ name:"Lamalo Travel Weekender", description:"Spacious canvas weekender with leather trim and trolley sleeve.", category:"bags", subcategory:"travel", genderFit:"unisex", materials:["Canvas","Leather Trim","Trolley Sleeve"], styleTags:["travel","weekender","canvas","spacious"], referencePrompt:"Spacious canvas weekender bag leather trim trolley sleeve travel", primaryImageUrl:"/lamalo/bag-tote.jpg" }, ["Navy","Black","Tan/Brown","Olive","Charcoal","Camel","Cream"]),
+];
+
+const bags: SeedCollection = { name:"Lamalo Bags & Handbags", description:"Everyday bags, evening clutches and travel-ready duffels.", collectionType:"accessories", season:"All-Season", year:2026, styleTags:["bags","handbag","tote","crossbody","leather","travel"], collectionPriceAud:cp(bagsItems), items:bagsItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 22 — Accessories
+// ─────────────────────────────────────────────────────────────────────────────
+
+const accessoriesItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Men's Leather Belt", description:"Classic pin-buckle leather belt in full-grain cowhide.", category:"accessories", subcategory:"belts", genderFit:"male", materials:["Full-Grain Cowhide","Nickel-Tone Buckle"], styleTags:["belt","leather","formal","classic"], referencePrompt:"Men's classic pin-buckle full-grain leather belt formal", primaryImageUrl:"/lamalo/accessory-belt.jpg" }, ["Black","Dark Brown","Tan","Cognac","Burgundy","Navy","Camel"]),
+  ...cc({ name:"Lamalo Women's Leather Belt", description:"Slim leather belt with gold-tone buckle — versatile and elegant.", category:"accessories", subcategory:"belts", genderFit:"female", materials:["Full-Grain Leather","Gold-Tone Buckle"], styleTags:["belt","leather","slim","elegant"], referencePrompt:"Women's slim leather belt gold-tone buckle elegant versatile", primaryImageUrl:"/lamalo/accessory-belt.jpg" }, ["Black","Tan","White","Camel","Nude Beige","Cobalt Blue","Burgundy"]),
+  ...cc({ name:"Lamalo Men's Slim Wallet", description:"Slim bifold wallet in full-grain leather with 6 card slots.", category:"accessories", subcategory:"wallets", genderFit:"male", materials:["Full-Grain Leather"], styleTags:["wallet","slim","leather","bifold"], referencePrompt:"Men's slim bifold leather wallet 6 card slots minimal", primaryImageUrl:"/lamalo/accessory-belt.jpg" }, ["Black","Dark Brown","Tan","Cognac","Navy","Burgundy","Forest Green"]),
+  ...cc({ name:"Lamalo Women's Silk Scarf", description:"Large 90×90cm silk-twill scarf with hand-rolled edges.", category:"accessories", subcategory:"scarves", genderFit:"female", materials:["100% Silk Twill"], styleTags:["scarf","silk","luxury","women"], referencePrompt:"Women's 90cm square silk twill scarf hand-rolled edges luxury", primaryImageUrl:"/lamalo/accessory-scarf.jpg" }, ["Navy/Gold","Black/White","Cobalt/Coral","Dusty Rose/Cream","Forest Green/Gold","Burgundy/Cream","Camel/White"]),
+  ...cc({ name:"Lamalo Merino Knit Scarf", description:"Fine-knit merino scarf with fringed ends — winter essential.", category:"accessories", subcategory:"scarves", genderFit:"unisex", materials:["100% Merino Wool"], styleTags:["scarf","merino","winter","knit"], referencePrompt:"Fine-knit merino wool scarf fringed ends winter essential", primaryImageUrl:"/lamalo/accessory-scarf.jpg" }, ["Charcoal","Navy","Camel","Burgundy","Forest Green","Cobalt Blue","Cream"]),
+  ...cc({ name:"Lamalo Gold Chain Necklace", description:"18ct gold-plated cable-chain necklace in three lengths.", category:"accessories", subcategory:"jewellery", genderFit:"female", materials:["18ct Gold-Plated Brass"], styleTags:["jewellery","necklace","gold","minimal"], referencePrompt:"18ct gold-plated cable chain necklace minimal elegant gold", primaryImageUrl:"/lamalo/accessory-scarf.jpg" }, ["Yellow Gold","Rose Gold","White Gold/Silver","Layered Yellow Gold","Layered Rose Gold","Two-Tone Gold","Matte Gold"]),
+  ...cc({ name:"Lamalo Gold Hoop Earrings", description:"Polished gold-plated hoop earrings in small, medium and large.", category:"accessories", subcategory:"jewellery", genderFit:"female", materials:["18ct Gold-Plated Brass"], styleTags:["jewellery","earrings","hoops","gold"], referencePrompt:"Polished gold-plated hoop earrings classic elegant", primaryImageUrl:"/lamalo/accessory-scarf.jpg" }, ["Small Yellow Gold","Medium Yellow Gold","Large Yellow Gold","Small Rose Gold","Medium Rose Gold","Small Silver","Medium Silver"]),
+  ...cc({ name:"Lamalo Leather Gloves", description:"Unlined leather gloves with a clean seam and touchscreen-compatible fingertips.", category:"accessories", subcategory:"gloves", genderFit:"unisex", materials:["Full-Grain Leather","Touchscreen Tips"], styleTags:["gloves","leather","winter","touchscreen"], referencePrompt:"Leather gloves touchscreen-compatible fingertips clean seam winter", primaryImageUrl:"/lamalo/accessory-scarf.jpg" }, ["Black","Dark Brown","Tan","Camel","Navy","Burgundy","Forest Green"]),
+];
+
+const accessories: SeedCollection = { name:"Lamalo Accessories", description:"The finishing touches — belts, wallets, scarves, jewellery and gloves.", collectionType:"accessories", season:"All-Season", year:2026, styleTags:["accessories","belts","scarves","jewellery","wallets","gloves"], collectionPriceAud:cp(accessoriesItems), items:accessoriesItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COLLECTION 23 — Comfort Swimwear (Seniors / Modest)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const comfortSwimItems: SeedItem[] = [
+  ...cc({ name:"Lamalo Women's Skirted Swimsuit", description:"One-piece swimsuit with attached swim skirt for modest coverage.", category:"swimwear", subcategory:"swimsuits", genderFit:"female", materials:["80% Nylon","20% Elastane"], styleTags:["swimwear","modest","skirted","seniors"], referencePrompt:"Women's one-piece swimsuit attached swim skirt modest senior coverage", primaryImageUrl:"/lamalo/women-swimsuit.jpg" }, SWIM_F),
+  ...cc({ name:"Lamalo Men's Comfort Swim Short", description:"Longer-length swim short with elastic waist and side pockets — easy and comfortable.", category:"swimwear", subcategory:"swim-shorts", genderFit:"male", materials:["100% Polyester","Elastic Waist"], styleTags:["swimwear","comfort","seniors","long-short"], referencePrompt:"Men's longer-length comfort swim shorts elastic waist easy seniors", primaryImageUrl:"/lamalo/swim-board-short.jpg" }, SWIM_M),
+  ...cc({ name:"Lamalo Women's Swim Tunic", description:"Long-sleeve swim tunic with UPF50+ and knee-length coverage.", category:"swimwear", subcategory:"swimsuits", genderFit:"female", materials:["Recycled Nylon","Elastane"], styleTags:["swimwear","tunic","UPF50+","modest","long-sleeve"], referencePrompt:"Women's long-sleeve UPF50+ swim tunic knee-length modest coverage", primaryImageUrl:"/lamalo/swim-rash-guard.jpg" }, ["Navy","Black","Cobalt Blue","Teal","Burgundy","Forest Green","White","Sage Green"]),
+  ...cc({ name:"Lamalo Unisex Aqua Shoe", description:"Quick-dry aqua shoe with rubber sole for pool, beach and water sports.", category:"footwear", subcategory:"water-shoes", genderFit:"unisex", materials:["Neoprene Upper","Rubber Sole"], styleTags:["aqua","water-shoe","pool","beach","quick-dry"], referencePrompt:"Quick-dry neoprene aqua shoe rubber sole pool beach water sport", primaryImageUrl:"/lamalo/shoe-slide.jpg" }, ["Black","Navy","Cobalt Blue","Teal","Forest Green","Coral","White"]),
+];
+
+const comfortSwim: SeedCollection = { name:"Lamalo Comfort Swimwear", description:"Modest, senior-friendly and comfortable swimwear for pool and beach.", collectionType:"swimwear", season:"Summer", year:2026, styleTags:["swimwear","modest","seniors","comfort","UPF50+"], collectionPriceAud:cp(comfortSwimItems), items:comfortSwimItems };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ALL COLLECTIONS
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ALL_COLLECTIONS: SeedCollection[] = [
+  mensEveryday,
+  mensPerformance,
+  mensOriginals,
+  mensLuxury,
+  mensSwimsear,
+  mensComfort,
+  womensEveryday,
+  womensActive,
+  womensOriginals,
+  womensLuxury,
+  womensSwimwear,
+  womensComfort,
+  kidsEveryday,
+  kidsActive,
+  kidsSwimwear,
+  mensFootwear,
+  womensFootwear,
+  watches,
+  eyewear,
+  headwear,
+  bags,
+  accessories,
+  comfortSwim,
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SEED RUNNER
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function runLamaloSeed(
+  userId: number
+): Promise<{ created: boolean; collections: number; items: number }> {
+  const db = (await getDb())!;
+
+  // ── Get or create the Lamalo Fashion designer profile ──
+  let designerProfileId: number;
+  const existing = await db
+    .select({ id: designerProfiles.id })
+    .from(designerProfiles)
+    .where(eq(designerProfiles.brandName, "Lamalo Fashion"))
+    .limit(1);
+
+  if (existing.length > 0) {
+    designerProfileId = existing[0].id;
+    log.info(`Lamalo Fashion profile found (id=${designerProfileId}) — checking for new collections`);
+  } else {
+    const [profile] = await db.insert(designerProfiles).values({
+      userId,
+      brandName: "Lamalo Fashion",
+      displayName: "Lamalo",
+      profileType: "brand",
+      bio:
+        "Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. " +
+        "Twenty-three curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, " +
+        "watches, eyewear and accessories. Every colour is a separate item at 30¢ each. " +
+        "Buy a whole collection and save 15%.",
+      website: "https://virelle.life/wardrobe-marketplace",
+      instagram: "@lamalofashion",
+      contactEmail: "wardrobe@virelle.life",
+      logoUrl:
+        "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png",
+      verified: true,
+      visibility: "public",
+      stripeAccountId: null,
+      stripeAccountStatus: "none",
+      membershipStatus: "active",
+      membershipSubscriptionId: null,
+      membershipCurrentPeriodEnd: new Date("2099-12-31"),
+    });
+    designerProfileId = (profile as any).insertId ?? 1;
+    log.info(`Lamalo Fashion profile created (id=${designerProfileId})`);
   }
 
-  interface SeedCollection {
-    name: string;
-    description: string;
-    collectionType: string;
-    season: string;
-    year: number;
-    styleTags: string[];
-    collectionPriceAud: number; // cents
-    items: SeedItem[];
-  }
+  let newCollections = 0;
+  let totalItems = 0;
 
-  // ─── Collection 1: Men's Everyday Casual (Country Road DNA) ─────────────────
-
-  const mensEveryday: SeedCollection = {
-    name: "Lamalo Men's Everyday",
-    description: "Relaxed daily-wear for men built on natural fabrics, clean silhouettes and versatile earth tones. Country Road heritage reinterpreted under the Lamalo label.",
-    collectionType: "core",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["casual","everyday","linen","sustainable","relaxed"],
-    collectionPriceAud: 8500,
-    items: [
-      { name: "Lamalo Linen Overshirt", description: "Relaxed-fit linen-blend overshirt with chest pockets and a split hem. Wears open as a light layer or buttoned as a shirt.", category: "tops", subcategory: "shirts", genderFit: "male", colors: ["Sage Green","Sand","White","Slate"], materials: ["55% Linen","45% Cotton"], styleTags: ["linen","relaxed","coastal","layering"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Men's relaxed linen overshirt sage green", primaryImageUrl: "/lamalo/men-linen-shirt.jpg" },
-      { name: "Lamalo Classic Polo", description: "Pique cotton polo with two-button placket and contrast tipping. A clean everyday essential.", category: "tops", subcategory: "polos", genderFit: "male", colors: ["Cobalt Blue","White","Charcoal","Navy"], materials: ["100% Cotton Pique"], styleTags: ["polo","smart-casual","preppy"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's classic pique polo cobalt blue", primaryImageUrl: "/lamalo/men-polo-shirt.jpg" },
-      { name: "Lamalo Slim Chino", description: "Slim-fit cotton twill chino with a clean front, belt loops and side seam pockets.", category: "bottoms", subcategory: "chinos", genderFit: "male", colors: ["Camel","Navy","Stone","Black"], materials: ["98% Cotton","2% Elastane"], styleTags: ["chino","smart-casual","versatile"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Men's slim chino trousers camel", primaryImageUrl: "/lamalo/men-chino-trouser.jpg" },
-      { name: "Lamalo Straight Denim", description: "Mid-rise straight-leg selvedge denim with classic five-pocket construction.", category: "bottoms", subcategory: "jeans", genderFit: "male", colors: ["Indigo","Mid-Wash","Black"], materials: ["98% Cotton Denim","2% Elastane"], styleTags: ["denim","classic","everyday"], leasePriceAud: 7, retailPriceAud: 42, referencePrompt: "Men's straight selvedge denim jeans indigo", primaryImageUrl: "/lamalo/men-denim-jean.jpg" },
-      { name: "Lamalo Full-Zip Hoodie", description: "Heavyweight cotton-fleece full-zip hoodie with a structured hood and kangaroo zip pocket.", category: "tops", subcategory: "hoodies", genderFit: "male", colors: ["Forest Green","Charcoal","Navy"], materials: ["80% Cotton","20% Polyester Fleece"], styleTags: ["hoodie","casual","layering"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Men's full-zip heavyweight fleece hoodie forest green", primaryImageUrl: "/lamalo/men-zip-hoodie.jpg" },
-      { name: "Lamalo Bomber Jacket", description: "Classic satin-shell bomber with ribbed cuffs, collar and hem. Minimal branding, maximum versatility.", category: "outerwear", subcategory: "jackets", genderFit: "male", colors: ["Midnight Black","Olive","Sand"], materials: ["Nylon Shell","Polyester Lining","Ribbed Knit Trim"], styleTags: ["bomber","streetwear","minimal"], leasePriceAud: 9, retailPriceAud: 54, referencePrompt: "Men's classic bomber jacket midnight black", primaryImageUrl: "/lamalo/men-bomber-jacket.jpg" },
-      { name: "Lamalo Premium Tee", description: "Supima cotton crew-neck tee with a medium weight and relaxed silhouette. The daily essential.", category: "tops", subcategory: "t-shirts", genderFit: "male", colors: ["White","Off-White","Sage","Black"], materials: ["100% Supima Cotton"], styleTags: ["tee","essential","relaxed"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's premium Supima cotton tee white minimal", primaryImageUrl: "/lamalo/men-polo-shirt.jpg" },
-      { name: "Lamalo Linen Short", description: "Mid-length linen-blend short with an elastic-back waist and side pockets. Summer essential.", category: "bottoms", subcategory: "shorts", genderFit: "male", colors: ["Sand","Navy","Charcoal"], materials: ["55% Linen","45% Cotton"], styleTags: ["linen","summer","casual"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's relaxed linen shorts sand natural", primaryImageUrl: "/lamalo/men-chino-trouser.jpg" },
-      { name: "Lamalo Cotton Henley", description: "Three-button henley in soft pima cotton with a relaxed fit.", category: "tops", subcategory: "t-shirts", genderFit: "male", colors: ["White","Grey","Navy"], materials: ["100% Pima Cotton"], styleTags: ["henley","casual","coastal"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's cotton henley shirt white relaxed", primaryImageUrl: "/lamalo/men-polo-shirt.jpg" },
-      { name: "Lamalo Woven Short", description: "Casual woven short in durable cotton with a clean finish and cargo-style pocket detail.", category: "bottoms", subcategory: "shorts", genderFit: "male", colors: ["Khaki","Olive","Navy"], materials: ["100% Cotton"], styleTags: ["shorts","casual","utility"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's cotton woven shorts khaki casual", primaryImageUrl: "/lamalo/men-chino-trouser.jpg" },
-    ],
-  };
-
-  // ─── Collection 2: Men's Performance Sport (Nike DNA) ────────────────────────
-
-  const mensSport: SeedCollection = {
-    name: "Lamalo Men's Performance",
-    description: "High-function athletic wear built for training and beyond. Moisture-wicking performance fabrics, ergonomic cuts and clean sport aesthetics.",
-    collectionType: "sport",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["athletic","performance","training","sport","activewear"],
-    collectionPriceAud: 7500,
-    items: [
-      { name: "Lamalo Track Jacket", description: "Lightweight full-zip track jacket with contrast side stripe. Performance tricot with a standard fit and two side zip pockets.", category: "outerwear", subcategory: "track-jackets", genderFit: "male", colors: ["Burnt Orange/White","Black","Cobalt Blue"], materials: ["100% Polyester Tricot"], styleTags: ["sport","track","retro-athletic"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Men's retro athletic track jacket burnt orange white stripe", primaryImageUrl: "/lamalo/men-track-jacket.jpg" },
-      { name: "Lamalo Tapered Jogger", description: "Tapered performance jogger with ribbed ankle cuffs, drawstring waist and zip side pockets.", category: "bottoms", subcategory: "joggers", genderFit: "male", colors: ["Charcoal","Black","Navy"], materials: ["60% Cotton","40% Polyester"], styleTags: ["jogger","sport","athleisure"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Men's tapered jogger pants charcoal ribbed cuffs", primaryImageUrl: "/lamalo/men-jogger-pant.jpg" },
-      { name: "Lamalo Dri-Lite Running Tee", description: "Ultra-lightweight moisture-wicking tee with flatlock seams and a technical mesh back panel.", category: "tops", subcategory: "t-shirts", genderFit: "male", colors: ["Forest Green","White","Black"], materials: ["Recycled Polyester"], styleTags: ["running","technical","lightweight"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's lightweight running t-shirt forest green athletic", primaryImageUrl: "/lamalo/men-polo-shirt.jpg" },
-      { name: "Lamalo Performance Short", description: "5" inseam training short with built-in mesh liner and an inner key pocket.", category: "bottoms", subcategory: "shorts", genderFit: "male", colors: ["Black","Navy","Charcoal"], materials: ["Nylon","Mesh Lining"], styleTags: ["training","shorts","athletic"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's performance training shorts black mesh", primaryImageUrl: "/lamalo/men-jogger-pant.jpg" },
-      { name: "Lamalo Zip Sport Hoodie", description: "Performance full-zip hoodie with moisture-wicking cotton-blend fleece and a fitted athletic cut.", category: "tops", subcategory: "hoodies", genderFit: "male", colors: ["Forest Green","Black","Grey"], materials: ["60% Cotton","40% Polyester"], styleTags: ["hoodie","sport","training"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Men's performance zip sport hoodie forest green", primaryImageUrl: "/lamalo/men-zip-hoodie.jpg" },
-      { name: "Lamalo Wind-Lite Jacket", description: "Packable wind and light-rain jacket in ripstop nylon. Zips into its own chest pocket.", category: "outerwear", subcategory: "jackets", genderFit: "male", colors: ["Cobalt Blue","Black","Forest Green"], materials: ["Ripstop Nylon"], styleTags: ["windbreaker","packable","running"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Men's lightweight packable windbreaker cobalt blue", primaryImageUrl: "/lamalo/men-track-jacket.jpg" },
-      { name: "Lamalo Training Tank", description: "Open-back mesh training tank with sweat-wicking fabric and a relaxed athletic fit.", category: "tops", subcategory: "t-shirts", genderFit: "male", colors: ["White","Black","Cobalt Blue"], materials: ["100% Polyester Mesh"], styleTags: ["tank","training","gym"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's open-back mesh training tank white", primaryImageUrl: "/lamalo/men-polo-shirt.jpg" },
-      { name: "Lamalo Compression Tight", description: "Full-length compression tight with graduated compression and a wide waistband.", category: "bottoms", subcategory: "tights", genderFit: "male", colors: ["Black","Navy"], materials: ["78% Nylon","22% Elastane"], styleTags: ["compression","running","training"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's full length compression tights black", primaryImageUrl: "/lamalo/men-jogger-pant.jpg" },
-    ],
-  };
-
-  // ─── Collection 3: Men's Originals Retro (Adidas DNA) ────────────────────────
-
-  const mensOriginals: SeedCollection = {
-    name: "Lamalo Men's Originals",
-    description: "Retro athletic heritage reimagined. Clean three-stripe aesthetics, tricot tracksuits and classic court footwear — sport culture dressed for the street.",
-    collectionType: "lifestyle",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["retro","originals","streetwear","heritage","sport-casual"],
-    collectionPriceAud: 7000,
-    items: [
-      { name: "Lamalo Retro Track Jacket", description: "Heritage-inspired track jacket in smooth polyester tricot with contrast side stripe and full zip.", category: "outerwear", subcategory: "track-jackets", genderFit: "male", colors: ["Burnt Orange/White","Navy/White","Black"], materials: ["100% Polyester Tricot"], styleTags: ["retro","track","originals"], leasePriceAud: 7, retailPriceAud: 42, referencePrompt: "Men's retro heritage track jacket burnt orange stripe", primaryImageUrl: "/lamalo/men-track-jacket.jpg" },
-      { name: "Lamalo Retro Track Pant", description: "Matching tricot track pant with side stripe and ankle zip. Pairs with the Track Jacket.", category: "bottoms", subcategory: "track-pants", genderFit: "male", colors: ["Burnt Orange/White","Navy/White","Black"], materials: ["100% Polyester Tricot"], styleTags: ["retro","track","originals"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Men's retro track pants matching stripe detail", primaryImageUrl: "/lamalo/men-jogger-pant.jpg" },
-      { name: "Lamalo Heritage Tee", description: "Essential cotton tee with a minimal Lamalo Originals graphic at the chest. Clean and wearable.", category: "tops", subcategory: "t-shirts", genderFit: "male", colors: ["White","Black","Grey"], materials: ["100% Cotton"], styleTags: ["graphic-tee","originals","heritage"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's heritage graphic tee minimal logo white cotton", primaryImageUrl: "/lamalo/men-polo-shirt.jpg" },
-      { name: "Lamalo Originals Hoodie", description: "Relaxed-fit cotton-fleece hoodie with a large kangaroo pocket and Originals embroidery on the chest.", category: "tops", subcategory: "hoodies", genderFit: "male", colors: ["Grey Marle","White","Black"], materials: ["80% Cotton","20% Polyester"], styleTags: ["hoodie","originals","relaxed"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Men's originals relaxed hoodie grey marle", primaryImageUrl: "/lamalo/men-zip-hoodie.jpg" },
-      { name: "Lamalo Classic Court Sneaker", description: "Low-top court sneaker in premium canvas with clean toe box and vulcanised rubber sole. Stan Smith heritage.", category: "footwear", subcategory: "sneakers", genderFit: "male", colors: ["White/White","White/Green","Black/White"], materials: ["Canvas Upper","Rubber Sole"], styleTags: ["sneaker","court","classic"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Men's classic canvas court sneaker white minimal", primaryImageUrl: "/lamalo/shoe-canvas-sneaker.jpg" },
-      { name: "Lamalo Athletic Short", description: "Nylon training short with white side stripe trim and elastic waist with internal drawcord.", category: "bottoms", subcategory: "shorts", genderFit: "male", colors: ["Black/White","Navy","Grey"], materials: ["Nylon"], styleTags: ["shorts","athletic","originals"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's athletic shorts black white stripe trim", primaryImageUrl: "/lamalo/men-jogger-pant.jpg" },
-      { name: "Lamalo Originals Polo", description: "Classic pique polo with a tonal Lamalo stripe at the collar and cuffs.", category: "tops", subcategory: "polos", genderFit: "male", colors: ["White","Black","Navy"], materials: ["100% Cotton Pique"], styleTags: ["polo","originals","classic"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's originals polo shirt white stripe collar", primaryImageUrl: "/lamalo/men-polo-shirt.jpg" },
-    ],
-  };
-
-  // ─── Collection 4: Men's Luxury Formal (Armani DNA) ──────────────────────────
-
-  const mensFormal: SeedCollection = {
-    name: "Lamalo Men's Luxury",
-    description: "Understated tailored luxury. Italian-inspired construction, premium materials and minimal aesthetics. Armani elegance at Lamalo pricing.",
-    collectionType: "formal",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["formal","luxury","tailored","minimal","elegant"],
-    collectionPriceAud: 18000,
-    items: [
-      { name: "Lamalo Single-Breasted Suit Jacket", description: "Single-breasted suit jacket in Italian wool-blend with a sharp notch lapel and padded shoulders. Available as a suit with matching trouser.", category: "formalwear", subcategory: "suit-jackets", genderFit: "male", colors: ["Charcoal","Navy","Midnight Black"], materials: ["70% Wool","30% Polyester"], styleTags: ["suit","formal","tailored"], leasePriceAud: 12, retailPriceAud: 72, referencePrompt: "Men's single breasted suit jacket charcoal sharp lapel", primaryImageUrl: "/lamalo/men-suit-jacket.jpg" },
-      { name: "Lamalo Dress Trouser", description: "Tailored dress trouser in wool-blend with a flat front and clean finish. Pairs with the Suit Jacket.", category: "bottoms", subcategory: "dress-trousers", genderFit: "male", colors: ["Charcoal","Black","Navy"], materials: ["70% Wool","30% Polyester"], styleTags: ["formal","tailored","dress-trouser"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Men's tailored dress trousers charcoal wool blend", primaryImageUrl: "/lamalo/men-chino-trouser.jpg" },
-      { name: "Lamalo Egyptian Cotton Dress Shirt", description: "Two-ply Egyptian cotton dress shirt with a semi-spread collar and single cuffs. Wrinkle-resistant finish.", category: "tops", subcategory: "dress-shirts", genderFit: "male", colors: ["White","Light Blue","Pale Pink"], materials: ["100% Egyptian Cotton"], styleTags: ["dress-shirt","formal","premium"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Men's Egyptian cotton dress shirt white formal", primaryImageUrl: "/lamalo/men-linen-shirt.jpg" },
-      { name: "Lamalo Merino V-Neck", description: "Fine-gauge 100% merino V-neck knit. Wears under a blazer or alone with trousers.", category: "tops", subcategory: "knitwear", genderFit: "male", colors: ["Navy","Charcoal","Black"], materials: ["100% Merino Wool"], styleTags: ["merino","knitwear","smart"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Men's fine merino V-neck knit navy", primaryImageUrl: "/lamalo/men-zip-hoodie.jpg" },
-      { name: "Lamalo Tailored Blazer", description: "Two-button tailored blazer in premium Italian wool-blend with a clean chest pocket and single-vent back.", category: "formalwear", subcategory: "blazers", genderFit: "male", colors: ["Navy","Stone","White"], materials: ["72% Wool","28% Polyester"], styleTags: ["blazer","smart","tailored"], leasePriceAud: 10, retailPriceAud: 60, referencePrompt: "Men's tailored blazer navy Italian wool", primaryImageUrl: "/lamalo/men-suit-jacket.jpg" },
-      { name: "Lamalo Cashmere Overcoat", description: "Long single-breasted overcoat in luxurious wool-cashmere blend. Peak lapel, button-front with a clean back vent.", category: "outerwear", subcategory: "overcoats", genderFit: "male", colors: ["Camel","Charcoal","Navy"], materials: ["70% Wool","30% Cashmere"], styleTags: ["overcoat","luxury","tailored"], leasePriceAud: 14, retailPriceAud: 84, referencePrompt: "Men's cashmere overcoat camel peak lapel long", primaryImageUrl: "/lamalo/men-bomber-jacket.jpg" },
-    ],
-  };
-
-  // ─── Collection 5: Men's Swimwear ────────────────────────────────────────────
-
-  const mensSwimwear: SeedCollection = {
-    name: "Lamalo Men's Swimwear",
-    description: "Lightweight, quick-dry swim shorts and trunks for the beach, pool and everything between.",
-    collectionType: "swimwear",
-    season: "Summer",
-    year: 2026,
-    styleTags: ["swimwear","beach","summer","quick-dry"],
-    collectionPriceAud: 3500,
-    items: [
-      { name: "Lamalo Classic Board Short", description: "Mid-thigh board short with elastic waist, side pockets and a Velcro fly. Fast-dry nylon.", category: "swimwear", subcategory: "board-shorts", genderFit: "male", colors: ["Navy/White","Cobalt Blue","Black"], materials: ["100% Nylon Quick-Dry"], styleTags: ["board-short","beach","classic"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's classic board short navy white waistband", primaryImageUrl: "/lamalo/swimwear-men-shorts.jpg" },
-      { name: "Lamalo Floral Swim Trunk", description: "Slim-cut swim trunk with bold tropical floral print, elasticated waist and a mesh liner.", category: "swimwear", subcategory: "swim-trunks", genderFit: "male", colors: ["Tropical Blue/Green","Navy","White"], materials: ["Recycled Nylon"], styleTags: ["swim-trunk","floral","tropical"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's slim swim trunk tropical floral print blue", primaryImageUrl: "/lamalo/swimwear-men-trunk.jpg" },
-      { name: "Lamalo Essential Swim Short", description: "Simple elastic-waist swim short with inner mesh brief and side pockets. Versatile and lightweight.", category: "swimwear", subcategory: "swim-shorts", genderFit: "male", colors: ["Black","Khaki","Navy"], materials: ["Polyester Quick-Dry"], styleTags: ["swim","essential","versatile"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's essential swim short black quick dry", primaryImageUrl: "/lamalo/swimwear-men-shorts.jpg" },
-      { name: "Lamalo Retro Swim Brief", description: "Low-rise retro-style swim brief in chlorine-resistant nylon/elastane blend.", category: "swimwear", subcategory: "swim-briefs", genderFit: "male", colors: ["Cobalt Blue","Black","White"], materials: ["80% Nylon","20% Elastane"], styleTags: ["swim-brief","retro","athletic"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's retro swim brief cobalt blue nylon", primaryImageUrl: "/lamalo/swimwear-men-trunk.jpg" },
-      { name: "Lamalo UPF50+ Rash Guard", description: "Long-sleeve rashguard with UPF50+ sun protection and a slim athletic fit.", category: "swimwear", subcategory: "rashguards", genderFit: "male", colors: ["White","Cobalt Blue","Black"], materials: ["82% Polyester","18% Elastane UPF50+"], styleTags: ["rashguard","UPF","surf"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's long sleeve rashguard white UPF50 sun protection", primaryImageUrl: "/lamalo/swimwear-men-shorts.jpg" },
-    ],
-  };
-
-  // ─── Collection 6: Men's Comfort Series (Elderly/Senior) ─────────────────────
-
-  const mensComfort: SeedCollection = {
-    name: "Lamalo Men's Comfort Series",
-    description: "Dignified, easy-wear clothing designed for comfort and confidence. Elastic waistbands, soft natural fabrics and practical details for relaxed daily life.",
-    collectionType: "core",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["comfort","senior","easy-care","relaxed","classic"],
-    collectionPriceAud: 6500,
-    items: [
-      { name: "Lamalo Heritage Flannel Shirt", description: "Long-sleeve brushed cotton flannel shirt with a button front and chest pockets. Warm, easy to wear.", category: "tops", subcategory: "shirts", genderFit: "male", colors: ["Navy Check","Burgundy Check","Grey"], materials: ["100% Brushed Cotton Flannel"], styleTags: ["flannel","comfort","casual"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's classic flannel check shirt navy brushed cotton", primaryImageUrl: "/lamalo/elderly-men-flannel-shirt.jpg", sizeRange: "S–3XL" },
-      { name: "Lamalo Button Cardigan", description: "Button-front cardigan in lambswool blend with ribbed cuffs and hem and two patch pockets.", category: "tops", subcategory: "knitwear", genderFit: "male", colors: ["Charcoal","Navy","Camel"], materials: ["80% Lambswool","20% Nylon"], styleTags: ["cardigan","knitwear","comfort"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Men's button front cardigan charcoal lambswool warm", primaryImageUrl: "/lamalo/elderly-men-cardigan.jpg", sizeRange: "S–3XL" },
-      { name: "Lamalo Anti-Pill Fleece Jacket", description: "Full-zip fleece jacket in anti-pill fabric with two front zip pockets and a chin guard.", category: "outerwear", subcategory: "fleece", genderFit: "male", colors: ["Navy","Charcoal","Forest Green"], materials: ["100% Anti-Pill Polyester Fleece"], styleTags: ["fleece","warm","practical"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Men's full zip anti-pill fleece jacket navy warm", primaryImageUrl: "/lamalo/elderly-men-fleece-jacket.jpg", sizeRange: "S–3XL" },
-      { name: "Lamalo Elastic-Waist Trouser", description: "Comfortable pull-on trouser with a full elastic waist and straight leg in soft cotton blend.", category: "bottoms", subcategory: "trousers", genderFit: "male", colors: ["Mid-Grey","Navy","Stone"], materials: ["65% Cotton","35% Polyester"], styleTags: ["comfort","elastic-waist","casual"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's elastic waist comfort trousers mid grey cotton blend", primaryImageUrl: "/lamalo/elderly-men-comfort-trouser.jpg", sizeRange: "S–3XL" },
-      { name: "Lamalo Puffer Gilet", description: "Lightweight quilted puffer gilet with zip front and two hand pockets. Excellent layering piece.", category: "outerwear", subcategory: "gilets", genderFit: "male", colors: ["Navy","Charcoal","Olive"], materials: ["Shell: Nylon","Fill: Polyester"], styleTags: ["gilet","puffer","layering"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Men's warm quilted gilet vest navy puffer", primaryImageUrl: "/lamalo/elderly-men-gilet.jpg", sizeRange: "S–3XL" },
-      { name: "Lamalo Relaxed Polo", description: "Soft jersey polo with a two-button placket. Easy to put on and comfortable all day.", category: "tops", subcategory: "polos", genderFit: "male", colors: ["Sky Blue","White","Stone"], materials: ["100% Soft Cotton Jersey"], styleTags: ["polo","comfort","classic"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's relaxed fit long sleeve polo sky blue comfortable senior", primaryImageUrl: "/lamalo/elderly-men-polo.jpg", sizeRange: "S–3XL" },
-      { name: "Lamalo Cotton Pyjama Set", description: "Classic two-piece pyjama set in 100% cotton with a button-front top and elasticated trouser.", category: "nightwear", subcategory: "pyjamas", genderFit: "male", colors: ["Navy/White Stripe","Grey/Blue"], materials: ["100% Cotton"], styleTags: ["pyjamas","nightwear","comfort"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Men's soft cotton pyjama set navy white stripe classic", primaryImageUrl: "/lamalo/elderly-men-pyjama.jpg", sizeRange: "S–3XL" },
-      { name: "Lamalo Wool Flat Cap", description: "Classic wool-blend flat cap with a fully lined interior and a snap brim.", category: "accessories", subcategory: "hats", genderFit: "male", colors: ["Beige Herringbone","Charcoal","Navy"], materials: ["80% Wool","20% Polyester"], styleTags: ["flat-cap","classic","heritage"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's wool herringbone flat cap beige classic senior", primaryImageUrl: "/lamalo/elderly-men-flat-cap.jpg" },
-      { name: "Lamalo Memory Foam Slipper", description: "Sherpa-lined open-back slipper with a memory foam footbed and non-slip rubber sole.", category: "footwear", subcategory: "slippers", genderFit: "male", colors: ["Brown","Navy"], materials: ["Faux Suede","Sherpa Lining","Memory Foam"], styleTags: ["slipper","comfort","home"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Men's sherpa lined memory foam slipper brown warm", primaryImageUrl: "/lamalo/elderly-men-slipper.jpg", sizeRange: "UK 6–13" },
-    ],
-  };
-
-  // ─── Collection 7: Women's Everyday Casual (Country Road DNA) ────────────────
-
-  const womensEveryday: SeedCollection = {
-    name: "Lamalo Women's Everyday",
-    description: "Effortless everyday dressing in natural fabrics and quiet earth tones. Relaxed, refined and seasonlessly wearable — Country Road spirit in a Lamalo edit.",
-    collectionType: "core",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["casual","linen","natural","relaxed","feminine"],
-    collectionPriceAud: 9000,
-    items: [
-      { name: "Lamalo Linen Midi Dress", description: "Relaxed A-line linen-blend midi dress with a V-neckline, side pockets and a tied waist sash.", category: "dresses", subcategory: "midi-dresses", genderFit: "female", colors: ["Sand","Sage Green","White","Dusty Rose"], materials: ["55% Linen","45% Cotton"], styleTags: ["linen","dress","relaxed","feminine"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Women's relaxed linen midi dress sand natural colour", primaryImageUrl: "/lamalo/women-linen-dress.jpg" },
-      { name: "Lamalo Silk-Touch Blouse", description: "Relaxed-fit blouse in silk-viscose blend with a soft drape and V-neckline. Tucks in or wears out.", category: "tops", subcategory: "blouses", genderFit: "female", colors: ["Ivory","Dusty Pink","White","Sage"], materials: ["70% Viscose","30% Silk"], styleTags: ["blouse","elegant","feminine"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Women's elegant silk blouse ivory white soft drape", primaryImageUrl: "/lamalo/women-silk-blouse.jpg" },
-      { name: "Lamalo Fitted Blazer", description: "Tailored single-button blazer with a clean lapel, welt pockets and a slightly suppressed waist.", category: "outerwear", subcategory: "blazers", genderFit: "female", colors: ["White","Camel","Black","Cobalt"], materials: ["Cotton Blend"], styleTags: ["blazer","tailored","smart-casual"], leasePriceAud: 9, retailPriceAud: 54, referencePrompt: "Women's fitted tailored blazer crisp white clean lapels", primaryImageUrl: "/lamalo/women-blazer.jpg" },
-      { name: "Lamalo Wide-Leg Trouser", description: "Relaxed wide-leg trouser in soft crepe with a high waist and clean-pressed front crease.", category: "bottoms", subcategory: "trousers", genderFit: "female", colors: ["Champagne","Black","Sage","Camel"], materials: ["Crepe/Linen Blend"], styleTags: ["wide-leg","tailored","relaxed"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Women's wide leg tailored trousers champagne ivory", primaryImageUrl: "/lamalo/women-wide-leg-pants.jpg" },
-      { name: "Lamalo Linen Jumpsuit", description: "Long-sleeve V-neck linen jumpsuit with a belted waist and relaxed wide-leg. Effortless one-piece dressing.", category: "dresses", subcategory: "jumpsuits", genderFit: "female", colors: ["Terracotta","Sand","White"], materials: ["55% Linen","45% Cotton"], styleTags: ["jumpsuit","linen","one-piece"], leasePriceAud: 7, retailPriceAud: 42, referencePrompt: "Women's casual linen wide leg jumpsuit terracotta", primaryImageUrl: "/lamalo/women-jumpsuit.jpg" },
-      { name: "Lamalo Wrap Midi Skirt", description: "Wrap-front midi skirt in cotton-linen blend with a side tie and a softly flared hem.", category: "bottoms", subcategory: "skirts", genderFit: "female", colors: ["Navy","Floral Print","Olive"], materials: ["55% Linen","45% Cotton"], styleTags: ["skirt","midi","relaxed"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Women's wrap front midi skirt navy cotton linen", primaryImageUrl: "/lamalo/women-wide-leg-pants.jpg" },
-      { name: "Lamalo Ribbed Tee", description: "Fitted ribbed cotton crew-neck tee. A seasonless wardrobe staple in versatile colours.", category: "tops", subcategory: "t-shirts", genderFit: "female", colors: ["White","Black","Sage","Terracotta"], materials: ["100% Cotton Rib"], styleTags: ["tee","essential","fitted"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Women's fitted ribbed cotton tee white minimal", primaryImageUrl: "/lamalo/women-silk-blouse.jpg" },
-      { name: "Lamalo Classic Denim", description: "High-rise straight-leg denim in stretch cotton. Versatile five-pocket construction.", category: "bottoms", subcategory: "jeans", genderFit: "female", colors: ["Indigo","Mid-Wash","Black"], materials: ["98% Cotton","2% Elastane"], styleTags: ["denim","classic","everyday"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Women's high rise straight leg denim jeans indigo", primaryImageUrl: "/lamalo/men-denim-jean.jpg" },
-    ],
-  };
-
-  // ─── Collection 8: Women's Active (Nike DNA) ─────────────────────────────────
-
-  const womensActive: SeedCollection = {
-    name: "Lamalo Women's Active",
-    description: "Performance activewear built for women. Moisture-wicking fabrics, supportive construction and clean sport aesthetics that go from studio to street.",
-    collectionType: "sport",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["activewear","performance","sport","athletic","fitness"],
-    collectionPriceAud: 7500,
-    items: [
-      { name: "Lamalo High-Waist Legging", description: "Full-length high-waist legging in 4-way stretch nylon-elastane. Squat-proof, moisture-wicking and flattering on all bodies.", category: "activewear", subcategory: "leggings", genderFit: "female", colors: ["Slate Grey","Black","Cobalt Blue","Dusty Rose"], materials: ["78% Nylon","22% Elastane"], styleTags: ["leggings","high-waist","performance"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's high waist performance leggings slate grey", primaryImageUrl: "/lamalo/women-leggings.jpg" },
-      { name: "Lamalo Sport Bra", description: "Medium-support sport bra with a wide underband and removable pads. Smooth and minimal.", category: "activewear", subcategory: "sport-bras", genderFit: "female", colors: ["Black","White","Cobalt Blue"], materials: ["78% Nylon","22% Elastane"], styleTags: ["sport-bra","support","minimal"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Women's medium support sport bra midnight black minimal", primaryImageUrl: "/lamalo/women-sport-bra.jpg" },
-      { name: "Lamalo Windbreaker", description: "Lightweight ripstop windbreaker with a packable hood, thumbhole cuffs and a drop-back hem.", category: "outerwear", subcategory: "jackets", genderFit: "female", colors: ["Cobalt Blue","Black","Sage"], materials: ["Ripstop Nylon"], styleTags: ["windbreaker","running","packable"], leasePriceAud: 7, retailPriceAud: 42, referencePrompt: "Women's lightweight running windbreaker cobalt blue", primaryImageUrl: "/lamalo/women-windbreaker.jpg" },
-      { name: "Lamalo Performance Tracksuit", description: "Matching two-piece tracksuit in moisture-wicking performance jersey. Zip jacket and matching track pant.", category: "activewear", subcategory: "tracksuits", genderFit: "female", colors: ["Lavender","Black","Cobalt Blue"], materials: ["Polyester Jersey"], styleTags: ["tracksuit","sport","matching-set"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's retro athletic tracksuit lavender with white stripe", primaryImageUrl: "/lamalo/women-tracksuit.jpg" },
-      { name: "Lamalo Active Running Tank", description: "Dri-Lite running tank with a racerback cut and flatlock seams. Lightweight and breezy.", category: "activewear", subcategory: "tanks", genderFit: "female", colors: ["White","Black","Pink"], materials: ["Recycled Polyester"], styleTags: ["tank","running","athletic"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Women's lightweight running tank white racerback athletic", primaryImageUrl: "/lamalo/women-sport-bra.jpg" },
-      { name: "Lamalo Active Short", description: "High-waist active short with a 3" inseam and built-in liner. Great for training and HIIT.", category: "activewear", subcategory: "shorts", genderFit: "female", colors: ["Black","Navy","Cobalt"], materials: ["Nylon/Spandex"], styleTags: ["shorts","training","active"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Women's high waist active short black training", primaryImageUrl: "/lamalo/women-leggings.jpg" },
-      { name: "Lamalo Seamless Crop Top", description: "Seamless-knit long-sleeve crop top with a fitted silhouette. Studio-ready and street-ready.", category: "activewear", subcategory: "tops", genderFit: "female", colors: ["Grey","Black","White"], materials: ["Seamless Nylon-Elastane"], styleTags: ["seamless","crop","studio"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Women's seamless crop top grey fitted athletic", primaryImageUrl: "/lamalo/women-sport-bra.jpg" },
-    ],
-  };
-
-  // ─── Collection 9: Women's Originals (Adidas DNA) ────────────────────────────
-
-  const womensOriginals: SeedCollection = {
-    name: "Lamalo Women's Originals",
-    description: "Retro athletic heritage for women. Tricot tracksuits, heritage hoodies and classic sport aesthetics with a modern feminine cut.",
-    collectionType: "lifestyle",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["retro","originals","streetwear","sport-casual","heritage"],
-    collectionPriceAud: 5500,
-    items: [
-      { name: "Lamalo Women's Retro Tracksuit", description: "Matching tricot tracksuit with contrast side stripe. Zip jacket and slim track pant.", category: "activewear", subcategory: "tracksuits", genderFit: "female", colors: ["Lavender/White","Black","Cobalt Blue"], materials: ["100% Polyester Tricot"], styleTags: ["retro","tracksuit","originals"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's retro tracksuit set lavender white stripe side detail", primaryImageUrl: "/lamalo/women-tracksuit.jpg" },
-      { name: "Lamalo Women's Heritage Hoodie", description: "Oversized cotton-fleece hoodie with a front pouch pocket and subtle Originals branding.", category: "tops", subcategory: "hoodies", genderFit: "female", colors: ["Grey Marle","White","Black"], materials: ["80% Cotton","20% Polyester"], styleTags: ["hoodie","oversized","heritage"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Women's oversized heritage hoodie grey marle cotton", primaryImageUrl: "/lamalo/men-zip-hoodie.jpg" },
-      { name: "Lamalo Women's Classic Tee", description: "Relaxed-fit cotton tee with minimal Originals graphic at the chest.", category: "tops", subcategory: "t-shirts", genderFit: "female", colors: ["White","Pink","Black","Grey"], materials: ["100% Cotton"], styleTags: ["tee","relaxed","originals"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Women's classic originals cotton tee white minimal graphic", primaryImageUrl: "/lamalo/women-silk-blouse.jpg" },
-      { name: "Lamalo Women's Retro Zip Jacket", description: "Quarter-zip sport jacket with retro stripe detailing on the sleeves. Sporty and versatile.", category: "outerwear", subcategory: "jackets", genderFit: "female", colors: ["Cobalt Blue","White","Pink"], materials: ["Polyester Tricot"], styleTags: ["zip-jacket","retro","sport"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Women's retro zip jacket cobalt blue stripe sleeves", primaryImageUrl: "/lamalo/women-windbreaker.jpg" },
-      { name: "Lamalo Women's Athletic Skort", description: "Pleated skort over built-in shorts. High waist, sporty cut and a clean white aesthetic.", category: "activewear", subcategory: "skirts", genderFit: "female", colors: ["White","Black","Navy"], materials: ["Nylon/Spandex"], styleTags: ["skort","tennis","athletic"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's athletic skort white pleated high waist", primaryImageUrl: "/lamalo/women-leggings.jpg" },
-    ],
-  };
-
-  // ─── Collection 10: Women's Luxury Formal (Armani DNA) ───────────────────────
-
-  const womensFormal: SeedCollection = {
-    name: "Lamalo Women's Luxury",
-    description: "Refined tailoring and understated luxury. Italian-inspired minimalism, premium fabrics and a polished aesthetic for every formal occasion.",
-    collectionType: "formal",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["luxury","formal","tailored","elegant","minimal"],
-    collectionPriceAud: 16000,
-    items: [
-      { name: "Lamalo Structured Blazer", description: "Sharp single-button blazer in Italian crepe with structured shoulders and a fitted waist.", category: "formalwear", subcategory: "blazers", genderFit: "female", colors: ["White","Camel","Black"], materials: ["Italian Crepe"], styleTags: ["blazer","structured","luxury"], leasePriceAud: 10, retailPriceAud: 60, referencePrompt: "Women's structured blazer white Italian crepe sharp", primaryImageUrl: "/lamalo/women-blazer.jpg" },
-      { name: "Lamalo Wide-Leg Formal Trouser", description: "Wide-leg formal trouser in premium crepe with a high waist and clean-pressed front crease.", category: "bottoms", subcategory: "dress-trousers", genderFit: "female", colors: ["White","Black","Champagne"], materials: ["Premium Crepe"], styleTags: ["formal","wide-leg","luxury"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's wide leg formal trouser white premium crepe", primaryImageUrl: "/lamalo/women-wide-leg-pants.jpg" },
-      { name: "Lamalo Pure Silk Blouse", description: "Pure silk blouse with mother-of-pearl buttons, a soft drape and a relaxed tuck-in silhouette.", category: "tops", subcategory: "blouses", genderFit: "female", colors: ["Ivory","Blush","White"], materials: ["100% Pure Silk"], styleTags: ["silk","blouse","luxury"], leasePriceAud: 9, retailPriceAud: 54, referencePrompt: "Women's pure silk blouse ivory elegant formal", primaryImageUrl: "/lamalo/women-silk-blouse.jpg" },
-      { name: "Lamalo Cashmere Sweater", description: "Fine-gauge cashmere crew-neck sweater with a relaxed drape and minimal detailing.", category: "tops", subcategory: "knitwear", genderFit: "female", colors: ["Cream","Black","Navy"], materials: ["100% Cashmere"], styleTags: ["cashmere","luxury","knitwear"], leasePriceAud: 10, retailPriceAud: 60, referencePrompt: "Women's fine cashmere crew neck sweater cream", primaryImageUrl: "/lamalo/women-silk-blouse.jpg" },
-      { name: "Lamalo Tailored Coat", description: "Long single-breasted coat in premium wool blend with a clean lapel and back vent.", category: "outerwear", subcategory: "coats", genderFit: "female", colors: ["Camel","Black","Navy"], materials: ["70% Wool","30% Polyester"], styleTags: ["coat","luxury","tailored"], leasePriceAud: 14, retailPriceAud: 84, referencePrompt: "Women's long tailored coat camel wool blend premium", primaryImageUrl: "/lamalo/women-blazer.jpg" },
-      { name: "Lamalo Satin Slip Dress", description: "Bias-cut satin slip dress with thin adjustable straps and a subtle back split. Timeless elegance.", category: "dresses", subcategory: "evening-dresses", genderFit: "female", colors: ["Black","Ivory","Champagne"], materials: ["Polyester Satin"], styleTags: ["slip-dress","satin","evening"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's satin slip dress black bias cut elegant formal", primaryImageUrl: "/lamalo/women-linen-dress.jpg" },
-      { name: "Lamalo Pleated Midi Skirt", description: "Pleated crepe midi skirt with an elasticated waist and a graceful swirl silhouette.", category: "bottoms", subcategory: "skirts", genderFit: "female", colors: ["Black","Ivory","Blush"], materials: ["Premium Crepe"], styleTags: ["pleated","midi","elegant"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's pleated midi skirt black crepe elegant", primaryImageUrl: "/lamalo/women-wide-leg-pants.jpg" },
-    ],
-  };
-
-  // ─── Collection 11: Women's Swimwear ─────────────────────────────────────────
-
-  const womensSwimwear: SeedCollection = {
-    name: "Lamalo Women's Swimwear",
-    description: "From laps to the beach — thoughtfully designed swimwear for women in every body-confident cut.",
-    collectionType: "swimwear",
-    season: "Summer",
-    year: 2026,
-    styleTags: ["swimwear","beach","summer","poolside","confidence"],
-    collectionPriceAud: 5500,
-    items: [
-      { name: "Lamalo Classic One-Piece", description: "Scoop-neck one-piece swimsuit with a low back and clean lines. Chlorine-resistant fabric.", category: "swimwear", subcategory: "one-piece", genderFit: "female", colors: ["Black","Cobalt Blue","Sage"], materials: ["80% Nylon","20% Elastane Chlorine-Resistant"], styleTags: ["one-piece","classic","elegant"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's classic one piece swimsuit black low back elegant", primaryImageUrl: "/lamalo/swimwear-women-onepiece.jpg" },
-      { name: "Lamalo Triangle Bikini", description: "Adjustable triangle top and low-rise brief bottom in recycled nylon. Minimal and versatile.", category: "swimwear", subcategory: "bikinis", genderFit: "female", colors: ["Cobalt Blue","Terracotta","Sage","Black"], materials: ["Recycled Nylon/Elastane"], styleTags: ["bikini","triangle","minimal"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's triangle bikini set cobalt blue top and brief", primaryImageUrl: "/lamalo/swimwear-women-bikini.jpg" },
-      { name: "Lamalo Modest Long-Sleeve Swimsuit", description: "Long-sleeve modest one-piece with UPF50+ protection. Full coverage, modern style.", category: "swimwear", subcategory: "one-piece", genderFit: "female", colors: ["Navy/White","Sage","Black"], materials: ["UPF50+ Nylon/Elastane"], styleTags: ["modest","UPF","coverage"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Women's modest long sleeve swimsuit navy white UPF50", primaryImageUrl: "/lamalo/swimwear-women-modest.jpg" },
-      { name: "Lamalo Ruched One-Piece", description: "Ruched one-piece with a flattering gathered front panel and adjustable straps.", category: "swimwear", subcategory: "one-piece", genderFit: "female", colors: ["Blush","Black","White"], materials: ["Nylon/Spandex"], styleTags: ["ruched","one-piece","flattering"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Women's ruched one piece swimsuit blush gathered front", primaryImageUrl: "/lamalo/swimwear-women-onepiece.jpg" },
-      { name: "Lamalo Sporty Bikini Set", description: "Sporty crop-top bikini with a supportive wired cup and matching high-waist brief.", category: "swimwear", subcategory: "bikinis", genderFit: "female", colors: ["Black","Cobalt Blue","White"], materials: ["Recycled Nylon/Elastane"], styleTags: ["bikini","sporty","high-waist"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's sporty crop bikini set black high waist", primaryImageUrl: "/lamalo/swimwear-women-bikini.jpg" },
-      { name: "Lamalo Floral Bikini", description: "Tropical floral-print bikini with an underwire push-up top and tie-side bottoms.", category: "swimwear", subcategory: "bikinis", genderFit: "female", colors: ["Tropical Print","Cobalt","Sage"], materials: ["Recycled Nylon/Elastane"], styleTags: ["bikini","floral","tropical"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's tropical floral bikini cobalt blue tie side", primaryImageUrl: "/lamalo/swimwear-women-bikini.jpg" },
-      { name: "Lamalo Swimwear Cover-Up", description: "Sheer cotton gauze cover-up dress with a V-neckline and side slits. Beach essential.", category: "swimwear", subcategory: "cover-ups", genderFit: "female", colors: ["White","Sand","Navy Stripe"], materials: ["Cotton Gauze"], styleTags: ["cover-up","beach","sheer"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's cotton gauze beach cover up dress white sheer", primaryImageUrl: "/lamalo/women-linen-dress.jpg" },
-    ],
-  };
-
-  // ─── Collection 12: Women's Comfort Series (Elderly/Senior) ──────────────────
-
-  const womensComfort: SeedCollection = {
-    name: "Lamalo Women's Comfort Series",
-    description: "Elegant, practical and easy-wear clothing for women who value comfort without compromising on style. Soft fabrics, easy fastenings and a dignified aesthetic.",
-    collectionType: "core",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["comfort","senior","easy-care","classic","dignified"],
-    collectionPriceAud: 7500,
-    items: [
-      { name: "Lamalo Wrap Midi Dress", description: "Soft viscose wrap dress with a V-neckline and gentle floral print. Easy to put on, flattering on all shapes.", category: "dresses", subcategory: "midi-dresses", genderFit: "female", colors: ["Dusty Rose/Floral","Lavender","Navy"], materials: ["100% Viscose"], styleTags: ["wrap-dress","comfort","feminine"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Women's elegant wrap midi dress dusty rose floral print modest", primaryImageUrl: "/lamalo/elderly-women-wrap-dress.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Elastic-Waist Trouser", description: "Pull-on trouser with a full elastic waist in soft cotton. Comfortable and dignified all day.", category: "bottoms", subcategory: "trousers", genderFit: "female", colors: ["Pale Blue","Navy","Blush"], materials: ["65% Cotton","35% Polyester"], styleTags: ["comfort","elastic-waist","classic"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's relaxed pull-on trouser elastic waist pale blue comfortable", primaryImageUrl: "/lamalo/elderly-women-elastic-trouser.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Long Wrap Cardigan", description: "Flowing open-front cardigan in merino blend that wraps and ties. Exceptionally comfortable.", category: "tops", subcategory: "knitwear", genderFit: "female", colors: ["Blush","Grey","Sage"], materials: ["70% Merino Wool","30% Polyester"], styleTags: ["cardigan","wrap","cosy"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Women's warm open front long cardigan soft blush pink knit", primaryImageUrl: "/lamalo/elderly-women-long-cardigan.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Button Blouse", description: "Button-front blouse in easy-care cotton with a soft drape and gentle collar. Timeless.", category: "tops", subcategory: "blouses", genderFit: "female", colors: ["Sky Blue","White","Blush"], materials: ["100% Easy-Care Cotton"], styleTags: ["blouse","button-front","classic"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's classic button front blouse sky blue easy care", primaryImageUrl: "/lamalo/elderly-women-blouse.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Quilted Zip Jacket", description: "Lightweight zip-front quilted jacket with easy-access pockets. Warm, neat and packable.", category: "outerwear", subcategory: "jackets", genderFit: "female", colors: ["Teal","Navy","Blush"], materials: ["Shell: Polyester","Fill: Polyester"], styleTags: ["quilted","jacket","practical"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Women's lightweight quilted jacket teal zip up warm", primaryImageUrl: "/lamalo/elderly-women-quilted-jacket.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Floral Cotton Nightgown", description: "Long cotton nightgown with a button-front neckline and soft floral print. Cosy and modest.", category: "nightwear", subcategory: "nightgowns", genderFit: "female", colors: ["White/Pink Floral","Blue/White"], materials: ["100% Cotton"], styleTags: ["nightgown","nightwear","comfort"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Women's soft cotton floral nightgown white pink long modest", primaryImageUrl: "/lamalo/elderly-women-nightgown.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo A-Line Midi Skirt", description: "Classic A-line midi skirt in soft cotton-blend with a fully elasticated waist.", category: "bottoms", subcategory: "skirts", genderFit: "female", colors: ["Navy","Black","Blush"], materials: ["65% Cotton","35% Polyester"], styleTags: ["skirt","a-line","classic"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's classic A-line skirt midi length navy blue", primaryImageUrl: "/lamalo/elderly-women-midi-skirt.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Wool-Mix Coat", description: "Warm wool-mix coat with a classic lapel, button-front and side pockets. Smart and practical.", category: "outerwear", subcategory: "coats", genderFit: "female", colors: ["Camel","Navy","Charcoal"], materials: ["60% Wool","40% Polyester"], styleTags: ["coat","wool","classic"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's warm wool mix coat camel full length classic senior", primaryImageUrl: "/lamalo/elderly-women-wool-coat.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Wide-Fit Walking Shoe", description: "Supportive wide-fit leather walking shoe with a cushioned insole and non-slip sole.", category: "footwear", subcategory: "walking-shoes", genderFit: "female", colors: ["White","Navy","Black"], materials: ["Leather Upper","Cushioned Insole"], styleTags: ["walking-shoe","comfortable","supportive"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's comfortable wide fit walking shoe white leather supportive", primaryImageUrl: "/lamalo/elderly-women-walking-shoe.jpg", sizeRange: "UK 3–9 (Wide)" },
-    ],
-  };
-
-  // ─── Collection 13: Kids' Everyday ───────────────────────────────────────────
-
-  const kidsEveryday: SeedCollection = {
-    name: "Lamalo Kids' Everyday",
-    description: "Durable, comfortable and fun everyday clothing for kids. Designed to handle playground adventures and look great doing it.",
-    collectionType: "core",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["kids","everyday","colourful","durable","comfortable"],
-    collectionPriceAud: 4500,
-    items: [
-      { name: "Lamalo Kids' Graphic Tee", description: "Soft organic cotton tee with a bold Lamalo graphic on the front. Machine washable and super soft.", category: "tops", subcategory: "t-shirts", genderFit: "kids", colors: ["Yellow","Red","Cobalt Blue","White"], materials: ["100% Organic Cotton"], styleTags: ["graphic-tee","kids","colourful"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Children's colourful graphic tee yellow organic cotton", primaryImageUrl: "/lamalo/kids-graphic-tee.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' School Polo", description: "Hardwearing pique cotton polo perfect for school or everyday wear. Easy-care fabric.", category: "tops", subcategory: "polos", genderFit: "kids", colors: ["White","Navy","Red","Cobalt"], materials: ["100% Cotton Pique"], styleTags: ["polo","school","smart"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Children's classic school polo shirt white navy easy care", primaryImageUrl: "/lamalo/kids-polo-shirt.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' Slim Denim", description: "Slim-fit stretch denim jeans for kids with an adjustable inner waist and reinforced knees.", category: "bottoms", subcategory: "jeans", genderFit: "kids", colors: ["Indigo","Mid-Wash","Black"], materials: ["Cotton/Elastane Denim"], styleTags: ["denim","kids","durable"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's slim fit stretch denim jeans indigo adjustable waist", primaryImageUrl: "/lamalo/kids-denim-jeans.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' Fleece Hoodie", description: "Cosy cotton-fleece hoodie with a kangaroo pouch pocket and flat-lock seams.", category: "tops", subcategory: "hoodies", genderFit: "kids", colors: ["Coral","Cobalt Blue","Black"], materials: ["80% Cotton","20% Polyester Fleece"], styleTags: ["hoodie","cosy","kids"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's cosy fleece hoodie coral pink soft cotton", primaryImageUrl: "/lamalo/kids-fleece-hoodie.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Girls' Linen Dress", description: "Relaxed linen-cotton dress with flutter sleeves and a smocked waist. Perfect for warm days.", category: "dresses", subcategory: "casual-dresses", genderFit: "kids", colors: ["Pink","White","Sage"], materials: ["55% Linen","45% Cotton"], styleTags: ["dress","girls","linen"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's linen summer dress pink light flutter sleeves", primaryImageUrl: "/lamalo/kids-linen-dress.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' Canvas Sneaker", description: "Classic low-top canvas sneaker with a cushioned insole and flexible rubber sole.", category: "footwear", subcategory: "sneakers", genderFit: "kids", colors: ["White/Rainbow","White/Blue"], materials: ["Canvas Upper","Rubber Sole"], styleTags: ["sneaker","kids","casual"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's canvas low-top sneaker white rainbow sole", primaryImageUrl: "/lamalo/kids-sneaker.jpg", sizeRange: "UK 6–2 (Kids)" },
-      { name: "Lamalo Kids' Velcro Sandal", description: "Adjustable velcro sport sandal with cushioned footbed and a flexible EVA sole.", category: "footwear", subcategory: "sandals", genderFit: "kids", colors: ["Teal","White","Black"], materials: ["Synthetic Upper","EVA Sole"], styleTags: ["sandal","velcro","summer"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Children's velcro sport sandal teal blue EVA sole", primaryImageUrl: "/lamalo/kids-sandal.jpg", sizeRange: "UK 6–2 (Kids)" },
-      { name: "Lamalo Kids' Cotton Shorts", description: "Elasticated-waist cotton shorts for comfortable all-day wear. Machine washable.", category: "bottoms", subcategory: "shorts", genderFit: "kids", colors: ["Khaki","Navy","Grey"], materials: ["100% Cotton Twill"], styleTags: ["shorts","casual","comfortable"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Children's casual cotton shorts khaki elasticated waist", primaryImageUrl: "/lamalo/kids-shorts.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-    ],
-  };
-
-  // ─── Collection 14: Kids' Active & Outerwear ─────────────────────────────────
-
-  const kidsActive: SeedCollection = {
-    name: "Lamalo Kids' Active",
-    description: "High-energy outerwear and activewear that keeps up with kids from school run to sport. Durable, practical and full of colour.",
-    collectionType: "sport",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["kids","active","sport","outerwear","durable"],
-    collectionPriceAud: 4000,
-    items: [
-      { name: "Lamalo Kids' Retro Tracksuit", description: "Matching zip jacket and jogger in performance jersey with a classic side stripe.", category: "activewear", subcategory: "tracksuits", genderFit: "kids", colors: ["Cobalt/White","Red/White","Black"], materials: ["Polyester Jersey"], styleTags: ["tracksuit","sport","retro"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Children's retro tracksuit cobalt blue white stripe athletic", primaryImageUrl: "/lamalo/kids-tracksuit.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' Puffer Jacket", description: "Lightweight warmth without the bulk. Water-resistant puffer with a hood and two zip pockets.", category: "outerwear", subcategory: "jackets", genderFit: "kids", colors: ["Yellow","Cobalt Blue","Pink"], materials: ["Shell: Nylon","Fill: Polyester"], styleTags: ["puffer","warm","kids"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Children's bright yellow puffer jacket warm lightweight hood", primaryImageUrl: "/lamalo/kids-puffer-jacket.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' Waterproof Rain Jacket", description: "Fully waterproof rain jacket with a packable hood, reflective trim and taped seams.", category: "outerwear", subcategory: "rain-jackets", genderFit: "kids", colors: ["Orange","Yellow","Cobalt"], materials: ["Waterproof Polyester Shell"], styleTags: ["rain-jacket","waterproof","kids"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Children's bright waterproof rain jacket orange hood reflective", primaryImageUrl: "/lamalo/kids-rain-jacket.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' Party Dress", description: "Tulle and satin party dress with a bow sash and full skirt. Perfect for celebrations.", category: "dresses", subcategory: "formal-dresses", genderFit: "kids", colors: ["Pink","Cobalt Blue","White"], materials: ["Polyester Satin","Tulle"], styleTags: ["party-dress","formal","princess"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's tulle party dress pink bow sash full skirt", primaryImageUrl: "/lamalo/kids-party-dress.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' Sport Shorts", description: "Lightweight nylon shorts with an elasticated waist and a small side pocket.", category: "bottoms", subcategory: "shorts", genderFit: "kids", colors: ["Black","Navy","Cobalt","Red"], materials: ["100% Nylon"], styleTags: ["shorts","sport","active"], leasePriceAud: 1, retailPriceAud: 6, referencePrompt: "Children's lightweight sport shorts black nylon elastic waist", primaryImageUrl: "/lamalo/kids-shorts.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' School Backpack", description: "Durable nylon backpack with padded back panel, organiser pockets and a water bottle side pocket.", category: "accessories", subcategory: "bags", genderFit: "kids", colors: ["Teal","Cobalt","Pink"], materials: ["Nylon"], styleTags: ["backpack","school","kids"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's colourful school backpack teal green multiple pockets", primaryImageUrl: "/lamalo/kids-backpack.jpg" },
-    ],
-  };
-
-  // ─── Collection 15: Kids' Swimwear ───────────────────────────────────────────
-
-  const kidsSwimwear: SeedCollection = {
-    name: "Lamalo Kids' Swimwear",
-    description: "Sun-smart and fun swimwear for kids. UPF50+ fabrics, durable construction and bright designs built for the pool and beach.",
-    collectionType: "swimwear",
-    season: "Summer",
-    year: 2026,
-    styleTags: ["kids","swimwear","UPF","summer","colourful"],
-    collectionPriceAud: 2500,
-    items: [
-      { name: "Lamalo Kids' UPF50+ One-Piece", description: "Colourful UPF50+ swimsuit with a crossback design and chlorine-resistant fabric.", category: "swimwear", subcategory: "one-piece", genderFit: "kids", colors: ["Rainbow Print","Cobalt Blue","Pink"], materials: ["UPF50+ Nylon/Elastane"], styleTags: ["one-piece","UPF","colourful"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's colourful UPF50+ swimsuit rainbow crossback", primaryImageUrl: "/lamalo/swimwear-kids-onepiece.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Kids' Rashguard Set", description: "Long-sleeve rashguard with matching shorts in UPF50+ fabric. Full sun protection for beach days.", category: "swimwear", subcategory: "rashguards", genderFit: "kids", colors: ["Blue Dinosaur","Tropical Print"], materials: ["UPF50+ Polyester"], styleTags: ["rashguard","UPF","kids"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's rashguard set blue dinosaur print long sleeve UPF50", primaryImageUrl: "/lamalo/swimwear-kids-rashguard-set.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Boys' Swim Short", description: "Quick-dry board short with elasticated waist and inner mesh brief.", category: "swimwear", subcategory: "swim-shorts", genderFit: "kids", colors: ["Cobalt/White","Tropical Print"], materials: ["Quick-Dry Nylon"], styleTags: ["swim-short","boys","beach"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Children's boys swim short cobalt blue quick dry beach", primaryImageUrl: "/lamalo/swimwear-kids-onepiece.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-      { name: "Lamalo Girls' Frill Swimsuit", description: "Frill-trim one-piece with a modest neckline and UPF30+ protection. Adorable and practical.", category: "swimwear", subcategory: "one-piece", genderFit: "kids", colors: ["Pink","Cobalt Blue","Mint"], materials: ["Nylon/Spandex UPF30+"], styleTags: ["swimsuit","girls","frill"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's girls frill swimsuit pink adorable UPF protection", primaryImageUrl: "/lamalo/swimwear-kids-onepiece.jpg", sizeRange: "2–3Y,3–4Y,4–5Y,5–6Y,6–7Y,7–8Y,8–9Y,9–10Y,10–11Y,11–12Y" },
-    ],
-  };
-
-  // ─── Collection 16: Men's Footwear ───────────────────────────────────────────
-
-  const mensFootwear: SeedCollection = {
-    name: "Lamalo Men's Footwear",
-    description: "From canvas court sneakers to polished leather dress shoes — every style a man needs, built with quality materials at Lamalo's competitive pricing.",
-    collectionType: "footwear",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["footwear","shoes","sneakers","leather","men"],
-    collectionPriceAud: 9500,
-    items: [
-      { name: "Lamalo Canvas Lo Sneaker", description: "Low-profile canvas sneaker with a vulcanised rubber sole and clean minimal upper. A classic icon.", category: "footwear", subcategory: "sneakers", genderFit: "male", colors: ["White","Black/White","Navy"], materials: ["Canvas Upper","Rubber Sole"], styleTags: ["sneaker","canvas","classic"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Men's clean low top canvas sneaker white rubber sole minimal", primaryImageUrl: "/lamalo/shoe-canvas-sneaker.jpg", sizeRange: "UK 6–14" },
-      { name: "Lamalo Performance Runner", description: "Lightweight running trainer with engineered mesh upper, foam midsole and high-traction outsole.", category: "footwear", subcategory: "running-shoes", genderFit: "male", colors: ["White/Cobalt","Black","Grey/White"], materials: ["Mesh Upper","Foam Midsole","Rubber Outsole"], styleTags: ["running","performance","trainer"], leasePriceAud: 7, retailPriceAud: 42, referencePrompt: "Men's performance runner white cobalt blue foam midsole mesh", primaryImageUrl: "/lamalo/shoe-running-trainer.jpg", sizeRange: "UK 6–14" },
-      { name: "Lamalo Penny Loafer", description: "Classic leather penny loafer with a stacked heel and leather lining. Italian-inspired.", category: "footwear", subcategory: "loafers", genderFit: "male", colors: ["Brown","Black","Tan"], materials: ["Full-Grain Leather"], styleTags: ["loafer","leather","classic"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Men's leather penny loafer chocolate brown stacked heel", primaryImageUrl: "/lamalo/shoe-leather-loafer.jpg", sizeRange: "UK 6–13" },
-      { name: "Lamalo Chelsea Boot", description: "Sleek pull-on Chelsea boot in smooth leather with an elastic gore and stacked sole.", category: "footwear", subcategory: "boots", genderFit: "male", colors: ["Midnight Black","Tan"], materials: ["Smooth Leather"], styleTags: ["chelsea-boot","leather","formal"], leasePriceAud: 9, retailPriceAud: 54, referencePrompt: "Men's chelsea boot midnight black sleek leather pull-on", primaryImageUrl: "/lamalo/shoe-chelsea-boot.jpg", sizeRange: "UK 6–13" },
-      { name: "Lamalo Sport Recovery Slide", description: "Cushioned EVA recovery slide with a single adjustable strap. Post-training essential.", category: "footwear", subcategory: "slides", genderFit: "male", colors: ["Black","White","Cobalt"], materials: ["EVA Foam"], styleTags: ["slide","recovery","sport"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's sport recovery slide black EVA cushioned adjustable strap", primaryImageUrl: "/lamalo/shoe-sport-slide.jpg", sizeRange: "UK 6–14" },
-      { name: "Lamalo Orthopaedic Slip-On", description: "Wide-fit slip-on shoe with orthopaedic insole, arch support and non-slip sole. Ideal for everyday comfort.", category: "footwear", subcategory: "comfort-shoes", genderFit: "male", colors: ["Tan","Black"], materials: ["Soft Leather Upper","Orthopaedic Insole"], styleTags: ["comfort","orthopaedic","slip-on"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Men's orthopaedic slip-on shoe tan leather no laces supportive", primaryImageUrl: "/lamalo/elderly-men-ortho-shoe.jpg", sizeRange: "UK 6–14 (Wide Fit)" },
-      { name: "Lamalo Men's Sherpa Slipper", description: "Bootie-style slipper with sherpa lining, memory foam footbed and a non-slip indoor sole.", category: "footwear", subcategory: "slippers", genderFit: "male", colors: ["Brown","Navy"], materials: ["Faux Suede","Sherpa Lining","Memory Foam"], styleTags: ["slipper","comfort","home"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Men's warm sherpa lined bootie slipper brown indoor", primaryImageUrl: "/lamalo/elderly-men-slipper.jpg", sizeRange: "UK 6–14" },
-    ],
-  };
-
-  // ─── Collection 17: Women's Footwear ─────────────────────────────────────────
-
-  const womensFootwear: SeedCollection = {
-    name: "Lamalo Women's Footwear",
-    description: "From platform sneakers to kitten heels — the complete women's shoe wardrobe. Stylish, comfortable and built to last.",
-    collectionType: "footwear",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["footwear","shoes","heels","sneakers","women"],
-    collectionPriceAud: 10500,
-    items: [
-      { name: "Lamalo Platform Sneaker", description: "Platform leather sneaker with a chunky sole and a sleek white upper. Elevated everyday.", category: "footwear", subcategory: "sneakers", genderFit: "female", colors: ["White","Black","Cobalt"], materials: ["Leather Upper","Platform Rubber Sole"], styleTags: ["platform","sneaker","elevated"], leasePriceAud: 7, retailPriceAud: 42, referencePrompt: "Women's white leather platform sneaker chunky sole minimal", primaryImageUrl: "/lamalo/women-platform-sneaker.jpg", sizeRange: "UK 3–9" },
-      { name: "Lamalo Strappy Heel Sandal", description: "Block heel strappy sandal in suede with an adjustable ankle strap. Goes from office to dinner.", category: "footwear", subcategory: "heels", genderFit: "female", colors: ["Nude","Black","Cobalt"], materials: ["Suede Upper","Leather Lining"], styleTags: ["heels","strappy","elegant"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's strappy block heel sandal nude beige suede ankle strap", primaryImageUrl: "/lamalo/women-heel-sandal.jpg", sizeRange: "UK 3–9" },
-      { name: "Lamalo Kitten Heel Pump", description: "Pointed-toe kitten heel pump in smooth leather. Classic, feminine and office-ready.", category: "footwear", subcategory: "heels", genderFit: "female", colors: ["Black","Nude","White"], materials: ["Smooth Leather"], styleTags: ["kitten-heel","pump","classic"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's pointed toe kitten heel pump black leather minimal", primaryImageUrl: "/lamalo/women-kitten-heel.jpg", sizeRange: "UK 3–9" },
-      { name: "Lamalo Knee-High Boot", description: "Knee-high suede boot with a low block heel and a side zip. Autumn/winter essential.", category: "footwear", subcategory: "boots", genderFit: "female", colors: ["Tan","Black"], materials: ["Suede Upper","Leather Insole"], styleTags: ["knee-boot","suede","autumn"], leasePriceAud: 10, retailPriceAud: 60, referencePrompt: "Women's knee-high suede boot tan brown side zip", primaryImageUrl: "/lamalo/women-knee-boot.jpg", sizeRange: "UK 3–9" },
-      { name: "Lamalo Cork Wedge Sandal", description: "Open-toe cork wedge sandal with a leather upper and an adjustable ankle strap.", category: "footwear", subcategory: "sandals", genderFit: "female", colors: ["Tan","Black","White"], materials: ["Leather Upper","Cork Wedge Sole"], styleTags: ["wedge","sandal","summer"], leasePriceAud: 7, retailPriceAud: 42, referencePrompt: "Women's cork wedge sandal tan strappy adjustable ankle", primaryImageUrl: "/lamalo/women-wedge-sandal.jpg", sizeRange: "UK 3–9" },
-      { name: "Lamalo Ballet Flat", description: "Classic leather ballet flat with a squared-off round toe and a cushioned insole. All-day comfort.", category: "footwear", subcategory: "flats", genderFit: "female", colors: ["Nude","Black","White"], materials: ["Leather Upper","Leather Lining"], styleTags: ["ballet-flat","classic","comfortable"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Women's classic leather ballet flat nude rounded toe minimal", primaryImageUrl: "/lamalo/women-heel-sandal.jpg", sizeRange: "UK 3–9" },
-      { name: "Lamalo Senior Court Shoe", description: "Wide-fit leather court shoe with a cushioned insole and a low comfortable heel.", category: "footwear", subcategory: "comfort-shoes", genderFit: "female", colors: ["Navy","Black","Beige"], materials: ["Soft Leather","Cushioned Insole"], styleTags: ["court-shoe","comfortable","wide-fit"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Elderly women's wide fit comfort court shoe navy leather cushioned", primaryImageUrl: "/lamalo/elderly-women-court-shoe.jpg", sizeRange: "UK 3–9 (Wide Fit)" },
-      { name: "Lamalo Women's Comfort Slipper", description: "Plush memory-foam slipper with faux-fur lining and a non-slip sole.", category: "footwear", subcategory: "slippers", genderFit: "female", colors: ["Dusty Pink","Grey"], materials: ["Faux Suede","Faux Fur Lining","Memory Foam"], styleTags: ["slipper","comfort","cosy"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Women's memory foam comfort slipper dusty pink faux fur lining", primaryImageUrl: "/lamalo/elderly-women-slipper.jpg", sizeRange: "UK 3–9" },
-    ],
-  };
-
-  // ─── Collection 18: Watches ───────────────────────────────────────────────────
-
-  const watchCollection: SeedCollection = {
-    name: "Lamalo Watches",
-    description: "Precision-crafted timepieces for men and women. From classic dress watches to sporty chronographs and elegant bracelet styles.",
-    collectionType: "accessories",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["watches","timepieces","luxury","accessories"],
-    collectionPriceAud: 12000,
-    items: [
-      { name: "Lamalo Men's Classic Dress Watch", description: "Minimalist dress watch with a stainless steel case, black dial and genuine leather strap. Date complication.", category: "accessories", subcategory: "watches", genderFit: "male", colors: ["Silver/Black","Gold/White","Rose Gold/White"], materials: ["Stainless Steel Case","Mineral Crystal","Leather Strap"], styleTags: ["watch","dress","minimal"], leasePriceAud: 9, retailPriceAud: 54, referencePrompt: "Men's minimalist dress watch silver stainless black dial leather strap", primaryImageUrl: "/lamalo/watch-mens-classic.jpg" },
-      { name: "Lamalo Men's Sport Chronograph", description: "Bold sport chronograph with a black case and dial, rubber strap and 100m water resistance.", category: "accessories", subcategory: "watches", genderFit: "male", colors: ["Black/Black","Silver/Grey"], materials: ["Stainless Steel","Rubber Strap","Sapphire Crystal"], styleTags: ["watch","chronograph","sport"], leasePriceAud: 10, retailPriceAud: 60, referencePrompt: "Men's sport chronograph watch black case rubber strap 100m water", primaryImageUrl: "/lamalo/watch-mens-sport.jpg" },
-      { name: "Lamalo Men's Minimalist Watch", description: "Ultra-thin quartz watch with a clean white dial, silver case and a slim leather strap.", category: "accessories", subcategory: "watches", genderFit: "male", colors: ["Silver/White","Black/Black"], materials: ["Stainless Steel Case","Leather Strap"], styleTags: ["watch","minimalist","thin"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Men's ultra thin minimalist watch silver case white dial slim", primaryImageUrl: "/lamalo/watch-mens-classic.jpg" },
-      { name: "Lamalo Men's Mesh Bracelet Watch", description: "Stainless steel mesh bracelet watch with a sunburst champagne dial. Smart-casual versatility.", category: "accessories", subcategory: "watches", genderFit: "male", colors: ["Gold/Champagne","Silver/White"], materials: ["Stainless Steel Mesh Bracelet"], styleTags: ["watch","mesh","smart-casual"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Men's mesh bracelet watch gold champagne dial sunburst", primaryImageUrl: "/lamalo/watch-mens-classic.jpg" },
-      { name: "Lamalo Women's Elegant Watch", description: "Rose gold case with a mother-of-pearl dial and a thin baguette bracelet. Understated glamour.", category: "accessories", subcategory: "watches", genderFit: "female", colors: ["Rose Gold/Pearl","Gold/White"], materials: ["Stainless Steel Rose Gold PVD","Bracelet Band"], styleTags: ["watch","elegant","rose-gold"], leasePriceAud: 9, retailPriceAud: 54, referencePrompt: "Women's elegant watch rose gold mother of pearl dial thin bracelet", primaryImageUrl: "/lamalo/watch-womens-elegant.jpg" },
-      { name: "Lamalo Women's Fashion Watch", description: "Gold-tone case with a sunburst champagne dial and an interchangeable mesh bracelet.", category: "accessories", subcategory: "watches", genderFit: "female", colors: ["Gold/Champagne","Rose Gold/Blush"], materials: ["Gold PVD Stainless Steel","Mesh Bracelet"], styleTags: ["watch","fashion","gold"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's fashion watch gold tone champagne dial mesh bracelet", primaryImageUrl: "/lamalo/watch-womens-fashion.jpg" },
-      { name: "Lamalo Women's Sport Watch", description: "Active sport watch with a 40mm case, silicone strap and 50m water resistance. Sporty and colourful.", category: "accessories", subcategory: "watches", genderFit: "female", colors: ["Silver/White","Cobalt Blue Strap"], materials: ["Stainless Steel","Silicone Strap"], styleTags: ["watch","sport","active"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Women's sport watch silver case cobalt blue silicone strap active", primaryImageUrl: "/lamalo/watch-mens-sport.jpg" },
-      { name: "Lamalo Women's Slim Bracelet Watch", description: "Delicate thin-case watch with a diamond-set bezel and an ultra-slim bracelet.", category: "accessories", subcategory: "watches", genderFit: "female", colors: ["Gold/White","Silver/White"], materials: ["Stainless Steel","Crystal Bezel"], styleTags: ["watch","slim","delicate"], leasePriceAud: 9, retailPriceAud: 54, referencePrompt: "Women's slim bracelet watch gold diamond bezel delicate thin case", primaryImageUrl: "/lamalo/watch-womens-elegant.jpg" },
-    ],
-  };
-
-  // ─── Collection 19: Eyewear / Sunglasses ─────────────────────────────────────
-
-  const eyewearCollection: SeedCollection = {
-    name: "Lamalo Eyewear",
-    description: "From sport shields to vintage aviators — curated sunglasses for every face shape and lifestyle. UV400 protection as standard.",
-    collectionType: "accessories",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["sunglasses","eyewear","UV400","fashion","sport"],
-    collectionPriceAud: 5000,
-    items: [
-      { name: "Lamalo Sport Shield", description: "Wraparound sport shield with UV400 polarised lens. Impact-resistant polycarbonate frame.", category: "accessories", subcategory: "sunglasses", genderFit: "unisex", colors: ["Black","Cobalt/Grey","White/Mirror"], materials: ["Polycarbonate Frame","UV400 Polarised Lens"], styleTags: ["sport","shield","polarised"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Sport wraparound shield sunglasses black UV400 polycarbonate", primaryImageUrl: "/lamalo/sunglasses-sport.jpg" },
-      { name: "Lamalo Oversized Fashion", description: "Statement oversized sunglasses in Italian acetate with UV400 lenses. Bold and modern.", category: "accessories", subcategory: "sunglasses", genderFit: "unisex", colors: ["Tortoiseshell","Black","Clear"], materials: ["Italian Acetate","UV400 Lens"], styleTags: ["oversized","fashion","statement"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Oversized fashion sunglasses tortoiseshell acetate bold UV400", primaryImageUrl: "/lamalo/sunglasses-fashion.jpg" },
-      { name: "Lamalo Retro Round", description: "Thin metal-frame round sunglasses inspired by the 1970s. Brown tinted UV400 lens.", category: "accessories", subcategory: "sunglasses", genderFit: "unisex", colors: ["Gold/Amber","Silver/Grey","Black"], materials: ["Metal Frame","UV400 Tinted Lens"], styleTags: ["retro","round","vintage"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Retro round sunglasses gold metal frame amber brown tinted lens", primaryImageUrl: "/lamalo/sunglasses-retro.jpg" },
-      { name: "Lamalo Classic Aviator", description: "Iconic aviator frame with a double bridge, teardrop lens and UV400 polarised coating.", category: "accessories", subcategory: "sunglasses", genderFit: "unisex", colors: ["Gold/Green","Silver/Blue","Gunmetal"], materials: ["Metal Frame","Polarised UV400"], styleTags: ["aviator","classic","polarised"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Classic aviator sunglasses gold frame polarised green lens double bridge", primaryImageUrl: "/lamalo/sunglasses-aviator.jpg" },
-      { name: "Lamalo Minimal Rectangle", description: "Slim rectangular frame in lightweight acetate. Clean and modern with UV400 flat lens.", category: "accessories", subcategory: "sunglasses", genderFit: "unisex", colors: ["Black","Tortoiseshell","Crystal"], materials: ["Lightweight Acetate","UV400 Flat Lens"], styleTags: ["minimal","rectangle","modern"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Slim rectangular sunglasses matte black acetate UV400 flat lens", primaryImageUrl: "/lamalo/sunglasses-minimal.jpg" },
-      { name: "Lamalo Cat-Eye", description: "Retro-inspired cat-eye frame in acetate with a dramatic upswept corner.", category: "accessories", subcategory: "sunglasses", genderFit: "female", colors: ["Black","Tortoiseshell","Pink"], materials: ["Acetate Frame","UV400 Lens"], styleTags: ["cat-eye","retro","feminine"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's cat-eye sunglasses tortoiseshell dramatic upswept retro", primaryImageUrl: "/lamalo/sunglasses-fashion.jpg" },
-      { name: "Lamalo Sport Wrap", description: "Lightweight sport wrap with interchangeable lenses and a ventilated nose bridge.", category: "accessories", subcategory: "sunglasses", genderFit: "unisex", colors: ["Black/Yellow","Black/Red","White"], materials: ["Polycarbonate","Rubber Grip"], styleTags: ["sport","wrap","interchangeable"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Sport wrap sunglasses black yellow interchangeable lens lightweight", primaryImageUrl: "/lamalo/sunglasses-sport.jpg" },
-      { name: "Lamalo Vintage Browline", description: "Bold acetate brow with slim metal lower frame. Heritage-inspired and endlessly flattering.", category: "accessories", subcategory: "sunglasses", genderFit: "unisex", colors: ["Black/Gold","Tortoiseshell/Gold"], materials: ["Acetate/Metal","UV400 Lens"], styleTags: ["browline","vintage","heritage"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Vintage browline sunglasses black gold acetate metal heritage", primaryImageUrl: "/lamalo/sunglasses-retro.jpg" },
-    ],
-  };
-
-  // ─── Collection 20: Headwear ──────────────────────────────────────────────────
-
-  const headwearCollection: SeedCollection = {
-    name: "Lamalo Headwear",
-    description: "Caps, hats and beanies for every season and style. From structured baseball caps to wide-brim sun hats and cosy knit beanies.",
-    collectionType: "accessories",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["hats","caps","headwear","accessories","seasonal"],
-    collectionPriceAud: 3500,
-    items: [
-      { name: "Lamalo Structured Baseball Cap", description: "6-panel structured cap in cotton twill with an adjustable snapback closure and embroidered Lamalo logo.", category: "accessories", subcategory: "caps", genderFit: "unisex", colors: ["White","Black","Navy","Cobalt"], materials: ["100% Cotton Twill"], styleTags: ["baseball-cap","structured","casual"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Structured baseball cap white cotton minimal embroidered logo snapback", primaryImageUrl: "/lamalo/hat-baseball-cap.jpg" },
-      { name: "Lamalo Bucket Hat", description: "Relaxed woven-cotton bucket hat with a wide drooping brim and a woven label.", category: "accessories", subcategory: "hats", genderFit: "unisex", colors: ["Black","White","Sage","Cobalt"], materials: ["100% Cotton"], styleTags: ["bucket-hat","summer","casual"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Cotton bucket hat black wide brim woven casual relaxed", primaryImageUrl: "/lamalo/hat-bucket.jpg" },
-      { name: "Lamalo Wide-Brim Sun Hat", description: "Natural straw sun hat with a wide brim and a black grosgrain ribbon band. Summer essential.", category: "accessories", subcategory: "hats", genderFit: "unisex", colors: ["Natural Straw","White","Black"], materials: ["Natural Straw","Cotton Lining"], styleTags: ["sun-hat","straw","summer"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Wide brim natural straw sun hat black ribbon band summer", primaryImageUrl: "/lamalo/hat-wide-brim.jpg" },
-      { name: "Lamalo Ribbed Knit Beanie", description: "Classic ribbed merino-wool beanie with a folded cuff. Soft, warm and versatile.", category: "accessories", subcategory: "beanies", genderFit: "unisex", colors: ["Charcoal","Black","White","Burgundy"], materials: ["100% Merino Wool"], styleTags: ["beanie","merino","winter"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Ribbed knit beanie charcoal merino wool folded cuff warm", primaryImageUrl: "/lamalo/hat-beanie.jpg" },
-      { name: "Lamalo Dad Cap", description: "Unstructured low-profile 6-panel cap in washed cotton with a curved brim.", category: "accessories", subcategory: "caps", genderFit: "unisex", colors: ["White","Grey","Sage"], materials: ["Washed Cotton"], styleTags: ["dad-cap","unstructured","relaxed"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Unstructured washed cotton dad cap white curved brim casual", primaryImageUrl: "/lamalo/hat-baseball-cap.jpg" },
-      { name: "Lamalo Trucker Cap", description: "Classic 5-panel trucker cap with a foam front and mesh back for breathability.", category: "accessories", subcategory: "caps", genderFit: "unisex", colors: ["White/Mesh","Black/Mesh","Navy/Mesh"], materials: ["Cotton Front","Nylon Mesh Back"], styleTags: ["trucker","mesh","casual"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Classic trucker cap white foam front mesh back breathable", primaryImageUrl: "/lamalo/hat-baseball-cap.jpg" },
-      { name: "Lamalo Wool Flat Cap", description: "Traditional flat cap in herringbone wool blend with a fully lined interior.", category: "accessories", subcategory: "hats", genderFit: "unisex", colors: ["Beige Herringbone","Charcoal","Navy"], materials: ["80% Wool","20% Polyester"], styleTags: ["flat-cap","heritage","classic"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Wool herringbone flat cap beige traditional lined interior", primaryImageUrl: "/lamalo/elderly-men-flat-cap.jpg" },
-      { name: "Lamalo Wool Beret", description: "Classic wool felt beret with a central stalk and a comfortable inner band.", category: "accessories", subcategory: "hats", genderFit: "unisex", colors: ["Black","Camel","Burgundy"], materials: ["100% Wool Felt"], styleTags: ["beret","classic","artistic"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Classic wool felt beret black French style artistic", primaryImageUrl: "/lamalo/hat-bucket.jpg" },
-      { name: "Lamalo Performance Visor", description: "Open-crown visor in moisture-wicking fabric with UV protection and an adjustable back strap.", category: "accessories", subcategory: "caps", genderFit: "unisex", colors: ["White","Black","Cobalt"], materials: ["Performance Polyester"], styleTags: ["visor","sport","UV-protection"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Performance sport visor white UV protection moisture wicking open crown", primaryImageUrl: "/lamalo/hat-baseball-cap.jpg" },
-    ],
-  };
-
-  // ─── Collection 21: Handbags & Carry ─────────────────────────────────────────
-
-  const handbagsCollection: SeedCollection = {
-    name: "Lamalo Bags & Handbags",
-    description: "Canvas totes to leather crossbodies — thoughtfully designed bags for every occasion and age. Practical, stylish and built to last.",
-    collectionType: "accessories",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["bags","handbags","leather","canvas","accessories"],
-    collectionPriceAud: 12000,
-    items: [
-      { name: "Lamalo Canvas Tote", description: "Large structured canvas tote with internal slip pockets and a leather base trim. Everyday versatile.", category: "accessories", subcategory: "tote-bags", genderFit: "unisex", colors: ["Natural/Beige","Black","Cobalt"], materials: ["Canvas","Leather Trim"], styleTags: ["tote","canvas","everyday"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Large structured canvas tote bag natural beige leather trim minimal", primaryImageUrl: "/lamalo/bag-tote.jpg" },
-      { name: "Lamalo Leather Crossbody", description: "Small structured leather crossbody with gold hardware and an adjustable strap. Day-to-evening.", category: "accessories", subcategory: "crossbody-bags", genderFit: "female", colors: ["Tan Cognac","Black","White"], materials: ["Full-Grain Leather","Gold Hardware"], styleTags: ["crossbody","leather","structured"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Leather crossbody bag tan cognac adjustable strap gold hardware", primaryImageUrl: "/lamalo/bag-crossbody.jpg" },
-      { name: "Lamalo Evening Clutch", description: "Sleek box clutch in smooth leather with a magnetic snap and a gold chain wrist strap.", category: "accessories", subcategory: "clutches", genderFit: "female", colors: ["Black","Gold","Ivory"], materials: ["Smooth Leather","Gold-Tone Hardware"], styleTags: ["clutch","evening","formal"], leasePriceAud: 5, retailPriceAud: 30, referencePrompt: "Evening clutch bag black smooth leather gold chain strap formal", primaryImageUrl: "/lamalo/bag-clutch.jpg" },
-      { name: "Lamalo Sport Duffel", description: "Large nylon duffel with a zippered main compartment, wet pouch and adjustable shoulder strap.", category: "accessories", subcategory: "duffel-bags", genderFit: "unisex", colors: ["Black","Cobalt","Grey"], materials: ["Nylon","Rubber Base Feet"], styleTags: ["duffel","sport","gym"], leasePriceAud: 6, retailPriceAud: 36, referencePrompt: "Large sport duffel bag black nylon shoulder strap wet pouch", primaryImageUrl: "/lamalo/bag-sports-duffel.jpg" },
-      { name: "Lamalo Quilted Shoulder Bag", description: "Quilted diamond-pattern shoulder bag with a gold chain strap and a flap closure.", category: "accessories", subcategory: "shoulder-bags", genderFit: "female", colors: ["White","Black","Cobalt"], materials: ["Quilted Leather","Gold Chain"], styleTags: ["quilted","shoulder-bag","chic"], leasePriceAud: 8, retailPriceAud: 48, referencePrompt: "Quilted leather shoulder bag white diamond pattern gold chain flap", primaryImageUrl: "/lamalo/bag-shoulder.jpg" },
-      { name: "Lamalo Structured Leather Tote", description: "Top-handle structured tote in full-grain leather with an internal organiser and a zip top.", category: "accessories", subcategory: "tote-bags", genderFit: "female", colors: ["Black","Tan","Camel"], materials: ["Full-Grain Leather"], styleTags: ["tote","leather","structured"], leasePriceAud: 10, retailPriceAud: 60, referencePrompt: "Structured leather tote bag black full grain top handle organiser", primaryImageUrl: "/lamalo/bag-tote.jpg" },
-      { name: "Lamalo Mini Shoulder Bag", description: "Compact mini bag with a leather body and a long adjustable chain strap. Evening to everyday.", category: "accessories", subcategory: "shoulder-bags", genderFit: "female", colors: ["Black","Tan","Cobalt"], materials: ["Leather","Chain Strap"], styleTags: ["mini-bag","chain","compact"], leasePriceAud: 7, retailPriceAud: 42, referencePrompt: "Mini shoulder bag black leather chain strap compact evening", primaryImageUrl: "/lamalo/bag-shoulder.jpg" },
-      { name: "Lamalo Travel Weekender", description: "Canvas-and-leather weekender bag with a wide zip opening, shoe compartment and carry handles.", category: "accessories", subcategory: "travel-bags", genderFit: "unisex", colors: ["Black","Navy"], materials: ["Canvas Body","Leather Handles and Trim"], styleTags: ["weekender","travel","weekend"], leasePriceAud: 9, retailPriceAud: 54, referencePrompt: "Canvas leather weekender travel bag black shoe compartment handles", primaryImageUrl: "/lamalo/bag-sports-duffel.jpg" },
-      { name: "Lamalo Kids' Backpack", description: "Fun and durable nylon backpack for kids with padded straps, organiser pockets and a water bottle slot.", category: "accessories", subcategory: "backpacks", genderFit: "kids", colors: ["Teal","Cobalt","Pink"], materials: ["Nylon"], styleTags: ["backpack","kids","school"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Children's colourful backpack teal padded straps school organiser pockets", primaryImageUrl: "/lamalo/kids-backpack.jpg" },
-    ],
-  };
-
-  // ─── Collection 22: Accessories — Belts, Scarves, Jewellery & More ────────────
-
-  const accessoriesCollection: SeedCollection = {
-    name: "Lamalo Accessories",
-    description: "The finishing touches — belts, scarves, jewellery, gloves and more. Thoughtfully crafted accessories for men, women, kids and seniors.",
-    collectionType: "accessories",
-    season: "All-Season",
-    year: 2026,
-    styleTags: ["accessories","belts","scarves","jewellery","finishing-touches"],
-    collectionPriceAud: 4500,
-    items: [
-      { name: "Lamalo Men's Leather Belt", description: "Full-grain leather belt with a brushed nickel pin buckle. Classic and versatile.", category: "accessories", subcategory: "belts", genderFit: "male", colors: ["Tan","Black","Brown"], materials: ["Full-Grain Leather"], styleTags: ["belt","leather","classic"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's genuine leather belt tan brown silver nickel buckle", primaryImageUrl: "/lamalo/acc-mens-belt.jpg" },
-      { name: "Lamalo Men's Slim Wallet", description: "Slim bifold wallet in smooth leather with card slots and a notes compartment.", category: "accessories", subcategory: "wallets", genderFit: "male", colors: ["Black","Tan","Navy"], materials: ["Smooth Leather"], styleTags: ["wallet","slim","leather"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Men's slim bifold leather wallet black card slots notes compartment", primaryImageUrl: "/lamalo/acc-mens-wallet.jpg" },
-      { name: "Lamalo Women's Silk Scarf", description: "100% pure silk square scarf with a vibrant print. Wear around the neck, as a headband or on the wrist.", category: "accessories", subcategory: "scarves", genderFit: "female", colors: ["Multicolour Floral","Navy/Cream","Cobalt/Gold"], materials: ["100% Pure Silk"], styleTags: ["scarf","silk","versatile"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's silk square scarf floral print multicolour 100% pure silk", primaryImageUrl: "/lamalo/acc-women-silk-scarf.jpg" },
-      { name: "Lamalo Gold Chain Necklace", description: "Delicate 18K gold-plated chain necklace with a lobster clasp. Timeless and wearable.", category: "accessories", subcategory: "jewellery", genderFit: "female", colors: ["Gold","Rose Gold","Silver"], materials: ["18K Gold-Plated Stainless Steel"], styleTags: ["necklace","gold","delicate"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Women's delicate gold chain necklace 18k plated minimal lobster clasp", primaryImageUrl: "/lamalo/acc-women-necklace.jpg" },
-      { name: "Lamalo Gold Hoop Earrings", description: "Classic gold hoop earrings in two sizes — everyday 25mm and statement 40mm.", category: "accessories", subcategory: "jewellery", genderFit: "female", colors: ["Gold","Silver","Rose Gold"], materials: ["18K Gold-Plated Stainless Steel"], styleTags: ["earrings","hoops","classic"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Women's gold hoop earrings 18k plated two sizes minimal classic", primaryImageUrl: "/lamalo/acc-women-earrings.jpg" },
-      { name: "Lamalo Merino Knit Scarf", description: "Chunky cable-knit merino wool scarf. Warm, soft and generous in length.", category: "accessories", subcategory: "scarves", genderFit: "unisex", colors: ["Burgundy","Charcoal","Camel"], materials: ["100% Merino Wool"], styleTags: ["scarf","merino","winter"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Unisex chunky cable knit merino wool scarf burgundy warm generous", primaryImageUrl: "/lamalo/acc-scarf-knit.jpg" },
-      { name: "Lamalo Kids' Fun Socks Set", description: "Set of 5 pairs of cotton socks in colourful animal and graphic prints. Kids love them.", category: "accessories", subcategory: "socks", genderFit: "kids", colors: ["Animal Print Mix","Rainbow","Sports Mix"], materials: ["80% Cotton","15% Polyester","5% Elastane"], styleTags: ["socks","kids","colourful"], leasePriceAud: 1, retailPriceAud: 6, referencePrompt: "Children's fun socks 5 pack colourful animal print rainbow", primaryImageUrl: "/lamalo/acc-kids-socks-set.jpg", sizeRange: "3–5Y,6–8Y,9–12Y" },
-      { name: "Lamalo Classic Umbrella", description: "Windproof fibreglass frame umbrella with a wooden curved handle. Opens to 100cm. Senior-friendly grip.", category: "accessories", subcategory: "umbrellas", genderFit: "unisex", colors: ["Black","Navy"], materials: ["Polyester Canopy","Fibreglass Frame","Wooden Handle"], styleTags: ["umbrella","windproof","practical"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Classic windproof umbrella black wooden curved handle easy grip senior", primaryImageUrl: "/lamalo/acc-elderly-umbrella.jpg" },
-      { name: "Lamalo Leather Gloves", description: "Classic leather gloves with cashmere lining. Touchscreen-compatible tips and a button closure.", category: "accessories", subcategory: "gloves", genderFit: "unisex", colors: ["Dark Brown","Black","Camel"], materials: ["Nappa Leather","Cashmere Lining"], styleTags: ["gloves","leather","winter"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Classic leather gloves dark brown cashmere lined touchscreen tips", primaryImageUrl: "/lamalo/acc-leather-gloves.jpg", sizeRange: "XS–XL" },
-    ],
-  };
-
-  // ─── Elderly Swimwear ──────────────────────────────────────────────────────────
-
-  const elderlySwimwear: SeedCollection = {
-    name: "Lamalo Comfort Swimwear",
-    description: "Swimwear designed with dignity and comfort in mind. Modest cuts, UV protection and flattering styles for mature bodies.",
-    collectionType: "swimwear",
-    season: "Summer",
-    year: 2026,
-    styleTags: ["swimwear","modest","senior","comfort","UPF"],
-    collectionPriceAud: 3000,
-    items: [
-      { name: "Lamalo Women's Skirted Swimsuit", description: "Modest one-piece with an attached skirted bottom panel for extra coverage. UPF30+ fabric.", category: "swimwear", subcategory: "one-piece", genderFit: "female", colors: ["Navy/White Trim","Black","Teal"], materials: ["UPF30+ Nylon/Elastane"], styleTags: ["modest","skirted","senior"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Elderly women's modest one piece skirted swimsuit navy white trim UPF", primaryImageUrl: "/lamalo/swimwear-elderly-women.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Men's Comfort Swim Short", description: "Longer-length swim short with a full elastic waist and quick-dry fabric. Comfortable in and out of the water.", category: "swimwear", subcategory: "swim-shorts", genderFit: "male", colors: ["Khaki","Navy","Black"], materials: ["Quick-Dry Polyester"], styleTags: ["swim-short","comfort","modest"], leasePriceAud: 3, retailPriceAud: 18, referencePrompt: "Elderly men's longer swim short khaki elasticated waist quick dry comfort", primaryImageUrl: "/lamalo/swimwear-elderly-men.jpg", sizeRange: "S–3XL" },
-      { name: "Lamalo Women's Swim Tunic", description: "Over-swimsuit swim tunic providing coverage and comfort at the pool. UPF50+ fabric.", category: "swimwear", subcategory: "cover-ups", genderFit: "female", colors: ["Navy","Black","Teal"], materials: ["UPF50+ Polyester"], styleTags: ["swim-tunic","coverage","modest"], leasePriceAud: 4, retailPriceAud: 24, referencePrompt: "Women's swim tunic navy UPF50 modest coverage pool beach senior", primaryImageUrl: "/lamalo/swimwear-elderly-women.jpg", sizeRange: "XS–3XL" },
-      { name: "Lamalo Unisex Aqua Shoe", description: "Quick-dry aqua shoe with a drainage sole and a slip-on design. Pool, beach and water sports.", category: "footwear", subcategory: "water-shoes", genderFit: "unisex", colors: ["Black","Cobalt Blue","Grey"], materials: ["Neoprene Upper","Non-Slip Sole"], styleTags: ["aqua-shoe","water-sports","comfort"], leasePriceAud: 2, retailPriceAud: 12, referencePrompt: "Unisex aqua water shoe black neoprene drainage sole slip-on pool beach", primaryImageUrl: "/lamalo/shoe-sport-slide.jpg", sizeRange: "UK 3–14" },
-    ],
-  };
-
-  // ─── ALL_COLLECTIONS ──────────────────────────────────────────────────────────
-
-  const ALL_COLLECTIONS: SeedCollection[] = [
-    mensEveryday,
-    mensSport,
-    mensOriginals,
-    mensFormal,
-    mensSwimwear,
-    mensComfort,
-    womensEveryday,
-    womensActive,
-    womensOriginals,
-    womensFormal,
-    womensSwimwear,
-    womensComfort,
-    kidsEveryday,
-    kidsActive,
-    kidsSwimwear,
-    mensFootwear,
-    womensFootwear,
-    watchCollection,
-    eyewearCollection,
-    headwearCollection,
-    handbagsCollection,
-    accessoriesCollection,
-    elderlySwimwear,
-  ];
-
-  // ─── Seed Runner ──────────────────────────────────────────────────────────────
-
-  export async function runLamaloSeed(
-    userId: number
-  ): Promise<{ created: boolean; collections: number; items: number }> {
-    const db = (await getDb())!;
-
-    // Get or create the Lamalo Fashion designer profile
-    let designerProfileId: number;
-    const existing = await db
-      .select({ id: designerProfiles.id })
-      .from(designerProfiles)
-      .where(eq(designerProfiles.brandName, "Lamalo Fashion"))
+  for (const col of ALL_COLLECTIONS) {
+    // Additive — skip if collection already exists
+    const existingCol = await db
+      .select({ id: designerCollections.id })
+      .from(designerCollections)
+      .where(
+        and(
+          eq(designerCollections.designerProfileId, designerProfileId),
+          eq(designerCollections.name, col.name)
+        )
+      )
       .limit(1);
 
-    if (existing.length > 0) {
-      designerProfileId = existing[0].id;
-      log.info(`Lamalo Fashion profile found (id=${designerProfileId}) — checking for new collections`);
-    } else {
-      const [profile] = await db.insert(designerProfiles).values({
-        userId,
-        brandName: "Lamalo Fashion",
-        displayName: "Lamalo",
-        profileType: "brand",
-        bio:
-          "Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. " +
-          "Twenty-three curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, " +
-          "watches, eyewear and accessories. Lease individual pieces or entire collections at some of the most " +
-          "competitive prices on the marketplace.",
-        website: "https://virelle.life/wardrobe-marketplace",
-        instagram: "@lamalofashion",
-        contactEmail: "wardrobe@virelle.life",
-        logoUrl:
-          "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png",
-        verified: true,
-        visibility: "public",
-        stripeAccountId: null,
-        stripeAccountStatus: "none",
-        membershipStatus: "active",
-        membershipSubscriptionId: null,
-        membershipCurrentPeriodEnd: new Date("2099-12-31"),
-      });
-      // @ts-ignore — Drizzle MySQL insertId
-      designerProfileId = (profile as any).insertId ?? 1;
-      log.info(`Lamalo Fashion profile created (id=${designerProfileId})`);
+    if (existingCol.length > 0) {
+      log.info(`Collection "${col.name}" already exists — skipping`);
+      continue;
     }
 
-    let newCollections = 0;
-    let totalItems = 0;
+    // Insert collection — price auto-calculated (item_count × 30c × 0.85)
+    const [colResult] = await db.insert(designerCollections).values({
+      designerProfileId,
+      userId,
+      name: col.name,
+      description: col.description,
+      collectionType: col.collectionType,
+      season: col.season,
+      year: col.year,
+      styleTags: col.styleTags,
+      visibility: "public",
+      licenseType: "full_license",
+      licenseNotes:
+        "One-time purchase — use in any Virelle Studios production, present or future. " +
+        "Platform retains 100% revenue for Lamalo in-house items.",
+      collectionPriceAud: col.collectionPriceAud,
+      published: true,
+      publishedAt: new Date(),
+    });
 
-    for (const col of ALL_COLLECTIONS) {
-      // Check if this collection already exists — additive seeding
-      const existingCol = await db
-        .select({ id: designerCollections.id })
-        .from(designerCollections)
-        .where(
-          and(
-            eq(designerCollections.designerProfileId, designerProfileId),
-            eq(designerCollections.name, col.name)
-          )
-        )
-        .limit(1);
+    const collectionId: number = (colResult as any).insertId ?? 1;
+    newCollections++;
 
-      if (existingCol.length > 0) {
-        log.info(`Collection "${col.name}" already exists — skipping`);
-        continue;
-      }
-
-      // Insert collection
-      const [colResult] = await db.insert(designerCollections).values({
+    for (const item of col.items) {
+      await db.insert(wardrobeItems).values({
+        collectionId,
+        userId,
         designerProfileId,
-        userId,
-        name: col.name,
-        description: col.description,
-        collectionType: col.collectionType,
-        season: col.season,
-        year: col.year,
-        styleTags: col.styleTags,
-        visibility: "public",
+        name: item.name,
+        description: item.description,
+        category: item.category,
+        subcategory: item.subcategory,
+        wardrobeType: "fashion",
+        genderFit: item.genderFit,
+        sizeRange: item.sizeRange ?? "XS–XXL",
+        era: "Contemporary 2026",
+        colors: item.colors,
+        materials: item.materials,
+        styleTags: item.styleTags,
+        referencePrompt: item.referencePrompt,
+        primaryImageUrl: item.primaryImageUrl ?? null,
+        brandPlacementAllowed: false,
+        shopfrontPlacementAllowed: true,
+        characterWardrobeAllowed: true,
+        costumeUseAllowed: true,
+        commercialUseAllowed: true,
         licenseType: "full_license",
-        licenseNotes:
-          "Leased for use in Virelle Studios film productions. Platform retains 100% revenue.",
-        collectionPriceAud: col.collectionPriceAud,
-        published: true,
-        publishedAt: new Date(),
+        visibility: "public",
+        status: "active",
+        retailPriceAud: item.retailPriceAud, // 30 AUD cents
+        leasePriceAud: null,                 // no lease — buy only
       });
-
-      // @ts-ignore — Drizzle MySQL insertId
-      const collectionId: number = (colResult as any).insertId ?? 1;
-      newCollections++;
-
-      for (const item of col.items) {
-        await db.insert(wardrobeItems).values({
-          collectionId,
-          userId,
-          designerProfileId,
-          name: item.name,
-          description: item.description,
-          category: item.category,
-          subcategory: item.subcategory,
-          wardrobeType: "fashion",
-          genderFit: item.genderFit,
-          sizeRange: item.sizeRange ?? "XS–XXL",
-          era: "Contemporary 2026",
-          colors: item.colors,
-          materials: item.materials,
-          styleTags: item.styleTags,
-          referencePrompt: item.referencePrompt,
-          primaryImageUrl: item.primaryImageUrl ?? null,
-          brandPlacementAllowed: false,
-          shopfrontPlacementAllowed: true,
-          characterWardrobeAllowed: true,
-          costumeUseAllowed: true,
-          commercialUseAllowed: true,
-          licenseType: "full_license",
-          visibility: "public",
-          status: "active",
-          retailPriceAud: item.retailPriceAud,
-          leasePriceAud: item.leasePriceAud,
-        });
-        totalItems++;
-      }
-
-      log.info(`Seeded collection "${col.name}" with ${col.items.length} items`);
+      totalItems++;
     }
 
-    log.info(
-      `Lamalo Fashion seed complete — ${newCollections} new collections, ${totalItems} new items`
-    );
-    return { created: existing.length === 0, collections: newCollections, items: totalItems };
+    log.info(`Seeded collection "${col.name}" with ${col.items.length} items (collection bundle = ${(col.collectionPriceAud / 100).toFixed(2)} AUD)`);
   }
-  
+
+  log.info(`Lamalo Fashion seed complete — ${newCollections} new collections, ${totalItems} new items`);
+  return { created: existing.length === 0, collections: newCollections, items: totalItems };
+}
