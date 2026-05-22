@@ -226,6 +226,8 @@ export default function AICasting() {
   const [performanceStyle, setPerformanceStyle] = useState("method-naturalistic");
   const [castingNotes, setCastingNotes] = useState("");
   const [voiceDescription, setVoiceDescription] = useState("");
+  const [hairStyle, setHairStyle] = useState("as-is");
+  const [facialHair, setFacialHair] = useState("as-is");
   const [isGenerating, setIsGenerating] = useState(false);
   const [filterSpecialty, setFilterSpecialty] = useState("all");
   const [tierFilter, setTierFilter] = useState("all");
@@ -326,6 +328,7 @@ export default function AICasting() {
           const sigNote = actor.isSignature
             ? `[Virelle Signature Cast — ${actor.tier === "flagship" ? "Flagship Star" : actor.tier === "premium" ? "Premium Cast" : "Standard"} — Archetype: ${actor.archetype}]`
             : `[Cast from AI Actor Library — Archetype: ${actor.archetype}, Specialty: ${actor.specialty}]`;
+          const groomingNotes = `[Grooming Hard-Locks: Hair=${hairStyle}, Facial Hair=${facialHair}]`;
           return createCharacterMutation.mutateAsync({
             projectId,
             name: actor.name,
@@ -333,7 +336,7 @@ export default function AICasting() {
             role: actor.archetype,
             arcType: actor.archetype,
             performanceStyle,
-            castingNotes: castingNotes ? `${castingNotes}\n\n${sigNote}` : sigNote,
+            castingNotes: castingNotes ? `${castingNotes}\n${groomingNotes}\n\n${sigNote}` : `${groomingNotes}\n\n${sigNote}`,
             voiceDescription: voiceDescription || undefined,
             isAiActor: true,
             aiActorId: id,
@@ -350,6 +353,8 @@ export default function AICasting() {
         setSelectedActors([]);
         setCastingNotes("");
         setVoiceDescription("");
+        setHairStyle("as-is");
+        setFacialHair("as-is");
       }
       if (failed > 0) {
         toast.error(`${failed} actor${failed > 1 ? "s" : ""} could not be cast. Please try again.`);
@@ -684,6 +689,47 @@ export default function AICasting() {
                   autoCorrect="on"
                   enterKeyHint="done"
                 />
+              </div>
+              <div className="border-t border-white/10 pt-3 mt-3">
+                <p className="text-xs font-semibold text-amber-300 mb-2 flex items-center gap-1">
+                  <Lock className="w-3 h-3" /> Grooming Hard-Locks
+                </p>
+                <div className="space-y-2">
+                  <div>
+                    <Label className="text-xs text-muted-foreground mb-1 block">Hair Style</Label>
+                    <Select value={hairStyle} onValueChange={setHairStyle}>
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="as-is" className="text-xs">As in reference</SelectItem>
+                        <SelectItem value="short" className="text-xs">Short</SelectItem>
+                        <SelectItem value="medium" className="text-xs">Medium</SelectItem>
+                        <SelectItem value="long" className="text-xs">Long</SelectItem>
+                        <SelectItem value="shaved" className="text-xs">Shaved</SelectItem>
+                        <SelectItem value="curly" className="text-xs">Curly</SelectItem>
+                        <SelectItem value="straight" className="text-xs">Straight</SelectItem>
+                        <SelectItem value="wavy" className="text-xs">Wavy</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground mb-1 block">Facial Hair</Label>
+                    <Select value={facialHair} onValueChange={setFacialHair}>
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="as-is" className="text-xs">As in reference</SelectItem>
+                        <SelectItem value="clean-shaven" className="text-xs">Clean Shaven</SelectItem>
+                        <SelectItem value="light-stubble" className="text-xs">Light Stubble</SelectItem>
+                        <SelectItem value="full-beard" className="text-xs">Full Beard</SelectItem>
+                        <SelectItem value="goatee" className="text-xs">Goatee</SelectItem>
+                        <SelectItem value="mustache" className="text-xs">Mustache</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
               <p className="text-xs text-muted-foreground pt-1">
                 These settings apply to all selected actors when cast. You can edit each character individually after casting.
