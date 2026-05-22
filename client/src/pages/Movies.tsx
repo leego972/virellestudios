@@ -253,9 +253,11 @@ export default function Movies() {
   const paidTiers = ["independent", "creator", "studio", "industry", "beta"];
   const canYouTubeExport = isAdmin || paidTiers.includes(tier);
 
-  // Helper: show opener before playing full films, play scenes/trailers directly
+  // Helper: show opener before playing full films, trailers, and short videos
   const playMovie = useCallback((movieId: number, movieType?: string) => {
-    if (movieType === "film") {
+    // Play opener for films, trailers, and generic "short" types. 
+    // Scenes play directly without the studio opener.
+    if (movieType === "film" || movieType === "trailer" || movieType === "short") {
       setShowOpenerBefore(movieId);
     } else {
       setShowPlayer(movieId);

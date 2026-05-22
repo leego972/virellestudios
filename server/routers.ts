@@ -48,6 +48,7 @@ import { ENV } from "./_core/env";
 import { seoRouter } from "./seo-router";
 import { autonomousRouter } from "./autonomous-router";
 import { marketingRouter } from "./marketing-router";
+import { adminSeedingRouter } from "./admin-seeding-router";
 import { contentCreatorRouter } from "./content-creator-router";
 import { advertisingRouter } from "./advertising-router";
 import { mailingListRouter } from "./mailing-list-router";
@@ -10097,6 +10098,7 @@ Rules:
   seo: seoRouter,
   autonomous: autonomousRouter,
   marketing: marketingRouter,
+  adminSeeding: adminSeedingRouter,
   contentCreator: contentCreatorRouter,
   mailingList: mailingListRouter,
   funding: fundingRouter,

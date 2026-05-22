@@ -2,6 +2,7 @@ import { trpc } from "@/lib/trpc";
 import DirectorChat from "@/components/DirectorChat";
 import ProjectJourneyNav from "@/components/ProjectJourneyNav";
 import MediaPlayer from "@/components/MediaPlayer";
+import StudioOpener from "@/components/StudioOpener";
 import ShareButton from "@/components/ShareButton";
 import SiteHead from "@/components/SiteHead";
 import { Button } from "@/components/ui/button";
@@ -194,6 +195,7 @@ export default function ProjectDetail() {
   const audioRef = useRef<HTMLInputElement>(null);
   const [videoPreviewSceneId, setVideoPreviewSceneId] = useState<number | null>(null);
   const [showFullFilm, setShowFullFilm] = useState(false);
+  const [showOpenerBefore, setShowOpenerBefore] = useState<"film" | "trailer" | null>(null);
 
   const { data: project, isLoading } = trpc.project.get.useQuery(
     { id: projectId },
@@ -257,7 +259,7 @@ export default function ProjectDetail() {
     id: -1,
     title: project?.title || "Full Film",
     description: project?.description || null,
-    type: "movie" as const,
+    type: "film" as const,
     fileUrl: (project as any).outputUrl as string,
     thumbnailUrl: project?.thumbnailUrl || null,
     duration: null,
@@ -807,7 +809,7 @@ export default function ProjectDetail() {
                 <div className="relative aspect-video rounded-md overflow-hidden bg-muted group cursor-pointer"
                   onClick={() => {
                     if (fullFilmItem) {
-                      setShowFullFilm(true);
+                      setShowOpenerBefore("film");
                     } else if (scenePlaylist.length > 0) {
                       setVideoPreviewSceneId(scenePlaylist[0].id);
                     }
@@ -2725,6 +2727,21 @@ export default function ProjectDetail() {
           sceneId={activeVideoMovie.id}
         />
       )}
+      {/* Studio Opener Gate */}
+      {showOpenerBefore && (
+        <StudioOpener
+          onComplete={() => {
+            const type = showOpenerBefore;
+            setShowOpenerBefore(null);
+            if (type === "film") {
+              setShowFullFilm(true);
+            }
+          }}
+          mode="film"
+          skippable
+        />
+      )}
+
       {/* Professional Media Player — full stitched film */}
       {showFullFilm && fullFilmItem && (
         <MediaPlayer

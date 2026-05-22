@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import MediaPlayer from "@/components/MediaPlayer";
+import StudioOpener from "@/components/StudioOpener";
 
 /** Upsert a <meta> tag by name or property attribute */
 function setMeta(attr: "name" | "property", key: string, value: string) {
@@ -47,6 +48,7 @@ export default function FilmPage() {
   const { slug } = useParams<{ slug: string }>();
   const [showBehindFilm, setShowBehindFilm] = useState(false);
   const [activeMediaId, setActiveMediaId] = useState<number | null>(null);
+  const [showOpenerBefore, setShowOpenerBefore] = useState<number | null>(null);
 
   const { data: filmPage, isLoading, error } = trpc.distribute.getFilmPage.useQuery(
     { slug: slug || "" },
@@ -269,7 +271,7 @@ export default function FilmPage() {
                 size="lg"
                 className="gap-2 bg-amber-500 hover:bg-amber-600 text-black font-bold shadow-lg shadow-amber-500/30"
                 onClick={() => {
-                  setActiveMediaId(0);
+                  setShowOpenerBefore(0);
                   if (fp_id && fp_owner) {
                     trackEvent.mutate({ entityType: "filmPage", entityId: fp_id, ownerId: fp_owner, eventType: "video_play" });
                   }
@@ -506,6 +508,19 @@ export default function FilmPage() {
           </a>
         </div>
       </div>
+
+      {/* Studio Opener Gate */}
+      {showOpenerBefore !== null && (
+        <StudioOpener
+          onComplete={() => {
+            const mediaId = showOpenerBefore;
+            setShowOpenerBefore(null);
+            setActiveMediaId(mediaId);
+          }}
+          mode="film"
+          skippable
+        />
+      )}
 
       {/* MediaPlayer — opens when Watch Film or a scene video is clicked */}
       {activeMedia && (

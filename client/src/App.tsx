@@ -16,6 +16,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Landing from "./pages/Landing";
 import OpenerPreview from "./pages/OpenerPreview";
+import Admin from "./pages/Admin";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "./_core/hooks/useAuth";
 import GoldWatermarkLaunch from "./components/GoldWatermarkLaunch";
@@ -275,6 +276,7 @@ function Router() {
       <Route path="/solutions">{() => <LazyPage><Solutions /></LazyPage>}</Route>
       <Route path="/download">{() => <LazyPage><DownloadApp /></LazyPage>}</Route>
       <Route path="/app">{() => <LazyPage><DownloadApp /></LazyPage>}</Route>
+      <Route path="/admin">{() => <LazyPage><Admin /></LazyPage>}</Route>
       <Route path="/signature-cast">{() => <LazyPage><SignatureCast /></LazyPage>}</Route>
       <Route path="/talent-search">{() => <LazyPage><TalentSearch /></LazyPage>}</Route>
 

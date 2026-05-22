@@ -419,7 +419,7 @@ export default function Register() {
                 </div>
               </div>
               <Button
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/?opener=1")}
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white text-lg py-6 mt-4"
               >
                 Enter Your Studio
