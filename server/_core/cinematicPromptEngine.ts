@@ -599,23 +599,51 @@ export function buildVisualDNA(project: {
   const profile = GENRE_PROFILES[genre] || DEFAULT_PROFILE;
   
   // Build character visual descriptions for consistency
-  const charDescs = characters.map(c => {
-    const attrs = c.attributes || {};
-    const parts = [`${c.name}:`];
-    if (attrs.gender) parts.push(attrs.gender);
-    if (attrs.ageRange || attrs.estimatedAge) parts.push(`${attrs.ageRange || attrs.estimatedAge}`);
-    if (attrs.ethnicity) parts.push(attrs.ethnicity);
-    if (attrs.build) parts.push(`${attrs.build} build`);
-    if (attrs.hairColor && attrs.hairStyle) parts.push(`${attrs.hairColor} ${attrs.hairStyle} hair`);
-    else if (attrs.hairColor) parts.push(`${attrs.hairColor} hair`);
-    if (attrs.eyeColor) parts.push(`${attrs.eyeColor} eyes`);
-    if (attrs.skinTone) parts.push(`${attrs.skinTone} skin`);
-    if (attrs.clothingStyle) parts.push(`wearing ${attrs.clothingStyle}`);
-    if (attrs.facialFeatures) parts.push(attrs.facialFeatures);
-    if (attrs.distinguishingMarks) parts.push(attrs.distinguishingMarks);
-    if (attrs.height) parts.push(`${attrs.height}`);
-    return parts.join(", ");
-  });
+    // PRIORITY: faceDnaPrompt (photo-locked) > direct columns > attributes JSON
+    const charDescs = characters.map(c => {
+      const attrs = c.attributes || {};
+      const ca = c as any;
+      // Direct DB columns take priority over the attributes JSON blob
+      const gender    = ca.gender    || attrs.gender;
+      const ageRange  = ca.ageRange  || attrs.ageRange || attrs.estimatedAge;
+      const ethnicity = ca.ethnicity || attrs.ethnicity;
+      const build     = ca.build     || attrs.build;
+      const hairColor = ca.hairColor || attrs.hairColor;
+      const hairStyle = ca.hairStyle || attrs.hairStyle;
+      const eyeColor  = ca.eyeColor  || attrs.eyeColor;
+      const skinTone  = ca.skinTone  || attrs.skinTone;
+      const height    = ca.height    || attrs.height;
+      const clothing  = ca.clothing  || ca.clothingStyle || attrs.clothingStyle;
+      const facialFeatures       = ca.facialFeatures       || attrs.facialFeatures;
+      const distinguishingFeat   = ca.distinguishingFeatures || attrs.distinguishingMarks;
+      // Gold-standard anchors from photo analysis
+      const faceDnaPrompt   = ca.faceDnaPrompt   || attrs.faceDnaPrompt;
+      const bodyDnaPrompt   = ca.bodyDnaPrompt   || attrs.bodyDnaPrompt;
+      const consistencyNotes = ca.consistencyNotes;
+
+      const parts = [`${c.name}:`];
+      if (faceDnaPrompt) {
+        // Photo-analysis anchor — already structured with | separators for max model weight
+        parts.push(faceDnaPrompt);
+        if (bodyDnaPrompt) parts.push(bodyDnaPrompt);
+      } else {
+        // Manual / auto-built descriptor from structured fields
+        if (gender)    parts.push(gender);
+        if (ageRange)  parts.push(String(ageRange));
+        if (ethnicity) parts.push(ethnicity);
+        if (build)     parts.push(`${build} build`);
+        if (hairColor && hairStyle) parts.push(`${hairColor} ${hairStyle} hair`);
+        else if (hairColor)         parts.push(`${hairColor} hair`);
+        if (eyeColor)  parts.push(`${eyeColor} eyes`);
+        if (skinTone)  parts.push(`${skinTone} skin`);
+        if (facialFeatures)        parts.push(facialFeatures);
+        if (distinguishingFeat)    parts.push(distinguishingFeat);
+        if (height)    parts.push(String(height));
+      }
+      if (clothing)          parts.push(`wearing ${clothing}`);
+      if (consistencyNotes)  parts.push(`CONSISTENCY: ${consistencyNotes}`);
+      return parts.join(", ");
+    });
 
   // Build consistency tokens — these go in EVERY prompt to maintain visual coherence
   const consistencyParts = [
@@ -704,7 +732,18 @@ export function buildScenePrompt(
     characterNames?: string[];
     cameraMovement?: string;
     // Minor protection: pass character age ranges for automatic modesty enforcement
-    characters?: Array<{ name: string; ageRange?: string | null }>;
+    characters?: Array<{
+        name: string;
+        ageRange?: string | null;
+        /** Face DNA from photo analysis — highest-fidelity character anchor */
+        faceDnaPrompt?: string | null;
+        /** Body proportions anchor from photo analysis */
+        bodyDnaPrompt?: string | null;
+        /** Director consistency notes — always injected verbatim */
+        consistencyNotes?: string | null;
+        /** Database character ID */
+        id?: number;
+      }>;
     // v6.77 — Per-project brand allow/block list. Real-world brand names that
     // may, must, or must NEVER appear in this shot (Nike, Pepsi, storefront
     // signage, billboards, road signs, etc.).
@@ -842,15 +881,32 @@ export function buildScenePrompt(
   }
 
   // 5. Characters in scene with detailed visual descriptions
-  if (options?.characterNames && options.characterNames.length > 0) {
-    const charRefs = options.characterNames
-      .map(name => {
-        const charDesc = visualDNA.characterDescriptions.find(d => d.startsWith(`${name}:`));
-        return charDesc || name;
-      })
-      .join("; ");
-    parts.push(`Characters present: ${charRefs}`);
-  }
+    // Priority: faceDnaPrompt (photo-locked) > visualDNA.characterDescriptions > name only
+    if (options?.characterNames && options.characterNames.length > 0) {
+      const charRefs = options.characterNames
+        .map(name => {
+          // Full character object with face DNA is highest priority
+          const fullChar = options?.characters?.find(c => c.name === name);
+          if (fullChar?.faceDnaPrompt) {
+            const dnaParts = [`${name}: ${fullChar.faceDnaPrompt}`];
+            if (fullChar.bodyDnaPrompt) dnaParts.push(fullChar.bodyDnaPrompt);
+            if (fullChar.consistencyNotes) dnaParts.push(`MUST MATCH EXACTLY: ${fullChar.consistencyNotes}`);
+            return dnaParts.join(" | ");
+          }
+          // Fall back to visualDNA character descriptions (built from direct columns)
+          const charDesc = visualDNA.characterDescriptions.find(d => d.startsWith(`${name}:`));
+          return charDesc || name;
+        })
+        .join("; ");
+      parts.push(`Characters present: ${charRefs}`);
+    }
+
+    // 5b. Wardrobe / costume — injected immediately after character descriptions so the
+    //     model associates each costume with its character before reading location/lighting.
+    //     Moving from position 17d to 5b significantly increases model attention on costumes.
+    if (options?.wardrobeContext && options.wardrobeContext.trim().length > 0) {
+      parts.push(options.wardrobeContext.trim());
+    }
 
   // 6. Location and setting with architectural detail
   if (scene.country || scene.city) {
@@ -1041,17 +1097,12 @@ export function buildScenePrompt(
     }
   }
 
-  // 17d. Wardrobe / costume / shopfront context — v6.77 Designer Wardrobe.
-  // The text block is precomputed by getWardrobePromptContextForScene
-  // (router layer) so this engine stays decoupled from the wardrobe tables.
-  // It already lists per-character wardrobe/costume references, scene
-  // set-dressing/shopfront placements, license/brand guardrails, and
-  // usage-mode directives (must_match, costume_accurate, period_accurate).
-  if (options?.wardrobeContext && options.wardrobeContext.trim().length > 0) {
-    parts.push(options.wardrobeContext.trim());
-  }
+  // 17d. Wardrobe context MOVED to position 5b (immediately after character
+    // descriptions) for maximum model attention. Per-character costume and scene
+    // set-dressing are now injected right after character DNA so the AI model sees
+    // "Character X wearing Y" as a single cohesive unit rather than two distant fragments.
 
-  // 18. (Quality anchor moved to position 1 for maximum model attention weight)
+    // 18. (Quality anchor moved to position 1 for maximum model attention weight)
 
   // 19. Minor Protection — auto-inject modesty directives for minor characters
   if (options?.characters && options.characters.length > 0) {
