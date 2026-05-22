@@ -2583,7 +2583,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
                   wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
-            characters: characters.map(c => ({ name: c.name, ageRange: c.dateOfBirth })),
+            characters: characters.map(c => ({
+                name: c.name,
+                ageRange: (c as any).ageRange ?? (c as any).dateOfBirth ?? null,
+                faceDnaPrompt: (c as any).faceDnaPrompt || (c as any).attributes?.faceDnaPrompt || null,
+                bodyDnaPrompt: (c as any).bodyDnaPrompt || (c as any).attributes?.bodyDnaPrompt || null,
+                consistencyNotes: (c as any).consistencyNotes || null,
+                id: (c as any).id,
+              })),
           }
         );
 
@@ -2778,6 +2785,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
                   wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
+                  characters: characters.map(c => ({
+                    name: c.name,
+                    ageRange: (c as any).ageRange ?? null,
+                    faceDnaPrompt: (c as any).faceDnaPrompt || (c as any).attributes?.faceDnaPrompt || null,
+                    bodyDnaPrompt: (c as any).bodyDnaPrompt || (c as any).attributes?.bodyDnaPrompt || null,
+                    consistencyNotes: (c as any).consistencyNotes || null,
+                    id: (c as any).id,
+                  })),
                 }
               );
               const sceneCharacterIds = (scene.characterIds as number[]) || [];
@@ -2903,6 +2918,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
                   wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
+            characters: characters.map(c => ({
+              name: c.name,
+              ageRange: (c as any).ageRange ?? null,
+              faceDnaPrompt: (c as any).faceDnaPrompt || (c as any).attributes?.faceDnaPrompt || null,
+              bodyDnaPrompt: (c as any).bodyDnaPrompt || (c as any).attributes?.bodyDnaPrompt || null,
+              consistencyNotes: (c as any).consistencyNotes || null,
+              id: (c as any).id,
+            })),
           }
         );
         // Use reference images from scene editor (first = promptImage for image-to-video)
@@ -3283,6 +3306,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                     characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
                   wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
+                    characters: characters.map(c => ({
+                      name: c.name,
+                      ageRange: (c as any).ageRange ?? null,
+                      faceDnaPrompt: (c as any).faceDnaPrompt || (c as any).attributes?.faceDnaPrompt || null,
+                      bodyDnaPrompt: (c as any).bodyDnaPrompt || (c as any).attributes?.bodyDnaPrompt || null,
+                      consistencyNotes: (c as any).consistencyNotes || null,
+                      id: (c as any).id,
+                    })),
                   }
                 );
                 const sceneRefImages = (scene as any).referenceImages as string[] || [];
@@ -3367,6 +3398,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                     characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
                   wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
+                    characters: characters.map(c => ({
+                      name: c.name,
+                      ageRange: (c as any).ageRange ?? null,
+                      faceDnaPrompt: (c as any).faceDnaPrompt || (c as any).attributes?.faceDnaPrompt || null,
+                      bodyDnaPrompt: (c as any).bodyDnaPrompt || (c as any).attributes?.bodyDnaPrompt || null,
+                      consistencyNotes: (c as any).consistencyNotes || null,
+                      id: (c as any).id,
+                    })),
                   }
                 );
                 await db.updateScene(scene.id, { status: "generating" } as any);
@@ -4243,6 +4282,14 @@ Break this into 8-15 scenes. For each scene, provide:
                 characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
                   wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
+                characters: characters.map(c => ({
+                  name: c.name,
+                  ageRange: (c as any).ageRange ?? null,
+                  faceDnaPrompt: (c as any).faceDnaPrompt || (c as any).attributes?.faceDnaPrompt || null,
+                  bodyDnaPrompt: (c as any).bodyDnaPrompt || (c as any).attributes?.bodyDnaPrompt || null,
+                  consistencyNotes: (c as any).consistencyNotes || null,
+                  id: (c as any).id,
+                })),
               }
             );
 
