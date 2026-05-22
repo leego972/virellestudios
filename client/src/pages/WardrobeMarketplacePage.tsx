@@ -1,9 +1,11 @@
 /**
- * WardrobeMarketplacePage.tsx — v8.0  "Lamalo Fashions by Virelle Studios"
+ * WardrobeMarketplacePage.tsx — v8.1  "Lamalo Fashions by Virelle Studios"
  *
  * Routes:
  *   /wardrobe-marketplace              → hero + designer grid
  *   /wardrobe-marketplace/designer/:id → designer profile + collections + items
+ *
+ * v8.1 adds: "Order Custom Item" flow (describe → A$4.99 → AI generation → inventory)
  */
 import { useState, useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
@@ -12,10 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Store, Search, Shirt, Sparkles, ArrowRight, Package,
   Users, Building2, ChevronLeft, Tag, CheckCircle2,
-  Loader2, ShieldCheck, Zap, Film, Lock,
+  Loader2, ShieldCheck, Zap, Film, Lock, Wand2, X,
+  ImagePlus, ClipboardList, Clock, CheckCheck, AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -128,6 +132,249 @@ function ValueProps() {
         </div>
       </div>
     </section>
+  );
+}
+
+// ─── Custom Order Modal ───────────────────────────────────────────────────────
+
+type OrderTab = "order" | "orders";
+
+function CustomOrderModal({
+  open,
+  onClose,
+  returnUrl,
+}: {
+  open: boolean;
+  onClose: () => void;
+  returnUrl: string;
+}) {
+  const [tab, setTab] = useState<OrderTab>("order");
+  const [description, setDescription] = useState("");
+  const [refImageUrl, setRefImageUrl] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const checkoutMut = trpc.wardrobeMarket.customItem.checkout.useMutation({
+    onSuccess: (res) => {
+      if (res.checkoutUrl) window.location.href = res.checkoutUrl;
+    },
+    onError: (e) => {
+      toast.error(e.message || "Could not start checkout. Please sign in first.");
+      setIsSubmitting(false);
+    },
+  });
+
+  const { data: myOrders, isLoading: ordersLoading, refetch: refetchOrders } =
+    trpc.wardrobeMarket.customItem.getMyOrders.useQuery(undefined, {
+      enabled: open && tab === "orders",
+    });
+
+  function handleSubmit() {
+    if (description.trim().length < 5) {
+      toast.error("Please describe the item in at least a few words.");
+      return;
+    }
+    setIsSubmitting(true);
+    checkoutMut.mutate({
+      description: description.trim(),
+      referenceImageUrl: refImageUrl.trim() || undefined,
+      returnUrl,
+    });
+  }
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="w-full max-w-lg bg-[#0a0a0a] border border-white/15 rounded-3xl overflow-hidden shadow-2xl shadow-black/60 flex flex-col max-h-[90vh]">
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/10 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center">
+              <Wand2 className="h-4.5 w-4.5 text-amber-400" />
+            </div>
+            <div>
+              <h2 className="text-base font-black text-white">Order Custom Item</h2>
+              <p className="text-[11px] text-white/35">AI-generated · Permanently yours · A$4.99</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-white/30 hover:text-white transition-colors">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex border-b border-white/10 shrink-0">
+          {[
+            { key: "order" as OrderTab,  label: "New Order",   icon: Wand2        },
+            { key: "orders" as OrderTab, label: "My Orders",   icon: ClipboardList },
+          ].map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold transition-colors ${
+                tab === key
+                  ? "text-amber-400 border-b-2 border-amber-400"
+                  : "text-white/40 hover:text-white/70"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" /> {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Body */}
+        <div className="overflow-y-auto flex-1">
+
+          {/* ─ New Order tab ─ */}
+          {tab === "order" && (
+            <div className="p-6 space-y-5">
+
+              {/* What you get */}
+              <div className="rounded-2xl bg-amber-500/[0.06] border border-amber-500/20 p-4 space-y-2">
+                <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-1">What you get for A$4.99</p>
+                {[
+                  "AI generates a professional fashion reference image from your description",
+                  "Costume Lock calibrated — item stays consistent across every scene",
+                  "Added permanently to your wardrobe inventory — use across all projects",
+                  "Yours exclusively — not listed in any public marketplace",
+                ].map((pt) => (
+                  <div key={pt} className="flex items-start gap-2">
+                    <CheckCheck className="h-3.5 w-3.5 text-amber-400 mt-0.5 shrink-0" />
+                    <p className="text-xs text-white/65 leading-relaxed">{pt}</p>
+                  </div>
+                ))}
+                <p className="text-[10px] text-white/25 pt-1 border-t border-white/10 mt-2">
+                  vs Adobe Firefly ~A$35/mo · Midjourney ~A$15/mo · Human illustrator A$50–200+ per drawing
+                </p>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-white/70">
+                  Describe your item <span className="text-amber-400">*</span>
+                </label>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="e.g. A fitted black leather biker jacket with silver zips, moto collar, and quilted shoulder panels. Slim cut, waist length."
+                  className="bg-white/5 border-white/15 text-white placeholder-white/25 text-sm resize-none h-28 focus:border-amber-500/50"
+                  maxLength={1000}
+                />
+                <p className="text-[10px] text-white/25 text-right">{description.length}/1000</p>
+              </div>
+
+              {/* Reference image */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-white/70 flex items-center gap-1.5">
+                  <ImagePlus className="h-3.5 w-3.5" />
+                  Reference image URL <span className="text-white/30 font-normal">(optional)</span>
+                </label>
+                <Input
+                  value={refImageUrl}
+                  onChange={(e) => setRefImageUrl(e.target.value)}
+                  placeholder="https://example.com/jacket-reference.jpg"
+                  className="bg-white/5 border-white/15 text-white placeholder-white/25 text-sm h-10 focus:border-amber-500/50"
+                />
+                <p className="text-[10px] text-white/30 leading-relaxed">
+                  Paste a direct image URL of a similar garment for visual reference. The AI will use it to anchor colours, silhouette, and style.
+                </p>
+              </div>
+
+              {/* CTA */}
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting || description.trim().length < 5}
+                className="w-full h-12 bg-amber-500 hover:bg-amber-400 text-black font-black text-sm rounded-xl"
+              >
+                {isSubmitting ? (
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Redirecting to checkout…</>
+                ) : (
+                  <><Wand2 className="h-4 w-4 mr-2" /> Order for A$4.99 → Checkout</>
+                )}
+              </Button>
+
+              <p className="text-[10px] text-white/25 text-center">
+                Secured by Stripe · No subscription · One-time charge · Generation begins after payment confirmation
+              </p>
+            </div>
+          )}
+
+          {/* ─ My Orders tab ─ */}
+          {tab === "orders" && (
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-bold text-white/50">Your custom item history</p>
+                <button onClick={() => refetchOrders()} className="text-[10px] text-amber-400 hover:text-amber-300">
+                  Refresh
+                </button>
+              </div>
+
+              {ordersLoading && (
+                <div className="space-y-3">
+                  {[1,2,3].map(i => <Skeleton key={i} className="h-20 rounded-xl bg-white/5" />)}
+                </div>
+              )}
+
+              {!ordersLoading && (!myOrders || myOrders.length === 0) && (
+                <div className="text-center py-10">
+                  <ClipboardList className="h-10 w-10 text-white/15 mx-auto mb-3" />
+                  <p className="text-sm text-white/30">No custom orders yet.</p>
+                  <button onClick={() => setTab("order")} className="text-xs text-amber-400 mt-2 hover:underline">
+                    Place your first order →
+                  </button>
+                </div>
+              )}
+
+              {!ordersLoading && myOrders && myOrders.length > 0 && (
+                <div className="space-y-3">
+                  {myOrders.map((order: any) => {
+                    const statusIcon =
+                      order.status === "completed"         ? <CheckCheck className="h-3.5 w-3.5 text-emerald-400" /> :
+                      order.status === "pending_generation" ? <Loader2 className="h-3.5 w-3.5 text-amber-400 animate-spin" /> :
+                      order.status === "failed"             ? <AlertCircle className="h-3.5 w-3.5 text-red-400" /> :
+                                                              <Clock className="h-3.5 w-3.5 text-white/40" />;
+                    const statusLabel =
+                      order.status === "completed"          ? "Completed"         :
+                      order.status === "pending_generation" ? "Generating…"       :
+                      order.status === "pending_payment"    ? "Awaiting payment"  :
+                                                              "Failed";
+                    return (
+                      <div key={order.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-4 flex gap-3">
+                        {order.generatedImageUrl ? (
+                          <img
+                            src={order.generatedImageUrl}
+                            alt="Generated"
+                            className="w-16 h-16 rounded-lg object-cover border border-white/10 shrink-0"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                            <Shirt className="h-7 w-7 text-white/15" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-white line-clamp-2 leading-snug">
+                            {order.description}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-1.5">
+                            {statusIcon}
+                            <span className="text-[10px] text-white/40">{statusLabel}</span>
+                          </div>
+                          <p className="text-[10px] text-white/25 mt-1">
+                            {new Date(order.createdAt).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
+                            {" · "}A${((order.priceAud ?? 499) / 100).toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -286,6 +533,7 @@ function CollectionBlock({
 function DesignerDetailView({ designerId }: { designerId: number }) {
   const [, setLocation] = useLocation();
   const [leasingId, setLeasingId] = useState<string | null>(null);
+  const [showCustomOrder, setShowCustomOrder] = useState(false);
 
   const { data, isLoading } = trpc.wardrobeMarket.marketplace.getDesigner.useQuery(
     { id: designerId },
@@ -310,13 +558,34 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
     onError: (e) => toast.error(e.message),
   });
 
+  const confirmCustom = trpc.wardrobeMarket.customItem.confirmAndGenerate.useMutation({
+    onSuccess: (res) => {
+      if (res.alreadyProcessed) {
+        toast.info("This item was already generated and is in your inventory.");
+      } else {
+        toast.success("Custom item generated and added to your wardrobe inventory!");
+      }
+      window.history.replaceState({}, "", window.location.pathname);
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const sid = p.get("purchase_session") ?? p.get("lease_session");
+    const customSid = p.get("custom_session");
     const cancelled = p.get("purchase_cancelled") ?? p.get("lease_cancelled");
-    if (sid) {
+    const customCancelled = p.get("custom_cancelled");
+
+    if (customSid) {
+      toast.loading("Generating your custom item…", { id: "custom-gen" });
+      confirmCustom.mutate(
+        { sessionId: customSid },
+        { onSettled: () => toast.dismiss("custom-gen") }
+      );
+    } else if (sid) {
       confirmPurchase.mutate({ sessionId: sid });
-    } else if (cancelled) {
+    } else if (cancelled || customCancelled) {
       toast.info("Checkout cancelled — no charge was made.");
       window.history.replaceState({}, "", window.location.pathname);
     }
@@ -330,6 +599,8 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       returnUrl: `${window.location.origin}/wardrobe-marketplace/designer/${designerId}`,
     });
   }
+
+  const returnUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/wardrobe-marketplace/designer/${designerId}`;
 
   if (isLoading) {
     return (
@@ -363,6 +634,12 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       <PageHeader
         onBack={() => setLocation("/wardrobe-marketplace")}
         crumb={(profile as any).brandName}
+      />
+
+      <CustomOrderModal
+        open={showCustomOrder}
+        onClose={() => setShowCustomOrder(false)}
+        returnUrl={returnUrl}
       />
 
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
@@ -418,6 +695,29 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
               </div>
             )}
           </div>
+        </div>
+
+        {/* ─── Custom Order CTA ─── */}
+        <div className="rounded-2xl border border-amber-500/25 bg-gradient-to-r from-amber-950/30 to-black p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
+            <Wand2 className="h-6 w-6 text-amber-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base font-black text-white mb-1">Can't find what you need?</h3>
+            <p className="text-xs text-white/50 leading-relaxed max-w-lg">
+              Order a custom AI-generated item — describe any garment or accessory, optionally add a reference photo, and our AI
+              builds it to spec with Costume Lock applied. Permanently yours for <strong className="text-amber-400">A$4.99</strong>.
+            </p>
+            <p className="text-[10px] text-white/30 mt-1.5">
+              vs Adobe Firefly A$35/mo · Midjourney A$15/mo · Human illustrator A$50–200+
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowCustomOrder(true)}
+            className="bg-amber-500 hover:bg-amber-400 text-black font-black h-11 px-6 shrink-0"
+          >
+            <Wand2 className="h-4 w-4 mr-2" /> Order Custom Item
+          </Button>
         </div>
 
         {/* Value props strip — only for the in-house Lamalo label */}
@@ -538,6 +838,9 @@ function MarketplaceGrid({
   setSearch: (s: string) => void;
   setLocation: (p: string) => void;
 }) {
+  const [showCustomOrder, setShowCustomOrder] = useState(false);
+  const returnUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/wardrobe-marketplace`;
+
   const { data: designers, isLoading } =
     trpc.wardrobeMarket.marketplace.browseDesigners.useQuery({ limit: 48, offset: 0 });
 
@@ -554,11 +857,46 @@ function MarketplaceGrid({
     a.brandName === "Lamalo Fashion" ? -1 : b.brandName === "Lamalo Fashion" ? 1 : 0,
   );
 
+  // Handle return from custom item checkout on the grid page
+  const confirmCustom = trpc.wardrobeMarket.customItem.confirmAndGenerate.useMutation({
+    onSuccess: (res) => {
+      if (res.alreadyProcessed) {
+        toast.info("This item was already generated and is in your inventory.");
+      } else {
+        toast.success("Custom item generated and added to your wardrobe inventory!");
+      }
+      window.history.replaceState({}, "", window.location.pathname);
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const customSid = p.get("custom_session");
+    const customCancelled = p.get("custom_cancelled");
+    if (customSid) {
+      toast.loading("Generating your custom item…", { id: "custom-gen" });
+      confirmCustom.mutate(
+        { sessionId: customSid },
+        { onSettled: () => toast.dismiss("custom-gen") }
+      );
+    } else if (customCancelled) {
+      toast.info("Checkout cancelled — no charge was made.");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white">
       <PageHeader />
 
-      {/* ── Hero ── */}
+      <CustomOrderModal
+        open={showCustomOrder}
+        onClose={() => setShowCustomOrder(false)}
+        returnUrl={returnUrl}
+      />
+
+      {/* Hero */}
       <section
         className="relative py-20 px-4 overflow-hidden border-b border-white/10"
         style={{ background: "linear-gradient(180deg,#000 0%,#0c0800 60%,#000 100%)" }}
@@ -587,32 +925,78 @@ function MarketplaceGrid({
             no drift, no guesswork, no re-prompting.
           </p>
           <p className="text-sm text-amber-400/80 font-semibold mb-10">
-            1,400+ items across 23 collections · From A$0.30 per item
+            1,400+ items across 23 collections · From A$0.30 per item · Custom AI items from A$4.99
           </p>
 
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/35" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search designers, styles, collections…"
-              className="pl-10 bg-white/5 border-white/15 text-white placeholder-white/30 h-12 text-sm"
-            />
+          <div className="flex flex-col sm:flex-row items-center gap-3 justify-center mb-8">
+            <div className="relative w-full max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/35" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search designers, styles, collections…"
+                className="pl-10 bg-white/5 border-white/15 text-white placeholder-white/30 h-12 text-sm"
+              />
+            </div>
+            <Button
+              onClick={() => setShowCustomOrder(true)}
+              className="bg-amber-500 hover:bg-amber-400 text-black font-black h-12 px-6 shrink-0 w-full sm:w-auto"
+            >
+              <Wand2 className="h-4 w-4 mr-2" /> Order Custom Item — A$4.99
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* ── Why Lamalo? ── */}
+      {/* Why Lamalo? */}
       <ValueProps />
 
-      {/* ── Stats bar ── */}
+      {/* ─── Custom Item Feature Strip ─── */}
+      <section className="border-b border-white/10 bg-gradient-to-r from-amber-950/20 to-black py-10 px-4">
+        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-6">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
+            <Wand2 className="h-8 w-8 text-amber-400" />
+          </div>
+          <div className="flex-1 text-center sm:text-left">
+            <h2 className="text-lg font-black text-white mb-1">
+              Order Custom AI Items — A$4.99 each
+            </h2>
+            <p className="text-sm text-white/50 leading-relaxed max-w-2xl">
+              Can't find your exact garment in the catalogue? Describe any fashion item or paste a reference image URL — our AI generates a professional reference sheet and adds it to your wardrobe inventory with Costume Lock already applied.
+              One-time charge, permanent ownership, exclusively yours.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-3 justify-center sm:justify-start">
+              {[
+                "AI-generated to your spec",
+                "Costume Lock included",
+                "Permanent inventory slot",
+                "Exclusively yours",
+                "No subscription needed",
+              ].map(t => (
+                <span key={t} className="text-[10px] font-semibold text-amber-400/80 bg-amber-500/[0.08] border border-amber-500/20 rounded-full px-2.5 py-0.5">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+          <Button
+            onClick={() => setShowCustomOrder(true)}
+            className="bg-amber-500 hover:bg-amber-400 text-black font-black h-11 px-6 shrink-0"
+          >
+            <Wand2 className="h-4 w-4 mr-2" /> Get Started
+          </Button>
+        </div>
+      </section>
+
+      {/* Stats bar */}
       <section className="border-b border-white/10 py-6 px-4 bg-white/[0.01]">
         <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-10">
           {[
-            { icon: Users,   label: "Designers",   value: designers?.length ?? "—" },
-            { icon: Package, label: "Collections", value: "23+"    },
-            { icon: Shirt,   label: "Items",       value: "1,400+" },
-            { icon: Tag,     label: "From",        value: "A$0.30" },
+            { icon: Users,   label: "Designers",    value: designers?.length ?? "—" },
+            { icon: Package, label: "Collections",  value: "23+"    },
+            { icon: Shirt,   label: "Items",        value: "1,400+" },
+            { icon: Tag,     label: "From",         value: "A$0.30" },
+            { icon: Wand2,   label: "Custom items", value: "A$4.99" },
           ].map(({ icon: Icon, label, value }) => (
             <div key={label} className="text-center">
               <div className="flex items-center justify-center gap-2 text-amber-400 mb-1">
@@ -625,7 +1009,7 @@ function MarketplaceGrid({
         </div>
       </section>
 
-      {/* ── Designer grid ── */}
+      {/* Designer grid */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-black tracking-tight text-white">
@@ -678,7 +1062,7 @@ function MarketplaceGrid({
         )}
       </section>
 
-      {/* ── Designer CTA ── */}
+      {/* Designer CTA */}
       <section className="border-t border-white/10 bg-white/[0.01] py-16 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <Building2 className="h-10 w-10 text-amber-400 mx-auto mb-4" />
