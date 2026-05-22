@@ -2211,3 +2211,31 @@ export type InsertWardrobeLease = typeof wardrobeLeases.$inferInsert;
   });
   export type ProjectVisualDNA = typeof projectVisualDNA.$inferSelect;
   export type InsertProjectVisualDNA = typeof projectVisualDNA.$inferInsert;
+
+  // ─── Custom Item Orders — AI-generated wardrobe items (v8.1) ─────────────────
+
+  export const customItemOrders = mysqlTable("customItemOrders", {
+    id:                    int("id").autoincrement().primaryKey(),
+    userId:                int("userId").notNull(),
+    description:           text("description").notNull(),
+    referenceImageUrl:     text("referenceImageUrl"),
+    generatedImageUrl:     text("generatedImageUrl"),
+    wardrobeItemId:        int("wardrobeItemId"),
+    stripeSessionId:       varchar("stripeSessionId", { length: 255 }),
+    stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+    priceAud:              int("priceAud").notNull().default(499),
+    itemName:              varchar("itemName", { length: 255 }),
+    itemCategory:          varchar("itemCategory", { length: 64 }),
+    status:                mysqlEnum("customItemOrderStatus", [
+                             "pending_payment",
+                             "pending_generation",
+                             "completed",
+                             "failed",
+                           ]).default("pending_payment").notNull(),
+    errorMessage:          text("errorMessage"),
+    createdAt:             timestamp("createdAt").defaultNow().notNull(),
+    updatedAt:             timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type CustomItemOrder       = typeof customItemOrders.$inferSelect;
+  export type InsertCustomItemOrder = typeof customItemOrders.$inferInsert;
+  
