@@ -2651,6 +2651,10 @@ export async function runAutoMigration(): Promise<void> {
     { table: "wardrobeAssignments", column: "placementNotes", definition: "TEXT NULL" },
     { table: "wardrobeAssignments", column: "promptWeight", definition: "INT NOT NULL DEFAULT 50" },
     { table: "wardrobeAssignments", column: "locked", definition: "TINYINT(1) NOT NULL DEFAULT 0" },
+    // customItemOrders — character/scene context for AI wardrobe generation
+    { table: "customItemOrders", column: "characterId", definition: "INT NULL" },
+    { table: "customItemOrders", column: "sceneId",     definition: "INT NULL" },
+    { table: "customItemOrders", column: "projectId",   definition: "INT NULL" },
   ];
 
   let tablesCreated = 0;
