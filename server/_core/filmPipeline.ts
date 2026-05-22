@@ -39,8 +39,8 @@ import { buildContinuityChain, generateConsistentScenePrompt, updateContinuityCh
 import { type UserApiKeys } from "./byokVideoEngine";
 import { storagePut } from "../storage";
 import { getDb } from "../db";
-import { projectBackgrounds, propAssignments, projectProps, characterStates, wardrobeAssignments, projectVisualDNA } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { projectBackgrounds, propAssignments, projectProps, characterStates, wardrobeAssignments, wardrobeItems, projectVisualDNA } from "../../drizzle/schema";
+import { eq, and, or, isNull } from "drizzle-orm";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import * as fs from "fs";
@@ -555,7 +555,12 @@ export async function generateFullFilm(
         _coherenceDb.select().from(propAssignments).where(eq(propAssignments.projectId, project.id)).catch(()=>[] as any[]),
         _coherenceDb.select().from(projectProps).where(eq(projectProps.projectId, project.id)).catch(()=>[] as any[]),
         _coherenceDb.select().from(characterStates).where(eq(characterStates.projectId, project.id)).catch(()=>[] as any[]),
-        _coherenceDb.select().from(wardrobeAssignments).where(eq(wardrobeAssignments.projectId, project.id)).catch(()=>[] as any[]),
+        _coherenceDb
+          .select({ assignment: wardrobeAssignments, item: wardrobeItems })
+          .from(wardrobeAssignments)
+          .innerJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
+          .where(eq(wardrobeAssignments.projectId, project.id))
+          .catch(()=>[] as any[]),
         _coherenceDb.select().from(projectVisualDNA).where(eq(projectVisualDNA.projectId, project.id)).limit(1).catch(()=>[] as any[]),
       ])
     : [[], [], [], [], [], []];
@@ -610,11 +615,20 @@ export async function generateFullFilm(
               (p.fromSceneOrder != null && p.fromSceneOrder <= _ord && (p.toSceneOrder ?? 9999) >= _ord)),
             characterStates: _stateRows.filter((s: any) =>
               (s.fromSceneOrder ?? 0) <= _ord && (s.toSceneOrder ?? 9999) >= _ord),
-            wardrobeByCharacter: Object.fromEntries(
-              _wardRows
-                .filter((w: any) => (w.fromSceneOrder ?? 0) <= _ord && (w.toSceneOrder ?? 9999) >= _ord)
-                .map((w: any) => [w.characterId, w])
-            ),
+            wardrobeByCharacter: (() => {
+                const _wmap: Record<number, string> = {};
+                for (const row of _wardRows as any[]) {
+                  const a = row.assignment ?? row;
+                  const wi = row.item;
+                  if (!wi || !a.characterId) continue;
+                  if ((a.fromSceneOrder ?? 0) > _ord || (a.toSceneOrder ?? 9999) < _ord) continue;
+                  const colors = Array.isArray(wi.colors) && wi.colors.length ? wi.colors.join(", ") : "";
+                  const mats = Array.isArray(wi.materials) && wi.materials.length ? wi.materials.join(", ") : "";
+                  const itemDesc = [wi.name, colors && `in ${colors}`, mats && `(${mats})`, wi.referencePrompt].filter(Boolean).join(" ");
+                  _wmap[a.characterId] = _wmap[a.characterId] ? `${_wmap[a.characterId]}; ${itemDesc}` : itemDesc;
+                }
+                return _wmap;
+              })(),
             visualDNA: _visualDNA,
           };
           const consistent = generateConsistentScenePrompt(continuityChain, sceneIdx, scenePrompt, coherenceCtx);
@@ -865,9 +879,54 @@ export async function generateSingleScene(
 }> {
   const { scene, characters, videoKeys, voiceKeys, musicKeys } = input;
 
-  // Build character DNA
-  const chain = buildContinuityChain(characters, [scene as any], input.projectId);
-  const { enhancedPrompt } = generateConsistentScenePrompt(chain, 0, scene.visualDescription || scene.description || "");
+    // ── Resolve wardrobe assignments for this scene ──────────────────────────
+    // Query wardrobeAssignments JOIN wardrobeItems for this project so the AI
+    // generates the exact leased outfit on each character in every frame.
+    const _wardDb = await getDb();
+    const wardrobeByCharacter: Record<number, string> = {};
+    if (_wardDb) {
+      try {
+        const sceneOrder = (scene as any).orderIndex ?? 0;
+        const wardRows = await _wardDb
+          .select({ assignment: wardrobeAssignments, item: wardrobeItems })
+          .from(wardrobeAssignments)
+          .innerJoin(wardrobeItems, eq(wardrobeAssignments.wardrobeItemId, wardrobeItems.id))
+          .where(eq(wardrobeAssignments.projectId, input.projectId))
+          .catch(() => [] as any[]);
+        for (const row of wardRows as any[]) {
+          const a = row.assignment;
+          const wi = row.item;
+          if (!wi || !a.characterId) continue;
+          const from = a.fromSceneOrder ?? 0;
+          const to   = a.toSceneOrder   ?? 9999;
+          if (from > sceneOrder || to < sceneOrder) continue;
+          const colors   = Array.isArray(wi.colors)    && wi.colors.length    ? wi.colors.join(", ")    : "";
+          const mats     = Array.isArray(wi.materials) && wi.materials.length ? wi.materials.join(", ") : "";
+          const itemDesc = [wi.name, colors && `in ${colors}`, mats && `(${mats})`, wi.referencePrompt]
+            .filter(Boolean).join(" ");
+          wardrobeByCharacter[a.characterId] = wardrobeByCharacter[a.characterId]
+            ? `${wardrobeByCharacter[a.characterId]}; ${itemDesc}`
+            : itemDesc;
+        }
+      } catch (err: any) {
+        console.warn("[SingleScene] Wardrobe resolution failed:", err.message);
+      }
+    }
+
+    // Pre-populate character.clothing so buildCharacterDNA bakes the outfit into
+    // the promptAnchor — every frame of the scene will show the correct clothes.
+    const charactersWithWardrobe = characters.map(c => ({
+      ...c,
+      clothing: wardrobeByCharacter[c.id] ?? c.clothing ?? undefined,
+    }));
+
+    // Build character DNA (with wardrobe already baked in)
+    const chain = buildContinuityChain(charactersWithWardrobe, [scene as any], input.projectId);
+    const { enhancedPrompt } = generateConsistentScenePrompt(
+      chain, 0,
+      scene.visualDescription || scene.description || "",
+      Object.keys(wardrobeByCharacter).length > 0 ? { wardrobeByCharacter } : undefined
+    );
 
   // Generate video
   const sceneResult = await generateExtendedScene(videoKeys, {
