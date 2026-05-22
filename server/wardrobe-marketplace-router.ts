@@ -921,6 +921,22 @@ export const wardrobeMarketplaceRouter = router({
                   status:           "completed",
                   generatedImageUrl: generatedImageUrl ?? null,
                   wardrobeItemId:   newItemId,
+                  itemName:         itemName || null,
+                  itemCategory:     (() => {
+                    const d = description.toLowerCase();
+                    if (/\bshoe|\bboot|\bsneaker|\bheel|\bsandal/.test(d))     return "shoes";
+                    if (/\bjacket|\bcoat|\bblazer|\bouterwear/.test(d))         return "outerwear";
+                    if (/\bdress|\bgown|\bsaree|\bkimono/.test(d))             return "dress";
+                    if (/\bsuit|\btuxedo/.test(d))                               return "suit";
+                    if (/\bshirt|\btop|\btank|\bblouse|\bsweater|\bjumper/.test(d)) return "top";
+                    if (/\bpant|\btrousers|\bjeans|\bshorts|\bskirt/.test(d))  return "bottom";
+                    if (/\bhat|\bcap|\bbeanie|\bhelmet/.test(d))               return "hat";
+                    if (/\bbag|\bbackpack|\bpurse|\bhandbag/.test(d))          return "bag";
+                    if (/\bnecklace|\bring|\bearring|\bbracelet|\bjewel/.test(d)) return "jewellery";
+                    if (/\bscarf|\bgloves|\bbelt|\btie|\bsocks/.test(d))      return "accessory";
+                    if (/\bcostume|\buniform|\barmou?r|\brobe/.test(d))         return "costume";
+                    return "other";
+                  })(),
                 })
                 .where(eq(customItemOrders.id, orderId));
 
