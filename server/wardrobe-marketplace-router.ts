@@ -869,33 +869,62 @@ export const wardrobeMarketplaceRouter = router({
 
                           const { url: generatedImageUrl } = await generateImage(genOptions);
 
-            const itemName = description.trim().split(/s+/).slice(0, 6).join(" ");
+            const itemName = description.trim().split(/\s+/).slice(0, 6).join(" ");
 
             const [itemInsert] = await dbConn
               .insert(wardrobeItems)
-              .values({
-                userId:          ctx.user.id,
-                name:            itemName,
-                description,
-                primaryImageUrl: generatedImageUrl ?? null,
-                imageUrls:       generatedImageUrl ? [generatedImageUrl] : [],
-                wardrobeType:    "wardrobe",
-                visibility:      "private",
-                referencePrompt: prompt,
-                retailPriceAud:  0,
-              } as any);
-            const newItemId = (itemInsert as any).insertId as number;
+                .values({
+                  userId:          ctx.user.id,
+                  name:            itemName,
+                  description,
+                  category: (() => {
+                    const d = description.toLowerCase();
+                    if (/\bshoe|\bboot|\bsneaker|\bheel|\bsandal/.test(d))    return "shoes";
+                    if (/\bjacket|\bcoat|\bblazer|\bouterwear/.test(d))        return "outerwear";
+                    if (/\bdress|\bgown|\bsaree|\bkimono/.test(d))            return "dress";
+                    if (/\bsuit|\btuxedo/.test(d))                              return "suit";
+                    if (/\bshirt|\btop|\btank|\bblouse|\bsweater|\bjumper/.test(d)) return "top";
+                    if (/\bpant|\btrousers|\bjeans|\bshorts|\bskirt/.test(d)) return "bottom";
+                    if (/\bhat|\bcap|\bbeanie|\bhelmet/.test(d))              return "hat";
+                    if (/\bbag|\bbackpack|\bpurse|\bhandbag/.test(d))         return "bag";
+                    if (/\bnecklace|\bring|\bearring|\bbracelet|\bjewel/.test(d)) return "jewellery";
+                    if (/\bscarf|\bgloves|\bbelt|\btie|\bsocks/.test(d))     return "accessory";
+                    if (/\bcostume|\buniform|\barmou?r|\brobe/.test(d))        return "costume";
+                    return "other";
+                  })(),
+                  primaryImageUrl: generatedImageUrl ?? null,
+                  imageUrls:       generatedImageUrl ? [generatedImageUrl] : [],
+                  wardrobeType:    character ? "character_signature" : "wardrobe",
+                  visibility:      "private",
+                  referencePrompt: prompt,
+                  retailPriceAud:  0,
+                } as any);
+              const newItemId = (itemInsert as any).insertId as number;
 
-            await dbConn
-              .update(customItemOrders)
-              .set({
-                status:           "completed",
-                generatedImageUrl: generatedImageUrl ?? null,
-                wardrobeItemId:   newItemId,
-              })
-              .where(eq(customItemOrders.id, orderId));
+              // Auto-assign item to character so scene AI can pick it up automatically
+              if (metaCharId && character?.projectId) {
+                await dbConn.insert(wardrobeAssignments).values({
+                  userId:         ctx.user.id,
+                  projectId:      character.projectId,
+                  wardrobeItemId: newItemId,
+                  assignmentType: "character_costume",
+                  characterId:    metaCharId,
+                  usageMode:      "must_match",
+                  promptWeight:   80,
+                  locked:         false,
+                } as any).catch(() => { /* non-fatal — item still created */ });
+              }
 
-            return { success: true, wardrobeItemId: newItemId, generatedImageUrl };
+              await dbConn
+                .update(customItemOrders)
+                .set({
+                  status:           "completed",
+                  generatedImageUrl: generatedImageUrl ?? null,
+                  wardrobeItemId:   newItemId,
+                })
+                .where(eq(customItemOrders.id, orderId));
+
+              return { success: true, wardrobeItemId: newItemId, generatedImageUrl };
 
           } catch (err: any) {
             await dbConn
