@@ -1,10 +1,9 @@
 /**
- * WardrobeMarketplacePage.tsx — v7.1
+ * WardrobeMarketplacePage.tsx — v8.0  "Lamalo Fashions by Virelle Studios"
  *
- * Public-facing browse page for the Virelle wardrobe marketplace.
  * Routes:
- *   /wardrobe-marketplace              → designer grid
- *   /wardrobe-marketplace/designer/:id → individual designer profile + collections
+ *   /wardrobe-marketplace              → hero + designer grid
+ *   /wardrobe-marketplace/designer/:id → designer profile + collections + items
  */
 import { useState, useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
@@ -14,22 +13,14 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Store,
-  Search,
-  Shirt,
-  Sparkles,
-  ArrowRight,
-  Package,
-  Users,
-  Building2,
-  ChevronLeft,
-  Tag,
-  CheckCircle2,
-  Loader2,
+  Store, Search, Shirt, Sparkles, ArrowRight, Package,
+  Users, Building2, ChevronLeft, Tag, CheckCircle2,
+  Loader2, ShieldCheck, Zap, Film, Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 
-const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
+const LOGO_URL =
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
 
 const PROFILE_TYPE_LABELS: Record<string, string> = {
   designer: "Fashion Designer",
@@ -41,60 +32,256 @@ const PROFILE_TYPE_LABELS: Record<string, string> = {
   other: "Designer",
 };
 
-// ─── Designer grid card ──────────────────────────────────────────────────────
+// ─── Shared page header ───────────────────────────────────────────────────────
 
-function DesignerCard({
-  profile,
-  onClick,
-}: {
-  profile: any;
-  onClick: () => void;
-}) {
+function PageHeader({ onBack, crumb }: { onBack?: () => void; crumb?: string }) {
+  const [, setLocation] = useLocation();
   return (
-    <button
-      onClick={onClick}
-      className="group text-left bg-white/3 hover:bg-white/6 border border-white/10 hover:border-amber-500/30 rounded-2xl overflow-hidden transition-all duration-200"
-    >
-      <div className="relative h-36 bg-gradient-to-br from-white/5 to-white/2 flex items-center justify-center overflow-hidden">
-        {profile.logoUrl ? (
-          <img
-            src={profile.logoUrl}
-            alt={profile.brandName}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
-            <Shirt className="h-8 w-8 text-white/30" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute bottom-2 left-3">
-          <Badge variant="outline" className="text-[10px] border-white/20 text-white/60 bg-black/40">
-            {PROFILE_TYPE_LABELS[profile.profileType] ?? "Designer"}
-          </Badge>
-        </div>
+    <header className="border-b border-white/10 px-4 sm:px-6 py-4 flex items-center gap-3 sticky top-0 bg-black/95 backdrop-blur-md z-20">
+      {onBack && (
+        <button onClick={onBack} className="text-white/40 hover:text-white transition-colors">
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+      )}
+      <button onClick={() => setLocation("/")} className="flex items-center gap-2.5">
+        <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" />
+        <span className="text-sm font-black tracking-tighter uppercase italic text-white">
+          Virelle <span className="text-amber-400">Studios</span>
+        </span>
+      </button>
+      <span className="text-white/25 text-xs hidden sm:block">
+        {crumb ? `/ Lamalo Fashions / ${crumb}` : "/ Lamalo Fashions"}
+      </span>
+      <div className="ml-auto flex items-center gap-2">
+        <Button
+          variant="outline" size="sm"
+          onClick={() => setLocation("/designer-register")}
+          className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10 hidden sm:flex text-xs h-8"
+        >
+          <Store className="h-3.5 w-3.5 mr-1.5" /> List Your Designs
+        </Button>
+        <Button
+          variant="outline" size="sm"
+          onClick={() => setLocation("/login")}
+          className="border-white/15 text-white/60 hover:bg-white/5 text-xs h-8"
+        >
+          Sign In
+        </Button>
       </div>
-      <div className="p-4">
-        <h3 className="font-bold text-sm text-white truncate group-hover:text-amber-400 transition-colors">
-          {profile.brandName}
-        </h3>
-        {profile.displayName && (
-          <p className="text-xs text-white/40 truncate mt-0.5">{profile.displayName}</p>
-        )}
-        {profile.bio && (
-          <p className="text-xs text-white/50 mt-2 line-clamp-2 leading-relaxed">{profile.bio}</p>
-        )}
-        <div className="flex items-center gap-1 mt-3 text-xs text-amber-400/70">
-          <Package className="h-3 w-3" />
-          <span>View collections</span>
-          <ArrowRight className="h-3 w-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-        </div>
-      </div>
-    </button>
+    </header>
   );
 }
 
-// ─── Designer detail view ────────────────────────────────────────────────────
+// ─── Why Lamalo? value props ──────────────────────────────────────────────────
+
+function ValueProps() {
+  const cards = [
+    {
+      icon: Lock,
+      title: "Costume Lock — outfit stays locked across every scene",
+      body: "Assign an item to a character and our pipeline embeds a Costume Lock into every generation call. Scene 1 to scene 90 — same jacket, same colour, same fit. No drift. No re-prompting.",
+      border: "border-amber-500/20",
+      iconBg: "bg-amber-500/10 text-amber-400",
+    },
+    {
+      icon: Film,
+      title: "Zero colour drift — each shade is a separate item",
+      body: "Generic AI treats \"red jacket\" as open to interpretation — and it drifts. Every Lamalo colour variant is a distinct catalogue entry with its own locked reference prompt, so the model renders exactly what you chose.",
+      border: "border-purple-500/20",
+      iconBg: "bg-purple-500/10 text-purple-400",
+    },
+    {
+      icon: Zap,
+      title: "Buy once, use across every project forever",
+      body: "Purchase an item for 30¢ and it lives in your wardrobe inventory permanently. Assign it to characters in any current or future project without ever repurchasing.",
+      border: "border-blue-500/20",
+      iconBg: "bg-blue-500/10 text-blue-400",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Every designer goes through the same pipeline",
+      body: "Third-party collections on this marketplace are run through the same Costume Lock optimisation — reference prompt calibration, colour separation, continuity integration. Premium results regardless of whose label it is.",
+      border: "border-emerald-500/20",
+      iconBg: "bg-emerald-500/10 text-emerald-400",
+    },
+  ];
+
+  return (
+    <section className="border-b border-white/10 bg-black py-14 px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto">
+        <p className="text-center text-[11px] font-black uppercase tracking-widest text-amber-500/60 mb-8">
+          Why Lamalo beats describing clothes in your prompt
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {cards.map((c) => {
+            const Icon = c.icon;
+            return (
+              <div key={c.title} className={`rounded-2xl border ${c.border} bg-white/[0.02] p-5`}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-4 ${c.iconBg}`}>
+                  <Icon className="h-4 w-4" />
+                </div>
+                <h3 className="text-sm font-bold text-white mb-2">{c.title}</h3>
+                <p className="text-xs text-white/45 leading-relaxed">{c.body}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Single item card ─────────────────────────────────────────────────────────
+
+function ItemCard({
+  item,
+  onBuy,
+  isBuying,
+}: {
+  item: any;
+  onBuy: () => void;
+  isBuying: boolean;
+}) {
+  const [imgErr, setImgErr] = useState(false);
+  const color = item.colors?.[0] ?? "";
+  const baseName = item.name?.split(" — ")[0] ?? item.name;
+  const cents = item.retailPriceAud ?? 30;
+  const priceLabel = `A$${(cents / 100).toFixed(2)}`;
+
+  return (
+    <div className="group rounded-xl border border-white/8 hover:border-amber-500/30 bg-white/[0.02] hover:bg-white/[0.04] overflow-hidden transition-all duration-200 flex flex-col">
+      <div className="relative h-36 bg-gradient-to-br from-white/5 to-black overflow-hidden">
+        {item.primaryImageUrl && !imgErr ? (
+          <img
+            src={item.primaryImageUrl}
+            alt={item.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImgErr(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Shirt className="h-10 w-10 text-white/10" />
+          </div>
+        )}
+        {color && (
+          <div className="absolute top-2 right-2">
+            <span className="text-[9px] font-bold uppercase tracking-wider bg-black/70 backdrop-blur-sm border border-white/10 text-white/70 rounded-full px-2 py-0.5">
+              {color}
+            </span>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      </div>
+
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        <div>
+          <p className="text-xs font-bold text-white leading-tight line-clamp-1">{baseName}</p>
+          {color && <p className="text-[10px] text-amber-400/70 mt-0.5">{color}</p>}
+        </div>
+        <div className="flex items-center justify-between mt-auto pt-1">
+          <div className="flex items-center gap-1 text-amber-400">
+            <Tag className="h-3 w-3" />
+            <span className="text-xs font-black">{priceLabel}</span>
+          </div>
+          <Button
+            size="sm"
+            onClick={onBuy}
+            disabled={isBuying}
+            className="h-7 px-3 text-[10px] font-bold bg-amber-500 hover:bg-amber-400 text-black rounded-lg"
+          >
+            {isBuying ? <Loader2 className="h-3 w-3 animate-spin" /> : "Buy"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Collection accordion ─────────────────────────────────────────────────────
+
+function CollectionBlock({
+  col,
+  onBuyItem,
+  onBuyCollection,
+  leasingId,
+}: {
+  col: any;
+  onBuyItem: (id: number) => void;
+  onBuyCollection: (id: number) => void;
+  leasingId: string | null;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const items: any[] = col.items ?? [];
+  const itemCount = items.length;
+  const bundleCents = col.collectionPriceAud ?? Math.floor(itemCount * 30 * 0.85);
+  const bundleLabel = `A$${(bundleCents / 100).toFixed(2)}`;
+  const isBuyingCol = leasingId === `collection-${col.id}`;
+
+  return (
+    <div className="rounded-2xl border border-white/10 overflow-hidden">
+      <div className="bg-white/[0.03] p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h3 className="text-base font-bold text-white">{col.name}</h3>
+            {col.season && (
+              <Badge variant="outline" className="border-white/15 text-white/40 text-[10px]">
+                {col.season}
+              </Badge>
+            )}
+          </div>
+          {col.description && (
+            <p className="text-xs text-white/45 line-clamp-2 leading-relaxed">{col.description}</p>
+          )}
+          <p className="text-[11px] text-white/30 mt-2">
+            {itemCount} items · A$0.30 each · Bundle saves 15%
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <Button
+            size="sm"
+            onClick={() => onBuyCollection(col.id)}
+            disabled={isBuyingCol}
+            className="bg-amber-500 hover:bg-amber-400 text-black font-bold h-9 px-4 text-xs"
+          >
+            {isBuyingCol ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              `Buy all ${itemCount} — ${bundleLabel}`
+            )}
+          </Button>
+          <button
+            onClick={() => setExpanded((e) => !e)}
+            className="h-9 px-3 rounded-lg border border-white/15 text-white/50 hover:text-white hover:border-white/30 text-xs font-semibold transition-all"
+          >
+            {expanded ? "Hide items" : `Browse ${itemCount} items`}
+          </button>
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="border-t border-white/8 p-4 bg-black">
+          {items.length === 0 ? (
+            <p className="text-xs text-white/30 text-center py-6">No items in this collection yet.</p>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+              {items.map((item: any) => (
+                <ItemCard
+                  key={item.id}
+                  item={item}
+                  onBuy={() => onBuyItem(item.id)}
+                  isBuying={leasingId === `item-${item.id}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Designer detail ──────────────────────────────────────────────────────────
 
 function DesignerDetailView({ designerId }: { designerId: number }) {
   const [, setLocation] = useLocation();
@@ -110,37 +297,38 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       if (res.checkoutUrl) window.location.href = res.checkoutUrl;
     },
     onError: (e) => {
-      toast.error(e.message || "Could not start checkout. Are you signed in?");
+      toast.error(e.message || "Could not start checkout. Please sign in first.");
       setLeasingId(null);
     },
   });
 
-  const confirmLease = trpc.wardrobeMarket.leasing.confirmLease.useMutation({
+  const confirmPurchase = trpc.wardrobeMarket.leasing.confirmLease.useMutation({
     onSuccess: () => {
-      toast.success("Lease activated! Items are now in your wardrobe inventory.");
+      toast.success("Purchase complete! Items are now in your wardrobe inventory.");
       window.history.replaceState({}, "", window.location.pathname);
     },
     onError: (e) => toast.error(e.message),
   });
 
-  // Handle return from Stripe lease checkout
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get("lease_session");
-    const cancelled = params.get("lease_cancelled");
-    if (sessionId) {
-      confirmLease.mutate({ sessionId });
+    const p = new URLSearchParams(window.location.search);
+    const sid = p.get("purchase_session") ?? p.get("lease_session");
+    const cancelled = p.get("purchase_cancelled") ?? p.get("lease_cancelled");
+    if (sid) {
+      confirmPurchase.mutate({ sessionId: sid });
     } else if (cancelled) {
       toast.info("Checkout cancelled — no charge was made.");
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
 
-  function handleLease(type: "item" | "collection", id: number) {
-    const key = `${type}-${id}`;
-    setLeasingId(key);
-    const returnUrl = `${window.location.origin}/wardrobe-marketplace/designer/${designerId}`;
-    checkoutMut.mutate({ type, id, returnUrl });
+  function handleBuy(type: "item" | "collection", id: number) {
+    setLeasingId(`${type}-${id}`);
+    checkoutMut.mutate({
+      type,
+      id,
+      returnUrl: `${window.location.origin}/wardrobe-marketplace/designer/${designerId}`,
+    });
   }
 
   if (isLoading) {
@@ -156,37 +344,31 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
         <Store className="h-12 w-12 text-white/20" />
         <p className="text-white/50">Designer not found or profile is private.</p>
-        <Button onClick={() => setLocation("/wardrobe-marketplace")} variant="outline" className="border-white/15 text-white/70">
-          Back to Marketplace
+        <Button
+          onClick={() => setLocation("/wardrobe-marketplace")}
+          variant="outline"
+          className="border-white/15 text-white/70"
+        >
+          Back to Lamalo Fashions
         </Button>
       </div>
     );
   }
 
   const { profile, collections } = data;
+  const isLamalo = (profile as any).brandName === "Lamalo Fashion";
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center gap-3 sticky top-0 bg-black/90 backdrop-blur-sm z-10">
-        <button
-          onClick={() => setLocation("/wardrobe-marketplace")}
-          className="text-white/40 hover:text-white transition-colors"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <button onClick={() => setLocation("/")} className="flex items-center gap-2.5">
-          <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-          <span className="text-sm font-black tracking-tighter uppercase italic">
-            Virelle <span className="text-amber-400">Studios</span>
-          </span>
-        </button>
-        <span className="text-white/30 text-sm hidden sm:block">/ Marketplace / {(profile as any).brandName}</span>
-      </header>
+      <PageHeader
+        onBack={() => setLocation("/wardrobe-marketplace")}
+        crumb={(profile as any).brandName}
+      />
 
-      <main className="max-w-5xl mx-auto px-4 py-10 space-y-10">
-        {/* Designer Profile Hero */}
-        <div className="flex items-start gap-5">
+      <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
+
+        {/* Profile hero */}
+        <div className="flex items-start gap-5 p-6 rounded-2xl border border-white/8 bg-white/[0.02]">
           {(profile as any).logoUrl ? (
             <img
               src={(profile as any).logoUrl}
@@ -206,95 +388,72 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
                   <CheckCircle2 className="h-3 w-3 mr-1" /> Verified
                 </Badge>
               )}
+              {isLamalo && (
+                <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 text-xs">
+                  <Sparkles className="h-3 w-3 mr-1" /> In-House Label
+                </Badge>
+              )}
             </div>
             <Badge variant="outline" className="border-white/20 text-white/50 text-xs mb-2">
               {PROFILE_TYPE_LABELS[(profile as any).profileType] ?? "Designer"}
             </Badge>
             {(profile as any).bio && (
-              <p className="text-sm text-white/60 leading-relaxed max-w-xl">{(profile as any).bio}</p>
+              <p className="text-sm text-white/55 leading-relaxed max-w-xl">{(profile as any).bio}</p>
+            )}
+            {isLamalo && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[
+                  "Costume Lock enabled",
+                  "Zero colour drift",
+                  "30¢ per item",
+                  "Scene continuity built-in",
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-400/80 bg-amber-500/[0.08] border border-amber-500/20 rounded-full px-2.5 py-0.5"
+                  >
+                    <Sparkles className="h-2.5 w-2.5" /> {tag}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
         </div>
+
+        {/* Value props strip — only for the in-house Lamalo label */}
+        {isLamalo && <ValueProps />}
 
         {/* Collections */}
         <div>
           <h2 className="text-lg font-black tracking-tight mb-5 flex items-center gap-2">
             <Package className="h-5 w-5 text-amber-400" />
-            Published Collections
+            Collections
             <span className="text-sm font-normal text-white/30 ml-1">({collections.length})</span>
           </h2>
 
           {collections.length === 0 ? (
-            <div className="bg-white/3 border border-white/10 rounded-2xl p-12 text-center">
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-12 text-center">
               <Package className="h-10 w-10 text-white/20 mx-auto mb-3" />
-              <p className="text-white/40 text-sm">No published collections yet. Check back soon!</p>
+              <p className="text-white/40 text-sm">No published collections yet.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {collections.map((col: any) => {
-                const isLeasing = leasingId === `collection-${col.id}`;
-                return (
-                  <div
-                    key={col.id}
-                    className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden hover:border-amber-500/20 transition-colors"
-                  >
-                    {col.coverImageUrl ? (
-                      <img
-                        src={col.coverImageUrl}
-                        alt={col.name}
-                        className="w-full h-44 object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-44 bg-white/5 flex items-center justify-center">
-                        <Package className="h-10 w-10 text-white/15" />
-                      </div>
-                    )}
-                    <div className="p-4 space-y-3">
-                      <div>
-                        <h3 className="font-bold text-sm text-white">{col.name}</h3>
-                        {col.description && (
-                          <p className="text-xs text-white/50 mt-1 line-clamp-2">{col.description}</p>
-                        )}
-                      </div>
-                      {col.collectionPriceAud ? (
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1.5 text-amber-400">
-                              <Tag className="h-3.5 w-3.5" />
-                              <span className="font-bold text-sm">A${(col.collectionPriceAud / 100).toFixed(2)}</span>
-                            </div>
-                            <span className="text-[10px] text-white/30">
-                              Designer earns A${((col.collectionPriceAud * 0.95) / 100).toFixed(2)}
-                            </span>
-                          </div>
-                          <Button
-                            size="sm"
-                            onClick={() => handleLease("collection", col.id)}
-                            disabled={isLeasing || checkoutMut.isPending}
-                            className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-8 text-xs"
-                          >
-                            {isLeasing ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <>Lease entire collection — A${(col.collectionPriceAud / 100).toFixed(2)}</>
-                            )}
-                          </Button>
-                        </div>
-                      ) : (
-                        <p className="text-xs text-white/30 italic">Pricing not yet set</p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="space-y-4">
+              {collections.map((col: any) => (
+                <CollectionBlock
+                  key={col.id}
+                  col={col}
+                  onBuyItem={(id) => handleBuy("item", id)}
+                  onBuyCollection={(id) => handleBuy("collection", id)}
+                  leasingId={leasingId}
+                />
+              ))}
             </div>
           )}
         </div>
 
-        {/* CTA */}
-        <div className="border-t border-white/10 pt-8 text-center">
-          <p className="text-xs text-white/30 mb-3">
-            Leases appear directly in your character's wardrobe inventory after payment.
+        <div className="border-t border-white/10 pt-8 text-center space-y-3">
+          <p className="text-xs text-white/30">
+            Purchased items appear instantly in your wardrobe inventory — assign to any character across any project.
           </p>
           <Button
             variant="outline"
@@ -310,23 +469,65 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
   );
 }
 
-// ─── Main export: routes between grid and designer detail ───────────────────
+// ─── Designer grid card ───────────────────────────────────────────────────────
 
-export default function WardrobeMarketplacePage() {
-  const [, setLocation] = useLocation();
-  const [search, setSearch] = useState("");
-
-  const [isDetailRoute, detailParams] = useRoute("/wardrobe-marketplace/designer/:id");
-  const designerId = isDetailRoute ? parseInt((detailParams as any)?.id ?? "0", 10) : 0;
-
-  if (isDetailRoute && designerId) {
-    return <DesignerDetailView designerId={designerId} />;
-  }
-
-  return <MarketplaceGrid search={search} setSearch={setSearch} setLocation={setLocation} />;
+function DesignerCard({ profile, onClick }: { profile: any; onClick: () => void }) {
+  const isLamalo = profile.brandName === "Lamalo Fashion";
+  return (
+    <button
+      onClick={onClick}
+      className={`group text-left rounded-2xl overflow-hidden transition-all duration-200 border ${
+        isLamalo
+          ? "border-amber-500/40 hover:border-amber-400 bg-gradient-to-br from-amber-950/30 to-black shadow-lg shadow-amber-500/10"
+          : "border-white/10 hover:border-amber-500/30 bg-white/[0.02] hover:bg-white/[0.04]"
+      }`}
+    >
+      <div className="relative h-36 overflow-hidden">
+        {profile.logoUrl ? (
+          <img
+            src={profile.logoUrl}
+            alt={profile.brandName}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full bg-white/5 flex items-center justify-center">
+            <Shirt className="h-8 w-8 text-white/20" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute bottom-2 left-3 flex gap-1.5">
+          <Badge variant="outline" className="text-[10px] border-white/20 text-white/60 bg-black/50">
+            {PROFILE_TYPE_LABELS[profile.profileType] ?? "Designer"}
+          </Badge>
+          {isLamalo && (
+            <Badge className="text-[10px] bg-amber-500/20 text-amber-300 border-amber-500/30">
+              In-House
+            </Badge>
+          )}
+        </div>
+      </div>
+      <div className="p-4">
+        <h3
+          className={`font-bold text-sm truncate transition-colors ${
+            isLamalo ? "text-amber-400" : "text-white group-hover:text-amber-400"
+          }`}
+        >
+          {profile.brandName}
+        </h3>
+        {profile.bio && (
+          <p className="text-xs text-white/40 mt-1.5 line-clamp-2 leading-relaxed">{profile.bio}</p>
+        )}
+        <div className="flex items-center gap-1 mt-3 text-xs text-amber-400/70">
+          <Package className="h-3 w-3" />
+          <span>Browse collections</span>
+          <ArrowRight className="h-3 w-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+      </div>
+    </button>
+  );
 }
 
-// ─── Marketplace grid (all designers) ───────────────────────────────────────
+// ─── Marketplace grid ─────────────────────────────────────────────────────────
 
 function MarketplaceGrid({
   search,
@@ -335,12 +536,10 @@ function MarketplaceGrid({
 }: {
   search: string;
   setSearch: (s: string) => void;
-  setLocation: (path: string) => void;
+  setLocation: (p: string) => void;
 }) {
-  const { data: designers, isLoading } = trpc.wardrobeMarket.marketplace.browseDesigners.useQuery({
-    limit: 48,
-    offset: 0,
-  });
+  const { data: designers, isLoading } =
+    trpc.wardrobeMarket.marketplace.browseDesigners.useQuery({ limit: 48, offset: 0 });
 
   const filtered = search
     ? (designers ?? []).filter(
@@ -351,100 +550,93 @@ function MarketplaceGrid({
       )
     : (designers ?? []);
 
+  const sorted = [...filtered].sort((a: any, b: any) =>
+    a.brandName === "Lamalo Fashion" ? -1 : b.brandName === "Lamalo Fashion" ? 1 : 0,
+  );
+
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Navigation */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between sticky top-0 z-10 bg-black/90 backdrop-blur-sm">
-        <button onClick={() => setLocation("/")} className="flex items-center gap-2.5">
-          <img
-            src={LOGO_URL}
-            alt="Virelle Studios"
-            className="h-7 w-7 rounded object-contain"
-            onError={(e) => (e.currentTarget.style.display = "none")}
-          />
-          <span className="text-sm font-black tracking-tighter uppercase italic">
-            Virelle <span className="text-amber-400">Studios</span>
-          </span>
-        </button>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setLocation("/designer-register")}
-            className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10 hidden sm:flex"
-          >
-            <Store className="h-3.5 w-3.5 mr-1.5" />
-            List Your Collections
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setLocation("/login")}
-            className="border-white/15 text-white/70 hover:bg-white/5"
-          >
-            Sign In
-          </Button>
-        </div>
-      </header>
+      <PageHeader />
 
-      {/* Hero */}
-      <section className="relative py-20 px-4 overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_60%_40%,rgba(212,175,55,0.05)_0%,transparent_70%)] pointer-events-none" />
+      {/* ── Hero ── */}
+      <section
+        className="relative py-20 px-4 overflow-hidden border-b border-white/10"
+        style={{ background: "linear-gradient(180deg,#000 0%,#0c0800 60%,#000 100%)" }}
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(212,175,55,0.06)_0%,transparent_70%)] pointer-events-none" />
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-400 text-xs font-bold mb-6">
+          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-400 text-xs font-black mb-6 uppercase tracking-widest">
             <Sparkles className="h-3.5 w-3.5" />
-            Fashion & Costume Marketplace
+            Virelle Studios · In-House Virtual Fashion Label
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tighter mb-4 text-white">
-            DRESS YOUR <span className="text-amber-400">CHARACTERS</span>
+
+          <h1 className="text-5xl sm:text-7xl font-black tracking-tighter leading-none mb-3 text-white">
+            LAMALO
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400">
+              FASHIONS
+            </span>
           </h1>
-          <p className="text-lg text-white/50 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Browse verified fashion and costume designers. Lease collections for your productions
-            — items appear directly in your character's wardrobe inventory.
+          <p className="text-sm font-bold text-white/30 uppercase tracking-widest mb-8">
+            by Virelle Studios
           </p>
+
+          <p className="text-base sm:text-lg text-white/55 mb-3 max-w-2xl mx-auto leading-relaxed">
+            Virtual clothing engineered for AI film generation. Every colour and every cut is
+            pre-optimised so your characters wear the <em>same</em> outfit in scene 1 and scene 90 —
+            no drift, no guesswork, no re-prompting.
+          </p>
+          <p className="text-sm text-amber-400/80 font-semibold mb-10">
+            1,400+ items across 23 collections · From A$0.30 per item
+          </p>
+
           <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/35" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search designers, styles, collections..."
-              className="pl-10 bg-white/5 border-white/15 text-white placeholder-white/30 h-12 text-base"
+              placeholder="Search designers, styles, collections…"
+              className="pl-10 bg-white/5 border-white/15 text-white placeholder-white/30 h-12 text-sm"
             />
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="border-b border-white/10 py-6 px-4">
-        <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-8">
+      {/* ── Why Lamalo? ── */}
+      <ValueProps />
+
+      {/* ── Stats bar ── */}
+      <section className="border-b border-white/10 py-6 px-4 bg-white/[0.01]">
+        <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-10">
           {[
-            { icon: Users, label: "Active Designers", value: designers?.length ?? "—" },
-            { icon: Package, label: "Leasable Collections", value: "Growing" },
-            { icon: Shirt, label: "Commission to Platform", value: "5% only" },
+            { icon: Users,   label: "Designers",   value: designers?.length ?? "—" },
+            { icon: Package, label: "Collections", value: "23+"    },
+            { icon: Shirt,   label: "Items",       value: "1,400+" },
+            { icon: Tag,     label: "From",        value: "A$0.30" },
           ].map(({ icon: Icon, label, value }) => (
             <div key={label} className="text-center">
               <div className="flex items-center justify-center gap-2 text-amber-400 mb-1">
                 <Icon className="h-4 w-4" />
                 <span className="text-2xl font-black">{value}</span>
               </div>
-              <p className="text-xs text-white/40">{label}</p>
+              <p className="text-xs text-white/35">{label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Designer Grid */}
+      {/* ── Designer grid ── */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-black tracking-tight text-white">
             {search ? `Results for "${search}"` : "All Designers"}
           </h2>
-          <span className="text-xs text-white/30">{filtered.length} designers</span>
+          <span className="text-xs text-white/30">{sorted.length} designers</span>
         </div>
 
         {isLoading && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {Array.from({ length: 12 }).map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="rounded-2xl overflow-hidden">
                 <Skeleton className="h-36 w-full bg-white/5" />
                 <div className="p-4 space-y-2">
@@ -456,7 +648,7 @@ function MarketplaceGrid({
           </div>
         )}
 
-        {!isLoading && filtered.length === 0 && (
+        {!isLoading && sorted.length === 0 && (
           <div className="text-center py-24">
             <Store className="h-12 w-12 text-white/20 mx-auto mb-4" />
             <p className="text-white/40 font-medium">
@@ -471,27 +663,33 @@ function MarketplaceGrid({
           </div>
         )}
 
-        {!isLoading && filtered.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {filtered.map((profile: any) => (
+        {!isLoading && sorted.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {sorted.map((profile: any) => (
               <DesignerCard
                 key={profile.id}
                 profile={profile}
-                onClick={() => setLocation(`/wardrobe-marketplace/designer/${profile.id}`)}
+                onClick={() =>
+                  setLocation(`/wardrobe-marketplace/designer/${profile.id}`)
+                }
               />
             ))}
           </div>
         )}
       </section>
 
-      {/* CTA for designers */}
-      <section className="border-t border-white/10 bg-white/2 py-16 px-4">
+      {/* ── Designer CTA ── */}
+      <section className="border-t border-white/10 bg-white/[0.01] py-16 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <Building2 className="h-10 w-10 text-amber-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-black tracking-tight mb-3">Are you a designer?</h2>
-          <p className="text-white/50 text-sm mb-6 leading-relaxed">
-            List your fashion or costume collections and earn 95% of every lease.
-            A$299/year — unlimited collections, direct payouts via Stripe.
+          <h2 className="text-2xl font-black tracking-tight mb-3 text-white">List your designs here.</h2>
+          <p className="text-white/50 text-sm mb-2 leading-relaxed">
+            Upload your collection and every item goes through Costume Lock optimisation — reference
+            prompt calibration, colour separation, and scene continuity integration. Your customers
+            get professional, drift-free results from day one.
+          </p>
+          <p className="text-white/35 text-xs mb-6">
+            A$299/year · Unlimited collections · 95% of every sale · Direct Stripe payouts.
           </p>
           <Button
             onClick={() => setLocation("/designer-register")}
@@ -502,16 +700,42 @@ function MarketplaceGrid({
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-white/10 py-8 px-4 text-center">
         <p className="text-xs text-white/20">
-          © 2026 Virelle Studios. All rights reserved.
+          © 2026 Virelle Studios · Lamalo Fashions ·{" "}
+          <button
+            onClick={() => setLocation("/terms")}
+            className="hover:text-white/40 transition-colors"
+          >
+            Terms
+          </button>
           {" · "}
-          <button onClick={() => setLocation("/terms")} className="hover:text-white/50 transition-colors">Terms</button>
-          {" · "}
-          <button onClick={() => setLocation("/privacy")} className="hover:text-white/50 transition-colors">Privacy</button>
+          <button
+            onClick={() => setLocation("/privacy")}
+            className="hover:text-white/40 transition-colors"
+          >
+            Privacy
+          </button>
         </p>
       </footer>
     </div>
+  );
+}
+
+// ─── Root export ──────────────────────────────────────────────────────────────
+
+export default function WardrobeMarketplacePage() {
+  const [, setLocation] = useLocation();
+  const [search, setSearch] = useState("");
+  const [isDetailRoute, detailParams] = useRoute("/wardrobe-marketplace/designer/:id");
+  const designerId = isDetailRoute
+    ? parseInt((detailParams as any)?.id ?? "0", 10)
+    : 0;
+
+  if (isDetailRoute && designerId) {
+    return <DesignerDetailView designerId={designerId} />;
+  }
+  return (
+    <MarketplaceGrid search={search} setSearch={setSearch} setLocation={setLocation} />
   );
 }
