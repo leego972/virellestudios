@@ -4337,12 +4337,15 @@ Break this into 8-15 scenes. For each scene, provide:
               preferredProvider: earlyUserKeys.preferredProvider || (ENV.runwayApiKey ? "runway" : undefined),
             };
 
-            // Build rich video prompt including character physical descriptions for consistent faces
+            // Build rich video prompt — PRIORITY: faceDnaPrompt (photo-locked) > assembled attributes
             const charVideoDescriptions = characters.map(c => {
               const attrs = (c.attributes as any) || {};
               if (attrs.isAnimal && attrs.animalSpecies) {
                 return `${c.name} (${attrs.animalSpecies}${attrs.hairColor ? `, ${attrs.hairColor} coloring` : ""}${attrs.build ? `, ${attrs.build}` : ""})`.trim();
               }
+              const faceDnaPrompt = (c as any).faceDnaPrompt || attrs.faceDnaPrompt;
+              // Use photo-locked face DNA anchor when available
+              if (faceDnaPrompt) return `[CHARACTER ${c.name}: ${faceDnaPrompt}]`;
               const parts = [c.name];
               if (attrs.gender) parts.push(attrs.gender);
               if (attrs.ageRange) parts.push(`in their ${attrs.ageRange}`);
