@@ -2232,6 +2232,10 @@ export type InsertWardrobeLease = typeof wardrobeLeases.$inferInsert;
                              "completed",
                              "failed",
                            ]).default("pending_payment").notNull(),
+    // Context for AI generation — which character wears this item and in which scene
+    characterId:           int("characterId"),
+    sceneId:               int("sceneId"),
+    projectId:             int("projectId"),
     errorMessage:          text("errorMessage"),
     createdAt:             timestamp("createdAt").defaultNow().notNull(),
     updatedAt:             timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
