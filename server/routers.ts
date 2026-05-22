@@ -169,6 +169,16 @@ async function getWardrobePromptContextForScene(
       const c = await db.getCharacterById(cid).catch(() => undefined);
       if (c) charById.set(c.id, { id: c.id, name: c.name });
     }
+    // Resolve any characterIds referenced by scene-level assignments that are
+    // not in scene.characterIds (avoids "Character #N" fallback in wardrobe prompt).
+    const _extraCids = new Set<number>();
+    for (const a of allAssignments) {
+      if (a.characterId && !charById.has(a.characterId)) _extraCids.add(a.characterId);
+    }
+    for (const cid of _extraCids) {
+      const c = await db.getCharacterById(cid).catch(() => undefined);
+      if (c) charById.set(c.id, { id: c.id, name: c.name });
+    }
 
     const characterLines: string[] = [];
     const sceneLines: string[] = [];
