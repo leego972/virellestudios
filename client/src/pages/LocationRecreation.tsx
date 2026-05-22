@@ -23,6 +23,7 @@ const LocationRecreation: React.FC = () => {
   const [locationName, setLocationName] = useState("");
   const [uploading, setUploading] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+  const [view, setView] = useState<"upload" | "gallery">("gallery");
   
   const [envSettings, setEnvSettings] = useState({
     timeOfDay: "afternoon",
@@ -30,14 +31,32 @@ const LocationRecreation: React.FC = () => {
     lighting: "natural"
   });
 
+  const utils = trpc.useContext();
+  const { data: locationsList, isLoading: loadingLocations } = trpc.locationRecreation.list.useQuery({ 
+    projectId: parseInt(projectId!) 
+  });
+
   const analyzeMutation = trpc.locationRecreation.analyzeVideo.useMutation({
     onSuccess: (data) => {
       setSelectedLocationId(data.locationId);
       setUploading(false);
+      utils.locationRecreation.list.invalidate();
+      setView("upload");
     }
   });
 
-  const applyEnvMutation = trpc.locationRecreation.applyEnvironment.useMutation();
+  const applyEnvMutation = trpc.locationRecreation.applyEnvironment.useMutation({
+    onSuccess: () => {
+      utils.locationRecreation.list.invalidate();
+    }
+  });
+
+  const deleteMutation = trpc.locationRecreation.delete.useMutation({
+    onSuccess: () => {
+      utils.locationRecreation.list.invalidate();
+      if (selectedLocationId) setSelectedLocationId(null);
+    }
+  });
 
   const handleUpload = async () => {
     if (!videoUrl || !locationName) return;
@@ -55,6 +74,16 @@ const LocationRecreation: React.FC = () => {
       locationId: selectedLocationId,
       ...envSettings as any
     });
+  };
+
+  const selectLocation = (loc: any) => {
+    setSelectedLocationId(loc.id);
+    setEnvSettings({
+      timeOfDay: loc.bestTimeOfDay || "afternoon",
+      weather: loc.weatherPreferences?.[0] || "clear",
+      lighting: "natural"
+    });
+    setView("upload");
   };
 
   return (
@@ -77,115 +106,179 @@ const LocationRecreation: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Step 1: Upload Video */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm">
-            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-              <Video className="text-blue-400" />
-              1. Upload Location Reference
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-zinc-500 mb-2 uppercase tracking-widest">Location Name</label>
-                <input 
-                  type="text"
-                  placeholder="e.g., Jerry's Apartment, The Bundy House"
-                  value={locationName}
-                  onChange={(e) => setLocationName(e.target.value)}
-                  className="w-full bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-500 mb-2 uppercase tracking-widest">Video URL (S3 or Reference)</label>
-                <div className="flex gap-3">
-                  <input 
-                    type="text"
-                    placeholder="https://..."
-                    value={videoUrl}
-                    onChange={(e) => setVideoUrl(e.target.value)}
-                    className="flex-1 bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                  />
-                  <button 
-                    onClick={handleUpload}
-                    disabled={uploading || !videoUrl}
-                    className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 px-8 rounded-xl font-bold transition-all flex items-center gap-2"
-                  >
-                    {uploading ? <Zap className="animate-spin" /> : <Upload />}
-                    ANALYZE
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            {analyzeMutation.isSuccess && (
-              <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center gap-3 text-blue-400">
-                <CheckCircle className="w-6 h-6" />
-                <div>
-                  <p className="font-bold">Analysis Underway</p>
-                  <p className="text-sm">AI is extracting architectural details from your video.</p>
-                </div>
-              </div>
-            )}
-          </div>
+      <div className="flex gap-4 mb-8">
+        <button 
+          onClick={() => setView("gallery")}
+          className={`px-6 py-2 rounded-full font-bold transition-all ${view === "gallery" ? "bg-blue-600 text-white" : "bg-zinc-900 text-zinc-500 hover:bg-zinc-800"}`}
+        >
+          My Locations
+        </button>
+        <button 
+          onClick={() => {
+            setView("upload");
+            setSelectedLocationId(null);
+          }}
+          className={`px-6 py-2 rounded-full font-bold transition-all ${view === "upload" && !selectedLocationId ? "bg-blue-600 text-white" : "bg-zinc-900 text-zinc-500 hover:bg-zinc-800"}`}
+        >
+          New Recreation
+        </button>
+      </div>
 
-          {/* Step 2: Environment Controls */}
-          <div className={`bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm transition-all ${!selectedLocationId ? 'opacity-50 pointer-events-none' : ''}`}>
-            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-              <Settings className="text-purple-400" />
-              2. Environmental Controls
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Time of Day</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {["dawn", "morning", "afternoon", "evening", "night", "golden-hour"].map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setEnvSettings({...envSettings, timeOfDay: t})}
-                      className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.timeOfDay === t ? 'border-purple-500 bg-purple-500/10 text-purple-400' : 'border-zinc-800 hover:border-zinc-600'}`}
-                    >
-                      {t.replace('-', ' ')}
-                    </button>
-                  ))}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          {view === "gallery" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {loadingLocations ? (
+                <div className="col-span-2 py-20 text-center text-zinc-500">Loading your locations...</div>
+              ) : locationsList?.length === 0 ? (
+                <div className="col-span-2 py-20 text-center bg-zinc-900/30 rounded-3xl border border-dashed border-zinc-800">
+                  <MapPin className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
+                  <p className="text-zinc-500">No locations found. Upload a video to get started.</p>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Weather</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {["clear", "cloudy", "rainy", "stormy", "snowy", "foggy", "windy"].map((w) => (
-                    <button
-                      key={w}
-                      onClick={() => setEnvSettings({...envSettings, weather: w})}
-                      className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.weather === w ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-zinc-800 hover:border-zinc-600'}`}
-                    >
-                      {w}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Lighting</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {["natural", "dramatic", "soft", "neon", "candlelight", "studio", "backlit", "silhouette"].map((l) => (
-                    <button
-                      key={l}
-                      onClick={() => setEnvSettings({...envSettings, lighting: l})}
-                      className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.lighting === l ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-zinc-800 hover:border-zinc-600'}`}
-                    >
-                      {l}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              ) : (
+                locationsList?.map((loc) => (
+                  <div key={loc.id} className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 hover:border-blue-500/50 transition-all group">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold">{loc.name}</h3>
+                        <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">{loc.locationType || "Interior"}</p>
+                      </div>
+                      <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${loc.aiRecreationStatus === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}`}>
+                        {loc.aiRecreationStatus}
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-6">
+                      <button 
+                        onClick={() => selectLocation(loc)}
+                        className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-2 rounded-xl text-sm font-bold transition-all"
+                      >
+                        Edit Environment
+                      </button>
+                      <button 
+                        onClick={() => deleteMutation.mutate({ locationId: loc.id })}
+                        className="px-4 bg-red-500/10 hover:bg-red-500/20 text-red-500 py-2 rounded-xl transition-all"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
-            <button 
-              onClick={handleApplyEnv}
-              className="w-full mt-8 bg-white text-black font-black py-4 rounded-2xl hover:bg-zinc-200 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
-            >
-              Update Environment
-            </button>
-          </div>
+          ) : (
+            <>
+              {/* Step 1: Upload Video */}
+              <div className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm">
+                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+                  <Video className="text-blue-400" />
+                  {selectedLocationId ? "Location Details" : "1. Upload Location Reference"}
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-500 mb-2 uppercase tracking-widest">Location Name</label>
+                    <input 
+                      type="text"
+                      placeholder="e.g., Jerry's Apartment, The Bundy House"
+                      value={locationName || (selectedLocationId ? locationsList?.find(l => l.id === selectedLocationId)?.name : "")}
+                      readOnly={!!selectedLocationId}
+                      onChange={(e) => setLocationName(e.target.value)}
+                      className="w-full bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    />
+                  </div>
+                  {!selectedLocationId && (
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-500 mb-2 uppercase tracking-widest">Video URL (S3 or Reference)</label>
+                      <div className="flex gap-3">
+                        <input 
+                          type="text"
+                          placeholder="https://..."
+                          value={videoUrl}
+                          onChange={(e) => setVideoUrl(e.target.value)}
+                          className="flex-1 bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        />
+                        <button 
+                          onClick={handleUpload}
+                          disabled={uploading || !videoUrl}
+                          className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 px-8 rounded-xl font-bold transition-all flex items-center gap-2"
+                        >
+                          {uploading ? <Zap className="animate-spin" /> : <Upload />}
+                          ANALYZE
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {analyzeMutation.isSuccess && !selectedLocationId && (
+                  <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center gap-3 text-blue-400">
+                    <CheckCircle className="w-6 h-6" />
+                    <div>
+                      <p className="font-bold">Analysis Underway</p>
+                      <p className="text-sm">AI is extracting architectural details from your video.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Step 2: Environment Controls */}
+              <div className={`bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm transition-all ${!selectedLocationId ? 'opacity-50 pointer-events-none' : ''}`}>
+                <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+                  <Settings className="text-purple-400" />
+                  2. Environmental Controls
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Time of Day</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["dawn", "morning", "afternoon", "evening", "night", "golden-hour"].map((t) => (
+                        <button
+                          key={t}
+                          onClick={() => setEnvSettings({...envSettings, timeOfDay: t})}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.timeOfDay === t ? 'border-purple-500 bg-purple-500/10 text-purple-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                        >
+                          {t.replace('-', ' ')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Weather</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["clear", "cloudy", "rainy", "stormy", "snowy", "foggy", "windy"].map((w) => (
+                        <button
+                          key={w}
+                          onClick={() => setEnvSettings({...envSettings, weather: w})}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.weather === w ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                        >
+                          {w}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Lighting</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["natural", "dramatic", "soft", "neon", "candlelight", "studio", "backlit", "silhouette"].map((l) => (
+                        <button
+                          key={l}
+                          onClick={() => setEnvSettings({...envSettings, lighting: l})}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.lighting === l ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-zinc-800 hover:border-zinc-600'}`}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  onClick={handleApplyEnv}
+                  className="w-full mt-8 bg-white text-black font-black py-4 rounded-2xl hover:bg-zinc-200 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  {applyEnvMutation.isLoading ? <Zap className="animate-spin" /> : "Update Environment"}
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Info Sidebar */}

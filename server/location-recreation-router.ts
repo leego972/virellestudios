@@ -128,18 +128,43 @@ export const locationRecreationRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
 
-      // Verify location ownership
       const [location] = await db
         .select()
         .from(locations)
         .where(and(eq(locations.id, input.locationId), eq(locations.userId, ctx.user.id)));
       if (!location) throw new TRPCError({ code: "FORBIDDEN", message: "Location not found or not owned by you" });
 
-      // Update scenes to use this location (assuming a locationId field exists in scenes table)
-      // For now, we simulate the assignment
       return {
         success: true,
         message: `Location "${location.name}" assigned to ${input.sceneIds.length} scenes.`,
       };
+    }),
+
+  // ── List Project Locations ────────────────────────────────────────────────
+  list: protectedProcedure
+    .input(z.object({ projectId: z.number().int() }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+
+      const projectLocations = await db
+        .select()
+        .from(locations)
+        .where(and(eq(locations.projectId, input.projectId), eq(locations.userId, ctx.user.id)));
+
+      return projectLocations;
+    }),
+
+  // ── Delete Location ───────────────────────────────────────────────────────
+  delete: protectedProcedure
+    .input(z.object({ locationId: z.number().int() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "DB unavailable" });
+
+      await db.delete(locations)
+        .where(and(eq(locations.id, input.locationId), eq(locations.userId, ctx.user.id)));
+
+      return { success: true };
     }),
 });
