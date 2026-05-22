@@ -244,8 +244,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/designer-register">{() => <Suspense fallback={<PageLoader />}><DesignerRegisterPage /></Suspense>}</Route>
-      <Route path="/wardrobe-marketplace">{() => <Suspense fallback={<PageLoader />}><WardrobeMarketplacePage /></Suspense>}</Route>
-      <Route path="/wardrobe-marketplace/designer/:id">{() => <Suspense fallback={<PageLoader />}><WardrobeMarketplacePage /></Suspense>}</Route>
+
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/billing/success">{() => <LazyPage><BillingSuccess /></LazyPage>}</Route>
@@ -374,6 +373,8 @@ function Router() {
               <Route path="/admin/growth">{() => <LazyPage><AdminGrowthDashboard /></LazyPage>}</Route>
               <Route path="/admin/signature-cast">{() => <LazyPage><AdminSignatureCast /></LazyPage>}</Route>
               <Route path="/projects/:projectId/locations/recreate">{() => <LazyPage><LocationRecreation /></LazyPage>}</Route>
+              <Route path="/wardrobe-marketplace">{() => <LazyPage><WardrobeMarketplacePage /></LazyPage>}</Route>
+              <Route path="/wardrobe-marketplace/designer/:id">{() => <LazyPage><WardrobeMarketplacePage /></LazyPage>}</Route>
               {/* v6.63 — Production Spine */}
               <Route path="/projects/:id/schedule">{() => <LazyPage><Schedule /></LazyPage>}</Route>
               <Route path="/projects/:id/day-out-of-days">{() => <LazyPage><DayOutOfDays /></LazyPage>}</Route>

@@ -64,13 +64,7 @@ function PageHeader({ onBack, crumb }: { onBack?: () => void; crumb?: string }) 
         >
           <Store className="h-3.5 w-3.5 mr-1.5" /> List Your Designs
         </Button>
-        <Button
-          variant="outline" size="sm"
-          onClick={() => setLocation("/login")}
-          className="border-white/15 text-white/60 hover:bg-white/5 text-xs h-8"
-        >
-          Sign In
-        </Button>
+
       </div>
     </header>
   );
