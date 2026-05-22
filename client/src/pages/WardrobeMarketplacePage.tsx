@@ -612,8 +612,6 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       } else {
         toast.success("Custom item generated and added to your wardrobe inventory!");
         utils.wardrobeMarket.customItem.getMyOrders.invalidate();
-        setTab("orders");
-        onOpen?.();
       }
       window.history.replaceState({}, "", window.location.pathname);
     },
