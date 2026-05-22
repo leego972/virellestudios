@@ -723,6 +723,14 @@ export function buildScenePrompt(
     genreMotion?: string | null;
     lipSyncMode?: string | null;
     cinemaIndustry?: string | null;
+    /** Props / set-dressing items from the production props library */
+    props?: string[] | null;
+    /** Director's shot intent — emotional / narrative purpose of this shot */
+    shotIntent?: string | null;
+    /** Continuity notes from the script supervisor */
+    continuityNotes?: string | null;
+    /** Practical light sources visible in frame */
+    practicalLights?: string | null;
   },
   visualDNA: VisualDNA,
   options?: {
@@ -936,6 +944,26 @@ export function buildScenePrompt(
   }
   if (scene.actionDescription) {
     parts.push(`Action: ${scene.actionDescription}`);
+  }
+
+  // 6a. Props and set-dressing from the production props library
+  if (scene.props && Array.isArray(scene.props) && scene.props.length > 0) {
+    parts.push(`Props and set-dressing (must appear in frame): ${scene.props.join(", ")}`);
+  }
+
+  // 6a2. Director's shot intent — emotional/narrative purpose of this specific shot
+  if (scene.shotIntent) {
+    parts.push(`Shot intent (what this shot must convey emotionally): ${scene.shotIntent}`);
+  }
+
+  // 6a3. Script supervisor continuity notes — injected for precise cross-scene matching
+  if (scene.continuityNotes) {
+    parts.push(`Continuity from previous scene: ${scene.continuityNotes}`);
+  }
+
+  // 6a4. Practical lights visible in frame — key for realistic exposure matching
+  if (scene.practicalLights) {
+    parts.push(`Practical light sources visible in frame: ${scene.practicalLights}`);
   }
 
   // 6b. Crowd/Extras — background population for scene realism
