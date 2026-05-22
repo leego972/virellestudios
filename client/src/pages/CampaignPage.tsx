@@ -1,5 +1,6 @@
 import { useRoute, useLocation } from "wouter";
   import { trpc } from "@/lib/trpc";
+  import { useEffect } from "react";
   import { Badge } from "@/components/ui/badge";
   import { Button } from "@/components/ui/button";
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +31,41 @@ import { useRoute, useLocation } from "wouter";
     const [customAmount, setCustomAmount] = useState("");
     const [backing, setBacking] = useState(false);
 
-    const { data, isLoading, error } = trpc.crowdfund.campaign.get.useQuery({ slug }, { enabled: !!slug });
+    const { data, isLoading, error, refetch } = trpc.crowdfund.campaign.get.useQuery({ slug }, { enabled: !!slug });
+
+    // Handle return from Stripe
+    const [loc] = useLocation();
+    const query = new URLSearchParams(loc.split("?")[1]);
+    const status = query.get("status");
+    const sessionId = query.get("session_id");
+    const [confirming, setConfirming] = useState(false);
+
+    const confirm = trpc.crowdfund.confirmContribution.useMutation({
+      onSuccess: (res) => {
+        if (res.success) {
+          toast.success(res.alreadyConfirmed ? "Contribution already confirmed" : "Thank you for backing this project!");
+          refetch();
+          // Clean URL
+          navigate(`/crowdfund/c/${slug}`, { replace: true });
+        }
+        setConfirming(false);
+      },
+      onError: (err) => {
+        toast.error(err.message);
+        setConfirming(false);
+      }
+    });
+
+    useEffect(() => {
+      if (status === "success" && sessionId && !confirming) {
+        setConfirming(true);
+        confirm.mutate({ sessionId, contributionId: 0 }); // contributionId is found by sessionId on server
+      } else if (status === "cancelled") {
+        toast.error("Contribution cancelled");
+        navigate(`/crowdfund/c/${slug}`, { replace: true });
+      }
+    }, [status, sessionId]);
+
     const contribute = trpc.crowdfund.contribute.useMutation({
       onSuccess: ({ checkoutUrl }) => {
         window.location.href = checkoutUrl;
@@ -85,8 +120,8 @@ import { useRoute, useLocation } from "wouter";
         campaignSlug: slug,
         amountCents: backAmount,
         rewardId: selectedReward ?? undefined,
-        successUrl: `${origin}/campaigns/${slug}/success`,
-        cancelUrl: `${origin}/campaigns/${slug}`,
+        successUrl: `${origin}/crowdfund/c/${slug}?status=success&session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${origin}/crowdfund/c/${slug}?status=cancelled`,
       });
     }
 

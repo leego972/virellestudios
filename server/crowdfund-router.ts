@@ -518,8 +518,12 @@ function slugify(text: string): string {
         const [contribution] = await db
           .select()
           .from(crowdfundContributions)
-          .where(eq(crowdfundContributions.id, input.contributionId));
-        if (!contribution || contribution.stripeSessionId !== input.sessionId)
+          .where(
+            input.contributionId > 0
+              ? eq(crowdfundContributions.id, input.contributionId)
+              : eq(crowdfundContributions.stripeSessionId, input.sessionId)
+          );
+        if (!contribution)
           throw new TRPCError({ code: "NOT_FOUND", message: "Contribution not found" });
         if (contribution.status === "paid" || contribution.status === "captured")
           return { success: true, alreadyConfirmed: true };
@@ -527,7 +531,7 @@ function slugify(text: string): string {
         await db
           .update(crowdfundContributions)
           .set({ status: newStatus, stripePaymentIntentId: pi?.id ?? null })
-          .where(eq(crowdfundContributions.id, input.contributionId));
+          .where(eq(crowdfundContributions.id, contribution.id));
         await db
           .update(crowdfundCampaigns)
           .set({

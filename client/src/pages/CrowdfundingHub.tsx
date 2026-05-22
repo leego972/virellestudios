@@ -195,6 +195,53 @@ import { useMemo, useState } from "react";
     const [launchingId, setLaunchingId] = useState<number | null>(null);
     const [deadlineDays, setDeadlineDays] = useState(30);
     const [settingUpPayoutsId, setSettingUpPayoutsId] = useState<number | null>(null);
+    const [manageCampaignId, setManageCampaignId] = useState<number | null>(null);
+    const { data: manageData, refetch: refetchManage } = trpc.crowdfund.campaign.getById.useQuery(
+      { id: manageCampaignId ?? 0 },
+      { enabled: !!manageCampaignId }
+    );
+
+    const updateCampaignMutation = trpc.crowdfund.campaign.update.useMutation({
+      onSuccess: () => {
+        toast.success("Campaign updated");
+        refetchManage();
+        refetchCampaigns();
+      },
+      onError: (e) => toast.error(e.message),
+    });
+
+    const deleteCampaignMutation = trpc.crowdfund.campaign.delete.useMutation({
+      onSuccess: () => {
+        toast.success("Campaign cancelled");
+        setManageCampaignId(null);
+        refetchCampaigns();
+      },
+      onError: (e) => toast.error(e.message),
+    });
+
+    const createRewardMutation = trpc.crowdfund.reward.create.useMutation({
+      onSuccess: () => {
+        toast.success("Reward created");
+        refetchManage();
+      },
+      onError: (e) => toast.error(e.message),
+    });
+
+    const updateRewardMutation = trpc.crowdfund.reward.update.useMutation({
+      onSuccess: () => {
+        toast.success("Reward updated");
+        refetchManage();
+      },
+      onError: (e) => toast.error(e.message),
+    });
+
+    const deleteRewardMutation = trpc.crowdfund.reward.delete.useMutation({
+      onSuccess: () => {
+        toast.success("Reward removed");
+        refetchManage();
+      },
+      onError: (e) => toast.error(e.message),
+    });
 
     // ── Director AI ───────────────────────────────────────────────────────────
     const sendMessage = trpc.directorChat.send.useMutation();
@@ -457,10 +504,21 @@ import { useMemo, useState } from "react";
                             )}
                           </div>
                         )}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="w-full h-7 text-xs gap-1.5"
+                          onClick={(e) => { e.stopPropagation(); setManageCampaignId(campaign.id); }}
+                        >
+                          <Settings className="w-3 h-3" />
+                          Manage Campaign
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
               </div>
             )}
           </CardContent>
@@ -781,6 +839,190 @@ import { useMemo, useState } from "react";
                 Go Live
               </Button>
             </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* ── Manage Campaign Modal ────────────────────────────────────────── */}
+        <Dialog open={!!manageCampaignId} onOpenChange={(open) => !open && setManageCampaignId(null)}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Settings className="w-5 h-5 text-amber-400" /> Manage Campaign
+              </DialogTitle>
+              <DialogDescription>
+                Edit details, manage reward tiers, and view contributions.
+              </DialogDescription>
+            </DialogHeader>
+
+            {!manageData ? (
+              <div className="py-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>
+            ) : (
+              <div className="space-y-6 py-2">
+                {/* Basic Details */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <Label className="text-xs text-muted-foreground uppercase">Title</Label>
+                    <Input
+                      value={manageData.campaign.title}
+                      onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, title: e.target.value })}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Label className="text-xs text-muted-foreground uppercase">Tagline</Label>
+                    <Input
+                      value={manageData.campaign.tagline || ""}
+                      onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, tagline: e.target.value })}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Label className="text-xs text-muted-foreground uppercase">Description (HTML supported)</Label>
+                    <Textarea
+                      rows={4}
+                      value={manageData.campaign.description || ""}
+                      onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, description: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground uppercase">Poster URL</Label>
+                    <Input
+                      value={manageData.campaign.posterUrl || ""}
+                      onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, posterUrl: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground uppercase">Pitch Video URL (Embed)</Label>
+                    <Input
+                      value={manageData.campaign.videoUrl || ""}
+                      onChange={e => updateCampaignMutation.mutate({ id: manageData.campaign.id, videoUrl: e.target.value })}
+                      placeholder="https://youtube.com/embed/..."
+                    />
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Reward Tiers */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-sm flex items-center gap-2">
+                      <Gift className="w-4 h-4 text-amber-400" /> Reward Tiers
+                    </h4>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-xs"
+                      onClick={() => createRewardMutation.mutate({
+                        campaignId: manageData.campaign.id,
+                        title: "New Reward",
+                        amountCents: 1000,
+                        description: "Description of the reward...",
+                      })}
+                    >
+                      <Plus className="w-3 h-3 mr-1" /> Add Tier
+                    </Button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {manageData.rewards.map(reward => (
+                      <div key={reward.id} className="p-3 border rounded-lg bg-zinc-500/5 space-y-3">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 grid grid-cols-4 gap-2">
+                            <div className="col-span-2">
+                              <Label className="text-[10px] text-muted-foreground uppercase">Tier Title</Label>
+                              <Input
+                                className="h-8 text-sm"
+                                value={reward.title}
+                                onChange={e => updateRewardMutation.mutate({ id: reward.id, title: e.target.value })}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-[10px] text-muted-foreground uppercase">Amount (AUD)</Label>
+                              <Input
+                                className="h-8 text-sm"
+                                type="number"
+                                value={reward.amountCents / 100}
+                                onChange={e => updateRewardMutation.mutate({ id: reward.id, amountCents: Math.round(parseFloat(e.target.value) * 100) })}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-[10px] text-muted-foreground uppercase">Limit (Optional)</Label>
+                              <Input
+                                className="h-8 text-sm"
+                                type="number"
+                                value={reward.limitCount || ""}
+                                onChange={e => updateRewardMutation.mutate({ id: reward.id, limitCount: e.target.value ? parseInt(e.target.value) : null })}
+                              />
+                            </div>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-red-400"
+                            onClick={() => deleteRewardMutation.mutate({ id: reward.id })}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <div>
+                          <Label className="text-[10px] text-muted-foreground uppercase">Description</Label>
+                          <Textarea
+                            className="text-xs"
+                            rows={2}
+                            value={reward.description || ""}
+                            onChange={e => updateRewardMutation.mutate({ id: reward.id, description: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    {manageData.rewards.length === 0 && (
+                      <div className="text-center py-6 border border-dashed rounded-lg text-sm text-muted-foreground">
+                        No reward tiers created yet.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Contributions */}
+                <div className="space-y-4">
+                  <h4 className="font-bold text-sm flex items-center gap-2">
+                    <Users className="w-4 h-4 text-amber-400" /> Recent Contributions
+                  </h4>
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {manageData.contributions.map(c => (
+                      <div key={c.id} className="flex items-center justify-between p-2 border rounded text-xs">
+                        <div className="flex flex-col">
+                          <span className="font-medium">{FMT_AUD(c.amountCents)}</span>
+                          <span className="text-muted-foreground">{new Date(c.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <Badge variant="outline" className="capitalize">{c.status}</Badge>
+                      </div>
+                    ))}
+                    {manageData.contributions.length === 0 && (
+                      <div className="text-center py-4 text-xs text-muted-foreground">No contributions yet.</div>
+                    )}
+                  </div>
+                </div>
+
+                {manageData.campaign.status === "draft" && (
+                  <div className="pt-4 border-t">
+                    <Button
+                      variant="ghost"
+                      className="w-full text-red-400 hover:text-red-300 hover:bg-red-400/10 gap-2"
+                      onClick={() => {
+                        if (confirm("Are you sure you want to cancel this draft campaign?")) {
+                          deleteCampaignMutation.mutate({ id: manageData.campaign.id });
+                        }
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4" /> Cancel Campaign
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </DialogContent>
         </Dialog>
 
