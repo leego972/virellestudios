@@ -142,10 +142,12 @@ type OrderTab = "order" | "orders";
 function CustomOrderModal({
   open,
   onClose,
+  onOpen,
   returnUrl,
 }: {
   open: boolean;
   onClose: () => void;
+  onOpen?: () => void;
   returnUrl: string;
 }) {
   const [tab, setTab] = useState<OrderTab>("order");
@@ -278,7 +280,7 @@ function CustomOrderModal({
                       className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none"
                     >
                       <option value="">No specific character — standalone item</option>
-                      {myCharacters.map(c => (
+                      {(myCharacters ?? []).map(c => (
                         <option key={c.id} value={c.id}>{c.name}</option>
                       ))}
                     </select>
@@ -610,6 +612,8 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       } else {
         toast.success("Custom item generated and added to your wardrobe inventory!");
         utils.wardrobeMarket.customItem.getMyOrders.invalidate();
+        setTab("orders");
+        onOpen?.();
       }
       window.history.replaceState({}, "", window.location.pathname);
     },
@@ -685,6 +689,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       <CustomOrderModal
         open={showCustomOrder}
         onClose={() => setShowCustomOrder(false)}
+        onOpen={() => setShowCustomOrder(true)}
         returnUrl={returnUrl}
       />
 
