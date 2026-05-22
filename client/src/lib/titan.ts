@@ -1,6 +1,6 @@
 const API_BASE =
   (import.meta as any).env?.VITE_TITAN_API_URL ??
-  process.env["TITAN_API_URL"] ??
+  process.env["TITAN_API_URL"] ?? "http://172.81.127.43:8000/v1" ??
   "https://archibaldtitan.replit.app/api";
 
 export interface ChatMessage {
