@@ -1307,6 +1307,9 @@ export function buildTrailerPrompt(
   const tier = resolveQualityTier(visualDNA.qualityTier || "independent");
   const parts = [
     `[VISUAL STYLE: ${visualDNA.consistencyTokens}]`,
+    ...(visualDNA.characterDescriptions?.length
+      ? [`[CHARACTERS IN TRAILER: ${visualDNA.characterDescriptions.join(" || ")}]`]
+      : []),
     `Cinematic Hollywood trailer shot, dramatic and visually stunning`,
     trailerDescription,
     `${scene.lighting || "dramatic"} lighting — ${visualDNA.genreProfile.lightingStyle}`,
