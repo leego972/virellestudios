@@ -602,6 +602,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
     onError: (e) => toast.error(e.message),
   });
 
+  const utils = trpc.useUtils();
   const confirmCustom = trpc.wardrobeMarket.customItem.confirmAndGenerate.useMutation({
     onSuccess: (res) => {
       if (res.alreadyProcessed) {
@@ -1154,7 +1155,6 @@ function MarketplaceGrid({
 // ─── Root export ──────────────────────────────────────────────────────────────
 
 export default function WardrobeMarketplacePage() {
-  const utils = trpc.useUtils();
   const [, setLocation] = useLocation();
   const [search, setSearch] = useState("");
   const [isDetailRoute, detailParams] = useRoute("/wardrobe-marketplace/designer/:id");
