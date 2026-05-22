@@ -188,6 +188,8 @@ export function buildCharacterDNA(character: {
       faceSection.push(`DISTINGUISHING: ${attrs.distinguishingFeatures.join(", ")}`);
     }
     sections.push(faceSection.join(" | "));
+    // ── Photorealism enforcement ──
+    sections.push("photorealistic human face with authentic natural skin texture, visible pores, micro-wrinkles, and subsurface scattering. NOT CGI, NOT plastic skin.");
   }
 
   // ── Body DNA ──
@@ -223,7 +225,7 @@ export function buildCharacterDNA(character: {
 
   // ── Director consistency notes ──
   if (character.consistencyNotes) {
-    sections.push(`CONSISTENCY DIRECTIVE: ${character.consistencyNotes}`);
+    sections.push(`PHYSICAL HARD-LOCK DIRECTIVE: ${character.consistencyNotes}`);
   }
 
   // ── Photorealism enforcement — always injected, character-specific where possible ──
