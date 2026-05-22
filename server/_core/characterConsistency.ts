@@ -437,6 +437,17 @@ export function buildContinuityChain(
     clothing?: string | null;
     referenceImageUrl?: string | null;
     thumbnailUrl?: string | null;
+    faceDnaPrompt?: string | null;
+    bodyDnaPrompt?: string | null;
+    consistencyNotes?: string | null;
+    deepProfile?: string | null;
+    nationality?: string | null;
+    weight?: string | null;
+    fitnessLevel?: string | null;
+    posture?: string | null;
+    isNonHuman?: boolean | null;
+    costumeType?: string | null;
+    referenceImageLocked?: boolean | null;
   }>,
   scenes: Array<{
     id: number;
