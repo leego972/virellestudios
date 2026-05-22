@@ -616,11 +616,12 @@ export const appRouter = router({
         return { success: true };
       }),
     provisionBetaTester: adminProcedure
-        .mutation(async ({ ctx }) => {
-          const BETA_EMAIL = "tester@virelle.life";
-          const BETA_NAME  = "Virelle Beta Tester";
-          const BETA_PASS  = "Hello123";
+      .mutation(async ({ ctx }) => {
+        const BETA_EMAIL = "tester@virelle.life";
+        const BETA_NAME  = "Virelle Beta Tester";
+        const BETA_PASS  = "Hello123";
 
+        try {
           // Already exists — sync API keys from admin caller
           const existing = await db.getUserByEmail(BETA_EMAIL);
           if (existing) {
@@ -645,15 +646,26 @@ export const appRouter = router({
               bonusGenerations:   9999,
               creditBalance:      50000,
               apiKeysUpdatedAt:   new Date(),
-            } as any);
+            });
             logAuditEvent(ctx.user.id, "beta_tester_api_keys_synced", ctx.req.ip || "unknown", true, { targetEmail: BETA_EMAIL });
             return { created: false, synced: true, email: BETA_EMAIL };
           }
 
           // Create fresh account
           const passwordHash = await bcrypt.hash(BETA_PASS, 12);
-          const newUser = await db.createEmailUser({ email: BETA_EMAIL, name: BETA_NAME, passwordHash, howDidYouHear: "beta_provision" });
-          if (!newUser) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create beta tester account" });
+          const newUser = await db.createEmailUser({ 
+            email: BETA_EMAIL, 
+            name: BETA_NAME, 
+            passwordHash, 
+            howDidYouHear: "beta_provision" 
+          });
+          
+          if (!newUser) {
+            throw new TRPCError({ 
+              code: "INTERNAL_SERVER_ERROR", 
+              message: "Failed to create beta tester account" 
+            });
+          }
 
           // Copy admin's API keys + set studio-level access
           await db.updateUser(newUser.id, {
@@ -677,11 +689,18 @@ export const appRouter = router({
             bonusGenerations:   9999,
             creditBalance:      50000,
             apiKeysUpdatedAt:   new Date(),
-          } as any);
+          });
 
           logAuditEvent(ctx.user.id, "beta_tester_provisioned", ctx.req.ip || "unknown", true, { targetEmail: BETA_EMAIL, newUserId: newUser.id });
           return { created: true, synced: false, email: BETA_EMAIL, userId: newUser.id };
-        }),
+        } catch (error: any) {
+          console.error("[admin.provisionBetaTester] Error:", error);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: error.message || "Failed to provision beta tester"
+          });
+        }
+      }),
   }),
 
   // ─── Projects ───

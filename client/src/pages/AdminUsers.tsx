@@ -66,17 +66,20 @@ export default function AdminUsers() {
     // ─── Beta tester provisioning ──────────────────────────────────────────────
     const [betaProvisioning, setBetaProvisioning] = useState(false);
     const provisionBetaTesterMutation = trpc.admin.provisionBetaTester.useMutation({
-      onSuccess: (data) => {
-        setBetaProvisioning(false);
-        if (data.created) {
-          toast.success("Beta tester account created! Email: tester@virelle.life · Password: Hello123");
-        } else {
-          toast.success("API keys synced to existing tester@virelle.life account");
-        }
-        utils.admin.listUsers.invalidate();
-      },
-      onError: (err) => { setBetaProvisioning(false); toast.error(err.message || "Failed to provision beta tester"); },
-    });
+    onSuccess: (data) => {
+      setBetaProvisioning(false);
+      if (data.created) {
+        toast.success(`Beta tester account created! Email: ${data.email} · Password: Hello123`);
+      } else {
+        toast.success(`API keys synced to existing ${data.email} account`);
+      }
+      utils.admin.listUsers.invalidate();
+    },
+    onError: (err) => {
+      setBetaProvisioning(false);
+      toast.error(err.message || "Failed to provision beta tester");
+    },
+  });
 
   // ─── Projects state ────────────────────────────────────────────────────────
   const [projectSearch, setProjectSearch] = useState("");
@@ -121,7 +124,7 @@ export default function AdminUsers() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Shield className="w-6 h-6 text-amber-500" />
@@ -200,7 +203,7 @@ export default function AdminUsers() {
           </CardHeader>
           <CardContent>
             <Button
-              className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+              className="w-full sm:w-auto gap-2 bg-amber-600 hover:bg-amber-700 text-white"
               disabled={provisionBetaTesterMutation.isPending || betaProvisioning}
               onClick={() => { setBetaProvisioning(true); provisionBetaTesterMutation.mutate(); }}
             >
@@ -213,18 +216,20 @@ export default function AdminUsers() {
         </Card>
 
         {/* Tabs */}
-        <Tabs defaultValue="users">
-        <TabsList className="bg-muted/50">
-          <TabsTrigger value="users" className="gap-2">
-            <Users className="w-4 h-4" /> Users
-          </TabsTrigger>
-          <TabsTrigger value="projects" className="gap-2">
-            <Film className="w-4 h-4" /> Projects
-          </TabsTrigger>
-          <TabsTrigger value="beta" className="gap-2">
-            <Zap className="w-4 h-4 text-amber-400" /> Beta Testers
-          </TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="users" className="w-full">
+        <div className="overflow-x-auto pb-2 -mx-1 px-1 no-scrollbar">
+          <TabsList className="bg-muted/50 w-full sm:w-auto inline-flex min-w-full sm:min-w-0">
+            <TabsTrigger value="users" className="gap-2 flex-1 sm:flex-none">
+              <Users className="w-4 h-4" /> Users
+            </TabsTrigger>
+            <TabsTrigger value="projects" className="gap-2 flex-1 sm:flex-none">
+              <Film className="w-4 h-4" /> Projects
+            </TabsTrigger>
+            <TabsTrigger value="beta" className="gap-2 flex-1 sm:flex-none">
+              <Zap className="w-4 h-4 text-amber-400" /> Beta Testers
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* ─── Users Tab ─────────────────────────────────────────────────── */}
         <TabsContent value="users" className="mt-4">
