@@ -54,6 +54,7 @@ import { advertisingRouter } from "./advertising-router";
 import { mailingListRouter } from "./mailing-list-router";
 import { fundingRouter } from "./funding-router";
 import { crowdfundRouter } from "./crowdfund-router";
+import { crowdfundMilestonesRouter } from "./crowdfund-milestones-router";
 import { wardrobeMarketplaceRouter } from "./wardrobe-marketplace-router";
   import { backgroundsRouter } from "./backgrounds-router";
   import { propsRouter } from "./props-router";
@@ -62,6 +63,8 @@ import { wardrobeMarketplaceRouter } from "./wardrobe-marketplace-router";
 import { filmPostRouter } from "./film-post-router";
 import { featureFilmRouter } from "./feature-film-router";
 import { productionAssetsRouter } from "./production-assets-router";
+import { productionDocumentsRouter } from "./production-documents-router";
+import { epkGeneratorRouter } from "./epk-generator-router";
 import { generateBlogArticle, startBlogScheduler, type GeneratedArticle } from "./_core/blogEngine";
 import { generateFullFilm, generateSingleScene, estimateFilmCost, type FilmGenerationProgress } from "./_core/filmPipeline";
 import { generateSceneDialogue, inferEmotionFromContext, TTS_PROVIDERS, EMOTION_STATES, type VoiceActingKeys } from "./_core/voiceActingEngine";
@@ -10103,6 +10106,7 @@ Rules:
   mailingList: mailingListRouter,
   funding: fundingRouter,
   crowdfund: crowdfundRouter,
+  crowdfundMilestones: crowdfundMilestonesRouter,
   wardrobeMarket: wardrobeMarketplaceRouter,
     backgrounds: backgroundsRouter,
     props: propsRouter,
@@ -10120,6 +10124,8 @@ Rules:
   filmPost: filmPostRouter,
   featureFilm: featureFilmRouter,
   productionAssets: productionAssetsRouter,
+  productionDocuments: productionDocumentsRouter,
+  epkGenerator: epkGeneratorRouter,
   blog: router({
     // Public: list published articles
     list: publicProcedure
