@@ -385,7 +385,7 @@ export const wardrobeMarketplaceRouter = router({
         const designer = await db.getDesignerProfileById(col.designerProfileId);
         const items = await db.getWardrobeItemsByCollection(input.id);
         const leasable = items.filter(
-          (i) => i.visibility === "public" && i.status === "active" && i.leasePriceAud,
+          (i) => i.visibility === "public" && i.status === "active" && i.retailPriceAud,
         );
         return { collection: col, designer, items: leasable };
       }),
@@ -409,7 +409,7 @@ export const wardrobeMarketplaceRouter = router({
             and(
               eq(wardrobeItems.visibility, "public"),
               eq(wardrobeItems.status, "active"),
-              isNotNull(wardrobeItems.leasePriceAud),
+              isNotNull(wardrobeItems.retailPriceAud),
             ),
           )
           .orderBy(desc(wardrobeItems.createdAt))
@@ -443,20 +443,20 @@ export const wardrobeMarketplaceRouter = router({
         if (input.type === "item") {
           const item = await db.getWardrobeItemById(input.id);
           if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Item not found" });
-          if (!item.leasePriceAud) {
-            throw new TRPCError({ code: "BAD_REQUEST", message: "Item has no lease price set" });
+          if (!item.retailPriceAud) {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "Item has no purchase price set" });
           }
-          amountCents = item.leasePriceAud;
+          amountCents = item.retailPriceAud;
           designerProfileId = item.designerProfileId!;
-          productName = `Lease: ${item.name} — Virelle Studios`;
+          productName = `Buy: ${item.name} — Virelle Studios`;
         } else {
           const col = await db.getDesignerCollectionById(input.id);
-          if (!col || !col.collectionPriceAud) {
-            throw new TRPCError({ code: "NOT_FOUND", message: "Collection not found or not priced" });
-          }
-          amountCents = col.collectionPriceAud;
+          if (!col) throw new TRPCError({ code: "NOT_FOUND", message: "Collection not found" });
+          // Auto-calculate bundle: item_count × 30c × 0.85
+          const _colItems = await db.getWardrobeItemsByCollection(input.id);
+          amountCents = Math.floor(_colItems.length * 30 * 0.85) || (col.collectionPriceAud ?? 30);
           designerProfileId = col.designerProfileId;
-          productName = `Lease collection: ${col.name} — Virelle Studios`;
+          productName = `Buy: ${col.name} Collection — Virelle Studios`;
         }
 
         const designer = await db.getDesignerProfileById(designerProfileId);
@@ -492,8 +492,8 @@ export const wardrobeMarketplaceRouter = router({
             },
             quantity: 1,
           }],
-          success_url: `${input.returnUrl}?lease_session={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${input.returnUrl}?lease_cancelled=1`,
+          success_url: `${input.returnUrl}?purchase_session={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${input.returnUrl}?purchase_cancelled=1`,
           metadata: sessionMeta,
           payment_intent_data: paymentIntentData,
           customer_email: (ctx.user as any).email ?? undefined,
@@ -509,7 +509,7 @@ export const wardrobeMarketplaceRouter = router({
       }),
 
     /**
-     * Called from the client after Stripe Checkout succeeds (via ?lease_session=).
+     * Called from the client after Stripe Checkout succeeds (via ?purchase_session=).
      * Creates the lease record in the DB and marks it as active.
      */
     confirmLease: protectedProcedure
