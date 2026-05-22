@@ -249,7 +249,34 @@ function CustomOrderModal({
                 </p>
               </div>
 
-              {/* Description */}
+              {/* Character picker */}
+                {myCharacters && myCharacters.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                      Who wears this? <span className="text-white/30 font-normal normal-case">(optional — guides the AI)</span>
+                    </label>
+                    <select
+                      value={characterId ?? ""}
+                      onChange={e => setCharacterId(e.target.value ? Number(e.target.value) : null)}
+                      className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none"
+                    >
+                      <option value="">No specific character — standalone item</option>
+                      {myCharacters.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                    {characterId && (() => {
+                      const ch = myCharacters.find(c => c.id === characterId);
+                      return ch?.description ? (
+                        <p className="text-[11px] text-white/35 leading-relaxed pl-1 truncate">
+                          {ch.description.slice(0, 120)}
+                        </p>
+                      ) : null;
+                    })()}
+                  </div>
+                )}
+
+                {/* Description */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-white/70">
                   Describe your item <span className="text-amber-400">*</span>
