@@ -348,7 +348,13 @@ export default function AICasting() {
       if (succeeded > 0) {
         setCastSuccess(true);
         toast.success(
-          `${succeeded} actor${succeeded > 1 ? "s" : ""} added to your project. View and edit them in the Characters tab.`
+          `${succeeded} actor${succeeded > 1 ? "s" : ""} added to your project. View and edit them in the Characters tab.`,
+          {
+            action: {
+              label: "Generate Talent Release",
+              onClick: () => navigate(`/legal-docs`),
+            },
+          }
         );
         setSelectedActors([]);
         setCastingNotes("");

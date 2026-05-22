@@ -1,6 +1,7 @@
 import { safeJsonExtract } from "./_core/safeParse";
 import { invokeLLM, type Tool, type Message } from "./_core/llm";
 import * as db from "./db";
+import { analyzeProjectHealth } from "./_core/wiseAssistantEngine";
 
 // Define all tools the Director's Assistant can use
 const DIRECTOR_TOOLS: Tool[] = [
@@ -822,9 +823,21 @@ HOLLYWOOD PHOTOREALISM RULES — MANDATORY:
           },
         });
 
-        const filmSpec = safeJsonExtract<any>(filmResult.choices[0].message.content, {});
+    const filmSpec = safeJsonExtract<any>(filmResult.choices[0].message.content, {});
 
-        // Update project title if it's a generic name
+    // Run Wise Assistant health check after generation
+    const health = await analyzeProjectHealth(projectId, userId);
+    const criticalIssues = health.filter(h => h.severity === "high");
+    const recommendations = health.filter(h => h.severity === "medium");
+
+    let assistantNote = "";
+    if (criticalIssues.length > 0) {
+      assistantNote = `\n\n⚠️ **Wise Assistant Note:** I noticed ${criticalIssues.length} critical issues (like missing characters or dialogue gaps) that might affect your film. I recommend checking the project health.`;
+    } else if (recommendations.length > 0) {
+      assistantNote = `\n\n💡 **Wise Assistant Recommendation:** Your film is looking great! I've identified ${recommendations.length} ways to optimize the pacing and lighting for better cinematic results.`;
+    }
+
+    // Update project title if it's a generic name
         const project = await db.getProjectById(projectId, userId);
         if (project && (project.title === "Untitled Project" || project.title === "New Project")) {
           await db.updateProject(projectId, userId, { title: filmSpec.filmTitle, description: filmSpec.filmDescription });
@@ -908,7 +921,7 @@ HOLLYWOOD PHOTOREALISM RULES — MANDATORY:
 
         return {
           success: true,
-          message: summary,
+          message: summary + assistantNote,
           actionType: toolName,
           actionData: { filmTitle: filmSpec.filmTitle, sceneCount: filmSpec.scenes.length, totalDuration },
         };

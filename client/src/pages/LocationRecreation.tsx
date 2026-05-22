@@ -30,10 +30,22 @@ const LocationRecreation: React.FC = () => {
     weather: "clear",
     lighting: "natural"
   });
+  const [selectedSceneIds, setSelectedSceneIds] = useState<number[]>([]);
 
   const utils = trpc.useContext();
   const { data: locationsList, isLoading: loadingLocations } = trpc.locationRecreation.list.useQuery({ 
     projectId: parseInt(projectId!) 
+  });
+
+  const { data: scenes = [] } = trpc.scene.listByProject.useQuery({
+    projectId: parseInt(projectId!)
+  });
+
+  const assignMutation = trpc.locationRecreation.assignToScenes.useMutation({
+    onSuccess: () => {
+      toast.success("Location assigned to selected scenes");
+      setSelectedSceneIds([]);
+    }
   });
 
   const analyzeMutation = trpc.locationRecreation.analyzeVideo.useMutation({
@@ -74,6 +86,19 @@ const LocationRecreation: React.FC = () => {
       locationId: selectedLocationId,
       ...envSettings as any
     });
+    
+    if (selectedSceneIds.length > 0) {
+      assignMutation.mutate({
+        locationId: selectedLocationId,
+        sceneIds: selectedSceneIds
+      });
+    }
+  };
+
+  const toggleScene = (id: number) => {
+    setSelectedSceneIds(prev => 
+      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
+    );
   };
 
   const selectLocation = (loc: any) => {
@@ -270,11 +295,40 @@ const LocationRecreation: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                <div className="mt-8 border-t border-zinc-800 pt-8">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <CheckCircle className="text-green-400" />
+                    3. Assign to Scenes
+                  </h3>
+                  <p className="text-zinc-400 text-sm mb-4">Select the scenes where this recreated location will be used.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[200px] overflow-y-auto p-2 bg-black/40 rounded-xl border border-zinc-800">
+                    {scenes.length === 0 ? (
+                      <p className="text-zinc-600 text-xs italic p-4">No scenes found in this project.</p>
+                    ) : (
+                      scenes.map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => toggleScene(s.id)}
+                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedSceneIds.includes(s.id) ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-zinc-800 hover:border-zinc-700'}`}
+                        >
+                          <div className={`w-4 h-4 rounded border flex items-center justify-center ${selectedSceneIds.includes(s.id) ? 'bg-green-500 border-green-500' : 'border-zinc-600'}`}>
+                            {selectedSceneIds.includes(s.id) && <CheckCircle className="w-3 h-3 text-black" />}
+                          </div>
+                          <div className="truncate">
+                            <p className="text-xs font-bold truncate">Scene {s.orderIndex + 1}</p>
+                            <p className="text-[10px] text-zinc-500 truncate">{s.title || "Untitled"}</p>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+
                 <button 
                   onClick={handleApplyEnv}
                   className="w-full mt-8 bg-white text-black font-black py-4 rounded-2xl hover:bg-zinc-200 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
                 >
-                  {applyEnvMutation.isLoading ? <Zap className="animate-spin" /> : "Update Environment"}
+                  {(applyEnvMutation.isLoading || assignMutation.isLoading) ? <Zap className="animate-spin" /> : "Update & Assign to Scenes"}
                 </button>
               </div>
             </>

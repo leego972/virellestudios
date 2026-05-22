@@ -2,8 +2,8 @@ import { router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
-import { eq, and } from "drizzle-orm";
-import { locations, projects } from "../drizzle/schema";
+import { eq, and, inArray } from "drizzle-orm";
+import { locations, projects, scenes } from "../drizzle/schema";
 
 /**
  * Location Recreation Router
@@ -134,9 +134,21 @@ export const locationRecreationRouter = router({
         .where(and(eq(locations.id, input.locationId), eq(locations.userId, ctx.user.id)));
       if (!location) throw new TRPCError({ code: "FORBIDDEN", message: "Location not found or not owned by you" });
 
+      // Real assignment: Update scenes with this location and its environment settings
+      await db.update(scenes)
+        .set({
+          locationType: location.name,
+          timeOfDay: location.bestTimeOfDay || "afternoon",
+          weather: location.weatherPreferences?.[0] || "clear",
+        })
+        .where(and(
+          inArray(scenes.id, input.sceneIds),
+          eq(scenes.projectId, location.projectId)
+        ));
+
       return {
         success: true,
-        message: `Location "${location.name}" assigned to ${input.sceneIds.length} scenes.`,
+        message: `Location "${location.name}" assigned to ${input.sceneIds.length} scenes. Scene continuity (Time/Weather) has been synced.`,
       };
     }),
 

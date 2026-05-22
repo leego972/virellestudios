@@ -49,7 +49,12 @@ export default function LocationScout() {
       utils.location.listByProject.invalidate({ projectId });
       setShowAddDialog(false);
       resetForm();
-      toast.success("Location added");
+      toast.success("Location added", {
+        action: {
+          label: "Generate Release Form",
+          onClick: () => navigate(`/legal-docs`),
+        },
+      });
     },
     onError: (e) => toast.error(e.message),
   });
