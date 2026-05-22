@@ -589,38 +589,65 @@ export const wardrobeMarketplaceRouter = router({
       director: router({
         /** Assign a leased wardrobe item to a character for a range of scenes */
         assign: protectedProcedure
-          .input(z.object({
-            projectId: z.number().int(),
-            characterId: z.number().int(),
-            wardrobeItemId: z.number().int(),
-            fromSceneOrder: z.number().int().min(0),
-            toSceneOrder: z.number().int().min(0),
-            notes: z.string().max(500).optional(),
-          }))
-          .mutation(async ({ ctx, input }) => {
-            const _db = (await getDb())!;
-            const rows = await _db.select().from(projects).where(eq(projects.id, input.projectId)).limit(1).catch(()=>[] as any[]);
-            if (!rows[0] || (rows[0] as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
-            await _db.delete(wardrobeAssignments).where(
-              and(
-                eq(wardrobeAssignments.projectId, input.projectId),
-                eq(wardrobeAssignments.characterId, input.characterId),
-                eq(wardrobeAssignments.fromSceneOrder, input.fromSceneOrder),
-                eq(wardrobeAssignments.toSceneOrder, input.toSceneOrder),
-              )
-            ).catch(()=>{});
-            const res = await _db.insert(wardrobeAssignments).values({
-              userId: ctx.user.id,
-              assignmentType: "character_wardrobe",
-              projectId: input.projectId,
-              characterId: input.characterId,
-              wardrobeItemId: input.wardrobeItemId,
-              fromSceneOrder: input.fromSceneOrder,
-              toSceneOrder: input.toSceneOrder,
-              placementNotes: input.notes ?? undefined,
-            });
-            return { id: (res as any).insertId, success: true };
-          }),
+            .input(z.object({
+              projectId: z.number().int(),
+              characterId: z.number().int(),
+              wardrobeItemId: z.number().int(),
+              fromSceneOrder: z.number().int().min(0),
+              toSceneOrder: z.number().int().min(0),
+              notes: z.string().max(500).optional(),
+            }))
+            .mutation(async ({ ctx, input }) => {
+              const _db = (await getDb())!;
+
+              // ── Verify project ownership ──
+              const rows = await _db.select().from(projects).where(eq(projects.id, input.projectId)).limit(1).catch(()=>[] as any[]);
+              if (!rows[0] || (rows[0] as any).userId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
+
+              // ── Verify the user has purchased this item before assigning it ──
+              // One purchase = unlimited use across all the user's projects,
+              // characters and scenes, present and future. We check:
+              //   (a) direct item lease  OR
+              //   (b) collection lease that includes this item  OR
+              //   (c) the user IS the designer who created this item
+              const userLeases = await db.getWardrobeLeasesByUser(ctx.user.id);
+              const activeLeases = userLeases.filter((l) => l.status === "active");
+              const hasDirectLease = activeLeases.some((l) => l.wardrobeItemId === input.wardrobeItemId);
+              if (!hasDirectLease) {
+                const item = await db.getWardrobeItemById(input.wardrobeItemId);
+                if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Wardrobe item not found" });
+                const isOwnItem = item.userId === ctx.user.id;
+                const hasCollectionLease = item.collectionId
+                  ? activeLeases.some((l) => l.collectionId === item.collectionId)
+                  : false;
+                if (!isOwnItem && !hasCollectionLease) {
+                  throw new TRPCError({
+                    code: "FORBIDDEN",
+                    message: "Purchase this item (or its collection) before assigning it to a character.",
+                  });
+                }
+              }
+
+              await _db.delete(wardrobeAssignments).where(
+                and(
+                  eq(wardrobeAssignments.projectId, input.projectId),
+                  eq(wardrobeAssignments.characterId, input.characterId),
+                  eq(wardrobeAssignments.fromSceneOrder, input.fromSceneOrder),
+                  eq(wardrobeAssignments.toSceneOrder, input.toSceneOrder),
+                )
+              ).catch(()=>{});
+              const res = await _db.insert(wardrobeAssignments).values({
+                userId: ctx.user.id,
+                assignmentType: "character_wardrobe",
+                projectId: input.projectId,
+                characterId: input.characterId,
+                wardrobeItemId: input.wardrobeItemId,
+                fromSceneOrder: input.fromSceneOrder,
+                toSceneOrder: input.toSceneOrder,
+                placementNotes: input.notes ?? undefined,
+              });
+              return { id: (res as any).insertId, success: true };
+            }),
 
         /** List all wardrobe assignments for a project */
         list: protectedProcedure
