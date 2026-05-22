@@ -21,6 +21,8 @@ import {
   designerCollections,
   wardrobeItems,
   wardrobeAssignments,
+  characters,
+  scenes,
   projects,
   customItemOrders,
 } from "../drizzle/schema";
@@ -685,6 +687,8 @@ export const wardrobeMarketplaceRouter = router({
         .input(z.object({
           description:       z.string().min(5).max(1000),
           referenceImageUrl: z.string().url().max(512).optional(),
+          characterId:       z.number().int().positive().optional(),
+          sceneId:           z.number().int().positive().optional(),
           returnUrl:         z.string().url().max(512),
         }))
         .mutation(async ({ ctx, input }) => {
@@ -701,6 +705,8 @@ export const wardrobeMarketplaceRouter = router({
               referenceImageUrl: input.referenceImageUrl ?? null,
               priceAud:          PRICE_CENTS,
               status:            "pending_payment",
+              characterId:       input.characterId ?? null,
+              sceneId:           input.sceneId ?? null,
             } as any);
           const orderId = (insertResult as any).insertId as number;
 
@@ -726,6 +732,8 @@ export const wardrobeMarketplaceRouter = router({
               orderId:           String(orderId),
               description:       input.description.slice(0, 500),
               referenceImageUrl: input.referenceImageUrl ?? "",
+              characterId:       input.characterId ? String(input.characterId) : "",
+              sceneId:           input.sceneId     ? String(input.sceneId)     : "",
             },
             customer_email: (ctx.user as any).email ?? undefined,
           });
@@ -760,39 +768,106 @@ export const wardrobeMarketplaceRouter = router({
           }
 
           const orderId         = parseInt(session.metadata?.orderId ?? "0", 10);
-          const description     = session.metadata?.description ?? "";
-          const referenceImgUrl = session.metadata?.referenceImageUrl || null;
+            const description     = session.metadata?.description ?? "";
+            const referenceImgUrl = session.metadata?.referenceImageUrl || null;
+            const metaCharId      = session.metadata?.characterId ? parseInt(session.metadata.characterId, 10) : null;
+            const metaSceneId     = session.metadata?.sceneId     ? parseInt(session.metadata.sceneId,     10) : null;
 
-          // Idempotency
-          const [existingOrder] = await dbConn
-            .select()
-            .from(customItemOrders)
-            .where(eq(customItemOrders.id, orderId));
-          if (existingOrder?.status === "completed") {
-            return { success: true, wardrobeItemId: existingOrder.wardrobeItemId, alreadyProcessed: true };
-          }
+            // Idempotency
+            const [existingOrder] = await dbConn
+              .select()
+              .from(customItemOrders)
+              .where(eq(customItemOrders.id, orderId));
+            if (existingOrder?.status === "completed") {
+              return { success: true, wardrobeItemId: existingOrder.wardrobeItemId, alreadyProcessed: true };
+            }
 
-          await dbConn
-            .update(customItemOrders)
-            .set({
-              status: "pending_generation",
-              stripePaymentIntentId: (session.payment_intent as any)?.id ?? null,
-            })
-            .where(eq(customItemOrders.id, orderId));
+            await dbConn
+              .update(customItemOrders)
+              .set({
+                status: "pending_generation",
+                stripePaymentIntentId: (session.payment_intent as any)?.id ?? null,
+              })
+              .where(eq(customItemOrders.id, orderId));
 
-          try {
-            const prompt = [
-              "Professional fashion design reference sheet.",
-              "Clean white studio background, full front-facing view.",
-              "High-resolution product photography, no person, clothing only.",
-              "Fashion catalogue style, even studio lighting.",
-              "Item: " + description,
-            ].join(" ");
+            try {
+              // ── Fetch character + scene context for AI generation ──
+              let character: (typeof characters.$inferSelect) | undefined;
+              let scene:     (typeof scenes.$inferSelect)     | undefined;
 
-            const genOptions: Parameters<typeof generateImage>[0] = { prompt };
-            if (referenceImgUrl) genOptions.originalImages = [{ url: referenceImgUrl }];
+              if (metaCharId) {
+                const [c] = await dbConn.select().from(characters)
+                  .where(eq(characters.id, metaCharId)).limit(1);
+                character = c;
+              }
+              if (metaSceneId) {
+                const [s] = await dbConn.select().from(scenes)
+                  .where(eq(scenes.id, metaSceneId)).limit(1);
+                scene = s;
+              }
 
-            const { url: generatedImageUrl } = await generateImage(genOptions);
+              // ── Build cinematic, character-anchored prompt ──
+              const promptParts: string[] = [];
+
+              if (character) {
+                const attrs         = (character.attributes ?? {}) as Record<string, unknown>;
+                const wardrobeStyle = (character.wardrobe  ?? {}) as Record<string, string>;
+                const charDetails   = [
+                  attrs.gender    ? String(attrs.gender)    : null,
+                  attrs.age       ? `age ${attrs.age}`     : null,
+                  attrs.ethnicity ? String(attrs.ethnicity) : null,
+                  character.nationality ?? null,
+                  character.occupation  ?? null,
+                ].filter(Boolean).join(", ");
+
+                promptParts.push(
+                  `Character: ${character.name}${charDetails ? ` (${charDetails})` : ""}.`
+                );
+                promptParts.push(`${character.name} is wearing: ${description}.`);
+                if (character.description) {
+                  promptParts.push(`Character appearance: ${character.description.slice(0, 300)}.`);
+                }
+                if (wardrobeStyle.signature) {
+                  promptParts.push(`Signature wardrobe style: ${wardrobeStyle.signature}.`);
+                }
+              } else {
+                promptParts.push(`Fashion model wearing: ${description}.`);
+              }
+
+              if (scene) {
+                const sceneCtx = [
+                  scene.timeOfDay    ? `time of day: ${scene.timeOfDay}`       : null,
+                  scene.weather      ? `weather: ${scene.weather}`             : null,
+                  scene.lighting     ? `lighting: ${scene.lighting}`           : null,
+                  scene.mood         ? `mood: ${scene.mood}`                   : null,
+                  scene.locationType ? `location: ${scene.locationType}`       : null,
+                  scene.colorPalette ? `colour palette: ${scene.colorPalette}` : null,
+                ].filter(Boolean).join(", ");
+                if (sceneCtx) promptParts.push(`Scene context — ${sceneCtx}.`);
+                if (scene.description) {
+                  promptParts.push(`Scene: ${scene.description.slice(0, 200)}.`);
+                }
+              }
+
+              promptParts.push(
+                "Full body shot showing the complete outfit from head to toe.",
+                "Cinematic photorealistic quality, professional costume reference.",
+                "Clothing item clearly and accurately rendered — correct fabric texture, fit, silhouette and colour.",
+                "Ultra-high detail, fashion editorial photography standard."
+              );
+
+              const prompt = promptParts.join(" ");
+
+              // Reference images: character photo takes priority, then user-supplied URL
+              const refImages: Parameters<typeof generateImage>[0]["originalImages"] = [];
+              if (character?.photoUrl)               refImages.push({ url: character.photoUrl });
+              else if (character?.referenceImageUrl) refImages.push({ url: character.referenceImageUrl });
+              if (referenceImgUrl)                   refImages.push({ url: referenceImgUrl });
+
+              const genOptions: Parameters<typeof generateImage>[0] = { prompt };
+              if (refImages.length > 0) genOptions.originalImages = refImages;
+
+                          const { url: generatedImageUrl } = await generateImage(genOptions);
 
             const itemName = description.trim().split(/s+/).slice(0, 6).join(" ");
 
@@ -835,6 +910,24 @@ export const wardrobeMarketplaceRouter = router({
         }),
 
       /** List the current user's custom item orders */
+        /** List the current user's characters — used to pick who wears a custom item */
+        getMyCharacters: protectedProcedure.query(async ({ ctx }) => {
+          const dbConn = await getDb();
+          if (!dbConn) return [];
+          return dbConn
+            .select({
+              id:          characters.id,
+              name:        characters.name,
+              description: characters.description,
+              photoUrl:    characters.photoUrl,
+              projectId:   characters.projectId,
+            })
+            .from(characters)
+            .where(eq(characters.userId, ctx.user.id))
+            .orderBy(desc(characters.updatedAt))
+            .limit(100);
+        }),
+  
       getMyOrders: protectedProcedure.query(async ({ ctx }) => {
         const dbConn = await getDb();
         if (!dbConn) return [];
