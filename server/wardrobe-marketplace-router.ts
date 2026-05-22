@@ -8,6 +8,7 @@
  *             → designer receives 95% via Stripe Connect transfer_data.destination
  */
 import Stripe from "stripe";
+import { generateImage } from "./_core/imageGeneration";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { eq, and, desc, isNotNull, sql } from "drizzle-orm";
@@ -21,6 +22,7 @@ import {
   wardrobeItems,
   wardrobeAssignments,
   projects,
+  customItemOrders,
 } from "../drizzle/schema";
 
 const stripe: Stripe | null = ENV.stripeSecretKey
@@ -670,4 +672,179 @@ export const wardrobeMarketplaceRouter = router({
             return { success: true };
           }),
       }),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CUSTOM ITEM ORDERS — AI-generated wardrobe items
+    //   Price: A$4.99 per item
+    //   Flow: describe → Stripe checkout → AI generation → wardrobe inventory
+    // ═══════════════════════════════════════════════════════════════════════════
+    customItem: router({
+
+      /** Create a Stripe Checkout Session for a custom item order (A$4.99) */
+      checkout: protectedProcedure
+        .input(z.object({
+          description:       z.string().min(5).max(1000),
+          referenceImageUrl: z.string().url().max(512).optional(),
+          returnUrl:         z.string().url().max(512),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const s = requireStripe();
+          const PRICE_CENTS = 499; // A$4.99
+          const dbConn = await getDb();
+          if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+          const [insertResult] = await dbConn
+            .insert(customItemOrders)
+            .values({
+              userId:            ctx.user.id,
+              description:       input.description,
+              referenceImageUrl: input.referenceImageUrl ?? null,
+              priceAud:          PRICE_CENTS,
+              status:            "pending_payment",
+            } as any);
+          const orderId = (insertResult as any).insertId as number;
+
+          const session = await s.checkout.sessions.create({
+            mode: "payment",
+            payment_method_types: ["card"],
+            line_items: [{
+              price_data: {
+                currency: "aud",
+                product_data: {
+                  name: "Lamalo Custom Item — AI Fashion Generation",
+                  description: input.description.slice(0, 100),
+                },
+                unit_amount: PRICE_CENTS,
+              },
+              quantity: 1,
+            }],
+            success_url: input.returnUrl + "?custom_session={CHECKOUT_SESSION_ID}&order_id=" + orderId,
+            cancel_url:  input.returnUrl + "?custom_cancelled=1",
+            metadata: {
+              userId:            String(ctx.user.id),
+              type:              "custom_item_order",
+              orderId:           String(orderId),
+              description:       input.description.slice(0, 500),
+              referenceImageUrl: input.referenceImageUrl ?? "",
+            },
+            customer_email: (ctx.user as any).email ?? undefined,
+          });
+
+          await dbConn
+            .update(customItemOrders)
+            .set({ stripeSessionId: session.id })
+            .where(eq(customItemOrders.id, orderId));
+
+          return { checkoutUrl: session.url, sessionId: session.id, orderId };
+        }),
+
+      /**
+       * Called when the user returns from Stripe with ?custom_session=.
+       * Verifies payment, generates the AI image, adds item to wardrobe inventory.
+       */
+      confirmAndGenerate: protectedProcedure
+        .input(z.object({ sessionId: z.string().max(255) }))
+        .mutation(async ({ ctx, input }) => {
+          const s = requireStripe();
+          const dbConn = await getDb();
+          if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+          const session = await s.checkout.sessions.retrieve(input.sessionId, {
+            expand: ["payment_intent"],
+          });
+          if (session.metadata?.userId !== String(ctx.user.id)) {
+            throw new TRPCError({ code: "FORBIDDEN" });
+          }
+          if (session.payment_status !== "paid") {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "Payment not completed yet." });
+          }
+
+          const orderId         = parseInt(session.metadata?.orderId ?? "0", 10);
+          const description     = session.metadata?.description ?? "";
+          const referenceImgUrl = session.metadata?.referenceImageUrl || null;
+
+          // Idempotency
+          const [existingOrder] = await dbConn
+            .select()
+            .from(customItemOrders)
+            .where(eq(customItemOrders.id, orderId));
+          if (existingOrder?.status === "completed") {
+            return { success: true, wardrobeItemId: existingOrder.wardrobeItemId, alreadyProcessed: true };
+          }
+
+          await dbConn
+            .update(customItemOrders)
+            .set({
+              status: "pending_generation",
+              stripePaymentIntentId: (session.payment_intent as any)?.id ?? null,
+            })
+            .where(eq(customItemOrders.id, orderId));
+
+          try {
+            const prompt = [
+              "Professional fashion design reference sheet.",
+              "Clean white studio background, full front-facing view.",
+              "High-resolution product photography, no person, clothing only.",
+              "Fashion catalogue style, even studio lighting.",
+              "Item: " + description,
+            ].join(" ");
+
+            const genOptions: Parameters<typeof generateImage>[0] = { prompt };
+            if (referenceImgUrl) genOptions.originalImages = [{ url: referenceImgUrl }];
+
+            const { url: generatedImageUrl } = await generateImage(genOptions);
+
+            const itemName = description.trim().split(/s+/).slice(0, 6).join(" ");
+
+            const [itemInsert] = await dbConn
+              .insert(wardrobeItems)
+              .values({
+                userId:          ctx.user.id,
+                name:            itemName,
+                description,
+                primaryImageUrl: generatedImageUrl ?? null,
+                imageUrls:       generatedImageUrl ? [generatedImageUrl] : [],
+                wardrobeType:    "wardrobe",
+                visibility:      "private",
+                referencePrompt: prompt,
+                retailPriceAud:  0,
+              } as any);
+            const newItemId = (itemInsert as any).insertId as number;
+
+            await dbConn
+              .update(customItemOrders)
+              .set({
+                status:           "completed",
+                generatedImageUrl: generatedImageUrl ?? null,
+                wardrobeItemId:   newItemId,
+              })
+              .where(eq(customItemOrders.id, orderId));
+
+            return { success: true, wardrobeItemId: newItemId, generatedImageUrl };
+
+          } catch (err: any) {
+            await dbConn
+              .update(customItemOrders)
+              .set({ status: "failed", errorMessage: String(err?.message ?? "Generation failed") })
+              .where(eq(customItemOrders.id, orderId));
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "AI generation failed — please contact support for a refund.",
+            });
+          }
+        }),
+
+      /** List the current user's custom item orders */
+      getMyOrders: protectedProcedure.query(async ({ ctx }) => {
+        const dbConn = await getDb();
+        if (!dbConn) return [];
+        return dbConn
+          .select()
+          .from(customItemOrders)
+          .where(eq(customItemOrders.userId, ctx.user.id))
+          .orderBy(desc(customItemOrders.createdAt))
+          .limit(50);
+      }),
+    }),
+  
   });
