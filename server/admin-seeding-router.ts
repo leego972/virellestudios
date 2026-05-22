@@ -11,7 +11,10 @@ import {
   wardrobeItems,
   wardrobeCollections,
   fundingSources,
+  users,
 } from "../drizzle/schema";
+import { nanoid } from "nanoid";
+import bcrypt from "bcrypt";
 import { eq } from "drizzle-orm";
 
 // Import seed data
@@ -202,7 +205,7 @@ export const adminSeedingRouter = router({
    */
   getStatus: adminProcedure.query(async () => {
     try {
-      const [collectionCount, itemCount, sourceCount] = await Promise.all([
+      const [collectionCount, itemCount, sourceCount, userCount] = await Promise.all([
         db
           .select()
           .from(wardrobeCollections)
@@ -215,6 +218,10 @@ export const adminSeedingRouter = router({
           .select()
           .from(fundingSources)
           .then((r) => r.length),
+        db
+          .select()
+          .from(users)
+          .then((r) => r.length),
       ]);
 
       return {
@@ -222,13 +229,78 @@ export const adminSeedingRouter = router({
         collections: collectionCount,
         items: itemCount,
         fundingSources: sourceCount,
-        message: `Current state: ${collectionCount} collections, ${itemCount} items, ${sourceCount} funding sources`,
+        totalUsers: userCount,
+        message: `Current state: ${collectionCount} collections, ${itemCount} items, ${sourceCount} funding sources, ${userCount} users`,
       };
     } catch (error) {
       console.error("Status check error:", error);
       return {
         success: false,
         error: "Failed to check status",
+      };
+    }
+  }),
+
+  /**
+   * Create Beta Tester Accounts
+   * Generates two pre-configured beta accounts
+   */
+  createBetaAccounts: adminProcedure.mutation(async () => {
+    try {
+      const betaAccounts = [
+        { email: "beta1@virelle.life", name: "Beta Tester One" },
+        { email: "beta2@virelle.life", name: "Beta Tester Two" },
+      ];
+
+      const results = [];
+
+      for (const account of betaAccounts) {
+        // Check if user already exists
+        const existing = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, account.email))
+          .limit(1);
+
+        if (existing.length > 0) {
+          results.push({ email: account.email, status: "already_exists" });
+          continue;
+        }
+
+        const password = "BetaAccess2026!";
+        const passwordHash = await bcrypt.hash(password, 10);
+        const openId = nanoid(32);
+
+        await db.insert(users).values({
+          openId,
+          email: account.email,
+          name: account.name,
+          passwordHash,
+          role: "user",
+          subscriptionTier: "beta",
+          subscriptionStatus: "active",
+          creditBalance: 1000000,
+          totalCreditsEarned: 1000000,
+          onboardingCompleted: true,
+          professionalRole: "hobbyist",
+          experienceLevel: "beginner",
+          loginMethod: "credentials",
+        });
+
+        results.push({ email: account.email, status: "created", password });
+      }
+
+      return {
+        success: true,
+        results,
+        message: "Beta accounts processed successfully",
+      };
+    } catch (error) {
+      console.error("Beta account creation error:", error);
+      return {
+        success: false,
+        error: "Failed to create beta accounts",
+        details: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }),

@@ -3,7 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, Loader2, Zap } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, Zap, Users } from "lucide-react";
 import { trpc } from "@/_core/trpc";
 
 export default function Admin() {
@@ -99,6 +99,28 @@ export default function Admin() {
     }
   };
 
+  const handleCreateBetaAccounts = async () => {
+    setStatus("loading");
+    setMessage("Creating beta tester accounts...");
+    try {
+      const result = await trpc.adminSeeding.createBetaAccounts.mutate();
+      if (result.success) {
+        setStatus("success");
+        const details = result.results.map((r: any) => 
+          `${r.email}: ${r.status}${r.password ? ` (PW: ${r.password})` : ""}`
+        ).join("\n");
+        setMessage(`Beta accounts processed:\n${details}`);
+        setSeedStatus(null); // Refresh status
+      } else {
+        setStatus("error");
+        setMessage(result.error || "Failed to create beta accounts");
+      }
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error ? error.message : "An error occurred");
+    }
+  };
+
   if (!user?.isAdmin) {
     return null;
   }
@@ -161,7 +183,7 @@ export default function Admin() {
         )}
 
         {/* Seeding Controls */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Marketplace Seeding */}
           <Card className="bg-white/5 border-white/10 hover:border-amber-500/30 transition-colors">
             <CardHeader>
@@ -258,6 +280,50 @@ export default function Admin() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Beta Tester Accounts */}
+        <Card className="mb-8 bg-white/5 border-white/10 hover:border-blue-500/30 transition-colors">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Users className="h-5 w-5 text-blue-400" />
+              Beta Tester Accounts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-white/60">
+              Generate two pre-configured beta tester accounts with full access, unlimited credits, and "Beta" subscription tier.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white/5 p-3 rounded-lg border border-white/10 text-xs">
+                <div className="font-bold text-blue-400">Account 1</div>
+                <div>Email: beta1@virelle.life</div>
+                <div>Tier: Beta (Unlimited)</div>
+              </div>
+              <div className="bg-white/5 p-3 rounded-lg border border-white/10 text-xs">
+                <div className="font-bold text-blue-400">Account 2</div>
+                <div>Email: beta2@virelle.life</div>
+                <div>Tier: Beta (Unlimited)</div>
+              </div>
+            </div>
+            <Button
+              onClick={handleCreateBetaAccounts}
+              disabled={status === "loading"}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold"
+            >
+              {status === "loading" ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Users className="h-4 w-4 mr-2" />
+                  Generate Beta Tester Accounts
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Info Section */}
         <Card className="mt-8 bg-white/5 border-white/10">
