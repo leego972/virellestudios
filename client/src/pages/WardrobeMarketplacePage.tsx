@@ -173,6 +173,16 @@ function CustomOrderModal({
       enabled: open,
     });
 
+  // Reset form when modal is closed
+  useEffect(() => {
+    if (!open) {
+      setDescription("");
+      setRefImageUrl("");
+      setCharacterId(null);
+      setIsSubmitting(false);
+    }
+  }, [open]);
+
 
   function handleSubmit() {
     if (description.trim().length < 5) {
@@ -598,6 +608,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
         toast.info("This item was already generated and is in your inventory.");
       } else {
         toast.success("Custom item generated and added to your wardrobe inventory!");
+        utils.wardrobeMarket.customItem.getMyOrders.invalidate();
       }
       window.history.replaceState({}, "", window.location.pathname);
     },
@@ -1143,6 +1154,7 @@ function MarketplaceGrid({
 // ─── Root export ──────────────────────────────────────────────────────────────
 
 export default function WardrobeMarketplacePage() {
+  const utils = trpc.useUtils();
   const [, setLocation] = useLocation();
   const [search, setSearch] = useState("");
   const [isDetailRoute, detailParams] = useRoute("/wardrobe-marketplace/designer/:id");
