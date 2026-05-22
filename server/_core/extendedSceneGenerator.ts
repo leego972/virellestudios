@@ -424,6 +424,11 @@ export function planSubShots(
     // Camera & technical anchor — specific enough for Hollywood-grade output
     promptParts.push(`Photorealistic cinematic footage, ARRI ALEXA 65 with ${angle === "aerial drone" ? "aerial gimbal" : "Leica Summicron-C prime lens"}, 24fps, 2.39:1 anamorphic CinemaScope, ${filmStock}`);
 
+    // Character descriptions — injected early for maximum model weight
+    if (options?.characterDescriptions && options.characterDescriptions.length > 0) {
+      promptParts.push(`Cast in frame: ${options.characterDescriptions.join("; ")}`);
+    }
+
     if (options?.genre) promptParts.push(`${options.genre} feature film`);
 
     // Dramatic context
@@ -440,12 +445,6 @@ export function planSubShots(
 
     // Camera specifics
     promptParts.push(`Shot: ${angle}, camera movement: ${movement}`);
-
-    // Character descriptions for visual consistency
-    if (options?.characterDescriptions && options.characterDescriptions.length > 0) {
-      promptParts.push(`Cast in frame: ${options.characterDescriptions.join("; ")}`);
-    }
-
     // Location grounding
     if (options?.locationDescription) {
       promptParts.push(`Setting: ${options.locationDescription}`);
