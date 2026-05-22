@@ -151,6 +151,7 @@ function CustomOrderModal({
   const [tab, setTab] = useState<OrderTab>("order");
   const [description, setDescription] = useState("");
   const [refImageUrl, setRefImageUrl] = useState("");
+  const [characterId, setCharacterId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const checkoutMut = trpc.wardrobeMarket.customItem.checkout.useMutation({
@@ -167,6 +168,11 @@ function CustomOrderModal({
     trpc.wardrobeMarket.customItem.getMyOrders.useQuery(undefined, {
       enabled: open && tab === "orders",
     });
+  const { data: myCharacters } =
+    trpc.wardrobeMarket.customItem.getMyCharacters.useQuery(undefined, {
+      enabled: open,
+    });
+
 
   function handleSubmit() {
     if (description.trim().length < 5) {
@@ -177,6 +183,7 @@ function CustomOrderModal({
     checkoutMut.mutate({
       description: description.trim(),
       referenceImageUrl: refImageUrl.trim() || undefined,
+      characterId: characterId ?? undefined,
       returnUrl,
     });
   }
