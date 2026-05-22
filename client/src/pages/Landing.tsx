@@ -6,7 +6,7 @@ import {
   ArrowRight, Play, ShieldCheck,
   Globe, Sparkles, Video, Eye, Cpu, CreditCard,
   Zap as ZapIcon, Film, Smartphone, Download, Crown,
-  Menu, X,
+  Menu, X, Shirt,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -781,7 +781,152 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ─── 7.5 — Founding Designer Partner Program ─── */}
+        
+          {/* ─── Lamalo Virtual Wardrobe ─── */}
+          <section className="relative py-28 px-4 sm:px-6 lg:px-8 border-t border-white/10 overflow-hidden bg-black">
+            {/* Ambient glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_50%,rgba(212,175,55,0.05)_0%,transparent_70%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_60%,rgba(99,102,241,0.04)_0%,transparent_70%)] pointer-events-none" />
+
+            <div className="relative z-10 max-w-6xl mx-auto">
+
+              {/* Label */}
+              <div className="flex justify-center mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-black uppercase tracking-widest">
+                  <Shirt className="h-3.5 w-3.5" />
+                  Lamalo Fashion — In-House Virtual Label
+                </div>
+              </div>
+
+              {/* Main headline */}
+              <div className="text-center mb-16">
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-none mb-6 text-white">
+                  Clothing built <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400">for the camera.</span>
+                </h2>
+                <p className="text-base sm:text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
+                  Ask any AI to dress a character in a{" "}
+                  <span className="text-white/80 italic">"red bomber jacket"</span>{" "}
+                  and it works — once. By scene 40, that jacket has drifted to burgundy. By scene 60, it's maroon. By scene 80, it's gone.
+                  We built <span className="text-amber-400 font-semibold">Lamalo</span> to fix that.
+                </p>
+              </div>
+
+              {/* Three-pillar grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                {[
+                  {
+                    icon: "🎯",
+                    title: "Production-grade reference prompts",
+                    body: "Every Lamalo item ships with a precise visual specification — fabric, cut, silhouette, and exact colour — baked directly into the generation pipeline. The AI isn't guessing. It knows exactly what it's supposed to render.",
+                    accent: "amber",
+                  },
+                  {
+                    icon: "🎨",
+                    title: "Each colour is a separate purchase",
+                    body: "A white tee and a black tee are two distinct items in the catalogue. When you assign a colour to a character, the AI locks that exact shade across every scene they appear in — no drift, no interpretation, no surprises.",
+                    accent: "purple",
+                  },
+                  {
+                    icon: "🎬",
+                    title: "Automatic scene-to-scene continuity",
+                    body: "Assign an outfit to a character and it follows them through the entire film. Scene 3 to scene 87 — same jacket, same colour, same fit. Our pipeline injects a Costume Lock into every generation call so the AI never forgets.",
+                    accent: "blue",
+                  },
+                ].map((p) => (
+                  <div
+                    key={p.title}
+                    className={`rounded-2xl border bg-white/[0.02] p-7 ${
+                      p.accent === "amber" ? "border-amber-500/20" :
+                      p.accent === "purple" ? "border-purple-500/20" : "border-blue-500/20"
+                    }`}
+                  >
+                    <div className="text-3xl mb-4">{p.icon}</div>
+                    <h3 className="text-base font-bold text-white mb-3">{p.title}</h3>
+                    <p className="text-sm text-white/50 leading-relaxed">{p.body}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Catalogue callout */}
+              <div
+                className="rounded-2xl border border-amber-500/20 overflow-hidden mb-10"
+                style={{ background: "linear-gradient(135deg, #0c0900 0%, #0f0d02 50%, #080808 100%)" }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+                  {/* Left — copy */}
+                  <div className="p-8 md:p-10 flex flex-col justify-center">
+                    <p className="text-xs font-black uppercase tracking-widest text-amber-500/60 mb-3">23 collections · 1,400+ items</p>
+                    <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-4 leading-tight">
+                      Menswear. Womenswear. Kids. Sport.<br />
+                      <span className="text-amber-400">From 30 cents per item.</span>
+                    </h3>
+                    <p className="text-sm text-white/50 leading-relaxed mb-6">
+                      Everyday basics, performance sport (soccer, basketball, hockey, AFL, football), formalwear, swimwear, footwear, eyewear, watches, and accessories — each piece AI-designed and pre-tested for consistent on-screen rendering across skin tones and lighting conditions.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={() => setLocation("/wardrobe-marketplace")}
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-amber-500/20"
+                      >
+                        <Shirt className="h-4 w-4" />
+                        Browse Lamalo Collection
+                      </button>
+                      <button
+                        onClick={() => setLocation("/designer-register")}
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/15 hover:border-white/30 text-white/70 hover:text-white font-semibold text-sm transition-all"
+                      >
+                        List Your Designs
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right — item sample grid */}
+                  <div className="border-t md:border-t-0 md:border-l border-amber-500/10 p-6 grid grid-cols-3 gap-2 content-start">
+                    {[
+                      { label: "Men's Sport", tag: "Soccer · Basketball · AFL · Rugby", color: "from-blue-900/40 to-blue-800/20" },
+                      { label: "Women's Active", tag: "10 colours each", color: "from-purple-900/40 to-purple-800/20" },
+                      { label: "Men's Footwear", tag: "10 shoe types", color: "from-amber-900/40 to-amber-800/20" },
+                      { label: "Women's Footwear", tag: "Heels · Boots · Sandals · Flips", color: "from-rose-900/40 to-rose-800/20" },
+                      { label: "Luxury", tag: "Cashmere · Silk · Tailored", color: "from-yellow-900/40 to-yellow-800/20" },
+                      { label: "Kids & Swim", tag: "UPF50+ · Sport kits", color: "from-teal-900/40 to-teal-800/20" },
+                    ].map((cat) => (
+                      <div
+                        key={cat.label}
+                        className={`rounded-xl bg-gradient-to-br ${cat.color} border border-white/5 p-3 flex flex-col justify-between min-h-[80px]`}
+                      >
+                        <p className="text-[11px] font-bold text-white/80 leading-snug">{cat.label}</p>
+                        <p className="text-[10px] text-white/35 mt-1 leading-snug">{cat.tag}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Designer partner note */}
+              <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                  <Sparkles className="h-5 w-5 text-amber-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-white mb-1">Designers: your clothes go through the same pipeline.</p>
+                  <p className="text-xs text-white/45 leading-relaxed max-w-2xl">
+                    Upload your collection to the Virelle marketplace and we run every item through the same production-grade optimisation process — reference prompt calibration, colour variant separation, and scene continuity integration. Your customers get the same locked, drift-free results as Lamalo. Premium rendering, your brand.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setLocation("/designer-register")}
+                  className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-amber-500/30 text-amber-400 text-xs font-bold hover:bg-amber-500/10 transition-colors whitespace-nowrap"
+                >
+                  Join as Designer <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+            </div>
+          </section>
+
+                  {/* ─── 7.5 — Founding Designer Partner Program ─── */}
           <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10">
             <div className="absolute inset-0 bg-gradient-to-br from-black via-amber-950/10 to-black" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(212,175,55,0.07)_0%,transparent_70%)] pointer-events-none" />
