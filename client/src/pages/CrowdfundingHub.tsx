@@ -514,9 +514,8 @@ import { useMemo, useState } from "react";
                           <Settings className="w-3 h-3" />
                           Manage Campaign
                         </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
                 );
               })}
               </div>

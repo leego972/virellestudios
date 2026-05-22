@@ -18,7 +18,7 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 // Import seed data
-import { LAMALO_COLLECTIONS, LAMALO_ITEMS } from "./lamalo-seed";
+import { runLamaloSeed } from "./lamalo-seed";
 import { FUNDING_SOURCES_DATA } from "./funding-seed";
 
 export const adminSeedingRouter = router({
@@ -28,284 +28,149 @@ export const adminSeedingRouter = router({
    */
   seedMarketplace: adminProcedure.mutation(async ({ ctx }) => {
     try {
-      const db = await getDb();
-      let collectionCount = 0;
-      let itemCount = 0;
-
-      // Seed collections
-      for (const collection of LAMALO_COLLECTIONS) {
-        // Check if collection already exists
-        const existing = await db
-          .select()
-          .from(wardrobeCollections)
-          .where(eq(wardrobeCollections.id, collection.id))
-          .limit(1);
-
-        if (!existing.length) {
-          await db.insert(wardrobeCollections).values(collection);
-          collectionCount++;
-        }
-      }
-
-      // Seed items
-      for (const item of LAMALO_ITEMS) {
-        // Check if item already exists
-        const existing = await db
-          .select()
-          .from(wardrobeItems)
-          .where(eq(wardrobeItems.id, item.id))
-          .limit(1);
-
-        if (!existing.length) {
-          await db.insert(wardrobeItems).values(item);
-          itemCount++;
-        }
-      }
-
-      // Grant admin user access to all collections
-      if (ctx.user?.id) {
-        // This would require a wardrobeAccess table or similar
-        // For now, we'll just note that the items are seeded
-      }
-
+      // Call the lamalo seed function
+      await runLamaloSeed();
+      
       return {
         success: true,
-        collectionsSeeded: collectionCount,
-        itemsSeeded: itemCount,
-        message: `Seeded ${collectionCount} collections and ${itemCount} items`,
+        message: "Marketplace seeded successfully",
       };
     } catch (error) {
       console.error("Marketplace seeding error:", error);
       return {
         success: false,
-        error: "Failed to seed marketplace",
-        details: error instanceof Error ? error.message : "Unknown error",
+        message: `Failed to seed marketplace: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
 
   /**
-   * Seed all funding sources
-   * Returns count of seeded funding sources
+   * Seed funding sources
+   * Returns count of seeded sources
    */
   seedFundingSources: adminProcedure.mutation(async ({ ctx }) => {
     try {
       const db = await getDb();
-      let sourceCount = 0;
+      let count = 0;
 
       for (const source of FUNDING_SOURCES_DATA) {
         // Check if source already exists
         const existing = await db
           .select()
           .from(fundingSources)
-          .where(eq(fundingSources.id, source.id))
+          .where(eq(fundingSources.name, source.name))
           .limit(1);
 
         if (!existing.length) {
           await db.insert(fundingSources).values(source);
-          sourceCount++;
+          count++;
         }
       }
 
       return {
         success: true,
-        sourcesSeeded: sourceCount,
-        message: `Seeded ${sourceCount} funding sources`,
+        count,
+        message: `Seeded ${count} funding sources`,
       };
     } catch (error) {
       console.error("Funding sources seeding error:", error);
       return {
         success: false,
-        error: "Failed to seed funding sources",
-        details: error instanceof Error ? error.message : "Unknown error",
+        message: `Failed to seed funding sources: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
 
   /**
-   * Seed everything at once (marketplace + funding)
-   * One-click admin button
+   * Seed everything (marketplace + funding sources)
    */
   seedEverything: adminProcedure.mutation(async ({ ctx }) => {
     try {
       const db = await getDb();
-      const marketplaceResult = await db.transaction(async (tx) => {
-        let collectionCount = 0;
-        let itemCount = 0;
+      
+      // Seed marketplace
+      await runLamaloSeed();
+      
+      // Seed funding sources
+      let fundingCount = 0;
+      for (const source of FUNDING_SOURCES_DATA) {
+        const existing = await db
+          .select()
+          .from(fundingSources)
+          .where(eq(fundingSources.name, source.name))
+          .limit(1);
 
-        for (const collection of LAMALO_COLLECTIONS) {
-          const existing = await tx
-            .select()
-            .from(wardrobeCollections)
-            .where(eq(wardrobeCollections.id, collection.id))
-            .limit(1);
-
-          if (!existing.length) {
-            await tx.insert(wardrobeCollections).values(collection);
-            collectionCount++;
-          }
+        if (!existing.length) {
+          await db.insert(fundingSources).values(source);
+          fundingCount++;
         }
-
-        for (const item of LAMALO_ITEMS) {
-          const existing = await tx
-            .select()
-            .from(wardrobeItems)
-            .where(eq(wardrobeItems.id, item.id))
-            .limit(1);
-
-          if (!existing.length) {
-            await tx.insert(wardrobeItems).values(item);
-            itemCount++;
-          }
-        }
-
-        return { collectionCount, itemCount };
-      });
-
-      const fundingResult = await db.transaction(async (tx) => {
-        let sourceCount = 0;
-
-        for (const source of FUNDING_SOURCES_DATA) {
-          const existing = await tx
-            .select()
-            .from(fundingSources)
-            .where(eq(fundingSources.id, source.id))
-            .limit(1);
-
-          if (!existing.length) {
-            await tx.insert(fundingSources).values(source);
-            sourceCount++;
-          }
-        }
-
-        return { sourceCount };
-      });
+      }
 
       return {
         success: true,
-        marketplace: {
-          collectionsSeeded: marketplaceResult.collectionCount,
-          itemsSeeded: marketplaceResult.itemCount,
-        },
-        funding: {
-          sourcesSeeded: fundingResult.sourceCount,
-        },
-        message: `✅ Seeding complete! ${marketplaceResult.collectionCount} collections, ${marketplaceResult.itemCount} items, ${fundingResult.sourceCount} funding sources`,
+        message: `Seeded marketplace and ${fundingCount} funding sources`,
       };
     } catch (error) {
       console.error("Complete seeding error:", error);
       return {
         success: false,
-        error: "Failed to seed data",
-        details: error instanceof Error ? error.message : "Unknown error",
+        message: `Failed to complete seeding: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
 
   /**
-   * Get seeding status
-   * Shows what's already been seeded
+   * Create beta tester accounts
    */
-  getStatus: adminProcedure.query(async () => {
+  createBetaAccounts: adminProcedure.mutation(async ({ ctx }) => {
     try {
       const db = await getDb();
-      const [collectionCount, itemCount, sourceCount, userCount] = await Promise.all([
-        db
-          .select()
-          .from(wardrobeCollections)
-          .then((r) => r.length),
-        db
-          .select()
-          .from(wardrobeItems)
-          .then((r) => r.length),
-        db
-          .select()
-          .from(fundingSources)
-          .then((r) => r.length),
-        db
-          .select()
-          .from(users)
-          .then((r) => r.length),
-      ]);
-
-      return {
-        success: true,
-        collections: collectionCount,
-        items: itemCount,
-        fundingSources: sourceCount,
-        totalUsers: userCount,
-        message: `Current state: ${collectionCount} collections, ${itemCount} items, ${sourceCount} funding sources, ${userCount} users`,
-      };
-    } catch (error) {
-      console.error("Status check error:", error);
-      return {
-        success: false,
-        error: "Failed to check status",
-      };
-    }
-  }),
-
-  /**
-   * Create Beta Tester Accounts
-   * Generates two pre-configured beta accounts
-   */
-  createBetaAccounts: adminProcedure.mutation(async () => {
-    try {
-      const db = await getDb();
-      const betaAccounts = [
-        { email: "beta1@virelle.life", name: "Beta Tester One" },
-        { email: "beta2@virelle.life", name: "Beta Tester Two" },
+      const accounts = [
+        { email: "beta1@virelle.life", password: "BetaAccess2026!" },
+        { email: "beta2@virelle.life", password: "BetaAccess2026!" },
       ];
 
-      const results = [];
-
-      for (const account of betaAccounts) {
-        // Check if user already exists
+      const created = [];
+      for (const account of accounts) {
+        // Check if account exists
         const existing = await db
           .select()
           .from(users)
           .where(eq(users.email, account.email))
           .limit(1);
 
-        if (existing.length > 0) {
-          results.push({ email: account.email, status: "already_exists" });
-          continue;
+        if (existing.length) {
+          // Update existing account with credits
+          await db
+            .update(users)
+            .set({ credits: 1000000, role: "beta" })
+            .where(eq(users.email, account.email));
+          created.push({ email: account.email, status: "updated" });
+        } else {
+          // Create new account
+          const hashedPassword = await bcrypt.hash(account.password, 10);
+          await db.insert(users).values({
+            id: nanoid(),
+            email: account.email,
+            password: hashedPassword,
+            credits: 1000000,
+            role: "beta",
+            createdAt: new Date(),
+          });
+          created.push({ email: account.email, status: "created" });
         }
-
-        const password = "BetaAccess2026!";
-        const passwordHash = await bcrypt.hash(password, 10);
-        const openId = nanoid(32);
-
-        await db.insert(users).values({
-          openId,
-          email: account.email,
-          name: account.name,
-          passwordHash,
-          role: "user",
-          subscriptionTier: "beta",
-          subscriptionStatus: "active",
-          creditBalance: 1000000,
-          totalCreditsEarned: 1000000,
-          onboardingCompleted: true,
-          professionalRole: "hobbyist",
-          experienceLevel: "beginner",
-          loginMethod: "credentials",
-        });
-
-        results.push({ email: account.email, status: "created", password });
       }
 
       return {
         success: true,
-        results,
-        message: "Beta accounts processed successfully",
+        accounts: created,
+        message: `Beta accounts ready: ${created.map((a) => a.email).join(", ")}`,
       };
     } catch (error) {
       console.error("Beta account creation error:", error);
       return {
         success: false,
-        error: "Failed to create beta accounts",
-        details: error instanceof Error ? error.message : "Unknown error",
+        message: `Failed to create beta accounts: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),

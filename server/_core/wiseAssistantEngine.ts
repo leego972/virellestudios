@@ -126,7 +126,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
 
     // ── Optimization: Dialogue timing ───────────────────────────────────
     for (const scene of scenes) {
-      const dialogueLines = await db.getSceneDialogue(scene.id);
+      const dialogueLines = await db.getSceneDialogues(scene.id);
       if (dialogueLines.length > 0) {
         const estimatedDialogueDuration = dialogueLines.length * 3; // ~3 seconds per line average
         if (scene.duration && scene.duration < estimatedDialogueDuration) {

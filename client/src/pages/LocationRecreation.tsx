@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { trpc } from "../utils/trpc";
-import { useParams, useNavigate } from "react-router-dom";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 import { 
   Upload, 
   MapPin, 
@@ -16,9 +16,12 @@ import {
   Settings
 } from "lucide-react";
 
+import { useParams, useLocation } from "wouter";
+
 const LocationRecreation: React.FC = () => {
-  const { projectId } = useParams<{ projectId: string }>();
-  const navigate = useNavigate();
+  const [params] = useParams<{ projectId: string }>();
+  const [, navigate] = useLocation();
+  const projectId = parseInt(params?.projectId || "0");
   const [videoUrl, setVideoUrl] = useState("");
   const [locationName, setLocationName] = useState("");
   const [uploading, setUploading] = useState(false);
