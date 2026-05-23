@@ -1054,6 +1054,11 @@ export async function getSceneDialogues(sceneId: number) {
   return db.select().from(dialogues).where(eq(dialogues.sceneId, sceneId)).orderBy(asc(dialogues.orderIndex));
 }
 
+/** Alias of getSceneDialogues — returns all dialogue rows for a scene (singular form used by wiseAssistantEngine). */
+export async function getSceneDialogue(sceneId: number) {
+  return getSceneDialogues(sceneId);
+}
+
 export async function getDialogueById(id: number) {
   const db = await getDb();
   if (!db) return undefined;
@@ -3395,6 +3400,29 @@ export async function getWardrobeAssignmentsByScene(sceneId: number): Promise<Wa
   if (!db) return [];
   return db.select().from(wardrobeAssignments)
     .where(eq(wardrobeAssignments.sceneId, sceneId));
+}
+
+/**
+ * Fetch all Character rows assigned to a scene.
+ * The scene stores characterIds as a JSON array; we parse it and batch-select
+ * the matching characters in a single query.
+ */
+export async function getSceneCharacters(sceneId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  const [rows] = await db.execute(sql`SELECT characterIds FROM scenes WHERE id = ${sceneId} LIMIT 1`);
+  const scene = (rows as unknown as any[])?.[0];
+  if (!scene?.characterIds) return [];
+  let ids: number[];
+  try {
+    ids = typeof scene.characterIds === "string"
+      ? JSON.parse(scene.characterIds)
+      : scene.characterIds;
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(ids) || ids.length === 0) return [];
+  return db.select().from(characters).where(inArray(characters.id, ids)).orderBy(asc(characters.name));
 }
 
 export async function getWardrobeAssignmentById(id: number): Promise<WardrobeAssignment | undefined> {
