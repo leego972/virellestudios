@@ -9,7 +9,7 @@
 
     const warnings: string[] = [];
 
-    if (!process.env.JWT_SECRET)            warnings.push("JWT_SECRET not set — auth tokens will use empty secret (insecure)");
+    if (!process.env.JWT_SECRET)            warnings.push("JWT_SECRET not set — server will throw a fatal error on startup (set it in Railway Variables)");
     if (!process.env.DATABASE_URL)          warnings.push("DATABASE_URL not set — all DB operations will fail");
     if (!process.env.STRIPE_SECRET_KEY)     warnings.push("STRIPE_SECRET_KEY not set — billing disabled");
     if (!process.env.STRIPE_WEBHOOK_SECRET) warnings.push("STRIPE_WEBHOOK_SECRET not set — webhook verification disabled");
