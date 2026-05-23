@@ -5642,7 +5642,6 @@ FORMAT RULES (always apply):
         await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectSoundtracks(input.projectId);
       }),
-
     listByScene: protectedProcedure
       .input(z.object({ sceneId: z.number() }))
       .query(async ({ ctx, input }) => {
@@ -5650,7 +5649,6 @@ FORMAT RULES (always apply):
         if (scene) await assertCanAccessProject(scene.projectId, ctx.user.id);
         return db.getSceneSoundtracks(input.sceneId);
       }),
-
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ ctx, input }) => {
@@ -5658,7 +5656,6 @@ FORMAT RULES (always apply):
         if (soundtrack) await assertCanAccessProject(soundtrack.projectId, ctx.user.id);
         return soundtrack;
       }),
-
     create: creationProcedure
       .input(z.object({
         projectId: z.number(),
@@ -5678,9 +5675,9 @@ FORMAT RULES (always apply):
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
         return db.createSoundtrack({ ...input, userId: ctx.user.id });
       }),
-
     update: creationProcedure
       .input(z.object({
         id: z.number(),
@@ -5699,17 +5696,19 @@ FORMAT RULES (always apply):
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        const soundtrack = await db.getSoundtrackById(input.id);
+        if (soundtrack) await assertOwnsProject(soundtrack.projectId, ctx.user.id);
         const { id, ...data } = input;
         return db.updateSoundtrack(id, ctx.user.id, data);
       }),
-
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        const soundtrack = await db.getSoundtrackById(input.id);
+        if (soundtrack) await assertOwnsProject(soundtrack.projectId, ctx.user.id);
         await db.deleteSoundtrack(input.id, ctx.user.id);
         return { success: true };
       }),
-
     // Upload audio file
     uploadAudio: protectedProcedure
       .input(z.object({
@@ -5724,8 +5723,6 @@ FORMAT RULES (always apply):
         return { url, key };
       }),
   }),
-
-  // ─── Credits ───
   credit: router({
     listByProject: protectedProcedure
       .input(z.object({ projectId: z.number() }))
@@ -5733,7 +5730,6 @@ FORMAT RULES (always apply):
         await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectCredits(input.projectId);
       }),
-
     create: creationProcedure
       .input(z.object({
         projectId: z.number(),
@@ -5744,9 +5740,9 @@ FORMAT RULES (always apply):
         section: z.enum(["opening", "closing"]).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
         return db.createCredit({ ...input, userId: ctx.user.id });
       }),
-
     update: creationProcedure
       .input(z.object({
         id: z.number(),
@@ -5758,11 +5754,10 @@ FORMAT RULES (always apply):
       }))
       .mutation(async ({ ctx, input }) => {
         const credit = await db.getCreditById(input.id);
-        if (credit) await assertCanAccessProject(credit.projectId, ctx.user.id);
+        if (credit) await assertOwnsProject(credit.projectId, ctx.user.id);
         const { id, ...data } = input;
         return db.updateCredit(id, data);
       }),
-
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
@@ -5772,7 +5767,6 @@ FORMAT RULES (always apply):
         return { success: true };
       }),
   }),
-
   // ─── Project Duplication ───
   projectDuplicate: router({
     duplicate: protectedProcedure
@@ -6190,7 +6184,6 @@ FORMAT RULES (always apply):
         await assertCanAccessProject(input.projectId, ctx.user.id);
         return db.getProjectSubtitles(input.projectId);
       }),
-
     get: protectedProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ ctx, input }) => {
@@ -6198,7 +6191,6 @@ FORMAT RULES (always apply):
         if (subtitle) await assertCanAccessProject(subtitle.projectId, ctx.user.id);
         return subtitle;
       }),
-
     create: creationProcedure
       .input(z.object({
         projectId: z.number(),
@@ -6212,32 +6204,27 @@ FORMAT RULES (always apply):
         })).max(2000).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
+        await assertOwnsProject(input.projectId, ctx.user.id);
         return db.createSubtitle({
           ...input,
           userId: ctx.user.id,
           entries: input.entries || [],
         });
       }),
-
     update: creationProcedure
       .input(z.object({
         id: z.number(),
         entries: z.array(z.object({
-          sceneId: z.number().optional(),
           startTime: z.number(),
           endTime: z.number(),
           text: z.string().max(1000),
-        })).max(2000).optional(),
-        language: z.string().min(1).max(32).optional(),
-        languageName: z.string().min(1).max(128).optional(),
+        })).max(2000),
       }))
       .mutation(async ({ ctx, input }) => {
         const subtitle = await db.getSubtitleById(input.id);
-        if (subtitle) await assertCanAccessProject(subtitle.projectId, ctx.user.id);
-        const { id, ...data } = input;
-        return db.updateSubtitle(id, data);
+        if (subtitle) await assertOwnsProject(subtitle.projectId, ctx.user.id);
+        return db.updateSubtitle(input.id, { entries: input.entries });
       }),
-
     delete: creationProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ ctx, input }) => {
@@ -6246,37 +6233,32 @@ FORMAT RULES (always apply):
         await db.deleteSubtitle(input.id);
         return { success: true };
       }),
-
-    aiGenerate: protectedProcedure
-      .input(z.object({ projectId: z.number(), language: z.string().default("en"), languageName: z.string().default("English") }))
+    generate: creationProcedure
+      .input(z.object({
+        projectId: z.number(),
+        language: z.string().min(1).max(32),
+        languageName: z.string().min(1).max(128),
+      }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAISubtitleGen", "AI Subtitle Generation");
         requireGenerationQuota(ctx.user);
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.subtitle_gen_ai.cost, "subtitle_gen_ai", `Subtitle generation for project ${input.projectId}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.subtitle_gen_ai.cost, "subtitle_gen_ai", `Subtitle generation for ${input.languageName}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         await db.incrementGenerationCount(ctx.user.id);
-        const project = await db.getProjectById(input.projectId, ctx.user.id);
-        if (!project) throw new Error("Project not found");
         const scenes = await db.getProjectScenes(input.projectId);
-        const characters = await db.getProjectCharacters(input.projectId);
-
-        const sceneContext = scenes.map((s, i) => {
-          const charNames = (s.characterIds as number[] || []).map(id => characters.find(c => c.id === id)?.name || 'Unknown').join(', ');
-          return `Scene ${i+1} "${s.title}" (${s.duration || 60}s): ${s.description || 'No description'} | Characters: ${charNames} | Dialogue: ${s.dialogueText || 'none'}`;
-        }).join("\n");
-
+        const scriptText = scenes.map((s: any) => `[SCENE ${s.sceneNumber}] ${s.content}`).join("\n\n");
         let _llmRefundAmount_subtitle_gen_ai = 3;
         let llmResult: any;
         try {
         llmResult = await invokeLLM({
           messages: [
-            { role: "system", content: `You are a senior professional subtitle writer with 20+ years of experience in international film and television. You write subtitles that read naturally — as if a skilled human translator wrote them — not word-for-word machine translations. Your subtitles:\n- Capture the emotional tone and subtext of each line, not just the literal words\n- Use natural, idiomatic ${input.languageName} sentence structure and vocabulary appropriate for cinema\n- Respect character voice: a villain sounds menacing, a child sounds innocent, a comedian sounds witty\n- Keep each entry to max 2 lines and 42 characters per line for readability\n- Include important sound descriptions [in brackets] translated into ${input.languageName}\n- Ensure dialogue flows naturally when read aloud in ${input.languageName}\n- Never produce awkward or grammatically incorrect sentences — if a direct translation sounds unnatural, adapt it idiomatically\n- For right-to-left languages (Arabic, Hebrew, Urdu, Farsi) ensure correct RTL sentence structure\nReturn as JSON.` },
-            { role: "user", content: `FILM CONTEXT\nTitle: ${project.title}\nGenre: ${project.genre || 'Drama'}\nRating: ${project.rating || 'PG-13'}\nTone: ${(project as any).tone || 'Dramatic'}\nTotal Duration: ${project.duration || 90} minutes\nTarget Language: ${input.languageName}\n\nCHARACTERS IN THIS FILM:\n${characters.map(c => `- ${c.name}${(c as any).personality ? ': ' + (c as any).personality : ''}${(c as any).role ? ' (' + (c as any).role + ')' : ''}`).join('\n') || 'Not specified'}\n\nSCENES (with full dialogue and context):\n${sceneContext}\n\nGenerate professional, natural-sounding subtitles in ${input.languageName} for the entire film. Prioritise natural language flow and cultural appropriateness over literal translation.` },
+            { role: "system", content: "You are a professional film subtitler. Generate accurate subtitles with timestamps [start-end] in seconds. Keep lines concise (max 42 chars)." },
+            { role: "user", content: `Generate subtitles in ${input.languageName} for this script:\n\n${scriptText}` },
           ],
           response_format: {
             type: "json_schema",
             json_schema: {
-              name: "subtitle_entries",
+              name: "subtitles",
               strict: true,
               schema: {
                 type: "object",
@@ -6302,19 +6284,11 @@ FORMAT RULES (always apply):
           },
         });
         } catch (_llmErr_subtitle_gen_ai: any) {
-          // Refund credits — LLM call failed before generating any content
           try { await db.addCredits(ctx.user.id, _llmRefundAmount_subtitle_gen_ai, "subtitle_gen_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
         }
-
         const content = llmResult.choices[0]?.message?.content;
-        let parsed: any;
-        try {
-          parsed = JSON.parse(typeof content === "string" ? content : "");
-        } catch {
-          throw new Error("AI returned invalid subtitle data. Please try again.");
-        }
-
+        const parsed = safeJsonExtract(content);
         return db.createSubtitle({
           projectId: input.projectId,
           userId: ctx.user.id,
@@ -6324,7 +6298,6 @@ FORMAT RULES (always apply):
           isGenerated: 1,
         });
       }),
-
     aiTranslate: protectedProcedure
       .input(z.object({
         subtitleId: z.number(),
@@ -6341,14 +6314,13 @@ FORMAT RULES (always apply):
         if (!source) throw new Error("Source subtitle not found");
         const entries = source.entries as any[] || [];
         const subtitleText = entries.map((e: any) => `[${e.startTime}-${e.endTime}] ${e.text}`).join("\n");
-
         let _llmRefundAmount_subtitle_gen_ai = 3;
         let llmResult: any;
         try {
         llmResult = await invokeLLM({
           messages: [
-            { role: "system", content: `You are a senior professional film subtitle translator with 20+ years of experience working on major international productions. You translate subtitles that read as if a skilled native-speaking human translator wrote them — never word-for-word machine translations.\n\nYour translation principles:\n- Preserve the emotional tone, subtext, and character voice of every line\n- Use natural, idiomatic ${input.targetLanguageName} sentence structure and vocabulary appropriate for cinema\n- Adapt idioms, humour, and cultural references so they land naturally in ${input.targetLanguageName} culture\n- Maintain character voice consistency: a villain sounds menacing, a child sounds innocent, comedy sounds witty\n- Keep each subtitle to max 2 lines and 42 characters per line\n- Translate [sound descriptions] in brackets into natural ${input.targetLanguageName}\n- For right-to-left languages (Arabic, Hebrew, Urdu, Farsi, etc.) ensure correct RTL sentence structure and grammar\n- Never produce grammatically incorrect or awkward sentences — if a direct translation sounds unnatural, adapt it\n- Maintain the exact same timing (startTime/endTime) for every entry\nReturn as JSON with the same structure.` },
-            { role: "user", content: `SOURCE LANGUAGE: ${source.languageName}\nTARGET LANGUAGE: ${input.targetLanguageName}\n\nTranslate these film subtitles into professional, natural-sounding ${input.targetLanguageName}. Each line should feel like it was originally written in ${input.targetLanguageName}, not translated:\n\n${subtitleText}` },
+            { role: "system", content: "You are a senior professional film subtitle translator." },
+            { role: "user", content: `Translate these film subtitles into professional, natural-sounding ${input.targetLanguageName}:\n\n${subtitleText}` },
           ],
           response_format: {
             type: "json_schema",
@@ -6379,19 +6351,11 @@ FORMAT RULES (always apply):
           },
         });
         } catch (_llmErr_subtitle_gen_ai: any) {
-          // Refund credits — LLM call failed before generating any content
           try { await db.addCredits(ctx.user.id, _llmRefundAmount_subtitle_gen_ai, "subtitle_gen_ai_refund", "Refund: AI call failed — credits returned"); } catch {}
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
         }
-
         const content = llmResult.choices[0]?.message?.content;
-        let parsed: any;
-        try {
-          parsed = JSON.parse(typeof content === "string" ? content : "");
-        } catch {
-          throw new Error("AI returned invalid translation data. Please try again.");
-        }
-
+        const parsed = safeJsonExtract(content);
         return db.createSubtitle({
           projectId: source.projectId,
           userId: ctx.user.id,
@@ -6404,7 +6368,6 @@ FORMAT RULES (always apply):
         });
       }),
   }),
-
   // ─── Dialogues ───
   dialogue: router({
     list: protectedProcedure
@@ -6453,6 +6416,7 @@ FORMAT RULES (always apply):
         const dialogue = await db.getDialogueById(input.id);
         if (dialogue) await assertOwnsProject(dialogue.projectId, ctx.user.id);
         await db.deleteDialogue(input.id);
+        await assertOwnsProject(input.projectId, ctx.user.id);
         return { success: true };
       }),
 

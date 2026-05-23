@@ -346,6 +346,7 @@ function Router() {
               <Route path="/referrals">{() => <Referrals />}</Route>
               <Route path="/credits">{() => <LazyPage><CreditsPage /></LazyPage>}</Route>
               <Route path="/marketplace">{() => <LazyPage><AssetMarketplace /></LazyPage>}</Route>
+              <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
               <Route path="/settings">{() => <SettingsPage />}</Route>
               <Route path="/funding">{() => <LazyPage><FundingDirectory /></LazyPage>}</Route>
               <Route path="/funding-directory">{() => <LazyPage><FundingDirectory /></LazyPage>}</Route>

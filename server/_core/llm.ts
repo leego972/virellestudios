@@ -436,8 +436,18 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     output_schema,
   });
 
+  const supportsJsonSchema = provider.model.includes("gpt-4") || provider.model.includes("gpt-3.5") || provider.model.includes("gemini");
   if (normalizedResponseFormat) {
-    payload.response_format = normalizedResponseFormat;
+    if (normalizedResponseFormat.type === "json_schema" && !supportsJsonSchema) {
+      payload.response_format = { type: "json_object" };
+      // Inject schema into system prompt as fallback
+      const systemMsg = messages.find(m => m.role === "system");
+      if (systemMsg && typeof systemMsg.content === "string") {
+        systemMsg.content += `\n\nReturn JSON matching this schema: ${JSON.stringify(normalizedResponseFormat.json_schema.schema)}`;
+      }
+    } else {
+      payload.response_format = normalizedResponseFormat;
+    }
   } else if (provider.model.startsWith("gemini")) {
     // Only enable thinking when not using structured output (json_schema)
     // as they are incompatible with the Gemini model
@@ -554,8 +564,18 @@ async function invokeLLMWithProvider(
     output_schema,
   });
 
+  const supportsJsonSchema = provider.model.includes("gpt-4") || provider.model.includes("gpt-3.5") || provider.model.includes("gemini");
   if (normalizedResponseFormat) {
-    payload.response_format = normalizedResponseFormat;
+    if (normalizedResponseFormat.type === "json_schema" && !supportsJsonSchema) {
+      payload.response_format = { type: "json_object" };
+      // Inject schema into system prompt as fallback
+      const systemMsg = messages.find(m => m.role === "system");
+      if (systemMsg && typeof systemMsg.content === "string") {
+        systemMsg.content += `\n\nReturn JSON matching this schema: ${JSON.stringify(normalizedResponseFormat.json_schema.schema)}`;
+      }
+    } else {
+      payload.response_format = normalizedResponseFormat;
+    }
   } else if (provider.model.startsWith("gemini")) {
     payload.thinking = {
       budget_tokens: 2048,

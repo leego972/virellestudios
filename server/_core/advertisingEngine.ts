@@ -1,3 +1,4 @@
+import { safeJsonExtract } from "./safeParse";
 import { invokeLLM } from "./llm";
 import { generateImage } from "./imageGeneration";
 import { generateVideo as byokGenerateVideo } from "./byokVideoEngine";
@@ -586,7 +587,7 @@ export async function generateAdContent(
   const content = typeof msg?.content === "string" ? msg.content : Array.isArray(msg?.content) ? msg.content.map((c: any) => c.text || "").join("") : "";
   let parsed: any;
   try {
-    parsed = JSON.parse(content);
+    parsed = safeJsonExtract(content, null);
   } catch {
     throw new Error("Failed to parse AI-generated ad content");
   }

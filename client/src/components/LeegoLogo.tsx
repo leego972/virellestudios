@@ -84,7 +84,7 @@ export default function LeegoLogo({
       alt={alt}
       draggable={false}
       onClick={handlePulse}
-      className={`${className} ${disablePulse ? "" : "cursor-pointer"} select-none`}
+      className={`${className} ${disablePulse ? "" : "cursor-pointer"} select-none leego-glow`}
       style={{
         transformOrigin: "center",
         transition: `transform ${TRANSITION_MS}ms cubic-bezier(0.34, 1.56, 0.64, 1)`,

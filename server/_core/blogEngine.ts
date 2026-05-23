@@ -1,3 +1,4 @@
+import { safeJsonExtract } from "./safeParse";
 import { invokeLLM } from "./llm";
 import { ENV } from "./env";
 import { generateImage } from "./imageGeneration";
@@ -210,7 +211,7 @@ Return your response as JSON with this exact structure:
         ? result.choices[0].message.content.map((p: any) => p.text || "").join("")
         : "";
 
-    const parsed = JSON.parse(content);
+    const parsed = safeJsonExtract(content, null);
     const slug = slugify(parsed.title || topic) + "-" + Date.now().toString(36);
 
     // Generate a cover image for the article
