@@ -127,7 +127,8 @@ export const ENV = {
   // ─── TitanAI Inference API ─────────────────────────────────────────────────
   // Set TITAN_API_URL to the running TitanAI API server (e.g. http://ssh5.vast.ai:8000 — current Vast box: TitanAI-Verified-2)
   // Leave empty to disable — falls back to OpenAI/Forge routing as normal.
-  titanApiUrl: process.env.TITAN_API_URL ?? "http://172.81.127.43:8000/v1",
+  // Leave empty string when TITAN_API_URL is unset — server routes skip TitanAI and fall back to OpenAI
+  titanApiUrl: process.env.TITAN_API_URL ?? "",
   titanApiKey: process.env.TITAN_API_KEY ?? "",
   /** Venice AI permanent platform key — used as the default LLM for ALL users (Assistant, script gen, scene breakdowns) when no user-specific LLM key is set. OpenAI-compatible. */
   veniceApiKey: process.env.VENICE_API_KEY ?? "",
