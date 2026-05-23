@@ -2,6 +2,8 @@ import { router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
+import { and, eq } from "drizzle-orm";
+import { projects } from "../drizzle/schema";
 
 /**
  * Production Documents Router
@@ -36,8 +38,8 @@ export const productionDocumentsRouter = router({
         // Verify project ownership
         const [project] = await db
           .select()
-          .from("projects")
-          .where("id = ? AND userId = ?", input.projectId, ctx.user.id);
+          .from(projects)
+          .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id)));
         if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project not found or not owned by you" });
 
         // Generate HTML document
@@ -95,8 +97,8 @@ export const productionDocumentsRouter = router({
         // Verify project ownership
         const [project] = await db
           .select()
-          .from("projects")
-          .where("id = ? AND userId = ?", input.projectId, ctx.user.id);
+          .from(projects)
+          .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id)));
         if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project not found or not owned by you" });
 
         // Generate HTML document
@@ -148,8 +150,8 @@ export const productionDocumentsRouter = router({
         // Verify project ownership
         const [project] = await db
           .select()
-          .from("projects")
-          .where("id = ? AND userId = ?", input.projectId, ctx.user.id);
+          .from(projects)
+          .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id)));
         if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project not found or not owned by you" });
 
         // Generate HTML document
@@ -199,8 +201,8 @@ export const productionDocumentsRouter = router({
         // Verify project ownership
         const [project] = await db
           .select()
-          .from("projects")
-          .where("id = ? AND userId = ?", input.projectId, ctx.user.id);
+          .from(projects)
+          .where(and(eq(projects.id, input.projectId), eq(projects.userId, ctx.user.id)));
         if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project not found or not owned by you" });
 
         // Calculate total rental cost
