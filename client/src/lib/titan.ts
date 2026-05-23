@@ -1,10 +1,8 @@
-const _titanBase =
-    (import.meta as any).env?.VITE_TITAN_API_URL ??
-    process.env["TITAN_API_URL"];
-  if (!_titanBase) {
-    console.warn("[TitanAI] VITE_TITAN_API_URL / TITAN_API_URL is not set — Titan features will be unavailable.");
-  }
-  const API_BASE = _titanBase ?? "";
+// VITE_TITAN_API_URL must be set in Railway → Variables for Titan AI to work.
+const API_BASE = (import.meta as any).env?.VITE_TITAN_API_URL ?? "";
+if (!API_BASE) {
+  console.warn("[TitanAI] VITE_TITAN_API_URL is not set — Titan AI features will be unavailable.");
+}
 
 export interface ChatMessage {
   role: "user" | "assistant";
