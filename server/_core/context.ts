@@ -11,12 +11,19 @@ import { ENV } from "./env";
 let JWT_SECRET_KEY = ENV.cookieSecret;
 
 if (!JWT_SECRET_KEY) {
-  // JWT_SECRET / SESSION_SECRET not set — server starts with ephemeral key.
-  // Set JWT_SECRET in Railway env vars so sessions survive restarts.
+  if (process.env.NODE_ENV === "production") {
+    // Hard fail — the fallback key is visible in the public source repo,
+    // so any attacker could forge valid JWT tokens for any user.
+    throw new Error(
+      "[virelle] FATAL: JWT_SECRET env var is not set. " +
+      "Add JWT_SECRET to Railway environment variables and redeploy."
+    );
+  }
+  // Development only: ephemeral key so the server starts without full config.
   JWT_SECRET_KEY = "dev-secret-change-me-set-JWT_SECRET-in-railway";
   console.warn(
-    "[virelle] WARNING: JWT_SECRET is not set. Using insecure fallback. " +
-    "Sessions will be invalidated on restart. Add JWT_SECRET to Railway env vars."
+    "[virelle] WARNING: JWT_SECRET is not set. Using insecure dev fallback. " +
+    "Sessions will be invalidated on restart."
   );
 }
 
