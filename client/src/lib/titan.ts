@@ -1,7 +1,10 @@
-const API_BASE =
-  (import.meta as any).env?.VITE_TITAN_API_URL ??
-  process.env["TITAN_API_URL"] ??
-  "http://172.81.127.43:8000/v1";
+const _titanBase =
+    (import.meta as any).env?.VITE_TITAN_API_URL ??
+    process.env["TITAN_API_URL"];
+  if (!_titanBase) {
+    console.warn("[TitanAI] VITE_TITAN_API_URL / TITAN_API_URL is not set — Titan features will be unavailable.");
+  }
+  const API_BASE = _titanBase ?? "";
 
 export interface ChatMessage {
   role: "user" | "assistant";
