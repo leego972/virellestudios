@@ -184,6 +184,16 @@ import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
         sourcemap: false,
         minify: "esbuild",
         rollupOptions: {
+          external: [
+            "drizzle-orm",
+            "mysql2",
+            "mysql2/promise",
+            "bcryptjs",
+            "nanoid",
+            "@trpc/server",
+            "express",
+            "stripe",
+          ],
           output: {
             manualChunks: {
               // Vendor chunks — split heavy dependencies
