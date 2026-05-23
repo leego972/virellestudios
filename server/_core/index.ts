@@ -1287,7 +1287,7 @@ async function startServer() {
 
   // ── SSE Streaming Director Chat ─────────────────────────────────────────
   // Maps sessionId -> SSE Response so the POST handler can write to it
-  const activeDirectorStreams = new Map<string, import('express').Response>();
+  const activeDirectorStreams = new Map<string, { res: import('express').Response; userId: number }>();
   const MAX_DIRECTOR_STREAMS = 200; // Global cap to prevent memory exhaustion
 
   app.get("/api/director/stream/:sessionId", async (req, res) => {
@@ -1312,7 +1312,7 @@ async function startServer() {
     res.setHeader("Connection", "keep-alive");
     res.setHeader("X-Accel-Buffering", "no");
     res.flushHeaders();
-    activeDirectorStreams.set(sessionId, res);
+    activeDirectorStreams.set(sessionId, { res, userId: streamCtx.user.id });
     req.on("close", () => activeDirectorStreams.delete(sessionId));
     res.write(`data: ${JSON.stringify({ type: "connected" })}\n\n`);
   });
@@ -1324,12 +1324,20 @@ async function startServer() {
       projectContext?: string;
       directorInstructions?: string;
     };
-    const sseRes = activeDirectorStreams.get(sessionId);
-    if (!sseRes) { res.status(404).json({ error: "No active stream" }); return; }
+    const _streamEntry = activeDirectorStreams.get(sessionId);
+    if (!_streamEntry) { res.status(404).json({ error: "No active stream" }); return; }
 
     // Authenticate the user for tool execution
     const toolCtx = await createContext({ req, res, info: {} } as any);
     if (!toolCtx.user) { res.status(401).json({ error: "Unauthorized" }); return; }
+    // Ownership guard: only the user who opened this SSE stream may send to it.
+    // Without this, anyone who discovers the sessionId could write to another
+    // user's stream or have credits deducted from the wrong account.
+    if (toolCtx.user.id !== _streamEntry.userId) {
+      res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+    const sseRes = _streamEntry.res;
 
     // Credits: deduct 2 credits per Director's Assistant message (same as virelle_chat)
     // Admin users are exempt from credit deductions
