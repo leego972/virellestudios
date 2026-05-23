@@ -1,20 +1,16 @@
-/**
- * Admin Seeding Router
- * One-click seeding for marketplace items and funding sources
- * Protected by adminProcedure — only accessible to admin accounts
- */
-
-import { z } from "zod";
-import { router, adminProcedure } from "./_core/trpc";
+import { router, adminProcedure } from "./trpc";
 import { getDb } from "./db";
-import {
-  wardrobeItems,
-  fundingSources,
+import { 
+  wardrobeCollections, 
+  wardrobeItems, 
+  fundingSources, 
   users,
+  crowdfundCampaigns,
+  crowdfundRewards
 } from "../drizzle/schema";
 import { nanoid } from "nanoid";
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 // Import seed data
 import { runLamaloSeed } from "./lamalo-seed";
@@ -23,13 +19,10 @@ import { FUNDING_SOURCES_DATA } from "./funding-seed";
 export const adminSeedingRouter = router({
   /**
    * Seed all marketplace items and collections
-   * Returns count of seeded items
    */
   seedMarketplace: adminProcedure.mutation(async ({ ctx }) => {
     try {
-      // Call the lamalo seed function
       await runLamaloSeed(ctx.user.id);
-      
       return {
         success: true,
         message: "Marketplace seeded successfully",
@@ -38,23 +31,21 @@ export const adminSeedingRouter = router({
       console.error("Marketplace seeding error:", error);
       return {
         success: false,
-        message: `Failed to seed marketplace: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: \`Failed to seed marketplace: \${error instanceof Error ? error.message : "Unknown error"}\`,
       };
     }
   }),
 
   /**
    * Seed funding sources
-   * Returns count of seeded sources
    */
-  seedFundingSources: adminProcedure.mutation(async ({ ctx }) => {
+  seedFundingSources: adminProcedure.mutation(async () => {
     try {
       const db = await getDb();
       if (!db) throw new Error("DB unavailable");
+      
       let count = 0;
-
       for (const source of FUNDING_SOURCES_DATA) {
-        // Check if source already exists
         const existing = await db
           .select()
           .from(fundingSources)
@@ -66,57 +57,160 @@ export const adminSeedingRouter = router({
           count++;
         }
       }
-
+      
       return {
         success: true,
         count,
-        message: `Seeded ${count} funding sources`,
+        message: \`Seeded \${count} funding sources\`,
       };
     } catch (error) {
       console.error("Funding sources seeding error:", error);
       return {
         success: false,
-        message: `Failed to seed funding sources: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: \`Failed to seed funding sources: \${error instanceof Error ? error.message : "Unknown error"}\`,
       };
     }
   }),
 
   /**
-   * Seed everything (marketplace + funding sources)
+   * Seed sample crowdfunding campaigns
+   */
+  seedCrowdfunding: adminProcedure.mutation(async ({ ctx }) => {
+    try {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+
+      const samples = [
+        {
+          userId: ctx.user.id,
+          title: "Echoes of Eternity",
+          slug: "echoes-of-eternity",
+          tagline: "A high-concept sci-fi epic about the last transmission from Earth.",
+          description: "In the year 2142, a lone signal technician on a lunar outpost receives a message that shouldn't exist. Echoes of Eternity is a visually stunning exploration of isolation, memory, and the endurance of the human spirit.",
+          genre: "Sci-Fi",
+          format: "Feature Film",
+          goalAmountCents: 5000000,
+          raisedAmountCents: 1250000,
+          backerCount: 42,
+          status: "active",
+          deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+        {
+          userId: ctx.user.id,
+          title: "The Neon Underground",
+          slug: "neon-underground",
+          tagline: "Cyberpunk noir set in the rain-soaked streets of Neo-Sydney.",
+          description: "A private investigator with a cybernetic eye takes on a case that leads him deep into the heart of a corporate conspiracy. The Neon Underground combines classic noir tropes with a gritty, neon-lit future.",
+          genre: "Cyberpunk / Noir",
+          format: "Short Film",
+          goalAmountCents: 1500000,
+          raisedAmountCents: 850000,
+          backerCount: 128,
+          status: "active",
+          deadline: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+        }
+      ];
+
+      let count = 0;
+      for (const sample of samples) {
+        const existing = await db
+          .select()
+          .from(crowdfundCampaigns)
+          .where(eq(crowdfundCampaigns.slug, sample.slug))
+          .limit(1);
+
+        if (!existing.length) {
+          const [result] = await db.insert(crowdfundCampaigns).values(sample as any);
+          const campaignId = (result as any).insertId;
+
+          // Add sample rewards
+          await db.insert(crowdfundRewards).values([
+            {
+              campaignId,
+              title: "Digital Supporter",
+              description: "Digital copy of the film and your name in the credits.",
+              amountCents: 2500,
+              sortOrder: 1,
+            },
+            {
+              campaignId,
+              title: "Executive Producer Credit",
+              description: "On-screen Executive Producer credit and invitation to the premiere.",
+              amountCents: 500000,
+              limitCount: 5,
+              sortOrder: 10,
+            }
+          ] as any);
+          
+          count++;
+        }
+      }
+
+      return {
+        success: true,
+        count,
+        message: \`Seeded \${count} sample campaigns\`,
+      };
+    } catch (error) {
+      console.error("Crowdfunding seeding error:", error);
+      return {
+        success: false,
+        message: \`Failed to seed crowdfunding: \${error instanceof Error ? error.message : "Unknown error"}\`,
+      };
+    }
+  }),
+
+  /**
+   * Seed everything
    */
   seedEverything: adminProcedure.mutation(async ({ ctx }) => {
     try {
       const db = await getDb();
-      
       if (!db) throw new Error("DB unavailable");
-      
-      // Seed marketplace
+
+      // 1. Marketplace
       await runLamaloSeed(ctx.user.id);
-      
-      // Seed funding sources
-      let fundingCount = 0;
+
+      // 2. Funding
       for (const source of FUNDING_SOURCES_DATA) {
         const existing = await db
           .select()
           .from(fundingSources)
           .where(eq(fundingSources.organization, source.name))
           .limit(1);
-
         if (!existing.length) {
           await db.insert(fundingSources).values(source as any);
-          fundingCount++;
         }
+      }
+
+      // 3. Crowdfunding
+      const sample = {
+        userId: ctx.user.id,
+        title: "Virelle Genesis",
+        slug: "virelle-genesis",
+        tagline: "The documentary that started it all.",
+        goalAmountCents: 1000000,
+        status: "active",
+        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+      };
+      const existing = await db
+        .select()
+        .from(crowdfundCampaigns)
+        .where(eq(crowdfundCampaigns.slug, sample.slug))
+        .limit(1);
+      if (!existing.length) {
+        await db.insert(crowdfundCampaigns).values(sample as any);
       }
 
       return {
         success: true,
-        message: `Seeded marketplace and ${fundingCount} funding sources`,
+        message: "Everything seeded successfully",
       };
     } catch (error) {
       console.error("Complete seeding error:", error);
       return {
         success: false,
-        message: `Failed to complete seeding: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: \`Failed to complete seeding: \${error instanceof Error ? error.message : "Unknown error"}\`,
       };
     }
   }),
@@ -128,6 +222,7 @@ export const adminSeedingRouter = router({
     try {
       const db = await getDb();
       if (!db) throw new Error("DB unavailable");
+
       const accounts = [
         { email: "beta1@virelle.life", password: "BetaAccess2026!" },
         { email: "beta2@virelle.life", password: "BetaAccess2026!" },
@@ -135,7 +230,6 @@ export const adminSeedingRouter = router({
 
       const created = [];
       for (const account of accounts) {
-        // Check if account exists
         const existing = await db
           .select()
           .from(users)
@@ -143,14 +237,12 @@ export const adminSeedingRouter = router({
           .limit(1);
 
         if (existing.length) {
-          // Update existing account with credits
           await db
             .update(users)
             .set({ credits: 1000000, role: "user" } as any)
             .where(eq(users.email, account.email));
           created.push({ email: account.email, status: "updated" });
         } else {
-          // Create new account
           const hashedPassword = await bcrypt.hash(account.password, 10);
           await db.insert(users).values({
             id: nanoid() as any,
@@ -167,17 +259,43 @@ export const adminSeedingRouter = router({
       return {
         success: true,
         accounts: created,
-        message: `Beta accounts ready: ${created.map((a) => a.email).join(", ")}`,
+        message: \`Beta accounts ready: \${created.map((a) => a.email).join(", ")}\`,
       };
     } catch (error) {
       console.error("Beta account creation error:", error);
       return {
         success: false,
-        message: `Failed to create beta accounts: ${error instanceof Error ? error.message : "Unknown error"}`,
+        message: \`Failed to create beta accounts: \${error instanceof Error ? error.message : "Unknown error"}\`,
       };
     }
   }),
+
+  /**
+   * Get detailed seeding status
+   */
   getStatus: adminProcedure.query(async () => {
-      return { success: true, message: "Admin seeding router ready." };
-    }),
-  });
+    try {
+      const db = await getDb();
+      if (!db) return { success: false, message: "DB unavailable" };
+
+      const [collections] = await db.select({ count: sql<number>\`count(*)\` }).from(wardrobeCollections);
+      const [items] = await db.select({ count: sql<number>\`count(*)\` }).from(wardrobeItems);
+      const [sources] = await db.select({ count: sql<number>\`count(*)\` }).from(fundingSources);
+      const [campaigns] = await db.select({ count: sql<number>\`count(*)\` }).from(crowdfundCampaigns);
+
+      return {
+        success: true,
+        collections: collections?.count || 0,
+        items: items?.count || 0,
+        fundingSources: sources?.count || 0,
+        campaigns: campaigns?.count || 0,
+        message: "Database status retrieved successfully",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: \`Failed to get status: \${error instanceof Error ? error.message : "Unknown error"}\`,
+      };
+    }
+  }),
+});

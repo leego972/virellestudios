@@ -3,7 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, Loader2, Zap, Users } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, Zap, Users, Rocket } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
 export default function Admin() {
@@ -36,137 +36,146 @@ export default function Admin() {
   }, []);
 
   const handleSeedMarketplace = async () => {
-    setStatus("loading");
     setMessage("Seeding marketplace...");
     try {
+      setStatus("loading");
       const result = await (trpc.adminSeeding.seedMarketplace as any).mutate();
       if (result.success) {
-        setStatus("success");
-        setMessage(result.message);
         setSeedStatus(null); // Refresh status
-        setTimeout(() => setStatus("idle"), 3000);
+        setMessage(result.message);
+        setStatus("success");
       } else {
-        setStatus("error");
         setMessage(result.error || "Failed to seed marketplace");
+        setStatus("error");
       }
     } catch (error) {
+      console.error(error);
+      setMessage("An unexpected error occurred");
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
   const handleSeedFunding = async () => {
-    setStatus("loading");
     setMessage("Seeding funding sources...");
     try {
+      setStatus("loading");
       const result = await (trpc.adminSeeding.seedFundingSources as any).mutate();
       if (result.success) {
-        setStatus("success");
-        setMessage(result.message);
         setSeedStatus(null); // Refresh status
-        setTimeout(() => setStatus("idle"), 3000);
+        setMessage(result.message);
+        setStatus("success");
       } else {
-        setStatus("error");
         setMessage(result.error || "Failed to seed funding sources");
+        setStatus("error");
       }
     } catch (error) {
+      console.error(error);
+      setMessage("An unexpected error occurred");
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "An error occurred");
+    }
+  };
+
+  const handleSeedCrowdfunding = async () => {
+    setMessage("Seeding crowdfunding...");
+    try {
+      setStatus("loading");
+      const result = await (trpc.adminSeeding as any).seedCrowdfunding.mutate();
+      if (result.success) {
+        setSeedStatus(null);
+        setMessage(result.message);
+        setStatus("success");
+      } else {
+        setMessage(result.message || "Failed to seed crowdfunding");
+        setStatus("error");
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage("An unexpected error occurred");
+      setStatus("error");
     }
   };
 
   const handleSeedEverything = async () => {
-    if (!confirm("Are you sure? This will seed all marketplace items and funding sources.")) {
+    if (!confirm("Are you sure? This will seed all marketplace items, funding sources, and sample campaigns.")) {
       return;
     }
-
-    setStatus("loading");
     setMessage("Seeding everything...");
     try {
+      setStatus("loading");
       const result = await (trpc.adminSeeding.seedEverything as any).mutate();
       if (result.success) {
-        setStatus("success");
-        setMessage(result.message);
         setSeedStatus(null); // Refresh status
-        setTimeout(() => setStatus("idle"), 3000);
+        setMessage(result.message);
+        setStatus("success");
       } else {
-        setStatus("error");
         setMessage(result.error || "Failed to seed data");
+        setStatus("error");
       }
     } catch (error) {
+      console.error(error);
+      setMessage("An unexpected error occurred");
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
   const handleCreateBetaAccounts = async () => {
-    setStatus("loading");
     setMessage("Creating beta tester accounts...");
     try {
+      setStatus("loading");
       const result = await (trpc.adminSeeding.createBetaAccounts as any).mutate();
       if (result.success) {
-        setStatus("success");
-        const details = result.results.map((r: any) => 
-          `${r.email}: ${r.status}${r.password ? ` (PW: ${r.password})` : ""}`
-        ).join("\n");
-        setMessage(`Beta accounts processed:\n${details}`);
         setSeedStatus(null); // Refresh status
+        setMessage(result.message);
+        setStatus("success");
       } else {
-        setStatus("error");
         setMessage(result.error || "Failed to create beta accounts");
+        setStatus("error");
       }
     } catch (error) {
+      console.error(error);
+      setMessage("An unexpected error occurred");
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
-  if (!user?.isAdmin) {
+  if (!user || !user.isAdmin) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-black mb-2 text-amber-400">Admin Power Tools</h1>
-          <p className="text-white/60">One-click seeding for marketplace and funding sources</p>
+    <div className="min-h-screen bg-black text-white p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <p className="text-white/60">One-click seeding for marketplace, funding, and crowdfunding</p>
+          </div>
+          <Button variant="outline" onClick={() => setLocation("/")}>Back to App</Button>
         </div>
 
-        {/* Status Message */}
-        {message && (
-          <div
-            className={`mb-8 p-4 rounded-lg border flex items-start gap-3 ${
-              status === "success"
-                ? "bg-green-500/10 border-green-500/30 text-green-300"
-                : status === "error"
-                ? "bg-red-500/10 border-red-500/30 text-red-300"
-                : "bg-amber-500/10 border-amber-500/30 text-amber-300"
-            }`}
-          >
-            {status === "success" ? (
-              <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
-            ) : status === "error" ? (
-              <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
-            ) : (
-              <Loader2 className="h-5 w-5 shrink-0 mt-0.5 animate-spin" />
-            )}
-            <span>{message}</span>
+        {status !== "idle" && (
+          <div className={`mb-8 p-4 rounded-lg flex items-center gap-3 ${
+            status === "loading" ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" :
+            status === "success" ? "bg-green-500/10 text-green-400 border border-green-500/20" :
+            "bg-red-500/10 text-red-400 border border-red-500/20"
+          }`}>
+            {status === "loading" ? <Loader2 className="h-5 w-5 animate-spin" /> :
+             status === "success" ? <CheckCircle2 className="h-5 w-5" /> :
+             <AlertCircle className="h-5 w-5" />}
+            <p className="font-medium">{message}</p>
           </div>
         )}
 
-        {/* Current Status */}
         {seedStatus && (
           <Card className="mb-8 bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-lg">Current Seeding Status</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-3 gap-4">
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                   <div className="text-2xl font-bold text-amber-400">{seedStatus.collections || 0}</div>
-                  <div className="text-xs text-white/60 mt-1">Wardrobe Collections</div>
+                  <div className="text-xs text-white/60 mt-1">Collections</div>
                 </div>
                 <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                   <div className="text-2xl font-bold text-amber-400">{seedStatus.items || 0}</div>
@@ -176,19 +185,23 @@ export default function Admin() {
                   <div className="text-2xl font-bold text-amber-400">{seedStatus.fundingSources || 0}</div>
                   <div className="text-xs text-white/60 mt-1">Funding Sources</div>
                 </div>
+                <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+                  <div className="text-2xl font-bold text-amber-400">{seedStatus.campaigns || 0}</div>
+                  <div className="text-xs text-white/60 mt-1">Sample Campaigns</div>
+                </div>
               </div>
-              <p className="text-xs text-white/40 italic">{seedStatus.message}</p>
+              <p className="text-xs text-white/40 italic mt-4">{seedStatus.message}</p>
             </CardContent>
           </Card>
         )}
 
         {/* Seeding Controls */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Marketplace Seeding */}
           <Card className="bg-white/5 border-white/10 hover:border-amber-500/30 transition-colors">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <span className="text-2xl">🛍️</span>
+                <Shirt className="h-5 w-5 text-amber-400" />
                 Seed Marketplace
               </CardTitle>
             </CardHeader>
@@ -199,7 +212,7 @@ export default function Admin() {
               <Button
                 onClick={handleSeedMarketplace}
                 disabled={status === "loading"}
-                className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                className="w-full bg-white/10 hover:bg-white/20 text-white"
               >
                 {status === "loading" ? (
                   <>
@@ -220,7 +233,7 @@ export default function Admin() {
           <Card className="bg-white/5 border-white/10 hover:border-amber-500/30 transition-colors">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <span className="text-2xl">💰</span>
+                <DollarSign className="h-5 w-5 text-amber-400" />
                 Seed Funding Sources
               </CardTitle>
             </CardHeader>
@@ -231,7 +244,7 @@ export default function Admin() {
               <Button
                 onClick={handleSeedFunding}
                 disabled={status === "loading"}
-                className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                className="w-full bg-white/10 hover:bg-white/20 text-white"
               >
                 {status === "loading" ? (
                   <>
@@ -248,6 +261,38 @@ export default function Admin() {
             </CardContent>
           </Card>
 
+          {/* Crowdfunding Seeding */}
+          <Card className="bg-white/5 border-white/10 hover:border-amber-500/30 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Rocket className="h-5 w-5 text-amber-400" />
+                Seed Crowdfunding
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-white/60">
+                Seed sample active crowdfunding campaigns to populate the hub for demonstration.
+              </p>
+              <Button
+                onClick={handleSeedCrowdfunding}
+                disabled={status === "loading"}
+                className="w-full bg-white/10 hover:bg-white/20 text-white"
+              >
+                {status === "loading" ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Seeding...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="h-4 w-4 mr-2" />
+                    Seed Crowdfunding
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* Seed Everything */}
           <Card className="bg-gradient-to-br from-amber-500/20 to-purple-500/20 border-amber-500/30 hover:border-amber-500/50 transition-colors">
             <CardHeader>
@@ -258,7 +303,7 @@ export default function Admin() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-white/60">
-                One-click seeding: marketplace + funding sources. Requires confirmation.
+                One-click seeding: marketplace + funding sources + crowdfunding. Requires confirmation.
               </p>
               <Button
                 onClick={handleSeedEverything}
@@ -344,9 +389,15 @@ export default function Admin() {
               </p>
             </div>
             <div>
+              <h4 className="font-semibold text-white mb-2">🚀 Crowdfunding Seeding</h4>
+              <p>
+                Creates sample active crowdfunding campaigns with rewards and backers to demonstrate the Crowdfunding Hub's features.
+              </p>
+            </div>
+            <div>
               <h4 className="font-semibold text-white mb-2">⚡ Seed Everything</h4>
               <p>
-                Runs both marketplace and funding seeding in a single transaction. Perfect for fresh deployments or complete data refresh.
+                Runs all seeding tasks in a single transaction. Perfect for fresh deployments or complete data refresh.
               </p>
             </div>
           </CardContent>
@@ -355,3 +406,7 @@ export default function Admin() {
     </div>
   );
 }
+
+// Mock components to satisfy imports if needed
+function Shirt(props: any) { return <Users {...props} /> }
+function DollarSign(props: any) { return <Zap {...props} /> }
