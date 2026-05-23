@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,781 +7,283 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   ArrowLeft, Search, Star, Download, ShoppingCart,
   Music, Palette, Users, MapPin, Shirt, Sparkles, Lock, CheckCircle2, Loader2,
-  Camera, Film, Mic, Clapperboard, Layers, Zap, Crown,
+  Camera, Film, Mic, Clapperboard, Layers, Zap, Crown, ExternalLink, Info, DollarSign,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 
-type AssetCategory = "all" | "characters" | "locations" | "music" | "vfx-packs" | "wardrobes" | "color-grades" | "cinematography" | "prompt-packs" | "sfx" | "dialogue-packs";
-
-const ASSETS = [
-  // ── FREE ASSETS ──────────────────────────────────────────────────────────────
-  {
-    id: "a001", name: "Neo-Tokyo Street Market", category: "locations" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.9, downloads: 8420,
-    tags: ["sci-fi", "night", "urban", "neon"], author: "Virelle Studios",
-    description: "Crowded night market with neon signs, street food stalls, and rain-slicked pavement. Ideal for cyberpunk and sci-fi scenes.",
-    applyHint: "Use as a location reference in your scene's Location field.",
-  },
-  {
-    id: "a002", name: "Orchestral Drama Suite Vol. 1", category: "music" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.8, downloads: 12300,
-    tags: ["drama", "emotional", "strings", "orchestral"], author: "Virelle Studios",
-    description: "Full orchestral suite with 8 cues: tension build, emotional reveal, quiet grief, triumphant resolution, and more.",
-    applyHint: "Added to your Sound Library. Apply it to any scene's background music.",
-  },
-  {
-    id: "a004", name: "Victorian London Mansion", category: "locations" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.7, downloads: 5230,
-    tags: ["period", "gothic", "interior", "drama"], author: "Virelle Studios",
-    description: "Grand Victorian interior with dark wood panelling, candlelit chandeliers, and heavy drapes. Perfect for period drama and gothic horror.",
-    applyHint: "Use as a location reference in your scene's Location field.",
-  },
-  {
-    id: "a006", name: "Horror Atmosphere SFX Pack", category: "sfx" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.8, downloads: 9100,
-    tags: ["horror", "suspense", "atmosphere", "sound"], author: "Virelle Studios",
-    description: "20 atmospheric sound prompts: distant footsteps, creaking floorboards, low drones, sudden silence, and jump-scare stingers.",
-    applyHint: "Added to your Sound Library. Apply to scenes in the Sound Effects tab.",
-  },
-  {
-    id: "a007", name: "Deakins Desert Landscape", category: "locations" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.9, downloads: 7650,
-    tags: ["western", "epic", "outdoor", "golden-hour"], author: "Virelle Studios",
-    description: "Vast desert plateau at golden hour. Sparse scrub brush, red rock formations, and a horizon that stretches forever.",
-    applyHint: "Use as a location reference in your scene's Location field.",
-  },
-  {
-    id: "a008", name: "Noir Detective Wardrobe Pack", category: "wardrobes" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.7, downloads: 4320,
-    tags: ["noir", "1940s", "detective", "period"], author: "Virelle Studios",
-    description: "8 wardrobe descriptions for 1940s noir characters: trench coat detective, femme fatale, corrupt cop, and newspaper editor.",
-    applyHint: "Apply wardrobe descriptions to your characters.",
-  },
-  {
-    id: "a010", name: "Romance Drama Color Grades", category: "color-grades" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.6, downloads: 3210,
-    tags: ["romance", "warm", "soft", "golden"], author: "Virelle Studios",
-    description: "4 color grade presets for romantic drama: golden afternoon, soft morning, twilight warmth, and candlelit evening.",
-    applyHint: "Apply in Color Grading Studio.",
-  },
-  {
-    id: "a011", name: "Jazz Club Interior — 1950s", category: "locations" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.8, downloads: 6890,
-    tags: ["jazz", "1950s", "interior", "night"], author: "Virelle Studios",
-    description: "Intimate jazz club with low lighting, a small stage, smoke haze, and round tables with candles. Perfect for crime drama and period romance.",
-    applyHint: "Use as a location reference in your scene's Location field.",
-  },
-  {
-    id: "a020", name: "Handheld Cinematography Starter Pack", category: "cinematography" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.7, downloads: 5100,
-    tags: ["handheld", "documentary", "indie", "camera"], author: "Virelle Studios",
-    description: "15 handheld camera movement descriptions for indie and documentary-style scenes. Adds urgency, intimacy, and realism.",
-    applyHint: "Apply camera movement descriptions in the Scene Editor's Camera field.",
-  },
-  {
-    id: "a021", name: "Urban Ambience SFX Pack", category: "sfx" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.6, downloads: 4800,
-    tags: ["urban", "city", "ambient", "modern"], author: "Virelle Studios",
-    description: "18 urban ambient sound prompts: traffic hum, subway rumble, distant sirens, coffee shop chatter, rain on glass.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a022", name: "Villain Monologue Dialogue Pack", category: "dialogue-packs" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.8, downloads: 6200,
-    tags: ["villain", "monologue", "drama", "thriller"], author: "Virelle Studios",
-    description: "10 villain monologue templates across genres: cold corporate, theatrical megalomaniac, quiet menace, tragic antagonist.",
-    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
-  },
-  {
-    id: "a029", name: "Indie Film Starter Prompt Pack", category: "prompt-packs" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.7, downloads: 7400,
-    tags: ["indie", "drama", "prompts", "beginner"], author: "Virelle Studios",
-    description: "30 beginner-friendly scene prompts for indie drama: kitchen arguments, late-night drives, rooftop conversations, and quiet morning routines.",
-    applyHint: "Use prompts directly in Quick Generate or Scene Editor.",
-  },
-  {
-    id: "a030", name: "Sci-Fi Ambient SFX Pack", category: "sfx" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.7, downloads: 5900,
-    tags: ["sci-fi", "ambient", "space", "electronic"], author: "Virelle Studios",
-    description: "22 sci-fi ambient sound prompts: ship engine hum, airlock pressure, holographic interface beeps, distant nebula winds, and cryosleep chambers.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a031", name: "Street Photography Color Grades", category: "color-grades" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.5, downloads: 3800,
-    tags: ["street", "urban", "gritty", "documentary"], author: "Virelle Studios",
-    description: "5 gritty urban color grade presets: faded film, high-contrast B&W, bleach bypass, cold steel, and warm sepia.",
-    applyHint: "Apply in Color Grading Studio.",
-  },
-  {
-    id: "a032", name: "Hero's Journey Character Pack", category: "characters" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.8, downloads: 8100,
-    tags: ["hero", "adventure", "archetype", "drama"], author: "Virelle Studios",
-    description: "5 classic hero archetype profiles: the reluctant hero, the chosen one, the anti-hero, the underdog, and the reformed villain. Includes backstory and personality notes.",
-    applyHint: "Import directly into your project's Character Library.",
-  },
-  {
-    id: "a033", name: "Nature & Wilderness SFX Pack", category: "sfx" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.6, downloads: 4200,
-    tags: ["nature", "wilderness", "outdoor", "ambient"], author: "Virelle Studios",
-    description: "20 nature sound prompts: dense forest at dawn, crashing ocean waves, thunderstorm approach, desert wind, and mountain stream.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a034", name: "Confrontation Dialogue Pack", category: "dialogue-packs" as AssetCategory,
-    price: 0, isPremium: false, rating: 4.7, downloads: 5300,
-    tags: ["confrontation", "drama", "tension", "dialogue"], author: "Virelle Studios",
-    description: "15 confrontation scene dialogue templates: family argument, workplace power struggle, betrayal reveal, and courtroom cross-examination.",
-    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
-  },
-
-  // ── PREMIUM ASSETS ───────────────────────────────────────────────────────────
-  {
-    id: "a003", name: "Blade Runner Color Grade Pack", category: "color-grades" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.9, downloads: 6780,
-    tags: ["sci-fi", "neon", "noir", "cyberpunk"], author: "CinematicLUTs",
-    description: "6 LUT presets inspired by neo-noir cinematography. Deep teals, amber highlights, crushed blacks. Instantly transforms any scene into a cyberpunk masterpiece.",
-    applyHint: "Apply in Color Grading Studio.",
-  },
-  {
-    id: "a005", name: "Action Hero Wardrobe Pack", category: "wardrobes" as AssetCategory,
-    price: 2.99, isPremium: true, rating: 4.6, downloads: 3890,
-    tags: ["action", "tactical", "military", "modern"], author: "CostumePro",
-    description: "12 wardrobe descriptions for action protagonists: tactical gear, undercover civilian, formal infiltration, and field medic variants.",
-    applyHint: "Apply wardrobe descriptions to your characters.",
-  },
-  {
-    id: "a009", name: "Sci-Fi VFX Particle Pack", category: "vfx-packs" as AssetCategory,
-    price: 7.99, isPremium: true, rating: 4.9, downloads: 5670,
-    tags: ["sci-fi", "particles", "energy", "hologram"], author: "VFXPro",
-    description: "15 VFX prompt templates: holographic displays, energy shields, teleportation effects, laser fire, and plasma explosions.",
-    applyHint: "Apply in VFX Suite.",
-  },
-  {
-    id: "a012", name: "Epic Action Score Vol. 2", category: "music" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.9, downloads: 8900,
-    tags: ["action", "epic", "percussion", "orchestral"], author: "FilmScore Pro",
-    description: "10 action cues: chase sequence, final battle, hero theme, villain reveal, and victory fanfare. Full orchestral with heavy percussion.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a013", name: "Anamorphic Lens Cinematography Pack", category: "cinematography" as AssetCategory,
-    price: 5.99, isPremium: true, rating: 4.9, downloads: 4200,
-    tags: ["anamorphic", "cinematic", "lens-flare", "widescreen"], author: "CinematicLUTs",
-    description: "20 anamorphic lens shot descriptions with horizontal lens flares, oval bokeh, and 2.39:1 widescreen compositions. The Hollywood blockbuster look.",
-    applyHint: "Apply in Scene Editor under Camera & Optics.",
-  },
-  {
-    id: "a014", name: "Psychological Thriller Prompt Pack", category: "prompt-packs" as AssetCategory,
-    price: 6.99, isPremium: true, rating: 4.8, downloads: 3100,
-    tags: ["thriller", "psychological", "suspense", "prompts"], author: "Virelle Studios",
-    description: "50 scene generation prompts for psychological thrillers: unreliable narrators, paranoia sequences, gaslighting confrontations, and mind-bending reveals.",
-    applyHint: "Use prompts directly in Quick Generate or Scene Editor.",
-  },
-  {
-    id: "a015", name: "Hollywood Character Pack — 10 Archetypes", category: "characters" as AssetCategory,
-    price: 9.99, isPremium: true, rating: 4.9, downloads: 7800,
-    tags: ["characters", "archetypes", "hollywood", "drama"], author: "Virelle Studios",
-    description: "10 fully developed character profiles: the reluctant hero, the femme fatale, the wise mentor, the corrupt authority figure, and 6 more. Each includes backstory, personality, wardrobe, and voice notes.",
-    applyHint: "Import directly into your project's Character Library.",
-  },
-  {
-    id: "a016", name: "War Film Location Pack", category: "locations" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.8, downloads: 3400,
-    tags: ["war", "military", "battlefield", "historical"], author: "Virelle Studios",
-    description: "12 war film locations: WWI trenches, WWII bombed city streets, jungle warfare, modern urban combat zones, field hospitals, and command bunkers.",
-    applyHint: "Use as location references in your scene's Location field.",
-  },
-  {
-    id: "a017", name: "Drone Cinematography Pack", category: "cinematography" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.7, downloads: 2900,
-    tags: ["drone", "aerial", "establishing", "epic"], author: "CinematicLUTs",
-    description: "18 drone shot descriptions: sweeping establishing reveals, low-altitude chase tracking, orbital character shots, and epic landscape reveals.",
-    applyHint: "Apply in Scene Editor under Camera Movement.",
-  },
-  {
-    id: "a018", name: "Horror & Suspense Score Pack", category: "music" as AssetCategory,
-    price: 5.99, isPremium: true, rating: 4.9, downloads: 5100,
-    tags: ["horror", "suspense", "score", "strings"], author: "FilmScore Pro",
-    description: "12 horror and suspense cues: creeping dread, jump scare stinger, psychological unease, monster reveal, and final confrontation. Strings, brass, and dissonant piano.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a019", name: "Romantic Drama Dialogue Pack", category: "dialogue-packs" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.7, downloads: 4600,
-    tags: ["romance", "drama", "dialogue", "emotional"], author: "Virelle Studios",
-    description: "25 romantic dialogue templates: first meeting sparks, slow-burn tension, heartbreaking breakup, reunion after years apart, and love confession under pressure.",
-    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
-  },
-  {
-    id: "a023", name: "Neon Noir Location Pack", category: "locations" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.8, downloads: 3700,
-    tags: ["noir", "neon", "night", "urban"], author: "Virelle Studios",
-    description: "10 neon noir locations: rain-soaked alleyways, rooftop bars, underground fight clubs, corrupt police precincts, and smoky detective offices.",
-    applyHint: "Use as location references in your scene's Location field.",
-  },
-  {
-    id: "a024", name: "Complete VFX Explosion Pack", category: "vfx-packs" as AssetCategory,
-    price: 8.99, isPremium: true, rating: 4.9, downloads: 4300,
-    tags: ["vfx", "explosion", "action", "practical"], author: "VFXPro",
-    description: "22 explosion and destruction VFX prompt templates: car explosions, building collapses, shockwave blasts, fire propagation, and debris fields.",
-    applyHint: "Apply in VFX Suite.",
-  },
-  {
-    id: "a025", name: "Director's Master Prompt Library", category: "prompt-packs" as AssetCategory,
-    price: 14.99, isPremium: true, rating: 5.0, downloads: 2100,
-    tags: ["prompts", "master", "all-genre", "professional"], author: "Virelle Studios",
-    description: "100 professional-grade scene generation prompts across 10 genres. Crafted by the Virelle team to get the best results from AI video generation. The ultimate prompt toolkit for serious filmmakers.",
-    applyHint: "Use prompts in Quick Generate or Scene Editor for best AI results.",
-  },
-  {
-    id: "a026", name: "Sci-Fi Character Pack — 8 Archetypes", category: "characters" as AssetCategory,
-    price: 7.99, isPremium: true, rating: 4.8, downloads: 3200,
-    tags: ["sci-fi", "characters", "space", "futuristic"], author: "Virelle Studios",
-    description: "8 fully developed sci-fi character profiles: space captain, rogue AI, alien diplomat, cybernetic soldier, colony scientist, and more. Full backstory and wardrobe included.",
-    applyHint: "Import directly into your project's Character Library.",
-  },
-  {
-    id: "a027", name: "Steadicam & Dolly Shot Pack", category: "cinematography" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.7, downloads: 2600,
-    tags: ["steadicam", "dolly", "smooth", "tracking"], author: "CinematicLUTs",
-    description: "16 steadicam and dolly shot descriptions: long corridor reveals, character-following tracking shots, slow push-ins on emotional beats, and dramatic pull-backs.",
-    applyHint: "Apply in Scene Editor under Camera Movement.",
-  },
-  {
-    id: "a028", name: "Western Frontier Score Pack", category: "music" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.8, downloads: 3800,
-    tags: ["western", "frontier", "score", "guitar"], author: "FilmScore Pro",
-    description: "8 western score cues: lonesome frontier theme, standoff tension, saloon brawl, sunset ride, and final showdown. Acoustic guitar, harmonica, and sweeping strings.",
-    applyHint: "Added to your Sound Library.",
-  },
-
-  // ── NEW PREMIUM ASSETS ───────────────────────────────────────────────────────
-  {
-    id: "a035", name: "Period Drama Wardrobe — Regency Era", category: "wardrobes" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.8, downloads: 2800,
-    tags: ["regency", "period", "costume", "romance"], author: "CostumePro",
-    description: "10 Regency-era wardrobe descriptions: aristocratic ball gowns, military dress uniforms, servant livery, and country gentleman attire. Perfect for Jane Austen-style productions.",
-    applyHint: "Apply wardrobe descriptions to your characters.",
-  },
-  {
-    id: "a036", name: "Tokyo Neon Rooftop Location Pack", category: "locations" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.9, downloads: 4100,
-    tags: ["tokyo", "rooftop", "neon", "night"], author: "Virelle Studios",
-    description: "8 Tokyo rooftop locations: rain-soaked helipad, neon-lit terrace bar, satellite dish forest, penthouse pool at midnight, and graffiti-covered water tower.",
-    applyHint: "Use as location references in your scene's Location field.",
-  },
-  {
-    id: "a037", name: "Electronic & Synthwave Score Pack", category: "music" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.8, downloads: 3600,
-    tags: ["synthwave", "electronic", "retro", "80s"], author: "FilmScore Pro",
-    description: "10 synthwave score cues: neon chase, slow-motion hero walk, digital heartbeat, retro-future montage, and final transmission. Perfect for 80s-inspired and cyberpunk films.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a038", name: "Crime Thriller Dialogue Pack", category: "dialogue-packs" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.8, downloads: 3900,
-    tags: ["crime", "thriller", "interrogation", "dialogue"], author: "Virelle Studios",
-    description: "20 crime thriller dialogue templates: police interrogation, criminal negotiation, witness intimidation, corrupt deal, and courtroom testimony under pressure.",
-    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
-  },
-  {
-    id: "a039", name: "Water & Ocean VFX Pack", category: "vfx-packs" as AssetCategory,
-    price: 6.99, isPremium: true, rating: 4.7, downloads: 2400,
-    tags: ["water", "ocean", "storm", "vfx"], author: "VFXPro",
-    description: "18 water and ocean VFX prompt templates: rogue waves, underwater pressure cracks, ship hull breach, tsunami wall, rain curtain, and flooded city streets.",
-    applyHint: "Apply in VFX Suite.",
-  },
-  {
-    id: "a040", name: "Tilt-Shift & Macro Cinematography Pack", category: "cinematography" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.7, downloads: 2100,
-    tags: ["tilt-shift", "macro", "miniature", "artistic"], author: "CinematicLUTs",
-    description: "14 tilt-shift and macro shot descriptions: miniaturised city overhead, extreme close-up emotional detail, shallow-depth-of-field isolation, and dreamlike focus pulls.",
-    applyHint: "Apply in Scene Editor under Camera & Optics.",
-  },
-  {
-    id: "a041", name: "Post-Apocalyptic Location Pack", category: "locations" as AssetCategory,
-    price: 5.99, isPremium: true, rating: 4.9, downloads: 4700,
-    tags: ["post-apocalyptic", "wasteland", "ruins", "survival"], author: "Virelle Studios",
-    description: "12 post-apocalyptic locations: overgrown shopping mall, flooded subway tunnels, collapsed skyscraper camp, irradiated desert highway, and fortified survivor compound.",
-    applyHint: "Use as location references in your scene's Location field.",
-  },
-  {
-    id: "a042", name: "Fantasy Epic Score Pack", category: "music" as AssetCategory,
-    price: 5.99, isPremium: true, rating: 4.9, downloads: 5500,
-    tags: ["fantasy", "epic", "choir", "orchestral"], author: "FilmScore Pro",
-    description: "12 fantasy epic cues: ancient prophecy theme, dragon flight, dark forest approach, throne room confrontation, and sacrifice finale. Full choir and orchestral.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a043", name: "Horror Character Pack — 6 Archetypes", category: "characters" as AssetCategory,
-    price: 6.99, isPremium: true, rating: 4.8, downloads: 3300,
-    tags: ["horror", "characters", "dark", "supernatural"], author: "Virelle Studios",
-    description: "6 horror character profiles: the final girl, the skeptic, the occultist, the possessed innocent, the ancient evil, and the grieving parent. Full backstory and psychological notes.",
-    applyHint: "Import directly into your project's Character Library.",
-  },
-  {
-    id: "a044", name: "Cinéma Vérité Color Grade Pack", category: "color-grades" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.7, downloads: 2700,
-    tags: ["documentary", "vérité", "naturalistic", "raw"], author: "CinematicLUTs",
-    description: "6 naturalistic color grade presets: raw daylight, overcast grey, fluorescent interior, golden magic hour, and desaturated realism. For documentary and social realist films.",
-    applyHint: "Apply in Color Grading Studio.",
-  },
-  {
-    id: "a045", name: "Sci-Fi Prompt Pack Vol. 2 — Space Opera", category: "prompt-packs" as AssetCategory,
-    price: 7.99, isPremium: true, rating: 4.9, downloads: 3800,
-    tags: ["sci-fi", "space-opera", "prompts", "epic"], author: "Virelle Studios",
-    description: "60 space opera scene prompts: first contact encounters, fleet battles, alien world landings, AI uprising sequences, and wormhole jumps. Built for Veo3 and Runway.",
-    applyHint: "Use prompts in Quick Generate or Scene Editor.",
-  },
-  {
-    id: "a046", name: "Futuristic Wardrobe Pack", category: "wardrobes" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.7, downloads: 2500,
-    tags: ["futuristic", "sci-fi", "fashion", "costume"], author: "CostumePro",
-    description: "12 futuristic wardrobe descriptions: biopunk body armour, corporate executive nanosuit, rebel faction gear, AI android uniform, and high-fashion zero-gravity couture.",
-    applyHint: "Apply wardrobe descriptions to your characters.",
-  },
-  {
-    id: "a047", name: "Battle & Combat SFX Pack", category: "sfx" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.9, downloads: 5800,
-    tags: ["battle", "combat", "war", "action"], author: "FilmScore Pro",
-    description: "25 battle and combat sound prompts: sword clashes, gunfire echoes, grenade concussions, tank rumble, helicopter blades, and distant artillery.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a048", name: "Emotional Monologue Dialogue Pack", category: "dialogue-packs" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.8, downloads: 4100,
-    tags: ["monologue", "emotional", "drama", "character"], author: "Virelle Studios",
-    description: "12 emotional monologue templates: grief after loss, redemption confession, farewell speech, survivor's testimony, and a parent's apology to their child.",
-    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
-  },
-  {
-    id: "a049", name: "Macro Close-Up SFX Pack", category: "sfx" as AssetCategory,
-    price: 2.99, isPremium: true, rating: 4.6, downloads: 2200,
-    tags: ["foley", "close-up", "detail", "practical"], author: "Virelle Studios",
-    description: "20 hyper-detailed Foley sound prompts: pen clicking, coffee pour, paper rustle, glass clink, keyboard typing, and heartbeat under stress.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a050", name: "Supernatural VFX Pack", category: "vfx-packs" as AssetCategory,
-    price: 7.99, isPremium: true, rating: 4.9, downloads: 3900,
-    tags: ["supernatural", "magic", "vfx", "horror"], author: "VFXPro",
-    description: "20 supernatural VFX prompt templates: spectral apparitions, shadow tendrils, reality tears, levitation effects, blood-red sky, and demonic possession visual distortions.",
-    applyHint: "Apply in VFX Suite.",
-  },
-  {
-    id: "a051", name: "Spy Thriller Location Pack", category: "locations" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.8, downloads: 3500,
-    tags: ["spy", "thriller", "international", "luxury"], author: "Virelle Studios",
-    description: "10 spy thriller locations: Monaco casino floor, Berlin safe house, Moscow metro at night, Geneva private bank vault, Dubai rooftop helipad, and Istanbul grand bazaar.",
-    applyHint: "Use as location references in your scene's Location field.",
-  },
-  {
-    id: "a052", name: "Jazz & Soul Score Pack", category: "music" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.8, downloads: 3200,
-    tags: ["jazz", "soul", "blues", "character"], author: "FilmScore Pro",
-    description: "10 jazz and soul score cues: late-night piano bar, slow blues walk, upbeat bebop chase, soulful ballad, and melancholic trumpet solo.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a053", name: "Crime Drama Character Pack — 8 Profiles", category: "characters" as AssetCategory,
-    price: 7.99, isPremium: true, rating: 4.8, downloads: 3600,
-    tags: ["crime", "drama", "characters", "gritty"], author: "Virelle Studios",
-    description: "8 crime drama character profiles: the burned detective, the ambitious DA, the mob enforcer, the informant, the corrupt politician, the reformed criminal, the journalist, and the crime boss.",
-    applyHint: "Import directly into your project's Character Library.",
-  },
-  {
-    id: "a054", name: "Wuxia & Martial Arts Wardrobe Pack", category: "wardrobes" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.7, downloads: 2300,
-    tags: ["wuxia", "martial-arts", "chinese", "period"], author: "CostumePro",
-    description: "10 wuxia wardrobe descriptions: silk fighting robes, imperial guard armour, wandering swordsman attire, court official robes, and assassin's black garb.",
-    applyHint: "Apply wardrobe descriptions to your characters.",
-  },
-  {
-    id: "a055", name: "Neon Cyberpunk Color Grade Pack", category: "color-grades" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.9, downloads: 4900,
-    tags: ["cyberpunk", "neon", "teal-orange", "night"], author: "CinematicLUTs",
-    description: "8 cyberpunk color grade presets: neon magenta crush, acid green shadows, orange-teal split, holographic blue, and rain-soaked amber. The definitive cyberpunk look.",
-    applyHint: "Apply in Color Grading Studio.",
-  },
-  {
-    id: "a056", name: "Horror Prompt Pack — Supernatural & Slasher", category: "prompt-packs" as AssetCategory,
-    price: 6.99, isPremium: true, rating: 4.8, downloads: 3400,
-    tags: ["horror", "supernatural", "slasher", "prompts"], author: "Virelle Studios",
-    description: "55 horror scene prompts: haunted house reveals, slasher chase sequences, possession rituals, creature encounters, and psychological breakdown scenes.",
-    applyHint: "Use prompts in Quick Generate or Scene Editor.",
-  },
-  {
-    id: "a057", name: "Long Take & Oner Cinematography Pack", category: "cinematography" as AssetCategory,
-    price: 5.99, isPremium: true, rating: 4.9, downloads: 2800,
-    tags: ["long-take", "oner", "tracking", "cinematic"], author: "CinematicLUTs",
-    description: "12 long-take and single-shot descriptions: Goodfellas-style restaurant walk, war trench oner, apartment building descent, and crowd-parting reveal. The most cinematic shots in film.",
-    applyHint: "Apply in Scene Editor under Camera Movement.",
-  },
-  {
-    id: "a058", name: "Ambient Electronic & Dark Ambient Score Pack", category: "music" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.7, downloads: 2900,
-    tags: ["ambient", "dark", "electronic", "atmospheric"], author: "FilmScore Pro",
-    description: "10 dark ambient and electronic score cues: industrial drone, glitching signal, void silence, corrupted memory, and slow system shutdown. For sci-fi, horror, and art house.",
-    applyHint: "Added to your Sound Library.",
-  },
-  {
-    id: "a059", name: "Comedy Dialogue Pack", category: "dialogue-packs" as AssetCategory,
-    price: 2.99, isPremium: true, rating: 4.7, downloads: 3700,
-    tags: ["comedy", "banter", "sitcom", "dialogue"], author: "Virelle Studios",
-    description: "20 comedy dialogue templates: awkward first date, workplace misunderstanding, family dinner chaos, best friend banter, and mistaken identity confrontation.",
-    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
-  },
-  {
-    id: "a060", name: "Natural Disaster VFX Pack", category: "vfx-packs" as AssetCategory,
-    price: 9.99, isPremium: true, rating: 4.9, downloads: 4200,
-    tags: ["disaster", "vfx", "earthquake", "tornado"], author: "VFXPro",
-    description: "24 natural disaster VFX prompt templates: earthquake ground split, tornado funnel, volcanic eruption, flash flood surge, wildfire wall, and lightning storm strike.",
-    applyHint: "Apply in VFX Suite.",
-  },
-  {
-    id: "a061", name: "Abandoned Locations Pack", category: "locations" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.8, downloads: 3100,
-    tags: ["abandoned", "decay", "atmospheric", "horror"], author: "Virelle Studios",
-    description: "10 abandoned location descriptions: derelict hospital, overgrown theme park, flooded basement, crumbling church, rust-belt factory, and empty shopping mall at night.",
-    applyHint: "Use as location references in your scene's Location field.",
-  },
-  {
-    id: "a062", name: "Royalty & Court Wardrobe Pack", category: "wardrobes" as AssetCategory,
-    price: 4.99, isPremium: true, rating: 4.8, downloads: 2600,
-    tags: ["royalty", "medieval", "court", "fantasy"], author: "CostumePro",
-    description: "12 royal and court wardrobe descriptions: king's battle armour, queen's ceremonial gown, court jester, royal assassin's cloak, and exiled prince's travel wear.",
-    applyHint: "Apply wardrobe descriptions to your characters.",
-  },
-  {
-    id: "a063", name: "Cinematic Dialogue Pack — Mentor & Student", category: "dialogue-packs" as AssetCategory,
-    price: 3.99, isPremium: true, rating: 4.8, downloads: 3400,
-    tags: ["mentor", "student", "wisdom", "drama"], author: "Virelle Studios",
-    description: "15 mentor-student dialogue templates: first lesson, moment of doubt, tough love confrontation, passing the torch, and final goodbye. Timeless dramatic exchanges.",
-    applyHint: "Use as dialogue starting points in the Dialogue Editor.",
-  },
-];
-
-const CATEGORY_ICONS: Record<AssetCategory, React.ReactNode> = {
-  "all": <Sparkles className="w-4 h-4" />,
-  "characters": <Users className="w-4 h-4" />,
-  "locations": <MapPin className="w-4 h-4" />,
-  "music": <Music className="w-4 h-4" />,
-  "vfx-packs": <Zap className="w-4 h-4" />,
-  "wardrobes": <Shirt className="w-4 h-4" />,
-  "color-grades": <Palette className="w-4 h-4" />,
-  "cinematography": <Camera className="w-4 h-4" />,
-  "prompt-packs": <Clapperboard className="w-4 h-4" />,
-  "sfx": <Mic className="w-4 h-4" />,
-  "dialogue-packs": <Layers className="w-4 h-4" />,
-};
-
-const CATEGORY_LABELS: Record<AssetCategory, string> = {
-  "all": "All Assets",
-  "characters": "Characters",
-  "locations": "Locations",
-  "music": "Music & Score",
-  "vfx-packs": "VFX Packs",
-  "wardrobes": "Wardrobes",
-  "color-grades": "Color Grades",
-  "cinematography": "Cinematography",
-  "prompt-packs": "Prompt Packs",
-  "sfx": "Sound FX",
-  "dialogue-packs": "Dialogue Packs",
-};
+type AssetCategory = "all" | "wardrobes" | "funding" | "locations" | "music" | "vfx-packs" | "color-grades" | "cinematography" | "prompt-packs" | "sfx" | "dialogue-packs";
 
 export default function AssetMarketplace() {
-  const [, navigate] = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [, setLocation] = useLocation();
+  const [search, setSearch] = useState("");
   const [category, setCategory] = useState<AssetCategory>("all");
-  const [sortBy, setSortBy] = useState("popular");
-  const [downloading, setDownloading] = useState<string | null>(null);
-  const [buying, setBuying] = useState<string | null>(null);
 
-  // Saved free assets
-  const [savedIds, setSavedIds] = useState<string[]>(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("virelle_marketplace_assets") || "[]");
-      return saved.map((a: any) => a.id);
-    } catch { return []; }
-  });
+  // ── Real Data Fetching ──────────────────────────────────────────────────────
+  const { data: wardrobeItems = [], isLoading: loadingWardrobe } = trpc.wardrobeMarket.marketplace.searchItems.useQuery(
+    { limit: 100 },
+    { enabled: category === "all" || category === "wardrobes" }
+  );
 
-  // Server-side owned assets (purchased or admin)
-  const { data: ownedData, refetch: refetchOwned } = trpc.subscription.getOwnedAssets.useQuery(undefined, {
-    retry: false,
-  });
-  const createAssetCheckout = trpc.subscription.createAssetCheckout.useMutation();
-  const confirmPurchase = trpc.subscription.confirmAssetPurchase.useMutation();
+  const { data: fundingSources = [], isLoading: loadingFunding } = trpc.funding.list.useQuery(
+    {},
+    { enabled: category === "all" || category === "funding" }
+  );
 
-  // Admin owns everything — ownedAssetIds === "all" means admin bypass
-  const isAdmin = ownedData?.ownedAssetIds === "all";
-  const ownedIds: string[] = isAdmin ? ASSETS.map(a => a.id) : (ownedData?.ownedAssetIds as string[] ?? []);
+  // ── Unified Data Mapping ────────────────────────────────────────────────────
+  const allAssets = useMemo(() => {
+    const assets: any[] = [];
 
-  // Handle ?asset_purchased= redirect from Stripe
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const purchasedId = params.get("asset_purchased");
-    const sessionId = params.get("session_id");
-    if (purchasedId) {
-      confirmPurchase.mutate({ assetId: purchasedId, sessionId: sessionId || undefined }, {
-        onSuccess: (res) => {
-          if (res.success) {
-            toast.success("Purchase confirmed! Asset unlocked.");
-            refetchOwned();
-          }
-        },
+    // Map Wardrobe Items
+    wardrobeItems.forEach((item: any) => {
+      assets.push({
+        id: `wardrobe-${item.id}`,
+        realId: item.id,
+        name: item.name,
+        category: "wardrobes",
+        price: (item.retailPriceAud || 0) / 100,
+        isPremium: (item.retailPriceAud || 0) > 0,
+        rating: 4.9,
+        downloads: 120,
+        tags: [...(item.styleTags || []), item.category, item.genderFit].filter(Boolean),
+        author: "Lamalo Designer",
+        description: item.description || "High-quality production-ready wardrobe item.",
+        imageUrl: item.primaryImageUrl,
+        type: "wardrobe"
       });
-      // Clean URL
-      window.history.replaceState({}, "", window.location.pathname);
-    }
-  }, []);
+    });
 
-  const filteredAssets = ASSETS.filter((asset) => {
-    const matchesSearch =
-      !searchQuery ||
-      asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      asset.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = category === "all" || asset.category === category;
+    // Map Funding Sources
+    fundingSources.forEach((src: any) => {
+      assets.push({
+        id: `funding-${src.id}`,
+        realId: src.id,
+        name: src.organization,
+        category: "funding",
+        price: 0,
+        isPremium: false,
+        rating: 4.8,
+        downloads: 450,
+        tags: [src.type, src.country, "grant"].filter(Boolean),
+        author: src.country,
+        description: src.supports || "Funding opportunity for film and media projects.",
+        imageUrl: null,
+        type: "funding"
+      });
+    });
+
+    return assets;
+  }, [wardrobeItems, fundingSources]);
+
+  const filteredAssets = allAssets.filter(a => {
+    const matchesSearch = a.name.toLowerCase().includes(search.toLowerCase()) || 
+                          a.description.toLowerCase().includes(search.toLowerCase()) ||
+                          a.tags.some((t: string) => t.toLowerCase().includes(search.toLowerCase()));
+    const matchesCategory = category === "all" || a.category === category;
     return matchesSearch && matchesCategory;
-  }).sort((a, b) => {
-    if (sortBy === "popular") return b.downloads - a.downloads;
-    if (sortBy === "rating") return b.rating - a.rating;
-    if (sortBy === "free") return (a.price === 0 ? -1 : 1);
-    if (sortBy === "price-asc") return a.price - b.price;
-    return 0;
   });
 
-  const handleSaveFree = async (asset: typeof ASSETS[0]) => {
-    if (savedIds.includes(asset.id)) {
-      toast.info(`"${asset.name}" is already in your asset library.`);
-      return;
-    }
-    setDownloading(asset.id);
-    try {
-      const saved = JSON.parse(localStorage.getItem("virelle_marketplace_assets") || "[]");
-      saved.push({
-        id: asset.id, name: asset.name, category: asset.category,
-        tags: asset.tags, description: asset.description, applyHint: asset.applyHint,
-        savedAt: new Date().toISOString(),
-      });
-      localStorage.setItem("virelle_marketplace_assets", JSON.stringify(saved));
-      setSavedIds((prev) => [...prev, asset.id]);
-      toast.success(`"${asset.name}" saved to your library. ${asset.applyHint}`);
-    } catch {
-      toast.error("That asset didn't save to your library. Please try again.");
-    } finally {
-      setDownloading(null);
-    }
+  const isLoading = (category === "wardrobes" && loadingWardrobe) || 
+                    (category === "funding" && loadingFunding) ||
+                    (category === "all" && (loadingWardrobe || loadingFunding));
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
+  const handleBuyWardrobe = () => {
+    setLocation(`/wardrobe-marketplace`);
+    toast.info("Redirecting to Lamalo Fashions...");
   };
 
-  const handleBuyPremium = async (asset: typeof ASSETS[0]) => {
-    setBuying(asset.id);
-    try {
-      const result = await createAssetCheckout.mutateAsync({
-        assetId: asset.id,
-        assetName: asset.name,
-        priceAud: asset.price,
-        successUrl: window.location.href,
-        cancelUrl: window.location.href,
-      });
-      if (result.adminBypass || result.alreadyOwned) {
-        toast.success(result.adminBypass ? `Admin access — "${asset.name}" unlocked.` : `You already own "${asset.name}".`);
-        refetchOwned();
-      } else if (result.url) {
-        window.location.href = result.url;
-      }
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to start checkout. Please try again.");
-    } finally {
-      setBuying(null);
-    }
+  const handleViewFunding = () => {
+    setLocation("/funding-pro");
   };
-
-  const handleUseOwned = (asset: typeof ASSETS[0]) => {
-    const saved = JSON.parse(localStorage.getItem("virelle_marketplace_assets") || "[]");
-    if (!saved.find((a: any) => a.id === asset.id)) {
-      saved.push({ id: asset.id, name: asset.name, category: asset.category, tags: asset.tags, description: asset.description, applyHint: asset.applyHint, savedAt: new Date().toISOString() });
-      localStorage.setItem("virelle_marketplace_assets", JSON.stringify(saved));
-      setSavedIds(prev => [...prev, asset.id]);
-    }
-    toast.success(`"${asset.name}" added to your library. ${asset.applyHint}`);
-  };
-
-  const freeCount = ASSETS.filter(a => !a.isPremium).length;
-  const premiumCount = ASSETS.filter(a => a.isPremium).length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b border-border/40 bg-black/20 px-4 py-3 sticky top-0 z-40 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} aria-label="Back to dashboard" className="shrink-0 h-8 w-8">
-              <ArrowLeft className="w-4 h-4" />
+    <div className="min-h-screen bg-[#050505] text-white pb-20">
+      {/* Header */}
+      <div className="border-b border-white/5 bg-black/40 backdrop-blur-xl sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="text-white/60 hover:text-white">
+              <ArrowLeft className="w-5 h-5" />
             </Button>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-base sm:text-lg font-semibold flex items-center gap-2 min-w-0">
-                  <ShoppingCart className="w-4 h-4 sm:w-5 h-5 text-amber-400 shrink-0" />
-                  <span className="truncate">Marketplace</span>
-                </h1>
-                {isAdmin && (
-                  <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 text-[9px] sm:text-[10px] px-1.5 py-0 h-5">
-                    <Crown className="w-2.5 h-2.5 mr-1 shrink-0" /> Admin
-                  </Badge>
-                )}
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-amber-500 rounded flex items-center justify-center">
+                <ShoppingCart className="w-5 h-5 text-black" />
               </div>
-              <p className="text-[10px] text-muted-foreground truncate mt-0.5">
-                {ASSETS.length} assets · {freeCount} free · {premiumCount} premium
-              </p>
+              <h1 className="text-lg font-bold tracking-tight uppercase italic text-white">
+                Asset <span className="text-amber-500">Marketplace</span>
+              </h1>
             </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Badge variant="outline" className="border-amber-500/20 text-amber-500 bg-amber-500/5 px-3 py-1">
+              <Crown className="w-3 h-3 mr-1.5" /> Pro Member
+            </Badge>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-4">
-        {/* Filters */}
-        <div className="flex gap-2 mb-4 flex-wrap">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-muted-foreground" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search assets..."
-              className="pl-8 h-9 text-sm"
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Search & Filter */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search wardrobes, funding, music, locations..." 
+              className="pl-10 bg-white/5 border-white/10 h-11 focus:ring-amber-500/20 text-white"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-40 h-9 text-sm">
-              <SelectValue />
+          <Select value={category} onValueChange={(v) => setCategory(v as AssetCategory)}>
+            <SelectTrigger className="w-full md:w-[200px] bg-white/5 border-white/10 h-11 text-white">
+              <SelectValue placeholder="Category" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="popular">Most Popular</SelectItem>
-              <SelectItem value="rating">Highest Rated</SelectItem>
-              <SelectItem value="free">Free First</SelectItem>
-              <SelectItem value="price-asc">Price: Low to High</SelectItem>
+            <SelectContent className="bg-zinc-900 border-white/10 text-white">
+              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="wardrobes">Wardrobes (Real)</SelectItem>
+              <SelectItem value="funding">Funding (Real)</SelectItem>
+              <SelectItem value="locations">Locations (Soon)</SelectItem>
+              <SelectItem value="music">Music (Soon)</SelectItem>
+              <SelectItem value="vfx-packs">VFX Packs (Soon)</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Category Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-3 no-scrollbar scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0">
-          {(Object.keys(CATEGORY_LABELS) as AssetCategory[]).map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all shrink-0 ${
-                category === cat
-                  ? "bg-amber-500 text-black font-medium shadow-lg shadow-amber-500/20"
-                  : "bg-black/40 border border-border/40 text-muted-foreground hover:border-amber-500/40 hover:text-amber-400"
+        {/* Categories Bar */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+          {[
+            { id: "all", label: "All", icon: Sparkles },
+            { id: "wardrobes", label: "Wardrobes", icon: Shirt },
+            { id: "funding", label: "Funding", icon: DollarSign },
+            { id: "locations", label: "Locations", icon: MapPin },
+            { id: "music", label: "Music", icon: Music },
+            { id: "vfx-packs", label: "VFX", icon: Zap },
+          ].map((cat) => (
+            <Button
+              key={cat.id}
+              variant={category === cat.id ? "default" : "outline"}
+              size="sm"
+              onClick={() => setCategory(cat.id as AssetCategory)}
+              className={`rounded-full px-4 h-9 whitespace-nowrap ${
+                category === cat.id ? "bg-amber-500 text-black hover:bg-amber-600" : "border-white/10 hover:bg-white/5 text-white"
               }`}
             >
-              <span className="shrink-0 opacity-80">{CATEGORY_ICONS[cat]}</span>
-              {CATEGORY_LABELS[cat]}
-            </button>
+              <cat.icon className="w-3.5 h-3.5 mr-2" />
+              {cat.label}
+            </Button>
           ))}
         </div>
 
-        {/* Asset Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAssets.map((asset) => {
-            const isSavedFree = savedIds.includes(asset.id);
-            const isOwned = ownedIds.includes(asset.id);
-            const isDownloading = downloading === asset.id;
-            const isBuying = buying === asset.id;
-
-            return (
-              <Card key={asset.id} className={`border-border/40 bg-black/20 hover:border-amber-500/40 transition-all ${isOwned && asset.isPremium ? "ring-1 ring-amber-500/30" : ""}`}>
-                <CardContent className="pt-4 space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium leading-tight">{asset.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{asset.author}</p>
+        {/* Grid */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="aspect-[4/5] rounded-xl bg-white/5 animate-pulse border border-white/5" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredAssets.map((asset) => (
+              <Card key={asset.id} className="border-white/5 bg-white/[0.02] hover:border-amber-500/40 transition-all overflow-hidden group">
+                <div className="aspect-square bg-zinc-900 relative overflow-hidden">
+                  {asset.imageUrl ? (
+                    <img src={asset.imageUrl} alt={asset.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center opacity-20">
+                      {asset.category === "funding" ? <DollarSign className="w-12 h-12" /> : <Package className="w-12 h-12" />}
                     </div>
-                    <div className="flex flex-col items-end gap-1 ml-2 shrink-0">
-                      {asset.isPremium ? (
-                        <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 text-xs">
-                          A${asset.price}
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-green-400 border-green-500/40 text-xs">
-                          Free
-                        </Badge>
-                      )}
-                      {isOwned && asset.isPremium && (
-                        <Badge className="bg-green-500/20 text-green-400 border-green-500/40 text-[10px]">
-                          <CheckCircle2 className="w-2.5 h-2.5 mr-0.5" /> Owned
-                        </Badge>
-                      )}
-                    </div>
+                  )}
+                  <div className="absolute top-3 right-3 flex flex-col gap-2">
+                    {asset.isPremium ? (
+                      <Badge className="bg-amber-500 text-black font-bold border-none">
+                        A${asset.price}
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-green-500 text-white font-bold border-none">
+                        FREE
+                      </Badge>
+                    )}
                   </div>
+                </div>
+                <CardContent className="p-4 space-y-3">
+                  <div>
+                    <h3 className="font-bold text-sm line-clamp-1 text-white">{asset.name}</h3>
+                    <p className="text-[10px] text-white/40 uppercase tracking-wider mt-0.5">{asset.author}</p>
+                  </div>
+                  
+                  <p className="text-xs text-white/60 line-clamp-2 h-8">
+                    {asset.description}
+                  </p>
 
-                  <p className="text-xs text-muted-foreground line-clamp-2">{asset.description}</p>
-
-                  <div className="flex flex-wrap gap-1">
-                    {asset.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="text-xs bg-muted/40 px-1.5 py-0.5 rounded text-muted-foreground">
+                  <div className="flex flex-wrap gap-1.5">
+                    {asset.tags.slice(0, 3).map((tag: string) => (
+                      <Badge key={tag} variant="secondary" className="bg-white/5 text-[10px] font-normal text-white/60 hover:bg-white/10">
                         {tag}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-0.5">
-                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                        <span className="text-xs text-amber-400">{asset.rating}</span>
+                  <div className="pt-2 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 text-[10px] text-white/40 font-medium">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                        {asset.rating}
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {(asset.downloads / 1000).toFixed(1)}k
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <Download className="w-3 h-3" />
+                        {asset.downloads}
+                      </div>
                     </div>
-
-                    {!asset.isPremium ? (
-                      // Free asset
-                      <Button
-                        size="sm"
-                        className={`h-7 text-xs ${isSavedFree ? "bg-green-600 hover:bg-green-700 text-white" : "bg-amber-500 hover:bg-amber-600 text-black"}`}
-                        onClick={() => handleSaveFree(asset)}
-                        disabled={isDownloading || isSavedFree}
+                    
+                    {asset.type === "wardrobe" ? (
+                      <Button 
+                        size="sm" 
+                        className="h-8 bg-amber-500 hover:bg-amber-600 text-black font-bold text-[10px] px-4"
+                        onClick={() => handleBuyWardrobe()}
                       >
-                        {isDownloading ? <Loader2 className="w-3 h-3 animate-spin" /> :
-                          isSavedFree ? <><CheckCircle2 className="w-3 h-3 mr-1" /> Saved</> :
-                          <><Download className="w-3 h-3 mr-1" /> Save</>}
-                      </Button>
-                    ) : isOwned ? (
-                      // Premium — already owned (includes admin)
-                      <Button
-                        size="sm"
-                        className="h-7 text-xs bg-green-600 hover:bg-green-700 text-white"
-                        onClick={() => handleUseOwned(asset)}
-                      >
-                        <CheckCircle2 className="w-3 h-3 mr-1" /> Use Asset
+                        <Shirt className="w-3 h-3 mr-1.5" /> VIEW ITEM
                       </Button>
                     ) : (
-                      // Premium — not yet purchased
-                      <Button
-                        size="sm"
-                        className="h-7 text-xs bg-amber-500 hover:bg-amber-600 text-black"
-                        onClick={() => handleBuyPremium(asset)}
-                        disabled={isBuying}
+                      <Button 
+                        size="sm" 
+                        className="h-8 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] px-4"
+                        onClick={() => handleViewFunding()}
                       >
-                        {isBuying ? <Loader2 className="w-3 h-3 animate-spin" /> :
-                          <><ShoppingCart className="w-3 h-3 mr-1" /> Buy A${asset.price}</>}
+                        <ExternalLink className="w-3 h-3 mr-1.5" /> APPLY
                       </Button>
                     )}
                   </div>
                 </CardContent>
               </Card>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {filteredAssets.length === 0 && (
-          <div className="text-center py-16 text-muted-foreground">
-            <Film className="w-12 h-12 mx-auto mb-3 opacity-20" />
-            <p className="text-sm">No assets found matching your search.</p>
+        {/* Coming Soon Section */}
+        {category !== "wardrobes" && category !== "funding" && category !== "all" && (
+          <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/[0.01]">
+            <Lock className="w-12 h-12 mx-auto mb-4 text-white/20" />
+            <h2 className="text-xl font-bold mb-2">Marketplace Expansion</h2>
+            <p className="text-white/40 max-w-md mx-auto text-sm">
+              We're currently seeding the {category} marketplace. These professional assets will be available for production soon.
+            </p>
+            <Button 
+              variant="link" 
+              className="mt-4 text-amber-500"
+              onClick={() => setCategory("all")}
+            >
+              Back to available assets
+            </Button>
+          </div>
+        )}
+
+        {filteredAssets.length === 0 && !isLoading && (category === "all" || category === "wardrobes" || category === "funding") && (
+          <div className="text-center py-20">
+            <Search className="w-12 h-12 mx-auto mb-4 text-white/10" />
+            <h2 className="text-lg font-medium text-white/40">No items found</h2>
+            <p className="text-sm text-white/20">Try adjusting your search or category filters.</p>
           </div>
         )}
       </div>

@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import DirectorChat from "@/components/DirectorChat";
 import ProjectJourneyNav from "@/components/ProjectJourneyNav";
 import MediaPlayer from "@/components/MediaPlayer";
@@ -2717,48 +2718,56 @@ export default function ProjectDetail() {
         </DialogContent>
       </Dialog>
       {/* Professional Media Player — scene preview */}
+      {/* Professional Media Player — scene preview */}
       {activeVideoMovie && !showFullFilm && (
-        <MediaPlayer
-          movie={activeVideoMovie}
-          playlist={scenePlaylist}
-          onClose={() => setVideoPreviewSceneId(null)}
-          onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
-          projectId={projectId}
-          sceneId={activeVideoMovie.id}
-        />
+        <ErrorBoundary>
+          <MediaPlayer
+            movie={activeVideoMovie}
+            playlist={scenePlaylist}
+            onClose={() => setVideoPreviewSceneId(null)}
+            onNavigate={(movieId) => setVideoPreviewSceneId(movieId)}
+            projectId={projectId}
+            sceneId={activeVideoMovie.id}
+          />
+        </ErrorBoundary>
       )}
+
       {/* Studio Opener Gate */}
       {showOpenerBefore && (
-        <StudioOpener
-          onComplete={() => {
-            const type = showOpenerBefore;
-            setShowOpenerBefore(null);
-            if (type === "film") {
-              setShowFullFilm(true);
-            }
-          }}
-          mode="film"
-          skippable
-        />
+        <ErrorBoundary>
+          <StudioOpener
+            onComplete={() => {
+              const type = showOpenerBefore;
+              setShowOpenerBefore(null);
+              if (type === "film") {
+                setShowFullFilm(true);
+              }
+            }}
+            mode="film"
+            skippable
+          />
+        </ErrorBoundary>
       )}
 
       {/* Professional Media Player — full stitched film */}
       {showFullFilm && fullFilmItem && (
-        <MediaPlayer
-          movie={fullFilmItem}
-          playlist={fullFilmPlaylist}
-          onClose={() => setShowFullFilm(false)}
-          onNavigate={(movieId) => {
-            if (movieId === -1) return; // already on full film
-            setShowFullFilm(false);
-            setVideoPreviewSceneId(movieId);
-          }}
-          projectId={projectId}
-        />
+        <ErrorBoundary>
+          <MediaPlayer
+            movie={fullFilmItem}
+            playlist={fullFilmPlaylist}
+            onClose={() => setShowFullFilm(false)}
+            onNavigate={(movieId) => {
+              if (movieId === -1) return; // already on full film
+              setShowFullFilm(false);
+              setVideoPreviewSceneId(movieId);
+            }}
+            projectId={projectId}
+          />
+        </ErrorBoundary>
       )}
 
       {/* Director's Assistant Chat */}
-      <DirectorChat projectId={project.id} />
+      <ErrorBoundary><DirectorChat projectId={project.id} /></ErrorBoundary>
 
       {/* Re-generate Film Confirm */}
       <AlertDialog open={regenConfirmOpen} onOpenChange={setRegenConfirmOpen}>
