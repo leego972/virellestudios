@@ -78,6 +78,8 @@ function rateLimit(windowMs: number, max: number) {
 
 async function startServer() {
   const app = express();
+  // Trust Railway's reverse proxy — corrects req.ip from X-Forwarded-For.
+  app.set('trust proxy', 1);
   const server = createServer(app);
 
 
@@ -529,7 +531,9 @@ async function startServer() {
       const secret = process.env.SESSION_SECRET || "";
       if (!secret) return res.status(503).send("Calendar feed unavailable: server not configured.");
       const expected = createHmac("sha256", secret).update(`ical:${projectId}`).digest("hex").slice(0, 32);
-      if (token !== expected) return res.status(403).send("Invalid token.");
+      const safeEqual = token.length === expected.length &&
+        crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expected));
+      if (!safeEqual) return res.status(403).send("Invalid token.");
       const dbMod = await import("../db");
       const project = await dbMod.getProjectByIdRaw(projectId);
       const days = await dbMod.listShootDays(projectId);
@@ -1286,8 +1290,10 @@ async function startServer() {
   const activeDirectorStreams = new Map<string, import('express').Response>();
   const MAX_DIRECTOR_STREAMS = 200; // Global cap to prevent memory exhaustion
 
-  app.get("/api/director/stream/:sessionId", (_req, res) => {
-    const { sessionId } = _req.params;
+  app.get("/api/director/stream/:sessionId", async (req, res) => {
+    const streamCtx = await createContext({ req, res, info: {} } as any);
+    if (!streamCtx.user) { res.status(401).json({ error: "Authentication required" }); return; }
+    const { sessionId } = req.params;
 
     // Reject malformed session IDs
     if (!/^[a-zA-Z0-9_-]{8,128}$/.test(sessionId)) {
@@ -1307,7 +1313,7 @@ async function startServer() {
     res.setHeader("X-Accel-Buffering", "no");
     res.flushHeaders();
     activeDirectorStreams.set(sessionId, res);
-    _req.on("close", () => activeDirectorStreams.delete(sessionId));
+    req.on("close", () => activeDirectorStreams.delete(sessionId));
     res.write(`data: ${JSON.stringify({ type: "connected" })}\n\n`);
   });
 
@@ -1532,12 +1538,14 @@ startServer().catch(console.error);
 // ── Graceful shutdown ────────────────────────────────────────────────────────
 function gracefulShutdown(signal: string) {
   logger.info(`[Server] Received ${signal} — shutting down gracefully`);
-  // Give in-flight requests 10 seconds to complete before forcing exit
+  // Give in-flight requests up to 10 seconds to drain before forcing exit.
+  // Do NOT call process.exit() immediately — Railway stops routing new traffic
+  // on SIGTERM, so existing requests drain naturally within this window.
+  // Intentionally no .unref() so the process stays alive long enough to drain.
   setTimeout(() => {
     logger.info("[Server] Forced exit after 10s timeout");
     process.exit(0);
-  }, 10_000).unref();
-  process.exit(0);
+  }, 10_000);
 }
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
