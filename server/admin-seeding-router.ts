@@ -1,7 +1,7 @@
-import { router, adminProcedure } from "./trpc";
+import { router, adminProcedure } from "./_core/trpc";
 import { getDb } from "./db";
 import { 
-  wardrobeCollections, 
+  designerCollections, 
   wardrobeItems, 
   fundingSources, 
   users,
@@ -31,7 +31,7 @@ export const adminSeedingRouter = router({
       console.error("Marketplace seeding error:", error);
       return {
         success: false,
-        message: \`Failed to seed marketplace: \${error instanceof Error ? error.message : "Unknown error"}\`,
+        message: `Failed to seed marketplace: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
@@ -61,13 +61,13 @@ export const adminSeedingRouter = router({
       return {
         success: true,
         count,
-        message: \`Seeded \${count} funding sources\`,
+        message: `Seeded ${count} funding sources`,
       };
     } catch (error) {
       console.error("Funding sources seeding error:", error);
       return {
         success: false,
-        message: \`Failed to seed funding sources: \${error instanceof Error ? error.message : "Unknown error"}\`,
+        message: `Failed to seed funding sources: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
@@ -149,13 +149,13 @@ export const adminSeedingRouter = router({
       return {
         success: true,
         count,
-        message: \`Seeded \${count} sample campaigns\`,
+        message: `Seeded ${count} sample campaigns`,
       };
     } catch (error) {
       console.error("Crowdfunding seeding error:", error);
       return {
         success: false,
-        message: \`Failed to seed crowdfunding: \${error instanceof Error ? error.message : "Unknown error"}\`,
+        message: `Failed to seed crowdfunding: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
@@ -183,23 +183,44 @@ export const adminSeedingRouter = router({
         }
       }
 
-      // 3. Crowdfunding
-      const sample = {
-        userId: ctx.user.id,
-        title: "Virelle Genesis",
-        slug: "virelle-genesis",
-        tagline: "The documentary that started it all.",
-        goalAmountCents: 1000000,
-        status: "active",
-        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-      };
-      const existing = await db
-        .select()
-        .from(crowdfundCampaigns)
-        .where(eq(crowdfundCampaigns.slug, sample.slug))
-        .limit(1);
-      if (!existing.length) {
-        await db.insert(crowdfundCampaigns).values(sample as any);
+      // 3. Crowdfunding (comprehensive)
+      const samples = [
+        {
+          userId: ctx.user.id,
+          title: "Virelle Genesis",
+          slug: "virelle-genesis",
+          tagline: "The documentary that started it all.",
+          description: "A deep dive into the origins of AI-assisted filmmaking.",
+          goalAmountCents: 1000000,
+          raisedAmountCents: 450000,
+          backerCount: 124,
+          status: "active",
+          fundingModel: "all_or_nothing",
+          deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+        {
+          userId: ctx.user.id,
+          title: "Neon Dreams: 2099",
+          slug: "neon-dreams-2099",
+          tagline: "A cyberpunk odyssey created entirely with AI.",
+          description: "The first feature film to utilize the full Virelle Studios pipeline.",
+          goalAmountCents: 5000000,
+          raisedAmountCents: 1200000,
+          backerCount: 850,
+          status: "active",
+          fundingModel: "keep_it_all",
+          deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
+        }
+      ];
+      for (const sample of samples) {
+        const existing = await db
+          .select()
+          .from(crowdfundCampaigns)
+          .where(eq(crowdfundCampaigns.slug, sample.slug))
+          .limit(1);
+        if (!existing.length) {
+          await db.insert(crowdfundCampaigns).values(sample as any);
+        }
       }
 
       return {
@@ -210,7 +231,7 @@ export const adminSeedingRouter = router({
       console.error("Complete seeding error:", error);
       return {
         success: false,
-        message: \`Failed to complete seeding: \${error instanceof Error ? error.message : "Unknown error"}\`,
+        message: `Failed to complete seeding: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
@@ -259,13 +280,13 @@ export const adminSeedingRouter = router({
       return {
         success: true,
         accounts: created,
-        message: \`Beta accounts ready: \${created.map((a) => a.email).join(", ")}\`,
+        message: `Beta accounts ready: ${created.map((a) => a.email).join(", ")}`,
       };
     } catch (error) {
       console.error("Beta account creation error:", error);
       return {
         success: false,
-        message: \`Failed to create beta accounts: \${error instanceof Error ? error.message : "Unknown error"}\`,
+        message: `Failed to create beta accounts: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
@@ -278,10 +299,10 @@ export const adminSeedingRouter = router({
       const db = await getDb();
       if (!db) return { success: false, message: "DB unavailable" };
 
-      const [collections] = await db.select({ count: sql<number>\`count(*)\` }).from(wardrobeCollections);
-      const [items] = await db.select({ count: sql<number>\`count(*)\` }).from(wardrobeItems);
-      const [sources] = await db.select({ count: sql<number>\`count(*)\` }).from(fundingSources);
-      const [campaigns] = await db.select({ count: sql<number>\`count(*)\` }).from(crowdfundCampaigns);
+      const [collections] = await db.select({ count: sql<number>`count(*)` }).from(designerCollections);
+      const [items] = await db.select({ count: sql<number>`count(*)` }).from(wardrobeItems);
+      const [sources] = await db.select({ count: sql<number>`count(*)` }).from(fundingSources);
+      const [campaigns] = await db.select({ count: sql<number>`count(*)` }).from(crowdfundCampaigns);
 
       return {
         success: true,
@@ -294,7 +315,7 @@ export const adminSeedingRouter = router({
     } catch (error) {
       return {
         success: false,
-        message: \`Failed to get status: \${error instanceof Error ? error.message : "Unknown error"}\`,
+        message: `Failed to get status: ${error instanceof Error ? error.message : "Unknown error"}`,
       };
     }
   }),
