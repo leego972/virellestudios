@@ -1417,7 +1417,10 @@ export async function runAutoMigration(): Promise<void> {
 
   // ─── Columns that may be missing from existing tables ───
   const missingColumns: ColumnCheck[] = [
-    // Users table - subscription fields
+    // Projects table — EPK generator needs slug + releaseDate
+      { table: "projects", column: "slug", definition: "VARCHAR(255) NULL" },
+      { table: "projects", column: "releaseDate", definition: "DATE NULL" },
+      // Users table - subscription fields
     { table: "users", column: "subscriptionTier", definition: "ENUM('independent','creator','studio','pro','industry','beta','amateur') NOT NULL DEFAULT 'independent'" },
     { table: "users", column: "stripeCustomerId", definition: "VARCHAR(255) NULL" },
     { table: "users", column: "stripeSubscriptionId", definition: "VARCHAR(255) NULL" },
