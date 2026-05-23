@@ -1,5 +1,5 @@
 import { eq, and, asc, desc, isNull, inArray } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { sql } from "drizzle-orm";
 import {
@@ -49,7 +49,7 @@ import {
     wardrobeLeases, InsertWardrobeLease, WardrobeLease,
   } from "../drizzle/schema";
 
-let _db: ReturnType<typeof drizzle> | null = null;
+let _db: MySql2Database<Record<string, unknown>> | null = null;
 
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
@@ -60,7 +60,7 @@ export async function getDb() {
           connectionLimit: 10,
           queueLimit: 0,
         });
-        _db = drizzle(pool);
+        _db = drizzle(pool) as MySql2Database<Record<string, unknown>>;
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
