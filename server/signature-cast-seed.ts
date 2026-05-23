@@ -143,7 +143,7 @@ export async function runSignatureCastSeed(userId: number) {
       isNonHuman: false,
       createdAt: new Date(),
       updatedAt: new Date()
-    });
+    } as any);
   }
 }
 
@@ -288,6 +288,6 @@ export async function runDiverseCastSeed(userId: number) {
       isNonHuman: false,
       createdAt: new Date(),
       updatedAt: new Date()
-    });
+    } as any);
   }
 }

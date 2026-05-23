@@ -248,7 +248,7 @@ export const epkGeneratorRouter = router({
           title: p.title,
           genre: p.genre,
           duration: p.duration,
-          epkUrl: `https://virelle.life/epk/${p.slug}`,
+          epkUrl: `https://virelle.life/epk/${(p as any).slug ?? String(p.id)}`,
         })),
         total: userProjects.length,
       };

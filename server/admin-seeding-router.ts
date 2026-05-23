@@ -28,7 +28,7 @@ export const adminSeedingRouter = router({
   seedMarketplace: adminProcedure.mutation(async ({ ctx }) => {
     try {
       // Call the lamalo seed function
-      await runLamaloSeed();
+      await runLamaloSeed(ctx.user.id);
       
       return {
         success: true,
@@ -62,7 +62,7 @@ export const adminSeedingRouter = router({
           .limit(1);
 
         if (!existing.length) {
-          await db.insert(fundingSources).values(source);
+          await db.insert(fundingSources).values(source as any);
           count++;
         }
       }
@@ -91,7 +91,7 @@ export const adminSeedingRouter = router({
       if (!db) throw new Error("DB unavailable");
       
       // Seed marketplace
-      await runLamaloSeed();
+      await runLamaloSeed(ctx.user.id);
       
       // Seed funding sources
       let fundingCount = 0;
@@ -103,7 +103,7 @@ export const adminSeedingRouter = router({
           .limit(1);
 
         if (!existing.length) {
-          await db.insert(fundingSources).values(source);
+          await db.insert(fundingSources).values(source as any);
           fundingCount++;
         }
       }
@@ -127,6 +127,7 @@ export const adminSeedingRouter = router({
   createBetaAccounts: adminProcedure.mutation(async ({ ctx }) => {
     try {
       const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
       const accounts = [
         { email: "beta1@virelle.life", password: "BetaAccess2026!" },
         { email: "beta2@virelle.life", password: "BetaAccess2026!" },
@@ -145,20 +146,20 @@ export const adminSeedingRouter = router({
           // Update existing account with credits
           await db
             .update(users)
-            .set({ credits: 1000000, role: "user" })
+            .set({ credits: 1000000, role: "user" } as any)
             .where(eq(users.email, account.email));
           created.push({ email: account.email, status: "updated" });
         } else {
           // Create new account
           const hashedPassword = await bcrypt.hash(account.password, 10);
           await db.insert(users).values({
-            id: nanoid(),
+            id: nanoid() as any,
             email: account.email,
             password: hashedPassword,
             credits: 1000000,
             role: "user",
             createdAt: new Date(),
-          });
+          } as any);
           created.push({ email: account.email, status: "created" });
         }
       }

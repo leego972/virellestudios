@@ -36,7 +36,9 @@ import { useMemo, useState } from "react";
     AlertCircle,
     Video,
     Settings,
+    Trash2,
   } from "lucide-react";
+  import { Separator } from "@/components/ui/separator";
   import { toast } from "sonner";
 
   // ─── Helpers ──────────────────────────────────────────────────────────────────
