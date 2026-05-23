@@ -37,7 +37,7 @@ const DesignerWardrobePage = lazy(() => import("./pages/DesignerWardrobePage"));
 const WardrobeMarketplacePage = lazy(() => import("./pages/WardrobeMarketplacePage"));
 const DesignerStudioPage = lazy(() => import("./pages/DesignerStudioPage"));
 const DesignerRegisterPage = lazy(() => import("./pages/DesignerRegisterPage"));
-  const UserInventoryPage = lazy(() => import("./pages/UserInventoryPage"));
+const UserInventoryPage = lazy(() => import("./pages/UserInventoryPage"));
 const SignatureCast = lazy(() => import("./pages/SignatureCast"));
 const TalentSearch = lazy(() => import("./pages/TalentSearch"));
 const SceneEditor = lazy(() => import("./pages/SceneEditor"));
@@ -127,8 +127,8 @@ const PitchLab = lazy(() => import("./pages/PitchLab"));
 const PressKit = lazy(() => import("./pages/PressKit"));
 const FestivalTracker = lazy(() => import("./pages/FestivalTracker"));
 const CrowdfundingHub = lazy(() => import("./pages/CrowdfundingHub"));
-  const CrowdfundBrowse = lazy(() => import("./pages/Campaigns"));
-  const CrowdfundCampaignPage = lazy(() => import("./pages/CampaignPage"));
+const CrowdfundBrowse = lazy(() => import("./pages/Campaigns"));
+const CrowdfundCampaignPage = lazy(() => import("./pages/CampaignPage"));
 const BrandOutreach = lazy(() => import("./pages/BrandOutreach"));
 const ProductionOffice = lazy(() => import("./pages/ProductionOffice"));
 const ProStudio = lazy(() => import("./pages/ProStudio"));
@@ -160,15 +160,15 @@ const CreatorProfile = lazy(() => import("./pages/CreatorProfile"));
 const Collections = lazy(() => import("./pages/Collections"));
 const BillingSuccess = lazy(() => import("./pages/BillingSuccess"));
 const BillingPortal = lazy(() => import("./pages/BillingPortal"));
-  const MusicScore = lazy(() => import("./pages/MusicScore"));
-  const LegalDocs = lazy(() => import("./pages/LegalDocs"));
-  const ScriptCoverage = lazy(() => import("./pages/ScriptCoverage"));
-  const TaxIncentives = lazy(() => import("./pages/TaxIncentives"));
-  const TableRead = lazy(() => import("./pages/TableRead"));
-  const SeriesBible = lazy(() => import("./pages/SeriesBible"));
-  const FilmComps = lazy(() => import("./pages/FilmComps"));
-  const Equipment = lazy(() => import("./pages/Equipment"));
-  const Community = lazy(() => import("./pages/Community"));
+const MusicScore = lazy(() => import("./pages/MusicScore"));
+const LegalDocs = lazy(() => import("./pages/LegalDocs"));
+const ScriptCoverage = lazy(() => import("./pages/ScriptCoverage"));
+const TaxIncentives = lazy(() => import("./pages/TaxIncentives"));
+const TableRead = lazy(() => import("./pages/TableRead"));
+const SeriesBible = lazy(() => import("./pages/SeriesBible"));
+const FilmComps = lazy(() => import("./pages/FilmComps"));
+const Equipment = lazy(() => import("./pages/Equipment"));
+const Community = lazy(() => import("./pages/Community"));
 
 const BackgroundLibraryPage = lazy(() => import("./pages/BackgroundLibraryPage"));
 const PropsLibraryPage = lazy(() => import("./pages/PropsLibraryPage"));
@@ -224,15 +224,15 @@ function GatedPreProductionPanel() { return <LazyPage><SubscriptionGate feature=
 function GatedFeatureTimeline() { return <LazyPage><SubscriptionGate feature="Feature Timeline" featureKey="canUseDirectorAssistant" requiredTier="indie"><FeatureTimeline /></SubscriptionGate></LazyPage>; }
 function GatedTrailerStudio() { return <LazyPage><SubscriptionGate feature="Trailer Studio" featureKey="canUseFullFilmGeneration" requiredTier="amateur"><TrailerStudio /></SubscriptionGate></LazyPage>; }
 function GatedTVCommercial() { return <LazyPage><SubscriptionGate feature="TV Commercial Creator" featureKey="canUseAdPosterMaker" requiredTier="independent"><TVCommercial /></SubscriptionGate></LazyPage>; }
-  function GatedMusicScore() { return <LazyPage><SubscriptionGate feature="Music Score" featureKey="canUseSoundEffects" requiredTier="indie"><MusicScore /></SubscriptionGate></LazyPage>; }
-  function GatedScriptCoverage() { return <LazyPage><SubscriptionGate feature="Script Coverage" featureKey="canUseScriptWriter" requiredTier="indie"><ScriptCoverage /></SubscriptionGate></LazyPage>; }
-  function GatedTableRead() { return <LazyPage><SubscriptionGate feature="AI Table Read" featureKey="canUseDialogueEditor" requiredTier="indie"><TableRead /></SubscriptionGate></LazyPage>; }
-  function GatedEquipment() { return <LazyPage><SubscriptionGate feature="Equipment & Props" featureKey="canUseLocationScout" requiredTier="indie"><Equipment /></SubscriptionGate></LazyPage>; }
-    function GatedLegalDocs() { return <LazyPage><SubscriptionGate feature="Legal Documents" featureKey="canUseBudgetEstimator" requiredTier="indie"><LegalDocs /></SubscriptionGate></LazyPage>; }
-    function GatedTaxIncentives() { return <LazyPage><SubscriptionGate feature="Tax Incentives" featureKey="canUseBudgetEstimator" requiredTier="indie"><TaxIncentives /></SubscriptionGate></LazyPage>; }
-    function GatedSeriesBible() { return <LazyPage><SubscriptionGate feature="Series Bible" featureKey="canUseScriptWriter" requiredTier="indie"><SeriesBible /></SubscriptionGate></LazyPage>; }
-    function GatedFilmComps() { return <LazyPage><SubscriptionGate feature="Film Comps" featureKey="canUseBudgetEstimator" requiredTier="indie"><FilmComps /></SubscriptionGate></LazyPage>; }
-    function GatedCommunity() { return <LazyPage><SubscriptionGate feature="Community" featureKey="canUseDirectorAssistant" requiredTier="indie"><Community /></SubscriptionGate></LazyPage>; }
+function GatedMusicScore() { return <LazyPage><SubscriptionGate feature="Music Score" featureKey="canUseSoundEffects" requiredTier="indie"><MusicScore /></SubscriptionGate></LazyPage>; }
+function GatedScriptCoverage() { return <LazyPage><SubscriptionGate feature="Script Coverage" featureKey="canUseScriptWriter" requiredTier="indie"><ScriptCoverage /></SubscriptionGate></LazyPage>; }
+function GatedTableRead() { return <LazyPage><SubscriptionGate feature="AI Table Read" featureKey="canUseDialogueEditor" requiredTier="indie"><TableRead /></SubscriptionGate></LazyPage>; }
+function GatedEquipment() { return <LazyPage><SubscriptionGate feature="Equipment & Props" featureKey="canUseLocationScout" requiredTier="indie"><Equipment /></SubscriptionGate></LazyPage>; }
+function GatedLegalDocs() { return <LazyPage><SubscriptionGate feature="Legal Documents" featureKey="canUseBudgetEstimator" requiredTier="indie"><LegalDocs /></SubscriptionGate></LazyPage>; }
+function GatedTaxIncentives() { return <LazyPage><SubscriptionGate feature="Tax Incentives" featureKey="canUseBudgetEstimator" requiredTier="indie"><TaxIncentives /></SubscriptionGate></LazyPage>; }
+function GatedSeriesBible() { return <LazyPage><SubscriptionGate feature="Series Bible" featureKey="canUseScriptWriter" requiredTier="indie"><SeriesBible /></SubscriptionGate></LazyPage>; }
+function GatedFilmComps() { return <LazyPage><SubscriptionGate feature="Film Comps" featureKey="canUseBudgetEstimator" requiredTier="indie"><FilmComps /></SubscriptionGate></LazyPage>; }
+function GatedCommunity() { return <LazyPage><SubscriptionGate feature="Community" featureKey="canUseDirectorAssistant" requiredTier="indie"><Community /></SubscriptionGate></LazyPage>; }
 
 function Router() {
   return (
@@ -243,7 +243,7 @@ function Router() {
       {/* Auth pages (no layout) */}
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
-      <Route path="/designer-register">{() => <Suspense fallback={<PageLoader />}><DesignerRegisterPage /></Suspense>}</Route>
+      <Route path="/designer-register">{() => <LazyPage><DesignerRegisterPage /></LazyPage>}</Route>
 
       <Route path="/pricing">{() => <LazyPage><Pricing /></LazyPage>}</Route>
       <Route path="/subscription">{() => <LazyPage><Pricing /></LazyPage>}</Route>
@@ -435,7 +435,7 @@ function App() {
           <CommandPaletteGlobal />
           <KeyboardShortcutsHelp />
           <WelcomeOutfitPicker />
-      <PWAInstallPrompt />
+          <PWAInstallPrompt />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
