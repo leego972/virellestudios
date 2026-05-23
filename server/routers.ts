@@ -8957,6 +8957,7 @@ Generate a detailed production budget estimate.`,
           content: result.response,
           actionType: actionSummary,
           actionData: result.actions.length > 0 ? result.actions : undefined,
+          toolCalls: result.toolCalls,
           actionStatus: result.actions.some((a) => !a.success) ? "failed" : result.actions.length > 0 ? "executed" : "pending",
         });
 

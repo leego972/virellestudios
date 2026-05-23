@@ -1111,7 +1111,7 @@ export async function processDirectorMessage(
   userMessage: string,
   chatHistory: Array<{ role: "user" | "assistant" | "system"; content: string }>,
   imageUrls?: string[]
-): Promise<{ response: string; actions: Array<{ type: string; data: Record<string, unknown>; success: boolean; message: string }> }> {
+): Promise<{ response: string; actions: Array<{ type: string; data: Record<string, unknown>; success: boolean; message: string }>; toolCalls?: any[] }> {
   // Build messages array with system prompt and history
   // If images are provided, build multimodal content for the user message
   const userContent: Message["content"] = imageUrls && imageUrls.length > 0
@@ -1193,5 +1193,5 @@ export async function processDirectorMessage(
     finalResponse = actions.map((a) => `${a.success ? "✓" : "✗"} ${a.message}`).join("\n");
   }
 
-  return { response: finalResponse, actions };
+  return { response: finalResponse, actions, toolCalls: messages.filter(m => m.role === "assistant" && m.tool_calls).flatMap(m => m.tool_calls) };
 }

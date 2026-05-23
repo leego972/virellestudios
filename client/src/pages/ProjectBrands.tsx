@@ -176,7 +176,7 @@ export default function ProjectBrands() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
           {(Object.keys(policyMeta) as Policy[]).map((p) => {
             const m = policyMeta[p];
             const Icon = m.icon;

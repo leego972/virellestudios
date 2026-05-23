@@ -2224,7 +2224,7 @@ export default function SceneEditor() {
                 <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
                   <p className="text-xs text-muted-foreground">Upload reference images (logos, concept art, mood boards) to guide AI generation. PNG, JPG, WEBP — max 10MB each.</p>
                   {form.referenceImages.length > 0 && (
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       {form.referenceImages.map((url: string, idx: number) => (
                         <div key={idx} className="relative group rounded-lg overflow-hidden border border-border/60 aspect-square">
                           <img src={url} alt={`Reference ${idx + 1}`} className="w-full h-full object-cover" />

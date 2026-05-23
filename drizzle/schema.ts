@@ -652,6 +652,7 @@ export const directorChats = mysqlTable("directorChats", {
   content: text("content").notNull(),
   actionType: varchar("actionType", { length: 128 }), // e.g. add_sound, cut_scene, add_transition, modify_scene
   actionData: json("actionData"), // JSON with action details and results
+  toolCalls: json("toolCalls"),
   actionStatus: mysqlEnum("actionStatus", ["pending", "executed", "failed"]).default("pending"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
