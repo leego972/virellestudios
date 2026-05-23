@@ -1555,6 +1555,7 @@ process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
     logger.error("[Server] Unhandled promise rejection:", { reason: String(reason), promise: String(promise) });
   });
   process.on("uncaughtException", (err) => {
-    logger.error("[Server] Uncaught exception (non-fatal):", { error: err.message, stack: err.stack });
+    logger.error("[Server] Uncaught exception — process state undefined, forcing exit:", { error: err.message, stack: err.stack });
+    process.exit(1);
   });
 
