@@ -48,7 +48,7 @@ export const epkGeneratorRouter = router({
       if (!project) throw new TRPCError({ code: "FORBIDDEN", message: "Project not found or not owned by you" });
 
       // Generate unique EPK slug
-      const epkSlug = `epk-${project.slug}-${Date.now()}`;
+      const epkSlug = `epk-${(project as any).slug ?? String(project.id)}-${Date.now()}`;
       const epkUrl = `https://virelle.life/epk/${epkSlug}`;
 
       // Compile EPK data
@@ -61,7 +61,7 @@ export const epkGeneratorRouter = router({
         genre: project.genre,
         rating: project.rating,
         duration: project.duration,
-        releaseDate: project.releaseDate,
+        releaseDate: (project as any).releaseDate ?? null,
         director: ctx.user.name,
         directorBio: input.customBio || `${ctx.user.name} is a filmmaker using Virelle Studios.`,
         socialLinks: input.socialLinks || {},
@@ -216,13 +216,13 @@ export const epkGeneratorRouter = router({
         rating: project.rating,
         duration: project.duration,
         director: ctx.user.name,
-        releaseDate: project.releaseDate,
+        releaseDate: (project as any).releaseDate ?? null,
       });
 
       return {
         success: true,
         html,
-        filename: `${project.slug}_press_kit.html`,
+        filename: `${(project as any).slug ?? String(project.id)}_press_kit.html`,
         message: "Press kit HTML generated. Use manus-md-to-pdf to convert to PDF.",
       };
     }),

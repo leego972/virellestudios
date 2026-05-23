@@ -2081,6 +2081,21 @@ export type InsertWardrobeLease = typeof wardrobeLeases.$inferInsert;
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   });
   export type CrowdfundPayout = typeof crowdfundPayouts.$inferSelect;
+
+  // ─── Crowdfunding Milestones ──────────────────────────────────────────────────
+  export const crowdfundMilestones = mysqlTable("crowdfundMilestones", {
+    id: int("id").autoincrement().primaryKey(),
+    campaignId: int("campaignId").notNull(),
+    percentageGoal: int("percentageGoal").notNull(),
+    assetType: mysqlEnum("assetType_cfm", ["graphic", "email", "video", "social_post"]).notNull(),
+    autoGenerate: boolean("autoGenerate").default(true).notNull(),
+    autoShare: boolean("autoShare").default(false).notNull(),
+    generatedAt: timestamp("generatedAt"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  });
+  export type CrowdfundMilestone = typeof crowdfundMilestones.$inferSelect;
+  export type InsertCrowdfundMilestone = typeof crowdfundMilestones.$inferInsert;
   export type InsertCrowdfundPayout = typeof crowdfundPayouts.$inferInsert;
 
   // ═══════════════════════════════════════════════════════════════════════════════

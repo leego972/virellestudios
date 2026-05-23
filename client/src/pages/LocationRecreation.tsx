@@ -19,7 +19,7 @@ import {
 import { useParams, useLocation } from "wouter";
 
 const LocationRecreation: React.FC = () => {
-  const [params] = useParams<{ projectId: string }>();
+  const params = useParams<{ projectId: string }>();
   const [, navigate] = useLocation();
   const projectId = parseInt(params?.projectId || "0");
   const [videoUrl, setVideoUrl] = useState("");
@@ -37,11 +37,11 @@ const LocationRecreation: React.FC = () => {
 
   const utils = trpc.useContext();
   const { data: locationsList, isLoading: loadingLocations } = trpc.locationRecreation.list.useQuery({ 
-    projectId: parseInt(projectId!) 
+    projectId: projectId 
   });
 
   const { data: scenes = [] } = trpc.scene.listByProject.useQuery({
-    projectId: parseInt(projectId!)
+    projectId: projectId
   });
 
   const assignMutation = trpc.locationRecreation.assignToScenes.useMutation({
@@ -77,7 +77,7 @@ const LocationRecreation: React.FC = () => {
     if (!videoUrl || !locationName) return;
     setUploading(true);
     analyzeMutation.mutate({
-      projectId: parseInt(projectId!),
+      projectId: projectId,
       videoUrl,
       locationName
     });
@@ -331,7 +331,7 @@ const LocationRecreation: React.FC = () => {
                   onClick={handleApplyEnv}
                   className="w-full mt-8 bg-white text-black font-black py-4 rounded-2xl hover:bg-zinc-200 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
                 >
-                  {(applyEnvMutation.isLoading || assignMutation.isLoading) ? <Zap className="animate-spin" /> : "Update & Assign to Scenes"}
+                  {(applyEnvMutation.isPending || assignMutation.isPending) ? <Zap className="animate-spin" /> : "Update & Assign to Scenes"}
                 </button>
               </div>
             </>

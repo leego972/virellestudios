@@ -9,7 +9,6 @@ import { router, adminProcedure } from "./_core/trpc";
 import { getDb } from "./db";
 import {
   wardrobeItems,
-  wardrobeCollections,
   fundingSources,
   users,
 } from "../drizzle/schema";
@@ -51,6 +50,7 @@ export const adminSeedingRouter = router({
   seedFundingSources: adminProcedure.mutation(async ({ ctx }) => {
     try {
       const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
       let count = 0;
 
       for (const source of FUNDING_SOURCES_DATA) {
@@ -58,7 +58,7 @@ export const adminSeedingRouter = router({
         const existing = await db
           .select()
           .from(fundingSources)
-          .where(eq(fundingSources.name, source.name))
+          .where(eq(fundingSources.organization, source.name))
           .limit(1);
 
         if (!existing.length) {
@@ -88,6 +88,8 @@ export const adminSeedingRouter = router({
     try {
       const db = await getDb();
       
+      if (!db) throw new Error("DB unavailable");
+      
       // Seed marketplace
       await runLamaloSeed();
       
@@ -97,7 +99,7 @@ export const adminSeedingRouter = router({
         const existing = await db
           .select()
           .from(fundingSources)
-          .where(eq(fundingSources.name, source.name))
+          .where(eq(fundingSources.organization, source.name))
           .limit(1);
 
         if (!existing.length) {
@@ -143,7 +145,7 @@ export const adminSeedingRouter = router({
           // Update existing account with credits
           await db
             .update(users)
-            .set({ credits: 1000000, role: "beta" })
+            .set({ credits: 1000000, role: "user" })
             .where(eq(users.email, account.email));
           created.push({ email: account.email, status: "updated" });
         } else {
@@ -154,7 +156,7 @@ export const adminSeedingRouter = router({
             email: account.email,
             password: hashedPassword,
             credits: 1000000,
-            role: "beta",
+            role: "user",
             createdAt: new Date(),
           });
           created.push({ email: account.email, status: "created" });
@@ -174,4 +176,7 @@ export const adminSeedingRouter = router({
       };
     }
   }),
-});
+  getStatus: adminProcedure.query(async () => {
+      return { success: true, message: "Admin seeding router ready." };
+    }),
+  });

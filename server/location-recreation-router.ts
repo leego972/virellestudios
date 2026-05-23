@@ -138,8 +138,8 @@ export const locationRecreationRouter = router({
       await db.update(scenes)
         .set({
           locationType: location.name,
-          timeOfDay: location.bestTimeOfDay || "afternoon",
-          weather: location.weatherPreferences?.[0] || "clear",
+          timeOfDay: (location.bestTimeOfDay || "afternoon") as any,
+          weather: ((location as any).weatherPreferences?.[0] || "clear") as any,
         })
         .where(and(
           inArray(scenes.id, input.sceneIds),

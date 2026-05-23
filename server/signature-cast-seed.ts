@@ -1,4 +1,4 @@
-import { db as getDb } from './db';
+import { getDb } from './db';
 import { characters } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 

@@ -55,8 +55,8 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
           if (!characterAppearances.has(char.id)) {
             characterAppearances.set(char.id, new Set());
           }
-          if (char.physicalDescription) {
-            characterAppearances.get(char.id)!.add(char.physicalDescription);
+          if ((char as any).physicalDescription ?? char.description) {
+            characterAppearances.get(char.id)!.add((char as any).physicalDescription ?? char.description);
           }
         }
       }
@@ -147,7 +147,7 @@ export async function analyzeProjectHealth(projectId: number, userId: number): P
     for (const scene of scenes) {
       const sceneChars = await db.getSceneCharacters(scene.id);
       for (const char of sceneChars) {
-        if (!char.physicalDescription || char.physicalDescription.length < 50) {
+        if (!(char as any).physicalDescription ?? char.description || (char as any).physicalDescription ?? char.description.length < 50) {
           recommendations.push({
             type: "warning",
             severity: "medium",
@@ -193,7 +193,7 @@ export async function validateSceneBeforeGeneration(sceneId: number): Promise<As
     // Check for character consistency
     const characters = await db.getSceneCharacters(sceneId);
     for (const char of characters) {
-      if (!char.physicalDescription || char.physicalDescription.length < 50) {
+      if (!(char as any).physicalDescription ?? char.description || (char as any).physicalDescription ?? char.description.length < 50) {
         recommendations.push({
           type: "warning",
           severity: "high",

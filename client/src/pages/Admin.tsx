@@ -24,7 +24,7 @@ export default function Admin() {
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const result = await trpc.adminSeeding.getStatus.query();
+        const result = await (trpc.adminSeeding.getStatus as any).query();
         if (result.success) {
           setSeedStatus(result);
         }
@@ -39,7 +39,7 @@ export default function Admin() {
     setStatus("loading");
     setMessage("Seeding marketplace...");
     try {
-      const result = await trpc.adminSeeding.seedMarketplace.mutate();
+      const result = await (trpc.adminSeeding.seedMarketplace as any).mutate();
       if (result.success) {
         setStatus("success");
         setMessage(result.message);
@@ -59,7 +59,7 @@ export default function Admin() {
     setStatus("loading");
     setMessage("Seeding funding sources...");
     try {
-      const result = await trpc.adminSeeding.seedFundingSources.mutate();
+      const result = await (trpc.adminSeeding.seedFundingSources as any).mutate();
       if (result.success) {
         setStatus("success");
         setMessage(result.message);
@@ -83,7 +83,7 @@ export default function Admin() {
     setStatus("loading");
     setMessage("Seeding everything...");
     try {
-      const result = await trpc.adminSeeding.seedEverything.mutate();
+      const result = await (trpc.adminSeeding.seedEverything as any).mutate();
       if (result.success) {
         setStatus("success");
         setMessage(result.message);
@@ -103,7 +103,7 @@ export default function Admin() {
     setStatus("loading");
     setMessage("Creating beta tester accounts...");
     try {
-      const result = await trpc.adminSeeding.createBetaAccounts.mutate();
+      const result = await (trpc.adminSeeding.createBetaAccounts as any).mutate();
       if (result.success) {
         setStatus("success");
         const details = result.results.map((r: any) => 

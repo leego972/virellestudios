@@ -1,5 +1,5 @@
-import { db as getDb } from './db';
-import { designerProfiles, designerCollections, wardrobeItems } from '../shared/schema';
+import { getDb } from './db';
+import { designerProfiles, designerCollections, wardrobeItems } from '../drizzle/schema';
 import { eq, and } from 'drizzle-orm';
 
 const EXECUTIVE_COLLECTIONS = [
