@@ -21,6 +21,7 @@
  */
 
 import { generateVideo as generateBYOKVideo, selectProvider, type UserApiKeys, type VideoGenerationRequest, type VideoGenerationResult } from "./byokVideoEngine";
+import { buildNegativePrompt } from "./cinematicPromptEngine";
 import { storagePut } from "../storage";
 import { execFile } from "child_process";
 import { promisify } from "util";
@@ -118,6 +119,27 @@ async function pollVeo3Sentinel(apiKey: string, operationName: string): Promise<
 }
 
 // ─── Types ───
+
+
+// ─── Sub-clip retry helper ──────────────────────────────────────────────────
+async function generateSubClipWithRetry(
+  fn: () => Promise<VideoGenerationResult>,
+  maxRetries = 2,
+  baseDelayMs = 3000
+): Promise<VideoGenerationResult> {
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try { return await fn(); } catch (err: any) {
+      lastError = err;
+      if (attempt < maxRetries) {
+        const delay = baseDelayMs * Math.pow(2, attempt);
+        console.warn(`[ExtendedScene] Sub-clip attempt ${attempt + 1} failed (${err.message}). Retrying in ${delay}ms...`);
+        await new Promise(res => setTimeout(res, delay));
+      }
+    }
+  }
+  throw lastError ?? new Error("Sub-clip generation failed after retries");
+}
 
 export interface SubShot {
   index: number;
@@ -784,7 +806,7 @@ export async function generateExtendedScene(
       // Wrap the entire sub-clip generation (including sentinel polling) in a 20-minute timeout.
       // This prevents a single hung Runway/Veo3 task from blocking all subsequent scenes.
       const SUB_CLIP_TIMEOUT_MS = 20 * 60 * 1000;
-      const videoResult = await Promise.race([
+      const videoResult = await generateSubClipWithRetry(() => Promise.race([
         generateBYOKVideo(keys, {
           prompt: effectivePrompt,
           imageUrl: effectiveImageUrl,
