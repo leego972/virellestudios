@@ -171,6 +171,7 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
         duration,
       };
       if (req.seed !== undefined && req.seed !== null) createParams.seed = req.seed;
+      if (req.negativePrompt) createParams.negativePrompt = req.negativePrompt;
       task = await client.imageToVideo.create(createParams);
     } else {
       // Text-to-video: use gen4.5 via textToVideo endpoint (no image required)
@@ -182,6 +183,7 @@ async function generateWithRunway(key: string, req: VideoGenerationRequest): Pro
         duration,
       };
       if (req.seed !== undefined && req.seed !== null) createParams.seed = req.seed;
+      if (req.negativePrompt) createParams.negativePrompt = req.negativePrompt;
       task = await (client as any).textToVideo.create(createParams);
     }
 
