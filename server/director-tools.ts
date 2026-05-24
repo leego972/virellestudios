@@ -499,6 +499,25 @@ const getUserContext: Tool = {
 
 // ─── Export ───────────────────────────────────────────────────────────
 
+
+  const regenerateScene: Tool = {
+    type: "function",
+    function: {
+      name: "regenerate_scene",
+      description: "Regenerate the video for a specific scene. Use when the director wants a different look, lighting, camera angle, or visual style. Optionally supply a full prompt override or a short style note.",
+      parameters: {
+        type: "object",
+        properties: {
+          projectId:      { type: "number", description: "The project ID" },
+          sceneId:        { type: "number", description: "The ID of the scene to regenerate" },
+          promptOverride: { type: "string", description: "Optional full prompt override." },
+          styleNote:      { type: "string", description: "Optional style note (e.g. 'more dramatic lighting', 'golden-hour warmth')." },
+        },
+        required: ["projectId", "sceneId"],
+      },
+    },
+  };
+  
 export const DIRECTOR_TOOLS: Tool[] = [
   // Project management
   listProjects,
@@ -539,6 +558,7 @@ export const DIRECTOR_TOOLS: Tool[] = [
   getUserContext,
   // Navigation
   navigateTo,
+  regenerateScene,
 ];
 
 /** Human-readable description of what a tool is doing (for streaming UI) */
