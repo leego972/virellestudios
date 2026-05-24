@@ -4193,7 +4193,33 @@ Available fields you can update:
         // Check if director explicitly granted creative leeway in their plot/description
         const directorText = (projectRef.plotSummary || projectRef.description || "").toLowerCase();
         const hasCreativeLeeway = /be creative|use your judgment|surprise me|you decide|fill it in|add what you think|make it cinematic|your choice|go wild|improvise|creative freedom/i.test(directorText);
-        const systemPrompt = buildSceneBreakdownSystemPrompt({ ...project, creativeLeeway: hasCreativeLeeway });
+        // ── Visual Style Pre-generation (C1) ──────────────────────────────────────
+          // Run a focused LLM call to establish a Visual DNA guide before scene breakdown.
+          // This anchors every scene's look so the final film has visual consistency.
+          let visualDnaGuide = "";
+          try {
+            const vdnaResult = await invokeLLM({
+              userApiKey: userLlmApiKey,
+              messages: [
+                {
+                  role: "system",
+                  content: `You are a world-class cinematographer. In 150-200 words, write a concise Visual DNA guide for a ${projectRef.genre || "Drama"} film. Cover: color palette, primary lighting style, preferred lens range, camera movement philosophy, texture/grain style, and two reference cinematographers whose work defines this look. Be technically specific (e.g. f/stops, focal lengths, color temperature). Output plain text only — no headings, no bullets.`,
+                },
+                {
+                  role: "user",
+                  content: `Film: "${projectRef.title}" — ${projectRef.genre || "Drama"} | ${projectRef.rating || "PG-13"} | ${projectRef.duration || 90} min${projectRef.tone ? "\nTone: " + projectRef.tone : ""}${projectRef.themes ? "\nThemes: " + projectRef.themes : ""}`,
+                },
+              ],
+            });
+            if (vdnaResult.choices?.[0]?.message?.content) {
+              visualDnaGuide = vdnaResult.choices[0].message.content.trim();
+            }
+          } catch {
+            // Non-fatal — proceed without visual DNA guide
+          }
+
+                  const systemPrompt = buildSceneBreakdownSystemPrompt({ ...project, creativeLeeway: hasCreativeLeeway }) +
+            (visualDnaGuide ? `\n\nVISUAL DNA FOR THIS FILM (apply consistently to every scene):\n${visualDnaGuide}` : "");
 
         // v6.77 — Inject project brand policy so the AI scene breakdown places
         // required brands into the right shots and never writes forbidden ones
