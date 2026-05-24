@@ -1112,6 +1112,28 @@ export async function processDirectorMessage(
   chatHistory: Array<{ role: "user" | "assistant" | "system"; content: string }>,
   imageUrls?: string[]
 ): Promise<{ response: string; actions: Array<{ type: string; data: Record<string, unknown>; success: boolean; message: string }>; toolCalls?: any[] }> {
+  // Fetch project specs to enforce rating/genre/tone in every tool execution
+  let projectSpecBlock = "";
+  try {
+    const projectData = await db.getProjectById(projectId, userId);
+    if (projectData) {
+      const specLines = [
+        "\n\n--- ACTIVE PROJECT SPECS (NON-NEGOTIABLE) ---",
+        `Title: "${projectData.title}"`,
+        projectData.genre    ? `Genre: ${projectData.genre}`                                            : null,
+        projectData.rating   ? `Rating: ${projectData.rating} — strictly enforce this content level`   : null,
+        projectData.tone     ? `Tone: ${projectData.tone}`                                             : null,
+        projectData.themes   ? `Themes: ${projectData.themes}`                                        : null,
+        projectData.setting  ? `Setting: ${projectData.setting}`                                      : null,
+        "Every scene you create or modify MUST honor these specs. Never exceed the rated content level.",
+        "--- END PROJECT SPECS ---",
+      ].filter(Boolean).join("\n");
+      projectSpecBlock = specLines;
+    }
+  } catch {
+    // Non-fatal — continue without spec block
+  }
+
   // Build messages array with system prompt and history
   // If images are provided, build multimodal content for the user message
   const userContent: Message["content"] = imageUrls && imageUrls.length > 0
@@ -1125,7 +1147,7 @@ export async function processDirectorMessage(
     : userMessage;
 
   const messages: Message[] = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: SYSTEM_PROMPT + projectSpecBlock },
     ...chatHistory.slice(-20).map((m) => ({ role: m.role as any, content: m.content })),
     { role: "user", content: userContent },
   ];
