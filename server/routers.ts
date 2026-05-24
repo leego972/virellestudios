@@ -4212,10 +4212,19 @@ Available fields you can update:
               role: "user",
               content: `Plot: ${projectRef.plotSummary || projectRef.description || "A compelling story"}
 
+Director's Specs (NON-NEGOTIABLE — honor these exactly):
+- Genre: ${projectRef.genre || "Drama"}
+- Rating: ${projectRef.rating || "PG-13"}
+- Duration: ${projectRef.duration || 90} minutes
+${projectRef.tone ? "- Tone: " + projectRef.tone : ""}
+${projectRef.themes ? "- Themes: " + projectRef.themes : ""}
+${projectRef.setting ? "- Setting: " + projectRef.setting : ""}
+
+
 Characters:
 ${charDescriptions}
 ${__sbBrandBlock ? `\n${__sbBrandBlock}\n` : ""}
-Break this into 8-15 scenes. For each scene, provide:
+Break this into the number of scenes specified in your system instructions above. For each scene, provide:
 - title: Scene title
 - description: What happens narratively (2-3 sentences)
 - visualDescription: EXACTLY what the camera sees — specific details about environment, character positions, expressions, lighting quality, colors, textures, foreground/background elements (3-5 sentences, be extremely specific and visual)
