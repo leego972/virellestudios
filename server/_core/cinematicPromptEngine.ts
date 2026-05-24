@@ -1324,3 +1324,36 @@ export function buildTrailerPrompt(
   ];
   return parts.join(". ");
 }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // NEGATIVE PROMPTS — genre-aware list of what the video model should NOT render
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  const GENRE_NEGATIVE_PROMPTS: Record<string, string> = {
+    Action:    "blurry, out of focus, low quality, oversaturated, plastic skin, CGI faces, cartoon, anime, illustration, watermark, text overlay, soft lighting, pastel colors, cheerful, boring composition",
+    Drama:     "blurry, low quality, CGI artifacts, plastic skin, overexposed, watermark, text overlay, cartoon, anime, oversaturated, neon colors, explosive action, horror elements",
+    Comedy:    "blurry, low quality, dark and gloomy, horror elements, violent, graphic content, desaturated, crushed blacks, film grain overload, CGI artifacts",
+    Horror:    "blurry, low quality, bright cheerful colors, high-key lighting, pastel palette, sunny outdoors, happy expressions, CGI gloss, plastic skin, cartoon, anime, watermark",
+    "Sci-Fi":  "blurry, low quality, medieval, historical, organic nature without tech, low-tech, primitive, watermark, text overlay, CGI gloss, plastic skin, cartoon, anime",
+    Romance:   "blurry, low quality, horror elements, violent, dark and oppressive, industrial, gritty, CGI artifacts, plastic skin, watermark, harsh lighting",
+    Thriller:  "blurry, low quality, cartoon, anime, cheerful colors, bright high-key, comedic, fantasy elements, CGI gloss, watermark, text overlay",
+    Documentary: "blurry, low quality, CGI, animation, illustration, fantasy elements, unrealistic lighting, overprocessed, watermark, logo, text overlay",
+    Musical:   "blurry, low quality, dark oppressive, horror, violent, desaturated, gritty, CGI artifacts, watermark",
+    Western:   "blurry, low quality, modern technology, sci-fi elements, futuristic, CGI gloss, watermark, text overlay, cartoon, anime",
+    Fantasy:   "blurry, low quality, modern settings, contemporary clothing, realistic mundane environments, CGI gloss on faces, watermark, text overlay",
+    Animation: "blurry, low quality, live action photorealism, watermark, text overlay",
+  };
+
+  const DEFAULT_NEGATIVE_PROMPT =
+    "blurry, low quality, CGI artifacts, plastic skin, watermark, text overlay, cartoon, anime, out of focus, overexposed, underexposed, low resolution, grainy noise, compression artifacts, duplicate subjects, extra limbs, malformed hands, disfigured faces, cropped frame";
+
+  /**
+   * Returns a genre-appropriate negative prompt string for video generation.
+   * Negative prompts tell the model what NOT to render, significantly improving output quality.
+   */
+  export function buildNegativePrompt(genre?: string | null): string {
+    const base = GENRE_NEGATIVE_PROMPTS[genre || ""] || DEFAULT_NEGATIVE_PROMPT;
+    // Always append universal quality guards on top of genre-specific ones
+    return base + ", low resolution, compression artifacts, duplicate subjects, malformed hands, disfigured faces";
+  }
+  
