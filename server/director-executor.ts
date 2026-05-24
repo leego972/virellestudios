@@ -848,7 +848,50 @@ export async function executeDirectorTool(
         };
       }
 
-      default:
+
+        // ─── Regenerate Scene ────────────────────────────────────────────────
+
+        case "regenerate_scene": {
+          const projectId = Number(args.projectId);
+          const sceneId   = Number(args.sceneId);
+          const project = await db.getProjectById(projectId, ctx.userId);
+          if (!project) return { success: false, error: "Project not found." };
+          const scene = await db.getSceneById(sceneId);
+          if (!scene || scene.projectId !== projectId) return { success: false, error: "Scene not found." };
+
+          // Build effective prompt — director override, optional style note, or fallback to existing description
+          const basePrompt = (args.promptOverride as string | undefined) || scene.visualDescription || scene.description || scene.title || "Cinematic scene";
+          const styleNote  = args.styleNote as string | undefined;
+          const finalPrompt = styleNote ? `${basePrompt}. ${styleNote}` : basePrompt;
+
+          // Deduct 2 credits per scene regeneration
+          const { CREDIT_COSTS } = await import("./_core/subscription");
+          const regenCost = 2;
+          try {
+            await db.deductCredits(ctx.userId, regenCost, "scene_generation", `Director: regenerate scene "${scene.title}"`);
+          } catch (e: any) {
+            if (e.message?.includes("INSUFFICIENT_CREDITS")) return { success: false, error: e.message };
+          }
+
+          // Queue a regeneration job for this scene
+          await db.updateScene(sceneId, {
+            status: "pending",
+            videoUrl: null,
+            aiPromptOverride: finalPrompt,
+          });
+
+          return {
+            success: true,
+            data: {
+              sceneId,
+              projectId,
+              message: `Scene "${scene.title}" has been queued for regeneration${styleNote ? ` with style: "${styleNote}"` : ""}. The new video will appear once generation completes.`,
+              action: { type: "scene_regeneration_queued", sceneId, projectId },
+            },
+          };
+        }
+
+        default:
         return { success: false, error: `Unknown tool: ${toolName}` };
     }
   } catch (err: any) {
