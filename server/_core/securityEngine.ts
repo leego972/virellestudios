@@ -7,31 +7,66 @@ import type { User } from "../../drizzle/schema";
 // ENCRYPTION — Encrypt/decrypt user BYOK API keys at rest
 // ============================================================
 
-const ENCRYPTION_KEY = crypto
+// Derive encryption key using scrypt — stronger than a raw SHA-256 hash.
+// Fail hard at startup if JWT_SECRET is missing or is the insecure default.
+const _jwtSecret = process.env.JWT_SECRET;
+if (!_jwtSecret || _jwtSecret === "dev-secret-change-me") {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("[security] JWT_SECRET is not set or is using the insecure default. Set a strong secret before starting in production.");
+  } else {
+    console.warn("[security] WARNING: JWT_SECRET is not set — using insecure dev default. Do NOT use in production.");
+  }
+}
+// Legacy key (SHA-256) kept solely for decrypting old CBC-encrypted values
+const LEGACY_ENCRYPTION_KEY = crypto
   .createHash("sha256")
-  .update(process.env.JWT_SECRET || "dev-secret-change-me")
-  .digest(); // 32 bytes for AES-256
+  .update(_jwtSecret || "dev-secret-change-me")
+  .digest();
+// Current key (scrypt) used for all new GCM encryption
+const ENCRYPTION_KEY = crypto.scryptSync(
+  _jwtSecret || "dev-secret-change-me",
+  "virelle-apikey-salt-v1",
+  32
+);
 const IV_LENGTH = 16;
 
 export function encryptApiKey(plaintext: string): string {
-  const iv = crypto.randomBytes(IV_LENGTH);
-  const cipher = crypto.createCipheriv("aes-256-cbc", ENCRYPTION_KEY, iv);
+  const iv = crypto.randomBytes(12); // 96-bit IV for AES-256-GCM
+  const cipher = crypto.createCipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
   let encrypted = cipher.update(plaintext, "utf8", "hex");
   encrypted += cipher.final("hex");
-  return iv.toString("hex") + ":" + encrypted;
+  const authTag = (cipher as crypto.CipherGCM).getAuthTag().toString("hex");
+  // Format: v2:<iv>:<authTag>:<ciphertext>
+  return "v2:" + iv.toString("hex") + ":" + authTag + ":" + encrypted;
 }
 
 export function decryptApiKey(ciphertext: string): string {
   try {
-    const [ivHex, encrypted] = ciphertext.split(":");
-    if (!ivHex || !encrypted) return ciphertext; // Not encrypted, return as-is
-    const iv = Buffer.from(ivHex, "hex");
-    const decipher = crypto.createDecipheriv("aes-256-cbc", ENCRYPTION_KEY, iv);
-    let decrypted = decipher.update(encrypted, "hex", "utf8");
-    decrypted += decipher.final("utf8");
-    return decrypted;
+    if (ciphertext.startsWith("v2:")) {
+      // AES-256-GCM (current format)
+      const parts = ciphertext.slice(3).split(":");
+      if (parts.length < 3) return ciphertext;
+      const [ivHex, authTagHex, ...encParts] = parts;
+      const iv      = Buffer.from(ivHex, "hex");
+      const authTag = Buffer.from(authTagHex, "hex");
+      const decipher = crypto.createDecipheriv("aes-256-gcm", ENCRYPTION_KEY, iv) as crypto.DecipherGCM;
+      decipher.setAuthTag(authTag);
+      let decrypted = decipher.update(encParts.join(":"), "hex", "utf8");
+      decrypted += decipher.final("utf8");
+      return decrypted;
+    } else {
+      // Legacy AES-256-CBC — decrypt with SHA-256 key for backward compatibility
+      const [ivHex, encrypted] = ciphertext.split(":");
+      if (!ivHex || !encrypted) return ciphertext;
+      const iv = Buffer.from(ivHex, "hex");
+      const decipher = crypto.createDecipheriv("aes-256-cbc", LEGACY_ENCRYPTION_KEY, iv);
+      let decrypted = decipher.update(encrypted, "hex", "utf8");
+      decrypted += decipher.final("utf8");
+      return decrypted;
+    }
   } catch {
-    return ciphertext; // Decryption failed, return as-is (might be plaintext)
+    logger.error("[security] decryptApiKey failed — returning empty string to prevent key leakage");
+    return "";
   }
 }
 
