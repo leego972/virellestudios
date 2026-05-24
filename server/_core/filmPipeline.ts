@@ -1,3 +1,4 @@
+import { buildNegativePrompt } from "./cinematicPromptEngine";
 /**
  * Full Film Generation Pipeline — The Master Orchestrator
  * 
@@ -659,6 +660,7 @@ export async function generateFullFilm(
               .filter(c => (scene.characterIds || []).includes(c.characterId))
               .map(c => c.promptAnchor),
             locationDescription: scene.locationType || undefined,
+            negativePrompt: buildNegativePrompt(config.genre),
             previousSceneLastFrameUrl: previousLastFrame,
           },
           (clipIdx, totalClips) => {
