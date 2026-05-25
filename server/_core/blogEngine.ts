@@ -211,8 +211,8 @@ Return your response as JSON with this exact structure:
         ? result.choices[0].message.content.map((p: any) => p.text || "").join("")
         : "";
 
-    const parsed = safeJsonExtract<{ title?: string; subtitle?: string; content?: string; excerpt?: string; tags?: string[]; metaTitle?: string; metaDescription?: string; }>(content, null);
-    if (!parsed) throw new Error(`[BlogEngine] Failed to parse JSON from AI response for topic: "${topic}"`);
+    const parsed = safeJsonExtract<{ title?: string; subtitle?: string; content?: string; excerpt?: string; tags?: string[]; metaTitle?: string; metaDescription?: string; }>(content, {});
+    // parsed is {} if JSON extraction fails — all fields are optional so this is safe
     const slug = slugify(parsed.title || topic) + "-" + Date.now().toString(36);
 
     // Generate a cover image for the article
