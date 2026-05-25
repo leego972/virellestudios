@@ -875,7 +875,7 @@ export async function executeDirectorTool(
 
           // Queue a regeneration job for this scene
           await db.updateScene(sceneId, {
-            status: "pending",
+            status: "generating",
             videoUrl: null,
             aiPromptOverride: finalPrompt,
           });
