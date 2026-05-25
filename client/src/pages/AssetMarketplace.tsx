@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   ArrowLeft, Search, Star, Download, ShoppingCart,
   Music, Palette, Users, MapPin, Shirt, Sparkles, Lock, CheckCircle2, Loader2,
-  Camera, Film, Mic, Clapperboard, Layers, Zap, Crown, ExternalLink, Info, DollarSign,
+  Camera, Film, Mic, Clapperboard, Layers, Zap, Crown, ExternalLink, Info, DollarSign, Package,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
