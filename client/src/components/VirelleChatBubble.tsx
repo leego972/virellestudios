@@ -328,7 +328,6 @@ export default function VirelleChatBubble({
           {/* Chat messages */}
           {chatHistory.map((msg, idx) => (
             <div key={idx} className={`flex gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
               {msg.role === "user" ? (
                 <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                   <User className="w-3.5 h-3.5 text-primary" />
@@ -338,6 +337,7 @@ export default function VirelleChatBubble({
                   <VirelleFaceAvatar speaking={isSpeaking} />
                 </div>
               )}
+              <div className={`rounded-lg px-3 py-2 max-w-[85%] ${
                 msg.role === "user"
                   ? "bg-primary text-primary-foreground rounded-tr-none"
                   : "bg-muted/50 rounded-tl-none"
