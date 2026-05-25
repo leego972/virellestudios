@@ -212,6 +212,7 @@ Return your response as JSON with this exact structure:
         : "";
 
     const parsed = safeJsonExtract(content, null);
+    if (!parsed) throw new Error(`[BlogEngine] Failed to parse JSON from AI response for topic: "${topic}"`);
     const slug = slugify(parsed.title || topic) + "-" + Date.now().toString(36);
 
     // Generate a cover image for the article
