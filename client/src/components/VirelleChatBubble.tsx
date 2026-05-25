@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-  import { VirelleFaceAvatar } from "./VirelleFace";
+import { VirelleFaceAvatar } from "./VirelleFace";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
