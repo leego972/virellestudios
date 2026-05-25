@@ -199,7 +199,7 @@ export default function Subtitles() {
       setSelectedSubId(data.id);
       toast.success("Subtitles generated");
     },
-    onError: (e) => toast.error(e.message),
+    onError: (e: { message: string }) => toast.error(e.message),
   });
 
   const translateMutation = trpc.subtitle.aiTranslate.useMutation({
