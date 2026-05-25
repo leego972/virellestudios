@@ -1215,5 +1215,5 @@ export async function processDirectorMessage(
     finalResponse = actions.map((a) => `${a.success ? "✓" : "✗"} ${a.message}`).join("\n");
   }
 
-  return { response: finalResponse, actions, toolCalls: messages.filter(m => m.role === "assistant" && m.tool_calls).flatMap(m => m.tool_calls) };
+  return { response: finalResponse, actions, toolCalls: (messages as any[]).filter(m => m.role === "assistant" && m.tool_calls).flatMap(m => m.tool_calls) };
 }
