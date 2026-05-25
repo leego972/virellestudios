@@ -4212,7 +4212,7 @@ Available fields you can update:
               ],
             });
             if (vdnaResult.choices?.[0]?.message?.content) {
-              visualDnaGuide = vdnaResult.choices[0].message.content.trim();
+              visualDnaGuide = (vdnaResult.choices[0].message.content as string).trim();
             }
           } catch {
             // Non-fatal — proceed without visual DNA guide
@@ -6323,7 +6323,7 @@ FORMAT RULES (always apply):
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
         }
         const content = llmResult.choices[0]?.message?.content;
-        const parsed = safeJsonExtract(content);
+        const parsed = safeJsonExtract(content, {} as any);
         return db.createSubtitle({
           projectId: input.projectId,
           userId: ctx.user.id,
@@ -6390,7 +6390,7 @@ FORMAT RULES (always apply):
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "AI generation failed. Your 3 credits have been refunded." });
         }
         const content = llmResult.choices[0]?.message?.content;
-        const parsed = safeJsonExtract(content);
+        const parsed = safeJsonExtract(content, {} as any);
         return db.createSubtitle({
           projectId: source.projectId,
           userId: ctx.user.id,
@@ -6451,7 +6451,7 @@ FORMAT RULES (always apply):
         const dialogue = await db.getDialogueById(input.id);
         if (dialogue) await assertOwnsProject(dialogue.projectId, ctx.user.id);
         await db.deleteDialogue(input.id);
-        await assertOwnsProject(input.projectId, ctx.user.id);
+        // ownership already verified via dialogue.projectId above
         return { success: true };
       }),
 
