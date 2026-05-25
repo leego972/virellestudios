@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+  import { VirelleFaceAvatar } from "./VirelleFace";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   MessageCircle, X, Send, Loader2, Sparkles, CheckCircle2,
-  Bot, User, ChevronDown, Settings2, Minimize2, Volume2, VolumeX,
+  User, ChevronDown, Settings2, Minimize2, Volume2, VolumeX,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -291,8 +292,8 @@ export default function VirelleChatBubble({
           {/* Welcome message */}
           {chatHistory.length === 0 && (
             <div className="flex gap-2.5">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shrink-0 mt-0.5">
-                <Bot className="w-3.5 h-3.5 text-white" />
+              <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mt-0.5 bg-black">
+                <VirelleFaceAvatar speaking={false} />
               </div>
               <div className="bg-muted/50 rounded-lg rounded-tl-none px-3 py-2 max-w-[85%]">
                 <p className="text-sm text-foreground">
@@ -328,17 +329,15 @@ export default function VirelleChatBubble({
           {chatHistory.map((msg, idx) => (
             <div key={idx} className={`flex gap-2.5 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
               <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                msg.role === "user"
-                  ? "bg-primary/20"
-                  : "bg-gradient-to-br from-amber-500 to-amber-600"
-              }`}>
-                {msg.role === "user" ? (
+              {msg.role === "user" ? (
+                <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                   <User className="w-3.5 h-3.5 text-primary" />
-                ) : (
-                  <Bot className="w-3.5 h-3.5 text-white" />
-                )}
-              </div>
-              <div className={`rounded-lg px-3 py-2 max-w-[85%] ${
+                </div>
+              ) : (
+                <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mt-0.5 bg-black">
+                  <VirelleFaceAvatar speaking={isSpeaking} />
+                </div>
+              )}
                 msg.role === "user"
                   ? "bg-primary text-primary-foreground rounded-tr-none"
                   : "bg-muted/50 rounded-tl-none"
@@ -371,8 +370,8 @@ export default function VirelleChatBubble({
           {/* Typing indicator */}
           {isTyping && (
             <div className="flex gap-2.5">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shrink-0 mt-0.5">
-                <Bot className="w-3.5 h-3.5 text-white" />
+              <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mt-0.5 bg-black">
+                <VirelleFaceAvatar speaking={false} />
               </div>
               <div className="bg-muted/50 rounded-lg rounded-tl-none px-3 py-2">
                 <div className="flex items-center gap-1.5">
