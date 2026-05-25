@@ -819,7 +819,7 @@ export async function generateExtendedScene(
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error(`Sub-clip ${i + 1} timed out after 20 minutes`)), SUB_CLIP_TIMEOUT_MS)
         ),
-      ]);
+      ]));
 
       // Resolve async sentinel URLs (Runway, Veo 3, and fal.ai return pending sentinels that need polling)
       let resolvedVideoUrl = videoResult.videoUrl;
