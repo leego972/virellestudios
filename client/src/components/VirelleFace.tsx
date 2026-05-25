@@ -1,4 +1,3 @@
-import React from 'react';
 
 export type VState = 'idle' | 'thinking' | 'speaking';
 
