@@ -226,18 +226,51 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
       <script>
-        /* ── Diagnostic error overlay (temporary) ── */
+        /* ── Enhanced diagnostic overlay (temporary) ── */
+        // Immediately add a visible indicator that JS is running
+        document.addEventListener('DOMContentLoaded', function() {
+          var ind = document.createElement('div');
+          ind.id = '_jsind';
+          ind.style.cssText = 'position:fixed;bottom:8px;right:8px;background:#0f0;color:#000;padding:4px 8px;font:12px monospace;z-index:99999;border-radius:4px';
+          ind.textContent = 'JS OK';
+          document.body.appendChild(ind);
+
+          // Check if React mounted after 3 seconds
+          setTimeout(function() {
+            var root = document.getElementById('root');
+            var childCount = root ? root.childElementCount : -1;
+            var ind2 = document.createElement('div');
+            ind2.style.cssText = 'position:fixed;bottom:30px;right:8px;background:' + (childCount > 0 ? '#00f' : '#f00') + ';color:#fff;padding:4px 8px;font:12px monospace;z-index:99999;border-radius:4px';
+            ind2.textContent = 'root children: ' + childCount;
+            document.body.appendChild(ind2);
+          }, 3000);
+        });
+
+        // Intercept console.error to catch React ErrorBoundary logs
+        var origErr = console.error;
+        console.error = function() {
+          origErr.apply(console, arguments);
+          var msg = Array.from(arguments).map(function(a) { return String(a); }).join(' ');
+          if (msg.includes('ErrorBoundary') || msg.includes('caught error') || msg.includes('React') || msg.includes('Error')) {
+            var d = document.getElementById('_reacterr') || document.createElement('div');
+            d.id = '_reacterr';
+            d.style.cssText = 'position:fixed;top:0;left:0;right:0;padding:16px;background:#300;color:#faa;font:13px/1.5 monospace;z-index:99998;white-space:pre-wrap;max-height:50vh;overflow:auto';
+            d.textContent += msg.substring(0, 500) + '\n---\n';
+            document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
+          }
+        };
+
         window.addEventListener('error', function(e) {
           var d = document.getElementById('_diag') || document.createElement('div');
           d.id = '_diag';
-          d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;padding:24px;background:#1a0000;color:#ff6b6b;font:14px/1.6 monospace;z-index:99999;overflow:auto;white-space:pre-wrap';
+          d.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:24px;background:#1a0000;color:#ff6b6b;font:14px/1.6 monospace;z-index:99999;max-width:90vw;border-radius:8px;white-space:pre-wrap;border:2px solid #f00';
           d.textContent += 'JS ERROR: ' + e.message + '\n  File: ' + (e.filename||'').split('/').pop() + '  Line: ' + e.lineno + '\n\n';
           document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
         });
         window.addEventListener('unhandledrejection', function(e) {
           var d = document.getElementById('_diag') || document.createElement('div');
           d.id = '_diag';
-          d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;padding:24px;background:#001a1a;color:#ffd93d;font:14px/1.6 monospace;z-index:99999;overflow:auto;white-space:pre-wrap';
+          d.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:24px;background:#001a1a;color:#ffd93d;font:14px/1.6 monospace;z-index:99999;max-width:90vw;border-radius:8px;white-space:pre-wrap;border:2px solid #ff0';
           d.textContent += 'UNHANDLED REJECTION: ' + String(e.reason) + '\n\n';
           document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
         });
