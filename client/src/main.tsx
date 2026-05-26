@@ -10,6 +10,26 @@ import { toast } from "sonner";
 import App from "./App";
 import "./index.css";
 
+
+  // ── DEBUG: display any crash visibly in the DOM ──────────────────────────────
+  function __showFatalError(msg: string) {
+    const el = document.createElement("div");
+    el.style.cssText =
+      "position:fixed;inset:0;z-index:999999;background:#0a0a0a;display:flex;align-items:center;justify-content:center;padding:32px;";
+    el.innerHTML =
+      `<div style="max-width:600px;padding:24px;border:1px solid #ff4444;border-radius:8px;background:#1a0000;">
+        <p style="color:#ff6666;font:bold 14px monospace;margin:0 0 12px">VIRELLE — APP CRASH</p>
+        <pre style="color:#ffaaaa;font:12px/1.6 monospace;white-space:pre-wrap;word-break:break-all;margin:0">${msg}</pre>
+      </div>`;
+    document.body.appendChild(el);
+  }
+  window.addEventListener("error", (e) =>
+    __showFatalError(`JS Error: ${e.message}\n@ ${e.filename?.split("/").pop()}:${e.lineno}`)
+  );
+  window.addEventListener("unhandledrejection", (e) =>
+    __showFatalError(`Promise rejected: ${e.reason?.message ?? String(e.reason)}`)
+  );
+  
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
