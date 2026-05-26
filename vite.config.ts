@@ -194,15 +194,6 @@ import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
             "express",
             "stripe",
           ],
-          output: {
-            manualChunks: {
-              // Vendor chunks — split heavy dependencies
-              "vendor-react": ["react", "react-dom"],
-              "vendor-ui": ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu", "@radix-ui/react-select", "@radix-ui/react-tabs", "@radix-ui/react-tooltip", "@radix-ui/react-slider"],
-              "vendor-trpc": ["@trpc/client", "@trpc/react-query", "@tanstack/react-query"],
-              "vendor-icons": ["lucide-react"],
-            },
-          },
         },
         chunkSizeWarningLimit: 500,
       },
