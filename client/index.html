@@ -225,6 +225,23 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+      <script>
+        /* ── Diagnostic error overlay (temporary) ── */
+        window.addEventListener('error', function(e) {
+          var d = document.getElementById('_diag') || document.createElement('div');
+          d.id = '_diag';
+          d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;padding:24px;background:#1a0000;color:#ff6b6b;font:14px/1.6 monospace;z-index:99999;overflow:auto;white-space:pre-wrap';
+          d.textContent += 'JS ERROR: ' + e.message + '\n  File: ' + (e.filename||'').split('/').pop() + '  Line: ' + e.lineno + '\n\n';
+          document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+          var d = document.getElementById('_diag') || document.createElement('div');
+          d.id = '_diag';
+          d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;padding:24px;background:#001a1a;color:#ffd93d;font:14px/1.6 monospace;z-index:99999;overflow:auto;white-space:pre-wrap';
+          d.textContent += 'UNHANDLED REJECTION: ' + String(e.reason) + '\n\n';
+          document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
+        });
+      </script>
   </body>
 
 </html>
