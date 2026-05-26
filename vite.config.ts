@@ -179,7 +179,7 @@ import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
       build: {
         outDir: path.resolve(import.meta.dirname, "dist/public"),
         emptyOutDir: true,
-        target: "es2020",
+        target: "es2015",
         cssCodeSplit: true,
         sourcemap: false,
         minify: "esbuild",
