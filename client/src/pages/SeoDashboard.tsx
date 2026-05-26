@@ -11,7 +11,7 @@
  *  - SEO event log
  *  - Kill switch for emergency SEO disabling
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -112,6 +112,13 @@ function KeywordRow({ keyword }: { keyword: any }) {
 // ─── Main Component ────────────────────────────────────────────────────────
 export default function SeoDashboard() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    if (user !== undefined && user !== null && !user.isAdmin) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
   const utils = trpc.useUtils();
   const [activeTab, setActiveTab] = useState("overview");
   const [killSwitchEnabled, setKillSwitchEnabled] = useState(false);
