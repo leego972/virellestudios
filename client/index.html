@@ -2,6 +2,19 @@
   <html lang="en">
 
     <head>
+  <!-- Force SW unregister: clears any stale cached app on iPhone Safari -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          regs.forEach(function(r) { r.unregister(); });
+        });
+        // Nuke all caches — ensures no old broken build is served
+        if (window.caches) {
+          caches.keys().then(function(ks) { ks.forEach(function(k) { caches.delete(k); }); });
+        }
+      }
+    </script>
+  
       <meta charset="UTF-8" />
       <!-- Viewport: desktop-friendly scaling, iOS safe areas -->
       <meta
