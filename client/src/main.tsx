@@ -1,4 +1,5 @@
-import { createRoot, flushSync } from "react-dom/client";
+import { createRoot } from "react-dom/client";
+  import { flushSync } from "react-dom";
   import "./index.css";
 
   function step(n: number, msg: string) {
@@ -25,7 +26,7 @@ import { createRoot, flushSync } from "react-dom/client";
       step(3, '#root found');
       const root = createRoot(rootEl);
       step(4, 'createRoot OK');
-      step(5, 'calling flushSync');
+      step(5, 'calling flushSync (react-dom)');
       try {
         flushSync(() => {
           root.render(
@@ -33,11 +34,11 @@ import { createRoot, flushSync } from "react-dom/client";
               display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
               gap:'12px',fontFamily:'Georgia,serif'}}>
               <div style={{fontSize:'28px',letterSpacing:'6px'}}>VIRELLE</div>
-              <div style={{fontSize:'13px',color:'#aaa',fontFamily:'monospace'}}>React 18 OK</div>
+              <div style={{fontSize:'13px',color:'#aaa',fontFamily:'monospace'}}>React 19 OK ✓</div>
             </div>
           );
         });
-        step(6, 'flushSync OK — React rendered!');
+        step(6, 'flushSync OK — React committed to DOM!');
       } catch (fe: unknown) {
         const e = fe as any;
         step(55, 'flushSync threw: name=' + (e?.name ?? '?') + ' msg=' + (e?.message ?? String(e)).slice(0,200));
