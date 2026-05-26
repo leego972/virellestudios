@@ -223,50 +223,70 @@
   </head>
 
   <body style="background:#111;">
-      <!-- DEBUG: visible test div (non-React, appears before JS executes) -->
-      <div id="_sync_ind" style="position:fixed;top:8px;right:8px;z-index:99999;background:#ff0;color:#000;padding:6px 12px;font:bold 14px monospace;border-radius:4px;border:2px solid #000;">HTML LOADED</div>
+      <!-- Loading splash: visible immediately, before JS bundle loads -->
+      <style>
+        #_vl_splash {
+          position: fixed; inset: 0; z-index: 9999;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center; gap: 20px;
+          background: #0a0a0a;
+          transition: opacity 0.4s ease;
+        }
+        #_vl_splash.hidden { opacity: 0; pointer-events: none; }
+        #_vl_splash svg { animation: _vl_pulse 2s ease-in-out infinite; }
+        @keyframes _vl_pulse {
+          0%, 100% { opacity: 0.7; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.05); }
+        }
+        #_vl_dots { display: flex; gap: 6px; }
+        #_vl_dots span {
+          width: 6px; height: 6px; border-radius: 50%;
+          background: #c8b49a; animation: _vl_bounce 1.2s ease-in-out infinite;
+        }
+        #_vl_dots span:nth-child(2) { animation-delay: 0.2s; }
+        #_vl_dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes _vl_bounce {
+          0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+          40% { transform: translateY(-8px); opacity: 1; }
+        }
+      </style>
+
+      <div id="_vl_splash">
+        <!-- VirÉlle wordmark -->
+        <svg width="160" height="28" viewBox="0 0 160 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="22" font-family="Georgia, serif" font-size="22" fill="#c8b49a" letter-spacing="6">VIRELLE</text>
+        </svg>
+        <div id="_vl_dots"><span></span><span></span><span></span></div>
+      </div>
+
       <script>
-        /* SYNC diagnostic — runs during HTML parse, before any module scripts */
-        document.getElementById('_sync_ind').textContent = 'JS SYNC OK';
-        document.getElementById('_sync_ind').style.background = '#0f0';
-
-        // Error handlers
-        window.addEventListener('error', function(e) {
-          var d = document.createElement('div');
-          d.style.cssText = 'position:fixed;top:50%;left:10%;right:10%;transform:translateY(-50%);padding:20px;background:#300;color:#faa;font:13px/1.6 monospace;z-index:99999;border-radius:8px;border:2px solid #f00;white-space:pre-wrap';
-          d.textContent = 'JS ERROR: ' + e.message + '\n  in ' + (e.filename||'').split('/').pop() + ':' + e.lineno;
-          document.body.appendChild(d);
-        });
-        window.addEventListener('unhandledrejection', function(e) {
-          var d = document.createElement('div');
-          d.style.cssText = 'position:fixed;top:50%;left:10%;right:10%;transform:translateY(-50%);padding:20px;background:#003;color:#aaf;font:13px/1.6 monospace;z-index:99999;border-radius:8px;border:2px solid #00f;white-space:pre-wrap';
-          d.textContent = 'REJECTION: ' + String(e.reason);
-          document.body.appendChild(d);
-        });
-
-        // Intercept console.error (catches React ErrorBoundary)
-        var _oce = console.error;
-        console.error = function() {
-          _oce.apply(console, arguments);
-          var msg = Array.from(arguments).map(String).join(' ').substring(0, 600);
-          var d = document.createElement('div');
-          d.style.cssText = 'position:fixed;top:8px;left:8px;right:60px;padding:10px;background:#200;color:#f88;font:11px/1.4 monospace;z-index:99998;border-radius:4px;max-height:30vh;overflow:auto;white-space:pre-wrap';
-          d.textContent = 'console.error: ' + msg;
-          document.body.appendChild(d);
-        };
-
-        // After 4s: check if React mounted
-        setTimeout(function() {
-          var root = document.getElementById('root');
-          var kids = root ? root.childElementCount : -1;
-          var badge = document.createElement('div');
-          badge.style.cssText = 'position:fixed;bottom:8px;right:8px;z-index:99999;background:' + (kids > 0 ? '#00f' : '#f00') + ';color:#fff;padding:6px 10px;font:bold 12px monospace;border-radius:4px';
-          badge.textContent = '4s: root.children=' + kids;
-          document.body.appendChild(badge);
-        }, 4000);
+        /* Hide splash once React has mounted — React populates #root */
+        (function() {
+          var splash = document.getElementById('_vl_splash');
+          var observer = new MutationObserver(function(mutations) {
+            var root = document.getElementById('root');
+            if (root && root.firstElementChild) {
+              splash.classList.add('hidden');
+              setTimeout(function() { splash.remove(); }, 500);
+              observer.disconnect();
+            }
+          });
+          // Observe body for the root div being populated
+          document.addEventListener('DOMContentLoaded', function() {
+            var root = document.getElementById('root');
+            if (root) observer.observe(root, { childList: true, subtree: false });
+            // Safety net: hide after 12s regardless
+            setTimeout(function() {
+              if (splash && splash.parentNode) {
+                splash.classList.add('hidden');
+                setTimeout(function() { if (splash.parentNode) splash.remove(); }, 500);
+              }
+            }, 12000);
+          });
+        })();
       </script>
+
       <div id="root"></div>
       <script type="module" src="/src/main.tsx"></script>
     </body>
-
 </html>
