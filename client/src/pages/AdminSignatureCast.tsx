@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 // ─── ACTOR REGISTRY (mirrors server signatureCast.ts) ──────────────────────
 const ACTOR_REGISTRY = [
@@ -50,6 +52,14 @@ function TierBadge({ tier }: { tier: string }) {
 }
 
 export default function AdminSignatureCast() {
+    const { user } = useAuth();
+    const [, setLocation] = useLocation();
+    useEffect(() => {
+      if (user !== undefined && user !== null && !user.isAdmin) {
+        setLocation("/");
+      }
+    }, [user, setLocation]);
+  
   const utils = trpc.useUtils();
   const generateAllMutation = trpc.signatureCast.generateAllPortraits.useMutation({
     onSuccess: (d: any) => toast.success("Generated " + d.succeeded + "/" + d.total + " portraits"),
