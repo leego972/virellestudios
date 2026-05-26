@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -112,6 +112,13 @@ function StageCard({ stage }: { stage: { stage: string; success: boolean; durati
 
 export default function AdminAutonomous() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    if (user !== undefined && user !== null && !user.isAdmin) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
   const utils = trpc.useUtils();
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["instagram", "tiktok", "facebook", "x_twitter"]);
   const [generateVideos, setGenerateVideos] = useState(false);
