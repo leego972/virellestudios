@@ -9,7 +9,7 @@
  *  - Video and image ad generation
  *  - Platform strategy overview
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -190,6 +190,13 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
 // ─── Main Component ────────────────────────────────────────────────────────
 export default function AdvertisingDashboard() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    if (user !== undefined && user !== null && !user.isAdmin) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
   const utils = trpc.useUtils();
   const [activeTab, setActiveTab] = useState("overview");
   const [queueFilter, setQueueFilter] = useState<"all" | "draft" | "approved" | "published">("draft");
