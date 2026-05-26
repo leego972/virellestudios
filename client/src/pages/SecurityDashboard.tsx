@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Shield,
   ShieldAlert,
@@ -52,6 +52,14 @@ function formatTimeAgo(ts: number) {
 }
 
 export default function SecurityDashboard() {
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    if (user !== undefined && user !== null && !user.isAdmin) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
   const { user: currentUser } = useAuth();
   const utils = trpc.useUtils();
   const [severityFilter, setSeverityFilter] = useState<string>("");
