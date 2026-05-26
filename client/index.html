@@ -222,59 +222,51 @@
       </script>
   </head>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body style="background:#111;">
+      <!-- DEBUG: visible test div (non-React, appears before JS executes) -->
+      <div id="_sync_ind" style="position:fixed;top:8px;right:8px;z-index:99999;background:#ff0;color:#000;padding:6px 12px;font:bold 14px monospace;border-radius:4px;border:2px solid #000;">HTML LOADED</div>
       <script>
-        /* ── Enhanced diagnostic overlay (temporary) ── */
-        // Immediately add a visible indicator that JS is running
-        document.addEventListener('DOMContentLoaded', function() {
-          var ind = document.createElement('div');
-          ind.id = '_jsind';
-          ind.style.cssText = 'position:fixed;bottom:8px;right:8px;background:#0f0;color:#000;padding:4px 8px;font:12px monospace;z-index:99999;border-radius:4px';
-          ind.textContent = 'JS OK';
-          document.body.appendChild(ind);
+        /* SYNC diagnostic — runs during HTML parse, before any module scripts */
+        document.getElementById('_sync_ind').textContent = 'JS SYNC OK';
+        document.getElementById('_sync_ind').style.background = '#0f0';
 
-          // Check if React mounted after 3 seconds
-          setTimeout(function() {
-            var root = document.getElementById('root');
-            var childCount = root ? root.childElementCount : -1;
-            var ind2 = document.createElement('div');
-            ind2.style.cssText = 'position:fixed;bottom:30px;right:8px;background:' + (childCount > 0 ? '#00f' : '#f00') + ';color:#fff;padding:4px 8px;font:12px monospace;z-index:99999;border-radius:4px';
-            ind2.textContent = 'root children: ' + childCount;
-            document.body.appendChild(ind2);
-          }, 3000);
-        });
-
-        // Intercept console.error to catch React ErrorBoundary logs
-        var origErr = console.error;
-        console.error = function() {
-          origErr.apply(console, arguments);
-          var msg = Array.from(arguments).map(function(a) { return String(a); }).join(' ');
-          if (msg.includes('ErrorBoundary') || msg.includes('caught error') || msg.includes('React') || msg.includes('Error')) {
-            var d = document.getElementById('_reacterr') || document.createElement('div');
-            d.id = '_reacterr';
-            d.style.cssText = 'position:fixed;top:0;left:0;right:0;padding:16px;background:#300;color:#faa;font:13px/1.5 monospace;z-index:99998;white-space:pre-wrap;max-height:50vh;overflow:auto';
-            d.textContent += msg.substring(0, 500) + '\n---\n';
-            document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
-          }
-        };
-
+        // Error handlers
         window.addEventListener('error', function(e) {
-          var d = document.getElementById('_diag') || document.createElement('div');
-          d.id = '_diag';
-          d.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:24px;background:#1a0000;color:#ff6b6b;font:14px/1.6 monospace;z-index:99999;max-width:90vw;border-radius:8px;white-space:pre-wrap;border:2px solid #f00';
-          d.textContent += 'JS ERROR: ' + e.message + '\n  File: ' + (e.filename||'').split('/').pop() + '  Line: ' + e.lineno + '\n\n';
-          document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
+          var d = document.createElement('div');
+          d.style.cssText = 'position:fixed;top:50%;left:10%;right:10%;transform:translateY(-50%);padding:20px;background:#300;color:#faa;font:13px/1.6 monospace;z-index:99999;border-radius:8px;border:2px solid #f00;white-space:pre-wrap';
+          d.textContent = 'JS ERROR: ' + e.message + '\n  in ' + (e.filename||'').split('/').pop() + ':' + e.lineno;
+          document.body.appendChild(d);
         });
         window.addEventListener('unhandledrejection', function(e) {
-          var d = document.getElementById('_diag') || document.createElement('div');
-          d.id = '_diag';
-          d.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:24px;background:#001a1a;color:#ffd93d;font:14px/1.6 monospace;z-index:99999;max-width:90vw;border-radius:8px;white-space:pre-wrap;border:2px solid #ff0';
-          d.textContent += 'UNHANDLED REJECTION: ' + String(e.reason) + '\n\n';
-          document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
+          var d = document.createElement('div');
+          d.style.cssText = 'position:fixed;top:50%;left:10%;right:10%;transform:translateY(-50%);padding:20px;background:#003;color:#aaf;font:13px/1.6 monospace;z-index:99999;border-radius:8px;border:2px solid #00f;white-space:pre-wrap';
+          d.textContent = 'REJECTION: ' + String(e.reason);
+          document.body.appendChild(d);
         });
+
+        // Intercept console.error (catches React ErrorBoundary)
+        var _oce = console.error;
+        console.error = function() {
+          _oce.apply(console, arguments);
+          var msg = Array.from(arguments).map(String).join(' ').substring(0, 600);
+          var d = document.createElement('div');
+          d.style.cssText = 'position:fixed;top:8px;left:8px;right:60px;padding:10px;background:#200;color:#f88;font:11px/1.4 monospace;z-index:99998;border-radius:4px;max-height:30vh;overflow:auto;white-space:pre-wrap';
+          d.textContent = 'console.error: ' + msg;
+          document.body.appendChild(d);
+        };
+
+        // After 4s: check if React mounted
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          var kids = root ? root.childElementCount : -1;
+          var badge = document.createElement('div');
+          badge.style.cssText = 'position:fixed;bottom:8px;right:8px;z-index:99999;background:' + (kids > 0 ? '#00f' : '#f00') + ';color:#fff;padding:6px 10px;font:bold 12px monospace;border-radius:4px';
+          badge.textContent = '4s: root.children=' + kids;
+          document.body.appendChild(badge);
+        }, 4000);
       </script>
-  </body>
+      <div id="root"></div>
+      <script type="module" crossorigin src="/assets/index-CMZZxPum.js"></script>
+    </body>
 
 </html>
