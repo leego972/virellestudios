@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,13 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function AdminOutreach() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    if (user !== undefined && user !== null && !user.isAdmin) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
   const utils = trpc.useUtils();
 
   // ─── Contacts ───────────────────────────────────────────────────────────────
