@@ -260,10 +260,28 @@
       </div>
 
       <script>
-        /* Hide splash once React has mounted — React populates #root */
         (function() {
           var splash = document.getElementById('_vl_splash');
-          var observer = new MutationObserver(function(mutations) {
+
+          /* Show any JS crash directly in the splash — makes remote debugging possible */
+          function showError(msg) {
+            if (!splash) return;
+            var el = document.createElement('div');
+            el.style.cssText = 'margin-top:16px;max-width:90vw;padding:10px 14px;background:#1a0000;border:1px solid #ff4444;border-radius:6px;color:#ff9999;font:12px/1.5 monospace;white-space:pre-wrap;word-break:break-all;text-align:left;';
+            el.textContent = msg;
+            splash.appendChild(el);
+          }
+
+          window.addEventListener('error', function(e) {
+            showError('JS ERROR: ' + (e.message || String(e)) + (e.filename ? '
+at ' + e.filename.split('/').pop() + ':' + e.lineno : ''));
+          });
+          window.addEventListener('unhandledrejection', function(e) {
+            showError('UNHANDLED: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+          });
+
+          /* Hide splash once React has mounted */
+          var observer = new MutationObserver(function() {
             var root = document.getElementById('root');
             if (root && root.firstElementChild) {
               splash.classList.add('hidden');
@@ -271,17 +289,16 @@
               observer.disconnect();
             }
           });
-          // Observe body for the root div being populated
           document.addEventListener('DOMContentLoaded', function() {
             var root = document.getElementById('root');
             if (root) observer.observe(root, { childList: true, subtree: false });
-            // Safety net: hide after 12s regardless
+            /* Safety net: if still loading after 15s, show hint */
             setTimeout(function() {
-              if (splash && splash.parentNode) {
-                splash.classList.add('hidden');
-                setTimeout(function() { if (splash.parentNode) splash.remove(); }, 500);
+              var root2 = document.getElementById('root');
+              if (root2 && !root2.firstElementChild && splash && splash.parentNode) {
+                showError('Still loading after 15s — no JS errors caught. Check network tab for failed requests.');
               }
-            }, 12000);
+            }, 15000);
           });
         })();
       </script>
