@@ -1,54 +1,123 @@
-import { createRoot } from "react-dom/client";
-  import { flushSync } from "react-dom";
+import "@/lib/sentry";
+  import "@/lib/analytics";
+  import { trpc } from "@/lib/trpc";
+  import { UNAUTHED_ERR_MSG } from '@shared/const';
+  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+  import { httpBatchLink, TRPCClientError } from "@trpc/client";
+  import { createRoot } from "react-dom/client";
+  import superjson from "superjson";
+  import { toast } from "sonner";
+  import App from "./App";
   import "./index.css";
 
-  function step(n: number, msg: string) {
-    const splash = document.getElementById('_vl_splash');
-    if (!splash) return;
-    const dots = document.getElementById('_vl_dots');
-    if (dots) dots.style.display = 'none';
-    const p = document.createElement('p');
-    p.style.cssText = 'color:#c8b49a;font:11px/1.6 monospace;margin:4px 0;max-width:90vw;word-break:break-all;text-align:center;';
-    p.textContent = 'Step ' + n + ': ' + msg;
-    (splash as HTMLElement).style.opacity = '1';
-    (splash as HTMLElement).style.zIndex = '999999';
-    splash.appendChild(p);
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: (failureCount, error) => {
+          if (error instanceof TRPCClientError) {
+            const code = error.data?.code;
+            if (code === "UNAUTHORIZED" || code === "FORBIDDEN" || code === "NOT_FOUND") return false;
+          }
+          return failureCount < 2;
+        },
+        staleTime: 60_000,
+        gcTime: 5 * 60_000,
+        refetchOnWindowFocus: false,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
+
+  if ("serviceWorker" in navigator && import.meta.env.PROD) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/sw.js", { scope: "/" })
+        .catch((err) => console.warn("[SW] Registration failed:", err));
+    });
   }
 
-  step(1, 'module loaded');
-  window.addEventListener('error', (e) => step(99, 'onerror: ' + e.message.slice(0,200)));
-  window.addEventListener('unhandledrejection', (e) => step(99, 'rejection: ' + ((e.reason as any)?.message ?? String(e.reason)).slice(0,200)));
-  step(2, 'handlers registered');
-
-  try {
-    const rootEl = document.getElementById('root');
-    if (!rootEl) { step(3, 'ERROR: #root missing'); } else {
-      step(3, '#root found');
-      const root = createRoot(rootEl);
-      step(4, 'createRoot OK');
-      step(5, 'calling flushSync (react-dom)');
-      try {
-        flushSync(() => {
-          root.render(
-            <div style={{position:'fixed',inset:'0',zIndex:99999,background:'#0a0a0a',color:'#c8b49a',
-              display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-              gap:'12px',fontFamily:'Georgia,serif'}}>
-              <div style={{fontSize:'28px',letterSpacing:'6px'}}>VIRELLE</div>
-              <div style={{fontSize:'13px',color:'#aaa',fontFamily:'monospace'}}>React 19 OK ✓</div>
-            </div>
-          );
-        });
-        step(6, 'flushSync OK — React committed to DOM!');
-      } catch (fe: unknown) {
-        const e = fe as any;
-        step(55, 'flushSync threw: name=' + (e?.name ?? '?') + ' msg=' + (e?.message ?? String(e)).slice(0,200));
-        step(56, 'stack: ' + (e?.stack ?? '').slice(0,250));
+  if (import.meta.env.PROD && typeof PerformanceObserver !== "undefined") {
+    const sendVital = (name: string, value: number) => {
+      const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
+      if (typeof g === "function") {
+        g("event", name, { event_category: "Web Vitals", value: Math.round(value), non_interaction: true });
       }
-    }
-  } catch (err: unknown) {
-    const e = err as any;
-    step(99, 'outer catch: ' + (e?.name ?? '') + ': ' + (e?.message ?? String(e)).slice(0,200));
+    };
+    try { new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) sendVital("LCP", e.startTime);
+    }).observe({ type: "largest-contentful-paint", buffered: true }); } catch { /* unsupported */ }
+    try { let cls = 0;
+      new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) if (!(e as PerformanceEntry & { hadRecentInput: boolean }).hadRecentInput)
+          cls += (e as PerformanceEntry & { value: number }).value;
+      }).observe({ type: "layout-shift", buffered: true });
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") sendVital("CLS", cls * 1000);
+      }, { once: true });
+    } catch { /* unsupported */ }
+    try { new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) sendVital("INP", (e as PerformanceEntry & { duration: number }).duration);
+    }).observe({ type: "event", buffered: true }); } catch { /* unsupported */ }
   }
 
-  step(8, 'done');
+  const redirectToLoginIfUnauthorized = (error: unknown) => {
+    if (!(error instanceof TRPCClientError)) return;
+    if (typeof window === "undefined") return;
+    const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
+    if (!isUnauthorized) return;
+    const path = window.location.pathname;
+    const PUBLIC_PATHS = ["/login", "/register", "/pricing", "/subscription", "/welcome", "/blog", "/about", "/contact", "/download", "/how-it-works", "/showcase", "/legal", "/share", "/terms", "/privacy"];
+    if (PUBLIC_PATHS.some(p => path === p || path.startsWith(p + "/"))) return;
+    window.location.href = "/login";
+  };
+
+  queryClient.getQueryCache().subscribe(event => {
+    if (event.type === "updated" && event.action.type === "error") {
+      const error = event.query.state.error;
+      redirectToLoginIfUnauthorized(error);
+      if (import.meta.env.DEV) console.error("[API Query Error]", error);
+    }
+  });
+
+  queryClient.getMutationCache().subscribe(event => {
+    if (event.type === "updated" && event.action.type === "error") {
+      const error = event.mutation.state.error;
+      redirectToLoginIfUnauthorized(error);
+      if (error instanceof TRPCClientError && error.data?.code === "FORBIDDEN") {
+        const msg = error.message;
+        if (msg && msg.includes("trial has ended")) {
+          toast.error(msg, {
+            duration: 8000,
+            action: { label: "Upgrade", onClick: () => { window.location.href = "/pricing"; } },
+          });
+        }
+      }
+      if (import.meta.env.DEV) console.error("[API Mutation Error]", error);
+    }
+  });
+
+  const trpcClient = trpc.createClient({
+    links: [
+      httpBatchLink({
+        url: "/api/trpc",
+        transformer: superjson,
+        fetch(input, init) {
+          return globalThis.fetch(input, {
+            ...(init ?? {}),
+            credentials: "include",
+          });
+        },
+      }),
+    ],
+  });
+
+  createRoot(document.getElementById("root")!).render(
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
   
