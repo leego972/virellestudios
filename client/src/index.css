@@ -583,6 +583,13 @@
   animation: float 6s ease-in-out infinite;
 }
 
+/* VirelleFace avatar float animation */
+@keyframes virelle-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-6px) rotate(0.5deg); }
+  75% { transform: translateY(-3px) rotate(-0.5deg); }
+}
+
 /* Pulse ring for CTA buttons */
 @keyframes pulse-ring {
   0% { box-shadow: 0 0 0 0 oklch(0.78 0.18 85 / 0.5); }
