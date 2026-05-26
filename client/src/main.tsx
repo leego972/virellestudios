@@ -148,11 +148,23 @@ const trpcClient = trpc.createClient({
   ],
 });
 
-createRoot(document.getElementById("root")!).render(
-  <trpc.Provider client={trpcClient} queryClient={queryClient}>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  </trpc.Provider>
-);
-
+try {
+    const rootEl = document.getElementById("root");
+    if (!rootEl) throw new Error("#root element not found in DOM");
+    createRoot(rootEl, {
+      onRecoverableError: (err: unknown) => {
+        const m = err instanceof Error ? err.message : String(err);
+        __showFatalError("React recoverable error:\n" + m);
+      },
+    } as any).render(
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </trpc.Provider>
+    );
+  } catch (err: unknown) {
+    const m = err instanceof Error ? err.message + "\n" + (err.stack ?? "") : String(err);
+    __showFatalError("createRoot crash:\n" + m);
+  }
+  
