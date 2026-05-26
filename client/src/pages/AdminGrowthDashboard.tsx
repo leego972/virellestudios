@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -331,6 +331,13 @@ function ConversionFunnelPanel() {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AdminGrowthDashboard() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    if (user !== undefined && user !== null && !user.isAdmin) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
 
   if (!user || (user as any).role !== "admin") {
     return (
