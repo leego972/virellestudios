@@ -1,58 +1,229 @@
-      <script>
-          (function() {
-            var splash = document.getElementById('_vl_splash');
-            var gone = false;
+<!doctype html>
+  <html lang="en">
 
-            function hideSplash() {
-              if (gone || !splash) return;
-              gone = true;
-              splash.classList.add('hidden');
-              setTimeout(function() { if (splash && splash.parentNode) splash.remove(); }, 500);
+    <head>
+      <meta charset="UTF-8" />
+      <!-- Viewport: desktop-friendly scaling, iOS safe areas -->
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+      <title>Virelle Studios — AI Film Production Studio | Create Hollywood Movies with AI</title>
+      <meta name="description" content="Virelle Studios is a professional AI-powered film production studio. Create, direct, and produce Hollywood-quality movies, trailers, and screenplays with AI. Includes funding directory, professional sound editing (ADR, Foley, score cues), 130+ language subtitles, and a full production pipeline. Plans from A$149/mo." />
+      <meta name="keywords" content="AI film production, AI movie maker, AI director, film studio, AI video generation, screenplay generator, storyboard AI, AI cinematography, movie production software, AI Hollywood, film making app, AI screenwriter, film funding directory, ADR dialogue replacement, Foley sound design, film score cues, subtitle translation, professional film tools, indie filmmaker tools, film post production, AI subtitle generator, film finance application" />
+      <meta name="author" content="Virelle Studios" />
+      <meta name="theme-color" content="#0a0a0a" />
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <link rel="canonical" href="https://virelle.life/" />
+      <!-- iOS-specific meta tags -->
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta name="apple-mobile-web-app-title" content="Virelle Studios" />
+      <meta name="application-name" content="Virelle Studios" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="format-detection" content="telephone=no" />
+      <!-- Open Graph / Social -->
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://virelle.life/" />
+      <meta property="og:title" content="Virelle Studios — Create Hollywood-Quality Movies with AI" />
+      <meta property="og:description" content="Professional AI-powered film production studio. Generate cinematic scenes, screenplays, trailers, and full movies. Includes film funding directory, ADR/Foley post-production sound, 130+ language subtitles, and a complete Hollywood-standard production pipeline." />
+      <meta property="og:site_name" content="Virelle Studios" />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:image" content="https://d2xsxph8kpxj0f.cloudfront.net/310519663446819082/CAkcwNccSUcizneMbEWnnU/virelle-og-image-Qh4eXQVhsEMQW9syLK6aSw.png" />
+      <meta property="og:image:width" content="2752" />
+      <meta property="og:image:height" content="1536" />
+      <meta property="og:image:alt" content="Virelle Studios — AI Film Production Studio" />
+      <!-- Twitter / X -->
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Virelle Studios — AI Film Production Studio" />
+      <meta name="twitter:description" content="Create Hollywood-quality movies with AI. Full production pipeline: screenplays, storyboards, cinematography, ADR/Foley sound, 130+ language subtitles, and film funding directory." />
+      <meta name="twitter:site" content="@VirelleStudios" />
+      <meta name="twitter:image" content="https://d2xsxph8kpxj0f.cloudfront.net/310519663446819082/CAkcwNccSUcizneMbEWnnU/virelle-og-image-Qh4eXQVhsEMQW9syLK6aSw.png" />
+      <meta name="twitter:image:alt" content="Virelle Studios — AI Film Production Studio" />
+      <!-- LinkedIn -->
+      <meta property="og:image:secure_url" content="https://d2xsxph8kpxj0f.cloudfront.net/310519663446819082/CAkcwNccSUcizneMbEWnnU/virelle-og-image-Qh4eXQVhsEMQW9syLK6aSw.png" />
+      <!-- JSON-LD Structured Data — SoftwareApplication -->
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Virelle Studios",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Web, iOS, Android",
+        "description": "Professional AI-powered film production studio for creating Hollywood-quality movies, trailers, screenplays, and storyboards using artificial intelligence. Features include film funding directory, professional post-production sound (ADR, Foley, score cues, three-bus mix), 130+ language professional subtitle translation, and a complete production pipeline.",
+        "url": "https://virelle.life",
+        "image": "https://virelle.life/virelle-og-image.png",
+        "screenshot": "https://virelle.life/virelle-og-image.png",
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Indie Plan",
+            "price": "149",
+            "priceCurrency": "AUD",
+            "billingIncrement": "P1M",
+            "description": "500 credits/month, up to 2 projects, 720p export, AI screenplay, character creator, director's assistant, BYOK support"
+          },
+          {
+            "@type": "Offer",
+            "name": "Creator Plan",
+            "price": "490",
+            "priceCurrency": "AUD",
+            "billingIncrement": "P1M",
+            "description": "2,000 credits/month, up to 10 projects, 1080p HD export, full production pipeline, film funding directory, ADR/Foley sound tools"
+          },
+          {
+            "@type": "Offer",
+            "name": "Studio Plan",
+            "price": "1490",
+            "priceCurrency": "AUD",
+            "billingIncrement": "P1M",
+            "description": "6,000 credits/month, unlimited projects, 4K export, priority rendering, advanced analytics, team collaboration"
+          }
+        ],
+        "creator": {
+          "@type": "Organization",
+          "name": "Virelle Studios",
+          "url": "https://virelle.life"
+        },
+        "featureList": [
+          "AI Scene Generation",
+          "Cinematic Prompt Engine",
+          "Screenplay Writer",
+          "Storyboard Generator",
+          "Trailer Creation",
+          "Color Grading",
+          "Professional Sound Editing (ADR, Foley, Score Cues)",
+          "Three-Bus Film Mix (Dialogue / Music / Effects)",
+          "Visual Effects Studio",
+          "130+ Language Professional Subtitle Translation",
+          "SRT and VTT Subtitle Export",
+          "Film Funding Directory by Country",
+          "Hollywood-Standard Funding Application Builder",
+          "Budget Estimator",
+          "Location Scout",
+          "Mood Board",
+          "Collaboration Tools",
+          "Ad Poster Maker",
+          "Campaign Manager",
+          "Character Studio",
+          "AI Actor System"
+        ]
+      }
+      </script>
+      <!-- JSON-LD Structured Data — Organization -->
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Virelle Studios",
+        "url": "https://virelle.life",
+        "logo": "https://virelle.life/virelle-favicon-512.png",
+        "description": "AI-powered professional film production studio offering a complete Hollywood-standard production pipeline, film funding directory, post-production sound tools, and 130+ language subtitle translation.",
+        "foundingDate": "2025",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "url": "https://virelle.life/contact"
+        },
+        "sameAs": [
+          "https://twitter.com/VirelleStudios",
+          "https://www.instagram.com/virellestudios",
+          "https://www.linkedin.com/company/virelle-studios",
+          "https://www.youtube.com/@VirelleStudios",
+          "https://www.tiktok.com/@virellestudios",
+          "https://www.facebook.com/VirelleStudios"
+        ]
+      }
+      </script>
+      <!-- JSON-LD Structured Data — WebSite -->
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Virelle Studios",
+        "url": "https://virelle.life",
+        "description": "Professional AI film production studio — create Hollywood-quality movies with AI",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://virelle.life/projects?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+      </script>
+      <!-- JSON-LD Structured Data — FAQPage (boosts rich snippets in search) -->
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Virelle Studios?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Virelle Studios is a professional AI-powered film production platform that lets filmmakers, screenwriters, and production companies create Hollywood-quality movies, trailers, and screenplays using artificial intelligence. It includes a complete production pipeline from screenplay to post-production."
             }
-
-            /* Capture JS errors and show them in the splash so we can debug remotely */
-            function showErr(msg) {
-              if (!splash || gone) return;
-              var el = document.getElementById('_vl_err') || document.createElement('div');
-              el.id = '_vl_err';
-              el.style.cssText = 'margin-top:20px;max-width:88vw;padding:10px 14px;background:#1a0000;border:1px solid #ff4444;border-radius:6px;color:#ff9999;font:11px/1.6 monospace;white-space:pre-wrap;word-break:break-all;text-align:left;';
-              el.textContent = msg;
-              if (!el.parentNode) splash.appendChild(el);
+          },
+          {
+            "@type": "Question",
+            "name": "Does Virelle Studios have a film funding directory?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Virelle Studios includes a global film funding directory searchable by country, with a Hollywood-standard application builder that compiles your project details into a professional submission package delivered by email and download."
             }
-            window.addEventListener('error', function(e) {
-              showErr('ERROR: ' + (e.message || e.type) + (e.filename ? '
-@ ' + e.filename.replace(/.*//,'') + ':' + e.lineno : ''));
-            });
-            window.addEventListener('unhandledrejection', function(e) {
-              var msg = e.reason && e.reason.message ? e.reason.message : String(e.reason);
-              showErr('PROMISE REJECTED: ' + msg.slice(0, 300));
-            });
+          },
+          {
+            "@type": "Question",
+            "name": "What sound editing tools does Virelle Studios offer?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Virelle Studios includes professional film post-production sound tools: ADR (Automated Dialogue Replacement), Foley track management (footsteps, cloth, props, impacts, environmental), score cue placement, and a three-bus mix panel (Dialogue / Music / Effects) with EQ, reverb, and compression controls."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many subtitle languages does Virelle Studios support?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Virelle Studios supports professional subtitle translation into 130+ languages using context-aware AI that understands film genre, tone, character names, and scene context to produce natural, professional-quality translations — not word-for-word machine output."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How much does Virelle Studios cost?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Virelle Studios offers self-serve plans starting from A$149/month (Indie), A$490/month (Creator), and A$1,490/month (Studio). Production and Enterprise plans are available for larger studios and production companies. All plans include a monthly credit allowance for AI generation, and additional credit packs can be purchased at any time."
+            }
+          }
+        ]
+      }
+      </script>
+      <!-- PWA Manifest -->
+      <link rel="manifest" href="/manifest.json" />
+      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link rel="apple-touch-icon" sizes="192x192" href="/apple-touch-icon.png" />
+      <!-- Preconnect for performance -->
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
 
-            /* Poll every 50ms — hides splash the moment React populates #root.
-               type="module" scripts run BEFORE DOMContentLoaded, so MutationObserver
-               attached at DOMContentLoaded always misses the React mount. */
-            var checks = 0;
-            var poll = setInterval(function() {
-              checks++;
-              var root = document.getElementById('root');
-              if (root && root.firstElementChild) {
-                clearInterval(poll);
-                hideSplash();
-              }
-              /* After 20s with no mount and no error shown, display a hint */
-              if (checks === 400 && !document.getElementById('_vl_err')) {
-                showErr('App bundle loaded but React did not mount after 20s.\nOpen browser console (DevTools) for details.');
-              }
-            }, 50);
-
-            /* Hard limit: 25s */
-            setTimeout(function() { clearInterval(poll); hideSplash(); }, 25000);
-          })();
+        <!-- Google Analytics 4 -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-HH9N8M3FQS"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HH9N8M3FQS', {
+            page_path: window.location.pathname,
+            anonymize_ip: true,
+            cookie_flags: 'SameSite=None;Secure'
+          });
         </script>
-  </head>
+    </head>
 
-  <body style="background:#111;">
-      <!-- Loading splash: visible immediately, before JS bundle loads -->
+    <body>
+      <!-- Loading splash — visible immediately, before JS bundle loads -->
       <style>
         #_vl_splash {
           position: fixed; inset: 0; z-index: 9999;
@@ -62,11 +233,6 @@
           transition: opacity 0.4s ease;
         }
         #_vl_splash.hidden { opacity: 0; pointer-events: none; }
-        #_vl_splash svg { animation: _vl_pulse 2s ease-in-out infinite; }
-        @keyframes _vl_pulse {
-          0%, 100% { opacity: 0.7; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.05); }
-        }
         #_vl_dots { display: flex; gap: 6px; }
         #_vl_dots span {
           width: 6px; height: 6px; border-radius: 50%;
@@ -81,36 +247,98 @@
       </style>
 
       <div id="_vl_splash">
-        <!-- VirÉlle wordmark -->
         <svg width="160" height="28" viewBox="0 0 160 28" fill="none" xmlns="http://www.w3.org/2000/svg">
           <text x="0" y="22" font-family="Georgia, serif" font-size="22" fill="#c8b49a" letter-spacing="6">VIRELLE</text>
         </svg>
         <div id="_vl_dots"><span></span><span></span><span></span></div>
       </div>
 
+      <!-- Single consolidated debug + polling script.
+           Runs AFTER splash div exists in DOM.
+           Patches window.reportError so React 18's silent production-mode render
+           errors (which bypass window.onerror on Safari) become visible. -->
       <script>
-          (function() {
-            var splash = document.getElementById('_vl_splash');
-            var gone = false;
-            function hideSplash() {
-              if (gone || !splash) return;
-              gone = true;
-              splash.classList.add('hidden');
-              setTimeout(function() { if (splash && splash.parentNode) splash.remove(); }, 500);
+        (function() {
+          var splash = document.getElementById('_vl_splash');
+          var gone = false;
+
+          function hideSplash() {
+            if (gone || !splash) return;
+            gone = true;
+            splash.classList.add('hidden');
+            setTimeout(function() { if (splash && splash.parentNode) splash.remove(); }, 500);
+          }
+
+          function showErr(msg) {
+            // Stop the loading dots
+            var dots = document.getElementById('_vl_dots');
+            if (dots) dots.style.display = 'none';
+            // Show or create error box inside splash
+            var el = document.getElementById('_vl_err');
+            if (!el) {
+              el = document.createElement('div');
+              el.id = '_vl_err';
+              el.style.cssText = 'margin-top:20px;max-width:88vw;padding:10px 14px;background:#1a0000;border:1px solid #ff4444;border-radius:6px;color:#ff9999;font:11px/1.6 monospace;white-space:pre-wrap;word-break:break-all;text-align:left;';
+              if (splash) splash.appendChild(el);
+              else { document.body.appendChild(el); el.style.position = 'fixed'; el.style.top = '20px'; el.style.left = '20px'; el.style.zIndex = '999999'; }
             }
-            /* Poll every 50ms — works regardless of whether React commits before or
-               after DOMContentLoaded. type="module" scripts run before DOMContentLoaded,
-               so a MutationObserver attached at DOMContentLoaded always misses the mount. */
-            var poll = setInterval(function() {
-              var root = document.getElementById('root');
-              if (root && root.firstElementChild) { clearInterval(poll); hideSplash(); }
-            }, 50);
-            /* Hard safety: remove splash after 20s no matter what */
-            setTimeout(function() { clearInterval(poll); hideSplash(); }, 20000);
-          })();
-        </script>
+            el.textContent = (el.textContent ? el.textContent + '\n\n' : '') + msg;
+            // Ensure splash stays visible when an error occurs
+            if (splash) { splash.classList.remove('hidden'); splash.style.opacity = '1'; splash.style.pointerEvents = 'none'; }
+            clearInterval(poll);
+            clearTimeout(safetyTimer);
+          }
+
+          // Intercept window.onerror (synchronous JS errors, including module parse failures)
+          window.addEventListener('error', function(e) {
+            var file = e.filename ? e.filename.replace(/^.*\//, '') : '';
+            showErr('JS ERROR: ' + (e.message || String(e.error)) + (file ? '\n@ ' + file + ':' + e.lineno : ''));
+          });
+
+          // Intercept unhandled Promise rejections (async errors, dynamic import failures)
+          window.addEventListener('unhandledrejection', function(e) {
+            var msg = (e.reason && e.reason.message) ? e.reason.message : String(e.reason);
+            showErr('PROMISE REJECTED: ' + msg.slice(0, 400));
+          });
+
+          // Intercept React 18 internal render errors.
+          // React 18 production mode calls window.reportError() for uncaught render errors
+          // (no ErrorBoundary to catch them). On iOS Safari this does NOT bubble to
+          // window.onerror, so we must patch reportError directly.
+          var _origReportError = window.reportError;
+          window.reportError = function(err) {
+            var msg = (err && err.message) ? err.message + (err.stack ? '\n' + err.stack.slice(0, 600) : '') : String(err);
+            showErr('REACT INTERNAL ERROR:\n' + msg);
+            if (typeof _origReportError === 'function') _origReportError.call(window, err);
+          };
+
+          // Poll every 50ms — hide splash the instant React populates #root
+          var checks = 0;
+          var poll = setInterval(function() {
+            checks++;
+            var root = document.getElementById('root');
+            if (root && root.firstElementChild) {
+              clearInterval(poll);
+              clearTimeout(safetyTimer);
+              hideSplash();
+              return;
+            }
+            // After 20s with no mount and no error, show a hint
+            if (checks === 400 && !document.getElementById('_vl_err')) {
+              showErr('Bundle loaded but React did not mount after 20s.\nCheck browser DevTools console for details.');
+            }
+          }, 50);
+
+          // Hard safety: force-remove splash after 25s regardless
+          var safetyTimer = setTimeout(function() {
+            clearInterval(poll);
+            hideSplash();
+          }, 25000);
+        })();
+      </script>
 
       <div id="root"></div>
       <script type="module" src="/src/main.tsx"></script>
     </body>
-</html>
+
+  </html>
