@@ -16,6 +16,7 @@ import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { AI_PERFORMANCE_STYLE_OPTIONS, AI_PERFORMANCE_STYLE_LABELS } from "@shared/types";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 // ─── VIRELLE SIGNATURE CAST ────────────────────────────────────────────────
 const SIGNATURE_CAST = [
@@ -215,7 +216,7 @@ function TierBadge({ tier }: { tier: "flagship" | "premium" | "standard" }) {
   );
 }
 
-export default function AICasting() {
+function AICastingInner() {
   const [, navigate] = useLocation();
   const params = useParams<{ projectId: string }>();
   const projectId = parseInt(params.projectId || "0");
@@ -946,5 +947,17 @@ function UnlockModal({
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AICasting() {
+  return (
+    <SubscriptionGate
+      feature="AI Casting"
+      featureKey="canUseAICasting"
+      requiredTier="independent"
+    >
+      <AICastingInner />
+    </SubscriptionGate>
   );
 }
