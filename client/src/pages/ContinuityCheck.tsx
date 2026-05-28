@@ -9,6 +9,7 @@ import { useState } from "react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { NextStageCTA } from "@/components/NextStageCTA";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 type Issue = {
   severity: string;
@@ -29,7 +30,7 @@ const SEVERITY_CONFIG: Record<string, { icon: typeof AlertCircle; color: string;
   low: { icon: Info, color: "text-blue-500", bg: "bg-blue-500/10 border-blue-500/20" },
 };
 
-export default function ContinuityCheck() {
+function ContinuityCheckInner() {
   const { user, loading: authLoading } = useAuth();
   const params = useParams<{ projectId: string }>();
   const [, navigate] = useLocation();
@@ -213,5 +214,17 @@ export default function ContinuityCheck() {
       </div>
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={6} />}
     </div>
+  );
+}
+
+export default function ContinuityCheck() {
+  return (
+    <SubscriptionGate
+      feature="Continuity Check"
+      featureKey="canUseContinuityCheck"
+      requiredTier="amateur"
+    >
+      <ContinuityCheckInner />
+    </SubscriptionGate>
   );
 }
