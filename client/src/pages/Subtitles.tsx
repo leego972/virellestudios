@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useRoute, useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
 import { Languages, Plus, Sparkles, Trash2, Download, ArrowLeft, Loader2, Globe, Copy } from "lucide-react";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 const LANGUAGES = [
   // ── English ────────────────────────────────────────────────────────────────
@@ -463,6 +464,7 @@ export default function Subtitles() {
           </div>
         </div>
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
   );
 }
