@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useRoute, useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
 import { MapPin, Plus, Sparkles, Trash2, Image, Tag, ArrowLeft, Loader2 } from "lucide-react";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 const LOCATION_TYPES = [
   "City Street", "Suburban Home", "Mansion", "Apartment", "Office Building",
@@ -243,6 +244,7 @@ export default function LocationScout() {
           </div>
         )}
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={4} />}
     </div>
   );
 }
