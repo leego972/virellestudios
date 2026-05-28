@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
 import { NextStageCTA } from "@/components/NextStageCTA";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
   ArrowLeft, Sparkles, Film, Play, Pause, Plus, Trash2, GripVertical,
   Type, Music, Volume2, Clock, Clapperboard, Wand2, ChevronDown, ChevronUp,
   Eye, Download, Layers, Zap, Settings2, RotateCcw, Copy, MoveUp, MoveDown,
@@ -103,7 +104,7 @@ const PACING_COLORS: Record<string, string> = {
   frenetic: "bg-red-500/20 text-red-400",
 };
 
-export default function TrailerStudio() {
+function TrailerStudioInner() {
   const params = useParams<{ projectId: string }>();
   const projectId = Number(params.projectId);
   const [, setLocation] = useLocation();
@@ -807,5 +808,17 @@ export default function TrailerStudio() {
       )}
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={8} />}
     </div>
+  );
+}
+
+export default function TrailerStudio() {
+  return (
+    <SubscriptionGate
+      feature="Trailer Studio"
+      featureKey="canUseTrailerGeneration"
+      requiredTier="independent"
+    >
+      <TrailerStudioInner />
+    </SubscriptionGate>
   );
 }
