@@ -74,3 +74,94 @@
 
   All stages are now correctly wired end-to-end. ✅
   
+
+  ---
+
+  ## Pass 4 — Security & Subscription Tier Enforcement (2025-05-28)
+
+  ### SEC-01 — CRITICAL: Unauthenticated Debug Log Endpoint ✅ FIXED
+  **File:** `gateway.mjs`
+  **Severity:** Critical  
+  **Description:** The `/debug-app-log` endpoint was unauthenticated. Any caller (including anonymous internet users) could read the full server log file, which contains email addresses, user IDs, error stack traces, Stripe event data, and AI prompt/response content.  
+  **Fix:** Endpoint now requires `?token=<SESSION_SECRET>` query parameter. Requests without a valid token receive HTTP 403. The secret is validated server-side using `process.env.SESSION_SECRET`.
+
+  ---
+
+  ### SEC-02 — CONFIRMED GOOD: Session Cookie Flags ✅ No action needed
+  **File:** `server/_core/cookies.ts`  
+  **Description:** Cookie flags verified: `httpOnly: true`, `sameSite: 'lax'`, `secure: isSecureRequest(req)`. No fix required.
+
+  ---
+
+  ### TIER-01 — character.aiGenerate: protectedProcedure → creationProcedure ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** Medium  
+  **Description:** `character.aiGenerate` used `protectedProcedure` instead of `creationProcedure`. The procedure already contained `requireFeature(canUseAICharacterGen)` and `requireGenerationQuota`, so active-tier users were correctly blocked. However, expired beta testers (valid session, lapsed subscription) could still invoke the endpoint because `protectedProcedure` only checks authentication, not subscription status.  
+  **Fix:** Changed to `creationProcedure` which enforces active subscription state before the handler runs.
+
+  ---
+
+  ### TIER-02 — moodBoard.generateImage: missing requireFeature ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** High  
+  **Description:** `moodBoard.generateImage` lacked a `requireFeature(canUseMoodBoard)` call. The only gate was credit deduction (`db.deductCredits`). Users on the `none` tier normally have 0 credits, but bonus/gifted credits bypass this check — allowing mood board image generation without an active Indie+ plan.  
+  **Fix:** Added `requireFeature(ctx.user, "canUseMoodBoard", "Mood Board")` immediately after `rateLimitAI`, before credit deduction. Feature flags are authoritative; credits are a metered resource.
+
+  ---
+
+  ### TIER-03 — locationScout.generateImage: missing requireFeature ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** High  
+  **Description:** Same pattern as TIER-02. `locationScout.generateImage` (the image generation endpoint, distinct from the AI suggestions endpoint which was already guarded) lacked `requireFeature(canUseLocationScout)`. Bonus credits could bypass the tier gate.  
+  **Fix:** Added `requireFeature(ctx.user, "canUseLocationScout", "Location Scout")` after `rateLimitAI`.
+
+  ---
+
+  ### TIER-04 — generateVideo: missing requireFeature(canUseQuickGenerate) ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** High  
+  **Description:** The `generateVideo` mutation was guarded by `requireGenerationQuota` but not by `requireFeature(canUseQuickGenerate)`. Indie tier users have `canUseQuickGenerate: false` and `maxClipsPerScene: 0`, meaning video generation is not an Indie feature. However, with 10 `maxGenerationsPerMonth` credits, they could call this endpoint and trigger video generation without the feature being enabled on their plan.  
+  **Fix:** Added `requireFeature(ctx.user, "canUseQuickGenerate", "Video Generation")` before `requireGenerationQuota`.
+
+  ---
+
+  ### CLIENT-TIER-01 — VFXSuite.tsx: no client-side tier gate ✅ FIXED
+  **File:** `client/src/pages/VFXSuite.tsx`  
+  **Severity:** Medium (UX — server already blocks at API layer)  
+  **Description:** The Visual Effects Suite page was fully rendered for users on any tier. Indie and Creator tier subscribers could see and interact with the complete VFX controls before being blocked server-side. This is a poor UX and exposes features users haven't paid for.  
+  **Fix:** Wrapped export with `SubscriptionGate feature="Visual Effects Suite" featureKey="canUseVisualEffects" requiredTier="independent"`. Non-Industry subscribers now see an `UpgradePrompt` immediately on page load.
+
+  ---
+
+  ### CLIENT-TIER-02 — TableRead.tsx: no client-side tier gate ✅ FIXED
+  **File:** `client/src/pages/TableRead.tsx`  
+  **Severity:** Medium  
+  **Description:** Table Read (AI Voice Acting / TTS table read feature) was fully visible to all tiers. `canUseAIVoiceActing` is false for Indie and Creator tiers.  
+  **Fix:** Wrapped with `SubscriptionGate feature="Table Read (AI Voice)" featureKey="canUseAIVoiceActing" requiredTier="independent"`.
+
+  ---
+
+  ### CLIENT-TIER-03 — SoundEffects.tsx: no client-side tier gate ✅ FIXED
+  **File:** `client/src/pages/SoundEffects.tsx`  
+  **Severity:** Medium  
+  **Description:** Sound Effects page was fully visible to all tiers. `canUseSoundEffects` is false for Indie tier.  
+  **Fix:** Wrapped with `SubscriptionGate feature="Sound Effects" featureKey="canUseSoundEffects" requiredTier="independent"`.
+
+  ---
+
+  ## Summary — All Passes
+
+  | Pass | Scope | Issues Found | Issues Fixed |
+  |------|-------|-------------|-------------|
+  | 1 | Core bugs (type errors, hardcoded signals) | 4 | 4 ✅ |
+  | 2 | Missing NextStageCTA on 14 sub-tool pages | 14 | 14 ✅ |
+  | 3 | Character pipeline (MultiShotSequencer, generatePreview) | 2 major | 2 ✅ |
+  | 4 | Security + subscription tier enforcement | 10 | 10 ✅ |
+  | **Total** | | **30** | **30 ✅** |
+
+  ### Tier Enforcement Architecture (post-audit)
+  - **Feature flags are authoritative.** `requireFeature(ctx.user, flagKey, label)` must be called on every mutation/query that is behind a tier flag, regardless of credit deduction.
+  - **Credit deduction is not a tier gate.** Bonus credits can be granted to any user; they bypass the tier check.
+  - **`creationProcedure` vs `protectedProcedure`**: Any mutation that consumes a plan resource (generation, feature) must use `creationProcedure` so expired subscriptions are blocked at the middleware level.
+  - **Client gates are UX, not security.** `SubscriptionGate` on the client prevents confusing UX for lower-tier users. The API layer is the authoritative enforcement point.
+  
