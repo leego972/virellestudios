@@ -6119,6 +6119,7 @@ FORMAT RULES (always apply):
       .input(z.object({ description: z.string().min(1).max(1000) }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseLocationScout", "Location Scout");
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.location_scout_ai.cost, "location_scout_ai", `Location image: ${input.description.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         try {
           const { url } = await generateImage({
@@ -6195,6 +6196,7 @@ FORMAT RULES (always apply):
       .input(z.object({ prompt: z.string().min(1).max(2000), projectId: z.number().optional() }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseMoodBoard", "Mood Board");
         // Deduct 1 credit for mood board image generation (same as preview image)
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.generate_preview_image.cost, "generate_preview_image", `Mood board image: ${input.prompt.substring(0, 50)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // v6.77 — Mood board references the same brand policy as the rest of
