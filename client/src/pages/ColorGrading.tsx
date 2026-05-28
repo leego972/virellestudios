@@ -10,6 +10,7 @@ import { Loader2, ArrowLeft, Palette, Check, Eye } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 const COLOR_PRESETS = [
   { name: "natural", label: "Natural", desc: "True-to-life colors", gradient: "from-green-400 to-blue-400", settings: { temperature: 50, tint: 50, contrast: 50, saturation: 50, highlights: 50, shadows: 50, vibrance: 50, clarity: 50 } },
@@ -241,6 +242,7 @@ export default function ColorGrading() {
           <p className="text-[10px] text-muted-foreground mt-1 text-center">Hover to move the comparison slider</p>
         </div>
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
   );
 }
