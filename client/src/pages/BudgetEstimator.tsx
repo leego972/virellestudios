@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(amount);
@@ -423,6 +424,7 @@ export default function BudgetEstimator() {
           </div>
         ) : null}
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={4} />}
     </div>
   );
 }
