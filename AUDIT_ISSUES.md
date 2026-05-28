@@ -39,3 +39,38 @@
   - [ ] Audit SoundEffects, VisualEffects, Collaboration, VFXSuite, LiveActionPlate, DirectorCut pages for any logic issues
   - [ ] End-to-end test: create project → complete all 8 stages → verify journey nav advances correctly
   
+
+  ---
+
+  ## Pass 3 — Character Generation Pipeline (2025-05-28)
+
+  ### BUG-15 · CRITICAL — MultiShotSequencer: no character selection, no generation call
+  **File:** `client/src/pages/MultiShotSequencer.tsx`  
+  **Root cause:** Stage 6 "Soundstage" page only saved camera metadata via `scene.update`; the "Generate Sequence" button never called `scene.generatePreview` or any image/video generation endpoint. No character selection UI existed, so `scene.characterIds` was always empty — meaning the server's character DNA injection, reference-photo locking, and wardrobe/costume prompts were completely bypassed for every scene generated from this page.  
+  **Fix:**
+  - Added **Scene Cast panel** (sidebar): select which characters appear anywhere in this scene. Their `faceDnaPrompt`, `bodyDnaPrompt`, `consistencyNotes`, and reference photos are auto-injected into the generation prompt via the existing server pipeline.
+  - Added **per-shot character toggles** inside each `ShotCard`: assign specific cast members to individual shots — useful when character A exits and character B enters mid-sequence.
+  - Scene-level `characterIds` is now derived as the union of all per-shot selections and persisted on `scene.update`.
+  - Added **"Generate Preview"** button that: (1) saves scene + characterIds, then (2) calls `trpc.scene.generatePreview` — which uses `scene.characterIds` to fetch character photos + DNA and passes them as `originalImages` (reference-locked) and as structured `faceDnaPrompt`/`bodyDnaPrompt` into `buildScenePrompt`. Costumes are auto-injected per-character via the existing `getWardrobePromptContextForScene` pipeline.
+  - **Costume-to-character-to-scene wiring is now correct**: wardrobe assignments (from Wardrobe Marketplace) are fetched server-side using `scene.characterIds` — so costumes assigned to character A will appear on character A in exactly the scenes/shots where A is selected, not on all characters or all scenes.
+
+  ### BUG-16 — routers.ts: console.warn in three generation endpoints (logging policy violation)
+  **File:** `server/routers.ts`  
+  **Lines:** 2676, 2726, 2845 (generatePreview, generateNanoBananaImage, bulkGeneratePreviews)  
+  **Fix:** Replaced `console.warn(msg, e)` with `logger.warn({ err: e }, msg)` in all three auto-set-thumbnail fallback paths.  
+  **Note:** ~14 additional `console.warn` / `console.log` / `console.error` calls exist throughout `routers.ts` from older code. These are lower-priority and should be migrated to `logger` in a dedicated logging cleanup pass.
+
+  ---
+
+  ## Character Consistency Pipeline — Architecture Summary
+
+  The full pipeline works as follows when all pieces are correctly wired:
+
+  1. **CastingBoard (Stage 2)** — user creates characters with photos, physical descriptions, `faceDnaPrompt`, `bodyDnaPrompt`, `consistencyNotes`
+  2. **Wardrobe Marketplace** — user assigns wardrobe items to characters with `usageMode` (must_match / costume_accurate / etc.)
+  3. **MultiShotSequencer (Stage 6)** — user selects which characters appear in each shot; `scene.characterIds` is saved
+  4. **`scene.generatePreview`** — server fetches `scene.characterIds`, loads character photos + DNA, passes them to `buildScenePrompt` as both `originalImages` (for gpt-image-1-edit face locking) and structured DNA fields; `getWardrobePromptContextForScene` injects per-character costume directives
+  5. **`buildScenePrompt`** → `buildVisualDNA`** → final prompt with character appearance locked, wardrobe specified per character, face DNA injected
+
+  All stages are now correctly wired end-to-end. ✅
+  
