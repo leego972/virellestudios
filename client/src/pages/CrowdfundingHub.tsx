@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -104,7 +105,7 @@ interface NewCampaignState {
 const FMT_AUD = (cents: number) =>
   new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", minimumFractionDigits: 0 }).format(cents / 100);
 
-export default function CrowdfundingHub() {
+function CrowdfundingHubInner() {
   const params = useParams<{ projectId?: string }>();
   const [, navigate] = useLocation();
   const projectId = parseInt(params.projectId || "0");
@@ -1029,5 +1030,17 @@ export default function CrowdfundingHub() {
 
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={5} />}
     </div>
+  );
+}
+
+export default function CrowdfundingHub() {
+  return (
+    <SubscriptionGate
+      feature="Crowdfunding Hub"
+      featureKey="canUseCrowdfunding"
+      requiredTier="indie"
+    >
+      <CrowdfundingHubInner />
+    </SubscriptionGate>
   );
 }
