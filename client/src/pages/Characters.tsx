@@ -214,7 +214,13 @@ export default function Characters() {
       build: attrs.build || "",
       hairColor: attrs.hairColor || "",
       role: attrs.role || attrs.characterRole || "",
-      deepProfile: attrs.deepProfile || {},
+      deepProfile: {
+          ...(attrs.deepProfile || {}),
+          // Merge top-level voice fields so the Voice UI shows saved values
+          ...(char.voiceId        ? { voiceId: char.voiceId }               : {}),
+          ...(char.voiceType      ? { voiceType: char.voiceType }           : {}),
+          ...(char.voiceDescription ? { voiceDescription: char.voiceDescription } : {}),
+        },
       isNonHuman: attrs.isNonHuman ?? false,
       costumeType: attrs.costumeType || "",
       referenceImageLocked: attrs.referenceImageLocked ?? false,
@@ -328,6 +334,9 @@ export default function Characters() {
         name: form.name.trim(),
         description: form.description.trim() || undefined,
         photoUrl: form.photoUrl || undefined,
+        voiceId: form.deepProfile.voiceId || undefined,
+        voiceType: form.deepProfile.voiceType || undefined,
+        voiceDescription: form.deepProfile.voiceDescription || undefined,
         attributes,
       });
     } else {
