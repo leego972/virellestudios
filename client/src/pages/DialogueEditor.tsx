@@ -16,6 +16,7 @@ import { useState, useMemo } from "react";
 import { useLocation, useParams } from "wouter";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 // 35 emotion states grouped by dramatic category
 const EMOTION_GROUPS: Record<string, string[]> = {
@@ -619,6 +620,7 @@ function EditDialogueLine({ dialogue, onSave, onCancel }: {
         <Button variant="ghost" size="sm" onClick={onCancel}>Cancel</Button>
         <Button size="sm" onClick={() => onSave({ characterName: charName, line: lineText, emotion: emo, direction: dir || undefined })}>Save</Button>
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
     </div>
   );
 }
