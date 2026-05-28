@@ -73,6 +73,7 @@ import { useLocation, useParams } from "wouter";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import {
+import { NextStageCTA } from "@/components/NextStageCTA";
   TIME_OF_DAY_OPTIONS, TIME_OF_DAY_LABELS,
   WEATHER_OPTIONS, WEATHER_LABELS,
   LIGHTING_OPTIONS, LIGHTING_LABELS,
@@ -2521,6 +2522,7 @@ export default function SceneEditor() {
           onSceneUpdated={() => utils.scene.listByProject.invalidate({ projectId })}
         />
       )}
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
     </div>
   );
 }
