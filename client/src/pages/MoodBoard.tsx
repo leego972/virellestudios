@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useRoute, useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
 import { Palette, Plus, Trash2, Type, Image, Sparkles, ArrowLeft, Loader2 } from "lucide-react";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 const CATEGORIES = ["All", "Colors", "Images", "Typography", "Textures", "References", "Notes"];
 
@@ -199,6 +200,7 @@ export default function MoodBoard() {
           </div>
         )}
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={1} />}
     </div>
   );
 }
