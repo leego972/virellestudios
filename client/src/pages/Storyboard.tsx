@@ -11,6 +11,7 @@ import { useState, useMemo } from "react";
 import MediaPlayer from "@/components/MediaPlayer";
 import { getLoginUrl } from "@/const";
 import { NextStageCTA } from "@/components/NextStageCTA";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 const TRANSITION_LABELS: Record<string, string> = {
   cut: "CUT", fade: "FADE", dissolve: "DISSOLVE", wipe: "WIPE",
@@ -18,7 +19,7 @@ const TRANSITION_LABELS: Record<string, string> = {
   "match-cut": "MATCH CUT", "j-cut": "J-CUT", "l-cut": "L-CUT",
 };
 
-export default function Storyboard() {
+function StoryboardInner() {
   const { user, loading: authLoading } = useAuth();
   const params = useParams<{ projectId: string }>();
   const [, navigate] = useLocation();
@@ -352,5 +353,17 @@ export default function Storyboard() {
       `}</style>
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
     </div>
+  );
+}
+
+export default function Storyboard() {
+  return (
+    <SubscriptionGate
+      feature="Storyboard"
+      featureKey="canUseStoryboard"
+      requiredTier="amateur"
+    >
+      <StoryboardInner />
+    </SubscriptionGate>
   );
 }
