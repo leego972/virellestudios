@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
+import { NextStageCTA } from "@/components/NextStageCTA";
   ArrowLeft, Sparkles, Film, Play, Pause, Plus, Trash2, GripVertical,
   Type, Music, Volume2, Clock, Clapperboard, Wand2, ChevronDown, ChevronUp,
   Eye, Download, Layers, Zap, Settings2, RotateCcw, Copy, MoveUp, MoveDown,
@@ -804,6 +805,7 @@ export default function TrailerStudio() {
           </SheetContent>
         </Sheet>
       )}
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={8} />}
     </div>
   );
 }
