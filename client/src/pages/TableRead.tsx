@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
   import { useParams, useLocation } from "wouter";
   import { ArrowLeft, Mic, Play, Pause, RotateCcw, Users, Wand2, Loader2, Volume2, Plus, Trash2, ChevronDown } from "lucide-react";
   import { Button } from "@/components/ui/button";
@@ -70,7 +71,7 @@ import { useState, useRef } from "react";
   MORGAN
   Then why are your hands shaking?`;
 
-  export default function TableRead() {
+  function TableReadInner() {
     const params = useParams<{ id: string }>();
     const projectId = params.id;
     const [, setLocation] = useLocation();
@@ -226,4 +227,15 @@ import { useState, useRef } from "react";
       </div>
     );
   }
-  
+
+export default function TableRead() {
+  return (
+    <SubscriptionGate
+      feature="Table Read (AI Voice)"
+      featureKey="canUseAIVoiceActing"
+      requiredTier="independent"
+    >
+      <TableReadInner />
+    </SubscriptionGate>
+  );
+}
