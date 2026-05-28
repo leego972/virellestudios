@@ -81,6 +81,7 @@ import {
 import { useLocation } from "wouter";
 import { useSubscription } from "@/hooks/useSubscription";
 import { FeatureGate } from "@/components/UpgradePrompt";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -342,7 +343,7 @@ function useHistory<T>(initial: T) {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function AdPosterMaker() {
+function AdPosterMakerInner() {
   const [, setLocation] = useLocation();
   const previewRef = useRef<HTMLDivElement>(null);
   const { canUseFeature, tier, isLoading: subLoading } = useSubscription();
@@ -1911,4 +1912,16 @@ function hexToRgba(hex: string, opacity: number): string {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+export default function AdPosterMaker() {
+  return (
+    <SubscriptionGate
+      feature="Ad Poster Maker"
+      featureKey="canUseAdPosterMaker"
+      requiredTier="independent"
+    >
+      <AdPosterMakerInner />
+    </SubscriptionGate>
+  );
 }
