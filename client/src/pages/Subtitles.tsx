@@ -16,6 +16,7 @@ import { useRoute, useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
 import { Languages, Plus, Sparkles, Trash2, Download, ArrowLeft, Loader2, Globe, Copy } from "lucide-react";
 import { NextStageCTA } from "@/components/NextStageCTA";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 const LANGUAGES = [
   // ── English ────────────────────────────────────────────────────────────────
@@ -170,7 +171,7 @@ function exportVTT(entries: any[], languageName: string): string {
   ).join("\n");
 }
 
-export default function Subtitles() {
+function SubtitlesInner() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [, params] = useRoute("/projects/:id/subtitles");
   const [, navigate] = useLocation();
@@ -466,5 +467,17 @@ export default function Subtitles() {
       </div>
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
+  );
+}
+
+export default function Subtitles() {
+  return (
+    <SubscriptionGate
+      feature="Subtitles & Captions"
+      featureKey="canUseSubtitles"
+      requiredTier="amateur"
+    >
+      <SubtitlesInner />
+    </SubscriptionGate>
   );
 }
