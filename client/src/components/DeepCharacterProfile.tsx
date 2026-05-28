@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   User, Palette, Brain, MessageSquare, Cloud, Shirt, Users,
-  Plus, Trash2, Upload, X, ImageIcon, Loader2, Lock,
+  Plus, Trash2, Upload, X, ImageIcon, Loader2, Lock, Volume2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -82,7 +82,13 @@ export type DeepProfile = {
   wardrobe?: WardrobeItem[];
   // Relationships
   relationships?: RelationshipEntry[];
-};
+    // Voice & TTS
+    voiceGender?: "male" | "female" | "neutral";
+    voiceAge?: "young" | "adult" | "elderly";
+    voiceId?: string;
+    voiceType?: string;
+    voiceDescription?: string;
+  };
 
 const WARDROBE_CATEGORIES = [
   { value: "signature", label: "Signature / Hero Outfit" },
@@ -141,7 +147,29 @@ const VOCABULARY_LEVELS = [
   "Archaic / Old-fashioned", "Foreign Phrases Mixed In",
 ];
 
-const TIME_OF_DAY_PREFS = [
+const ELEVEN_VOICES: { id: string; name: string; gender: "male"|"female"|"neutral"; age: "young"|"adult"|"elderly"; desc: string }[] = [
+    { id: "pNInz6obpgDQGcFmaJgB", name: "Adam",    gender: "male",    age: "adult",   desc: "Deep American — authoritative, cinematic" },
+    { id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh",    gender: "male",    age: "adult",   desc: "Deep, warm, storytelling" },
+    { id: "yoZ06aMxZJJ28mfd3POQ", name: "Sam",     gender: "male",    age: "adult",   desc: "Raspy, intense, film-noir" },
+    { id: "VR6AewLTigWG4xSOukaG", name: "Arnold",  gender: "male",    age: "adult",   desc: "Crisp, commanding, strong" },
+    { id: "onwK4e9ZLuTAKqWW03F9", name: "Daniel",  gender: "male",    age: "adult",   desc: "Deep British, authoritative" },
+    { id: "CYw3kZ02Gonhk2lD1jVQ", name: "Dave",    gender: "male",    age: "adult",   desc: "Conversational, British-inflected" },
+    { id: "g5CIjZEefAph4nQFvHAz", name: "Ethan",   gender: "male",    age: "young",   desc: "Husky, whisper-quiet, brooding" },
+    { id: "D38z5RcWu1voky8WS1ja", name: "Fin",     gender: "male",    age: "elderly", desc: "Old, rugged, seasoned sailor" },
+    { id: "2EiwWnXFnvU5JabPnv8n", name: "Clyde",   gender: "male",    age: "elderly", desc: "War-veteran, gravel, weary" },
+    { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel",  gender: "female",  age: "adult",   desc: "Calm, clear, American — versatile default" },
+    { id: "AZnzlk1XvdvUeBnXmlld", name: "Domi",    gender: "female",  age: "adult",   desc: "Strong, confident, direct" },
+    { id: "EXAVITQu4vr4xnSDxMaL", name: "Bella",   gender: "female",  age: "young",   desc: "Soft, bright, American" },
+    { id: "MF3mGyEYCl7XYWbV9V6O", name: "Elli",    gender: "female",  age: "young",   desc: "Wide emotional range, expressive" },
+    { id: "LcfcDJNUP1GQjkzn1xUU", name: "Emily",   gender: "female",  age: "adult",   desc: "Calm, meditative, composed" },
+    { id: "oWAxZDx7w5VEj9dCyTzz", name: "Grace",   gender: "female",  age: "adult",   desc: "Southern US, warm, storyteller" },
+    { id: "ThT5KcBeYPX3keUQqHPh", name: "Dorothy", gender: "female",  age: "elderly", desc: "Pleasant, British, classic" },
+    { id: "pMsXgVXv3BLzUgSXRplE", name: "Serena",  gender: "female",  age: "adult",   desc: "Pleasant, professional, American" },
+    { id: "z9fAnlkpzviPz146aGWa", name: "Glinda",  gender: "female",  age: "adult",   desc: "Strong, theatrical, powerful" },
+    { id: "ErXwobaYiN019PkySvjV", name: "Antoni",  gender: "neutral", age: "adult",   desc: "Well-rounded, natural character actor" },
+  ];
+
+  const TIME_OF_DAY_PREFS = [
   "Dawn / Early Riser", "Morning", "Midday", "Afternoon", "Evening",
   "Night Owl", "Midnight", "No Preference",
 ];
@@ -437,7 +465,98 @@ export function DeepCharacterProfile({ profile, onChange, characterName }: Props
           <Label className="text-xs text-muted-foreground">Physical Mannerisms & Habits</Label>
           <Textarea placeholder="e.g. Taps fingers when thinking, never makes eye contact, always adjusts collar when nervous, cracks knuckles before a fight..." value={profile.mannerisms || ""} onChange={e => set("mannerisms", e.target.value)} className="min-h-[100px] text-sm bg-background/50 resize-y" />
         </div>
-        <div className="p-3 bg-muted/30 rounded-lg border border-border/50">
+        {/* ── AI Voice / TTS / Lip Sync ── */}
+          <div className="space-y-3 p-3 rounded-lg border border-amber-500/20 bg-amber-500/5">
+            <div className="flex items-center gap-2">
+              <Volume2 className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+              <span className="text-xs font-semibold text-foreground">AI Voice — TTS &amp; Lip Sync</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Voice Gender</Label>
+                <div className="flex gap-1">
+                  {(["male", "female", "neutral"] as const).map(g => (
+                    <button key={g} type="button"
+                      onClick={() => set("voiceGender", profile.voiceGender === g ? undefined : g)}
+                      className={[
+                        "flex-1 h-8 rounded-md text-xs font-medium border transition-colors capitalize",
+                        profile.voiceGender === g
+                          ? "bg-amber-500/20 border-amber-500/60 text-amber-400"
+                          : "bg-background/50 border-border/50 text-muted-foreground hover:border-border",
+                      ].join(" ")}
+                    >{g}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Age Range</Label>
+                <div className="flex gap-1">
+                  {(["young", "adult", "elderly"] as const).map(a => (
+                    <button key={a} type="button"
+                      onClick={() => set("voiceAge", profile.voiceAge === a ? undefined : a)}
+                      className={[
+                        "flex-1 h-8 rounded-md text-xs font-medium border transition-colors capitalize",
+                        profile.voiceAge === a
+                          ? "bg-amber-500/20 border-amber-500/60 text-amber-400"
+                          : "bg-background/50 border-border/50 text-muted-foreground hover:border-border",
+                      ].join(" ")}
+                    >{a}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">
+                ElevenLabs Voice
+                <span className="ml-1.5 text-muted-foreground/50 font-normal">filtered by gender &amp; age above</span>
+              </Label>
+              <Select
+                value={profile.voiceId || "__auto__"}
+                onValueChange={v => set("voiceId", v === "__auto__" ? undefined : v)}
+              >
+                <SelectTrigger className="h-9 text-sm bg-background/50">
+                  <SelectValue placeholder="Auto-assign" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  <SelectItem value="__auto__">🎲 Auto-assign (AI picks best match)</SelectItem>
+                  {ELEVEN_VOICES
+                    .filter(v =>
+                      !profile.voiceGender ||
+                      v.gender === profile.voiceGender ||
+                      v.gender === "neutral"
+                    )
+                    .filter(v => !profile.voiceAge || v.age === profile.voiceAge)
+                    .map(v => (
+                      <SelectItem key={v.id} value={v.id}>
+                        {v.name} — {v.desc}
+                      </SelectItem>
+                    ))
+                  }
+                </SelectContent>
+              </Select>
+              {profile.voiceId && (
+                <p className="text-[10px] text-muted-foreground pl-1 font-mono">
+                  ID: <span className="text-amber-400/80">{profile.voiceId}</span>
+                </p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">
+                Voice Description
+                <span className="ml-1.5 text-muted-foreground/50 font-normal">used when no ElevenLabs key</span>
+              </Label>
+              <Input
+                placeholder="e.g. Deep baritone, slight Southern drawl, measured and deliberate"
+                value={profile.voiceDescription || ""}
+                onChange={e => set("voiceDescription", e.target.value)}
+                className="h-9 text-sm bg-background/50"
+              />
+            </div>
+            <p className="text-[10px] text-amber-300/70 leading-relaxed">
+              🎬 Voice drives TTS audio generation and lip-sync animation. Requires ElevenLabs key in Account Settings for premium voices.
+            </p>
+          </div>
+          <div className="p-3 bg-muted/30 rounded-lg border border-border/50">
           <p className="text-xs text-muted-foreground leading-relaxed">
             <strong className="text-foreground">AI Script Note:</strong> Speech pattern and mannerisms are injected into the AI script generator to ensure {characterName || "this character"} speaks and behaves consistently across all scenes.
           </p>
