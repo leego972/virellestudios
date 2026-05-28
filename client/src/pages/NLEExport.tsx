@@ -9,6 +9,7 @@ import { ArrowLeft, Download, FileCode, FileText, Film, Table, Loader2, CheckCir
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 // Map old format keys to new backend format values
 const FORMAT_MAP: Record<string, "fcpxml" | "edl" | "csv" | "premiere_xml" | "resolve_xml"> = {
@@ -291,6 +292,7 @@ export default function NLEExport() {
           </Card>
         )}
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
   );
 }
