@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
   import { Button } from "@/components/ui/button";
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
   import { Badge } from "@/components/ui/badge";
@@ -209,7 +210,7 @@ import { useState } from "react";
     );
   }
 
-  export default function MultiShotSequencer() {
+  function MultiShotSequencerInner() {
     const [, navigate] = useLocation();
     const params = useParams<{ projectId: string; sceneId: string }>();
     const projectId = parseInt(params.projectId || "0");
@@ -619,4 +620,15 @@ import { useState } from "react";
       </div>
     );
   }
-  
+
+export default function MultiShotSequencer() {
+  return (
+    <SubscriptionGate
+      feature="Multi-Shot Sequencer"
+      featureKey="canUseMultiShotSequencer"
+      requiredTier="independent"
+    >
+      <MultiShotSequencerInner />
+    </SubscriptionGate>
+  );
+}
