@@ -165,3 +165,140 @@
   - **`creationProcedure` vs `protectedProcedure`**: Any mutation that consumes a plan resource (generation, feature) must use `creationProcedure` so expired subscriptions are blocked at the middleware level.
   - **Client gates are UX, not security.** `SubscriptionGate` on the client prevents confusing UX for lower-tier users. The API layer is the authoritative enforcement point.
   
+
+  ---
+
+  ## Pass 5 — Comprehensive Server Tier Enforcement + Client Gate Coverage + Build Fix (2025-05-28)
+
+  ### Overview
+  Full codebase sweep after Pass 4. Scanned every AI mutation in `server/routers.ts` for missing `requireFeature`
+  calls, audited all 120+ client pages for missing `SubscriptionGate`, verified all 8 filmmaker journey stage
+  routes, and fixed two broken TypeScript imports introduced by Pass 2's NextStageCTA injection.
+
+  ---
+
+  ### TIER-05 — createDemoShort: protectedProcedure → creationProcedure + requireFeature ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** High  
+  **Description:** `createDemoShort` automatically fires video generation for all 5 scenes. It used `protectedProcedure`
+  (login-only) and lacked `requireFeature(canUseQuickGenerate)`. Any logged-in user — including expired testers
+  and `none`-tier accounts — could trigger a full video generation pipeline.  
+  **Fix:** Changed to `creationProcedure` + added `requireFeature(ctx.user, "canUseQuickGenerate", "Demo Short")`.
+
+  ---
+
+  ### TIER-06 — generateNanoBananaImage: protectedProcedure → creationProcedure ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** Medium  
+  **Description:** BYOK (bring-your-own-key) Gemini image generation used `protectedProcedure`. Even with a user's
+  own API key, generation should require an active subscription to prevent abuse of platform infrastructure
+  (rate limiting, credit tracking, quota enforcement).  
+  **Fix:** Changed to `creationProcedure`.
+
+  ---
+
+  ### TIER-07 — inferEmotion (dialogue): missing requireFeature(canUseAIDialogueGen) ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** Medium  
+  **Description:** `dialogue.inferEmotion` called AI to infer character emotion from dialogue context. No feature flag
+  check — available to `none`-tier users who have no AI dialogue access.  
+  **Fix:** Added `requireFeature(ctx.user, "canUseAIDialogueGen", "AI Dialogue")` after `rateLimitAI`.
+
+  ---
+
+  ### TIER-08 — directorChat voice mutations (3): protectedProcedure → creationProcedure + requireFeature ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** High  
+  **Description:** Three director-chat AI voice mutations — `transcribeVoice`, `voiceEditText`, `speakResponse` —
+  all used `protectedProcedure` with no `requireFeature` check. Director Assistant is an Indie+ feature
+  (`canUseDirectorAssistant: false` on `none` tier). Credits-only gating is insufficient.  
+  **Fix:** Changed all three to `creationProcedure` + added `requireFeature(ctx.user, "canUseDirectorAssistant", "Director Assistant")`.
+
+  ---
+
+  ### TIER-09 — generatePromoAssets: protectedProcedure → creationProcedure + requireFeature ✅ FIXED
+  **File:** `server/routers.ts`  
+  **Severity:** High  
+  **Description:** `distribute.generatePromoAssets` generates AI promotional content (posters, social cuts, press
+  materials). Used `protectedProcedure` with no feature flag — accessible to all authenticated users.
+  Promo asset generation is an Industry-tier capability (`canUseFullFilmGeneration`).  
+  **Fix:** Changed to `creationProcedure` + added `requireFeature(ctx.user, "canUseFullFilmGeneration", "Promo Asset Generation")`.
+
+  ---
+
+  ### CLIENT-TIER-04 through CLIENT-TIER-15 — 12 Feature Pages Without SubscriptionGate ✅ FIXED
+  **Files:** see table below  
+  **Severity:** Medium (UX — server layer is authoritative; client gates prevent confusing UI)
+
+  | ID | Page | Feature Flag | Required Tier |
+  |---|---|---|---|
+  | CLIENT-TIER-04 | `LiveActionPlate.tsx` | `canUseLiveActionPlate` | Industry |
+  | CLIENT-TIER-05 | `NLEExport.tsx` | `canUseNLEExport` | Industry |
+  | CLIENT-TIER-06 | `AICasting.tsx` | `canUseAICasting` | Industry |
+  | CLIENT-TIER-07 | `TrailerStudio.tsx` | `canUseTrailerGeneration` | Industry |
+  | CLIENT-TIER-08 | `AdPosterMaker.tsx` | `canUseAdPosterMaker` | Industry |
+  | CLIENT-TIER-09 | `MultiShotSequencer.tsx` | `canUseMultiShotSequencer` | Industry |
+  | CLIENT-TIER-10 | `ColorGrading.tsx` | `canUseColorGrading` | Creator |
+  | CLIENT-TIER-11 | `Subtitles.tsx` | `canUseSubtitles` | Creator |
+  | CLIENT-TIER-12 | `Storyboard.tsx` | `canUseStoryboard` | Creator |
+  | CLIENT-TIER-13 | `ContinuityCheck.tsx` | `canUseContinuityCheck` | Creator |
+  | CLIENT-TIER-14 | `MusicScore.tsx` | `canUseAISoundtrack` | Industry |
+  | CLIENT-TIER-15 | `CrowdfundingHub.tsx` | `canUseCrowdfunding` | Indie |
+
+  All 12 wrapped using the existing `SubscriptionGate` component pattern (rename inner function, append wrapper export).
+
+  ---
+
+  ### JOURNEY-01 — 8-Stage Filmmaker Journey: All Routes Verified ✅ NO ACTION NEEDED
+  **File:** `client/src/components/ProjectJourneyNav.tsx`, `client/src/App.tsx`  
+  **Description:** Verified all 8 STAGES entries have matching routes and lazy-loaded page imports in `App.tsx`:
+  1. Idea & Pitch → `/pitch-lab` ✅
+  2. Casting Studio → `/casting-board` ✅
+  3. Writer's Room → `/script` ✅
+  4. Production Office → `/production-office` ✅
+  5. Funding Office → `/crowdfunding` ✅
+  6. Soundstage → `/multi-shot` ✅
+  7. Cutting Room → `/cutting-room` ✅
+  8. Release & Promote → `/press-kit` ✅
+
+  ---
+
+  ### BUILD-01 — CRITICAL: Broken TypeScript Imports in TrailerStudio + SceneEditor ✅ FIXED
+  **Files:** `client/src/pages/TrailerStudio.tsx`, `client/src/pages/SceneEditor.tsx`  
+  **Severity:** CRITICAL (broke CI/Railway build)  
+  **Description:** The Pass 2 import injection algorithm used `src.lastIndexOf('\nimport ')` + `src.indexOf('\n', pos+1)`
+  to find the insertion point. When the last `import` found was the START of a multi-line `import { ... }` block,
+  the algorithm inserted the new import statement on the NEXT LINE — inside the multi-line block — producing invalid TypeScript:
+  ```typescript
+  // BROKEN (TrailerStudio.tsx lines 11-14):
+  import {
+  import { NextStageCTA } from "@/components/NextStageCTA";   // ← inside block!
+  import { SubscriptionGate } from "@/components/SubscriptionGate";  // ← inside block!
+    ArrowLeft, Sparkles, Film, ...
+  } from "lucide-react";
+  ```
+  **Root cause:** Multi-line import blocks — `import {\n  A,\n  B,\n} from "module";` — were not handled by the
+  import-insertion algorithm.  
+  **Fix:** Stripped the misplaced imports and re-inserted them immediately after the closing `} from "lucide-react";`
+  (TrailerStudio) and `} from "@shared/types";` (SceneEditor). CI TypeScript check now passes.
+
+  ---
+
+  ## Final Summary — All 5 Passes
+
+  | Pass | Scope | Issues Found | Fixed |
+  |------|-------|-------------|-------|
+  | 1 | Core bugs (types, hardcoded signals) | 4 | 4 ✅ |
+  | 2 | Missing NextStageCTA on 14 sub-tool pages | 14 | 14 ✅ |
+  | 3 | Character consistency pipeline | 2 | 2 ✅ |
+  | 4 | Security + tier enforcement (first sweep) | 10 | 10 ✅ |
+  | 5 | Full sweep: 7 server mutations + 12 client pages + 2 build errors | 21 | 21 ✅ |
+  | **Total** | | **51** | **51 ✅** |
+
+  ### Key Architecture Rules (post-audit)
+  1. **Feature flags are authoritative.** `requireFeature()` must be called for every tier-gated mutation regardless of credit deduction.
+  2. **Credit deduction is metered usage, not tier enforcement.** Bonus credits bypass tier gates.
+  3. **`creationProcedure` over `protectedProcedure`** for any mutation that consumes a plan resource.
+  4. **Client gates are UX.** `SubscriptionGate` improves UX; the API layer is authoritative.
+  5. **Multi-line imports must be detected** before any import injection. Use a full-parse approach, not `lastIndexOf('\nimport ')`.
+  
