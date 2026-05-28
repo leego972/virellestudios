@@ -793,11 +793,11 @@ export default function ProjectDetail() {
               sceneCount: scenes?.length ?? 0,
               hasScript: !!(project as any)?.scriptText && ((project as any).scriptText as string).trim().length > 0,
               hasBudget: !!(project as any)?.budget && Number((project as any).budget) > 0,
-              hasFundingApplication: false,
+              hasFundingApplication: (scenes ?? []).length >= 1,
               hasShotsGenerated: (scenes ?? []).some((s: any) => s.videoUrl || s.thumbnailUrl),
               hasLockedShots: (scenes ?? []).some((s: any) => s.status === "locked" || s.status === "approved"),
               hasExport: project?.status === "completed" || !!(project as any)?.exportedAt,
-              hasCampaign: false,
+              hasCampaign: project?.status === "completed" || !!(project as any)?.exportedAt || !!(project as any)?.trailerUrl,
             }}
           />
         </TabsContent>
