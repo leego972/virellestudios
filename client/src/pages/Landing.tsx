@@ -68,7 +68,7 @@ function CinematicBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-40"
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-60"
     />
   );
 }
@@ -85,7 +85,7 @@ function GoldWatermark() {
         alt=""
         className="w-[380px] h-[380px] sm:w-[520px] sm:h-[520px] lg:w-[660px] lg:h-[660px] object-contain"
         style={{
-          opacity: 0.06,
+          opacity: 0.10,
           filter: "sepia(1) saturate(4) brightness(1.4) hue-rotate(5deg)",
         }}
         draggable={false}
@@ -108,7 +108,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-amber-500/30 relative">
+    <div className="min-h-screen text-white selection:bg-amber-500/30 relative" style={{ background: 'linear-gradient(160deg, #100c00 0%, #0a0700 40%, #000000 100%)' }}>
       <SiteHead
         title="The unified AI film production studio"
         description="Virelle Studios — script to screen in one platform. AI casting, scenes, scoring, VFX, distribution, and grant funding for indie filmmakers and major studios."
@@ -184,10 +184,10 @@ export default function Landing() {
 
       <main>
         {/* ─── 1. Hero Section ─── */}
-        <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-black">
+        <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
           <CinematicBackground />
           {/* Subtle radial glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(212,175,55,0.06)_0%,transparent_70%)] pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 90% 75% at 50% 35%, rgba(212,175,55,0.22) 0%, rgba(180,140,20,0.08) 45%, transparent 75%)' }} />
           <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black pointer-events-none" />
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
