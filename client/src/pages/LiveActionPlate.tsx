@@ -15,6 +15,7 @@ import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { LIVE_ACTION_COMPOSITE_OPTIONS, LIVE_ACTION_COMPOSITE_LABELS } from "@shared/types";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 const COMPOSITE_ICONS: Record<string, React.ReactNode> = {
   "none": <Film className="w-5 h-5" />,
@@ -27,7 +28,7 @@ const COMPOSITE_ICONS: Record<string, React.ReactNode> = {
   "environment-extension": <Maximize2 className="w-5 h-5" />,
 };
 
-export default function LiveActionPlate() {
+function LiveActionPlateInner() {
   const [, navigate] = useLocation();
   const params = useParams<{ projectId: string; sceneId: string }>();
   const projectId = parseInt(params.projectId || "0");
@@ -290,5 +291,17 @@ export default function LiveActionPlate() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LiveActionPlate() {
+  return (
+    <SubscriptionGate
+      feature="Live Action Plate"
+      featureKey="canUseLiveActionPlate"
+      requiredTier="independent"
+    >
+      <LiveActionPlateInner />
+    </SubscriptionGate>
   );
 }
