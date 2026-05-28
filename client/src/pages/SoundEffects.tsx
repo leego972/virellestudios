@@ -63,6 +63,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLocation, useParams } from "wouter";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 const ADR_STATUS_ICONS: Record<string, React.ReactNode> = {
   pending: <AlertCircle className="h-3.5 w-3.5 text-yellow-500" />,
@@ -243,7 +244,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   Custom: <Upload className="h-3.5 w-3.5" />,
 };
 
-export default function SoundEffects() {
+function SoundEffectsInner() {
   const { user, loading: authLoading } = useAuth();
   const params = useParams<{ id: string }>();
   const projectId = Number(params.id);
@@ -1618,5 +1619,17 @@ export default function SoundEffects() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function SoundEffects() {
+  return (
+    <SubscriptionGate
+      feature="Sound Effects"
+      featureKey="canUseSoundEffects"
+      requiredTier="independent"
+    >
+      <SoundEffectsInner />
+    </SubscriptionGate>
   );
 }
