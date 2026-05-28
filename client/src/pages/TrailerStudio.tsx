@@ -9,13 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
-import { NextStageCTA } from "@/components/NextStageCTA";
-import { SubscriptionGate } from "@/components/SubscriptionGate";
   ArrowLeft, Sparkles, Film, Play, Pause, Plus, Trash2, GripVertical,
   Type, Music, Volume2, Clock, Clapperboard, Wand2, ChevronDown, ChevronUp,
   Eye, Download, Layers, Zap, Settings2, RotateCcw, Copy, MoveUp, MoveDown,
   Image as ImageIcon, Video, Megaphone, Star, Target, Palette
 } from "lucide-react";
+import { NextStageCTA } from "@/components/NextStageCTA";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 // ─── Trailer Types ───
 const TRAILER_TYPES = [
