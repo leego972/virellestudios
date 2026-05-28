@@ -1590,6 +1590,12 @@ export default function SceneEditor() {
                       </Select>
                     </div>
                   </div>
+                    {form.lipSyncMode && form.lipSyncMode !== "none" && (
+                      <div className="col-span-3 flex items-start gap-2 mt-1 p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/20 text-xs text-amber-300/80">
+                        <span className="shrink-0">🎙</span>
+                        <span>Lip sync uses each character&apos;s assigned ElevenLabs voice — set in <strong className="text-amber-300">Characters → Speech → AI Voice</strong>. Missing voices are auto-assigned.</span>
+                      </div>
+                    )}
                 </div>
               </CollapsibleContent>
             </Collapsible>
