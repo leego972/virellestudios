@@ -1177,7 +1177,7 @@ export async function processDirectorMessage(
         role: "assistant",
         content: assistantMessage.content || "",
         tool_calls: assistantMessage.tool_calls,
-      } as any);
+      });
 
       for (const toolCall of assistantMessage.tool_calls) {
         const args = JSON.parse(toolCall.function.arguments);
