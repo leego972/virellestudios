@@ -36,6 +36,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 // ─── Screenplay element types ─────────────────────────────────────────────────
 
@@ -1266,6 +1267,7 @@ export default function ScriptWriter() {
           </div>
         </div>
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
     </div>
   );
 }
