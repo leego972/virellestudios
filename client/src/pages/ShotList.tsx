@@ -9,6 +9,7 @@ import { Loader2, ArrowLeft, ListOrdered, Printer, Sparkles, Download } from "lu
 import { useState } from "react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 type Shot = {
   shotNumber: string;
@@ -190,6 +191,7 @@ export default function ShotList() {
           </Card>
         )}
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={4} />}
     </div>
   );
 }
