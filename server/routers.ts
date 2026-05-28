@@ -2674,7 +2674,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           try {
             await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: result.url });
           } catch (e) {
-            logger.warn({ err: e }, '[Preview] Failed to auto-set project thumbnail');
+            logger.warn('[Preview] Failed to auto-set project thumbnail: ' + String(e));
           }
         }
 
@@ -2724,7 +2724,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 await db.updateProject(proj.id, ctx.user.id, { thumbnailUrl: result.url });
               }
             } catch (e) {
-              logger.warn({ err: e }, '[NanoBanana] Failed to auto-set project thumbnail');
+              logger.warn('[NanoBanana] Failed to auto-set project thumbnail: ' + String(e));
             }
           }
         }
@@ -2843,7 +2843,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: result.url });
                   (project as any).thumbnailUrl = result.url; // prevent re-setting
                 } catch (e) {
-                  logger.warn({ err: e }, '[BulkPreview] Failed to auto-set project thumbnail');
+                  logger.warn('[BulkPreview] Failed to auto-set project thumbnail: ' + String(e));
                 }
               }
               generated++;
