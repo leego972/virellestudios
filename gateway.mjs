@@ -9,7 +9,16 @@
 
   const gw = http.createServer((cReq, cRes) => {
     // Diagnostic: expose the Express app crash log
-    if (cReq.url === '/debug-app-log') {
+    if (cReq.url?.startsWith('/debug-app-log')) {
+      // SEC-01: Require secret token — prevents unauthenticated log access (PII)
+      const _u = new URL(cReq.url, 'http://localhost');
+      const _tok = _u.searchParams.get('token');
+      const _sec = process.env.SESSION_SECRET || process.env.DEBUG_LOG_SECRET;
+      if (!_sec || _tok !== _sec) {
+        cRes.writeHead(403, { 'Content-Type': 'application/json' });
+        cRes.end(JSON.stringify({ error: 'Forbidden' }));
+        return;
+      }
       try {
         const log = fs.readFileSync(LOG_FILE, 'utf8');
         cRes.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
