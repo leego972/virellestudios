@@ -11,6 +11,7 @@ import { useState, useEffect, useRef } from "react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { NextStageCTA } from "@/components/NextStageCTA";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 const COLOR_PRESETS = [
   { name: "natural", label: "Natural", desc: "True-to-life colors", gradient: "from-green-400 to-blue-400", settings: { temperature: 50, tint: 50, contrast: 50, saturation: 50, highlights: 50, shadows: 50, vibrance: 50, clarity: 50 } },
@@ -38,7 +39,7 @@ type Settings = {
   clarity: number;
 };
 
-export default function ColorGrading() {
+function ColorGradingInner() {
   const { user, loading: authLoading } = useAuth();
   const params = useParams<{ projectId: string }>();
   const [, navigate] = useLocation();
@@ -244,5 +245,17 @@ export default function ColorGrading() {
       </div>
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
+  );
+}
+
+export default function ColorGrading() {
+  return (
+    <SubscriptionGate
+      feature="Color Grading"
+      featureKey="canUseColorGrading"
+      requiredTier="amateur"
+    >
+      <ColorGradingInner />
+    </SubscriptionGate>
   );
 }
