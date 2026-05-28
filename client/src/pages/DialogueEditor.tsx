@@ -620,7 +620,6 @@ function EditDialogueLine({ dialogue, onSave, onCancel }: {
         <Button variant="ghost" size="sm" onClick={onCancel}>Cancel</Button>
         <Button size="sm" onClick={() => onSave({ characterName: charName, line: lineText, emotion: emo, direction: dir || undefined })}>Save</Button>
       </div>
-      {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
     </div>
   );
 }
