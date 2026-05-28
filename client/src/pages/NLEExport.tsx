@@ -10,6 +10,7 @@ import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { NextStageCTA } from "@/components/NextStageCTA";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 // Map old format keys to new backend format values
 const FORMAT_MAP: Record<string, "fcpxml" | "edl" | "csv" | "premiere_xml" | "resolve_xml"> = {
@@ -58,7 +59,7 @@ const FORMAT_DESCRIPTIONS: Record<string, string> = {
   "pdf-production-report": "Comprehensive production report PDF including script breakdown, shot list, budget estimate, and character notes.",
 };
 
-export default function NLEExport() {
+function NLEExportInner() {
   const [, navigate] = useLocation();
   const params = useParams<{ projectId: string }>();
   const projectId = parseInt(params.projectId || "0");
@@ -294,5 +295,17 @@ export default function NLEExport() {
       </div>
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
+  );
+}
+
+export default function NLEExport() {
+  return (
+    <SubscriptionGate
+      feature="NLE Export"
+      featureKey="canUseNLEExport"
+      requiredTier="independent"
+    >
+      <NLEExportInner />
+    </SubscriptionGate>
   );
 }
