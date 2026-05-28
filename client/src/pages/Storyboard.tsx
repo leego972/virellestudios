@@ -10,6 +10,7 @@ import { Loader2, ArrowLeft, Grid3X3, List, Printer, Clock, MapPin, Camera, Sun,
 import { useState, useMemo } from "react";
 import MediaPlayer from "@/components/MediaPlayer";
 import { getLoginUrl } from "@/const";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 const TRANSITION_LABELS: Record<string, string> = {
   cut: "CUT", fade: "FADE", dissolve: "DISSOLVE", wipe: "WIPE",
@@ -349,6 +350,7 @@ export default function Storyboard() {
           .hover\\:ring-1 { box-shadow: none !important; }
         }
       `}</style>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
     </div>
   );
 }
