@@ -15,6 +15,7 @@ import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { VFX_SUITE_OPTIONS, VFX_SUITE_LABELS } from "@shared/types";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
 
 const VFX_ICONS: Record<string, React.ReactNode> = {
   "none": <X className="w-4 h-4" />,
@@ -41,7 +42,7 @@ const VFX_CATEGORIES: Record<string, string[]> = {
   "Cinematic Effects": ["motion-blur-add", "lens-flare-add", "film-grain-add", "depth-of-field-post", "vignette-add"],
 };
 
-export default function VFXSuite() {
+function VFXSuiteInner() {
   const [, navigate] = useLocation();
   const params = useParams<{ projectId: string; sceneId: string }>();
   const projectId = parseInt(params.projectId || "0");
@@ -305,5 +306,17 @@ export default function VFXSuite() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VFXSuite() {
+  return (
+    <SubscriptionGate
+      feature="Visual Effects Suite"
+      featureKey="canUseVisualEffects"
+      requiredTier="independent"
+    >
+      <VFXSuiteInner />
+    </SubscriptionGate>
   );
 }
