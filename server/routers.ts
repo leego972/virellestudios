@@ -805,9 +805,10 @@ export const appRouter = router({
 
 
       // One-button demo short: creates project + 5 scenes + fires video generation automatically
-      createDemoShort: protectedProcedure
+      createDemoShort: creationProcedure
         .mutation(async ({ ctx }) => {
           await rateLimitHeavyAI(ctx.user.id);
+          requireFeature(ctx.user, "canUseQuickGenerate", "Demo Short");
           requireGenerationQuota(ctx.user);
           const projectCount = await db.getUserProjectCount(ctx.user.id);
           requireResourceQuota(ctx.user, "maxProjects", projectCount, "projects");
@@ -2681,7 +2682,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
       }),
 
     // Generate image using Nano Banana (Google Gemini native image generation)
-    generateNanoBananaImage: protectedProcedure
+    generateNanoBananaImage: creationProcedure
       .input(z.object({
         prompt: z.string().min(1).max(2000),
         model: z.enum(["nano-banana-2", "nano-banana-pro"]).optional(),
@@ -6645,6 +6646,7 @@ Generate the full dialogue for this scene.`,
       }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseAIDialogueGen", "AI Dialogue");
         const scene = input.sceneId ? await db.getSceneById(input.sceneId) : null;
         const project = await db.getProjectById(input.projectId, 0).catch(() => null);
         const characters = await db.getProjectCharacters(input.projectId).catch(() => []);
@@ -8990,7 +8992,7 @@ Generate a detailed production budget estimate.`,
         return { success: true };
       }),
 
-    transcribeVoice: protectedProcedure
+    transcribeVoice: creationProcedure
       .input(z.object({
         projectId: z.number(),
         audioData: z.string().max(70_000_000, "File too large. Max 50MB."), // base64 encoded audio
@@ -8998,6 +9000,7 @@ Generate a detailed production budget estimate.`,
       }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseDirectorAssistant", "Director Assistant");
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_transcription", `Voice transcription`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // Upload audio to S3 first
         const buffer = Buffer.from(input.audioData, "base64");
@@ -9027,13 +9030,14 @@ Generate a detailed production budget estimate.`,
         };
       }),
 
-    voiceEditText: protectedProcedure
+    voiceEditText: creationProcedure
       .input(z.object({
         currentText: z.string().min(1).max(10000),
         editCommand: z.string().min(1).max(2000),
       }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseDirectorAssistant", "Director Assistant");
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_edit_text", `Voice edit text`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         const response = await invokeLLM({
           messages: [
@@ -9115,12 +9119,13 @@ Rules:
       }),
 
     // ─── AI Voice Response (ElevenLabs → OpenAI TTS fallback) ───
-    speakResponse: protectedProcedure
+    speakResponse: creationProcedure
       .input(z.object({
         text: z.string().min(1).max(5000),
       }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseDirectorAssistant", "Director Assistant");
         // Deduct 1 credit for AI voice synthesis (same cost as a chat message)
         try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.virelle_chat.cost, "voice_speak", `AI voice synthesis: ${input.text.substring(0, 40)}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
         // Get user's ElevenLabs API key
@@ -11019,10 +11024,11 @@ Rules:
         };
       }),
       
-    generatePromoAssets: protectedProcedure
+    generatePromoAssets: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
+        requireFeature(ctx.user, "canUseFullFilmGeneration", "Promo Asset Generation");
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         
