@@ -66,6 +66,11 @@ export type Message = {
   content: MessageContent | MessageContent[];
   name?: string;
   tool_call_id?: string;
+  tool_calls?: Array<{
+    id: string;
+    type: "function";
+    function: { name: string; arguments: string };
+  }>;
 };
 
 export type Tool = {
