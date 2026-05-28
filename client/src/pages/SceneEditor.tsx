@@ -73,7 +73,6 @@ import { useLocation, useParams } from "wouter";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import {
-import { NextStageCTA } from "@/components/NextStageCTA";
   TIME_OF_DAY_OPTIONS, TIME_OF_DAY_LABELS,
   WEATHER_OPTIONS, WEATHER_LABELS,
   LIGHTING_OPTIONS, LIGHTING_LABELS,
@@ -112,6 +111,7 @@ import { NextStageCTA } from "@/components/NextStageCTA";
   SPEED_RAMP_OPTIONS, SPEED_RAMP_LABELS,
   LIP_SYNC_OPTIONS, LIP_SYNC_LABELS,
 } from "@shared/types";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 type ExtraEntry = {
   description: string;
