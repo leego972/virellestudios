@@ -8,6 +8,7 @@ import { Loader2, ArrowLeft, ShieldCheck, AlertTriangle, AlertCircle, Info, Spar
 import { useState } from "react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 type Issue = {
   severity: string;
@@ -210,6 +211,7 @@ export default function ContinuityCheck() {
           </>
         )}
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={6} />}
     </div>
   );
 }
