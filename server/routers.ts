@@ -1252,7 +1252,7 @@ export const appRouter = router({
       }),
 
     // AI Character Generator — create photorealistic portrait from feature selections
-    aiGenerate: protectedProcedure
+    aiGenerate: creationProcedure
       .input(z.object({
         name: z.string().min(1).max(128),
         projectId: z.number().nullable().optional(),
