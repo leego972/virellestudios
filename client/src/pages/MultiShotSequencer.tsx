@@ -24,6 +24,7 @@ import {
   APERTURE_OPTIONS, APERTURE_LABELS,
 } from "@shared/types";
 import { trpc } from "@/lib/trpc";
+import { NextStageCTA } from "@/components/NextStageCTA";
 
 type ShotData = {
   id: string;
@@ -434,6 +435,7 @@ export default function MultiShotSequencer() {
           </ScrollArea>
         </div>
       </div>
+      {!!projectId && <NextStageCTA projectId={projectId} currentStage={6} />}
     </div>
   );
 }
