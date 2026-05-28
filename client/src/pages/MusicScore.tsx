@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SubscriptionGate } from "@/components/SubscriptionGate";
   import { useParams, useLocation } from "wouter";
   import { ArrowLeft, Music, Plus, Play, Pause, Trash2, Wand2, Download, ExternalLink, Clock, Tag, Loader2, CheckCircle } from "lucide-react";
   import { Button } from "@/components/ui/button";
@@ -48,7 +49,7 @@ import { useState } from "react";
     { name: "MOJO (Musicbed)", description: "One-time licence for theatrical release, festival, and broadcast.", url: "https://www.musicbed.com/mojo", priceRange: "Custom quote", bestFor: "Theatrical / Festival" },
   ];
 
-  export default function MusicScore() {
+  function MusicScoreInner() {
     const params = useParams<{ id: string }>();
     const projectId = params.id;
     const [, setLocation] = useLocation();
@@ -219,4 +220,15 @@ import { useState } from "react";
       </div>
     );
   }
-  
+
+export default function MusicScore() {
+  return (
+    <SubscriptionGate
+      feature="Music Score"
+      featureKey="canUseAISoundtrack"
+      requiredTier="independent"
+    >
+      <MusicScoreInner />
+    </SubscriptionGate>
+  );
+}
