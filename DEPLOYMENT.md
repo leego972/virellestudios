@@ -231,3 +231,89 @@ Full step-by-step rollback playbook lives in
 - **Billing:** Stripe (subscriptions + one-shot credit packs)
 - **AI providers:** Pollinations (video), OpenRouter (script),
   ElevenLabs (voice), Vast.ai (GPU rendering)
+
+---
+
+## TitanAI inference server
+
+TitanAI is a custom-trained 1B-parameter model hosted at
+**`leego972/titanai`** on GitHub. The inference server is a FastAPI +
+llama-cpp-python container that downloads the GGUF model from the
+GitHub Release on first boot and caches it locally.
+
+### Deploy the TitanAI server on Railway
+
+**One-time setup (you only do this once):**
+
+1. Go to [railway.app](https://railway.app) → your existing project →
+   **New Service** → **GitHub Repo** → pick **`leego972/titanai`**.
+2. Railway will auto-detect `railway.json` and build `server/Dockerfile`.
+3. Under the new service → **Variables**, add:
+
+   | Variable | Value |
+   |---|---|
+   | `TITAN_API_KEY` | Any strong secret, e.g. `openssl rand -hex 24` |
+   | `N_THREADS` | `4` (increase if instance has more vCPUs) |
+
+4. Railway will assign a public URL, e.g.
+   `https://titanai-production.up.railway.app`.
+   Copy it.
+
+> **First-boot note:** the server downloads the 1.27 GB GGUF from the
+> GitHub Release on startup (~3–5 min on Railway's network). Subsequent
+> restarts are instant because the file is cached at `/app/models/`.
+> Mount `/app/models` as a Railway Volume to persist it across redeploys.
+
+**Auto-deploy on push:** the `.github/workflows/deploy.yml` in
+`leego972/titanai` will auto-deploy on every `main` push once you add
+`RAILWAY_TOKEN` as a GitHub secret in that repo (Settings → Secrets →
+Actions → New secret `RAILWAY_TOKEN`).
+
+---
+
+### Wire the TitanAI URL into this app (virellestudios)
+
+In Railway → **virellestudios** service → **Variables**, set all three:
+
+| Variable | Value |
+|---|---|
+| `TITAN_API_URL` | `https://titanai-production.up.railway.app` (your Railway URL) |
+| `TITAN_API_KEY` | Same secret you set on the TitanAI service above |
+| `VITE_TITAN_API_KEY` | Same secret (needed at build-time for the browser client) |
+| `VITE_TITAN_API_URL` | Same URL (needed at build-time for the browser client) |
+
+Railway will auto-redeploy virellestudios on variable save.
+
+---
+
+### How the integration works
+
+- **Server-side (`server/_core/llm.ts`):** any call to `invokeLLM()`
+  with `model: "titan-1b"` (or any `"titan-*"` model) is routed to
+  `TITAN_API_URL/v1/chat/completions` (OpenAI-compatible). Falls back to
+  Venice/OpenAI automatically if the TitanAI server is unreachable.
+- **Client-side (`client/src/lib/titan.ts`):** `titanChat()`,
+  `titanStatus()`, and `titanPersona()` call
+  `VITE_TITAN_API_URL/titan/chat`, `/titan/status`, `/titan/persona`
+  directly from the browser. Used by `DirectorChat.tsx`.
+
+No code changes are required in virellestudios — the integration is
+already wired. Only the env vars above need to be set.
+
+---
+
+### Verify the connection
+
+```bash
+# Health check
+curl https://titanai-production.up.railway.app/healthz
+
+# Status (should show "ready" once model is loaded)
+curl https://titanai-production.up.railway.app/titan/status
+
+# Quick chat test
+curl -X POST https://titanai-production.up.railway.app/titan/chat \
+  -H "Authorization: Bearer <TITAN_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{"messages":[{"role":"user","content":"Hello, who are you?"}]}'
+```
