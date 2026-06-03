@@ -2,7 +2,7 @@
  * S3 Upload helper for video files.
  * Uses the existing storagePut from server/storage.ts
  */
-import { storagePut } from "server/storage";
+import { storagePut } from "../storage";
 
 export async function uploadBufferToS3(
   buffer: Buffer,
