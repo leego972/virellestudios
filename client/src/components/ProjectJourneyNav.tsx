@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import ProjectToolHub from "./ProjectToolHub";
 import {
   Lightbulb,
   Users,
@@ -115,13 +116,13 @@ const STAGES: Stage[] = [
   {
     key: "post",
     number: 7,
-    title: "Cutting Room",
-    blurb: "Edit, color, sound, captions, master export",
+    title: "Post-Production",
+    blurb: "Edit, VFX, color, sound, captions, credits, and master export",
     icon: Scissors,
     hrefFor: (id) => `/projects/${id}/cutting-room`,
     isDone: (s) => s.hasExport,
-    ctaLabel: "Cut your film",
-    surfaces: ["Director Cut", "Color Grading", "NLE Export", "Sound Effects"],
+    ctaLabel: "Open Post-Production",
+    surfaces: ["Cutting Room", "VFX", "Color", "Sound", "Export"],
   },
   {
     key: "release",
@@ -260,6 +261,8 @@ export function ProjectJourneyNav({
           );
         })}
       </div>
+
+      <ProjectToolHub projectId={projectId} />
     </div>
   );
 }
