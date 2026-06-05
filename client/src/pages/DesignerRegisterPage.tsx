@@ -1,14 +1,3 @@
-/**
- * DesignerRegisterPage.tsx — v7.0
- *
- * Step-by-step wizard to join the Virelle Studios wardrobe marketplace as a designer.
- *
- * Steps:
- *  1 — Brand info (name, type, bio)
- *  2 — Membership payment (A$150/year Founding Partner price via Stripe Checkout redirect)
- *  3 — Stripe Connect onboarding (to receive payouts from leases)
- *  4 — Done + CTA to Designer Studio
- */
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -36,6 +25,7 @@ import {
 import { toast } from "sonner";
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png";
+const DESIGNER_MEMBERSHIP_PRICE = "A$300/year";
 
 const STEPS = [
   { id: 1, label: "Brand Profile" },
@@ -80,7 +70,6 @@ export default function DesignerRegisterPage() {
   const [bio, setBio] = useState("");
 
   const subscribeMutation = trpc.wardrobeMarket.designer.subscribeMembership.useMutation();
-  const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
   const activateMutation = trpc.wardrobeMarket.designer.activateMembership.useMutation();
   const onboardMutation = trpc.wardrobeMarket.designer.onboardConnect.useMutation();
   const updateBrandMutation = trpc.wardrobeMarket.designer.updateBrandProfile.useMutation();
@@ -88,10 +77,8 @@ export default function DesignerRegisterPage() {
   const { data: connectData } = trpc.wardrobeMarket.designer.getConnectStatus.useQuery();
 
   const BRAND_STORAGE_KEY = "virelle_designer_brand_draft";
-
   const returnUrl = `${window.location.origin}/designer-register`;
 
-  // Handle return from Stripe Checkout
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const checkoutStatus = params.get("checkout");
@@ -103,7 +90,6 @@ export default function DesignerRegisterPage() {
         { sessionId },
         {
           onSuccess: () => {
-            // Restore brand info saved before the Stripe redirect and persist it
             try {
               const saved = localStorage.getItem(BRAND_STORAGE_KEY);
               if (saved) {
@@ -119,9 +105,9 @@ export default function DesignerRegisterPage() {
                 localStorage.removeItem(BRAND_STORAGE_KEY);
               }
             } catch {
-              // ignore storage errors
+              // Ignore storage errors.
             }
-            toast.success("Designer membership activated!");
+            toast.success("Designer membership activated.");
             window.history.replaceState({}, "", "/designer-register");
             setStep(3);
             setLoading(false);
@@ -133,12 +119,11 @@ export default function DesignerRegisterPage() {
         },
       );
     } else if (checkoutStatus === "cancelled") {
-      toast.info("Checkout cancelled — you can try again whenever you're ready.");
+      toast.info("Checkout cancelled — no charge was made.");
       window.history.replaceState({}, "", "/designer-register");
     }
   }, []);
 
-  // If already has active membership, skip to step 3 or 4
   useEffect(() => {
     if (!membershipData) return;
     if (membershipData.status === "active") {
@@ -150,7 +135,6 @@ export default function DesignerRegisterPage() {
     }
   }, [membershipData, connectData]);
 
-  // Step 1 → save brand info locally + move to step 2
   function handleBrandInfoSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!brandName.trim()) {
@@ -160,11 +144,9 @@ export default function DesignerRegisterPage() {
     setStep(2);
   }
 
-  // Step 2 → save brand info to localStorage then redirect to Stripe Checkout
   async function handleSubscribe() {
     setLoading(true);
     try {
-      // Persist brand data so it survives the Stripe redirect
       localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify({ brandName, profileType, bio }));
       const result = await subscribeMutation.mutateAsync({ returnUrl });
       if (result.checkoutUrl) {
@@ -176,7 +158,6 @@ export default function DesignerRegisterPage() {
     }
   }
 
-  // Step 3 → open Stripe Connect onboarding
   async function handleConnectOnboard() {
     setLoading(true);
     try {
@@ -193,12 +174,11 @@ export default function DesignerRegisterPage() {
     }
   }
 
-  // Handle return from Stripe Connect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const connectStatus = params.get("connect");
     if (connectStatus === "done") {
-      toast.success("Payout setup complete! You can now start listing collections.");
+      toast.success("Payout setup complete. You can now start listing collections.");
       window.history.replaceState({}, "", "/designer-register");
       setStep(4);
     }
@@ -206,7 +186,6 @@ export default function DesignerRegisterPage() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Header */}
       <header className="border-b border-white/10 px-6 py-4 flex items-center gap-3">
         <button onClick={() => setLocation("/")} className="flex items-center gap-2.5">
           <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
@@ -219,7 +198,6 @@ export default function DesignerRegisterPage() {
 
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-lg">
-          {/* Hero */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-400 text-xs font-bold mb-4">
               <Store className="h-3.5 w-3.5" />
@@ -229,8 +207,7 @@ export default function DesignerRegisterPage() {
               List Your Collections
             </h1>
             <p className="text-white/50 text-sm leading-relaxed max-w-sm mx-auto">
-              Fashion and costume designers earn recurring income by licensing their
-              work to film productions worldwide. A$150/year founding price — 95% of every lease goes to you.
+              Sell virtual film-use items and live products to filmmakers. Designer membership is {DESIGNER_MEMBERSHIP_PRICE}; designers keep 95% of sales and Virelle takes 5%.
             </p>
           </div>
 
@@ -242,7 +219,6 @@ export default function DesignerRegisterPage() {
             </div>
           )}
 
-          {/* ── Step 1: Brand Info ── */}
           {!loading && step === 1 && (
             <form onSubmit={handleBrandInfoSubmit} className="space-y-5 bg-white/3 border border-white/10 rounded-2xl p-6">
               <div>
@@ -280,7 +256,7 @@ export default function DesignerRegisterPage() {
                 <Textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  placeholder="Tell productions about your style and specialty..."
+                  placeholder="Tell productions about your style, specialty, garments, costumes or accessory line."
                   rows={3}
                   className="bg-white/5 border-white/15 text-white placeholder-white/30 resize-none"
                   maxLength={2000}
@@ -293,49 +269,40 @@ export default function DesignerRegisterPage() {
             </form>
           )}
 
-          {/* ── Step 2: Membership Payment ── */}
           {!loading && step === 2 && (
             <div className="bg-white/3 border border-white/10 rounded-2xl p-6 space-y-5">
               <div className="text-center">
                 <CreditCard className="h-10 w-10 text-amber-400 mx-auto mb-3" />
                 <h2 className="text-xl font-black mb-1">Designer Membership</h2>
-                <p className="text-white/50 text-sm">One yearly payment unlocks your entire marketplace presence.</p>
+                <p className="text-white/50 text-sm">One yearly payment unlocks your marketplace profile, upload tools, pricing controls and sales channel.</p>
               </div>
 
               <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-white/70">Yearly membership</span>
-                  {foundingStatus?.foundingActive === false ? (
-                    <span className="font-bold text-white">A$299</span>
-                  ) : (
-                    <span className="font-bold text-amber-400">
-                      A$150 <span className="text-xs font-normal text-white/40 line-through ml-1">was A$299</span>
-                    </span>
-                  )}
-                  {foundingStatus?.foundingActive !== false && (
-                    <span className="bg-amber-500/20 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-full">
-                      {foundingStatus?.spotsRemaining !== undefined
-                        ? `${foundingStatus.spotsRemaining} spots left`
-                        : "FOUNDING PRICE"}
-                    </span>
-                  )}
+                  <span className="text-white/70">Annual designer membership</span>
+                  <span className="font-bold text-amber-400">{DESIGNER_MEMBERSHIP_PRICE}</span>
                 </div>
                 <div className="flex justify-between text-xs text-white/40">
-                  <span>Your earnings per lease</span>
-                  <span>95% of lease price</span>
+                  <span>Designer earnings</span>
+                  <span>95% of item sale price</span>
                 </div>
                 <div className="flex justify-between text-xs text-white/40">
                   <span>Platform commission</span>
                   <span>5%</span>
                 </div>
+                <div className="flex justify-between text-xs text-white/40">
+                  <span>Pricing control</span>
+                  <span>You set your item prices</span>
+                </div>
               </div>
 
               <ul className="space-y-2 text-sm text-white/70">
                 {[
-                  "List unlimited collections and items",
-                  "Get discovered by film productions worldwide",
-                  "Direct Stripe payouts — receive 95% of every lease",
-                  "Cancels anytime from your account settings",
+                  "List virtual film-use items and live products",
+                  "Live products can include a matching virtual inventory item",
+                  "Virtual item pricing guide: around 10%-20% of comparable real-world item value",
+                  "Direct Stripe payouts after payout setup",
+                  "Managing existing listings is designed to be fast and simple",
                 ].map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
@@ -349,29 +316,27 @@ export default function DesignerRegisterPage() {
                   Back
                 </Button>
                 <Button onClick={handleSubscribe} className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold">
-                  {foundingStatus?.foundingActive === false ? "Subscribe — A$299/yr" : "Join as Founding Partner — A$150/yr"}
+                  Join — {DESIGNER_MEMBERSHIP_PRICE}
                 </Button>
               </div>
               <p className="text-center text-xs text-white/30">
-                Secured by Stripe. Renews automatically each year.
+                The annual membership fee is disclosed before checkout. Secured by Stripe and renews yearly unless cancelled.
               </p>
             </div>
           )}
 
-          {/* ── Step 3: Connect Onboarding ── */}
           {!loading && step === 3 && (
             <div className="bg-white/3 border border-white/10 rounded-2xl p-6 space-y-5 text-center">
               <Wallet className="h-10 w-10 text-amber-400 mx-auto" />
               <div>
                 <h2 className="text-xl font-black mb-2">Set Up Your Payouts</h2>
                 <p className="text-white/50 text-sm leading-relaxed">
-                  Connect a bank account via Stripe so lease payments land directly in your account.
-                  This takes about 3 minutes.
+                  Connect a bank account through Stripe so product and virtual item sales can pay out directly to you. This usually takes a few minutes.
                 </p>
               </div>
               <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 flex items-center gap-2 text-sm">
                 <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
-                <span className="text-green-300">Membership active — you can now publish collections</span>
+                <span className="text-green-300">Membership active — you can prepare and publish listings</span>
               </div>
               <Button onClick={handleConnectOnboard} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-11">
                 Set Up Payouts via Stripe
@@ -385,17 +350,15 @@ export default function DesignerRegisterPage() {
             </div>
           )}
 
-          {/* ── Step 4: Done ── */}
           {!loading && step === 4 && (
             <div className="bg-white/3 border border-white/10 rounded-2xl p-8 text-center space-y-5">
               <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto">
                 <Sparkles className="h-8 w-8 text-amber-400" />
               </div>
               <div>
-                <h2 className="text-2xl font-black mb-2">You're a Virelle Designer!</h2>
+                <h2 className="text-2xl font-black mb-2">You're a Virelle Designer</h2>
                 <p className="text-white/50 text-sm">
-                  Your designer studio is ready. Start adding items, pricing collections,
-                  and publishing to the marketplace.
+                  Your designer studio is ready. Start adding virtual items, live products, prices, images and descriptions for the marketplace.
                 </p>
               </div>
               <div className="flex flex-col gap-3">
