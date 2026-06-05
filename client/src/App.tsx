@@ -169,10 +169,10 @@ const SeriesBible = lazy(() => import("./pages/SeriesBible"));
 const FilmComps = lazy(() => import("./pages/FilmComps"));
 const Equipment = lazy(() => import("./pages/Equipment"));
 const Community = lazy(() => import("./pages/Community"));
-
 const BackgroundLibraryPage = lazy(() => import("./pages/BackgroundLibraryPage"));
 const PropsLibraryPage = lazy(() => import("./pages/PropsLibraryPage"));
 const NarrativeStructurePage = lazy(() => import("./pages/NarrativeStructurePage"));
+
 // ─── Loading fallback ───
 function PageLoader() {
   return (
@@ -267,8 +267,8 @@ function Router() {
       <Route path="/share/:projectId/:token">{() => <LazyPage><SharePreview /></LazyPage>}</Route>
       <Route path="/films/:slug">{() => <LazyPage><FilmPage /></LazyPage>}</Route>
       <Route path="/creators/:slug">{() => <LazyPage><CreatorProfile /></LazyPage>}</Route>
-        <Route path="/crowdfund/c/:slug">{() => <LazyPage><CrowdfundCampaignPage /></LazyPage>}</Route>
-        <Route path="/crowdfund/browse">{() => <LazyPage><CrowdfundBrowse /></LazyPage>}</Route>
+      <Route path="/crowdfund/c/:slug">{() => <LazyPage><CrowdfundCampaignPage /></LazyPage>}</Route>
+      <Route path="/crowdfund/browse">{() => <LazyPage><CrowdfundBrowse /></LazyPage>}</Route>
       <Route path="/collections/:slug">{() => <LazyPage><Collections /></LazyPage>}</Route>
       <Route path="/how-it-works">{() => <LazyPage><HowItWorks /></LazyPage>}</Route>
       <Route path="/about">{() => <LazyPage><About /></LazyPage>}</Route>
@@ -332,8 +332,8 @@ function Router() {
               <Route path="/projects/:projectId/wardrobe">{() => <LazyPage><DesignerWardrobePage /></LazyPage>}</Route>
               {/* v7.0 — Designer Studio (auth-required dashboard page) */}
               <Route path="/designer/studio">{() => <LazyPage><DesignerStudioPage /></LazyPage>}</Route>
-                <Route path="/wardrobe-inventory">{() => <LazyPage><UserInventoryPage /></LazyPage>}</Route>
-      <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
+              <Route path="/wardrobe-inventory">{() => <LazyPage><UserInventoryPage /></LazyPage>}</Route>
+              <Route path="/projects/:projectId/script-breakdown">{() => <LazyPage><ScriptBreakdownWizardPage /></LazyPage>}</Route>
               <Route path="/awaiting-review">{() => <LazyPage><AwaitingReviewPage /></LazyPage>}</Route>
               <Route path="/projects/:id/scenes">{() => <SceneEditor />}</Route>
               <Route path="/movies">{() => <Movies />}</Route>
@@ -396,21 +396,21 @@ function Router() {
               <Route path="/projects/:id/daily-report">{() => <LazyPage><DailyReport /></LazyPage>}</Route>
               <Route path="/projects/:id/daily-report/:dayId">{() => <LazyPage><DailyReport /></LazyPage>}</Route>
               <Route path="/projects/:id/auto-recap">{() => <LazyPage><AutoRecap /></LazyPage>}</Route>
-                {/* ── New competitive-gap features ── */}
-                <Route path="/projects/:id/music-score" component={GatedMusicScore} />
-                <Route path="/projects/:id/coverage" component={GatedScriptCoverage} />
-                <Route path="/projects/:id/table-read" component={GatedTableRead} />
-                <Route path="/projects/:id/equipment" component={GatedEquipment} />
-                <Route path="/legal-docs" component={GatedLegalDocs} />
-                <Route path="/tax-incentives" component={GatedTaxIncentives} />
-                <Route path="/series" component={GatedSeriesBible} />
-                <Route path="/film-comps" component={GatedFilmComps} />
-                <Route path="/community" component={GatedCommunity} />
-              <Route path="/404" component={NotFound} />
-              <Route component={NotFound} />
+              {/* Competitive-gap and pipeline library features */}
+              <Route path="/projects/:id/music-score" component={GatedMusicScore} />
+              <Route path="/projects/:id/coverage" component={GatedScriptCoverage} />
+              <Route path="/projects/:id/table-read" component={GatedTableRead} />
+              <Route path="/projects/:id/equipment" component={GatedEquipment} />
               <Route path="/projects/:id/backgrounds" component={BackgroundLibraryPage} />
               <Route path="/projects/:id/props" component={PropsLibraryPage} />
               <Route path="/projects/:id/narrative" component={NarrativeStructurePage} />
+              <Route path="/legal-docs" component={GatedLegalDocs} />
+              <Route path="/tax-incentives" component={GatedTaxIncentives} />
+              <Route path="/series" component={GatedSeriesBible} />
+              <Route path="/film-comps" component={GatedFilmComps} />
+              <Route path="/community" component={GatedCommunity} />
+              <Route path="/404" component={NotFound} />
+              <Route component={NotFound} />
             </Switch>
           </Suspense>
         </DashboardLayout>
