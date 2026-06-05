@@ -33,6 +33,7 @@ const ALL_PROVIDERS: { id: string; label: string; capability: string }[] = [
   { id: "huggingface", label: "Hugging Face", capability: "Video • image" },
   { id: "elevenlabs", label: "ElevenLabs", capability: "Voice" },
   { id: "suno", label: "Suno", capability: "Music" },
+  { id: "did", label: "D-ID", capability: "Accessibility • Auslan sign-language interpreter overlay" },
 ];
 
 export default function BYOKControlCenterPage() {
@@ -117,6 +118,9 @@ export default function BYOKControlCenterPage() {
           <p className="mt-4 text-xs text-zinc-500">
             To add or change a key, open the Settings page → API keys. Keys are
             stored encrypted at rest and never returned to the browser.
+          </p>
+          <p className="mt-2 text-xs text-zinc-500">
+            The D-ID key powers the optional circular Auslan sign-language interpreter overlay on exported films.
           </p>
         </section>
 
