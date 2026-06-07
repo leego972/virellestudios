@@ -1,12 +1,31 @@
 FROM node:22-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-# Install pnpm via npm so Docker is decoupled from the packageManager field.
-# corepack would pin pnpm@10.4.1 (stale field) instead of the 10.33.x that
-# generated the current lockfile, causing ERR_PNPM_OUTDATED_LOCKFILE.
 RUN npm install -g pnpm
 
-# ─── Install dependencies (pre-warms Docker cache layer) ───
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml .pnpmfile.cjs ./
+COPY package.json pnpm-lock.yaml ./
+COPY .pnpmfile.cjs* ./
+RUN pnpm install --no-frozen-lockfile
+
+FROM base AS builder
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+COPY .pnpmfile.cjs* ./
+RUN pnpm install --no-frozen-lockfile
+COPY . .
+ENV NODE_ENV=production
+RUN pnpm build
+
+FROM base AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package.json pnpm-lock.yaml ./
+COPY .pnpmfile.cjs* ./
+RUN pnpm install --prod --no-frozen-lockfile
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/client ./client
+COPY --from=builder /app/public ./public
+EXPOSE 3000
+CMD ["pnpm", "start"]
