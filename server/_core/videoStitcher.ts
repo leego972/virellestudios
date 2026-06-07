@@ -643,8 +643,9 @@ export async function stitchMovie(input: StitchInput): Promise<StitchResult> {
       normalizedFiles.push(normalizedOpener);
       console.log(`[VideoStitcher] VirElle Studios opener prepended successfully.`);
     } catch (openerErr: any) {
-      console.error(`[VideoStitcher] WARNING: Failed to prepend VirElle opener: ${openerErr.message}`);
-      // If opener fails to download/process, continue without it rather than failing the entire film
+      throw new Error(
+        `Mandatory Virelle Studios opener failed to prepend: ${openerErr?.message ?? openerErr}`
+      );
     }
 
     // Generate title card if requested
