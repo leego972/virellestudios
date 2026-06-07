@@ -1,3 +1,5 @@
-# Scene Contract Gate Implementation TODO
+# Scene Contract Gate Implementation Checkpoint
 
-This placeholder confirms GitHub write access is available. Replace with the full scene contract gate implementation after branch creation and integration review.
+GitHub write access is working from this chat.
+
+This checkpoint was created before applying the full Scene Contract Gate scaffolding. It can be removed after the main implementation files are committed.
