@@ -3,12 +3,6 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN npm install -g pnpm
 
-FROM base AS deps
-WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-COPY .pnpmfile.cjs* ./
-RUN pnpm install --no-frozen-lockfile
-
 FROM base AS builder
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
@@ -25,7 +19,5 @@ COPY package.json pnpm-lock.yaml ./
 COPY .pnpmfile.cjs* ./
 RUN pnpm install --prod --no-frozen-lockfile
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/client ./client
-COPY --from=builder /app/public ./public
 EXPOSE 3000
 CMD ["pnpm", "start"]
