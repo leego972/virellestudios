@@ -28,6 +28,7 @@ import { DIRECTOR_TOOLS, getDirectorToolDescription, buildDirectorSystemPrompt }
 import { executeDirectorTool } from "../director-executor";
 import { runStripeProvisioning } from "./stripeProvisioning";
 import { registerSeoRoutes } from "../seo-engine";
+import { directorAssistantTitanRouter } from "../director-assistant-titan-router";
 import { registerSeoV4Routes } from "../seo-engine-v4";
 
 // Validate production environment on startup
@@ -1047,6 +1048,7 @@ async function startServer() {
   registerSeoRoutes(app);
   seedBlogPosts().catch((e) => logger.warn("[BlogSeed] Seed failed: " + e?.message));
   registerSeoV4Routes(app);
+  app.use("/api/director-assistant", directorAssistantTitanRouter);
 
   // Dynamic blog sitemap — auto-includes all published articles
   app.get("/sitemap-blog.xml", async (_req, res) => {
