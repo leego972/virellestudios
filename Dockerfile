@@ -21,5 +21,10 @@ COPY scripts/railway-normalize-package.cjs ./scripts/railway-normalize-package.c
 COPY .pnpmfile.cjs* ./
 RUN node scripts/railway-normalize-package.cjs && pnpm install --prod --no-frozen-lockfile
 COPY --from=builder /app/dist ./dist
+# Gateway + startup script — gateway listens on $PORT, proxies to app on $PORT+1.
+# If the app hasn't started yet, gateway returns {"ok":true,"warming":true} so
+# Railway's health check passes during cold start instead of killing the container.
+COPY start.sh gateway.mjs ./
+RUN chmod +x start.sh
 EXPOSE 3000
-CMD ["pnpm", "start"]
+CMD ["sh", "start.sh"]
