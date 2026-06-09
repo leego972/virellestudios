@@ -1,3 +1,4 @@
+import { logger } from "./logger";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./env";
 import Redis from "ioredis";
@@ -16,15 +17,10 @@ if (ENV.redisUrl) {
       connectTimeout: 2000,
     });
     redis.on("error", (err) => {
-      console.warn("[RateLimit] Redis error:", err.message);
+      logger.warn(`[RateLimit] Redis error: ${err.message}`);
     });
   } catch (err) {
-    console.error(
-      "[RateLimit] WARNING: Failed to initialize Redis. " +
-      "Falling back to in-memory rate limiting. " +
-      "Check your REDIS_URL environment variable.",
-      err
-    );
+    logger.errorWithStack("[RateLimit] Failed to initialize Redis — falling back to in-memory rate limiting. Check REDIS_URL.", err);
     redis = null;
   }
 } else {
@@ -32,14 +28,9 @@ if (ENV.redisUrl) {
     // Warn loudly but do NOT crash — allows the server to start while Redis is
     // being provisioned. In-memory fallback is used until REDIS_URL is set.
     // ACTION REQUIRED: Add REDIS_URL to Railway environment variables.
-    console.error(
-      "[RateLimit] WARNING: REDIS_URL not set in production. " +
-      "Falling back to in-memory rate limiting. " +
-      "This is NOT safe for multi-instance deployments. " +
-      "Add REDIS_URL to your Railway environment variables."
-    );
+    logger.error("[RateLimit] REDIS_URL not set in production — in-memory fallback active. NOT safe for multi-instance. Add REDIS_URL to Railway env.");
   } else {
-    console.warn("[RateLimit] REDIS_URL not set. Falling back to in-memory storage (dev only).");
+    logger.warn("[RateLimit] REDIS_URL not set — falling back to in-memory storage (dev only).");
   }
 }
 
@@ -109,7 +100,7 @@ export async function checkRateLimit(
       return;
     } catch (err) {
       if (err instanceof TRPCError) throw err;
-      console.error("[RateLimit] Redis check failed:", err);
+      logger.errorWithStack("[RateLimit] Redis check failed", err);
       if (process.env.NODE_ENV === "production") {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
