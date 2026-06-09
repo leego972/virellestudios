@@ -899,7 +899,7 @@ export const appRouter = router({
               const allDone = finalScenes.every((s: any) => s.status === "completed" || s.status === "failed");
               if (allDone) await db.updateProject(projectId, userId, { status: "completed", progress: 100 }).catch(() => {});
             } catch (err: any) {
-              logger.error(`[DemoShort] Background error: ${$err.message}`);
+              logger.error(`[DemoShort] Background error: ${err.message}`);
               await db.updateProject(projectId, userId, { status: "failed" }).catch(() => {});
             }
           });
@@ -2886,7 +2886,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               }
               generated++;
             } catch (e) {
-              logger.error(`Bulk gen failed for scene "${scene.title}":`, e);
+              logger.errorWithStack(`Bulk gen failed for scene "${scene.title}":`, e);
             }
           }));
         }
@@ -3536,7 +3536,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 }
                 generated++;
               } catch (e) {
-                logger.error(`Bulk video gen failed for scene "${scene.title}":`, e);
+                logger.errorWithStack(`Bulk video gen failed for scene "${scene.title}":`, e);
                 await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               }
             }));
@@ -4205,7 +4205,7 @@ Available fields you can update:
               }
             }
           } catch (charDesignErr: any) {
-            logger.error(`[QuickGen] Character auto-generation failed: ${$charDesignErr.message}`);
+            logger.error(`[QuickGen] Character auto-generation failed: ${charDesignErr.message}`);
             // Non-fatal — continue with scene generation
           }
         }
@@ -4415,7 +4415,7 @@ Break this into the number of scenes specified in your system instructions above
                 }
               }
             } catch (imgErr) {
-              logger.error(`Failed to generate thumbnail for scene "${scene.title}":`, imgErr);
+              logger.errorWithStack(`Failed to generate thumbnail for scene "${scene.title}":`, imgErr);
             }
 
             // Step 4b: Generate extended video scene using clip chaining (30-60s per scene)
@@ -4632,7 +4632,7 @@ Break this into the number of scenes specified in your system instructions above
             logger.info(`[QuickGen] Auto-stitched ${videoScenes.length} scenes → ${outputUrl}`);
           }
         } catch (stitchErr: any) {
-          logger.error(`[QuickGen] Auto-stitch failed (non-fatal): ${$stitchErr.message}`);
+          logger.error(`[QuickGen] Auto-stitch failed (non-fatal): ${stitchErr.message}`);
           // Non-fatal — project still completes, user can manually export later
         }
 
@@ -4833,7 +4833,7 @@ Break this into the number of scenes specified in your system instructions above
                 }
               }
             } catch (e) {
-              logger.error(`Failed to generate trailer image for scene ${sceneIdx}:`, e);
+              logger.errorWithStack(`Failed to generate trailer image for scene ${sceneIdx}:`, e);
             }
           }
         }
@@ -8387,7 +8387,7 @@ Generate a detailed production budget estimate.`,
               totalDuration = result.duration;
               mimeType = result.mimeType;
             } catch (err: any) {
-              logger.error(`[Export] Video stitching failed: ${$err.message}`);
+              logger.error(`[Export] Video stitching failed: ${err.message}`);
               // Hard fail — never save a full film without the Virelle Studios opener.
               throw new Error(`Film compilation failed: ${err.message}. Please try again.`);
             }
@@ -8493,7 +8493,7 @@ Generate a detailed production budget estimate.`,
               totalDuration = result.duration;
               mimeType = result.mimeType;
             } catch (err: any) {
-              logger.error(`[Export] Trailer stitching failed: ${$err.message}`);
+              logger.error(`[Export] Trailer stitching failed: ${err.message}`);
               // Hard fail — never save a trailer without the Virelle Studios opener.
               throw new Error(`Trailer compilation failed: ${err.message}. Please try again.`);
             }
@@ -9351,7 +9351,7 @@ Rules:
           });
           return { videoUrl: result.videoUrl || null };
         } catch (err: any) {
-          logger.error(`Video ad generation failed: ${$err.message}`);
+          logger.error(`Video ad generation failed: ${err.message}`);
           return { videoUrl: null };
         }
       }),
