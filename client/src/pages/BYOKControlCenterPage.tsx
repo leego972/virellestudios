@@ -20,20 +20,20 @@ const VIDEO_PROVIDERS = [
 
 const LLM_PROVIDERS = ["openai", "anthropic", "google", "venice"] as const;
 
-const ALL_PROVIDERS: { id: string; label: string; capability: string }[] = [
-  { id: "openai", label: "OpenAI", capability: "LLM • image • video • voice" },
-  { id: "anthropic", label: "Anthropic Claude", capability: "LLM" },
-  { id: "google", label: "Google Gemini", capability: "LLM" },
-  { id: "venice", label: "Venice", capability: "LLM" },
-  { id: "runway", label: "Runway", capability: "Video" },
-  { id: "replicate", label: "Replicate", capability: "Video • image" },
-  { id: "fal", label: "fal.ai", capability: "Video • image" },
-  { id: "luma", label: "Luma Dream Machine", capability: "Video" },
-  { id: "byteplus", label: "BytePlus SeedDance", capability: "Video" },
-  { id: "huggingface", label: "Hugging Face", capability: "Video • image" },
-  { id: "elevenlabs", label: "ElevenLabs", capability: "Voice" },
-  { id: "suno", label: "Suno", capability: "Music" },
-  { id: "did", label: "D-ID", capability: "Accessibility • Auslan sign-language interpreter overlay" },
+const ALL_PROVIDERS: { id: string; label: string; capability: string; keyUrl?: string; required?: boolean }[] = [
+  { id: "openai", label: "OpenAI", capability: "LLM • image • video • voice", keyUrl: "https://platform.openai.com/api-keys" },
+  { id: "anthropic", label: "Anthropic Claude", capability: "LLM", keyUrl: "https://console.anthropic.com/settings/keys" },
+  { id: "google", label: "Google AI Studio", capability: "LLM • Veo 3 video", keyUrl: "https://aistudio.google.com/apikey" },
+  { id: "venice", label: "Venice AI", capability: "LLM (privacy-focused)", keyUrl: "https://venice.ai/settings/api" },
+  { id: "runway", label: "Runway", capability: "Video (premium quality)", keyUrl: "https://app.runwayml.com/settings" },
+  { id: "replicate", label: "Replicate", capability: "Video • image", keyUrl: "https://replicate.com/account/api-tokens" },
+  { id: "fal", label: "fal.ai", capability: "Video • image (cheapest, recommended)", keyUrl: "https://fal.ai/dashboard/keys" },
+  { id: "luma", label: "Luma Dream Machine", capability: "Video", keyUrl: "https://lumalabs.ai/dream-machine/api" },
+  { id: "byteplus", label: "BytePlus SeedDance", capability: "Video", keyUrl: "https://console.byteplus.com/" },
+  { id: "huggingface", label: "Hugging Face", capability: "Video • image (free tier)", keyUrl: "https://huggingface.co/settings/tokens" },
+  { id: "elevenlabs", label: "ElevenLabs", capability: "Voice & SFX — required for all sound", keyUrl: "https://elevenlabs.io/app/settings/api-keys", required: true },
+  { id: "suno", label: "Suno", capability: "Music scores", keyUrl: "https://app.suno.ai/account" },
+  { id: "did", label: "D-ID", capability: "Auslan sign-language interpreter overlay", keyUrl: "https://studio.d-id.com/account-settings" },
 ];
 
 export default function BYOKControlCenterPage() {
@@ -90,7 +90,10 @@ export default function BYOKControlCenterPage() {
                   className="flex items-center justify-between text-sm py-2 border-b border-zinc-800/60 last:border-b-0"
                 >
                   <div>
-                    <div className="text-zinc-100">{p.label}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-100">{p.label}</span>
+                      {p.required && <span className="text-[10px] bg-violet-500/20 text-violet-300 px-1.5 py-0.5 rounded font-semibold">Required</span>}
+                    </div>
                     <div className="text-xs text-zinc-500">{p.capability}</div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -103,6 +106,16 @@ export default function BYOKControlCenterPage() {
                       >
                         Test
                       </button>
+                    )}
+                    {p.keyUrl && (
+                      <a
+                        href={p.keyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-amber-400 hover:text-amber-300 underline underline-offset-2 whitespace-nowrap"
+                      >
+                        Get key →
+                      </a>
                     )}
                   </div>
                 </li>
@@ -118,6 +131,7 @@ export default function BYOKControlCenterPage() {
           <p className="mt-4 text-xs text-zinc-500">
             To add or change a key, open the Settings page → API keys. Keys are
             stored encrypted at rest and never returned to the browser.
+            <strong className="text-zinc-300"> ElevenLabs is required</strong> for all voice and sound generation.
           </p>
           <p className="mt-2 text-xs text-zinc-500">
             The D-ID key powers the optional circular Auslan sign-language interpreter overlay on exported films.
