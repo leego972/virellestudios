@@ -12,7 +12,7 @@
  */
 import { safeJsonExtract } from "./_core/safeParse";
 import { z } from "zod";
-import { router, protectedProcedure } from "./_core/trpc";
+import { router, protectedProcedure, creationProcedure } from "./_core/trpc";
 import { rateLimitAI } from "./_core/rateLimit";
 import { getDb } from "./db";
 import { eq, and, asc, desc, sql } from "drizzle-orm";
@@ -581,7 +581,7 @@ export const featureFilmRouter = router({
     }),
 
   /** AI-generate act structure for a project */
-  generateActStructure: protectedProcedure
+  generateActStructure: creationProcedure
     .input(z.object({
       projectId: z.number(),
       cutId: z.number(),
@@ -924,7 +924,7 @@ export const featureFilmRouter = router({
     }),
 
   /** AI-generate continuity records for all scenes in a project */
-  generateContinuityRecords: protectedProcedure
+  generateContinuityRecords: creationProcedure
     .input(z.object({ projectId: z.number() }))
     .mutation(async ({ input, ctx }) => {
       await rateLimitAI(ctx.user.id);
@@ -1150,7 +1150,7 @@ export const featureFilmRouter = router({
     }),
 
   /** AI-generate character arcs for all characters in a project */
-  generateCharacterArcs: protectedProcedure
+  generateCharacterArcs: creationProcedure
     .input(z.object({ projectId: z.number() }))
     .mutation(async ({ input, ctx }) => {
       await rateLimitAI(ctx.user.id);
@@ -1304,7 +1304,7 @@ export const featureFilmRouter = router({
    * Stitches all included scenes using the existing videoStitcher,
    * prepends the Virelle Studios opener, and saves to My Movies.
    */
-  compileFilm: protectedProcedure
+  compileFilm: creationProcedure
     .input(z.object({
       projectId: z.number(),
       cutId: z.number().optional(), // if omitted, uses all project scenes in order
