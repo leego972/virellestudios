@@ -1,3 +1,4 @@
+import { logger } from "./logger";
 import { Sentry } from "./sentry.js";
 import { UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG } from '@shared/const';
 import { initTRPC, TRPCError } from "@trpc/server";
@@ -21,7 +22,7 @@ const t = initTRPC.context<TrpcContext>().create({
       error.message?.includes('ER_');
 
     if (isSqlError) {
-      console.error('[tRPC] Database error (hidden from client):', error.message);
+      logger.error(`[tRPC] Database error (hidden from client): ${error.message}`);
       return {
         ...shape,
         message: "An unexpected error occurred. Please try again.",
@@ -37,7 +38,7 @@ const t = initTRPC.context<TrpcContext>().create({
     const isProduction = process.env.NODE_ENV === "production";
     const isUnexpected500 = shape.data?.httpStatus === 500 && !(error.cause instanceof TRPCError);
     if (isProduction && isUnexpected500) {
-      console.error('[tRPC] Internal error (hidden from client):', error.message);
+      logger.error(`[tRPC] Internal error (hidden from client): ${error.message}`);
       return {
         ...shape,
         message: "An unexpected error occurred. Please try again.",
