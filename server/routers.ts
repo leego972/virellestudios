@@ -13694,11 +13694,11 @@ Return JSON ONLY in this exact shape:
           if (existing && existing.id) {
             releasedReservationId = existing.id;
             try { await db.releaseReservation(existing.id); } catch (e: any) {
-              logger.warn(`[recap.cancelRender] release reservation ${existing.id} failed:`, e?.message);
+              logger.warn(`[recap.cancelRender] release reservation ${existing.id} failed: ${e?.message}`);
             }
           }
         } catch (e: any) {
-          logger.warn(`[recap.cancelRender] reservation lookup failed for recap ${input.recapId}:`, e?.message);
+          logger.warn(`[recap.cancelRender] reservation lookup failed for recap ${input.recapId}: ${e?.message}`);
         }
 
         // Revert recap to the settled outline state with a clear message.
