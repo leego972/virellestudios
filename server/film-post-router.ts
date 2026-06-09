@@ -7,7 +7,7 @@
  * - Score cue placement and management
  */
 import { z } from "zod";
-import { router, protectedProcedure } from "./_core/trpc";
+import { router, protectedProcedure, creationProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
 import {
@@ -328,7 +328,7 @@ export const filmPostRouter = router({
 
   // ─── AI Generation ──────────────────────────────────────────────────────────
 
-  generateAdrSuggestions: protectedProcedure
+  generateAdrSuggestions: creationProcedure
     .input(z.object({
       projectId: z.number(),
       context: z.string().max(1000).optional(), // extra context from user
@@ -387,7 +387,7 @@ Return JSON: { "suggestions": [ { "characterName": "...", "dialogueLine": "...",
       return { suggestions: (parsed.suggestions || []) as Array<{ characterName: string; dialogueLine: string; trackType: string; notes: string }> };
     }),
 
-  generateFoleySuggestions: protectedProcedure
+  generateFoleySuggestions: creationProcedure
     .input(z.object({
       projectId: z.number(),
       context: z.string().max(1000).optional(),
@@ -445,7 +445,7 @@ Return JSON: { "suggestions": [ { "name": "...", "foleyType": "...", "descriptio
       return { suggestions: (parsed.suggestions || []) as Array<{ name: string; foleyType: string; description: string; notes: string }> };
     }),
 
-  generateScoreCues: protectedProcedure
+  generateScoreCues: creationProcedure
     .input(z.object({
       projectId: z.number(),
       style: z.string().optional(), // e.g. "orchestral", "electronic", "minimal piano"
