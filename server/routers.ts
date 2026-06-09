@@ -2406,6 +2406,24 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         externalFootageUrl: z.string().optional(),
         externalFootageType: z.string().optional(),
         externalFootageLabel: z.string().optional(),
+        // Scene type & coverage
+        sceneType: z.string().optional(),
+        coverageType: z.string().optional(),
+        screenDirection: z.string().optional(),
+        continuityNotes: z.string().optional(),
+        shotIntent: z.string().optional(),
+        practicalLights: z.string().optional(),
+        dialogueSubtext: z.string().optional(),
+        // Advanced lens
+        lensFilter: z.string().optional(),
+        shootingFormat: z.string().optional(),
+        // Generation controls
+        negativePrompt: z.string().optional(),
+        seed: z.number().optional(),
+        referenceImages: z.any().optional(),
+        // Production extras
+        extras: z.any().optional(),
+        voiceRoles: z.any().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Ownership guard: caller must own the target project
@@ -2544,6 +2562,24 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         videoJobId: z.string().optional(),
         // SFX production notes
         sfxProductionNotes: z.string().optional(),
+        // Scene type & coverage
+        sceneType: z.string().optional(),
+        coverageType: z.string().optional(),
+        screenDirection: z.string().optional(),
+        continuityNotes: z.string().optional(),
+        shotIntent: z.string().optional(),
+        practicalLights: z.string().optional(),
+        dialogueSubtext: z.string().optional(),
+        // Advanced lens
+        lensFilter: z.string().optional(),
+        shootingFormat: z.string().optional(),
+        // Generation controls
+        negativePrompt: z.string().optional(),
+        seed: z.number().optional(),
+        referenceImages: z.any().optional(),
+        // Production extras
+        extras: z.any().optional(),
+        voiceRoles: z.any().optional(),
       }))
        .mutation(async ({ ctx, input }) => {
         const scene = await db.getSceneById(input.id);
@@ -2659,9 +2695,11 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           pushActorAnchor((char as any).aiActorId);
         }
 
+        const userKeys = await db.getUserApiKeys(ctx.user.id);
         const result = await generateImage({
           prompt,
           originalImages: originalImages.length > 0 ? originalImages : undefined,
+          userOpenAiKey: userKeys.openaiKey || undefined,
         }).catch((_e: unknown) => {
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Preview image generation failed. Please try again." });
         });
