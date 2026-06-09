@@ -1,4 +1,5 @@
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
+import { logger } from "./_core/logger";
 import { z } from "zod";
 import { getDb } from "./db";
 import {
@@ -620,7 +621,7 @@ function slugify(text: string): string {
                     .where(eq(crowdfundContributions.id, c.id));
                 }
               } catch (err: any) {
-                console.error(`[Crowdfund] Failed to process PI ${c.stripePaymentIntentId}:`, err.message);
+                logger.error(`[Crowdfund] Failed to process PI ${c.stripePaymentIntentId}: ${err.message}`);
               }
             }
           }
