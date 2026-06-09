@@ -78,3 +78,4 @@ scripts/        One-shot scripts (mobile-constants sync, etc.)
 - **Auth:** JWT with Manus OAuth
 - **Billing:** Stripe (subscriptions + credit packs)
 - **AI:** Pollinations · OpenRouter · ElevenLabs · Vast.ai
+
