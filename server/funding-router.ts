@@ -1,4 +1,4 @@
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, creationProcedure, router } from "./_core/trpc";
 import { rateLimitAI } from "./_core/rateLimit";
 import { z } from "zod";
 import { getDb, deductCredits, getProjectById, getProjectScenes, getProjectCharacters, createChatMessage } from "./db";
@@ -518,7 +518,7 @@ export const fundingRouter = router({
     }),
 
   // Submit a full 13-section funding application via email
-  submitApplication: protectedProcedure
+  submitApplication: creationProcedure
     .input(applicationInputSchema)
     .mutation(async ({ input, ctx }) => {
       const user = ctx.user;
@@ -678,7 +678,7 @@ export const fundingRouter = router({
     }),
 
   /* ─── AI Autofill: draft application fields from project bible ─── */
-  autofillDraft: protectedProcedure
+  autofillDraft: creationProcedure
     .input(z.object({ projectId: z.number(), fundingSourceId: z.number() }))
     .mutation(async ({ input, ctx }) => {
       await rateLimitAI(ctx.user.id);
