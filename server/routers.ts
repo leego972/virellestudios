@@ -890,7 +890,7 @@ export const appRouter = router({
                       if (idx === 0 && videoResult.thumbnailUrl) await db.updateProject(projectId, userId, { thumbnailUrl: videoResult.thumbnailUrl }).catch(() => {});
                     }
                   } catch (e: any) {
-                    logger.error(`[DemoShort] Scene ${idx + 1} failed:`, e.message);
+                    logger.error(`[DemoShort] Scene ${idx + 1} failed: ${e.message}`);
                     await db.updateScene(scene.id, { status: "failed" }).catch(() => {});
                   }
                 })
@@ -3143,7 +3143,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
             } catch (err: any) {
-              logger.error(`[SceneVideo] Extended Veo3 generation failed for scene ${scene.id}:`, err.message);
+              logger.error(`[SceneVideo] Extended Veo3 generation failed for scene ${scene.id}: ${err.message}`);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               // v6.70 — async failure: refund. releaseReservation is idempotent.
               if (__sceneVideoResId) {
@@ -3192,7 +3192,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
             } catch (err: any) {
-              logger.error(`[SceneVideo] Extended Runway generation failed for scene ${scene.id}:`, err.message);
+              logger.error(`[SceneVideo] Extended Runway generation failed for scene ${scene.id}: ${err.message}`);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               if (__sceneVideoResId) {
                 try { await db.releaseReservation(__sceneVideoResId); } catch {}
@@ -3242,7 +3242,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
             } catch (err: any) {
-              logger.error(`[SceneVideo] Extended fal.ai generation failed for scene ${scene.id}:`, err.message);
+              logger.error(`[SceneVideo] Extended fal.ai generation failed for scene ${scene.id}: ${err.message}`);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               if (__sceneVideoResId) {
                 try { await db.releaseReservation(__sceneVideoResId); } catch {}
@@ -3293,7 +3293,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
             } catch (err: any) {
-              logger.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
+              logger.error(`[SceneVideo] Background generation failed for scene ${scene.id}: ${err.message}`);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               if (__sceneVideoResId) {
                 try { await db.releaseReservation(__sceneVideoResId); } catch {}
@@ -3444,7 +3444,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 logger.info(`[BulkVideo:fal] Extended generation completed for scene ${scene.id}: ${extResult.totalDuration}s, ${extResult.subClipCount} clips`);
                 generated++;
               } catch (e: any) {
-                logger.error(`[BulkVideo:fal] Extended generation failed for scene "${scene.title}":`, e.message);
+                logger.error(`[BulkVideo:fal] Extended generation failed for scene "${scene.title}": ${e.message}`);
                 await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               }
             }));
@@ -3737,7 +3737,7 @@ Available fields you can update:
             aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
           }
         } catch (err: any) {
-          logger.error(`[Virelle] LLM call failed (${provider}):`, err.message);
+          logger.error(`[Virelle] LLM call failed (${provider}): ${err.message}`);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Virelle AI error: ${err.message}` });
         }
 
@@ -4201,7 +4201,7 @@ Available fields you can update:
                   logger.info(`[QuickGen] Auto-generated character portrait: ${cd.name}`);
                 }
               } catch (charErr: any) {
-                logger.error(`[QuickGen] Failed to generate character portrait for ${cd.name}:`, charErr.message);
+                logger.error(`[QuickGen] Failed to generate character portrait for ${cd.name}: ${charErr.message}`);
               }
             }
           } catch (charDesignErr: any) {
@@ -4530,7 +4530,7 @@ Break this into the number of scenes specified in your system instructions above
               generatedCount++;
               logger.info(`[QuickGen] Scene ${sceneIdx + 1}/${allScenes.length} extended video generated (${extResult.totalDuration.toFixed(1)}s, ${extResult.subClipCount} clips): ${extResult.videoUrl}`);
             } catch (videoErr: any) {
-              logger.error(`[QuickGen] Extended video generation failed for scene "${scene.title}":`, videoErr.message);
+              logger.error(`[QuickGen] Extended video generation failed for scene "${scene.title}": ${videoErr.message}`);
 
               // Fallback to single clip generation
               try {
@@ -4583,7 +4583,7 @@ Break this into the number of scenes specified in your system instructions above
                 }
               } catch (fallbackErr: any) {
                 const errMsg = fallbackErr.message || String(fallbackErr);
-                logger.error(`[QuickGen] All video generation failed for scene "${scene.title}":`, errMsg);
+                logger.error(`[QuickGen] All video generation failed for scene "${scene.title}": ${errMsg}`);
                 // Store actionable error in the job so the UI can surface it
                 try {
                   await db.updateJob(job.id, { errorMessage: `Scene "${scene.title}" — ${errMsg}` });
@@ -4593,7 +4593,7 @@ Break this into the number of scenes specified in your system instructions above
               }
             }
            } catch (e: any) {
-            logger.error(`Failed to process scene "${scene.title}":`, e?.message || e);
+            logger.error(`Failed to process scene "${scene.title}": ${(e as any)?.message ?? String(e)}`);
             // Mark scene as completed (with no video) so it doesn't stay in 'generating' state
             try { await db.updateScene(scene.id, { status: "completed" }); } catch { /* ignore */ }
           }
@@ -11232,7 +11232,7 @@ Rules:
           totalDuration = result.duration;
           mimeType = result.mimeType;
         } catch (err: any) {
-          logger.error(`[Export] ${input.platform} promo stitching failed:`, err.message);
+          logger.error(`[Export] ${input.platform} promo stitching failed: ${err.message}`);
           // Hard fail — never save a promo without the Virelle Studios opener.
           throw new Error(`Promo compilation failed: ${err.message}. Please try again.`);
         }
@@ -13653,7 +13653,7 @@ Return JSON ONLY in this exact shape:
           } catch (err: any) {
             // renderRecapMp4 swallows its own errors, but guard the dynamic
             // import too so a bad import never leaves the recap stuck.
-            logger.error(`[recap.renderMp4] background dispatch failed for recap ${input.recapId}:`, err?.message);
+            logger.error(`[recap.renderMp4] background dispatch failed for recap ${input.recapId}: ${err?.message ?? ""}`);
             try {
               await db.updateRecap(input.recapId, ctx.user.id, { status: "outline_completed", errorMessage: err?.message || "Render dispatch failed." } as any);
             } catch {}
