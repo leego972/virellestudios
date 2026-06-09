@@ -347,3 +347,104 @@
 2. `encryptApiKey` / `decryptApiKey` are the canonical key storage primitives — never use base64 for secrets
 3. `generateImage` calls that happen inside user-triggered endpoints MUST pass `userOpenAiKey` from `getUserApiKeys`
 
+---
+
+## Pass 7 — Procedure Gates, Duplicate Columns, Broken tRPC Names (2026-06-09)
+
+### BUG-21 · MEDIUM — autoMigrate: duplicate `screenDirection` + `dialogueSubtext` column entries
+**File:** `server/_core/autoMigrate.ts`  
+**Root cause:** Pass 6 added the 5 missing scene columns, but `screenDirection` and `dialogueSubtext` already existed from an earlier migration block, producing "duplicate column" SQL errors on fresh DB init.  
+**Fix:** Removed the duplicate entries from the second migration block.
+
+### BUG-22 · HIGH — Subtitles.tsx: `trpc.subtitle.aiGenerate` does not exist
+**File:** `client/src/pages/Subtitles.tsx`  
+**Root cause:** Component called `trpc.subtitle.aiGenerate.useMutation()` with a TypeScript `as any` cast to silence the error. The actual procedure is `trpc.subtitle.generate`.  
+**Fix:** Changed call to `trpc.subtitle.generate.useMutation()`, removed the `as any` cast.
+
+### BUG-23 · HIGH — film-post-router: AI generation procedures on protectedProcedure
+**File:** `server/film-post-router.ts`  
+**Root cause:** `generateAdrSuggestions`, `generateFoleySuggestions`, `generateScoreCues` used `protectedProcedure`, bypassing the `blockExpiredTester` middleware gate that `creationProcedure` enforces.  
+**Fix:** All three upgraded to `creationProcedure`.
+
+### BUG-24 · HIGH — funding-router: AI procedures on protectedProcedure
+**File:** `server/funding-router.ts`  
+**Root cause:** `submitApplication` (calls LLM to draft application text) and `autofillDraft` (LLM autofill) used `protectedProcedure`.  
+**Fix:** Both upgraded to `creationProcedure`.
+
+### BUG-25 · HIGH — location-recreation-router: analyzeVideo on protectedProcedure
+**File:** `server/location-recreation-router.ts`  
+**Root cause:** `analyzeVideo` (runs video-to-environment AI analysis) used `protectedProcedure`.  
+**Fix:** Upgraded to `creationProcedure`.
+
+### BUG-26 · MEDIUM — mailing-list-router: manual role checks instead of adminProcedure
+**File:** `server/mailing-list-router.ts`  
+**Root cause:** All admin endpoints checked `ctx.user.role !== "admin"` manually inside the handler instead of using the `adminProcedure` middleware. Inconsistent pattern and bypasses centralised admin gate.  
+**Fix:** All admin-only procedures (listContacts, addContact, importContacts, updateContact, deleteContacts, uploadAdImage, listCampaigns, saveCampaign, sendCampaign) converted to `adminProcedure`.
+
+### BUG-27 · LOW — testApiKey: veo3 missing from provider enum
+**File:** `server/routers.ts` (`settings.testApiKey`)  
+**Root cause:** `veo3` was added to `saveApiKey`'s provider enum but not to `testApiKey`, so testing a veo3 key returned a tRPC validation error.  
+**Fix:** Added `"veo3"` to `testApiKey`'s `z.enum` and wired it through to the Google/Gemini validation branch.
+
+---
+
+## Pass 7 Summary
+
+| Issue | Severity | Fixed |
+|-------|----------|-------|
+| BUG-21: autoMigrate duplicate columns | MEDIUM | ✅ |
+| BUG-22: Subtitles aiGenerate → subtitle.generate | HIGH | ✅ |
+| BUG-23: film-post AI procedures on protectedProcedure | HIGH | ✅ |
+| BUG-24: funding-router AI procedures on protectedProcedure | HIGH | ✅ |
+| BUG-25: location-recreation analyzeVideo on protectedProcedure | HIGH | ✅ |
+| BUG-26: mailing-list manual role checks | MEDIUM | ✅ |
+| BUG-27: testApiKey missing veo3 | LOW | ✅ |
+
+---
+
+## Pass 8 — Cinematic Engine Type Gaps + Feature Film AI Gates (2026-06-09)
+
+### BUG-28 · HIGH — cinematicPromptEngine: 9 scene fields missing from buildScenePrompt type; scene.negativePrompt override never applied
+**File:** `server/_core/cinematicPromptEngine.ts`  
+**Root cause:**  
+1. The `buildScenePrompt` scene parameter type was missing 9 fields that Pass 6 added to the DB and tRPC schema: `sceneType`, `lensFilter`, `shootingFormat`, `coverageType`, `screenDirection`, `dialogueSubtext`, `negativePrompt`, `seed`, `voiceRoles`. TypeScript allowed passing a full scene row (via structural subtyping) but the fields were never read — and linters couldn't catch the omission.  
+2. `scene.negativePrompt` (user-specified "avoid" text) was completely ignored. The negative prompt was always built from `QUALITY_NEGATIVE[tier]` + minor-protection additions, even when the user explicitly overrode it.  
+**Fix:**  
+1. Added all 9 fields to the scene type parameter with JSDoc.  
+2. Rewrote negative-prompt logic: if `scene.negativePrompt` is non-empty it takes full priority over the tier default; otherwise, the tier default + minor-protection path runs unchanged.  
+3. Added prompt-builder `if` blocks for `sceneType`, `lensFilter`, `shootingFormat`, `coverageType`, `screenDirection`, `dialogueSubtext` so they actually appear in the generated prompt.
+
+### BUG-29 · HIGH — feature-film-router: 4 AI generation procedures on protectedProcedure
+**File:** `server/feature-film-router.ts`  
+**Root cause:** `generateActStructure`, `generateContinuityRecords`, `generateCharacterArcs`, `compileFilm` all used `protectedProcedure`, bypassing the `blockExpiredTester` gate. `creationProcedure` was not even imported in the file.  
+**Fix:** Added `creationProcedure` to the import and upgraded all four procedures.
+
+---
+
+## Pass 8 Summary
+
+| Issue | Severity | Fixed |
+|-------|----------|-------|
+| BUG-28: 9 scene fields missing from buildScenePrompt type; negativePrompt never applied | HIGH | ✅ |
+| BUG-29: 4 feature-film AI procedures on protectedProcedure | HIGH | ✅ |
+
+---
+
+## Full Audit Coverage (Passes 1–8)
+
+- **Server:** All procedures in `routers.ts` (14 379 lines) + all 16 separate router files audited for: correct procedure gate (`creationProcedure` vs `protectedProcedure` vs `adminProcedure`), Zod schema completeness, DB column coverage, encryption correctness.
+- **Client:** All 422 unique `trpc.<router>.<procedure>` calls across ~120 page files verified against server router definitions. Zero dangling client calls found.
+- **CI:** Build ✅, TypeScript Check ✅, Audit ✅ on HEAD after every push batch.
+
+| Pass | Scope | Issues | Fixed |
+|------|-------|--------|-------|
+| 1 | Core bugs (types, signals) | 4 | 4 ✅ |
+| 2 | NextStageCTA on 14 sub-tool pages | 14 | 14 ✅ |
+| 3 | Character consistency pipeline | 2 | 2 ✅ |
+| 4 | Security + tier enforcement | 10 | 10 ✅ |
+| 5 | Server mutations + client pages + build errors | 21 | 21 ✅ |
+| 6 | Scene pipeline, BYOK encryption, DB schema | 4 | 4 ✅ |
+| 7 | Procedure gates, duplicate columns, broken tRPC names | 7 | 7 ✅ |
+| 8 | Cinematic engine type gaps + feature film AI gates | 2 | 2 ✅ |
+| **Total** | | **64** | **64 ✅** |
+
