@@ -1,3 +1,4 @@
+import { logger } from "./logger";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { Request, Response, NextFunction } from "express";
 import type { User } from "../../drizzle/schema";
@@ -21,10 +22,7 @@ if (!JWT_SECRET_KEY) {
   }
   // Development only: ephemeral key so the server starts without full config.
   JWT_SECRET_KEY = "dev-secret-change-me-set-JWT_SECRET-in-railway";
-  console.warn(
-    "[virelle] WARNING: JWT_SECRET is not set. Using insecure dev fallback. " +
-    "Sessions will be invalidated on restart."
-  );
+  logger.warn("[virelle] JWT_SECRET not set — using insecure dev fallback. Sessions will be invalidated on restart.");
 }
 
 const secretKey = new TextEncoder().encode(JWT_SECRET_KEY);
@@ -130,7 +128,7 @@ export async function createContext(
   if (user && (user as any).accountExpiresAt) {
     const expiry = new Date((user as any).accountExpiresAt);
     if (expiry < new Date()) {
-      console.log(`[Auth] Tester account ${user.email} has expired — entering read-only grace mode.`);
+      logger.info("[Auth] Tester account expired — read-only grace mode", { email: user.email });
       isExpiredTester = true;
     }
   }
@@ -175,9 +173,7 @@ export const requireAdminExpress = async (
   try {
     const ctx = await createContext({ req, res } as any);
     if (!ctx.user || ctx.user.role !== "admin") {
-      console.warn(
-        `[Admin] Unauthorized access attempt to ${req.path} from ${req.ip}`,
-      );
+      logger.warn(`[Admin] Unauthorized access attempt to ${req.path}`, { ip: req.ip });
       res.status(403).json({ error: "Forbidden: Admin access required" });
       return;
     }
