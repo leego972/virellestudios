@@ -6,7 +6,7 @@ import {
   ArrowRight, Play, ShieldCheck,
   Globe, Sparkles, Video, Eye, Cpu, CreditCard,
   Zap as ZapIcon, Film, Smartphone, Download, Crown,
-  Menu, X, Shirt,
+  Menu, X, Shirt, Key, ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -225,7 +225,7 @@ export default function Landing() {
 
             {/* No-risk micro-copy */}
             <p className="text-xs text-white/30 mb-10 -mt-6 tracking-wide">
-              Free to explore · No credit card required · Cancel anytime
+              7-day free trial · No credit card required · Cancel anytime
             </p>
 
             {/* App download strip */}
@@ -434,6 +434,62 @@ export default function Landing() {
           </div>
         </section>
 
+
+        {/* ─── 2b. Get Your API Keys — provider shortcuts ─── */}
+        <section id="get-keys" className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
+                <Key className="h-3.5 w-3.5" />
+                3-Minute Setup
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+                Connect Your AI Providers
+              </h2>
+              <p className="mt-3 text-sm text-white/50 max-w-xl mx-auto">
+                Register, grab your keys from the links below, paste them in Settings → API Keys. You pay the AI providers directly at cost — no Virelle markup.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {([
+                { name: "fal.ai",         tag: "Video · Recommended",  note: "~$0.40/clip · Fastest setup",       url: "https://fal.ai/dashboard/keys",                   color: "emerald", required: false },
+                { name: "ElevenLabs",     tag: "Voice & SFX · Required", note: "Free tier — required for all sound", url: "https://elevenlabs.io/app/settings/api-keys",   color: "violet",  required: true  },
+                { name: "Runway",         tag: "Video · Premium",       note: "~$0.50/clip · Cinematic quality",   url: "https://app.runwayml.com/settings",               color: "blue",    required: false },
+                { name: "OpenAI",         tag: "Script Writing",        note: "~$0.01/scene · GPT-4o",            url: "https://platform.openai.com/api-keys",            color: "amber",   required: false },
+                { name: "Google AI Studio", tag: "LLM + Veo 3 Video",  note: "Free tier available",               url: "https://aistudio.google.com/apikey",              color: "amber",   required: false },
+                { name: "Suno",           tag: "Music Scores",          note: "Free tier available",               url: "https://app.suno.ai/account",                    color: "pink",    required: false },
+              ] as const).map((p) => (
+                <a
+                  key={p.name}
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex flex-col p-4 rounded-2xl border border-white/8 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20 transition-all duration-200"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <div className="font-semibold text-white text-sm">{p.name}</div>
+                      <div className="text-[11px] text-white/40 mt-0.5">{p.tag}</div>
+                    </div>
+                    {p.required && (
+                      <span className="text-[10px] bg-violet-500/20 text-violet-300 px-2 py-0.5 rounded-full font-semibold shrink-0">Required</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-white/40 leading-relaxed flex-1">{p.note}</p>
+                  <div className="flex items-center justify-end mt-3">
+                    <span className="text-xs font-semibold text-amber-400 group-hover:text-amber-300 flex items-center gap-1">
+                      Get key <ExternalLink className="h-3 w-3" />
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
+            <p className="text-center text-xs text-white/20 mt-6">
+              Keys are stored encrypted and never shared. Add or update them anytime in Settings → API Keys.
+            </p>
+          </div>
+        </section>
+
         {/* ─── 3. Two Core Use Cases ─── */}
         <section id="use-cases" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-y border-white/10">
           <div className="max-w-6xl mx-auto">
@@ -553,7 +609,7 @@ export default function Landing() {
                   <Cpu className="h-6 w-6 text-amber-400" />
                 </div>
                 <h4 className="text-lg font-bold mb-3 text-white">BYOK Architecture</h4>
-                <p className="text-sm text-white/50 leading-relaxed">Bring Your Own Key. Connect your own AI provider accounts (Runway, Sora, fal.ai) for zero markup on generation costs.</p>
+                <p className="text-sm text-white/50 leading-relaxed">Your AI keys, your costs. Connect fal.ai, Runway, ElevenLabs, OpenAI and more — Virelle orchestrates them without any markup. You pay providers directly.counts (Runway, Sora, fal.ai) for zero markup on generation costs.</p>
               </div>
               <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02]">
                 <div className="h-12 w-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-6">
@@ -661,7 +717,7 @@ export default function Landing() {
                 Transparent Pricing
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">Production Tiers</h2>
-              <p className="mt-3 text-sm text-white/50">Register free. Features unlock when you subscribe.</p>
+              <p className="mt-3 text-sm text-white/50">7-day free trial on all plans. Bring your own API keys — you pay providers directly, no markup.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {[
@@ -753,7 +809,7 @@ export default function Landing() {
                 </div>
               </button>
             </div>
-            <p className="text-xs text-white/30 mt-6">Subscription required. Register free, then choose a plan to unlock all features.</p>
+            <p className="text-xs text-white/30 mt-6">7-day free trial included. Connect your own AI keys (fal.ai, ElevenLabs, OpenAI, etc.) — Virelle never charges you for AI usage.</p>
           </div>
         </section>
 
@@ -1045,7 +1101,7 @@ export default function Landing() {
             <p className="text-sm text-white/30 mb-12">No credit card required to explore every tool. Cancel anytime.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => setLocation("/register")} className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-black font-bold px-10 h-14 text-base shadow-xl shadow-amber-500/20">
-                Start Free
+                Start Free Trial
               </Button>
               <Button size="lg" variant="outline" onClick={() => setLocation("/pricing")} className="w-full sm:w-auto h-14 px-10 text-base border-white/10 hover:bg-white/5 text-white">
                 View Pricing
