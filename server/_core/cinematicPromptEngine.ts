@@ -731,6 +731,24 @@ export function buildScenePrompt(
     continuityNotes?: string | null;
     /** Practical light sources visible in frame */
     practicalLights?: string | null;
+    /** Scene type (e.g. "interior", "exterior", "aerial", "underwater") */
+    sceneType?: string | null;
+    /** Lens filter applied (e.g. "anamorphic", "polarizer", "ND gradient") */
+    lensFilter?: string | null;
+    /** Shooting format / resolution (e.g. "4K RAW", "6K ARRIRAW", "8K RED") */
+    shootingFormat?: string | null;
+    /** Coverage type for this shot (e.g. "master shot", "coverage", "inserts") */
+    coverageType?: string | null;
+    /** Screen direction of primary action (e.g. "screen left to right") */
+    screenDirection?: string | null;
+    /** Subtext notes — underlying emotion or tension not in the dialogue */
+    dialogueSubtext?: string | null;
+    /** User-specified negative prompt override; replaces the quality-tier default when set */
+    negativePrompt?: string | null;
+    /** Seed for deterministic generation (passed through to the generation engine) */
+    seed?: number | null;
+    /** Voice casting / dialogue role notes for this scene */
+    voiceRoles?: string | null;
   },
   visualDNA: VisualDNA,
   options?: {
@@ -965,6 +983,24 @@ export function buildScenePrompt(
   if (scene.practicalLights) {
     parts.push(`Practical light sources visible in frame: ${scene.practicalLights}`);
   }
+  if (scene.sceneType) {
+    parts.push(`Scene type: ${scene.sceneType}`);
+  }
+  if (scene.lensFilter) {
+    parts.push(`Lens filter: ${scene.lensFilter}`);
+  }
+  if (scene.shootingFormat) {
+    parts.push(`Shooting format: ${scene.shootingFormat}`);
+  }
+  if (scene.coverageType) {
+    parts.push(`Coverage type: ${scene.coverageType}`);
+  }
+  if (scene.screenDirection) {
+    parts.push(`Screen direction: ${scene.screenDirection}`);
+  }
+  if (scene.dialogueSubtext) {
+    parts.push(`Subtext / emotional undercurrent: ${scene.dialogueSubtext}`);
+  }
 
   // 6b. Crowd/Extras — background population for scene realism
   if (scene.crowdLevel && scene.crowdLevel !== "empty") {
@@ -1149,17 +1185,22 @@ export function buildScenePrompt(
 
   // 20. Negative prompt (what to avoid)
   const baseNegative = QUALITY_NEGATIVE[tier];
-  // Add minor protection negative prompts if minors are in the scene
-  let negativePrompt = baseNegative;
-  if (options?.characters && options.characters.length > 0) {
-    const minorCheck = applyMinorProtection(
-      scene.description || scene.title || "",
-      scene.locationType,
-      scene.actionDescription,
-      options.characters
-    );
-    if (minorCheck.hasMinors && minorCheck.negativePromptAdditions.length > 0) {
-      negativePrompt = `${baseNegative}, ${minorCheck.negativePromptAdditions.join(", ")}`;
+  // Scene-level negativePrompt takes full priority; otherwise use tier default + minor protection
+  let negativePrompt: string;
+  if (scene.negativePrompt?.trim()) {
+    negativePrompt = scene.negativePrompt.trim();
+  } else {
+    negativePrompt = baseNegative;
+    if (options?.characters && options.characters.length > 0) {
+      const minorCheck = applyMinorProtection(
+        scene.description || scene.title || "",
+        scene.locationType,
+        scene.actionDescription,
+        options.characters
+      );
+      if (minorCheck.hasMinors && minorCheck.negativePromptAdditions.length > 0) {
+        negativePrompt = `${baseNegative}, ${minorCheck.negativePromptAdditions.join(", ")}`;
+      }
     }
   }
   parts.push(`[AVOID: ${negativePrompt}]`);
