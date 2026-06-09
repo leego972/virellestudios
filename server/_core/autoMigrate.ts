@@ -1441,13 +1441,11 @@ export async function runAutoMigration(): Promise<void> {
     { table: "scenes", column: "screenDirection", definition: "VARCHAR(32) NULL" },
     { table: "scenes", column: "shotIntent", definition: "TEXT NULL" },
     { table: "scenes", column: "practicalLights", definition: "TEXT NULL" },
-    { table: "scenes", column: "screenDirection", definition: "VARCHAR(64) NULL" },
     { table: "scenes", column: "dialogueSubtext", definition: "TEXT NULL" },
     { table: "scenes", column: "negativePrompt", definition: "TEXT NULL" },
     { table: "scenes", column: "seed", definition: "INT NULL" },
     { table: "scenes", column: "voiceRoles", definition: "JSON NULL" },
     { table: "scenes", column: "continuityNotes", definition: "TEXT NULL" },
-    { table: "scenes", column: "dialogueSubtext", definition: "TEXT NULL" },
     { table: "scenes", column: "colorGrading", definition: "VARCHAR(128) NULL" },
     { table: "scenes", column: "productionNotes", definition: "TEXT NULL" },
     // Scenes table - video generation fields
