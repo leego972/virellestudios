@@ -383,47 +383,77 @@ export default function Register() {
   };
 
   if (showWelcome) {
+    const PROVIDER_LINKS = [
+      { name: "fal.ai", tag: "Video · Cheapest", url: "https://fal.ai/dashboard/keys", note: "~$0.40/clip · Recommended", required: false },
+      { name: "ElevenLabs", tag: "Voice & SFX · Required", url: "https://elevenlabs.io/app/settings/api-keys", note: "Free tier available", required: true },
+      { name: "Runway", tag: "Video · Premium", url: "https://app.runwayml.com/settings", note: "~$0.50/clip", required: false },
+      { name: "OpenAI", tag: "Script Writing", url: "https://platform.openai.com/api-keys", note: "~$0.01/scene", required: false },
+      { name: "Google AI Studio", tag: "LLM + Veo 3", url: "https://aistudio.google.com/apikey", note: "Free tier available", required: false },
+      { name: "Suno", tag: "Music Scores", url: "https://app.suno.ai/account", note: "Free tier available", required: false },
+    ];
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative">
         <GoldWatermarkLaunch />
-        <div className="w-full max-w-md relative z-10">
+        <div className="w-full max-w-lg relative z-10">
           <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10">
-            <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-6">
-              <div className="w-20 h-20 rounded-full bg-amber-600/20 flex items-center justify-center">
-                <Check className="w-10 h-10 text-amber-500" />
+            <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-5">
+              <div className="w-16 h-16 rounded-full bg-amber-600/20 flex items-center justify-center">
+                <Check className="w-8 h-8 text-amber-500" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <h2 className="text-2xl font-bold text-foreground">Welcome to Virelle Studios!</h2>
-                <p className="text-muted-foreground">
-                  Your account has been created successfully. You're now part of the future of AI filmmaking.
+                <p className="text-sm text-muted-foreground">
+                  Account created. Now connect your AI providers to start generating.
                 </p>
               </div>
-              <div className="w-full space-y-3 pt-2">
-                <div className="flex items-center gap-3 text-left p-3 rounded-lg bg-amber-600/5 border border-amber-500/10">
-                  <div className="w-8 h-8 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-amber-500 text-sm font-bold">1</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Create your first project and describe your film concept</p>
-                </div>
-                <div className="flex items-center gap-3 text-left p-3 rounded-lg bg-amber-600/5 border border-amber-500/10">
-                  <div className="w-8 h-8 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-amber-500 text-sm font-bold">2</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Add your API keys in Settings to unlock AI video, voice, and music</p>
-                </div>
-                <div className="flex items-center gap-3 text-left p-3 rounded-lg bg-amber-600/5 border border-amber-500/10">
-                  <div className="w-8 h-8 rounded-full bg-amber-600/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-amber-500 text-sm font-bold">3</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Let the AI Director generate your screenplay, scenes, and full film</p>
-                </div>
+
+              {/* Step 1 callout */}
+              <div className="w-full p-3 rounded-lg bg-amber-600/5 border border-amber-500/20 text-left">
+                <p className="text-xs font-semibold text-amber-400 mb-1">Step 1 — Get your API keys (3 min)</p>
+                <p className="text-xs text-muted-foreground">Click each provider below to open their key page. Paste the keys into <strong>Settings → API Keys</strong> after.</p>
               </div>
-              <Button
-                onClick={() => navigate("/?opener=1")}
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white text-lg py-6 mt-4"
-              >
-                Enter Your Studio
-              </Button>
+
+              {/* Provider quick-links */}
+              <div className="w-full grid grid-cols-2 gap-2">
+                {PROVIDER_LINKS.map((p) => (
+                  <a
+                    key={p.name}
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex flex-col p-3 rounded-lg border text-left transition-colors hover:bg-muted/50 ${p.required ? "border-violet-500/40 bg-violet-500/5" : "border-border bg-muted/20"}`}
+                  >
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-xs font-semibold text-foreground">{p.name}</span>
+                      {p.required && <span className="text-[10px] bg-violet-500/20 text-violet-400 px-1.5 py-0.5 rounded font-semibold">Required</span>}
+                    </div>
+                    <span className="text-[11px] text-muted-foreground">{p.tag}</span>
+                    <span className="text-[10px] text-muted-foreground/60 mt-1">{p.note}</span>
+                  </a>
+                ))}
+              </div>
+
+              {/* Step 2 */}
+              <div className="w-full p-3 rounded-lg bg-muted/20 border border-border text-left">
+                <p className="text-xs font-semibold text-foreground mb-0.5">Step 2 — Paste keys in Settings</p>
+                <p className="text-xs text-muted-foreground">Settings → API Keys. ElevenLabs is required for voice and sound in every film.</p>
+              </div>
+
+              <div className="w-full space-y-2 pt-1">
+                <Button
+                  onClick={() => navigate("/settings?tab=api-keys")}
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                >
+                  Open API Keys Settings
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/?opener=1")}
+                  className="w-full text-muted-foreground text-sm"
+                >
+                  Skip for now — do this later
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
