@@ -448,3 +448,44 @@
 | 8 | Cinematic engine type gaps + feature film AI gates | 2 | 2 ✅ |
 | **Total** | | **64** | **64 ✅** |
 
+
+---
+
+## Pass 9 — Server Logging Hygiene: console.log/warn → logger (2026-06-09)
+
+### BUG-30 · LOW — routers.ts: 32 console.log/warn calls bypass structured logger
+**Files:** `server/routers.ts`, `server/feature-film-router.ts`  
+**Root cause:** Background fire-and-forget handlers (SceneVideo, BulkVideo, QuickGen, Export, Distribute, recap, preproduction) and catch blocks used `console.log()`/`console.warn()` directly instead of the `logger` singleton required by the server coding standard (`server/_core/logger.ts`). This bypassed structured logging, preventing Railway log aggregation from picking up these messages at the correct severity level.  
+**Fix:**  
+1. `server/routers.ts`: Replaced all 14 `console.warn(` → `logger.warn(` and all 18 `console.log(` → `logger.info(`. `logger` was already imported at L41.  
+2. `server/feature-film-router.ts`: Added `import { logger } from "./_core/logger";` and replaced 2 `console.warn(` → `logger.warn(`.
+
+---
+
+## Pass 9 Summary
+
+| Issue | Severity | Fixed |
+|-------|----------|-------|
+| BUG-30: 32 console.log/warn calls in server routers | LOW | ✅ |
+
+---
+
+## Full Audit Coverage (Passes 1–9)
+
+- **Server:** All procedures in `routers.ts` (14 379 lines) + all 16 separate router files audited for: correct procedure gate (`creationProcedure` vs `protectedProcedure` vs `adminProcedure`), Zod schema completeness, DB column coverage, encryption correctness, logging hygiene.
+- **Client:** All 300+ unique `trpc.<router>.<procedure>` calls across all 132 page/component files verified against server router definitions. Zero dangling client calls found. `trpc.ai.chat` confirmed JSDoc-comment-only (not a live call).
+- **Routes:** All 132 pages in App.tsx confirmed to have matching route definitions. All lazy imports verified against real page files.
+- **CI:** Build ✅, TypeScript Check ✅, Audit ✅ on HEAD after every push batch.
+
+| Pass | Scope | Issues | Fixed |
+|------|-------|--------|-------|
+| 1 | Core bugs (types, signals) | 4 | 4 ✅ |
+| 2 | NextStageCTA on 14 sub-tool pages | 14 | 14 ✅ |
+| 3 | Character consistency pipeline | 2 | 2 ✅ |
+| 4 | Security + tier enforcement | 10 | 10 ✅ |
+| 5 | Server mutations + client pages + build errors | 21 | 21 ✅ |
+| 6 | Scene pipeline, BYOK encryption, DB schema | 4 | 4 ✅ |
+| 7 | Procedure gates, duplicate columns, broken tRPC names | 7 | 7 ✅ |
+| 8 | Cinematic engine type gaps + feature film AI gates | 2 | 2 ✅ |
+| 9 | Server logging hygiene (console.log → logger) | 1 | 1 ✅ |
+| **Total** | | **65** | **65 ✅** |
