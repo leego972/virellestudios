@@ -1419,7 +1419,7 @@ export const featureFilmRouter = router({
                   .map((s: any) => ({ videoUrl: s.videoUrl, title: s.title, duration: s.duration, orderIndex: s.orderIndex }));
               }
             } catch (e) {
-              logger.warn("[CompileFilm] Could not load opener scenes:", e);
+              logger.warn(`[CompileFilm] Could not load opener scenes: ${e instanceof Error ? e.message : String(e)}`);
             }
           }
 
@@ -1447,7 +1447,7 @@ export const featureFilmRouter = router({
                 .from(credits)
                 .where(eq(credits.projectId, input.projectId));
             } catch (e) {
-              logger.warn("[CompileFilm] Could not load credits:", e);
+              logger.warn(`[CompileFilm] Could not load credits: ${e instanceof Error ? e.message : String(e)}`);
             }
           }
 
