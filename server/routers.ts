@@ -3580,7 +3580,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         else if (userKeys.openaiKey) provider = "openai";
         else if (userKeys.anthropicKey) provider = "anthropic";
         else if (userKeys.googleAiKey) provider = "google";
-        } else if (isAdminChat && (ENV.veniceApiKey || ENV.openaiApiKey)) {
+        else if (isAdminChat && (ENV.veniceApiKey || ENV.openaiApiKey)) {
           provider = ENV.veniceApiKey ? "venice" : "openai";
         } else {
           throw new TRPCError({
