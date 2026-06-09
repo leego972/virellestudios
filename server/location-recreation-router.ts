@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from "./_core/trpc";
+import { router, protectedProcedure, creationProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
@@ -14,7 +14,7 @@ import { locations, projects, scenes } from "../drizzle/schema";
 
 export const locationRecreationRouter = router({
   // ── Upload & Analyze Location Video ────────────────────────────────────────
-  analyzeVideo: protectedProcedure
+  analyzeVideo: creationProcedure
     .input(
       z.object({
         projectId: z.number().int(),
