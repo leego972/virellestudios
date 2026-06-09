@@ -1656,14 +1656,12 @@ export async function getUserApiKeys(userId: number): Promise<{
   const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
   if (!user) throw new Error("User not found");
 
-  // Decode base64-encoded keys
+  // Decrypt keys — handles AES-256-GCM (v2:), legacy CBC, and base64 fallback
+  const { decryptApiKey } = await import("./_core/securityEngine");
   const decode = (val: string | null | undefined): string | null => {
     if (!val) return null;
-    try {
-      return Buffer.from(val, "base64").toString("utf-8");
-    } catch {
-      return val; // Already plain text
-    }
+    const decrypted = decryptApiKey(val);
+    return decrypted || null;
   };
 
   return {
