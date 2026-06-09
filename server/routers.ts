@@ -10627,8 +10627,8 @@ Rules:
         const column = columnMap[provider];
         if (!column) throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid provider" });
 
-        // Simple obfuscation (base64) — in production you'd use proper encryption
-        const encoded = Buffer.from(key).toString("base64");
+        // Encrypt with AES-256-GCM — uses securityEngine.encryptApiKey for proper key protection
+        const encoded = encryptApiKey(key);
 
         await db.updateUserApiKey(ctx.user!.id, column, encoded);
 
