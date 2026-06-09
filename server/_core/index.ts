@@ -758,7 +758,7 @@ async function startServer() {
         },
       );
     } catch (err) {
-      console.error("[Admin] Failed to log audit event:", err);
+      logger.errorWithStack("[Admin] Failed to log audit event", err);
     }
   };
 
@@ -781,10 +781,7 @@ async function startServer() {
       process.env.ENABLE_MAINTENANCE_ROUTES !== "true"
     ) {
       const user = (req as any).user;
-      console.warn(
-        `[Admin] Maintenance route blocked in production: ${req.path} ` +
-          `(admin=${user?.email || user?.id || "unknown"})`,
-      );
+      logger.warn(`[Admin] Maintenance route blocked in production: ${req.path} (admin=${user?.email || user?.id || "unknown"})`);
       // Best-effort audit log — never block the response if logging fails.
       void logAdminAction(
         req,
@@ -1213,7 +1210,7 @@ async function startServer() {
           if (creditErr.message?.includes("INSUFFICIENT_CREDITS")) {
             return res.status(402).json({ error: "Insufficient credits for TTS generation." });
           }
-          console.warn("[Credits] TTS deduction warning:", creditErr.message);
+          logger.warn(`[Credits] TTS deduction warning: ${creditErr.message}`);
         }
       }
       // Try user's ElevenLabs key first, then system key
@@ -1254,7 +1251,7 @@ async function startServer() {
       });
       if (!ttsRes.ok) {
         // OpenAI failed (billing limit, etc.) — fall through to free Pollinations TTS
-        console.warn(`[TTS] OpenAI failed (${ttsRes.status}), trying Pollinations free TTS`);
+        logger.warn(`[TTS] OpenAI failed (${ttsRes.status}), trying Pollinations free TTS`);
       } else {
         const buf = Buffer.from(await ttsRes.arrayBuffer());
         res.setHeader("Content-Type", "audio/mpeg");
@@ -1278,7 +1275,7 @@ async function startServer() {
           return res.end(pollBuf);
         }
       } catch (pollErr) {
-        console.warn("[TTS] Pollinations fallback failed:", pollErr);
+        logger.warn(`[TTS] Pollinations fallback failed: ${pollErr instanceof Error ? pollErr.message : String(pollErr)}`);
       }
 
       return res.status(502).json({ error: "TTS generation failed — all providers exhausted" });
@@ -1354,7 +1351,7 @@ async function startServer() {
           return;
         }
         // Non-credit errors don't block — log and continue
-        console.warn("[Credits] Director stream deduction warning:", creditErr.message);
+        logger.warn(`[Credits] Director stream deduction warning: ${creditErr.message}`);
       }
     }
 
@@ -1477,12 +1474,12 @@ async function startServer() {
     try {
       await runAutoMigration();
     } catch (err: any) {
-      console.error("[AutoMigrate] Migration failed:", err.message);
+      logger.error(`[AutoMigrate] Migration failed: ${err.message}`);
     }
     try {
       await runStripeProvisioning();
     } catch (err: any) {
-      console.error("[StripeProvisioning] Failed:", err.message);
+      logger.error(`[StripeProvisioning] Failed: ${err.message}`);
     }
     logger.info("[Server] Background init (migrate + provision) complete");
   })();
