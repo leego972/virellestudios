@@ -65,6 +65,14 @@ export function decryptApiKey(ciphertext: string): string {
       return decrypted;
     }
   } catch {
+    // Last resort: try base64 decode for legacy keys saved before encryption was added
+    try {
+      const decoded = Buffer.from(ciphertext, "base64").toString("utf-8");
+      // Only return the decoded value if it looks like a valid API key (not a decrypt error)
+      if (decoded && !decoded.startsWith("v2:") && decoded.length > 0) return decoded;
+    } catch {
+      // fall through
+    }
     logger.error("[security] decryptApiKey failed — returning empty string to prevent key leakage");
     return "";
   }
