@@ -48,6 +48,8 @@ export type GenerateImageOptions = {
     b64Json?: string;
     mimeType?: string;
   }>;
+  /** Optional user-provided OpenAI API key (BYOK). Falls back to ENV.openaiApiKey. */
+  userOpenAiKey?: string | null;
 };
 
 export type GenerateImageResponse = {
@@ -82,7 +84,7 @@ async function resolveReferenceBase64(
 async function generateWithOpenAIImageEdit(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
-  const apiKey = ENV.openaiApiKey;
+  const apiKey = options.userOpenAiKey || ENV.openaiApiKey;
   if (!apiKey) throw new Error("OpenAI API key not configured");
 
   const refs = await resolveReferenceBase64(options.originalImages);
@@ -304,7 +306,7 @@ async function generateWithHuggingFace(
 async function generateWithDallE3(
   options: GenerateImageOptions
 ): Promise<GenerateImageResponse> {
-  const apiKey = ENV.openaiApiKey;
+  const apiKey = options.userOpenAiKey || ENV.openaiApiKey;
   if (!apiKey) {
     throw new Error("OpenAI API key not configured for image generation");
   }
@@ -355,7 +357,7 @@ export async function generateImage(
   const errors: string[] = [];
 
   // 1. OpenAI gpt-image-1 (primary — supports reference images for character-from-photo)
-  if (ENV.openaiApiKey) {
+  if (options.userOpenAiKey || ENV.openaiApiKey) {
     try {
       const result = await generateWithOpenAIImageEdit(options);
       console.log(`[ImageGen] Generated with ${result.provider}`);
@@ -391,7 +393,7 @@ export async function generateImage(
   }
 
   // 4. Final fallback: DALL-E 3 (text-to-image only)
-  if (ENV.openaiApiKey) {
+  if (options.userOpenAiKey || ENV.openaiApiKey) {
     try {
       console.log("[ImageGen] Falling back to OpenAI DALL-E 3");
       const result = await generateWithDallE3(options);
