@@ -54,11 +54,15 @@ export interface VideoGenerationResult {
 }
 
 // ─── Pollinations Key Rotation Pool ───
+// Keys come exclusively from env vars. Never hardcode credentials here.
+// Set POLLINATIONS_API_KEY (primary) and optionally POLLINATIONS_API_KEY_2
+// in Railway Variables. The pool is filtered to only non-empty values;
+// if both are absent, Pollinations generation will be unavailable.
 
 const POLLINATIONS_KEY_POOL: string[] = [
-  ENV.pollinationsApiKey || "sk_KZ0EBVOHXycDd8YnvEZAvLDGnvhK33SP",
-  "sk_FNPdDzSn5ue5VQnUJrBeY7wF2m6nI0ht",
-].filter(k => k && k.length > 0);
+  ENV.pollinationsApiKey,
+  process.env.POLLINATIONS_API_KEY_2 ?? "",
+].filter((k): k is string => typeof k === "string" && k.length > 0);
 
 let pollinationsKeyIndex = 0;
 
