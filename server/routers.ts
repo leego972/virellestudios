@@ -3089,7 +3089,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             );
           }
         } catch (cancelErr: any) {
-          console.warn(`[SceneVideo] Could not cancel old jobs for scene ${scene.id}: ${cancelErr.message}`);
+          logger.warn(`[SceneVideo] Could not cancel old jobs for scene ${scene.id}: ${cancelErr.message}`);
         }
 
         // Mark scene as generating immediately
@@ -3104,7 +3104,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           // Uses generateExtendedScene to chain multiple sub-clips into full declared duration.
           (async () => {
             try {
-              console.log(`[SceneVideo] Extended Veo3 generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
+              logger.info(`[SceneVideo] Extended Veo3 generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
               const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
@@ -3136,7 +3136,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
-              console.log(`[SceneVideo] Extended Veo3 generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+              logger.info(`[SceneVideo] Extended Veo3 generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
               // v6.70 — async success: finalize the reservation. finalizeReservation
               // is idempotent (only updates rows still in "reserved" state).
               if (__sceneVideoResId) {
@@ -3156,7 +3156,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           // Uses generateExtendedScene to chain multiple 10s Runway clips into full declared duration.
           (async () => {
             try {
-              console.log(`[SceneVideo] Extended Runway generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
+              logger.info(`[SceneVideo] Extended Runway generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
               const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
@@ -3187,7 +3187,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
-              console.log(`[SceneVideo] Extended Runway generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+              logger.info(`[SceneVideo] Extended Runway generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
               if (__sceneVideoResId) {
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
@@ -3206,7 +3206,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           // other providers — fire-and-forget background task.
           (async () => {
             try {
-              console.log(`[SceneVideo] Extended fal.ai generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
+              logger.info(`[SceneVideo] Extended fal.ai generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
               const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
@@ -3237,7 +3237,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
-              console.log(`[SceneVideo] Extended fal.ai generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
+              logger.info(`[SceneVideo] Extended fal.ai generation completed for scene ${scene.id}: ${extResult.videoUrl} (${extResult.totalDuration}s, ${extResult.subClipCount} clips)`);
               if (__sceneVideoResId) {
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
@@ -3257,7 +3257,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
           // or use their own polling internally.
           (async () => {
             try {
-              console.log(`[SceneVideo] Background generation started for scene ${scene.id} (provider: ${activeProvider})`);
+              logger.info(`[SceneVideo] Background generation started for scene ${scene.id} (provider: ${activeProvider})`);
               const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
@@ -3288,7 +3288,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               if (extResult.thumbnailUrl && project && !project.thumbnailUrl) {
                 try { await db.updateProject(project.id, ctx.user.id, { thumbnailUrl: extResult.thumbnailUrl }); } catch (e) { /* ignore */ }
               }
-              console.log(`[SceneVideo] Background generation completed for scene ${scene.id}: ${extResult.videoUrl}`);
+              logger.info(`[SceneVideo] Background generation completed for scene ${scene.id}: ${extResult.videoUrl}`);
               if (__sceneVideoResId) {
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
@@ -3414,7 +3414,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   sceneRefImages.push(...cp);
                 }
                 await db.updateScene(scene.id, { status: "generating" } as any);
-                console.log(`[BulkVideo:fal] Extended generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
+                logger.info(`[BulkVideo:fal] Extended generation started for scene ${scene.id} (target: ${scene.duration || 45}s)`);
                 const extResult = await generateExtendedSceneBulkFal(bulkByokKeys, {
                   sceneId: scene.id,
                   projectId: project.id,
@@ -3441,7 +3441,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   link: `/projects/${project.id}/scenes`,
                 });
               } catch (_) { /* non-critical */ }
-                console.log(`[BulkVideo:fal] Extended generation completed for scene ${scene.id}: ${extResult.totalDuration}s, ${extResult.subClipCount} clips`);
+                logger.info(`[BulkVideo:fal] Extended generation completed for scene ${scene.id}: ${extResult.totalDuration}s, ${extResult.subClipCount} clips`);
                 generated++;
               } catch (e: any) {
                 console.error(`[BulkVideo:fal] Extended generation failed for scene "${scene.title}":`, e.message);
@@ -4029,7 +4029,7 @@ Available fields you can update:
             throw new TRPCError({ code: "FORBIDDEN", message: e.message });
           }
           // Non-credit errors don't block generation for now
-          console.warn("[Credits] Deduction warning:", e.message);
+          logger.warn("[Credits] Deduction warning:", e.message);
         }
 
         // ── Reset: clear existing scenes and OLD jobs BEFORE creating the new job ──
@@ -4048,7 +4048,7 @@ Available fields you can update:
             await dbConn.delete(genJobsTable).where(eqOp(genJobsTable.projectId, project.id));
           }
         } catch (clearErr: any) {
-          console.warn("[QuickGen] Could not clear old scenes/jobs:", clearErr.message);
+          logger.warn("[QuickGen] Could not clear old scenes/jobs:", clearErr.message);
           // Non-fatal — continue with generation
         }
         // Create a generation job AFTER clearing old jobs so it isn't immediately deleted
@@ -4081,7 +4081,7 @@ Available fields you can update:
         // not the platform key (which may be quota-exhausted).
         let earlyUserKeys: any = { openaiKey: null, anthropicKey: null, googleAiKey: null, falApiKey: null };
         try { earlyUserKeys = await db.getUserApiKeys(userId); } catch (e: any) {
-          console.warn("[QuickGen] getUserApiKeys failed, continuing with platform keys:", e?.message);
+          logger.warn("[QuickGen] getUserApiKeys failed, continuing with platform keys:", e?.message);
         }
         const userLlmApiKey: string | null = earlyUserKeys.openaiKey || null;
 
@@ -4105,7 +4105,7 @@ Available fields you can update:
             "Open Settings → API Keys and connect at least one of: fal.ai (cheapest, ~$0.40/clip), " +
             "Runway, Hugging Face (free tier), Luma, Replicate, or Google Veo 3. " +
             "Once connected, return here and tap Re-generate Film.";
-          console.warn(`[QuickGen] Project ${projectId} blocked: user has no video API keys configured.`);
+          logger.warn(`[QuickGen] Project ${projectId} blocked: user has no video API keys configured.`);
           try { await db.updateJob(jobId, { status: "failed", progress: 0, errorMessage: noKeyMsg }); } catch {}
           try { await db.updateProject(projectId, userId, { status: "failed", progress: 0 }); } catch {}
           return;
@@ -4198,7 +4198,7 @@ Available fields you can update:
                       autoGeneratedForProject: projectId,
                     },
                   });
-                  console.log(`[QuickGen] Auto-generated character portrait: ${cd.name}`);
+                  logger.info(`[QuickGen] Auto-generated character portrait: ${cd.name}`);
                 }
               } catch (charErr: any) {
                 console.error(`[QuickGen] Failed to generate character portrait for ${cd.name}:`, charErr.message);
@@ -4528,7 +4528,7 @@ Break this into the number of scenes specified in your system instructions above
               (scene as any).lastFrameUrl = extResult.lastFrameUrl;
 
               generatedCount++;
-              console.log(`[QuickGen] Scene ${sceneIdx + 1}/${allScenes.length} extended video generated (${extResult.totalDuration.toFixed(1)}s, ${extResult.subClipCount} clips): ${extResult.videoUrl}`);
+              logger.info(`[QuickGen] Scene ${sceneIdx + 1}/${allScenes.length} extended video generated (${extResult.totalDuration.toFixed(1)}s, ${extResult.subClipCount} clips): ${extResult.videoUrl}`);
             } catch (videoErr: any) {
               console.error(`[QuickGen] Extended video generation failed for scene "${scene.title}":`, videoErr.message);
               
@@ -4571,7 +4571,7 @@ Break this into the number of scenes specified in your system instructions above
                   // Leave scene in generating state — worker will complete it
                   await db.updateScene(scene.id, { status: "generating" } as any);
                   generatedCount++;
-                  console.log(`[QuickGen] Scene ${sceneIdx + 1} Runway job ${taskId} queued for worker`);
+                  logger.info(`[QuickGen] Scene ${sceneIdx + 1} Runway job ${taskId} queued for worker`);
                 } else {
                   await db.updateScene(scene.id, {
                     videoUrl: finalVideoUrl,
@@ -4579,7 +4579,7 @@ Break this into the number of scenes specified in your system instructions above
                     status: "completed",
                   });
                   generatedCount++;
-                  console.log(`[QuickGen] Scene ${sceneIdx + 1} fallback single-clip generated via ${videoResult.provider}`);
+                  logger.info(`[QuickGen] Scene ${sceneIdx + 1} fallback single-clip generated via ${videoResult.provider}`);
                 }
               } catch (fallbackErr: any) {
                 const errMsg = fallbackErr.message || String(fallbackErr);
@@ -4629,7 +4629,7 @@ Break this into the number of scenes specified in your system instructions above
               resolution: projectRef.resolution === "1920x1080" ? "1080p" : "720p",
             });
             outputUrl = stitchResult.fileUrl;
-            console.log(`[QuickGen] Auto-stitched ${videoScenes.length} scenes → ${outputUrl}`);
+            logger.info(`[QuickGen] Auto-stitched ${videoScenes.length} scenes → ${outputUrl}`);
           }
         } catch (stitchErr: any) {
           console.error("[QuickGen] Auto-stitch failed (non-fatal):", stitchErr.message);
@@ -4654,7 +4654,7 @@ Break this into the number of scenes specified in your system instructions above
               progress: 0,
             });
           } catch { /* ignore */ }
-          console.log(`[QuickGen] Background generation halted for project ${projectId}: 0 videos produced`);
+          logger.info(`[QuickGen] Background generation halted for project ${projectId}: 0 videos produced`);
           return;
         }
 
@@ -4675,7 +4675,7 @@ Break this into the number of scenes specified in your system instructions above
           ...(outputUrl ? { outputUrl } : {}),
           ...(finalThumbnailUrl ? { thumbnailUrl: finalThumbnailUrl } : {}),
         });
-        console.log(`[QuickGen] Background generation complete for project ${projectId}: ${scenesData.length} scenes, ${generatedCount} videos`);
+        logger.info(`[QuickGen] Background generation complete for project ${projectId}: ${scenesData.length} scenes, ${generatedCount} videos`);
         } catch (error: any) {
           // Error recovery: ensure project doesn't get stuck in "generating" state
           // AND surface the actual error message into the job so the red banner in the UI fires.
@@ -8303,7 +8303,7 @@ Generate a detailed production budget estimate.`,
                 const text = (s.dialogueText || s.subtitleText || "").trim();
                 return text.length > 0;
               });
-              console.log(`[Export] Generating ${scenesWithDialogue.length} Auslan avatar(s) in parallel...`);
+              logger.info(`[Export] Generating ${scenesWithDialogue.length} Auslan avatar(s) in parallel...`);
               const avatarResults = await Promise.allSettled(
                 scenesWithDialogue.map(async (scene: any) => {
                   const dialogueText = (scene.dialogueText || scene.subtitleText || "").trim();
@@ -8318,11 +8318,11 @@ Generate a detailed production budget estimate.`,
                 if (result.status === "fulfilled") {
                   auslanAvatarMap.set(result.value.sceneId, result.value.videoUrl);
                 } else {
-                  console.warn("[Export] An Auslan avatar generation failed:", result.reason?.message ?? result.reason);
+                  logger.warn("[Export] An Auslan avatar generation failed:", result.reason?.message ?? result.reason);
                 }
               }
             } else {
-              console.warn("[Export] Auslan overlay enabled but no D-ID API key set — skipping avatar generation");
+              logger.warn("[Export] Auslan overlay enabled but no D-ID API key set — skipping avatar generation");
             }
           }
 
@@ -11124,7 +11124,7 @@ Rules:
             }));
           }
         } catch (llmErr: any) {
-          console.warn("[Distribute] LLM promo generation failed, using fallback:", llmErr.message);
+          logger.warn("[Distribute] LLM promo generation failed, using fallback:", llmErr.message);
           // fallbackAssets already set above — continue
         }
 
@@ -13694,11 +13694,11 @@ Return JSON ONLY in this exact shape:
           if (existing && existing.id) {
             releasedReservationId = existing.id;
             try { await db.releaseReservation(existing.id); } catch (e: any) {
-              console.warn(`[recap.cancelRender] release reservation ${existing.id} failed:`, e?.message);
+              logger.warn(`[recap.cancelRender] release reservation ${existing.id} failed:`, e?.message);
             }
           }
         } catch (e: any) {
-          console.warn(`[recap.cancelRender] reservation lookup failed for recap ${input.recapId}:`, e?.message);
+          logger.warn(`[recap.cancelRender] reservation lookup failed for recap ${input.recapId}:`, e?.message);
         }
 
         // Revert recap to the settled outline state with a clear message.
@@ -13821,7 +13821,7 @@ Return JSON ONLY in this exact shape:
               await db.deleteScene(s.id);
               deleted++;
             } catch (err: any) {
-              console.warn(`[applyBreakdownToProject] delete failed on scene ${s.id}: ${err?.message}`);
+              logger.warn(`[applyBreakdownToProject] delete failed on scene ${s.id}: ${err?.message}`);
             }
           }
         }
@@ -13876,7 +13876,7 @@ Return JSON ONLY in this exact shape:
               charNameSet.add(k);
               createdCharacters.push(name);
             } catch (err: any) {
-              console.warn(`[applyBreakdownToProject] character create failed for "${name}": ${err?.message}`);
+              logger.warn(`[applyBreakdownToProject] character create failed for "${name}": ${err?.message}`);
               characterCreateFailures.push({ name, error: err?.message ?? "unknown" });
             }
           }
@@ -13901,7 +13901,7 @@ Return JSON ONLY in this exact shape:
               locNameSet.add(k);
               createdLocations.push(name);
             } catch (err: any) {
-              console.warn(`[applyBreakdownToProject] location create failed for "${name}": ${err?.message}`);
+              logger.warn(`[applyBreakdownToProject] location create failed for "${name}": ${err?.message}`);
               locationCreateFailures.push({ name, error: err?.message ?? "unknown" });
             }
           }
@@ -13968,7 +13968,7 @@ Return JSON ONLY in this exact shape:
             } as any);
             created++;
           } catch (err: any) {
-            console.warn(`[applyBreakdownToProject] failed on scene ${s.sceneNumber}: ${err?.message}`);
+            logger.warn(`[applyBreakdownToProject] failed on scene ${s.sceneNumber}: ${err?.message}`);
             failures.push({ sceneNumber: s.sceneNumber, error: err?.message ?? "unknown" });
           }
         }
