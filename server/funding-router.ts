@@ -1,4 +1,5 @@
 import { publicProcedure, protectedProcedure, creationProcedure, router } from "./_core/trpc";
+import { logger } from "./_core/logger";
 import { rateLimitAI } from "./_core/rateLimit";
 import { z } from "zod";
 import { getDb, deductCredits, getProjectById, getProjectScenes, getProjectCharacters, createChatMessage } from "./db";
@@ -548,7 +549,7 @@ export const fundingRouter = router({
           });
         }
       } catch (err) {
-        console.error("[FundingRouter] Failed to send application email:", err);
+        logger.errorWithStack("[FundingRouter] Failed to send application email", err);
         // Don't fail the mutation — form was submitted, email is best-effort
       }
       // Track in [FundingApplications] log so the tracker UI can show it
@@ -572,7 +573,7 @@ export const fundingRouter = router({
           await dbConn.execute(sql`DELETE FROM directorChats WHERE userId = ${user.id} AND content LIKE '[FundingApplications]%'`);
           await createChatMessage({ projectId: 0, userId: user.id, role: "user", content: `[FundingApplications]\n${JSON.stringify(apps)}` });
         }
-      } catch (e) { console.error("[FundingRouter] application tracker write failed:", e); }
+      } catch (e) { logger.errorWithStack("[FundingRouter] application tracker write failed", e); }
       return { success: true, message: "Application compiled and sent to your email." };
     }),
 
@@ -719,7 +720,7 @@ FUNDING TARGET
         const txt = String(resp?.content ?? resp?.text ?? "").trim();
         const m = txt.match(/\{[\s\S]*\}/);
         if (m) draft = JSON.parse(m[0]);
-      } catch (e) { console.error("[FundingRouter] autofill LLM failed:", e); }
+      } catch (e) { logger.errorWithStack("[FundingRouter] autofill LLM failed", e); }
       // Always include facts we know
       draft.projectTitle = draft.projectTitle || projAny.title || projAny.name || "";
       draft.workingTitle = draft.workingTitle || draft.projectTitle;
