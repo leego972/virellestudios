@@ -1499,7 +1499,7 @@ export const featureFilmRouter = router({
           }).where(eq(filmCompileJobs.id, jobId));
 
         } catch (err: any) {
-          console.error("[CompileFilm] Job failed:", err.message);
+          logger.error(`[CompileFilm] Job failed: ${err.message}`);
           await db.update(filmCompileJobs).set({
             status: "failed",
             errorMessage: err.message,
@@ -1636,7 +1636,7 @@ export const featureFilmRouter = router({
         } catch (_) { /* non-critical */ }
       } catch (err: any) {
         if (err instanceof TRPCError) throw err;
-        console.error("[FeatureFilmRouter] emailPressKit failed:", err);
+        logger.errorWithStack("[FeatureFilmRouter] emailPressKit failed", err);
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Email delivery failed. Try again later or contact support." });
       }
       return { success: true, message: `Press kit sent to ${input.recipients.length} recipient(s).`, recipients: input.recipients.length };
