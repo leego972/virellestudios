@@ -302,3 +302,48 @@
   4. **Client gates are UX.** `SubscriptionGate` improves UX; the API layer is authoritative.
   5. **Multi-line imports must be detected** before any import injection. Use a full-parse approach, not `lastIndexOf('\nimport ')`.
   
+---
+
+## Pass 6 — Scene Pipeline, BYOK Encryption, DB Schema (2026-06-09)
+
+### BUG-17 · CRITICAL — scene.update + scene.create: 15 form fields silently stripped by tRPC schema
+**Files:** `server/routers.ts`  
+**Root cause:** The `scene.update` and `scene.create` z.object input schemas were missing 15 fields that `SceneEditor.tsx` sent and `buildScenePrompt` expected. tRPC strips unknown fields before they reach `db.updateScene`, so these values were NEVER persisted to the DB and never used in generation.  
+**Missing fields:** `sceneType`, `coverageType`, `screenDirection`, `continuityNotes`, `shotIntent`, `practicalLights`, `dialogueSubtext`, `lensFilter`, `shootingFormat`, `negativePrompt`, `seed`, `referenceImages`, `extras`, `voiceRoles`  
+**Fix:** Added all 15 fields to both `scene.create` and `scene.update` z.object schemas with appropriate types (`z.string().optional()`, `z.number().optional()`, `z.any().optional()`).
+
+### BUG-18 · CRITICAL — autoMigrate: 5 scene DB columns missing (new fields never persisted)
+**File:** `server/_core/autoMigrate.ts`  
+**Root cause:** Even after fixing BUG-17, 5 of the new fields had no corresponding DB columns, so `db.updateScene` would produce a SQL error when trying to SET those columns.  
+**Missing columns:** `screenDirection VARCHAR(64)`, `dialogueSubtext TEXT`, `negativePrompt TEXT`, `seed INT`, `voiceRoles JSON`  
+**Fix:** Added all 5 to the `autoMigrate` column-addition list. They are added idempotently via `IF NOT EXISTS` so existing instances are unaffected.
+
+### BUG-19 · HIGH — BYOK keys stored as base64 (not encrypted)
+**Files:** `server/routers.ts` (saveApiKey), `server/db.ts` (getUserApiKeys), `server/_core/securityEngine.ts` (decryptApiKey)  
+**Root cause:** `settings.saveApiKey` used `Buffer.from(key).toString("base64")` — trivially reversible. The `encryptApiKey` AES-256-GCM function in `securityEngine.ts` was imported but not used. `getUserApiKeys` correspondingly base64-decoded instead of using `decryptApiKey`.  
+**Fix (backward compatible):**
+1. `saveApiKey` now calls `encryptApiKey(key)` → AES-256-GCM `v2:iv:authTag:ciphertext` format
+2. `getUserApiKeys` now calls `decryptApiKey(val)` which handles `v2:` (GCM), legacy CBC format, and falls back to base64 for keys saved before this fix
+3. `decryptApiKey` updated with a base64 fallback as final resort (any existing user keys continue to work without requiring them to re-enter)
+
+### BUG-20 · MEDIUM — generatePreview uses platform OpenAI key only; user BYOK key ignored
+**File:** `server/routers.ts` (generatePreview)  
+**Root cause:** `generatePreview` called `generateImage({prompt, originalImages})` without loading the user's BYOK keys. Even if a user added their own OpenAI key in Settings, it was never used for preview image generation.  
+**Fix:** Added `const userKeys = await db.getUserApiKeys(ctx.user.id)` before the `generateImage` call and passed `userOpenAiKey: userKeys.openaiKey || undefined`. Also updated `GenerateImageOptions` type in `imageGeneration.ts` to accept `userOpenAiKey`, and updated `generateWithOpenAIImageEdit` + `generateWithDallE3` to prefer `options.userOpenAiKey || ENV.openaiApiKey`.
+
+---
+
+## Pass 6 Summary
+
+| Issue | Severity | Fixed |
+|-------|----------|-------|
+| BUG-17: 15 scene fields stripped by tRPC schema | CRITICAL | ✅ |
+| BUG-18: 5 missing scene DB columns | CRITICAL | ✅ |
+| BUG-19: BYOK keys stored as base64, not encrypted | HIGH | ✅ |
+| BUG-20: generatePreview ignores user BYOK OpenAI key | MEDIUM | ✅ |
+
+**Architecture rules added:**
+1. Any field that `buildScenePrompt` reads via `(scene as any).field` MUST be in the `scene.update` and `scene.create` z.object schemas AND have a DB column
+2. `encryptApiKey` / `decryptApiKey` are the canonical key storage primitives — never use base64 for secrets
+3. `generateImage` calls that happen inside user-triggered endpoints MUST pass `userOpenAiKey` from `getUserApiKeys`
+
