@@ -194,8 +194,7 @@ function SubtitlesInner() {
   const selectedSub = useMemo(() => subtitleList.find((s: any) => s.id === selectedSubId), [subtitleList, selectedSubId]);
   const entries = (selectedSub?.entries as any[]) || [];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const generateMutation = (trpc.subtitle as any).aiGenerate.useMutation({
+  const generateMutation = trpc.subtitle.generate.useMutation({
     onSuccess: (data: { id: number }) => {
       utils.subtitle.listByProject.invalidate({ projectId });
       setSelectedSubId(data.id);
