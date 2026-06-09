@@ -38,6 +38,7 @@ import {
 } from "../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { invokeLLM } from "./_core/llm";
+import { logger } from "./_core/logger";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -1418,7 +1419,7 @@ export const featureFilmRouter = router({
                   .map((s: any) => ({ videoUrl: s.videoUrl, title: s.title, duration: s.duration, orderIndex: s.orderIndex }));
               }
             } catch (e) {
-              console.warn("[CompileFilm] Could not load opener scenes:", e);
+              logger.warn("[CompileFilm] Could not load opener scenes:", e);
             }
           }
 
@@ -1446,7 +1447,7 @@ export const featureFilmRouter = router({
                 .from(credits)
                 .where(eq(credits.projectId, input.projectId));
             } catch (e) {
-              console.warn("[CompileFilm] Could not load credits:", e);
+              logger.warn("[CompileFilm] Could not load credits:", e);
             }
           }
 
