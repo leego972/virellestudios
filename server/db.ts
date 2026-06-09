@@ -1,3 +1,4 @@
+import { logger } from "./_core/logger";
 import { eq, and, asc, desc, isNull, inArray } from "drizzle-orm";
 import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
@@ -62,7 +63,7 @@ export async function getDb() {
         });
         _db = drizzle(pool) as MySql2Database<Record<string, unknown>>;
     } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
+      logger.warn("[Database] Failed to connect", { error: error instanceof Error ? error.message : String(error) });
       _db = null;
     }
   }
@@ -73,7 +74,7 @@ export async function getDb() {
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) throw new Error("User openId is required for upsert");
   const db = await getDb();
-  if (!db) { console.warn("[Database] Cannot upsert user: database not available"); return; }
+  if (!db) { logger.warn("[Database] Cannot upsert user: database not available"); return; }
   try {
     const values: InsertUser = { openId: user.openId };
     const updateSet: Record<string, unknown> = {};
@@ -100,9 +101,9 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
     await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
     if (user.role === 'admin') {
-      console.log(`[Auth] Admin role confirmed for ${user.email || user.openId}`);
+      logger.info(`[Auth] Admin role confirmed for ${user.email || user.openId}`);
     }
-  } catch (error) { console.error("[Database] Failed to upsert user:", error); throw error; }
+  } catch (error) { logger.errorWithStack("[Database] Failed to upsert user", error); throw error; }
 }
 
 export async function getUserByOpenId(openId: string) {
@@ -369,7 +370,7 @@ function sanitizeEnumValue(column: string, value: unknown): unknown {
   for (const v of enumDef.valid) {
     if (lower.includes(v) || v.includes(lower)) return v;
   }
-  console.warn(`[createScene] Sanitizing ${column}: "${value}" -> "${enumDef.fallback}" (not a valid enum value)`);
+  logger.warn(`[createScene] Sanitizing ${column}: "${value}" -> "${enumDef.fallback}" (not a valid enum value)`);
   return enumDef.fallback;
 }
 
@@ -418,8 +419,8 @@ export async function createScene(data: InsertScene) {
     const sqlMsg = err.sqlMessage || err.message || 'no message';
     const code = err.code || err.errno || 'UNKNOWN';
     const fullErr = JSON.stringify({ code: err.code, errno: err.errno, sqlState: err.sqlState, sqlMessage: err.sqlMessage, message: err.message?.slice(0, 300) });
-    console.error(`[createScene] Full error:`, fullErr);
-    console.error(`[createScene] Columns attempted:`, columns);
+    logger.errorWithStack("[createScene] Full error", fullErr);
+    logger.error("[createScene] Columns attempted", { columns });
     throw new Error(`Scene insert failed [${code}]: ${sqlMsg}. Debug: ${fullErr}`);
   }
 }
@@ -1813,7 +1814,7 @@ export async function deductCredits(userId: number, amount: number, action: stri
         balanceAfter: currentBalance,
       });
     } catch (e) {
-      console.warn("[Credits] Failed to log exempt transaction:", e);
+      logger.warn("[Credits] Failed to log exempt transaction", { error: e instanceof Error ? e.message : String(e) });
     }
     return currentBalance;
   }
@@ -1855,10 +1856,10 @@ export async function deductCredits(userId: number, amount: number, action: stri
       balanceAfter: newBalance,
     });
   } catch (e) {
-    console.warn("[Credits] Failed to log transaction:", e);
+    logger.warn("[Credits] Failed to log transaction", { error: e instanceof Error ? e.message : String(e) });
   }
 
-  console.log(`[Credits] User ${userId}: -${amount} credits for ${action} (balance: ${newBalance})`);
+  logger.info(`[Credits] User ${userId}: -${amount} credits for ${action} (balance: ${newBalance})`);
   return newBalance;
 }
 
@@ -1892,10 +1893,10 @@ export async function addCredits(userId: number, amount: number, action: string,
       balanceAfter: newBalance,
     });
   } catch (e) {
-    console.warn("[Credits] Failed to log transaction:", e);
+    logger.warn("[Credits] Failed to log transaction", { error: e instanceof Error ? e.message : String(e) });
   }
 
-  console.log(`[Credits] User ${userId}: +${amount} credits for ${action} (balance: ${newBalance})`);
+  logger.info(`[Credits] User ${userId}: +${amount} credits for ${action} (balance: ${newBalance})`);
   return newBalance;
 }
 
@@ -1981,7 +1982,7 @@ export async function claimStripeWebhookEvent(
     }
     return false;
   } catch (e) {
-    console.warn(`[StripeWebhook] claimStripeWebhookEvent failed for ${eventId}:`, e);
+    logger.warn(`[StripeWebhook] claimStripeWebhookEvent failed for ${eventId}`, { error: e instanceof Error ? e.message : String(e) });
     // Fail open: prefer at-least-once processing over silently dropping.
     return true;
   }
@@ -2008,7 +2009,7 @@ export async function markStripeWebhookEventResult(
       WHERE stripeEventId = ${eventId}
     `);
   } catch (e) {
-    console.warn(`[StripeWebhook] markStripeWebhookEventResult failed for ${eventId}:`, e);
+    logger.warn(`[StripeWebhook] markStripeWebhookEventResult failed for ${eventId}`, { error: e instanceof Error ? e.message : String(e) });
   }
 }
 
@@ -2052,7 +2053,7 @@ export async function hasStripeInvoiceBeenCredited(
     const rows = Array.isArray(result) ? result : (result[0] ?? []);
     return Array.isArray(rows) ? rows.length > 0 : false;
   } catch (e) {
-    console.warn(`[StripeWebhook] hasStripeInvoiceBeenCredited failed for ${invoiceId}:`, e);
+    logger.warn(`[StripeWebhook] hasStripeInvoiceBeenCredited failed for ${invoiceId}`, { error: e instanceof Error ? e.message : String(e) });
     return false;
   }
 }
@@ -2177,7 +2178,7 @@ export async function assignBetaTier(userId: number, expiresAt: Date): Promise<v
       `UPDATE users SET subscriptionTier = 'beta', betaExpiresAt = '${expiresAtIso}', updatedAt = NOW() WHERE id = ${userId}`
     ));
   } catch (err) {
-    console.warn("[Beta] 'beta' ENUM value not accepted, falling back to 'industry':", err);
+    logger.warn("[Beta] 'beta' ENUM value not accepted, falling back to 'industry'", { error: err instanceof Error ? err.message : String(err) });
     try {
       await db.execute(sql.raw(
         `UPDATE users SET subscriptionTier = 'industry', betaExpiresAt = '${expiresAtIso}', updatedAt = NOW() WHERE id = ${userId}`
@@ -2303,7 +2304,7 @@ export async function setFirstLoginExpiry(userId: number, openId: string): Promi
              AND accountExpiresAt IS NULL`
     );
   } catch (err) {
-    console.warn("[DB] setFirstLoginExpiry failed (non-critical):", err);
+    logger.warn("[DB] setFirstLoginExpiry failed (non-critical)", { error: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -2794,7 +2795,7 @@ export async function logActivity(
     await db.insert(activityLog).values({ projectId, userId, actor: actor || null, eventType, payload } as any);
   } catch (e) {
     // Activity log is best-effort — never break the user action because of audit failure.
-    console.warn("[activityLog] insert failed:", e);
+    logger.warn("[activityLog] insert failed", { error: e instanceof Error ? e.message : String(e) });
   }
 }
 
