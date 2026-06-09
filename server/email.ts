@@ -1,3 +1,4 @@
+import { logger } from "./_core/logger";
 import nodemailer from "nodemailer";
 import { ENV } from "./_core/env";
 
@@ -106,7 +107,7 @@ export async function sendPasswordResetEmail(
     });
     return true;
   } catch (err) {
-    console.error("Gmail: unexpected error sending password reset email:", err);
+    logger.errorWithStack("Gmail: unexpected error sending password reset email", err);
     return false;
   }
 }
@@ -195,7 +196,7 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<boolea
     });
     return true;
   } catch (err) {
-    console.error("Gmail: unexpected error sending welcome email:", err);
+    logger.errorWithStack("Gmail: unexpected error sending welcome email", err);
     return false;
   }
 }
@@ -263,7 +264,7 @@ export async function sendSubscriptionConfirmationEmail(
     });
     return true;
   } catch (err) {
-    console.error("Gmail: unexpected error sending subscription confirmation email:", err);
+    logger.errorWithStack("Gmail: unexpected error sending subscription confirmation email", err);
     return false;
   }
 }
@@ -319,7 +320,7 @@ export async function sendNewSignupNotification(
     });
     return true;
   } catch (err) {
-    console.error("Gmail: unexpected error sending new signup notification:", err);
+    logger.errorWithStack("Gmail: unexpected error sending new signup notification", err);
     return false;
   }
 }
@@ -377,7 +378,7 @@ export async function sendNewSubscriptionNotification(
     });
     return true;
   } catch (err) {
-    console.error("Gmail: unexpected error sending new subscription notification:", err);
+    logger.errorWithStack("Gmail: unexpected error sending new subscription notification", err);
     return false;
   }
 }
@@ -385,7 +386,7 @@ export async function sendNewSubscriptionNotification(
 /** Verify that the Gmail SMTP connection works by checking credentials are set */
 export async function verifyEmailConnection(): Promise<boolean> {
   if (!ENV.gmailUser || !ENV.gmailAppPassword) {
-    console.error("GMAIL_USER or GMAIL_APP_PASSWORD is not set");
+    logger.error("GMAIL_USER or GMAIL_APP_PASSWORD is not set");
     return false;
   }
   return true;
@@ -467,7 +468,7 @@ export async function sendCollaborationInviteEmail(
     });
     return true;
   } catch (err) {
-    console.error("Gmail: unexpected error sending collaboration invite email:", err);
+    logger.errorWithStack("Gmail: unexpected error sending collaboration invite email", err);
     return false;
   }
 }
