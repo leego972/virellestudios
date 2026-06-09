@@ -1,4 +1,5 @@
 import { router, adminProcedure } from "./_core/trpc";
+import { logger } from "./_core/logger";
 import { getDb } from "./db";
 import { 
   designerCollections, 
@@ -28,7 +29,7 @@ export const adminSeedingRouter = router({
         message: "Marketplace seeded successfully",
       };
     } catch (error) {
-      console.error("Marketplace seeding error:", error);
+      logger.errorWithStack("Marketplace seeding error", error);
       return {
         success: false,
         message: `Failed to seed marketplace: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -64,7 +65,7 @@ export const adminSeedingRouter = router({
         message: `Seeded ${count} funding sources`,
       };
     } catch (error) {
-      console.error("Funding sources seeding error:", error);
+      logger.errorWithStack("Funding sources seeding error", error);
       return {
         success: false,
         message: `Failed to seed funding sources: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -152,7 +153,7 @@ export const adminSeedingRouter = router({
         message: `Seeded ${count} sample campaigns`,
       };
     } catch (error) {
-      console.error("Crowdfunding seeding error:", error);
+      logger.errorWithStack("Crowdfunding seeding error", error);
       return {
         success: false,
         message: `Failed to seed crowdfunding: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -228,7 +229,7 @@ export const adminSeedingRouter = router({
         message: "Everything seeded successfully",
       };
     } catch (error) {
-      console.error("Complete seeding error:", error);
+      logger.errorWithStack("Complete seeding error", error);
       return {
         success: false,
         message: `Failed to complete seeding: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -283,7 +284,7 @@ export const adminSeedingRouter = router({
         message: `Beta accounts ready: ${created.map((a) => a.email).join(", ")}`,
       };
     } catch (error) {
-      console.error("Beta account creation error:", error);
+      logger.errorWithStack("Beta account creation error", error);
       return {
         success: false,
         message: `Failed to create beta accounts: ${error instanceof Error ? error.message : "Unknown error"}`,
