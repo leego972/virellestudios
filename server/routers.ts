@@ -3580,20 +3580,17 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         else if (userKeys.openaiKey) provider = "openai";
         else if (userKeys.anthropicKey) provider = "anthropic";
         else if (userKeys.googleAiKey) provider = "google";
-        else if (ENV.veniceApiKey) {
-          // Permanent platform Venice — works for ALL users with no own LLM key (until TitanAI trained)
-          provider = "venice";
-        } else if (isAdminChat && ENV.openaiApiKey) {
-          provider = "openai";
+        } else if (isAdminChat && (ENV.veniceApiKey || ENV.openaiApiKey)) {
+          provider = ENV.veniceApiKey ? "venice" : "openai";
         } else {
           throw new TRPCError({
             code: "FORBIDDEN",
-            message: "Director's Assistant is temporarily unavailable. Please try again shortly.",
+            message: "No LLM key configured. Go to Settings → API Keys and add an OpenAI, Anthropic, Google AI, or Venice key to use the Director's Assistant.",
           });
         }
 
         const apiKey =
-          provider === "venice" ? (userKeys.veniceKey || ENV.veniceApiKey)
+          provider === "venice" ? (userKeys.veniceKey || (isAdminChat ? ENV.veniceApiKey : ""))
           : provider === "openai" ? (userKeys.openaiKey || (isAdminChat ? ENV.openaiApiKey : ""))
           : provider === "anthropic" ? userKeys.anthropicKey!
           : userKeys.googleAiKey!;
@@ -4081,7 +4078,7 @@ Available fields you can update:
         // not the platform key (which may be quota-exhausted).
         let earlyUserKeys: any = { openaiKey: null, anthropicKey: null, googleAiKey: null, falApiKey: null };
         try { earlyUserKeys = await db.getUserApiKeys(userId); } catch (e: any) {
-          logger.warn(`[QuickGen] getUserApiKeys failed, continuing with platform keys: ${e?.message}`);
+          logger.warn(`[QuickGen] getUserApiKeys failed, generation may fail without user keys: ${e?.message}`);
         }
         const userLlmApiKey: string | null = earlyUserKeys.openaiKey || null;
 
@@ -4107,6 +4104,16 @@ Available fields you can update:
             "Once connected, return here and tap Re-generate Film.";
           logger.warn(`[QuickGen] Project ${projectId} blocked: user has no video API keys configured.`);
           try { await db.updateJob(jobId, { status: "failed", progress: 0, errorMessage: noKeyMsg }); } catch {}
+          try { await db.updateProject(projectId, userId, { status: "failed", progress: 0 }); } catch {}
+          return;
+        }
+        if (!earlyUserKeys.elevenlabsKey) {
+          const noElevenLabsMsg =
+            "NO_ELEVENLABS_KEY: ElevenLabs is required for voice and sound generation. " +
+            "Open Settings → API Keys, add your ElevenLabs API key, then tap Re-generate Film. " +
+            "Get a free key at elevenlabs.io — the free tier covers thousands of characters per month.";
+          logger.warn(`[QuickGen] Project ${projectId} blocked: user has no ElevenLabs key configured.`);
+          try { await db.updateJob(jobId, { status: "failed", progress: 0, errorMessage: noElevenLabsMsg }); } catch {}
           try { await db.updateProject(projectId, userId, { status: "failed", progress: 0 }); } catch {}
           return;
         }
@@ -4420,19 +4427,18 @@ Break this into the number of scenes specified in your system instructions above
 
             // Step 4b: Generate extended video scene using clip chaining (30-60s per scene)
             // Re-use earlyUserKeys fetched at the top of quickGenerate (avoids duplicate DB call).
+            const isAdminQG = ctxUser.role === "admin";
             const byokKeys: UserApiKeys = {
-              // User's own key takes priority; platform key is the fallback for ALL users
-              // so film generation works out of the box without requiring BYOK setup.
-              openaiKey: earlyUserKeys.openaiKey || ENV.openaiApiKey || undefined,
-              runwayKey: earlyUserKeys.runwayKey || ENV.runwayApiKey || undefined,
+              // BYOK-only: user's own keys are used exclusively. Admins also get platform key fallback.
+              openaiKey: earlyUserKeys.openaiKey || (isAdminQG ? ENV.openaiApiKey : undefined) || undefined,
+              runwayKey: earlyUserKeys.runwayKey || (isAdminQG ? ENV.runwayApiKey : undefined) || undefined,
               replicateKey: earlyUserKeys.replicateKey,
-              falKey: earlyUserKeys.falKey || ENV.falApiKey || undefined,
+              falKey: earlyUserKeys.falKey || (isAdminQG ? ENV.falApiKey : undefined) || undefined,
               lumaKey: earlyUserKeys.lumaKey,
               hfToken: earlyUserKeys.hfToken,
               byteplusKey: earlyUserKeys.byteplusKey,
-              googleAiKey: earlyUserKeys.googleAiKey || ENV.googleApiKey || undefined,
-              // Default to Runway when platform key is available — it's faster and more reliable
-              preferredProvider: earlyUserKeys.preferredProvider || (ENV.runwayApiKey ? "runway" : undefined),
+              googleAiKey: earlyUserKeys.googleAiKey || (isAdminQG ? ENV.googleApiKey : undefined) || undefined,
+              preferredProvider: earlyUserKeys.preferredProvider || undefined,
             };
 
             // Build rich video prompt — PRIORITY: faceDnaPrompt (photo-locked) > assembled attributes
@@ -9181,8 +9187,10 @@ Rules:
         };
 
         if (!elevenlabsKey) {
-          // No ElevenLabs key — client should fall back to browser TTS
-          return { audioBase64: null, provider: "browser" as const };
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "ElevenLabs API key required for voice generation. Add your key in Settings → API Keys. Get a free key at elevenlabs.io.",
+          });
         }
 
         try {
