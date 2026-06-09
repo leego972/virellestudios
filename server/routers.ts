@@ -4029,7 +4029,7 @@ Available fields you can update:
             throw new TRPCError({ code: "FORBIDDEN", message: e.message });
           }
           // Non-credit errors don't block generation for now
-          logger.warn("[Credits] Deduction warning:", e.message);
+          logger.warn(`[Credits] Deduction warning: ${e.message}`);
         }
 
         // ── Reset: clear existing scenes and OLD jobs BEFORE creating the new job ──
@@ -4048,7 +4048,7 @@ Available fields you can update:
             await dbConn.delete(genJobsTable).where(eqOp(genJobsTable.projectId, project.id));
           }
         } catch (clearErr: any) {
-          logger.warn("[QuickGen] Could not clear old scenes/jobs:", clearErr.message);
+          logger.warn(`[QuickGen] Could not clear old scenes/jobs: ${clearErr.message}`);
           // Non-fatal — continue with generation
         }
         // Create a generation job AFTER clearing old jobs so it isn't immediately deleted
@@ -4081,7 +4081,7 @@ Available fields you can update:
         // not the platform key (which may be quota-exhausted).
         let earlyUserKeys: any = { openaiKey: null, anthropicKey: null, googleAiKey: null, falApiKey: null };
         try { earlyUserKeys = await db.getUserApiKeys(userId); } catch (e: any) {
-          logger.warn("[QuickGen] getUserApiKeys failed, continuing with platform keys:", e?.message);
+          logger.warn(`[QuickGen] getUserApiKeys failed, continuing with platform keys: ${e?.message}`);
         }
         const userLlmApiKey: string | null = earlyUserKeys.openaiKey || null;
 
@@ -8318,7 +8318,7 @@ Generate a detailed production budget estimate.`,
                 if (result.status === "fulfilled") {
                   auslanAvatarMap.set(result.value.sceneId, result.value.videoUrl);
                 } else {
-                  logger.warn("[Export] An Auslan avatar generation failed:", result.reason?.message ?? result.reason);
+                  logger.warn(`[Export] An Auslan avatar generation failed: ${String(result.reason?.message ?? result.reason)}`);
                 }
               }
             } else {
@@ -11124,7 +11124,7 @@ Rules:
             }));
           }
         } catch (llmErr: any) {
-          logger.warn("[Distribute] LLM promo generation failed, using fallback:", llmErr.message);
+          logger.warn(`[Distribute] LLM promo generation failed, using fallback: ${llmErr.message}`);
           // fallbackAssets already set above — continue
         }
 
