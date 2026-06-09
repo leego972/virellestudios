@@ -420,7 +420,7 @@ export const appRouter = router({
             }
           } catch (err) {
             // Don't fail registration if referral processing fails
-             console.error("Referral processing error:", err);
+             logger.errorWithStack("Referral processing error:", err);
           }
         }
         // Create session
@@ -436,7 +436,7 @@ export const appRouter = router({
               await db.applyPromoCodeToUser(user.id, input.promoCode.trim().toUpperCase());
             }
           } catch (err) {
-            console.error("Promo code application error:", err);
+            logger.errorWithStack("Promo code application error:", err);
           }
         }
         // Auto-create referral code for new user (so it's ready to share immediately)
@@ -447,7 +447,7 @@ export const appRouter = router({
             await db.createReferralCode({ userId: user.id, code: newCode, isActive: true });
           }
         } catch (err) {
-          console.error("Auto-create referral code error:", err);
+          logger.errorWithStack("Auto-create referral code error:", err);
         }
         // Send welcome notification
         try {
@@ -543,7 +543,7 @@ export const appRouter = router({
         const { sendPasswordResetEmail } = await import("./email");
         const sent = await sendPasswordResetEmail(user.email!, token, safeOrigin);
         if (!sent) {
-          console.error("Failed to send password reset email to", user.email);
+          logger.error(`Failed to send password reset email to ${user.email}`);
         }
         return { success: true, message: "If an account with that email exists, a reset link has been sent." };
       }),
@@ -653,17 +653,17 @@ export const appRouter = router({
 
           // Create fresh account
           const passwordHash = await bcrypt.hash(BETA_PASS, 12);
-          const newUser = await db.createEmailUser({ 
-            email: BETA_EMAIL, 
-            name: BETA_NAME, 
-            passwordHash, 
-            howDidYouHear: "beta_provision" 
+          const newUser = await db.createEmailUser({
+            email: BETA_EMAIL,
+            name: BETA_NAME,
+            passwordHash,
+            howDidYouHear: "beta_provision"
           });
-          
+
           if (!newUser) {
-            throw new TRPCError({ 
-              code: "INTERNAL_SERVER_ERROR", 
-              message: "Failed to create beta tester account" 
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to create beta tester account"
             });
           }
 
@@ -694,7 +694,7 @@ export const appRouter = router({
           logAuditEvent(ctx.user.id, "beta_tester_provisioned", ctx.req.ip || "unknown", true, { targetEmail: BETA_EMAIL, newUserId: newUser.id });
           return { created: true, synced: false, email: BETA_EMAIL, userId: newUser.id };
         } catch (error: any) {
-          console.error("[admin.provisionBetaTester] Error:", error);
+          logger.errorWithStack("[admin.provisionBetaTester] Error:", error);
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: error.message || "Failed to provision beta tester"
@@ -890,7 +890,7 @@ export const appRouter = router({
                       if (idx === 0 && videoResult.thumbnailUrl) await db.updateProject(projectId, userId, { thumbnailUrl: videoResult.thumbnailUrl }).catch(() => {});
                     }
                   } catch (e: any) {
-                    console.error(`[DemoShort] Scene ${idx + 1} failed:`, e.message);
+                    logger.error(`[DemoShort] Scene ${idx + 1} failed:`, e.message);
                     await db.updateScene(scene.id, { status: "failed" }).catch(() => {});
                   }
                 })
@@ -899,7 +899,7 @@ export const appRouter = router({
               const allDone = finalScenes.every((s: any) => s.status === "completed" || s.status === "failed");
               if (allDone) await db.updateProject(projectId, userId, { status: "completed", progress: 100 }).catch(() => {});
             } catch (err: any) {
-              console.error("[DemoShort] Background error:", err.message);
+              logger.error(`[DemoShort] Background error: ${$err.message}`);
               await db.updateProject(projectId, userId, { status: "failed" }).catch(() => {});
             }
           });
@@ -2886,7 +2886,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               }
               generated++;
             } catch (e) {
-              console.error(`Bulk gen failed for scene "${scene.title}":`, e);
+              logger.error(`Bulk gen failed for scene "${scene.title}":`, e);
             }
           }));
         }
@@ -3143,7 +3143,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
             } catch (err: any) {
-              console.error(`[SceneVideo] Extended Veo3 generation failed for scene ${scene.id}:`, err.message);
+              logger.error(`[SceneVideo] Extended Veo3 generation failed for scene ${scene.id}:`, err.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               // v6.70 — async failure: refund. releaseReservation is idempotent.
               if (__sceneVideoResId) {
@@ -3192,7 +3192,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
             } catch (err: any) {
-              console.error(`[SceneVideo] Extended Runway generation failed for scene ${scene.id}:`, err.message);
+              logger.error(`[SceneVideo] Extended Runway generation failed for scene ${scene.id}:`, err.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               if (__sceneVideoResId) {
                 try { await db.releaseReservation(__sceneVideoResId); } catch {}
@@ -3242,7 +3242,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
             } catch (err: any) {
-              console.error(`[SceneVideo] Extended fal.ai generation failed for scene ${scene.id}:`, err.message);
+              logger.error(`[SceneVideo] Extended fal.ai generation failed for scene ${scene.id}:`, err.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               if (__sceneVideoResId) {
                 try { await db.releaseReservation(__sceneVideoResId); } catch {}
@@ -3293,7 +3293,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 try { await db.finalizeReservation(__sceneVideoResId); } catch {}
               }
             } catch (err: any) {
-              console.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
+              logger.error(`[SceneVideo] Background generation failed for scene ${scene.id}:`, err.message);
               await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               if (__sceneVideoResId) {
                 try { await db.releaseReservation(__sceneVideoResId); } catch {}
@@ -3444,7 +3444,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 logger.info(`[BulkVideo:fal] Extended generation completed for scene ${scene.id}: ${extResult.totalDuration}s, ${extResult.subClipCount} clips`);
                 generated++;
               } catch (e: any) {
-                console.error(`[BulkVideo:fal] Extended generation failed for scene "${scene.title}":`, e.message);
+                logger.error(`[BulkVideo:fal] Extended generation failed for scene "${scene.title}":`, e.message);
                 await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               }
             }));
@@ -3536,7 +3536,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 }
                 generated++;
               } catch (e) {
-                console.error(`Bulk video gen failed for scene "${scene.title}":`, e);
+                logger.error(`Bulk video gen failed for scene "${scene.title}":`, e);
                 await db.updateScene(scene.id, { status: "failed" } as any).catch(() => {});
               }
             }));
@@ -3737,7 +3737,7 @@ Available fields you can update:
             aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
           }
         } catch (err: any) {
-          console.error(`[Virelle] LLM call failed (${provider}):`, err.message);
+          logger.error(`[Virelle] LLM call failed (${provider}):`, err.message);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Virelle AI error: ${err.message}` });
         }
 
@@ -3768,7 +3768,7 @@ Available fields you can update:
               }
             }
           } catch (e) {
-            console.error("[Virelle] Failed to parse JSON updates:", e);
+            logger.errorWithStack("[Virelle] Failed to parse JSON updates:", e);
           }
         }
 
@@ -4201,11 +4201,11 @@ Available fields you can update:
                   logger.info(`[QuickGen] Auto-generated character portrait: ${cd.name}`);
                 }
               } catch (charErr: any) {
-                console.error(`[QuickGen] Failed to generate character portrait for ${cd.name}:`, charErr.message);
+                logger.error(`[QuickGen] Failed to generate character portrait for ${cd.name}:`, charErr.message);
               }
             }
           } catch (charDesignErr: any) {
-            console.error("[QuickGen] Character auto-generation failed:", charDesignErr.message);
+            logger.error(`[QuickGen] Character auto-generation failed: ${$charDesignErr.message}`);
             // Non-fatal — continue with scene generation
           }
         }
@@ -4415,7 +4415,7 @@ Break this into the number of scenes specified in your system instructions above
                 }
               }
             } catch (imgErr) {
-              console.error(`Failed to generate thumbnail for scene "${scene.title}":`, imgErr);
+              logger.error(`Failed to generate thumbnail for scene "${scene.title}":`, imgErr);
             }
 
             // Step 4b: Generate extended video scene using clip chaining (30-60s per scene)
@@ -4530,8 +4530,8 @@ Break this into the number of scenes specified in your system instructions above
               generatedCount++;
               logger.info(`[QuickGen] Scene ${sceneIdx + 1}/${allScenes.length} extended video generated (${extResult.totalDuration.toFixed(1)}s, ${extResult.subClipCount} clips): ${extResult.videoUrl}`);
             } catch (videoErr: any) {
-              console.error(`[QuickGen] Extended video generation failed for scene "${scene.title}":`, videoErr.message);
-              
+              logger.error(`[QuickGen] Extended video generation failed for scene "${scene.title}":`, videoErr.message);
+
               // Fallback to single clip generation
               try {
                 // Use up to 15s for fallback single clip (providers will cap to their own max)
@@ -4583,7 +4583,7 @@ Break this into the number of scenes specified in your system instructions above
                 }
               } catch (fallbackErr: any) {
                 const errMsg = fallbackErr.message || String(fallbackErr);
-                console.error(`[QuickGen] All video generation failed for scene "${scene.title}":`, errMsg);
+                logger.error(`[QuickGen] All video generation failed for scene "${scene.title}":`, errMsg);
                 // Store actionable error in the job so the UI can surface it
                 try {
                   await db.updateJob(job.id, { errorMessage: `Scene "${scene.title}" — ${errMsg}` });
@@ -4593,7 +4593,7 @@ Break this into the number of scenes specified in your system instructions above
               }
             }
            } catch (e: any) {
-            console.error(`Failed to process scene "${scene.title}":`, e?.message || e);
+            logger.error(`Failed to process scene "${scene.title}":`, e?.message || e);
             // Mark scene as completed (with no video) so it doesn't stay in 'generating' state
             try { await db.updateScene(scene.id, { status: "completed" }); } catch { /* ignore */ }
           }
@@ -4632,7 +4632,7 @@ Break this into the number of scenes specified in your system instructions above
             logger.info(`[QuickGen] Auto-stitched ${videoScenes.length} scenes → ${outputUrl}`);
           }
         } catch (stitchErr: any) {
-          console.error("[QuickGen] Auto-stitch failed (non-fatal):", stitchErr.message);
+          logger.error(`[QuickGen] Auto-stitch failed (non-fatal): ${$stitchErr.message}`);
           // Non-fatal — project still completes, user can manually export later
         }
 
@@ -4646,7 +4646,7 @@ Break this into the number of scenes specified in your system instructions above
             "(2) the provider is temporarily down, or (3) the prompt was rejected by the safety filter. " +
             "Open Settings → API Keys, verify your fal.ai / Runway / Hugging Face / Luma key is valid and funded, " +
             "then return here and tap Re-generate Film.";
-          console.error(`[QuickGen] Project ${projectId} produced 0 videos — marking job/project failed.`);
+          logger.error(`[QuickGen] Project ${projectId} produced 0 videos — marking job/project failed.`);
           try { await db.updateJob(job.id, { status: "failed", progress: 0, errorMessage: failMsg }); } catch { /* ignore */ }
           try {
             await db.updateProject(projectId, userId, {
@@ -4682,7 +4682,7 @@ Break this into the number of scenes specified in your system instructions above
           const fatalMsg =
             (error?.message ? String(error.message) : "Unknown background generation error") +
             " — please check Settings → API Keys and try Re-generate Film. If this keeps happening, the issue is on the AI provider side.";
-          console.error("[QuickGen] Background generation failed:", error?.message, error?.stack);
+          logger.errorWithStack("[QuickGen] Background generation failed", error);
           try { await db.updateJob(jobId, { status: "failed", progress: 0, errorMessage: fatalMsg }); } catch { /* ignore */ }
           try {
             await db.updateProject(projectId, userId, {
@@ -4833,7 +4833,7 @@ Break this into the number of scenes specified in your system instructions above
                 }
               }
             } catch (e) {
-              console.error(`Failed to generate trailer image for scene ${sceneIdx}:`, e);
+              logger.error(`Failed to generate trailer image for scene ${sceneIdx}:`, e);
             }
           }
         }
@@ -4917,7 +4917,7 @@ Break this into the number of scenes specified in your system instructions above
         const scenesWithDialogueCount = allScenes.length;
         const creditsPerScene = 2; // video + voice + music
         const totalCreditsNeeded = scenesWithDialogueCount * creditsPerScene;
-        
+
         // Check if user has enough credits for the entire film
         const userLimits = getUserLimits(ctx.user);
         if (userLimits.maxGenerationsPerMonth !== -1) {
@@ -5123,7 +5123,7 @@ Break this into the number of scenes specified in your system instructions above
             stats: result.stats,
           };
         } catch (error: any) {
-          console.error("generateFullFilm failed:", error);
+          logger.errorWithStack("generateFullFilm failed:", error);
           await db.updateJob(job.id, { status: "failed", progress: 0 });
           await db.updateProject(project.id, ctx.user.id, { status: "draft", progress: 0 });
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: `Full film generation failed: ${error.message}` });
@@ -8097,7 +8097,7 @@ Generate a detailed production budget estimate.`,
             const { sendCollaborationInviteEmail } = await import("./email");
             await sendCollaborationInviteEmail(input.email, inviterName, projectTitle, input.role, inviteUrl);
           } catch (emailErr) {
-            console.error("Failed to send collaboration invite email:", emailErr);
+            logger.errorWithStack("Failed to send collaboration invite email:", emailErr);
             // Non-fatal — invite was created, email failure shouldn't block the response
           }
         }
@@ -8222,7 +8222,7 @@ Generate a detailed production budget estimate.`,
               }
             }
           } catch (err) {
-            console.error('[Export] Failed to fetch opener scenes:', err);
+            logger.errorWithStack("[Export] Failed to fetch opener scenes:", err);
           }
 
           let fileUrl: string | undefined;
@@ -8387,7 +8387,7 @@ Generate a detailed production budget estimate.`,
               totalDuration = result.duration;
               mimeType = result.mimeType;
             } catch (err: any) {
-              console.error("[Export] Video stitching failed:", err.message);
+              logger.error(`[Export] Video stitching failed: ${$err.message}`);
               // Hard fail — never save a full film without the Virelle Studios opener.
               throw new Error(`Film compilation failed: ${err.message}. Please try again.`);
             }
@@ -8432,7 +8432,7 @@ Generate a detailed production budget estimate.`,
         } else if (input.exportType === "trailer") {
           // For trailers, stitch first 3 scenes (or first 30s of each) if available
           const scenesWithVideo = scenes.filter((s: any) => s.videoUrl).slice(0, 3);
-          
+
           // Fetch VirElle Studios Opener scenes to prepend as opening credits
           let openerScenes: any[] = [];
           try {
@@ -8458,7 +8458,7 @@ Generate a detailed production budget estimate.`,
               }
             }
           } catch (err) {
-            console.error('[Export] Failed to fetch opener scenes:', err);
+            logger.errorWithStack("[Export] Failed to fetch opener scenes:", err);
           }
 
           let fileUrl: string | undefined;
@@ -8471,16 +8471,16 @@ Generate a detailed production budget estimate.`,
           if (scenesWithVideo.length >= 1) {
             try {
               const { stitchMovie } = await import("./_core/videoStitcher");
-              
+
               const userScenes = scenesWithVideo.map((s: any) => ({
                 videoUrl: s.videoUrl,
                 title: s.title || undefined,
                 duration: s.duration || undefined,
                 orderIndex: s.orderIndex || 0,
               }));
-              
+
               const allScenes = [...openerScenes, ...userScenes];
-              
+
               const result = await stitchMovie({
                 scenes: allScenes,
                 projectTitle: `${project.title} - Trailer`,
@@ -8493,7 +8493,7 @@ Generate a detailed production budget estimate.`,
               totalDuration = result.duration;
               mimeType = result.mimeType;
             } catch (err: any) {
-              console.error("[Export] Trailer stitching failed:", err.message);
+              logger.error(`[Export] Trailer stitching failed: ${$err.message}`);
               // Hard fail — never save a trailer without the Virelle Studios opener.
               throw new Error(`Trailer compilation failed: ${err.message}. Please try again.`);
             }
@@ -8877,7 +8877,7 @@ Generate a detailed production budget estimate.`,
           surfaceFilter = `AND EXISTS (SELECT 1 FROM analyticsEvents ae WHERE ae.entityType = 'filmPage' AND ae.entityId = f.id AND ae.createdAt >= DATE_SUB(NOW(), INTERVAL 7 DAY))`;
         }
         const rows = await dbConn.execute(
-          sql`SELECT 
+          sql`SELECT
               f.id, f.slug, f.title, f.description, f.thumbnailUrl, f.trailerUrl, f.isPublic,
               f.showCreatorName, f.showVirelleBranding, f.allowShowcase, f.createdAt,
               u.name as creatorName, u.avatarUrl as creatorAvatar,
@@ -9203,7 +9203,7 @@ Rules:
 
           if (!resp.ok) {
             const errText = await resp.text().catch(() => "");
-            console.error(`[speakResponse] ElevenLabs error ${resp.status}: ${errText}`);
+            logger.error(`[speakResponse] ElevenLabs error ${resp.status}: ${errText}`);
             return { audioBase64: null, provider: "browser" as const };
           }
 
@@ -9211,7 +9211,7 @@ Rules:
           const audioBase64 = audioBuffer.toString("base64");
           return { audioBase64, provider: "elevenlabs" as const };
         } catch (err) {
-          console.error("[speakResponse] ElevenLabs TTS failed:", err);
+          logger.errorWithStack("[speakResponse] ElevenLabs TTS failed:", err);
           return { audioBase64: null, provider: "browser" as const };
         }
       }),
@@ -9351,7 +9351,7 @@ Rules:
           });
           return { videoUrl: result.videoUrl || null };
         } catch (err: any) {
-          console.error("Video ad generation failed:", err.message);
+          logger.error(`Video ad generation failed: ${$err.message}`);
           return { videoUrl: null };
         }
       }),
@@ -9726,7 +9726,7 @@ Rules:
             const effectiveTierForDb = (liveStatus === "active" || liveStatus === "trialing" ? liveTier : null);
             const tierChanged = effectiveTierForDb !== user.subscriptionTier;
             const statusChanged = liveStatus !== user.subscriptionStatus;
-            const periodChanged = !user.subscriptionCurrentPeriodEnd || 
+            const periodChanged = !user.subscriptionCurrentPeriodEnd ||
               Math.abs(livePeriodEnd.getTime() - new Date(user.subscriptionCurrentPeriodEnd).getTime()) > 60000;
             if (tierChanged || statusChanged || periodChanged) {
               await db.updateUserSubscription(user.id, {
@@ -11026,26 +11026,26 @@ Rules:
       .query(async ({ ctx, input }) => {
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
-        
+
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         // Check if film page exists
         const filmPageRows = await dbConn.execute(
           sql`SELECT * FROM filmPages WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} LIMIT 1`
         );
         const filmPage = (Array.isArray(filmPageRows[0]) ? filmPageRows[0] : filmPageRows as any[])?.[0];
-        
+
         // Check if promo assets exist
         const promoAssetsRows = await dbConn.execute(
           sql`SELECT COUNT(*) as count FROM promoAssets WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id}`
         );
         const promoAssetsCount = (Array.isArray(promoAssetsRows[0]) ? promoAssetsRows[0] : promoAssetsRows as any[])?.[0]?.count || 0;
-        
+
         // Check exports
         const movies = await db.getUserMovies(ctx.user.id);
         const projectMovies = movies.filter((m: any) => m.projectId === input.projectId);
-        
+
         const exports = {
           trailer: projectMovies.some((m: any) => m.type === "trailer" && !m.tags?.includes("tiktok") && !m.tags?.includes("instagram") && !m.tags?.includes("youtubeShorts") && !m.tags?.includes("square")),
           tiktok: projectMovies.some((m: any) => m.type === "trailer" && m.tags?.includes("tiktok")),
@@ -11053,7 +11053,7 @@ Rules:
           youtubeShorts: projectMovies.some((m: any) => m.type === "trailer" && m.tags?.includes("youtubeShorts")),
           square: projectMovies.some((m: any) => m.type === "trailer" && m.tags?.includes("square")),
         };
-        
+
         return {
           isPublished: !!filmPage?.isPublic,
           slug: filmPage?.slug || project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -11062,7 +11062,7 @@ Rules:
           exports,
         };
       }),
-      
+
     generatePromoAssets: creationProcedure
       .input(z.object({ projectId: z.number() }))
       .mutation(async ({ ctx, input }) => {
@@ -11070,10 +11070,10 @@ Rules:
         requireFeature(ctx.user, "canUseFullFilmGeneration", "Promo Asset Generation");
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
-        
+
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         // Delete existing promo assets for this project before regenerating
         await dbConn.execute(
           sql`DELETE FROM promoAssets WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id}`
@@ -11133,38 +11133,38 @@ Rules:
             sql`INSERT INTO promoAssets (userId, projectId, type, variant, content) VALUES (${ctx.user.id}, ${input.projectId}, ${asset.type}, ${asset.variant}, ${asset.content})`
           );
         }
-        
+
         return { success: true, message: "Promo assets generated successfully" };
       }),
-      
+
     getPromoAssets: protectedProcedure
       .input(z.object({ projectId: z.number() }))
       .query(async ({ ctx, input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         const rows = await dbConn.execute(
           sql`SELECT * FROM promoAssets WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} ORDER BY createdAt DESC`
         );
         return Array.isArray(rows[0]) ? rows[0] : rows as any[];
       }),
-      
+
     createPromoExport: protectedProcedure
-      .input(z.object({ 
+      .input(z.object({
         projectId: z.number(),
         platform: z.enum(["tiktok", "instagram", "youtubeShorts", "square"])
       }))
       .mutation(async ({ ctx, input }) => {
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
-        
+
         const scenes = await db.getProjectScenes(project.id);
         const scenesWithVideo = scenes.filter((s: any) => s.videoUrl).slice(0, 3); // Use first 3 scenes for promo
-        
+
         if (scenesWithVideo.length === 0) {
           throw new TRPCError({ code: "BAD_REQUEST", message: "No video scenes available for export" });
         }
-        
+
         // Fetch VirElle Studios Opener scenes to prepend as opening credits
         let openerScenes: any[] = [];
         try {
@@ -11190,7 +11190,7 @@ Rules:
             }
           }
         } catch (err) {
-          console.error('[Export] Failed to fetch opener scenes:', err);
+          logger.errorWithStack("[Export] Failed to fetch opener scenes:", err);
         }
 
         let fileUrl: string | undefined;
@@ -11232,7 +11232,7 @@ Rules:
           totalDuration = result.duration;
           mimeType = result.mimeType;
         } catch (err: any) {
-          console.error(`[Export] ${input.platform} promo stitching failed:`, err.message);
+          logger.error(`[Export] ${input.platform} promo stitching failed:`, err.message);
           // Hard fail — never save a promo without the Virelle Studios opener.
           throw new Error(`Promo compilation failed: ${err.message}. Please try again.`);
         }
@@ -11252,12 +11252,12 @@ Rules:
           mimeType,
           tags: project.genre ? [project.genre, "promo", input.platform] : ["promo", input.platform],
         });
-        
+
         return { success: true, movieId: movie.id };
       }),
-      
+
     publishFilmPage: protectedProcedure
-      .input(z.object({ 
+      .input(z.object({
         projectId: z.number(),
         slug: z.string().min(3).max(80).regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/, "Slug must be lowercase letters, numbers, and hyphens only, and cannot start or end with a hyphen"),
         isPublic: z.boolean(),
@@ -11275,10 +11275,10 @@ Rules:
 
         const project = await db.getProjectById(input.projectId, ctx.user.id);
         if (!project) throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
-        
+
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         // Check if slug is taken by another project
         const existingSlugRows = await dbConn.execute(
           sql`SELECT id FROM filmPages WHERE slug = ${input.slug} AND projectId != ${input.projectId} LIMIT 1`
@@ -11287,21 +11287,21 @@ Rules:
         if (existingSlug) {
           throw new TRPCError({ code: "BAD_REQUEST", message: "This URL slug is already taken" });
         }
-        
+
         // Check if film page exists for this project
         const filmPageRows = await dbConn.execute(
           sql`SELECT id FROM filmPages WHERE projectId = ${input.projectId} AND userId = ${ctx.user.id} LIMIT 1`
         );
         const filmPage = (Array.isArray(filmPageRows[0]) ? filmPageRows[0] : filmPageRows as any[])?.[0];
-        
+
         const title = input.title || project.title;
         const description = input.description || project.plotSummary || project.description || "";
-        
+
         if (filmPage) {
           // Update existing
           await dbConn.execute(
-            sql`UPDATE filmPages SET 
-                slug = ${input.slug}, 
+            sql`UPDATE filmPages SET
+                slug = ${input.slug},
                 isPublic = ${input.isPublic},
                 title = ${title},
                 description = ${description},
@@ -11312,28 +11312,28 @@ Rules:
         } else {
           // Create new
           await dbConn.execute(
-            sql`INSERT INTO filmPages (userId, projectId, slug, title, description, isPublic, showCreatorName, allowShowcase) 
+            sql`INSERT INTO filmPages (userId, projectId, slug, title, description, isPublic, showCreatorName, allowShowcase)
                 VALUES (${ctx.user.id}, ${input.projectId}, ${input.slug}, ${title}, ${description}, ${input.isPublic}, ${input.showCreatorName ?? true}, ${input.allowShowcase ?? true})`
           );
         }
-        
+
         return { success: true, url: `/films/${input.slug}` };
       }),
-      
+
     getFilmPage: publicProcedure
       .input(z.object({ slug: z.string(), preview: z.boolean().optional() }))
       .query(async ({ ctx, input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         const rows = await dbConn.execute(
-          sql`SELECT f.*, u.name as creatorName, u.avatarUrl as creatorAvatar 
-              FROM filmPages f 
-              LEFT JOIN users u ON f.userId = u.id 
+          sql`SELECT f.*, u.name as creatorName, u.avatarUrl as creatorAvatar
+              FROM filmPages f
+              LEFT JOIN users u ON f.userId = u.id
               WHERE f.slug = ${input.slug} LIMIT 1`
         );
         const filmPage = (Array.isArray(rows[0]) ? rows[0] : rows as any[])?.[0];
-        
+
         if (!filmPage) throw new TRPCError({ code: "NOT_FOUND", message: "Film page not found" });
 
         // Only the owner can view draft pages; everyone else requires isPublic = true
@@ -11343,29 +11343,29 @@ Rules:
         if (!filmPage.isPublic && !isOwner) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Film page not found or not public" });
         }
-        
+
         // Get the actual movie file
         const movieRows = await dbConn.execute(
           sql`SELECT * FROM movies WHERE projectId = ${filmPage.projectId} AND type = 'film' ORDER BY createdAt DESC LIMIT 1`
         );
         const movie = (Array.isArray(movieRows[0]) ? movieRows[0] : movieRows as any[])?.[0];
-        
+
         return {
           ...filmPage,
           movieUrl: movie?.fileUrl || null,
           movieDuration: movie?.duration || null,
         };
       }),
-      
+
     getShowcase: publicProcedure
       .query(async () => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         const rows = await dbConn.execute(
           sql`SELECT f.*, u.name as creatorName, u.avatarUrl as creatorAvatar, m.fileUrl as movieUrl, m.thumbnailUrl as movieThumbnail
-              FROM filmPages f 
-              LEFT JOIN users u ON f.userId = u.id 
+              FROM filmPages f
+              LEFT JOIN users u ON f.userId = u.id
               LEFT JOIN movies m ON f.projectId = m.projectId AND m.type = 'film'
               WHERE f.isPublic = true AND f.allowShowcase = true
               GROUP BY f.id
@@ -11382,35 +11382,35 @@ Rules:
       .query(async ({ input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         const rows = await dbConn.execute(
           sql`SELECT * FROM creatorProfiles WHERE slug = ${input.slug} LIMIT 1`
         );
         const profile = (Array.isArray(rows[0]) ? rows[0] : rows as any[])?.[0];
         if (!profile) throw new TRPCError({ code: "NOT_FOUND", message: "Profile not found" });
-        
+
         // Get public collections for this creator
         const collectionsRows = await dbConn.execute(
           sql`SELECT * FROM collections WHERE userId = ${profile.userId} AND isPublic = true ORDER BY createdAt DESC`
         );
-        
+
         // Get public films for this creator
         const filmsRows = await dbConn.execute(
           sql`SELECT f.*, m.fileUrl as movieUrl, m.thumbnailUrl as movieThumbnail
-              FROM filmPages f 
+              FROM filmPages f
               LEFT JOIN movies m ON f.projectId = m.projectId AND m.type = 'film'
               WHERE f.userId = ${profile.userId} AND f.isPublic = true
               GROUP BY f.id
               ORDER BY f.createdAt DESC`
         );
-        
+
         return {
           ...profile,
           collections: Array.isArray(collectionsRows[0]) ? collectionsRows[0] : collectionsRows as any[],
           films: Array.isArray(filmsRows[0]) ? filmsRows[0] : filmsRows as any[],
         };
       }),
-      
+
     updateProfile: protectedProcedure
       .input(z.object({
         slug: z.string().min(3).max(64).regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
@@ -11424,26 +11424,26 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         // Check if slug is taken by someone else
         const slugCheck = await dbConn.execute(
           sql`SELECT id FROM creatorProfiles WHERE slug = ${input.slug} AND userId != ${ctx.user.id} LIMIT 1`
         );
         const existingSlug = (Array.isArray(slugCheck[0]) ? slugCheck[0] : slugCheck as any[])?.[0];
         if (existingSlug) throw new TRPCError({ code: "CONFLICT", message: "Profile URL is already taken" });
-        
+
         // Check if profile exists
         const profileCheck = await dbConn.execute(
           sql`SELECT id FROM creatorProfiles WHERE userId = ${ctx.user.id} LIMIT 1`
         );
         const existingProfile = (Array.isArray(profileCheck[0]) ? profileCheck[0] : profileCheck as any[])?.[0];
-        
+
         if (existingProfile) {
           await dbConn.execute(
-            sql`UPDATE creatorProfiles SET 
-                slug = ${input.slug}, 
-                displayName = ${input.displayName}, 
-                bio = ${input.bio || null}, 
+            sql`UPDATE creatorProfiles SET
+                slug = ${input.slug},
+                displayName = ${input.displayName},
+                bio = ${input.bio || null},
                 profileType = ${input.profileType},
                 isPublic = ${input.isPublic},
                 socialLinks = ${input.socialLinks ? JSON.stringify(input.socialLinks) : null},
@@ -11453,11 +11453,11 @@ Rules:
           );
         } else {
           await dbConn.execute(
-            sql`INSERT INTO creatorProfiles (userId, slug, displayName, bio, profileType, isPublic, socialLinks, focusTags) 
+            sql`INSERT INTO creatorProfiles (userId, slug, displayName, bio, profileType, isPublic, socialLinks, focusTags)
                 VALUES (${ctx.user.id}, ${input.slug}, ${input.displayName}, ${input.bio || null}, ${input.profileType}, ${input.isPublic}, ${input.socialLinks ? JSON.stringify(input.socialLinks) : null}, ${input.focusTags ? JSON.stringify(input.focusTags) : null})`
           );
         }
-        
+
         return { success: true, slug: input.slug };
       }),
   }),
@@ -11469,7 +11469,7 @@ Rules:
       .query(async ({ input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         const rows = await dbConn.execute(
           sql`SELECT c.*, u.name as creatorName, p.slug as creatorSlug
               FROM collections c
@@ -11479,7 +11479,7 @@ Rules:
         );
         const collection = (Array.isArray(rows[0]) ? rows[0] : rows as any[])?.[0];
         if (!collection) throw new TRPCError({ code: "NOT_FOUND", message: "Collection not found" });
-        
+
         // Get items in collection
         const itemsRows = await dbConn.execute(
           sql`SELECT ci.*, f.slug as filmSlug, f.title as filmTitle, f.thumbnailUrl as filmThumbnail, m.fileUrl as movieUrl
@@ -11489,7 +11489,7 @@ Rules:
               WHERE ci.collectionId = ${collection.id} AND f.isPublic = true
               ORDER BY ci.orderIndex ASC`
         );
-        
+
         return {
           ...collection,
           items: Array.isArray(itemsRows[0]) ? itemsRows[0] : itemsRows as any[],
@@ -11510,19 +11510,19 @@ Rules:
       .mutation(async ({ input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) return { success: false };
-        
+
         try {
           await dbConn.execute(
-            sql`INSERT INTO analyticsEvents (userId, entityType, entityId, eventType, metadata) 
+            sql`INSERT INTO analyticsEvents (userId, entityType, entityId, eventType, metadata)
                 VALUES (${input.ownerId}, ${input.entityType}, ${input.entityId}, ${input.eventType}, ${input.metadata ? JSON.stringify(input.metadata) : null})`
           );
           return { success: true };
         } catch (e) {
-          console.error("Analytics tracking error:", e);
+          logger.errorWithStack("Analytics tracking error:", e);
           return { success: false };
         }
       }),
-      
+
     getStats: protectedProcedure
       .input(z.object({
         entityType: z.enum(["filmPage", "creatorProfile", "collection"]),
@@ -11531,23 +11531,23 @@ Rules:
       .query(async ({ ctx, input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) return { views: 0, plays: 0, shares: 0 };
-        
+
         const rows = await dbConn.execute(
-          sql`SELECT eventType, COUNT(*) as count 
-              FROM analyticsEvents 
+          sql`SELECT eventType, COUNT(*) as count
+              FROM analyticsEvents
               WHERE userId = ${ctx.user.id} AND entityType = ${input.entityType} AND entityId = ${input.entityId}
               GROUP BY eventType`
         );
-        
+
         const results = Array.isArray(rows[0]) ? rows[0] : rows as any[];
         const stats = { views: 0, plays: 0, shares: 0 };
-        
+
         for (const row of results) {
           if (row.eventType === 'page_view') stats.views = Number(row.count);
           if (row.eventType === 'video_play') stats.plays = Number(row.count);
           if (row.eventType === 'share_click') stats.shares = Number(row.count);
         }
-        
+
         return stats;
       }),
     setCurationFlag: adminProcedure
@@ -11560,23 +11560,23 @@ Rules:
       .mutation(async ({ ctx, input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         // Check if flag already exists
         const existingRows = await dbConn.execute(
-          sql`SELECT id FROM adminCurationFlags 
+          sql`SELECT id FROM adminCurationFlags
               WHERE entityType = ${input.entityType} AND entityId = ${input.entityId} AND flagType = ${input.flagType} LIMIT 1`
         );
         const existing = (Array.isArray(existingRows[0]) ? existingRows[0] : existingRows as any[])?.[0];
-        
+
         if (!existing) {
           await dbConn.execute(
-            sql`INSERT INTO adminCurationFlags (entityType, entityId, flagType, adminId, notes) 
+            sql`INSERT INTO adminCurationFlags (entityType, entityId, flagType, adminId, notes)
                 VALUES (${input.entityType}, ${input.entityId}, ${input.flagType}, ${ctx.user.id}, ${input.notes || null})`
           );
         }
         return { success: true };
       }),
-      
+
     removeCurationFlag: adminProcedure
       .input(z.object({
         entityType: z.enum(["project", "creatorProfile"]),
@@ -11586,9 +11586,9 @@ Rules:
       .mutation(async ({ input }) => {
         const dbConn = await db.getDb();
         if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database connection failed" });
-        
+
         await dbConn.execute(
-          sql`DELETE FROM adminCurationFlags 
+          sql`DELETE FROM adminCurationFlags
               WHERE entityType = ${input.entityType} AND entityId = ${input.entityId} AND flagType = ${input.flagType}`
         );
         return { success: true };
@@ -11690,7 +11690,7 @@ Rules:
           return { success: true };
         } catch (e: any) {
           if (e.code === "TOO_MANY_REQUESTS") throw e;
-          console.error("Abuse report error:", e);
+          logger.errorWithStack("Abuse report error:", e);
           return { success: false };
         }
       }),
@@ -11753,7 +11753,7 @@ Rules:
           );
           return Array.isArray(rows[0]) ? rows[0] : rows as any[];
         } catch (e) {
-          console.error("getTopFilms error:", e);
+          logger.errorWithStack("getTopFilms error:", e);
           return [];
         }
       }),
@@ -11779,7 +11779,7 @@ Rules:
             newUsers: get(usersRow),
           };
         } catch (e) {
-          console.error("getFunnelStats error:", e);
+          logger.errorWithStack("getFunnelStats error:", e);
           return { views: 0, plays: 0, shares: 0, signupClicks: 0, newUsers: 0 };
         }
       }),
@@ -11807,7 +11807,7 @@ Rules:
           );
           return Array.isArray(rows[0]) ? rows[0] : rows as any[];
         } catch (e) {
-          console.error("getTopCreators error:", e);
+          logger.errorWithStack("getTopCreators error:", e);
           return [];
         }
       }),
@@ -11830,7 +11830,7 @@ Rules:
           );
           return { success: true };
         } catch (e) {
-          console.error("Conversion tracking error:", e);
+          logger.errorWithStack("Conversion tracking error:", e);
           return { success: false };
         }
       }),
@@ -12264,7 +12264,7 @@ Rules:
               ON DUPLICATE KEY UPDATE portraitUrl = ${result.url}, updatedAt = NOW()
             `);
           }
-        } catch (e: any) { console.error("DB save failed:", e.message); }
+        } catch (e: any) { logger.error(`DB save failed: ${(e as Error).message}`); }
         return { success: true, actorId: a.id, portraitUrl: result.url };
       }),
 
@@ -13653,7 +13653,7 @@ Return JSON ONLY in this exact shape:
           } catch (err: any) {
             // renderRecapMp4 swallows its own errors, but guard the dynamic
             // import too so a bad import never leaves the recap stuck.
-            console.error(`[recap.renderMp4] background dispatch failed for recap ${input.recapId}:`, err?.message);
+            logger.error(`[recap.renderMp4] background dispatch failed for recap ${input.recapId}:`, err?.message);
             try {
               await db.updateRecap(input.recapId, ctx.user.id, { status: "outline_completed", errorMessage: err?.message || "Render dispatch failed." } as any);
             } catch {}
