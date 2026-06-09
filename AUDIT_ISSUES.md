@@ -470,11 +470,42 @@
 
 ---
 
-## Full Audit Coverage (Passes 1–9)
+---
 
-- **Server:** All procedures in `routers.ts` (14 379 lines) + all 16 separate router files audited for: correct procedure gate (`creationProcedure` vs `protectedProcedure` vs `adminProcedure`), Zod schema completeness, DB column coverage, encryption correctness, logging hygiene.
-- **Client:** All 300+ unique `trpc.<router>.<procedure>` calls across all 132 page/component files verified against server router definitions. Zero dangling client calls found. `trpc.ai.chat` confirmed JSDoc-comment-only (not a live call).
-- **Routes:** All 132 pages in App.tsx confirmed to have matching route definitions. All lazy imports verified against real page files.
+## Pass 10 Summary
+
+**Scope:** Server logging hygiene — convert all remaining `console.*` calls in tRPC infrastructure and core server files to structured `logger` calls.
+
+**Files touched:** `server/routers.ts`, `server/feature-film-router.ts`, `server/_core/index.ts`, `server/admin-seeding-router.ts`, `server/crowdfund-router.ts`, `server/funding-router.ts`, `server/_core/trpc.ts`, `server/_core/context.ts`, `server/_core/rateLimit.ts`, `server/email.ts`, `server/db.ts`
+
+**TS error fixes required:**  
+1. Python f-string bug produced `${$var.message}` instead of `${var.message}` in 6 template literals → fixed with `re.sub(r'\$\{\$(\w)', r'${\1', content)`.  
+2. `split_args` function didn't decrement depth on `}` inside template literals, causing 17 two-arg `logger.error(template, e)` to not split → converted to `logger.errorWithStack(template, e)` or merged into single template.
+
+**CI:** ✅ Build ✅ TypeScript Check ✅ Audit — confirmed on commit `03c371a0`.
+
+| Issue | Severity | Fixed |
+|-------|----------|-------|
+| BUG-31: console.* calls in routers.ts (45) | LOW | ✅ |
+| BUG-32: console.* calls in feature-film-router.ts (2) | LOW | ✅ |
+| BUG-33: console.* calls in _core/index.ts (8) | LOW | ✅ |
+| BUG-34: console.* calls in admin-seeding-router.ts (5) | LOW | ✅ |
+| BUG-35: console.* calls in crowdfund-router.ts (1) | LOW | ✅ |
+| BUG-36: console.* calls in funding-router.ts (3) | LOW | ✅ |
+| BUG-37: console.* calls in _core/trpc.ts (2) | LOW | ✅ |
+| BUG-38: console.* calls in _core/context.ts (3) | LOW | ✅ |
+| BUG-39: console.* calls in _core/rateLimit.ts (5) | LOW | ✅ |
+| BUG-40: console.* calls in email.ts (7) | LOW | ✅ |
+| BUG-41: console.* calls in db.ts (18) | LOW | ✅ |
+
+---
+
+## Full Audit Coverage (Passes 1–10)
+
+- **Server:** All procedures in `routers.ts` (14 380 lines) + all 16 separate router files audited for: correct procedure gate, Zod schema completeness, DB column coverage, encryption correctness, logging hygiene.
+- **Client:** All 300+ unique `trpc.<router>.<procedure>` calls across all 132 page/component files verified against server router definitions.
+- **Routes:** All 132 pages in App.tsx confirmed to have matching route definitions.
+- **Security:** All publicProcedure mutations audited (only `logout` — correct). All AI endpoints behind `creationProcedure` or `protectedProcedure`. Rate limiting (Redis + in-memory fallback), security headers (CSP/HSTS/X-Frame-Options), JWT session all confirmed in place.
 - **CI:** Build ✅, TypeScript Check ✅, Audit ✅ on HEAD after every push batch.
 
 | Pass | Scope | Issues | Fixed |
@@ -487,5 +518,6 @@
 | 6 | Scene pipeline, BYOK encryption, DB schema | 4 | 4 ✅ |
 | 7 | Procedure gates, duplicate columns, broken tRPC names | 7 | 7 ✅ |
 | 8 | Cinematic engine type gaps + feature film AI gates | 2 | 2 ✅ |
-| 9 | Server logging hygiene (console.log → logger) | 1 | 1 ✅ |
-| **Total** | | **65** | **65 ✅** |
+| 9 | Server logging hygiene (console.log → logger, routers) | 1 | 1 ✅ |
+| 10 | Server logging hygiene (all core infra + db + email) | 11 | 11 ✅ |
+| **Total** | | **76** | **76 ✅** |
