@@ -10702,7 +10702,7 @@ Rules:
     // Test an API key to verify it works
     testApiKey: protectedProcedure
       .input(z.object({
-        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "venice", "did"]),
+        provider: z.enum(["openai", "runway", "replicate", "fal", "luma", "huggingface", "elevenlabs", "suno", "seedance", "anthropic", "google", "veo3", "venice", "did"]),
         key: z.string().min(1),
       }))
       .mutation(async ({ input }) => {
@@ -10730,9 +10730,10 @@ Rules:
               if (resp.ok || resp.status === 200) return { valid: true, message: "Anthropic (Claude) key is valid" };
               return { valid: false, message: `Anthropic returned ${resp.status}` };
             }
+            case "veo3":
             case "google": {
               const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
-              if (resp.ok) return { valid: true, message: "Google AI (Gemini) key is valid" };
+              if (resp.ok) return { valid: true, message: "Google AI (Gemini / Veo3) key is valid" };
               return { valid: false, message: `Google AI returned ${resp.status}` };
             }
             case "openai": {
