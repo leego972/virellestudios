@@ -2,16 +2,19 @@
   <html lang="en">
 
     <head>
-  <!-- Force SW unregister: clears any stale cached app on iPhone Safari -->
+  <!-- SW cache migration: remove caches from versions older than the current build.
+       Do NOT unregister the SW itself — that breaks PWA installability (beforeinstallprompt). -->
     <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(regs) {
-          regs.forEach(function(r) { r.unregister(); });
+      var CURRENT_SW_VERSION = "v1.3.0";
+      if (window.caches) {
+        caches.keys().then(function(ks) {
+          ks.forEach(function(k) {
+            // Only delete virelle-* caches that belong to an older version
+            if (k.startsWith("virelle-") && k.indexOf(CURRENT_SW_VERSION) === -1) {
+              caches.delete(k);
+            }
+          });
         });
-        // Nuke all caches — ensures no old broken build is served
-        if (window.caches) {
-          caches.keys().then(function(ks) { ks.forEach(function(k) { caches.delete(k); }); });
-        }
       }
     </script>
   
