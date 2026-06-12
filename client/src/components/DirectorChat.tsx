@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { VirelleFace } from "./VirelleFace";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { skipToken } from "@tanstack/react-query";
@@ -265,6 +266,9 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
 
   // TTS state
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [lipVolume, setLipVolume] = useState(0);
+  const lipAnalyserRef = useRef<AnalyserNode | null>(null);
+  const lipRafRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
   // Ref to speakTextViaHttp so it can be called from sendViaSSE without forward reference
@@ -713,6 +717,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
       if (audioSourceRef.current) { try { audioSourceRef.current.stop(); } catch (_) {} }
       if (audioCtxRef.current) { try { audioCtxRef.current.close(); } catch (_) {} }
       if (streamingIntervalRef.current) clearInterval(streamingIntervalRef.current);
+      if (lipRafRef.current) cancelAnimationFrame(lipRafRef.current);
     };
   }, []);
 
@@ -742,6 +747,27 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
     setIsSpeaking(false);
   }, []);
 
+  // ─── Lip-sync helpers ───
+  const stopLipSync = useCallback(() => {
+    lipAnalyserRef.current = null;
+    if (lipRafRef.current) { cancelAnimationFrame(lipRafRef.current); lipRafRef.current = null; }
+    setLipVolume(0);
+  }, []);
+
+  const startLipSync = useCallback((analyser: AnalyserNode) => {
+    lipAnalyserRef.current = analyser;
+    const buf = new Uint8Array(analyser.frequencyBinCount);
+    const tick = () => {
+      if (!lipAnalyserRef.current) return;
+      analyser.getByteTimeDomainData(buf);
+      let sum = 0;
+      for (let i = 0; i < buf.length; i++) { const d = (buf[i] - 128) / 128; sum += d * d; }
+      setLipVolume(Math.min(Math.sqrt(sum / buf.length) * 10, 1));
+      lipRafRef.current = requestAnimationFrame(tick);
+    };
+    lipRafRef.current = requestAnimationFrame(tick);
+  }, []);
+
   /** Speak text aloud via /api/voice/tts using AudioContext (Safari safe).
    *  After speaking in voice mode, auto-restarts listening (Titan loop). */
   const speakTextViaHttp = useCallback(async (text: string): Promise<void> => {
@@ -768,11 +794,18 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
       const audioBuf = await ctx.decodeAudioData(arrayBuf);
       const source = ctx.createBufferSource();
       source.buffer = audioBuf;
-      source.connect(ctx.destination);
+      // Analyser drives VirelleFace lip-sync in real time
+      const lipAn = ctx.createAnalyser();
+      lipAn.fftSize = 256;
+      lipAn.smoothingTimeConstant = 0.75;
+      source.connect(lipAn);
+      lipAn.connect(ctx.destination);
+      startLipSync(lipAn);
       audioSourceRef.current = source;
       return new Promise((resolve) => {
         source.onended = () => {
           audioSourceRef.current = null;
+          stopLipSync();
           setIsSpeaking(false);
           // Titan loop: after speaking, auto-restart listening
           if (voiceModeRef.current) {
@@ -787,6 +820,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
         source.start(0);
       });
     } catch (err) {
+      stopLipSync();
       setIsSpeaking(false);
       if (voiceModeRef.current) {
         setVoiceModeState("listening");
@@ -1090,6 +1124,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
       voiceModeStreamRef.current = null;
     }
     stopSpeaking();
+    stopLipSync();
     voiceModeRef.current = false;
     setVoiceModeActive(false);
     setVoiceModeState("inactive");
@@ -1465,6 +1500,77 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
       )}
 
 
+
+
+      {/* ─── Full-screen Voice Mode Overlay ─── */}
+      {voiceModeActive && (
+        <div
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center select-none"
+          style={{ background: 'linear-gradient(180deg,#030305 0%,#070810 50%,#030305 100%)' }}
+        >
+          {/* Close */}
+          <button
+            onClick={closeVoiceMode}
+            className="absolute top-5 right-5 size-10 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
+            style={{ touchAction: 'manipulation' }}
+            aria-label="Close voice mode"
+          >
+            <X className="size-5" />
+          </button>
+
+          <p className="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[0.25em] uppercase text-white/25">
+            Director&rsquo;s Assistant
+          </p>
+
+          {/* Face — 300 × 300 container */}
+          <div style={{ position: 'relative', width: 300, height: 300, flexShrink: 0 }}>
+            <VirelleFace volume={lipVolume} speaking={voiceModeState === 'speaking'} />
+          </div>
+
+          {/* Status + transcript */}
+          <div className="mt-8 flex flex-col items-center gap-3 px-6 max-w-[320px] w-full">
+            <div className="flex items-center gap-2">
+              <div className={cn(
+                'size-2 rounded-full',
+                voiceModeState === 'listening' ? 'bg-red-500 animate-pulse' :
+                voiceModeState === 'thinking'  ? 'bg-blue-400 animate-pulse' :
+                voiceModeState === 'speaking'  ? 'bg-emerald-400 animate-pulse' : 'bg-white/20'
+              )} />
+              <span className={cn(
+                'text-xs font-bold tracking-[0.18em] uppercase',
+                voiceModeState === 'listening' ? 'text-red-400' :
+                voiceModeState === 'thinking'  ? 'text-blue-400' :
+                voiceModeState === 'speaking'  ? 'text-emerald-400' : 'text-white/30'
+              )}>
+                {voiceModeState === 'listening' ? 'Listening' :
+                 voiceModeState === 'thinking'  ? 'Thinking'  :
+                 voiceModeState === 'speaking'  ? 'Speaking'  : ''}
+              </span>
+              {voiceModeState === 'thinking' && <Loader2 className="size-3 text-blue-400 animate-spin" />}
+            </div>
+
+            {voiceModeState === 'listening' && vmRecordingDuration > 0 && (
+              <VoiceWaveform active={true} color="#ef4444" />
+            )}
+
+            {voiceModeTranscript && voiceModeTranscript !== 'Transcribing...' && (
+              <p className="text-sm text-white/50 text-center italic leading-relaxed">
+                &ldquo;{voiceModeTranscript}&rdquo;
+              </p>
+            )}
+          </div>
+
+          {/* End call button */}
+          <button
+            onClick={closeVoiceMode}
+            className="absolute bottom-10 flex items-center gap-2 px-6 py-3 rounded-full bg-red-500/15 border border-red-500/35 text-red-400 hover:bg-red-500/28 transition-all text-sm font-semibold"
+            style={{ touchAction: 'manipulation' }}
+          >
+            <PhoneCall className="size-4" />
+            End
+          </button>
+        </div>
+      )}
 
       {/* ─── Chat panel ─── */}
       <div
