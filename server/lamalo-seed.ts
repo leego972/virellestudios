@@ -5,8 +5,8 @@
  * Rules:
  *  - Every color variant = a separate purchasable item (white tee ≠ black tee)
  *  - Every base item has ≥ 7 color options
- *  - Price = 30 AUD cents per item (PRICE constant)
- *  - Collection bundle = item_count × PRICE × 0.85  (15 % discount, auto-calculated)
+ *  - Price ≈ 10% of Kmart AUD retail prices (per-category, auto-calculated)
+ *  - Collection bundle = sum of item prices × 0.85  (15 % discount, auto-calculated)
  *  - No lease price — one purchase, use forever across all projects/scenes
  *  - Seed is additive: skips collections that already exist by name
  */
@@ -18,13 +18,34 @@ import { logger } from "./_core/logger";
 
 const log = logger.child({ module: "lamalo-seed" });
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// ─── Pricing — ~10 % of Kmart AUD retail prices ─────────────────────────────
+// (image-only virtual wardrobe items, not physical goods)
 
-const PRICE = 30; // AUD cents per item
+const CAT_PRICE: Record<string, number> = {
+  "tops":        100,   // $1.00 — tees, polos, shirts, hoodies, tanks
+  "bottoms":     250,   // $2.50 — jeans, chinos, trousers, joggers
+  "outerwear":   350,   // $3.50 — jackets, coats, blazers
+  "dresses":     200,   // $2.00 — dresses, jumpsuits
+  "swimwear":    150,   // $1.50 — bikinis, one-pieces, boardshorts
+  "footwear":    300,   // $3.00 — sneakers, boots, sandals, heels
+  "accessories": 100,   // $1.00 — hats, belts, scarves, jewellery
+  "watches":     150,   // $1.50 — men's and women's watches
+  "eyewear":     100,   // $1.00 — sunglasses and frames
+  "bags":        200,   // $2.00 — totes, crossbodies, clutches, duffels
+  "suits":       500,   // $5.00 — suit jackets, blazers, formal separates
+  "uniforms":    300,   // $3.00 — professional / costume uniforms
+  "knitwear":    200,   // $2.00 — merino, cardigans, sweaters
+  "lingerie":    100,   // $1.00 — underwear, bralettes, sleepwear basics
+};
+
+/** Return retail price (AUD cents) for a category, default $1.00 */
+function itemPrice(category: string): number {
+  return CAT_PRICE[category.toLowerCase()] ?? 100;
+}
 
 /** 15 % off when buying the whole collection */
 function cp(items: SeedItem[]): number {
-  return Math.floor(items.length * PRICE * 0.85);
+  return Math.floor(items.reduce((sum, i) => sum + i.retailPriceAud, 0) * 0.85);
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -69,13 +90,15 @@ interface SeedCollection {
 }
 
 // ─── Helper: expand one base item into one item per color ────────────────────
+// Auto-prices by category. Hard-capped at 5 colours per item.
 
 function cc(base: BaseItem, colors: string[]): SeedItem[] {
-  return colors.map(color => ({
+  const price = itemPrice(base.category);
+  return colors.slice(0, 5).map(color => ({
     ...base,
     name: `${base.name} — ${color}`,
     colors: [color],
-    retailPriceAud: PRICE,
+    retailPriceAud: price,
     referencePrompt: `${base.referencePrompt}, ${color.toLowerCase()} colorway`,
   }));
 }
