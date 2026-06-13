@@ -483,16 +483,16 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
         es.close();
         sseRef.current = null;
         // In voice mode — auto-speak the response (use ref to avoid stale closure)
-        if (voiceModeRef.current) {
-          // Use ref to avoid forward-reference issue; speakTextViaHttp handles listen-again loop
-          speakTextViaHttpRef.current(finalText).catch(() => {
-            if (voiceModeRef.current) {
-              setVoiceModeState("listening");
-              voiceModeStateRef.current = "listening";
-              startVoiceModeRecordingRef.current();
-            }
-          });
-        }
+        // Always auto-speak Titan's reply (text + voice simultaneously)
+        speakTextViaHttpRef.current(finalText).catch(() => {
+          if (voiceModeRef.current) {
+            setVoiceModeState("listening");
+            voiceModeStateRef.current = "listening";
+            startVoiceModeRecordingRef.current();
+          }
+        });
+
+
       } catch {}
     });
 
