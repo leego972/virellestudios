@@ -494,6 +494,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
         }
 
 
+      } catch {}
     });
 
     es.addEventListener("error", (e: MessageEvent) => {
