@@ -7,15 +7,16 @@ import { z } from "zod";
 
   /** Curated starter outfit picks from Lamalo Fashion — shown to new studio users */
   const STARTER_PICKS = [
-    "Lamalo Linen Shirt",
-    "Lamalo Polo Shirt",
-    "Lamalo Graphic Tee",
-    "Lamalo Chino Trouser",
-    "Lamalo Denim Jean",
+    "Lamalo Premium Tee",
+    "Lamalo Classic Polo",
+    "Lamalo Slim Chino",
+    "Lamalo Straight Denim",
     "Lamalo Bomber Jacket",
-    "Lamalo Canvas Sneaker",
-    "Lamalo Jogger Pant",
+    "Lamalo Canvas Lo Sneaker",
+    "Lamalo Tapered Jogger",
+    "Lamalo Full-Zip Hoodie",
   ];
+  const CATEGORY_LABELS = new Set(["Lamalo Men", "Lamalo Women", "Lamalo Kids", "Lamalo Girls", "Lamalo Boys", "Lamalo Teens", "Lamalo Watches", "Lamalo Eyewear", "Lamalo Headwear", "Lamalo Accessories", "Lamalo Bags & Handbags", "Lamalo Professional Uniforms", "Lamalo Comfort Swimwear"]);
 
   export const lamaloGiftsRouter = router({
     /** Check if this user (non-designer) has already claimed their 2 free outfits */
@@ -67,9 +68,10 @@ import { z } from "zod";
         .where(eq(designerProfiles.brandName, "Lamalo Fashion"))
         .limit(24);
 
-      // Filter to starter picks + sort by them
-      const picks = items.filter(i => STARTER_PICKS.includes(i.name));
-      const rest  = items.filter(i => !STARTER_PICKS.includes(i.name));
+      // Prioritise named starter picks, then fill with any other real items
+      const realItems = items.filter(i => i.name && !CATEGORY_LABELS.has(i.name));
+      const picks = realItems.filter(i => STARTER_PICKS.includes(i.name));
+      const rest  = realItems.filter(i => !STARTER_PICKS.includes(i.name));
       return [...picks, ...rest].slice(0, 8);
     }),
 
