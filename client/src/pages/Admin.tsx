@@ -45,12 +45,12 @@ export default function Admin() {
         setMessage(result.message);
         setStatus("success");
       } else {
-        setMessage(result.error || "Failed to seed marketplace");
+        setMessage(result.message || result.error || "Failed to seed marketplace");
         setStatus("error");
       }
     } catch (error) {
       console.error(error);
-      setMessage("An unexpected error occurred");
+      setMessage((error as any)?.message ?? (error as any)?.data?.message ?? "Unexpected error — check browser console");
       setStatus("error");
     }
   };
@@ -70,7 +70,7 @@ export default function Admin() {
       }
     } catch (error) {
       console.error(error);
-      setMessage("An unexpected error occurred");
+      setMessage((error as any)?.message ?? (error as any)?.data?.message ?? "Unexpected error — check browser console");
       setStatus("error");
     }
   };
@@ -90,7 +90,7 @@ export default function Admin() {
       }
     } catch (error) {
       console.error(error);
-      setMessage("An unexpected error occurred");
+      setMessage((error as any)?.message ?? (error as any)?.data?.message ?? "Unexpected error — check browser console");
       setStatus("error");
     }
   };
@@ -113,7 +113,7 @@ export default function Admin() {
       }
     } catch (error) {
       console.error(error);
-      setMessage("An unexpected error occurred");
+      setMessage((error as any)?.message ?? (error as any)?.data?.message ?? "Unexpected error — check browser console");
       setStatus("error");
     }
   };
@@ -133,7 +133,7 @@ export default function Admin() {
       }
     } catch (error) {
       console.error(error);
-      setMessage("An unexpected error occurred");
+      setMessage((error as any)?.message ?? (error as any)?.data?.message ?? "Unexpected error — check browser console");
       setStatus("error");
     }
   };
