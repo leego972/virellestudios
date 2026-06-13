@@ -1,300 +1,45 @@
 import { getDb } from './db';
-  import { characters } from '../drizzle/schema';
-  import { eq, sql } from 'drizzle-orm';
+import { characters } from '../drizzle/schema';
+import { eq, sql } from 'drizzle-orm';
 
-  const SIGNATURE_CAST = [
-    {
-      name: "Julian Vance",
-      role: "Male Lead",
-      storyImportance: "lead",
-      screenTime: "heavy",
-      description: "The Charismatic Rogue. Mixed European/Mediterranean, sharp jawline, olive skin. Lean athletic, 6'1\". British RP, Mid-Atlantic, French-accented English.",
-      ageRange: "32-38",
-      ethnicity: "Mixed European/Mediterranean",
-      skinTone: "olive",
-      build: "lean athletic",
-      height: "6'1\"",
-      hairColor: "dark",
-      hairStyle: "sharp taper cut",
-      hairLength: "short",
-      eyeColor: "brown",
-      faceShape: "sharp jawline",
-      distinguishingFeatures: "piercing eyes, sharp cheekbones",
-      isAiActor: true,
-      aiActorId: "M-L01",
-      consistencyNotes: "HARD-LOCK: Maintain exact facial symmetry and olive skin tone across all scenes. Hair must stay in a sharp taper cut unless specified.",
-      faceDnaPrompt: "sharp masculine jawline | olive mediterranean skin | deep brown eyes | short sharp taper cut hair | realistic skin texture with subtle pores"
-    },
-    {
-      name: "Elena Rostova",
-      role: "Female Lead",
-      storyImportance: "lead",
-      screenTime: "heavy",
-      description: "The Elegant Mastermind. Eastern European/Slavic, pale flawless skin, striking green eyes. Tall willowy, 5'10\". British RP, Russian-accented English.",
-      ageRange: "30-38",
-      ethnicity: "Eastern European/Slavic",
-      skinTone: "pale",
-      build: "tall willowy",
-      height: "5'10\"",
-      hairColor: "blonde",
-      hairStyle: "sleek straight",
-      hairLength: "long",
-      eyeColor: "green",
-      faceShape: "oval",
-      distinguishingFeatures: "striking green eyes, pale skin",
-      isAiActor: true,
-      aiActorId: "F-L01",
-      consistencyNotes: "HARD-LOCK: Flawless pale skin and striking green eyes are essential. Hair must remain sleek and straight.",
-      faceDnaPrompt: "slavic facial features | pale flawless skin | piercing green eyes | long sleek straight blonde hair | high-fashion makeup look"
-    },
-    {
-      name: "Kofi Adebayo",
-      role: "Male Lead",
-      storyImportance: "lead",
-      screenTime: "heavy",
-      description: "The Driven Professional. West African diaspora, deep warm brown skin, strong brow. Broad shoulders, 6'2\". General American, London MLE.",
-      ageRange: "28-35",
-      ethnicity: "West African",
-      skinTone: "deep warm brown",
-      build: "broad shoulders",
-      height: "6'2\"",
-      hairColor: "black",
-      hairStyle: "short fade",
-      hairLength: "short",
-      eyeColor: "dark brown",
-      faceShape: "strong brow",
-      distinguishingFeatures: "warm brown skin, strong presence",
-      isAiActor: true,
-      aiActorId: "M-L02",
-      consistencyNotes: "HARD-LOCK: Maintain deep warm brown skin tone and strong brow. Hair is a clean short fade.",
-      faceDnaPrompt: "strong west african features | deep warm brown skin | dark brown eyes | short clean fade haircut | professional appearance"
-    },
-    {
-      name: "Tariq Hassan",
-      role: "Male Character Actor",
-      storyImportance: "supporting",
-      screenTime: "moderate",
-      description: "The World-Weary Veteran. Middle Eastern/North African, salt-and-pepper beard, deep-set eyes. Broad stocky, 6'0\". Arabic-accented English.",
-      ageRange: "40-50",
-      ethnicity: "Middle Eastern/North African",
-      skinTone: "olive",
-      build: "broad stocky",
-      height: "6'0\"",
-      hairColor: "salt-and-pepper",
-      hairStyle: "short messy",
-      hairLength: "short",
-      eyeColor: "dark",
-      faceShape: "deep-set eyes",
-      distinguishingFeatures: "salt-and-pepper beard, weathered face",
-      isAiActor: true,
-      aiActorId: "M-C02",
-      consistencyNotes: "HARD-LOCK: Salt-and-pepper beard and weathered skin texture are critical. Maintain deep-set eyes.",
-      faceDnaPrompt: "weathered middle eastern features | salt-and-pepper beard | deep-set dark eyes | rugged skin texture with micro-wrinkles"
-    },
-    {
-      name: "Chloe Chen",
-      role: "Comedic Woman",
-      storyImportance: "supporting",
-      screenTime: "moderate",
-      description: "The Deadpan Cynic. East Asian, sharp bob cut, minimal expression default. Petite, 5'2\". California Vocal Fry, General American.",
-      ageRange: "22-30",
-      ethnicity: "East Asian",
-      skinTone: "fair",
-      build: "petite",
-      height: "5'2\"",
-      hairColor: "black",
-      hairStyle: "sharp bob cut",
-      hairLength: "short",
-      eyeColor: "dark",
-      faceShape: "sharp",
-      distinguishingFeatures: "sharp bob cut, minimal expression",
-      isAiActor: true,
-      aiActorId: "F-X01",
-      consistencyNotes: "HARD-LOCK: Sharp black bob cut and deadpan expression must be maintained. High-fidelity skin texture.",
-      faceDnaPrompt: "east asian features | fair skin | sharp black bob cut | minimal deadpan expression | realistic skin pores"
-    }
-  ];
+const SIGNATURE_CAST = [
+  { name: "Julian Vance", role: "Male Lead", storyImportance: "lead", screenTime: "heavy", description: "The Charismatic Rogue. Mixed European/Mediterranean, sharp jawline, olive skin.", nationality: "Mixed European/Mediterranean", castingNotes: "HARD-LOCK: Exact facial symmetry, olive skin, sharp taper cut.", isAiActor: true, aiActorId: "M-L01" },
+  { name: "Elena Rostova", role: "Female Lead", storyImportance: "lead", screenTime: "heavy", description: "The Elegant Mastermind. Eastern European/Slavic, pale skin, green eyes.", nationality: "Eastern European/Slavic", castingNotes: "HARD-LOCK: Pale skin, green eyes, sleek straight hair.", isAiActor: true, aiActorId: "F-L01" },
+  { name: "Kofi Adebayo", role: "Male Lead", storyImportance: "lead", screenTime: "heavy", description: "The Driven Professional. West African, deep warm brown skin, strong brow.", nationality: "West African", castingNotes: "HARD-LOCK: Deep warm brown skin, strong brow, clean short fade.", isAiActor: true, aiActorId: "M-L02" },
+  { name: "Tariq Hassan", role: "Male Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The World-Weary Veteran. Middle Eastern, salt-and-pepper beard, deep-set eyes.", nationality: "Middle Eastern/North African", castingNotes: "HARD-LOCK: Salt-and-pepper beard, weathered skin texture.", isAiActor: true, aiActorId: "M-C02" },
+  { name: "Chloe Chen", role: "Comedic Woman", storyImportance: "supporting", screenTime: "moderate", description: "The Deadpan Cynic. East Asian, sharp bob cut, minimal expression.", nationality: "East Asian", castingNotes: "HARD-LOCK: Sharp black bob cut, deadpan expression.", isAiActor: true, aiActorId: "F-X01" },
+];
 
-  export async function runSignatureCastSeed(userId: number) {
-    const db = (await getDb())!;
-    // Schema prep — add physical description columns that don't exist in the base characters table
-    const charCols: Array<[string, string]> = [
-      ["ageRange",              "VARCHAR(32) NULL"],
-      ["ethnicity",             "VARCHAR(128) NULL"],
-      ["skinTone",              "VARCHAR(64) NULL"],
-      ["build",                 "VARCHAR(64) NULL"],
-      ["height",                "VARCHAR(16) NULL"],
-      ["hairColor",             "VARCHAR(64) NULL"],
-      ["hairStyle",             "VARCHAR(64) NULL"],
-      ["hairLength",            "VARCHAR(32) NULL"],
-      ["eyeColor",              "VARCHAR(64) NULL"],
-      ["faceShape",             "VARCHAR(64) NULL"],
-      ["distinguishingFeatures","TEXT NULL"],
-      ["consistencyNotes",      "TEXT NULL"],
-      ["faceDnaPrompt",         "TEXT NULL"],
-      ["isAiActor",             "TINYINT(1) NOT NULL DEFAULT 0"],
-      ["aiActorId",             "VARCHAR(64) NULL"],
-    ];
-    for (const [col, def] of charCols) {
-      try { await db.execute(sql.raw(`ALTER TABLE characters ADD COLUMN \`${col}\` ${def}`)); } catch { /* already exists */ }
-    }
-  
-    for (const cast of SIGNATURE_CAST) {
-      const existing = await db.select({ id: characters.id }).from(characters)
-        .where(eq(characters.name, cast.name)).limit(1);
-      if (existing.length > 0) continue;
-      await db.execute(sql`
-        INSERT IGNORE INTO characters
-          (userId, name, role, storyImportance, screenTime, description,
-           ageRange, ethnicity, skinTone, build, height,
-           hairColor, hairStyle, hairLength, eyeColor, faceShape,
-           distinguishingFeatures, isAiActor, aiActorId,
-           consistencyNotes, faceDnaPrompt, isNonHuman)
-        VALUES
-          (${userId}, ${cast.name}, ${cast.role}, ${cast.storyImportance}, ${cast.screenTime},
-           ${cast.description}, ${cast.ageRange}, ${cast.ethnicity}, ${cast.skinTone},
-           ${cast.build}, ${cast.height}, ${cast.hairColor}, ${cast.hairStyle},
-           ${cast.hairLength}, ${cast.eyeColor}, ${cast.faceShape},
-           ${cast.distinguishingFeatures}, ${cast.isAiActor ? 1 : 0}, ${cast.aiActorId},
-           ${cast.consistencyNotes}, ${cast.faceDnaPrompt}, ${0})
-      `);
-    }
-  }
+const DIVERSE_CAST_EXPANSION = [
+  { name: "Zaid Al-Farsi", role: "Male Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Stoic Intellectual. Arab/Middle Eastern, groomed short beard.", nationality: "Arab", castingNotes: "HARD-LOCK: Groomed short beard, deep brown eyes.", isAiActor: true, aiActorId: "M-C03" },
+  { name: "Aisha Mbeki", role: "Female Lead", storyImportance: "lead", screenTime: "heavy", description: "The Resourceful Leader. Black/West African, glowing skin, natural braids.", nationality: "Black/West African", castingNotes: "HARD-LOCK: Natural braids, glowing deep brown skin.", isAiActor: true, aiActorId: "F-L05" },
+  { name: "Toby 'Small' Miller", role: "Male Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Clever Observer. Little Person, sharp blue eyes.", nationality: "White", castingNotes: "HARD-LOCK: Little person features, blue eyes.", isAiActor: true, aiActorId: "M-LP01" },
+  { name: "Magnus 'Giant' Sorensen", role: "Male Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Gentle Giant. Extremely tall, Nordic features, long blonde hair and beard.", nationality: "White/Nordic", castingNotes: "HARD-LOCK: 7ft2 height, rugged Nordic features, long blonde hair and beard.", isAiActor: true, aiActorId: "M-G01" },
+  { name: "Mei Ling", role: "Female Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Tech Savant. East Asian, sharp bob cut, focused gaze.", nationality: "Asian", castingNotes: "HARD-LOCK: Sharp black bob cut, focused gaze.", isAiActor: true, aiActorId: "F-C03" },
+];
 
-  const DIVERSE_CAST_EXPANSION = [
-    {
-      name: "Zaid Al-Farsi",
-      role: "Male Character Actor",
-      storyImportance: "supporting",
-      screenTime: "moderate",
-      description: "The Stoic Intellectual. Arab/Middle Eastern, sharp features, groomed short beard, intellectual gaze. Average build, 5'11\". Arabic-accented English, British RP.",
-      ageRange: "35-45",
-      ethnicity: "Arab",
-      skinTone: "olive",
-      build: "average",
-      height: "5'11\"",
-      hairColor: "black",
-      hairStyle: "neatly groomed",
-      hairLength: "short",
-      eyeColor: "dark brown",
-      faceShape: "sharp",
-      distinguishingFeatures: "groomed short beard, deep-set eyes",
-      isAiActor: true,
-      aiActorId: "M-C03",
-      consistencyNotes: "PHYSICAL HARD-LOCK: Groomed short beard and sharp intellectual features are essential. Maintain deep brown eye color.",
-      faceDnaPrompt: "sharp arab features | groomed short black beard | deep brown eyes | olive skin | intellectual expression | high-fidelity skin texture"
-    },
-    {
-      name: "Aisha Mbeki",
-      role: "Female Lead",
-      storyImportance: "lead",
-      screenTime: "heavy",
-      description: "The Resourceful Leader. Black/West African, glowing skin, natural braids. Athletic build, 5'8\". General American, West African accent.",
-      ageRange: "28-35",
-      ethnicity: "Black",
-      skinTone: "deep brown",
-      build: "athletic",
-      height: "5'8\"",
-      hairColor: "black",
-      hairStyle: "natural braids",
-      hairLength: "long",
-      eyeColor: "dark brown",
-      faceShape: "oval",
-      distinguishingFeatures: "natural braids, glowing skin",
-      isAiActor: true,
-      aiActorId: "F-L05",
-      consistencyNotes: "PHYSICAL HARD-LOCK: Natural braids and glowing deep brown skin must be consistent. Maintain athletic posture.",
-      faceDnaPrompt: "strong west african features | natural black braids | deep brown glowing skin | dark brown eyes | confident expression | realistic skin pores"
-    },
-    {
-      name: "Toby 'Small' Miller",
-      role: "Male Character Actor",
-      storyImportance: "supporting",
-      screenTime: "moderate",
-      description: "The Clever Observer. Little Person (Male), sharp eyes, charismatic smile. 4'2\". General American.",
-      ageRange: "30-40",
-      ethnicity: "White",
-      skinTone: "fair",
-      build: "little person",
-      height: "4'2\"",
-      hairColor: "light brown",
-      hairStyle: "neatly parted",
-      hairLength: "short",
-      eyeColor: "blue",
-      faceShape: "round",
-      distinguishingFeatures: "little person, sharp blue eyes",
-      isAiActor: true,
-      aiActorId: "M-LP01",
-      consistencyNotes: "PHYSICAL HARD-LOCK: Maintain exact height and facial features of a little person. Blue eyes must be striking and consistent.",
-      faceDnaPrompt: "charismatic white male face | blue eyes | light brown neatly parted hair | little person features | realistic skin texture"
-    },
-    {
-      name: "Magnus 'Giant' Sorensen",
-      role: "Male Character Actor",
-      storyImportance: "supporting",
-      screenTime: "moderate",
-      description: "The Gentle Giant. Extremely Tall (Male), Nordic features, long blonde hair and beard. 7'2\". Scandinavian-accented English.",
-      ageRange: "35-45",
-      ethnicity: "White/Nordic",
-      skinTone: "pale",
-      build: "extremely tall",
-      height: "7'2\"",
-      hairColor: "blonde",
-      hairStyle: "long messy",
-      hairLength: "long",
-      eyeColor: "ice blue",
-      faceShape: "rugged",
-      distinguishingFeatures: "extremely tall, long blonde beard",
-      isAiActor: true,
-      aiActorId: "M-G01",
-      consistencyNotes: "PHYSICAL HARD-LOCK: Maintain 7'2\" height and rugged Nordic features. Long blonde hair and beard are essential.",
-      faceDnaPrompt: "rugged nordic features | long blonde hair and beard | ice blue eyes | pale skin | extremely tall stature | realistic skin imperfections"
-    },
-    {
-      name: "Mei Ling",
-      role: "Female Character Actor",
-      storyImportance: "supporting",
-      screenTime: "moderate",
-      description: "The Tech Savant. Asian/East Asian, sharp bob cut, focused gaze. Petite, 5'3\". General American, Mandarin-accented English.",
-      ageRange: "24-30",
-      ethnicity: "Asian",
-      skinTone: "fair",
-      build: "petite",
-      height: "5'3\"",
-      hairColor: "black",
-      hairStyle: "sharp bob",
-      hairLength: "short",
-      eyeColor: "dark brown",
-      faceShape: "heart",
-      distinguishingFeatures: "sharp bob cut, focused expression",
-      isAiActor: true,
-      aiActorId: "F-C03",
-      consistencyNotes: "PHYSICAL HARD-LOCK: Sharp black bob cut and focused gaze must be maintained. Fair skin with realistic texture.",
-      faceDnaPrompt: "sharp east asian features | fair skin | sharp black bob cut | dark brown eyes | focused expression | high-fidelity skin pores"
-    }
-  ];
+type CastMember = typeof SIGNATURE_CAST[0];
 
-  export async function runDiverseCastSeed(userId: number) {
-    const db = (await getDb())!;
-    for (const cast of DIVERSE_CAST_EXPANSION) {
-      const existing = await db.select({ id: characters.id }).from(characters)
-        .where(eq(characters.name, cast.name)).limit(1);
-      if (existing.length > 0) continue;
-      await db.execute(sql`
-        INSERT IGNORE INTO characters
-          (userId, name, role, storyImportance, screenTime, description,
-           ageRange, ethnicity, skinTone, build, height,
-           hairColor, hairStyle, hairLength, eyeColor, faceShape,
-           distinguishingFeatures, isAiActor, aiActorId,
-           consistencyNotes, faceDnaPrompt, isNonHuman)
-        VALUES
-          (${userId}, ${cast.name}, ${cast.role}, ${cast.storyImportance}, ${cast.screenTime},
-           ${cast.description}, ${cast.ageRange}, ${cast.ethnicity}, ${cast.skinTone},
-           ${cast.build}, ${cast.height}, ${cast.hairColor}, ${cast.hairStyle},
-           ${cast.hairLength}, ${cast.eyeColor}, ${cast.faceShape},
-           ${cast.distinguishingFeatures}, ${cast.isAiActor ? 1 : 0}, ${cast.aiActorId},
-           ${cast.consistencyNotes}, ${cast.faceDnaPrompt}, ${0})
-      `);
-    }
-  }
-  
+async function insertCast(db: NonNullable<Awaited<ReturnType<typeof import('./db').getDb>>>, userId: number, cast: CastMember) {
+  const existing = await db.select({ id: characters.id }).from(characters).where(eq(characters.name, cast.name)).limit(1);
+  if (existing.length > 0) return;
+  await db.execute(sql`
+    INSERT IGNORE INTO characters
+      (userId, name, role, storyImportance, screenTime, description,
+       nationality, castingNotes, isAIActor, aiActorId, isNonHuman)
+    VALUES
+      (${userId}, ${cast.name}, ${cast.role}, ${cast.storyImportance}, ${cast.screenTime},
+       ${cast.description}, ${cast.nationality}, ${cast.castingNotes},
+       ${cast.isAiActor ? 1 : 0}, ${cast.aiActorId}, ${0})
+  `);
+}
+
+export async function runSignatureCastSeed(userId: number) {
+  const db = (await getDb())!;
+  for (const cast of SIGNATURE_CAST) { await insertCast(db, userId, cast); }
+}
+
+export async function runDiverseCastSeed(userId: number) {
+  const db = (await getDb())!;
+  for (const cast of DIVERSE_CAST_EXPANSION) { await insertCast(db, userId, cast); }
+}
