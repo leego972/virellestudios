@@ -5,7 +5,7 @@
  * collection management (publish/unpublish, pricing), and earnings overview.
  */
 import { useState, useEffect } from "react";
-import { useLocation, Link } from "wouter";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
@@ -330,8 +330,8 @@ export default function DesignerStudioPage() {
     );
   }
 
-  // Public browse — non-members see designer catalogue instead of a blank wall
-    const { data: publicDesigners } = trpc.wardrobeMarket.browseDesigners.useQuery({ limit: 24, offset: 0 });
+  // Public items browse — non-members see Lamalo items directly
+    const { data: publicItems } = trpc.wardrobeMarket.searchItems.useQuery({ limit: 60, offset: 0 });
 
     if (!isMember) {
       return (
@@ -348,39 +348,39 @@ export default function DesignerStudioPage() {
               Join as Designer — A$299/yr
             </Button>
           </header>
-          <div className="max-w-5xl mx-auto px-6 py-10">
-            <h1 className="text-3xl font-black mb-1">Designer Catalogue</h1>
-            <p className="text-white/40 text-sm mb-8">Browse collections from our designers and lease wardrobe for your production.</p>
-            {(!publicDesigners || publicDesigners.length === 0) ? (
-              <div className="flex flex-col items-center justify-center py-20 text-white/30">
-                <Store className="h-10 w-10 mb-3" />
-                <p className="text-sm">No designers yet — run Seed Marketplace from the Admin panel.</p>
+          <div className="max-w-6xl mx-auto px-6 py-8">
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <h1 className="text-3xl font-black mb-1">Lamalo Fashion</h1>
+                <p className="text-white/40 text-sm">Browse the full wardrobe catalogue and lease items for your production.</p>
+              </div>
+              <span className="text-white/30 text-xs">{publicItems?.length ?? 0} items</span>
+            </div>
+            {(!publicItems || publicItems.length === 0) ? (
+              <div className="flex flex-col items-center justify-center py-24 text-white/30">
+                <Shirt className="h-10 w-10 mb-3" />
+                <p className="text-sm mb-1">No items yet.</p>
+                <p className="text-xs">Go to <strong className="text-amber-400">/admin</strong> → Seed Marketplace to load the catalogue.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {(publicDesigners as any[]).map((d) => (
-                  <Link key={d.id} href={`/wardrobe-marketplace/designer/${d.id}`}>
-                    <div className="rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-amber-500/30 transition-all cursor-pointer p-5">
-                      <div className="flex items-center gap-3 mb-3">
-                        {d.logoUrl ? (
-                          <img src={d.logoUrl} alt={d.brandName} className="h-10 w-10 rounded-full object-cover border border-white/10" />
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center">
-                            <Store className="h-5 w-5 text-amber-400" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="font-bold text-sm">{d.brandName}</p>
-                          <p className="text-xs text-white/40 capitalize">{d.profileType || "brand"}</p>
-                        </div>
-                      </div>
-                      {d.bio && <p className="text-xs text-white/50 line-clamp-2 mb-3">{d.bio}</p>}
-                      <div className="flex items-center gap-1 text-amber-400 text-xs font-semibold">
-                        <ArrowRight className="h-3.5 w-3.5" />
-                        View Catalogue
-                      </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {(publicItems as any[]).map((item) => (
+                  <div key={item.id} className="rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-amber-500/25 transition-all overflow-hidden group cursor-pointer">
+                    <div className="aspect-square bg-white/5 overflow-hidden">
+                      {item.primaryImageUrl ? (
+                        <img src={item.primaryImageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center"><Shirt className="h-8 w-8 text-white/20" /></div>
+                      )}
                     </div>
-                  </Link>
+                    <div className="p-3">
+                      <p className="text-xs font-semibold line-clamp-2 leading-snug mb-1">{item.name}</p>
+                      <p className="text-[10px] text-white/40 capitalize mb-2">{item.subcategory || item.category}</p>
+                      {item.retailPriceAud && (
+                        <p className="text-amber-400 text-xs font-bold">A${(item.retailPriceAud / 100).toFixed(2)}<span className="text-white/30 font-normal ml-1">/ day</span></p>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
