@@ -384,51 +384,6 @@ export default function DesignerRegisterPage() {
                 <p className="text-center text-xs text-white/30">Secured by Stripe. Renews automatically each year.</p>
               </div>
             )}
-                  {foundingStatus?.foundingActive !== false && (
-                    <span className="bg-amber-500/20 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-full">
-                      {foundingStatus?.spotsRemaining !== undefined
-                        ? `${foundingStatus.spotsRemaining} spots left`
-                        : "FOUNDING PRICE"}
-                    </span>
-                  )}
-                </div>
-                <div className="flex justify-between text-xs text-white/40">
-                  <span>Your earnings per lease</span>
-                  <span>95% of lease price</span>
-                </div>
-                <div className="flex justify-between text-xs text-white/40">
-                  <span>Platform commission</span>
-                  <span>5%</span>
-                </div>
-              </div>
-
-              <ul className="space-y-2 text-sm text-white/70">
-                {[
-                  "List unlimited collections and items",
-                  "Get discovered by film productions worldwide",
-                  "Direct Stripe payouts — receive 95% of every lease",
-                  "Cancels anytime from your account settings",
-                ].map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep(1)} className="flex-1 border-white/15 text-white/70 hover:bg-white/5">
-                  Back
-                </Button>
-                <Button onClick={handleSubscribe} className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold">
-                  {foundingStatus?.foundingActive === false ? "Subscribe — A$299/yr" : "Join as Founding Partner — A$150/yr"}
-                </Button>
-              </div>
-              <p className="text-center text-xs text-white/30">
-                Secured by Stripe. Renews automatically each year.
-              </p>
-            </div>
-          )}
 
           {/* ── Step 3: Connect Onboarding ── */}
           {!loading && step === 3 && (
