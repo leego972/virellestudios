@@ -386,12 +386,15 @@ export default function Characters() {
             <span className="text-lg leading-none mt-0.5">⚠️</span>
             <p className="text-amber-800 dark:text-amber-300">
               <span className="font-semibold">Wardrobe not assigned.</span>
-              {" "}Characters without a wardrobe assignment will render wearing a plain all-black outfit.
+              {" "}Characters without a wardrobe assignment will render in a plain all-black outfit.
               Lease costumes from the{" "}
               <a href="/wardrobe" className="underline font-medium hover:text-amber-900 dark:hover:text-amber-200">
-                Virelle Wardrobe Marketplace
+                Wardrobe Marketplace
+              </a>{" "}or{" "}
+              <a href="/inventory" className="underline font-medium hover:text-amber-900 dark:hover:text-amber-200">
+                assign already-leased items
               </a>{" "}
-              and assign them to your cast.
+              to your cast.
             </p>
           </div>
         )}
