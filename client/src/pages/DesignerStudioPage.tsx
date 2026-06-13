@@ -5,8 +5,9 @@
  * collection management (publish/unpublish, pricing), and earnings overview.
  */
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -298,7 +299,8 @@ export default function DesignerStudioPage() {
     onError: (e) => toast.error(e.message),
   });
 
-  const isMember = membership?.status === "active";
+  const { isAdmin } = useSubscription();
+  const isMember = membership?.status === "active" || isAdmin;
   const isConnected = connectStatus?.chargesEnabled && connectStatus?.payoutsEnabled;
 
   const profile = membership?.profile as any;
@@ -328,23 +330,64 @@ export default function DesignerStudioPage() {
     );
   }
 
-  if (!isMember) {
-    return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4">
-        <Store className="h-12 w-12 text-amber-400 mb-4" />
-        <h1 className="text-2xl font-black mb-2">Designer Studio</h1>
-        <p className="text-white/50 text-sm mb-6 text-center max-w-sm">
-          You need an active designer membership to access this page.
-        </p>
-        <Button
-          onClick={() => setLocation("/designer-register")}
-          className="bg-amber-500 hover:bg-amber-600 text-black font-bold"
-        >
-          Join as Designer — A$299/yr
-        </Button>
-      </div>
-    );
-  }
+  // Public browse — non-members see designer catalogue instead of a blank wall
+    const { data: publicDesigners } = trpc.wardrobeMarket.browseDesigners.useQuery({ limit: 24, offset: 0 });
+
+    if (!isMember) {
+      return (
+        <div className="min-h-screen bg-black text-white">
+          <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <img src={LOGO_URL} alt="Virelle Studios" className="h-7 w-7 rounded object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+              <span className="text-sm font-black tracking-tighter uppercase italic">
+                Virelle <span className="text-amber-400">Studios</span>
+              </span>
+            </div>
+            <Button onClick={() => setLocation("/designer-register")} className="bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs">
+              <Store className="h-3.5 w-3.5 mr-1.5" />
+              Join as Designer — A$299/yr
+            </Button>
+          </header>
+          <div className="max-w-5xl mx-auto px-6 py-10">
+            <h1 className="text-3xl font-black mb-1">Designer Catalogue</h1>
+            <p className="text-white/40 text-sm mb-8">Browse collections from our designers and lease wardrobe for your production.</p>
+            {(!publicDesigners || publicDesigners.length === 0) ? (
+              <div className="flex flex-col items-center justify-center py-20 text-white/30">
+                <Store className="h-10 w-10 mb-3" />
+                <p className="text-sm">No designers yet — run Seed Marketplace from the Admin panel.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {(publicDesigners as any[]).map((d) => (
+                  <Link key={d.id} href={`/wardrobe-marketplace/designer/${d.id}`}>
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-amber-500/30 transition-all cursor-pointer p-5">
+                      <div className="flex items-center gap-3 mb-3">
+                        {d.logoUrl ? (
+                          <img src={d.logoUrl} alt={d.brandName} className="h-10 w-10 rounded-full object-cover border border-white/10" />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                            <Store className="h-5 w-5 text-amber-400" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-bold text-sm">{d.brandName}</p>
+                          <p className="text-xs text-white/40 capitalize">{d.profileType || "brand"}</p>
+                        </div>
+                      </div>
+                      {d.bio && <p className="text-xs text-white/50 line-clamp-2 mb-3">{d.bio}</p>}
+                      <div className="flex items-center gap-1 text-amber-400 text-xs font-semibold">
+                        <ArrowRight className="h-3.5 w-3.5" />
+                        View Catalogue
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
 
   return (
     <div className="min-h-screen bg-black text-white">
