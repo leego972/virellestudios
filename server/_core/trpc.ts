@@ -104,3 +104,34 @@ export const adminProcedure = t.procedure.use(
     });
   }),
 );
+
+  // ─── designerProcedure ────────────────────────────────────────────────────────
+  // Centralised designer gate — replaces repetitive manual designerProfiles checks
+  // in every designer-facing endpoint. Lazy-imports db to avoid circular deps.
+  const requireDesigner = t.middleware(async opts => {
+    const { ctx, next } = opts;
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
+    }
+    const { getDb } = await import("../db");
+    const dbConn = await getDb();
+    if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+    const { sql } = await import("drizzle-orm");
+    const rows: any = await dbConn.execute(
+      sql`SELECT id, userId FROM designerProfiles WHERE userId = ${ctx.user.id} AND status = 'active' LIMIT 1`
+    );
+    const profile = (Array.isArray(rows[0]) ? rows[0] : rows)[0] ?? null;
+    if (!profile) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "An active Designer membership is required. Join via the Wardrobe Marketplace.",
+      });
+    }
+    return next({
+      ctx: { ...ctx, user: ctx.user, designerProfile: { id: profile.id as number, userId: profile.userId as number } },
+    });
+  });
+
+  /** Protected procedure that also requires an active designer profile (status=active). */
+  export const designerProcedure = t.procedure.use(requireDesigner);
+  
