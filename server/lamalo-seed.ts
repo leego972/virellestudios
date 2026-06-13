@@ -755,38 +755,32 @@ export async function runLamaloSeed(
       publishedAt: new Date(),
     });
 
-    const collectionId: number = (colResult as any).insertId ?? 1;
+    const collectionId: number = (colResult as any).insertId;
+    if (!collectionId) { log.warn(`Collection "${col.name}" insert returned no insertId, skipping items`); newCollections++; continue; }
     newCollections++;
-
     for (const item of col.items) {
-      await db.insert(wardrobeItems).values({
-        collectionId,
-        userId,
-        designerProfileId,
-        name: item.name,
-        description: item.description,
-        category: item.category,
-        subcategory: item.subcategory,
-        wardrobeType: "fashion",
-        genderFit: item.genderFit,
-        sizeRange: item.sizeRange ?? "XS–XXL",
-        era: "Contemporary 2026",
-        colors: item.colors ? JSON.stringify(item.colors) : null,
-        materials: item.materials ? JSON.stringify(item.materials) : null,
-        styleTags: item.styleTags ? JSON.stringify(item.styleTags) : null,
-        referencePrompt: item.referencePrompt,
-        primaryImageUrl: item.primaryImageUrl ?? null,
-        brandPlacementAllowed: false,
-        shopfrontPlacementAllowed: true,
-        characterWardrobeAllowed: true,
-        costumeUseAllowed: true,
-        commercialUseAllowed: true,
-        licenseType: "full_license",
-        visibility: "public",
-        status: "active",
-        retailPriceAud: item.retailPriceAud, // category-based price (see CAT_PRICE)
-        leasePriceAud: null,                 // no lease — buy only
-      });
+      // Use raw SQL to avoid Drizzle double-encoding JSON columns
+      await db.execute(sql`
+        INSERT IGNORE INTO wardrobeItems
+          (collectionId, userId, designerProfileId, name, description, category,
+           subcategory, wardrobeType, genderFit, sizeRange, era,
+           colors, materials, styleTags, primaryImageUrl, referencePrompt,
+           brandPlacementAllowed, shopfrontPlacementAllowed, characterWardrobeAllowed,
+           costumeUseAllowed, commercialUseAllowed, licenseType, visibility, status,
+           retailPriceAud, leasePriceAud)
+        VALUES
+          (${collectionId}, ${userId}, ${designerProfileId},
+           ${item.name}, ${item.description}, ${item.category},
+           ${item.subcategory ?? null}, ${"fashion"}, ${item.genderFit ?? null},
+           ${item.sizeRange ?? "XS-XXL"}, ${"Contemporary 2026"},
+           ${item.colors ? JSON.stringify(item.colors) : null},
+           ${item.materials ? JSON.stringify(item.materials) : null},
+           ${item.styleTags ? JSON.stringify(item.styleTags) : null},
+           ${item.primaryImageUrl ?? null}, ${item.referencePrompt ?? null},
+           ${0}, ${1}, ${1}, ${1}, ${1},
+           ${"full_license"}, ${"public"}, ${"active"},
+           ${item.retailPriceAud ?? null}, ${null})
+      `);
       totalItems++;
     }
 
