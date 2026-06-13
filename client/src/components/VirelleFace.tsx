@@ -10,12 +10,14 @@ import React, { useEffect, useState } from 'react';
 
   // Eye colour per state
   const EYE_COLOR: Record<VoiceState, { core: string; mid: string; outer: string }> = {
-    idle:      { core: '#ffffff', mid: '#cccccc', outer: '#888888' },
-    inactive:  { core: '#ffffff', mid: '#cccccc', outer: '#888888' },
+    idle:      { core: '#e8eeff', mid: '#aabbee', outer: '#6677bb' },
+    inactive:  { core: '#e8eeff', mid: '#aabbee', outer: '#6677bb' },
     listening: { core: '#fffde7', mid: '#ffd700', outer: '#ffaa00' }, // yellow
     thinking:  { core: '#ddeeff', mid: '#7ab0ff', outer: '#3060e0' }, // blue
     speaking:  { core: '#e0fff0', mid: '#44ff88', outer: '#00cc55' }, // green
   };
+
+  let _vfCount = 0;
 
   export const VirelleFace = ({
     volume = 0,
@@ -26,6 +28,8 @@ import React, { useEffect, useState } from 'react';
     speaking?: boolean;
     state?: VoiceState;
   }) => {
+    // Stable unique ID per mount — prevents SVG gradient collision when two instances render
+    const [uid] = React.useState(() => `vf${++_vfCount}`);
     const v = Math.min(Math.max(volume, 0), 1);
 
     // Derive effective state from props
@@ -37,7 +41,7 @@ import React, { useEffect, useState } from 'react';
     const color = EYE_COLOR[effectiveState];
 
     // Opacity + scale pulse with volume when speaking
-    const eyeOpacity = isActive ? Math.min(0.70 + v * 0.30, 1.0) : 0.22;
+    const eyeOpacity = isActive ? Math.min(0.70 + v * 0.30, 1.0) : 0.55;
     const eyeScale   = isActive ? 1 + v * 0.15 : 0.82;
 
     const mkGrad = (id: string, cx: number, cy: number, rx: number) => (
@@ -82,8 +86,8 @@ import React, { useEffect, useState } from 'react';
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' }}
           >
             <defs>
-              {mkGrad('vf-eye-l', GEO.leftEye.cx,  GEO.leftEye.cy,  GEO.leftEye.rx)}
-              {mkGrad('vf-eye-r', GEO.rightEye.cx, GEO.rightEye.cy, GEO.rightEye.rx)}
+              {mkGrad(`${uid}-l`, GEO.leftEye.cx,  GEO.leftEye.cy,  GEO.leftEye.rx)}
+              {mkGrad(`${uid}-r`, GEO.rightEye.cx, GEO.rightEye.cy, GEO.rightEye.rx)}
             </defs>
 
             {/* Left eye — glow locked to socket centre */}
@@ -92,7 +96,7 @@ import React, { useEffect, useState } from 'react';
               cy={GEO.leftEye.cy}
               rx={GEO.leftEye.rx  * eyeScale}
               ry={GEO.leftEye.ry  * eyeScale}
-              fill="url(#vf-eye-l)"
+              fill={`url(#${uid}-l)`}
               style={{
                 transition: 'rx 0.12s ease-out, ry 0.12s ease-out',
                 animation: effectiveState === 'speaking' ? 'eye-flicker 0.18s linear infinite' : 'none',
@@ -105,7 +109,7 @@ import React, { useEffect, useState } from 'react';
               cy={GEO.rightEye.cy}
               rx={GEO.rightEye.rx * eyeScale}
               ry={GEO.rightEye.ry * eyeScale}
-              fill="url(#vf-eye-r)"
+              fill={`url(#${uid}-r)`}
               style={{
                 transition: 'rx 0.12s ease-out, ry 0.12s ease-out',
                 animation: effectiveState === 'speaking' ? 'eye-flicker 0.18s linear infinite 0.09s' : 'none',
