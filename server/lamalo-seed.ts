@@ -633,6 +633,58 @@ export async function runLamaloSeed(
 ): Promise<{ created: boolean; collections: number; items: number }> {
   const db = (await getDb())!;
 
+    // ── Ensure all marketplace columns exist before inserting (idempotent) ──
+    // This guards against Railway deployments where autoMigrate ALTER TABLE may
+    // not have run yet, or ran on an older schema version.
+    {
+      const wiCols: Array<[string, string]> = [
+        ["collectionId",             "INT NULL"],
+        ["designerProfileId",        "INT NULL"],
+        ["subcategory",              "VARCHAR(128) NULL"],
+        ["wardrobeType",             "VARCHAR(64) NOT NULL DEFAULT 'wardrobe'"],
+        ["genderFit",                "VARCHAR(64) NULL"],
+        ["sizeRange",                "VARCHAR(128) NULL"],
+        ["colors",                   "JSON NULL"],
+        ["materials",                "JSON NULL"],
+        ["styleTags",                "JSON NULL"],
+        ["imageUrls",                "JSON NULL"],
+        ["primaryImageUrl",          "TEXT NULL"],
+        ["referencePrompt",          "TEXT NULL"],
+        ["brandPlacementAllowed",    "TINYINT(1) NOT NULL DEFAULT 0"],
+        ["shopfrontPlacementAllowed","TINYINT(1) NOT NULL DEFAULT 1"],
+        ["characterWardrobeAllowed", "TINYINT(1) NOT NULL DEFAULT 1"],
+        ["costumeUseAllowed",        "TINYINT(1) NOT NULL DEFAULT 1"],
+        ["commercialUseAllowed",     "TINYINT(1) NOT NULL DEFAULT 0"],
+        ["licenseType",              "VARCHAR(64) NOT NULL DEFAULT 'reference_only'"],
+        ["licenseNotes",             "TEXT NULL"],
+        ["visibility",               "VARCHAR(32) NOT NULL DEFAULT 'public'"],
+        ["status",                   "VARCHAR(32) NOT NULL DEFAULT 'active'"],
+        ["retailPriceAud",           "INT NULL"],
+        ["leasePriceAud",            "INT NULL"],
+      ];
+      for (const [col, def] of wiCols) {
+        try {
+          await db.execute(sql.raw(`ALTER TABLE wardrobeItems ADD COLUMN \`${col}\` ${def}`));
+        } catch { /* duplicate column = already exists, skip */ }
+      }
+      // Also ensure designerCollections has needed columns
+      const dcCols: Array<[string, string]> = [
+        ["designerProfileId", "INT NOT NULL DEFAULT 0"],
+        ["collectionType",    "VARCHAR(64) NOT NULL DEFAULT 'core'"],
+        ["season",            "VARCHAR(64) NULL"],
+        ["year",              "INT NULL"],
+        ["styleTags",         "JSON NULL"],
+        ["collectionPriceAud","INT NULL"],
+        ["status",            "VARCHAR(32) NOT NULL DEFAULT 'active'"],
+        ["visibility",        "VARCHAR(32) NOT NULL DEFAULT 'public'"],
+      ];
+      for (const [col, def] of dcCols) {
+        try {
+          await db.execute(sql.raw(`ALTER TABLE designerCollections ADD COLUMN \`${col}\` ${def}`));
+        } catch { /* skip */ }
+      }
+    }
+  
   // ── Get or create the Lamalo Fashion designer profile (idempotent) ──
   // Use raw INSERT IGNORE so duplicate-key errors on re-runs are silently skipped.
   await db.execute(sql`
