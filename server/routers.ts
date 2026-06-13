@@ -332,6 +332,29 @@ export const appRouter = router({
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
+    updateAvatar: protectedProcedure
+      .input(z.object({
+        imageDataUrl: z.string().min(1).max(10 * 1024 * 1024),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const match = input.imageDataUrl.match(/^data:(image\/[^;]+);base64,(.+)$/);
+        if (!match) throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid image data URL" });
+        const [, contentType, base64Data] = match;
+        const buffer = Buffer.from(base64Data, "base64");
+        if (buffer.length > 5 * 1024 * 1024) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Image must be under 5MB" });
+        }
+        const ext = (contentType.split("/")[1] ?? "jpg").replace("jpeg", "jpg");
+        const key = `avatars/user-${ctx.user.id}-${Date.now()}.${ext}`;
+        let avatarUrl: string;
+        try {
+          avatarUrl = await storagePut(key, buffer, contentType);
+        } catch {
+          avatarUrl = input.imageDataUrl;
+        }
+        await db.updateUser(ctx.user.id, { avatarUrl });
+        return { avatarUrl };
+      }),
     register: publicProcedure
       .input(z.object({
         email: z.string().email().max(320).trim(),
