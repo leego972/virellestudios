@@ -33,7 +33,7 @@ import { useState, useEffect } from "react";
 
         {/* ── White mask face — large ambient background, eyes react to voice state ── */}
         <div
-          className="absolute inset-0 pointer-events-none select-none"
+          className="fixed inset-0 pointer-events-none select-none"
           style={{ zIndex: 0 }}
           aria-hidden="true"
         >
