@@ -10,8 +10,8 @@ import React, { useEffect, useState } from 'react';
 
   // Eye colour per state
   const EYE_COLOR: Record<VoiceState, { core: string; mid: string; outer: string }> = {
-    idle:      { core: '#f0e8ff', mid: '#cc99ff', outer: '#8833cc' },
-    inactive:  { core: '#f0e8ff', mid: '#cc99ff', outer: '#8833cc' },
+    idle:      { core: '#fff8e0', mid: '#ffd700', outer: '#cc8800' },
+    inactive:  { core: '#fff8e0', mid: '#ffd700', outer: '#cc8800' },
     listening: { core: '#fffde7', mid: '#ffd700', outer: '#ffaa00' }, // yellow
     thinking:  { core: '#ddeeff', mid: '#7ab0ff', outer: '#3060e0' }, // blue
     speaking:  { core: '#e0fff0', mid: '#44ff88', outer: '#00cc55' }, // green
