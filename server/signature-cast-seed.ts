@@ -14,13 +14,12 @@ const DIVERSE_CAST_EXPANSION = [
   { name: "Zaid Al-Farsi", role: "Male Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Stoic Intellectual. Arab/Middle Eastern, groomed short beard.", nationality: "Arab", castingNotes: "HARD-LOCK: Groomed short beard, deep brown eyes.", isAiActor: true, aiActorId: "M-C03" },
   { name: "Aisha Mbeki", role: "Female Lead", storyImportance: "lead", screenTime: "heavy", description: "The Resourceful Leader. Black/West African, glowing skin, natural braids.", nationality: "Black/West African", castingNotes: "HARD-LOCK: Natural braids, glowing deep brown skin.", isAiActor: true, aiActorId: "F-L05" },
   { name: "Toby 'Small' Miller", role: "Male Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Clever Observer. Little Person, sharp blue eyes.", nationality: "White", castingNotes: "HARD-LOCK: Little person features, blue eyes.", isAiActor: true, aiActorId: "M-LP01" },
-  { name: "Magnus 'Giant' Sorensen", role: "Male Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Gentle Giant. Extremely tall, Nordic features, long blonde hair and beard.", nationality: "White/Nordic", castingNotes: "HARD-LOCK: 7ft2 height, rugged Nordic features, long blonde hair and beard.", isAiActor: true, aiActorId: "M-G01" },
+  { name: "Magnus 'Giant' Sorensen", role: "Male Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Gentle Giant. Extremely tall, Nordic features, long blonde hair.", nationality: "White/Nordic", castingNotes: "HARD-LOCK: 7ft2 height, rugged Nordic features, long blonde hair and beard.", isAiActor: true, aiActorId: "M-G01" },
   { name: "Mei Ling", role: "Female Character Actor", storyImportance: "supporting", screenTime: "moderate", description: "The Tech Savant. East Asian, sharp bob cut, focused gaze.", nationality: "Asian", castingNotes: "HARD-LOCK: Sharp black bob cut, focused gaze.", isAiActor: true, aiActorId: "F-C03" },
 ];
 
-type CastMember = typeof SIGNATURE_CAST[0];
-
-async function insertCast(db: NonNullable<Awaited<ReturnType<typeof import('./db').getDb>>>, userId: number, cast: CastMember) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function insertCast(db: any, userId: number, cast: { name: string; role: string; storyImportance: string; screenTime: string; description: string; nationality: string; castingNotes: string; isAiActor: boolean; aiActorId: string }) {
   const existing = await db.select({ id: characters.id }).from(characters).where(eq(characters.name, cast.name)).limit(1);
   if (existing.length > 0) return;
   await db.execute(sql`
