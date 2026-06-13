@@ -233,29 +233,6 @@ export default function DashboardLayout({
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
   const { loading, user, logout } = useAuth();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [localAvatar, setLocalAvatar] = useState<string | undefined>(undefined);
-  const avatarSrc = localAvatar ?? (user as any)?.avatarUrl ?? (user?.role === "admin" ? "/leego-logo.png" : undefined);
-  const handleAvatarClick = () => fileInputRef.current?.click();
-  const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const canvas = document.createElement("canvas");
-    const img = new Image();
-    img.onload = () => {
-      const s = Math.min(400, img.width, img.height);
-      canvas.width = s; canvas.height = s;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      const scale = s / Math.min(img.width, img.height);
-      ctx.drawImage(img, (img.width * scale - s) / -2 / scale, (img.height * scale - s) / -2 / scale, img.width, img.height, 0, 0, s, s);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
-      fetch("/api/avatar", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ imageDataUrl: dataUrl }) })
-        .then(r => r.ok ? r.json() : null).then(d => { if (d?.avatarUrl) setLocalAvatar(d.avatarUrl); }).catch(() => {});
-    };
-    img.src = URL.createObjectURL(file);
-    e.target.value = "";
-  };
   const [currentPath] = useLocation();
   // Public routes that should NOT be redirected even if unauthenticated
   const PUBLIC_ROUTES = [
@@ -342,6 +319,29 @@ function DashboardLayoutContent({
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [localAvatar, setLocalAvatar] = useState<string | undefined>(undefined);
+  const avatarSrc = localAvatar ?? (user as any)?.avatarUrl ?? (user?.role === "admin" ? "/leego-logo.png" : undefined);
+  const handleAvatarClick = () => fileInputRef.current?.click();
+  const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const canvas = document.createElement("canvas");
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(400, img.width, img.height);
+      canvas.width = s; canvas.height = s;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const scale = s / Math.min(img.width, img.height);
+      ctx.drawImage(img, (img.width * scale - s) / -2 / scale, (img.height * scale - s) / -2 / scale, img.width, img.height, 0, 0, s, s);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+      fetch("/api/avatar", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ imageDataUrl: dataUrl }) })
+        .then(r => r.ok ? r.json() : null).then(d => { if (d?.avatarUrl) setLocalAvatar(d.avatarUrl); }).catch(() => {});
+    };
+    img.src = URL.createObjectURL(file);
+    e.target.value = "";
+  };
   const isMobile = useIsMobile();
 
   const isActive = (path: string) => {
