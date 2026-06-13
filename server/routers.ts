@@ -489,7 +489,11 @@ export const appRouter = router({
             sendNewSignupNotification(user!.email!, user!.name || "Unknown", user!.role || "user").catch(() => {});
           }).catch(() => {});
         }
-        return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
+        // Grant 2 free AI character generations on signup (matches the 2 free Lamalo outfits welcome package)
+          try {
+            await db.addCredits(user.id, CREDIT_COSTS.character_gen_ai.cost * 2, "signup_char_gen_bonus", "Welcome bonus — 2 free AI character generations");
+          } catch (_) { /* non-critical — never fail registration */ }
+          return { success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
       }),
     login: publicProcedure
       .input(z.object({
@@ -1344,8 +1348,11 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAICharacterGen", "AI Character Generation");
-        requireGenerationQuota(ctx.user);
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character generation: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        // Industry-tier members get AI character generation FREE — skip quota + credit deduction
+        if (!isTopTierUser(ctx.user)) {
+          requireGenerationQuota(ctx.user);
+          try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character generation: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        }
         await db.incrementGenerationCount(ctx.user.id);
         const f = input.features;
         const promptParts = [
@@ -1413,8 +1420,11 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         await rateLimitAI(ctx.user.id);
         requireFeature(ctx.user, "canUseAICharacterGen", "AI Character Generation");
-        requireGenerationQuota(ctx.user);
-        try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character from photo: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        // Industry-tier members get character-from-photo generation FREE — skip quota + credit deduction
+        if (!isTopTierUser(ctx.user)) {
+          requireGenerationQuota(ctx.user);
+          try { await db.deductCredits(ctx.user.id, CREDIT_COSTS.character_gen_ai.cost, "character_gen_ai", `AI character from photo: ${input.name}`); } catch (e: any) { if (e.message?.includes("INSUFFICIENT_CREDITS")) throw new TRPCError({ code: "FORBIDDEN", message: e.message }); }
+        }
         await db.incrementGenerationCount(ctx.user.id);
 
         // Step 1: Resolve the reference photo — either from uploaded base64 or from a URL
