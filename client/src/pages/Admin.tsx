@@ -138,7 +138,64 @@ export default function Admin() {
     }
   };
 
-  if (!user || !user.isAdmin) {
+
+    const handleSeedExecutive = async () => {
+      setMessage("Seeding executive collections...");
+      setStatus("loading");
+      try {
+        const result = await (trpc.adminSeeding.seedExecutive as any).mutate();
+        setStatus(result.success ? "success" : "error");
+        setMessage(result.message);
+        setSeedStatus(null);
+      } catch (error: any) {
+        setStatus("error");
+        setMessage(error?.message || "Failed to seed executive collections");
+      }
+    };
+
+    const handleSeedMaster = async () => {
+      setMessage("Seeding master collections...");
+      setStatus("loading");
+      try {
+        const result = await (trpc.adminSeeding.seedMaster as any).mutate();
+        setStatus(result.success ? "success" : "error");
+        setMessage(result.message);
+        setSeedStatus(null);
+      } catch (error: any) {
+        setStatus("error");
+        setMessage(error?.message || "Failed to seed master collections");
+      }
+    };
+
+    const handleSeedSignatureCast = async () => {
+      setMessage("Seeding signature & diverse cast...");
+      setStatus("loading");
+      try {
+        const result = await (trpc.adminSeeding.seedSignatureCast as any).mutate();
+        setStatus(result.success ? "success" : "error");
+        setMessage(result.message);
+        setSeedStatus(null);
+      } catch (error: any) {
+        setStatus("error");
+        setMessage(error?.message || "Failed to seed cast");
+      }
+    };
+
+    const handleSeedUniforms = async () => {
+      setMessage("Seeding uniform collections...");
+      setStatus("loading");
+      try {
+        const result = await (trpc.adminSeeding.seedUniforms as any).mutate();
+        setStatus(result.success ? "success" : "error");
+        setMessage(result.message);
+        setSeedStatus(null);
+      } catch (error: any) {
+        setStatus("error");
+        setMessage(error?.message || "Failed to seed uniforms");
+      }
+    };
+
+    if (!user || !user.isAdmin) {
     return null;
   }
 
@@ -293,7 +350,111 @@ export default function Admin() {
             </CardContent>
           </Card>
 
-          {/* Seed Everything */}
+
+            {/* Executive Wardrobe */}
+            <Card className="bg-white/5 border-white/10 hover:border-amber-500/30 transition-colors">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shirt className="h-5 w-5 text-purple-400" />
+                  Seed Executive Wardrobe
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-white/60">
+                  Seed premium executive & luxury fashion collections into the wardrobe marketplace.
+                </p>
+                <Button
+                  onClick={handleSeedExecutive}
+                  disabled={status === "loading"}
+                  className="w-full bg-white/10 hover:bg-white/20 text-white"
+                >
+                  {status === "loading" ? (
+                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Seeding...</>
+                  ) : (
+                    <><Zap className="h-4 w-4 mr-2" />Seed Executive</>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Master Collections */}
+            <Card className="bg-white/5 border-white/10 hover:border-amber-500/30 transition-colors">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shirt className="h-5 w-5 text-emerald-400" />
+                  Seed Master Collections
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-white/60">
+                  Seed all master wardrobe collections including emerging designer lines.
+                </p>
+                <Button
+                  onClick={handleSeedMaster}
+                  disabled={status === "loading"}
+                  className="w-full bg-white/10 hover:bg-white/20 text-white"
+                >
+                  {status === "loading" ? (
+                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Seeding...</>
+                  ) : (
+                    <><Zap className="h-4 w-4 mr-2" />Seed Master</>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Signature Cast */}
+            <Card className="bg-white/5 border-white/10 hover:border-amber-500/30 transition-colors">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Users className="h-5 w-5 text-pink-400" />
+                  Seed Signature Cast
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-white/60">
+                  Seed pre-built signature characters and diverse cast members for projects.
+                </p>
+                <Button
+                  onClick={handleSeedSignatureCast}
+                  disabled={status === "loading"}
+                  className="w-full bg-white/10 hover:bg-white/20 text-white"
+                >
+                  {status === "loading" ? (
+                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Seeding...</>
+                  ) : (
+                    <><Users className="h-4 w-4 mr-2" />Seed Cast</>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Uniforms */}
+            <Card className="bg-white/5 border-white/10 hover:border-amber-500/30 transition-colors">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shirt className="h-5 w-5 text-cyan-400" />
+                  Seed Uniform Collections
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-white/60">
+                  Seed professional uniform and workwear collections across departments.
+                </p>
+                <Button
+                  onClick={handleSeedUniforms}
+                  disabled={status === "loading"}
+                  className="w-full bg-white/10 hover:bg-white/20 text-white"
+                >
+                  {status === "loading" ? (
+                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Seeding...</>
+                  ) : (
+                    <><Zap className="h-4 w-4 mr-2" />Seed Uniforms</>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+            {/* Seed Everything */}
           <Card className="bg-gradient-to-br from-amber-500/20 to-purple-500/20 border-amber-500/30 hover:border-amber-500/50 transition-colors">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
@@ -394,7 +555,24 @@ export default function Admin() {
                 Creates sample active crowdfunding campaigns with rewards and backers to demonstrate the Crowdfunding Hub's features.
               </p>
             </div>
-            <div>
+
+              <div>
+                <h4 className="font-semibold text-white mb-2">👔 Executive Wardrobe</h4>
+                <p>Premium executive and luxury fashion collections for high-end character styling.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-white mb-2">🎨 Master Collections</h4>
+                <p>Comprehensive emerging designer wardrobe lines covering all fashion categories.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-white mb-2">🎭 Signature Cast</h4>
+                <p>Pre-built named characters (Julian Vance etc.) plus a diverse supporting cast ready to assign to projects.</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-white mb-2">🦺 Uniforms</h4>
+                <p>Professional uniform and workwear collections for crew and department characters.</p>
+              </div>
+              <div>
               <h4 className="font-semibold text-white mb-2">⚡ Seed Everything</h4>
               <p>
                 Runs all seeding tasks in a single transaction. Perfect for fresh deployments or complete data refresh.
