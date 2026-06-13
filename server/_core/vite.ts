@@ -11,20 +11,20 @@ import express, { type Express } from "express";
   // initialise — avoiding hangs or crashes in non-Replit environments.
 
   export async function setupVite(app: Express, server: Server) {
-    // Lazy imports — only executed in development when this function is called
+    // Lazy imports — only executed in development when this function is called.
+    // IMPORTANT: vite.config.ts is NOT dynamically imported here — passing it as a
+    // path string means esbuild cannot statically trace it, so its dev-only imports
+    // (vite-plugin-manus-runtime, @builder.io/vite-plugin-jsx-loc) are never bundled
+    // into dist/index.js and cannot cause ERR_MODULE_NOT_FOUND on Railway.
     const { createServer: createViteServer } = await import("vite");
-    const { default: viteConfig } = await import("../../vite.config.js");
-
-    const serverOptions = {
-      middlewareMode: true,
-      hmr: { server },
-      allowedHosts: true as const,
-    };
 
     const vite = await createViteServer({
-      ...viteConfig,
-      configFile: false,
-      server: serverOptions,
+      configFile: path.resolve(import.meta.dirname, "../../vite.config.ts"),
+      server: {
+        middlewareMode: true,
+        hmr: { server },
+        allowedHosts: true as const,
+      },
       appType: "custom",
     });
 
