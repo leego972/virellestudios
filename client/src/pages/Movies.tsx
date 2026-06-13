@@ -255,9 +255,9 @@ export default function Movies() {
 
   // Helper: show opener before playing full films, trailers, and short videos
   const playMovie = useCallback((movieId: number, movieType?: string) => {
-    // Play opener for films, trailers, and generic "short" types. 
+    // Play opener for complete videos: films, trailers, commercials, features, and short types.
     // Scenes play directly without the studio opener.
-    if (movieType === "film" || movieType === "trailer" || movieType === "short") {
+    if (movieType === "film" || movieType === "trailer" || movieType === "short" || movieType === "commercial" || movieType === "feature") {
       setShowOpenerBefore(movieId);
     } else {
       setShowPlayer(movieId);
