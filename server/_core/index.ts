@@ -1568,7 +1568,20 @@ async function startServer() {
     }
   }, 10_000).unref();
   logger.info("[recapSweeper] Boot sweep scheduled (in 10s, threshold=60m)");
-}
+
+    // Ensure leego972@gmail.com always has admin role after every deploy
+    setTimeout(async () => {
+      try {
+        const dbMod = await import("../db");
+        const dbConn = await (dbMod as any).getDb();
+        if (!dbConn) return;
+        await dbConn.execute(sql`UPDATE users SET role = 'admin' WHERE email = 'leego972@gmail.com'`);
+        logger.info("[Admin] leego972@gmail.com promoted to role=admin");
+      } catch (err: any) {
+        logger.warn("[Admin] Admin role seed failed: " + err?.message);
+      }
+    }, 8_000).unref();
+  }
 
 startServer().catch(console.error);
 
