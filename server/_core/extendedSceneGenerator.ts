@@ -183,6 +183,8 @@ export interface ExtendedSceneRequest {
   seed?: number;
   /** Explicit scene type — overrides genre/mood auto-detection for Hollywood shot grammar selection */
   sceneType?: "action" | "dialogue" | "emotional" | "horror" | "reveal" | "default";
+  /** Wardrobe context block — injected into every sub-shot prompt so characters wear correct outfits */
+  wardrobeContext?: string;
 }
 
 export interface ExtendedSceneResult {
@@ -408,6 +410,8 @@ export function planSubShots(
     provider?: string;
     /** Hint about the type of scene for shot grammar selection */
     sceneType?: "action" | "dialogue" | "emotional" | "horror" | "reveal" | "default";
+    /** Wardrobe context block to append to every sub-shot prompt */
+    wardrobeContext?: string;
   }
 ): SubShot[] {
   const provider = options?.provider || "pollinations";
@@ -494,13 +498,17 @@ export function planSubShots(
     });
   }
 
+  // Append wardrobeContext to every sub-shot prompt for costume consistency
+  if (options && options.wardrobeContext && options.wardrobeContext.trim()) {
+    const wc = options.wardrobeContext.trim();
+    for (const shot of subShots) {
+      shot.prompt = shot.prompt + " WARDROBE & COSTUME: " + wc;
+    }
+  }
   return subShots;
 }
 
-// ─── Frame Extraction ───
-
-/**
- * Extract the last frame from a video file and upload to S3.
+// ─── Camera Angle Variations ───* Extract the last frame from a video file and upload to S3.
  * This frame is used as the reference image for the next clip's generation.
  */
 async function extractLastFrame(videoUrl: string, projectId: number, sceneId: number): Promise<string | undefined> {
@@ -758,6 +766,7 @@ export async function generateExtendedScene(
       locationDescription: request.locationDescription,
       provider: activeProvider,
       sceneType: (request.sceneType as any) || "default",
+      wardrobeContext: request.wardrobeContext,
     }
   );
 
