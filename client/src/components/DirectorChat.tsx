@@ -45,6 +45,7 @@ import {
 interface DirectorChatProps {
   projectId?: number;
   defaultOpen?: boolean;
+  hideVoiceOverlay?: boolean;
 }
 interface ActionBadge {
   type: string;
@@ -221,7 +222,7 @@ type VoiceState = "idle" | "recording" | "recording_edit" | "transcribing" | "ap
 // Voice mode states (full-screen overlay)
 type VoiceModeState = "listening" | "thinking" | "speaking" | "inactive";
 
-export default function DirectorChat({ projectId, defaultOpen = false }: DirectorChatProps) {
+export default function DirectorChat({ projectId, defaultOpen = false, hideVoiceOverlay = false }: DirectorChatProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<Array<{ url: string; name: string; mimeType: string }>>([]);
@@ -1512,7 +1513,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
 
 
       {/* ─── Full-screen Voice Mode Overlay ─── */}
-      {voiceModeActive && (
+      {!hideVoiceOverlay && voiceModeActive && (
         <div
           className="fixed inset-0 z-[60] flex flex-col items-center justify-center select-none"
           style={{ background: 'linear-gradient(180deg,#030305 0%,#070810 50%,#030305 100%)' }}
