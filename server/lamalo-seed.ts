@@ -693,7 +693,7 @@ export async function runLamaloSeed(
       continue;
     }
 
-    // Insert collection — price auto-calculated (item_count × 30c × 0.85)
+    // Insert collection — price auto-calculated (sum of item prices × 0.90, 10% bundle discount)
     const [colResult] = await db.insert(designerCollections).values({
       designerProfileId,
       userId,
@@ -742,7 +742,7 @@ export async function runLamaloSeed(
         licenseType: "full_license",
         visibility: "public",
         status: "active",
-        retailPriceAud: item.retailPriceAud, // 30 AUD cents
+        retailPriceAud: item.retailPriceAud, // category-based price (see CAT_PRICE)
         leasePriceAud: null,                 // no lease — buy only
       });
       totalItems++;
