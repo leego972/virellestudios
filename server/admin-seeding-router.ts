@@ -26,13 +26,14 @@ import { router, adminProcedure } from "./_core/trpc";
      * Seed all marketplace items and collections
      */
     seedMarketplace: adminProcedure.mutation(async ({ ctx }) => {
-      try {
-        await runLamaloSeed(ctx.user.id);
-        return { success: true, message: "Marketplace seeded successfully" };
-      } catch (error) {
-        logger.errorWithStack("Marketplace seeding error", error);
-        return { success: false, message: `Failed to seed marketplace: ${error instanceof Error ? error.message : "Unknown error"}` };
-      }
+      const userId = ctx.user.id;
+      // Fire-and-forget: 1400+ inserts would timeout if awaited
+      runLamaloSeed(userId).then(r => {
+        logger.info(`[Seed] Lamalo complete: ${r.collections} collections, ${r.items} items`);
+      }).catch(err => {
+        logger.errorWithStack("[Seed] Marketplace seeding error", err);
+      });
+      return { success: true, message: "Seeding started — items will appear within 60 seconds. Refresh the page to see them." };
     }),
 
     /**
