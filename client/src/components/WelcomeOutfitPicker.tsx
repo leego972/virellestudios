@@ -97,8 +97,11 @@ import { useState } from "react";
               <Button
                 size="sm"
                 className="flex-1 sm:flex-none"
-                disabled={selected.length < 2 || claimMut?.isPending || outfits.length === 0}
-                onClick={() => claimMut?.mutate?.({ itemId1: selected[0], itemId2: selected[1] })}
+                disabled={claimMut?.isPending || (outfits.length > 0 && selected.length < 2)}
+                onClick={() => {
+                    if (outfits.length === 0 || selected.length < 2) { setOpen(false); return; }
+                    claimMut?.mutate?.({ itemId1: selected[0], itemId2: selected[1] });
+                  }}
               >
                 {claimMut?.isPending
                   ? <Loader2 className="w-4 h-4 animate-spin mr-1" />
