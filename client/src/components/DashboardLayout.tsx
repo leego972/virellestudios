@@ -70,7 +70,8 @@ import {
   Store,
   Camera,
   Package,
-, Settings2 } from "lucide-react";
+  Settings2,
+} from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
