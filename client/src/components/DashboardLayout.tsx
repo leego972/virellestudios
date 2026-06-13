@@ -87,10 +87,10 @@ const menuGroups = [
     label: "Studio",
     items: [
       { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+      { icon: MessageSquare, label: "Director's Assistant", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
       { icon: Film, label: "Projects", path: "/projects" },
       { icon: Clapperboard, label: "My Movies", path: "/movies" },
-      { icon: MessageSquare, label: "Director's Assistant", path: "/assistant", hollywoodKey: "director_chat" as ToolIconKey },
-        { icon: Tv, label: "Series Bible", path: "/series" },
+      { icon: Tv, label: "Series Bible", path: "/series" },
     ],
   },
   {
