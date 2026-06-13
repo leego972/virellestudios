@@ -68,6 +68,7 @@ import {
   Calculator,
   Shirt,
   Store,
+  Camera,
   Package,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -232,6 +233,29 @@ export default function DashboardLayout({
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
   const { loading, user, logout } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [localAvatar, setLocalAvatar] = useState<string | undefined>(undefined);
+  const avatarSrc = localAvatar ?? (user as any)?.avatarUrl ?? (user?.role === "admin" ? "/leego-logo.png" : undefined);
+  const handleAvatarClick = () => fileInputRef.current?.click();
+  const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const canvas = document.createElement("canvas");
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(400, img.width, img.height);
+      canvas.width = s; canvas.height = s;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const scale = s / Math.min(img.width, img.height);
+      ctx.drawImage(img, (img.width * scale - s) / -2 / scale, (img.height * scale - s) / -2 / scale, img.width, img.height, 0, 0, s, s);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+      fetch("/api/avatar", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ imageDataUrl: dataUrl }) })
+        .then(r => r.ok ? r.json() : null).then(d => { if (d?.avatarUrl) setLocalAvatar(d.avatarUrl); }).catch(() => {});
+    };
+    img.src = URL.createObjectURL(file);
+    e.target.value = "";
+  };
   const [currentPath] = useLocation();
   // Public routes that should NOT be redirected even if unauthenticated
   const PUBLIC_ROUTES = [
@@ -552,7 +576,8 @@ function DashboardLayoutContent({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  <Avatar className="h-8 w-8 border shrink-0">
+                  <Avatar className="h-8 w-8 border shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={handleAvatarClick} title="Change profile picture">
+                    {avatarSrc && <img src={avatarSrc} alt="" className="absolute inset-0 w-full h-full object-cover rounded-full" />}
                     <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
                       {user?.name?.charAt(0).toUpperCase() || "U"}
                     </AvatarFallback>
@@ -582,6 +607,10 @@ function DashboardLayoutContent({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem
+                <DropdownMenuItem onClick={handleAvatarClick} className="cursor-pointer">
+                  <Camera className="mr-2 h-4 w-4" />
+                  <span>Change Photo</span>
+                </DropdownMenuItem>
                   onClick={logout}
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
@@ -590,6 +619,7 @@ function DashboardLayoutContent({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarFile} />
           </SidebarFooter>
         </Sidebar>
         <div
