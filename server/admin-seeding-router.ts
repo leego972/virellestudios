@@ -15,6 +15,10 @@ import { eq, sql } from "drizzle-orm";
 
 // Import seed data
 import { runLamaloSeed } from "./lamalo-seed";
+  import { runExecutiveSeed } from "./executive-seed";
+  import { runMasterSeed } from "./master-seed";
+  import { runSignatureCastSeed, runDiverseCastSeed } from "./signature-cast-seed";
+  import { runUniformSeed } from "./uniform-seed";
 import { FUNDING_SOURCES_DATA } from "./funding-seed";
 
 export const adminSeedingRouter = router({
@@ -161,7 +165,61 @@ export const adminSeedingRouter = router({
     }
   }),
 
-  /**
+
+    /**
+     * Seed Executive wardrobe collections
+     */
+    seedExecutive: adminProcedure.mutation(async ({ ctx }) => {
+      try {
+        await runExecutiveSeed(ctx.user.id);
+        return { success: true, message: "Executive collections seeded successfully" };
+      } catch (error) {
+        logger.errorWithStack("Executive seeding error", error);
+        return { success: false, message: `Failed: ${error instanceof Error ? error.message : "Unknown error"}` };
+      }
+    }),
+
+    /**
+     * Seed Master wardrobe collections
+     */
+    seedMaster: adminProcedure.mutation(async ({ ctx }) => {
+      try {
+        await runMasterSeed(ctx.user.id);
+        return { success: true, message: "Master collections seeded successfully" };
+      } catch (error) {
+        logger.errorWithStack("Master seeding error", error);
+        return { success: false, message: `Failed: ${error instanceof Error ? error.message : "Unknown error"}` };
+      }
+    }),
+
+    /**
+     * Seed Signature Cast characters
+     */
+    seedSignatureCast: adminProcedure.mutation(async ({ ctx }) => {
+      try {
+        await runSignatureCastSeed(ctx.user.id);
+        await runDiverseCastSeed(ctx.user.id);
+        return { success: true, message: "Signature & Diverse Cast seeded successfully" };
+      } catch (error) {
+        logger.errorWithStack("Cast seeding error", error);
+        return { success: false, message: `Failed: ${error instanceof Error ? error.message : "Unknown error"}` };
+      }
+    }),
+
+    /**
+     * Seed Uniform collections
+     */
+    seedUniforms: adminProcedure.mutation(async ({ ctx }) => {
+      try {
+        await runUniformSeed(ctx.user.id);
+        return { success: true, message: "Uniform collections seeded successfully" };
+      } catch (error) {
+        logger.errorWithStack("Uniform seeding error", error);
+        return { success: false, message: `Failed: ${error instanceof Error ? error.message : "Unknown error"}` };
+      }
+    }),
+
+    /**
    * Seed everything
    */
   seedEverything: adminProcedure.mutation(async ({ ctx }) => {
@@ -169,10 +227,17 @@ export const adminSeedingRouter = router({
       const db = await getDb();
       if (!db) throw new Error("DB unavailable");
 
-      // 1. Marketplace
-      await runLamaloSeed(ctx.user.id);
+      // 1. Marketplace (Lamalo + Executive + Master + Uniforms)
+        await runLamaloSeed(ctx.user.id);
+        await runExecutiveSeed(ctx.user.id);
+        await runMasterSeed(ctx.user.id);
+        await runUniformSeed(ctx.user.id);
 
-      // 2. Funding
+        // 2. Cast
+        await runSignatureCastSeed(ctx.user.id);
+        await runDiverseCastSeed(ctx.user.id);
+
+      // 4. Funding
       for (const source of FUNDING_SOURCES_DATA) {
         const existing = await db
           .select()
@@ -184,7 +249,7 @@ export const adminSeedingRouter = router({
         }
       }
 
-      // 3. Crowdfunding (comprehensive)
+      // 5. Crowdfunding (comprehensive)
       const samples = [
         {
           userId: ctx.user.id,
