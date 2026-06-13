@@ -20,6 +20,17 @@ export const stripe = ENV.stripeSecretKey
 //   "studio"      → "Industry"    (alias for independent, backward-compat)
 //   "industry"    → "Industry"    (custom/sales-led, same display name)
 export type SubscriptionTier = "none" | "indie" | "amateur" | "independent" | "creator" | "studio" | "industry" | "beta";
+  // ─── Top-tier helpers ─────────────────────────────────────────────────────────
+  // Independent / creator / studio / industry = "Industry" display tier.
+  // These users get AI generation services (character gen, photo gen, wardrobe gen) FREE.
+  // Lamalo clothing item purchases are always paid regardless of tier.
+  export const TOP_TIER_KEYS: SubscriptionTier[] = ["independent", "creator", "studio", "industry"];
+  /** True when the user has an active top-tier subscription — AI gen services are free for them */
+  export function isTopTierUser(user: { subscriptionTier?: string | null; subscriptionStatus?: string | null }): boolean {
+    const status = user.subscriptionStatus ?? "none";
+    return TOP_TIER_KEYS.includes((user.subscriptionTier ?? "none") as SubscriptionTier)
+      && (status === "active" || status === "trialing");
+  }
 export type BillingInterval = "monthly" | "annual";
 
 export interface TierLimits {
