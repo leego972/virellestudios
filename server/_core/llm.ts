@@ -303,12 +303,21 @@ const resolveProvider = (): { url: string; apiKey: string; model: string } => {
     };
   }
 
-  // Ultimate free fallback: Pollinations (no API key required, OpenAI-compatible)
+  // Groq free tier — Llama 3.3 70B with tool calling (free at console.groq.com)
+  if (ENV.groqApiKey) {
     return {
-      url: "https://text.pollinations.ai/openai",
-      apiKey: "",
-      model: "openai",
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      apiKey: ENV.groqApiKey,
+      model: "llama-3.3-70b-versatile",
     };
+  }
+
+  // Final free fallback: Pollinations (no key needed, no tool support)
+  return {
+    url: "https://text.pollinations.ai/openai",
+    apiKey: "",
+    model: "openai-large",
+  };
 };
 
 const normalizeResponseFormat = ({
