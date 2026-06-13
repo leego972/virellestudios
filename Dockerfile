@@ -26,7 +26,7 @@ COPY --from=builder /app/dist ./dist
 # Gateway + startup script — gateway listens on $PORT, proxies to app on $PORT+1.
 # If the app hasn't started yet, gateway returns {"ok":true,"warming":true} so
 # Railway's health check passes during cold start instead of killing the container.
-COPY start.sh gateway.mjs ./
+COPY start.sh gateway.mjs seed-admin.mjs ./
 RUN chmod +x start.sh
 EXPOSE 3000
 CMD ["sh", "start.sh"]
