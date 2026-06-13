@@ -941,12 +941,11 @@ export default function Landing() {
                   {/* Right — item sample grid */}
                   <div className="border-t md:border-t-0 md:border-l border-amber-500/10 p-6 grid grid-cols-3 gap-2 content-start">
                     {[
-                      { label: "Men's Sport", tag: "Soccer · Basketball · AFL · Rugby", color: "from-blue-900/40 to-blue-800/20" },
-                      { label: "Women's Active", tag: "10 colours each", color: "from-purple-900/40 to-purple-800/20" },
-                      { label: "Men's Footwear", tag: "10 shoe types", color: "from-amber-900/40 to-amber-800/20" },
-                      { label: "Women's Footwear", tag: "Heels · Boots · Sandals · Flips", color: "from-rose-900/40 to-rose-800/20" },
-                      { label: "Luxury", tag: "Cashmere · Silk · Tailored", color: "from-yellow-900/40 to-yellow-800/20" },
-                      { label: "Kids & Swim", tag: "UPF50+ · Sport kits", color: "from-teal-900/40 to-teal-800/20" },
+                      { label: "Menswear", tag: "Shirts · Trousers · Footwear", color: "from-blue-900/40 to-blue-800/20" },
+                      { label: "Womenswear", tag: "Dresses · Blouses · Footwear", color: "from-purple-900/40 to-purple-800/20" },
+                      { label: "Kids / Teens", tag: "All ages · Footwear included", color: "from-teal-900/40 to-teal-800/20" },
+                      { label: "Costume / Professional", tag: "Police · Nurse · Firefighter · Ambo", color: "from-orange-900/40 to-orange-800/20" },
+                      { label: "Accessories", tag: "Jewellery · Sunglasses · Handbags", color: "from-yellow-900/40 to-yellow-800/20" },
                     ].map((cat) => (
                       <div
                         key={cat.label}
