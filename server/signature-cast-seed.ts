@@ -127,16 +127,14 @@ import { getDb } from './db';
            ageRange, ethnicity, skinTone, build, height,
            hairColor, hairStyle, hairLength, eyeColor, faceShape,
            distinguishingFeatures, isAiActor, aiActorId,
-           consistencyNotes, faceDnaPrompt, isNonHuman,
-           createdAt, updatedAt)
+           consistencyNotes, faceDnaPrompt, isNonHuman)
         VALUES
           (${userId}, ${cast.name}, ${cast.role}, ${cast.storyImportance}, ${cast.screenTime},
            ${cast.description}, ${cast.ageRange}, ${cast.ethnicity}, ${cast.skinTone},
            ${cast.build}, ${cast.height}, ${cast.hairColor}, ${cast.hairStyle},
            ${cast.hairLength}, ${cast.eyeColor}, ${cast.faceShape},
            ${cast.distinguishingFeatures}, ${cast.isAiActor ? 1 : 0}, ${cast.aiActorId},
-           ${cast.consistencyNotes}, ${cast.faceDnaPrompt}, ${0},
-           ${new Date()}, ${new Date()})
+           ${cast.consistencyNotes}, ${cast.faceDnaPrompt}, ${0})
       `);
     }
   }
@@ -266,16 +264,14 @@ import { getDb } from './db';
            ageRange, ethnicity, skinTone, build, height,
            hairColor, hairStyle, hairLength, eyeColor, faceShape,
            distinguishingFeatures, isAiActor, aiActorId,
-           consistencyNotes, faceDnaPrompt, isNonHuman,
-           createdAt, updatedAt)
+           consistencyNotes, faceDnaPrompt, isNonHuman)
         VALUES
           (${userId}, ${cast.name}, ${cast.role}, ${cast.storyImportance}, ${cast.screenTime},
            ${cast.description}, ${cast.ageRange}, ${cast.ethnicity}, ${cast.skinTone},
            ${cast.build}, ${cast.height}, ${cast.hairColor}, ${cast.hairStyle},
            ${cast.hairLength}, ${cast.eyeColor}, ${cast.faceShape},
            ${cast.distinguishingFeatures}, ${cast.isAiActor ? 1 : 0}, ${cast.aiActorId},
-           ${cast.consistencyNotes}, ${cast.faceDnaPrompt}, ${0},
-           ${new Date()}, ${new Date()})
+           ${cast.consistencyNotes}, ${cast.faceDnaPrompt}, ${0})
       `);
     }
   }
