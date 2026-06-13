@@ -39,6 +39,7 @@ const startedAt = new Date();
 // Rate limiting is now handled via centralized Redis-backed rateLimit.ts
 import { rateLimitHeavyAI, rateLimitUpload, rateLimitAI } from "./rateLimit";
 import type { Request, Response, NextFunction } from "express";
+import { storagePut } from "./storage";
 
 /**
  * Lightweight Express middleware for IP-based rate limiting on public endpoints
@@ -1102,6 +1103,35 @@ async function startServer() {
 
   // POST /api/voice/upload — accepts raw audio body, returns temp URL.
   // Auth required; size capped at VOICE_MAX_SIZE; MIME must be in allowlist.
+
+  // ─── Avatar upload ────────────────────────────────────────────────────────
+  app.post("/api/avatar", express.json({ limit: "10mb" }), async (req: Request, res: Response) => {
+    try {
+      const ctx = await createContext({ req, res, info: {} } as any);
+      if (!ctx.user) return res.status(401).json({ error: "Authentication required" });
+      const { imageDataUrl } = req.body ?? {};
+      if (typeof imageDataUrl !== "string") return res.status(400).json({ error: "imageDataUrl required" });
+      const match = imageDataUrl.match(/^data:(image\/[^;]+);base64,(.+)$/);
+      if (!match) return res.status(400).json({ error: "Invalid image data URL" });
+      const [, contentType, base64Data] = match;
+      const buffer = Buffer.from(base64Data, "base64");
+      if (buffer.length > 5 * 1024 * 1024) return res.status(413).json({ error: "Image must be under 5MB" });
+      const ext = (contentType.split("/")[1] ?? "jpg").replace("jpeg", "jpg");
+      const key = `avatars/user-${ctx.user.id}-${Date.now()}.${ext}`;
+      let avatarUrl: string;
+      try {
+        avatarUrl = await storagePut(key, buffer, contentType);
+      } catch {
+        avatarUrl = imageDataUrl;
+      }
+      await db.updateUser(ctx.user.id, { avatarUrl });
+      return res.json({ avatarUrl });
+    } catch (err) {
+      logger.error("[avatar] upload error", { err });
+      return res.status(500).json({ error: "Upload failed" });
+    }
+  });
+
   app.post("/api/voice/upload", async (req, res) => {
     try {
       const ctx = await createContext({ req, res, info: {} } as any);
