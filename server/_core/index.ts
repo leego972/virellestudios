@@ -39,7 +39,7 @@ const startedAt = new Date();
 // Rate limiting is now handled via centralized Redis-backed rateLimit.ts
 import { rateLimitHeavyAI, rateLimitUpload, rateLimitAI } from "./rateLimit";
 import type { Request, Response, NextFunction } from "express";
-import { storagePut } from "./storage";
+import { storagePut } from "../storage";
 
 /**
  * Lightweight Express middleware for IP-based rate limiting on public endpoints
