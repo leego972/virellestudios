@@ -788,5 +788,5 @@ export async function runLamaloSeed(
   }
 
   log.info(`Lamalo Fashion seed complete — ${newCollections} new collections, ${totalItems} new items`);
-  return { created: existing.length === 0, collections: newCollections, items: totalItems };
+  return { created: newCollections > 0, collections: newCollections, items: totalItems };
 }
