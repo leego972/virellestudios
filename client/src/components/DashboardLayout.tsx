@@ -322,7 +322,7 @@ function DashboardLayoutContent({
   const sidebarRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localAvatar, setLocalAvatar] = useState<string | undefined>(undefined);
-  const avatarSrc = localAvatar ?? (user as any)?.avatarUrl ?? (user?.role === "admin" ? "/leego-logo.png" : undefined);
+  const avatarSrc = localAvatar ?? (user?.role === "admin" ? "/leego-logo.png" : (user as any)?.avatarUrl) ?? undefined;
   const handleAvatarClick = () => fileInputRef.current?.click();
   const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
