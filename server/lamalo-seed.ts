@@ -11,7 +11,7 @@
  *  - Seed is additive: skips collections that already exist by name
  */
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "./db";
 import { designerProfiles, designerCollections, wardrobeItems } from "../drizzle/schema";
 import { logger } from "./_core/logger";
