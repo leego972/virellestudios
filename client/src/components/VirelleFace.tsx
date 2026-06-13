@@ -2,11 +2,11 @@ import React from 'react';
 
   // ── Geometry calibrated to the theatrical mask image (1024x1024) ──────────
   // All values in SVG viewBox units 0-100.
-  // Left  eye socket: cx=33, cy=39, rx=8,  ry=3.8
-  // Right eye socket: cx=67, cy=39, rx=8,  ry=3.8
+  // Left  eye socket: cx=34, cy=40, rx=6, ry=4.5  ← pixel-measured from 1254×1254 mask
+  // Right eye socket: cx=66, cy=40, rx=6, ry=4.5
   const GEO = {
-    leftEye:  { cx: 33, cy: 39, rx: 8,   ry: 3.8 },
-    rightEye: { cx: 67, cy: 39, rx: 8,   ry: 3.8 },
+    leftEye:  { cx: 34, cy: 40, rx: 6,   ry: 4.5 },
+    rightEye: { cx: 66, cy: 40, rx: 6,   ry: 4.5 },
   };
 
   export const VirelleFace = ({
