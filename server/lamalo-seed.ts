@@ -1,6 +1,6 @@
 /**
  * lamalo-seed.ts  — Lamalo Fashion · Virelle Studios in-house brand
- * 23 collections · 1 400+ items
+ * 26 collections · 1 400+ items
  *
  * Rules:
  *  - Every color variant = a separate purchasable item (white tee ≠ black tee)
@@ -512,6 +512,62 @@ const comfortSwimItems: SeedItem[] = [
 const comfortSwim: SeedCollection = { name:"Lamalo Comfort Swimwear", description:"Modest, senior-friendly and comfortable swimwear for pool and beach.", collectionType:"swimwear", season:"Summer", year:2026, styleTags:["swimwear","modest","seniors","comfort","UPF50+"], collectionPriceAud:cp(comfortSwimItems), items:comfortSwimItems };
 
 // ─────────────────────────────────────────────────────────────────────────────
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // COLLECTION 24 — Kids' Footwear
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  const SHOE_K = ["White","Black","Navy","Red","Royal Blue","Pink","Purple"];
+
+  const kidsFootwearItems: SeedItem[] = [
+    ...cc({ name:"Lamalo Kids' Canvas Sneaker", description:"Classic lace-up canvas sneaker for kids — durable and easy to clean.", category:"footwear", subcategory:"sneakers", genderFit:"unisex", materials:["Canvas Upper","Rubber Sole"], styleTags:["sneakers","kids","casual","school"], referencePrompt:"Kids' canvas lace-up sneaker rubber sole durable casual school", primaryImageUrl:"/lamalo/shoe-sneaker.jpg", sizeRange:"EU 24–38" }, SHOE_K),
+    ...cc({ name:"Lamalo Kids' Velcro Trainer", description:"Lightweight kids' trainer with velcro closure — easy for little hands.", category:"footwear", subcategory:"trainers", genderFit:"unisex", materials:["Mesh Upper","EVA Sole"], styleTags:["trainers","kids","velcro","easy-on"], referencePrompt:"Kids' lightweight velcro trainer mesh upper EVA sole easy-on", primaryImageUrl:"/lamalo/shoe-sneaker.jpg", sizeRange:"EU 24–36" }, SHOE_K),
+    ...cc({ name:"Lamalo Kids' School Shoe", description:"Classic leather-look school shoe with cushioned insole and buckle detail.", category:"footwear", subcategory:"school-shoes", genderFit:"unisex", materials:["Synthetic Leather","Rubber Sole"], styleTags:["school","formal","kids","buckle"], referencePrompt:"Kids' classic leather-look school shoe cushioned insole buckle", primaryImageUrl:"/lamalo/shoe-oxford.jpg", sizeRange:"EU 28–38" }, ["Black","Brown","Navy","Tan","White"]),
+    ...cc({ name:"Lamalo Kids' Running Shoe", description:"Lightweight kids' running shoe with responsive foam sole and reflective detail.", category:"footwear", subcategory:"running", genderFit:"unisex", materials:["Engineered Mesh","Foam Midsole"], styleTags:["running","sport","kids","lightweight"], referencePrompt:"Kids' lightweight running shoe engineered mesh foam midsole reflective", primaryImageUrl:"/lamalo/shoe-runner.jpg", sizeRange:"EU 28–38" }, ["White/Blue","Black/Red","Navy/Lime","Grey/Orange","White/Pink","Black/White","Blue/Yellow"]),
+    ...cc({ name:"Lamalo Kids' Sandal", description:"Adjustable velcro sandal for kids with cushioned footbed and water-resistant straps.", category:"footwear", subcategory:"sandals", genderFit:"unisex", materials:["Synthetic Strap","EVA Footbed"], styleTags:["sandals","summer","kids","beach"], referencePrompt:"Kids' adjustable velcro sandal cushioned footbed water-resistant summer", primaryImageUrl:"/lamalo/shoe-slide.jpg", sizeRange:"EU 24–36" }, ["Black","Navy","Tan","Red","Blue","Pink","White"]),
+    ...cc({ name:"Lamalo Kids' Gumboot", description:"Classic kids' gumboot in matte rubber with pull-on loop — puddle-proof.", category:"footwear", subcategory:"boots", genderFit:"unisex", materials:["Natural Rubber"], styleTags:["boots","rain","kids","waterproof","gumboots"], referencePrompt:"Kids' classic matte rubber gumboot pull-on loop waterproof rain", primaryImageUrl:"/lamalo/shoe-boot.jpg", sizeRange:"EU 24–36" }, ["Navy","Black","Red","Green","Yellow","Pink","Blue"]),
+    ...cc({ name:"Lamalo Kids' Slip-On", description:"Easy pull-on kids' slip-on with elastic gusset and cushioned sole — great for quick trips.", category:"footwear", subcategory:"slip-ons", genderFit:"unisex", materials:["Canvas","Rubber Sole"], styleTags:["slip-on","kids","easy","casual"], referencePrompt:"Kids' canvas slip-on elastic gusset cushioned sole casual easy-on", primaryImageUrl:"/lamalo/shoe-sneaker.jpg", sizeRange:"EU 24–36" }, SHOE_K),
+  ];
+
+  const kidsFootwear: SeedCollection = { name:"Lamalo Kids' Footwear", description:"Durable, fun footwear for kids from toddlers to tweens — sneakers, school shoes, sandals and more.", collectionType:"footwear", season:"All-Season", year:2026, styleTags:["footwear","kids","sneakers","school","sandals"], collectionPriceAud:cp(kidsFootwearItems), items:kidsFootwearItems };
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // COLLECTION 25 — Teens' Casual
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  const teensItems: SeedItem[] = [
+    ...cc({ name:"Lamalo Teens' Oversized Tee", description:"Dropped-shoulder oversized tee for teens in soft cotton jersey — effortlessly cool.", category:"tops", subcategory:"t-shirts", genderFit:"unisex", materials:["100% Cotton Jersey"], styleTags:["oversized","teens","casual","streetwear"], referencePrompt:"Teens' oversized dropped-shoulder cotton tee casual streetwear", primaryImageUrl:"/lamalo/men-tshirt.jpg", sizeRange:"XS–XL Teen" }, TOPS),
+    ...cc({ name:"Lamalo Teens' Graphic Hoodie", description:"Heavyweight pullover hoodie with Lamalo graphic chest print — a teen wardrobe essential.", category:"tops", subcategory:"hoodies", genderFit:"unisex", materials:["80% Cotton","20% Polyester"], styleTags:["hoodie","graphic","teens","streetwear"], referencePrompt:"Teens' heavyweight pullover hoodie graphic chest print streetwear", primaryImageUrl:"/lamalo/men-zip-hoodie.jpg", sizeRange:"XS–XL Teen" }, HOODIE),
+    ...cc({ name:"Lamalo Teens' Cargo Pants", description:"Relaxed-fit cargo pants with side utility pockets — the teen street staple.", category:"bottoms", subcategory:"cargo", genderFit:"unisex", materials:["100% Cotton Twill"], styleTags:["cargo","teens","streetwear","relaxed"], referencePrompt:"Teens' relaxed-fit cotton cargo pants side utility pockets street", primaryImageUrl:"/lamalo/men-chino-trouser.jpg", sizeRange:"XS–XL Teen" }, ["Khaki","Black","Olive","Stone","Charcoal","Sand","Forest Green","Navy"]),
+    ...cc({ name:"Lamalo Teens' Denim Jacket", description:"Classic unisex denim jacket in a boxy teen fit with raw-hem detail.", category:"outerwear", subcategory:"denim-jackets", genderFit:"unisex", materials:["100% Cotton Denim"], styleTags:["denim","teens","jacket","casual"], referencePrompt:"Teens' classic boxy-fit denim jacket raw-hem unisex casual", primaryImageUrl:"/lamalo/men-denim-jacket.jpg", sizeRange:"XS–XL Teen" }, DENIM),
+    ...cc({ name:"Lamalo Teens' Bomber Jacket", description:"Satin-finish bomber jacket with ribbed collar, cuffs and hem — teen-approved.", category:"outerwear", subcategory:"bomber", genderFit:"unisex", materials:["100% Polyester Satin"], styleTags:["bomber","teens","jacket","streetwear"], referencePrompt:"Teens' satin-finish bomber jacket ribbed collar cuffs hem street", primaryImageUrl:"/lamalo/men-bomber-jacket.jpg", sizeRange:"XS–XL Teen" }, OUTER),
+    ...cc({ name:"Lamalo Teens' Track Pants", description:"Slim tapered track pants with side stripe and elasticated ankle — sport meets street.", category:"bottoms", subcategory:"track-pants", genderFit:"unisex", materials:["80% Cotton","20% Polyester"], styleTags:["track-pants","teens","sport","street"], referencePrompt:"Teens' slim tapered track pants side stripe elasticated ankle sport street", primaryImageUrl:"/lamalo/men-jogger.jpg", sizeRange:"XS–XL Teen" }, ["Black","Navy","Charcoal","Forest Green","Burgundy","Cobalt Blue","White","Olive"]),
+    ...cc({ name:"Lamalo Girls' Crop Top", description:"Fitted crop tee with ribbed texture and a relaxed open-edge hem.", category:"tops", subcategory:"crop-tops", genderFit:"female", materials:["95% Cotton","5% Elastane"], styleTags:["crop-top","teens","girls","casual"], referencePrompt:"Teens' girls fitted ribbed crop top relaxed open-edge hem casual", primaryImageUrl:"/lamalo/women-blouse.jpg", sizeRange:"XS–L Teen" }, ["White","Black","Blush Pink","Sage Green","Lavender","Cream","Dusty Rose","Navy"]),
+    ...cc({ name:"Lamalo Teens' Mini Skirt", description:"Low-rise denim mini skirt with frayed hem — a teen classic.", category:"bottoms", subcategory:"skirts", genderFit:"female", materials:["100% Cotton Denim"], styleTags:["mini-skirt","teens","girls","denim","casual"], referencePrompt:"Teens' low-rise denim mini skirt frayed hem casual", primaryImageUrl:"/lamalo/women-wide-leg-trouser.jpg", sizeRange:"XS–L Teen" }, DENIM),
+  ];
+
+  const teens: SeedCollection = { name:"Lamalo Teens' Casual", description:"Street-ready teen fashion — oversized tees, cargo pants, bombers, and denim for the next generation.", collectionType:"casual", season:"All-Season", year:2026, styleTags:["teens","streetwear","casual","denim","oversized"], collectionPriceAud:cp(teensItems), items:teensItems };
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // COLLECTION 26 — Professional / Costume Uniforms
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  const professionalItems: SeedItem[] = [
+    ...cc({ name:"Lamalo Police Uniform Shirt", description:"Regulation-style navy police uniform shirt with epaulettes and badge tab — crisp and authoritative.", category:"tops", subcategory:"uniform-shirt", genderFit:"unisex", materials:["65% Polyester","35% Cotton"], styleTags:["police","uniform","professional","costume"], referencePrompt:"Police uniform shirt navy epaulettes badge tab regulation professional", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, ["Navy","Black","White","Charcoal","Royal Blue"]),
+    ...cc({ name:"Lamalo Police Uniform Pants", description:"Straight-leg uniform trousers with side stripe and reinforced knee panels.", category:"bottoms", subcategory:"uniform-pants", genderFit:"unisex", materials:["65% Polyester","35% Cotton"], styleTags:["police","uniform","pants","professional"], referencePrompt:"Police uniform trousers straight-leg side stripe reinforced knee professional", primaryImageUrl:"/lamalo/men-chino-trouser.jpg" }, ["Navy","Black","Charcoal","Royal Blue"]),
+    ...cc({ name:"Lamalo Nurse Scrub Top", description:"V-neck nursing scrub top with two patch pockets and a relaxed unisex fit.", category:"tops", subcategory:"scrubs", genderFit:"unisex", materials:["55% Cotton","45% Polyester"], styleTags:["nurse","scrubs","medical","professional","healthcare"], referencePrompt:"Nurse V-neck scrub top patch pockets unisex medical healthcare", primaryImageUrl:"/lamalo/men-polo-shirt.jpg" }, ["Navy","Black","Royal Blue","Ceil Blue","Hunter Green","Burgundy","White","Charcoal"]),
+    ...cc({ name:"Lamalo Nurse Scrub Pants", description:"Straight-leg nursing scrub pants with drawstring waist, cargo pocket and ankle hem.", category:"bottoms", subcategory:"scrubs", genderFit:"unisex", materials:["55% Cotton","45% Polyester"], styleTags:["nurse","scrubs","medical","professional"], referencePrompt:"Nurse scrub pants straight-leg drawstring waist cargo pocket medical", primaryImageUrl:"/lamalo/men-chino-trouser.jpg" }, ["Navy","Black","Royal Blue","Ceil Blue","Hunter Green","Burgundy","White","Charcoal"]),
+    ...cc({ name:"Lamalo Paramedic / Ambulance Shirt", description:"High-visibility ambulance uniform shirt with reflective tape and large chest pockets.", category:"tops", subcategory:"uniform-shirt", genderFit:"unisex", materials:["Polyester","Cotton Blend"], styleTags:["paramedic","ambulance","high-vis","professional","uniform"], referencePrompt:"Paramedic ambulance uniform shirt high-visibility reflective tape chest pockets", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, ["Green/Yellow Hi-Vis","Orange Hi-Vis","Navy","White","Teal"]),
+    ...cc({ name:"Lamalo Paramedic Cargo Pants", description:"Durable paramedic cargo pants with multiple utility pockets and reinforced knees.", category:"bottoms", subcategory:"cargo", genderFit:"unisex", materials:["Ripstop Polyester","Cotton"], styleTags:["paramedic","ambulance","cargo","professional","uniform"], referencePrompt:"Paramedic cargo pants utility pockets reinforced knees durable professional", primaryImageUrl:"/lamalo/men-chino-trouser.jpg" }, ["Navy","Black","Olive","Charcoal","Forest Green"]),
+    ...cc({ name:"Lamalo Firefighter Station Shirt", description:"Station-wear shirt for firefighters in flame-resistant cotton with chest pocket and roll-up sleeves.", category:"tops", subcategory:"uniform-shirt", genderFit:"unisex", materials:["100% FR Cotton"], styleTags:["firefighter","station-wear","FR","professional","uniform"], referencePrompt:"Firefighter station shirt flame-resistant cotton chest pocket roll-up sleeves", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, ["Navy","Black","Dark Blue","Charcoal","Forest Green"]),
+    ...cc({ name:"Lamalo Firefighter Hi-Vis Vest", description:"High-visibility safety vest with reflective strips and multiple ID pockets — worn over station wear.", category:"outerwear", subcategory:"vest", genderFit:"unisex", materials:["100% Polyester Mesh"], styleTags:["firefighter","hi-vis","safety-vest","professional","reflective"], referencePrompt:"Firefighter high-visibility safety vest reflective strips ID pockets orange yellow", primaryImageUrl:"/lamalo/men-bomber-jacket.jpg" }, ["Orange Hi-Vis","Yellow Hi-Vis","Red Hi-Vis"]),
+    ...cc({ name:"Lamalo Security Guard Shirt", description:"Dark navy security uniform shirt with epaulette loops and breast pockets.", category:"tops", subcategory:"uniform-shirt", genderFit:"unisex", materials:["65% Polyester","35% Cotton"], styleTags:["security","uniform","professional","guard"], referencePrompt:"Security guard uniform shirt dark navy epaulette loops breast pockets professional", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, ["Black","Navy","Charcoal","Dark Grey"]),
+    ...cc({ name:"Lamalo Chef's Jacket", description:"Classic double-breasted chef's jacket in white cotton with black toggle buttons.", category:"tops", subcategory:"chef-wear", genderFit:"unisex", materials:["100% Cotton"], styleTags:["chef","kitchen","uniform","professional","hospitality"], referencePrompt:"Chef's double-breasted jacket white cotton black toggle buttons professional kitchen", primaryImageUrl:"/lamalo/men-linen-shirt.jpg" }, ["White","Black","Navy","Charcoal","Checkered Black/White"]),
+  ];
+
+  const professional: SeedCollection = { name:"Lamalo Professional Uniforms", description:"Profession-ready costume and workwear — police, nurses, paramedics, firefighters, security and chefs.", collectionType:"uniform", season:"All-Season", year:2026, styleTags:["uniform","professional","costume","police","nurse","paramedic","firefighter"], collectionPriceAud:cp(professionalItems), items:professionalItems };
+
+  
 // ALL COLLECTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -539,6 +595,9 @@ const ALL_COLLECTIONS: SeedCollection[] = [
   bags,
   accessories,
   comfortSwim,
+  kidsFootwear,
+  teens,
+  professional,
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
