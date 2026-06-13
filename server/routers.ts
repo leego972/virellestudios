@@ -3196,6 +3196,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
                 sceneType: (scene as any).sceneType || undefined,
+                wardrobeContext: sceneWardrobeContext || undefined,
+                previousSceneLastFrameUrl,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
               try {
@@ -3247,6 +3249,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
+                wardrobeContext: sceneWardrobeContext || undefined,
                 previousSceneLastFrameUrl,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
@@ -3298,6 +3301,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
+                wardrobeContext: sceneWardrobeContext || undefined,
                 previousSceneLastFrameUrl,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
@@ -3350,6 +3354,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
+                wardrobeContext: sceneWardrobeContext || undefined,
                 previousSceneLastFrameUrl,
               });
               await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
@@ -3537,6 +3542,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             const batch = scenesNeedingVideo.slice(i, i + BATCH);
             await Promise.allSettled(batch.map(async (scene) => {
               try {
+                const bulkWardrobeCtx = await getWardrobePromptContextForScene(scene.id, ctx.user.id);
                 const sceneIdx = scenes.findIndex(s => s.id === scene.id);
                 const prompt = buildScenePrompt(
                   { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
@@ -3547,7 +3553,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                     previousSceneDescription: sceneIdx > 0 ? (scenes[sceneIdx - 1]?.description || undefined) : undefined,
                     characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
-                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
+                  wardrobeContext: bulkWardrobeCtx,
                     characters: characters.map(c => ({
                       name: c.name,
                       ageRange: (c as any).ageRange ?? null,
@@ -3593,8 +3599,10 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                   locationDescription: scene.locationType || undefined,
                   referenceImages: bulkOtherRefs.length > 0 ? bulkOtherRefs : undefined,
                   characterDescriptions: bulkOtherCharDescs.length > 0 ? bulkOtherCharDescs : undefined,
+                  wardrobeContext: bulkWardrobeCtx || undefined,
+                  previousSceneLastFrameUrl: sceneIdx > 0 ? (scenes[sceneIdx - 1] as any)?.endFrameUrl : undefined,
                 });
-                await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+                await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
               try {
                 await db.createNotification({
                   userId: ctx.user.id,
@@ -4577,6 +4585,7 @@ Break this into the number of scenes specified in your system instructions above
             try {
               // Import and use extended scene generator for clip chaining
               const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
+              const autoGenWardrobeCtx = await getWardrobePromptContextForScene(scene.id, userId);
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: projectId,
@@ -4591,12 +4600,14 @@ Break this into the number of scenes specified in your system instructions above
                 referenceImages: qgRefImages.length > 0 ? qgRefImages : undefined,
                 characterDescriptions: charVideoDescriptions.length > 0 ? charVideoDescriptions : undefined,
                 previousSceneLastFrameUrl: sceneIdx > 0 ? (allScenes[sceneIdx - 1] as any)?.lastFrameUrl : undefined,
+                wardrobeContext: autoGenWardrobeCtx || undefined,
               });
 
               await db.updateScene(scene.id, {
                 videoUrl: extResult.videoUrl,
                 thumbnailUrl: extResult.thumbnailUrl || undefined,
                 status: "completed",
+                ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}),
               });
 
               // Set project thumbnail from first scene's video thumbnail (if not already set)
