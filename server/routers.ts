@@ -290,7 +290,7 @@ async function getWardrobePromptContextForScene(
 
 // Build a rich, accurate prompt description for extended scene generation.
 // Placed at module scope (not inside router object) to satisfy TypeScript's strict checker.
-function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, effectiveDialogueText?: string): string {
+function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, effectiveDialogueText?: string, wardrobeContext?: string): string {
   const parts: string[] = [];
   if (sceneData.description) parts.push(sceneData.description);
   const dialogueText = effectiveDialogueText?.trim() || sceneData.dialogueText?.trim();
@@ -308,6 +308,7 @@ function buildExtendedSceneDescription(sceneData: any, cinematicPrompt: string, 
   if (sceneData.foregroundElements?.trim()) parts.push(`FOREGROUND: ${sceneData.foregroundElements.trim()}`);
   if (sceneData.backgroundElements?.trim()) parts.push(`BACKGROUND: ${sceneData.backgroundElements.trim()}`);
   if (sceneData.characterBlocking?.trim()) parts.push(`CHARACTER POSITIONS: ${sceneData.characterBlocking.trim()}`);
+  if (wardrobeContext?.trim()) parts.push(`WARDROBE & COSTUME DIRECTIVES (characters must wear exactly): ${wardrobeContext.trim()}`);
   if (cinematicPrompt) parts.push(`CINEMATIC STYLE: ${cinematicPrompt}`);
   return parts.join('. ');
 }
@@ -2729,7 +2730,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             previousSceneDescription: sceneIdx > 0 ? (allScenes[sceneIdx - 1]?.description || undefined) : undefined,
             characterNames: characters.map(c => c.name),
                   brands: await brandsForPrompt(scene.projectId),
-                  wardrobeContext: await getWardrobePromptContextForScene(scene.id, ctx.user.id),
+                  wardrobeContext: sceneWardrobeContext,
             characters: characters.map(c => ({
                 name: c.name,
                 ageRange: (c as any).ageRange ?? (c as any).dateOfBirth ?? null,
@@ -3057,6 +3058,11 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const visualDNA = buildVisualDNA(project, characters, userTier);
         const allScenes = await db.getProjectScenes(project.id);
         const sceneIdx = allScenes.findIndex(s => s.id === scene.id);
+        // ── Continuity: prev scene last frame for scene-to-scene visual anchoring ──
+        const _prevScene = sceneIdx > 0 ? allScenes[sceneIdx - 1] : null;
+        const previousSceneLastFrameUrl: string | undefined = (_prevScene as any)?.endFrameUrl ?? undefined;
+        // Pre-fetch wardrobeContext once, reuse in buildScenePrompt + buildExtendedSceneDescription
+        const sceneWardrobeContext = await getWardrobePromptContextForScene(scene.id, ctx.user.id);
         const prompt = buildScenePrompt(
           { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
           visualDNA,
@@ -3122,19 +3128,11 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
             .slice(0, 2); // Max 2 reference images to keep prompts focused
           sceneRefImages.push(...charPhotos);
         }
-        const characterDescriptions = sceneActiveCharacters
-          .filter((c: any) => c.name)
-          .map((c: any) => {
-            const parts: string[] = [c.name];
-            if (c.age) parts.push(`age ${c.age}`);
-            if (c.gender) parts.push(c.gender);
-            if (c.ethnicity) parts.push(c.ethnicity);
-            if (c.build) parts.push(c.build);
-            if (c.hairColor) parts.push(`${c.hairColor} hair`);
-            if (c.description) parts.push(c.description);
-            return parts.filter(Boolean).join(", ");
-          })
-          .filter((x: any) => x !== null) as any[];
+        // Use rich CharacterDNA for cinematographer-grade visual consistency across all providers
+          const { buildCharacterDNA: _buildDNA } = await import("./_core/characterConsistency");
+          const characterDescriptions = sceneActiveCharacters
+            .filter((c: any) => c.name)
+            .map((c: any) => _buildDNA(c).promptAnchor);
 
         // Build BYOK keys: use user's own keys; admins also get platform keys as fallback
         const rawUserKeys = await db.getUserApiKeys(ctx.user.id);
@@ -3185,7 +3183,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3199,7 +3197,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 seed: sceneSeed,
                 sceneType: (scene as any).sceneType || undefined,
               });
-              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
               try {
                 await db.createNotification({
                   userId: ctx.user.id,
@@ -3237,7 +3235,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3249,8 +3247,9 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
+                previousSceneLastFrameUrl,
               });
-              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
               try {
                 await db.createNotification({
                   userId: ctx.user.id,
@@ -3287,7 +3286,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3299,8 +3298,9 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
+                previousSceneLastFrameUrl,
               });
-              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
               try {
                 await db.createNotification({
                   userId: ctx.user.id,
@@ -3338,7 +3338,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3350,8 +3350,9 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 aiPromptOverride: sceneAiPromptOverride,
                 negativePrompt: sceneNegativePrompt,
                 seed: sceneSeed,
+                previousSceneLastFrameUrl,
               });
-              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed" } as any);
+              await db.updateScene(scene.id, { videoUrl: extResult.videoUrl, status: "completed", ...(extResult.lastFrameUrl ? { endFrameUrl: extResult.lastFrameUrl } : {}) } as any);
               try {
                 await db.createNotification({
                   userId: ctx.user.id,
