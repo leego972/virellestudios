@@ -4585,7 +4585,7 @@ Break this into the number of scenes specified in your system instructions above
             try {
               // Import and use extended scene generator for clip chaining
               const { generateExtendedScene } = await import("./_core/extendedSceneGenerator");
-              const autoGenWardrobeCtx = await getWardrobePromptContextForScene(scene.id, userId);
+              const autoGenWardrobeCtx = await getWardrobePromptContextForScene(scene.id, ctx.user.id);
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: projectId,
