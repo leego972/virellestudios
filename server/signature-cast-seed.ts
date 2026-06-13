@@ -23,11 +23,11 @@ import { getDb } from './db';
       await pool.execute(
         `INSERT IGNORE INTO characters
           (userId, projectId, name, role, storyImportance, screenTime,
-           description, nationality, castingNotes, isAiActor, aiActorId, isNonHuman)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           description, nationality, castingNotes, isAiActor, aiActorId)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [userId, 0, cast.name, cast.role, cast.storyImportance, cast.screenTime,
          cast.description, cast.nationality, cast.castingNotes,
-         cast.isAiActor ? 1 : 0, cast.aiActorId, 0]
+         cast.isAiActor ? 1 : 0, cast.aiActorId]
       );
     } catch (err: any) {
       throw new Error(`MySQL ${err.code ?? err.errno ?? 'ERR'} inserting "${cast.name}": ${err.sqlMessage ?? err.message}`);
