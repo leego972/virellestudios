@@ -124,7 +124,10 @@ export const ENV = {
   whatsappAccessToken: process.env.WHATSAPP_ACCESS_TOKEN ?? "",
   whatsappPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID ?? "",
 
-  // ─── TitanAI Inference API ─────────────────────────────────────────────────
+  // ─── Groq (free LLM — Llama 3.3 70B, tool-calling capable) ──────────────
+    groqApiKey: process.env.GROQ_API_KEY ?? "",
+
+    // ─── TitanAI Inference API ─────────────────────────────────────────────────
   // Set TITAN_API_URL to the running TitanAI API server (e.g. http://ssh5.vast.ai:8000 — current Vast box: TitanAI-Verified-2)
   // Leave empty to disable — falls back to OpenAI/Forge routing as normal.
   // Leave empty string when TITAN_API_URL is unset — server routes skip TitanAI and fall back to OpenAI
