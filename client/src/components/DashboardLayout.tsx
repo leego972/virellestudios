@@ -70,7 +70,7 @@ import {
   Store,
   Camera,
   Package,
-} from "lucide-react";
+, Settings2 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
@@ -153,6 +153,7 @@ const menuGroups = [
 const menuItems = menuGroups.flatMap((g) => g.items);
 
 const adminMenuItems = [
+  { icon: Settings2, label: "Admin & Seeding", path: "/admin" },
   { icon: Shield, label: "User Management", path: "/admin/users" },
   { icon: ShieldAlert, label: "Security", path: "/admin/security" },
   { icon: TrendingUp, label: "Growth Dashboard", path: "/admin/growth" },
