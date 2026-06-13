@@ -1,26 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-  // ── Geometry calibrated to the theatrical mask image (1024x1024) ──────────
-  // All values in SVG viewBox units 0-100.
-  // Left  eye socket: cx=34, cy=40, rx=6, ry=4.5  ← pixel-measured from 1254×1254 mask
-  // Right eye socket: cx=66, cy=40, rx=6, ry=4.5
+  // Eye socket positions — calibrated to virelle-face.png (0-100 viewBox)
   const GEO = {
     leftEye:  { cx: 34, cy: 40, rx: 6,   ry: 4.5 },
     rightEye: { cx: 66, cy: 40, rx: 6,   ry: 4.5 },
   };
 
+  type VoiceState = 'idle' | 'inactive' | 'listening' | 'thinking' | 'speaking';
+
+  // Eye colour per state
+  const EYE_COLOR: Record<VoiceState, { core: string; mid: string; outer: string }> = {
+    idle:      { core: '#ffffff', mid: '#cccccc', outer: '#888888' },
+    inactive:  { core: '#ffffff', mid: '#cccccc', outer: '#888888' },
+    listening: { core: '#fffde7', mid: '#ffd700', outer: '#ffaa00' }, // yellow
+    thinking:  { core: '#ddeeff', mid: '#7ab0ff', outer: '#3060e0' }, // blue
+    speaking:  { core: '#e0fff0', mid: '#44ff88', outer: '#00cc55' }, // green
+  };
+
   export const VirelleFace = ({
     volume = 0,
     speaking = false,
+    state = 'idle',
   }: {
     volume?: number;
     speaking?: boolean;
+    state?: VoiceState;
   }) => {
     const v = Math.min(Math.max(volume, 0), 1);
 
-    // Eye glow: bright white core, blue halo — pulses with speech intensity
-    const eyeOpacity = speaking ? Math.min(0.65 + v * 0.35, 1) : 0.28;
-    const eyeScale   = speaking ? 1 + v * 0.18 : 0.80;
+    // Derive effective state from props
+    const effectiveState: VoiceState =
+      state !== 'idle' && state !== 'inactive' ? state :
+      speaking ? 'speaking' : 'idle';
+
+    const isActive = effectiveState !== 'idle' && effectiveState !== 'inactive';
+    const color = EYE_COLOR[effectiveState];
+
+    // Opacity + scale pulse with volume when speaking
+    const eyeOpacity = isActive ? Math.min(0.70 + v * 0.30, 1.0) : 0.22;
+    const eyeScale   = isActive ? 1 + v * 0.15 : 0.82;
+
+    const mkGrad = (id: string, cx: number, cy: number, rx: number) => (
+      <radialGradient
+        key={id}
+        id={id}
+        cx={cx}
+        cy={cy}
+        r={rx * 1.35}
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop offset="0%"   stopColor={color.core}  stopOpacity={eyeOpacity} />
+        <stop offset="30%"  stopColor={color.mid}   stopOpacity={eyeOpacity * 0.80} />
+        <stop offset="65%"  stopColor={color.outer} stopOpacity={eyeOpacity * 0.35} />
+        <stop offset="100%" stopColor={color.outer} stopOpacity="0" />
+      </radialGradient>
+    );
 
     return (
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -29,10 +63,10 @@ import React from 'react';
           width: '72%',
           aspectRatio: '1 / 1',
           animation: 'virelle-float 4.2s ease-in-out infinite',
-          filter: speaking
-            ? 'drop-shadow(0 0 28px rgba(120,160,255,0.35)) drop-shadow(0 8px 44px rgba(60,100,255,0.22))'
-            : 'drop-shadow(0 8px 38px rgba(180,180,255,0.12))',
-          transition: 'filter 0.7s ease',
+          filter: isActive
+            ? `drop-shadow(0 0 28px ${color.outer}55) drop-shadow(0 8px 44px ${color.outer}33)`
+            : 'drop-shadow(0 8px 38px rgba(180,180,255,0.10))',
+          transition: 'filter 0.6s ease',
         }}>
 
           <img
@@ -48,21 +82,11 @@ import React from 'react';
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' }}
           >
             <defs>
-              <radialGradient id="vf-eye-l" cx="50%" cy="42%" r="52%">
-                <stop offset="0%"   stopColor="#ffffff" stopOpacity={eyeOpacity} />
-                <stop offset="28%"  stopColor="#d8eeff" stopOpacity={eyeOpacity * 0.88} />
-                <stop offset="62%"  stopColor="#7ab0ff" stopOpacity={eyeOpacity * 0.42} />
-                <stop offset="100%" stopColor="#3060e0" stopOpacity="0" />
-              </radialGradient>
-              <radialGradient id="vf-eye-r" cx="50%" cy="42%" r="52%">
-                <stop offset="0%"   stopColor="#ffffff" stopOpacity={eyeOpacity} />
-                <stop offset="28%"  stopColor="#d8eeff" stopOpacity={eyeOpacity * 0.88} />
-                <stop offset="62%"  stopColor="#7ab0ff" stopOpacity={eyeOpacity * 0.42} />
-                <stop offset="100%" stopColor="#3060e0" stopOpacity="0" />
-              </radialGradient>
+              {mkGrad('vf-eye-l', GEO.leftEye.cx,  GEO.leftEye.cy,  GEO.leftEye.rx)}
+              {mkGrad('vf-eye-r', GEO.rightEye.cx, GEO.rightEye.cy, GEO.rightEye.rx)}
             </defs>
 
-            {/* Left eye glow — sits precisely inside the socket hole */}
+            {/* Left eye — glow locked to socket centre */}
             <ellipse
               cx={GEO.leftEye.cx}
               cy={GEO.leftEye.cy}
@@ -71,11 +95,11 @@ import React from 'react';
               fill="url(#vf-eye-l)"
               style={{
                 transition: 'rx 0.12s ease-out, ry 0.12s ease-out',
-                animation: speaking ? 'eye-flicker 0.18s linear infinite' : 'none',
+                animation: effectiveState === 'speaking' ? 'eye-flicker 0.18s linear infinite' : 'none',
               }}
             />
 
-            {/* Right eye glow — sits precisely inside the socket hole */}
+            {/* Right eye — glow locked to socket centre */}
             <ellipse
               cx={GEO.rightEye.cx}
               cy={GEO.rightEye.cy}
@@ -84,7 +108,7 @@ import React from 'react';
               fill="url(#vf-eye-r)"
               style={{
                 transition: 'rx 0.12s ease-out, ry 0.12s ease-out',
-                animation: speaking ? 'eye-flicker 0.18s linear infinite 0.09s' : 'none',
+                animation: effectiveState === 'speaking' ? 'eye-flicker 0.18s linear infinite 0.09s' : 'none',
               }}
             />
           </svg>
