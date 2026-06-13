@@ -1120,7 +1120,7 @@ async function startServer() {
       const key = `avatars/user-${ctx.user.id}-${Date.now()}.${ext}`;
       let avatarUrl: string;
       try {
-        avatarUrl = await storagePut(key, buffer, contentType);
+        avatarUrl = (await storagePut(key, buffer, contentType)).url;
       } catch {
         avatarUrl = imageDataUrl;
       }
