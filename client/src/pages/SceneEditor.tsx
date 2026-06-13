@@ -326,6 +326,27 @@ export default function SceneEditor() {
   const { id } = useParams<{ id: string }>();
   const projectId = parseInt(id || "0");
   const [, setLocation] = useLocation();
+
+  /** Detects plan-expired FORBIDDEN errors and redirects to /pricing with a clear upgrade prompt */
+  const handleGenerationError = (err: any) => {
+    const msg: string = err?.message ?? "";
+    if (msg.includes("trial has ended") || msg.includes("upgrade to a paid plan") || (err?.data?.code === "FORBIDDEN" && msg.includes("plan"))) {
+      toast.error("Your free trial has ended — upgrade to continue creating.", {
+        duration: 9000,
+        action: { label: "View Plans", onClick: () => setLocation("/pricing") },
+      });
+    } else if (msg.includes("no_video_key") || msg.includes("No video generation key")) {
+      toast.error("No video provider configured. Add an API key in Settings → Providers.", { duration: 8000 });
+    } else if (msg.includes("402") || msg.includes("insufficient") || msg.includes("credits")) {
+      toast.error("Insufficient credits. Top up your generation credits to continue.", { duration: 8000 });
+    } else if (msg.includes("403") || msg.includes("quota") || msg.includes("rate limit")) {
+      toast.error("Provider quota exceeded. Try again shortly or switch providers in Settings.", { duration: 8000 });
+    } else if (msg.includes("401") || msg.includes("invalid_api_key") || msg.includes("Unauthorized")) {
+      toast.error("Invalid API key. Check your provider credentials in Settings → Providers.", { duration: 8000 });
+    } else {
+      toast.error(msg || "Generation failed. Please try again.", { duration: 6000 });
+    }
+  };
   const [selectedSceneId, setSelectedSceneId] = useState<number | null>(null);
   // v6.63 — Production Spine: per-scene approval + shot list + version compare
   const [productionOpen, setProductionOpen] = useState(false);
@@ -401,7 +422,7 @@ export default function SceneEditor() {
       if (result.url) setPreviewUrl(result.url);
       toast.success("Preview generated");
     },
-    onError: (err) => toast.error(err.message),
+    onError: handleGenerationError,
   });
 
   const bulkGenMutation = trpc.scene.bulkGeneratePreviews.useMutation({
@@ -409,7 +430,7 @@ export default function SceneEditor() {
       utils.scene.listByProject.invalidate({ projectId });
       toast.success(`Generated ${result.generated} preview images (${result.total} total scenes)`);
     },
-    onError: (err) => toast.error(err.message),
+    onError: handleGenerationError,
   });
 
   const videoMutation = trpc.scene.generateVideo.useMutation({
@@ -442,20 +463,7 @@ export default function SceneEditor() {
         toast.success(`Video generated via ${result.provider} (${result.duration}s)`);
       }
     },
-    onError: (err: any) => {
-      const msg = err?.message ?? "";
-      if (msg.includes("no_video_key") || msg.includes("No video generation key")) {
-        toast.error("No video provider configured. Add an API key in Settings → Providers.", { duration: 8000 });
-      } else if (msg.includes("402") || msg.includes("insufficient") || msg.includes("credits")) {
-        toast.error("Insufficient credits. Top up your generation credits to continue.", { duration: 8000 });
-      } else if (msg.includes("403") || msg.includes("quota") || msg.includes("rate limit")) {
-        toast.error("Provider quota exceeded. Try again shortly or switch providers in Settings.", { duration: 8000 });
-      } else if (msg.includes("401") || msg.includes("invalid_api_key") || msg.includes("Unauthorized")) {
-        toast.error("Invalid API key. Check your provider credentials in Settings → Providers.", { duration: 8000 });
-      } else {
-        toast.error(msg || "Video generation failed. Please try again.", { duration: 6000 });
-      }
-    },
+    onError: handleGenerationError,
   });
 
   const bulkVideoMutation = trpc.scene.bulkGenerateVideos.useMutation({
@@ -463,7 +471,7 @@ export default function SceneEditor() {
       utils.scene.listByProject.invalidate({ projectId });
       toast.success(`Generated ${result.generated} videos (${result.total} total scenes)`);
     },
-    onError: (err: any) => toast.error(err?.message?.includes("credits") ? "Insufficient credits for bulk generation." : (err?.message || "Bulk video generation failed.")),
+    onError: handleGenerationError,
   });
 
   const resetStatusMutation = trpc.scene.resetStatus.useMutation({
