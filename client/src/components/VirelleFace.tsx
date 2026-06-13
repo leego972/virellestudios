@@ -33,7 +33,7 @@ import React, { useEffect, useState } from 'react';
       state !== 'idle' && state !== 'inactive' ? state :
       speaking ? 'speaking' : 'idle';
 
-    const isActive = effectiveState !== 'idle' && effectiveState !== 'inactive';
+    const isActive = effectiveState === 'listening' || effectiveState === 'thinking' || effectiveState === 'speaking';
     const color = EYE_COLOR[effectiveState];
 
     // Opacity + scale pulse with volume when speaking
