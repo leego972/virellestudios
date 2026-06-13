@@ -13,6 +13,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { eq, and, desc, isNotNull, sql } from "drizzle-orm";
 import { ENV } from "./_core/env";
+import { isTopTierUser } from "./_core/subscription";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { getDb } from "./db";
 import * as db from "./db";
@@ -973,7 +974,112 @@ export const wardrobeMarketplaceRouter = router({
             .limit(100);
         }),
   
-      getMyOrders: protectedProcedure.query(async ({ ctx }) => {
+
+        /**
+         * Generate a custom wardrobe item FREE — top-tier (Industry) members only.
+         * Non-top-tier members use customItem.checkout (A$4.99 via Stripe).
+         */
+        generateFree: protectedProcedure
+          .input(z.object({
+            description: z.string().min(5).max(1000),
+            characterId: z.number().int().positive().optional(),
+            sceneId:     z.number().int().positive().optional(),
+            itemName:    z.string().max(255).optional(),
+          }))
+          .mutation(async ({ ctx, input }) => {
+            if (!isTopTierUser(ctx.user)) {
+              throw new TRPCError({ code: "FORBIDDEN", message: "Custom item AI generation is free for Industry-tier members. Others pay A$4.99 — use customItem.checkout." });
+            }
+            const dbConn = await getDb();
+            if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+            const [ins] = await dbConn.insert(customItemOrders).values({
+              userId:      ctx.user.id,
+              description: input.description,
+              priceAud:    0,
+              status:      "pending_generation",
+              characterId: input.characterId ?? null,
+              sceneId:     input.sceneId ?? null,
+            } as any);
+            const orderId = (ins as any).insertId as number;
+
+            try {
+              let character: any;
+              if (input.characterId) {
+                const [c] = await dbConn.select().from(characters)
+                  .where(eq(characters.id, input.characterId)).limit(1);
+                character = c;
+              }
+              const promptParts: string[] = [];
+              if (character) {
+                promptParts.push(`Character: ${character.name} wearing: ${input.description}.`);
+                if (character.description) promptParts.push(`Character appearance: ${character.description.slice(0,300)}.`);
+              } else {
+                promptParts.push(`Fashion model wearing: ${input.description}.`);
+              }
+              promptParts.push(
+                "Full body shot showing the complete outfit from head to toe.",
+                "Cinematic photorealistic quality, professional costume reference sheet.",
+                "Clothing item clearly rendered — correct fabric texture, fit, silhouette and colour.",
+                "Ultra-high detail, fashion editorial photography standard."
+              );
+              const prompt = promptParts.join(" ");
+              const refImages: Parameters<typeof generateImage>[0]["originalImages"] = [];
+              if (character?.photoUrl) refImages.push({ url: character.photoUrl });
+              else if (character?.referenceImageUrl) refImages.push({ url: character.referenceImageUrl });
+              const genOpts: Parameters<typeof generateImage>[0] = { prompt };
+              if (refImages.length > 0) genOpts.originalImages = refImages;
+              const { url: generatedImageUrl } = await generateImage(genOpts);
+
+              const catDetect = (d: string): string => {
+                const s = d.toLowerCase();
+                if (/\bshoe|\bboot|\bsneaker|\bheel|\bsandal/.test(s)) return "shoes";
+                if (/\bjacket|\bcoat|\bblazer|\bouterwear/.test(s))      return "outerwear";
+                if (/\bdress|\bgown/.test(s))                               return "dress";
+                if (/\bsuit|\btuxedo/.test(s))                             return "suit";
+                if (/\bshirt|\btop|\btank|\bblouse|\bsweater/.test(s))  return "top";
+                if (/\bpant|\bjeans|\bshorts|\bskirt/.test(s))           return "bottom";
+                if (/\bhat|\bcap|\bbeanie/.test(s))                       return "hat";
+                if (/\bbag|\bpurse|\bhandbag/.test(s))                    return "bag";
+                return "other";
+              };
+              const itemName = (input.itemName || input.description).trim().split(/\s+/).slice(0, 6).join(" ");
+              const [itemIns] = await dbConn.insert(wardrobeItems).values({
+                userId:          ctx.user.id,
+                name:            itemName,
+                description:     input.description,
+                category:        catDetect(input.description),
+                primaryImageUrl: generatedImageUrl ?? null,
+                imageUrls:       generatedImageUrl ? [generatedImageUrl] : [],
+                wardrobeType:    character ? "character_signature" : "wardrobe",
+                visibility:      "private",
+                referencePrompt: prompt,
+                retailPriceAud:  0,
+              } as any);
+              const newItemId = (itemIns as any).insertId as number;
+
+              if (input.characterId && character?.projectId) {
+                await dbConn.insert(wardrobeAssignments).values({
+                  userId: ctx.user.id, projectId: character.projectId,
+                  wardrobeItemId: newItemId, assignmentType: "character_costume",
+                  characterId: input.characterId, usageMode: "must_match",
+                  promptWeight: 80, locked: false,
+                } as any).catch(() => {});
+              }
+              await dbConn.update(customItemOrders)
+                .set({ status: "completed", generatedImageUrl: generatedImageUrl ?? null, wardrobeItemId: newItemId, itemName })
+                .where(eq(customItemOrders.id, orderId));
+
+              return { success: true, wardrobeItemId: newItemId, generatedImageUrl };
+            } catch (err: any) {
+              await dbConn.update(customItemOrders)
+                .set({ status: "failed", errorMessage: err.message })
+                .where(eq(customItemOrders.id, orderId));
+              throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Image generation failed. Please try again." });
+            }
+          }),
+
+        getMyOrders: protectedProcedure.query(async ({ ctx }) => {
         const dbConn = await getDb();
         if (!dbConn) return [];
         return dbConn
