@@ -80,6 +80,7 @@ export default function DesignerRegisterPage() {
   const [bio, setBio] = useState("");
 
   const subscribeMutation = trpc.wardrobeMarket.designer.subscribeMembership.useMutation();
+  const subscribeBundleMutation = trpc.wardrobeMarket.designer.subscribeBundleMembership.useMutation();
   const { data: foundingStatus } = trpc.wardrobeMarket.marketplace.foundingStatus.useQuery();
   const activateMutation = trpc.wardrobeMarket.designer.activateMembership.useMutation();
   const onboardMutation = trpc.wardrobeMarket.designer.onboardConnect.useMutation();
@@ -170,6 +171,21 @@ export default function DesignerRegisterPage() {
       if (result.checkoutUrl) {
         window.location.href = result.checkoutUrl;
       }
+
+    // Step 2 — bundle checkout (Designer membership + Virelle Indie, 20% off)
+    async function handleSubscribeBundle() {
+      setLoading(true);
+      try {
+        localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify({ brandName, profileType, bio }));
+        const result = await subscribeBundleMutation.mutateAsync({ returnUrl });
+        if (result.checkoutUrl) {
+          window.location.href = result.checkoutUrl;
+        }
+      } catch (err: any) {
+        toast.error(err.message || "Could not start checkout");
+        setLoading(false);
+      }
+    }
     } catch (err: any) {
       toast.error(err.message || "Could not start checkout");
       setLoading(false);
@@ -294,24 +310,80 @@ export default function DesignerRegisterPage() {
           )}
 
           {/* ── Step 2: Membership Payment ── */}
-          {!loading && step === 2 && (
-            <div className="bg-white/3 border border-white/10 rounded-2xl p-6 space-y-5">
-              <div className="text-center">
-                <CreditCard className="h-10 w-10 text-amber-400 mx-auto mb-3" />
-                <h2 className="text-xl font-black mb-1">Designer Membership</h2>
-                <p className="text-white/50 text-sm">One yearly payment unlocks your entire marketplace presence.</p>
-              </div>
+            {!loading && step === 2 && (
+              <div className="space-y-4">
+                <div className="text-center mb-2">
+                  <CreditCard className="h-9 w-9 text-amber-400 mx-auto mb-3" />
+                  <h2 className="text-xl font-black mb-1">Choose Your Plan</h2>
+                  <p className="text-white/50 text-sm">Unlock the marketplace, or bundle with Virelle filmmaker tools.</p>
+                </div>
 
-              <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-white/70">Yearly membership</span>
-                  {foundingStatus?.foundingActive === false ? (
-                    <span className="font-bold text-white">A$299</span>
-                  ) : (
-                    <span className="font-bold text-amber-400">
-                      A$150 <span className="text-xs font-normal text-white/40 line-through ml-1">was A$299</span>
+                {/* Card 1 — Designer Membership Only */}
+                <div className="bg-white/3 border border-white/10 rounded-2xl p-5 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-bold text-white">Designer Membership</p>
+                      <p className="text-white/40 text-xs mt-0.5">Marketplace access only</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      {foundingStatus?.foundingActive === false ? (
+                        <p className="text-lg font-black text-white">A$299<span className="text-xs font-normal text-white/40">/yr</span></p>
+                      ) : (
+                        <>
+                          <p className="text-lg font-black text-amber-400">A$150<span className="text-xs font-normal text-white/40">/yr</span></p>
+                          <p className="text-[10px] text-white/30 line-through">A$299/yr</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <ul className="space-y-1.5 text-xs text-white/60">
+                    {["List unlimited collections & items", "Get discovered by film productions", "95% of every lease via Stripe"].map(f => (
+                      <li key={f} className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-amber-400 shrink-0" />{f}</li>
+                    ))}
+                  </ul>
+                  <Button onClick={handleSubscribe} variant="outline" className="w-full border-white/20 text-white hover:bg-white/5 font-semibold">
+                    {foundingStatus?.foundingActive === false ? "Subscribe — A$299/yr" : "Join as Founding Partner — A$150/yr"}
+                  </Button>
+                </div>
+
+                {/* Card 2 — Bundle Deal (highlighted) */}
+                <div className="relative bg-amber-500/5 border-2 border-amber-500/40 rounded-2xl p-5 space-y-3">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-amber-500 text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wide">
+                      Best Value — 20% Off
                     </span>
-                  )}
+                  </div>
+                  <div className="flex items-start justify-between gap-2 pt-1">
+                    <div>
+                      <p className="font-bold text-white">Designer + Filmmaker Bundle</p>
+                      <p className="text-white/40 text-xs mt-0.5">Marketplace + Virelle Indie plan</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-lg font-black text-amber-400">A$1,431<span className="text-xs font-normal text-white/40">/yr</span></p>
+                      <p className="text-[10px] text-white/30 line-through">A$1,789/yr</p>
+                    </div>
+                  </div>
+                  <ul className="space-y-1.5 text-xs text-white/60">
+                    {[
+                      "Everything in Designer Membership",
+                      "Virelle Indie — filmmaker tools & AI scene generation",
+                      "500 generation credits/month",
+                      "Create & publish your own film projects",
+                    ].map(f => (
+                      <li key={f} className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-amber-400 shrink-0" />{f}</li>
+                    ))}
+                  </ul>
+                  <Button onClick={handleSubscribeBundle} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold">
+                    Get the Bundle — A$1,431/yr <ArrowRight className="h-4 w-4 ml-1.5" />
+                  </Button>
+                </div>
+
+                <button onClick={() => setStep(1)} className="w-full text-xs text-white/30 hover:text-white/60 transition-colors pt-1">
+                  ← Back to brand profile
+                </button>
+                <p className="text-center text-xs text-white/30">Secured by Stripe. Renews automatically each year.</p>
+              </div>
+            )}
                   {foundingStatus?.foundingActive !== false && (
                     <span className="bg-amber-500/20 text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-full">
                       {foundingStatus?.spotsRemaining !== undefined
