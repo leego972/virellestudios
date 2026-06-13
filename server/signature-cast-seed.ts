@@ -25,7 +25,7 @@ async function insertCast(db: any, userId: number, cast: { name: string; role: s
   await db.execute(sql`
     INSERT IGNORE INTO characters
       (userId, name, role, storyImportance, screenTime, description,
-       nationality, castingNotes, isAIActor, aiActorId, isNonHuman)
+       nationality, castingNotes, isAiActor, aiActorId, isNonHuman)
     VALUES
       (${userId}, ${cast.name}, ${cast.role}, ${cast.storyImportance}, ${cast.screenTime},
        ${cast.description}, ${cast.nationality}, ${cast.castingNotes},
