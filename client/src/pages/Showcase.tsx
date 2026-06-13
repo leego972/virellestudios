@@ -1283,7 +1283,7 @@ function DiscoveryFeed() {
               Scene Generation Prompts
             </h3>
             <p className="text-xs text-neutral-500 mt-1">
-              Visual prompts for each scene — ready for generation via Lee's API.
+              Visual prompts for each scene — ready for generation.
             </p>
           </div>
           <div className="space-y-4">
@@ -1297,7 +1297,7 @@ function DiscoveryFeed() {
                     {prompt.heading}
                   </span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/25 font-mono uppercase tracking-wider">
-                    Ready for Generation · Lee's API
+                    Ready for Generation
                   </span>
                 </div>
                 <p className="text-xs text-neutral-300 leading-relaxed mb-3">
@@ -1469,12 +1469,12 @@ function DiscoveryFeed() {
                 Asset Placeholders
               </h3>
               <p className="text-xs text-neutral-500 mt-1">
-                No media produced yet — all ready for generation via Lee's API.
+                No media produced yet — all ready for generation.
               </p>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-400/30 bg-amber-400/5 text-amber-400 text-xs font-semibold">
               <Sparkles className="w-3 h-3" />
-              Ready for Lee's API Generation
+              Ready for Generation
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1508,9 +1508,14 @@ function DiscoveryFeed() {
                   <span className="text-[10px] text-neutral-600 font-mono">
                     {a.specs}
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20 font-mono uppercase tracking-wider">
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard?.writeText(a.description).catch(() => {})}
+                    className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20 font-mono uppercase tracking-wider cursor-pointer hover:bg-amber-400/20 hover:border-amber-400/40 transition-colors active:scale-95"
+                    title="Copy to clipboard"
+                  >
                     Ready for Generation
-                  </span>
+                  </button>
                 </div>
               </div>
             ))}
@@ -1575,10 +1580,13 @@ function DiscoveryFeed() {
                   </button>
                 </Link>
 
-                <div className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-amber-500/30 text-amber-400 text-sm font-semibold">
+                <button
+                type="button"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-amber-500/30 text-amber-400 text-sm font-semibold cursor-pointer hover:bg-amber-500/10 transition-all active:scale-95"
+              >
                 <Sparkles className="w-4 h-4" />
-                Ready for API Generation
-              </div>
+                Ready for Generation
+              </button>
             </div>
 
             <p className="text-xs text-neutral-600 mt-8 italic">
