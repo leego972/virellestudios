@@ -1,6 +1,6 @@
 import { getDb } from './db';
 import { designerProfiles, designerCollections, wardrobeItems } from '../drizzle/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 
 const UNIFORM_COLLECTIONS = [
   {
@@ -56,40 +56,43 @@ export async function runUniformSeed(userId: number) {
   const designerProfileId = existing[0]?.id || 1;
 
   for (const col of UNIFORM_COLLECTIONS) {
-    const [colResult] = await db.insert(designerCollections).values({
-      designerProfileId,
-      userId,
-      name: col.name,
-      description: col.description,
-      collectionType: col.collectionType,
-      season: col.season,
-      year: col.year,
-      styleTags: col.styleTags,
-      visibility: "public",
-      licenseType: "full_license",
-      collectionPriceAud: col.collectionPriceAud,
-      published: true,
-      publishedAt: new Date(),
-    });
-    const collectionId: number = (colResult as any).insertId ?? 1;
+    await db.execute(sql`
+        INSERT IGNORE INTO designerCollections
+          (designerProfileId, userId, name, description, collectionType, season, year,
+           styleTags, visibility, licenseType, collectionPriceAud, published, publishedAt)
+        VALUES
+          (${designerProfileId}, ${userId}, ${col.name}, ${col.description},
+           ${col.collectionType}, ${col.season ?? null}, ${col.year ?? null},
+           ${col.styleTags ? JSON.stringify(col.styleTags) : null},
+           ${'public'}, ${'full_license'}, ${col.collectionPriceAud ?? null},
+           ${1}, ${new Date()})
+      `);
+      const _colRow = await db.select({ id: designerCollections.id })
+        .from(designerCollections)
+        .where(and(eq(designerCollections.designerProfileId, designerProfileId), eq(designerCollections.name, col.name)))
+        .limit(1);
+      const collectionId: number = _colRow[0]?.id ?? 0;
+      if (!collectionId) continue;
 
     for (const item of col.items) {
-      await db.insert(wardrobeItems).values({
-        collectionId,
-        userId,
-        designerProfileId,
-        name: item.name,
-        description: item.name,
-        category: item.category,
-        subcategory: item.subcategory,
-        wardrobeType: "fashion",
-        genderFit: item.genderFit,
-        colors: item.colors,
-        referencePrompt: item.referencePrompt,
-        visibility: "public",
-        status: "active",
-        retailPriceAud: item.retailPriceAud,
-      });
+      await db.execute(sql`
+          INSERT IGNORE INTO wardrobeItems
+            (collectionId, userId, designerProfileId, name, description, category,
+             subcategory, wardrobeType, genderFit,
+             colors, referencePrompt,
+             brandPlacementAllowed, shopfrontPlacementAllowed, characterWardrobeAllowed,
+             costumeUseAllowed, commercialUseAllowed, licenseType, visibility, status,
+             retailPriceAud)
+          VALUES
+            (${collectionId}, ${userId}, ${designerProfileId},
+             ${item.name}, ${item.name}, ${item.category},
+             ${item.subcategory ?? null}, ${'fashion'}, ${item.genderFit ?? null},
+             ${item.colors ? JSON.stringify(item.colors) : null},
+             ${item.referencePrompt ?? null},
+             ${0}, ${1}, ${1}, ${1}, ${1},
+             ${'full_license'}, ${'public'}, ${'active'},
+             ${item.retailPriceAud ?? null})
+        `);
     }
   }
 }
