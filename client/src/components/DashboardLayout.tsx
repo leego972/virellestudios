@@ -262,7 +262,7 @@ export default function DashboardLayout({
     };
     img.src = objectUrl;
   };
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: { target: HTMLInputElement & { files: FileList | null }; value: string }) => {
     const file = e.target.files?.[0];
     if (file) resizeAndUpload(file);
     e.target.value = "";
@@ -622,7 +622,6 @@ function DashboardLayoutContent({
                   <Camera className="mr-2 h-4 w-4" />
                   <span>Change Photo</span>
                 </DropdownMenuItem>
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                 <DropdownMenuItem
                   onClick={logout}
                   className="cursor-pointer text-destructive focus:text-destructive"
@@ -632,6 +631,7 @@ function DashboardLayoutContent({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
           </SidebarFooter>
         </Sidebar>
         <div
