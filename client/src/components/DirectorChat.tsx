@@ -482,18 +482,18 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
         setIsSending(false);
         es.close();
         sseRef.current = null;
-        // In voice mode — auto-speak the response (use ref to avoid stale closure)
-        // Always auto-speak Titan's reply (text + voice simultaneously)
-        speakTextViaHttpRef.current(finalText).catch(() => {
-          if (voiceModeRef.current) {
-            setVoiceModeState("listening");
-            voiceModeStateRef.current = "listening";
-            startVoiceModeRecordingRef.current();
-          }
-        });
+        // In voice mode — auto-speak the response
+        if (voiceModeRef.current) {
+          speakTextViaHttpRef.current(finalText).catch(() => {
+            if (voiceModeRef.current) {
+              setVoiceModeState("listening");
+              voiceModeStateRef.current = "listening";
+              startVoiceModeRecordingRef.current();
+            }
+          });
+        }
 
 
-      } catch {}
     });
 
     es.addEventListener("error", (e: MessageEvent) => {
@@ -609,6 +609,14 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
 
   // Keep non-reactive refs in sync with state (Titan pattern)
   useEffect(() => { voiceModeRef.current = voiceModeActive; }, [voiceModeActive]);
+  // Broadcast voice state to ambient VirelleFace on AssistantPage
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('virelle-voice-state', { detail: voiceModeState }));
+  }, [voiceModeState]);
+  useEffect(() => {
+    if (!voiceModeActive) window.dispatchEvent(new CustomEvent('virelle-voice-state', { detail: 'inactive' }));
+  }, [voiceModeActive]);
+
   useEffect(() => { voiceModeStateRef.current = voiceModeState; }, [voiceModeState]);
 
   // ─── iOS Safari: lock panel to visual viewport so keyboard doesn't jump the UI ───
@@ -1524,7 +1532,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
 
           {/* Face — 300 × 300 container */}
           <div style={{ position: 'relative', width: 300, height: 300, flexShrink: 0 }}>
-            <VirelleFace volume={lipVolume} speaking={voiceModeState === 'speaking'} />
+            <VirelleFace volume={lipVolume} speaking={voiceModeState === 'speaking'} state={voiceModeState} />
           </div>
 
           {/* Status + transcript */}
