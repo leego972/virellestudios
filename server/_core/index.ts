@@ -1276,7 +1276,7 @@ async function startServer() {
       const ttsRes = await fetch("https://api.openai.com/v1/audio/speech", {
         method: "POST",
         headers: { "Authorization": `Bearer ${openAiKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "tts-1-hd", input: trimmed, voice: "nova", speed: 0.95, response_format: "mp3" }),
+        body: JSON.stringify({ model: "tts-1-hd", input: trimmed, voice: "shimmer", speed: 0.95, response_format: "mp3" }),
         signal: AbortSignal.timeout(30000),
       });
       if (!ttsRes.ok) {
@@ -1294,7 +1294,7 @@ async function startServer() {
       // ── Pollinations free TTS (last resort — always available, no key needed) ──
       try {
         const encodedText = encodeURIComponent(trimmed.slice(0, 500));
-        const pollinationsUrl = `https://text.pollinations.ai/${encodedText}?model=openai-audio&voice=nova&format=mp3`;
+        const pollinationsUrl = `https://text.pollinations.ai/${encodedText}?model=openai-audio&voice=shimmer&format=mp3`;
         const pollRes = await fetch(pollinationsUrl, { signal: AbortSignal.timeout(20000) });
         if (pollRes.ok) {
           const pollBuf = Buffer.from(await pollRes.arrayBuffer());
