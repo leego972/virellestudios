@@ -36,6 +36,7 @@ const CAT_PRICE: Record<string, number> = {
   "uniforms":    300,   // $3.00 — professional / costume uniforms
   "knitwear":    200,   // $2.00 — merino, cardigans, sweaters
   "lingerie":    100,   // $1.00 — underwear, bralettes, sleepwear basics
+  "sleepwear":   100,   // $1.00 — pyjamas, nightgowns, robes
 };
 
 /** Return retail price (AUD cents) for a category, default $1.00 */
