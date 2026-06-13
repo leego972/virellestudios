@@ -3,12 +3,24 @@ import { useState, useEffect } from "react";
   import DirectorChat from "@/components/DirectorChat";
   import { VirelleFace } from "@/components/VirelleFace";
 
+  type VoiceState = 'idle' | 'inactive' | 'listening' | 'thinking' | 'speaking';
+
   export default function AssistantPage() {
     const [showVoiceHint, setShowVoiceHint] = useState(false);
+    const [voiceState, setVoiceState] = useState<VoiceState>('idle');
 
     useEffect(() => {
       const dismissed = localStorage.getItem("virelle.voiceHintDismissed");
       if (!dismissed) setShowVoiceHint(true);
+    }, []);
+
+    // Mirror DirectorChat voice state so the ambient face reacts
+    useEffect(() => {
+      const handler = (e: Event) => {
+        setVoiceState((e as CustomEvent<VoiceState>).detail ?? 'idle');
+      };
+      window.addEventListener('virelle-voice-state', handler);
+      return () => window.removeEventListener('virelle-voice-state', handler);
     }, []);
 
     const dismiss = () => {
@@ -19,28 +31,28 @@ import { useState, useEffect } from "react";
     return (
       <div className="flex flex-col h-[calc(100vh-4rem)] overflow-hidden relative">
 
-        {/* ── White mask face — large ambient background ── */}
+        {/* ── White mask face — large ambient background, eyes react to voice state ── */}
         <div
           className="absolute inset-0 pointer-events-none select-none"
           style={{ zIndex: 0 }}
           aria-hidden="true"
         >
-          {/* Outer glow bloom behind the mask */}
+          {/* Outer bloom behind the mask */}
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
               width: "min(70vh, 70vw)",
               height: "min(70vh, 70vw)",
-              background: "radial-gradient(circle, rgba(160,180,255,0.18) 0%, rgba(100,130,255,0.10) 40%, transparent 72%)",
+              background: "radial-gradient(circle, rgba(160,180,255,0.15) 0%, rgba(100,130,255,0.08) 40%, transparent 72%)",
               filter: "blur(32px)",
             }}
           />
-          {/* Face container — VirelleFace uses absolute inset-0 internally */}
+          {/* Face container */}
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{ width: "min(62vh, 62vw)", height: "min(62vh, 62vw)", position: "relative" }}
           >
-            <VirelleFace volume={0} speaking={false} />
+            <VirelleFace volume={0} speaking={voiceState === 'speaking'} state={voiceState} />
           </div>
         </div>
 
