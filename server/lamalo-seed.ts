@@ -633,44 +633,34 @@ export async function runLamaloSeed(
 ): Promise<{ created: boolean; collections: number; items: number }> {
   const db = (await getDb())!;
 
-  // ── Get or create the Lamalo Fashion designer profile ──
-  let designerProfileId: number;
-  const existing = await db
+  // ── Get or create the Lamalo Fashion designer profile (idempotent) ──
+  // Use raw INSERT IGNORE so duplicate-key errors on re-runs are silently skipped.
+  await db.execute(sql`
+    INSERT IGNORE INTO designerProfiles
+      (userId, brandName, displayName, profileType, bio, website, instagram,
+       contactEmail, logoUrl, verified, visibility, stripeAccountId,
+       stripeAccountStatus, membershipStatus, membershipSubscriptionId,
+       membershipCurrentPeriodEnd)
+    VALUES
+      (${userId}, 'Lamalo Fashion', 'Lamalo', 'brand',
+       'Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. Twenty-six curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, watches, eyewear and accessories. Each colour is a separate purchasable item. Buy a full collection bundle and save 10%.',
+       'https://virelle.life/wardrobe-marketplace', '@lamalofashion', 'wardrobe@virelle.life',
+       'https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png',
+       TRUE, 'public', NULL, 'none', 'active', NULL, '2099-12-31 00:00:00')
+  `);
+
+  // Always look up the real id after the upsert
+  const profileRow = await db
     .select({ id: designerProfiles.id })
     .from(designerProfiles)
     .where(eq(designerProfiles.brandName, "Lamalo Fashion"))
     .limit(1);
 
-  if (existing.length > 0) {
-    designerProfileId = existing[0].id;
-    log.info(`Lamalo Fashion profile found (id=${designerProfileId}) — checking for new collections`);
-  } else {
-    const [profile] = await db.insert(designerProfiles).values({
-      userId,
-      brandName: "Lamalo Fashion",
-      displayName: "Lamalo",
-      profileType: "brand",
-      bio:
-        "Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. " +
-        "Twenty-six curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, " +
-        "watches, eyewear and accessories. Each colour is a separate purchasable item. " +
-        "Buy a full collection bundle and save 10%.",
-      website: "https://virelle.life/wardrobe-marketplace",
-      instagram: "@lamalofashion",
-      contactEmail: "wardrobe@virelle.life",
-      logoUrl:
-        "https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png",
-      verified: true,
-      visibility: "public",
-      stripeAccountId: null,
-      stripeAccountStatus: "none",
-      membershipStatus: "active",
-      membershipSubscriptionId: null,
-      membershipCurrentPeriodEnd: new Date("2099-12-31"),
-    });
-    designerProfileId = (profile as any).insertId ?? 1;
-    log.info(`Lamalo Fashion profile created (id=${designerProfileId})`);
+  if (profileRow.length === 0) {
+    throw new Error("Failed to find or create Lamalo Fashion designer profile");
   }
+  const designerProfileId = profileRow[0].id;
+  log.info(`Lamalo Fashion profile ready (id=${designerProfileId})`);
 
   let newCollections = 0;
   let totalItems = 0;
