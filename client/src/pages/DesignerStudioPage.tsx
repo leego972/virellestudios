@@ -331,7 +331,7 @@ export default function DesignerStudioPage() {
   }
 
   // Public items browse — non-members see Lamalo items directly
-    const { data: publicItems } = trpc.wardrobeMarket.searchItems.useQuery({ limit: 60, offset: 0 });
+    const { data: publicItems } = trpc.wardrobeMarket.marketplace.searchItems.useQuery({ limit: 60, offset: 0 });
 
     if (!isMember) {
       return (
