@@ -117,6 +117,28 @@ import { getDb } from './db';
 
   export async function runSignatureCastSeed(userId: number) {
     const db = (await getDb())!;
+    // Schema prep — add physical description columns that don't exist in the base characters table
+    const charCols: Array<[string, string]> = [
+      ["ageRange",              "VARCHAR(32) NULL"],
+      ["ethnicity",             "VARCHAR(128) NULL"],
+      ["skinTone",              "VARCHAR(64) NULL"],
+      ["build",                 "VARCHAR(64) NULL"],
+      ["height",                "VARCHAR(16) NULL"],
+      ["hairColor",             "VARCHAR(64) NULL"],
+      ["hairStyle",             "VARCHAR(64) NULL"],
+      ["hairLength",            "VARCHAR(32) NULL"],
+      ["eyeColor",              "VARCHAR(64) NULL"],
+      ["faceShape",             "VARCHAR(64) NULL"],
+      ["distinguishingFeatures","TEXT NULL"],
+      ["consistencyNotes",      "TEXT NULL"],
+      ["faceDnaPrompt",         "TEXT NULL"],
+      ["isAiActor",             "TINYINT(1) NOT NULL DEFAULT 0"],
+      ["aiActorId",             "VARCHAR(64) NULL"],
+    ];
+    for (const [col, def] of charCols) {
+      try { await db.execute(sql`ALTER TABLE characters ADD COLUMN \`${sql.raw(col)}\` ${sql.raw(def)}`); } catch { /* already exists */ }
+    }
+  
     for (const cast of SIGNATURE_CAST) {
       const existing = await db.select({ id: characters.id }).from(characters)
         .where(eq(characters.name, cast.name)).limit(1);
