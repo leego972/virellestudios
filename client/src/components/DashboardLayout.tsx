@@ -580,8 +580,8 @@ function DashboardLayoutContent({
                 <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                   <Avatar className="h-8 w-8 border shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={handleAvatarClick} title="Change profile picture">
                     {avatarSrc && <img src={avatarSrc} alt="" className="absolute inset-0 w-full h-full object-cover rounded-full" />}
-                    <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
-                      {user?.name?.charAt(0).toUpperCase() || "U"}
+                    <AvatarFallback className="p-0 bg-transparent">
+                      <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Leego" className="w-full h-full object-cover rounded-full" />
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
@@ -689,8 +689,8 @@ function DashboardLayoutContent({
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-accent/50 transition-colors focus:outline-none">
                     <Avatar className="h-7 w-7 border shrink-0">
-                      <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
-                        {user?.name?.charAt(0).toUpperCase() || 'U'}
+                      <AvatarFallback className="p-0 bg-transparent">
+                        <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663418605762/hxRQQgsmyjgcByim.png" alt="Leego" className="w-full h-full object-cover rounded-full" />
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium hidden md:block">{user?.name || 'Director'}</span>
