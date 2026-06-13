@@ -457,9 +457,10 @@ export const wardrobeMarketplaceRouter = router({
         } else {
           const col = await db.getDesignerCollectionById(input.id);
           if (!col) throw new TRPCError({ code: "NOT_FOUND", message: "Collection not found" });
-          // Auto-calculate bundle: item_count × 30c × 0.85
+          // Auto-calculate bundle: sum of actual item prices × 0.90 (10% bundle discount)
           const _colItems = await db.getWardrobeItemsByCollection(input.id);
-          amountCents = Math.floor(_colItems.length * 30 * 0.85) || (col.collectionPriceAud ?? 30);
+          const _colItemSum = (_colItems as any[]).reduce((s: number, i: any) => s + (i.retailPriceAud ?? 0), 0);
+          amountCents = _colItemSum > 0 ? Math.floor(_colItemSum * 0.90) : (col.collectionPriceAud ?? 100);
           designerProfileId = col.designerProfileId;
           productName = `Buy: ${col.name} Collection — Virelle Studios`;
         }
