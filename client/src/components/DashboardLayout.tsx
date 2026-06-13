@@ -72,7 +72,6 @@ import {
   Package,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
-import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
@@ -235,14 +234,7 @@ export default function DashboardLayout({
   });
   const { loading, user, logout } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const trpcUtils = trpc.useUtils();
-  const updateAvatarMutation = trpc.auth.updateAvatar.useMutation({
-    onSuccess: (data) => {
-      trpcUtils.auth.me.setData(undefined, (old: any) =>
-        old ? { ...old, avatarUrl: data.avatarUrl } : old
-      );
-    },
-  });
+  const [localAvatarUrl, setLocalAvatarUrl] = useState<string | undefined>(undefined);
   const handleAvatarClick = () => fileInputRef.current?.click();
   const resizeAndUpload = (file: File) => {
     const canvas = document.createElement("canvas");
@@ -258,16 +250,19 @@ export default function DashboardLayout({
       const ox = (img.width * scale - size) / 2;
       const oy = (img.height * scale - size) / 2;
       ctx2d.drawImage(img, -ox / scale, -oy / scale, img.width, img.height, 0, 0, size, size);
-      updateAvatarMutation.mutate({ imageDataUrl: canvas.toDataURL("image/jpeg", 0.85) });
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+      fetch("/api/avatar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageDataUrl: dataUrl }), credentials: "include" })
+        .then(r => r.json()).then(d => { if (d?.avatarUrl) setLocalAvatarUrl(d.avatarUrl); }).catch(() => {});
     };
     img.src = objectUrl;
   };
-  const handleFileChange = (e: { target: HTMLInputElement & { files: FileList | null }; value: string }) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = (e: Event) => {
+    const input = (e.target ?? e) as HTMLInputElement;
+    const file = input.files?.[0];
     if (file) resizeAndUpload(file);
-    e.target.value = "";
+    input.value = "";
   };
-  const profilePicSrc = (user as any)?.avatarUrl || (user?.role === "admin" ? "/leego-logo.png" : undefined);
+  const profilePicSrc = localAvatarUrl || (user as any)?.avatarUrl || (user?.role === "admin" ? "/leego-logo.png" : undefined);
   const [currentPath] = useLocation();
   // Public routes that should NOT be redirected even if unauthenticated
   const PUBLIC_ROUTES = [
