@@ -652,9 +652,9 @@ export async function runLamaloSeed(
       profileType: "brand",
       bio:
         "Lamalo Fashion is the Virelle Studios in-house label — contemporary, accessible, and production-ready. " +
-        "Twenty-three curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, " +
-        "watches, eyewear and accessories. Every colour is a separate item at 30¢ each. " +
-        "Buy a whole collection and save 15%.",
+        "Twenty-six curated collections spanning menswear, womenswear, kids, seniors, swimwear, footwear, " +
+        "watches, eyewear and accessories. Each colour is a separate purchasable item. " +
+        "Buy a full collection bundle and save 10%.",
       website: "https://virelle.life/wardrobe-marketplace",
       instagram: "@lamalofashion",
       contactEmail: "wardrobe@virelle.life",
