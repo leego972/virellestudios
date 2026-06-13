@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import LeegoFooter from "@/components/LeegoFooterLaunch";
 import LeegoLogo from "@/components/LeegoLogo";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,9 +68,11 @@ import {
   Calculator,
   Shirt,
   Store,
+  Camera,
   Package,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
+import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import { Button } from "./ui/button";
@@ -232,6 +234,40 @@ export default function DashboardLayout({
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
   const { loading, user, logout } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const trpcUtils = trpc.useUtils();
+  const updateAvatarMutation = trpc.auth.updateAvatar.useMutation({
+    onSuccess: (data) => {
+      trpcUtils.auth.me.setData(undefined, (old: any) =>
+        old ? { ...old, avatarUrl: data.avatarUrl } : old
+      );
+    },
+  });
+  const handleAvatarClick = () => fileInputRef.current?.click();
+  const resizeAndUpload = (file: File) => {
+    const canvas = document.createElement("canvas");
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const size = Math.min(400, img.width, img.height);
+      canvas.width = size;
+      canvas.height = size;
+      const ctx2d = canvas.getContext("2d")!;
+      const scale = size / Math.min(img.width, img.height);
+      const ox = (img.width * scale - size) / 2;
+      const oy = (img.height * scale - size) / 2;
+      ctx2d.drawImage(img, -ox / scale, -oy / scale, img.width, img.height, 0, 0, size, size);
+      updateAvatarMutation.mutate({ imageDataUrl: canvas.toDataURL("image/jpeg", 0.85) });
+    };
+    img.src = objectUrl;
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) resizeAndUpload(file);
+    e.target.value = "";
+  };
+  const profilePicSrc = (user as any)?.avatarUrl || (user?.role === "admin" ? "/leego-logo.png" : undefined);
   const [currentPath] = useLocation();
   // Public routes that should NOT be redirected even if unauthenticated
   const PUBLIC_ROUTES = [
@@ -552,7 +588,8 @@ function DashboardLayoutContent({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  <Avatar className="h-8 w-8 border shrink-0">
+                  <Avatar className="h-8 w-8 border shrink-0 cursor-pointer hover:opacity-80 transition-opacity" title="Change profile picture">
+                    {profilePicSrc && <AvatarImage src={profilePicSrc} alt={user?.name || ""} />}
                     <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
                       {user?.name?.charAt(0).toUpperCase() || "U"}
                     </AvatarFallback>
@@ -581,6 +618,11 @@ function DashboardLayoutContent({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={handleAvatarClick} className="cursor-pointer">
+                  <Camera className="mr-2 h-4 w-4" />
+                  <span>Change Photo</span>
+                </DropdownMenuItem>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                 <DropdownMenuItem
                   onClick={logout}
                   className="cursor-pointer text-destructive focus:text-destructive"
