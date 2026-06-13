@@ -150,10 +150,9 @@ export default function Landing() {
               </Button>
             ) : (
               <>
-                <button onClick={() => setLocation("/login")} className="hidden sm:block text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Login</button>
-                <Button onClick={() => setLocation("/register")} className="hidden sm:flex bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-6 shadow-lg shadow-amber-500/20">
-                  Get Started
-                </Button>
+                <button onClick={() => setLocation("/login")} className="hidden sm:block text-sm font-bold text-white/60 hover:text-white transition-colors px-4">Sign In</button>
+                <Button onClick={() => setLocation("/register")} className="hidden sm:flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-full px-5 shadow-lg shadow-amber-500/20 text-sm"><Film className="h-3.5 w-3.5" />Join as Director</Button>
+                <Button onClick={() => setLocation("/designer-register")} className="hidden sm:flex items-center gap-1.5 bg-transparent hover:bg-white/10 text-white border border-white/30 hover:border-white/50 font-bold rounded-full px-5 text-sm"><Shirt className="h-3.5 w-3.5" />Join as Designer</Button>
               </>
             )}
             {/* Mobile hamburger */}
@@ -175,8 +174,9 @@ export default function Landing() {
             <button onClick={() => { setLocation("/download"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all flex items-center gap-2"><Smartphone className="h-4 w-4 text-amber-400" />Get the App</button>
             <button onClick={() => { setLocation("/contact"); setMobileMenuOpen(false); }} className="w-full text-left py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all">Industry</button>
             <div className="border-t border-white/10 pt-3 mt-1 flex flex-col gap-2">
-              <button onClick={() => { setLocation("/login"); setMobileMenuOpen(false); }} className="w-full py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all text-left">Login</button>
-              <Button onClick={() => { setLocation("/register"); setMobileMenuOpen(false); }} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl py-3">Get Started Free</Button>
+              <button onClick={() => { setLocation("/login"); setMobileMenuOpen(false); }} className="w-full py-3 px-4 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all text-left">Sign In</button>
+              <Button onClick={() => { setLocation("/register"); setMobileMenuOpen(false); }} className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl py-3 flex items-center justify-center gap-2"><Film className="h-4 w-4" />Join as Director</Button>
+              <Button onClick={() => { setLocation("/designer-register"); setMobileMenuOpen(false); }} className="w-full bg-transparent hover:bg-white/10 text-white border border-white/30 font-bold rounded-xl py-3 flex items-center justify-center gap-2"><Shirt className="h-4 w-4" />Join as Designer</Button>
             </div>
           </div>
         )}
