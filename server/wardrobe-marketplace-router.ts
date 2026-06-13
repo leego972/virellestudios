@@ -36,6 +36,7 @@ const PLATFORM_COMMISSION = 0.05; // 5%
 const DESIGNER_YEARLY_CENTS = 29900; // A$299.00 — standard annual membership
 const FOUNDING_DESIGNER_YEARLY_CENTS = 15000; // A$150.00 — Founding Designer Partner price
   const FOUNDING_MEMBER_LIMIT = 50;                // promo closes automatically at this count
+  const BUNDLE_YEARLY_CENTS = 143120; // A$1,431.20 — Designer membership + Virelle Indie (20% off combined A$1,789/yr)
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -105,6 +106,41 @@ export const wardrobeMarketplaceRouter = router({
         return { checkoutUrl: session.url, sessionId: session.id };
       }),
 
+      /** Create a Stripe Checkout Session for the Designer + Virelle Indie bundle (20% off). */
+      subscribeBundleMembership: protectedProcedure
+        .input(z.object({ returnUrl: z.string().url().max(512) }))
+        .mutation(async ({ ctx, input }) => {
+          const s = requireStripe();
+          const profile = await db.getDesignerProfileByUserId(ctx.user.id);
+          if (profile?.membershipStatus === "active") {
+            throw new TRPCError({ code: "BAD_REQUEST", message: "You already have an active designer membership." });
+          }
+
+          const session = await s.checkout.sessions.create({
+            mode: "subscription",
+            payment_method_types: ["card"],
+            line_items: [{
+              price_data: {
+                currency: "aud",
+                product_data: {
+                  name: "Virelle Studios — Designer + Filmmaker Bundle",
+                  description: "Designer Marketplace membership (A$299/yr) + Virelle Indie filmmaker plan (A$1,490/yr) — 20% off. Unlimited collections, filmmaker tools, 95% of every lease.",
+                  metadata: { type: "designer_bundle" },
+                },
+                unit_amount: BUNDLE_YEARLY_CENTS,
+                recurring: { interval: "year" },
+              },
+              quantity: 1,
+            }],
+            success_url: `${input.returnUrl}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${input.returnUrl}?checkout=cancelled`,
+            metadata: { userId: String(ctx.user.id), type: "designer_bundle" },
+            customer_email: (ctx.user as any).email || undefined,
+          });
+
+          return { checkoutUrl: session.url, sessionId: session.id };
+        }),
+
     /** Activate membership after Stripe Checkout succeeds */
     activateMembership: protectedProcedure
       .input(z.object({ sessionId: z.string().max(255) }))
@@ -135,9 +171,24 @@ export const wardrobeMarketplaceRouter = router({
         const existing = await db.getDesignerProfileByUserId(ctx.user.id);
         if (existing) {
           await db.updateDesignerProfile(existing.id, patch);
+          // If bundle: also activate the user's Virelle Indie tier
+          if (session.metadata?.type === "designer_bundle") {
+            await db.updateUser(ctx.user.id, {
+              subscriptionTier: "indie" as any,
+              subscriptionStatus: "active" as any,
+              subscriptionCurrentPeriodEnd: periodEnd,
+            });
+          }
           return db.getDesignerProfileByUserId(ctx.user.id);
         }
 
+          if (session.metadata?.type === "designer_bundle") {
+            await db.updateUser(ctx.user.id, {
+              subscriptionTier: "indie" as any,
+              subscriptionStatus: "active" as any,
+              subscriptionCurrentPeriodEnd: periodEnd,
+            });
+          }
         return db.createDesignerProfile({
           userId: ctx.user.id,
           brandName: "My Brand",
