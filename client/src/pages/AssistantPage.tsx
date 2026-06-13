@@ -50,7 +50,7 @@ import { useState, useEffect } from "react";
           {/* Face container */}
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{ width: "min(62vh, 62vw)", height: "min(62vh, 62vw)", position: "relative" }}
+            style={{ width: "min(62vh, 62vw)", height: "min(62vh, 62vw)" }}
           >
             <VirelleFace volume={0} speaking={voiceState === 'speaking'} state={voiceState} />
           </div>
