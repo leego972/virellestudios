@@ -303,7 +303,12 @@ const resolveProvider = (): { url: string; apiKey: string; model: string } => {
     };
   }
 
-  throw new Error("No LLM API key configured. Set OPENAI_API_KEY or BUILT_IN_FORGE_API_KEY.");
+  // Ultimate free fallback: Pollinations (no API key required, OpenAI-compatible)
+    return {
+      url: "https://text.pollinations.ai/openai",
+      apiKey: "",
+      model: "openai",
+    };
 };
 
 const normalizeResponseFormat = ({
