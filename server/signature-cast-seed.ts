@@ -136,7 +136,7 @@ import { getDb } from './db';
       ["aiActorId",             "VARCHAR(64) NULL"],
     ];
     for (const [col, def] of charCols) {
-      try { await db.execute(sql`ALTER TABLE characters ADD COLUMN \`${sql.raw(col)}\` ${sql.raw(def)}`); } catch { /* already exists */ }
+      try { await db.execute(sql.raw(`ALTER TABLE characters ADD COLUMN \`${col}\` ${def}`)); } catch { /* already exists */ }
     }
   
     for (const cast of SIGNATURE_CAST) {
