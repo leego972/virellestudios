@@ -606,11 +606,11 @@ function DashboardLayoutContent({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
                 <DropdownMenuItem onClick={handleAvatarClick} className="cursor-pointer">
                   <Camera className="mr-2 h-4 w-4" />
                   <span>Change Photo</span>
                 </DropdownMenuItem>
+                <DropdownMenuItem
                   onClick={logout}
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
