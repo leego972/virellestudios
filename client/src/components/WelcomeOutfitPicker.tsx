@@ -5,14 +5,23 @@ import { useState } from "react";
   import { Card, CardContent } from "@/components/ui/card";
   import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
   import { toast } from "sonner";
-  import { Gift, CheckCircle, Loader2, Shirt } from "lucide-react";
+  import { Gift, CheckCircle, Loader2, Shirt, PackageOpen } from "lucide-react";
 
   export default function WelcomeOutfitPicker() {
     const { data: gift } = (trpc as any).lamaloGifts?.hasClaimedGift?.useQuery?.() ?? {};
-    const { data: outfits = [] } = (trpc as any).lamaloGifts?.getStarterOutfits?.useQuery?.({ enabled: gift?.eligible && !gift?.claimed }) ?? { data: [] };
+
+    // ✅ Fix: enabled passed as OPTIONS (2nd arg), not input (1st arg)
+    const { data: outfits = [], isLoading: outfitsLoading } = (trpc as any).lamaloGifts?.getStarterOutfits?.useQuery?.(
+      undefined,
+      { enabled: !!(gift?.eligible && !gift?.claimed) }
+    ) ?? {};
+
     const claimMut = (trpc as any).lamaloGifts?.claimGift?.useMutation?.({
-      onSuccess: () => toast.success("Your 2 free Lamalo outfits are now in your wardrobe!"),
-      onError: (e: any) => toast.error(e.message),
+      onSuccess: () => {
+        toast.success("Your 2 free Lamalo outfits are now in your wardrobe!");
+        setOpen(false);
+      },
+      onError: (e: any) => toast.error(e?.message ?? "Something went wrong"),
     });
 
     const [selected, setSelected] = useState<number[]>([]);
@@ -22,66 +31,79 @@ import { useState } from "react";
 
     const toggle = (id: number) => {
       setSelected(prev =>
-        prev.includes(id) ? prev.filter(x=>x!==id) : prev.length < 2 ? [...prev, id] : prev
+        prev.includes(id) ? prev.filter(x => x !== id) : prev.length < 2 ? [...prev, id] : prev
       );
     };
 
     return (
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex items-center gap-2 mb-1">
-              <Gift className="w-5 h-5 text-yellow-500" />
-              <DialogTitle>Welcome Gift — 2 Free Lamalo Outfits</DialogTitle>
+              <Gift className="w-5 h-5 text-yellow-500 shrink-0" />
+              <DialogTitle className="text-base leading-snug">Welcome Gift — 2 Free Lamalo Outfits</DialogTitle>
             </div>
-            <DialogDescription>
-              Choose 2 outfits from Lamalo Fashions as a welcome gift for your first 2 characters.
-              These are yours permanently at no cost.
+            <DialogDescription className="text-sm">
+              Choose any 2 outfits from Lamalo Fashions as a welcome gift. These are yours permanently at no cost.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
-            {outfits.map((item: any) => {
-              const isSelected = selected.includes(item.id);
-              const disabled = !isSelected && selected.length >= 2;
-              return (
-                <Card
-                  key={item.id}
-                  onClick={() => !disabled && toggle(item.id)}
-                  className={`cursor-pointer transition-all ${disabled ? 'opacity-40' : ''} ${isSelected ? 'ring-2 ring-primary shadow-md' : 'hover:shadow-sm'}`}
-                >
-                  <CardContent className="p-3 space-y-2">
-                    {item.thumbnailUrl ? (
-                      <img src={item.thumbnailUrl} alt={item.name} className="w-full aspect-square object-cover rounded" />
-                    ) : (
-                      <div className="w-full aspect-square bg-muted rounded flex items-center justify-center">
-                        <Shirt className="w-8 h-8 opacity-30" />
+          {outfitsLoading ? (
+            <div className="flex items-center justify-center py-10">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : outfits.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
+              <PackageOpen className="w-10 h-10 text-muted-foreground/50" />
+              <p className="text-sm text-muted-foreground">The Lamalo collection is being set up.<br />Check back soon or contact support.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
+              {outfits.map((item: any) => {
+                const isSelected = selected.includes(item.id);
+                const disabled = !isSelected && selected.length >= 2;
+                return (
+                  <Card
+                    key={item.id}
+                    onClick={() => !disabled && toggle(item.id)}
+                    className={`relative cursor-pointer transition-all ${disabled ? "opacity-40 cursor-not-allowed" : ""} ${isSelected ? "ring-2 ring-primary shadow-md" : "hover:shadow-sm"}`}
+                  >
+                    <CardContent className="p-3 space-y-2">
+                      {item.primaryImageUrl ? (
+                        <img src={item.primaryImageUrl} alt={item.name} className="w-full aspect-square object-cover rounded" />
+                      ) : (
+                        <div className="w-full aspect-square bg-muted rounded flex items-center justify-center">
+                          <Shirt className="w-8 h-8 opacity-30" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-xs font-semibold leading-tight">{item.name}</p>
+                        <Badge variant="secondary" className="text-[10px] mt-1">{item.category}</Badge>
                       </div>
-                    )}
-                    <div>
-                      <p className="text-xs font-semibold leading-tight">{item.name}</p>
-                      <Badge variant="secondary" className="text-[10px] mt-1">{item.category}</Badge>
-                    </div>
-                    {isSelected && <CheckCircle className="w-4 h-4 text-primary absolute top-2 right-2" />}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                      {isSelected && <CheckCircle className="w-4 h-4 text-primary absolute top-2 right-2" />}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
 
-          <div className="flex items-center justify-between mt-4 pt-4 border-t">
-            <p className="text-sm text-muted-foreground">
-              {selected.length}/2 outfits selected
-            </p>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={()=>setOpen(false)}>Choose Later</Button>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-4 pt-4 border-t">
+            <p className="text-sm text-muted-foreground">{selected.length}/2 outfits selected</p>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button variant="ghost" size="sm" className="flex-1 sm:flex-none" onClick={() => setOpen(false)}>
+                Choose Later
+              </Button>
               <Button
                 size="sm"
-                disabled={selected.length < 2 || claimMut?.isPending}
+                className="flex-1 sm:flex-none"
+                disabled={selected.length < 2 || claimMut?.isPending || outfits.length === 0}
                 onClick={() => claimMut?.mutate?.({ itemId1: selected[0], itemId2: selected[1] })}
               >
-                {claimMut?.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Gift className="w-4 h-4 mr-1" />}
-                Claim Free Outfits
+                {claimMut?.isPending
+                  ? <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                  : <Gift className="w-4 h-4 mr-1" />}
+                Claim Free
               </Button>
             </div>
           </div>
