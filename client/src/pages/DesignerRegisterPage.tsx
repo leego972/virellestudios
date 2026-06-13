@@ -172,20 +172,21 @@ export default function DesignerRegisterPage() {
         window.location.href = result.checkoutUrl;
       }
 
-    // Step 2 — bundle checkout (Designer membership + Virelle Indie, 20% off)
-    async function handleSubscribeBundle() {
-      setLoading(true);
-      try {
-        localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify({ brandName, profileType, bio }));
-        const result = await subscribeBundleMutation.mutateAsync({ returnUrl });
-        if (result.checkoutUrl) {
-          window.location.href = result.checkoutUrl;
-        }
-      } catch (err: any) {
-        toast.error(err.message || "Could not start checkout");
-        setLoading(false);
-      }
+    } catch (err: any) {
+      toast.error(err.message || "Could not start checkout");
+      setLoading(false);
     }
+  }
+
+  // Step 2 bundle — Designer membership + Virelle Indie, 20% off
+  async function handleSubscribeBundle() {
+    setLoading(true);
+    try {
+      localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify({ brandName, profileType, bio }));
+      const result = await subscribeBundleMutation.mutateAsync({ returnUrl });
+      if (result.checkoutUrl) {
+        window.location.href = result.checkoutUrl;
+      }
     } catch (err: any) {
       toast.error(err.message || "Could not start checkout");
       setLoading(false);
