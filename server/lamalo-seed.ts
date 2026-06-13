@@ -6,7 +6,7 @@
  *  - Every color variant = a separate purchasable item (white tee ≠ black tee)
  *  - Every base item has ≥ 7 color options
  *  - Price ≈ 10% of Kmart AUD retail prices (per-category, auto-calculated)
- *  - Collection bundle = sum of item prices × 0.85  (15 % discount, auto-calculated)
+ *  - Collection bundle = sum of item prices × 0.90  (10 % discount, auto-calculated)
  *  - No lease price — one purchase, use forever across all projects/scenes
  *  - Seed is additive: skips collections that already exist by name
  */
@@ -45,7 +45,7 @@ function itemPrice(category: string): number {
 
 /** 15 % off when buying the whole collection */
 function cp(items: SeedItem[]): number {
-  return Math.floor(items.reduce((sum, i) => sum + i.retailPriceAud, 0) * 0.85);
+  return Math.floor(items.reduce((sum, i) => sum + i.retailPriceAud, 0) * 0.90);
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
