@@ -1528,7 +1528,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
           </button>
 
           <p className="absolute top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-[0.25em] uppercase text-white/25">
-            Director&rsquo;s Assistant
+            Virelle
           </p>
 
           {/* Face — 300 × 300 container */}
@@ -1621,7 +1621,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
                 {voiceModeActive && voiceModeState === "listening" && <span className="text-amber-400">Listening…</span>}
                 {voiceModeActive && voiceModeState === "thinking" && <span className="text-blue-400">Thinking…</span>}
                 {voiceModeActive && voiceModeState === "speaking" && <span className="text-emerald-400">Speaking…</span>}
-                {(!voiceModeActive || voiceModeState === "inactive") && "AI co-director for your film"}
+                {(!voiceModeActive || voiceModeState === "inactive") && "Virelle, your AI co-director"}
               </p>
             </div>
           </div>
@@ -1743,7 +1743,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
                 <MessageSquare className="size-8 text-amber-500/60" />
               </div>
               <div>
-                <p className="font-medium text-sm mb-1">Your AI co-director is ready</p>
+                <p className="font-medium text-sm mb-1">Virelle is ready</p>
                 <p className="text-xs text-muted-foreground max-w-[280px]">
                   I can modify scenes, add sound effects, adjust transitions, and help you build a better film.
                   Type, speak, or tap the phone icon for hands-free voice mode.
@@ -2163,7 +2163,7 @@ export default function DirectorChat({ projectId, defaultOpen = false }: Directo
                 : voiceState === "applying_edit" ? "Applying your edit..."
                 : showEditPreview ? "Review the edit above..."
                 : hasInputText ? "Edit text or press V to voice-edit..."
-                : "Message Director's Assistant... (/ for commands)"
+                : "Message Virelle... (/ for commands)"
               }
               className={cn(
                 "w-full min-h-[52px] max-h-[200px] resize-none text-[15px] leading-relaxed rounded-2xl border-0 bg-transparent py-3.5 px-4 pr-14 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
