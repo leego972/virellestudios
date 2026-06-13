@@ -41,7 +41,7 @@ import {
 import { logger } from "./_core/logger";
 import { createSessionToken } from "./_core/context";
 import { notifyOwner } from "./_core/notification";
-import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota, requireResourceQuota, getOrCreateStripeCustomer, createCheckoutSession, createBillingPortalSession, TIER_LIMITS, CREDIT_COSTS, getVideoCredits, stripe, type SubscriptionTier } from "./_core/subscription";
+import { getEffectiveTier, getUserLimits, requireFeature, requireGenerationQuota, requireResourceQuota, getOrCreateStripeCustomer, createCheckoutSession, createBillingPortalSession, TIER_LIMITS, CREDIT_COSTS, getVideoCredits, stripe, isTopTierUser, type SubscriptionTier } from "./_core/subscription";
 import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaign, getCampaign, listCampaigns, updateCampaignStatus, deleteCampaign, addPostRecord, getPlatformsByCategory, getRecommendedPlatforms, getSchedulerState, runAutonomousAdCycle, generateImageAd, generateVideoAd, type AdContentType, type AdCampaign } from "./_core/advertisingEngine";
 import { getSocialCredentialStatus, postToLinkedIn, postToReddit, sendWhatsAppMessage, broadcastWhatsApp } from "./_core/socialPostingEngine";
 import { ENV } from "./_core/env";
@@ -1276,7 +1276,50 @@ export const appRouter = router({
       }),
 
     // AI Character Generator — create photorealistic portrait from feature selections
-    aiGenerate: creationProcedure
+
+      /**
+       * Stripe Checkout for AI character generation — A$1.99 one-time.
+       * Returns { free: true } immediately for Industry-tier members (no charge).
+       */
+      aiGenerateCheckout: protectedProcedure
+        .input(z.object({ returnUrl: z.string().url().max(512) }))
+        .mutation(async ({ ctx, input }) => {
+          if (isTopTierUser(ctx.user)) return { free: true as const, checkoutUrl: null, sessionId: null };
+          if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payments not configured" });
+          const session = await stripe.checkout.sessions.create({
+            mode: "payment",
+            payment_method_types: ["card"],
+            line_items: [{ price_data: { currency: "aud", product_data: { name: "AI Character Generation — Virelle Studios", description: "Generate a hyper-realistic photorealistic character portrait from your chosen features." }, unit_amount: 199 }, quantity: 1 }],
+            success_url: input.returnUrl + "?char_gen_session={CHECKOUT_SESSION_ID}",
+            cancel_url:  input.returnUrl + "?char_gen_cancelled=1",
+            metadata: { userId: String(ctx.user.id), type: "ai_character_gen" },
+            customer_email: (ctx.user as any).email ?? undefined,
+          });
+          return { free: false as const, checkoutUrl: session.url, sessionId: session.id };
+        }),
+
+      /**
+       * Stripe Checkout for character-from-photo generation — A$5.99 one-time.
+       * Returns { free: true } immediately for Industry-tier members (no charge).
+       */
+      aiGenerateFromPhotoCheckout: protectedProcedure
+        .input(z.object({ returnUrl: z.string().url().max(512) }))
+        .mutation(async ({ ctx, input }) => {
+          if (isTopTierUser(ctx.user)) return { free: true as const, checkoutUrl: null, sessionId: null };
+          if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payments not configured" });
+          const session = await stripe.checkout.sessions.create({
+            mode: "payment",
+            payment_method_types: ["card"],
+            line_items: [{ price_data: { currency: "aud", product_data: { name: "Character from Photo — Virelle Studios", description: "Upload a reference photo — AI analyzes and recreates a hyper-realistic cinematic character portrait." }, unit_amount: 599 }, quantity: 1 }],
+            success_url: input.returnUrl + "?char_photo_session={CHECKOUT_SESSION_ID}",
+            cancel_url:  input.returnUrl + "?char_photo_cancelled=1",
+            metadata: { userId: String(ctx.user.id), type: "ai_character_from_photo" },
+            customer_email: (ctx.user as any).email ?? undefined,
+          });
+          return { free: false as const, checkoutUrl: session.url, sessionId: session.id };
+        }),
+
+      aiGenerate: creationProcedure
       .input(z.object({
         name: z.string().min(1).max(128),
         projectId: z.number().nullable().optional(),
