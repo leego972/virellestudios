@@ -88,8 +88,7 @@ import { useState, useRef, useEffect } from "react";
     const { projectId } = useParams<{ projectId: string }>();
     const pid = Number(projectId);
 
-    const { data: scenesData } = trpc.scene.list.useQuery({ projectId: pid }, { enabled: !!pid });
-    const scenes = scenesData?.scenes ?? [];
+    const { data: scenes = [] } = trpc.scene.listByProject.useQuery({ projectId: pid }, { enabled: !!pid });
 
     const [selectedSceneId, setSelectedSceneId] = useState<number | null>(null);
     const [mix, setMix] = useState<MixState>(defaultMix);
@@ -236,7 +235,7 @@ import { useState, useRef, useEffect } from "react";
                 {TRACKS.map(track => {
                   const ts = mix[track.id];
                   const effVol = effectiveVolume(track.id);
-                  const Icon = track.icon;
+                  const Icon = track.icon as React.ComponentType<React.SVGProps<SVGSVGElement>>;
                   return (
                     <div key={track.id} className="flex flex-col items-center gap-2 min-w-[84px] flex-1"
                       style={{ opacity: (anySolo && !ts.solo && !ts.muted) ? 0.35 : 1, transition: "opacity .2s" }}>
@@ -256,7 +255,7 @@ import { useState, useRef, useEffect } from "react";
                       <div className="flex flex-col items-center gap-1.5 w-full">
                         <span className="text-[10px] text-muted-foreground tabular-nums">{ts.volume}%</span>
                         <div className="h-28 flex items-center justify-center">
-                          <input type="range" min={0} max={100} value={ts.volume} orient="vertical"
+                          <input type="range" min={0} max={100} value={ts.volume} {...({orient:"vertical"} as any)}
                             className="appearance-none w-2 h-24 rounded-full cursor-pointer"
                             style={{ writingMode: "vertical-lr", direction: "rtl", accentColor: track.color }}
                             disabled={ts.locked}
@@ -344,7 +343,7 @@ import { useState, useRef, useEffect } from "react";
                   <div className="flex flex-col items-center gap-1.5 w-full">
                     <span className="text-[10px] text-muted-foreground tabular-nums">{masterVolume}%</span>
                     <div className="h-28 flex items-center justify-center">
-                      <input type="range" min={0} max={100} value={masterVolume} orient="vertical"
+                      <input type="range" min={0} max={100} value={masterVolume} {...({orient:"vertical"} as any)}
                         className="appearance-none w-2 h-24 rounded-full cursor-pointer"
                         style={{ writingMode: "vertical-lr", direction: "rtl", accentColor: "#D4AF37" }}
                         onChange={e => { setMasterVolume(Number(e.target.value)); setDirty(true); }} />
