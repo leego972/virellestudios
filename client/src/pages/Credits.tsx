@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Helpers ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function formatCredits(n: number) {
   if (Math.abs(n) >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
@@ -68,7 +68,7 @@ const TIER_LABELS: Record<string, string> = {
 
 const PAGE_SIZE = 25;
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Component ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Credits() {
   const [page, setPage] = useState(0);
@@ -91,7 +91,7 @@ export default function Credits() {
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6">
 
-      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Header ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+      {/* ─── Header ─── */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 text-gold-shimmer">
           <HollywoodIcon tool="credits" size={36} />
@@ -102,7 +102,7 @@ export default function Credits() {
         </p>
       </div>
 
-      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Balance Summary Cards ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+      {/* ─── Balance Summary Cards ─── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Current Balance */}
         <Card className="bg-gradient-to-br from-amber-600/15 to-orange-600/5 border-amber-500/20 sm:col-span-1 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
@@ -190,7 +190,7 @@ export default function Credits() {
         </Card>
       </div>
 
-      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ This Page Stats ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+      {/* ─── This Page Stats ─── */}
       {!historyLoading && transactions.length > 0 && (
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-xl border border-green-500/20 bg-green-600/5 p-4 flex items-center gap-3">
@@ -210,7 +210,7 @@ export default function Credits() {
         </div>
       )}
 
-      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Transaction History ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+      {/* ─── Transaction History ─── */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Transaction History</CardTitle>
@@ -235,7 +235,7 @@ export default function Credits() {
             </div>
           ) : (
             <>
-              {/* Table header ÃÂ¢ÃÂÃÂ desktop only */}
+              {/* Table header — desktop only */}
               <div className="hidden sm:grid grid-cols-[1fr_auto_auto_auto] gap-4 px-3 pb-2 text-xs text-muted-foreground font-medium border-b border-amber-500/20">
                 <span>Action</span>
                 <span className="text-right w-24">Amount</span>
@@ -273,17 +273,17 @@ export default function Credits() {
                         </div>
                       </div>
 
-                      {/* Amount ÃÂ¢ÃÂÃÂ desktop */}
+                      {/* Amount — desktop */}
                       <div className={`hidden sm:block text-right w-24 font-bold text-sm ${isCredit ? "text-green-400" : "text-red-400"}`}>
                         {isCredit ? "+" : ""}{tx.amount.toLocaleString()}
                       </div>
 
-                      {/* Balance After ÃÂ¢ÃÂÃÂ desktop */}
+                      {/* Balance After — desktop */}
                       <div className="hidden sm:block text-right w-28 text-sm text-muted-foreground">
                         {(tx.balanceAfter ?? 0).toLocaleString()}
                       </div>
 
-                      {/* Date ÃÂ¢ÃÂÃÂ desktop */}
+                      {/* Date — desktop */}
                       <div className="hidden sm:block text-right w-32 text-xs text-muted-foreground">
                         <div>{formatDate(tx.createdAt)}</div>
                         <div className="opacity-60">{formatTime(tx.createdAt)}</div>
@@ -324,7 +324,7 @@ export default function Credits() {
         </CardContent>
       </Card>
 
-      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ How Credits Work ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+      {/* ─── How Credits Work ─── */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">How Credits Work</CardTitle>
@@ -349,7 +349,7 @@ export default function Credits() {
               <RefreshCw className="h-5 w-5 text-blue-400 shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold">Auto-Refresh</p>
-                <p className="text-muted-foreground text-xs mt-0.5">Your monthly allocation is automatically topped up on each billing cycle renewal ÃÂ¢ÃÂÃÂ no action needed.</p>
+                <p className="text-muted-foreground text-xs mt-0.5">Your monthly allocation is automatically topped up on each billing cycle renewal — no action needed.</p>
               </div>
             </div>
           </div>
