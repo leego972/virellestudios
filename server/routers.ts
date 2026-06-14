@@ -2720,6 +2720,8 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         const allScenes = project ? await db.getProjectScenes(project.id) : [];
         const sceneIdx = allScenes.findIndex(s => s.id === scene.id);
 
+        const sceneWardrobeContext = await getWardrobePromptContextForScene(scene.id, ctx.user.id);
+
         // Build rich cinematic prompt
         const prompt = buildScenePrompt(
           { ...scene, cinemaIndustry: project?.cinemaIndustry || "Hollywood" },
