@@ -31,11 +31,11 @@ export default function LeegoFooterLaunch() {
           </div>
           <div className="flex flex-wrap items-center gap-3 text-xs text-foreground/45">
             <a href="/terms" className="hover:text-foreground/70 transition-colors">Terms of Service</a>
-            <span>Â·</span>
+            <span>·</span>
             <a href="/privacy" className="hover:text-foreground/70 transition-colors">Privacy Policy</a>
-            <span>Â·</span>
+            <span>·</span>
             <a href="/acceptable-use" className="hover:text-foreground/70 transition-colors">Acceptable Use</a>
-            <span>Â·</span>
+            <span>·</span>
             <a href="mailto:studiosvirelle@gmail.com" className="hover:text-amber-400 transition-colors">studiosvirelle@gmail.com</a>
           </div>
         </div>
