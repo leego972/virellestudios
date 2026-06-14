@@ -293,7 +293,6 @@ export default function Referrals() {
               const isCompleted = successful >= m.count;
               const isNext = !isCompleted && nextMilestone?.count === m.count;
               return (
-                <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
                 <div
                   key={m.count}
                   className={
@@ -323,7 +322,6 @@ export default function Referrals() {
                   </div>
                   {isCompleted && <Check className="h-4 w-4 text-green-400 shrink-0" />}
                   {isNext && <ChevronRight className="h-4 w-4 text-amber-400 shrink-0" />}
-                </div>
               );
             })}
           </div>

@@ -421,7 +421,6 @@ import { useState, useEffect, useCallback } from "react";
                     const Icon = tInfo.icon;
                     const isSelected = el.id === selectedId;
                     return (
-                      <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
                       <div
                         key={el.id}
                         onClick={() => setSelectedId(el.id)}
@@ -473,7 +472,6 @@ import { useState, useEffect, useCallback } from "react";
                             <Trash2 className="h-3 w-3" />
                           </button>
                         </div>
-                      </div>
                     );
                   })}
                 </div>

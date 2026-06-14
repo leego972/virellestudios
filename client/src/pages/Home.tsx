@@ -640,7 +640,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
                 {activityItems.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
                     <div key={item.id} className="flex items-start gap-3 py-2.5 px-3 rounded-lg hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => setLocation(`/projects/${item.id}`)}>
                       <div className={`h-7 w-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${item.status === "completed" ? "bg-green-500/10" : item.status === "generating" ? "bg-blue-500/10" : "bg-muted"}`}>
                         <Icon className={`h-3.5 w-3.5 ${item.status === "completed" ? "text-green-400" : item.status === "generating" ? "text-blue-400 animate-spin" : "text-muted-foreground"}`} />
@@ -649,7 +648,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
                         <p className="text-xs font-medium truncate">{item.title}</p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">{item.action} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {timeAgo(item.updatedAt)}</p>
                       </div>
-                    </div>
                   );
                 })}
               </div>

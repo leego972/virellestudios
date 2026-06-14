@@ -125,7 +125,6 @@ import { useState } from "react";
     const analyzing = analyzeMutation.isPending;
 
     return (
-      <div className="max-w-5xl mx-auto space-y-6 min-h-screen py-6 px-4" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>

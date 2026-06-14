@@ -448,11 +448,9 @@ export default function ProjectDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto space-y-6 py-4">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64 w-full rounded-lg" />
-      </div>
     );
   }
 
