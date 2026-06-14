@@ -76,7 +76,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios ÃÂ¢ÃÂÃÂ sales, support, partnerships, and press inquiries." />
+      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ sales, support, partnerships, and press inquiries." />
       {/* Header */}
       <div className="border-b bg-card/50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
@@ -142,7 +142,7 @@ export default function Contact() {
 
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 glass-card shadow-lg shadow-amber-500/5">
               <CardContent className="p-5">
-                <h3 className="font-semibold mb-2">Industry Plan</h3>
+                <h3 className="font-semibold mb-2 gradient-text-gold">Industry Plan</h3>
                 <p className="text-sm text-muted-foreground mb-3">
                   Need unlimited generations, dedicated support, and custom integrations? Our Industry plan is built for professional studios.
                 </p>
