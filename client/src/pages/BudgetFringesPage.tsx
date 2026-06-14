@@ -107,11 +107,11 @@ export default function BudgetFringesPage() {
                 </div>
               </div>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".82rem" }}>
-                <thead>
+                <thead className="text-amber-400/80 border-b border-amber-500/20">
                   <tr style={{ borderBottom: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.55)" }}>
-                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }}>Label</th>
-                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }}>%</th>
-                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }}>Applies to (tags, comma-separated)</th>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }} className="text-amber-400/80">Label</th>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }} className="text-amber-400/80">%</th>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }} className="text-amber-400/80">Applies to (tags, comma-separated)</th>
                     <th style={{ width: 32 }}></th>
                   </tr>
                 </thead>
@@ -140,12 +140,12 @@ export default function BudgetFringesPage() {
               <h2 className="gradient-text-gold" style={{ margin: 0, fontSize: "1rem", color: "#FFD78C" }}>Loaded budget preview</h2>
               <div style={{ fontSize: ".78rem", color: "rgba(255,255,255,.5)", marginTop: ".15rem", marginBottom: ".7rem" }}>Currency: {currency}</div>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".83rem" }}>
-                <thead>
+                <thead className="text-amber-400/80 border-b border-amber-500/20">
                   <tr style={{ borderBottom: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.55)" }}>
-                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }}>Category</th>
-                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }}>Base</th>
-                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }}>Fringe</th>
-                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }}>Loaded total</th>
+                    <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500 }} className="text-amber-400/80">Category</th>
+                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }} className="text-amber-400/80">Base</th>
+                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }} className="text-amber-400/80">Fringe</th>
+                    <th style={{ textAlign: "right", padding: ".5rem .4rem", fontWeight: 500 }} className="text-amber-400/80">Loaded total</th>
                     <th style={{ textAlign: "left", padding: ".5rem .4rem", fontWeight: 500, color: "rgba(255,255,255,.4)" }}>Applied</th>
                   </tr>
                 </thead>
