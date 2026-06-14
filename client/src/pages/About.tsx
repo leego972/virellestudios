@@ -12,12 +12,12 @@ const VALUES = [
   {
     icon: Target,
     title: "Director First",
-    desc: "The AI executes your vision ÃÂ¢ÃÂÃÂ it never overrides it. Every generation is faithful to your instructions unless you explicitly grant creative freedom.",
+    desc: "The AI executes your vision — it never overrides it. Every generation is faithful to your instructions unless you explicitly grant creative freedom.",
   },
   {
     icon: Eye,
     title: "Cinematic Standard",
-    desc: "Every tool in Virelle is built to professional production standards. We don't build novelty features ÃÂ¢ÃÂÃÂ we build production infrastructure.",
+    desc: "Every tool in Virelle is built to professional production standards. We don't build novelty features — we build production infrastructure.",
   },
   {
     icon: Shield,
@@ -27,7 +27,7 @@ const VALUES = [
   {
     icon: Zap,
     title: "Speed Without Compromise",
-    desc: "A full feature film in hours instead of months. We refuse to sacrifice quality for speed ÃÂ¢ÃÂÃÂ Virelle delivers both.",
+    desc: "A full feature film in hours instead of months. We refuse to sacrifice quality for speed — Virelle delivers both.",
   },
   {
     icon: Heart,
@@ -37,7 +37,7 @@ const VALUES = [
   {
     icon: Globe,
     title: "Global Creative Access",
-    desc: "A filmmaker in Lagos, a brand team in Seoul, a music artist in SÃÂÃÂ£o Paulo ÃÂ¢ÃÂÃÂ Virelle gives every creator access to Hollywood-level production tools.",
+    desc: "A filmmaker in Lagos, a brand team in Seoul, a music artist in São Paulo — Virelle gives every creator access to Hollywood-level production tools.",
   },
 ];
 
@@ -45,7 +45,7 @@ const METHODOLOGY = [
   {
     step: "01",
     title: "Concept Development",
-    desc: "Your story idea is developed into a structured screenplay with scenes, characters, and dialogue ÃÂ¢ÃÂÃÂ all under your creative direction.",
+    desc: "Your story idea is developed into a structured screenplay with scenes, characters, and dialogue — all under your creative direction.",
   },
   {
     step: "02",
@@ -73,7 +73,7 @@ const CAPABILITIES = [
   { label: "AI Video Providers", value: "Runway, fal.ai, Google Veo 3" },
   { label: "AI Language Models", value: "GPT-4.1, Gemini 2.5 Flash" },
   { label: "Image Generation", value: "DALL-E 3 HD" },
-  { label: "Voice Acting", value: "ElevenLabs ÃÂ¢ÃÂÃÂ 35 emotion states, per-emotion tuning" },
+  { label: "Voice Acting", value: "ElevenLabs — 35 emotion states, per-emotion tuning" },
   { label: "Export Formats", value: "MP4, ProRes, DaVinci Resolve" },
   { label: "Subtitle Languages", value: "130+ languages, context-aware AI translation" },
   { label: "Max Film Duration", value: "Up to 180 minutes (Industry tier)" },
@@ -87,7 +87,7 @@ export default function About() {
 
   return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="About Virelle Studios" description="Learn how Virelle Studios is building the world's most powerful AI film production platform ÃÂ¢ÃÂÃÂ from script to screen in one unified studio." />
+      <SiteHead title="About Virelle Studios" description="Learn how Virelle Studios is building the world's most powerful AI film production platform — from script to screen in one unified studio." />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b" style={{background:"rgba(7,7,14,0.97)",backdropFilter:"blur(24px)",borderBottomColor:"rgba(255,255,255,0.07)"}}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -120,7 +120,7 @@ export default function About() {
             , Not Demos
           </h1>
           <p className="text-lg text-foreground/70 leading-relaxed">
-            Virelle Studios is an AI film production platform built on a single conviction: every filmmaker ÃÂ¢ÃÂÃÂ regardless of budget, crew, or studio backing ÃÂ¢ÃÂÃÂ deserves access to professional-grade production tools.
+            Virelle Studios is an AI film production platform built on a single conviction: every filmmaker — regardless of budget, crew, or studio backing — deserves access to professional-grade production tools.
           </p>
         </div>
       </section>
@@ -135,13 +135,13 @@ export default function About() {
                 <span className="text-amber-400">the Studio</span>
               </h2>
               <p className="text-foreground/70 leading-relaxed mb-4">
-                Virelle was founded with a straightforward mission: collapse the gap between a filmmaker's imagination and what they can actually produce. The traditional film production stack ÃÂ¢ÃÂÃÂ pre-production, casting, location scouting, shooting, VFX, post ÃÂ¢ÃÂÃÂ requires teams, budgets, and timelines that exclude most of the world's storytellers.
+                Virelle was founded with a straightforward mission: collapse the gap between a filmmaker's imagination and what they can actually produce. The traditional film production stack — pre-production, casting, location scouting, shooting, VFX, post — requires teams, budgets, and timelines that exclude most of the world's storytellers.
               </p>
               <p className="text-foreground/70 leading-relaxed mb-4">
                 AI changes that equation. Not by replacing human creativity, but by removing the infrastructure barriers that prevent it from reaching the screen.
               </p>
               <p className="text-foreground/70 leading-relaxed mb-6">
-                Virelle is not a content generator. It is a production platform ÃÂ¢ÃÂÃÂ built with the same discipline, structure, and quality standards as a professional studio workflow, powered by the best available AI models, and designed to execute the director's vision with precision.
+                Virelle is not a content generator. It is a production platform — built with the same discipline, structure, and quality standards as a professional studio workflow, powered by the best available AI models, and designed to execute the director's vision with precision.
               </p>
               <div className="flex items-center gap-3">
                 <Button onClick={() => setLocation("/how-it-works")} variant="outline" className="h-10">
@@ -202,7 +202,7 @@ export default function About() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">Production Methodology</h2>
-            <p className="text-foreground/60 max-w-xl mx-auto">Virelle follows a structured five-stage production pipeline ÃÂ¢ÃÂÃÂ the same sequence used in professional film production, powered by AI at every stage.</p>
+            <p className="text-foreground/60 max-w-xl mx-auto">Virelle follows a structured five-stage production pipeline — the same sequence used in professional film production, powered by AI at every stage.</p>
           </div>
           <div className="space-y-4">
             {METHODOLOGY.map((m, i) => (
@@ -249,7 +249,7 @@ export default function About() {
               <div>
                 <h3 className="text-xl font-bold mb-2 gradient-text-gold">Our Position on AI and Creative Work</h3>
                 <p className="text-foreground/70 leading-relaxed mb-4">
-                  Virelle is built on the belief that AI is a production tool ÃÂ¢ÃÂÃÂ not a replacement for human creative direction. Every film made on Virelle is the product of a director's vision. The AI executes; the director decides.
+                  Virelle is built on the belief that AI is a production tool — not a replacement for human creative direction. Every film made on Virelle is the product of a director's vision. The AI executes; the director decides.
                 </p>
                 <p className="text-foreground/70 leading-relaxed mb-4">
                   We operate under a strict content policy that prohibits the generation of harmful, deceptive, or rights-infringing material. All generated content is subject to our Acceptable Use Policy, which is enforced at the platform level.
