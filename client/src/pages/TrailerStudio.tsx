@@ -274,7 +274,23 @@ function TrailerStudioInner() {
     return scene?.title || `Scene ${sceneId}`;
   };
 
-  return (
+    if (showOpener) {
+      return (
+        <StudioOpener
+          mode="film"
+          skippable
+          onComplete={() => {
+            setShowOpener(false);
+            if (pendingResult) {
+              setGeneratedResult(pendingResult);
+              setPendingResult(null);
+              toast.success("Trailer generated successfully!");
+            }
+          }}
+        />
+      );
+    }
+    return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Header ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       <div className="border-b sticky top-0 z-40" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }}>
@@ -814,31 +830,15 @@ function TrailerStudioInner() {
   );
 }
 
-export default function TrailerStudio() {
-  if (showOpener) {
-      return (
-        <StudioOpener
-          mode="film"
-          skippable
-          onComplete={() => {
-            setShowOpener(false);
-            if (pendingResult) {
-              setGeneratedResult(pendingResult);
-              setPendingResult(null);
-              toast.success("Trailer generated successfully!");
-            }
-          }}
-        />
-      );
-    }
-
+  export default function TrailerStudio() {
     return (
-    <SubscriptionGate
-      feature="Trailer Studio"
-      featureKey="canUseTrailerGeneration"
-      requiredTier="independent"
-    >
-      <TrailerStudioInner />
-    </SubscriptionGate>
-  );
-}
+      <SubscriptionGate
+        feature="Trailer Studio"
+        featureKey="canUseTrailerGeneration"
+        requiredTier="independent"
+      >
+        <TrailerStudioInner />
+      </SubscriptionGate>
+    );
+  }
+  
