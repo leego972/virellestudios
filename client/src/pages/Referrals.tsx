@@ -57,7 +57,7 @@ export default function Referrals() {
   const shareNative = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Join Virelle Studios Ã¢ÂÂ AI Film Production",
+        title: "Join Virelle Studios ÃÂ¢ÃÂÃÂ AI Film Production",
         text: "I've been using Virelle Studios to create Hollywood-quality AI films. Sign up with my link and we both get 7,000 bonus credits!",
         url: referralLink,
       }).catch(() => {});
@@ -79,7 +79,7 @@ export default function Referrals() {
 
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
-      `Ã°ÂÂÂ¬ Join me on Virelle Studios Ã¢ÂÂ the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
+      `ÃÂ°ÃÂÃÂÃÂ¬ Join me on Virelle Studios ÃÂ¢ÃÂÃÂ the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
     );
     window.open("https://wa.me/?text=" + text, "_blank");
   };
@@ -110,12 +110,12 @@ export default function Referrals() {
 
       {/* Reward Banner */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/10 border border-amber-500/20 p-4 text-center">
+        <div className="rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/10 border border-amber-500/20 p-4 text-center glass-card shadow-lg shadow-amber-500/5">
           <div className="text-3xl font-black text-amber-400">+7,000</div>
           <div className="text-sm text-muted-foreground mt-1">credits you earn</div>
           <div className="text-xs text-amber-400/60 mt-0.5">per successful signup</div>
         </div>
-        <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-violet-600/10 border border-purple-500/20 p-4 text-center">
+        <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-violet-600/10 border border-purple-500/20 p-4 text-center glass-card shadow-lg shadow-amber-500/5">
           <div className="text-3xl font-black text-purple-400 gradient-text-gold">+7,000</div>
           <div className="text-sm text-muted-foreground mt-1">credits they get</div>
           <div className="text-xs text-purple-400/60 mt-0.5">instant on signup</div>
