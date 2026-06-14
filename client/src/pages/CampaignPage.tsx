@@ -171,7 +171,7 @@ import { useRoute, useLocation } from "wouter";
 
               {/* Stats bar */}
               <div className="space-y-2">
-                <Progress value={progress} className="h-3 rounded-full" />
+                <Progress value={progress} className="h-3 rounded-full [&>div]:bg-amber-500" />
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-foreground font-semibold">{progress}% funded</span>
                   <span className="text-muted-foreground">{fmtAud(campaign.raisedAmountCents)} raised of {fmtAud(campaign.goalAmountCents)}</span>
@@ -233,7 +233,7 @@ import { useRoute, useLocation } from "wouter";
               )}
             </div>
 
-            {/* Sidebar Ã¢ÂÂ Rewards + Back */}
+            {/* Sidebar ÃÂ¢ÃÂÃÂ Rewards + Back */}
             <div className="space-y-4">
               {/* Reward tiers */}
               {rewards.length > 0 && (
@@ -296,20 +296,20 @@ import { useRoute, useLocation } from "wouter";
                       onClick={handleBack}
                     >
                       {backing ? (
-                        <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />ProcessingÃ¢ÂÂ¦</span>
+                        <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />ProcessingÃÂ¢ÃÂÃÂ¦</span>
                       ) : (
                         <span className="flex items-center gap-2"><Heart className="w-4 h-4" />Back this project</span>
                       )}
                     </Button>
                   ) : (
                     <Button className="w-full" variant="outline" disabled>
-                      {campaign.status === "funded" ? "Ã°ÂÂÂ Funded Ã¢ÂÂ Campaign Closed" : "Campaign Ended"}
+                      {campaign.status === "funded" ? "ÃÂ°ÃÂÃÂÃÂ Funded ÃÂ¢ÃÂÃÂ Campaign Closed" : "Campaign Ended"}
                     </Button>
                   )}
 
                   {isActive && (
                     <p className="text-xs text-center text-muted-foreground">
-                      Virelle charges a 7% platform fee ÃÂ· Powered by Stripe
+                      Virelle charges a 7% platform fee ÃÂÃÂ· Powered by Stripe
                     </p>
                   )}
                 </CardContent>

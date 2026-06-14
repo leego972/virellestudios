@@ -1,5 +1,5 @@
 /**
- * Advertising Dashboard â VirÃlle Studios
+ * Advertising Dashboard Ã¢ÂÂ VirÃÂlle Studios
  *
  * Full-featured advertising management interface:
  *  - Live campaign performance overview
@@ -28,7 +28,7 @@ import {
   Film, Sparkles, ExternalLink, Copy, ChevronDown, ChevronUp,
 } from "lucide-react";
 
-// âââ Platform Meta âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Platform Meta Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const PLATFORM_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   instagram: { label: "Instagram", color: "text-purple-400", icon: <Camera className="w-4 h-4" /> },
   tiktok: { label: "TikTok", color: "text-pink-400", icon: <Video className="w-4 h-4" /> },
@@ -39,7 +39,7 @@ const PLATFORM_META: Record<string, { label: string; color: string; icon: React.
   pinterest: { label: "Pinterest", color: "text-rose-400", icon: <Share2 className="w-4 h-4" /> },
 };
 
-// âââ Status Badge ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Status Badge Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; className: string }> = {
     draft: { label: "Draft", className: "border-zinc-500/50 text-zinc-400 bg-zinc-500/10" },
@@ -58,7 +58,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-// âââ Metric Card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Metric Card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   icon: React.ReactNode;
   label: string;
@@ -80,7 +80,7 @@ function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   );
 }
 
-// âââ Content Queue Item ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Content Queue Item Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting }: {
   item: any;
   onApprove: (id: number) => void;
@@ -100,11 +100,11 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
             <p className="font-medium text-sm truncate">{item.title || item.headline || "Untitled"}</p>
             <div className="flex items-center gap-2 mt-1">
               <span className={`text-xs ${platformMeta.color}`}>{platformMeta.label}</span>
-              <span className="text-xs text-muted-foreground">â¢</span>
+              <span className="text-xs text-muted-foreground">Ã¢ÂÂ¢</span>
               <span className="text-xs text-muted-foreground">{item.contentType || "post"}</span>
               {item.qualityScore != null && (
                 <>
-                  <span className="text-xs text-muted-foreground">â¢</span>
+                  <span className="text-xs text-muted-foreground">Ã¢ÂÂ¢</span>
                   <span className={`text-xs font-medium ${item.qualityScore >= 75 ? "text-emerald-400" : item.qualityScore >= 50 ? "text-yellow-400" : "text-red-400"}`}>
                     Quality: {item.qualityScore}/100
                   </span>
@@ -188,7 +188,7 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
   );
 }
 
-// âââ Main Component ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Main Component Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 export default function AdvertisingDashboard() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
@@ -204,7 +204,7 @@ export default function AdvertisingDashboard() {
   const [approvingId, setApprovingId] = useState<number | null>(null);
   const [rejectingId, setRejectingId] = useState<number | null>(null);
 
-  // âââ Queries âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Queries Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const dashboardQuery = trpc.advertising.getDashboard.useQuery(undefined, { refetchInterval: 15000 });
   const performanceQuery = trpc.advertising.getPerformance.useQuery({ days: 30 });
   const activityQuery = trpc.advertising.getActivity.useQuery({ limit: 20 });
@@ -215,10 +215,10 @@ export default function AdvertisingDashboard() {
   const tiktokStatsQuery = trpc.advertising.getTikTokStats.useQuery();
   const strategiesQuery = trpc.advertising.getStrategies.useQuery();
 
-  // âââ Mutations ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Mutations Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const runCycleMutation = trpc.advertising.runCycle.useMutation({
     onSuccess: () => {
-      toast.success("Advertising cycle complete â new content generated and queued");
+      toast.success("Advertising cycle complete Ã¢ÂÂ new content generated and queued");
       utils.advertising.getDashboard.invalidate();
       utils.advertising.getContentQueue.invalidate();
       utils.advertising.getActivity.invalidate();
@@ -259,7 +259,7 @@ export default function AdvertisingDashboard() {
     onError: (err) => toast.error(err.message || "Video generation failed"),
   });
 
-  // âââ Access Guard âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Access Guard Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   if (user?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
@@ -294,7 +294,7 @@ export default function AdvertisingDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* âââ Header ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Header Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
@@ -302,7 +302,7 @@ export default function AdvertisingDashboard() {
             Advertising Dashboard
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Autonomous ad generation, distribution, and performance tracking for VirÃlle Studios
+            Autonomous ad generation, distribution, and performance tracking for VirÃÂlle Studios
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -330,27 +330,27 @@ export default function AdvertisingDashboard() {
         </div>
       </div>
 
-      {/* âââ KPI Row âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ KPI Row Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <MetricCard
           icon={<BarChart3 className="w-4 h-4" />}
           label="Total Impressions"
-          value={performance?.paid?.totalImpressions?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalImpressions?.toLocaleString() ?? "â"}
+          value={performance?.paid?.totalImpressions?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalImpressions?.toLocaleString() ?? "Ã¢ÂÂ"}
           sub="Last 30 days"
           color="text-amber-400"
         />
         <MetricCard
           icon={<MousePointer className="w-4 h-4" />}
           label="Total Clicks"
-          value={performance?.paid?.totalClicks?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalClicks?.toLocaleString() ?? "â"}
-          sub={`CTR: ${performance?.paid?.ctr ?? (dashboard?.performance as any)?.paid?.ctr ?? "â"}`}
+          value={performance?.paid?.totalClicks?.toLocaleString() ?? (dashboard?.performance as any)?.paid?.totalClicks?.toLocaleString() ?? "Ã¢ÂÂ"}
+          sub={`CTR: ${performance?.paid?.ctr ?? (dashboard?.performance as any)?.paid?.ctr ?? "Ã¢ÂÂ"}`}
           color="text-blue-400"
         />
         <MetricCard
           icon={<Activity className="w-4 h-4" />}
           label="Engagements"
-          value={performance?.paid?.totalConversions?.toLocaleString() ?? "â"}
-          sub={`Conv. Rate: ${performance?.paid?.conversionRate ?? "â"}`}
+          value={performance?.paid?.totalConversions?.toLocaleString() ?? "Ã¢ÂÂ"}
+          sub={`Conv. Rate: ${performance?.paid?.conversionRate ?? "Ã¢ÂÂ"}`}
           color="text-purple-400"
         />
         <MetricCard
@@ -362,7 +362,7 @@ export default function AdvertisingDashboard() {
         />
       </div>
 
-      {/* âââ Tabs ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Tabs Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-card/50 border border-border/50">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -372,7 +372,7 @@ export default function AdvertisingDashboard() {
           <TabsTrigger value="activity">Activity</TabsTrigger>
         </TabsList>
 
-        {/* âââ Overview Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Overview Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="overview" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Platform Performance */}
@@ -398,7 +398,7 @@ export default function AdvertisingDashboard() {
                           </div>
                           <span className="text-xs text-muted-foreground">{(data.impressions || 0).toLocaleString()} impr.</span>
                         </div>
-                        <Progress value={pct} className="h-1.5" />
+                        <Progress value={pct} className="h-1.5 [&>div]:bg-amber-500" />
                       </div>
                     );
                   })
@@ -463,7 +463,7 @@ export default function AdvertisingDashboard() {
                       <div>
                         <p className="text-sm">{item.description || item.action}</p>
                         <p className="text-xs text-muted-foreground">
-                          {item.createdAt ? new Date(item.createdAt).toLocaleString() : "â"}
+                          {item.createdAt ? new Date(item.createdAt).toLocaleString() : "Ã¢ÂÂ"}
                         </p>
                       </div>
                     </div>
@@ -474,7 +474,7 @@ export default function AdvertisingDashboard() {
           )}
         </TabsContent>
 
-        {/* âââ Content Queue Tab âââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Content Queue Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="queue" className="space-y-4 mt-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
@@ -532,7 +532,7 @@ export default function AdvertisingDashboard() {
           )}
         </TabsContent>
 
-        {/* âââ TikTok Tab ââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ TikTok Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="tiktok" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* TikTok Status */}
@@ -564,11 +564,11 @@ export default function AdvertisingDashboard() {
                   <>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Account</span>
-                      <span className="text-sm font-medium">@{tiktok.creatorInfo.creatorNickname || "â"}</span>
+                      <span className="text-sm font-medium">@{tiktok.creatorInfo.creatorNickname || "Ã¢ÂÂ"}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Followers</span>
-                      <span className="text-sm font-medium">{(tiktok.creatorInfo as any).followerCount?.toLocaleString() ?? "â"}</span>
+                      <span className="text-sm font-medium">{(tiktok.creatorInfo as any).followerCount?.toLocaleString() ?? "Ã¢ÂÂ"}</span>
                     </div>
                   </>
                 )}
@@ -606,13 +606,13 @@ export default function AdvertisingDashboard() {
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   Generate Ad Video
                 </CardTitle>
-                <CardDescription>Create a cinematic AI video ad for VirÃlle Studios</CardDescription>
+                <CardDescription>Create a cinematic AI video ad for VirÃÂlle Studios</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
                   {[
                     { topic: "AI filmmaking revolution 2026", label: "AI Revolution" },
-                    { topic: "Cinematic scene generation with VirÃlle", label: "Scene Generation" },
+                    { topic: "Cinematic scene generation with VirÃÂlle", label: "Scene Generation" },
                     { topic: "From script to screen in minutes with AI", label: "Script to Screen" },
                     { topic: "Hollywood quality films without a Hollywood budget", label: "Hollywood Quality" },
                   ].map(({ topic, label }) => (
@@ -620,7 +620,7 @@ export default function AdvertisingDashboard() {
                       key={topic}
                       variant="outline"
                       className="w-full justify-start border-border/50 hover:bg-amber-500/10 hover:border-amber-500/30 text-sm h-9"
-                      onClick={() => generateVideoMutation.mutate({ topic, cta: "Try VirÃlle Studios free" })}
+                      onClick={() => generateVideoMutation.mutate({ topic, cta: "Try VirÃÂlle Studios free" })}
                       disabled={generateVideoMutation.isPending}
                     >
                       {generateVideoMutation.isPending ? (
@@ -648,7 +648,7 @@ export default function AdvertisingDashboard() {
                     <div key={i} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm truncate">{post.caption || post.description || "TikTok post"}</p>
-                        <p className="text-xs text-muted-foreground">{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "â"}</p>
+                        <p className="text-xs text-muted-foreground">{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Ã¢ÂÂ"}</p>
                       </div>
                       <div className="flex items-center gap-3 ml-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{post.viewCount?.toLocaleString() ?? 0}</span>
@@ -662,7 +662,7 @@ export default function AdvertisingDashboard() {
           )}
         </TabsContent>
 
-        {/* âââ Strategy Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Strategy Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="strategy" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
@@ -671,7 +671,7 @@ export default function AdvertisingDashboard() {
                 Platform Strategy Overview
               </CardTitle>
               <CardDescription>
-                Autonomous advertising strategy for VirÃlle Studios across all channels
+                Autonomous advertising strategy for VirÃÂlle Studios across all channels
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -728,7 +728,7 @@ export default function AdvertisingDashboard() {
           </Card>
 
 
-            {/* âââ Platform Playbook ââââââââââââââââââââââââââââââââââââââââââ */}
+            {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Platform Playbook Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
             <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
@@ -742,12 +742,12 @@ export default function AdvertisingDashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {[
-                    { platform: "tiktok",        freq: "2â3Ã / day",  formats: ["60s vertical", "trending audio", "behind-the-scenes"],  ctr: "1.6%" },
-                    { platform: "instagram",     freq: "1Ã / day",    formats: ["Reels", "Carousel", "Story poll"],                      ctr: "0.9%" },
-                    { platform: "youtube_shorts",freq: "4â5Ã / week", formats: ["Shorts < 60s", "Trailer teaser", "Process reveal"],     ctr: "0.5%" },
-                    { platform: "facebook",      freq: "1Ã / day",    formats: ["Video post", "Event promo", "Link + image"],            ctr: "0.7%" },
-                    { platform: "x_twitter",     freq: "3â5Ã / day",  formats: ["Thread", "GIF clip", "Poll"],                          ctr: "0.4%" },
-                    { platform: "linkedin",      freq: "3Ã / week",   formats: ["Article", "Milestone post", "Behind-the-lens"],        ctr: "0.6%" },
+                    { platform: "tiktok",        freq: "2Ã¢ÂÂ3ÃÂ / day",  formats: ["60s vertical", "trending audio", "behind-the-scenes"],  ctr: "1.6%" },
+                    { platform: "instagram",     freq: "1ÃÂ / day",    formats: ["Reels", "Carousel", "Story poll"],                      ctr: "0.9%" },
+                    { platform: "youtube_shorts",freq: "4Ã¢ÂÂ5ÃÂ / week", formats: ["Shorts < 60s", "Trailer teaser", "Process reveal"],     ctr: "0.5%" },
+                    { platform: "facebook",      freq: "1ÃÂ / day",    formats: ["Video post", "Event promo", "Link + image"],            ctr: "0.7%" },
+                    { platform: "x_twitter",     freq: "3Ã¢ÂÂ5ÃÂ / day",  formats: ["Thread", "GIF clip", "Poll"],                          ctr: "0.4%" },
+                    { platform: "linkedin",      freq: "3ÃÂ / week",   formats: ["Article", "Milestone post", "Behind-the-lens"],        ctr: "0.6%" },
                   ].map(({ platform, freq, formats, ctr }) => {
                     const meta = PLATFORM_META[platform] || { label: platform, color: "text-zinc-400", icon: null };
                     return (
@@ -794,7 +794,7 @@ export default function AdvertisingDashboard() {
           )}
         </TabsContent>
 
-        {/* âââ Activity Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Activity Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <TabsContent value="activity" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card shadow-lg shadow-amber-500/5">
             <CardHeader className="pb-3">
@@ -841,7 +841,7 @@ export default function AdvertisingDashboard() {
                         )}
                       </div>
                       <span className="text-xs text-muted-foreground flex-shrink-0">
-                        {item.createdAt ? new Date(item.createdAt).toLocaleString() : "â"}
+                        {item.createdAt ? new Date(item.createdAt).toLocaleString() : "Ã¢ÂÂ"}
                       </span>
                     </div>
                   ))}
@@ -861,7 +861,7 @@ export default function AdvertisingDashboard() {
   );
 }
 
-// âââ Missing import ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Missing import Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function Heart({ className }: { className?: string }) {
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>

@@ -77,7 +77,7 @@ import { useLocation } from "wouter";
             <div className="relative flex-1 min-w-48">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search campaignsâ¦"
+                placeholder="Search campaignsÃ¢ÂÂ¦"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="pl-9"
@@ -190,7 +190,7 @@ import { useLocation } from "wouter";
                         <h3 className="font-bold text-sm leading-snug line-clamp-2 group-hover:text-amber-400 transition-colors">{campaign.title}</h3>
                         {campaign.tagline && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{campaign.tagline}</p>}
                       </div>
-                      <Progress value={progress} className="h-1.5 rounded-full" />
+                      <Progress value={progress} className="h-1.5 rounded-full [&>div]:bg-amber-500" />
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span className="font-semibold text-foreground">{fmtAud(campaign.raisedAmountCents)}</span>
                         <span>{progress}% of {fmtAud(campaign.goalAmountCents)}</span>

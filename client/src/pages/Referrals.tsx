@@ -57,7 +57,7 @@ export default function Referrals() {
   const shareNative = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Join Virelle Studios ÃÂ¢ÃÂÃÂ AI Film Production",
+        title: "Join Virelle Studios ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ AI Film Production",
         text: "I've been using Virelle Studios to create Hollywood-quality AI films. Sign up with my link and we both get 7,000 bonus credits!",
         url: referralLink,
       }).catch(() => {});
@@ -79,7 +79,7 @@ export default function Referrals() {
 
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
-      `ÃÂ°ÃÂÃÂÃÂ¬ Join me on Virelle Studios ÃÂ¢ÃÂÃÂ the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
+      `ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¬ Join me on Virelle Studios ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
     );
     window.open("https://wa.me/?text=" + text, "_blank");
   };
@@ -280,7 +280,7 @@ export default function Referrals() {
                 </span>
                 <span className="text-amber-400 font-semibold">{successful} / {nextMilestone.count} referrals</span>
               </div>
-              <Progress value={milestoneProgress} className="h-2" />
+              <Progress value={milestoneProgress} className="h-2 [&>div]:bg-amber-500" />
               <p className="text-xs text-muted-foreground">
                 {nextMilestone.count - successful} more signup{nextMilestone.count - successful !== 1 ? "s" : ""} to unlock{" "}
                 <span className="text-amber-400 font-semibold">{formatCredits(nextMilestone.bonus)} bonus credits</span>
