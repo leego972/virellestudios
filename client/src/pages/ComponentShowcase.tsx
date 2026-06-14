@@ -988,7 +988,7 @@ export default function ComponentsShowcase() {
             <h3 className="text-2xl font-semibold gradient-text-gold">Collapsible</h3>
             <Collapsible>
               <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-                <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+                <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
                   <CollapsibleTrigger asChild>
                     <Button variant="ghost" className="w-full justify-between">
                       <CardTitle className="gradient-text-gold">@peduarte starred 3 repositories</CardTitle>

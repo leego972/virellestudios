@@ -574,6 +574,7 @@ export default function DialogueEditor() {
         </DialogContent>
       </Dialog>
     </div>
+  </>
   );
 }
 

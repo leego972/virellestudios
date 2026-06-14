@@ -642,7 +642,6 @@ import { useState, useEffect, useCallback } from "react";
             to   { transform: translateY(-100%); }
           }
         `}</style>
-      </div>
     </>
     );
   }
