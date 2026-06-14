@@ -118,7 +118,144 @@ import { useEffect, useMemo, useState } from "react";
     );
   }
 
-  // ─── Main component ───────────────────────────────────────────────────────────
+
+    // ─── Interactive Timeline Editor ─────────────────────────────────────────────
+
+    function TimelineEditor({
+      scenes, projectId, onReordered,
+    }: {
+      scenes: any[]; projectId: number; onReordered: () => void;
+    }) {
+      const [order, setOrder]   = useState<number[]>(scenes.map((s: any) => s.id));
+      const [dragging, setDragging] = useState<number | null>(null);
+      const [dragOver, setDragOver] = useState<number | null>(null);
+      const [saved, setSaved]   = useState(false);
+      const reorder = trpc.scene.reorder.useMutation();
+      const utils   = trpc.useUtils();
+      const totalDur = scenes.reduce((a: number, s: any) => a + (s.duration || 0), 0);
+
+      useEffect(() => { setOrder(scenes.map((s: any) => s.id)); }, [scenes.length]);
+
+      const ordered = order.map(id => scenes.find((s: any) => s.id === id)).filter(Boolean) as any[];
+
+      function startDrag(id: number) { setDragging(id); }
+      function onDragOver(id: number, e: React.DragEvent) { e.preventDefault(); setDragOver(id); }
+      function onDrop(targetId: number) {
+        if (dragging === null || dragging === targetId) { setDragging(null); setDragOver(null); return; }
+        const next = [...order];
+        const fromIdx = next.indexOf(dragging);
+        const toIdx   = next.indexOf(targetId);
+        next.splice(fromIdx, 1);
+        next.splice(toIdx, 0, dragging);
+        setOrder(next);
+        setDragging(null);
+        setDragOver(null);
+        setSaved(false);
+      }
+      function onDragEnd() { setDragging(null); setDragOver(null); }
+
+      async function handleSave() {
+        try {
+          await reorder.mutateAsync({ projectId, sceneIds: order });
+          await utils.scene.listByProject.invalidate({ projectId });
+          setSaved(true);
+          setTimeout(() => setSaved(false), 2000);
+          onReordered();
+          toast.success("Scene order saved");
+        } catch (e: any) { toast.error(e.message || "Reorder failed"); }
+      }
+
+      const minWidth = 40;
+      const maxWidth = 240;
+
+      return (
+        <div className="rounded-xl border overflow-hidden" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(255,255,255,0.02)" }}>
+          <div className="px-5 py-3 border-b flex items-center justify-between" style={{ borderColor:"rgba(255,255,255,0.07)" }}>
+            <div>
+              <p className="text-xs font-semibold">Visual Timeline — drag to reorder</p>
+              <p className="text-[10px] text-muted-foreground">{ordered.length} scenes · {fmtSecs(totalDur)} total</p>
+            </div>
+            <Button size="sm" onClick={handleSave} disabled={reorder.isPending || saved} className="gap-2 h-7 text-xs"
+              style={{ background: saved ? "rgba(74,222,128,0.15)" : "linear-gradient(135deg,#D4AF37,#b8960c)", color: saved ? "#4ade80" : "#000" }}>
+              {reorder.isPending ? <Loader2 className="h-3 w-3 animate-spin text-amber-400" /> : <Check className="h-3 w-3" />}
+              {saved ? "Saved!" : "Save Order"}
+            </Button>
+          </div>
+          {/* Timeline scroll */}
+          <div className="px-4 py-4 overflow-x-auto">
+            <div className="flex items-end gap-1.5 min-w-max pb-1">
+              {ordered.map((s: any, i: number) => {
+                const dur   = s.duration || 5;
+                const frac  = totalDur > 0 ? dur / totalDur : 1 / ordered.length;
+                const w     = Math.max(minWidth, Math.min(maxWidth, Math.round(frac * 900)));
+                const isDragging = dragging === s.id;
+                const isOver     = dragOver  === s.id;
+                return (
+                  <div key={s.id}
+                    draggable
+                    onDragStart={() => startDrag(s.id)}
+                    onDragOver={e  => onDragOver(s.id, e)}
+                    onDrop={()     => onDrop(s.id)}
+                    onDragEnd={onDragEnd}
+                    className="flex flex-col items-center cursor-grab active:cursor-grabbing select-none transition-all"
+                    style={{ opacity: isDragging ? 0.3 : 1, transform: isOver ? "scaleY(1.04)" : "none" }}>
+                    {/* Clip block */}
+                    <div className="relative rounded-lg overflow-hidden border-2 transition-colors"
+                      style={{
+                        width: w, height: 54,
+                        borderColor: isOver ? "#D4AF37" : "rgba(255,255,255,0.08)",
+                        background: s.thumbnailUrl ? "transparent" : "rgba(212,175,55,0.06)",
+                      }}>
+                      {s.thumbnailUrl && (
+                        <img src={s.thumbnailUrl} alt="" className="w-full h-full object-cover opacity-70" />
+                      )}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center px-1">
+                        {!s.thumbnailUrl && (
+                          <Clapperboard style={{ width:14, height:14, color:"rgba(212,175,55,0.4)" }} />
+                        )}
+                        <span className="text-[9px] font-bold text-center leading-tight mt-0.5 drop-shadow-sm"
+                          style={{ color: s.thumbnailUrl ? "#fff" : "rgba(255,255,255,0.6)" }}>
+                          {i + 1}
+                        </span>
+                      </div>
+                      {/* Has video badge */}
+                      {s.videoUrl && (
+                        <div className="absolute top-1 right-1 h-2 w-2 rounded-full" style={{ background:"#4ade80" }} title="Video ready" />
+                      )}
+                      {/* Drop indicator */}
+                      {isOver && (
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5" style={{ background:"#D4AF37" }} />
+                      )}
+                    </div>
+                    {/* Label */}
+                    <div className="mt-1 text-center" style={{ width: w }}>
+                      <p className="text-[9px] text-muted-foreground truncate px-1">{s.title || "Scene"}</p>
+                      <p className="text-[8px] text-muted-foreground/50">{fmtSecs(dur)}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {/* Timecode ruler */}
+          <div className="px-4 pb-2">
+            <div className="flex items-center gap-1.5 overflow-x-auto">
+              {ordered.map((s: any, i: number) => {
+                const cum = ordered.slice(0, i).reduce((a: number, x: any) => a + (x.duration || 0), 0);
+                return (
+                  <span key={s.id} className="text-[9px] text-muted-foreground/40 whitespace-nowrap">
+                    {fmtSecs(cum)}
+                  </span>
+                );
+              })}
+              <span className="text-[9px] text-muted-foreground/40 ml-auto">{fmtSecs(totalDur)}</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Main component ───────────────────────────────────────────────────────────
 
   export default function CuttingRoom() {
     const params = useParams<{ projectId: string }>();
@@ -273,7 +410,12 @@ import { useEffect, useMemo, useState } from "react";
             </div>
           </div>
 
-          {/* Scene timeline */}
+          {/* Interactive Timeline Editor */}
+            {sortedScenes.length > 0 && (
+              <TimelineEditor scenes={sortedScenes} projectId={projectId} onReordered={() => {}} />
+            )}
+
+            {/* Scene timeline */}
           <div className="space-y-2">
             <div className="flex items-center justify-between mb-1">
               <p className="text-xs font-semibold">Scene Timeline</p>
