@@ -125,7 +125,7 @@ export default function Referrals() {
       {/* Referral Link Card */}
       <Card className="bg-gradient-to-br from-amber-600/10 to-orange-600/5 border-amber-500/20">
         <CardHeader>
-          <CardTitle className="text-lg">Your Referral Link</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold">Your Referral Link</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {isLoading ? (
@@ -185,7 +185,7 @@ export default function Referrals() {
           : "border-border/50"
         }>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Tag className="h-4 w-4 text-green-400" />
               Your Promo Code
             </CardTitle>
@@ -266,7 +266,7 @@ export default function Referrals() {
       {/* Milestone Progress */}
       <Card className="border-amber-500/20">
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
             <Trophy className="h-5 w-5 text-amber-400" />
             Milestone Rewards
           </CardTitle>
@@ -333,7 +333,7 @@ export default function Referrals() {
       {/* How It Works */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">How It Works</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold">How It Works</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -368,7 +368,7 @@ export default function Referrals() {
       {stats?.referrals && stats.referrals.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Referral History</CardTitle>
+            <CardTitle className="text-lg gradient-text-gold">Referral History</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

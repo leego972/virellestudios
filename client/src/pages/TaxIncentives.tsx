@@ -73,7 +73,7 @@ import { useState, useMemo } from "react";
         {/* Budget input + top picks */}
         <div className="grid gap-4 sm:grid-cols-2">
           <Card>
-            <CardHeader><CardTitle className="text-sm">Your Production Budget</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm gradient-text-gold">Your Production Budget</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-1.5">
                 <Label>Total Budget (USD equivalent)</Label>
@@ -151,7 +151,7 @@ import { useState, useMemo } from "react";
 
         {selected && (
           <Card className="border-primary/30">
-            <CardHeader><CardTitle className="text-base flex items-center justify-between"><span>{selected.name}, {selected.country} — {selected.rebate}% {selected.type}</span><a href={selected.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="gap-1 text-xs"><ExternalLink className="h-3 w-3" />Official Site</Button></a></CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold"><span>{selected.name}, {selected.country} — {selected.rebate}% {selected.type}</span><a href={selected.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="gap-1 text-xs"><ExternalLink className="h-3 w-3" />Official Site</Button></a></CardTitle></CardHeader>
             <CardContent className="space-y-2">
               <p className="text-sm text-muted-foreground">{selected.notes}</p>
               <div className="flex gap-4 text-xs">

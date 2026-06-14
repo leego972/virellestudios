@@ -269,7 +269,7 @@ export default function NewProject() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-primary" />
-                <CardTitle className="text-sm font-medium">Quick Generate — Just the Essentials</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Quick Generate — Just the Essentials</CardTitle>
               </div>
               <p className="text-xs text-muted-foreground mt-1">Fill in a title and describe your film. Our AI Director handles the rest — screenplay, scenes, characters, and cinematography.</p>
             </CardHeader>
@@ -403,7 +403,7 @@ export default function NewProject() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Clapperboard className="h-4 w-4 text-amber-400" />
-                <CardTitle className="text-sm font-medium">Generate Trailer — AI Cinematic Preview</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Generate Trailer — AI Cinematic Preview</CardTitle>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Virelle will generate your film's scenes, then automatically produce a cinematic trailer with key shots, tagline, and beat structure. No editing required.
@@ -499,7 +499,7 @@ export default function NewProject() {
           <TabsContent value="basics" className="space-y-4 mt-4">
             <Card className="bg-card/50">
               <CardHeader className="pb-4">
-                <CardTitle className="text-sm font-medium">Basic Information</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Basic Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
@@ -716,7 +716,7 @@ export default function NewProject() {
           <TabsContent value="story" className="space-y-4 mt-4">
             <Card className="bg-card/50">
               <CardHeader className="pb-4">
-                <CardTitle className="text-sm font-medium">Main Storyline</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Main Storyline</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
@@ -778,7 +778,7 @@ export default function NewProject() {
           <TabsContent value="narrative" className="space-y-4 mt-4">
             <Card className="bg-card/50">
               <CardHeader className="pb-4">
-                <CardTitle className="text-sm font-medium">Narrative Structure</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Narrative Structure</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -828,7 +828,7 @@ export default function NewProject() {
 
             <Card className="bg-card/50">
               <CardHeader className="pb-4">
-                <CardTitle className="text-sm font-medium">Key Story Moments</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Key Story Moments</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
@@ -914,7 +914,7 @@ export default function NewProject() {
         {/* v6.62 — Project-level reference images (style anchors) */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm">Style Anchors (optional)</CardTitle>
+            <CardTitle className="text-sm gradient-text-gold">Style Anchors (optional)</CardTitle>
           </CardHeader>
           <CardContent>
             <ProjectReferenceImageDrop

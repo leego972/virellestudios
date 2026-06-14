@@ -1110,7 +1110,7 @@ export default function FeatureTimeline() {
       <Dialog open={newCutDialogOpen} onOpenChange={setNewCutDialogOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-700 max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-zinc-100">Create New Cut</DialogTitle>
+            <DialogTitle className="text-zinc-100 gradient-text-gold">Create New Cut</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
@@ -1194,7 +1194,7 @@ export default function FeatureTimeline() {
       <Dialog open={generateActsDialogOpen} onOpenChange={setGenerateActsDialogOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-700 max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-zinc-100">Generate Act Structure</DialogTitle>
+            <DialogTitle className="text-zinc-100 gradient-text-gold">Generate Act Structure</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <p className="text-xs text-zinc-400">
@@ -1238,7 +1238,7 @@ export default function FeatureTimeline() {
       <Dialog open={compileDialogOpen} onOpenChange={setCompileDialogOpen}>
         <DialogContent className="bg-zinc-900 border-zinc-700 max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-zinc-100 flex items-center gap-2">
+            <DialogTitle className="text-zinc-100 flex items-center gap-2 gradient-text-gold">
               <Film size={16} className="text-amber-500" /> Compile Full Film
             </DialogTitle>
           </DialogHeader>

@@ -195,7 +195,7 @@ export default function BrandOutreach() {
         {/* Brands */}
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-base">Brands & Sponsor Desks</CardTitle>
+            <CardTitle className="text-base gradient-text-gold">Brands & Sponsor Desks</CardTitle>
             <CardDescription>Pick one to draft outreach.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -256,7 +256,7 @@ export default function BrandOutreach() {
         {/* AI outreach drafter */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Sparkles className="h-4 w-4" /> Outreach Drafter
             </CardTitle>
             <CardDescription>

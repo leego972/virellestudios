@@ -225,7 +225,7 @@ export default function Collaboration() {
         {/* Roles Guide */}
         <Card className="mb-6">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm">Team Roles</CardTitle>
+            <CardTitle className="text-sm gradient-text-gold">Team Roles</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">

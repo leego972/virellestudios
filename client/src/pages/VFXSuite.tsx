@@ -223,7 +223,7 @@ function VFXSuiteInner() {
         <div className="space-y-4">
           <Card className="border-amber-500/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Processing Settings</CardTitle>
+              <CardTitle className="text-sm gradient-text-gold">Processing Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -287,7 +287,7 @@ function VFXSuiteInner() {
           {selectedOps.length > 0 && (
             <Card className="border-amber-500/20">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Selected Operations</CardTitle>
+                <CardTitle className="text-sm gradient-text-gold">Selected Operations</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-1">

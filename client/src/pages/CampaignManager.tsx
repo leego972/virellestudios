@@ -667,7 +667,7 @@ export default function CampaignManager() {
         <TabsContent value="quick-generate" className="space-y-4 mt-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 gradient-text-gold">
                 <Zap className="h-5 w-5 text-primary" />
                 Quick Content Generator
               </CardTitle>
@@ -854,7 +854,7 @@ export default function CampaignManager() {
                 {/* Platform Breakdown */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
+                    <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                       <Globe className="h-4 w-4 text-primary" />
                       Platform Breakdown
                     </CardTitle>
@@ -888,7 +888,7 @@ export default function CampaignManager() {
                 {/* Content Type Breakdown */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
+                    <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                       <Sparkles className="h-4 w-4 text-primary" />
                       Content Type Performance
                     </CardTitle>
@@ -923,7 +923,7 @@ export default function CampaignManager() {
               {/* Recent Activity */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                     <Clock className="h-4 w-4 text-primary" />
                     Recent Activity
                   </CardTitle>
@@ -958,7 +958,7 @@ export default function CampaignManager() {
               {/* Advertising Tips */}
               <Card className="border-primary/20 bg-primary/5">
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                     <TrendingUp className="h-4 w-4 text-primary" />
                     Free Advertising Tips
                   </CardTitle>

@@ -807,7 +807,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               The Inciting Email
             </div>
-            <h3 className="text-2xl font-bold ">
+            <h3 className="text-2xl font-bold">
               One email reminded him he was a storyteller.
             </h3>
           </div>
@@ -841,7 +841,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Cast
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold ">
+            <h3 className="text-2xl md:text-3xl font-bold">
               Main characters
             </h3>
           </div>
@@ -892,7 +892,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Short Film
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold ">
+            <h3 className="text-2xl md:text-3xl font-bold">
               Full script
             </h3>
           </div>
@@ -1099,7 +1099,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               What Virelle Built
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold ">
+            <h3 className="text-2xl md:text-3xl font-bold">
               A complete production package
             </h3>
             <p className="text-sm text-neutral-500 mt-2 max-w-xl mx-auto">
@@ -1133,7 +1133,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               The Difference
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold ">
+            <h3 className="text-2xl md:text-3xl font-bold">
               {showrunner.comparisonCopy.headline}
             </h3>
             <p className="text-sm text-neutral-400 max-w-2xl mx-auto mt-3 leading-relaxed">
@@ -1196,7 +1196,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Social Cuts
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold ">
+            <h3 className="text-2xl md:text-3xl font-bold">
               3 ready-to-post versions
             </h3>
           </div>

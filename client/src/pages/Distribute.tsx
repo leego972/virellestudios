@@ -235,7 +235,7 @@ export default function Distribute() {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <BarChart2 className="w-4 h-4 text-amber-500" />
-              <CardTitle className="text-sm">Film Page Analytics</CardTitle>
+              <CardTitle className="text-sm gradient-text-gold">Film Page Analytics</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -261,7 +261,7 @@ export default function Distribute() {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Distribution Readiness</CardTitle>
+            <CardTitle className="text-base gradient-text-gold">Distribution Readiness</CardTitle>
             <Badge
               variant={isFullyReady ? "default" : "secondary"}
               className={isFullyReady ? "bg-green-600" : ""}
@@ -353,7 +353,7 @@ export default function Distribute() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <platform.icon className={`w-5 h-5 ${platform.color}`} />
-                        <CardTitle className="text-sm">{platform.label}</CardTitle>
+                        <CardTitle className="text-sm gradient-text-gold">{platform.label}</CardTitle>
                       </div>
                       {done && <Badge className="bg-green-600 text-xs">Done</Badge>}
                     </div>

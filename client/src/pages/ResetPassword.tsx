@@ -69,7 +69,7 @@ export default function ResetPassword() {
               <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
                 <XCircle className="w-6 h-6 text-red-500" />
               </div>
-              <CardTitle className="text-xl">Invalid link</CardTitle>
+              <CardTitle className="text-xl gradient-text-gold">Invalid link</CardTitle>
               <CardDescription>This password reset link is missing a token. Please request a new one.</CardDescription>
             </CardHeader>
             <CardFooter className="justify-center">
@@ -99,7 +99,7 @@ export default function ResetPassword() {
               <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
                 <XCircle className="w-6 h-6 text-red-500" />
               </div>
-              <CardTitle className="text-xl">Link expired</CardTitle>
+              <CardTitle className="text-xl gradient-text-gold">Link expired</CardTitle>
               <CardDescription>This password reset link has expired or has already been used. Please request a new one.</CardDescription>
             </CardHeader>
             <CardFooter className="justify-center">
@@ -129,7 +129,7 @@ export default function ResetPassword() {
               <div className="mx-auto w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center mb-2">
                 <CheckCircle2 className="w-6 h-6 text-green-500" />
               </div>
-              <CardTitle className="text-xl">Password reset!</CardTitle>
+              <CardTitle className="text-xl gradient-text-gold">Password reset!</CardTitle>
               <CardDescription>Your password has been updated successfully. You can now sign in with your new password.</CardDescription>
             </CardHeader>
             <CardFooter className="justify-center">
@@ -172,7 +172,7 @@ export default function ResetPassword() {
 
         <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-xl">Reset password</CardTitle>
+            <CardTitle className="text-xl gradient-text-gold">Reset password</CardTitle>
             <CardDescription>Enter your new password below</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>

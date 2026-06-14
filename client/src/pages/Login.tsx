@@ -91,7 +91,7 @@ export default function Login() {
           {/* Login Card */}
           <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl">
             <CardHeader className="space-y-1 pb-4">
-              <CardTitle className="text-xl text-center">Sign In</CardTitle>
+              <CardTitle className="text-xl text-center gradient-text-gold">Sign In</CardTitle>
               <CardDescription className="text-center">Enter your email and password to continue</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>

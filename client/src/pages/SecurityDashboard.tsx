@@ -253,7 +253,7 @@ export default function SecurityDashboard() {
       {/* Flagged Users */}
       <Card className="border-border/50 bg-card/80">
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
             <AlertTriangle className="w-5 h-5 text-orange-500" />
             Flagged Users
           </CardTitle>
@@ -326,7 +326,7 @@ export default function SecurityDashboard() {
       {/* Lock User Action */}
       <Card className="border-border/50 bg-card/80">
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
             <Lock className="w-5 h-5 text-red-500" />
             Lock User Account
           </CardTitle>
@@ -387,7 +387,7 @@ export default function SecurityDashboard() {
         <CardHeader>
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
                 <ShieldAlert className="w-5 h-5 text-red-500" />
                 Security Events
               </CardTitle>
@@ -462,7 +462,7 @@ export default function SecurityDashboard() {
         <CardHeader>
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
                 <Eye className="w-5 h-5 text-green-500" />
                 Audit Log
               </CardTitle>

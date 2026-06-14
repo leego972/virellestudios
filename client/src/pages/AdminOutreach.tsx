@@ -573,7 +573,7 @@ export default function AdminOutreach() {
       <Dialog open={confirmSendId !== null} onOpenChange={() => setConfirmSendId(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold">
               <Send className="h-5 w-5 text-amber-400" />
               Push to Full List
             </DialogTitle>

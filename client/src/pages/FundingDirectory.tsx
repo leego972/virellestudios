@@ -690,7 +690,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-border shrink-0">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base">
+            <DialogTitle className="flex items-center gap-2 text-base gradient-text-gold">
               <FileText className="h-5 w-5 text-amber-500" />
               {source.packTitle || "Global Film Funding Application"}
             </DialogTitle>

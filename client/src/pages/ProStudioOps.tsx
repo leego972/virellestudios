@@ -213,15 +213,15 @@ function StudioDashboardTab({ projectId }: { projectId: number }) {
         </CardContent></Card>
       )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><MessageSquare className="h-4 w-4" />Frame Reviews</CardTitle></CardHeader><CardContent>
+        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><MessageSquare className="h-4 w-4" />Frame Reviews</CardTitle></CardHeader><CardContent>
           <div className="flex items-baseline gap-3"><div className="text-2xl font-bold">{d.comments.open}</div><div className="text-xs text-muted-foreground">open · {d.comments.resolved} resolved</div></div>
           {d.comments.open > 0 && <div className="text-[11px] text-amber-400 mt-1">⚠ awaiting director attention</div>}
         </CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><Package className="h-4 w-4" />Deliverables</CardTitle></CardHeader><CardContent>
+        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Package className="h-4 w-4" />Deliverables</CardTitle></CardHeader><CardContent>
           <div className="flex items-baseline gap-3"><div className="text-2xl font-bold">{d.deliverables.ready}/{d.deliverables.total}</div><div className="text-xs text-muted-foreground">ready</div></div>
           {d.deliverables.total > 0 && d.deliverables.ready < d.deliverables.total && <div className="text-[11px] text-muted-foreground mt-1">{d.deliverables.total - d.deliverables.ready} pending packaging</div>}
         </CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><Scale className="h-4 w-4" />Clearances</CardTitle></CardHeader><CardContent>
+        <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Scale className="h-4 w-4" />Clearances</CardTitle></CardHeader><CardContent>
           <div className="flex items-baseline gap-3"><div className="text-2xl font-bold">{d.clearances.total - d.clearances.pending}/{d.clearances.total}</div><div className="text-xs text-muted-foreground">cleared</div></div>
           {d.clearances.pending > 0 && <div className="text-[11px] text-rose-400 mt-1">⚠ {d.clearances.pending} blocking distribution</div>}
         </CardContent></Card>
@@ -261,7 +261,7 @@ function FrameCommentsTab({ projectId }: { projectId: number }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-4">
-      <Card><CardHeader><CardTitle className="text-sm">Scenes</CardTitle></CardHeader>
+      <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Scenes</CardTitle></CardHeader>
         <CardContent className="p-2 max-h-[60vh] overflow-y-auto">
           {sceneList.map(s => (
             <button key={s.id} onClick={() => { setSel(s.id); setDraft(null); }} className={`w-full text-left p-2 rounded text-xs hover:bg-muted/50 ${sceneId === s.id ? "bg-muted/70 ring-1 ring-primary/30" : ""}`}>
@@ -272,7 +272,7 @@ function FrameCommentsTab({ projectId }: { projectId: number }) {
         </CardContent>
       </Card>
       <Card>
-        <CardHeader><CardTitle className="text-sm">Review Thread</CardTitle><p className="text-xs text-muted-foreground">Frame.io-style timecoded reviews. Roles, statuses, sign-off list.</p></CardHeader>
+        <CardHeader><CardTitle className="text-sm gradient-text-gold">Review Thread</CardTitle><p className="text-xs text-muted-foreground">Frame.io-style timecoded reviews. Roles, statuses, sign-off list.</p></CardHeader>
         <CardContent className="space-y-2">
           {live.length === 0 && <p className="text-xs text-muted-foreground">No comments yet.</p>}
           {live.map((c, i) => (
@@ -326,7 +326,7 @@ function ColorTab({ projectId }: { projectId: number }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-4">
-      <Card><CardHeader><CardTitle className="text-sm">Scenes</CardTitle></CardHeader>
+      <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Scenes</CardTitle></CardHeader>
         <CardContent className="p-2 max-h-[60vh] overflow-y-auto">
           {sceneList.map(s => (
             <button key={s.id} onClick={() => { setSel(s.id); setDraft(null); }} className={`w-full text-left p-2 rounded text-xs hover:bg-muted/50 ${sceneId === s.id ? "bg-muted/70 ring-1 ring-primary/30" : ""}`}>
@@ -337,7 +337,7 @@ function ColorTab({ projectId }: { projectId: number }) {
         </CardContent>
       </Card>
       <Card>
-        <CardHeader><CardTitle className="text-sm">CDL + LUT + Color Space</CardTitle><p className="text-xs text-muted-foreground">ASC-CDL slope/offset/power/saturation per shot for DI handoff.</p></CardHeader>
+        <CardHeader><CardTitle className="text-sm gradient-text-gold">CDL + LUT + Color Space</CardTitle><p className="text-xs text-muted-foreground">ASC-CDL slope/offset/power/saturation per shot for DI handoff.</p></CardHeader>
         <CardContent className="space-y-3">
           {(["slope","offset","power"] as const).map(k => (
             <div key={k}>
@@ -378,7 +378,7 @@ function AssetVersionsTab({ projectId }: { projectId: number }) {
   const submit = () => { if (!form.label) return; snap.mutate({ projectId, ...form, notes: form.notes || undefined, payloadUrl: form.payloadUrl || undefined, checksum: form.checksum || undefined }); audit.mutate({ projectId, event: { action: "assetVersions.snapshot", targetType: form.assetType, summary: `Snapshot: ${form.label}` } }); setForm({ ...form, label: "", notes: "", payloadUrl: "", checksum: "" }); };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card><CardHeader><CardTitle className="text-sm">New Snapshot</CardTitle><p className="text-xs text-muted-foreground">Pin a version of any project asset for rollback or audit.</p></CardHeader>
+      <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">New Snapshot</CardTitle><p className="text-xs text-muted-foreground">Pin a version of any project asset for rollback or audit.</p></CardHeader>
         <CardContent className="space-y-2">
           <div><Label className="text-xs">Asset Type</Label>
             <Select value={form.assetType} onValueChange={v => setForm({ ...form, assetType: v })}><SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{["script","schedule","budget","edl","audio_stems","color_grade"].map(c => <SelectItem key={c} value={c} className="text-xs">{c}</SelectItem>)}</SelectContent></Select>
@@ -390,7 +390,7 @@ function AssetVersionsTab({ projectId }: { projectId: number }) {
           <Button size="sm" onClick={submit} disabled={snap.isPending || !form.label}><Plus className="h-3.5 w-3.5 mr-1.5" />Snapshot</Button>
         </CardContent>
       </Card>
-      <Card><CardHeader><CardTitle className="text-sm">Version History</CardTitle></CardHeader>
+      <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Version History</CardTitle></CardHeader>
         <CardContent className="space-y-1.5 max-h-[60vh] overflow-y-auto">
           {(list.data || []).length === 0 && <p className="text-xs text-muted-foreground">No snapshots yet.</p>}
           {(list.data || []).map((v: any) => (
@@ -438,14 +438,14 @@ function RenderQueueTab({ projectId }: { projectId: number }) {
 
   return (
     <div className="space-y-4">
-      <Card><CardHeader><CardTitle className="text-sm">Cost Caps</CardTitle></CardHeader>
+      <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Cost Caps</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div><Label className="text-xs">Daily credit cap</Label><Input type="number" value={live.cap?.dailyCredits ?? ""} onChange={e => updateCap({ dailyCredits: e.target.value ? Number(e.target.value) : null })} className="h-8 text-xs" /></div>
           <div><Label className="text-xs">Per-job cap</Label><Input type="number" value={live.cap?.perJobCredits ?? ""} onChange={e => updateCap({ perJobCredits: e.target.value ? Number(e.target.value) : null })} className="h-8 text-xs" /></div>
           <div className="flex items-end gap-2 pb-1"><Switch checked={!!live.cap?.pauseOnExceed} onCheckedChange={c => updateCap({ pauseOnExceed: c })} /><span className="text-xs">Pause queue if over cap</span></div>
         </CardContent>
       </Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2"><CardTitle className="text-sm">Queue ({live.jobs.length} jobs · est {dailyEstimate} cr {overCap && <span className="text-rose-400">⚠ over cap</span>})</CardTitle>
+      <Card><CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2"><CardTitle className="text-sm gradient-text-gold">Queue ({live.jobs.length} jobs · est {dailyEstimate} cr {overCap && <span className="text-rose-400">⚠ over cap</span>})</CardTitle>
         <div className="flex flex-wrap gap-1">
           <Button size="sm" variant="outline" onClick={() => runBulk("startAllQueued")} disabled={bulk.isPending}><Play className="h-3.5 w-3.5 mr-1" />Start All</Button>
           <Button size="sm" variant="outline" onClick={() => runBulk("pauseAll")} disabled={bulk.isPending}><Pause className="h-3.5 w-3.5 mr-1" />Pause All</Button>
@@ -497,12 +497,12 @@ function DeliverablesTab({ projectId }: { projectId: number }) {
 
   return (
     <div className="space-y-3">
-      <Card><CardHeader><CardTitle className="text-sm">Add Deliverable Profile</CardTitle></CardHeader>
+      <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Add Deliverable Profile</CardTitle></CardHeader>
         <CardContent className="flex flex-wrap gap-1.5">
           {Object.keys(presets).map(p => <Button key={p} size="sm" variant="outline" className="text-[10px] h-7" onClick={() => add(p)}><Plus className="h-3 w-3 mr-1" />{p.replace(/_/g, " ")}</Button>)}
         </CardContent>
       </Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm">Deliverable Specs</CardTitle><div className="flex gap-2"><Button size="sm" variant="outline" onClick={downloadManifest} disabled={!manifest.data}><Download className="h-3.5 w-3.5 mr-1.5" />Manifest</Button><Button size="sm" onClick={persist} disabled={!draft || save.isPending}><Save className="h-3.5 w-3.5 mr-1.5" />Save</Button></div></CardHeader>
+      <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm gradient-text-gold">Deliverable Specs</CardTitle><div className="flex gap-2"><Button size="sm" variant="outline" onClick={downloadManifest} disabled={!manifest.data}><Download className="h-3.5 w-3.5 mr-1.5" />Manifest</Button><Button size="sm" onClick={persist} disabled={!draft || save.isPending}><Save className="h-3.5 w-3.5 mr-1.5" />Save</Button></div></CardHeader>
         <CardContent className="space-y-2">
           {live.length === 0 && <p className="text-xs text-muted-foreground">No deliverables.</p>}
           {live.map((d: any, i: number) => (
@@ -540,12 +540,12 @@ function ClearancesTab({ projectId }: { projectId: number }) {
 
   return (
     <div className="space-y-3">
-      <Card><CardHeader><CardTitle className="text-sm">Add Clearance</CardTitle></CardHeader>
+      <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Add Clearance</CardTitle></CardHeader>
         <CardContent className="flex flex-wrap gap-1.5">
           {["music_sync","master_use","location_release","talent_release","ai_rider_sag","stock_footage","trademark"].map(k => <Button key={k} size="sm" variant="outline" className="text-[10px] h-7" onClick={() => add(k)}><Plus className="h-3 w-3 mr-1" />{k.replace(/_/g," ")}</Button>)}
         </CardContent>
       </Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm">Clearance Tracker</CardTitle><Button size="sm" onClick={persist} disabled={!draft || save.isPending}><Save className="h-3.5 w-3.5 mr-1.5" />Save</Button></CardHeader>
+      <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm gradient-text-gold">Clearance Tracker</CardTitle><Button size="sm" onClick={persist} disabled={!draft || save.isPending}><Save className="h-3.5 w-3.5 mr-1.5" />Save</Button></CardHeader>
         <CardContent className="space-y-2">
           {live.length === 0 && <p className="text-xs text-muted-foreground">No clearances tracked.</p>}
           {live.map((c: any, i: number) => (
@@ -585,12 +585,12 @@ function DistributionTab({ projectId }: { projectId: number }) {
 
   return (
     <div className="space-y-3">
-      <Card><CardHeader><CardTitle className="text-sm">Add Distribution Target</CardTitle></CardHeader>
+      <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Add Distribution Target</CardTitle></CardHeader>
         <CardContent className="flex flex-wrap gap-1.5">
           {["filmfreeway","vimeo_ott","prime_video_direct","youtube","tiktok","meta","x_video","tubi","plex","custom"].map(p => <Button key={p} size="sm" variant="outline" className="text-[10px] h-7" onClick={() => add(p)}><Plus className="h-3 w-3 mr-1" />{p.replace(/_/g," ")}</Button>)}
         </CardContent>
       </Card>
-      <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm">Distribution Plan</CardTitle><Button size="sm" onClick={persist} disabled={!draft || save.isPending}><Save className="h-3.5 w-3.5 mr-1.5" />Save</Button></CardHeader>
+      <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm gradient-text-gold">Distribution Plan</CardTitle><Button size="sm" onClick={persist} disabled={!draft || save.isPending}><Save className="h-3.5 w-3.5 mr-1.5" />Save</Button></CardHeader>
         <CardContent className="space-y-2">
           {live.length === 0 && <p className="text-xs text-muted-foreground">No targets yet.</p>}
           {live.map((t: any, i: number) => (
@@ -614,7 +614,7 @@ function AuditTab({ projectId }: { projectId: number }) {
   const list = trpc.auditLog.list.useQuery({ projectId, limit: 500 });
   const download = () => { if (!list.data) return; const blob = new Blob([JSON.stringify(list.data, null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `audit-log-project-${projectId}.json`; a.click(); URL.revokeObjectURL(a.href); };
   return (
-    <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm">Activity Trail ({(list.data || []).length} events)</CardTitle><Button size="sm" variant="outline" onClick={download}><Download className="h-3.5 w-3.5 mr-1.5" />Export JSON</Button></CardHeader>
+    <Card><CardHeader className="flex flex-row items-center justify-between"><CardTitle className="text-sm gradient-text-gold">Activity Trail ({(list.data || []).length} events)</CardTitle><Button size="sm" variant="outline" onClick={download}><Download className="h-3.5 w-3.5 mr-1.5" />Export JSON</Button></CardHeader>
       <CardContent>
         <div className="max-h-[60vh] overflow-y-auto">
           {(list.data || []).length === 0 && <p className="text-xs text-muted-foreground">No activity recorded yet.</p>}
@@ -645,7 +645,7 @@ function ProxyTab({ projectId }: { projectId: number }) {
   const persist = (id: number) => { const d = get(id); save.mutate({ projectId, sceneId: id, data: d }); audit.mutate({ projectId, event: { action: "proxyChain.save", targetType: "scene", targetId: String(id), summary: `proxy=${d.proxyStatus} master=${d.masterStatus}` } }); const next = { ...drafts }; delete next[id]; setDrafts(next); };
 
   return (
-    <Card><CardHeader><CardTitle className="text-sm">Proxy → Master Conform</CardTitle><p className="text-xs text-muted-foreground">Edit on 1/4-res proxies, conform to full-res master only on final pass.</p></CardHeader>
+    <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Proxy → Master Conform</CardTitle><p className="text-xs text-muted-foreground">Edit on 1/4-res proxies, conform to full-res master only on final pass.</p></CardHeader>
       <CardContent className="space-y-2 max-h-[70vh] overflow-y-auto">
         {((scenes.data || []) as any[]).map(s => {
           const d = get(s.id); const dirty = drafts[s.id] != null;
@@ -680,7 +680,7 @@ function CutsTab({ projectId }: { projectId: number }) {
   const persist = (id: number) => { save.mutate({ projectId, sceneId: id, data: get(id) }); audit.mutate({ projectId, event: { action: "timelineCuts.save", targetType: "scene", targetId: String(id), summary: `cuts updated for scene ${id}` } }); const next = { ...drafts }; delete next[id]; setDrafts(next); };
 
   return (
-    <Card><CardHeader><CardTitle className="text-sm">Trim In/Out, Transitions, Audio Fades</CardTitle><p className="text-xs text-muted-foreground">NLE-style J/L cuts, dissolves, audio crossfade per scene.</p></CardHeader>
+    <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Trim In/Out, Transitions, Audio Fades</CardTitle><p className="text-xs text-muted-foreground">NLE-style J/L cuts, dissolves, audio crossfade per scene.</p></CardHeader>
       <CardContent className="space-y-2 max-h-[70vh] overflow-y-auto">
         {((scenes.data || []) as any[]).map(s => {
           const d = get(s.id); const dirty = drafts[s.id] != null;
@@ -742,7 +742,7 @@ function LocksTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2"><Lock className="h-4 w-4" />Scene Locks</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Lock className="h-4 w-4" />Scene Locks</CardTitle>
         <div className="text-xs text-muted-foreground">Locked scenes cannot be re-rendered. Protects approved cuts from accidental credit spend. <span className="text-amber-400">{lockedCount} of {scenes.data.length} locked.</span></div>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -831,7 +831,7 @@ function ApprovalsTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2"><CheckCheck className="h-4 w-4" />3-Tier Approval Chain</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><CheckCheck className="h-4 w-4" />3-Tier Approval Chain</CardTitle>
         <div className="text-xs text-muted-foreground">Director → Producer → Executive. When all three approve, scene <strong>auto-locks</strong> against further renders.</div>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -920,7 +920,7 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
     <div className="space-y-4">
       {s && (
         <Card className="border-emerald-500/40 bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent">
-          <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2 text-emerald-300"><TrendingUp className="h-4 w-4" />What Virelle has saved you on this project</CardTitle></CardHeader>
+          <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2 text-emerald-300 gradient-text-gold"><TrendingUp className="h-4 w-4" />What Virelle has saved you on this project</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             <div>
               <div className="text-xs text-muted-foreground flex items-center gap-1.5"><DollarSign className="h-3 w-3" />Money saved</div>
@@ -941,7 +941,7 @@ function StudioBudgetTab({ projectId }: { projectId: number }) {
         </Card>
       )}
       <Card>
-        <CardHeader><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="h-4 w-4" />Project Budget</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><DollarSign className="h-4 w-4" />Project Budget</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div><Label className="text-xs">Total budget (USD)</Label><Input type="number" value={live.totalBudget} onChange={e => update({ totalBudget: Number(e.target.value) })} /></div>

@@ -532,7 +532,7 @@ export default function ContentCreatorPage() {
             {/* Generator Panel */}
             <Card className="bg-card/50 border-border/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Sparkles className="h-4 w-4 text-blue-400 text-amber-400/70" />
                   AI Content Generator
                 </CardTitle>
@@ -644,7 +644,7 @@ export default function ContentCreatorPage() {
               {generatedContent ? (
                 <Card className="bg-card/50 border-border/50">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-base flex items-center gap-2">
+                    <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                       <CheckCircle className="h-4 w-4 text-emerald-400" />
                       Generated Content
                     </CardTitle>
@@ -713,7 +713,7 @@ export default function ContentCreatorPage() {
               {/* SEO Briefs */}
               <Card className="bg-card/50 border-border/50">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2">
+                  <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                     <Search className="h-4 w-4 text-blue-400" />
                     SEO Content Briefs
                   </CardTitle>
@@ -978,7 +978,7 @@ export default function ContentCreatorPage() {
           {campaigns.length > 0 && (
             <Card className="bg-card/50 border-border/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                   <Zap className="h-4 w-4 text-yellow-400" />
                   Bulk Generate
                 </CardTitle>
@@ -1039,7 +1039,7 @@ export default function ContentCreatorPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="bg-card/50 border-border/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Video className="h-4 w-4 text-pink-400" />
                   TikTok Integration
                 </CardTitle>
@@ -1115,7 +1115,7 @@ export default function ContentCreatorPage() {
 
             <Card className="bg-card/50 border-border/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">TikTok Performance</CardTitle>
+                <CardTitle className="text-base gradient-text-gold">TikTok Performance</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {dashboard && (
@@ -1156,7 +1156,7 @@ export default function ContentCreatorPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="bg-card/50 border-border/50">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm">Performance by Platform</CardTitle>
+                    <CardTitle className="text-sm gradient-text-gold">Performance by Platform</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {Object.entries(analytics.byPlatform).length === 0 ? (
@@ -1182,7 +1182,7 @@ export default function ContentCreatorPage() {
 
                 <Card className="bg-card/50 border-border/50">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm">Key Metrics</CardTitle>
+                    <CardTitle className="text-sm gradient-text-gold">Key Metrics</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex items-center justify-between py-2 border-b border-border/50">
@@ -1211,7 +1211,7 @@ export default function ContentCreatorPage() {
               {dashboard?.topPerformingPieces && dashboard.topPerformingPieces.length > 0 && (
                 <Card className="bg-card/50 border-border/50">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm flex items-center gap-2">
+                    <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                       <Star className="h-4 w-4 text-yellow-400 text-amber-400/70" />
                       Top Performing Content
                     </CardTitle>

@@ -144,7 +144,7 @@ import { useState } from "react";
                       <span className="text-muted-foreground">
                         {TYPE_ICONS[bg.backgroundType as BgType] ?? <MapPin className="w-4 h-4 text-amber-400/70" />}
                       </span>
-                      <CardTitle className="text-base">{bg.name}</CardTitle>
+                      <CardTitle className="text-base gradient-text-gold">{bg.name}</CardTitle>
                     </div>
                     <Badge variant="secondary">{TYPE_LABELS[bg.backgroundType as BgType] ?? bg.backgroundType}</Badge>
                   </div>

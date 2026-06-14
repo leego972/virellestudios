@@ -150,7 +150,7 @@ export default function AdminSignatureCast() {
           <TabsContent value="actors" className="mt-4">
             <Card className="border-zinc-800">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm text-zinc-300">Actor Registry — Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold">Actor Registry — Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
               </CardHeader>
               <CardContent>
                 {/* Portrait Generation */}
@@ -304,7 +304,7 @@ export default function AdminSignatureCast() {
           <TabsContent value="pricing" className="mt-4">
             <Card className="border-zinc-800">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm text-zinc-300">License Pricing by Tier (AUD)</CardTitle>
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold">License Pricing by Tier (AUD)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -353,7 +353,7 @@ export default function AdminSignatureCast() {
           <TabsContent value="entitlements" className="mt-4">
             <Card className="border-zinc-800">
               <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                <CardTitle className="text-sm text-zinc-300">All Active Actor Licenses</CardTitle>
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold">All Active Actor Licenses</CardTitle>
                 <Button
                   size="sm"
                   variant="ghost"
@@ -417,7 +417,7 @@ export default function AdminSignatureCast() {
           <TabsContent value="analytics" className="mt-4">
             <Card className="border-zinc-800">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm text-zinc-300">Revenue & Conversion Analytics</CardTitle>
+                <CardTitle className="text-sm text-zinc-300 gradient-text-gold">Revenue & Conversion Analytics</CardTitle>
               </CardHeader>
               <CardContent>
                 {!analytics ? (

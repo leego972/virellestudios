@@ -159,7 +159,7 @@ export default function FestivalTracker() {
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">
-                    <CardTitle className="text-base leading-snug">{f.name}</CardTitle>
+                    <CardTitle className="text-base leading-snug gradient-text-gold">{f.name}</CardTitle>
                     <CardDescription className="text-xs flex items-center gap-1"><Globe2 className="h-3 w-3" />{f.city}, {f.country} · Tier {f.tier}</CardDescription>
                   </div>
                   {status && <Badge className={STATUS_COLORS[status] + " border-0 whitespace-nowrap"}>{STATUS_LABELS[status]}</Badge>}

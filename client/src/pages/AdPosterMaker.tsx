@@ -1233,7 +1233,7 @@ function AdPosterMakerInner() {
               {selectedElement && (
                 <Card className="border-primary/20 bg-primary/5">
                   <CardHeader className="pb-2 pt-3 px-3">
-                    <CardTitle className="text-xs font-semibold text-primary uppercase tracking-wider">Edit Selected Layer</CardTitle>
+                    <CardTitle className="text-xs font-semibold text-primary uppercase tracking-wider gradient-text-gold">Edit Selected Layer</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3 px-3 pb-3">
                     <div>
@@ -1472,7 +1472,7 @@ function AdPosterMakerInner() {
       <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Download className="h-5 w-5 text-primary" /> Export Asset</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Download className="h-5 w-5 text-primary" /> Export Asset</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -1503,7 +1503,7 @@ function AdPosterMakerInner() {
       <Dialog open={showQrDialog} onOpenChange={setShowQrDialog}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><QrCode className="h-5 w-5 text-primary" /> QR Code Overlay</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><QrCode className="h-5 w-5 text-primary" /> QR Code Overlay</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -1543,7 +1543,7 @@ function AdPosterMakerInner() {
       <Dialog open={showTaglinesDialog} onOpenChange={setShowTaglinesDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Zap className="h-5 w-5 text-amber-400" /> 5 AI Tagline Variants</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Zap className="h-5 w-5 text-amber-400" /> 5 AI Tagline Variants</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
             {taglineVariants.map((tagline, i) => (
@@ -1567,7 +1567,7 @@ function AdPosterMakerInner() {
       <Dialog open={showBrandKitDialog} onOpenChange={setShowBrandKitDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Paintbrush className="h-5 w-5 text-purple-400" /> AI Brand Kit</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Paintbrush className="h-5 w-5 text-purple-400" /> AI Brand Kit</DialogTitle>
           </DialogHeader>
           {brandKit && (
             <div className="space-y-4">

@@ -214,7 +214,7 @@ export default function Credits() {
       {/* ─── Transaction History ─── */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg">Transaction History</CardTitle>
+          <CardTitle className="text-lg gradient-text-gold">Transaction History</CardTitle>
           {total > 0 && (
             <span className="text-sm text-muted-foreground">
               {total.toLocaleString()} total
@@ -328,7 +328,7 @@ export default function Credits() {
       {/* ─── How Credits Work ─── */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">How Credits Work</CardTitle>
+          <CardTitle className="text-base gradient-text-gold">How Credits Work</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">

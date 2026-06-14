@@ -71,7 +71,7 @@ function StyleBibleTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Project Visual Identity</CardTitle>
+        <CardTitle className="text-base gradient-text-gold">Project Visual Identity</CardTitle>
         <p className="text-xs text-muted-foreground">Locked guidelines that every generated asset should respect. Useful for handing off to AI prompts and human collaborators alike.</p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -155,7 +155,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4">
       <Card>
-        <CardHeader><CardTitle className="text-sm">Scenes</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-sm gradient-text-gold">Scenes</CardTitle></CardHeader>
         <CardContent className="p-2 max-h-[60vh] overflow-y-auto">
           {sceneList.length === 0 ? (
             <p className="text-xs text-muted-foreground p-3 leading-relaxed">No scenes loaded — open a project with scenes to begin a Pro Studio session.</p>
@@ -173,7 +173,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">{scene ? `Versions — ${scene.title || scene.name || `Scene ${scene.id}`}` : "Select a scene"}</CardTitle>
+          <CardTitle className="text-sm gradient-text-gold">{scene ? `Versions — ${scene.title || scene.name || `Scene ${scene.id}`}` : "Select a scene"}</CardTitle>
           <p className="text-xs text-muted-foreground">Track every render of this shot. Mark one as final so editors and reviewers know what to use.</p>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -230,7 +230,7 @@ function VoiceConsentTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">AI Voice & Likeness Consent</CardTitle>
+        <CardTitle className="text-base gradient-text-gold">AI Voice & Likeness Consent</CardTitle>
         <p className="text-xs text-muted-foreground">Required when cloning a real person's voice or using a likeness that resembles a real performer. Distributors and platforms require this paper trail before accepting AI content.</p>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -327,7 +327,7 @@ function ProvenanceTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2"><FileJson className="h-4 w-4" />Content Provenance Manifest</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><FileJson className="h-4 w-4" />Content Provenance Manifest</CardTitle>
         <p className="text-xs text-muted-foreground">C2PA-compatible JSON listing every AI-generated asset in this project, the model used, and required disclosure language. Submit alongside YouTube, Meta, TikTok, and broadcast deliverables.</p>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -372,7 +372,7 @@ function RenderHistoryTab() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-sm">Top Cost Drivers</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-sm gradient-text-gold">Top Cost Drivers</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-1.5">
             {(summary.data?.byAction || []).slice(0, 12).map(a => (
@@ -386,7 +386,7 @@ function RenderHistoryTab() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-sm">Recent Render Activity</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-sm gradient-text-gold">Recent Render Activity</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-1 max-h-[60vh] overflow-y-auto">
             {(list.data || []).map(r => (

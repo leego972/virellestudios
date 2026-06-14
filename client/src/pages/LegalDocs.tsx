@@ -397,7 +397,7 @@ import { useState } from "react";
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="space-y-4">
                 <Card>
-                  <CardHeader><CardTitle className="text-base flex items-center gap-2">{selected.icon}{selected.title}</CardTitle><CardDescription>{selected.description}</CardDescription></CardHeader>
+                  <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold">{selected.icon}{selected.title}</CardTitle><CardDescription>{selected.description}</CardDescription></CardHeader>
                   <CardContent className="space-y-4">
                     {selected.fields.map(f => (
                       <div key={f.key} className="space-y-1.5">

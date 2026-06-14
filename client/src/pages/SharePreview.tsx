@@ -151,7 +151,7 @@ export default function SharePreview() {
       <div className="min-h-screen flex items-center justify-center p-6" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
         <Card className="max-w-md w-full">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
+            <CardTitle className="flex items-center gap-2 text-destructive gradient-text-gold">
               <AlertCircle className="h-5 w-5" />
               Link expired or invalid
             </CardTitle>

@@ -119,7 +119,7 @@ import { useState } from "react";
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <Package className="w-4 h-4 text-muted-foreground" />
-                      <CardTitle className="text-base">{prop.name}</CardTitle>
+                      <CardTitle className="text-base gradient-text-gold">{prop.name}</CardTitle>
                     </div>
                     <Badge variant="outline">{prop.category}</Badge>
                   </div>

@@ -425,7 +425,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
           <div className="col-span-1 space-y-4">
             <Card className="border-amber-500/20">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                   <Camera className="w-4 h-4 text-amber-400" />
                   Camera Rig Setup
                 </CardTitle>
@@ -499,7 +499,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
             {characters.length > 0 && (
               <Card className="border-amber-500/20">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2">
+                  <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                     <Users className="w-4 h-4 text-amber-400" />
                     Scene Cast
                   </CardTitle>
@@ -530,7 +530,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
 
             <Card className="border-amber-500/20">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                   <Clock className="w-4 h-4 text-amber-400" />
                   Sequence Summary
                 </CardTitle>

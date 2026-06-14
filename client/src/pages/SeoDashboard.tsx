@@ -294,7 +294,7 @@ export default function SeoDashboard() {
             {/* SEO Report Summary */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <BarChart3 className="w-4 h-4 text-amber-400" />
                   SEO Report Summary
                 </CardTitle>
@@ -350,7 +350,7 @@ export default function SeoDashboard() {
             {/* Web Vitals */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Activity className="w-4 h-4 text-amber-400" />
                   Core Web Vitals
                 </CardTitle>
@@ -395,7 +395,7 @@ export default function SeoDashboard() {
           {/* Quick Actions */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Zap className="w-4 h-4 text-amber-400" />
                 Quick Actions
               </CardTitle>
@@ -455,7 +455,7 @@ export default function SeoDashboard() {
         <TabsContent value="keywords" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Hash className="w-4 h-4 text-amber-400" />
                 Keyword Rankings
               </CardTitle>
@@ -487,7 +487,7 @@ export default function SeoDashboard() {
           {metaQuery.data && metaQuery.data.length > 0 && (
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <FileText className="w-4 h-4 text-amber-400" />
                   Meta Tag Optimisations
                 </CardTitle>
@@ -533,7 +533,7 @@ export default function SeoDashboard() {
             {/* Structured Data */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <FileText className="w-4 h-4 text-amber-400" />
                   Structured Data (JSON-LD)
                 </CardTitle>
@@ -575,7 +575,7 @@ export default function SeoDashboard() {
             {/* Open Graph */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Share2 className="w-4 h-4 text-amber-400" />
                   Open Graph Tags
                 </CardTitle>
@@ -604,7 +604,7 @@ export default function SeoDashboard() {
           {/* Internal Links */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Link className="w-4 h-4 text-amber-400" />
                 Internal Link Graph
               </CardTitle>
@@ -637,7 +637,7 @@ export default function SeoDashboard() {
           {/* Public Pages */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Globe className="w-4 h-4 text-amber-400" />
                 Indexed Public Pages
               </CardTitle>
@@ -670,7 +670,7 @@ export default function SeoDashboard() {
           {/* SEO Event Log */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Clock className="w-4 h-4 text-amber-400" />
                 SEO Event Log
               </CardTitle>
@@ -719,7 +719,7 @@ export default function SeoDashboard() {
           {/* IndexNow */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Globe className="w-4 h-4 text-amber-400" />
                 IndexNow — Instant Search Engine Notification
               </CardTitle>
@@ -751,7 +751,7 @@ export default function SeoDashboard() {
           {/* SEO Engine Status */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Settings className="w-4 h-4 text-amber-400" />
                 SEO Engine Status
               </CardTitle>
@@ -812,7 +812,7 @@ export default function SeoDashboard() {
           {/* Kill Switch */}
           <Card className="border-red-500/20 bg-red-500/5">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2 text-red-400">
+              <CardTitle className="text-base flex items-center gap-2 text-red-400 gradient-text-gold">
                 <AlertTriangle className="w-4 h-4" />
                 Emergency Kill Switch
               </CardTitle>

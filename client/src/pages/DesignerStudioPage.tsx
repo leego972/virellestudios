@@ -104,7 +104,7 @@ const ITEM_TIERS = [
       <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
         <DialogContent className="bg-zinc-900 border-white/15 text-white max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold">Set Pricing</DialogTitle>
+            <DialogTitle className="text-base font-bold gradient-text-gold">Set Pricing</DialogTitle>
             <p className="text-xs text-white/50 mt-0.5 truncate">{title}</p>
           </DialogHeader>
 

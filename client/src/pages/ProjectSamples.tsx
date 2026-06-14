@@ -91,7 +91,7 @@ function VideoPlayerModal({
         {/* Info bar */}
         <div className="mt-3 flex items-start justify-between gap-4">
           <div>
-            <h2 className=" font-semibold text-lg gradient-text-gold">{sample.title}</h2>
+            <h2 className="font-semibold text-lg gradient-text-gold">{sample.title}</h2>
             {sample.description && (
               <p className="text-white/60 text-sm mt-1 line-clamp-2">{sample.description}</p>
             )}
@@ -314,7 +314,7 @@ function UploadForm({ onSuccess }: { onSuccess: () => void }) {
       </DialogTrigger>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 gradient-text-gold">
             <Film className="w-5 h-5 text-amber-500" />
             Upload Project Sample
           </DialogTitle>

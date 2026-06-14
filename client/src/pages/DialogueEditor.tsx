@@ -228,7 +228,7 @@ export default function DialogueEditor() {
           <div className="sm:col-span-3">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">Scenes</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Scenes</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <ScrollArea className="h-[calc(100vh-16rem)]">
@@ -270,7 +270,7 @@ export default function DialogueEditor() {
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                     <MessageSquare className="h-4 w-4" />
                     {selectedSceneId ? `Scene Dialogue` : "All Dialogue"} ({conversationView.length} lines)
                   </CardTitle>
@@ -470,7 +470,7 @@ export default function DialogueEditor() {
       <Dialog open={showAiSuggest} onOpenChange={(open) => { setShowAiSuggest(open); if (!open) setAiSuggestions([]); }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary" /> AI Dialogue Suggestions</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Sparkles className="h-5 w-5 text-primary" /> AI Dialogue Suggestions</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -561,7 +561,7 @@ export default function DialogueEditor() {
       <Dialog open={showAiScene} onOpenChange={setShowAiScene}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Wand2 className="h-5 w-5 text-primary" /> Generate Scene Dialogue</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Wand2 className="h-5 w-5 text-primary" /> Generate Scene Dialogue</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
             AI will generate a complete dialogue sequence for the selected scene based on the film's plot, characters, and scene parameters.

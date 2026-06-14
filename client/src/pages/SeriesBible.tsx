@@ -130,15 +130,15 @@ import { useState } from "react";
 
             <TabsContent value="overview" className="space-y-4 mt-4">
               <Card><CardContent className="p-4"><p className="text-sm italic text-muted-foreground mb-3">"{activeSeries.logline}"</p>{activeSeries.premise && <><Separator className="mb-3" /><p className="text-sm text-muted-foreground">{activeSeries.premise}</p></>}</CardContent></Card>
-              {activeSeries.toneAndStyle && <Card><CardHeader><CardTitle className="text-sm">Tone & Style</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{activeSeries.toneAndStyle}</p></CardContent></Card>}
+              {activeSeries.toneAndStyle && <Card><CardHeader><CardTitle className="text-sm gradient-text-gold">Tone & Style</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{activeSeries.toneAndStyle}</p></CardContent></Card>}
             </TabsContent>
 
             <TabsContent value="world" className="mt-4">
-              <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><Globe className="h-4 w-4 text-primary" />World Building</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground whitespace-pre-wrap">{activeSeries.worldBuilding || "No world building notes yet. Edit the bible to add them."}</p></CardContent></Card>
+              <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Globe className="h-4 w-4 text-primary" />World Building</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground whitespace-pre-wrap">{activeSeries.worldBuilding || "No world building notes yet. Edit the bible to add them."}</p></CardContent></Card>
             </TabsContent>
 
             <TabsContent value="characters" className="mt-4">
-              <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2"><Users className="h-4 w-4 text-primary" />Main Characters</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground whitespace-pre-wrap">{activeSeries.mainCharacters || "No character notes yet. Edit the bible to add them."}</p></CardContent></Card>
+              <Card><CardHeader><CardTitle className="text-sm flex items-center gap-2 gradient-text-gold"><Users className="h-4 w-4 text-primary" />Main Characters</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground whitespace-pre-wrap">{activeSeries.mainCharacters || "No character notes yet. Edit the bible to add them."}</p></CardContent></Card>
             </TabsContent>
 
             <TabsContent value="episodes" className="space-y-4 mt-4">

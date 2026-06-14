@@ -115,7 +115,7 @@ import { useState } from "react";
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-primary" />
-            <CardTitle className="text-base">Visual DNA Lock</CardTitle>
+            <CardTitle className="text-base gradient-text-gold">Visual DNA Lock</CardTitle>
             <Badge variant="outline" className="text-xs">Project-wide</Badge>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
@@ -233,7 +233,7 @@ import { useState } from "react";
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Badge variant="outline" className="text-xs font-mono">ACT {act.orderIndex}</Badge>
-                          <CardTitle className="text-base">{act.name}</CardTitle>
+                          <CardTitle className="text-base gradient-text-gold">{act.name}</CardTitle>
                         </div>
                         <div className="flex gap-1">
                           <Button size="sm" variant="ghost" className="h-7" onClick={() => setEditing(act)}>

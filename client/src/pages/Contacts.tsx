@@ -83,7 +83,7 @@ export default function Contacts() {
 
         {open && (
           <Card className="bg-zinc-950 border-zinc-800">
-            <CardHeader><CardTitle className="text-base">{editingId ? "Edit contact" : "New contact"}</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base gradient-text-gold">{editingId ? "Edit contact" : "New contact"}</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div><label className="text-xs text-zinc-400">Name *</label><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>

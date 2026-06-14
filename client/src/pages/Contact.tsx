@@ -157,7 +157,7 @@ export default function Contact() {
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Send us a message</CardTitle>
+                <CardTitle className="text-lg gradient-text-gold">Send us a message</CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">

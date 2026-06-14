@@ -1349,7 +1349,7 @@ export default function DirectorCut() {
       <Dialog open={deleteConfirmIdx !== null} onOpenChange={() => setDeleteConfirmIdx(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-400">
+            <DialogTitle className="flex items-center gap-2 text-red-400 gradient-text-gold">
               <Trash2 className="w-4 h-4" /> Remove from Timeline
             </DialogTitle>
           </DialogHeader>

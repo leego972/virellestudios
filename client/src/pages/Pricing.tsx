@@ -403,7 +403,7 @@ export default function Pricing() {
                         className="shrink-0"
                       />
                     )}
-                    <CardTitle className="text-2xl">{tier.displayName}</CardTitle>
+                    <CardTitle className="text-2xl gradient-text-gold">{tier.displayName}</CardTitle>
                   </div>
                   <CardDescription className="min-h-[3rem]">{tier.description}</CardDescription>
                   <div className="mt-4">
@@ -457,7 +457,7 @@ export default function Pricing() {
                         className="shrink-0"
                       />
                     )}
-                    <CardTitle className="text-2xl">{tier.displayName}</CardTitle>
+                    <CardTitle className="text-2xl gradient-text-gold">{tier.displayName}</CardTitle>
                   </div>
                   <CardDescription className="min-h-[3rem]">{tier.description}</CardDescription>
                   <div className="mt-4">
@@ -561,7 +561,7 @@ export default function Pricing() {
               <Card key={pack.id} className={`border-zinc-800 bg-zinc-900/50 ${pack.popular ? "ring-1 ring-amber-500/50 border-amber-500/50" : ""}`}>
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg">{pack.label}</CardTitle>
+                    <CardTitle className="text-lg gradient-text-gold">{pack.label}</CardTitle>
                     {pack.popular && <Badge className="bg-amber-600">Best Value</Badge>}
                   </div>
                   <div className="text-2xl font-bold mt-2">{formatAUD(pack.price)}</div>

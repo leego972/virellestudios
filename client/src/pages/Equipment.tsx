@@ -143,7 +143,7 @@ import { useState, useMemo } from "react";
         {/* Add / Edit form */}
         {editing && (
           <Card className="border-primary/30">
-            <CardHeader><CardTitle className="text-base">{editing.id && items.find(i => i.id === editing.id) ? "Edit Item" : "Add Equipment"}</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base gradient-text-gold">{editing.id && items.find(i => i.id === editing.id) ? "Edit Item" : "Add Equipment"}</CardTitle></CardHeader>
             <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-1.5 sm:col-span-2 lg:col-span-1"><Label>Item Name *</Label><Input placeholder="Sony FX3 Camera Body" value={editing.name ?? ""} onChange={e => setEditing(p => ({ ...p, name: e.target.value }))} /></div>
               <div className="space-y-1.5"><Label>Category</Label><Select value={editing.category ?? "other"} onValueChange={v => setEditing(p => ({ ...p, category: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{CATEGORIES.map(c => <SelectItem key={c.key} value={c.key}>{c.icon} {c.label}</SelectItem>)}</SelectContent></Select></div>

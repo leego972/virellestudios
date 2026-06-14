@@ -158,7 +158,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
         {step === "input" && (
           <div className="space-y-4">
             <Card className="border-border/40 bg-black/20">
-              <CardHeader><CardTitle className="text-base">Paste Your Script</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base gradient-text-gold">Paste Your Script</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-xs text-muted-foreground">Use standard screenplay format: character names in ALL CAPS on their own line, followed by dialogue on the next line. Scene headings start with INT. or EXT.</p>
                 <Textarea className="h-72 font-mono text-xs" value={scriptText} onChange={e => setScriptText(e.target.value)} placeholder="INT. LOCATION - TIME\n\nACTION DESCRIPTION\n\nCHARACTER NAME\nDialogue text here." />
@@ -171,7 +171,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
         {step === "voices" && (
           <div className="space-y-4">
             <Card className="border-border/40 bg-black/20">
-              <CardHeader><CardTitle className="text-base flex items-center gap-2"><Users className="h-5 w-5 text-primary" />Assign Voices to Characters</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Users className="h-5 w-5 text-primary" />Assign Voices to Characters</CardTitle></CardHeader>
               <CardContent className="space-y-3">
                 {characters.map(char => (
                   <div key={char.name} className="flex items-center gap-3">

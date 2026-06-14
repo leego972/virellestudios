@@ -862,7 +862,7 @@ import { useState, useEffect } from "react";
               <DialogHeader>
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <DialogTitle className="text-xl font-bold">Unlock Talent</DialogTitle>
+                    <DialogTitle className="text-xl font-bold gradient-text-gold">Unlock Talent</DialogTitle>
                     <DialogDescription className="text-zinc-400 mt-1">
                       License <span className="text-white font-medium">{unlockActor.name}</span> for your project
                     </DialogDescription>

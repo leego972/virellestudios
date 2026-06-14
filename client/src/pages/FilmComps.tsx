@@ -131,7 +131,7 @@ import { useState, useMemo } from "react";
 
         {selected && (
           <Card className="border-primary/30">
-            <CardHeader><CardTitle className="text-base flex items-center justify-between"><span>{selected.title} ({selected.year})</span><div className="flex gap-2"><Badge variant="outline">{selected.budgetTier} budget</Badge><Badge className="text-sm font-bold">{selected.roi}x ROI</Badge></div></CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold"><span>{selected.title} ({selected.year})</span><div className="flex gap-2"><Badge variant="outline">{selected.budgetTier} budget</Badge><Badge className="text-sm font-bold">{selected.roi}x ROI</Badge></div></CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                 {[["Budget", selected.budget],["Domestic", selected.domestic],["Worldwide", selected.worldwide],["Distributor", selected.distribution],["Festival", selected.festivalRun],["Tone", selected.tone]].map(([k, v]) => (

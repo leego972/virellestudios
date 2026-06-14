@@ -371,7 +371,7 @@ function CrowdfundingHubInner() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Film className="h-4 w-4 text-amber-400" /> My Campaigns
               </CardTitle>
               <CardDescription>Your crowdfunding campaigns launched on Virelle.</CardDescription>
@@ -530,7 +530,7 @@ function CrowdfundingHubInner() {
         {/* Platforms list */}
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-base">Platforms</CardTitle>
+            <CardTitle className="text-base gradient-text-gold">Platforms</CardTitle>
             <CardDescription>Curated from the Funding Directory.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -576,7 +576,7 @@ function CrowdfundingHubInner() {
         {/* AI campaign builder */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Sparkles className="h-4 w-4" /> AI Campaign Builder
             </CardTitle>
             <CardDescription>
@@ -701,7 +701,7 @@ function CrowdfundingHubInner() {
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold">
               <Film className="w-5 h-5 text-amber-400" /> New Crowdfunding Campaign
             </DialogTitle>
           </DialogHeader>
@@ -801,7 +801,7 @@ function CrowdfundingHubInner() {
       <Dialog open={showLaunchModal} onOpenChange={(open) => { if (!open) { setShowLaunchModal(false); setLaunchingId(null); } }}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold">
               <Rocket className="w-5 h-5 text-amber-400" /> Launch Campaign
             </DialogTitle>
             <DialogDescription>
@@ -848,7 +848,7 @@ function CrowdfundingHubInner() {
       <Dialog open={!!manageCampaignId} onOpenChange={(open) => !open && setManageCampaignId(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold">
               <Settings className="w-5 h-5 text-amber-400" /> Manage Campaign
             </DialogTitle>
             <DialogDescription>

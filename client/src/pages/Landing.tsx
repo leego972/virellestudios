@@ -196,7 +196,7 @@ export default function Landing() {
               Professional AI Film Orchestration
             </div>
 
-            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 gradient-text-gold ">
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 gradient-text-gold">
               CONCEPT TO <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-500">CINEMATIC REALITY.</span>
             </h1>
@@ -426,7 +426,7 @@ export default function Landing() {
                     <span className={`text-${s.color}-400 font-black text-lg`}>{s.step}</span>
                   </div>
                   <div className={`inline-block px-2.5 py-1 rounded-full bg-${s.color}-500/10 text-${s.color}-400 text-[11px] font-bold mb-3 uppercase tracking-wider`}>{s.time}</div>
-                  <h3 className="text-base font-bold mb-2 ">{s.title}</h3>
+                  <h3 className="text-base font-bold mb-2">{s.title}</h3>
                   <p className="text-xs text-white/60 leading-relaxed">{s.desc}</p>
                 </div>
               ))}
@@ -506,7 +506,7 @@ export default function Landing() {
                   <div className="h-14 w-14 rounded-xl bg-amber-500/10 flex items-center justify-center mb-5 group-hover:bg-amber-500/20 transition-colors">
                     <Film className="h-7 w-7 text-amber-400" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 ">Full AI Film Generation</h3>
+                  <h3 className="text-xl font-bold mb-2">Full AI Film Generation</h3>
                   <p className="text-sm text-white/60 leading-relaxed mb-6">
                     Describe your movie concept and Virelle generates the entire film — screenplay, 60–90 cinematic scenes with clip chaining, AI voice-acted dialogue, original soundtrack, and scene-to-scene continuity.
                   </p>
@@ -527,7 +527,7 @@ export default function Landing() {
                   <div className="h-14 w-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5 group-hover:bg-purple-500/20 transition-colors">
                     <Sparkles className="h-7 w-7 text-purple-400" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 ">VFX Scene Studio</h3>
+                  <h3 className="text-xl font-bold mb-2">VFX Scene Studio</h3>
                   <p className="text-sm text-white/60 leading-relaxed mb-6">
                     Shooting a live-action film with a real cast? Use Virelle to generate the scenes that would be cost-prohibitive to shoot. Export individual scenes to composite into your production.
                   </p>
@@ -691,7 +691,7 @@ export default function Landing() {
                 ].map(card => (
                   <div key={card.type} className={`rounded-2xl border ${card.border} bg-white/[0.02] p-7 ${card.ring ? "ring-1 ring-amber-500/10" : ""}`}>
                     <div className="flex items-center justify-between mb-5">
-                      <h3 className="text-base font-bold ">{card.type}</h3>
+                      <h3 className="text-base font-bold">{card.type}</h3>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/60 bg-amber-500/5 border border-amber-500/15 px-2 py-0.5 rounded-full">{card.tag}</span>
                     </div>
                     <ul className="space-y-2.5">
@@ -728,7 +728,7 @@ export default function Landing() {
               ].map(plan => (
                 <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-white/10 hover:border-amber-500/30 bg-white/[0.02]"}`}>
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-2 ">{plan.tier}</h3>
+                    <h3 className="text-xl font-bold mb-2">{plan.tier}</h3>
                     <div className="mb-1">
                       <span className="text-3xl font-black text-white">{plan.price}</span>
                       {plan.price !== "Custom" && <span className="text-xs text-white/40 ml-1">/mo</span>}
@@ -1074,7 +1074,7 @@ export default function Landing() {
               <div className="border-t border-white/8 pt-16 flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div>
                   <p className="text-white/35 text-xs font-bold uppercase tracking-wider mb-1">Already a filmmaker?</p>
-                  <h3 className="text-xl font-black ">Browse the Wardrobe Marketplace</h3>
+                  <h3 className="text-xl font-black">Browse the Wardrobe Marketplace</h3>
                   <p className="text-white/40 text-sm mt-1">
                     Lease designer collections — they appear in your characters for AI scene generation.
                   </p>

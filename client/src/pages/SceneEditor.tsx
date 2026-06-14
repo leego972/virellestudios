@@ -957,7 +957,7 @@ export default function SceneEditor() {
       {scenes && scenes.length > 0 && (
         <Card className="bg-card/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Timeline</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider gradient-text-gold">Timeline</CardTitle>
           </CardHeader>
           <CardContent className="pb-4">
             <ScrollArea className="w-full">
@@ -1136,7 +1136,7 @@ export default function SceneEditor() {
       <Dialog open={editDialogOpen} onOpenChange={(open) => { if (!open) { setEditDialogOpen(false); setSelectedSceneId(null); } }}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto w-[95vw] md:w-auto">
           <DialogHeader>
-            <DialogTitle className="text-base">
+            <DialogTitle className="text-base gradient-text-gold">
               {selectedSceneId ? "Edit Scene" : "New Scene"}
             </DialogTitle>
             <p className="text-xs text-muted-foreground">Click any section header to expand or collapse it.</p>
@@ -2467,7 +2467,7 @@ export default function SceneEditor() {
       <Dialog open={!!previewUrl} onOpenChange={() => setPreviewUrl(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-base">Scene Preview</DialogTitle>
+            <DialogTitle className="text-base gradient-text-gold">Scene Preview</DialogTitle>
           </DialogHeader>
           {previewUrl && (
             <div className="aspect-video rounded-md overflow-hidden bg-muted">

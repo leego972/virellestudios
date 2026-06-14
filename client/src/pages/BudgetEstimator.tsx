@@ -328,7 +328,7 @@ export default function BudgetEstimator() {
             {/* Visual Breakdown Bar */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">Budget Distribution</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Budget Distribution</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex h-8 rounded-lg overflow-hidden">
@@ -412,7 +412,7 @@ export default function BudgetEstimator() {
             {activeBudget.aiAnalysis && (
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                     <TrendingUp className="h-4 w-4" /> Budget Analysis
                   </CardTitle>
                 </CardHeader>

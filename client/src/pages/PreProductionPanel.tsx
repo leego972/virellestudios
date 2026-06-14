@@ -208,7 +208,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
       {/* Production World */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Globe className="h-4 w-4 text-amber-500" />Production World
           </CardTitle>
         </CardHeader>
@@ -234,7 +234,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
       {/* Camera Package */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Camera className="h-4 w-4 text-blue-500" />Camera Package
           </CardTitle>
         </CardHeader>
@@ -262,7 +262,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
       {/* Colour & Look */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Palette className="h-4 w-4 text-purple-500" />Colour & Look
           </CardTitle>
         </CardHeader>
@@ -287,7 +287,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
       {/* Camera Movement & Lighting */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Film className="h-4 w-4 text-green-500" />Camera Movement & Lighting
           </CardTitle>
         </CardHeader>
@@ -313,7 +313,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
       {/* Sound & Music */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Zap className="h-4 w-4 text-orange-500" />Sound Design & Music
           </CardTitle>
         </CardHeader>
@@ -343,7 +343,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
       {dnaResult?.visualDnaPrompt && (
         <Card className="border-amber-500/30 bg-amber-500/5">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
               <Star className="h-4 w-4 text-amber-500" />Visual DNA
             </CardTitle>
           </CardHeader>
@@ -871,7 +871,7 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
     <div className="space-y-5 max-w-4xl">
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <CloudSun className="h-4 w-4 text-sky-500" />Atmospheric Conditions
           </CardTitle>
         </CardHeader>
@@ -914,7 +914,7 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
             <Film className="h-4 w-4 text-indigo-500" />Scene Context
           </CardTitle>
         </CardHeader>
@@ -962,7 +962,7 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
       {result && (
         <Card className="border-sky-500/30 bg-sky-500/5">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
               <CloudSun className="h-4 w-4 text-sky-500" />Atmosphere Profile
             </CardTitle>
           </CardHeader>
@@ -1112,7 +1112,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
+              <DialogTitle className="flex items-center gap-2 gradient-text-gold">
                 <Camera className="h-5 w-5 text-violet-500" />Upload Garment Photo
               </DialogTitle>
             </DialogHeader>
@@ -1436,7 +1436,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
       {/* Generator form */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2">
+          <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
             <Wand2 className="h-4 w-4 text-violet-500" />Generate New Shot List
           </CardTitle>
         </CardHeader>
@@ -1479,7 +1479,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
         <Card className="border-violet-200 bg-violet-50/30">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                 <Sparkles className="h-4 w-4 text-violet-500" />
                 {generatedShots.length} shots — {totalDuration(generatedShots)} screen time
               </CardTitle>

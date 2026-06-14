@@ -522,7 +522,7 @@ export default function Characters() {
       }}>
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-lg flex items-center gap-2">
+            <DialogTitle className="text-lg flex items-center gap-2 gradient-text-gold">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center">
                 <Camera className="h-4 w-4 text-white" />
               </div>
@@ -922,7 +922,7 @@ export default function Characters() {
       <Dialog open={dialogOpen} onOpenChange={(open) => !open && closeDialog()}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-base">
+            <DialogTitle className="text-base gradient-text-gold">
               {editingId ? "Edit Character" : "New Character"}
             </DialogTitle>
           </DialogHeader>
@@ -1119,7 +1119,7 @@ export default function Characters() {
       <Dialog open={aiDialogOpen} onOpenChange={setAiDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-base flex items-center gap-2">
+            <DialogTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Wand2 className="h-4 w-4 text-primary" />
               AI Character Generator
             </DialogTitle>

@@ -86,7 +86,7 @@ function MatchTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2"><Sparkles className="h-4 w-4 text-violet-400" />Ranked Match Score</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Sparkles className="h-4 w-4 text-violet-400" />Ranked Match Score</CardTitle>
         <div className="text-xs text-muted-foreground">Sources scored on country fit, stage, type, and synopsis keyword overlap. Top results first.</div>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -147,7 +147,7 @@ function SavedTab({ projectId }: { projectId: number }) {
   if (sources.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground">No shortlisted sources yet — save matches from the AI Match Score tab.</CardContent></Card>;
   return (
     <Card>
-      <CardHeader><CardTitle className="text-base flex items-center gap-2"><Bookmark className="h-4 w-4 text-amber-400" />Shortlist ({sources.length})</CardTitle></CardHeader>
+      <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Bookmark className="h-4 w-4 text-amber-400" />Shortlist ({sources.length})</CardTitle></CardHeader>
       <CardContent className="space-y-2">
         {sources.map((s: any) => (
           <div key={s.id} className="border border-border rounded-lg p-3 flex items-start justify-between gap-3">
@@ -189,7 +189,7 @@ function AppsTab() {
         ))}
       </div>
       <Card>
-        <CardHeader><CardTitle className="text-base flex items-center gap-2"><FileText className="h-4 w-4" />My Applications ({list.length})</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><FileText className="h-4 w-4" />My Applications ({list.length})</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {list.slice().reverse().map((a: any) => {
             const meta = STATUS_META[a.status] || STATUS_META.submitted;
@@ -254,7 +254,7 @@ function AutofillTab({ projectId }: { projectId: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2"><Wand2 className="h-4 w-4 text-violet-400" />AI Application Drafter</CardTitle>
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><Wand2 className="h-4 w-4 text-violet-400" />AI Application Drafter</CardTitle>
         <div className="text-xs text-muted-foreground">Pick a funder; we'll draft tailored application copy from your project bible. Costs ~3 credits.</div>
       </CardHeader>
       <CardContent className="space-y-3">

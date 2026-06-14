@@ -856,7 +856,7 @@ export default function ProjectDetail() {
             </Card>
             <Card className="bg-card/50 lg:col-span-2">
               <CardHeader className="pb-3 flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-medium">Project Details</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">Project Details</CardTitle>
                 {!editingDescription ? (
                   <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
                     setDescForm({ description: project.description || "", plotSummary: project.plotSummary || "" });
@@ -1255,7 +1255,7 @@ export default function ProjectDetail() {
           {trailerData && (
             <Card className="bg-card/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">{trailerData.trailerTitle || "Movie Trailer"}</CardTitle>
+                <CardTitle className="text-sm font-medium gradient-text-gold">{trailerData.trailerTitle || "Movie Trailer"}</CardTitle>
                 {trailerData.tagline && <p className="text-xs text-muted-foreground italic">{trailerData.tagline}</p>}
               </CardHeader>
               <CardContent className="space-y-3">
@@ -1289,7 +1289,7 @@ export default function ProjectDetail() {
         <TabsContent value="export" className="space-y-4">
           <Card className="bg-card/50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Download className="h-4 w-4" />
                 Export Settings
               </CardTitle>
@@ -1472,7 +1472,7 @@ export default function ProjectDetail() {
           {/* Export History */}
           <Card className="bg-card/50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Export History</CardTitle>
+              <CardTitle className="text-sm font-medium gradient-text-gold">Export History</CardTitle>
             </CardHeader>
             <CardContent>
               {jobs?.filter(j => (j.metadata as any)?.exportType).length ? (
@@ -2114,7 +2114,7 @@ export default function ProjectDetail() {
       <Dialog open={charDialogOpen} onOpenChange={setCharDialogOpen}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-base">Add Character with Photo</DialogTitle>
+            <DialogTitle className="text-base gradient-text-gold">Add Character with Photo</DialogTitle>
           </DialogHeader>
           <form
             onSubmit={(e) => {
@@ -2234,7 +2234,7 @@ export default function ProjectDetail() {
       <Dialog open={aiCharDialogOpen} onOpenChange={setAiCharDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-base flex items-center gap-2">
+            <DialogTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Wand2 className="h-4 w-4 text-primary" />
               AI Character Generator
             </DialogTitle>
@@ -2516,7 +2516,7 @@ export default function ProjectDetail() {
       <Dialog open={soundtrackDialogOpen} onOpenChange={setSoundtrackDialogOpen}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-base flex items-center gap-2">
+            <DialogTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Music className="h-4 w-4 text-primary" />
               Add Soundtrack
             </DialogTitle>
@@ -2641,7 +2641,7 @@ export default function ProjectDetail() {
       <Dialog open={fullFilmDialogOpen} onOpenChange={setFullFilmDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 gradient-text-gold">
               <Film className="h-5 w-5 text-violet-400" />
               Generate Full Feature Film
             </DialogTitle>
@@ -2887,7 +2887,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       {/* Structure & Tone */}
       <Card className="bg-card/50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium">Structure & Tone</CardTitle>
+          <CardTitle className="text-sm font-medium gradient-text-gold">Structure & Tone</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -2945,7 +2945,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       {/* Main Plot & Subplots */}
       <Card className="bg-card/50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium">Plot</CardTitle>
+          <CardTitle className="text-sm font-medium gradient-text-gold">Plot</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-1">
@@ -2986,7 +2986,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       {/* World & Key Moments */}
       <Card className="bg-card/50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium">World & Key Moments</CardTitle>
+          <CardTitle className="text-sm font-medium gradient-text-gold">World & Key Moments</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-1">

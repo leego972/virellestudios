@@ -202,7 +202,7 @@ export default function AdminUsers() {
       {/* Quick Actions */}
         <Card className="border-amber-500/20 bg-amber-500/5">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Gift className="w-4 h-4 text-amber-500" />
               Beta Tester Account
             </CardTitle>
@@ -256,7 +256,7 @@ export default function AdminUsers() {
           ) : (
             <Card className="border-border/50 bg-card/80">
               <CardHeader>
-                <CardTitle className="text-lg">All Users</CardTitle>
+                <CardTitle className="text-lg gradient-text-gold">All Users</CardTitle>
                 <CardDescription>View and manage registered users</CardDescription>
               </CardHeader>
               <CardContent>
@@ -365,7 +365,7 @@ export default function AdminUsers() {
           ) : (
             <Card className="border-border/50 bg-card/80">
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
                   <Film className="w-5 h-5 text-amber-500" />
                   All Projects
                 </CardTitle>
@@ -597,7 +597,7 @@ export default function AdminUsers() {
       <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) { setDeleteTarget(null); setDeleteReason(""); } }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-400">
+            <DialogTitle className="flex items-center gap-2 text-red-400 gradient-text-gold">
               <AlertTriangle className="w-5 h-5" />
               Permanently Delete Project
             </DialogTitle>

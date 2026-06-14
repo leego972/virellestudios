@@ -214,7 +214,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Brief inputs</CardTitle>
+          <CardTitle className="text-base gradient-text-gold">Brief inputs</CardTitle>
           <CardDescription>
             Pulling from {sortedScenes.length} scene{sortedScenes.length === 1 ? "" : "s"} of{" "}
             <span className="font-medium">{project?.title || "your project"}</span>.
@@ -259,7 +259,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div>
-              <CardTitle className="text-base">Latest brief</CardTitle>
+              <CardTitle className="text-base gradient-text-gold">Latest brief</CardTitle>
               <CardDescription>{FORMATS[format].label} · {angle}</CardDescription>
             </div>
             <Button onClick={() => copy(lastBrief)} size="sm" variant="ghost" className="gap-2">

@@ -378,7 +378,7 @@ export default function AdvertisingDashboard() {
             {/* Platform Performance */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <TrendingUp className="w-4 h-4 text-amber-400" />
                   Platform Performance
                 </CardTitle>
@@ -411,7 +411,7 @@ export default function AdvertisingDashboard() {
             {/* Autonomous Status */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Zap className="w-4 h-4 text-amber-400" />
                   Autonomous Engine
                 </CardTitle>
@@ -450,7 +450,7 @@ export default function AdvertisingDashboard() {
           {activityQuery.data && activityQuery.data.length > 0 && (
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Activity className="w-4 h-4 text-amber-400" />
                   Recent Activity
                 </CardTitle>
@@ -538,7 +538,7 @@ export default function AdvertisingDashboard() {
             {/* TikTok Status */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Video className="w-4 h-4 text-pink-400" />
                   TikTok Integration
                 </CardTitle>
@@ -602,7 +602,7 @@ export default function AdvertisingDashboard() {
             {/* Generate Ad Video */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   Generate Ad Video
                 </CardTitle>
@@ -640,7 +640,7 @@ export default function AdvertisingDashboard() {
           {tiktok?.recentPosts && tiktok.recentPosts.length > 0 && (
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Recent TikTok Posts</CardTitle>
+                <CardTitle className="text-base gradient-text-gold">Recent TikTok Posts</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -666,7 +666,7 @@ export default function AdvertisingDashboard() {
         <TabsContent value="strategy" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Target className="w-4 h-4 text-amber-400" />
                 Platform Strategy Overview
               </CardTitle>
@@ -731,7 +731,7 @@ export default function AdvertisingDashboard() {
             {/* ─── Platform Playbook ────────────────────────────────────────── */}
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Briefcase className="w-4 h-4 text-amber-400" />
                   Platform Playbook
                 </CardTitle>
@@ -778,7 +778,7 @@ export default function AdvertisingDashboard() {
           {dashboard?.strategy && (
             <Card className="border-border/50 bg-card/80">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Current Campaign Strategy</CardTitle>
+                <CardTitle className="text-base gradient-text-gold">Current Campaign Strategy</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -798,7 +798,7 @@ export default function AdvertisingDashboard() {
         <TabsContent value="activity" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Activity className="w-4 h-4 text-amber-400" />
                 Advertising Activity Log
               </CardTitle>

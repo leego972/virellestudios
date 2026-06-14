@@ -335,7 +335,7 @@ export default function AdminAutonomous() {
           {/* Pipeline diagram */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base">Pipeline Flow</CardTitle>
+              <CardTitle className="text-base gradient-text-gold">Pipeline Flow</CardTitle>
               <CardDescription>How the autonomous system works</CardDescription>
             </CardHeader>
             <CardContent>
@@ -362,7 +362,7 @@ export default function AdminAutonomous() {
           {status?.lastRunResult && (
             <Card className="border-border/50 bg-card/80">
               <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Clock className="w-4 h-4 text-amber-400" />
                   Last Pipeline Run
                   <Badge variant="outline" className="ml-auto text-xs">
@@ -400,7 +400,7 @@ export default function AdminAutonomous() {
           {stats && Object.keys((stats as any)?.byPlatform || {}).length > 0 && (
             <Card className="border-border/50 bg-card/80">
               <CardHeader>
-                <CardTitle className="text-base">Content by Platform</CardTitle>
+                <CardTitle className="text-base gradient-text-gold">Content by Platform</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -424,7 +424,7 @@ export default function AdminAutonomous() {
           {/* Scheduler control */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base">Scheduler Control</CardTitle>
+              <CardTitle className="text-base gradient-text-gold">Scheduler Control</CardTitle>
               <CardDescription>The scheduler runs the full pipeline automatically every 6 hours</CardDescription>
             </CardHeader>
             <CardContent className="flex gap-3">
@@ -450,7 +450,7 @@ export default function AdminAutonomous() {
           {/* Platform selection */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base">Platform Selection</CardTitle>
+              <CardTitle className="text-base gradient-text-gold">Platform Selection</CardTitle>
               <CardDescription>Choose which platforms to generate content for</CardDescription>
             </CardHeader>
             <CardContent>
@@ -494,7 +494,7 @@ export default function AdminAutonomous() {
           {/* Manual triggers */}
           <Card className="border-border/50 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base">Manual Triggers</CardTitle>
+              <CardTitle className="text-base gradient-text-gold">Manual Triggers</CardTitle>
               <CardDescription>Run individual stages or the full pipeline on demand</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -599,7 +599,7 @@ export default function AdminAutonomous() {
         <TabsContent value="content" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Image className="w-4 h-4 text-amber-400" />
                 Content Queue
               </CardTitle>
@@ -675,7 +675,7 @@ export default function AdminAutonomous() {
         <TabsContent value="history" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Clock className="w-4 h-4 text-amber-400" />
                 Activity Log
               </CardTitle>
@@ -711,7 +711,7 @@ export default function AdminAutonomous() {
         <TabsContent value="settings" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Settings className="w-4 h-4 text-amber-400" />
                 Pipeline Configuration
               </CardTitle>

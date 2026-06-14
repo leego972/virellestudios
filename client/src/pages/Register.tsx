@@ -401,7 +401,7 @@ export default function Register() {
                 <Check className="w-8 h-8 text-amber-500" />
               </div>
               <div className="space-y-1">
-                <h2 className="text-2xl font-bold text-foreground gradient-text-gold">Welcome to Virelle Studios!</h2>
+                <h2 className="text-2xl font-bold gradient-text-gold">Welcome to Virelle Studios!</h2>
                 <p className="text-sm text-muted-foreground">
                   Account created. Now connect your AI providers to start generating.
                 </p>
@@ -529,7 +529,7 @@ export default function Register() {
           {step === 1 && (
             <>
               <CardHeader className="space-y-1 pb-3">
-                <CardTitle className="text-lg">Account Details</CardTitle>
+                <CardTitle className="text-lg gradient-text-gold">Account Details</CardTitle>
                 <CardDescription>Your login credentials and contact info</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3.5">
@@ -746,7 +746,7 @@ export default function Register() {
           {step === 2 && (
             <>
               <CardHeader className="space-y-1 pb-3">
-                <CardTitle className="text-lg">Professional Profile</CardTitle>
+                <CardTitle className="text-lg gradient-text-gold">Professional Profile</CardTitle>
                 <CardDescription>Tell us about your work so we can personalize your experience</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3.5">
@@ -851,7 +851,7 @@ export default function Register() {
           {step === 3 && (
             <>
               <CardHeader className="space-y-1 pb-3">
-                <CardTitle className="text-lg">Creative Preferences</CardTitle>
+                <CardTitle className="text-lg gradient-text-gold">Creative Preferences</CardTitle>
                 <CardDescription>Help us tailor your studio experience</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3.5">

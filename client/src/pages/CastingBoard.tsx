@@ -242,7 +242,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                       </div>
                     )}
                     <div className="min-w-0 flex-1">
-                      <CardTitle className="text-base flex items-center gap-2">
+                      <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                         <span className="truncate">{c.name}</span>
                         {c.role && (
                           <Badge variant="outline" className="text-[10px] shrink-0">

@@ -152,7 +152,7 @@ function LiveActionPlateInner() {
         <div className="space-y-4">
           <Card className="border-amber-500/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                 <Upload className="w-4 h-4 text-amber-400" />
                 Upload Live Action Plate
               </CardTitle>
@@ -198,7 +198,7 @@ function LiveActionPlateInner() {
 
           <Card className="border-amber-500/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Composite Mode</CardTitle>
+              <CardTitle className="text-sm gradient-text-gold">Composite Mode</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -230,7 +230,7 @@ function LiveActionPlateInner() {
         <div className="space-y-4">
           <Card className="border-amber-500/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Composite Settings</CardTitle>
+              <CardTitle className="text-sm gradient-text-gold">Composite Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>

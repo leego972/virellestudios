@@ -259,7 +259,7 @@ pre{white-space:pre-wrap;font:inherit}
       {/* Schedule controls */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Schedule</CardTitle>
+          <CardTitle className="text-base gradient-text-gold">Schedule</CardTitle>
           <CardDescription>
             {sortedScenes.length} scenes · estimated total runtime{" "}
             {fmtDuration(sortedScenes.reduce((acc: number, s: any) => acc + (s.duration || 0), 0))}.
@@ -291,7 +291,7 @@ pre{white-space:pre-wrap;font:inherit}
       {/* Stripboard */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Calendar className="h-4 w-4" /> Stripboard
           </CardTitle>
         </CardHeader>
@@ -345,7 +345,7 @@ pre{white-space:pre-wrap;font:inherit}
       {dood.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Users className="h-4 w-4" /> Day-out-of-days
             </CardTitle>
             <CardDescription>Which cast works which days. Plan their pickup, holds, and travel.</CardDescription>
@@ -390,7 +390,7 @@ pre{white-space:pre-wrap;font:inherit}
       {/* AI call sheet */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Sparkles className="h-4 w-4" /> AI Call Sheet
           </CardTitle>
           <CardDescription>Pick a day and generate a print-ready one-pager.</CardDescription>
@@ -535,7 +535,7 @@ Output clean markdown only, no commentary.`;
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
           <ClipboardList className="h-4 w-4" />
           Daily Production Report
         </CardTitle>
@@ -632,7 +632,7 @@ function ChainOfTitleSection({ projectId }: { projectId: number }) {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <ClipboardList className="h-4 w-4" />
               Chain of Title
             </CardTitle>

@@ -165,7 +165,7 @@ export default function CreditsEditor() {
         {/* Opening Credits */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Film className="h-4 w-4 text-primary" />
               Opening Credits
             </CardTitle>
@@ -206,7 +206,7 @@ export default function CreditsEditor() {
         {/* Closing Credits */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Award className="h-4 w-4 text-primary" />
               Closing Credits
             </CardTitle>
@@ -248,7 +248,7 @@ export default function CreditsEditor() {
         {(allCredits?.length || 0) > 0 && (
           <Card className="bg-black text-white border-0">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base text-center text-white/80">Credits Preview</CardTitle>
+              <CardTitle className="text-base text-center text-white/80 gradient-text-gold">Credits Preview</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-6 py-8">
               {openingCredits.length > 0 && (

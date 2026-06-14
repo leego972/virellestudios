@@ -615,8 +615,7 @@ function AICastingInner() {
           {castMode === "signature" && (
             <Card className="border-amber-500/10 bg-amber-950/10">
               <CardHeader className="pb-2 pt-3 px-4">
-                <CardTitle className="text-xs flex items-center gap-2 text-amber-300
-">
+                <CardTitle className="text-xs flex items-center gap-2 text-amber-300">
                   <Heart className="w-3 h-3" />
                   Ready-made chemistry
                 </CardTitle>
@@ -650,7 +649,7 @@ function AICastingInner() {
 
           <Card className="border-amber-500/20">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 Performance Direction
               </CardTitle>
@@ -747,7 +746,7 @@ function AICastingInner() {
           {selectedActors.length > 0 && (
             <Card className="border-amber-500/20">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                   <Zap className="w-4 h-4 text-amber-400" />
                   Selected Cast ({selectedActors.length})
                 </CardTitle>

@@ -399,7 +399,7 @@ export default function Settings() {
           {/* Account Info */}
           <Card className="bg-card/50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <User className="h-4 w-4 text-amber-400" />
                 Account Information
               </CardTitle>
@@ -482,7 +482,7 @@ export default function Settings() {
           {/* Location */}
           <Card className="bg-card/50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <MapPin className="h-4 w-4 text-blue-400" />
                 Location
               </CardTitle>
@@ -513,7 +513,7 @@ export default function Settings() {
           {/* Professional */}
           <Card className="bg-card/50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Briefcase className="h-4 w-4 text-purple-400" />
                 Professional Details
               </CardTitle>
@@ -569,7 +569,7 @@ export default function Settings() {
           {/* Subscription Info */}
           <Card className="bg-card/50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Sparkles className="h-4 w-4 text-amber-400" />
                 Subscription
               </CardTitle>
@@ -600,7 +600,7 @@ export default function Settings() {
         <TabsContent value="security" className="space-y-6 mt-6">
           <Card className="bg-card/50">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Lock className="h-4 w-4 text-amber-400" />
                 Change Password
               </CardTitle>
@@ -712,7 +712,7 @@ export default function Settings() {
           {/* Recommended Providers */}
           <Card className="border-purple-500/30 bg-gradient-to-br from-purple-500/10 to-purple-600/5">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-400">
+              <CardTitle className="flex items-center gap-2 text-purple-400 gradient-text-gold">
                 <Star className="w-5 h-5" />
                 Recommended Providers
               </CardTitle>
@@ -762,7 +762,7 @@ export default function Settings() {
             <Card className="border from-violet-500/20 to-purple-600/10 border-violet-500/30 bg-gradient-to-br">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2 text-lg">
+                  <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
                     <span className="text-xl">🟣</span>
                     Venice AI (preferred LLM)
                     {configuredKeys['venice' as keyof typeof configuredKeys] && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
@@ -818,7 +818,7 @@ export default function Settings() {
                   <Card key={provider.id} className={`border ${colorClass} bg-gradient-to-br`}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="flex items-center gap-2 text-lg">
+                        <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
                           <span className="text-xl">{PROVIDER_ICONS[provider.id] || "🔑"}</span>
                           {provider.name}
                           {isConfigured && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
@@ -886,7 +886,7 @@ export default function Settings() {
                   <Card key={provider.id} className={`border ${colorClass} bg-gradient-to-br`}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="flex items-center gap-2 text-lg">
+                        <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
                           <span className="text-xl">{PROVIDER_ICONS[provider.id] || "🔑"}</span>
                           {provider.name}
                           {isConfigured && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
@@ -941,7 +941,7 @@ export default function Settings() {
             <Card className="border from-amber-500/20 to-amber-600/10 border-amber-500/30 bg-gradient-to-br">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2 text-lg">
+                  <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
                     <span className="text-xl">🍌</span>
                     Google Gemini (Nano Banana 2)
                     {configuredKeys['google' as keyof typeof configuredKeys] && <Badge className="bg-green-500/20 text-green-400 border-green-500/30"><CheckCircle2 className="w-3 h-3 mr-1" />Connected</Badge>}
@@ -979,7 +979,7 @@ export default function Settings() {
           {/* How It Works */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 gradient-text-gold">
                 <Film className="w-5 h-5 text-amber-500" />
                 How Video Generation Works
               </CardTitle>
@@ -1119,7 +1119,7 @@ function BillingTab({ profile }: { profile: any }) {
       {/* Current Plan Card */}
       <Card className="bg-card/50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Sparkles className="h-4 w-4 text-amber-400" />
             Current Plan
           </CardTitle>
@@ -1174,7 +1174,7 @@ function BillingTab({ profile }: { profile: any }) {
       {/* Credits Summary */}
       <Card className="bg-card/50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Zap className="h-4 w-4 text-amber-400" />
             Credits
           </CardTitle>
@@ -1235,7 +1235,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
   return (
     <Card className="bg-card/50">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
           <Film className="h-4 w-4 text-amber-400" />
           Signature Cast
         </CardTitle>
@@ -1402,7 +1402,7 @@ function ConnectedPlatformsTab() {
     <div className="min-h-screen space-y-6 px-4 py-4" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <Card className="bg-card/50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Share2 className="h-4 w-4 text-amber-400" />
             Connected Platforms
           </CardTitle>

@@ -658,7 +658,7 @@ import { useState } from "react";
                   <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
                     <Layers className="w-4 h-4 text-zinc-400" />
                   </div>
-                  <h3 className="text-lg font-semibold ">Create Your Own Cast</h3>
+                  <h3 className="text-lg font-semibold">Create Your Own Cast</h3>
                 </div>
                 <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
                   Build original characters for your film from scratch. Define their look, personality, wardrobe, voice direction, backstory, emotional range, and scene role before generation begins.
@@ -780,7 +780,7 @@ import { useState } from "react";
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <h3 className="font-semibold ">{actor.name}</h3>
+                        <h3 className="font-semibold">{actor.name}</h3>
                         <p className={`text-[10px] ${ac.text} font-medium`}>{actor.genreFit}</p>
                         <p className="text-xs text-zinc-400 leading-relaxed">{actor.hook}</p>
                         {isExpanded && (
@@ -953,7 +953,7 @@ import { useState } from "react";
                                 <TierBadge tier={actor.tier} />
                                 <span className={`text-[10px] ${ac.text} font-semibold tracking-widest uppercase`}>{actor.archetype}</span>
                               </div>
-                              <h3 className="font-semibold ">{actor.name}</h3>
+                              <h3 className="font-semibold">{actor.name}</h3>
                               <p className={`text-[10px] ${ac.text} font-medium`}>{actor.genreFit}</p>
                               <p className="text-xs text-zinc-400 leading-relaxed">{actor.hook}</p>
                               <div className="flex flex-wrap gap-1">
@@ -1213,7 +1213,7 @@ import { useState } from "react";
               <div key={item.title} className="rounded-xl border border-white/5 bg-white/[0.02] p-6 hover:border-amber-500/15 transition-colors">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-amber-500/50 text-xs font-mono">{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="font-semibold ">{item.title}</h3>
+                  <h3 className="font-semibold">{item.title}</h3>
                 </div>
                 <p className="text-sm text-zinc-400">{item.description}</p>
               </div>
@@ -1330,7 +1330,7 @@ import { useState } from "react";
           <Dialog open={!!unlockActor} onOpenChange={() => { setUnlockActor(null); setIsCheckingOut(false); }}>
             <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-lg">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold">Unlock {unlockActor.name}</DialogTitle>
+                <DialogTitle className="text-xl font-bold gradient-text-gold">Unlock {unlockActor.name}</DialogTitle>
                 <DialogDescription className="text-zinc-400">Choose a license type and complete checkout via Stripe.</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 mt-2">

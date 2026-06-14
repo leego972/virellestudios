@@ -55,7 +55,7 @@ export default function ForgotPassword() {
                 <div className="mx-auto w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-2">
                   <Mail className="w-6 h-6 text-amber-500" />
                 </div>
-                <CardTitle className="text-xl">Check your email</CardTitle>
+                <CardTitle className="text-xl gradient-text-gold">Check your email</CardTitle>
                 <CardDescription>
                   If an account with <span className="font-medium text-foreground">{email}</span> exists, 
                   you'll receive a password reset link shortly.
@@ -78,7 +78,7 @@ export default function ForgotPassword() {
           ) : (
             <>
               <CardHeader className="space-y-1 pb-4">
-                <CardTitle className="text-xl">Forgot password</CardTitle>
+                <CardTitle className="text-xl gradient-text-gold">Forgot password</CardTitle>
                 <CardDescription>Enter your email and we'll send you a reset link</CardDescription>
               </CardHeader>
               <form onSubmit={handleSubmit}>
