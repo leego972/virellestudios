@@ -1158,7 +1158,7 @@ export default function ComponentsShowcase() {
                       <div className="space-y-2">
                         <h4 className="text-sm font-semibold">@nextjs</h4>
                         <p className="text-sm">
-                          The React Framework Ã¢ÂÂ created and maintained by
+                          The React Framework ÃÂ¢ÃÂÃÂ created and maintained by
                           @vercel.
                         </p>
                       </div>
@@ -1196,7 +1196,7 @@ export default function ComponentsShowcase() {
                         <div className="p-1">
                           <Card>
                             <CardContent className="flex aspect-square items-center justify-center p-6">
-                              <span className="text-4xl font-semibold">
+                              <span className="text-4xl font-semibold gradient-text-gold">
                                 {index + 1}
                               </span>
                             </CardContent>

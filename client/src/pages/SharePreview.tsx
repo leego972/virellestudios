@@ -93,7 +93,7 @@ function ScreenerWatermark({ name }: { name: string }) {
     <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
       <div className="absolute inset-0 flex items-center justify-center">
         <span
-          className="text-white/25 text-2xl sm:text-3xl font-bold tracking-wider whitespace-nowrap"
+          className="/25 text-2xl sm:text-3xl font-bold tracking-wider whitespace-nowrap gradient-text-gold"
           style={{ transform: "rotate(-22deg)", textShadow: "0 1px 2px rgba(0,0,0,.6)" }}
         >
           {label}
@@ -244,7 +244,7 @@ export default function SharePreview() {
             <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-semibold gradient-text-gold">Scene {active.sceneNumber} ÃÂ¢ÃÂÃÂ {active.title}</h3>
+                  <h3 className="font-semibold">Scene {active.sceneNumber} ÃÂ¢ÃÂÃÂ {active.title}</h3>
                   {active.description && (
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{active.description}</p>
                   )}
