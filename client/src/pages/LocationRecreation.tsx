@@ -168,7 +168,7 @@ const LocationRecreation: React.FC = () => {
                   <div key={loc.id} className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 hover:border-blue-500/50 transition-all group">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-xl font-bold">{loc.name}</h3>
+                        <h3 className="text-xl font-bold gradient-text-gold">{loc.name}</h3>
                         <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">{loc.locationType || "Interior"}</p>
                       </div>
                       <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${loc.aiRecreationStatus === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}`}>
@@ -299,7 +299,7 @@ const LocationRecreation: React.FC = () => {
                   </div>
                 </div>
                 <div className="mt-8 border-t border-zinc-800 pt-8">
-                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2 gradient-text-gold">
                     <CheckCircle className="text-green-400" />
                     3. Assign to Scenes
                   </h3>
@@ -341,7 +341,7 @@ const LocationRecreation: React.FC = () => {
         {/* Info Sidebar */}
         <div className="space-y-6">
           <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-3xl border border-zinc-800">
-            <h3 className="text-xl font-bold mb-4">How it works</h3>
+            <h3 className="text-xl font-bold mb-4 gradient-text-gold">How it works</h3>
             <ul className="space-y-4 text-zinc-400 text-sm">
               <li className="flex gap-3">
                 <ChevronRight className="text-blue-500 flex-shrink-0" />

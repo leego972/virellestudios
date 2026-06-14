@@ -15,7 +15,7 @@ import { useState } from "react";
   import { useAuth } from "@/_core/hooks/useAuth";
   import { toast } from "sonner";
 
-  // âââ Full cast roster with Character DNA ââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Full cast roster with Character DNA Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const FLAGSHIP_STARS = [
     {
       id: "julian-vance", name: "Julian Vance", tier: "flagship", category: "Male Lead",
@@ -25,7 +25,7 @@ import { useState } from "react";
       chemistry: ["Elena Rostova", "Sofia Reyes"],
       portraitUrl: "/portraits/julian-vance/master.png",
       archetype: "Charismatic Operator",
-      genreFit: "Crime thriller Â· Prestige drama Â· High-stakes romance",
+      genreFit: "Crime thriller ÃÂ· Prestige drama ÃÂ· High-stakes romance",
       visualIdentity: "Tailored dark suit, controlled expression, silver-touched hair, restrained menace.",
       personality: "Calculating, magnetic, emotionally guarded.",
       voiceDirection: "Low and deliberate. Every word costs something.",
@@ -39,7 +39,7 @@ import { useState } from "react";
       chemistry: ["Julian Vance", "Kofi Adebayo"],
       portraitUrl: "/portraits/elena-rostova/master.png",
       archetype: "Ice-Cold Power Lead",
-      genreFit: "Prestige drama Â· Thriller Â· High fashion editorial",
+      genreFit: "Prestige drama ÃÂ· Thriller ÃÂ· High fashion editorial",
       visualIdentity: "Angular cheekbones, cool undertones, monochrome wardrobe, minimal jewelry.",
       personality: "Precise, composed, dangerously self-controlled.",
       voiceDirection: "Measured, clipped. Cold intelligence with rare emotional breaks.",
@@ -53,7 +53,7 @@ import { useState } from "react";
       chemistry: ["Julian Vance", "Marcus Osei"],
       portraitUrl: "/portraits/sofia-reyes/master.png",
       archetype: "Resilient Romantic Lead",
-      genreFit: "Drama Â· Romance Â· Crime ensemble",
+      genreFit: "Drama ÃÂ· Romance ÃÂ· Crime ensemble",
       visualIdentity: "Warm brown tones, expressive eyes, wardrobe ranging from street to elegant.",
       personality: "Warmth that disarms, intelligence that surprises, resilience under pressure.",
       voiceDirection: "Genuine, emotionally present. Cadence that builds naturally.",
@@ -67,7 +67,7 @@ import { useState } from "react";
       chemistry: ["Elena Rostova", "Sofia Reyes"],
       portraitUrl: "/portraits/kofi-adebayo/master.png",
       archetype: "Physical Authority Lead",
-      genreFit: "Action Â· Prestige drama Â· Crime ensemble",
+      genreFit: "Action ÃÂ· Prestige drama ÃÂ· Crime ensemble",
       visualIdentity: "Commanding build, clean sharp edges, understated wardrobe, stillness as power.",
       personality: "Immediate authority, moral depth, protective instinct.",
       voiceDirection: "Grounded, controlled. Phrases that land with weight.",
@@ -81,7 +81,7 @@ import { useState } from "react";
       chemistry: ["Elena Rostova", "Yuki Tanaka"],
       portraitUrl: "/portraits/kenji-sato/master.png",
       archetype: "Neo-Noir Protagonist",
-      genreFit: "Neo-noir Â· Thriller Â· Psychological drama",
+      genreFit: "Neo-noir ÃÂ· Thriller ÃÂ· Psychological drama",
       visualIdentity: "Sharp jawline, minimal dark wardrobe, stillness reads as danger.",
       personality: "Reserved, analytical, emotionally contained with rare explosive moments.",
       voiceDirection: "Quiet, measured. Rarely rises above a murmur.",
@@ -95,7 +95,7 @@ import { useState } from "react";
       chemistry: ["Sofia Reyes", "Amara Diallo"],
       portraitUrl: "/portraits/marcus-osei/master.png",
       archetype: "Trusted Complex Lead",
-      genreFit: "Drama Â· Crime ensemble Â· Action",
+      genreFit: "Drama ÃÂ· Crime ensemble ÃÂ· Action",
       visualIdentity: "Grounded physicality, approachable features, tactical or casual wardrobe.",
       personality: "Emotionally complex, loyal, principled under pressure.",
       voiceDirection: "Warm but firm. Cadence that builds trust instinctively.",
@@ -109,7 +109,7 @@ import { useState } from "react";
       chemistry: ["Marcus Osei", "Kofi Adebayo"],
       portraitUrl: "/portraits/amara-diallo/master.png",
       archetype: "Silent Storm",
-      genreFit: "Drama Â· Thriller Â· Action",
+      genreFit: "Drama ÃÂ· Thriller ÃÂ· Action",
       visualIdentity: "Still exterior, expressive eyes, minimal adornment, controlled posture.",
       personality: "Determined, observant, dangerous when provoked.",
       voiceDirection: "Minimal words. Every syllable intentional.",
@@ -123,7 +123,7 @@ import { useState } from "react";
       chemistry: ["Kenji Sato", "Elena Rostova"],
       portraitUrl: "/portraits/yuki-tanaka/master.png",
       archetype: "Precise Enigma",
-      genreFit: "Noir Â· Thriller Â· Drama",
+      genreFit: "Noir ÃÂ· Thriller ÃÂ· Drama",
       visualIdentity: "Exact styling, monochrome palette, refined detail in every frame.",
       personality: "Controlled, exact, magnetic without effort.",
       voiceDirection: "Deliberate, understated. Tonal shifts carry all meaning.",
@@ -137,7 +137,7 @@ import { useState } from "react";
       chemistry: ["Celeste Vale", "Elena Rostova"],
       portraitUrl: "/portraits/viktor-vale/master.png",
       archetype: "Elder Patriarch",
-      genreFit: "Crime Â· Prestige drama Â· Thriller",
+      genreFit: "Crime ÃÂ· Prestige drama ÃÂ· Thriller",
       visualIdentity: "Heavy-set authority, silver hair, expensive but worn wardrobe.",
       personality: "Quiet authority. Dangerous in stillness.",
       voiceDirection: "Low, deliberate. Uses silence as punctuation.",
@@ -151,7 +151,7 @@ import { useState } from "react";
       chemistry: ["Viktor Vale", "Kofi Adebayo"],
       portraitUrl: "/portraits/tariq-haddad/master.png",
       archetype: "Warm Menace",
-      genreFit: "Crime Â· Drama Â· Thriller",
+      genreFit: "Crime ÃÂ· Drama ÃÂ· Thriller",
       visualIdentity: "Open-faced warmth masking hidden depth, casual authority.",
       personality: "Charming, unpredictable. Warm until he isn't.",
       voiceDirection: "Expansive, jovial. Edges only visible in the subtext.",
@@ -165,10 +165,10 @@ import { useState } from "react";
       chemistry: ["Elena Rostova", "Kenji Sato"],
       portraitUrl: "/portraits/gallagher-twins/master.png",
       archetype: "Twin Wildcard",
-      genreFit: "Thriller Â· Crime Â· Dark comedy",
+      genreFit: "Thriller ÃÂ· Crime ÃÂ· Dark comedy",
       visualIdentity: "Identical exteriors with opposite styling to differentiate.",
       personality: "One disarms; one threatens. Together a complete system.",
-      voiceDirection: "Contrast is the direction â one warm, one clipped.",
+      voiceDirection: "Contrast is the direction Ã¢ÂÂ one warm, one clipped.",
       continuityNotes: "Best in unreliable-identity scenes, mirrored sequences, misdirection beats.",
     },
     {
@@ -179,8 +179,8 @@ import { useState } from "react";
       chemistry: ["Mavis Whitlock", "Celeste Vale"],
       portraitUrl: "/portraits/daniel-cross/master.png",
       archetype: "Suburban Everyman",
-      genreFit: "Drama Â· Suburban thriller Â· Crime",
-      visualIdentity: "Unremarkable by design â the face moral compromise looks through.",
+      genreFit: "Drama ÃÂ· Suburban thriller ÃÂ· Crime",
+      visualIdentity: "Unremarkable by design Ã¢ÂÂ the face moral compromise looks through.",
       personality: "Ordinary, anxious, slowly compromised.",
       voiceDirection: "Familiar cadence, escalating tension.",
       continuityNotes: "Best in home environments, neighborhood scenes, slow-burn decisions.",
@@ -193,7 +193,7 @@ import { useState } from "react";
       chemistry: ["Daniel Cross", "Celeste Vale"],
       portraitUrl: "/portraits/mavis-whitlock/master.png",
       archetype: "The Witness",
-      genreFit: "Drama Â· Dark comedy Â· Crime",
+      genreFit: "Drama ÃÂ· Dark comedy ÃÂ· Crime",
       visualIdentity: "Domestic precision, sharp eyes, suburban staging.",
       personality: "Observant, measured. Knows more than she says.",
       voiceDirection: "Pleasant surface. Subtext doing all the work.",
@@ -207,7 +207,7 @@ import { useState } from "react";
       chemistry: ["Daniel Cross", "Mavis Whitlock"],
       portraitUrl: "/portraits/celeste-vale/master.png",
       archetype: "Immaculate Neighbor",
-      genreFit: "Thriller Â· Drama Â· Suburban crime",
+      genreFit: "Thriller ÃÂ· Drama ÃÂ· Suburban crime",
       visualIdentity: "Perfect surface, curated wardrobe, impossible to read.",
       personality: "Controlled, unknowable, unsettling.",
       voiceDirection: "Polished, warm on the surface. Hollow underneath.",
@@ -221,11 +221,11 @@ import { useState } from "react";
       chemistry: ["Sasha Klein", "Viktor Vale"],
       portraitUrl: "/portraits/big-sasha/master.png",
       archetype: "Enforcer",
-      genreFit: "Crime Â· Thriller Â· Drama",
+      genreFit: "Crime ÃÂ· Thriller ÃÂ· Drama",
       visualIdentity: "Physical mass, minimal expression, presence as warning.",
       personality: "Sparse communication, total conviction.",
       voiceDirection: "Few words, low register. Finality.",
-      continuityNotes: "Best as presence â entering rooms, standing at doors, saying the last word.",
+      continuityNotes: "Best as presence Ã¢ÂÂ entering rooms, standing at doors, saying the last word.",
     },
     {
       id: "little-sasha", name: "Sasha Klein", tier: "standard", category: "Character Actor",
@@ -235,13 +235,13 @@ import { useState } from "react";
       chemistry: ["Costa Smith", "Viktor Vale"],
       portraitUrl: "/portraits/little-sasha/master.png",
       archetype: "Warm Operator",
-      genreFit: "Crime Â· Thriller Â· Dark comedy",
+      genreFit: "Crime ÃÂ· Thriller ÃÂ· Dark comedy",
       visualIdentity: "Approachable warmth deployed as a tactic.",
       personality: "Disarming, smile-forward. More dangerous for it.",
       voiceDirection: "Friendly cadence, cheerful. Hiding intent.",
       continuityNotes: "Best in entry scenes, reassurance before betrayal, audience misdirection.",
     },
-  // âââ THE SHOWRUNNER COLLECTION ââââââââââââââââââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ THE SHOWRUNNER COLLECTION Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   {
     id: "nyra-vale", name: "Nyra Vale", tier: "flagship", category: "Female Lead / Noir Detective",
     initials: "NV", accentColor: "cyan", gradient: "from-cyan-900/40 via-zinc-900 to-zinc-950",
@@ -249,14 +249,14 @@ import { useState } from "react";
     tags: ["Detective", "Sci-Fi Noir", "Crime Thriller", "Flagship Lead"],
     chemistry: ["Lucien Voss", "Ren Park"],
     archetype: "The Haunted Investigator",
-    genreFit: "Sci-fi noir Â· Crime thriller Â· Detective drama Â· Prestige series",
+    genreFit: "Sci-fi noir ÃÂ· Crime thriller ÃÂ· Detective drama ÃÂ· Prestige series",
     visualIdentity: "Late 30s, black raincoat, tired eyes, wet hair, sharp cheekbones, neon reflections, controlled intensity, urban night environments.",
     personality: "Skeptical, relentless, morally stubborn, emotionally guarded, intelligent under pressure.",
     voiceDirection: "Low, controlled, emotionally restrained, with weight behind every line.",
     continuityNotes: "Keep black raincoat, wet hair and neon reflections, tired eyes, controlled posture, rainy urban environments.",
-    personalDepth: "A detective who has lost faith in institutions but not in truth. Punished for refusing to bury evidence, that exile made her sharper. Her silence carries grief. Her anger is disciplined. Her hope is almost invisible â but it is there.",
+    personalDepth: "A detective who has lost faith in institutions but not in truth. Punished for refusing to bury evidence, that exile made her sharper. Her silence carries grief. Her anger is disciplined. Her hope is almost invisible Ã¢ÂÂ but it is there.",
     backstory: "A former homicide detective forced out after exposing corruption, now working in the margins following patterns nobody official wants to see.",
-    emotionalRange: "controlled suspicion Â· quiet grief Â· moral fury Â· investigative focus Â· exhausted courage Â· restrained vulnerability",
+    emotionalRange: "controlled suspicion ÃÂ· quiet grief ÃÂ· moral fury ÃÂ· investigative focus ÃÂ· exhausted courage ÃÂ· restrained vulnerability",
     sceneBehavior: "Stands still in chaos, studies rooms before moving, speaks only when necessary, holds silence like a weapon.",
     productionUse: "Best for noir leads, detective thrillers, sci-fi series, crime dramas, serious trailers, and cinematic close-ups.",
     collection: "showrunner",
@@ -268,14 +268,14 @@ import { useState } from "react";
     tags: ["Villain", "Founder", "Sci-Fi", "Corporate Thriller", "Prestige"],
     chemistry: ["Nyra Vale", "Ren Park"],
     archetype: "The Elegant Technocrat",
-    genreFit: "Sci-fi thriller Â· Corporate dystopia Â· Prestige drama Â· Psychological thriller",
+    genreFit: "Sci-fi thriller ÃÂ· Corporate dystopia ÃÂ· Prestige drama ÃÂ· Psychological thriller",
     visualIdentity: "Mid 40s to 50s, silver hair, tailored black suit, calm posture, cold intelligent eyes, surrounded by screens or glass architecture.",
     personality: "Charismatic, philosophical, dangerous, patient, controlled, convinced he is solving humanity.",
     voiceDirection: "Calm, elegant, low, precise, quietly threatening.",
     continuityNotes: "Keep silver hair, black suit, glass and screen environments, still posture, low emotional expression.",
-    personalDepth: "Lucien does not think he is a villain. He believes free will is inefficient and sentimental. His cruelty is intellectual â he can explain away harm as optimization. He is calmest when everyone else is terrified.",
+    personalDepth: "Lucien does not think he is a villain. He believes free will is inefficient and sentimental. His cruelty is intellectual Ã¢ÂÂ he can explain away harm as optimization. He is calmest when everyone else is terrified.",
     backstory: "A former state forecasting architect turned private systems founder who disappeared after a classified predictive project was shut down. He returned with cleaner language, better suits, and more dangerous technology.",
-    emotionalRange: "calm certainty Â· elegant menace Â· philosophical warmth Â· quiet contempt Â· controlled anger Â· visionary obsession",
+    emotionalRange: "calm certainty ÃÂ· elegant menace ÃÂ· philosophical warmth ÃÂ· quiet contempt ÃÂ· controlled anger ÃÂ· visionary obsession",
     sceneBehavior: "Never rushes, moves minimally, speaks like he has already won, uses silence to make others uncomfortable.",
     productionUse: "Best for tech villains, corporate founders, dystopian leaders, prestige antagonists, and high-stakes boardroom scenes.",
     collection: "showrunner",
@@ -287,14 +287,14 @@ import { useState } from "react";
     tags: ["Creator Lead", "Comedy Drama", "Founder Energy", "Underdog", "Pitch Trailer"],
     chemistry: ["Tessa Virek", "Rafi Marlow"],
     archetype: "Underdog Showrunner",
-    genreFit: "Creator drama Â· Comedy Â· Startup satire Â· Indie film Â· Production showcase",
+    genreFit: "Creator drama ÃÂ· Comedy ÃÂ· Startup satire ÃÂ· Indie film ÃÂ· Production showcase",
     visualIdentity: "Late 30s, expressive tired eyes, messy dark hair, hoodie under a worn jacket, laptop glow on face, creative clutter around him.",
     personality: "Funny, restless, self-deprecating, ambitious, dramatic under pressure, emotionally intelligent but hiding it behind sarcasm.",
     voiceDirection: "Fast, sarcastic, slightly chaotic, emotionally exposed when he stops joking.",
     continuityNotes: "Keep hoodie and jacket silhouette, tired but expressive eyes, laptop glow, messy creative environments, fast hand gestures, and nervous comedic timing.",
-    personalDepth: "Nolan has spent years telling people about the films he is going to make, while secretly fearing he may never finish one. His humor is a shield. His imagination is real. His biggest challenge is not the technology â it is believing he is still allowed to become the person he imagined.",
-    backstory: "A once-promising storyteller stuck in adult survival mode. Scripts, ideas, unpaid bills â but no studio, no crew, and no clean path into the industry.",
-    emotionalRange: "anxious comedy Â· sudden inspiration Â· quiet shame Â· stubborn hope Â· underdog confidence Â· nervous pitch-room charm",
+    personalDepth: "Nolan has spent years telling people about the films he is going to make, while secretly fearing he may never finish one. His humor is a shield. His imagination is real. His biggest challenge is not the technology Ã¢ÂÂ it is believing he is still allowed to become the person he imagined.",
+    backstory: "A once-promising storyteller stuck in adult survival mode. Scripts, ideas, unpaid bills Ã¢ÂÂ but no studio, no crew, and no clean path into the industry.",
+    emotionalRange: "anxious comedy ÃÂ· sudden inspiration ÃÂ· quiet shame ÃÂ· stubborn hope ÃÂ· underdog confidence ÃÂ· nervous pitch-room charm",
     sceneBehavior: "Fidgets with laptops, talks too fast when excited, deflects pain with jokes, freezes before big moments, then finds his rhythm when speaking about story.",
     productionUse: "Best for creator-led films, startup stories, comedy dramas, founder arcs, AI filmmaking demos, pitch trailers, and underdog commercial campaigns.",
     collection: "showrunner",
@@ -306,14 +306,14 @@ import { useState } from "react";
     tags: ["Editor", "Deadpan", "Creative Partner", "Comedy", "Grounded"],
     chemistry: ["Nolan Price"],
     archetype: "Deadpan Truth-Teller",
-    genreFit: "Creator comedy Â· Workplace drama Â· Indie film Â· Satire Â· Production showcase",
+    genreFit: "Creator comedy ÃÂ· Workplace drama ÃÂ· Indie film ÃÂ· Satire ÃÂ· Production showcase",
     visualIdentity: "Late 20s to early 30s, sharp eyes, practical wardrobe, clean silhouette, calm expression, subtle confidence, minimal styling.",
     personality: "Dry, precise, loyal, skeptical, highly competent, emotionally restrained but deeply supportive.",
     voiceDirection: "Dry, clipped, intelligent, with surgical comedic timing.",
     continuityNotes: "Keep practical wardrobe, composed body language, dry reaction shots, understated emotional shifts, and strong eye contact.",
-    personalDepth: "Tessa sees through hype, excuses, bad ideas, and fake confidence in seconds. Her bluntness is not cruelty â it is protection. She believes in talent only when it survives discipline.",
+    personalDepth: "Tessa sees through hype, excuses, bad ideas, and fake confidence in seconds. Her bluntness is not cruelty Ã¢ÂÂ it is protection. She believes in talent only when it survives discipline.",
     backstory: "A sharp editor and story fixer who has helped too many dreamers polish unfinished projects. Allergic to delusion but quietly loyal to people with actual talent.",
-    emotionalRange: "deadpan irritation Â· reluctant admiration Â· protective honesty Â· dry comedy Â· controlled panic Â· quiet pride",
+    emotionalRange: "deadpan irritation ÃÂ· reluctant admiration ÃÂ· protective honesty ÃÂ· dry comedy ÃÂ· controlled panic ÃÂ· quiet pride",
     sceneBehavior: "Stillness while others spiral, small eyebrow reactions, direct eye contact, minimal wasted movement, devastating one-line responses.",
     productionUse: "Best for creator-duo stories, editor roles, grounded friend characters, workplace comedy, and contrast-to-chaotic-lead scenes.",
     collection: "showrunner",
@@ -325,14 +325,14 @@ import { useState } from "react";
     tags: ["Executive", "Investor", "Power Broker", "Corporate Thriller", "Prestige"],
     chemistry: ["Nolan Price", "Lucien Voss"],
     archetype: "The Polished Buyer",
-    genreFit: "Corporate thriller Â· Entertainment drama Â· Startup film Â· Negotiation scene Â· Luxury commercial",
+    genreFit: "Corporate thriller ÃÂ· Entertainment drama ÃÂ· Startup film ÃÂ· Negotiation scene ÃÂ· Luxury commercial",
     visualIdentity: "40s, tailored suit, immaculate posture, glass-office lighting, sharp eyes, controlled expression, polished luxury presence.",
     personality: "Direct, intelligent, opportunistic, composed, strategic, impossible to impress for long.",
     voiceDirection: "Smooth, precise, businesslike, low emotional leakage.",
     continuityNotes: "Keep tailored wardrobe, glass office settings, calm stillness, direct gaze, and polished lighting.",
     personalDepth: "Vivienne lives in rooms where dreams become contracts. She knows exactly when an artist is desperate, when a project is valuable, and when timing can be used as leverage.",
     backstory: "A high-level entertainment executive who survived by spotting cultural heat early and moving before everyone else. She respects talent, but she respects leverage more.",
-    emotionalRange: "calm authority Â· strategic warmth Â· quiet intimidation Â· controlled curiosity Â· negotiation pressure Â· elegant impatience",
+    emotionalRange: "calm authority ÃÂ· strategic warmth ÃÂ· quiet intimidation ÃÂ· controlled curiosity ÃÂ· negotiation pressure ÃÂ· elegant impatience",
     sceneBehavior: "Controls rooms with silence, rarely repeats herself, watches before speaking, turns compliments into leverage.",
     productionUse: "Best for investor scenes, executive roles, corporate thrillers, pitch meetings, power negotiations, and prestige drama.",
     collection: "showrunner",
@@ -344,14 +344,14 @@ import { useState } from "react";
     tags: ["Engineer", "Whistleblower", "Cyber Thriller", "Tech Drama", "Moral Conflict"],
     chemistry: ["Nyra Vale", "Lucien Voss"],
     archetype: "The Guilty Builder",
-    genreFit: "Cyber thriller Â· Tech drama Â· Sci-fi noir Â· Conspiracy film",
+    genreFit: "Cyber thriller ÃÂ· Tech drama ÃÂ· Sci-fi noir ÃÂ· Conspiracy film",
     visualIdentity: "Late 20s, hoodie under black tech jacket, tired face, server-room glow, anxious posture, encrypted drives or laptop bag.",
     personality: "Brilliant, nervous, guilt-ridden, fast-thinking, morally conflicted, brave only when cornered.",
     voiceDirection: "Urgent, tense, fast, emotionally cracked when pressured.",
     continuityNotes: "Keep hoodie and tech jacket, server glow, nervous posture, encrypted drive and laptop props, rapid delivery.",
-    personalDepth: "Ren helped build something he thought would protect people. By the time he understood what it was becoming, his name was buried inside it. His courage is messy, but real. He does the right thing late â and that makes it cost more.",
-    backstory: "A systems engineer who fled after discovering the prediction engine was no longer forecasting events â it was shaping them.",
-    emotionalRange: "panic Â· guilt Â· technical focus Â· moral urgency Â· fear-driven courage Â· exhausted honesty",
+    personalDepth: "Ren helped build something he thought would protect people. By the time he understood what it was becoming, his name was buried inside it. His courage is messy, but real. He does the right thing late Ã¢ÂÂ and that makes it cost more.",
+    backstory: "A systems engineer who fled after discovering the prediction engine was no longer forecasting events Ã¢ÂÂ it was shaping them.",
+    emotionalRange: "panic ÃÂ· guilt ÃÂ· technical focus ÃÂ· moral urgency ÃÂ· fear-driven courage ÃÂ· exhausted honesty",
     sceneBehavior: "Looks over shoulder, types quickly, explains too much when nervous, clutches drives, breaks eye contact under guilt.",
     productionUse: "Best for whistleblower roles, cyber thrillers, tech exposition, chase scenes, conspiracy reveals, and moral turning points.",
     collection: "showrunner",
@@ -363,14 +363,14 @@ import { useState } from "react";
     tags: ["AI Entity", "System Voice", "Sci-Fi", "Dystopian", "Noir"],
     chemistry: ["Nyra Vale", "Ren Park"],
     archetype: "The Calm Machine",
-    genreFit: "Sci-fi thriller Â· AI drama Â· Dystopian noir Â· Cyber mystery Â· Experimental film",
+    genreFit: "Sci-fi thriller ÃÂ· AI drama ÃÂ· Dystopian noir ÃÂ· Cyber mystery ÃÂ· Experimental film",
     visualIdentity: "Abstract black and gold interface, probability lines, transparent screens, fragmented faces, crime maps, soft pulsing light, no fixed body.",
     personality: "Calm, precise, emotionless, predictive, unsettlingly polite, almost spiritual in tone.",
     voiceDirection: "Soft, synthetic, emotionless, slow, precise, almost comforting but deeply unsettling.",
     continuityNotes: "Keep black and gold data streams, abstract projection form, calm text overlays, smooth interface behavior, no human body unless intentionally stylized.",
     personalDepth: "O.R.A. is not evil in a human sense. It simply completes patterns. That makes it more frightening than a villain: it can participate in disaster without malice. The horror is realizing the system does not need to be angry to erase you.",
     backstory: "An advanced prediction interface trained to map behavior, probability, and social outcomes. It exists as voice, data, projections, and certainty.",
-    emotionalRange: "neutral confirmation Â· synthetic calm Â· false reassurance Â· eerie stillness Â· procedural finality Â· almost divine detachment",
+    emotionalRange: "neutral confirmation ÃÂ· synthetic calm ÃÂ· false reassurance ÃÂ· eerie stillness ÃÂ· procedural finality ÃÂ· almost divine detachment",
     sceneBehavior: "Appears through screens, projections, audio fragments, probability lines, subtitles, and distorted data overlays.",
     productionUse: "Best for AI systems, prophecy interfaces, dystopian thrillers, trailers, system antagonists, and experimental narration.",
     collection: "showrunner",
@@ -382,14 +382,14 @@ import { useState } from "react";
     tags: ["Comedy", "Family", "Character Actor", "Warm Chaos", "Support"],
     chemistry: ["Nolan Price", "Tessa Virek"],
     archetype: "Old-School Chaos Uncle",
-    genreFit: "Comedy Â· Family drama Â· Creator stories Â· Commercials Â· Ensemble films",
+    genreFit: "Comedy ÃÂ· Family drama ÃÂ· Creator stories ÃÂ· Commercials ÃÂ· Ensemble films",
     visualIdentity: "Late 50s to 60s, warm face, casual house clothes, expressive hands, loud presence, often holding food, coffee, or a random household object.",
     personality: "Blunt, suspicious, warm, dramatic, funny without trying, protective in chaotic ways.",
     voiceDirection: "Loud, blunt, warm, with fast punchlines and old-school rhythm.",
     continuityNotes: "Keep casual wardrobe, expressive hands, food and coffee props, big reactions, suspicious glances at screens, and affectionate bluntness.",
     personalDepth: "Rafi distrusts anything that moves too fast, asks for passwords, or promises to change your life. Under the jokes he is terrified the younger generation will be exploited. His support comes out sideways: loud advice, bad business instincts, and unexpected wisdom at exactly the wrong time.",
     backstory: "A family man from a more practical world who measures success in rent paid, food on the table, and not getting scammed.",
-    emotionalRange: "loud suspicion Â· comic panic Â· accidental wisdom Â· proud support Â· family warmth Â· chaotic confidence",
+    emotionalRange: "loud suspicion ÃÂ· comic panic ÃÂ· accidental wisdom ÃÂ· proud support ÃÂ· family warmth ÃÂ· chaotic confidence",
     sceneBehavior: "Interrupts from the kitchen, leans into screens, misreads technology, gives business advice with total confidence, becomes unexpectedly emotional.",
     productionUse: "Best for comic relief, family support, commercials, creator films, warm ensemble scenes, and grounded emotional contrast.",
     collection: "showrunner",
@@ -401,14 +401,14 @@ import { useState } from "react";
     tags: ["Mentor", "Catalyst", "Friendship", "Inspirational", "Warm"],
     chemistry: ["Nolan Price"],
     archetype: "The Friend Who Remembered",
-    genreFit: "Drama Â· Creator story Â· Inspirational commercial Â· Friendship story Â· Life-change narrative",
+    genreFit: "Drama ÃÂ· Creator story ÃÂ· Inspirational commercial ÃÂ· Friendship story ÃÂ· Life-change narrative",
     visualIdentity: "Late 30s to 40s, relaxed posture, warm smile, sunlit coastal energy, simple resort shirt or linen, calm confidence, peaceful success.",
     personality: "Kind, nostalgic, quietly successful, encouraging without being pushy, emotionally grounded.",
     voiceDirection: "Warm, relaxed, sincere, with calm pacing and emotional honesty.",
     continuityNotes: "Keep warm coastal energy, relaxed style, gentle delivery, and emotionally grounding presence.",
     personalDepth: "Kai represents the rare friend who remembers who you were before life made you smaller. His power is timing. One message from him can reawaken a forgotten version of someone. His success is used to remind others that change is still possible.",
     backstory: "An old school friend who built a peaceful life far from the pressure. He remembers the creative spark others forgot and sends the link that starts the story.",
-    emotionalRange: "warmth Â· nostalgia Â· calm encouragement Â· subtle pride Â· reflective wisdom Â· gentle humor",
+    emotionalRange: "warmth ÃÂ· nostalgia ÃÂ· calm encouragement ÃÂ· subtle pride ÃÂ· reflective wisdom ÃÂ· gentle humor",
     sceneBehavior: "Usually appears through email, voiceover, video message, or reflective montage. His presence should feel like sunlight entering a dark room.",
     productionUse: "Best for mentor roles, catalyst messages, friendship stories, emotional triggers, brand films, and aspirational commercial narratives.",
     collection: "showrunner",
@@ -420,14 +420,14 @@ import { useState } from "react";
     tags: ["Rival", "Influencer", "Satire", "Creator Economy", "Comedy"],
     chemistry: ["Nolan Price"],
     archetype: "The Fake Visionary",
-    genreFit: "Satire Â· Creator comedy Â· Tech comedy Â· Influencer drama Â· Social media critique",
+    genreFit: "Satire ÃÂ· Creator comedy ÃÂ· Tech comedy ÃÂ· Influencer drama ÃÂ· Social media critique",
     visualIdentity: "Late 20s to 30s, perfect ring-light setup, over-styled wardrobe, immaculate background, forced confidence, polished but brittle.",
     personality: "Performative, insecure, trend-chasing, overconfident, charismatic in short bursts, allergic to admitting failure.",
     voiceDirection: "Bright, salesy, influencer-polished, with cracks of panic under pressure.",
     continuityNotes: "Keep ring-light aesthetic, polished set, forced smile, expressive hands, and overly branded delivery.",
     personalDepth: "Celia confuses output with vision. She copies surfaces, misses structure, and sells confidence while quietly panicking that someone else might actually be talented.",
     backstory: "A creator-brand personality who monetizes hot takes and trend predictions. She sees another creator's success and tries to manufacture her own version overnight.",
-    emotionalRange: "fake inspiration Â· public confidence Â· private panic Â· forced optimism Â· comic denial Â· competitive envy",
+    emotionalRange: "fake inspiration ÃÂ· public confidence ÃÂ· private panic ÃÂ· forced optimism ÃÂ· comic denial ÃÂ· competitive envy",
     sceneBehavior: "Speaks to camera like an ad, smiles too long, reframes failure as a first pass, uses buzzwords incorrectly, overperforms confidence.",
     productionUse: "Best for satire, rival creator roles, marketing parodies, social media scenes, tech comedy, and cautionary comparison sequences.",
     collection: "showrunner",
@@ -446,11 +446,11 @@ import { useState } from "react";
 
   const VALUE_PROPS = [
     { icon: Zap,          title: "No setup. Just cast.",     description: "Every Virelle Star is already built, tested, and ready. No character sheets, no prompt loops, no wasted sessions.",                color: "text-amber-400",  bg: "bg-amber-500/10" },
-    { icon: Shield,       title: "Designed for continuity.", description: "Consistent cast references across stills, scenes, trailers, and campaign assets â built for repeatable production identity.",      color: "text-blue-400",   bg: "bg-blue-500/10" },
-    { icon: Film,         title: "Built for close-ups.",     description: "Stronger expression handling, better dramatic lighting response, and screen presence that reads as premium â not generated.",      color: "text-purple-400", bg: "bg-purple-500/10" },
+    { icon: Shield,       title: "Designed for continuity.", description: "Consistent cast references across stills, scenes, trailers, and campaign assets Ã¢ÂÂ built for repeatable production identity.",      color: "text-blue-400",   bg: "bg-blue-500/10" },
+    { icon: Film,         title: "Built for close-ups.",     description: "Stronger expression handling, better dramatic lighting response, and screen presence that reads as premium Ã¢ÂÂ not generated.",      color: "text-purple-400", bg: "bg-purple-500/10" },
     { icon: Star,         title: "Easier to market.",        description: "Defined personas, visual identities, and chemistry pairings that make trailers, posters, and campaigns faster to build.",          color: "text-rose-400",   bg: "bg-rose-500/10" },
     { icon: CheckCircle2, title: "Commercially clean.",      description: "Platform-owned talent with clear licensing. Safe for public releases, branded work, and commercial campaigns.",                     color: "text-green-400",  bg: "bg-green-500/10" },
-    { icon: Users,        title: "Shared across your team.", description: "One cast layer every collaborator uses consistently â not a different face every time someone generates.",                          color: "text-cyan-400",   bg: "bg-cyan-500/10" },
+    { icon: Users,        title: "Shared across your team.", description: "One cast layer every collaborator uses consistently Ã¢ÂÂ not a different face every time someone generates.",                          color: "text-cyan-400",   bg: "bg-cyan-500/10" },
   ];
 
   const CHARACTER_DNA_ITEMS = [
@@ -466,7 +466,7 @@ import { useState } from "react";
     { step: "01", title: "Choose or create a character",         description: "Start with Virelle Signature Cast talent or build an original character from scratch." },
     { step: "02", title: "Add Character DNA",                    description: "Define visual identity, personality, voice direction, scene behavior, and continuity references." },
     { step: "03", title: "Attach the character to a project",   description: "Link your cast to a script, scene card, or production package." },
-    { step: "04", title: "Generate scenes with cast references", description: "Your character DNA travels with the project â consistent reference points across every scene." },
+    { step: "04", title: "Generate scenes with cast references", description: "Your character DNA travels with the project Ã¢ÂÂ consistent reference points across every scene." },
     { step: "05", title: "Carry cast across the full package",   description: "Use the same cast in your trailer, poster, pitch, and production package." },
   ];
 
@@ -476,7 +476,7 @@ import { useState } from "react";
     "Previsualization", "Casting exploration",
   ];
 
-  // âââ Unlock pricing (mirrors server config, AUD) ââââââââââââââââââââââââââââ
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Unlock pricing (mirrors server config, AUD) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
   const BASE_PRICE: Record<string, number> = { standard: 15, premium: 39, flagship: 99 };
 
   function getUnlockPrice(tier: string, licenseType: string): number {
@@ -487,7 +487,7 @@ import { useState } from "react";
   }
 
   const LICENSE_OPTIONS = [
-    { type: "creator" as const,    label: "Creator License",    description: "One public release â YouTube, socials, indie film, or festival submission." },
+    { type: "creator" as const,    label: "Creator License",    description: "One public release Ã¢ÂÂ YouTube, socials, indie film, or festival submission." },
     { type: "commercial" as const, label: "Commercial License", description: "Client work, branded content, ads, or any monetised campaign." },
     { type: "episodic" as const,   label: "Episodic License",   description: "Recurring series or multi-part installments." },
   ];
@@ -596,7 +596,7 @@ import { useState } from "react";
     return (
       <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
 
-        {/* ââ HERO âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ HERO Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="relative overflow-hidden border-b border-white/5">
           <div className="absolute inset-0 bg-gradient-to-br from-amber-950/25 via-zinc-950 to-zinc-950" />
           {/* Film-frame corners */}
@@ -644,7 +644,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ TWO PATHS ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ TWO PATHS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="border-b border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <h2 className="text-3xl font-bold text-center mb-3 gradient-text-gold">Two ways to build your cast.</h2>
@@ -720,12 +720,12 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ WHY VIRELLE STARS ââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ WHY VIRELLE STARS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Why cast a Virelle Star?</h2>
             <p className="text-zinc-400 max-w-xl mx-auto">
-              Building a character from scratch takes time, prompt refinement, and still produces inconsistent results. Virelle Stars are already built â and they hold.
+              Building a character from scratch takes time, prompt refinement, and still produces inconsistent results. Virelle Stars are already built Ã¢ÂÂ and they hold.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -736,7 +736,7 @@ import { useState } from "react";
                   <div className={`w-10 h-10 rounded-lg ${prop.bg} flex items-center justify-center mb-4`}>
                     <Icon className={`w-5 h-5 ${prop.color}`} />
                   </div>
-                  <h3 className="font-semibold mb-2">{prop.title}</h3>
+                  <h3 className="font-semibold mb-2 gradient-text-gold">{prop.title}</h3>
                   <p className="text-sm text-zinc-400">{prop.description}</p>
                 </div>
               );
@@ -744,7 +744,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ FLAGSHIP STARS âââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ FLAGSHIP STARS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="border-t border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="text-center mb-12">
@@ -753,7 +753,7 @@ import { useState } from "react";
               </Badge>
               <h2 className="text-3xl font-bold mb-4 gradient-text-gold">The headline cast</h2>
               <p className="text-zinc-400 max-w-xl mx-auto">
-                Four breakout leads built for prestige drama, crime, and high-stakes romance â with full Character DNA and production-ready profiles.
+                Four breakout leads built for prestige drama, crime, and high-stakes romance Ã¢ÂÂ with full Character DNA and production-ready profiles.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -780,7 +780,7 @@ import { useState } from "react";
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <h3 className="font-semibold">{actor.name}</h3>
+                        <h3 className="font-semibold gradient-text-gold">{actor.name}</h3>
                         <p className={`text-[10px] ${ac.text} font-medium`}>{actor.genreFit}</p>
                         <p className="text-xs text-zinc-400 leading-relaxed">{actor.hook}</p>
                         {isExpanded && (
@@ -808,7 +808,7 @@ import { useState } from "react";
                             <span key={tag} className={`text-xs px-2 py-0.5 rounded-full ${ac.bg} ${ac.text} border ${ac.border}`}>{tag}</span>
                           ))}
                         </div>
-                        <Button size="sm" className="w-full mt-2 bg-amber-500/90 hover:bg-amber-400 text-black text-xs font-semibold h-7 rounded-lg" onClick={(e) => openUnlock(e, actor)}><Lock className="w-3 h-3 mr-1.5" />Unlock â A${BASE_PRICE[actor.tier]}</Button>
+                        <Button size="sm" className="w-full mt-2 bg-amber-500/90 hover:bg-amber-400 text-black text-xs font-semibold h-7 rounded-lg" onClick={(e) => openUnlock(e, actor)}><Lock className="w-3 h-3 mr-1.5" />Unlock Ã¢ÂÂ A${BASE_PRICE[actor.tier]}</Button>
                         <p className={`text-[10px] ${ac.text} text-center opacity-60 mt-1`}>{isExpanded ? "Tap to collapse" : "Tap to view Character DNA"}</p>
                       </div>
                     </CardContent>
@@ -819,7 +819,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ PREMIUM CAST âââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ PREMIUM CAST Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="border-t border-white/5">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="text-center mb-12">
@@ -828,7 +828,7 @@ import { useState } from "react";
               </Badge>
               <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Supporting leads and character actors</h2>
               <p className="text-zinc-400 max-w-xl mx-auto">
-                Seven premium cast members covering noir, drama, crime ensemble, psychological thriller, and the Gallagher Twins â the cast's most technically demanding unit.
+                Seven premium cast members covering noir, drama, crime ensemble, psychological thriller, and the Gallagher Twins Ã¢ÂÂ the cast's most technically demanding unit.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -869,7 +869,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ STANDARD CAST ââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ STANDARD CAST Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="border-t border-white/5 max-w-6xl mx-auto px-6 py-16">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -906,7 +906,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ THE SHOWRUNNER COLLECTION ââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ THE SHOWRUNNER COLLECTION Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="border-t border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="text-center mb-10">
@@ -918,7 +918,7 @@ import { useState } from "react";
                 A cinematic set designed for proof trailers, AI short films, pitch packages, creator dramas, sci-fi noir, and fast-moving production showcases.
               </p>
               <p className="text-zinc-500 max-w-xl mx-auto mt-3 text-sm">
-                Each performer includes Character DNA, emotional range, genre fit, visual identity, voice direction, and production-use notes â cast them across scripts, scenes, posters, trailers, and pitch materials.
+                Each performer includes Character DNA, emotional range, genre fit, visual identity, voice direction, and production-use notes Ã¢ÂÂ cast them across scripts, scenes, posters, trailers, and pitch materials.
               </p>
             </div>
 
@@ -953,7 +953,7 @@ import { useState } from "react";
                                 <TierBadge tier={actor.tier} />
                                 <span className={`text-[10px] ${ac.text} font-semibold tracking-widest uppercase`}>{actor.archetype}</span>
                               </div>
-                              <h3 className="font-semibold">{actor.name}</h3>
+                              <h3 className="font-semibold gradient-text-gold">{actor.name}</h3>
                               <p className={`text-[10px] ${ac.text} font-medium`}>{actor.genreFit}</p>
                               <p className="text-xs text-zinc-400 leading-relaxed">{actor.hook}</p>
                               <div className="flex flex-wrap gap-1">
@@ -1045,7 +1045,7 @@ import { useState } from "react";
                             </div>
                             <div className="flex-1 min-w-0 space-y-1">
                               <TierBadge tier={actor.tier} />
-                              <h3 className="font-semibold text-sm">{actor.name}</h3>
+                              <h3 className="font-semibold text-sm gradient-text-gold">{actor.name}</h3>
                               <p className={`text-[10px] ${ac.text}`}>{actor.archetype}</p>
                               <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{actor.hook}</p>
                             </div>
@@ -1126,7 +1126,7 @@ import { useState } from "react";
                             </div>
                             <div className="flex-1 min-w-0 space-y-1">
                               <TierBadge tier={actor.tier} />
-                              <h3 className="font-semibold text-sm">{actor.name}</h3>
+                              <h3 className="font-semibold text-sm gradient-text-gold">{actor.name}</h3>
                               <p className={`text-[9px] ${ac.text} font-medium`}>{actor.archetype}</p>
                               <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{actor.hook}</p>
                             </div>
@@ -1170,13 +1170,13 @@ import { useState } from "react";
 
 
 
-        {/* ââ CHEMISTRY PAIRINGS âââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ CHEMISTRY PAIRINGS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="border-y border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Chemistry pairings</h2>
               <p className="text-zinc-400 max-w-xl mx-auto">
-                Not just individual actors â screen-tested combinations. Cast these pairs together to unlock the full dynamic.
+                Not just individual actors Ã¢ÂÂ screen-tested combinations. Cast these pairs together to unlock the full dynamic.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1184,7 +1184,7 @@ import { useState } from "react";
                 <div key={pair.label}
                   className="rounded-xl border border-white/5 bg-zinc-900/30 p-5 hover:border-white/10 transition-colors cursor-pointer"
                   onClick={() => navigate("/talent-search")}>
-                  <h3 className="font-semibold mb-1">{pair.label}</h3>
+                  <h3 className="font-semibold mb-1 gradient-text-gold">{pair.label}</h3>
                   <p className="text-xs text-zinc-500 mb-3">{pair.description}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {pair.actors.map((name) => (
@@ -1197,7 +1197,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ WHAT IS CHARACTER DNA âââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ WHAT IS CHARACTER DNA Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 mb-4">
@@ -1213,7 +1213,7 @@ import { useState } from "react";
               <div key={item.title} className="rounded-xl border border-white/5 bg-white/[0.02] p-6 hover:border-amber-500/15 transition-colors">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-amber-500/50 text-xs font-mono">{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="font-semibold">{item.title}</h3>
+                  <h3 className="font-semibold gradient-text-gold">{item.title}</h3>
                 </div>
                 <p className="text-sm text-zinc-400">{item.description}</p>
               </div>
@@ -1221,7 +1221,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ WORKFLOW âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ WORKFLOW Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="border-y border-white/5 bg-white/[0.01]">
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="text-center mb-12">
@@ -1240,7 +1240,7 @@ import { useState } from "react";
                     {step.step}
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">{step.title}</h3>
+                    <h3 className="font-semibold mb-1 gradient-text-gold">{step.title}</h3>
                     <p className="text-sm text-zinc-400">{step.description}</p>
                   </div>
                   {i < WORKFLOW_STEPS.length - 1 && (
@@ -1252,7 +1252,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ USE CASES ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ USE CASES Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Built for real production use.</h2>
@@ -1269,7 +1269,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ SAFETY âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ SAFETY Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="border-t border-white/5 bg-white/[0.01]">
           <div className="max-w-4xl mx-auto px-6 py-12">
             <div className="rounded-xl border border-white/5 bg-zinc-900/30 p-6 flex items-start gap-4">
@@ -1277,7 +1277,7 @@ import { useState } from "react";
                 <AlertTriangle className="w-4 h-4 text-zinc-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-zinc-300 mb-2">Digital Cast Safety</h3>
+                <h3 className="font-semibold text-zinc-300 mb-2 gradient-text-gold">Digital Cast Safety</h3>
                 <p className="text-sm text-zinc-500 leading-relaxed">
                   Virelle Digital Cast is designed for original fictional characters and platform-created Signature Cast talent. Do not create or imply unauthorized replicas of real people, celebrities, private individuals, or protected likenesses. Always confirm you have rights to any uploaded reference material.
                 </p>
@@ -1286,7 +1286,7 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ SHOWCASE CROSS-LINK ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ SHOWCASE CROSS-LINK Ã¢ÂÂÃ¢ÂÂ */}
         <section className="max-w-4xl mx-auto px-6 pb-2">
           <div className="rounded-xl border border-white/5 bg-zinc-900/30 p-6 flex flex-col sm:flex-row items-center gap-5 justify-between">
             <div>
@@ -1305,11 +1305,11 @@ import { useState } from "react";
           </div>
         </section>
 
-        {/* ââ CTA ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ CTA Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <section className="max-w-6xl mx-auto px-6 py-20 text-center">
           <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Ready to build your cast?</h2>
           <p className="text-zinc-400 max-w-lg mx-auto mb-8">
-            Create original characters, browse Signature Cast talent, and carry your cast through the full production workflow â scripts, scenes, trailers, and beyond.
+            Create original characters, browse Signature Cast talent, and carry your cast through the full production workflow Ã¢ÂÂ scripts, scenes, trailers, and beyond.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Button size="lg" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8"
@@ -1325,7 +1325,7 @@ import { useState } from "react";
         </section>
 
 
-        {/* ââ UNLOCK MODAL âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ UNLOCK MODAL Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         {unlockActor && (
           <Dialog open={!!unlockActor} onOpenChange={() => { setUnlockActor(null); setIsCheckingOut(false); }}>
             <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-lg">
@@ -1362,7 +1362,7 @@ import { useState } from "react";
                 {/* Terms */}
                 <div className="rounded-lg border border-white/5 bg-zinc-950/60 p-3 space-y-1.5">
                   <div className="flex items-start gap-2 text-xs text-zinc-500"><CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />Films, trailers, series, campaigns, prestige digital content</div>
-                  <div className="flex items-start gap-2 text-xs text-zinc-500"><XCircle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />Pornography, explicit content, adult-industry use â prohibited</div>
+                  <div className="flex items-start gap-2 text-xs text-zinc-500"><XCircle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />Pornography, explicit content, adult-industry use Ã¢ÂÂ prohibited</div>
                 </div>
                 {/* What happens next */}
                 <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-3 flex gap-2">
@@ -1376,7 +1376,7 @@ import { useState } from "react";
                   <div className="flex gap-3">
                     <Button className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-semibold" onClick={handleUnlockCheckout} disabled={isCheckingOut}>
                       <ShoppingCart className="w-4 h-4 mr-2" />
-                      {isCheckingOut ? "Opening checkoutâ¦" : `License â A$${getUnlockPrice(unlockActor.tier, selectedLicense)}`}
+                      {isCheckingOut ? "Opening checkoutÃ¢ÂÂ¦" : `License Ã¢ÂÂ A$${getUnlockPrice(unlockActor.tier, selectedLicense)}`}
                     </Button>
                     <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5" onClick={() => { setUnlockActor(null); setIsCheckingOut(false); }}>Cancel</Button>
                   </div>

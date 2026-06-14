@@ -29,12 +29,12 @@ import { useState } from "react";
   ];
 
   const DEAF_CATEGORIES = [
-    { id: "music", label: "Music", color: "text-purple-400", bg: "bg-purple-500/10", icon: "🎵" },
-    { id: "sfx", label: "Sound Effect", color: "text-blue-400", bg: "bg-blue-500/10", icon: "🔊" },
-    { id: "ambience", label: "Ambience", color: "text-green-400", bg: "bg-green-500/10", icon: "🌿" },
-    { id: "dialogue", label: "Off-screen Dialogue", color: "text-amber-400", bg: "bg-amber-500/10", icon: "💬" },
-    { id: "silence", label: "Silence", color: "text-zinc-400", bg: "bg-zinc-500/10", icon: "🤫" },
-    { id: "narrator", label: "Narrator", color: "text-rose-400", bg: "bg-rose-500/10", icon: "🎙️" },
+    { id: "music", label: "Music", color: "text-purple-400", bg: "bg-purple-500/10", icon: "ðµ" },
+    { id: "sfx", label: "Sound Effect", color: "text-blue-400", bg: "bg-blue-500/10", icon: "ð" },
+    { id: "ambience", label: "Ambience", color: "text-green-400", bg: "bg-green-500/10", icon: "ð¿" },
+    { id: "dialogue", label: "Off-screen Dialogue", color: "text-amber-400", bg: "bg-amber-500/10", icon: "ð¬" },
+    { id: "silence", label: "Silence", color: "text-zinc-400", bg: "bg-zinc-500/10", icon: "ð¤«" },
+    { id: "narrator", label: "Narrator", color: "text-rose-400", bg: "bg-rose-500/10", icon: "ðï¸" },
   ];
 
   function formatTime(s: number) {
@@ -227,13 +227,13 @@ import { useState } from "react";
               </TabsTrigger>
             </TabsList>
 
-            {/* ── STANDARD SUBTITLES TAB ── */}
+            {/* ââ STANDARD SUBTITLES TAB ââ */}
             <TabsContent value="standard">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 {/* Track List */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold">Language Tracks</h3>
+                    <h3 className="text-sm font-semibold gradient-text-gold">Language Tracks</h3>
                     <Button size="sm" variant="outline" onClick={() => setShowAddTrack(true)} className="gap-1.5 h-7 text-xs">
                       <Plus className="h-3 w-3" />Add
                     </Button>
@@ -265,8 +265,8 @@ import { useState } from "react";
                             <div className="text-xs font-medium">{t.languageName}</div>
                             <div className="text-[10px] text-muted-foreground">
                               {(t.entries || []).length} entries
-                              {t.isGenerated ? " · AI generated" : ""}
-                              {t.isTranslation ? " · translated" : ""}
+                              {t.isGenerated ? " Â· AI generated" : ""}
+                              {t.isTranslation ? " Â· translated" : ""}
                             </div>
                           </div>
                           <button onClick={e => { e.stopPropagation(); deleteMutation.mutate({ id: t.id }); }} className="p-1 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 shrink-0">
@@ -326,7 +326,7 @@ import { useState } from "react";
                     <>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h3 className="text-sm font-semibold">{(selectedTrack as any).languageName}</h3>
+                          <h3 className="text-sm font-semibold gradient-text-gold">{(selectedTrack as any).languageName}</h3>
                           <p className="text-xs text-muted-foreground">{entries.length} entries</p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -394,7 +394,7 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* ── D/DEAF & HoH TRACK TAB ── */}
+            {/* ââ D/DEAF & HoH TRACK TAB ââ */}
             <TabsContent value="deaf">
               <div className="space-y-5">
                 <div className="rounded-xl border p-5" style={{ borderColor: "rgba(59,130,246,0.3)", background: "linear-gradient(135deg, rgba(59,130,246,0.06) 0%, transparent 100%)" }}>
@@ -403,7 +403,7 @@ import { useState } from "react";
                       <Volume2 className="h-6 w-6 text-blue-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-sm mb-1">D/deaf & Hard-of-Hearing Accessibility Track</h3>
+                      <h3 className="font-semibold text-sm mb-1 gradient-text-gold">D/deaf & Hard-of-Hearing Accessibility Track</h3>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         This track provides non-speech audio descriptions for viewers who are Deaf or hard of hearing.
                         Audio cues like <span className="text-blue-300 font-medium">[TENSE MUSIC BUILDS]</span>, <span className="text-blue-300 font-medium">[DOOR SLAMS]</span>, and <span className="text-blue-300 font-medium">[CROWD CHEERING]</span> are
@@ -420,7 +420,7 @@ import { useState } from "react";
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   {/* Add entry */}
                   <div className="space-y-3">
-                    <h3 className="text-sm font-semibold">Add Audio Description</h3>
+                    <h3 className="text-sm font-semibold gradient-text-gold">Add Audio Description</h3>
                     <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
@@ -472,7 +472,7 @@ import { useState } from "react";
                   {/* Entry list */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold">Descriptions ({deafEntries.length})</h3>
+                      <h3 className="text-sm font-semibold gradient-text-gold">Descriptions ({deafEntries.length})</h3>
                     </div>
                     {deafEntries.length === 0 ? (
                       <div className="rounded-lg border-2 border-dashed flex flex-col items-center justify-center py-12 gap-2 text-muted-foreground" style={{ borderColor: "rgba(59,130,246,0.15)" }}>
@@ -489,7 +489,7 @@ import { useState } from "react";
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-0.5">
                                   <span className={`text-[9px] font-bold uppercase tracking-wider ${cat?.color}`}>{cat?.label}</span>
-                                  <span className="text-[9px] font-mono text-muted-foreground">{e.startTime}s → {e.endTime}s</span>
+                                  <span className="text-[9px] font-mono text-muted-foreground">{e.startTime}s â {e.endTime}s</span>
                                 </div>
                                 <p className="text-xs font-medium">[{e.description.toUpperCase()}]</p>
                               </div>
@@ -506,7 +506,7 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* ── SIGN LANGUAGE NOTES TAB ── */}
+            {/* ââ SIGN LANGUAGE NOTES TAB ââ */}
             <TabsContent value="signlanguage">
               <div className="space-y-5">
                 <div className="rounded-xl border p-5 flex items-start gap-4" style={{ borderColor: "rgba(168,85,247,0.3)", background: "rgba(168,85,247,0.05)" }}>
@@ -514,7 +514,7 @@ import { useState } from "react";
                     <Hand className="h-6 w-6 text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-sm mb-1">Sign Language Interpreter Notes</h3>
+                    <h3 className="font-semibold text-sm mb-1 gradient-text-gold">Sign Language Interpreter Notes</h3>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Add per-scene notes for BSL (British Sign Language) or ASL (American Sign Language) interpreters.
                       These notes guide the AI on which scenes require interpreter framing, and can be exported as a production brief.
@@ -531,7 +531,7 @@ import { useState } from "react";
                         <h4 className="text-sm font-semibold">{lang} Notes</h4>
                       </div>
                       <Textarea
-                        placeholder={`Scene-by-scene ${lang} interpreter guidance...\n\nScene 1: Establish interpreter frame, bottom-right\nScene 2: Close-up on emotional dialogue — interpreter prominent\nScene 3: Action sequence — maintain corner frame...`}
+                        placeholder={`Scene-by-scene ${lang} interpreter guidance...\n\nScene 1: Establish interpreter frame, bottom-right\nScene 2: Close-up on emotional dialogue â interpreter prominent\nScene 3: Action sequence â maintain corner frame...`}
                         className="min-h-[200px] text-xs bg-background/50 resize-none"
                       />
                       <Button size="sm" variant="outline" className="w-full gap-2">

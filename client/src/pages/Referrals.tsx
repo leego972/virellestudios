@@ -57,7 +57,7 @@ export default function Referrals() {
   const shareNative = () => {
     if (navigator.share) {
       navigator.share({
-        title: "Join Virelle Studios â AI Film Production",
+        title: "Join Virelle Studios Ã¢ÂÂ AI Film Production",
         text: "I've been using Virelle Studios to create Hollywood-quality AI films. Sign up with my link and we both get 7,000 bonus credits!",
         url: referralLink,
       }).catch(() => {});
@@ -79,7 +79,7 @@ export default function Referrals() {
 
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
-      `ð¬ Join me on Virelle Studios â the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
+      `Ã°ÂÂÂ¬ Join me on Virelle Studios Ã¢ÂÂ the AI film production platform.\n\nSign up with my link and we both get 7,000 bonus credits:\n${referralLink}`
     );
     window.open("https://wa.me/?text=" + text, "_blank");
   };
@@ -116,7 +116,7 @@ export default function Referrals() {
           <div className="text-xs text-amber-400/60 mt-0.5">per successful signup</div>
         </div>
         <div className="rounded-xl bg-gradient-to-br from-purple-600/20 to-violet-600/10 border border-purple-500/20 p-4 text-center">
-          <div className="text-3xl font-black text-purple-400">+7,000</div>
+          <div className="text-3xl font-black text-purple-400 gradient-text-gold">+7,000</div>
           <div className="text-sm text-muted-foreground mt-1">credits they get</div>
           <div className="text-xs text-purple-400/60 mt-0.5">instant on signup</div>
         </div>
@@ -339,14 +339,14 @@ export default function Referrals() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3 text-lg">1</div>
-              <h4 className="font-semibold mb-1">Copy Your Link</h4>
+              <h4 className="font-semibold mb-1 gradient-text-gold">Copy Your Link</h4>
               <p className="text-sm text-muted-foreground">
                 Tap &ldquo;Copy Link&rdquo; above and send it to any filmmaker, studio, or content creator.
               </p>
             </div>
             <div className="text-center">
               <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3 text-lg">2</div>
-              <h4 className="font-semibold mb-1">They Sign Up</h4>
+              <h4 className="font-semibold mb-1 gradient-text-gold">They Sign Up</h4>
               <p className="text-sm text-muted-foreground">
                 When they register using your link, they automatically receive{" "}
                 <span className="text-purple-400 font-semibold">7,000 bonus credits</span>.
@@ -354,7 +354,7 @@ export default function Referrals() {
             </div>
             <div className="text-center">
               <div className="w-10 h-10 rounded-full bg-amber-600/20 text-amber-400 font-bold flex items-center justify-center mx-auto mb-3 text-lg">3</div>
-              <h4 className="font-semibold mb-1">You Earn Credits</h4>
+              <h4 className="font-semibold mb-1 gradient-text-gold">You Earn Credits</h4>
               <p className="text-sm text-muted-foreground">
                 You get <span className="text-amber-400 font-semibold">7,000 credits</span> per signup, plus milestone bonuses up to{" "}
                 <span className="text-amber-400 font-semibold">500K credits</span>.
