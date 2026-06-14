@@ -1,1 +1,167 @@
-aW1wb3J0IHsgdXNlU3RhdGUsIHVzZU1lbW8gfSBmcm9tICJyZWFjdCI7CiAgaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CiAgaW1wb3J0IHsgQ2FyZCwgQ2FyZENvbnRlbnQgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvY2FyZCI7CiAgaW1wb3J0IHsgQmFkZ2UgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvYmFkZ2UiOwogIGltcG9ydCB7IElucHV0IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2lucHV0IjsKICBpbXBvcnQgeyBUYWJzLCBUYWJzQ29udGVudCwgVGFic0xpc3QsIFRhYnNUcmlnZ2VyIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL3RhYnMiOwogIGltcG9ydCB7CiAgICBBcnJvd0xlZnQsIFNlYXJjaCwgTXVzaWMyLCBQbGF5LCBQYXVzZSwgRG93bmxvYWQsIEhlYXJ0LCBDcm93biwKICAgIENsb2NrLCBGaWx0ZXIsIFN0YXIsIFdhbmQyLCBDaGVja0NpcmNsZTIsIExvYWRlcjIsIFZvbHVtZTIsIFNsaWRlcnMKICB9IGZyb20gImx1Y2lkZS1yZWFjdCI7CiAgaW1wb3J0IHsgdXNlTG9jYXRpb24gfSBmcm9tICJ3b3V0ZXIiOwogIGltcG9ydCB7IHRvYXN0IH0gZnJvbSAic29ubmVyIjsKCiAgY29uc3QgVFJBQ0tTID0gWwogICAgeyBpZDoxLCB0aXRsZToiVGhyb25lIG9mIEdvbGQiLCBhcnRpc3Q6IlZpcmVsbGUgT3JjaGVzdHJhbCIsIGdlbnJlOiJDaW5lbWF0aWMgRXBpYyIsIG1vb2Q6IlRyaXVtcGhhbnQiLCBicG06OTUsIGR1cmF0aW9uOiIzOjQyIiwgdGFnczpbIm9yY2hlc3RyYWwiLCJlcGljIiwiaGVybyIsImJyYXNzIiwic3RyaW5ncyJdLCBmZWF0dXJlZDp0cnVlIH0sCiAgICB7IGlkOjIsIHRpdGxlOiJOZW9uIEFieXNzIiwgYXJ0aXN0OiJTeW50aGV0aWMgTm9pciIsIGdlbnJlOiJFbGVjdHJvbmljIC8gTmVvLU5vaXIiLCBtb29kOiJUZW5zZSIsIGJwbToxMTAsIGR1cmF0aW9uOiI0OjE4IiwgdGFnczpbImVsZWN0cm9uaWMiLCJub2lyIiwiY3liZXJwdW5rIiwiZGFyayIsImJhc3MiXSB9LAogICAgeyBpZDozLCB0aXRsZToiU2FoYXJhIERhd24iLCBhcnRpc3Q6IldvcmxkIENvbGxlY3RpdmUiLCBnZW5yZToiV29ybGQgLyBEb2N1bWVudGFyeSIsIG1vb2Q6Ikluc3BpcmluZyIsIGJwbTo4MCwgZHVyYXRpb246IjM6NTUiLCB0YWdzOlsid29ybGQiLCJkb2N1bWVudGFyeSIsImluc3BpcmluZyIsImV0aG5pYyIsImRydW1zIl0gfSwKICAgIHsgaWQ6NCwgdGl0bGU6Ikxhc3QgU2lnbmFsIiwgYXJ0aXN0OiJPcmJpdGFsIERyaWZ0IiwgZ2VucmU6IlNjaS1GaSAvIFNwYWNlIiwgbW9vZDoiTWVsYW5jaG9seSIsIGJwbTo3NSwgZHVyYXRpb246IjU6MDIiLCB0YWdzOlsic2NpLWZpIiwic3BhY2UiLCJhdG1vc3BoZXJpYyIsIm1lbGFuY2hvbHkiLCJwYWRzIl0sIGZlYXR1cmVkOnRydWUgfSwKICAgIHsgaWQ6NSwgdGl0bGU6IkJyb2tlbiBWb3dzIiwgYXJ0aXN0OiJDaGFtYmVyIFN0cmluZ3MiLCBnZW5yZToiRHJhbWEgLyBFbW90aW9uYWwiLCBtb29kOiJTYWQiLCBicG06NjgsIGR1cmF0aW9uOiIzOjI4IiwgdGFnczpbInN0cmluZ3MiLCJlbW90aW9uYWwiLCJkcmFtYSIsImludGltYXRlIiwicGlhbm8iXSB9LAogICAgeyBpZDo2LCB0aXRsZToiVGhlIFJlY2tvbmluZyIsIGFydGlzdDoiRGFyayBNYXR0ZXIgRW5zZW1ibGUiLCBnZW5yZToiVGhyaWxsZXIgLyBTdXNwZW5zZSIsIG1vb2Q6IlN1c3BlbnNlIiwgYnBtOjEyMCwgZHVyYXRpb246IjI6NTgiLCB0YWdzOlsidGhyaWxsZXIiLCJ0ZW5zaW9uIiwic3VzcGVuc2UiLCJwZXJjdXNzaW9uIiwic3RhY2NhdG8iXSB9LAogICAgeyBpZDo3LCB0aXRsZToiR29sZGVuIEhvdXIiLCBhcnRpc3Q6IkFjb3VzdGljIFNvdWwiLCBnZW5yZToiSW5kaWUgLyBGZWVsIEdvb2QiLCBtb29kOiJIYXBweSIsIGJwbToxMDUsIGR1cmF0aW9uOiIzOjM1IiwgdGFnczpbImFjb3VzdGljIiwiaW5kaWUiLCJwb3NpdGl2ZSIsImd1aXRhciIsInVwbGlmdGluZyJdIH0sCiAgICB7IGlkOjgsIHRpdGxlOiJXYXIgTWFjaGluZSIsIGFydGlzdDoiUGVyY3Vzc2lvbiBCcmlnYWRlIiwgZ2VucmU6IkFjdGlvbiAvIFdhciIsIG1vb2Q6IkludGVuc2UiLCBicG06MTQwLCBkdXJhdGlvbjoiMzoxNSIsIHRhZ3M6WyJhY3Rpb24iLCJ3YXIiLCJwZXJjdXNzaW9uIiwiaW50ZW5zZSIsImRydW1zIl0sIGZlYXR1cmVkOnRydWUgfSwKICAgIHsgaWQ6OSwgdGl0bGU6IkludmlzaWJsZSBUaHJlYWQiLCBhcnRpc3Q6IkFtYmllbnQgV2F2ZXMiLCBnZW5yZToiQW1iaWVudCAvIE1lZGl0YXRpb24iLCBtb29kOiJQZWFjZWZ1bCIsIGJwbTo2MCwgZHVyYXRpb246IjY6MjAiLCB0YWdzOlsiYW1iaWVudCIsIm1lZGl0YXRpb24iLCJwZWFjZWZ1bCIsImV0aGVyZWFsIiwicGFkcyJdIH0sCiAgICB7IGlkOjEwLCB0aXRsZToiRG93bnRvd24gS2luZ3MiLCBhcnRpc3Q6IlVyYmFuIFB1bHNlIiwgZ2VucmU6IkhpcC1Ib3AgLyBVcmJhbiIsIG1vb2Q6IkNvbmZpZGVudCIsIGJwbTo5MCwgZHVyYXRpb246IjM6NDgiLCB0YWdzOlsiaGlwLWhvcCIsInVyYmFuIiwiY29uZmlkZW50IiwiYmVhdHMiLCJiYXNzIl0gfSwKICAgIHsgaWQ6MTEsIHRpdGxlOiJDaGlsZHJlbiBvZiBXYXIiLCBhcnRpc3Q6IlZpcmVsbGUgT3JjaGVzdHJhbCIsIGdlbnJlOiJEcmFtYSAvIEhpc3RvcmljYWwiLCBtb29kOiJTb2xlbW4iLCBicG06NzIsIGR1cmF0aW9uOiI0OjA1IiwgdGFnczpbIm9yY2hlc3RyYWwiLCJoaXN0b3JpY2FsIiwic29sZW1uIiwiYnJhc3MiLCJjaG9pciJdIH0sCiAgICB7IGlkOjEyLCB0aXRsZToiVmVsb2NpdHkiLCBhcnRpc3Q6IlN5bnRoZXRpYyBOb2lyIiwgZ2VucmU6IkFjdGlvbiAvIENoYXNlIiwgbW9vZDoiQWRyZW5hbGluZSIsIGJwbToxNTUsIGR1cmF0aW9uOiIyOjQ0IiwgdGFnczpbImFjdGlvbiIsImNoYXNlIiwiZmFzdCIsImVsZWN0cm9uaWMiLCJhZHJlbmFsaW5lIl0gfSwKICAgIHsgaWQ6MTMsIHRpdGxlOiJNb25zb29uIFNlYXNvbiIsIGFydGlzdDoiV29ybGQgQ29sbGVjdGl2ZSIsIGdlbnJlOiJXb3JsZCAvIERyYW1hIiwgbW9vZDoiTWVsYW5jaG9seSIsIGJwbTo4MiwgZHVyYXRpb246IjQ6MzAiLCB0YWdzOlsid29ybGQiLCJyYWluIiwibWVsYW5jaG9seSIsImV0aG5pYyIsInN0cmluZ3MiXSB9LAogICAgeyBpZDoxNCwgdGl0bGU6IlByb3RvY29sIFplcm8iLCBhcnRpc3Q6Ik9yYml0YWwgRHJpZnQiLCBnZW5yZToiU2NpLUZpIC8gVGhyaWxsZXIiLCBtb29kOiJUZW5zZSIsIGJwbToxMTgsIGR1cmF0aW9uOiIzOjUwIiwgdGFnczpbInNjaS1maSIsInRocmlsbGVyIiwidGVuc2UiLCJzeW50aCIsImdsaXRjaCJdIH0sCiAgICB7IGlkOjE1LCB0aXRsZToiT2xkIFRvd24gR3JhY2UiLCBhcnRpc3Q6IkNvdW50cnkgUm9hZHMiLCBnZW5yZToiQ291bnRyeSAvIFdlc3Rlcm4iLCBtb29kOiJOb3N0YWxnaWMiLCBicG06ODgsIGR1cmF0aW9uOiIzOjIyIiwgdGFnczpbImNvdW50cnkiLCJ3ZXN0ZXJuIiwibm9zdGFsZ2ljIiwiZ3VpdGFyIiwiZmlkZGxlIl0gfSwKICAgIHsgaWQ6MTYsIHRpdGxlOiJMYSBTZXJlbmF0YSIsIGFydGlzdDoiUm9tYW5jZSBTdHJpbmdzIiwgZ2VucmU6IlJvbWFuY2UgLyBEcmFtYSIsIG1vb2Q6IlJvbWFudGljIiwgYnBtOjY1LCBkdXJhdGlvbjoiNDoxNSIsIHRhZ3M6WyJyb21hbmNlIiwic3RyaW5ncyIsInJvbWFudGljIiwiaW50aW1hdGUiLCJ2aW9saW4iXSB9LAogICAgeyBpZDoxNywgdGl0bGU6IlJpc2Ugb2YgRW1waXJlcyIsIGFydGlzdDoiRGFyayBNYXR0ZXIgRW5zZW1ibGUiLCBnZW5yZToiRmFudGFzeSAvIEVwaWMiLCBtb29kOiJFcGljIiwgYnBtOjEwMCwgZHVyYXRpb246IjU6MzAiLCB0YWdzOlsiZmFudGFzeSIsImVwaWMiLCJjaG9pciIsImJyYXNzIiwidHJpdW1waGFudCJdLCBmZWF0dXJlZDp0cnVlIH0sCiAgICB7IGlkOjE4LCB0aXRsZToiU3RyZWV0IEdvc3BlbCIsIGFydGlzdDoiVXJiYW4gUHVsc2UiLCBnZW5yZToiR29zcGVsIC8gU291bCIsIG1vb2Q6IlVwbGlmdGluZyIsIGJwbTo5NSwgZHVyYXRpb246IjQ6MDAiLCB0YWdzOlsiZ29zcGVsIiwic291bCIsInVwbGlmdGluZyIsImNob2lyIiwicGlhbm8iXSB9LAogICAgeyBpZDoxOSwgdGl0bGU6IlBvbGFyIE5pZ2h0IiwgYXJ0aXN0OiJBbWJpZW50IFdhdmVzIiwgZ2VucmU6IkFtYmllbnQgLyBBcmN0aWMiLCBtb29kOiJNeXN0ZXJpb3VzIiwgYnBtOjU1LCBkdXJhdGlvbjoiNzoxMCIsIHRhZ3M6WyJhbWJpZW50IiwiYXJjdGljIiwibXlzdGVyaW91cyIsImRyb25lIiwibmF0dXJlIl0gfSwKICAgIHsgaWQ6MjAsIHRpdGxlOiJLYXRhbmEgU3Rvcm0iLCBhcnRpc3Q6IkVhc3Rlcm4gRm9yY2UiLCBnZW5yZToiQXNpYW4gRnVzaW9uIC8gQWN0aW9uIiwgbW9vZDoiSW50ZW5zZSIsIGJwbToxMzIsIGR1cmF0aW9uOiIzOjA1IiwgdGFnczpbImFzaWFuIiwiYWN0aW9uIiwidGFpa28iLCJpbnRlbnNlIiwidHJhZGl0aW9uYWwiXSB9LAogIF07CgogIGNvbnN0IEdFTlJFUyA9IFsiQWxsIiwgIkNpbmVtYXRpYyBFcGljIiwgIkVsZWN0cm9uaWMgLyBOZW8tTm9pciIsICJXb3JsZCAvIERvY3VtZW50YXJ5IiwgIlNjaS1GaSAvIFNwYWNlIiwgIkRyYW1hIC8gRW1vdGlvbmFsIiwgIlRocmlsbGVyIC8gU3VzcGVuc2UiLCAiSW5kaWUgLyBGZWVsIEdvb2QiLCAiQWN0aW9uIC8gV2FyIiwgIkFtYmllbnQgLyBNZWRpdGF0aW9uIiwgIkhpcC1Ib3AgLyBVcmJhbiIsICJGYW50YXN5IC8gRXBpYyIsICJSb21hbmNlIC8gRHJhbWEiXTsKICBjb25zdCBNT09EUyA9IFsiQWxsIiwgIlRyaXVtcGhhbnQiLCAiVGVuc2UiLCAiSW5zcGlyaW5nIiwgIk1lbGFuY2hvbHkiLCAiU2FkIiwgIlN1c3BlbnNlIiwgIkhhcHB5IiwgIkludGVuc2UiLCAiUGVhY2VmdWwiLCAiQ29uZmlkZW50IiwgIlNvbGVtbiIsICJBZHJlbmFsaW5lIiwgIlJvbWFudGljIiwgIkVwaWMiLCAiVXBsaWZ0aW5nIiwgIk15c3RlcmlvdXMiXTsKCiAgZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gTXVzaWNTdHVkaW8oKSB7CiAgICBjb25zdCBbLCBzZXRMb2NhdGlvbl0gPSB1c2VMb2NhdGlvbigpOwogICAgY29uc3QgW3NlYXJjaCwgc2V0U2VhcmNoXSA9IHVzZVN0YXRlKCIiKTsKICAgIGNvbnN0IFtnZW5yZSwgc2V0R2VucmVdID0gdXNlU3RhdGUoIkFsbCIpOwogICAgY29uc3QgW21vb2QsIHNldE1vb2RdID0gdXNlU3RhdGUoIkFsbCIpOwogICAgY29uc3QgW3BsYXlpbmcsIHNldFBsYXlpbmddID0gdXNlU3RhdGU8bnVtYmVyIHwgbnVsbD4obnVsbCk7CiAgICBjb25zdCBbbGlrZWQsIHNldExpa2VkXSA9IHVzZVN0YXRlPFNldDxudW1iZXI+PihuZXcgU2V0KCkpOwogICAgY29uc3QgW2Rvd25sb2FkZWQsIHNldERvd25sb2FkZWRdID0gdXNlU3RhdGU8U2V0PG51bWJlcj4+KG5ldyBTZXQoKSk7CgogICAgY29uc3QgZmlsdGVyZWQgPSB1c2VNZW1vKCgpID0+IFRSQUNLUy5maWx0ZXIodCA9PiB7CiAgICAgIGNvbnN0IHEgPSBzZWFyY2gudG9Mb3dlckNhc2UoKTsKICAgICAgY29uc3QgbWF0Y2hTZWFyY2ggPSAhcSB8fCB0LnRpdGxlLnRvTG93ZXJDYXNlKCkuaW5jbHVkZXMocSkgfHwgdC5hcnRpc3QudG9Mb3dlckNhc2UoKS5pbmNsdWRlcyhxKSB8fCB0LnRhZ3Muc29tZSh0ZyA9PiB0Zy5pbmNsdWRlcyhxKSk7CiAgICAgIGNvbnN0IG1hdGNoR2VucmUgPSBnZW5yZSA9PT0gIkFsbCIgfHwgdC5nZW5yZSA9PT0gZ2VucmU7CiAgICAgIGNvbnN0IG1hdGNoTW9vZCA9IG1vb2QgPT09ICJBbGwiIHx8IHQubW9vZCA9PT0gbW9vZDsKICAgICAgcmV0dXJuIG1hdGNoU2VhcmNoICYmIG1hdGNoR2VucmUgJiYgbWF0Y2hNb29kOwogICAgfSksIFtzZWFyY2gsIGdlbnJlLCBtb29kXSk7CgogICAgY29uc3QgaGFuZGxlRG93bmxvYWQgPSAodDogdHlwZW9mIFRSQUNLU1swXSkgPT4gewogICAgICBzZXREb3dubG9hZGVkKHByZXYgPT4gbmV3IFNldChbLi4ucHJldiwgdC5pZF0pKTsKICAgICAgdG9hc3Quc3VjY2VzcyhgIiR7dC50aXRsZX0iIGFkZGVkIHRvIGxpYnJhcnlgLCB7IGRlc2NyaXB0aW9uOiAiV0FWIDk2a0h6LzI0LWJpdCDCtyBSb3lhbHR5LWZyZWUgwrcgQ29tbWVyY2lhbCBsaWNlbnNlIiB9KTsKICAgIH07CgogICAgcmV0dXJuICgKICAgICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiB0ZXh0LXdoaXRlIHBiLTIwIiBzdHlsZT17eyBiYWNrZ3JvdW5kOiAibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJib3JkZXItYiBib3JkZXItYW1iZXItNTAwLzIwIGJnLWJsYWNrLzYwIGJhY2tkcm9wLWJsdXIteGwgc3RpY2t5IHRvcC0wIHotMzAiPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTd4bCBteC1hdXRvIHB4LTQgaC0xNiBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtNCI+CiAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0iZ2hvc3QiIHNpemU9Imljb24iIG9uQ2xpY2s9eygpID0+IHNldExvY2F0aW9uKCIvIil9IGNsYXNzTmFtZT0idGV4dC13aGl0ZS82MCBob3Zlcjp0ZXh0LXdoaXRlIHNocmluay0wIj4KICAgICAgICAgICAgICA8QXJyb3dMZWZ0IGNsYXNzTmFtZT0idy01IGgtNSB0ZXh0LWFtYmVyLTQwMC83MCIgLz4KICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMi41Ij4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idy05IGgtOSBiZy1ncmFkaWVudC10by1iciBmcm9tLWFtYmVyLTUwMCB0by1hbWJlci03MDAgcm91bmRlZC1sZyBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBzaGFkb3ctbGcgc2hhZG93LWFtYmVyLTUwMC8zMCI+CiAgICAgICAgICAgICAgICA8TXVzaWMyIGNsYXNzTmFtZT0idy01IGgtNSB0ZXh0LWJsYWNrIiAvPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICA8aDEgY2xhc3NOYW1lPSJ0ZXh0LWxnIGZvbnQtYmxhY2sgdHJhY2tpbmctdGlnaHQgdXBwZXJjYXNlIGl0YWxpYyBncmFkaWVudC10ZXh0LWdvbGQiPk11c2ljIFN0dWRpbzwvaDE+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtd2hpdGUvNDAgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+RmlsbSBTY29yZXMgwrcgU291bmR0cmFja3MgwrcgUm95YWx0eS1GcmVlPC9wPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImhpZGRlbiBtZDpmbGV4IGl0ZW1zLWNlbnRlciBnYXAtNCBtbC1hdXRvIHRleHQteHMgdGV4dC13aGl0ZS80MCI+CiAgICAgICAgICAgICAgPHNwYW4+PHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWFtYmVyLTQwMCBmb250LWJvbGQiPntUUkFDS1MubGVuZ3RofTwvc3Bhbj4gdHJhY2tzPC9zcGFuPgogICAgICAgICAgICAgIDxzcGFuPjxzcGFuIGNsYXNzTmFtZT0idGV4dC1ncmVlbi00MDAgZm9udC1ib2xkIj4xMDAlPC9zcGFuPiByb3lhbHR5LWZyZWU8L3NwYW4+CiAgICAgICAgICAgICAgPHNwYW4+PHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWFtYmVyLTQwMCBmb250LWJvbGQiPldBViA5NmtIejwvc3Bhbj48L3NwYW4+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8QmFkZ2UgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJib3JkZXItYW1iZXItNTAwLzMwIHRleHQtYW1iZXItNTAwIGJnLWFtYmVyLTUwMC81IGhpZGRlbiBzbTpmbGV4IHNocmluay0wIj4KICAgICAgICAgICAgICA8Q3Jvd24gY2xhc3NOYW1lPSJ3LTMgaC0zIG1yLTEuNSIgLz4gUHJvCiAgICAgICAgICAgIDwvQmFkZ2U+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTd4bCBteC1hdXRvIHB4LTQgcHktOCI+CiAgICAgICAgICB7LyogU3RhdHMgKi99CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMiBtZDpncmlkLWNvbHMtNCBnYXAtNCBtYi04Ij4KICAgICAgICAgICAge1sKICAgICAgICAgICAgICB7IGxhYmVsOiAiVG90YWwgVHJhY2tzIiwgdmFsdWU6IFRSQUNLUy5sZW5ndGgsIGljb246IE11c2ljMiB9LAogICAgICAgICAgICAgIHsgbGFiZWw6ICJHZW5yZXMiLCB2YWx1ZTogR0VOUkVTLmxlbmd0aCAtIDEsIGljb246IFNsaWRlcnMgfSwKICAgICAgICAgICAgICB7IGxhYmVsOiAiRm9ybWF0IiwgdmFsdWU6ICJXQVYgOTZrSHoiLCBpY29uOiBWb2x1bWUyIH0sCiAgICAgICAgICAgICAgeyBsYWJlbDogIkxpY2Vuc2UiLCB2YWx1ZTogIkNvbW1lcmNpYWwiLCBpY29uOiBTdGFyIH0sCiAgICAgICAgICAgIF0ubWFwKHMgPT4gKAogICAgICAgICAgICAgIDxkaXYga2V5PXtzLmxhYmVsfSBjbGFzc05hbWU9ImdsYXNzLWNhcmQgcm91bmRlZC14bCBwLTQgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMTAgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMiPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InctOSBoLTkgcm91bmRlZC1sZyBiZy1hbWJlci01MDAvMTAgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMjAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgc2hyaW5rLTAiPgogICAgICAgICAgICAgICAgICA8cy5pY29uIGNsYXNzTmFtZT0idy00IGgtNCB0ZXh0LWFtYmVyLTQwMCIgLz4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LWJhc2UgZm9udC1ibGFjayB0ZXh0LXdoaXRlIj57cy52YWx1ZX08L3A+CiAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1bMTBweF0gdGV4dC13aGl0ZS80MCB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXIiPntzLmxhYmVsfTwvcD4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApKX0KICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgIHsvKiBTZWFyY2ggKyBGaWx0ZXJzICovfQogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZmxleC1jb2wgbWQ6ZmxleC1yb3cgZ2FwLTMgbWItNiI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJyZWxhdGl2ZSBmbGV4LTEiPgogICAgICAgICAgICAgIDxTZWFyY2ggY2xhc3NOYW1lPSJhYnNvbHV0ZSBsZWZ0LTQgdG9wLTEvMiAtdHJhbnNsYXRlLXktMS8yIHctNCBoLTQgdGV4dC1hbWJlci00MDAvNjAiIC8+CiAgICAgICAgICAgICAgPElucHV0IHBsYWNlaG9sZGVyPSJTZWFyY2ggYnkgdGl0bGUsIGFydGlzdCwgbW9vZCwgZ2VucmUuLi4iIGNsYXNzTmFtZT0icGwtMTEgYmctd2hpdGUvNSBib3JkZXItYW1iZXItNTAwLzIwIGgtMTEgdGV4dC13aGl0ZSBwbGFjZWhvbGRlcjp0ZXh0LXdoaXRlLzMwIiB2YWx1ZT17c2VhcmNofSBvbkNoYW5nZT17ZSA9PiBzZXRTZWFyY2goZS50YXJnZXQudmFsdWUpfSAvPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPHNlbGVjdCB2YWx1ZT17Z2VucmV9IG9uQ2hhbmdlPXtlID0+IHNldEdlbnJlKGUudGFyZ2V0LnZhbHVlKX0gY2xhc3NOYW1lPSJweC00IGgtMTEgcm91bmRlZC1sZyBiZy13aGl0ZS81IGJvcmRlciBib3JkZXItYW1iZXItNTAwLzIwIHRleHQtd2hpdGUgdGV4dC1zbSBtaW4tdy1bMjAwcHhdIj4KICAgICAgICAgICAgICB7R0VOUkVTLm1hcChnID0+IDxvcHRpb24ga2V5PXtnfSB2YWx1ZT17Z30gY2xhc3NOYW1lPSJiZy16aW5jLTkwMCI+e2d9PC9vcHRpb24+KX0KICAgICAgICAgICAgPC9zZWxlY3Q+CiAgICAgICAgICAgIDxzZWxlY3QgdmFsdWU9e21vb2R9IG9uQ2hhbmdlPXtlID0+IHNldE1vb2QoZS50YXJnZXQudmFsdWUpfSBjbGFzc05hbWU9InB4LTQgaC0xMSByb3VuZGVkLWxnIGJnLXdoaXRlLzUgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMjAgdGV4dC13aGl0ZSB0ZXh0LXNtIG1pbi13LVsxNjBweF0iPgogICAgICAgICAgICAgIHtNT09EUy5tYXAobSA9PiA8b3B0aW9uIGtleT17bX0gdmFsdWU9e219IGNsYXNzTmFtZT0iYmctemluYy05MDAiPnttfTwvb3B0aW9uPil9CiAgICAgICAgICAgIDwvc2VsZWN0PgogICAgICAgICAgPC9kaXY+CgogICAgICAgICAgey8qIFRyYWNrIExpc3QgKi99CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0yIj4KICAgICAgICAgICAge2ZpbHRlcmVkLm1hcCgodCwgaSkgPT4gKAogICAgICAgICAgICAgIDxkaXYga2V5PXt0LmlkfSBjbGFzc05hbWU9e2BmbGV4IGl0ZW1zLWNlbnRlciBnYXAtNCBwLTQgcm91bmRlZC14bCBib3JkZXIgdHJhbnNpdGlvbi1hbGwgZ3JvdXAgY3Vyc29yLXBvaW50ZXIgJHtwbGF5aW5nID09PSB0LmlkID8gImJvcmRlci1hbWJlci01MDAgYmctYW1iZXItNTAwLzUiIDogImJvcmRlci1hbWJlci01MDAvMTAgYmctd2hpdGUvWzAuMDJdIGhvdmVyOmJvcmRlci1hbWJlci01MDAvMzAgaG92ZXI6Ymctd2hpdGUvWzAuMDRdIn1gfQogICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gc2V0UGxheWluZyhwbGF5aW5nID09PSB0LmlkID8gbnVsbCA6IHQuaWQpfT4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ3LTEwIGgtMTAgcm91bmRlZC1sZyBiZy1ncmFkaWVudC10by1iciBmcm9tLWFtYmVyLTUwMC8yMCB0by1hbWJlci03MDAvMTAgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMjAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgc2hyaW5rLTAiPgogICAgICAgICAgICAgICAgICB7cGxheWluZyA9PT0gdC5pZCA/IDxQYXVzZSBjbGFzc05hbWU9InctNCBoLTQgdGV4dC1hbWJlci00MDAiIC8+IDogPFBsYXkgY2xhc3NOYW1lPSJ3LTQgaC00IHRleHQtYW1iZXItNDAwLzcwIiAvPn0KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXgtMSBtaW4tdy0wIj4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj4KICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9ImZvbnQtYm9sZCB0ZXh0LXNtIHRleHQtd2hpdGUgdHJ1bmNhdGUiPnt0LnRpdGxlfTwvcD4KICAgICAgICAgICAgICAgICAgICB7dC5mZWF0dXJlZCAmJiA8QmFkZ2UgY2xhc3NOYW1lPSJiZy1hbWJlci01MDAgdGV4dC1ibGFjayB0ZXh0LVs5cHhdIGJvcmRlci1ub25lIHB4LTEuNSBzaHJpbmstMCI+4piFPC9CYWRnZT59CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC13aGl0ZS80MCB0cnVuY2F0ZSI+e3QuYXJ0aXN0fSDCtyB7dC5nZW5yZX08L3A+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJoaWRkZW4gbWQ6ZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMgc2hyaW5rLTAiPgogICAgICAgICAgICAgICAgICA8QmFkZ2UgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJib3JkZXItYW1iZXItNTAwLzIwIHRleHQtYW1iZXItNDAwLzcwIHRleHQtWzEwcHhdIj57dC5tb29kfTwvQmFkZ2U+CiAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXdoaXRlLzMwIj57dC5icG19IEJQTTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtd2hpdGUvMzAgdy0xMCB0ZXh0LXJpZ2h0Ij57dC5kdXJhdGlvbn08L3NwYW4+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiBtbC0yIHNocmluay0wIiBvbkNsaWNrPXtlID0+IGUuc3RvcFByb3BhZ2F0aW9uKCl9PgogICAgICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJpY29uIiBjbGFzc05hbWU9ImgtOCB3LTggdGV4dC13aGl0ZS8zMCBob3Zlcjp0ZXh0LXJlZC00MDAiCiAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gc2V0TGlrZWQocHJldiA9PiB7IGNvbnN0IG4gPSBuZXcgU2V0KHByZXYpOyBuLmhhcyh0LmlkKSA/IG4uZGVsZXRlKHQuaWQpIDogbi5hZGQodC5pZCk7IHJldHVybiBuOyB9KX0+CiAgICAgICAgICAgICAgICAgICAgPEhlYXJ0IGNsYXNzTmFtZT17YHctNCBoLTQgJHtsaWtlZC5oYXModC5pZCkgPyAiZmlsbC1yZWQtNDAwIHRleHQtcmVkLTQwMCIgOiAiIn1gfSAvPgogICAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICAgICAgPEJ1dHRvbiBzaXplPSJzbSIgb25DbGljaz17KCkgPT4gaGFuZGxlRG93bmxvYWQodCl9CiAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgaC04IHRleHQteHMgZm9udC1ib2xkIHB4LTMgJHtkb3dubG9hZGVkLmhhcyh0LmlkKSA/ICJiZy1ncmVlbi02MDAgaG92ZXI6YmctZ3JlZW4tNTAwIHRleHQtd2hpdGUiIDogImJnLWFtYmVyLTUwMCBob3ZlcjpiZy1hbWJlci00MDAgdGV4dC1ibGFjayJ9YH0+CiAgICAgICAgICAgICAgICAgICAge2Rvd25sb2FkZWQuaGFzKHQuaWQpID8gPD48Q2hlY2tDaXJjbGUyIGNsYXNzTmFtZT0idy0zIGgtMyBtci0xIiAvPlNhdmVkPC8+IDogPD48RG93bmxvYWQgY2xhc3NOYW1lPSJ3LTMgaC0zIG1yLTEiIC8+RG93bmxvYWQ8Lz59CiAgICAgICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICkpfQogICAgICAgICAgICB7ZmlsdGVyZWQubGVuZ3RoID09PSAwICYmICgKICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1jZW50ZXIgcHktMTYgdGV4dC13aGl0ZS8zMCI+CiAgICAgICAgICAgICAgICA8TXVzaWMyIGNsYXNzTmFtZT0idy0xMiBoLTEyIG14LWF1dG8gbWItMyBvcGFjaXR5LTMwIiAvPgogICAgICAgICAgICAgICAgPHA+Tm8gdHJhY2tzIG1hdGNoIHlvdXIgc2VhcmNoPC9wPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApfQogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgKTsKICB9CiAg
+import { useState, useMemo } from "react";
+  import { Button } from "@/components/ui/button";
+  import { Card, CardContent } from "@/components/ui/card";
+  import { Badge } from "@/components/ui/badge";
+  import { Input } from "@/components/ui/input";
+  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  import {
+    ArrowLeft, Search, Music2, Play, Pause, Download, Heart, Crown,
+    Clock, Filter, Star, Wand2, CheckCircle2, Loader2, Volume2, Sliders
+  } from "lucide-react";
+  import { useLocation } from "wouter";
+  import { toast } from "sonner";
+
+  const TRACKS = [
+    { id:1, title:"Throne of Gold", artist:"Virelle Orchestral", genre:"Cinematic Epic", mood:"Triumphant", bpm:95, duration:"3:42", tags:["orchestral","epic","hero","brass","strings"], featured:true },
+    { id:2, title:"Neon Abyss", artist:"Synthetic Noir", genre:"Electronic / Neo-Noir", mood:"Tense", bpm:110, duration:"4:18", tags:["electronic","noir","cyberpunk","dark","bass"] },
+    { id:3, title:"Sahara Dawn", artist:"World Collective", genre:"World / Documentary", mood:"Inspiring", bpm:80, duration:"3:55", tags:["world","documentary","inspiring","ethnic","drums"] },
+    { id:4, title:"Last Signal", artist:"Orbital Drift", genre:"Sci-Fi / Space", mood:"Melancholy", bpm:75, duration:"5:02", tags:["sci-fi","space","atmospheric","melancholy","pads"], featured:true },
+    { id:5, title:"Broken Vows", artist:"Chamber Strings", genre:"Drama / Emotional", mood:"Sad", bpm:68, duration:"3:28", tags:["strings","emotional","drama","intimate","piano"] },
+    { id:6, title:"The Reckoning", artist:"Dark Matter Ensemble", genre:"Thriller / Suspense", mood:"Suspense", bpm:120, duration:"2:58", tags:["thriller","tension","suspense","percussion","staccato"] },
+    { id:7, title:"Golden Hour", artist:"Acoustic Soul", genre:"Indie / Feel Good", mood:"Happy", bpm:105, duration:"3:35", tags:["acoustic","indie","positive","guitar","uplifting"] },
+    { id:8, title:"War Machine", artist:"Percussion Brigade", genre:"Action / War", mood:"Intense", bpm:140, duration:"3:15", tags:["action","war","percussion","intense","drums"], featured:true },
+    { id:9, title:"Invisible Thread", artist:"Ambient Waves", genre:"Ambient / Meditation", mood:"Peaceful", bpm:60, duration:"6:20", tags:["ambient","meditation","peaceful","ethereal","pads"] },
+    { id:10, title:"Downtown Kings", artist:"Urban Pulse", genre:"Hip-Hop / Urban", mood:"Confident", bpm:90, duration:"3:48", tags:["hip-hop","urban","confident","beats","bass"] },
+    { id:11, title:"Children of War", artist:"Virelle Orchestral", genre:"Drama / Historical", mood:"Solemn", bpm:72, duration:"4:05", tags:["orchestral","historical","solemn","brass","choir"] },
+    { id:12, title:"Velocity", artist:"Synthetic Noir", genre:"Action / Chase", mood:"Adrenaline", bpm:155, duration:"2:44", tags:["action","chase","fast","electronic","adrenaline"] },
+    { id:13, title:"Monsoon Season", artist:"World Collective", genre:"World / Drama", mood:"Melancholy", bpm:82, duration:"4:30", tags:["world","rain","melancholy","ethnic","strings"] },
+    { id:14, title:"Protocol Zero", artist:"Orbital Drift", genre:"Sci-Fi / Thriller", mood:"Tense", bpm:118, duration:"3:50", tags:["sci-fi","thriller","tense","synth","glitch"] },
+    { id:15, title:"Old Town Grace", artist:"Country Roads", genre:"Country / Western", mood:"Nostalgic", bpm:88, duration:"3:22", tags:["country","western","nostalgic","guitar","fiddle"] },
+    { id:16, title:"La Serenata", artist:"Romance Strings", genre:"Romance / Drama", mood:"Romantic", bpm:65, duration:"4:15", tags:["romance","strings","romantic","intimate","violin"] },
+    { id:17, title:"Rise of Empires", artist:"Dark Matter Ensemble", genre:"Fantasy / Epic", mood:"Epic", bpm:100, duration:"5:30", tags:["fantasy","epic","choir","brass","triumphant"], featured:true },
+    { id:18, title:"Street Gospel", artist:"Urban Pulse", genre:"Gospel / Soul", mood:"Uplifting", bpm:95, duration:"4:00", tags:["gospel","soul","uplifting","choir","piano"] },
+    { id:19, title:"Polar Night", artist:"Ambient Waves", genre:"Ambient / Arctic", mood:"Mysterious", bpm:55, duration:"7:10", tags:["ambient","arctic","mysterious","drone","nature"] },
+    { id:20, title:"Katana Storm", artist:"Eastern Force", genre:"Asian Fusion / Action", mood:"Intense", bpm:132, duration:"3:05", tags:["asian","action","taiko","intense","traditional"] },
+  ];
+
+  const GENRES = ["All", "Cinematic Epic", "Electronic / Neo-Noir", "World / Documentary", "Sci-Fi / Space", "Drama / Emotional", "Thriller / Suspense", "Indie / Feel Good", "Action / War", "Ambient / Meditation", "Hip-Hop / Urban", "Fantasy / Epic", "Romance / Drama"];
+  const MOODS = ["All", "Triumphant", "Tense", "Inspiring", "Melancholy", "Sad", "Suspense", "Happy", "Intense", "Peaceful", "Confident", "Solemn", "Adrenaline", "Romantic", "Epic", "Uplifting", "Mysterious"];
+
+  export default function MusicStudio() {
+    const [, setLocation] = useLocation();
+    const [search, setSearch] = useState("");
+    const [genre, setGenre] = useState("All");
+    const [mood, setMood] = useState("All");
+    const [playing, setPlaying] = useState<number | null>(null);
+    const [liked, setLiked] = useState<Set<number>>(new Set());
+    const [downloaded, setDownloaded] = useState<Set<number>>(new Set());
+
+    const filtered = useMemo(() => TRACKS.filter(t => {
+      const q = search.toLowerCase();
+      const matchSearch = !q || t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q) || t.tags.some(tg => tg.includes(q));
+      const matchGenre = genre === "All" || t.genre === genre;
+      const matchMood = mood === "All" || t.mood === mood;
+      return matchSearch && matchGenre && matchMood;
+    }), [search, genre, mood]);
+
+    const handleDownload = (t: typeof TRACKS[0]) => {
+      setDownloaded(prev => new Set([...prev, t.id]));
+      toast.success(`"${t.title}" added to library`, { description: "WAV 96kHz/24-bit · Royalty-free · Commercial license" });
+    };
+
+    return (
+      <div className="min-h-screen text-white pb-20" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+        <div className="border-b border-amber-500/20 bg-black/60 backdrop-blur-xl sticky top-0 z-30">
+          <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="text-white/60 hover:text-white shrink-0">
+              <ArrowLeft className="w-5 h-5 text-amber-400/70" />
+            </Button>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg flex items-center justify-center shadow-lg shadow-amber-500/30">
+                <Music2 className="w-5 h-5 text-black" />
+              </div>
+              <div>
+                <h1 className="text-lg font-black tracking-tight uppercase italic gradient-text-gold">Music Studio</h1>
+                <p className="text-[10px] text-white/40 uppercase tracking-widest">Film Scores · Soundtracks · Royalty-Free</p>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center gap-4 ml-auto text-xs text-white/40">
+              <span><span className="text-amber-400 font-bold">{TRACKS.length}</span> tracks</span>
+              <span><span className="text-green-400 font-bold">100%</span> royalty-free</span>
+              <span><span className="text-amber-400 font-bold">WAV 96kHz</span></span>
+            </div>
+            <Badge variant="outline" className="border-amber-500/30 text-amber-500 bg-amber-500/5 hidden sm:flex shrink-0">
+              <Crown className="w-3 h-3 mr-1.5" /> Pro
+            </Badge>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {[
+              { label: "Total Tracks", value: TRACKS.length, icon: Music2 },
+              { label: "Genres", value: GENRES.length - 1, icon: Sliders },
+              { label: "Format", value: "WAV 96kHz", icon: Volume2 },
+              { label: "License", value: "Commercial", icon: Star },
+            ].map(s => (
+              <div key={s.label} className="glass-card rounded-xl p-4 border border-amber-500/10 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                  <s.icon className="w-4 h-4 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-base font-black text-white">{s.value}</p>
+                  <p className="text-[10px] text-white/40 uppercase tracking-wider">{s.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Search + Filters */}
+          <div className="flex flex-col md:flex-row gap-3 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400/60" />
+              <Input placeholder="Search by title, artist, mood, genre..." className="pl-11 bg-white/5 border-amber-500/20 h-11 text-white placeholder:text-white/30" value={search} onChange={e => setSearch(e.target.value)} />
+            </div>
+            <select value={genre} onChange={e => setGenre(e.target.value)} className="px-4 h-11 rounded-lg bg-white/5 border border-amber-500/20 text-white text-sm min-w-[200px]">
+              {GENRES.map(g => <option key={g} value={g} className="bg-zinc-900">{g}</option>)}
+            </select>
+            <select value={mood} onChange={e => setMood(e.target.value)} className="px-4 h-11 rounded-lg bg-white/5 border border-amber-500/20 text-white text-sm min-w-[160px]">
+              {MOODS.map(m => <option key={m} value={m} className="bg-zinc-900">{m}</option>)}
+            </select>
+          </div>
+
+          {/* Track List */}
+          <div className="space-y-2">
+            {filtered.map((t, i) => (
+              <div key={t.id} className={`flex items-center gap-4 p-4 rounded-xl border transition-all group cursor-pointer ${playing === t.id ? "border-amber-500 bg-amber-500/5" : "border-amber-500/10 bg-white/[0.02] hover:border-amber-500/30 hover:bg-white/[0.04]"}`}
+                onClick={() => setPlaying(playing === t.id ? null : t.id)}>
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-700/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                  {playing === t.id ? <Pause className="w-4 h-4 text-amber-400" /> : <Play className="w-4 h-4 text-amber-400/70" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="font-bold text-sm text-white truncate">{t.title}</p>
+                    {t.featured && <Badge className="bg-amber-500 text-black text-[9px] border-none px-1.5 shrink-0">★</Badge>}
+                  </div>
+                  <p className="text-xs text-white/40 truncate">{t.artist} · {t.genre}</p>
+                </div>
+                <div className="hidden md:flex items-center gap-3 shrink-0">
+                  <Badge variant="outline" className="border-amber-500/20 text-amber-400/70 text-[10px]">{t.mood}</Badge>
+                  <span className="text-xs text-white/30">{t.bpm} BPM</span>
+                  <span className="text-xs text-white/30 w-10 text-right">{t.duration}</span>
+                </div>
+                <div className="flex items-center gap-2 ml-2 shrink-0" onClick={e => e.stopPropagation()}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-white/30 hover:text-red-400"
+                    onClick={() => setLiked(prev => { const n = new Set(prev); n.has(t.id) ? n.delete(t.id) : n.add(t.id); return n; })}>
+                    <Heart className={`w-4 h-4 ${liked.has(t.id) ? "fill-red-400 text-red-400" : ""}`} />
+                  </Button>
+                  <Button size="sm" onClick={() => handleDownload(t)}
+                    className={`h-8 text-xs font-bold px-3 ${downloaded.has(t.id) ? "bg-green-600 hover:bg-green-500 text-white" : "bg-amber-500 hover:bg-amber-400 text-black"}`}>
+                    {downloaded.has(t.id) ? <><CheckCircle2 className="w-3 h-3 mr-1" />Saved</> : <><Download className="w-3 h-3 mr-1" />Download</>}
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {filtered.length === 0 && (
+              <div className="text-center py-16 text-white/30">
+                <Music2 className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                <p>No tracks match your search</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
