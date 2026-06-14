@@ -416,6 +416,7 @@ export default function DialogueEditor() {
                           <span>{e.charAt(0).toUpperCase() + e.slice(1)}</span>
                         </SelectItem>
                       ))}
+                  </>
                   ))}
                 </SelectContent>
               </Select>

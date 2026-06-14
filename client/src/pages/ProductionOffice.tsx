@@ -256,6 +256,7 @@ pre{white-space:pre-wrap;font:inherit}
       </div>
 
       {/* Schedule controls */}
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base gradient-text-gold">Schedule</CardTitle>
           <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
@@ -288,7 +289,7 @@ pre{white-space:pre-wrap;font:inherit}
 
       {/* Stripboard */}
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
             <Calendar className="h-4 w-4" /> Stripboard
           </CardTitle>

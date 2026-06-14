@@ -910,16 +910,16 @@ export default function ComponentsShowcase() {
                       <Input id="name" defaultValue="Pedro Duarte" />
                     </div>
                   </CardContent>
-                  <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Footer>
+                  <CardFooter className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Footer>
                     <Button>Save changes</Button>
                   </CardFooter>
                 </Card>
               </TabsContent>
               <TabsContent value="password">
                 <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-                  <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+                  <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
                     <CardTitle className="gradient-text-gold">Password</CardTitle>
-                    <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+                    <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
                       Change your password here.
                     </CardDescription>
                   </CardHeader>

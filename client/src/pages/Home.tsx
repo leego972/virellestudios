@@ -648,6 +648,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                         <p className="text-xs font-medium truncate">{item.title}</p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">{item.action} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {timeAgo(item.updatedAt)}</p>
                       </div>
+                    </div>
                   );
                 })}
               </div>
@@ -702,7 +703,6 @@ import { useAuth } from "@/_core/hooks/useAuth";
         </AlertDialog>
       
                     
-      </div>
       </div>
       </div>
     );

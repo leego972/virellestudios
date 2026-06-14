@@ -170,7 +170,7 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
       </Card>
 
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+        <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-sm gradient-text-gold">{scene ? `Versions Ã¢ÂÂ ${scene.title || scene.name || `Scene ${scene.id}`}` : "Select a scene"}</CardTitle>
           <p className="text-xs text-muted-foreground">Track every render of this shot. Mark one as final so editors and reviewers know what to use.</p>
         </CardHeader>
