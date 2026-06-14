@@ -1,1 +1,201 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CiAgaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CiAgaW1wb3J0IHsgQ2FyZCwgQ2FyZENvbnRlbnQsIENhcmRIZWFkZXIsIENhcmRUaXRsZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9jYXJkIjsKICBpbXBvcnQgeyBCYWRnZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9iYWRnZSI7CiAgaW1wb3J0IHsgVGFicywgVGFic0NvbnRlbnQsIFRhYnNMaXN0LCBUYWJzVHJpZ2dlciB9IGZyb20gIkAvY29tcG9uZW50cy91aS90YWJzIjsKICBpbXBvcnQgeyBTZWxlY3QsIFNlbGVjdENvbnRlbnQsIFNlbGVjdEl0ZW0sIFNlbGVjdFRyaWdnZXIsIFNlbGVjdFZhbHVlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL3NlbGVjdCI7CiAgaW1wb3J0IHsKICAgIEFycm93TGVmdCwgSGFuZCwgQ2FwdGlvbnMsIEdsb2JlLCBEb3dubG9hZCwgV2FuZDIsIENoZWNrQ2lyY2xlMiwKICAgIExvYWRlcjIsIENyb3duLCBFeWUsIFZvbHVtZTIsIEZpbGVUZXh0LCBMYW5ndWFnZXMsIE1pYywgU3RhciwgUGxheQogIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKICBpbXBvcnQgeyB1c2VMb2NhdGlvbiB9IGZyb20gIndvdXRlciI7CiAgaW1wb3J0IHsgdG9hc3QgfSBmcm9tICJzb25uZXIiOwoKICBjb25zdCBTSUdOX0xBTkdVQUdFUyA9IFsKICAgIHsgY29kZToiYXVzbGFuIiwgbmFtZToiQXVzbGFuIiwgY291bnRyeToiQXVzdHJhbGlhIPCfh6bwn4e6IiB9LAogICAgeyBjb2RlOiJhc2wiLCBuYW1lOiJBU0wiLCBjb3VudHJ5OiJVU0Eg8J+HuvCfh7giIH0sCiAgICB7IGNvZGU6ImJzbCIsIG5hbWU6IkJTTCIsIGNvdW50cnk6IlVuaXRlZCBLaW5nZG9tIPCfh6zwn4enIiB9LAogICAgeyBjb2RlOiJuenNsIiwgbmFtZToiTlpTTCIsIGNvdW50cnk6Ik5ldyBaZWFsYW5kIPCfh7Pwn4e/IiB9LAogICAgeyBjb2RlOiJsc2YiLCBuYW1lOiJMU0YiLCBjb3VudHJ5OiJGcmFuY2Ug8J+Hq/Cfh7ciIH0sCiAgICB7IGNvZGU6ImRncyIsIG5hbWU6IkRHUyIsIGNvdW50cnk6Ikdlcm1hbnkg8J+HqfCfh6oiIH0sCiAgICB7IGNvZGU6ImlzbCIsIG5hbWU6IklTTCIsIGNvdW50cnk6IklyZWxhbmQg8J+HrvCfh6oiIH0sCiAgICB7IGNvZGU6Imt2ayIsIG5hbWU6IktlbnlhbiBTTCIsIGNvdW50cnk6IktlbnlhIPCfh7Dwn4eqIiB9LAogIF07CgogIGNvbnN0IENBUFRJT05fTEFOR1MgPSBbIkVuZ2xpc2giLCJGcmVuY2giLCJTcGFuaXNoIiwiR2VybWFuIiwiUG9ydHVndWVzZSIsIkphcGFuZXNlIiwiS29yZWFuIiwiQXJhYmljIiwiSGluZGkiLCJJdGFsaWFuIiwiRHV0Y2giLCJSdXNzaWFuIiwiQ2hpbmVzZSIsIlR1cmtpc2giLCJQb2xpc2giXTsKCiAgZnVuY3Rpb24gRmVhdHVyZUNhcmQoeyBpY29uOiBJY29uLCB0aXRsZSwgZGVzYywgYmFkZ2UsIG9uQ2xpY2ssIGRvbmUgfTogYW55KSB7CiAgICByZXR1cm4gKAogICAgICA8Q2FyZCBjbGFzc05hbWU9ImJvcmRlci1hbWJlci01MDAvMjAgYmctd2hpdGUvWzAuMDJdIGdsYXNzLWNhcmQgaG92ZXI6Ym9yZGVyLWFtYmVyLTUwMC80MCB0cmFuc2l0aW9uLWFsbCBjdXJzb3ItcG9pbnRlciIgb25DbGljaz17b25DbGlja30+CiAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icC02IGZsZXggZmxleC1jb2wgaC1mdWxsIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ3LTEyIGgtMTIgcm91bmRlZC14bCBiZy1hbWJlci01MDAvMTAgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMjAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgbWItNCI+CiAgICAgICAgICAgIDxJY29uIGNsYXNzTmFtZT0idy02IGgtNiB0ZXh0LWFtYmVyLTQwMCIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtc3RhcnQganVzdGlmeS1iZXR3ZWVuIGdhcC0yIG1iLTIiPgogICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJmb250LWJsYWNrIHRleHQtd2hpdGUiPnt0aXRsZX08L2gzPgogICAgICAgICAgICB7YmFkZ2UgJiYgPEJhZGdlIGNsYXNzTmFtZT0iYmctYW1iZXItNTAwLzEwIGJvcmRlci1hbWJlci01MDAvMzAgdGV4dC1hbWJlci00MDAgdGV4dC1bMTBweF0gc2hyaW5rLTAiPntiYWRnZX08L0JhZGdlPn0KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtd2hpdGUvNTAgZmxleC0xIG1iLTQiPntkZXNjfTwvcD4KICAgICAgICAgIDxCdXR0b24gY2xhc3NOYW1lPXtgdy1mdWxsIGZvbnQtYm9sZCAke2RvbmUgPyAiYmctZ3JlZW4tNjAwIGhvdmVyOmJnLWdyZWVuLTUwMCB0ZXh0LXdoaXRlIiA6ICJiZy1hbWJlci01MDAgaG92ZXI6YmctYW1iZXItNDAwIHRleHQtYmxhY2sifWB9PgogICAgICAgICAgICB7ZG9uZSA/IDw+PENoZWNrQ2lyY2xlMiBjbGFzc05hbWU9InctNCBoLTQgbXItMiIgLz5HZW5lcmF0ZWQ8Lz4gOiA8PjxXYW5kMiBjbGFzc05hbWU9InctNCBoLTQgbXItMiIgLz5HZW5lcmF0ZTwvPn0KICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgIDwvQ2FyZD4KICAgICk7CiAgfQoKICBleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBBY2Nlc3NpYmlsaXR5U3R1ZGlvKCkgewogICAgY29uc3QgWywgc2V0TG9jYXRpb25dID0gdXNlTG9jYXRpb24oKTsKICAgIGNvbnN0IFtzaWduTGFuZywgc2V0U2lnbkxhbmddID0gdXNlU3RhdGUoImF1c2xhbiIpOwogICAgY29uc3QgW2NhcHRpb25MYW5nLCBzZXRDYXB0aW9uTGFuZ10gPSB1c2VTdGF0ZSgiRW5nbGlzaCIpOwogICAgY29uc3QgW2dlbmVyYXRpbmcsIHNldEdlbmVyYXRpbmddID0gdXNlU3RhdGU8c3RyaW5nIHwgbnVsbD4obnVsbCk7CiAgICBjb25zdCBbZG9uZSwgc2V0RG9uZV0gPSB1c2VTdGF0ZTxTZXQ8c3RyaW5nPj4obmV3IFNldCgpKTsKCiAgICBjb25zdCBoYW5kbGVHZW5lcmF0ZSA9IGFzeW5jIChmZWF0dXJlOiBzdHJpbmcsIGxhYmVsOiBzdHJpbmcpID0+IHsKICAgICAgc2V0R2VuZXJhdGluZyhmZWF0dXJlKTsKICAgICAgYXdhaXQgbmV3IFByb21pc2UociA9PiBzZXRUaW1lb3V0KHIsIDIwMDApKTsKICAgICAgc2V0R2VuZXJhdGluZyhudWxsKTsKICAgICAgc2V0RG9uZShwcmV2ID0+IG5ldyBTZXQoWy4uLnByZXYsIGZlYXR1cmVdKSk7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoYCR7bGFiZWx9IGdlbmVyYXRlZCFgLCB7IGRlc2NyaXB0aW9uOiAiUmVhZHkgdG8gZG93bmxvYWQgYW5kIGVtYmVkIGludG8geW91ciBmaWxtLiIgfSk7CiAgICB9OwoKICAgIGNvbnN0IHNsID0gU0lHTl9MQU5HVUFHRVMuZmluZChsID0+IGwuY29kZSA9PT0gc2lnbkxhbmcpOwoKICAgIHJldHVybiAoCiAgICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4gdGV4dC13aGl0ZSBwYi0yMCIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJib3JkZXItYiBib3JkZXItYW1iZXItNTAwLzIwIGJnLWJsYWNrLzYwIGJhY2tkcm9wLWJsdXIteGwgc3RpY2t5IHRvcC0wIHotMzAiPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTV4bCBteC1hdXRvIHB4LTQgaC0xNiBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtNCI+CiAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0iZ2hvc3QiIHNpemU9Imljb24iIG9uQ2xpY2s9eygpID0+IHNldExvY2F0aW9uKCIvIil9IGNsYXNzTmFtZT0idGV4dC13aGl0ZS82MCBob3Zlcjp0ZXh0LXdoaXRlIHNocmluay0wIj4KICAgICAgICAgICAgICA8QXJyb3dMZWZ0IGNsYXNzTmFtZT0idy01IGgtNSB0ZXh0LWFtYmVyLTQwMC83MCIgLz4KICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMi41Ij4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idy05IGgtOSBiZy1ncmFkaWVudC10by1iciBmcm9tLWFtYmVyLTUwMCB0by1hbWJlci03MDAgcm91bmRlZC1sZyBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBzaGFkb3ctbGcgc2hhZG93LWFtYmVyLTUwMC8zMCI+CiAgICAgICAgICAgICAgICA8SGFuZCBjbGFzc05hbWU9InctNSBoLTUgdGV4dC1ibGFjayIgLz4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC1sZyBmb250LWJsYWNrIHRyYWNraW5nLXRpZ2h0IHVwcGVyY2FzZSBpdGFsaWMgZ3JhZGllbnQtdGV4dC1nb2xkIj5BY2Nlc3NpYmlsaXR5IFN0dWRpbzwvaDE+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtd2hpdGUvNDAgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVzdCI+U3VidGl0bGVzIMK3IER1YmJpbmcgwrcgU2lnbiBMYW5ndWFnZSDCtyBBdWRpbyBEZXNjcmlwdGlvbjwvcD4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxCYWRnZSB2YXJpYW50PSJvdXRsaW5lIiBjbGFzc05hbWU9Im1sLWF1dG8gYm9yZGVyLWFtYmVyLTUwMC8zMCB0ZXh0LWFtYmVyLTUwMCBiZy1hbWJlci01MDAvNSBoaWRkZW4gc206ZmxleCBzaHJpbmstMCI+CiAgICAgICAgICAgICAgPENyb3duIGNsYXNzTmFtZT0idy0zIGgtMyBtci0xLjUiIC8+IFBybwogICAgICAgICAgICA8L0JhZGdlPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy01eGwgbXgtYXV0byBweC00IHB5LTgiPgogICAgICAgICAgey8qIFN0YXRzICovfQogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTIgbWQ6Z3JpZC1jb2xzLTQgZ2FwLTQgbWItOCI+CiAgICAgICAgICAgIHtbCiAgICAgICAgICAgICAgeyBsYWJlbDoiU2lnbiBMYW5ndWFnZXMiLCB2YWx1ZToiOCIsIGljb246SGFuZCB9LAogICAgICAgICAgICAgIHsgbGFiZWw6IkNhcHRpb24gTGFuZ3VhZ2VzIiwgdmFsdWU6IjE1KyIsIGljb246Q2FwdGlvbnMgfSwKICAgICAgICAgICAgICB7IGxhYmVsOiJGb3JtYXRzIiwgdmFsdWU6IlNSVC9WVFQvQVNTIiwgaWNvbjpGaWxlVGV4dCB9LAogICAgICAgICAgICAgIHsgbGFiZWw6IlN0YW5kYXJkcyIsIHZhbHVlOiJXQ0FHIDIuMSBBQSIsIGljb246U3RhciB9LAogICAgICAgICAgICBdLm1hcChzID0+ICgKICAgICAgICAgICAgICA8ZGl2IGtleT17cy5sYWJlbH0gY2xhc3NOYW1lPSJnbGFzcy1jYXJkIHJvdW5kZWQteGwgcC00IGJvcmRlciBib3JkZXItYW1iZXItNTAwLzEwIGZsZXggaXRlbXMtY2VudGVyIGdhcC0zIj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ3LTkgaC05IHJvdW5kZWQtbGcgYmctYW1iZXItNTAwLzEwIGJvcmRlciBib3JkZXItYW1iZXItNTAwLzIwIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHNocmluay0wIj4KICAgICAgICAgICAgICAgICAgPHMuaWNvbiBjbGFzc05hbWU9InctNCBoLTQgdGV4dC1hbWJlci00MDAiIC8+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1iYXNlIGZvbnQtYmxhY2sgdGV4dC13aGl0ZSI+e3MudmFsdWV9PC9wPgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtd2hpdGUvNDAgdXBwZXJjYXNlIHRyYWNraW5nLXdpZGVyIj57cy5sYWJlbH08L3A+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgKSl9CiAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICA8VGFicyBkZWZhdWx0VmFsdWU9InN1YnRpdGxlcyI+CiAgICAgICAgICAgIDxUYWJzTGlzdCBjbGFzc05hbWU9ImJnLWJsYWNrLzQwIGJvcmRlciBib3JkZXItYW1iZXItNTAwLzIwIG1iLTYgcC0xIHJvdW5kZWQteGwgZmxleC13cmFwIGgtYXV0byBnYXAtMSI+CiAgICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPSJzdWJ0aXRsZXMiIGNsYXNzTmFtZT0iZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1hbWJlci01MDAgZGF0YS1bc3RhdGU9YWN0aXZlXTp0ZXh0LWJsYWNrIGZvbnQtYm9sZCByb3VuZGVkLWxnIHB4LTQgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgPENhcHRpb25zIGNsYXNzTmFtZT0idy00IGgtNCIgLz4gU3VidGl0bGVzICYgQ0MKICAgICAgICAgICAgICA8L1RhYnNUcmlnZ2VyPgogICAgICAgICAgICAgIDxUYWJzVHJpZ2dlciB2YWx1ZT0ic2lnbiIgY2xhc3NOYW1lPSJkYXRhLVtzdGF0ZT1hY3RpdmVdOmJnLWFtYmVyLTUwMCBkYXRhLVtzdGF0ZT1hY3RpdmVdOnRleHQtYmxhY2sgZm9udC1ib2xkIHJvdW5kZWQtbGcgcHgtNCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgICAgICA8SGFuZCBjbGFzc05hbWU9InctNCBoLTQiIC8+IFNpZ24gTGFuZ3VhZ2UKICAgICAgICAgICAgICA8L1RhYnNUcmlnZ2VyPgogICAgICAgICAgICAgIDxUYWJzVHJpZ2dlciB2YWx1ZT0iYXVkaW8iIGNsYXNzTmFtZT0iZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1hbWJlci01MDAgZGF0YS1bc3RhdGU9YWN0aXZlXTp0ZXh0LWJsYWNrIGZvbnQtYm9sZCByb3VuZGVkLWxnIHB4LTQgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgPFZvbHVtZTIgY2xhc3NOYW1lPSJ3LTQgaC00IiAvPiBBdWRpbyBEZXNjcmlwdGlvbgogICAgICAgICAgICAgIDwvVGFic1RyaWdnZXI+CiAgICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPSJ0cmFuc2xhdGUiIGNsYXNzTmFtZT0iZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1hbWJlci01MDAgZGF0YS1bc3RhdGU9YWN0aXZlXTp0ZXh0LWJsYWNrIGZvbnQtYm9sZCByb3VuZGVkLWxnIHB4LTQgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICAgICAgPEdsb2JlIGNsYXNzTmFtZT0idy00IGgtNCIgLz4gVHJhbnNsYXRpb24KICAgICAgICAgICAgICA8L1RhYnNUcmlnZ2VyPgogICAgICAgICAgICA8L1RhYnNMaXN0PgoKICAgICAgICAgICAgPFRhYnNDb250ZW50IHZhbHVlPSJzdWJ0aXRsZXMiPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIHNtOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy0zIGdhcC01Ij4KICAgICAgICAgICAgICAgIDxGZWF0dXJlQ2FyZCBpY29uPXtDYXB0aW9uc30gdGl0bGU9IkF1dG8tQ2FwdGlvbnMgKFNSVCkiIGJhZGdlPSJBSSIgZGVzYz0iQUktZ2VuZXJhdGVkIHRpbWVkIGNhcHRpb25zIGZyb20geW91ciBmaWxtIGF1ZGlvLiBFeHBvcnRzIGFzIFNSVCwgVlRULCBhbmQgQVNTIGZvcm1hdHMgZm9yIGFsbCBtYWpvciBwbGF5ZXJzLiIgZG9uZT17ZG9uZS5oYXMoJ3NydCcpfSBvbkNsaWNrPXsoKSA9PiBoYW5kbGVHZW5lcmF0ZSgnc3J0JywnQXV0by1DYXB0aW9ucycpfSAvPgogICAgICAgICAgICAgICAgPEZlYXR1cmVDYXJkIGljb249e0hhbmR9IHRpdGxlPSJTREggU3VidGl0bGVzIiBiYWRnZT0iRGVhZiIgZGVzYz0iU3VidGl0bGVzIGZvciB0aGUgRGVhZiBhbmQgSGFyZC1vZi1oZWFyaW5nOiBpbmNsdWRlcyBzcGVha2VyIG5hbWVzLCBzb3VuZCBlZmZlY3RzLCBhbmQgbXVzaWMgZGVzY3JpcHRpb25zLiIgZG9uZT17ZG9uZS5oYXMoJ3NkaCcpfSBvbkNsaWNrPXsoKSA9PiBoYW5kbGVHZW5lcmF0ZSgnc2RoJywnU0RIIFN1YnRpdGxlcycpfSAvPgogICAgICAgICAgICAgICAgPEZlYXR1cmVDYXJkIGljb249e0V5ZX0gdGl0bGU9IkJ1cm5lZC1pbiBTdWJ0aXRsZXMiIGJhZGdlPSJIYXJkY29kZWQiIGRlc2M9IlBlcm1hbmVudGx5IGVtYmVkIHN1YnRpdGxlcyBpbnRvIHZpZGVvIGZyYW1lcy4gU3R5bGVkIHRvIG1hdGNoIHlvdXIgZmlsbSdzIGFlc3RoZXRpYyDigJQgZm9udCwgY29sb3VyLCBwb3NpdGlvbi4iIGRvbmU9e2RvbmUuaGFzKCdidXJuZWQnKX0gb25DbGljaz17KCkgPT4gaGFuZGxlR2VuZXJhdGUoJ2J1cm5lZCcsJ0J1cm5lZC1pbiBTdWJ0aXRsZXMnKX0gLz4KICAgICAgICAgICAgICAgIDxGZWF0dXJlQ2FyZCBpY29uPXtHbG9iZX0gdGl0bGU9Ik11bHRpLUxhbmd1YWdlIENhcHRpb25zIiBiYWRnZT17YCR7Q0FQVElPTl9MQU5HUy5sZW5ndGh9IGxhbmdzYH0gZGVzYz0iQXV0by10cmFuc2xhdGUgYW5kIGdlbmVyYXRlIGNhcHRpb25zIGluIDE1KyBsYW5ndWFnZXMgc2ltdWx0YW5lb3VzbHkgZm9yIGdsb2JhbCBkaXN0cmlidXRpb24uIiBkb25lPXtkb25lLmhhcygnbXVsdGknKX0gb25DbGljaz17KCkgPT4gaGFuZGxlR2VuZXJhdGUoJ211bHRpJywnTXVsdGktTGFuZ3VhZ2UgQ2FwdGlvbnMnKX0gLz4KICAgICAgICAgICAgICAgIDxGZWF0dXJlQ2FyZCBpY29uPXtGaWxlVGV4dH0gdGl0bGU9IlNjcmVlbnBsYXkgQ2FwdGlvbnMiIGJhZGdlPSJTY3JpcHQtc3luY2VkIiBkZXNjPSJHZW5lcmF0ZSBjYXB0aW9ucyBwcmVjaXNlbHkgc3luY2VkIHRvIHlvdXIgVmlyZWxsZSBzY3JlZW5wbGF5IHRpbWluZy4gWmVybyBkcmlmdCBmcm9tIGRpYWxvZ3VlIGN1ZXMuIiBkb25lPXtkb25lLmhhcygnc2NyaXB0Jyl9IG9uQ2xpY2s9eygpID0+IGhhbmRsZUdlbmVyYXRlKCdzY3JpcHQnLCdTY3JlZW5wbGF5IENhcHRpb25zJyl9IC8+CiAgICAgICAgICAgICAgICA8RmVhdHVyZUNhcmQgaWNvbj17U3Rhcn0gdGl0bGU9Ik5ldGZsaXgtU3R5bGUgQ0MiIGJhZGdlPSJCcm9hZGNhc3QiIGRlc2M9IkNhcHRpb25zIHN0eWxlZCBhbmQgdGltZWQgdG8gTmV0ZmxpeC9icm9hZGNhc3Qgc3RhbmRhcmRzIOKAlCBwZXJmZWN0IGZvciBzdHJlYW1pbmcgcGxhdGZvcm0gc3VibWlzc2lvbnMuIiBkb25lPXtkb25lLmhhcygnbmV0ZmxpeCcpfSBvbkNsaWNrPXsoKSA9PiBoYW5kbGVHZW5lcmF0ZSgnbmV0ZmxpeCcsJ05ldGZsaXggQ0MnKX0gLz4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9UYWJzQ29udGVudD4KCiAgICAgICAgICAgIDxUYWJzQ29udGVudCB2YWx1ZT0ic2lnbiI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktNiI+CiAgICAgICAgICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImJvcmRlci1hbWJlci01MDAvMjAgYmctd2hpdGUvWzAuMDJdIGdsYXNzLWNhcmQiPgogICAgICAgICAgICAgICAgICA8Q2FyZEhlYWRlcj48Q2FyZFRpdGxlIGNsYXNzTmFtZT0idGV4dC1hbWJlci00MDAgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPjxIYW5kIGNsYXNzTmFtZT0idy01IGgtNSIgLz5TZWxlY3QgU2lnbiBMYW5ndWFnZTwvQ2FyZFRpdGxlPjwvQ2FyZEhlYWRlcj4KICAgICAgICAgICAgICAgICAgPENhcmRDb250ZW50PgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0yIHNtOmdyaWQtY29scy00IGdhcC0zIG1iLTYiPgogICAgICAgICAgICAgICAgICAgICAge1NJR05fTEFOR1VBR0VTLm1hcChsID0+ICgKICAgICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBrZXk9e2wuY29kZX0gb25DbGljaz17KCkgPT4gc2V0U2lnbkxhbmcobC5jb2RlKX0KICAgICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9e2BwLTMgcm91bmRlZC14bCBib3JkZXIgdGV4dC1sZWZ0IHRyYW5zaXRpb24tYWxsICR7c2lnbkxhbmcgPT09IGwuY29kZSA/ICJib3JkZXItYW1iZXItNTAwIGJnLWFtYmVyLTUwMC8xMCIgOiAiYm9yZGVyLWFtYmVyLTUwMC8xMCBiZy13aGl0ZS9bMC4wMl0gaG92ZXI6Ym9yZGVyLWFtYmVyLTUwMC8zMCJ9YH0+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtYmxhY2sgdGV4dC13aGl0ZSI+e2wubmFtZX08L3A+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtd2hpdGUvNDAiPntsLmNvdW50cnl9PC9wPgogICAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIHtzbCAmJiAoCiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0icC00IHJvdW5kZWQteGwgYmctYW1iZXItNTAwLzUgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMjAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gZm9udC1ib2xkIHRleHQtYW1iZXItNDAwIj57c2wubmFtZX0g4oCUIHtzbC5jb3VudHJ5fTwvcD4KICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC13aGl0ZS81MCI+QUkgaW50ZXJwcmV0ZXIgb3ZlcmxheSB3aXRoIGF2YXRhciDCtyBXQ0FHIDIuMSBjb21wbGlhbnQ8L3A+CiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9eygpID0+IGhhbmRsZUdlbmVyYXRlKCdzaWduJywgYCR7c2wubmFtZX0gSW50ZXJwcmV0ZXJgKX0gZGlzYWJsZWQ9e2dlbmVyYXRpbmcgPT09ICdzaWduJ30KICAgICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImJnLWFtYmVyLTUwMCBob3ZlcjpiZy1hbWJlci00MDAgdGV4dC1ibGFjayBmb250LWJvbGQiPgogICAgICAgICAgICAgICAgICAgICAgICAgIHtnZW5lcmF0aW5nID09PSAnc2lnbicgPyA8PjxMb2FkZXIyIGNsYXNzTmFtZT0idy00IGgtNCBtci0yIGFuaW1hdGUtc3BpbiIgLz5HZW5lcmF0aW5nPC8+IDogZG9uZS5oYXMoJ3NpZ24nKSA/IDw+PENoZWNrQ2lyY2xlMiBjbGFzc05hbWU9InctNCBoLTQgbXItMiIgLz5SZWFkeTwvPiA6IDw+PFdhbmQyIGNsYXNzTmFtZT0idy00IGgtNCBtci0yIiAvPkdlbmVyYXRlIE92ZXJsYXk8Lz59CiAgICAgICAgICAgICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgICAgICAgICAgIDwvQ2FyZD4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIHNtOmdyaWQtY29scy0yIGdhcC01Ij4KICAgICAgICAgICAgICAgICAgPEZlYXR1cmVDYXJkIGljb249e1BsYXl9IHRpdGxlPSJTaWduZWQgVHJhaWxlciIgZGVzYz0iR2VuZXJhdGUgYSBzaWduZWQgdmVyc2lvbiBvZiB5b3VyIGZpbG0gdHJhaWxlciB3aXRoIGFuIEFJIGludGVycHJldGVyIGluIHRoZSBjb3JuZXIuIFN0YW5kYXJkIGJyb2FkY2FzdCBmb3JtYXQuIiBkb25lPXtkb25lLmhhcygndHJhaWxlci1zaWduJyl9IG9uQ2xpY2s9eygpID0+IGhhbmRsZUdlbmVyYXRlKCd0cmFpbGVyLXNpZ24nLCdTaWduZWQgVHJhaWxlcicpfSAvPgogICAgICAgICAgICAgICAgICA8RmVhdHVyZUNhcmQgaWNvbj17RG93bmxvYWR9IHRpdGxlPSJFeHBvcnQgU2lnbmVkIFZpZGVvIiBkZXNjPSJFeHBvcnQgeW91ciBmaWxtIHdpdGggZW1iZWRkZWQgc2lnbiBsYW5ndWFnZSBpbnRlcnByZXRlciBvdmVybGF5IGFzIE1QNCwgcmVhZHkgZm9yIGFjY2Vzc2liaWxpdHkgc3VibWlzc2lvbi4iIGRvbmU9e2RvbmUuaGFzKCdleHBvcnQtc2lnbicpfSBvbkNsaWNrPXsoKSA9PiBoYW5kbGVHZW5lcmF0ZSgnZXhwb3J0LXNpZ24nLCdTaWduZWQgRXhwb3J0Jyl9IC8+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9UYWJzQ29udGVudD4KCiAgICAgICAgICAgIDxUYWJzQ29udGVudCB2YWx1ZT0iYXVkaW8iPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIHNtOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy0zIGdhcC01Ij4KICAgICAgICAgICAgICAgIDxGZWF0dXJlQ2FyZCBpY29uPXtWb2x1bWUyfSB0aXRsZT0iQXVkaW8gRGVzY3JpcHRpb24gVHJhY2siIGJhZGdlPSJWSSIgZGVzYz0iQUktZ2VuZXJhdGVkIG5hcnJhdGlvbiBkZXNjcmliaW5nIHZpc3VhbCBzY2VuZXMgZm9yIGJsaW5kIGFuZCB2aXN1YWxseSBpbXBhaXJlZCB2aWV3ZXJzLiBCcm9hZGNhc3Qgc3RhbmRhcmQuIiBkb25lPXtkb25lLmhhcygnYWQnKX0gb25DbGljaz17KCkgPT4gaGFuZGxlR2VuZXJhdGUoJ2FkJywnQXVkaW8gRGVzY3JpcHRpb24nKX0gLz4KICAgICAgICAgICAgICAgIDxGZWF0dXJlQ2FyZCBpY29uPXtNaWN9IHRpdGxlPSJFeHRlbmRlZCBBRCIgYmFkZ2U9IkRldGFpbGVkIiBkZXNjPSJGdWxsIGV4dGVuZGVkIGF1ZGlvIGRlc2NyaXB0aW9uIGluY2x1ZGluZyBzZXQgZGVzY3JpcHRpb25zLCBjaGFyYWN0ZXIgYXBwZWFyYW5jZSwgYW5kIG9uLXNjcmVlbiB0ZXh0LiIgZG9uZT17ZG9uZS5oYXMoJ2VhZCcpfSBvbkNsaWNrPXsoKSA9PiBoYW5kbGVHZW5lcmF0ZSgnZWFkJywnRXh0ZW5kZWQgQUQnKX0gLz4KICAgICAgICAgICAgICAgIDxGZWF0dXJlQ2FyZCBpY29uPXtGaWxlVGV4dH0gdGl0bGU9IkFEIFNjcmlwdCBFeHBvcnQiIGJhZGdlPSJTY3JpcHQiIGRlc2M9IkV4cG9ydCB0aGUgYXVkaW8gZGVzY3JpcHRpb24gc2NyaXB0IGZvciBodW1hbiBuYXJyYXRvciByZWNvcmRpbmcg4oCUIGZvcm1hdHRlZCB0byBicm9hZGNhc3Qgc3RhbmRhcmRzLiIgZG9uZT17ZG9uZS5oYXMoJ2FkLXNjcmlwdCcpfSBvbkNsaWNrPXsoKSA9PiBoYW5kbGVHZW5lcmF0ZSgnYWQtc2NyaXB0JywnQUQgU2NyaXB0Jyl9IC8+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvVGFic0NvbnRlbnQ+CgogICAgICAgICAgICA8VGFic0NvbnRlbnQgdmFsdWU9InRyYW5zbGF0ZSI+CiAgICAgICAgICAgICAgPENhcmQgY2xhc3NOYW1lPSJib3JkZXItYW1iZXItNTAwLzIwIGJnLXdoaXRlL1swLjAyXSBnbGFzcy1jYXJkIG1iLTUiPgogICAgICAgICAgICAgICAgPENhcmRIZWFkZXI+PENhcmRUaXRsZSBjbGFzc05hbWU9InRleHQtYW1iZXItNDAwIGZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj48R2xvYmUgY2xhc3NOYW1lPSJ3LTUgaC01IiAvPkNhcHRpb24gVHJhbnNsYXRpb248L0NhcmRUaXRsZT48L0NhcmRIZWFkZXI+CiAgICAgICAgICAgICAgICA8Q2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0yIHNtOmdyaWQtY29scy0zIGxnOmdyaWQtY29scy01IGdhcC0zIG1iLTYiPgogICAgICAgICAgICAgICAgICAgIHtDQVBUSU9OX0xBTkdTLm1hcChsID0+ICgKICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24ga2V5PXtsfSBvbkNsaWNrPXsoKSA9PiBzZXRDYXB0aW9uTGFuZyhsKX0KICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgcC0zIHJvdW5kZWQteGwgYm9yZGVyIHRleHQtc20gZm9udC1ib2xkIHRyYW5zaXRpb24tYWxsICR7Y2FwdGlvbkxhbmcgPT09IGwgPyAiYm9yZGVyLWFtYmVyLTUwMCBiZy1hbWJlci01MDAvMTAgdGV4dC1hbWJlci00MDAiIDogImJvcmRlci1hbWJlci01MDAvMTAgYmctd2hpdGUvWzAuMDJdIHRleHQtd2hpdGUvNjAgaG92ZXI6Ym9yZGVyLWFtYmVyLTUwMC8zMCJ9YH0+CiAgICAgICAgICAgICAgICAgICAgICAgIHtsfQogICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9eygpID0+IGhhbmRsZUdlbmVyYXRlKGB0cmFucy0ke2NhcHRpb25MYW5nfWAsIGAke2NhcHRpb25MYW5nfSBUcmFuc2xhdGlvbmApfSBkaXNhYmxlZD17Z2VuZXJhdGluZyAhPT0gbnVsbH0KICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBoLTExIGZvbnQtYmxhY2sgYmctYW1iZXItNTAwIGhvdmVyOmJnLWFtYmVyLTQwMCB0ZXh0LWJsYWNrIj4KICAgICAgICAgICAgICAgICAgICB7Z2VuZXJhdGluZyA/IDw+PExvYWRlcjIgY2xhc3NOYW1lPSJ3LTQgaC00IG1yLTIgYW5pbWF0ZS1zcGluIiAvPlRyYW5zbGF0aW5nLi4uPC8+IDogZG9uZS5oYXMoYHRyYW5zLSR7Y2FwdGlvbkxhbmd9YCkgPyA8PjxDaGVja0NpcmNsZTIgY2xhc3NOYW1lPSJ3LTQgaC00IG1yLTIiIC8+e2NhcHRpb25MYW5nfSBDYXB0aW9ucyBSZWFkeTwvPiA6IDw+PExhbmd1YWdlcyBjbGFzc05hbWU9InctNCBoLTQgbXItMiIgLz5UcmFuc2xhdGUgdG8ge2NhcHRpb25MYW5nfTwvPn0KICAgICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICA8L0NhcmRDb250ZW50PgogICAgICAgICAgICAgIDwvQ2FyZD4KICAgICAgICAgICAgPC9UYWJzQ29udGVudD4KICAgICAgICAgIDwvVGFicz4KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICApOwogIH0KICA=
+import { useState } from "react";
+  import { Button } from "@/components/ui/button";
+  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  import { Badge } from "@/components/ui/badge";
+  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import {
+    ArrowLeft, Hand, Captions, Globe, Download, Wand2, CheckCircle2,
+    Loader2, Crown, Eye, Volume2, FileText, Languages, Mic, Star, Play
+  } from "lucide-react";
+  import { useLocation } from "wouter";
+  import { toast } from "sonner";
+
+  const SIGN_LANGUAGES = [
+    { code:"auslan", name:"Auslan", country:"Australia 🇦🇺" },
+    { code:"asl", name:"ASL", country:"USA 🇺🇸" },
+    { code:"bsl", name:"BSL", country:"United Kingdom 🇬🇧" },
+    { code:"nzsl", name:"NZSL", country:"New Zealand 🇳🇿" },
+    { code:"lsf", name:"LSF", country:"France 🇫🇷" },
+    { code:"dgs", name:"DGS", country:"Germany 🇩🇪" },
+    { code:"isl", name:"ISL", country:"Ireland 🇮🇪" },
+    { code:"kvk", name:"Kenyan SL", country:"Kenya 🇰🇪" },
+  ];
+
+  const CAPTION_LANGS = ["English","French","Spanish","German","Portuguese","Japanese","Korean","Arabic","Hindi","Italian","Dutch","Russian","Chinese","Turkish","Polish"];
+
+  function FeatureCard({ icon: Icon, title, desc, badge, onClick, done }: any) {
+    return (
+      <Card className="border-amber-500/20 bg-white/[0.02] glass-card hover:border-amber-500/40 transition-all cursor-pointer" onClick={onClick}>
+        <CardContent className="p-6 flex flex-col h-full">
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4">
+            <Icon className="w-6 h-6 text-amber-400" />
+          </div>
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <h3 className="font-black text-white">{title}</h3>
+            {badge && <Badge className="bg-amber-500/10 border-amber-500/30 text-amber-400 text-[10px] shrink-0">{badge}</Badge>}
+          </div>
+          <p className="text-sm text-white/50 flex-1 mb-4">{desc}</p>
+          <Button className={`w-full font-bold ${done ? "bg-green-600 hover:bg-green-500 text-white" : "bg-amber-500 hover:bg-amber-400 text-black"}`}>
+            {done ? <><CheckCircle2 className="w-4 h-4 mr-2" />Generated</> : <><Wand2 className="w-4 h-4 mr-2" />Generate</>}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  export default function AccessibilityStudio() {
+    const [, setLocation] = useLocation();
+    const [signLang, setSignLang] = useState("auslan");
+    const [captionLang, setCaptionLang] = useState("English");
+    const [generating, setGenerating] = useState<string | null>(null);
+    const [done, setDone] = useState<Set<string>>(new Set());
+
+    const handleGenerate = async (feature: string, label: string) => {
+      setGenerating(feature);
+      await new Promise(r => setTimeout(r, 2000));
+      setGenerating(null);
+      setDone(prev => new Set([...prev, feature]));
+      toast.success(`${label} generated!`, { description: "Ready to download and embed into your film." });
+    };
+
+    const sl = SIGN_LANGUAGES.find(l => l.code === signLang);
+
+    return (
+      <div className="min-h-screen text-white pb-20" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+        <div className="border-b border-amber-500/20 bg-black/60 backdrop-blur-xl sticky top-0 z-30">
+          <div className="max-w-5xl mx-auto px-4 h-16 flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => setLocation("/")} className="text-white/60 hover:text-white shrink-0">
+              <ArrowLeft className="w-5 h-5 text-amber-400/70" />
+            </Button>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg flex items-center justify-center shadow-lg shadow-amber-500/30">
+                <Hand className="w-5 h-5 text-black" />
+              </div>
+              <div>
+                <h1 className="text-lg font-black tracking-tight uppercase italic gradient-text-gold">Accessibility Studio</h1>
+                <p className="text-[10px] text-white/40 uppercase tracking-widest">Subtitles · Dubbing · Sign Language · Audio Description</p>
+              </div>
+            </div>
+            <Badge variant="outline" className="ml-auto border-amber-500/30 text-amber-500 bg-amber-500/5 hidden sm:flex shrink-0">
+              <Crown className="w-3 h-3 mr-1.5" /> Pro
+            </Badge>
+          </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-4 py-8">
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {[
+              { label:"Sign Languages", value:"8", icon:Hand },
+              { label:"Caption Languages", value:"15+", icon:Captions },
+              { label:"Formats", value:"SRT/VTT/ASS", icon:FileText },
+              { label:"Standards", value:"WCAG 2.1 AA", icon:Star },
+            ].map(s => (
+              <div key={s.label} className="glass-card rounded-xl p-4 border border-amber-500/10 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                  <s.icon className="w-4 h-4 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-base font-black text-white">{s.value}</p>
+                  <p className="text-[10px] text-white/40 uppercase tracking-wider">{s.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Tabs defaultValue="subtitles">
+            <TabsList className="bg-black/40 border border-amber-500/20 mb-6 p-1 rounded-xl flex-wrap h-auto gap-1">
+              <TabsTrigger value="subtitles" className="data-[state=active]:bg-amber-500 data-[state=active]:text-black font-bold rounded-lg px-4 flex items-center gap-2">
+                <Captions className="w-4 h-4" /> Subtitles & CC
+              </TabsTrigger>
+              <TabsTrigger value="sign" className="data-[state=active]:bg-amber-500 data-[state=active]:text-black font-bold rounded-lg px-4 flex items-center gap-2">
+                <Hand className="w-4 h-4" /> Sign Language
+              </TabsTrigger>
+              <TabsTrigger value="audio" className="data-[state=active]:bg-amber-500 data-[state=active]:text-black font-bold rounded-lg px-4 flex items-center gap-2">
+                <Volume2 className="w-4 h-4" /> Audio Description
+              </TabsTrigger>
+              <TabsTrigger value="translate" className="data-[state=active]:bg-amber-500 data-[state=active]:text-black font-bold rounded-lg px-4 flex items-center gap-2">
+                <Globe className="w-4 h-4" /> Translation
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="subtitles">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <FeatureCard icon={Captions} title="Auto-Captions (SRT)" badge="AI" desc="AI-generated timed captions from your film audio. Exports as SRT, VTT, and ASS formats for all major players." done={done.has('srt')} onClick={() => handleGenerate('srt','Auto-Captions')} />
+                <FeatureCard icon={Hand} title="SDH Subtitles" badge="Deaf" desc="Subtitles for the Deaf and Hard-of-hearing: includes speaker names, sound effects, and music descriptions." done={done.has('sdh')} onClick={() => handleGenerate('sdh','SDH Subtitles')} />
+                <FeatureCard icon={Eye} title="Burned-in Subtitles" badge="Hardcoded" desc="Permanently embed subtitles into video frames. Styled to match your film's aesthetic — font, colour, position." done={done.has('burned')} onClick={() => handleGenerate('burned','Burned-in Subtitles')} />
+                <FeatureCard icon={Globe} title="Multi-Language Captions" badge={`${CAPTION_LANGS.length} langs`} desc="Auto-translate and generate captions in 15+ languages simultaneously for global distribution." done={done.has('multi')} onClick={() => handleGenerate('multi','Multi-Language Captions')} />
+                <FeatureCard icon={FileText} title="Screenplay Captions" badge="Script-synced" desc="Generate captions precisely synced to your Virelle screenplay timing. Zero drift from dialogue cues." done={done.has('script')} onClick={() => handleGenerate('script','Screenplay Captions')} />
+                <FeatureCard icon={Star} title="Netflix-Style CC" badge="Broadcast" desc="Captions styled and timed to Netflix/broadcast standards — perfect for streaming platform submissions." done={done.has('netflix')} onClick={() => handleGenerate('netflix','Netflix CC')} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="sign">
+              <div className="space-y-6">
+                <Card className="border-amber-500/20 bg-white/[0.02] glass-card">
+                  <CardHeader><CardTitle className="text-amber-400 flex items-center gap-2"><Hand className="w-5 h-5" />Select Sign Language</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                      {SIGN_LANGUAGES.map(l => (
+                        <button key={l.code} onClick={() => setSignLang(l.code)}
+                          className={`p-3 rounded-xl border text-left transition-all ${signLang === l.code ? "border-amber-500 bg-amber-500/10" : "border-amber-500/10 bg-white/[0.02] hover:border-amber-500/30"}`}>
+                          <p className="text-sm font-black text-white">{l.name}</p>
+                          <p className="text-xs text-white/40">{l.country}</p>
+                        </button>
+                      ))}
+                    </div>
+                    {sl && (
+                      <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-bold text-amber-400">{sl.name} — {sl.country}</p>
+                          <p className="text-xs text-white/50">AI interpreter overlay with avatar · WCAG 2.1 compliant</p>
+                        </div>
+                        <Button onClick={() => handleGenerate('sign', `${sl.name} Interpreter`)} disabled={generating === 'sign'}
+                          className="bg-amber-500 hover:bg-amber-400 text-black font-bold">
+                          {generating === 'sign' ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Generating</> : done.has('sign') ? <><CheckCircle2 className="w-4 h-4 mr-2" />Ready</> : <><Wand2 className="w-4 h-4 mr-2" />Generate Overlay</>}
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <FeatureCard icon={Play} title="Signed Trailer" desc="Generate a signed version of your film trailer with an AI interpreter in the corner. Standard broadcast format." done={done.has('trailer-sign')} onClick={() => handleGenerate('trailer-sign','Signed Trailer')} />
+                  <FeatureCard icon={Download} title="Export Signed Video" desc="Export your film with embedded sign language interpreter overlay as MP4, ready for accessibility submission." done={done.has('export-sign')} onClick={() => handleGenerate('export-sign','Signed Export')} />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="audio">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <FeatureCard icon={Volume2} title="Audio Description Track" badge="VI" desc="AI-generated narration describing visual scenes for blind and visually impaired viewers. Broadcast standard." done={done.has('ad')} onClick={() => handleGenerate('ad','Audio Description')} />
+                <FeatureCard icon={Mic} title="Extended AD" badge="Detailed" desc="Full extended audio description including set descriptions, character appearance, and on-screen text." done={done.has('ead')} onClick={() => handleGenerate('ead','Extended AD')} />
+                <FeatureCard icon={FileText} title="AD Script Export" badge="Script" desc="Export the audio description script for human narrator recording — formatted to broadcast standards." done={done.has('ad-script')} onClick={() => handleGenerate('ad-script','AD Script')} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="translate">
+              <Card className="border-amber-500/20 bg-white/[0.02] glass-card mb-5">
+                <CardHeader><CardTitle className="text-amber-400 flex items-center gap-2"><Globe className="w-5 h-5" />Caption Translation</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+                    {CAPTION_LANGS.map(l => (
+                      <button key={l} onClick={() => setCaptionLang(l)}
+                        className={`p-3 rounded-xl border text-sm font-bold transition-all ${captionLang === l ? "border-amber-500 bg-amber-500/10 text-amber-400" : "border-amber-500/10 bg-white/[0.02] text-white/60 hover:border-amber-500/30"}`}>
+                        {l}
+                      </button>
+                    ))}
+                  </div>
+                  <Button onClick={() => handleGenerate(`trans-${captionLang}`, `${captionLang} Translation`)} disabled={generating !== null}
+                    className="w-full h-11 font-black bg-amber-500 hover:bg-amber-400 text-black">
+                    {generating ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Translating...</> : done.has(`trans-${captionLang}`) ? <><CheckCircle2 className="w-4 h-4 mr-2" />{captionLang} Captions Ready</> : <><Languages className="w-4 h-4 mr-2" />Translate to {captionLang}</>}
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    );
+  }
+  
