@@ -271,7 +271,7 @@ function CustomOrderModal({
                     <select
                       value={characterId ?? ""}
                       onChange={e => setCharacterId(e.target.value ? Number(e.target.value) : null)}
-                      className="w-full glass-card/5 border border-amber-500/20 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none"
+                      className="w-full glass-card/5 border border-amber-500/20 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none hover:shadow-amber-500/20 transition-shadow"
                     >
                       <option value="">No specific character Ã¢ÂÂ standalone item</option>
                       {(myCharacters ?? []).map(c => (
@@ -380,7 +380,7 @@ function CustomOrderModal({
                       order.status === "pending_payment"    ? "Awaiting payment"  :
                                                               "Failed";
                     return (
-                      <div key={order.id} className="rounded-xl border border-amber-500/20 glass-card/[0.02] p-4 flex gap-3">
+                      <div key={order.id} className="rounded-xl border border-amber-500/20 glass-card/[0.02] p-4 flex gap-3 hover:shadow-amber-500/20 transition-shadow">
                         {order.generatedImageUrl ? (
                           <img
                             src={order.generatedImageUrl}
@@ -388,7 +388,7 @@ function CustomOrderModal({
                             className="w-16 h-16 rounded-lg object-cover border border-amber-500/20 shrink-0"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-lg glass-card/5 border border-amber-500/20 flex items-center justify-center shrink-0">
+                          <div className="w-16 h-16 rounded-lg glass-card/5 border border-amber-500/20 flex items-center justify-center shrink-0 hover:shadow-amber-500/20 transition-shadow">
                             <Shirt className="h-7 w-7 text-white/15" />
                           </div>
                         )}
@@ -436,7 +436,7 @@ function ItemCard({
   const priceLabel = `A$${(cents / 100).toFixed(2)}`;
 
   return (
-    <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col">
+    <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col hover:shadow-amber-500/20 transition-shadow">
       <div className="relative h-36 bg-gradient-to-br from-white/5 to-black overflow-hidden">
         {item.primaryImageUrl && !imgErr ? (
           <img
@@ -688,7 +688,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
       <main className="max-w-5xl mx-auto px-4 py-10 space-y-8">
 
         {/* Profile hero */}
-        <div className="flex items-start gap-5 p-6 rounded-2xl border border-amber-500/20 glass-card/[0.02]">
+        <div className="gold-glow flex items-start gap-5 p-6 rounded-2xl border border-amber-500/20 glass-card/[0.02] hover:shadow-amber-500/20 transition-shadow">
           {(profile as any).logoUrl ? (
             <img
               src={(profile as any).logoUrl}
@@ -696,7 +696,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
               className="w-20 h-20 rounded-2xl object-cover border border-amber-500/20 shrink-0"
             />
           ) : (
-            <div className="w-20 h-20 rounded-2xl glass-card/5 border border-amber-500/20 flex items-center justify-center shrink-0">
+            <div className="w-20 h-20 rounded-2xl glass-card/5 border border-amber-500/20 flex items-center justify-center shrink-0 hover:shadow-amber-500/20 transition-shadow">
               <Shirt className="h-9 w-9 text-white/25" />
             </div>
           )}
@@ -775,7 +775,7 @@ function DesignerDetailView({ designerId }: { designerId: number }) {
           </h2>
 
           {collections.length === 0 ? (
-            <div className="glass-card/[0.03] border border-amber-500/20 rounded-2xl p-12 text-center">
+            <div className="glass-card/[0.03] border border-amber-500/20 rounded-2xl p-12 text-center hover:shadow-amber-500/20 transition-shadow">
               <Package className="h-10 w-10 text-white/20 mx-auto mb-3" />
               <p className="text-white/40 text-sm">No published collections yet.</p>
             </div>

@@ -261,7 +261,7 @@ export default function DesignerRegisterPage() {
 
           {/* ── Step 1: Brand Info ── */}
           {!loading && step === 1 && (
-            <form onSubmit={handleBrandInfoSubmit} className="space-y-5 glass-card/3 border border-amber-500/20 rounded-2xl p-6">
+            <form onSubmit={handleBrandInfoSubmit} className="gold-glow space-y-5 glass-card/3 border border-amber-500/20 rounded-2xl p-6 hover:shadow-amber-500/20 transition-shadow">
               <div>
                 <Label className="text-white/80 text-sm mb-1.5 block">Brand / Studio Name *</Label>
                 <Input
@@ -320,7 +320,7 @@ export default function DesignerRegisterPage() {
                 </div>
 
                 {/* Card 1 — Designer Membership Only */}
-                <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-5 space-y-3">
+                <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-5 space-y-3 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-bold text-white">Designer Membership</p>
@@ -388,7 +388,7 @@ export default function DesignerRegisterPage() {
 
           {/* ── Step 3: Connect Onboarding ── */}
           {!loading && step === 3 && (
-            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-6 space-y-5 text-center">
+            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-6 space-y-5 text-center hover:shadow-amber-500/20 transition-shadow">
               <Wallet className="h-10 w-10 text-amber-400 mx-auto" />
               <div>
                 <h2 className="text-xl font-black mb-2 gradient-text-gold">Set Up Your Payouts</h2>
@@ -415,7 +415,7 @@ export default function DesignerRegisterPage() {
 
           {/* ── Step 4: Done ── */}
           {!loading && step === 4 && (
-            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-8 text-center space-y-5">
+            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-8 text-center space-y-5 hover:shadow-amber-500/20 transition-shadow">
               <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto">
                 <Sparkles className="h-8 w-8 text-amber-400" />
               </div>

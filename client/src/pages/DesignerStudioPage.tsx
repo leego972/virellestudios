@@ -206,7 +206,7 @@ const ITEM_TIERS = [
 
             {/* Live earnings + breakeven */}
             {leaseNum > 0 && (
-              <div className="rounded-xl glass-card/3 border border-amber-500/20 p-3 space-y-1.5">
+              <div className="rounded-xl glass-card/3 border border-amber-500/20 p-3 space-y-1.5 hover:shadow-amber-500/20 transition-shadow">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-white/50">You earn per lease</span>
                   <span className="text-sm font-bold text-green-400">A${youEarn.toFixed(2)}</span>
@@ -365,7 +365,7 @@ export default function DesignerStudioPage() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {(publicItems as any[]).map((item) => (
-                  <div key={item.id} className="rounded-xl border border-amber-500/20 glass-card/[0.03] hover:glass-card/[0.06] hover:border-amber-500/25 transition-all overflow-hidden group cursor-pointer">
+                  <div key={item.id} className="rounded-xl border border-amber-500/20 glass-card/[0.03] hover:glass-card/[0.06] hover:border-amber-500/25 transition-all overflow-hidden group cursor-pointer hover:shadow-amber-500/20 transition-shadow">
                     <div className="aspect-square bg-white/5 overflow-hidden">
                       {item.primaryImageUrl ? (
                         <img src={item.primaryImageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
@@ -421,11 +421,11 @@ export default function DesignerStudioPage() {
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Brand Header */}
-        <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-6 flex items-center gap-4">
+        <div className="gold-glow glass-card/3 border border-amber-500/20 rounded-2xl p-6 flex items-center gap-4 hover:shadow-amber-500/20 transition-shadow">
           {profile?.logoUrl ? (
             <img src={profile.logoUrl} alt={profile.brandName} className="w-14 h-14 rounded-full object-cover border border-amber-500/20" />
           ) : (
-            <div className="w-14 h-14 rounded-full glass-card/10 flex items-center justify-center border border-amber-500/20">
+            <div className="w-14 h-14 rounded-full glass-card/10 flex items-center justify-center border border-amber-500/20 hover:shadow-amber-500/20 transition-shadow">
               <Shirt className="h-7 w-7 text-white/30" />
             </div>
           )}
@@ -437,7 +437,7 @@ export default function DesignerStudioPage() {
             variant="outline"
             size="sm"
             onClick={() => setLocation("/designer-wardrobe")}
-            className="border-amber-500/20 text-white/70 hover:glass-card/5 hidden sm:flex"
+            className="border-amber-500/20 text-white/70 hover:glass-card/5 hidden sm:flex hover:shadow-amber-500/20 transition-shadow"
           >
             <Pencil className="h-3.5 w-3.5 mr-1.5" />
             Edit Profile
@@ -447,7 +447,7 @@ export default function DesignerStudioPage() {
         {/* Status Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Membership */}
-          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2">
+          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2 hover:shadow-amber-500/20 transition-shadow">
             <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Membership</p>
             <StatusBadge status={membership?.status ?? "none"} />
             {membership?.expiresAt && (
@@ -458,7 +458,7 @@ export default function DesignerStudioPage() {
           </div>
 
           {/* Payouts */}
-          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2">
+          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2 hover:shadow-amber-500/20 transition-shadow">
             <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Payouts</p>
             {connectLoading ? (
               <Skeleton className="h-5 w-24 bg-white/5" />
@@ -489,7 +489,7 @@ export default function DesignerStudioPage() {
           </div>
 
           {/* Earnings */}
-          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2">
+          <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-4 space-y-2 hover:shadow-amber-500/20 transition-shadow">
             <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Your Earnings</p>
             <p className="text-2xl font-black text-amber-400">
               A${earnings?.totalEarnedDisplay ?? "0.00"}
@@ -516,7 +516,7 @@ export default function DesignerStudioPage() {
           </div>
 
           {collections.length === 0 ? (
-            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-10 text-center">
+            <div className="glass-card/3 border border-amber-500/20 rounded-2xl p-10 text-center hover:shadow-amber-500/20 transition-shadow">
               <Package className="h-10 w-10 text-white/20 mx-auto mb-3" />
               <p className="text-white/40 text-sm mb-3">No collections yet.</p>
               <Button
@@ -532,7 +532,7 @@ export default function DesignerStudioPage() {
               {collections.map((col: any) => (
                 <div
                   key={col.id}
-                  className="glass-card/3 border border-amber-500/20 rounded-xl p-4 flex items-center gap-3"
+                  className="glass-card/3 border border-amber-500/20 rounded-xl p-4 flex items-center gap-3 hover:shadow-amber-500/20 transition-shadow"
                 >
                   {col.coverImageUrl ? (
                     <img src={col.coverImageUrl} alt={col.name} className="w-12 h-12 rounded-lg object-cover shrink-0 border border-amber-500/20" />
