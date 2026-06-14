@@ -32,10 +32,10 @@ export default function FundingProMatch() {
 
   return (
       <div className="container max-w-7xl mx-auto p-4 space-y-4">
-      <SiteHead title="Funding Ã¢ÂÂ Pro Match & Tracker" description="AI-matched funding opportunities for your film, with shortlist, autofill drafts and application status tracking." />
+      <SiteHead title="Funding — Pro Match & Tracker" description="AI-matched funding opportunities for your film, with shortlist, autofill drafts and application status tracking." />
       <div className="flex items-center gap-3">
         <Button size="sm" variant="ghost" onClick={() => setLocation("/funding")}><ArrowLeft className="h-4 w-4 mr-1.5" />Back to Directory</Button>
-        <h1 className="text-2xl font-bold text-gold-shimmer">Funding Ã¢ÂÂ Pro Match & Tracker</h1>
+        <h1 className="text-2xl font-bold text-gold-shimmer">Funding — Pro Match & Tracker</h1>
         <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/40">v4</Badge>
       </div>
 
@@ -43,12 +43,12 @@ export default function FundingProMatch() {
         <CardContent className="pt-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <Label className="text-sm shrink-0">Project:</Label>
           <Select value={activeId ? String(activeId) : ""} onValueChange={v => setProjectId(Number(v))}>
-            <SelectTrigger className="max-w-md focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Choose a project to score againstÃ¢ÂÂ¦" /></SelectTrigger>
+            <SelectTrigger className="max-w-md focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Choose a project to score against…" /></SelectTrigger>
             <SelectContent>
               {(projects.data || []).map((p: any) => <SelectItem key={p.id} value={String(p.id)}>{p.title || p.name || `Project ${p.id}`}</SelectItem>)}
             </SelectContent>
           </Select>
-          {projects.isLoading && <div className="text-xs text-muted-foreground">loading projectsÃ¢ÂÂ¦</div>}
+          {projects.isLoading && <div className="text-xs text-muted-foreground">loading projects…</div>}
         </CardContent>
       </Card>
 
@@ -95,7 +95,7 @@ function MatchTab({ projectId }: { projectId: number }) {
             <SelectContent><SelectItem value="all">All countries</SelectItem>{(countries.data || []).map((c: any) => <SelectItem key={c.country} value={c.country}>{c.country}</SelectItem>)}</SelectContent>
           </Select></div>
           <div><Label className="text-xs">Top N</Label><Input type="number" value={limit} onChange={e => setLimit(Math.min(100, Math.max(1, Number(e.target.value) || 25)))} className="w-24" /></div>
-          {matches.isFetching && <div className="text-xs text-muted-foreground">scoringÃ¢ÂÂ¦</div>}
+          {matches.isFetching && <div className="text-xs text-muted-foreground">scoring…</div>}
         </div>
         {matches.data?.length === 0 && <div className="text-sm text-muted-foreground py-6 text-center">No matches above threshold. Try removing the country filter or filling in your project's genre/synopsis to improve scoring.</div>}
         <div className="space-y-2">
@@ -143,7 +143,7 @@ function SavedTab({ projectId }: { projectId: number }) {
   const toggleSaved = trpc.funding.toggleSaved.useMutation({ onSuccess: () => saved.refetch() });
   const ids = new Set((saved.data || []) as number[]);
   const sources = (all.data || []).filter((s: any) => ids.has(s.id));
-  if (sources.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No shortlisted sources yet Ã¢ÂÂ save matches from the AI Match Score tab.</CardContent></Card>;
+  if (sources.length === 0) return <Card><CardContent className="pt-6 text-center text-muted-foreground glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No shortlisted sources yet — save matches from the AI Match Score tab.</CardContent></Card>;
   return (
     <Card>
       <CardHeader><CardTitle className="text-base flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><Bookmark className="h-4 w-4 text-amber-400" />Shortlist ({sources.length})</CardTitle></CardHeader>
@@ -197,15 +197,15 @@ function AppsTab() {
               <div key={a.id} className="border border-border rounded-lg p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold">{a.projectTitle} Ã¢ÂÂ {a.organization}</div>
-                    <div className="text-xs text-muted-foreground">{a.country} ÃÂ· submitted {new Date(a.submittedAt).toLocaleDateString()}{a.updatedAt && ` ÃÂ· updated ${new Date(a.updatedAt).toLocaleDateString()}`}</div>
+                    <div className="font-semibold">{a.projectTitle} → {a.organization}</div>
+                    <div className="text-xs text-muted-foreground">{a.country} · submitted {new Date(a.submittedAt).toLocaleDateString()}{a.updatedAt && ` · updated ${new Date(a.updatedAt).toLocaleDateString()}`}</div>
                     {a.notes && <div className="text-xs text-muted-foreground mt-1.5 italic">"{a.notes}"</div>}
                   </div>
                   <Badge className={meta.color}><Icon className="h-3 w-3 mr-1" />{meta.label}</Badge>
                 </div>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {Object.keys(STATUS_META).map(k => k !== a.status && (
-                    <Button key={k} size="sm" variant="ghost" className="h-6 text-[10px] px-2" onClick={() => setStatusDialog({ appId: a.id, status: k, label: STATUS_META[k].label, notes: a.notes || "" })} aria-label={`Change status to ${STATUS_META[k].label}`}>Ã¢ÂÂ {STATUS_META[k].label}</Button>
+                    <Button key={k} size="sm" variant="ghost" className="h-6 text-[10px] px-2" onClick={() => setStatusDialog({ appId: a.id, status: k, label: STATUS_META[k].label, notes: a.notes || "" })} aria-label={`Change status to ${STATUS_META[k].label}`}>→ {STATUS_META[k].label}</Button>
                   ))}
                 </div>
               </div>
@@ -260,15 +260,15 @@ function AutofillTab({ projectId }: { projectId: number }) {
         <div className="flex gap-2 items-end">
           <div className="flex-1"><Label className="text-xs">Funding source</Label>
             <Select value={sourceId ? String(sourceId) : ""} onValueChange={v => { setSourceId(Number(v)); setDraft(null); }}>
-              <SelectTrigger><SelectValue placeholder="Pick a funderÃ¢ÂÂ¦" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Pick a funder…" /></SelectTrigger>
               <SelectContent>{(sources.data || []).slice(0, 200).map((s: any) => <SelectItem key={s.id} value={String(s.id)}>{s.organization} ({s.country})</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <Button onClick={() => sourceId && autofill.mutate({ projectId, fundingSourceId: sourceId })} disabled={!sourceId || autofill.isPending}>
-            <Sparkles className="h-3.5 w-3.5 mr-1.5" />{autofill.isPending ? "DraftingÃ¢ÂÂ¦" : "Generate Draft"}
+            <Sparkles className="h-3.5 w-3.5 mr-1.5" />{autofill.isPending ? "Drafting…" : "Generate Draft"}
           </Button>
         </div>
-        {src && <div className="text-xs text-muted-foreground border border-border rounded p-2"><strong>{src.organization}</strong> Ã¢ÂÂ {src.supports || src.eligibility || "Ã¢ÂÂ"}</div>}
+        {src && <div className="text-xs text-muted-foreground border border-border rounded p-2"><strong>{src.organization}</strong> — {src.supports || src.eligibility || "—"}</div>}
         {draft && (
           <div className="space-y-2">
             {Object.entries(draft).map(([k, v]: [string, any]) => (
