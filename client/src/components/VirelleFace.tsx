@@ -1,11 +1,11 @@
 import React from 'react';
 
   // Eye socket positions — calibrated to virelle-face.png (viewBox 0 0 100 133)
-  // cy:73 = ~55% from top of portrait (below beret, in the actual eye socket area)
-  // cx 41/59 = closer together than previous 38/62
+  // Glows sit BEHIND the mask at z:1; mask PNG is z:2 on top.
+  // The transparent eye sockets let the light bleed through from behind.
   const GEO = {
-    leftEye:  { cx: 43, cy: 69, rx: 2.6, ry: 1.9 },
-    rightEye: { cx: 63, cy: 69, rx: 2.6, ry: 1.9 },
+    leftEye:  { cx: 43, cy: 69, rx: 3.8, ry: 2.8 },
+    rightEye: { cx: 63, cy: 69, rx: 3.8, ry: 2.8 },
   };
 
   type VoiceState = 'idle' | 'inactive' | 'listening' | 'thinking' | 'speaking';
@@ -39,14 +39,14 @@ import React from 'react';
     const isActive = effectiveState === 'listening' || effectiveState === 'thinking' || effectiveState === 'speaking';
     const color = EYE_COLOR[effectiveState];
 
-    const eyeOpacity = isActive ? Math.min(0.80 + v * 0.20, 1.0) : 0.70;
-    const eyeScale   = isActive ? 1 + v * 0.10 : 1.0;
+    const eyeOpacity = isActive ? Math.min(0.92 + v * 0.08, 1.0) : 0.82;
+    const eyeScale   = isActive ? 1 + v * 0.12 : 1.0;
 
     const mkGrad = (id: string, cx: number, cy: number, rx: number) => (
-      <radialGradient key={id} id={id} cx={cx} cy={cy} r={rx * 2.4} gradientUnits="userSpaceOnUse">
+      <radialGradient key={id} id={id} cx={cx} cy={cy} r={rx * 2.6} gradientUnits="userSpaceOnUse">
         <stop offset="0%"   stopColor={color.core}  stopOpacity={eyeOpacity} />
-        <stop offset="35%"  stopColor={color.mid}   stopOpacity={eyeOpacity * 0.80} />
-        <stop offset="70%"  stopColor={color.outer} stopOpacity={eyeOpacity * 0.30} />
+        <stop offset="30%"  stopColor={color.mid}   stopOpacity={eyeOpacity * 0.85} />
+        <stop offset="65%"  stopColor={color.outer} stopOpacity={eyeOpacity * 0.35} />
         <stop offset="100%" stopColor={color.outer} stopOpacity="0" />
       </radialGradient>
     );
@@ -59,12 +59,12 @@ import React from 'react';
           aspectRatio: '3 / 4',
           animation: 'virelle-float 4.2s ease-in-out infinite',
           filter: isActive
-            ? `drop-shadow(0 0 36px ${color.outer}66) drop-shadow(0 0 60px ${color.outer}33)`
+            ? `drop-shadow(0 0 40px ${color.outer}88) drop-shadow(0 0 70px ${color.outer}44)`
             : 'drop-shadow(0 0 30px rgba(201,168,76,0.22)) drop-shadow(0 0 50px rgba(201,168,76,0.10))',
           transition: 'filter 0.6s ease',
         }}>
 
-          {/* Gold ambient glow behind the transparent mask */}
+          {/* z:0 — Gold ambient glow behind everything */}
           <div style={{
             position: 'absolute',
             inset: '-15%',
@@ -74,32 +74,14 @@ import React from 'react';
             pointerEvents: 'none',
           }} />
 
-          {/* Mask image */}
-          <img
-            src="/virelle-face.png"
-            alt=""
-            draggable={false}
-            style={{
-              position: 'relative',
-              zIndex: 1,
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              objectPosition: 'center',
-              userSelect: 'none',
-              pointerEvents: 'none',
-              display: 'block',
-            }}
-          />
-
-          {/* Eye glows */}
+          {/* z:1 — Eye glows BEHIND the mask, shine through the transparent sockets */}
           <svg
             viewBox="0 0 100 133"
             preserveAspectRatio="xMidYMid meet"
             style={{
               position: 'absolute',
               inset: 0,
-              zIndex: 2,
+              zIndex: 1,
               width: '100%',
               height: '100%',
               pointerEvents: 'none',
@@ -116,7 +98,7 @@ import React from 'react';
               rx={GEO.leftEye.rx  * eyeScale}
               ry={GEO.leftEye.ry  * eyeScale}
               fill={`url(#${uid}-l)`}
-              style={{ transition: 'rx 0.12s ease-out, ry 0.12s ease-out' }}
+              style={{ transition: 'rx 0.14s ease-out, ry 0.14s ease-out' }}
             />
             <ellipse
               cx={GEO.rightEye.cx}
@@ -124,9 +106,28 @@ import React from 'react';
               rx={GEO.rightEye.rx * eyeScale}
               ry={GEO.rightEye.ry * eyeScale}
               fill={`url(#${uid}-r)`}
-              style={{ transition: 'rx 0.12s ease-out, ry 0.12s ease-out' }}
+              style={{ transition: 'rx 0.14s ease-out, ry 0.14s ease-out' }}
             />
           </svg>
+
+          {/* z:2 — Mask PNG on top; transparent sockets reveal the glow behind */}
+          <img
+            src="/virelle-face.png"
+            alt=""
+            draggable={false}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 2,
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              objectPosition: 'center',
+              userSelect: 'none',
+              pointerEvents: 'none',
+              display: 'block',
+            }}
+          />
 
           <style>{`
             @keyframes virelle-float {
