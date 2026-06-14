@@ -1,1 +1,201 @@
-aW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgdXNlTG9jYXRpb24gfSBmcm9tICJ3b3V0ZXIiOwppbXBvcnQgeyBDaGVja0NpcmNsZSwgU3BhcmtsZXMsIEFycm93UmlnaHQgfSBmcm9tICJsdWNpZGUtcmVhY3QiOwppbXBvcnQgeyBCdXR0b24gfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvYnV0dG9uIjsKaW1wb3J0IHsgQmFkZ2UgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvYmFkZ2UiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7Cgpjb25zdCBUSUVSX05BTUVTOiBSZWNvcmQ8c3RyaW5nLCBzdHJpbmc+ID0gewogIGluZGllOiAiSW5kaWUiLAogIGFtYXRldXI6ICJDcmVhdG9yIiwKICBpbmRlcGVuZGVudDogIkluZHVzdHJ5IiwKICBjcmVhdG9yOiAiSW5kdXN0cnkiLCAgLy8gYWxpYXMKICBzdHVkaW86ICJJbmR1c3RyeSIsICAgLy8gYWxpYXMKICBpbmR1c3RyeTogIkluZHVzdHJ5IiwKfTsKCmNvbnN0IFBBQ0tfTkFNRVM6IFJlY29yZDxzdHJpbmcsIHN0cmluZz4gPSB7CiAgdG9wdXBfMTA6ICJTdGFydGVyIFBhY2siLAogIHRvcHVwXzUwOiAiUHJvZHVjZXIgUGFjayIsCiAgdG9wdXBfMTAwOiAiRGlyZWN0b3IgUGFjayIsCiAgdG9wdXBfMjAwOiAiU3R1ZGlvIFBhY2siLAogIHRvcHVwXzUwMDogIkJsb2NrYnVzdGVyIFBhY2siLAogIHRvcHVwXzEwMDA6ICJNb2d1bCBQYWNrIiwKfTsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEJpbGxpbmdTdWNjZXNzKCkgewogIGNvbnN0IFssIHNldExvY2F0aW9uXSA9IHVzZUxvY2F0aW9uKCk7CiAgY29uc3QgW2NvdW50ZG93biwgc2V0Q291bnRkb3duXSA9IHVzZVN0YXRlKDgpOwogIGNvbnN0IFttb2JpbGVSZWRpcmVjdGluZywgc2V0TW9iaWxlUmVkaXJlY3RpbmddID0gdXNlU3RhdGUoZmFsc2UpOwoKICAvLyBQYXJzZSBxdWVyeSBwYXJhbXMKICBjb25zdCBwYXJhbXMgPSBuZXcgVVJMU2VhcmNoUGFyYW1zKHdpbmRvdy5sb2NhdGlvbi5zZWFyY2gpOwogIGNvbnN0IHRpZXIgPSBwYXJhbXMuZ2V0KCJ0aWVyIik7CiAgY29uc3QgdHlwZSA9IHBhcmFtcy5nZXQoInR5cGUiKTsKICBjb25zdCBwYWNrID0gcGFyYW1zLmdldCgicGFjayIpOwogIC8vIHNvdXJjZT1tb2JpbGUgaXMgc2V0IGJ5IHRoZSBtb2JpbGUgYXBwIHdoZW4gaXQgb3BlbnMgdGhlIHdlYiBwcmljaW5nIHBhZ2UKICBjb25zdCBzb3VyY2UgPSBwYXJhbXMuZ2V0KCJzb3VyY2UiKTsKICBjb25zdCBpc01vYmlsZSA9IHNvdXJjZSA9PT0gIm1vYmlsZSI7CgogIGNvbnN0IGlzVG9wVXAgPSB0eXBlID09PSAidG9wdXAiOwogIGNvbnN0IHRpZXJOYW1lID0gdGllciA/IChUSUVSX05BTUVTW3RpZXJdIHx8IHRpZXIpIDogbnVsbDsKICBjb25zdCBwYWNrTmFtZSA9IHBhY2sgPyAoUEFDS19OQU1FU1twYWNrXSB8fCBwYWNrKSA6IG51bGw7CgogIC8vIFJlZmV0Y2ggdXNlciB0byBwaWNrIHVwIG5ldyBzdWJzY3JpcHRpb24vY3JlZGl0cwogIGNvbnN0IHV0aWxzID0gdHJwYy51c2VVdGlscygpOwogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICAvLyBJbnZhbGlkYXRlIHVzZXIgYW5kIHN1YnNjcmlwdGlvbiBxdWVyaWVzIHNvIHRoZSBVSSByZWZsZWN0cyB0aGUgbmV3IHN0YXRlCiAgICB1dGlscy5hdXRoLm1lLmludmFsaWRhdGUoKTsKICAgIHV0aWxzLnN1YnNjcmlwdGlvbi5zdGF0dXMuaW52YWxpZGF0ZSgpOwogIH0sIFtdKTsKCiAgLy8gSWYgdGhpcyBjaGVja291dCB3YXMgaW5pdGlhdGVkIGZyb20gdGhlIG1vYmlsZSBhcHAsIHJlZGlyZWN0IGJhY2sgdmlhIGRlZXAgbGluawogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBpZiAoIWlzTW9iaWxlKSByZXR1cm47CiAgICBzZXRNb2JpbGVSZWRpcmVjdGluZyh0cnVlKTsKICAgIC8vIEdpdmUgdGhlIHdlYmhvb2sgYSBtb21lbnQgdG8gcHJvY2VzcywgdGhlbiByZWRpcmVjdCBiYWNrIHRvIHRoZSBhcHAKICAgIGNvbnN0IHRpbWVyID0gc2V0VGltZW91dCgoKSA9PiB7CiAgICAgIGNvbnN0IGRlZXBMaW5rID0gaXNUb3BVcAogICAgICAgID8gYHZpcmVsbGU6Ly9iaWxsaW5nL3N1Y2Nlc3M/c3Vic2NyaXB0aW9uPXN1Y2Nlc3MmdHlwZT10b3B1cCZwYWNrPSR7cGFjayA/PyAiIn1gCiAgICAgICAgOiBgdmlyZWxsZTovL2JpbGxpbmcvc3VjY2Vzcz9zdWJzY3JpcHRpb249c3VjY2VzcyZ0aWVyPSR7dGllciA/PyAiIn1gOwogICAgICB3aW5kb3cubG9jYXRpb24uaHJlZiA9IGRlZXBMaW5rOwogICAgfSwgMjUwMCk7CiAgICByZXR1cm4gKCkgPT4gY2xlYXJUaW1lb3V0KHRpbWVyKTsKICB9LCBbaXNNb2JpbGUsIGlzVG9wVXAsIHRpZXIsIHBhY2tdKTsKCiAgLy8gQXV0by1yZWRpcmVjdCBjb3VudGRvd24gKHdlYiBvbmx5KQogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBpZiAoaXNNb2JpbGUpIHJldHVybjsgLy8gbW9iaWxlIGhhbmRsZXMgaXRzIG93biByZWRpcmVjdCBhYm92ZQogICAgaWYgKGNvdW50ZG93biA8PSAwKSB7CiAgICAgIHNldExvY2F0aW9uKCIvIik7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGNvbnN0IHRpbWVyID0gc2V0VGltZW91dCgoKSA9PiBzZXRDb3VudGRvd24oKGMpID0+IGMgLSAxKSwgMTAwMCk7CiAgICByZXR1cm4gKCkgPT4gY2xlYXJUaW1lb3V0KHRpbWVyKTsKICB9LCBbY291bnRkb3duLCBpc01vYmlsZV0pOwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiB0ZXh0LXdoaXRlIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHB4LTQiIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LWxnIHctZnVsbCB0ZXh0LWNlbnRlciBzcGFjZS15LTgiPgogICAgICAgIHsvKiBTdWNjZXNzIEljb24gKi99CiAgICAgICAgPGRpdiBjbGFzc05hbWU9InJlbGF0aXZlIGlubGluZS1mbGV4Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ3LTI0IGgtMjQgcm91bmRlZC1mdWxsIGJnLWFtYmVyLTUwMC8xMCBib3JkZXIgYm9yZGVyLWFtYmVyLTUwMC8zMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciI+CiAgICAgICAgICAgIDxDaGVja0NpcmNsZSBjbGFzc05hbWU9InctMTIgaC0xMiB0ZXh0LWFtYmVyLTQwMCIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImFic29sdXRlIC10b3AtMSAtcmlnaHQtMSI+CiAgICAgICAgICAgIDxTcGFya2xlcyBjbGFzc05hbWU9InctNiBoLTYgdGV4dC1hbWJlci00MDAgYW5pbWF0ZS1wdWxzZSIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgoKICAgICAgICB7LyogSGVhZGluZyAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0zIj4KICAgICAgICAgIDxCYWRnZSB2YXJpYW50PSJvdXRsaW5lIiBjbGFzc05hbWU9ImJvcmRlci1hbWJlci01MDAvNTAgdGV4dC1hbWJlci00MDAgcHgtNCBweS0xIj4KICAgICAgICAgICAgUGF5bWVudCBDb25maXJtZWQKICAgICAgICAgIDwvQmFkZ2U+CiAgICAgICAgICA8aDEgY2xhc3NOYW1lPSJ0ZXh0LTN4bCBzbTp0ZXh0LTR4bCBmb250LWJvbGQgdHJhY2tpbmctdGlnaHQiPgogICAgICAgICAgICB7aXNUb3BVcCA/ICJDcmVkaXRzIEFkZGVkISIgOiAiV2VsY29tZSB0byBWaXJlbGxlIFN0dWRpb3MhIn0KICAgICAgICAgIDwvaDE+CiAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtemluYy00MDAgdGV4dC1sZyBsZWFkaW5nLXJlbGF4ZWQiPgogICAgICAgICAgICB7aXNUb3BVcCAmJiBwYWNrTmFtZQogICAgICAgICAgICAgID8gYFlvdXIgJHtwYWNrTmFtZX0gaGFzIGJlZW4gYWRkZWQgdG8geW91ciBhY2NvdW50LiBTdGFydCBnZW5lcmF0aW5nIGltbWVkaWF0ZWx5LmAKICAgICAgICAgICAgICA6IHRpZXJOYW1lCiAgICAgICAgICAgICAgPyBgWW91ciAke3RpZXJOYW1lfSBtZW1iZXJzaGlwIGlzIG5vdyBhY3RpdmUuIFRpbWUgdG8gbWFrZSB5b3VyIGZpbG0uYAogICAgICAgICAgICAgIDogIllvdXIgcGF5bWVudCB3YXMgc3VjY2Vzc2Z1bC4gWW91ciBhY2NvdW50IGhhcyBiZWVuIHVwZGF0ZWQuIn0KICAgICAgICAgIDwvcD4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgey8qIE1vYmlsZSByZWRpcmVjdCBub3RpY2UgKi99CiAgICAgICAge21vYmlsZVJlZGlyZWN0aW5nICYmICgKICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJiZy1hbWJlci01MDAvMTAgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMzAgcm91bmRlZC0yeGwgcC02IHRleHQtY2VudGVyIHNwYWNlLXktMiI+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1hbWJlci00MDAgZm9udC1zZW1pYm9sZCI+UmV0dXJuaW5nIHRvIFZpcmVsbGUgU3R1ZGlvcyBhcHDigKY8L3A+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC16aW5jLTQwMCB0ZXh0LXNtIj4KICAgICAgICAgICAgICBJZiB0aGUgYXBwIGRvZXMgbm90IG9wZW4gYXV0b21hdGljYWxseSx7IiAifQogICAgICAgICAgICAgIDxhCiAgICAgICAgICAgICAgICBocmVmPXtpc1RvcFVwCiAgICAgICAgICAgICAgICAgID8gYHZpcmVsbGU6Ly9iaWxsaW5nL3N1Y2Nlc3M/c3Vic2NyaXB0aW9uPXN1Y2Nlc3MmdHlwZT10b3B1cCZwYWNrPSR7cGFjayA/PyAiIn1gCiAgICAgICAgICAgICAgICAgIDogYHZpcmVsbGU6Ly9iaWxsaW5nL3N1Y2Nlc3M/c3Vic2NyaXB0aW9uPXN1Y2Nlc3MmdGllcj0ke3RpZXIgPz8gIiJ9YH0KICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0idGV4dC1hbWJlci00MDAgdW5kZXJsaW5lIgogICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgIHRhcCBoZXJlCiAgICAgICAgICAgICAgPC9hPgogICAgICAgICAgICAgIC4KICAgICAgICAgICAgPC9wPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgKX0KCiAgICAgICAgey8qIFdoYXQncyBuZXh0ICh3ZWIgb25seSkgKi99CiAgICAgICAgeyFtb2JpbGVSZWRpcmVjdGluZyAmJiAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYmctemluYy05MDAvNjAgYm9yZGVyIGJvcmRlci16aW5jLTgwMCByb3VuZGVkLTJ4bCBwLTYgdGV4dC1sZWZ0IHNwYWNlLXktNCI+CiAgICAgICAgICAgIDxoMiBjbGFzc05hbWU9InRleHQtc20gZm9udC1zZW1pYm9sZCB0ZXh0LXppbmMtNDAwIHVwcGVyY2FzZSB0cmFja2luZy13aWRlciI+V2hhdCdzIG5leHQ8L2gyPgogICAgICAgICAgICB7aXNUb3BVcCA/ICgKICAgICAgICAgICAgICA8dWwgY2xhc3NOYW1lPSJzcGFjZS15LTMgdGV4dC1zbSB0ZXh0LXppbmMtMzAwIj4KICAgICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggaXRlbXMtc3RhcnQgZ2FwLTMiPgogICAgICAgICAgICAgICAgICA8Q2hlY2tDaXJjbGUgY2xhc3NOYW1lPSJ3LTQgaC00IHRleHQtYW1iZXItNDAwIG10LTAuNSBzaHJpbmstMCIgLz4KICAgICAgICAgICAgICAgICAgQ3JlZGl0cyBhcmUgbGl2ZSBpbiB5b3VyIGFjY291bnQg4oCUIG5vIGRlbGF5CiAgICAgICAgICAgICAgICA8L2xpPgogICAgICAgICAgICAgICAgPGxpIGNsYXNzTmFtZT0iZmxleCBpdGVtcy1zdGFydCBnYXAtMyI+CiAgICAgICAgICAgICAgICAgIDxDaGVja0NpcmNsZSBjbGFzc05hbWU9InctNCBoLTQgdGV4dC1hbWJlci00MDAgbXQtMC41IHNocmluay0wIiAvPgogICAgICAgICAgICAgICAgICBVc2UgdGhlbSBmb3IgdmlkZW8gZ2VuZXJhdGlvbiwgdm9pY2UgYWN0aW5nLCBmaWxtIHNjb3JlLCBhbmQgbW9yZQogICAgICAgICAgICAgICAgPC9saT4KICAgICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggaXRlbXMtc3RhcnQgZ2FwLTMiPgogICAgICAgICAgICAgICAgICA8Q2hlY2tDaXJjbGUgY2xhc3NOYW1lPSJ3LTQgaC00IHRleHQtYW1iZXItNDAwIG10LTAuNSBzaHJpbmstMCIgLz4KICAgICAgICAgICAgICAgICAgQ3JlZGl0cyBuZXZlciBleHBpcmUg4oCUIHVzZSB0aGVtIGF0IHlvdXIgb3duIHBhY2UKICAgICAgICAgICAgICAgIDwvbGk+CiAgICAgICAgICAgICAgPC91bD4KICAgICAgICAgICAgKSA6ICgKICAgICAgICAgICAgICA8dWwgY2xhc3NOYW1lPSJzcGFjZS15LTMgdGV4dC1zbSB0ZXh0LXppbmMtMzAwIj4KICAgICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggaXRlbXMtc3RhcnQgZ2FwLTMiPgogICAgICAgICAgICAgICAgICA8Q2hlY2tDaXJjbGUgY2xhc3NOYW1lPSJ3LTQgaC00IHRleHQtYW1iZXItNDAwIG10LTAuNSBzaHJpbmstMCIgLz4KICAgICAgICAgICAgICAgICAgWW91ciBtb250aGx5IGNyZWRpdHMgYXJlIHJlYWR5IHRvIHVzZSByaWdodCBub3cKICAgICAgICAgICAgICAgIDwvbGk+CiAgICAgICAgICAgICAgICA8bGkgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLXN0YXJ0IGdhcC0zIj4KICAgICAgICAgICAgICAgICAgPENoZWNrQ2lyY2xlIGNsYXNzTmFtZT0idy00IGgtNCB0ZXh0LWFtYmVyLTQwMCBtdC0wLjUgc2hyaW5rLTAiIC8+CiAgICAgICAgICAgICAgICAgIEFsbCBmZWF0dXJlcyBmb3IgeW91ciBwbGFuIGFyZSB1bmxvY2tlZCBpbW1lZGlhdGVseQogICAgICAgICAgICAgICAgPC9saT4KICAgICAgICAgICAgICAgIDxsaSBjbGFzc05hbWU9ImZsZXggaXRlbXMtc3RhcnQgZ2FwLTMiPgogICAgICAgICAgICAgICAgICA8Q2hlY2tDaXJjbGUgY2xhc3NOYW1lPSJ3LTQgaC00IHRleHQtYW1iZXItNDAwIG10LTAuNSBzaHJpbmstMCIgLz4KICAgICAgICAgICAgICAgICAgQSByZWNlaXB0IGhhcyBiZWVuIHNlbnQgdG8geW91ciBlbWFpbCBhZGRyZXNzCiAgICAgICAgICAgICAgICA8L2xpPgogICAgICAgICAgICAgIDwvdWw+CiAgICAgICAgICAgICl9CiAgICAgICAgICA8L2Rpdj4KICAgICAgICApfQoKICAgICAgICB7LyogQ1RBIGJ1dHRvbnMgKHdlYiBvbmx5KSAqL30KICAgICAgICB7IW1vYmlsZVJlZGlyZWN0aW5nICYmICgKICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIHNtOmZsZXgtcm93IGdhcC0zIGp1c3RpZnktY2VudGVyIj4KICAgICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICAgIGNsYXNzTmFtZT0iYmctYW1iZXItNjAwIGhvdmVyOmJnLWFtYmVyLTUwMCB0ZXh0LXdoaXRlIGZvbnQtc2VtaWJvbGQgcHgtOCIKICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRMb2NhdGlvbigiLyIpfQogICAgICAgICAgICA+CiAgICAgICAgICAgICAgR28gdG8gRGFzaGJvYXJkCiAgICAgICAgICAgICAgPEFycm93UmlnaHQgY2xhc3NOYW1lPSJ3LTQgaC00IG1sLTIiIC8+CiAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICA8QnV0dG9uCiAgICAgICAgICAgICAgdmFyaWFudD0ib3V0bGluZSIKICAgICAgICAgICAgICBjbGFzc05hbWU9ImJvcmRlci16aW5jLTcwMCBob3ZlcjpiZy16aW5jLTgwMCIKICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRMb2NhdGlvbigiL3ByaWNpbmciKX0KICAgICAgICAgICAgPgogICAgICAgICAgICAgIFZpZXcgUHJpY2luZwogICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgIDwvZGl2PgogICAgICAgICl9CgogICAgICAgIHsvKiBBdXRvLXJlZGlyZWN0IG5vdGljZSAod2ViIG9ubHkpICovfQogICAgICAgIHshbW9iaWxlUmVkaXJlY3RpbmcgJiYgKAogICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtemluYy02MDAiPgogICAgICAgICAgICBSZWRpcmVjdGluZyB0byB5b3VyIGRhc2hib2FyZCBpbnsiICJ9CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC16aW5jLTQwMCBmb250LW1lZGl1bSI+e2NvdW50ZG93bn1zPC9zcGFuPgogICAgICAgICAgICB7IiAifeKAlHsiICJ9CiAgICAgICAgICAgIDxidXR0b24KICAgICAgICAgICAgICBjbGFzc05hbWU9InRleHQtYW1iZXItNTAwIGhvdmVyOnRleHQtYW1iZXItNDAwIHVuZGVybGluZSIKICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRDb3VudGRvd24oMCl9CiAgICAgICAgICAgID4KICAgICAgICAgICAgICBnbyBub3cKICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICA8L3A+CiAgICAgICAgKX0KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9Cg==
+import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
+import { CheckCircle, Sparkles, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { trpc } from "@/lib/trpc";
+
+const TIER_NAMES: Record<string, string> = {
+  indie: "Indie",
+  amateur: "Creator",
+  independent: "Industry",
+  creator: "Industry",  // alias
+  studio: "Industry",   // alias
+  industry: "Industry",
+};
+
+const PACK_NAMES: Record<string, string> = {
+  topup_10: "Starter Pack",
+  topup_50: "Producer Pack",
+  topup_100: "Director Pack",
+  topup_200: "Studio Pack",
+  topup_500: "Blockbuster Pack",
+  topup_1000: "Mogul Pack",
+};
+
+export default function BillingSuccess() {
+  const [, setLocation] = useLocation();
+  const [countdown, setCountdown] = useState(8);
+  const [mobileRedirecting, setMobileRedirecting] = useState(false);
+
+  // Parse query params
+  const params = new URLSearchParams(window.location.search);
+  const tier = params.get("tier");
+  const type = params.get("type");
+  const pack = params.get("pack");
+  // source=mobile is set by the mobile app when it opens the web pricing page
+  const source = params.get("source");
+  const isMobile = source === "mobile";
+
+  const isTopUp = type === "topup";
+  const tierName = tier ? (TIER_NAMES[tier] || tier) : null;
+  const packName = pack ? (PACK_NAMES[pack] || pack) : null;
+
+  // Refetch user to pick up new subscription/credits
+  const utils = trpc.useUtils();
+  useEffect(() => {
+    // Invalidate user and subscription queries so the UI reflects the new state
+    utils.auth.me.invalidate();
+    utils.subscription.status.invalidate();
+  }, []);
+
+  // If this checkout was initiated from the mobile app, redirect back via deep link
+  useEffect(() => {
+    if (!isMobile) return;
+    setMobileRedirecting(true);
+    // Give the webhook a moment to process, then redirect back to the app
+    const timer = setTimeout(() => {
+      const deepLink = isTopUp
+        ? `virelle://billing/success?subscription=success&type=topup&pack=${pack ?? ""}`
+        : `virelle://billing/success?subscription=success&tier=${tier ?? ""}`;
+      window.location.href = deepLink;
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [isMobile, isTopUp, tier, pack]);
+
+  // Auto-redirect countdown (web only)
+  useEffect(() => {
+    if (isMobile) return; // mobile handles its own redirect above
+    if (countdown <= 0) {
+      setLocation("/");
+      return;
+    }
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [countdown, isMobile]);
+
+  return (
+    <div className="min-h-screen text-white flex items-center justify-center px-4" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <div className="max-w-lg w-full text-center space-y-8">
+        {/* Success Icon */}
+        <div className="relative inline-flex">
+          <div className="w-24 h-24 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+            <CheckCircle className="w-12 h-12 text-amber-400" />
+          </div>
+          <div className="absolute -top-1 -right-1">
+            <Sparkles className="w-6 h-6 text-amber-400 animate-pulse" />
+          </div>
+        </div>
+
+        {/* Heading */}
+        <div className="space-y-3">
+          <Badge variant="outline" className="border-amber-500/50 text-amber-400 px-4 py-1">
+            Payment Confirmed
+          </Badge>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">
+            {isTopUp ? "Credits Added!" : "Welcome to Virelle Studios!"}
+          </h1>
+          <p className="text-zinc-400 text-lg leading-relaxed">
+            {isTopUp && packName
+              ? `Your ${packName} has been added to your account. Start generating immediately.`
+              : tierName
+              ? `Your ${tierName} membership is now active. Time to make your film.`
+              : "Your payment was successful. Your account has been updated."}
+          </p>
+        </div>
+
+        {/* Mobile redirect notice */}
+        {mobileRedirecting && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 text-center space-y-2">
+            <p className="text-amber-400 font-semibold">Returning to Virelle Studios app…</p>
+            <p className="text-zinc-400 text-sm">
+              If the app does not open automatically,{" "}
+              <a
+                href={isTopUp
+                  ? `virelle://billing/success?subscription=success&type=topup&pack=${pack ?? ""}`
+                  : `virelle://billing/success?subscription=success&tier=${tier ?? ""}`}
+                className="text-amber-400 underline"
+              >
+                tap here
+              </a>
+              .
+            </p>
+          </div>
+        )}
+
+        {/* What's next (web only) */}
+        {!mobileRedirecting && (
+          <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 text-left space-y-4">
+            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">What's next</h2>
+            {isTopUp ? (
+              <ul className="space-y-3 text-sm text-zinc-300">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  Credits are live in your account — no delay
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  Use them for video generation, voice acting, film score, and more
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  Credits never expire — use them at your own pace
+                </li>
+              </ul>
+            ) : (
+              <ul className="space-y-3 text-sm text-zinc-300">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  Your monthly credits are ready to use right now
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  All features for your plan are unlocked immediately
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  A receipt has been sent to your email address
+                </li>
+              </ul>
+            )}
+          </div>
+        )}
+
+        {/* CTA buttons (web only) */}
+        {!mobileRedirecting && (
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button
+              className="bg-amber-600 hover:bg-amber-500 text-white font-semibold px-8"
+              onClick={() => setLocation("/")}
+            >
+              Go to Dashboard
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+            <Button
+              variant="outline"
+              className="border-zinc-700 hover:bg-zinc-800"
+              onClick={() => setLocation("/pricing")}
+            >
+              View Pricing
+            </Button>
+          </div>
+        )}
+
+        {/* Auto-redirect notice (web only) */}
+        {!mobileRedirecting && (
+          <p className="text-xs text-zinc-600">
+            Redirecting to your dashboard in{" "}
+            <span className="text-zinc-400 font-medium">{countdown}s</span>
+            {" "}—{" "}
+            <button
+              className="text-amber-500 hover:text-amber-400 underline"
+              onClick={() => setCountdown(0)}
+            >
+              go now
+            </button>
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
