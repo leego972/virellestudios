@@ -65,13 +65,13 @@ function NLEExportInner() {
   const projectId = parseInt(params.projectId || "0");
 
   const [selectedFormat, setSelectedFormat] = useState("xml-premiere-pro");
-  // v6.62 Ã¢ÂÂ Aspect ratio preset. Embeds matching frame dimensions in the
+  // v6.62 — Aspect ratio preset. Embeds matching frame dimensions in the
   // exported sequence header (FCPXML/Premiere XML) and adds metadata for EDL/CSV.
   // Initial value is 16:9 but we hydrate from the project's sticky preference
-  // (project.exportAspectRatio) once loaded Ã¢ÂÂ see useEffect below.
+  // (project.exportAspectRatio) once loaded — see useEffect below.
   type AspectRatioValue = "16:9" | "9:16" | "1:1" | "4:5" | "21:9" | "2.39:1";
   const [aspectRatio, setAspectRatio] = useState<AspectRatioValue>("16:9");
-  // Track whether the user has touched the chooser this session Ã¢ÂÂ once they
+  // Track whether the user has touched the chooser this session — once they
   // have, we stop overwriting their choice with the project's stored value.
   const [aspectTouched, setAspectTouched] = useState(false);
   const [includeOptions, setIncludeOptions] = useState({
@@ -131,7 +131,7 @@ function NLEExportInner() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       setExportComplete(true);
-      toast.success(`Export downloaded Ã¢ÂÂ ${result.sceneCount} scene${result.sceneCount !== 1 ? "s" : ""} included`);
+      toast.success(`Export downloaded — ${result.sceneCount} scene${result.sceneCount !== 1 ? "s" : ""} included`);
     } catch (err: any) {
       toast.error(err?.message || "Export failed. Please try again.");
     } finally {
@@ -164,7 +164,7 @@ function NLEExportInner() {
             disabled={isExporting}
           >
             {isExporting ? (
-              <><Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />ExportingÃ¢ÂÂ¦</>
+              <><Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />Exporting…</>
             ) : exportComplete ? (
               <><CheckCircle2 className="h-3.5 w-3.5" />Download</>
             ) : (
@@ -202,7 +202,7 @@ function NLEExportInner() {
 
         <Separator />
 
-        {/* v6.62 Ã¢ÂÂ Aspect ratio presets */}
+        {/* v6.62 — Aspect ratio presets */}
         <div>
           <h2 className="text-sm font-medium mb-3 gradient-text-gold">Aspect Ratio</h2>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
