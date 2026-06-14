@@ -7,6 +7,9 @@ Allow: /blog
 Allow: /blog/
 Allow: /features/
 Allow: /use-cases/
+Allow: /press
+Allow: /showcase
+Allow: /changelog
 Disallow: /api/
 Disallow: /api/trpc/
 Disallow: /dashboard
