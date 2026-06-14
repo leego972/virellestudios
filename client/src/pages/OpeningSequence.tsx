@@ -307,7 +307,6 @@ import { useState, useEffect, useCallback } from "react";
     const totalDuration = elements.reduce((s, e) => s + e.duration, 0);
 
     return (
-        {/* Cinematic header */}
         <div className="border-b" style={{ borderColor: "rgba(212,175,55,0.15)", background: "rgba(0,0,0,0.6)", backdropFilter: "blur(20px)" }}>
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">

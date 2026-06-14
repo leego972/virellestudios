@@ -125,6 +125,7 @@ import { useState } from "react";
     const analyzing = analyzeMutation.isPending;
 
     return (
+      <>
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
@@ -219,4 +220,5 @@ import { useState } from "react";
           </div>
   </div>
   );
+      </>
 }

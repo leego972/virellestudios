@@ -386,7 +386,6 @@ export default function Projects() {
           ))}
         </div>
       ) : (
-        {/* List view */}
         <div className="space-y-2">
           {filtered.map((project) => (
             <Card

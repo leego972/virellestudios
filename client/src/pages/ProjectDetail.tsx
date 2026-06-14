@@ -451,6 +451,7 @@ export default function ProjectDetail() {
     <div className="max-w-5xl mx-auto space-y-6 py-4">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64 w-full rounded-lg" />
+    </div>
     );
   }
 

@@ -919,6 +919,7 @@ export default function ScriptWriter() {
   // ────────────────────────────────────────── Render ·
 
   return (
+    <>
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* Modals */}
       <TemplatePicker
@@ -1268,4 +1269,5 @@ export default function ScriptWriter() {
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={3} />}
     </div>
   );
+    </>
 }

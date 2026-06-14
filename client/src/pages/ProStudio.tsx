@@ -72,6 +72,7 @@ function StyleBibleTab({ projectId }: { projectId: number }) {
       <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
         <CardTitle className="text-base gradient-text-gold">Project Visual Identity</CardTitle>
         <p className="text-xs text-muted-foreground">Locked guidelines that every generated asset should respect. Useful for handing off to AI prompts and human collaborators alike.</p>
+      </Card>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
