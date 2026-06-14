@@ -234,7 +234,7 @@ export default function AdminOutreach() {
           { label: "Campaigns Sent", value: campaigns.filter(c => c.status === "sent").length, icon: Send, color: "text-amber-400" },
           { label: "Emails Delivered", value: campaigns.reduce((a, c) => a + (c.sentCount || 0), 0), icon: Mail, color: "text-purple-400" },
         ].map((stat) => (
-          <Card key={stat.label} className="bg-card/50 border-border/50">
+          <Card key={stat.label} className="bg-card/50 border-border/50 glass-card">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-card flex items-center justify-center flex-shrink-0">
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
@@ -290,7 +290,7 @@ export default function AdminOutreach() {
           </p>
 
           {/* Contacts table */}
-          <Card className="bg-card/50 border-border/50">
+          <Card className="bg-card/50 border-border/50 glass-card">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -358,13 +358,13 @@ export default function AdminOutreach() {
             {campaignsQuery.isLoading ? (
               <div className="text-center py-12 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin inline mr-2" />Loading campaigns…</div>
             ) : campaigns.length === 0 ? (
-              <Card className="bg-card/50 border-border/50">
+              <Card className="bg-card/50 border-border/50 glass-card">
                 <CardContent className="py-12 text-center text-muted-foreground">
                   No campaigns yet. Create one and push to your list.
                 </CardContent>
               </Card>
             ) : campaigns.map(camp => (
-              <Card key={camp.id} className="bg-card/50 border-border/50">
+              <Card key={camp.id} className="bg-card/50 border-border/50 glass-card">
                 <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">

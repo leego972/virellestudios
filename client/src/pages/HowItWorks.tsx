@@ -273,7 +273,7 @@ export default function HowItWorks() {
                 blue: "text-blue-400 bg-blue-500/10",
               };
               return (
-                <Card key={w.title} className="bg-card/50 border-border/50">
+                <Card key={w.title} className="bg-card/50 border-border/50 glass-card">
                   <CardContent className="p-6">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${colorMap[w.color]}`}>
                       <Icon className="h-5 w-5" />

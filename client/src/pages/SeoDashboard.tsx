@@ -64,7 +64,7 @@ function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   color?: string;
 }) {
   return (
-    <Card className="border-border/50 bg-card/80">
+    <Card className="border-border/50 bg-card/80 glass-card">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-1">
           <span className={color}>{icon}</span>
@@ -174,7 +174,7 @@ export default function SeoDashboard() {
   if (user?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <Card className="border-border/50 bg-card/80 max-w-md">
+        <Card className="border-border/50 bg-card/80 max-w-md glass-card">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
               <Shield className="w-6 h-6 text-red-500" />
@@ -241,7 +241,7 @@ export default function SeoDashboard() {
       {/* ─── KPI Row ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Health Score */}
-        <Card className="border-border/50 bg-card/80">
+        <Card className="border-border/50 bg-card/80 glass-card">
           <CardContent className="p-4 flex items-center gap-4">
             <ScoreRing score={health?.overall ?? (report?.score as any)?.overall ?? 0} />
             <div>
@@ -292,7 +292,7 @@ export default function SeoDashboard() {
         <TabsContent value="overview" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* SEO Report Summary */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <BarChart3 className="w-4 h-4 text-amber-400" />
@@ -348,7 +348,7 @@ export default function SeoDashboard() {
             </Card>
 
             {/* Web Vitals */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Activity className="w-4 h-4 text-amber-400" />
@@ -393,7 +393,7 @@ export default function SeoDashboard() {
           </div>
 
           {/* Quick Actions */}
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Zap className="w-4 h-4 text-amber-400" />
@@ -453,7 +453,7 @@ export default function SeoDashboard() {
 
         {/* ─── Keywords Tab ──────────────────────────────────────────────── */}
         <TabsContent value="keywords" className="space-y-4 mt-4">
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Hash className="w-4 h-4 text-amber-400" />
@@ -485,7 +485,7 @@ export default function SeoDashboard() {
 
           {/* Meta Optimisations */}
           {metaQuery.data && metaQuery.data.length > 0 && (
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <FileText className="w-4 h-4 text-amber-400" />
@@ -531,7 +531,7 @@ export default function SeoDashboard() {
         <TabsContent value="technical" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Structured Data */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <FileText className="w-4 h-4 text-amber-400" />
@@ -573,7 +573,7 @@ export default function SeoDashboard() {
             </Card>
 
             {/* Open Graph */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Share2 className="w-4 h-4 text-amber-400" />
@@ -602,7 +602,7 @@ export default function SeoDashboard() {
           </div>
 
           {/* Internal Links */}
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Link className="w-4 h-4 text-amber-400" />
@@ -635,7 +635,7 @@ export default function SeoDashboard() {
           </Card>
 
           {/* Public Pages */}
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Globe className="w-4 h-4 text-amber-400" />
@@ -668,7 +668,7 @@ export default function SeoDashboard() {
         {/* ─── Content Tab ───────────────────────────────────────────────── */}
         <TabsContent value="content" className="space-y-4 mt-4">
           {/* SEO Event Log */}
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Clock className="w-4 h-4 text-amber-400" />
@@ -717,7 +717,7 @@ export default function SeoDashboard() {
           </Card>
 
           {/* IndexNow */}
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Globe className="w-4 h-4 text-amber-400" />
@@ -749,7 +749,7 @@ export default function SeoDashboard() {
         {/* ─── Settings Tab ──────────────────────────────────────────────── */}
         <TabsContent value="settings" className="space-y-4 mt-4">
           {/* SEO Engine Status */}
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Settings className="w-4 h-4 text-amber-400" />

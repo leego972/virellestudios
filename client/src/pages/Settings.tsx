@@ -397,7 +397,7 @@ export default function Settings() {
         {/* ─── Profile Tab ─── */}
         <TabsContent value="profile" className="space-y-6 mt-6">
           {/* Account Info */}
-          <Card className="bg-card/50">
+          <Card className="bg-card/50 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <User className="h-4 w-4 text-amber-400" />
@@ -480,7 +480,7 @@ export default function Settings() {
           </Card>
 
           {/* Location */}
-          <Card className="bg-card/50">
+          <Card className="bg-card/50 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <MapPin className="h-4 w-4 text-blue-400" />
@@ -511,7 +511,7 @@ export default function Settings() {
           </Card>
 
           {/* Professional */}
-          <Card className="bg-card/50">
+          <Card className="bg-card/50 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Briefcase className="h-4 w-4 text-purple-400" />
@@ -567,7 +567,7 @@ export default function Settings() {
           </Card>
 
           {/* Subscription Info */}
-          <Card className="bg-card/50">
+          <Card className="bg-card/50 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Sparkles className="h-4 w-4 text-amber-400" />
@@ -598,7 +598,7 @@ export default function Settings() {
 
         {/* ─── Security Tab ─── */}
         <TabsContent value="security" className="space-y-6 mt-6">
-          <Card className="bg-card/50">
+          <Card className="bg-card/50 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Lock className="h-4 w-4 text-amber-400" />
@@ -1117,7 +1117,7 @@ function BillingTab({ profile }: { profile: any }) {
   return (
     <div className="space-y-6">
       {/* Current Plan Card */}
-      <Card className="bg-card/50">
+      <Card className="bg-card/50 glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Sparkles className="h-4 w-4 text-amber-400" />
@@ -1172,7 +1172,7 @@ function BillingTab({ profile }: { profile: any }) {
       <ActiveTalentLicenses subscriptionTier={tier} />
 
       {/* Credits Summary */}
-      <Card className="bg-card/50">
+      <Card className="bg-card/50 glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Zap className="h-4 w-4 text-amber-400" />
@@ -1233,7 +1233,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
   const hasCastAccess = planAccess.length > 0;
 
   return (
-    <Card className="bg-card/50">
+    <Card className="bg-card/50 glass-card">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
           <Film className="h-4 w-4 text-amber-400" />
@@ -1400,7 +1400,7 @@ function ConnectedPlatformsTab() {
 
   return (
     <div className="min-h-screen space-y-6 px-4 py-4" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <Card className="bg-card/50">
+      <Card className="bg-card/50 glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
             <Share2 className="h-4 w-4 text-amber-400" />

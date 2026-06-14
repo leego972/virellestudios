@@ -114,7 +114,7 @@ export default function AdminUsers() {
   if (currentUser?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <Card className="border-border/50 bg-card/80 max-w-md">
+        <Card className="border-border/50 bg-card/80 max-w-md glass-card">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
               <Shield className="w-6 h-6 text-red-500" />
@@ -145,7 +145,7 @@ export default function AdminUsers() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Card className="border-border/50 bg-card/80">
+        <Card className="border-border/50 bg-card/80 glass-card">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
@@ -158,7 +158,7 @@ export default function AdminUsers() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/50 bg-card/80">
+        <Card className="border-border/50 bg-card/80 glass-card">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
@@ -171,7 +171,7 @@ export default function AdminUsers() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/50 bg-card/80">
+        <Card className="border-border/50 bg-card/80 glass-card">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -184,7 +184,7 @@ export default function AdminUsers() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/50 bg-card/80">
+        <Card className="border-border/50 bg-card/80 glass-card">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -247,14 +247,14 @@ export default function AdminUsers() {
               <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
             </div>
           ) : usersQuery.error ? (
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="text-center">
                 <CardTitle className="gradient-text-gold">Error</CardTitle>
                 <CardDescription>{usersQuery.error.message}</CardDescription>
               </CardHeader>
             </Card>
           ) : (
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader>
                 <CardTitle className="text-lg gradient-text-gold">All Users</CardTitle>
                 <CardDescription>View and manage registered users</CardDescription>
@@ -363,7 +363,7 @@ export default function AdminUsers() {
               <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
             </div>
           ) : (
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2 gradient-text-gold">
                   <Film className="w-5 h-5 text-amber-500" />
@@ -442,7 +442,7 @@ export default function AdminUsers() {
         </TabsContent>
         {/* ─── Beta Testers Tab ───────────────────────────────────────────── */}
         <TabsContent value="beta" className="mt-4">
-          <Card className="border-amber-500/30 bg-card/80">
+          <Card className="border-amber-500/30 bg-card/80 glass-card">
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">

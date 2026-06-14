@@ -265,7 +265,7 @@ export default function NewProject() {
 
         {/* Quick Generate form */}
         {mode === "quick" && (
-          <Card className="bg-card/50 border-primary/20">
+          <Card className="bg-card/50 border-primary/20 glass-card">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-primary" />
@@ -399,7 +399,7 @@ export default function NewProject() {
 
         {/* Generate Trailer form */}
         {mode === "trailer" && (
-          <Card className="bg-card/50 border-amber-500/20">
+          <Card className="bg-card/50 border-amber-500/20 glass-card">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Clapperboard className="h-4 w-4 text-amber-400" />
@@ -497,7 +497,7 @@ export default function NewProject() {
 
           {/* ─── Tab 1: Basics ─── */}
           <TabsContent value="basics" className="space-y-4 mt-4">
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 glass-card">
               <CardHeader className="pb-4">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Basic Information</CardTitle>
               </CardHeader>
@@ -714,7 +714,7 @@ export default function NewProject() {
 
           {/* ─── Tab 2: Story & Plot ─── */}
           <TabsContent value="story" className="space-y-4 mt-4">
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 glass-card">
               <CardHeader className="pb-4">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Main Storyline</CardTitle>
               </CardHeader>
@@ -776,7 +776,7 @@ export default function NewProject() {
 
           {/* ─── Tab 3: Narrative Details ─── */}
           <TabsContent value="narrative" className="space-y-4 mt-4">
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 glass-card">
               <CardHeader className="pb-4">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Narrative Structure</CardTitle>
               </CardHeader>
@@ -826,7 +826,7 @@ export default function NewProject() {
               </CardContent>
             </Card>
 
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 glass-card">
               <CardHeader className="pb-4">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Key Story Moments</CardTitle>
               </CardHeader>

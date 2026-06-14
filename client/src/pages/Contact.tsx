@@ -103,7 +103,7 @@ export default function Contact() {
             </div>
 
             <div className="space-y-4">
-              <Card className="bg-card/50">
+              <Card className="bg-card/50 glass-card">
                 <CardContent className="p-4 flex items-start gap-3">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                     <Mail className="h-5 w-5 text-primary" />
@@ -115,7 +115,7 @@ export default function Contact() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-card/50">
+              <Card className="bg-card/50 glass-card">
                 <CardContent className="p-4 flex items-start gap-3">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                     <MessageSquare className="h-5 w-5 text-primary" />
@@ -127,7 +127,7 @@ export default function Contact() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-card/50">
+              <Card className="bg-card/50 glass-card">
                 <CardContent className="p-4 flex items-start gap-3">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                     <Building2 className="h-5 w-5 text-primary" />

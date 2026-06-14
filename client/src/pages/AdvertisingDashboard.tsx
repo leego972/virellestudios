@@ -67,7 +67,7 @@ function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   color?: string;
 }) {
   return (
-    <Card className="border-border/50 bg-card/80">
+    <Card className="border-border/50 bg-card/80 glass-card">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-1">
           <span className={color}>{icon}</span>
@@ -263,7 +263,7 @@ export default function AdvertisingDashboard() {
   if (user?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <Card className="border-border/50 bg-card/80 max-w-md">
+        <Card className="border-border/50 bg-card/80 max-w-md glass-card">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
               <Shield className="w-6 h-6 text-red-500" />
@@ -376,7 +376,7 @@ export default function AdvertisingDashboard() {
         <TabsContent value="overview" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Platform Performance */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <TrendingUp className="w-4 h-4 text-amber-400" />
@@ -409,7 +409,7 @@ export default function AdvertisingDashboard() {
             </Card>
 
             {/* Autonomous Status */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Zap className="w-4 h-4 text-amber-400" />
@@ -448,7 +448,7 @@ export default function AdvertisingDashboard() {
 
           {/* Recent Activity Summary */}
           {activityQuery.data && activityQuery.data.length > 0 && (
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Activity className="w-4 h-4 text-amber-400" />
@@ -502,7 +502,7 @@ export default function AdvertisingDashboard() {
               <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
             </div>
           ) : contentQueueQuery.data?.items?.length === 0 ? (
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardContent className="py-12 text-center">
                 <Film className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                 <p className="text-muted-foreground">No {queueFilter === "all" ? "" : queueFilter} content in queue</p>
@@ -536,7 +536,7 @@ export default function AdvertisingDashboard() {
         <TabsContent value="tiktok" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* TikTok Status */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Video className="w-4 h-4 text-pink-400" />
@@ -600,7 +600,7 @@ export default function AdvertisingDashboard() {
             </Card>
 
             {/* Generate Ad Video */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Sparkles className="w-4 h-4 text-amber-400" />
@@ -638,7 +638,7 @@ export default function AdvertisingDashboard() {
 
           {/* Recent TikTok Posts */}
           {tiktok?.recentPosts && tiktok.recentPosts.length > 0 && (
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base gradient-text-gold">Recent TikTok Posts</CardTitle>
               </CardHeader>
@@ -664,7 +664,7 @@ export default function AdvertisingDashboard() {
 
         {/* ─── Strategy Tab ──────────────────────────────────────────────── */}
         <TabsContent value="strategy" className="space-y-4 mt-4">
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Target className="w-4 h-4 text-amber-400" />
@@ -729,7 +729,7 @@ export default function AdvertisingDashboard() {
 
 
             {/* ─── Platform Playbook ────────────────────────────────────────── */}
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                   <Briefcase className="w-4 h-4 text-amber-400" />
@@ -776,7 +776,7 @@ export default function AdvertisingDashboard() {
 
             {/* Strategy Overview from Advertising Orchestrator */}
           {dashboard?.strategy && (
-            <Card className="border-border/50 bg-card/80">
+            <Card className="border-border/50 bg-card/80 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base gradient-text-gold">Current Campaign Strategy</CardTitle>
               </CardHeader>
@@ -796,7 +796,7 @@ export default function AdvertisingDashboard() {
 
         {/* ─── Activity Tab ──────────────────────────────────────────────── */}
         <TabsContent value="activity" className="space-y-4 mt-4">
-          <Card className="border-border/50 bg-card/80">
+          <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Activity className="w-4 h-4 text-amber-400" />
