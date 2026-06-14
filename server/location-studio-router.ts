@@ -1,1 +1,67 @@
-aW1wb3J0IHsgcm91dGVyLCBwcm90ZWN0ZWRQcm9jZWR1cmUsIHB1YmxpY1Byb2NlZHVyZSB9IGZyb20gIi4vX2NvcmUvdHJwYyI7CiAgaW1wb3J0IHsgeiB9IGZyb20gInpvZCI7CiAgaW1wb3J0IHsgVFJQQ0Vycm9yIH0gZnJvbSAiQHRycGMvc2VydmVyIjsKICBpbXBvcnQgeyBnZW5lcmF0ZUltYWdlIH0gZnJvbSAiLi9fY29yZS9pbWFnZUdlbmVyYXRpb24iOwogIGltcG9ydCAqIGFzIGRiIGZyb20gIi4vZGIiOwoKICAvLyBDcmVkaXQgY29zdCBwZXIgbG9jYXRpb24gZ2VuZXJhdGlvbiAobWF0Y2hlcyBsb2NhdGlvbl9zY291dF9haSB0aWVyKQogIGNvbnN0IExPQ0FUSU9OX0dFTl9DT1NUID0gMTU7CgogIGNvbnN0IENVUkFURURfTE9DQVRJT05TID0gWwogICAgeyBpZDoxLCBuYW1lOiJNb3JvY2NhbiBEZXNlcnQgRm9ydHJlc3MiLCBjb3VudHJ5OiJNb3JvY2NvIiwgdHlwZToiRXh0ZXJpb3IiLCBtb29kOiJNeXN0aWNhbCIsIGRlc2NyaXB0aW9uOiJBbmNpZW50IGRlc2VydCBmb3J0cmVzcyB3aXRoIHRlcnJhY290dGEgd2FsbHMgYW5kIHN3ZWVwaW5nIGR1bmVzLiIsIGRhaWx5UmF0ZVVzZDoyODAwLCB0YWdzOlsiZGVzZXJ0IiwiZm9ydHJlc3MiLCJoaXN0b3JpY2FsIiwiZXBpYyJdLCBmZWF0dXJlZDp0cnVlIH0sCiAgICB7IGlkOjIsIG5hbWU6IlRva3lvIE5lb24gRGlzdHJpY3QiLCBjb3VudHJ5OiJKYXBhbiIsIHR5cGU6IkV4dGVyaW9yL05pZ2h0IiwgbW9vZDoiQ3liZXJwdW5rIiwgZGVzY3JpcHRpb246Ikljb25pYyBuZW9uLWxpdCBzdHJlZXRzIHdpdGggbGF5ZXJlZCBzaWduYWdlIGFuZCByZWZsZWN0aW9ucyBvbiB3ZXQgcGF2ZW1lbnQuIiwgZGFpbHlSYXRlVXNkOjQyMDAsIHRhZ3M6WyJ1cmJhbiIsIm5lb24iLCJuaWdodCIsImN5YmVycHVuayJdLCBmZWF0dXJlZDp0cnVlIH0sCiAgICB7IGlkOjMsIG5hbWU6IlNjb3R0aXNoIEhpZ2hsYW5kIE1vb3JzIiwgY291bnRyeToiU2NvdGxhbmQiLCB0eXBlOiJFeHRlcmlvciIsIG1vb2Q6IkRyYW1hdGljIiwgZGVzY3JpcHRpb246IlZhc3Qgb3BlbiBtb29ybGFuZCB3aXRoIGRyYW1hdGljIHJvbGxpbmcgZm9nIGFuZCBhbmNpZW50IHN0b25lIHJ1aW5zLiIsIGRhaWx5UmF0ZVVzZDoxNTAwLCB0YWdzOlsic2NvdGxhbmQiLCJoaWdobGFuZCIsIm1pc3QiLCJkcmFtYXRpYyJdLCBmZWF0dXJlZDp0cnVlIH0sCiAgICB7IGlkOjQsIG5hbWU6IkxBIFJvb2Z0b3AgUGVudGhvdXNlIiwgY291bnRyeToiVVNBIiwgdHlwZToiSW50ZXJpb3IvRXh0ZXJpb3IiLCBtb29kOiJMdXh1cnkiLCBkZXNjcmlwdGlvbjoiR2xhc3Mtd2FsbGVkIHBlbnRob3VzZSB3aXRoIDM2MMKwIGNpdHkgdmlld3MgYW5kIGluZmluaXR5IHBvb2wuIiwgZGFpbHlSYXRlVXNkOjY1MDAsIHRhZ3M6WyJsdXh1cnkiLCJwZW50aG91c2UiLCJMQSIsIm1vZGVybiJdIH0sCiAgICB7IGlkOjUsIG5hbWU6IkljZWxhbmRpYyBWb2xjYW5pYyBMYW5kc2NhcGUiLCBjb3VudHJ5OiJJY2VsYW5kIiwgdHlwZToiRXh0ZXJpb3IiLCBtb29kOiJBcG9jYWx5cHRpYyIsIGRlc2NyaXB0aW9uOiJPdGhlcndvcmxkbHkgYmxhY2sgbGF2YSBmaWVsZHMsIHN0ZWFtIHZlbnRzLCBhbmQgbWlkbmlnaHQgc3VuLiIsIGRhaWx5UmF0ZVVzZDoyMjAwLCB0YWdzOlsiaWNlbGFuZCIsInZvbGNhbmljIiwiYWxpZW4iLCJhcG9jYWx5cHRpYyJdIH0sCiAgICB7IGlkOjYsIG5hbWU6IkFtYXpvbiBSYWluZm9yZXN0IENhbXAiLCBjb3VudHJ5OiJCcmF6aWwiLCB0eXBlOiJFeHRlcmlvciIsIG1vb2Q6IkFkdmVudHVyZSIsIGRlc2NyaXB0aW9uOiJEZW5zZSBqdW5nbGUgY2Fub3B5LCByaXZlciB0cmlidXRhcmllcywgYW5kIGF1dGhlbnRpYyB0cmliYWwgY2FtcCBzZXR0aW5ncy4iLCBkYWlseVJhdGVVc2Q6MzEwMCwgdGFnczpbImp1bmdsZSIsImFtYXpvbiIsImFkdmVudHVyZSIsInRyb3BpY2FsIl0gfSwKICAgIHsgaWQ6NywgbmFtZToiUGFyaXMgQmVsbGUgw4lwb3F1ZSBBcGFydG1lbnQiLCBjb3VudHJ5OiJGcmFuY2UiLCB0eXBlOiJJbnRlcmlvciIsIG1vb2Q6IlJvbWFudGljIiwgZGVzY3JpcHRpb246IkF1dGhlbnRpYyBIYXVzc21hbm4gYXBhcnRtZW50IHdpdGggb3JuYXRlIGNvcm5pY2VzIGFuZCB2aWV3cyBvdmVyIHRoZSBTZWluZS4iLCBkYWlseVJhdGVVc2Q6MzgwMCwgdGFnczpbInBhcmlzIiwicm9tYW50aWMiLCJpbnRlcmlvciIsInBlcmlvZCJdIH0sCiAgICB7IGlkOjgsIG5hbWU6IkR1YmFpIEdsYXNzIFNreXNjcmFwZXIiLCBjb3VudHJ5OiJVQUUiLCB0eXBlOiJJbnRlcmlvciIsIG1vb2Q6IkNvcnBvcmF0ZSBQb3dlciIsIGRlc2NyaXB0aW9uOiJVbHRyYS1tb2Rlcm4gNjB0aC1mbG9vciBleGVjdXRpdmUgc3VpdGUgd2l0aCBmbG9vci10by1jZWlsaW5nIGdsYXNzIGFuZCBkZXNlcnQgdmlld3MuIiwgZGFpbHlSYXRlVXNkOjcyMDAsIHRhZ3M6WyJkdWJhaSIsImNvcnBvcmF0ZSIsImx1eHVyeSIsIm1vZGVybiJdIH0sCiAgICB7IGlkOjksIG5hbWU6Ik5ldyBPcmxlYW5zIEphenogUXVhcnRlciIsIGNvdW50cnk6IlVTQSIsIHR5cGU6IkV4dGVyaW9yIiwgbW9vZDoiQXRtb3NwaGVyaWMiLCBkZXNjcmlwdGlvbjoiRnJlbmNoIFF1YXJ0ZXIgc3RyZWV0c2NhcGVzIHdpdGggd3JvdWdodC1pcm9uIGJhbGNvbmllcyBhbmQgZ2FzIGxhbnRlcm5zLiIsIGRhaWx5UmF0ZVVzZDoyNDAwLCB0YWdzOlsibmV3IG9ybGVhbnMiLCJqYXp6IiwiYXRtb3NwaGVyaWMiLCJoaXN0b3JpY2FsIl0gfSwKICAgIHsgaWQ6MTAsIG5hbWU6Ik5vcndlZ2lhbiBGam9yZCBWaWxsYWdlIiwgY291bnRyeToiTm9yd2F5IiwgdHlwZToiRXh0ZXJpb3IiLCBtb29kOiJTZXJlbmUiLCBkZXNjcmlwdGlvbjoiRHJhbWF0aWMgZmpvcmQgd2l0aCBtaXJyb3ItZmxhdCB3YXRlciBhbmQgc25vdy1jYXBwZWQgcGVha3MuIiwgZGFpbHlSYXRlVXNkOjI5MDAsIHRhZ3M6WyJub3J3YXkiLCJmam9yZCIsIm5vcmRpYyIsInNlcmVuZSJdIH0sCiAgICB7IGlkOjExLCBuYW1lOiJNdW1iYWkgU3RyZWV0IFNjZW5lIiwgY291bnRyeToiSW5kaWEiLCB0eXBlOiJFeHRlcmlvciIsIG1vb2Q6IlJhdy9BdXRoZW50aWMiLCBkZXNjcmlwdGlvbjoiSGlnaC1lbmVyZ3kgdXJiYW4gZW52aXJvbm1lbnQgd2l0aCBpbmNyZWRpYmxlIGRlbnNpdHksIGNvbG91ciwgYW5kIHN0cmVldCBsaWZlLiIsIGRhaWx5UmF0ZVVzZDoxMjAwLCB0YWdzOlsiaW5kaWEiLCJ1cmJhbiIsImF1dGhlbnRpYyIsInZpYnJhbnQiXSB9LAogICAgeyBpZDoxMiwgbmFtZToiQmVybGluIEFiYW5kb25lZCBGYWN0b3J5IiwgY291bnRyeToiR2VybWFueSIsIHR5cGU6IkludGVyaW9yIiwgbW9vZDoiSW5kdXN0cmlhbC9Hcml0dHkiLCBkZXNjcmlwdGlvbjoiTWFzc2l2ZSBpbmR1c3RyaWFsIHNoZWxsIHdpdGggZXhwb3NlZCBzdGVlbCBhbmQgZHJhbWF0aWMgc2hhZnQgbGlnaHRpbmcuIiwgZGFpbHlSYXRlVXNkOjE4MDAsIHRhZ3M6WyJiZXJsaW4iLCJpbmR1c3RyaWFsIiwiYWJhbmRvbmVkIiwiZ3JpdHR5Il0gfSwKICBdOwoKICBleHBvcnQgY29uc3QgbG9jYXRpb25TdHVkaW9Sb3V0ZXIgPSByb3V0ZXIoewogICAgbGlzdExvY2F0aW9uczogcHVibGljUHJvY2VkdXJlLnF1ZXJ5KCgpID0+IENVUkFURURfTE9DQVRJT05TKSwKCiAgICBnZW5lcmF0ZUxvY2F0aW9uOiBwcm90ZWN0ZWRQcm9jZWR1cmUKICAgICAgLmlucHV0KHoub2JqZWN0KHsKICAgICAgICAvLyBUaGUgdXNlcidzIG93biB3b3JkcyDigJQgdGhpcyBpcyBwYXNzZWQgZGlyZWN0bHkgdG8gdGhlIEFJLCBub3RoaW5nIGFkZGVkCiAgICAgICAgZGVzY3JpcHRpb246IHouc3RyaW5nKCkubWluKDUsICJQbGVhc2UgZGVzY3JpYmUgdGhlIGxvY2F0aW9uIikubWF4KDEwMDApLAogICAgICB9KSkKICAgICAgLm11dGF0aW9uKGFzeW5jICh7IGN0eCwgaW5wdXQgfSkgPT4gewogICAgICAgIC8vIERlZHVjdCBjcmVkaXRzIGZpcnN0IOKAlCBmYWlsIGZhc3QgaWYgaW5zdWZmaWNpZW50CiAgICAgICAgdHJ5IHsKICAgICAgICAgIGF3YWl0IGRiLmRlZHVjdENyZWRpdHMoCiAgICAgICAgICAgIGN0eC51c2VyLmlkLAogICAgICAgICAgICBMT0NBVElPTl9HRU5fQ09TVCwKICAgICAgICAgICAgImxvY2F0aW9uX2dlbl9haSIsCiAgICAgICAgICAgIGBBSSBsb2NhdGlvbiBnZW5lcmF0aW9uOiAke2lucHV0LmRlc2NyaXB0aW9uLnNsaWNlKDAsIDgwKX1gCiAgICAgICAgICApOwogICAgICAgIH0gY2F0Y2ggKGU6IGFueSkgewogICAgICAgICAgaWYgKGUubWVzc2FnZT8uaW5jbHVkZXMoIklOU1VGRklDSUVOVF9DUkVESVRTIikpIHsKICAgICAgICAgICAgdGhyb3cgbmV3IFRSUENFcnJvcih7IGNvZGU6ICJGT1JCSURERU4iLCBtZXNzYWdlOiAiSW5zdWZmaWNpZW50IGNyZWRpdHMuIFBsZWFzZSB0b3AgdXAgdG8gZ2VuZXJhdGUgbG9jYXRpb25zLiIgfSk7CiAgICAgICAgICB9CiAgICAgICAgICB0aHJvdyBlOwogICAgICAgIH0KCiAgICAgICAgLy8gUGFzcyB0aGUgdXNlcidzIGRlc2NyaXB0aW9uIEVYQUNUTFkgYXMgd3JpdHRlbiB0byB0aGUgaW1hZ2UgQUkKICAgICAgICAvLyBXZSBvbmx5IHByZXBlbmQgImZpbG0gc3RpbGw6IiBzbyB0aGUgZ2VuZXJhdG9yIHVuZGVyc3RhbmRzIHRoZSBtZWRpdW0g4oCUCiAgICAgICAgLy8gZXZlcnl0aGluZyBlbHNlIGlzIDEwMCUgd2hhdCB0aGUgdXNlciB0eXBlZAogICAgICAgIGNvbnN0IHByb21wdCA9IGBmaWxtIHN0aWxsOiAke2lucHV0LmRlc2NyaXB0aW9ufWA7CgogICAgICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IGdlbmVyYXRlSW1hZ2UoeyBwcm9tcHQgfSkuY2F0Y2goKCkgPT4gewogICAgICAgICAgLy8gSWYgZ2VuZXJhdGlvbiBmYWlscywgcmVmdW5kIHRoZSBjcmVkaXRzCiAgICAgICAgICBkYi5hZGRDcmVkaXRzKGN0eC51c2VyLmlkLCBMT0NBVElPTl9HRU5fQ09TVCwgImxvY2F0aW9uX2dlbl9yZWZ1bmQiLCAiUmVmdW5kIOKAlCBsb2NhdGlvbiBnZW5lcmF0aW9uIGZhaWxlZCIpLmNhdGNoKCgpID0+IHt9KTsKICAgICAgICAgIHRocm93IG5ldyBUUlBDRXJyb3IoeyBjb2RlOiAiSU5URVJOQUxfU0VSVkVSX0VSUk9SIiwgbWVzc2FnZTogIkltYWdlIGdlbmVyYXRpb24gZmFpbGVkLiBZb3VyIGNyZWRpdHMgaGF2ZSBiZWVuIHJlZnVuZGVkLiIgfSk7CiAgICAgICAgfSk7CgogICAgICAgIHJldHVybiB7CiAgICAgICAgICBpbWFnZVVybDogcmVzdWx0LnVybCwKICAgICAgICAgIGRlc2NyaXB0aW9uOiBpbnB1dC5kZXNjcmlwdGlvbiwKICAgICAgICAgIGNyZWRpdHNDb3N0OiBMT0NBVElPTl9HRU5fQ09TVCwKICAgICAgICB9OwogICAgICB9KSwKICB9KTsKICA=
+import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
+  import { z } from "zod";
+  import { TRPCError } from "@trpc/server";
+  import { generateImage } from "./_core/imageGeneration";
+  import * as db from "./db";
+
+  // Credit cost per location generation (matches location_scout_ai tier)
+  const LOCATION_GEN_COST = 15;
+
+  const CURATED_LOCATIONS = [
+    { id:1, name:"Moroccan Desert Fortress", country:"Morocco", type:"Exterior", mood:"Mystical", description:"Ancient desert fortress with terracotta walls and sweeping dunes.", dailyRateUsd:2800, tags:["desert","fortress","historical","epic"], featured:true },
+    { id:2, name:"Tokyo Neon District", country:"Japan", type:"Exterior/Night", mood:"Cyberpunk", description:"Iconic neon-lit streets with layered signage and reflections on wet pavement.", dailyRateUsd:4200, tags:["urban","neon","night","cyberpunk"], featured:true },
+    { id:3, name:"Scottish Highland Moors", country:"Scotland", type:"Exterior", mood:"Dramatic", description:"Vast open moorland with dramatic rolling fog and ancient stone ruins.", dailyRateUsd:1500, tags:["scotland","highland","mist","dramatic"], featured:true },
+    { id:4, name:"LA Rooftop Penthouse", country:"USA", type:"Interior/Exterior", mood:"Luxury", description:"Glass-walled penthouse with 360° city views and infinity pool.", dailyRateUsd:6500, tags:["luxury","penthouse","LA","modern"] },
+    { id:5, name:"Icelandic Volcanic Landscape", country:"Iceland", type:"Exterior", mood:"Apocalyptic", description:"Otherworldly black lava fields, steam vents, and midnight sun.", dailyRateUsd:2200, tags:["iceland","volcanic","alien","apocalyptic"] },
+    { id:6, name:"Amazon Rainforest Camp", country:"Brazil", type:"Exterior", mood:"Adventure", description:"Dense jungle canopy, river tributaries, and authentic tribal camp settings.", dailyRateUsd:3100, tags:["jungle","amazon","adventure","tropical"] },
+    { id:7, name:"Paris Belle Époque Apartment", country:"France", type:"Interior", mood:"Romantic", description:"Authentic Haussmann apartment with ornate cornices and views over the Seine.", dailyRateUsd:3800, tags:["paris","romantic","interior","period"] },
+    { id:8, name:"Dubai Glass Skyscraper", country:"UAE", type:"Interior", mood:"Corporate Power", description:"Ultra-modern 60th-floor executive suite with floor-to-ceiling glass and desert views.", dailyRateUsd:7200, tags:["dubai","corporate","luxury","modern"] },
+    { id:9, name:"New Orleans Jazz Quarter", country:"USA", type:"Exterior", mood:"Atmospheric", description:"French Quarter streetscapes with wrought-iron balconies and gas lanterns.", dailyRateUsd:2400, tags:["new orleans","jazz","atmospheric","historical"] },
+    { id:10, name:"Norwegian Fjord Village", country:"Norway", type:"Exterior", mood:"Serene", description:"Dramatic fjord with mirror-flat water and snow-capped peaks.", dailyRateUsd:2900, tags:["norway","fjord","nordic","serene"] },
+    { id:11, name:"Mumbai Street Scene", country:"India", type:"Exterior", mood:"Raw/Authentic", description:"High-energy urban environment with incredible density, colour, and street life.", dailyRateUsd:1200, tags:["india","urban","authentic","vibrant"] },
+    { id:12, name:"Berlin Abandoned Factory", country:"Germany", type:"Interior", mood:"Industrial/Gritty", description:"Massive industrial shell with exposed steel and dramatic shaft lighting.", dailyRateUsd:1800, tags:["berlin","industrial","abandoned","gritty"] },
+  ];
+
+  export const locationStudioRouter = router({
+    listLocations: publicProcedure.query(() => CURATED_LOCATIONS),
+
+    generateLocation: protectedProcedure
+      .input(z.object({
+        // The user's own words — this is passed directly to the AI, nothing added
+        description: z.string().min(5, "Please describe the location").max(1000),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Deduct credits first — fail fast if insufficient
+        try {
+          await db.deductCredits(
+            ctx.user.id,
+            LOCATION_GEN_COST,
+            "location_gen_ai",
+            `AI location generation: ${input.description.slice(0, 80)}`
+          );
+        } catch (e: any) {
+          if (e.message?.includes("INSUFFICIENT_CREDITS")) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Insufficient credits. Please top up to generate locations." });
+          }
+          throw e;
+        }
+
+        // Pass the user's description EXACTLY as written to the image AI
+        // We only prepend "film still:" so the generator understands the medium —
+        // everything else is 100% what the user typed
+        const prompt = `film still: ${input.description}`;
+
+        const result = await generateImage({ prompt }).catch(() => {
+          // If generation fails, refund the credits
+          db.addCredits(ctx.user.id, LOCATION_GEN_COST, "location_gen_refund", "Refund — location generation failed").catch(() => {});
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Image generation failed. Your credits have been refunded." });
+        });
+
+        return {
+          imageUrl: result.url,
+          description: input.description,
+          creditsCost: LOCATION_GEN_COST,
+        };
+      }),
+  });
+  
