@@ -46,6 +46,7 @@ import { AD_PLATFORMS, generateAdContent, generateCampaignContent, createCampaig
 import { getSocialCredentialStatus, postToLinkedIn, postToReddit, sendWhatsAppMessage, broadcastWhatsApp } from "./_core/socialPostingEngine";
 import { ENV } from "./_core/env";
 import { seoRouter } from "./seo-router";
+import { communityForumRouter } from "./community-forum-router";
 import { autonomousRouter } from "./autonomous-router";
 import { marketingRouter } from "./marketing-router";
 import { adminSeedingRouter } from "./admin-seeding-router";
@@ -3269,7 +3270,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, _vfxLibCtx),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, ""),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3327,7 +3328,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, _vfxLibCtx),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, ""),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3383,7 +3384,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, _vfxLibCtx),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, ""),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3440,7 +3441,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
               const extResult = await generateExtendedScene(byokKeys, {
                 sceneId: scene.id,
                 projectId: project.id,
-                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, _vfxLibCtx),
+                description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, effectiveDialogueText, sceneWardrobeContext, ""),
                 targetDurationSeconds: Math.max(10, scene.duration || 45),
                 mood: scene.mood || undefined,
                 lighting: scene.lighting || undefined,
@@ -3602,7 +3603,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
                 const extResult = await generateExtendedSceneBulkFal(bulkByokKeys, {
                   sceneId: scene.id,
                   projectId: project.id,
-                  description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, bulkFalDialogue, undefined, _vfxLibCtx),
+                  description: sceneAiPromptOverride ? sceneAiPromptOverride : buildExtendedSceneDescription(scene, prompt, bulkFalDialogue, undefined, ""),
                   targetDurationSeconds: Math.max(10, scene.duration || 45),
                   mood: scene.mood || undefined,
                   lighting: scene.lighting || undefined,
@@ -10427,6 +10428,7 @@ Rules:
 
   // ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Blog (Public + Admin) ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
   seo: seoRouter,
+  communityForum: communityForumRouter,
   autonomous: autonomousRouter,
   marketing: marketingRouter,
   adminSeeding: adminSeedingRouter,
