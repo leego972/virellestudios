@@ -40,7 +40,7 @@ export default function PitchDeckPage() {
 
         {d && (
           <>
-            <header className="text-center border-b border-zinc-200 pb-8">
+            <header className="text-center border-b border-amber-500/20 pb-8">
               <div className="text-xs uppercase tracking-[0.3em] text-amber-700">
                 Virelle Studios
               </div>
@@ -71,7 +71,7 @@ export default function PitchDeckPage() {
               <Section title="Characters">
                 <div className="grid grid-cols-2 gap-4">
                   {d.characters.map((c: any) => (
-                    <div key={c.id} className="border border-zinc-200 rounded p-3">
+                    <div key={c.id} className="border border-amber-500/20 rounded p-3">
                       {c.referenceImages?.[0] && (
                         <img
                           src={c.referenceImages[0]}
@@ -108,7 +108,7 @@ export default function PitchDeckPage() {
               <Section title="Storyboard frames">
                 <div className="grid grid-cols-2 gap-3">
                   {d.scenes.slice(0, 8).map((s: any) => (
-                    <div key={s.id} className="border border-zinc-200 rounded overflow-hidden">
+                    <div key={s.id} className="border border-amber-500/20 rounded overflow-hidden">
                       {s.thumbnailUrl && (
                         <img
                           src={s.thumbnailUrl}
@@ -144,7 +144,7 @@ export default function PitchDeckPage() {
               </Section>
             )}
 
-            <footer className="text-center text-xs text-zinc-400 pt-8 border-t border-zinc-200">
+            <footer className="text-center text-xs text-zinc-400 pt-8 border-t border-amber-500/20">
               Generated with Virelle Studios — virelle.studio
             </footer>
           </>

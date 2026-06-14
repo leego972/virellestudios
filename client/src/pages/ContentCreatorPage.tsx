@@ -60,7 +60,7 @@ const STATUS_META: Record<string, { label: string; color: string; icon: React.Re
   scheduled: { label: "Scheduled", color: "bg-blue-500/20 text-blue-300 border-blue-500/30", icon: <Clock className="h-3 w-3" /> },
   published: { label: "Published", color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30", icon: <CheckCircle className="h-3 w-3" /> },
   failed: { label: "Failed", color: "bg-red-500/20 text-red-300 border-red-500/30", icon: <XCircle className="h-3 w-3" /> },
-  archived: { label: "Archived", color: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30", icon: <Trash2 className="h-3 w-3" /> },
+  archived: { label: "Archived", color: "bg-zinc-500/20 text-zinc-400 border-amber-500/20/30", icon: <Trash2 className="h-3 w-3" /> },
 };
 
 const PLATFORMS = [

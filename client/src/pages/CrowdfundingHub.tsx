@@ -823,7 +823,7 @@ function CrowdfundingHubInner() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="rounded-lg bg-zinc-500/5 border border-zinc-500/20 p-3 text-xs text-muted-foreground">
+            <div className="rounded-lg bg-zinc-500/5 border border-amber-500/20/20 p-3 text-xs text-muted-foreground">
               <CalendarDays className="w-3 h-3 inline mr-1" />
               Deadline: <span className="text-foreground font-medium">
                 {new Date(Date.now() + deadlineDays * 86400000).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}

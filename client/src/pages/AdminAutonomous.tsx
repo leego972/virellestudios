@@ -257,7 +257,7 @@ export default function AdminAutonomous() {
             variant="outline"
             className={isSchedulerActive
               ? "border-emerald-500/50 text-emerald-400 bg-emerald-500/10"
-              : "border-zinc-500/50 text-zinc-400 bg-zinc-500/10"
+              : "border-amber-500/20/50 text-zinc-400 bg-zinc-500/10"
             }
           >
             <div className={`w-2 h-2 rounded-full mr-2 ${isSchedulerActive ? "bg-emerald-400 animate-pulse" : "bg-zinc-400"}`} />

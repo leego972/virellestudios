@@ -20,7 +20,7 @@ const STATUS_META: Record<string, { label: string; color: string; icon: any }> =
   accepted:     { label: "Accepted",      color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40", icon: Trophy },
   rejected:     { label: "Rejected",      color: "bg-rose-500/20 text-rose-300 border-rose-500/40",       icon: XCircle },
   waitlisted:   { label: "Waitlisted",    color: "bg-violet-500/20 text-violet-300 border-violet-500/40", icon: AlertCircle },
-  withdrawn:    { label: "Withdrawn",     color: "bg-zinc-500/20 text-zinc-300 border-zinc-500/40",       icon: XCircle },
+  withdrawn:    { label: "Withdrawn",     color: "bg-zinc-500/20 text-zinc-300 border-amber-500/20/40",       icon: XCircle },
 };
 
 export default function FundingProMatch() {
