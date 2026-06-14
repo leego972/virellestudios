@@ -160,16 +160,16 @@ export default function ProjectBrands() {
               <Tag className="w-7 h-7 text-amber-400" />
               Brands
               {projectQ.data?.title ? (
-                <span className="text-zinc-500 font-normal">ÃÂ¢ÃÂÃÂ {projectQ.data.title}</span>
+                <span className="text-zinc-500 font-normal">— {projectQ.data.title}</span>
               ) : null}
             </h1>
             <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
               Tell the AI which real-world brands may, must, or must never appear
               in this film. Storefronts, billboards, signage, vehicles, drinks,
-              clothing ÃÂ¢ÃÂÃÂ every shot generator (scenes, trailers, posters,
+              clothing — every shot generator (scenes, trailers, posters,
               storyboards) reads this list before drawing.
             </p>
-            <p className="text-xs text-zinc-500 mt-1">Free to manage ÃÂ¢ÃÂÃÂ costs no credits.</p>
+            <p className="text-xs text-zinc-500 mt-1">Free to manage — costs no credits.</p>
           </div>
           <Button onClick={openNew} className="bg-amber-500 hover:bg-amber-400 text-black">
             <Plus className="w-4 h-4 mr-1" /> Add brand
@@ -275,7 +275,7 @@ export default function ProjectBrands() {
             <div>
               <Label className="text-zinc-400">Brand name *</Label>
               <Input
-                placeholder="Nike, Pepsi, Shell, In-N-OutÃÂ¢ÃÂÃÂ¦"
+                placeholder="Nike, Pepsi, Shell, In-N-Out…"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 className="bg-zinc-950 border-amber-500/20 mt-1"
@@ -286,7 +286,7 @@ export default function ProjectBrands() {
               <div>
                 <Label className="text-zinc-400">Category</Label>
                 <Input
-                  placeholder="apparel, beverage, vehicle, signageÃÂ¢ÃÂÃÂ¦"
+                  placeholder="apparel, beverage, vehicle, signage…"
                   value={form.category}
                   onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
                   className="bg-zinc-950 border-amber-500/20 mt-1"
@@ -302,9 +302,9 @@ export default function ProjectBrands() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-900 text-zinc-100 border-amber-500/20">
-                    <SelectItem value="allowed">Allowed ÃÂ¢ÃÂÃÂ may appear</SelectItem>
-                    <SelectItem value="required">Required ÃÂ¢ÃÂÃÂ must appear</SelectItem>
-                    <SelectItem value="forbidden">Forbidden ÃÂ¢ÃÂÃÂ never show</SelectItem>
+                    <SelectItem value="allowed">Allowed — may appear</SelectItem>
+                    <SelectItem value="required">Required — must appear</SelectItem>
+                    <SelectItem value="forbidden">Forbidden — never show</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
