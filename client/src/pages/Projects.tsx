@@ -135,12 +135,12 @@ export default function Projects() {
       <SiteHead title="Projects" description="Manage all your AI film productions in one place — scripts, scenes, casting, scoring, and distribution." />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
+          <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">Projects</h1>
           <p className="text-muted-foreground text-sm mt-1">
             {projects ? `${projects.length} project${projects.length !== 1 ? "s" : ""}` : "All your film productions"}
           </p>
         </div>
-        <Button size="sm" onClick={() => setLocation("/projects/new")}>
+        <Button size="sm" onClick={() => setLocation("/projects/new")} style={{background:"linear-gradient(135deg,#D4AF37,#b8960c)",color:"#000",fontWeight:600}}>
           <Plus className="h-4 w-4 mr-1" />
           New Project
         </Button>
@@ -272,7 +272,7 @@ export default function Projects() {
           {filtered.map((project) => (
             <Card
               key={project.id}
-              className="group cursor-pointer transition-all relative focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none" style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:"12px"}} onMouseEnter={e=>{e.currentTarget.style.border="1px solid rgba(212,175,55,0.3)";e.currentTarget.style.background="rgba(255,255,255,0.04)"}} onMouseLeave={e=>{e.currentTarget.style.border="1px solid rgba(255,255,255,0.07)";e.currentTarget.style.background="rgba(255,255,255,0.025)"}}
+              className="group cursor-pointer transition-all relative focus-visible:ring-2 focus-visible:ring-primary" style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:12}} style={{background:"rgba(255,255,255,0.025)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:"12px"}} onMouseEnter={e=>{e.currentTarget.style.border="1px solid rgba(212,175,55,0.3)";e.currentTarget.style.background="rgba(255,255,255,0.04)"}} onMouseLeave={e=>{e.currentTarget.style.border="1px solid rgba(255,255,255,0.07)";e.currentTarget.style.background="rgba(255,255,255,0.025)"}}
               onClick={() => setLocation(`/projects/${project.id}`)}
               role="button"
               tabIndex={0}
@@ -294,7 +294,7 @@ export default function Projects() {
                     />
                   </div>
                 ) : (
-                  <div className="aspect-video rounded-md mb-3 flex items-center justify-center" style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.05)"}}>
+                  <div className="aspect-video rounded-md mb-3 flex items-center justify-center shimmer-gold" style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.05)"}}>
                     <Film className="h-8 w-8 text-muted-foreground/30" />
                   </div>
                 )}
@@ -392,7 +392,7 @@ export default function Projects() {
           {filtered.map((project) => (
             <Card
               key={project.id}
-              className="bg-card/50 group cursor-pointer hover:border-primary/30 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+              className="group cursor-pointer hover:border-amber-400/40 transition-colors focus-visible:ring-2" style={{background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.06)",borderRadius:10}}ble:ring-primary focus-visible:outline-none"
               onClick={() => setLocation(`/projects/${project.id}`)}
               role="button"
               tabIndex={0}
