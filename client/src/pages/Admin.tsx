@@ -161,7 +161,7 @@ import React, { useState } from "react";
 
           <div className="mt-6">
             <Button
-              onClick={() => { if (confirm("Seed everything Ã¢ÂÂ marketplace, funding, and campaigns?")) seedEverything.mutate(); }}
+              onClick={() => { if (confirm("Seed everything — marketplace, funding, and campaigns?")) seedEverything.mutate(); }}
               disabled={isAnyLoading}
               className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold py-3"
             >
