@@ -1,1 +1,418 @@
-aW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgdXNlTG9jYXRpb24gfSBmcm9tICJ3b3V0ZXIiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IHVzZUF1dGggfSBmcm9tICJAL19jb3JlL2hvb2tzL3VzZUF1dGgiOwppbXBvcnQgeyBCdXR0b24gfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvYnV0dG9uIjsKaW1wb3J0IHsgQ2FyZCwgQ2FyZENvbnRlbnQsIENhcmRIZWFkZXIsIENhcmRUaXRsZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9jYXJkIjsKaW1wb3J0IHsgQmFkZ2UgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvYmFkZ2UiOwppbXBvcnQgeyBUYWJzLCBUYWJzQ29udGVudCwgVGFic0xpc3QsIFRhYnNUcmlnZ2VyIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL3RhYnMiOwppbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7CmltcG9ydCB7CiAgQmFyQ2hhcnQzLCBGaWxtLCBVc2VycywgVHJlbmRpbmdVcCwgU3RhciwgRXllLCBQbGF5LCBTaGFyZTIsCiAgQ2hlY2tDaXJjbGUyLCBYQ2lyY2xlLCBDbG9jaywgQWxlcnRUcmlhbmdsZSwgTG9hZGVyMiwgTWVnYXBob25lLAogIFNoaWVsZCwgWmFwLCBSZWZyZXNoQ3csCn0gZnJvbSAibHVjaWRlLXJlYWN0IjsKCi8vIOKUgOKUgOKUgCBTdGF0IGNhcmQg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmZ1bmN0aW9uIFN0YXRDYXJkKHsgbGFiZWwsIHZhbHVlLCBpY29uOiBJY29uLCBjb2xvciB9OiB7IGxhYmVsOiBzdHJpbmc7IHZhbHVlOiBudW1iZXIgfCBzdHJpbmc7IGljb246IGFueTsgY29sb3I6IHN0cmluZyB9KSB7CiAgcmV0dXJuICgKICAgIDxDYXJkIGNsYXNzTmFtZT0iYmctbmV1dHJhbC05MDAgYm9yZGVyLW5ldXRyYWwtODAwIj4KICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icHQtNiI+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiI+CiAgICAgICAgICA8ZGl2PgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1uZXV0cmFsLTQwMCI+e2xhYmVsfTwvcD4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LTJ4bCBmb250LWJvbGQgbXQtMSIgc3R5bGU9e3sgY29sb3IgfX0+e3ZhbHVlfTwvcD4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPEljb24gY2xhc3NOYW1lPSJ3LTggaC04IG9wYWNpdHktMzAiIHN0eWxlPXt7IGNvbG9yIH19IC8+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICA8L0NhcmQ+CiAgKTsKfQoKLy8g4pSA4pSA4pSAIFN1Ym1pc3Npb24gUmV2aWV3IFBhbmVsIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgApmdW5jdGlvbiBTdWJtaXNzaW9uc1BhbmVsKCkgewogIGNvbnN0IHV0aWxzID0gdHJwYy51c2VVdGlscygpOwogIGNvbnN0IHsgZGF0YTogcGVuZGluZywgaXNMb2FkaW5nIH0gPSB0cnBjLnN1Ym1pc3Npb25zLmxpc3RQZW5kaW5nLnVzZVF1ZXJ5KCk7CiAgY29uc3QgcmV2aWV3TXV0YXRpb24gPSB0cnBjLnN1Ym1pc3Npb25zLnJldmlldy51c2VNdXRhdGlvbih7CiAgICBvblN1Y2Nlc3M6ICgpID0+IHsKICAgICAgdXRpbHMuc3VibWlzc2lvbnMubGlzdFBlbmRpbmcuaW52YWxpZGF0ZSgpOwogICAgICB0b2FzdC5zdWNjZXNzKCJTdWJtaXNzaW9uIHJldmlld2VkIik7CiAgICB9LAogICAgb25FcnJvcjogKGVycikgPT4gdG9hc3QuZXJyb3IoZXJyLm1lc3NhZ2UgfHwgIkZhaWxlZCB0byByZXZpZXcgc3VibWlzc2lvbiIpLAogIH0pOwoKICBpZiAoaXNMb2FkaW5nKSByZXR1cm4gPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIHRleHQtbmV1dHJhbC00MDAgcHktOCI+PExvYWRlcjIgY2xhc3NOYW1lPSJ3LTQgaC00IGFuaW1hdGUtc3BpbiIgLz4gTG9hZGluZyBzdWJtaXNzaW9ucy4uLjwvZGl2PjsKCiAgaWYgKCFwZW5kaW5nPy5sZW5ndGgpIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1jZW50ZXIgcHktMTIgdGV4dC1uZXV0cmFsLTUwMCI+CiAgICAgIDxDaGVja0NpcmNsZTIgY2xhc3NOYW1lPSJ3LTEwIGgtMTAgbXgtYXV0byBtYi0zIG9wYWNpdHktNDAiIC8+CiAgICAgIDxwPk5vIHBlbmRpbmcgc3VibWlzc2lvbnM8L3A+CiAgICA8L2Rpdj4KICApOwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMyI+CiAgICAgIHtwZW5kaW5nLm1hcCgoc3ViOiBhbnkpID0+ICgKICAgICAgICA8Q2FyZCBrZXk9e3N1Yi5pZH0gY2xhc3NOYW1lPSJiZy1uZXV0cmFsLTkwMCBib3JkZXItbmV1dHJhbC04MDAiPgogICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icHQtNCI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIHNtOmZsZXgtcm93IHNtOml0ZW1zLXN0YXJ0IGdhcC00Ij4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIG1pbi13LTAiPgogICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJmb250LXNlbWlib2xkIHRleHQtd2hpdGUgdHJ1bmNhdGUiPntzdWIucHJvamVjdFRpdGxlIHx8IGBQcm9qZWN0ICMke3N1Yi5wcm9qZWN0SWR9YH08L3A+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1uZXV0cmFsLTQwMCBtdC0wLjUiPntzdWIuY3JlYXRvck5hbWV9IMK3IHtzdWIuY3JlYXRvckVtYWlsfTwvcD4KICAgICAgICAgICAgICAgIHtzdWIuZ2VucmUgJiYgPEJhZGdlIHZhcmlhbnQ9Im91dGxpbmUiIGNsYXNzTmFtZT0ibXQtMSB0ZXh0LXhzIGJvcmRlci1uZXV0cmFsLTcwMCB0ZXh0LW5ldXRyYWwtNDAwIj57c3ViLmdlbnJlfTwvQmFkZ2U+fQogICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbmV1dHJhbC01MDAgbXQtMSI+U3VibWl0dGVkIHtuZXcgRGF0ZShzdWIuY3JlYXRlZEF0KS50b0xvY2FsZURhdGVTdHJpbmcoKX08L3A+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTIgZmxleC13cmFwIj4KICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgc2l6ZT0ic20iCiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iYmctYW1iZXItNjAwIGhvdmVyOmJnLWFtYmVyLTUwMCB0ZXh0LXdoaXRlIgogICAgICAgICAgICAgICAgICBkaXNhYmxlZD17cmV2aWV3TXV0YXRpb24uaXNQZW5kaW5nfQogICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiByZXZpZXdNdXRhdGlvbi5tdXRhdGUoeyBzdWJtaXNzaW9uSWQ6IHN1Yi5pZCwgc3RhdHVzOiAiZmVhdHVyZWQiIH0pfQogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICA8U3RhciBjbGFzc05hbWU9InctMyBoLTMgbXItMSIgLz4gRmVhdHVyZQogICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICA8QnV0dG9uCiAgICAgICAgICAgICAgICAgIHNpemU9InNtIgogICAgICAgICAgICAgICAgICB2YXJpYW50PSJvdXRsaW5lIgogICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImJvcmRlci1ncmVlbi03MDAgdGV4dC1ncmVlbi00MDAgaG92ZXI6YmctZ3JlZW4tOTAwLzIwIgogICAgICAgICAgICAgICAgICBkaXNhYmxlZD17cmV2aWV3TXV0YXRpb24uaXNQZW5kaW5nfQogICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiByZXZpZXdNdXRhdGlvbi5tdXRhdGUoeyBzdWJtaXNzaW9uSWQ6IHN1Yi5pZCwgc3RhdHVzOiAiYXBwcm92ZWQiIH0pfQogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICA8Q2hlY2tDaXJjbGUyIGNsYXNzTmFtZT0idy0zIGgtMyBtci0xIiAvPiBBcHByb3ZlCiAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgc2l6ZT0ic20iCiAgICAgICAgICAgICAgICAgIHZhcmlhbnQ9Im91dGxpbmUiCiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iYm9yZGVyLXJlZC04MDAgdGV4dC1yZWQtNDAwIGhvdmVyOmJnLXJlZC05MDAvMjAiCiAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXtyZXZpZXdNdXRhdGlvbi5pc1BlbmRpbmd9CiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHJldmlld011dGF0aW9uLm11dGF0ZSh7IHN1Ym1pc3Npb25JZDogc3ViLmlkLCBzdGF0dXM6ICJkZWNsaW5lZCIgfSl9CiAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgIDxYQ2lyY2xlIGNsYXNzTmFtZT0idy0zIGgtMyBtci0xIiAvPiBEZWNsaW5lCiAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L0NhcmRDb250ZW50PgogICAgICAgIDwvQ2FyZD4KICAgICAgKSl9CiAgICA8L2Rpdj4KICApOwp9CgovLyDilIDilIDilIAgQWJ1c2UgRmxhZ3MgUGFuZWwg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmZ1bmN0aW9uIEFidXNlRmxhZ3NQYW5lbCgpIHsKICBjb25zdCB1dGlscyA9IHRycGMudXNlVXRpbHMoKTsKICBjb25zdCB7IGRhdGE6IGZsYWdzLCBpc0xvYWRpbmcgfSA9IHRycGMuYWJ1c2UubGlzdFBlbmRpbmcudXNlUXVlcnkoKTsKICBjb25zdCBhY3Rpb25NdXRhdGlvbiA9IHRycGMuYWJ1c2UuYWN0aW9uLnVzZU11dGF0aW9uKHsKICAgIG9uU3VjY2VzczogKCkgPT4gewogICAgICB1dGlscy5hYnVzZS5saXN0UGVuZGluZy5pbnZhbGlkYXRlKCk7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoIkZsYWcgYWN0aW9uZWQiKTsKICAgIH0sCiAgICBvbkVycm9yOiAoZXJyKSA9PiB0b2FzdC5lcnJvcihlcnIubWVzc2FnZSB8fCAiRmFpbGVkIHRvIGFjdGlvbiBmbGFnIiksCiAgfSk7CgogIGlmIChpc0xvYWRpbmcpIHJldHVybiA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIgdGV4dC1uZXV0cmFsLTQwMCBweS04Ij48TG9hZGVyMiBjbGFzc05hbWU9InctNCBoLTQgYW5pbWF0ZS1zcGluIiAvPiBMb2FkaW5nIGZsYWdzLi4uPC9kaXY+OwoKICBpZiAoIWZsYWdzPy5sZW5ndGgpIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1jZW50ZXIgcHktMTIgdGV4dC1uZXV0cmFsLTUwMCI+CiAgICAgIDxTaGllbGQgY2xhc3NOYW1lPSJ3LTEwIGgtMTAgbXgtYXV0byBtYi0zIG9wYWNpdHktNDAiIC8+CiAgICAgIDxwPk5vIHBlbmRpbmcgYWJ1c2UgZmxhZ3M8L3A+CiAgICA8L2Rpdj4KICApOwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMyI+CiAgICAgIHtmbGFncy5tYXAoKGZsYWc6IGFueSkgPT4gKAogICAgICAgIDxDYXJkIGtleT17ZmxhZy5pZH0gY2xhc3NOYW1lPSJiZy1uZXV0cmFsLTkwMCBib3JkZXItbmV1dHJhbC04MDAiPgogICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icHQtNCI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIHNtOmZsZXgtcm93IHNtOml0ZW1zLXN0YXJ0IGdhcC00Ij4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIG1pbi13LTAiPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj4KICAgICAgICAgICAgICAgICAgPEJhZGdlIHZhcmlhbnQ9Im91dGxpbmUiIGNsYXNzTmFtZT0idGV4dC14cyBib3JkZXItcmVkLTgwMCB0ZXh0LXJlZC00MDAiPntmbGFnLmVudGl0eVR5cGV9PC9CYWRnZT4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbmV1dHJhbC0zMDAiPiN7ZmxhZy5lbnRpdHlJZH08L3NwYW4+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LW5ldXRyYWwtMzAwIG10LTEiPntmbGFnLnJlYXNvbn08L3A+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC1uZXV0cmFsLTUwMCBtdC0xIj4KICAgICAgICAgICAgICAgICAgUmVwb3J0ZWQgYnkge2ZsYWcucmVwb3J0ZXJOYW1lIHx8ICJBbm9ueW1vdXMifSDCtyB7bmV3IERhdGUoZmxhZy5jcmVhdGVkQXQpLnRvTG9jYWxlRGF0ZVN0cmluZygpfQogICAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGdhcC0yIj4KICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgc2l6ZT0ic20iCiAgICAgICAgICAgICAgICAgIHZhcmlhbnQ9Im91dGxpbmUiCiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iYm9yZGVyLXJlZC04MDAgdGV4dC1yZWQtNDAwIGhvdmVyOmJnLXJlZC05MDAvMjAiCiAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXthY3Rpb25NdXRhdGlvbi5pc1BlbmRpbmd9CiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IGFjdGlvbk11dGF0aW9uLm11dGF0ZSh7IGZsYWdJZDogZmxhZy5pZCwgc3RhdHVzOiAiYWN0aW9uZWQiIH0pfQogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICA8QWxlcnRUcmlhbmdsZSBjbGFzc05hbWU9InctMyBoLTMgbXItMSIgLz4gQWN0aW9uCiAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICAgIDxCdXR0b24KICAgICAgICAgICAgICAgICAgc2l6ZT0ic20iCiAgICAgICAgICAgICAgICAgIHZhcmlhbnQ9Im91dGxpbmUiCiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iYm9yZGVyLW5ldXRyYWwtNzAwIHRleHQtbmV1dHJhbC00MDAgaG92ZXI6YmctbmV1dHJhbC04MDAiCiAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXthY3Rpb25NdXRhdGlvbi5pc1BlbmRpbmd9CiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IGFjdGlvbk11dGF0aW9uLm11dGF0ZSh7IGZsYWdJZDogZmxhZy5pZCwgc3RhdHVzOiAiZGlzbWlzc2VkIiB9KX0KICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgRGlzbWlzcwogICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgICA8L0NhcmQ+CiAgICAgICkpfQogICAgPC9kaXY+CiAgKTsKfQoKLy8g4pSA4pSA4pSAIFNob3djYXNlIEN1cmF0aW9uIFBhbmVsIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgApmdW5jdGlvbiBTaG93Y2FzZUN1cmF0aW9uUGFuZWwoKSB7CiAgY29uc3QgdXRpbHMgPSB0cnBjLnVzZVV0aWxzKCk7CiAgY29uc3QgeyBkYXRhOiB0b3BGaWxtcywgaXNMb2FkaW5nIH0gPSB0cnBjLmNvbnZlcnNpb24uZ2V0VG9wRmlsbXMudXNlUXVlcnkoeyBsaW1pdDogMjAgfSk7CiAgY29uc3Qgc2V0SGVyb011dGF0aW9uID0gdHJwYy5zaG93Y2FzZS5zZXRIZXJvLnVzZU11dGF0aW9uKHsKICAgIG9uU3VjY2VzczogKCkgPT4gewogICAgICB1dGlscy5jb252ZXJzaW9uLmdldFRvcEZpbG1zLmludmFsaWRhdGUoKTsKICAgICAgdG9hc3Quc3VjY2VzcygiSG9tZXBhZ2UgaGVybyB1cGRhdGVkIik7CiAgICB9LAogICAgb25FcnJvcjogKGVycikgPT4gdG9hc3QuZXJyb3IoZXJyLm1lc3NhZ2UgfHwgIkZhaWxlZCB0byBzZXQgaGVybyIpLAogIH0pOwogIGNvbnN0IHNldEN1cmF0aW9uTXV0YXRpb24gPSB0cnBjLmFuYWx5dGljcy5zZXRDdXJhdGlvbkZsYWcudXNlTXV0YXRpb24oewogICAgb25TdWNjZXNzOiAoKSA9PiB7CiAgICAgIHV0aWxzLmNvbnZlcnNpb24uZ2V0VG9wRmlsbXMuaW52YWxpZGF0ZSgpOwogICAgICB0b2FzdC5zdWNjZXNzKCJDdXJhdGlvbiBmbGFnIHVwZGF0ZWQiKTsKICAgIH0sCiAgICBvbkVycm9yOiAoZXJyKSA9PiB0b2FzdC5lcnJvcihlcnIubWVzc2FnZSB8fCAiRmFpbGVkIHRvIHVwZGF0ZSBmbGFnIiksCiAgfSk7CiAgY29uc3QgcmVtb3ZlQ3VyYXRpb25NdXRhdGlvbiA9IHRycGMuYW5hbHl0aWNzLnJlbW92ZUN1cmF0aW9uRmxhZy51c2VNdXRhdGlvbih7CiAgICBvblN1Y2Nlc3M6ICgpID0+IHsKICAgICAgdXRpbHMuY29udmVyc2lvbi5nZXRUb3BGaWxtcy5pbnZhbGlkYXRlKCk7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoIkZsYWcgcmVtb3ZlZCIpOwogICAgfSwKICAgIG9uRXJyb3I6IChlcnIpID0+IHRvYXN0LmVycm9yKGVyci5tZXNzYWdlIHx8ICJGYWlsZWQgdG8gcmVtb3ZlIGZsYWciKSwKICB9KTsKCiAgaWYgKGlzTG9hZGluZykgcmV0dXJuIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiB0ZXh0LW5ldXRyYWwtNDAwIHB5LTgiPjxMb2FkZXIyIGNsYXNzTmFtZT0idy00IGgtNCBhbmltYXRlLXNwaW4iIC8+IExvYWRpbmcgZmlsbXMuLi48L2Rpdj47CgogIGlmICghdG9wRmlsbXM/Lmxlbmd0aCkgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LWNlbnRlciBweS0xMiB0ZXh0LW5ldXRyYWwtNTAwIj4KICAgICAgPEZpbG0gY2xhc3NOYW1lPSJ3LTEwIGgtMTAgbXgtYXV0byBtYi0zIG9wYWNpdHktNDAiIC8+CiAgICAgIDxwPk5vIHB1YmxpYyBmaWxtcyB5ZXQ8L3A+CiAgICA8L2Rpdj4KICApOwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMyI+CiAgICAgIHt0b3BGaWxtcy5tYXAoKGZpbG06IGFueSkgPT4gKAogICAgICAgIDxDYXJkIGtleT17ZmlsbS5pZH0gY2xhc3NOYW1lPSJiZy1uZXV0cmFsLTkwMCBib3JkZXItbmV1dHJhbC04MDAiPgogICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icHQtNCI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIHNtOmZsZXgtcm93IHNtOml0ZW1zLWNlbnRlciBnYXAtNCI+CiAgICAgICAgICAgICAge2ZpbG0udGh1bWJuYWlsVXJsICYmICgKICAgICAgICAgICAgICAgIDxpbWcgc3JjPXtmaWxtLnRodW1ibmFpbFVybH0gYWx0PXtmaWxtLnRpdGxlfSBjbGFzc05hbWU9InctMjQgaC0xNCBvYmplY3QtY292ZXIgcm91bmRlZCIgLz4KICAgICAgICAgICAgICApfQogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4LTEgbWluLXctMCI+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9ImZvbnQtc2VtaWJvbGQgdGV4dC13aGl0ZSB0cnVuY2F0ZSI+e2ZpbG0udGl0bGUgfHwgYEZpbG0gIyR7ZmlsbS5pZH1gfTwvcD4KICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LW5ldXRyYWwtNDAwIj57ZmlsbS5jcmVhdG9yTmFtZX08L3A+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMgbXQtMSB0ZXh0LXhzIHRleHQtbmV1dHJhbC01MDAiPgogICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0xIj48RXllIGNsYXNzTmFtZT0idy0zIGgtMyIgLz57ZmlsbS52aWV3Q291bnR9PC9zcGFuPgogICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0xIj48UGxheSBjbGFzc05hbWU9InctMyBoLTMiIC8+e2ZpbG0ucGxheUNvdW50fTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMSI+PFNoYXJlMiBjbGFzc05hbWU9InctMyBoLTMiIC8+e2ZpbG0uc2hhcmVDb3VudH08L3NwYW4+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBnYXAtMiBmbGV4LXdyYXAiPgogICAgICAgICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICAgICAgICBzaXplPSJzbSIKICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJiZy1hbWJlci02MDAgaG92ZXI6YmctYW1iZXItNTAwIHRleHQtd2hpdGUgdGV4dC14cyIKICAgICAgICAgICAgICAgICAgZGlzYWJsZWQ9e3NldEhlcm9NdXRhdGlvbi5pc1BlbmRpbmd9CiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldEhlcm9NdXRhdGlvbi5tdXRhdGUoeyBmaWxtUGFnZUlkOiBmaWxtLmlkIH0pfQogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICA8U3RhciBjbGFzc05hbWU9InctMyBoLTMgbXItMSIgLz4gU2V0IEhlcm8KICAgICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgICAgPEJ1dHRvbgogICAgICAgICAgICAgICAgICBzaXplPSJzbSIKICAgICAgICAgICAgICAgICAgdmFyaWFudD0ib3V0bGluZSIKICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJib3JkZXItYmx1ZS03MDAgdGV4dC1ibHVlLTQwMCBob3ZlcjpiZy1ibHVlLTkwMC8yMCB0ZXh0LXhzIgogICAgICAgICAgICAgICAgICBkaXNhYmxlZD17c2V0Q3VyYXRpb25NdXRhdGlvbi5pc1BlbmRpbmd9CiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldEN1cmF0aW9uTXV0YXRpb24ubXV0YXRlKHsgZW50aXR5VHlwZTogInByb2plY3QiLCBlbnRpdHlJZDogZmlsbS5wcm9qZWN0SWQgPz8gZmlsbS5pZCwgZmxhZ1R5cGU6ICJzdGFmZl9waWNrIiB9KX0KICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgU3RhZmYgUGljawogICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICA8QnV0dG9uCiAgICAgICAgICAgICAgICAgIHNpemU9InNtIgogICAgICAgICAgICAgICAgICB2YXJpYW50PSJvdXRsaW5lIgogICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImJvcmRlci1yZWQtODAwIHRleHQtcmVkLTQwMCBob3ZlcjpiZy1yZWQtOTAwLzIwIHRleHQteHMiCiAgICAgICAgICAgICAgICAgIGRpc2FibGVkPXtyZW1vdmVDdXJhdGlvbk11dGF0aW9uLmlzUGVuZGluZ30KICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gcmVtb3ZlQ3VyYXRpb25NdXRhdGlvbi5tdXRhdGUoeyBlbnRpdHlUeXBlOiAicHJvamVjdCIsIGVudGl0eUlkOiBmaWxtLnByb2plY3RJZCA/PyBmaWxtLmlkLCBmbGFnVHlwZTogImZlYXR1cmVkIiB9KX0KICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgUmVtb3ZlIEZsYWcKICAgICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgPC9DYXJkPgogICAgICApKX0KICAgIDwvZGl2PgogICk7Cn0KCi8vIOKUgOKUgOKUgCBDb252ZXJzaW9uIEZ1bm5lbCBQYW5lbCDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAKZnVuY3Rpb24gQ29udmVyc2lvbkZ1bm5lbFBhbmVsKCkgewogIGNvbnN0IHsgZGF0YTogZnVubmVsLCBpc0xvYWRpbmcgfSA9IHRycGMuY29udmVyc2lvbi5nZXRGdW5uZWxTdGF0cy51c2VRdWVyeSh7IGRheXM6IDMwIH0pOwogIGNvbnN0IHsgZGF0YTogdG9wQ3JlYXRvcnMgfSA9IHRycGMuY29udmVyc2lvbi5nZXRUb3BDcmVhdG9ycy51c2VRdWVyeSh7IGxpbWl0OiAxMCB9KTsKCiAgY29uc3QgZXZlbnRMYWJlbHM6IFJlY29yZDxzdHJpbmcsIHN0cmluZz4gPSB7CiAgICBzaG93Y2FzZV90b19maWxtOiAiU2hvd2Nhc2Ug4oaSIEZpbG0gUGFnZSIsCiAgICB2aWV3X3RvX3dhdGNoOiAiRmlsbSBQYWdlIOKGkiBXYXRjaCIsCiAgICB3YXRjaF90b19wcm9maWxlOiAiV2F0Y2gg4oaSIENyZWF0b3IgUHJvZmlsZSIsCiAgICBwcm9maWxlX3RvX3NpZ251cDogIlByb2ZpbGUg4oaSIFNpZ24gVXAiLAogICAgZmlsbV90b19jcmVhdGU6ICJGaWxtIFBhZ2Ug4oaSIENyZWF0ZSBBY2NvdW50IiwKICB9OwoKICBpZiAoaXNMb2FkaW5nKSByZXR1cm4gPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIHRleHQtbmV1dHJhbC00MDAgcHktOCI+PExvYWRlcjIgY2xhc3NOYW1lPSJ3LTQgaC00IGFuaW1hdGUtc3BpbiIgLz4gTG9hZGluZyBmdW5uZWwgZGF0YS4uLjwvZGl2PjsKCiAgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTYiPgogICAgICA8ZGl2PgogICAgICAgIDxoMyBjbGFzc05hbWU9InRleHQtc20gZm9udC1zZW1pYm9sZCB0ZXh0LW5ldXRyYWwtMzAwIG1iLTMiPkNvbnZlcnNpb24gRnVubmVsIChMYXN0IDMwIERheXMpPC9oMz4KICAgICAgICB7IWZ1bm5lbCA/ICgKICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1uZXV0cmFsLTUwMCB0ZXh0LXNtIj5ObyBjb252ZXJzaW9uIGRhdGEgeWV0LiBFdmVudHMgd2lsbCBhcHBlYXIgYXMgdXNlcnMgbmF2aWdhdGUgcHVibGljIHBhZ2VzLjwvcD4KICAgICAgICApIDogKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiI+CiAgICAgICAgICAgIHsoWwogICAgICAgICAgICAgIHsgbGFiZWw6ICJQYWdlIFZpZXdzIiwgdmFsdWU6IGZ1bm5lbC52aWV3cyB9LAogICAgICAgICAgICAgIHsgbGFiZWw6ICJWaWRlbyBQbGF5cyIsIHZhbHVlOiBmdW5uZWwucGxheXMgfSwKICAgICAgICAgICAgICB7IGxhYmVsOiAiU2hhcmUgQ2xpY2tzIiwgdmFsdWU6IGZ1bm5lbC5zaGFyZXMgfSwKICAgICAgICAgICAgICB7IGxhYmVsOiAiU2lnbnVwIENUQSBDbGlja3MiLCB2YWx1ZTogZnVubmVsLnNpZ251cENsaWNrcyB9LAogICAgICAgICAgICAgIHsgbGFiZWw6ICJOZXcgUmVnaXN0cmF0aW9ucyIsIHZhbHVlOiBmdW5uZWwubmV3VXNlcnMgfSwKICAgICAgICAgICAgXSBhcyB7IGxhYmVsOiBzdHJpbmc7IHZhbHVlOiBudW1iZXIgfVtdKS5tYXAoKHJvdykgPT4gewogICAgICAgICAgICAgIGNvbnN0IG1heFZhbCA9IE1hdGgubWF4KGZ1bm5lbC52aWV3cywgZnVubmVsLnBsYXlzLCBmdW5uZWwuc2hhcmVzLCBmdW5uZWwuc2lnbnVwQ2xpY2tzLCBmdW5uZWwubmV3VXNlcnMsIDEpOwogICAgICAgICAgICAgIHJldHVybiAoCiAgICAgICAgICAgICAgICA8ZGl2IGtleT17cm93LmxhYmVsfSBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0zIj4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbmV1dHJhbC00MDAgdy01MiBzaHJpbmstMCI+e3Jvdy5sYWJlbH08L3NwYW4+CiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4LTEgYmctbmV1dHJhbC04MDAgcm91bmRlZC1mdWxsIGgtMiI+CiAgICAgICAgICAgICAgICAgICAgPGRpdgogICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJoLTIgcm91bmRlZC1mdWxsIgogICAgICAgICAgICAgICAgICAgICAgc3R5bGU9e3sKICAgICAgICAgICAgICAgICAgICAgICAgd2lkdGg6IGAke01hdGgubWluKDEwMCwgKHJvdy52YWx1ZSAvIG1heFZhbCkgKiAxMDApfSVgLAogICAgICAgICAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kOiAibGluZWFyLWdyYWRpZW50KDkwZGVnLCAjZDRhZjM3LCAjZjVlNmEzKSIsCiAgICAgICAgICAgICAgICAgICAgICB9fQogICAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQtc20gZm9udC1zZW1pYm9sZCB0ZXh0LXdoaXRlIHctMTIgdGV4dC1yaWdodCI+e3Jvdy52YWx1ZX08L3NwYW4+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICApOwogICAgICAgICAgICB9KX0KICAgICAgICAgIDwvZGl2PgogICAgICAgICl9CiAgICAgIDwvZGl2PgoKICAgICAgPGRpdj4KICAgICAgICA8aDMgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtc2VtaWJvbGQgdGV4dC1uZXV0cmFsLTMwMCBtYi0zIj5Ub3AgQ3JlYXRvcnMgYnkgVmlld3M8L2gzPgogICAgICAgIHshdG9wQ3JlYXRvcnM/Lmxlbmd0aCA/ICgKICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1uZXV0cmFsLTUwMCB0ZXh0LXNtIj5ObyBjcmVhdG9yIGRhdGEgeWV0LjwvcD4KICAgICAgICApIDogKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMiI+CiAgICAgICAgICAgIHt0b3BDcmVhdG9ycy5tYXAoKGNyZWF0b3I6IGFueSwgaTogbnVtYmVyKSA9PiAoCiAgICAgICAgICAgICAgPGRpdiBrZXk9e2NyZWF0b3IuaWR9IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMgcHktMS41IGJvcmRlci1iIGJvcmRlci1uZXV0cmFsLTgwMCBsYXN0OmJvcmRlci0wIj4KICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC1uZXV0cmFsLTUwMCB0ZXh0LXNtIHctNSI+e2kgKyAxfS48L3NwYW4+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIG1pbi13LTAiPgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC13aGl0ZSB0cnVuY2F0ZSI+e2NyZWF0b3IuZGlzcGxheU5hbWV9PC9wPgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC1uZXV0cmFsLTUwMCI+e2NyZWF0b3IuZmlsbUNvdW50fSBmaWxtczwvcD4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0xIHRleHQtc20gdGV4dC1uZXV0cmFsLTMwMCI+CiAgICAgICAgICAgICAgICAgIDxFeWUgY2xhc3NOYW1lPSJ3LTMgaC0zIiAvPiB7Y3JlYXRvci50b3RhbFZpZXdzfQogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICkpfQogICAgICAgICAgPC9kaXY+CiAgICAgICAgKX0KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9CgovLyDilIDilIDilIAgTWFpbiBDb21wb25lbnQg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEFkbWluR3Jvd3RoRGFzaGJvYXJkKCkgewogIGNvbnN0IHsgdXNlciB9ID0gdXNlQXV0aCgpOwogIGNvbnN0IFssIHNldExvY2F0aW9uXSA9IHVzZUxvY2F0aW9uKCk7CiAgdXNlRWZmZWN0KCgpID0+IHsKICAgIGlmICh1c2VyICE9PSB1bmRlZmluZWQgJiYgdXNlciAhPT0gbnVsbCAmJiAhdXNlci5pc0FkbWluKSB7CiAgICAgIHNldExvY2F0aW9uKCIvIik7CiAgICB9CiAgfSwgW3VzZXIsIHNldExvY2F0aW9uXSk7CgoKICBpZiAoIXVzZXIgfHwgKHVzZXIgYXMgYW55KS5yb2xlICE9PSAiYWRtaW4iKSB7CiAgICByZXR1cm4gKAogICAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIGJnLW5ldXRyYWwtOTUwIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIj4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1jZW50ZXIgdGV4dC1uZXV0cmFsLTQwMCI+CiAgICAgICAgICA8U2hpZWxkIGNsYXNzTmFtZT0idy0xMiBoLTEyIG14LWF1dG8gbWItMyBvcGFjaXR5LTQwIiAvPgogICAgICAgICAgPHA+QWRtaW4gYWNjZXNzIHJlcXVpcmVkPC9wPgogICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KICAgICk7CiAgfQoKICBjb25zdCB7IGRhdGE6IHRvcEZpbG1zIH0gPSB0cnBjLmNvbnZlcnNpb24uZ2V0VG9wRmlsbXMudXNlUXVlcnkoeyBsaW1pdDogNSB9KTsKICBjb25zdCB7IGRhdGE6IHRvcENyZWF0b3JzIH0gPSB0cnBjLmNvbnZlcnNpb24uZ2V0VG9wQ3JlYXRvcnMudXNlUXVlcnkoeyBsaW1pdDogNSB9KTsKICBjb25zdCB7IGRhdGE6IHBlbmRpbmcgfSA9IHRycGMuc3VibWlzc2lvbnMubGlzdFBlbmRpbmcudXNlUXVlcnkoKTsKICBjb25zdCB7IGRhdGE6IGFidXNlRmxhZ3MgfSA9IHRycGMuYWJ1c2UubGlzdFBlbmRpbmcudXNlUXVlcnkoKTsKCiAgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4gdGV4dC13aGl0ZSIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctN3hsIG14LWF1dG8gcHgtNCBweS04Ij4KICAgICAgICB7LyogSGVhZGVyICovfQogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYi04Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyBtYi0yIj4KICAgICAgICAgICAgPEJhckNoYXJ0MyBjbGFzc05hbWU9InctNiBoLTYiIHN0eWxlPXt7IGNvbG9yOiAiI2Q0YWYzNyIgfX0gLz4KICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIj5Hcm93dGggRGFzaGJvYXJkPC9oMT4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LW5ldXRyYWwtNDAwIHRleHQtc20iPlNob3djYXNlIGN1cmF0aW9uLCBzdWJtaXNzaW9uIHJldmlldywgYWJ1c2UgbW9kZXJhdGlvbiwgYW5kIGNvbnZlcnNpb24gYW5hbHl0aWNzLjwvcD4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgey8qIFN1bW1hcnkgU3RhdHMgKi99CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTIgbGc6Z3JpZC1jb2xzLTQgZ2FwLTQgbWItOCI+CiAgICAgICAgICA8U3RhdENhcmQgbGFiZWw9IlB1YmxpYyBGaWxtcyIgdmFsdWU9e3RvcEZpbG1zPy5sZW5ndGggPz8gIuKAlCJ9IGljb249e0ZpbG19IGNvbG9yPSIjZDRhZjM3IiAvPgogICAgICAgICAgPFN0YXRDYXJkIGxhYmVsPSJQdWJsaWMgQ3JlYXRvcnMiIHZhbHVlPXt0b3BDcmVhdG9ycz8ubGVuZ3RoID8/ICLigJQifSBpY29uPXtVc2Vyc30gY29sb3I9IiM2MGE1ZmEiIC8+CiAgICAgICAgICA8U3RhdENhcmQgbGFiZWw9IlBlbmRpbmcgU3VibWlzc2lvbnMiIHZhbHVlPXtwZW5kaW5nPy5sZW5ndGggPz8gMH0gaWNvbj17Q2xvY2t9IGNvbG9yPSIjZjU5ZTBiIiAvPgogICAgICAgICAgPFN0YXRDYXJkIGxhYmVsPSJBYnVzZSBGbGFncyIgdmFsdWU9e2FidXNlRmxhZ3M/Lmxlbmd0aCA/PyAwfSBpY29uPXtBbGVydFRyaWFuZ2xlfSBjb2xvcj0iI2VmNDQ0NCIgLz4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgey8qIE1haW4gVGFicyAqL30KICAgICAgICA8VGFicyBkZWZhdWx0VmFsdWU9InNob3djYXNlIj4KICAgICAgICAgIDxUYWJzTGlzdCBjbGFzc05hbWU9ImJnLW5ldXRyYWwtOTAwIGJvcmRlciBib3JkZXItbmV1dHJhbC04MDAgbWItNiBmbGV4LXdyYXAgaC1hdXRvIGdhcC0xIHAtMSI+CiAgICAgICAgICAgIDxUYWJzVHJpZ2dlciB2YWx1ZT0ic2hvd2Nhc2UiIGNsYXNzTmFtZT0iZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1uZXV0cmFsLTcwMCB0ZXh0LXhzIHNtOnRleHQtc20iPgogICAgICAgICAgICAgIDxTdGFyIGNsYXNzTmFtZT0idy0zLjUgaC0zLjUgbXItMS41IiAvPiBTaG93Y2FzZSBDdXJhdGlvbgogICAgICAgICAgICA8L1RhYnNUcmlnZ2VyPgogICAgICAgICAgICA8VGFic1RyaWdnZXIgdmFsdWU9InN1Ym1pc3Npb25zIiBjbGFzc05hbWU9ImRhdGEtW3N0YXRlPWFjdGl2ZV06YmctbmV1dHJhbC03MDAgdGV4dC14cyBzbTp0ZXh0LXNtIj4KICAgICAgICAgICAgICA8TWVnYXBob25lIGNsYXNzTmFtZT0idy0zLjUgaC0zLjUgbXItMS41IiAvPiBTdWJtaXNzaW9ucwogICAgICAgICAgICAgIHsocGVuZGluZz8ubGVuZ3RoID8/IDApID4gMCAmJiAoCiAgICAgICAgICAgICAgICA8QmFkZ2UgY2xhc3NOYW1lPSJtbC0xLjUgYmctYW1iZXItNjAwIHRleHQtd2hpdGUgdGV4dC1bMTBweF0gcHgtMS41IHB5LTAiPntwZW5kaW5nIS5sZW5ndGh9PC9CYWRnZT4KICAgICAgICAgICAgICApfQogICAgICAgICAgICA8L1RhYnNUcmlnZ2VyPgogICAgICAgICAgICA8VGFic1RyaWdnZXIgdmFsdWU9ImFidXNlIiBjbGFzc05hbWU9ImRhdGEtW3N0YXRlPWFjdGl2ZV06YmctbmV1dHJhbC03MDAgdGV4dC14cyBzbTp0ZXh0LXNtIj4KICAgICAgICAgICAgICA8U2hpZWxkIGNsYXNzTmFtZT0idy0zLjUgaC0zLjUgbXItMS41IiAvPiBBYnVzZSBGbGFncwogICAgICAgICAgICAgIHsoYWJ1c2VGbGFncz8ubGVuZ3RoID8/IDApID4gMCAmJiAoCiAgICAgICAgICAgICAgICA8QmFkZ2UgY2xhc3NOYW1lPSJtbC0xLjUgYmctcmVkLTYwMCB0ZXh0LXdoaXRlIHRleHQtWzEwcHhdIHB4LTEuNSBweS0wIj57YWJ1c2VGbGFncyEubGVuZ3RofTwvQmFkZ2U+CiAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgPC9UYWJzVHJpZ2dlcj4KICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPSJmdW5uZWwiIGNsYXNzTmFtZT0iZGF0YS1bc3RhdGU9YWN0aXZlXTpiZy1uZXV0cmFsLTcwMCB0ZXh0LXhzIHNtOnRleHQtc20iPgogICAgICAgICAgICAgIDxUcmVuZGluZ1VwIGNsYXNzTmFtZT0idy0zLjUgaC0zLjUgbXItMS41IiAvPiBDb252ZXJzaW9uIEZ1bm5lbAogICAgICAgICAgICA8L1RhYnNUcmlnZ2VyPgogICAgICAgICAgPC9UYWJzTGlzdD4KCiAgICAgICAgICA8VGFic0NvbnRlbnQgdmFsdWU9InNob3djYXNlIj4KICAgICAgICAgICAgPFNob3djYXNlQ3VyYXRpb25QYW5lbCAvPgogICAgICAgICAgPC9UYWJzQ29udGVudD4KICAgICAgICAgIDxUYWJzQ29udGVudCB2YWx1ZT0ic3VibWlzc2lvbnMiPgogICAgICAgICAgICA8U3VibWlzc2lvbnNQYW5lbCAvPgogICAgICAgICAgPC9UYWJzQ29udGVudD4KICAgICAgICAgIDxUYWJzQ29udGVudCB2YWx1ZT0iYWJ1c2UiPgogICAgICAgICAgICA8QWJ1c2VGbGFnc1BhbmVsIC8+CiAgICAgICAgICA8L1RhYnNDb250ZW50PgogICAgICAgICAgPFRhYnNDb250ZW50IHZhbHVlPSJmdW5uZWwiPgogICAgICAgICAgICA8Q29udmVyc2lvbkZ1bm5lbFBhbmVsIC8+CiAgICAgICAgICA8L1RhYnNDb250ZW50PgogICAgICAgIDwvVGFicz4KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9Cg==
+import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
+import {
+  BarChart3, Film, Users, TrendingUp, Star, Eye, Play, Share2,
+  CheckCircle2, XCircle, Clock, AlertTriangle, Loader2, Megaphone,
+  Shield, Zap, RefreshCw,
+} from "lucide-react";
+
+// ─── Stat card ───────────────────────────────────────────────────────────────
+function StatCard({ label, value, icon: Icon, color }: { label: string; value: number | string; icon: any; color: string }) {
+  return (
+    <Card className="bg-neutral-900 border-neutral-800">
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-neutral-400">{label}</p>
+            <p className="text-2xl font-bold mt-1" style={{ color }}>{value}</p>
+          </div>
+          <Icon className="w-8 h-8 opacity-30" style={{ color }} />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ─── Submission Review Panel ──────────────────────────────────────────────────
+function SubmissionsPanel() {
+  const utils = trpc.useUtils();
+  const { data: pending, isLoading } = trpc.submissions.listPending.useQuery();
+  const reviewMutation = trpc.submissions.review.useMutation({
+    onSuccess: () => {
+      utils.submissions.listPending.invalidate();
+      toast.success("Submission reviewed");
+    },
+    onError: (err) => toast.error(err.message || "Failed to review submission"),
+  });
+
+  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading submissions...</div>;
+
+  if (!pending?.length) return (
+    <div className="text-center py-12 text-neutral-500">
+      <CheckCircle2 className="w-10 h-10 mx-auto mb-3 opacity-40" />
+      <p>No pending submissions</p>
+    </div>
+  );
+
+  return (
+    <div className="space-y-3">
+      {pending.map((sub: any) => (
+        <Card key={sub.id} className="bg-neutral-900 border-neutral-800">
+          <CardContent className="pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-white truncate">{sub.projectTitle || `Project #${sub.projectId}`}</p>
+                <p className="text-sm text-neutral-400 mt-0.5">{sub.creatorName} · {sub.creatorEmail}</p>
+                {sub.genre && <Badge variant="outline" className="mt-1 text-xs border-neutral-700 text-neutral-400">{sub.genre}</Badge>}
+                <p className="text-xs text-neutral-500 mt-1">Submitted {new Date(sub.createdAt).toLocaleDateString()}</p>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  size="sm"
+                  className="bg-amber-600 hover:bg-amber-500 text-white"
+                  disabled={reviewMutation.isPending}
+                  onClick={() => reviewMutation.mutate({ submissionId: sub.id, status: "featured" })}
+                >
+                  <Star className="w-3 h-3 mr-1" /> Feature
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-green-700 text-green-400 hover:bg-green-900/20"
+                  disabled={reviewMutation.isPending}
+                  onClick={() => reviewMutation.mutate({ submissionId: sub.id, status: "approved" })}
+                >
+                  <CheckCircle2 className="w-3 h-3 mr-1" /> Approve
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-red-800 text-red-400 hover:bg-red-900/20"
+                  disabled={reviewMutation.isPending}
+                  onClick={() => reviewMutation.mutate({ submissionId: sub.id, status: "declined" })}
+                >
+                  <XCircle className="w-3 h-3 mr-1" /> Decline
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ─── Abuse Flags Panel ────────────────────────────────────────────────────────
+function AbuseFlagsPanel() {
+  const utils = trpc.useUtils();
+  const { data: flags, isLoading } = trpc.abuse.listPending.useQuery();
+  const actionMutation = trpc.abuse.action.useMutation({
+    onSuccess: () => {
+      utils.abuse.listPending.invalidate();
+      toast.success("Flag actioned");
+    },
+    onError: (err) => toast.error(err.message || "Failed to action flag"),
+  });
+
+  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading flags...</div>;
+
+  if (!flags?.length) return (
+    <div className="text-center py-12 text-neutral-500">
+      <Shield className="w-10 h-10 mx-auto mb-3 opacity-40" />
+      <p>No pending abuse flags</p>
+    </div>
+  );
+
+  return (
+    <div className="space-y-3">
+      {flags.map((flag: any) => (
+        <Card key={flag.id} className="bg-neutral-900 border-neutral-800">
+          <CardContent className="pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs border-red-800 text-red-400">{flag.entityType}</Badge>
+                  <span className="text-sm text-neutral-300">#{flag.entityId}</span>
+                </div>
+                <p className="text-sm text-neutral-300 mt-1">{flag.reason}</p>
+                <p className="text-xs text-neutral-500 mt-1">
+                  Reported by {flag.reporterName || "Anonymous"} · {new Date(flag.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-red-800 text-red-400 hover:bg-red-900/20"
+                  disabled={actionMutation.isPending}
+                  onClick={() => actionMutation.mutate({ flagId: flag.id, status: "actioned" })}
+                >
+                  <AlertTriangle className="w-3 h-3 mr-1" /> Action
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-neutral-700 text-neutral-400 hover:bg-neutral-800"
+                  disabled={actionMutation.isPending}
+                  onClick={() => actionMutation.mutate({ flagId: flag.id, status: "dismissed" })}
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ─── Showcase Curation Panel ──────────────────────────────────────────────────
+function ShowcaseCurationPanel() {
+  const utils = trpc.useUtils();
+  const { data: topFilms, isLoading } = trpc.conversion.getTopFilms.useQuery({ limit: 20 });
+  const setHeroMutation = trpc.showcase.setHero.useMutation({
+    onSuccess: () => {
+      utils.conversion.getTopFilms.invalidate();
+      toast.success("Homepage hero updated");
+    },
+    onError: (err) => toast.error(err.message || "Failed to set hero"),
+  });
+  const setCurationMutation = trpc.analytics.setCurationFlag.useMutation({
+    onSuccess: () => {
+      utils.conversion.getTopFilms.invalidate();
+      toast.success("Curation flag updated");
+    },
+    onError: (err) => toast.error(err.message || "Failed to update flag"),
+  });
+  const removeCurationMutation = trpc.analytics.removeCurationFlag.useMutation({
+    onSuccess: () => {
+      utils.conversion.getTopFilms.invalidate();
+      toast.success("Flag removed");
+    },
+    onError: (err) => toast.error(err.message || "Failed to remove flag"),
+  });
+
+  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading films...</div>;
+
+  if (!topFilms?.length) return (
+    <div className="text-center py-12 text-neutral-500">
+      <Film className="w-10 h-10 mx-auto mb-3 opacity-40" />
+      <p>No public films yet</p>
+    </div>
+  );
+
+  return (
+    <div className="space-y-3">
+      {topFilms.map((film: any) => (
+        <Card key={film.id} className="bg-neutral-900 border-neutral-800">
+          <CardContent className="pt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              {film.thumbnailUrl && (
+                <img src={film.thumbnailUrl} alt={film.title} className="w-24 h-14 object-cover rounded" />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-white truncate">{film.title || `Film #${film.id}`}</p>
+                <p className="text-sm text-neutral-400">{film.creatorName}</p>
+                <div className="flex items-center gap-3 mt-1 text-xs text-neutral-500">
+                  <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{film.viewCount}</span>
+                  <span className="flex items-center gap-1"><Play className="w-3 h-3" />{film.playCount}</span>
+                  <span className="flex items-center gap-1"><Share2 className="w-3 h-3" />{film.shareCount}</span>
+                </div>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  size="sm"
+                  className="bg-amber-600 hover:bg-amber-500 text-white text-xs"
+                  disabled={setHeroMutation.isPending}
+                  onClick={() => setHeroMutation.mutate({ filmPageId: film.id })}
+                >
+                  <Star className="w-3 h-3 mr-1" /> Set Hero
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-blue-700 text-blue-400 hover:bg-blue-900/20 text-xs"
+                  disabled={setCurationMutation.isPending}
+                  onClick={() => setCurationMutation.mutate({ entityType: "project", entityId: film.projectId ?? film.id, flagType: "staff_pick" })}
+                >
+                  Staff Pick
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-red-800 text-red-400 hover:bg-red-900/20 text-xs"
+                  disabled={removeCurationMutation.isPending}
+                  onClick={() => removeCurationMutation.mutate({ entityType: "project", entityId: film.projectId ?? film.id, flagType: "featured" })}
+                >
+                  Remove Flag
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ─── Conversion Funnel Panel ──────────────────────────────────────────────────
+function ConversionFunnelPanel() {
+  const { data: funnel, isLoading } = trpc.conversion.getFunnelStats.useQuery({ days: 30 });
+  const { data: topCreators } = trpc.conversion.getTopCreators.useQuery({ limit: 10 });
+
+  const eventLabels: Record<string, string> = {
+    showcase_to_film: "Showcase → Film Page",
+    view_to_watch: "Film Page → Watch",
+    watch_to_profile: "Watch → Creator Profile",
+    profile_to_signup: "Profile → Sign Up",
+    film_to_create: "Film Page → Create Account",
+  };
+
+  if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin" /> Loading funnel data...</div>;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-sm font-semibold text-neutral-300 mb-3">Conversion Funnel (Last 30 Days)</h3>
+        {!funnel ? (
+          <p className="text-neutral-500 text-sm">No conversion data yet. Events will appear as users navigate public pages.</p>
+        ) : (
+          <div className="space-y-2">
+            {([
+              { label: "Page Views", value: funnel.views },
+              { label: "Video Plays", value: funnel.plays },
+              { label: "Share Clicks", value: funnel.shares },
+              { label: "Signup CTA Clicks", value: funnel.signupClicks },
+              { label: "New Registrations", value: funnel.newUsers },
+            ] as { label: string; value: number }[]).map((row) => {
+              const maxVal = Math.max(funnel.views, funnel.plays, funnel.shares, funnel.signupClicks, funnel.newUsers, 1);
+              return (
+                <div key={row.label} className="flex items-center gap-3">
+                  <span className="text-sm text-neutral-400 w-52 shrink-0">{row.label}</span>
+                  <div className="flex-1 bg-neutral-800 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full"
+                      style={{
+                        width: `${Math.min(100, (row.value / maxVal) * 100)}%`,
+                        background: "linear-gradient(90deg, #d4af37, #f5e6a3)",
+                      }}
+                    />
+                  </div>
+                  <span className="text-sm font-semibold text-white w-12 text-right">{row.value}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div>
+        <h3 className="text-sm font-semibold text-neutral-300 mb-3">Top Creators by Views</h3>
+        {!topCreators?.length ? (
+          <p className="text-neutral-500 text-sm">No creator data yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {topCreators.map((creator: any, i: number) => (
+              <div key={creator.id} className="flex items-center gap-3 py-1.5 border-b border-neutral-800 last:border-0">
+                <span className="text-neutral-500 text-sm w-5">{i + 1}.</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-white truncate">{creator.displayName}</p>
+                  <p className="text-xs text-neutral-500">{creator.filmCount} films</p>
+                </div>
+                <div className="flex items-center gap-1 text-sm text-neutral-300">
+                  <Eye className="w-3 h-3" /> {creator.totalViews}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+export default function AdminGrowthDashboard() {
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    if (user !== undefined && user !== null && !user.isAdmin) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
+
+  if (!user || (user as any).role !== "admin") {
+    return (
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <div className="text-center text-neutral-400">
+          <Shield className="w-12 h-12 mx-auto mb-3 opacity-40" />
+          <p>Admin access required</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: topFilms } = trpc.conversion.getTopFilms.useQuery({ limit: 5 });
+  const { data: topCreators } = trpc.conversion.getTopCreators.useQuery({ limit: 5 });
+  const { data: pending } = trpc.submissions.listPending.useQuery();
+  const { data: abuseFlags } = trpc.abuse.listPending.useQuery();
+
+  return (
+    <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <BarChart3 className="w-6 h-6" style={{ color: "#d4af37" }} />
+            <h1 className="text-2xl font-bold gradient-text-gold">Growth Dashboard</h1>
+          </div>
+          <p className="text-neutral-400 text-sm">Showcase curation, submission review, abuse moderation, and conversion analytics.</p>
+        </div>
+
+        {/* Summary Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <StatCard label="Public Films" value={topFilms?.length ?? "—"} icon={Film} color="#d4af37" />
+          <StatCard label="Public Creators" value={topCreators?.length ?? "—"} icon={Users} color="#60a5fa" />
+          <StatCard label="Pending Submissions" value={pending?.length ?? 0} icon={Clock} color="#f59e0b" />
+          <StatCard label="Abuse Flags" value={abuseFlags?.length ?? 0} icon={AlertTriangle} color="#ef4444" />
+        </div>
+
+        {/* Main Tabs */}
+        <Tabs defaultValue="showcase">
+          <TabsList className="bg-neutral-900 border border-neutral-800 mb-6 flex-wrap h-auto gap-1 p-1">
+            <TabsTrigger value="showcase" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
+              <Star className="w-3.5 h-3.5 mr-1.5" /> Showcase Curation
+            </TabsTrigger>
+            <TabsTrigger value="submissions" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
+              <Megaphone className="w-3.5 h-3.5 mr-1.5" /> Submissions
+              {(pending?.length ?? 0) > 0 && (
+                <Badge className="ml-1.5 bg-amber-600 text-white text-[10px] px-1.5 py-0">{pending!.length}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="abuse" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
+              <Shield className="w-3.5 h-3.5 mr-1.5" /> Abuse Flags
+              {(abuseFlags?.length ?? 0) > 0 && (
+                <Badge className="ml-1.5 bg-red-600 text-white text-[10px] px-1.5 py-0">{abuseFlags!.length}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="funnel" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
+              <TrendingUp className="w-3.5 h-3.5 mr-1.5" /> Conversion Funnel
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="showcase">
+            <ShowcaseCurationPanel />
+          </TabsContent>
+          <TabsContent value="submissions">
+            <SubmissionsPanel />
+          </TabsContent>
+          <TabsContent value="abuse">
+            <AbuseFlagsPanel />
+          </TabsContent>
+          <TabsContent value="funnel">
+            <ConversionFunnelPanel />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}
