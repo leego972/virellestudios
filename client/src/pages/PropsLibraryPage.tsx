@@ -81,7 +81,7 @@ import { useState } from "react";
       <div className="p-6 space-y-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Props Library</h1>
+            <h1 className="text-2xl font-bold gradient-text-gold">Props Library</h1>
             <p className="text-muted-foreground text-sm mt-1">
               Lock hero props so AI renders them identically in every scene they appear.
             </p>
