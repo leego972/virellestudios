@@ -187,7 +187,7 @@ export default function SharePreview() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">{project.title}</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3 gradient-text-gold">{project.title}</h1>
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-4">
             {project.directorName && <span>Directed by {project.directorName}</span>}
             {project.genre && (<><span>·</span><span>{project.genre}</span></>)}
