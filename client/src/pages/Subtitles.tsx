@@ -29,12 +29,12 @@ import { useState } from "react";
   ];
 
   const DEAF_CATEGORIES = [
-    { id: "music", label: "Music", color: "text-purple-400", bg: "bg-purple-500/10", icon: "Ã°ÂÂÂµ" },
-    { id: "sfx", label: "Sound Effect", color: "text-blue-400", bg: "bg-blue-500/10", icon: "Ã°ÂÂÂ" },
-    { id: "ambience", label: "Ambience", color: "text-green-400", bg: "bg-green-500/10", icon: "Ã°ÂÂÂ¿" },
-    { id: "dialogue", label: "Off-screen Dialogue", color: "text-amber-400", bg: "bg-amber-500/10", icon: "Ã°ÂÂÂ¬" },
-    { id: "silence", label: "Silence", color: "text-zinc-400", bg: "bg-zinc-500/10", icon: "Ã°ÂÂ¤Â«" },
-    { id: "narrator", label: "Narrator", color: "text-rose-400", bg: "bg-rose-500/10", icon: "Ã°ÂÂÂÃ¯Â¸Â" },
+    { id: "music", label: "Music", color: "text-purple-400", bg: "bg-purple-500/10", icon: "🎵" },
+    { id: "sfx", label: "Sound Effect", color: "text-blue-400", bg: "bg-blue-500/10", icon: "🔊" },
+    { id: "ambience", label: "Ambience", color: "text-green-400", bg: "bg-green-500/10", icon: "🌿" },
+    { id: "dialogue", label: "Off-screen Dialogue", color: "text-amber-400", bg: "bg-amber-500/10", icon: "💬" },
+    { id: "silence", label: "Silence", color: "text-zinc-400", bg: "bg-zinc-500/10", icon: "🤫" },
+    { id: "narrator", label: "Narrator", color: "text-rose-400", bg: "bg-rose-500/10", icon: "🎙️" },
   ];
 
   function formatTime(s: number) {
@@ -227,7 +227,7 @@ import { useState } from "react";
               </TabsTrigger>
             </TabsList>
 
-            {/* Ã¢ÂÂÃ¢ÂÂ STANDARD SUBTITLES TAB Ã¢ÂÂÃ¢ÂÂ */}
+            {/* ── STANDARD SUBTITLES TAB ── */}
             <TabsContent value="standard">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 {/* Track List */}
@@ -265,8 +265,8 @@ import { useState } from "react";
                             <div className="text-xs font-medium">{t.languageName}</div>
                             <div className="text-[10px] text-muted-foreground">
                               {(t.entries || []).length} entries
-                              {t.isGenerated ? " ÃÂ· AI generated" : ""}
-                              {t.isTranslation ? " ÃÂ· translated" : ""}
+                              {t.isGenerated ? " · AI generated" : ""}
+                              {t.isTranslation ? " · translated" : ""}
                             </div>
                           </div>
                           <button onClick={e => { e.stopPropagation(); deleteMutation.mutate({ id: t.id }); }} className="p-1 rounded hover:bg-red-500/10 text-muted-foreground hover:text-red-400 shrink-0">
@@ -394,7 +394,7 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* Ã¢ÂÂÃ¢ÂÂ D/DEAF & HoH TRACK TAB Ã¢ÂÂÃ¢ÂÂ */}
+            {/* ── D/DEAF & HoH TRACK TAB ── */}
             <TabsContent value="deaf">
               <div className="space-y-5">
                 <div className="rounded-xl border p-5" style={{ borderColor: "rgba(59,130,246,0.3)", background: "linear-gradient(135deg, rgba(59,130,246,0.06) 0%, transparent 100%)" }}>
@@ -489,7 +489,7 @@ import { useState } from "react";
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-0.5">
                                   <span className={`text-[9px] font-bold uppercase tracking-wider ${cat?.color}`}>{cat?.label}</span>
-                                  <span className="text-[9px] font-mono text-muted-foreground">{e.startTime}s Ã¢ÂÂ {e.endTime}s</span>
+                                  <span className="text-[9px] font-mono text-muted-foreground">{e.startTime}s → {e.endTime}s</span>
                                 </div>
                                 <p className="text-xs font-medium">[{e.description.toUpperCase()}]</p>
                               </div>
@@ -506,7 +506,7 @@ import { useState } from "react";
               </div>
             </TabsContent>
 
-            {/* Ã¢ÂÂÃ¢ÂÂ SIGN LANGUAGE NOTES TAB Ã¢ÂÂÃ¢ÂÂ */}
+            {/* ── SIGN LANGUAGE NOTES TAB ── */}
             <TabsContent value="signlanguage">
               <div className="space-y-5">
                 <div className="rounded-xl border p-5 flex items-start gap-4" style={{ borderColor: "rgba(168,85,247,0.3)", background: "rgba(168,85,247,0.05)" }}>
@@ -531,7 +531,7 @@ import { useState } from "react";
                         <h4 className="text-sm font-semibold gradient-text-gold">{lang} Notes</h4>
                       </div>
                       <Textarea
-                        placeholder={`Scene-by-scene ${lang} interpreter guidance...\n\nScene 1: Establish interpreter frame, bottom-right\nScene 2: Close-up on emotional dialogue Ã¢ÂÂ interpreter prominent\nScene 3: Action sequence Ã¢ÂÂ maintain corner frame...`}
+                        placeholder={`Scene-by-scene ${lang} interpreter guidance...\n\nScene 1: Establish interpreter frame, bottom-right\nScene 2: Close-up on emotional dialogue — interpreter prominent\nScene 3: Action sequence — maintain corner frame...`}
                         className="min-h-[200px] text-xs bg-background/50 resize-none"
                       />
                       <Button size="sm" variant="outline" className="w-full gap-2 hover:border-amber-500/50 hover:text-amber-400">
