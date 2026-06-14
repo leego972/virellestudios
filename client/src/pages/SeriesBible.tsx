@@ -203,7 +203,7 @@ import { useState } from "react";
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="flex items-center gap-3">
             {series.length > 0 && <Button variant="ghost" size="icon" onClick={() => { setEditingSeries(null); setActiveSeries(activeSeries); }}><ChevronRight className="h-4 w-4 rotate-180" /></Button>}
-            <h1 className="text-2xl font-bold flex items-center gap-2"><Tv className="h-6 w-6 text-primary" />{isNew ? "New Series Bible" : "Edit Series Bible"}</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Tv className="h-6 w-6 text-primary" />{isNew ? "New Series Bible" : "Edit Series Bible"}</h1>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2 space-y-1.5"><Label>Series Title *</Label><Input placeholder="My Series Title" value={form.title} onChange={e => setEditingSeries(p => ({ ...(p ?? form), title: e.target.value }))} /></div>
