@@ -436,7 +436,7 @@ function ItemCard({
   const priceLabel = `A$${(cents / 100).toFixed(2)}`;
 
   return (
-    <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 bg-white/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col">
+    <div className="group rounded-xl border border-amber-500/20 hover:border-amber-500/30 glass-card/[0.02] hover:glass-card/[0.04] overflow-hidden transition-all duration-200 flex flex-col">
       <div className="relative h-36 bg-gradient-to-br from-white/5 to-black overflow-hidden">
         {item.primaryImageUrl && !imgErr ? (
           <img

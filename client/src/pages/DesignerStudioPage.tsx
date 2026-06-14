@@ -365,7 +365,7 @@ export default function DesignerStudioPage() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {(publicItems as any[]).map((item) => (
-                  <div key={item.id} className="rounded-xl border border-amber-500/20 bg-white/[0.03] hover:glass-card/[0.06] hover:border-amber-500/25 transition-all overflow-hidden group cursor-pointer">
+                  <div key={item.id} className="rounded-xl border border-amber-500/20 glass-card/[0.03] hover:glass-card/[0.06] hover:border-amber-500/25 transition-all overflow-hidden group cursor-pointer">
                     <div className="aspect-square bg-white/5 overflow-hidden">
                       {item.primaryImageUrl ? (
                         <img src={item.primaryImageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />

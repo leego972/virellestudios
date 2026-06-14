@@ -208,7 +208,7 @@ export default function DownloadApp() {
             <h3 className="text-center text-lg font-semibold mb-6 /60 gradient-text-gold">Every tool, on mobile</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {MOBILE_FEATURES.map(f => (
-                <div key={f.label} className="bg-white/5 border border-amber-500/20 rounded-2xl p-4 sm:p-5 hover:glass-card/8 transition-colors">
+                <div key={f.label} className="glass-card/5 border border-amber-500/20 rounded-2xl p-4 sm:p-5 hover:glass-card/8 transition-colors">
                   <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{f.icon}</div>
                   <div className="font-semibold text-sm sm:text-base mb-1">{f.label}</div>
                   <div className="text-xs text-zinc-400 leading-snug">{f.desc}</div>
@@ -260,7 +260,7 @@ export default function DownloadApp() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {DESKTOP_FEATURES.map(f => (
-              <div key={f.label} className="bg-white/5 border border-amber-500/20 rounded-2xl p-4 sm:p-5 hover:glass-card/8 transition-colors">
+              <div key={f.label} className="glass-card/5 border border-amber-500/20 rounded-2xl p-4 sm:p-5 hover:glass-card/8 transition-colors">
                 <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{f.icon}</div>
                 <div className="font-semibold text-sm sm:text-base mb-1">{f.label}</div>
                 <div className="text-xs text-zinc-400 leading-snug">{f.desc}</div>

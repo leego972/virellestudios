@@ -112,7 +112,7 @@ export default function Blog() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map((article) => (
               <Link key={article.id} href={`/blog/${article.slug}`}>
-                <article className="group bg-white/5 rounded-xl overflow-hidden border border-amber-500/20 hover:border-amber-500/30 transition-all hover:glass-card/[0.07] cursor-pointer h-full flex flex-col">
+                <article className="group glass-card/5 rounded-xl overflow-hidden border border-amber-500/20 hover:border-amber-500/30 transition-all hover:glass-card/[0.07] cursor-pointer h-full flex flex-col">
                   {/* Cover Image or Gradient */}
                   <div className="h-40 bg-gradient-to-br from-amber-600/20 to-orange-600/10 flex items-center justify-center overflow-hidden">
                     {(article as any).coverImageUrl ? (

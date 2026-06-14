@@ -233,7 +233,7 @@ export default function Landing() {
               <p className="text-xs text-white/40 font-semibold uppercase tracking-widest">Also available on</p>
               <button
                 onClick={() => setLocation("/download")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/20 bg-white/5 hover:glass-card/10 transition-all text-sm font-semibold text-white/80"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/20 glass-card/5 hover:glass-card/10 transition-all text-sm font-semibold text-white/80"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -242,7 +242,7 @@ export default function Landing() {
               </button>
               <button
                 onClick={() => setLocation("/download")}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/20 bg-white/5 hover:glass-card/10 transition-all text-sm font-semibold text-white/80"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/20 glass-card/5 hover:glass-card/10 transition-all text-sm font-semibold text-white/80"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4 fill-white" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.99-2.54-2.54-10.57 9.39zm-1.9-20.1C1.1 3.96 1 4.32 1 4.71v14.58c0 .39.1.75.28 1.05l.07.07 8.17-8.17v-.19L1.35 3.59l-.07.07zM20.13 10.4l-2.35-1.36-2.84 2.84 2.84 2.84 2.37-1.37c.68-.39.68-1.03-.02-1.95zM4.17.24L16.29 7.23l-2.54 2.54L3.18.38C3.53.3 3.87.07 4.17.24z"/>
@@ -464,7 +464,7 @@ export default function Landing() {
                   href={p.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-col p-4 rounded-2xl border border-amber-500/20 bg-white/[0.02] hover:glass-card/[0.04] hover:border-white/20 transition-all duration-200"
+                  className="group flex flex-col p-4 rounded-2xl border border-amber-500/20 glass-card/[0.02] hover:glass-card/[0.04] hover:border-white/20 transition-all duration-200"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -786,7 +786,7 @@ export default function Landing() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => setLocation("/download")}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-amber-500/20 bg-white/5 hover:glass-card/10 transition-all w-full sm:w-auto"
+                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-amber-500/20 glass-card/5 hover:glass-card/10 transition-all w-full sm:w-auto"
               >
                 <svg viewBox="0 0 24 24" className="h-8 w-8 fill-white shrink-0" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -798,7 +798,7 @@ export default function Landing() {
               </button>
               <button
                 onClick={() => setLocation("/download")}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-amber-500/20 bg-white/5 hover:glass-card/10 transition-all w-full sm:w-auto"
+                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-amber-500/20 glass-card/5 hover:glass-card/10 transition-all w-full sm:w-auto"
               >
                 <svg viewBox="0 0 24 24" className="h-8 w-8 fill-white shrink-0" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.99-2.54-2.54-10.57 9.39zm-1.9-20.1C1.1 3.96 1 4.32 1 4.71v14.58c0 .39.1.75.28 1.05l.07.07 8.17-8.17v-.19L1.35 3.59l-.07.07zM20.13 10.4l-2.35-1.36-2.84 2.84 2.84 2.84 2.37-1.37c.68-.39.68-1.03-.02-1.95zM4.17.24L16.29 7.23l-2.54 2.54L3.18.38C3.53.3 3.87.07 4.17.24z"/>
@@ -1049,7 +1049,7 @@ export default function Landing() {
                   { icon: "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", title: "Production Credits", desc: "Get credited when your pieces are used in eligible Virelle.life productions." },
                   { icon: "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", title: "Global Reach, Day One", desc: "Discoverable by film productions worldwide from the moment you publish." },
                 ] as const).map((b) => (
-                  <div key={b.title} className="bg-white/3 border border-amber-500/20 rounded-2xl p-5 hover:border-amber-500/25 hover:glass-card/5 transition-all">
+                  <div key={b.title} className="glass-card/3 border border-amber-500/20 rounded-2xl p-5 hover:border-amber-500/25 hover:glass-card/5 transition-all">
                     <div className="text-2xl mb-3">{b.icon}</div>
                     <h4 className="text-sm font-black mb-1.5 gradient-text-gold">{b.title}</h4>
                     <p className="text-xs text-white/45 leading-relaxed">{b.desc}</p>
