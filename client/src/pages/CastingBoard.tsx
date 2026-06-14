@@ -132,7 +132,7 @@ export default function CastingBoard() {
 
   function continuityLevel(scs: number[]): { color: string; label: string } {
     if (scs.length === 0) return { color: "bg-muted text-muted-foreground", label: "No scenes" };
-    if (scs.length >= 8) return { color: "bg-amber-500/20 text-amber-700 dark:text-amber-300", label: `${scs.length} scenes Ã¢ÂÂ strict` };
+    if (scs.length >= 8) return { color: "bg-amber-500/20 text-amber-700 dark:text-amber-300", label: `${scs.length} scenes — strict` };
     if (scs.length >= 3) return { color: "bg-blue-500/20 text-blue-700 dark:text-blue-300", label: `${scs.length} scenes` };
     return { color: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300", label: `${scs.length} scene${scs.length === 1 ? "" : "s"}` };
   }
@@ -170,14 +170,14 @@ export default function CastingBoard() {
         projectId,
         message: `[CastingSides:${charId}]\n\nWrite a 1-page audition "sides" for the role of ${ch.name}${ch.role ? ` (${ch.role})` : ""} from "${project?.title || "Untitled"}".
 
-Character notes: ${ch.description || "Ã¢ÂÂ"}
-Backstory: ${(ch as any).backstory || "Ã¢ÂÂ"}
-Motivations: ${(ch as any).motivations || "Ã¢ÂÂ"}
+Character notes: ${ch.description || "—"}
+Backstory: ${(ch as any).backstory || "—"}
+Motivations: ${(ch as any).motivations || "—"}
 
 Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, an action heading, parentheticals where needed. End with one stage direction that reveals subtext. The scene should let the reader showcase a clear emotional turn.`,
       });
       // pick the AI text out of the response
-      const text = (res as any)?.assistant?.content || (res as any)?.content || "(generated Ã¢ÂÂ check Director Chat)";
+      const text = (res as any)?.assistant?.content || (res as any)?.content || "(generated — check Director Chat)";
       setSides((p) => ({ ...p, [charId]: typeof text === "string" ? text : JSON.stringify(text) }));
       toast.success(`Sides drafted for ${ch.name}.`);
     } catch (e: any) {
@@ -209,7 +209,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Casting Board</h1>
         <p className="text-muted-foreground mt-1">
-          {characters?.length ?? 0} role{characters?.length === 1 ? "" : "s"} ÃÂ· attach actors, draft sides, and lock consent.
+          {characters?.length ?? 0} role{characters?.length === 1 ? "" : "s"} · attach actors, draft sides, and lock consent.
         </p>
       </div>
 
@@ -217,7 +217,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
         <CinematicEmptyState
           quoteSeed="casting-board"
           title="No cast to call yet"
-          description="The Casting Board is where roles meet performers Ã¢ÂÂ once you've built characters, you'll attach actors, draft sides, and lock consent here. Build your cast first."
+          description="The Casting Board is where roles meet performers — once you've built characters, you'll attach actors, draft sides, and lock consent here. Build your cast first."
         />
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
@@ -268,7 +268,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                       variant="secondary"
                     >
                       <ShieldCheck className="h-3 w-3 mr-1" />
-                      Consent {cs.done}/{cs.total}{signed ? " ÃÂ· signed" : ""}
+                      Consent {cs.done}/{cs.total}{signed ? " · signed" : ""}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -293,7 +293,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                     </div>
                     <div className="col-span-2">
                       <Label className="text-xs">Headshot URL</Label>
-                      <Input value={s.headshotUrl} onChange={(e) => update(c.id, { headshotUrl: e.target.value })} placeholder="https://Ã¢ÂÂ¦" />
+                      <Input value={s.headshotUrl} onChange={(e) => update(c.id, { headshotUrl: e.target.value })} placeholder="https://…" />
                     </div>
                     <div className="col-span-2">
                       <Label className="text-xs">Casting notes</Label>
@@ -328,7 +328,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
                           />
                           <span>
                             <span className="font-medium">{f.label}</span>
-                            <span className="text-muted-foreground"> Ã¢ÂÂ {f.help}</span>
+                            <span className="text-muted-foreground"> — {f.help}</span>
                           </span>
                         </label>
                       ))}
