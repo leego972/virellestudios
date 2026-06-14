@@ -12,8 +12,8 @@ import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 import { HollywoodBadge } from "@/components/HollywoodIcon";
 import { PRICING_TIER_BADGE, TierBadgeKey } from "@/constants/hollywoodIcons";
 
-// ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Tier Definitions ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
-// All prices in AUD. Three public tiers: Indie, Creator, Industry ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ all self-serve.
+// ─── Tier Definitions ────────────────────────────────────────────────────────
+// All prices in AUD. Three public tiers: Indie, Creator, Industry — all self-serve.
 // Legacy DB keys independent/creator/studio all resolve to Industry.
 
 const SELF_SERVE_TIERS = [
@@ -109,7 +109,7 @@ const SELF_SERVE_TIERS = [
   },
 ];
 
-// Enterprise / custom-pricing tier (contact sales ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ not shown in main grid)
+// Enterprise / custom-pricing tier (contact sales — not shown in main grid)
 const ENTERPRISE_TIERS = [
   {
     id: "industry",
@@ -153,33 +153,33 @@ const CREDIT_PACKS = [
 ];
 
 const CREDIT_COSTS = [
-  { action: "Create New Project", cost: 0, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-  { action: "Generate Film (AI Scene Breakdown)", cost: 10, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬" },
-  { action: "Generate Scene Video (ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤45s)", cost: 10, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥" },
-  { action: "Regenerate Scene Video", cost: 8, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-  { action: "Generate Preview Image", cost: 3, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
-  { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸" },
-  { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹" },
-  { action: "Virelle AI Chat (per message)", cost: 2, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬" },
-  { action: "AI Script Writer", cost: 8, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-  { action: "AI Storyboard Generation", cost: 8, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨" },
-  { action: "AI Dialogue Polish", cost: 5, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
-  { action: "AI Continuity Check", cost: 5, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-  { action: "AI Shot List Generation", cost: 5, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-  { action: "Trailer Generation", cost: 20, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
-  { action: "Ad/Poster Generation", cost: 5, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
-  { action: "Subtitle Generation", cost: 8, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬" },
-  { action: "Export Final Film", cost: 8, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¾" },
-  { action: "Budget Estimator", cost: 5, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°" },
-  { action: "Location Scout", cost: 3, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-  { action: "Mood Board", cost: 3, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨" },
-  { action: "Color Grading Plan", cost: 4, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-  { action: "Sound Effects (AI)", cost: 5, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
-  { action: "ADR Suggestions", cost: 5, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
-  { action: "Foley Suggestions", cost: 5, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂµ" },
-  { action: "Score Cues", cost: 8, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¼" },
-  { action: "Mix Summary Export", cost: 2, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
-  { action: "Funding Application", cost: 10, icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¼" },
+  { action: "Create New Project", cost: 0, icon: "📁" },
+  { action: "Generate Film (AI Scene Breakdown)", cost: 10, icon: "🎬" },
+  { action: "Generate Scene Video (≤45s)", cost: 10, icon: "🎥" },
+  { action: "Regenerate Scene Video", cost: 8, icon: "🔄" },
+  { action: "Generate Preview Image", cost: 3, icon: "🖼️" },
+  { action: "Bulk Generate All Previews (per scene)", cost: 3, icon: "📸" },
+  { action: "Bulk Generate All Videos (per scene)", cost: 10, icon: "📹" },
+  { action: "Virelle AI Chat (per message)", cost: 2, icon: "💬" },
+  { action: "AI Script Writer", cost: 8, icon: "📝" },
+  { action: "AI Storyboard Generation", cost: 8, icon: "🎨" },
+  { action: "AI Dialogue Polish", cost: 5, icon: "🗣️" },
+  { action: "AI Continuity Check", cost: 5, icon: "🔍" },
+  { action: "AI Shot List Generation", cost: 5, icon: "📋" },
+  { action: "Trailer Generation", cost: 20, icon: "🎞️" },
+  { action: "Ad/Poster Generation", cost: 5, icon: "🖼️" },
+  { action: "Subtitle Generation", cost: 8, icon: "💬" },
+  { action: "Export Final Film", cost: 8, icon: "💾" },
+  { action: "Budget Estimator", cost: 5, icon: "💰" },
+  { action: "Location Scout", cost: 3, icon: "📍" },
+  { action: "Mood Board", cost: 3, icon: "🎨" },
+  { action: "Color Grading Plan", cost: 4, icon: "🌈" },
+  { action: "Sound Effects (AI)", cost: 5, icon: "🔊" },
+  { action: "ADR Suggestions", cost: 5, icon: "🎙️" },
+  { action: "Foley Suggestions", cost: 5, icon: "🎵" },
+  { action: "Score Cues", cost: 8, icon: "🎼" },
+  { action: "Mix Summary Export", cost: 2, icon: "🎚️" },
+  { action: "Funding Application", cost: 10, icon: "💼" },
 ];
 
 const FAQ = [
@@ -189,7 +189,7 @@ const FAQ = [
   },
   {
     q: "How do credits work?",
-    a: "Credits are consumed each time you use a generative feature ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ such as generating a scene video, creating a storyboard, or running the AI script writer. Your subscription includes a monthly credit allowance, and you can purchase additional credit packs at any time.",
+    a: "Credits are consumed each time you use a generative feature — such as generating a scene video, creating a storyboard, or running the AI script writer. Your subscription includes a monthly credit allowance, and you can purchase additional credit packs at any time.",
   },
   {
     q: "Can I cancel my subscription?",
@@ -201,7 +201,7 @@ const FAQ = [
   },
   {
     q: "Do unused credits roll over?",
-    a: "Yes ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ all credits accumulate in your balance and never expire. Each month, your subscription's monthly allowance is added on top of any remaining balance. Credits purchased as top-up packs work the same way: they are added to your balance and carry forward indefinitely.",
+    a: "Yes — all credits accumulate in your balance and never expire. Each month, your subscription's monthly allowance is added on top of any remaining balance. Credits purchased as top-up packs work the same way: they are added to your balance and carry forward indefinitely.",
   },
   {
     q: "What payment methods are accepted?",
@@ -210,7 +210,7 @@ const FAQ = [
 ];
 
 export default function Pricing() {
-  // Read URL params ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ source=mobile means the user came from the mobile app
+  // Read URL params — source=mobile means the user came from the mobile app
   const urlParams = new URLSearchParams(window.location.search);
   const urlSource = urlParams.get("source") ?? "";
   const urlTier = urlParams.get("tier") ?? "";
@@ -325,13 +325,13 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen text-white selection:bg-amber-500/30" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ from Free to Studio. AI film production from $0 to enterprise scale." />
+      <SiteHead title="Plans & Pricing" description="Subscription plans and credit packs for Virelle Studios — from Free to Studio. AI film production from $0 to enterprise scale." />
 
-          {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Founding Director urgency banner ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
+          {/* ── Founding Director urgency banner ── */}
           <div className="sticky top-0 z-40 bg-amber-500 text-black py-2 px-4 text-center text-xs font-bold tracking-wide">
-            <span className="mr-2">ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬</span>
-            Founding Director Offer ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 50% off your first year on any annual Creator or Industry plan.
-            <span className="ml-2 opacity-70">Early access pricing ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Limited availability.</span>
+            <span className="mr-2">🎬</span>
+            Founding Director Offer — 50% off your first year on any annual Creator or Industry plan.
+            <span className="ml-2 opacity-70">Early access pricing · Limited availability.</span>
           </div>
       <GoldWatermarkLaunch />
       
@@ -352,11 +352,11 @@ export default function Pricing() {
             {/* Trust badges */}
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-6 mb-2">
               {[
-                { icon: "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", label: "Cancel anytime" },
-                { icon: "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", label: "Credits never expire" },
-                { icon: "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", label: "100% commercial ownership" },
-                { icon: "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", label: "BYOK support" },
-              { icon: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡", label: "14-day money-back guarantee" },
+                { icon: "✓", label: "Cancel anytime" },
+                { icon: "✓", label: "Credits never expire" },
+                { icon: "✓", label: "100% commercial ownership" },
+                { icon: "✓", label: "BYOK support" },
+              { icon: "🛡", label: "14-day money-back guarantee" },
               ].map(({ icon, label }) => (
                 <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <span className="text-emerald-400 font-bold">{icon}</span>
