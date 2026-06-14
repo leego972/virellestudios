@@ -4,8 +4,8 @@ import React from 'react';
   // Glows sit BEHIND the mask at z:1; mask PNG is z:2 on top.
   // The transparent eye sockets let the light bleed through from behind.
   const GEO = {
-    leftEye:  { cx: 43, cy: 69, rx: 3.8, ry: 2.8 },
-    rightEye: { cx: 63, cy: 69, rx: 3.8, ry: 2.8 },
+    leftEye:  { cx: 46, cy: 69, rx: 7.0, ry: 5.0 },
+    rightEye: { cx: 60, cy: 69, rx: 7.0, ry: 5.0 },
   };
 
   type VoiceState = 'idle' | 'inactive' | 'listening' | 'thinking' | 'speaking';
