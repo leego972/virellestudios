@@ -44,7 +44,7 @@ export default function FundingProMatch() {
         <CardContent className="pt-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
           <Label className="text-sm shrink-0">Project:</Label>
           <Select value={activeId ? String(activeId) : ""} onValueChange={v => setProjectId(Number(v))}>
-            <SelectTrigger className="max-w-md"><SelectValue placeholder="Choose a project to score againstÃ¢ÂÂ¦" /></SelectTrigger>
+            <SelectTrigger className="max-w-md focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Choose a project to score againstÃ¢ÂÂ¦" /></SelectTrigger>
             <SelectContent>
               {(projects.data || []).map((p: any) => <SelectItem key={p.id} value={String(p.id)}>{p.title || p.name || `Project ${p.id}`}</SelectItem>)}
             </SelectContent>
@@ -92,7 +92,7 @@ function MatchTab({ projectId }: { projectId: number }) {
       <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <div className="flex flex-wrap gap-2 items-end">
           <div><Label className="text-xs">Country filter</Label><Select value={country || "all"} onValueChange={v => setCountry(v === "all" ? "" : v)}>
-            <SelectTrigger className="w-56"><SelectValue placeholder="All countries" /></SelectTrigger>
+            <SelectTrigger className="w-56 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="All countries" /></SelectTrigger>
             <SelectContent><SelectItem value="all">All countries</SelectItem>{(countries.data || []).map((c: any) => <SelectItem key={c.country} value={c.country}>{c.country}</SelectItem>)}</SelectContent>
           </Select></div>
           <div><Label className="text-xs">Top N</Label><Input type="number" value={limit} onChange={e => setLimit(Math.min(100, Math.max(1, Number(e.target.value) || 25)))} className="w-24" /></div>

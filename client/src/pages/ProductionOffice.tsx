@@ -547,7 +547,7 @@ Output clean markdown only, no commentary.`;
         <div className="flex items-center gap-2">
           <Label className="text-xs text-muted-foreground">Shoot day</Label>
           <Select value={String(dayIdx)} onValueChange={(v) => setDayIdx(parseInt(v))}>
-            <SelectTrigger className="h-8 w-44 text-xs">
+            <SelectTrigger className="h-8 w-44 text-xs focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

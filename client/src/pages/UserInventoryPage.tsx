@@ -287,7 +287,7 @@
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold">Project</Label>
                   <Select value={assignProjectId} onValueChange={(v) => { setAssignProjectId(v); setAssignCharacterId(""); }}>
-                    <SelectTrigger className="h-9 text-sm">
+                    <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue placeholder="Select a projectÃ¢ÂÂ¦" />
                     </SelectTrigger>
                     <SelectContent>
@@ -305,7 +305,7 @@
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold">Character</Label>
                   <Select value={assignCharacterId} onValueChange={setAssignCharacterId} disabled={!assignProjectId}>
-                    <SelectTrigger className="h-9 text-sm">
+                    <SelectTrigger className="h-9 text-sm focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                       <SelectValue placeholder={assignProjectId ? "Select a characterÃ¢ÂÂ¦" : "Select a project first"} />
                     </SelectTrigger>
                     <SelectContent>

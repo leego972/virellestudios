@@ -527,7 +527,7 @@ export default function Settings() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Professional Role</Label>
                   <Select value={profileForm.professionalRole} onValueChange={(v) => setProfileForm((p) => ({ ...p, professionalRole: v }))}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select role" /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select role" /></SelectTrigger>
                     <SelectContent>
                       {["director", "producer", "writer", "cinematographer", "editor", "vfx_artist", "animator", "student", "hobbyist", "other"].map((r) => (
                         <SelectItem key={r} value={r}>{r.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}</SelectItem>
@@ -540,7 +540,7 @@ export default function Settings() {
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Experience Level</Label>
                   <Select value={profileForm.experienceLevel} onValueChange={(v) => setProfileForm((p) => ({ ...p, experienceLevel: v }))}>
-                    <SelectTrigger className="h-9 text-sm bg-background/50"><SelectValue placeholder="Select level" /></SelectTrigger>
+                    <SelectTrigger className="h-9 text-sm bg-background/50 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Select level" /></SelectTrigger>
                     <SelectContent>
                       {["beginner", "intermediate", "advanced", "professional", "studio"].map((l) => (
                         <SelectItem key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</SelectItem>
@@ -1483,7 +1483,7 @@ function ConnectedPlatformsTab() {
                     <div>
                       <Label className="text-xs">Display Name (optional)</Label>
                       <Input
-                        className="mt-1 h-8 text-xs focus:ring-amber-500/30 focus:border-amber-500/50"
+                        className="mt-1 h-8 text-xs"
                         placeholder={`e.g. @${platform.name.toLowerCase()}page`}
                         value={formValues.displayName || ""}
                         onChange={(e) => setFormValues((v) => ({ ...v, displayName: e.target.value }))} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
@@ -1492,7 +1492,7 @@ function ConnectedPlatformsTab() {
                       <div key={field.key}>
                         <Label className="text-xs">{field.label}</Label>
                         <Input
-                          className="mt-1 h-8 text-xs font-mono focus:ring-amber-500/30 focus:border-amber-500/50"
+                          className="mt-1 h-8 text-xs font-mono"
                           type={field.secret ? "password" : "text"}
                           placeholder={field.placeholder}
                           value={formValues[field.key] || ""}

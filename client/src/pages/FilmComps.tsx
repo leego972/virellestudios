@@ -84,8 +84,8 @@ import { useState, useMemo } from "react";
         {/* Filters */}
         <div className="flex gap-3 flex-wrap">
           <Input placeholder="Search title, genre, distributorÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
-          <Select value={genreFilter} onValueChange={setGenreFilter}><SelectTrigger className="w-36"><SelectValue placeholder="Genre" /></SelectTrigger><SelectContent><SelectItem value="all">All genres</SelectItem>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent></Select>
-          <Select value={tierFilter} onValueChange={setTierFilter}><SelectTrigger className="w-44"><SelectValue placeholder="Budget tier" /></SelectTrigger><SelectContent><SelectItem value="all">All budgets</SelectItem>{BUDGET_TIERS.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select>
+          <Select value={genreFilter} onValueChange={setGenreFilter}><SelectTrigger className="w-36 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Genre" /></SelectTrigger><SelectContent><SelectItem value="all">All genres</SelectItem>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent></Select>
+          <Select value={tierFilter} onValueChange={setTierFilter}><SelectTrigger className="w-44 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue placeholder="Budget tier" /></SelectTrigger><SelectContent><SelectItem value="all">All budgets</SelectItem>{BUDGET_TIERS.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select>
         </div>
 
         {/* Summary cards */}

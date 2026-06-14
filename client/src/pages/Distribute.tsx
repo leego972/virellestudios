@@ -556,21 +556,21 @@ export default function Distribute() {
                   <p className="text-sm font-medium">Show creator name</p>
                   <p className="text-xs text-muted-foreground">Display your name on the public page</p>
                 </div>
-                <Switch checked={showCreatorName} onCheckedChange={setShowCreatorName} />
+                <Switch checked={showCreatorName} onCheckedChange={setShowCreatorName} className="data-[state=checked]:bg-amber-500" />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">Include in Showcase</p>
                   <p className="text-xs text-muted-foreground">Allow your film to appear in the community showcase</p>
                 </div>
-                <Switch checked={allowShowcase} onCheckedChange={setAllowShowcase} />
+                <Switch checked={allowShowcase} onCheckedChange={setAllowShowcase} className="data-[state=checked]:bg-amber-500" />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">Make page public</p>
                   <p className="text-xs text-muted-foreground">Anyone with the link can view your film page</p>
                 </div>
-                <Switch checked={isPublic} onCheckedChange={setIsPublic} />
+                <Switch checked={isPublic} onCheckedChange={setIsPublic} className="data-[state=checked]:bg-amber-500" />
               </div>
             </div>
 

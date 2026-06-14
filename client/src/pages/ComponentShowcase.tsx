@@ -437,7 +437,7 @@ export default function ComponentsShowcase() {
                   <Label htmlFor="terms">Accept terms and conditions</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Switch id="airplane-mode" />
+                  <Switch id="airplane-mode" className="data-[state=checked]:bg-amber-500" />
                   <Label htmlFor="airplane-mode">Airplane Mode</Label>
                 </div>
                 <div className="space-y-2">
@@ -455,7 +455,7 @@ export default function ComponentsShowcase() {
                 </div>
                 <div className="space-y-2">
                   <Label>Slider</Label>
-                  <Slider defaultValue={[50]} max={100} step={1} />
+                  <Slider defaultValue={[50]} max={100} step={1} className="[&>*]:bg-amber-500/30 [&_[role=slider]]:bg-amber-500 [&_[role=slider]]:border-amber-600" />
                 </div>
                 <div className="space-y-2">
                   <Label>Input OTP</Label>

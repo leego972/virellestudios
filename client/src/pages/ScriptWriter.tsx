@@ -999,7 +999,7 @@ export default function ScriptWriter() {
             </Tooltip>
 
             <Select onValueChange={(v) => handleExport(v as "txt" | "fountain" | "screenplay" | "fdx")}>
-              <SelectTrigger className="w-auto h-8 px-2 gap-1 border-none bg-transparent hover:bg-accent">
+              <SelectTrigger className="w-auto h-8 px-2 gap-1 border-none bg-transparent hover:bg-accent focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                 <Download className="h-4 w-4" />
                 <span className="text-xs hidden sm:inline">Export</span>
               </SelectTrigger>
@@ -1189,7 +1189,7 @@ export default function ScriptWriter() {
                           setCurrentType(val as ElementType);
                         }}
                       >
-                        <SelectTrigger className="h-6 w-16 text-[10px] border-none bg-transparent">
+                        <SelectTrigger className="h-6 w-16 text-[10px] border-none bg-transparent focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
