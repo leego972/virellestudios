@@ -827,7 +827,7 @@ export default function ProjectDetail() {
                   {/* Play button overlay ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ show when full film or scene videos exist */}
                   {(fullFilmItem || scenePlaylist.length > 0) && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
-                      <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                      <div className="w-14 h-14 rounded-full glass-card/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
                         <Play className="h-7 w-7 text-white fill-white ml-0.5" />
                       </div>
                       {fullFilmItem ? (

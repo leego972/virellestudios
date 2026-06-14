@@ -985,7 +985,7 @@ export default function SceneEditor() {
                           className="absolute inset-0 mb-1.5 flex items-center justify-center bg-black/30 rounded active:bg-black/50 transition-colors"
                           onClick={(e) => { e.stopPropagation(); setVideoPreviewSceneId(scene.id); }}
                         >
-                          <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full glass-card/20 backdrop-blur-sm flex items-center justify-center">
                             <Play className="h-4 w-4 text-white fill-white ml-0.5" />
                           </div>
                         </button>

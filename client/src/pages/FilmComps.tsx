@@ -110,7 +110,7 @@ import { useState, useMemo } from "react";
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/40 border-b">
-                <tr>{["Film","Year","Genre","Budget","Worldwide","ROI","Distributor"].map(h => <th key={h} className="text-left p-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>)}</tr>
+                <tr>{["Film","Year","Genre","Budget","Worldwide","ROI","Distributor"].map(h => <th key={h} className="text-left p-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap text-amber-400/70 border-b border-amber-500/20">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filtered.map(film => (

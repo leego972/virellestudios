@@ -442,7 +442,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
                   <table className="w-full text-xs whitespace-nowrap">
                     <thead><tr style={{ background: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                       {["Shot #","Scene","Type","Move","Camera","Lens","FL","Aperture","ND","FPS","Format"].map(h =>
-                        <th key={h} className="text-left px-3 py-2.5 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">{h}</th>
+                        <th key={h} className="text-left px-3 py-2.5 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground text-amber-400/70 border-b border-amber-500/20">{h}</th>
                       )}
                     </tr></thead>
                     <tbody className="divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>

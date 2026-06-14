@@ -629,7 +629,7 @@ function AICastingInner() {
                 ].map((cp) => (
                   <button
                     key={cp.label}
-                    className="w-full text-left p-2 rounded-lg bg-white/5 hover:glass-card/10 transition-colors border border-amber-500/20"
+                    className="w-full text-left p-2 rounded-lg glass-card/5 hover:glass-card/10 transition-colors border border-amber-500/20"
                     onClick={() => {
                       cp.pair.forEach((id) => {
                         if (!selectedActors.includes(id)) toggleActor(id);

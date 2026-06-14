@@ -360,7 +360,7 @@ import { useState } from "react";
                           </div>
                           <div className="divide-y max-h-[500px] overflow-y-auto" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
                             {entries.map((entry, i) => (
-                              <div key={i} className="grid grid-cols-12 items-center px-4 py-2.5 hover:bg-white/[0.02] transition-colors">
+                              <div key={i} className="grid grid-cols-12 items-center px-4 py-2.5 hover: glass-card/[0.02] transition-colors">
                                 <div className="col-span-1 text-[10px] text-muted-foreground font-mono">{i+1}</div>
                                 <div className="col-span-3 text-[10px] font-mono text-muted-foreground">{formatTime(entry.startTime)}</div>
                                 <div className="col-span-3 text-[10px] font-mono text-muted-foreground">{formatTime(entry.endTime)}</div>
@@ -379,7 +379,7 @@ import { useState } from "react";
                                   )}
                                 </div>
                                 <div className="col-span-1 flex justify-end">
-                                  <button onClick={() => setEditingEntry({ index: i, text: entry.text })} className="p-1 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground">
+                                  <button onClick={() => setEditingEntry({ index: i, text: entry.text })} className="p-1 rounded hover: glass-card/10 text-muted-foreground hover:text-foreground">
                                     <Edit3 className="h-3 w-3" />
                                   </button>
                                 </div>

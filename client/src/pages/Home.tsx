@@ -176,7 +176,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
         {/* Phase header */}
         <button
           onClick={() => setExpanded(e => !e)}
-          className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/[0.02] transition-colors"
+          className="w-full flex items-center justify-between px-5 py-4 hover: glass-card/[0.02] transition-colors"
         >
           <div className="flex items-center gap-3">
             <span className="text-xl leading-none">{phase.emoji}</span>
