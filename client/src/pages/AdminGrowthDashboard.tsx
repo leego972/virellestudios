@@ -75,7 +75,7 @@ function SubmissionsPanel() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-green-700 text-green-400 hover:bg-green-900/20"
+                  className="border-green-700 text-green-400 hover:bg-green-900/20 hover:border-amber-500/50 hover:text-amber-400"
                   disabled={reviewMutation.isPending}
                   onClick={() => reviewMutation.mutate({ submissionId: sub.id, status: "approved" })}
                 >
@@ -84,7 +84,7 @@ function SubmissionsPanel() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-red-800 text-red-400 hover:bg-red-900/20"
+                  className="border-red-800 text-red-400 hover:bg-red-900/20 hover:border-amber-500/50 hover:text-amber-400"
                   disabled={reviewMutation.isPending}
                   onClick={() => reviewMutation.mutate({ submissionId: sub.id, status: "declined" })}
                 >
@@ -140,7 +140,7 @@ function AbuseFlagsPanel() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-red-800 text-red-400 hover:bg-red-900/20"
+                  className="border-red-800 text-red-400 hover:bg-red-900/20 hover:border-amber-500/50 hover:text-amber-400"
                   disabled={actionMutation.isPending}
                   onClick={() => actionMutation.mutate({ flagId: flag.id, status: "actioned" })}
                 >
@@ -149,7 +149,7 @@ function AbuseFlagsPanel() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-neutral-700 text-neutral-400 hover:bg-neutral-800"
+                  className="border-neutral-700 text-neutral-400 hover:bg-neutral-800 hover:border-amber-500/50 hover:text-amber-400"
                   disabled={actionMutation.isPending}
                   onClick={() => actionMutation.mutate({ flagId: flag.id, status: "dismissed" })}
                 >
@@ -229,7 +229,7 @@ function ShowcaseCurationPanel() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-blue-700 text-blue-400 hover:bg-blue-900/20 text-xs"
+                  className="border-blue-700 text-blue-400 hover:bg-blue-900/20 text-xs hover:border-amber-500/50 hover:text-amber-400"
                   disabled={setCurationMutation.isPending}
                   onClick={() => setCurationMutation.mutate({ entityType: "project", entityId: film.projectId ?? film.id, flagType: "staff_pick" })}
                 >
@@ -238,7 +238,7 @@ function ShowcaseCurationPanel() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-red-800 text-red-400 hover:bg-red-900/20 text-xs"
+                  className="border-red-800 text-red-400 hover:bg-red-900/20 text-xs hover:border-amber-500/50 hover:text-amber-400"
                   disabled={removeCurationMutation.isPending}
                   onClick={() => removeCurationMutation.mutate({ entityType: "project", entityId: film.projectId ?? film.id, flagType: "featured" })}
                 >

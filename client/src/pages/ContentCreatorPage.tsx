@@ -238,7 +238,7 @@ function PieceCard({ piece, onApprove, onReject, onPublishTikTok, onSchedule }: 
           <div className="flex items-center gap-1">
             {piece.status === "draft" && (
               <>
-                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => onApprove(piece.id)}>
+                <Button size="sm" variant="outline" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={() => onApprove(piece.id)}>
                   <CheckCircle className="h-3 w-3 mr-1" /> Approve
                 </Button>
                 <Button size="sm" variant="ghost" className="h-7 text-xs text-red-400" onClick={() => onReject(piece.id)}>
@@ -248,7 +248,7 @@ function PieceCard({ piece, onApprove, onReject, onPublishTikTok, onSchedule }: 
             )}
             {piece.status === "approved" && (
               <>
-                <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => onSchedule(piece.id)}>
+                <Button size="sm" variant="outline" className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400" onClick={() => onSchedule(piece.id)}>
                   <Clock className="h-3 w-3 mr-1" /> Schedule
                 </Button>
                 {piece.platform === "tiktok" && (
@@ -951,7 +951,7 @@ export default function ContentCreatorPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 text-xs"
+                          className="h-7 text-xs hover:border-amber-500/50 hover:text-amber-400"
                           onClick={() => {
                             setBulkCampaignId(campaign.id);
                             if (Array.isArray(campaign.platforms)) setBulkPlatforms(campaign.platforms);
@@ -1087,7 +1087,7 @@ export default function ContentCreatorPage() {
                 </div>
 
                 <Button
-                  className="w-full"
+                  className="w-full hover:border-amber-500/50 hover:text-amber-400"
                   variant="outline"
                   onClick={() => {
                     setPlatform("tiktok");
@@ -1099,7 +1099,7 @@ export default function ContentCreatorPage() {
                   Create TikTok Carousel
                 </Button>
                 <Button
-                  className="w-full"
+                  className="w-full hover:border-amber-500/50 hover:text-amber-400"
                   variant="outline"
                   onClick={() => {
                     setPlatform("tiktok");

@@ -63,7 +63,7 @@ export default function CreatorProfile() {
         <div className="text-white text-xl font-semibold">Profile not found</div>
         <p className="text-neutral-400 text-sm">This creator profile doesn't exist or is private.</p>
         <Link href="/showcase">
-          <Button variant="outline" className="border-neutral-700 text-neutral-300">Browse Showcase</Button>
+          <Button variant="outline" className="border-neutral-700 text-neutral-300 hover:border-amber-500/50 hover:text-amber-400">Browse Showcase</Button>
         </Link>
       </div>
     );

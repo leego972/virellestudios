@@ -302,7 +302,7 @@ import { useRoute, useLocation } from "wouter";
                       )}
                     </Button>
                   ) : (
-                    <Button className="w-full" variant="outline" disabled>
+                    <Button className="w-full hover:border-amber-500/50 hover:text-amber-400" variant="outline" disabled>
                       {campaign.status === "funded" ? "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ Funded ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Campaign Closed" : "Campaign Ended"}
                     </Button>
                   )}
@@ -318,7 +318,7 @@ import { useRoute, useLocation } from "wouter";
               {/* Share */}
               <Button
                 variant="outline"
-                className="w-full"
+                className="w-full hover:border-amber-500/50 hover:text-amber-400"
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
                   toast.success("Link copied!");

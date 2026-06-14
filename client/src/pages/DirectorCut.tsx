@@ -1071,7 +1071,7 @@ export default function DirectorCut() {
                         Save Retake Instructions
                       </Button>
                       <Button
-                        className="w-full h-8 text-xs gap-1.5"
+                        className="w-full h-8 text-xs gap-1.5 hover:border-amber-500/50 hover:text-amber-400"
                         variant="outline"
                         onClick={() => {
                           submitRetake().then(() => {

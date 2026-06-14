@@ -382,7 +382,7 @@ export default function HowItWorks() {
               Start Creating
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
-            <Button size="lg" variant="outline" className="h-12 px-8" onClick={() => setLocation("/pricing")}>
+            <Button size="lg" variant="outline" className="h-12 px-8 hover:border-amber-500/50 hover:text-amber-400" onClick={() => setLocation("/pricing")}>
               View Pricing
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>

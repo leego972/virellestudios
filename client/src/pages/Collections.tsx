@@ -60,7 +60,7 @@ export default function Collections() {
         <div className="text-white text-xl font-semibold">Collection not found</div>
         <p className="text-neutral-400 text-sm">This collection doesn't exist or is private.</p>
         <Link href="/showcase">
-          <Button variant="outline" className="border-neutral-700 text-neutral-300">Browse Showcase</Button>
+          <Button variant="outline" className="border-neutral-700 text-neutral-300 hover:border-amber-500/50 hover:text-amber-400">Browse Showcase</Button>
         </Link>
       </div>
     );

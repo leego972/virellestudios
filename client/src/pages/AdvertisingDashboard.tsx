@@ -175,7 +175,7 @@ function ContentQueueItem({ item, onApprove, onReject, isApproving, isRejecting 
           <Button
             size="sm"
             variant="outline"
-            className="flex-1 border-red-500/30 text-red-400 hover:bg-red-500/10 h-8"
+            className="flex-1 border-red-500/30 text-red-400 hover:bg-red-500/10 h-8 hover:border-amber-500/50 hover:text-amber-400"
             onClick={() => onReject(item.id)}
             disabled={isRejecting}
           >

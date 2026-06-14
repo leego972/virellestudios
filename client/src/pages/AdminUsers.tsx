@@ -554,7 +554,7 @@ export default function AdminUsers() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-8 text-xs border-green-500/30 text-green-400 hover:bg-green-500/10"
+                                className="h-8 text-xs border-green-500/30 text-green-400 hover:bg-green-500/10 hover:border-amber-500/50 hover:text-amber-400"
                                 disabled={grantCreditsMutation.isPending}
                                 onClick={() => grantCreditsMutation.mutate({ userId: u.id, amount: grantAmount[u.id] ?? 1000, reason: "Admin grant" })}
                               >

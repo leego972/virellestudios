@@ -50,7 +50,7 @@ import { useState } from "react";
         </div>
         <div className="flex gap-2 pt-2">
           <Button onClick={() => onSave(form)} className="flex-1">Save</Button>
-          <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
+          <Button variant="outline" onClick={onClose} className="flex-1 hover:border-amber-500/50 hover:text-amber-400">Cancel</Button>
         </div>
       </div>
     );

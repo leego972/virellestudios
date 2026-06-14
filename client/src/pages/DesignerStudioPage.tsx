@@ -228,7 +228,7 @@ const ITEM_TIERS = [
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={onClose} className="border-white/15 text-white/70 hover:bg-white/5">
+            <Button variant="outline" onClick={onClose} className="border-white/15 text-white/70 hover:bg-white/5 hover:border-amber-500/50 hover:text-amber-400">
               Cancel
             </Button>
             <Button
@@ -569,7 +569,7 @@ export default function DesignerStudioPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-white/15 text-white/60 hover:bg-white/5 text-xs h-7 px-2"
+                      className="border-white/15 text-white/60 hover:bg-white/5 text-xs h-7 px-2 hover:border-amber-500/50 hover:text-amber-400"
                       onClick={() =>
                         setPricingDialog({
                           open: true,

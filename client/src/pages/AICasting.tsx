@@ -409,7 +409,7 @@ function AICastingInner() {
             <Button
               size="sm"
               variant="outline"
-              className="border-white/10 text-zinc-400 text-xs hidden md:flex"
+              className="border-white/10 text-zinc-400 text-xs hidden md:flex hover:border-amber-500/50 hover:text-amber-400"
               onClick={() => navigate("/signature-cast")}
             >
               <Film className="w-3 h-3 mr-1" />

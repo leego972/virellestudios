@@ -95,7 +95,7 @@ import { useState } from "react";
               episodeNumber: form.episodeNumber ? Number(form.episodeNumber) : undefined,
               episodeTitle: form.episodeTitle || undefined,
             })} className="flex-1">Save</Button>
-            <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
+            <Button variant="outline" onClick={onClose} className="flex-1 hover:border-amber-500/50 hover:text-amber-400">Cancel</Button>
           </div>
         </div>
       );

@@ -657,7 +657,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
               </p>
             </div>
             <div className="flex gap-3 w-full">
-              <Button variant="outline" className="flex-1 gap-2" onClick={handleDownload}>
+              <Button variant="outline" className="flex-1 gap-2 hover:border-amber-500/50 hover:text-amber-400" onClick={handleDownload}>
                 <Download className="h-4 w-4" />
                 Download Package
               </Button>
@@ -1281,7 +1281,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
                   variant="outline"
                   size="sm"
                   onClick={handleDownload}
-                  className="gap-1.5"
+                  className="gap-1.5 hover:border-amber-500/50 hover:text-amber-400"
                 >
                   <Download className="h-4 w-4" /> Download Package
                 </Button>

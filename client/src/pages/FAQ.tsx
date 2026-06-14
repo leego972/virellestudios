@@ -284,7 +284,7 @@ export default function FAQ() {
               Contact Us
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
-            <Button size="lg" variant="outline" className="h-12 px-8" onClick={() => setLocation("/how-it-works")}>
+            <Button size="lg" variant="outline" className="h-12 px-8 hover:border-amber-500/50 hover:text-amber-400" onClick={() => setLocation("/how-it-works")}>
               How It Works
             </Button>
           </div>

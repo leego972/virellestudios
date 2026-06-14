@@ -833,7 +833,7 @@ export default function Register() {
               </CardContent>
               <CardFooter className="flex flex-col gap-2 pt-2">
                 <div className="flex gap-3 w-full">
-                  <Button variant="outline" onClick={prevStep} className="flex-1">
+                  <Button variant="outline" onClick={prevStep} className="flex-1 hover:border-amber-500/50 hover:text-amber-400">
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back
                   </Button>
                   <Button onClick={nextStep} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">
@@ -932,7 +932,7 @@ export default function Register() {
               </CardContent>
               <CardFooter className="flex flex-col gap-2 pt-2">
                 <div className="flex gap-3 w-full">
-                  <Button variant="outline" onClick={prevStep} className="flex-1">
+                  <Button variant="outline" onClick={prevStep} className="flex-1 hover:border-amber-500/50 hover:text-amber-400">
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back
                   </Button>
                   <Button

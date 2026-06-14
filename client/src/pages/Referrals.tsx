@@ -163,11 +163,11 @@ export default function Referrals() {
                     <Share2 className="h-3.5 w-3.5 mr-1.5" />
                     Share
                   </Button>
-                  <Button onClick={shareLinkedIn} size="sm" variant="outline" className="border-blue-500/30 hover:bg-blue-600/20 text-blue-400">
+                  <Button onClick={shareLinkedIn} size="sm" variant="outline" className="border-blue-500/30 hover:bg-blue-600/20 text-blue-400 hover:border-amber-500/50 hover:text-amber-400">
                     <Briefcase className="h-3.5 w-3.5 mr-1.5" />
                     LinkedIn
                   </Button>
-                  <Button onClick={shareWhatsApp} size="sm" variant="outline" className="border-green-500/30 hover:bg-green-600/20 text-green-400">
+                  <Button onClick={shareWhatsApp} size="sm" variant="outline" className="border-green-500/30 hover:bg-green-600/20 text-green-400 hover:border-amber-500/50 hover:text-amber-400">
                     <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
                     WhatsApp
                   </Button>

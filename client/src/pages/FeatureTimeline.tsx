@@ -840,7 +840,7 @@ export default function FeatureTimeline() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="gap-1.5 border-red-800/50 text-red-400 hover:bg-red-950/30 text-xs"
+                      className="gap-1.5 border-red-800/50 text-red-400 hover:bg-red-950/30 text-xs hover:border-amber-500/50 hover:text-amber-400"
                       onClick={() => activeCut && deleteCutMutation.mutate({ cutId: activeCut.id })}
                       disabled={deleteCutMutation.isPending}
                     >

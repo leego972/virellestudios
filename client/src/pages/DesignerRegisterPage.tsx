@@ -342,7 +342,7 @@ export default function DesignerRegisterPage() {
                       <li key={f} className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-amber-400 shrink-0" />{f}</li>
                     ))}
                   </ul>
-                  <Button onClick={handleSubscribe} variant="outline" className="w-full border-white/20 text-white hover:bg-white/5 font-semibold">
+                  <Button onClick={handleSubscribe} variant="outline" className="w-full border-white/20 text-white hover:bg-white/5 font-semibold hover:border-amber-500/50 hover:text-amber-400">
                     {foundingStatus?.foundingActive === false ? "Subscribe — A$299/yr" : "Join as Founding Partner — A$150/yr"}
                   </Button>
                 </div>

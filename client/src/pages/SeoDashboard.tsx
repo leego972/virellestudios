@@ -315,7 +315,7 @@ export default function SeoDashboard() {
                             {data.score}/100
                           </span>
                         </div>
-                        <Progress value={data.score} className="h-1.5" />
+                        <Progress value={data.score} className="h-1.5 [&>div]:bg-amber-500" />
                       </div>
                     ))}
                     {(report?.score as any)?.issues && (report?.score as any)?.issues.length > 0 && (
@@ -380,7 +380,7 @@ export default function SeoDashboard() {
                               </span>
                             </div>
                           </div>
-                          <Progress value={typeof score === "number" ? score : 50} className="h-1.5" />
+                          <Progress value={typeof score === "number" ? score : 50} className="h-1.5 [&>div]:bg-amber-500" />
                         </div>
                       );
                     })}
@@ -413,7 +413,7 @@ export default function SeoDashboard() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-border/50 hover:bg-blue-500/10 hover:border-blue-500/30 h-auto py-3 flex-col gap-2"
+                  className="border-border/50 hover:bg-blue-500/10 hover:border-blue-500/30 h-auto py-3 flex-col gap-2 hover:border-amber-500/50 hover:text-amber-400"
                   onClick={() => submitIndexNowMutation.mutate({ urls: [] })}
                   disabled={submitIndexNowMutation.isPending}
                 >
@@ -426,7 +426,7 @@ export default function SeoDashboard() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-border/50 hover:bg-green-500/10 hover:border-green-500/30 h-auto py-3 flex-col gap-2"
+                  className="border-border/50 hover:bg-green-500/10 hover:border-green-500/30 h-auto py-3 flex-col gap-2 hover:border-amber-500/50 hover:text-amber-400"
                   onClick={() => {
                     utils.seo.getHealthScore.invalidate();
                     utils.seo.getReport.invalidate();
@@ -440,7 +440,7 @@ export default function SeoDashboard() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-border/50 hover:bg-purple-500/10 hover:border-purple-500/30 h-auto py-3 flex-col gap-2"
+                  className="border-border/50 hover:bg-purple-500/10 hover:border-purple-500/30 h-auto py-3 flex-col gap-2 hover:border-amber-500/50 hover:text-amber-400"
                   onClick={() => setActiveTab("settings")}
                 >
                   <Settings className="w-5 h-5 text-purple-400" />

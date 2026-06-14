@@ -229,7 +229,7 @@ export default function ProjectBrands() {
                           {m.label}
                         </Badge>
                         {b.category ? (
-                          <Badge variant="outline" className="bg-zinc-800/40 text-zinc-300 border-zinc-700">
+                          <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20">
                             {b.category}
                           </Badge>
                         ) : null}

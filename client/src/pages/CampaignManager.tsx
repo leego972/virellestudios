@@ -588,7 +588,7 @@ export default function CampaignManager() {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        className="h-7 px-2"
+                                        className="h-7 px-2 hover:border-amber-500/50 hover:text-amber-400"
                                         onClick={() => recordPostMut.mutate({
                                           id: content.id,
                                           status: "published",
@@ -1022,7 +1022,7 @@ export default function CampaignManager() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="flex-1"
+                            className="flex-1 hover:border-amber-500/50 hover:text-amber-400"
                             onClick={() => window.open(p.url, "_blank")}
                           >
                             <ExternalLink className="h-3 w-3 mr-1" /> Visit

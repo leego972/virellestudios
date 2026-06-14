@@ -64,7 +64,7 @@ export default function ForgotPassword() {
               <CardFooter className="flex flex-col gap-4 pt-2">
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full hover:border-amber-500/50 hover:text-amber-400"
                   onClick={() => { setSubmitted(false); setEmail(""); }}
                 >
                   Try a different email
