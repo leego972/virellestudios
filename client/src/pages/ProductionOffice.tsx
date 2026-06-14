@@ -354,13 +354,13 @@ pre{white-space:pre-wrap;font:inherit}
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-1 pr-2 sticky left-0 bg-[#07070e]">Cast</th>
+                  <th className="text-left py-1 pr-2 sticky left-0 bg-[#07070e] border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Cast</th>
                   {stripboard.map((d) => (
-                    <th key={d.day} className="text-center px-1 font-medium">
+                    <th key={d.day} className="text-center px-1 font-medium border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">
                       D{d.day}
                     </th>
                   ))}
-                  <th className="text-center px-2">Total</th>
+                  <th className="text-center px-2 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Total</th>
                 </tr>
               </thead>
               <tbody>

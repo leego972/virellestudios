@@ -997,7 +997,7 @@ export default function FeatureTimeline() {
                       ) : (
                         <div className="text-center py-4">
                           <CheckCircle2 size={24} className="text-green-400 mx-auto mb-2" />
-                          <p className="text-sm text-zinc-300">{summary?.continuityRecordsCount} continuity records generated</p>
+                          <p className="text-sm text-zinc-400">{summary?.continuityRecordsCount} continuity records generated</p>
                           <p className="text-xs text-zinc-500 mt-1">Per-scene continuity data is available in the Scene Editor.</p>
                         </div>
                       )}
@@ -1035,7 +1035,7 @@ export default function FeatureTimeline() {
                           {summary.audioPlan.audioPassNotes && (
                             <div className="rounded-lg p-3 border border-amber-500/20 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                               <p className="text-[10px] text-zinc-500 mb-1">Notes</p>
-                              <p className="text-xs text-zinc-300">{summary.audioPlan.audioPassNotes}</p>
+                              <p className="text-xs text-zinc-400">{summary.audioPlan.audioPassNotes}</p>
                             </div>
                           )}
                         </div>
@@ -1168,7 +1168,7 @@ export default function FeatureTimeline() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="border-amber-500/20 text-zinc-300" onClick={() => setNewCutDialogOpen(false)}>
+            <Button variant="outline" className="border-amber-500/20 text-zinc-400" onClick={() => setNewCutDialogOpen(false)}>
               Cancel
             </Button>
             <Button
@@ -1215,7 +1215,7 @@ export default function FeatureTimeline() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="border-amber-500/20 text-zinc-300" onClick={() => setGenerateActsDialogOpen(false)}>
+            <Button variant="outline" className="border-amber-500/20 text-zinc-400" onClick={() => setGenerateActsDialogOpen(false)}>
               Cancel
             </Button>
             <Button
@@ -1297,7 +1297,7 @@ export default function FeatureTimeline() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="border-amber-500/20 text-zinc-300" onClick={() => setCompileDialogOpen(false)}>
+            <Button variant="outline" className="border-amber-500/20 text-zinc-400" onClick={() => setCompileDialogOpen(false)}>
               Cancel
             </Button>
             <Button

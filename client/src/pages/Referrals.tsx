@@ -129,11 +129,11 @@ export default function Referrals() {
         </CardHeader>
         <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           {isLoading ? (
-            <div className="h-12 bg-white/5 rounded-lg animate-pulse" />
+            <div className="h-12 glass-card/5 rounded-lg animate-pulse" />
           ) : (
             <>
               <div className="flex flex-col sm:flex-row gap-2">
-                <div className="flex-1 bg-black/30 rounded-lg px-4 py-3 text-sm font-mono text-white/80 truncate border border-white/10">
+                <div className="flex-1 bg-black/30 rounded-lg px-4 py-3 text-sm font-mono text-white/80 truncate border border-amber-500/20">
                   {referralLink}
                 </div>
                 <Button onClick={copyLink} variant="outline" className="border-amber-500/30 hover:bg-amber-600/20 shrink-0">
@@ -302,7 +302,7 @@ export default function Referrals() {
                       ? "border-amber-500/40 bg-amber-500/10"
                       : isNext
                       ? "border-amber-500/20 ring-1 ring-amber-500/30"
-                      : "border-white/5 opacity-50")
+                      : "border-amber-500/20 opacity-50")
                   }
                 >
                   <MilestoneIcon icon={m.icon} />
@@ -373,7 +373,7 @@ export default function Referrals() {
           <CardContent>
             <div className="space-y-2">
               {stats.referrals.map((ref: any, i: number) => (
-                <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg bg-white/3 border border-white/5">
+                <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-lg glass-card/3 border border-amber-500/20">
                   <div className="flex items-center gap-3">
                     <div className={
                       "w-2 h-2 rounded-full shrink-0 " +

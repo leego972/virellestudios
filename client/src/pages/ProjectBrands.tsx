@@ -184,7 +184,7 @@ export default function ProjectBrands() {
               <Card key={p} className="bg-zinc-900/40 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                 <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex items-center gap-2 mb-1">
-                    <Icon className="w-4 h-4 text-zinc-300" />
+                    <Icon className="w-4 h-4 text-zinc-400" />
                     <span className="text-xs uppercase tracking-wider text-amber-400/60">{m.label}</span>
                   </div>
                   <div className="text-2xl font-semibold">{counts[p]}</div>
@@ -273,7 +273,7 @@ export default function ProjectBrands() {
 
           <div className="space-y-4">
             <div>
-              <Label className="text-zinc-300">Brand name *</Label>
+              <Label className="text-zinc-400">Brand name *</Label>
               <Input
                 placeholder="Nike, Pepsi, Shell, In-N-OutÃÂ¢ÃÂÃÂ¦"
                 value={form.name}
@@ -284,7 +284,7 @@ export default function ProjectBrands() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="text-zinc-300">Category</Label>
+                <Label className="text-zinc-400">Category</Label>
                 <Input
                   placeholder="apparel, beverage, vehicle, signageÃÂ¢ÃÂÃÂ¦"
                   value={form.category}
@@ -293,7 +293,7 @@ export default function ProjectBrands() {
                 />
               </div>
               <div>
-                <Label className="text-zinc-300">Policy</Label>
+                <Label className="text-zinc-400">Policy</Label>
                 <Select
                   value={form.policy}
                   onValueChange={(v) => setForm((f) => ({ ...f, policy: v as Policy }))}
@@ -311,7 +311,7 @@ export default function ProjectBrands() {
             </div>
 
             <div>
-              <Label className="text-zinc-300">Director notes (optional)</Label>
+              <Label className="text-zinc-400">Director notes (optional)</Label>
               <Textarea
                 placeholder="e.g. only on background billboards, not in close-ups; the hero never drinks it."
                 value={form.notes}

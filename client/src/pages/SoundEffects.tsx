@@ -341,7 +341,7 @@ import { useState, useRef } from "react";
 
                             {/* Play */}
                             <button onClick={e => { e.stopPropagation(); sfx.fileUrl ? playAudio(sfx.fileUrl, String(sfx.id)) : toast.info("No audio file â generate or upload to preview"); }}
-                              className={`h-8 w-8 rounded-full flex items-center justify-center border transition-all ${sfx.fileUrl ? "border-pink-500/25 hover:bg-pink-500/15" : "opacity-25 cursor-not-allowed border-white/10"}`}
+                              className={`h-8 w-8 rounded-full flex items-center justify-center border transition-all ${sfx.fileUrl ? "border-pink-500/25 hover:bg-pink-500/15" : "opacity-25 cursor-not-allowed border-amber-500/20"}`}
                               style={{ background: isPlaying ? "rgba(236,72,153,0.2)" : "transparent" }}>
                               {isPlaying ? <Pause className="h-3.5 w-3.5 text-pink-400" /> : <Play className="h-3.5 w-3.5 text-muted-foreground" />}
                             </button>
@@ -700,9 +700,9 @@ import { useState, useRef } from "react";
                       <thead>
                         <tr className="border-b" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.03)" }}>
                           {["Cue #","Name","Category","Bus","In (s)","Dur (s)","Loop","Vol %","Pan","Fade In","Fade Out","Reverb","Pitch","Notes"].map(h => (
-                            <th key={h} className="text-left px-3 py-2.5 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground whitespace-nowrap">{h}</th>
+                            <th key={h} className="text-left px-3 py-2.5 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground whitespace-nowrap border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">{h}</th>
                           ))}
-                          <th className="px-3 py-2.5" />
+                          <th className="px-3 py-2.5 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs" />
                         </tr>
                       </thead>
                       <tbody className="divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>

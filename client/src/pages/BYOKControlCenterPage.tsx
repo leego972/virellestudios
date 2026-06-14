@@ -123,7 +123,7 @@ export default function BYOKControlCenterPage() {
             })}
           </ul>
           {testMut.data && (
-            <div className="mt-3 text-xs text-zinc-300">
+            <div className="mt-3 text-xs text-zinc-400">
               Test result for {testMut.data.provider}:{" "}
               <StatusBadge status={testMut.data.status} />
             </div>
@@ -131,7 +131,7 @@ export default function BYOKControlCenterPage() {
           <p className="mt-4 text-xs text-zinc-500">
             To add or change a key, open the Settings page ÃÂ¢ÃÂÃÂ API keys. Keys are
             stored encrypted at rest and never returned to the browser.
-            <strong className="text-zinc-300"> ElevenLabs is required</strong> for all voice and sound generation.
+            <strong className="text-zinc-400"> ElevenLabs is required</strong> for all voice and sound generation.
           </p>
           <p className="mt-2 text-xs text-zinc-500">
             The D-ID key powers the optional circular Auslan sign-language interpreter overlay on exported films.
@@ -143,7 +143,7 @@ export default function BYOKControlCenterPage() {
             Preferences
           </h2>
 
-          <label className="block text-sm text-zinc-300 mb-1">
+          <label className="block text-sm text-zinc-400 mb-1">
             Preferred video provider
           </label>
           <select
@@ -159,7 +159,7 @@ export default function BYOKControlCenterPage() {
             ))}
           </select>
 
-          <label className="block text-sm text-zinc-300 mb-1">
+          <label className="block text-sm text-zinc-400 mb-1">
             Preferred LLM provider (script & dialogue)
           </label>
           <select
@@ -175,7 +175,7 @@ export default function BYOKControlCenterPage() {
             ))}
           </select>
 
-          <label className="block text-sm text-zinc-300 mb-1">Fallback policy</label>
+          <label className="block text-sm text-zinc-400 mb-1">Fallback policy</label>
           <select
             value={fallbackMode}
             onChange={(e) => setFallbackMode(e.target.value as FallbackMode)}

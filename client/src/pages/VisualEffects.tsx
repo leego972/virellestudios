@@ -652,9 +652,9 @@ import { useState } from "react";
                       <thead>
                         <tr className="border-b" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.03)" }}>
                           {["Shot #","Name","Category","Status","Complexity","Layer","Blend","Intensity","Software","Color Space","Frames","Artist","Ver","Chroma","Roto","Notes"].map(h => (
-                            <th key={h} className="text-left px-3 py-2.5 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground whitespace-nowrap">{h}</th>
+                            <th key={h} className="text-left px-3 py-2.5 text-[9px] font-semibold uppercase tracking-widest text-muted-foreground whitespace-nowrap border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">{h}</th>
                           ))}
-                          <th className="px-3 py-2.5" />
+                          <th className="px-3 py-2.5 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs" />
                         </tr>
                       </thead>
                       <tbody className="divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>

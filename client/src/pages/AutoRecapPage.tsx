@@ -157,7 +157,7 @@ export default function AutoRecapPage() {
         )}
 
         {isEpisodic && episodes.length < 2 && (
-          <div className="border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4 text-sm text-zinc-300">
+          <div className="border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 rounded-lg p-4 text-sm text-zinc-400">
             You need at least two rendered film-type episodes in this project before you can
             generate a recap. Render the next episode and one previous episode first.
           </div>
@@ -380,7 +380,7 @@ export default function AutoRecapPage() {
                       const hasAsset = !!(recapDetail.data.recap as any).outputAssetId
                         || !!(recapDetail.data.recap as any).fileUrl;
                       let label = s;
-                      let cls = "bg-zinc-700 text-zinc-300";
+                      let cls = "bg-zinc-700 text-zinc-400";
                       if (s === "render_completed" || (s === "completed" && hasAsset)) {
                         label = "Final recap video ready";
                         cls = "bg-emerald-500/20 text-emerald-300";
@@ -416,7 +416,7 @@ export default function AutoRecapPage() {
                       </div>
                       <ol className="space-y-1 mt-2">
                         {recapDetail.data.segments.map((seg) => (
-                          <li key={seg.id} className="text-xs text-zinc-300 border-l-2 border-amber-500/40 pl-2">
+                          <li key={seg.id} className="text-xs text-zinc-400 border-l-2 border-amber-500/40 pl-2">
                             <span className="text-zinc-500">[{seg.startTimeSeconds.toFixed(1)}s ÃÂ¢ÃÂÃÂ {seg.endTimeSeconds.toFixed(1)}s]</span>{" "}
                             {seg.reason}
                             {seg.caption && (
@@ -430,7 +430,7 @@ export default function AutoRecapPage() {
                           <div className="text-xs uppercase tracking-wider text-amber-400/60 mb-1">
                             Voiceover script
                           </div>
-                          <div className="text-xs text-zinc-300 whitespace-pre-wrap">
+                          <div className="text-xs text-zinc-400 whitespace-pre-wrap">
                             {recapDetail.data.recap.voiceoverScript}
                           </div>
                         </div>
@@ -535,7 +535,7 @@ export default function AutoRecapPage() {
                   <div className="text-xs uppercase tracking-wider text-amber-400/60 mb-2">
                     Earlier recaps for this episode
                   </div>
-                  <ul className="space-y-1 text-xs text-zinc-300">
+                  <ul className="space-y-1 text-xs text-zinc-400">
                     {existingRecaps.data.map((r) => (
                       <li key={r.id} className="flex justify-between">
                         <span>#{r.id} ÃÂÃÂ· {r.lengthSeconds}s ÃÂÃÂ· {r.style}</span>

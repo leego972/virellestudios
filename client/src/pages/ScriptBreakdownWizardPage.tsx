@@ -195,7 +195,7 @@ export default function ScriptBreakdownWizardPage() {
 
       {step === 1 && (
         <div className="border border-amber-500/20 rounded-lg p-4 glass-card hover:shadow-amber-500/20 hover:shadow-lg transition-shadow gold-glow">
-          <div className="text-sm text-zinc-300 mb-2">
+          <div className="text-sm text-zinc-400 mb-2">
             Paste a script or use the project's saved script. Nothing will be
             written to your project until you approve in step 3.
           </div>
@@ -244,7 +244,7 @@ export default function ScriptBreakdownWizardPage() {
               ))}
             </div>
           )}
-          <div className="text-sm text-zinc-300">
+          <div className="text-sm text-zinc-400">
             Proposing <strong>{proposed.length}</strong> scene{proposed.length === 1 ? "" : "s"}
             {source ? ` (${source} source)` : ""}. Uncheck anything you don't want Ã¢ÂÂ only ticked rows are saved.
           </div>
@@ -255,7 +255,7 @@ export default function ScriptBreakdownWizardPage() {
               <summary className="cursor-pointer text-sm font-semibold text-zinc-100">
                 Story
               </summary>
-              <div className="mt-3 space-y-1.5 text-xs text-zinc-300">
+              <div className="mt-3 space-y-1.5 text-xs text-zinc-400">
                 {storyTitle && (
                   <div><span className="text-zinc-500">Title:</span> <span className="text-zinc-100">{storyTitle}</span></div>
                 )}
@@ -464,7 +464,7 @@ export default function ScriptBreakdownWizardPage() {
               replace so we hide the choice entirely. */}
           {existingSceneCount > 0 && (
             <div className="bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40 border border-amber-500/20 rounded p-3 space-y-2">
-              <div className="text-xs text-zinc-300">
+              <div className="text-xs text-zinc-400">
                 This project already has <strong>{existingSceneCount}</strong> scene
                 {existingSceneCount === 1 ? "" : "s"}. How should these be applied?
               </div>
@@ -571,7 +571,7 @@ export default function ScriptBreakdownWizardPage() {
             <div className="text-emerald-200 text-lg font-medium mb-1">
               Breakdown applied.
             </div>
-            <div className="text-sm text-zinc-300">
+            <div className="text-sm text-zinc-400">
               {applyMut.data?.created ?? 0} new scene
               {applyMut.data?.created === 1 ? "" : "s"} added to your project
               {(applyMut.data?.deleted ?? 0) > 0

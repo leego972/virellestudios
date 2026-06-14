@@ -125,17 +125,17 @@ export default function Contacts() {
                 <CardContent className="p-0 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <table className="w-full text-sm">
                     <thead className="text-xs text-zinc-400 bg-zinc-900/40">
-                      <tr><th className="px-3 py-2 text-left">Name</th><th className="px-3 py-2 text-left">Role</th><th className="px-3 py-2 text-left">Call</th><th className="px-3 py-2 text-left">Contact</th><th className="px-3 py-2"></th></tr>
+                      <tr><th className="px-3 py-2 text-left border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Name</th><th className="px-3 py-2 text-left border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Role</th><th className="px-3 py-2 text-left border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Call</th><th className="px-3 py-2 text-left border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Contact</th><th className="px-3 py-2 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs"></th></tr>
                     </thead>
                     <tbody>
                       {list.map((c) => (
                         <tr key={c.id} className="border-t border-amber-500/20 hover:bg-amber-500/10/40">
                           <td className="px-3 py-2 font-medium">{c.name}</td>
-                          <td className="px-3 py-2 text-zinc-300">{c.role || "ÃÂ¢ÃÂÃÂ"}</td>
+                          <td className="px-3 py-2 text-zinc-400">{c.role || "ÃÂ¢ÃÂÃÂ"}</td>
                           <td className="px-3 py-2 font-mono text-xs">{c.callTimeOverride || "ÃÂ¢ÃÂÃÂ"}</td>
                           <td className="px-3 py-2 text-xs space-y-0.5">
-                            {c.email && <div className="flex items-center gap-1 text-zinc-300"><Mail className="w-3 h-3" /><a href={`mailto:${c.email}`} className="hover:text-amber-400">{c.email}</a></div>}
-                            {c.phone && <div className="flex items-center gap-1 text-zinc-300"><Phone className="w-3 h-3" /><a href={`tel:${c.phone}`} className="hover:text-amber-400">{c.phone}</a></div>}
+                            {c.email && <div className="flex items-center gap-1 text-zinc-400"><Mail className="w-3 h-3" /><a href={`mailto:${c.email}`} className="hover:text-amber-400">{c.email}</a></div>}
+                            {c.phone && <div className="flex items-center gap-1 text-zinc-400"><Phone className="w-3 h-3" /><a href={`tel:${c.phone}`} className="hover:text-amber-400">{c.phone}</a></div>}
                           </td>
                           <td className="px-3 py-2 text-right whitespace-nowrap">
                             <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => startEdit(c)}><Edit2 className="w-3.5 h-3.5" /></Button>

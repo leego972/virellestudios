@@ -122,12 +122,12 @@ import { useState, useMemo } from "react";
             <table className="w-full text-sm">
               <thead className="bg-muted/40 border-b">
                 <tr>
-                  <th className="text-left p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Jurisdiction</th>
-                  <th className="text-left p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Rate</th>
-                  <th className="text-left p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider hidden sm:table-cell">Type</th>
-                  <th className="text-left p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider hidden md:table-cell">Min Spend</th>
-                  {budgetNum > 0 && <th className="text-right p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Est. Saving</th>}
-                  <th className="p-3 w-8"></th>
+                  <th className="text-left p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Jurisdiction</th>
+                  <th className="text-left p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Rate</th>
+                  <th className="text-left p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider hidden sm:table-cell border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Type</th>
+                  <th className="text-left p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider hidden md:table-cell border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Min Spend</th>
+                  {budgetNum > 0 && <th className="text-right p-3 font-medium text-muted-foreground text-xs uppercase tracking-wider border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">Est. Saving</th>}
+                  <th className="p-3 w-8 border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

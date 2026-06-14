@@ -108,7 +108,7 @@ export default function BlogArticle() {
         `<a href="${safeUrl(url)}" class="text-amber-400 hover:text-amber-300 underline" target="_blank" rel="noopener noreferrer">${label}</a>`
       )
       // Horizontal rules
-      .replace(/^---$/gm, '<hr class="border-white/10 my-8" />')
+      .replace(/^---$/gm, '<hr class="border-amber-500/20 my-8" />')
       // Paragraphs (double newlines)
       .replace(/\n\n/g, '</p><p class="text-white/70 leading-relaxed mb-4">');
 
@@ -143,7 +143,7 @@ export default function BlogArticle() {
   return (
     <div className="min-h-screen text-white" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       {/* Header */}
-      <header className="border-b border-white/10 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-amber-500/20 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/blog">
@@ -196,12 +196,12 @@ export default function BlogArticle() {
 
         {/* Cover Image */}
         {(article as any).coverImageUrl && (
-          <div className="rounded-xl overflow-hidden mb-8 border border-white/10">
+          <div className="rounded-xl overflow-hidden mb-8 border border-amber-500/20">
             <img src={(article as any).coverImageUrl} alt={article.title} className="w-full h-64 sm:h-80 object-cover" />
           </div>
         )}
 
-        <hr className="border-white/10 mb-8" />
+        <hr className="border-amber-500/20 mb-8" />
 
         {/* Content */}
         <div
@@ -211,7 +211,7 @@ export default function BlogArticle() {
 
         {/* Tags */}
         {tags.length > 0 && (
-          <div className="mt-10 pt-6 border-t border-white/10">
+          <div className="mt-10 pt-6 border-t border-amber-500/20">
             <div className="flex items-center gap-2 flex-wrap">
               <Tag className="h-4 w-4 text-white/40" />
               {tags.map((tag: string) => (

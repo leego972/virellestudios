@@ -1245,7 +1245,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Plan inclusion status */}
-        <div className="rounded-lg border border-white/5 bg-white/5 p-4 space-y-2">
+        <div className="rounded-lg border border-amber-500/20 glass-card/5 p-4 space-y-2">
           <div className="flex items-center gap-2">
             {hasCastAccess ? (
               <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
@@ -1276,7 +1276,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
         <ActiveTalentLicensesList />
 
         {/* Usage terms reminder */}
-        <div className="rounded-lg border border-white/5 bg-gradient-to-r from-amber-950/10 via-zinc-950/40 to-zinc-950/40 p-3 space-y-1">
+        <div className="rounded-lg border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-950/40 to-zinc-950/40 p-3 space-y-1">
           <p className="text-xs font-semibold text-amber-400/60 uppercase tracking-wider">Usage Terms</p>
           <div className="flex items-start gap-2 text-xs text-zinc-600">
             <CheckCircle2 className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" />
@@ -1297,7 +1297,7 @@ function ActiveTalentLicenses({ subscriptionTier }: { subscriptionTier: string }
           </a>
           {!hasCastAccess && (
             <a href="/pricing">
-              <Button size="sm" variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 text-xs hover:border-amber-500/50 hover:text-amber-400">
+              <Button size="sm" variant="outline" className="border-amber-500/20 text-zinc-400 hover:bg-white/5 text-xs hover:border-amber-500/50 hover:text-amber-400">
                 Upgrade for Cast Access
               </Button>
             </a>
@@ -1317,7 +1317,7 @@ function ActiveTalentLicensesList() {
     return (
       <div>
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses</p>
-        <div className="rounded-lg border border-white/5 bg-gradient-to-r from-amber-950/10 via-zinc-950/40 to-zinc-950/40 p-4 text-center">
+        <div className="rounded-lg border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-950/40 to-zinc-950/40 p-4 text-center">
           <Loader2 className="h-5 w-5 text-zinc-600 mx-auto animate-spin text-amber-400" />
         </div>
       </div>
@@ -1328,7 +1328,7 @@ function ActiveTalentLicensesList() {
     return (
       <div>
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses</p>
-        <div className="rounded-lg border border-white/5 bg-gradient-to-r from-amber-950/10 via-zinc-950/40 to-zinc-950/40 p-4 text-center">
+        <div className="rounded-lg border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-950/40 to-zinc-950/40 p-4 text-center">
           <Film className="h-8 w-8 text-zinc-700 mx-auto mb-2" />
           <p className="text-xs text-zinc-500 mb-1">No individual actor licenses yet.</p>
           <p className="text-xs text-zinc-600">When you unlock a specific actor for a project, it will appear here.</p>
@@ -1341,7 +1341,7 @@ function ActiveTalentLicensesList() {
       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Individual Actor Licenses ({list.length})</p>
       <div className="space-y-2">
         {list.map((e: any, i: number) => (
-          <div key={i} className="rounded-lg border border-white/5 bg-gradient-to-r from-amber-950/10 via-zinc-950/40 to-zinc-950/40 p-3 flex items-center justify-between gap-3">
+          <div key={i} className="rounded-lg border border-amber-500/20 bg-gradient-to-r from-amber-950/10 via-zinc-950/40 to-zinc-950/40 p-3 flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="text-sm font-medium text-white truncate">{e.actorId}</p>
               <p className="text-xs text-zinc-500">
@@ -1479,7 +1479,7 @@ function ConnectedPlatformsTab() {
                   </div>
                 </div>
                 {isEditing && (
-                  <div className="mt-4 space-y-3 border-t border-white/10 pt-4">
+                  <div className="mt-4 space-y-3 border-t border-amber-500/20 pt-4">
                     <div>
                       <Label className="text-xs">Display Name (optional)</Label>
                       <Input

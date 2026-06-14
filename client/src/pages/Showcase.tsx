@@ -641,7 +641,7 @@ function DiscoveryFeed() {
                   )}
                   {/* Play overlay */}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full glass-card/20 backdrop-blur-sm flex items-center justify-center">
                       <Play className="w-5 h-5 text-white ml-0.5" />
                     </div>
                   </div>
@@ -1426,13 +1426,13 @@ function DiscoveryFeed() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-neutral-800">
-                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider">
+                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">
                     Segment
                   </th>
-                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider">
+                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">
                     Target
                   </th>
-                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider hidden md:table-cell">
+                  <th className="text-left text-neutral-500 font-semibold p-3 uppercase tracking-wider hidden md:table-cell border-b border-amber-500/20 text-amber-400/70 font-semibold tracking-wide uppercase text-xs">
                     Pacing
                   </th>
                 </tr>

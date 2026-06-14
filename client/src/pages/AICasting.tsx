@@ -409,7 +409,7 @@ function AICastingInner() {
             <Button
               size="sm"
               variant="outline"
-              className="border-white/10 text-zinc-400 text-xs hidden md:flex hover:border-amber-500/50 hover:text-amber-400"
+              className="border-amber-500/20 text-zinc-400 text-xs hidden md:flex hover:border-amber-500/50 hover:text-amber-400"
               onClick={() => navigate("/signature-cast")}
             >
               <Film className="w-3 h-3 mr-1" />
@@ -629,7 +629,7 @@ function AICastingInner() {
                 ].map((cp) => (
                   <button
                     key={cp.label}
-                    className="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                    className="w-full text-left p-2 rounded-lg bg-white/5 hover:glass-card/10 transition-colors border border-amber-500/20"
                     onClick={() => {
                       cp.pair.forEach((id) => {
                         if (!selectedActors.includes(id)) toggleActor(id);
@@ -696,7 +696,7 @@ function AICastingInner() {
                   enterKeyHint="done"
                 />
               </div>
-              <div className="border-t border-white/10 pt-3 mt-3">
+              <div className="border-t border-amber-500/20 pt-3 mt-3">
                 <p className="text-xs font-semibold text-amber-300 mb-2 flex items-center gap-1">
                   <Lock className="w-3 h-3" /> Grooming Hard-Locks
                 </p>
