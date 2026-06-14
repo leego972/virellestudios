@@ -1544,7 +1544,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
             const sShots = (savedShots as any[]).filter((s: any) => s.sceneName === sName);
             const isOpen = activeScene === sName;
             return (
-              <Card key={sName}>
+              <Card key={sName} className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/30"
                   onClick={() => setActiveScene(isOpen ? null : sName)}>
                   <div className="flex items-center gap-3">
@@ -1706,7 +1706,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
       {displayDays.length > 0 && (
         <div className="space-y-3">
           {displayDays.map((day: any, i: number) => (
-            <Card key={i} className={isGenerated ? "border-violet-200" : ""}>
+            <Card key={i} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow ${isGenerated ? "border-violet-200" : ""}`}>
               <div className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">

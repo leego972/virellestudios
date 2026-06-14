@@ -180,7 +180,7 @@ import { useState, useMemo } from "react";
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 gradient-text-gold">{cat.icon} {cat.label} ({cat.items.length})</h3>
             <div className="space-y-2">
               {cat.items.map(item => (
-                <Card key={item.id} className={`transition-colors ${item.checkedOut ? "opacity-60" : "hover:border-primary/30"}`}>
+                <Card key={item.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow transition-colors ${item.checkedOut ? "opacity-60" : "hover:border-primary/30"}`}>
                   <CardContent className="p-3 flex items-start gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <button onClick={() => toggle(item.id)} className="mt-0.5 shrink-0">{item.checkedOut ? <CheckSquare className="h-4 w-4 text-amber-400" /> : <Square className="h-4 w-4 text-muted-foreground" />}</button>
                     <div className="flex-1 min-w-0">

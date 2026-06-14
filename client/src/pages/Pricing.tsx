@@ -388,7 +388,7 @@ export default function Pricing() {
             const Icon = tier.icon;
 
             return (
-              <Card key={tier.id} className={`relative flex flex-col border-amber-500/20 bg-zinc-900/50 backdrop-blur-sm transition-all hover:border-amber-500/20 ${tier.color}`}>
+              <Card key={tier.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow relative flex flex-col border-amber-500/20 bg-zinc-900/50 backdrop-blur-sm transition-all hover:border-amber-500/20 ${tier.color}`}>
                 {tier.badge && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge className={`${tier.badgeColor} text-white px-4 py-1`}>{tier.badge}</Badge>
@@ -444,7 +444,7 @@ export default function Pricing() {
           {ENTERPRISE_TIERS.map((tier) => {
             const Icon = tier.icon;
             return (
-              <Card key={tier.id} className={`relative flex flex-col border-amber-500/20 bg-zinc-900/50 backdrop-blur-sm ${tier.color}`}>
+              <Card key={tier.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow relative flex flex-col border-amber-500/20 bg-zinc-900/50 backdrop-blur-sm ${tier.color}`}>
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <Badge className={`${tier.badgeColor} text-white px-4 py-1`}>{tier.badge}</Badge>
                 </div>
@@ -558,7 +558,7 @@ export default function Pricing() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {CREDIT_PACKS.map((pack) => (
-              <Card key={pack.id} className={`border-amber-500/20 bg-zinc-900/50 ${pack.popular ? "ring-1 ring-amber-500/50 border-amber-500/50" : ""}`}>
+              <Card key={pack.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border-amber-500/20 bg-zinc-900/50 ${pack.popular ? "ring-1 ring-amber-500/50 border-amber-500/50" : ""}`}>
                 <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{pack.label}</CardTitle>

@@ -155,7 +155,7 @@ export default function FestivalTracker() {
         {visible.map((f) => {
           const status = tracking[f.name];
           return (
-            <Card key={f.name} className={status ? "border-amber-500/30" : ""}>
+            <Card key={f.name} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow ${status ? "border-amber-500/30" : ""}`}>
               <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">

@@ -815,7 +815,7 @@ export default function Settings() {
                 const inputValue = keyInputs[provider.id] || "";
                 const colorClass = PROVIDER_COLORS[provider.id] || "from-gray-500/20 to-gray-600/10 border-gray-500/30";
                 return (
-                  <Card key={provider.id} className={`border ${colorClass} bg-gradient-to-br`}>
+                  <Card key={provider.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border ${colorClass} bg-gradient-to-br`}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">
@@ -883,7 +883,7 @@ export default function Settings() {
                 const inputValue = keyInputs[provider.id] || "";
                 const colorClass = PROVIDER_COLORS[provider.id] || "from-gray-500/20 to-gray-600/10 border-gray-500/30";
                 return (
-                  <Card key={provider.id} className={`border ${colorClass} bg-gradient-to-br`}>
+                  <Card key={provider.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border ${colorClass} bg-gradient-to-br`}>
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <CardTitle className="flex items-center gap-2 text-lg gradient-text-gold">

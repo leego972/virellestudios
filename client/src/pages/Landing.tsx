@@ -726,7 +726,7 @@ export default function Landing() {
                 { tier: "Industry", price: "A$1,490", credits: "6,000 credits/mo",  desc: "Boutique studios and agencies.",         cta: "Select Industry" },
                 { tier: "Industry+", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.",         cta: "Contact Sales" },
               ].map(plan => (
-                <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-amber-500/20 hover:border-amber-500/30 bg-white/[0.02]"}`}>
+                <Card key={plan.tier} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-amber-500/20 hover:border-amber-500/30 bg-white/[0.02]"}`}>
                   <CardContent className="p-6 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 hover:shadow-lg transition-shadow">
                     <h3 className="text-xl font-bold mb-2 gradient-text-gold">{plan.tier}</h3>
                     <div className="mb-1">

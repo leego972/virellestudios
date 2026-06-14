@@ -713,7 +713,7 @@ export default function Movies() {
       {/* Stats (only on main view) */}
       {!activeFolder && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-primary/30 ${typeFilter === null ? 'ring-1 ring-primary/20' : ''}`} onClick={() => setTypeFilter(null)}>
+          <Card className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow cursor-pointer transition-all hover:ring-1 hover:ring-primary/30 ${typeFilter === null ? 'ring-1 ring-primary/20' : ''}`} onClick={() => setTypeFilter(null)}>
             <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="p-2 rounded-lg bg-amber-400/10">
                 <Folder className="h-5 w-5 text-amber-400" />
@@ -724,7 +724,7 @@ export default function Movies() {
               </div>
             </CardContent>
           </Card>
-          <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-emerald-500/30 ${typeFilter === 'film' ? 'ring-1 ring-emerald-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'film' ? null : 'film')}>
+          <Card className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow cursor-pointer transition-all hover:ring-1 hover:ring-emerald-500/30 ${typeFilter === 'film' ? 'ring-1 ring-emerald-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'film' ? null : 'film')}>
             <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="p-2 rounded-lg bg-emerald-500/10">
                 <Clapperboard className="h-5 w-5 text-emerald-400" />
@@ -737,7 +737,7 @@ export default function Movies() {
               </div>
             </CardContent>
           </Card>
-          <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-blue-500/30 ${typeFilter === 'scene' ? 'ring-1 ring-blue-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'scene' ? null : 'scene')}>
+          <Card className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow cursor-pointer transition-all hover:ring-1 hover:ring-blue-500/30 ${typeFilter === 'scene' ? 'ring-1 ring-blue-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'scene' ? null : 'scene')}>
             <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="p-2 rounded-lg bg-blue-500/10">
                 <Film className="h-5 w-5 text-blue-400" />
@@ -750,7 +750,7 @@ export default function Movies() {
               </div>
             </CardContent>
           </Card>
-          <Card className={`cursor-pointer transition-all hover:ring-1 hover:ring-amber-500/30 ${typeFilter === 'trailer' ? 'ring-1 ring-amber-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'trailer' ? null : 'trailer')}>
+          <Card className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow cursor-pointer transition-all hover:ring-1 hover:ring-amber-500/30 ${typeFilter === 'trailer' ? 'ring-1 ring-amber-500/40' : ''}`} onClick={() => setTypeFilter(typeFilter === 'trailer' ? null : 'trailer')}>
             <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="p-2 rounded-lg bg-amber-500/10">
                 <Play className="h-5 w-5 text-amber-400" />

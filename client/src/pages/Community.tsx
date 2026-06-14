@@ -155,7 +155,7 @@ import { useState } from "react";
 
             <div className="space-y-3">
               {filteredPosts.map(post => (
-                <Card key={post.id} className={`hover:border-primary/40 transition-colors cursor-pointer ${post.pinned ? "border-primary/20" : ""}`}>
+                <Card key={post.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow hover:border-primary/40 transition-colors cursor-pointer ${post.pinned ? "border-primary/20" : ""}`}>
                   <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-9 w-9 shrink-0 mt-0.5">

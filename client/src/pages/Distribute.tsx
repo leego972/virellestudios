@@ -348,7 +348,7 @@ export default function Distribute() {
               const done = !!(exports as any)[platform.key];
               const exportUrl = (promoStatus as any)?.[`${platform.key}Url`] || null;
               return (
-                <Card key={platform.key} className={`border ${platform.bg}`}>
+                <Card key={platform.key} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow border ${platform.bg}`}>
                   <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">

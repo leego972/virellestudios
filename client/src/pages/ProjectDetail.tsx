@@ -1038,7 +1038,7 @@ export default function ProjectDetail() {
                       ? "border-emerald-500/20 bg-card/50"
                       : "bg-card/50";
                 return (
-                <Card key={scene.id} className={`group ${cardBorder}`}>
+                <Card key={scene.id} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow group ${cardBorder}`}>
                   <CardContent className="p-3 flex items-center gap-3">
                     <div className="relative h-14 w-20 shrink-0">
                       {scene.thumbnailUrl ? (
