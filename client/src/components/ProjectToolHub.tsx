@@ -24,6 +24,8 @@ import {
   Volume2,
   Wand2,
   Wallet,
+  SlidersHorizontal,
+  Mic2,
 } from "lucide-react";
 
 type Tool = {
@@ -77,6 +79,7 @@ export default function ProjectToolHub({ projectId }: { projectId: number | stri
         { title: "Script Breakdown", description: "Break down scenes, locations, cast, props and production needs.", href: `/projects/${projectId}/script-breakdown`, icon: FileText },
         { title: "Series Bible", description: "World, characters, episodes and continuity bible.", href: `/series`, icon: BookOpen },
         { title: "Casting Board", description: "Cast characters and organise talent decisions.", href: `/projects/${projectId}/casting-board`, icon: Users },
+        { title: "Character Voices", description: "Assign ElevenLabs voices and clone voice samples for your cast.", href: `/characters`, icon: Mic2, badge: "AI" },
         { title: "Pre-Production Panel", description: "Director vision, vehicles, locations, atmosphere and visual rules.", href: `/projects/${projectId}/pre-production`, icon: Clapperboard },
       ],
     },
@@ -116,6 +119,8 @@ export default function ProjectToolHub({ projectId }: { projectId: number | stri
         { title: "Sound Effects", description: "Foley, impact sounds, ambience and sound design.", href: `/projects/${projectId}/sound-effects`, icon: Volume2, badge: "Sound" },
         { title: "Music Score", description: "Compose and organise the cinematic score.", href: `/projects/${projectId}/music-score`, icon: Music, badge: "Sound" },
         { title: "Subtitles", description: "Captions, accessibility and language tracks.", href: `/projects/${projectId}/subtitles`, icon: Type, badge: "Access" },
+        { title: "Audio Mixer", description: "Per-scene volume faders, pan, fade in/out and mix presets.", href: `/projects/${projectId}/audio-mixer`, icon: SlidersHorizontal, badge: "Mix" },
+        { title: "Dubbing Studio", description: "AI multilingual dubbing with 30 languages and ElevenLabs voice.", href: `/dubbing-studio`, icon: Mic2, badge: "AI" },
         { title: "Credits Editor", description: "Opening and end credits sequence.", href: `/projects/${projectId}/credits`, icon: FileText },
         { title: "NLE Export", description: "Export for professional editing timelines.", href: `/projects/${projectId}/nle-export`, icon: Download },
       ],
