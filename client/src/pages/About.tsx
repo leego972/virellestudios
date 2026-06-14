@@ -184,7 +184,7 @@ export default function About() {
             {VALUES.map((v) => {
               const Icon = v.icon;
               return (
-                <div key={v.title} className="p-6 rounded-xl border border-border/50 bg-card/40 hover:border-amber-500/30 transition-colors">
+                <div key={v.title} className="p-6 rounded-xl border border-border/50 bg-card/40 hover:border-amber-500/30 transition-colors glass-card">
                   <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
                     <Icon className="h-5 w-5 text-amber-400" />
                   </div>
@@ -206,7 +206,7 @@ export default function About() {
           </div>
           <div className="space-y-4">
             {METHODOLOGY.map((m, i) => (
-              <div key={m.step} className="flex gap-5 p-6 rounded-xl border border-border/50 bg-card/40 hover:border-amber-500/20 transition-colors">
+              <div key={m.step} className="flex gap-5 p-6 rounded-xl border border-border/50 bg-card/40 hover:border-amber-500/20 transition-colors glass-card">
                 <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
                   <span className="text-xs font-bold text-amber-400">{m.step}</span>
                 </div>
