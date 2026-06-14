@@ -244,7 +244,7 @@ import { useState } from "react";
           <div className="mb-5 grid grid-cols-4 sm:grid-cols-7 gap-3">
             <div className="rounded-xl border px-3 py-2.5" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
               <div className="text-[9px] text-muted-foreground uppercase tracking-wider">Total Shots</div>
-              <div className="text-xl font-bold text-white mt-0.5">{allVfx.length}</div>
+              <div className="text-xl font-bold mt-0.5">{allVfx.length}</div>
             </div>
             {statusCounts.slice(0,6).map(s => (
               <div key={s.id} className="rounded-xl border px-3 py-2.5" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)" }}>
