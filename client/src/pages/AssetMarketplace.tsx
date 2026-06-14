@@ -268,7 +268,6 @@ export default function AssetMarketplace() {
           </div>
         )}
 
-        }
 
         {filteredAssets.length === 0 && !isLoading && (category === "all" || category === "wardrobes" || category === "funding") && (
           <div className="text-center py-20">
