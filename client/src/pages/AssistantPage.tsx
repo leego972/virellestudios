@@ -43,14 +43,14 @@ import { useState, useEffect } from "react";
             style={{
               width: "min(88vh, 88vw)",
               height: "min(88vh, 88vw)",
-              background: "radial-gradient(circle, rgba(160,180,255,0.15) 0%, rgba(100,130,255,0.08) 40%, transparent 72%)",
+              background: "radial-gradient(circle, rgba(201,168,76,0.18) 0%, rgba(180,130,40,0.09) 40%, transparent 72%)",
               filter: "blur(32px)",
             }}
           />
           {/* Face container */}
           <div
             className="absolute top-[40%] left-[40%] -translate-x-1/2 -translate-y-1/2"
-            style={{ width: "min(80vh, 80vw)", height: "min(80vh, 80vw)" }}
+            style={{ width: "min(80vh, 80vw)", height: "min(80vh, 80vw)", mixBlendMode: "screen" as const }}
           >
             <VirelleFace volume={0} speaking={voiceState === 'speaking'} state={voiceState} />
           </div>
