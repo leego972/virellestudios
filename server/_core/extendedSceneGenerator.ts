@@ -186,7 +186,17 @@ export interface ExtendedSceneRequest {
   sceneType?: "action" | "dialogue" | "emotional" | "horror" | "reveal" | "default";
   /** Wardrobe context block Ã¢ÂÂ injected into every sub-shot prompt so characters wear correct outfits */
   wardrobeContext?: string;
-}
+    /** Sound effects notes injected into every sub-shot prompt */
+    sfxNotes?: string;
+    /** SFX production notes (mic placement, Foley direction, etc.) */
+    sfxProductionNotes?: string;
+    /** Ambient soundscape description */
+    ambientSound?: string;
+    /** Music mood for the scene */
+    musicMood?: string;
+    /** Music tempo */
+    musicTempo?: string;
+  }
 
 export interface ExtendedSceneResult {
   videoUrl: string;           // S3 URL of the stitched scene video
