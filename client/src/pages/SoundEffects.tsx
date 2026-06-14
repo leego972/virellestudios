@@ -20,7 +20,7 @@ import { useState, useRef } from "react";
     FileText, LayoutList, Tag, Save, X, Info, RefreshCw,
   } from "lucide-react";
 
-  // âââ Constants âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ─── Constants ─────────────────────────────────────────────────────────────────
 
   const SFX_CATEGORIES = [
     { id: "ambient",     label: "Ambient",           icon: Wind,       color: "text-green-400",   bg: "bg-green-500/10",   border: "border-green-500/30" },
@@ -49,14 +49,14 @@ import { useState, useRef } from "react";
     { id: "master",   label: "Master Bus",   color: "text-yellow-400", bg: "bg-yellow-500/10", dot: "#D4AF37" },
   ];
 
-  // âââ Mix Data (stored as JSON in the notes field) ââââââââââââââââââââââââââââââ
+  // ─── Mix Data (stored as JSON in the notes field) ──────────────────────────────
   interface MixData {
     directorNote: string;
-    fadeIn:       number;  // 0â10s
-    fadeOut:      number;  // 0â10s
-    pan:          number;  // -1.0 (L) â 0 (C) â 1.0 (R)
-    reverb:       number;  // 0â1.0 wet amount
-    pitchShift:   number;  // -12 â +12 semitones
+    fadeIn:       number;  // 0–10s
+    fadeOut:      number;  // 0–10s
+    pan:          number;  // -1.0 (L) → 0 (C) → 1.0 (R)
+    reverb:       number;  // 0–1.0 wet amount
+    pitchShift:   number;  // -12 → +12 semitones
     cueNumber:    string;
     busRoute:     string;
   }
@@ -74,7 +74,7 @@ import { useState, useRef } from "react";
   }
   function serializeMixData(d: MixData): string { return JSON.stringify(d); }
 
-  // âââ Sub-components âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ─── Sub-components ─────────────────────────────────────────────────────────────
 
   function VolumeBar({ value }: { value: number }) {
     const bars = 16, active = Math.round(value * bars);
@@ -127,7 +127,7 @@ import { useState, useRef } from "react";
     );
   }
 
-  // âââ Main Page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ─── Main Page ──────────────────────────────────────────────────────────────────
 
   export default function SoundEffects() {
     const params = useParams<{ id: string }>();
@@ -173,7 +173,7 @@ import { useState, useRef } from "react";
     const handleFileUpload = (file: File) => {
       const valid = ["audio/mpeg","audio/mp3","audio/wav","audio/ogg","audio/mp4","audio/webm","audio/x-m4a","audio/aac","audio/flac"];
       if (!valid.includes(file.type)) { toast.error("Unsupported audio format"); return; }
-      if (file.size > 50 * 1024 * 1024) { toast.error("File too large â max 50 MB"); return; }
+      if (file.size > 50 * 1024 * 1024) { toast.error("File too large — max 50 MB"); return; }
       setUploading(true);
       const reader = new FileReader();
       reader.onload = (e) => { const b64 = (e.target?.result as string).split(",")[1]; uploadMutation.mutate({ projectId, fileName: file.name, fileData: b64, contentType: file.type as any }); };
@@ -220,7 +220,7 @@ import { useState, useRef } from "react";
 
     return (
       <div className="min-h-screen" style={{ background: "linear-gradient(135deg,#07070e 0%,#0c0c1a 60%,#080a10 100%)" }}>
-        {/* ââ Header ââ */}
+        {/* ── Header ── */}
         <div className="border-b sticky top-0 z-20" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,7,14,0.97)", backdropFilter: "blur(24px)" }}>
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -232,7 +232,7 @@ import { useState, useRef } from "react";
                 </div>
                 <div>
                   <div className="font-bold text-sm tracking-tight">Sound Effects Studio</div>
-                  <div className="text-[10px] text-muted-foreground">{allSfx.length} cues Â· {totalDuration.toFixed(1)}s total runtime</div>
+                  <div className="text-[10px] text-muted-foreground">{allSfx.length} cues · {totalDuration.toFixed(1)}s total runtime</div>
                 </div>
               </div>
             </div>
@@ -248,7 +248,7 @@ import { useState, useRef } from "react";
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* ââ Stats bar ââ */}
+          {/* ── Stats bar ── */}
           <div className="mb-5 grid grid-cols-3 sm:grid-cols-6 gap-3">
             {[
               { label: "Total Cues",   value: allSfx.length,             color: "text-white" },
@@ -262,12 +262,12 @@ import { useState, useRef } from "react";
             ))}
           </div>
 
-          {/* ââ Pipeline banner ââ */}
+          {/* ── Pipeline banner ── */}
           <div className="mb-6 rounded-xl border px-4 py-3 flex items-start gap-3" style={{ borderColor: "rgba(236,72,153,0.2)", background: "rgba(236,72,153,0.04)" }}>
             <Sparkles className="h-4 w-4 text-pink-400 mt-0.5 shrink-0" />
             <p className="text-xs text-muted-foreground leading-relaxed">
               <span className="text-pink-400 font-semibold">Connected to AI Generation Pipeline.</span>{" "}
-              Every cue writes into <span className="font-mono text-[11px] text-pink-300">sfxNotes</span> and <span className="font-mono text-[11px] text-pink-300">sfxProductionNotes</span> â bus routing, fade envelopes, reverb, and spatial pan are injected as compositing parameters at render time.
+              Every cue writes into <span className="font-mono text-[11px] text-pink-300">sfxNotes</span> and <span className="font-mono text-[11px] text-pink-300">sfxProductionNotes</span> — bus routing, fade envelopes, reverb, and spatial pan are injected as compositing parameters at render time.
             </p>
           </div>
 
@@ -280,13 +280,13 @@ import { useState, useRef } from "react";
               <TabsTrigger value="spotting"  className="gap-1.5 text-xs h-7 data-[state=active]:text-amber-400"><LayoutList className="h-3.5 w-3.5" />Spotting Sheet</TabsTrigger>
             </TabsList>
 
-            {/* ââââââââââââââââââ MIX BOARD ââââââââââââââââââ */}
+            {/* ══════════════════ MIX BOARD ══════════════════ */}
             <TabsContent value="mixboard">
               <div className="space-y-3">
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="relative flex-1 min-w-48 max-w-xs">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                    <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search cuesâ¦" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
+                    <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search cues…" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
                   </div>
                   <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                     <SelectTrigger className="h-8 w-44 text-xs bg-black/30 border-border/40 focus:ring-amber-500/30 focus:border-amber-500/50 hover:border-amber-500/40"><SelectValue /></SelectTrigger>
@@ -340,7 +340,7 @@ import { useState, useRef } from "react";
                             onClick={() => setExpandedId(isExpanded ? null : sfx.id)}>
 
                             {/* Play */}
-                            <button onClick={e => { e.stopPropagation(); sfx.fileUrl ? playAudio(sfx.fileUrl, String(sfx.id)) : toast.info("No audio file â generate or upload to preview"); }}
+                            <button onClick={e => { e.stopPropagation(); sfx.fileUrl ? playAudio(sfx.fileUrl, String(sfx.id)) : toast.info("No audio file — generate or upload to preview"); }}
                               className={`h-8 w-8 rounded-full flex items-center justify-center border transition-all ${sfx.fileUrl ? "border-pink-500/25 hover:bg-pink-500/15" : "opacity-25 cursor-not-allowed border-amber-500/20"}`}
                               style={{ background: isPlaying ? "rgba(236,72,153,0.2)" : "transparent" }}>
                               {isPlaying ? <Pause className="h-3.5 w-3.5 text-pink-400" /> : <Play className="h-3.5 w-3.5 text-muted-foreground" />}
@@ -378,8 +378,8 @@ import { useState, useRef } from "react";
 
                             {/* Time */}
                             <div className="text-[10px] text-muted-foreground space-y-0.5">
-                              <div className="flex items-center gap-1"><Clock className="h-2.5 w-2.5" style={{ width: 10, height: 10 }} />{sfx.startTime ?? "â"}s in</div>
-                              <div className="flex items-center gap-1"><Waves className="h-2.5 w-2.5" style={{ width: 10, height: 10 }} />{sfx.duration ?? "â"}s dur</div>
+                              <div className="flex items-center gap-1"><Clock className="h-2.5 w-2.5" style={{ width: 10, height: 10 }} />{sfx.startTime ?? "—"}s in</div>
+                              <div className="flex items-center gap-1"><Waves className="h-2.5 w-2.5" style={{ width: 10, height: 10 }} />{sfx.duration ?? "—"}s dur</div>
                             </div>
 
                             {/* Expand chevron */}
@@ -388,7 +388,7 @@ import { useState, useRef } from "react";
                             </div>
                           </div>
 
-                          {/* ââ Expanded mixer strip ââ */}
+                          {/* ── Expanded mixer strip ── */}
                           {isExpanded && (
                             <div className="border-t px-4 py-5 space-y-6" style={{ borderColor: "rgba(236,72,153,0.12)", background: "rgba(0,0,0,0.25)" }}>
                               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -404,7 +404,7 @@ import { useState, useRef } from "react";
                                   <PanStrip value={mix.pan} />
                                   <Slider value={[mix.pan]} onValueChange={([v]) => saveMix(sfx, { pan: parseFloat(v.toFixed(2)) })} min={-1} max={1} step={0.05} />
                                   <div className="flex justify-between text-[9px] text-muted-foreground/50 font-mono">
-                                    <span>â Left</span><span>Center</span><span>Right â¶</span>
+                                    <span>◀ Left</span><span>Center</span><span>Right ▶</span>
                                   </div>
                                 </div>
 
@@ -412,7 +412,7 @@ import { useState, useRef } from "react";
                                 <div className="space-y-2.5">
                                   <div className="flex items-center justify-between">
                                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Fade Envelope</Label>
-                                    <span className="text-[10px] font-mono text-muted-foreground">â{mix.fadeIn}s Â· {mix.fadeOut}sâ</span>
+                                    <span className="text-[10px] font-mono text-muted-foreground">↑{mix.fadeIn}s · {mix.fadeOut}s↓</span>
                                   </div>
                                   <FadeVisual fadeIn={mix.fadeIn} fadeOut={mix.fadeOut} duration={sfx.duration || 5} />
                                   <div className="grid grid-cols-2 gap-3 mt-1">
@@ -505,14 +505,14 @@ import { useState, useRef } from "react";
                               <div className="space-y-1.5">
                                 <Label className="text-[10px] text-muted-foreground uppercase tracking-wider">Sound Design Notes</Label>
                                 <Textarea value={mix.directorNote} onChange={e => saveMix(sfx, { directorNote: e.target.value })}
-                                  placeholder="e.g. Swell under dialogue beat â cut hard on door slam. Layer with interior room tone. Reverb tail should bleed into next sceneâ¦"
+                                  placeholder="e.g. Swell under dialogue beat — cut hard on door slam. Layer with interior room tone. Reverb tail should bleed into next scene…"
                                   className="min-h-[72px] text-xs bg-black/30 resize-none border-pink-500/10" />
                               </div>
 
                               {/* Delete */}
                               <div className="flex justify-between items-center pt-1">
                                 <span className="text-[9px] text-muted-foreground/50">
-                                  {sfx.isCustom ? "Custom upload" : sfx.fileUrl ? "AI generated" : "Preset â no audio file attached"}
+                                  {sfx.isCustom ? "Custom upload" : sfx.fileUrl ? "AI generated" : "Preset — no audio file attached"}
                                 </span>
                                 <button onClick={() => deleteMutation.mutate({ id: sfx.id })}
                                   className="flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg border border-transparent hover:border-red-500/20 hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-all">
@@ -529,13 +529,13 @@ import { useState, useRef } from "react";
               </div>
             </TabsContent>
 
-            {/* ââââââââââââââââââ SFX LIBRARY ââââââââââââââââââ */}
+            {/* ══════════════════ SFX LIBRARY ══════════════════ */}
             <TabsContent value="library">
               <div className="space-y-4">
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="relative flex-1 min-w-48 max-w-xs">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                    <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search preset libraryâ¦" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
+                    <Input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search preset library…" className="h-8 pl-9 text-xs bg-black/30 border-border/40" />
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -576,7 +576,7 @@ import { useState, useRef } from "react";
               </div>
             </TabsContent>
 
-            {/* ââââââââââââââââââ AI STUDIO ââââââââââââââââââ */}
+            {/* ══════════════════ AI STUDIO ══════════════════ */}
             <TabsContent value="aigenerate">
               <div className="max-w-2xl mx-auto space-y-5">
                 <div className="rounded-2xl border p-6" style={{ borderColor: "rgba(236,72,153,0.3)", background: "linear-gradient(135deg,rgba(236,72,153,0.06) 0%,transparent 100%)" }}>
@@ -586,7 +586,7 @@ import { useState, useRef } from "react";
                     </div>
                     <div>
                       <h3 className="font-bold text-base gradient-text-gold">AI Sound Effect Generator</h3>
-                      <p className="text-xs text-muted-foreground">Powered by ElevenLabs Sound Generation Â· Up to 30 seconds</p>
+                      <p className="text-xs text-muted-foreground">Powered by ElevenLabs Sound Generation · Up to 30 seconds</p>
                     </div>
                   </div>
                   <div className="space-y-4">
@@ -597,9 +597,9 @@ import { useState, useRef } from "react";
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">Sound Description</Label>
                       <Textarea value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}
-                        placeholder={"Describe your sound in cinematic detailâ¦\n\ne.g. Heavy rain hammering a tin roof with distant rolling thunder, atmospheric and immersive, slowly building in intensity over 8 seconds"}
+                        placeholder={"Describe your sound in cinematic detail…\n\ne.g. Heavy rain hammering a tin roof with distant rolling thunder, atmospheric and immersive, slowly building in intensity over 8 seconds"}
                         className="min-h-[110px] bg-black/30 border-border/40 resize-none text-sm" />
-                      <p className="text-[10px] text-muted-foreground">Include: environment Â· intensity Â· duration intent Â· mood Â· layering for best results.</p>
+                      <p className="text-[10px] text-muted-foreground">Include: environment · intensity · duration intent · mood · layering for best results.</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
@@ -617,7 +617,7 @@ import { useState, useRef } from "react";
                     <Button className="w-full gap-2 h-11 font-semibold" style={{ background: "linear-gradient(135deg,#ec4899,#f43f5e)" }}
                       onClick={() => generateMutation.mutate({ projectId, prompt: aiPrompt, durationSeconds: aiDuration, name: aiName || aiPrompt.slice(0,60), category: aiCategory })}
                       disabled={!aiPrompt.trim() || generateMutation.isPending}>
-                      {generateMutation.isPending ? <><Loader2 className="h-4 w-4 animate-spin text-amber-400" />Generatingâ¦</> : <><Sparkles className="h-4 w-4" />Generate Sound Effect</>}
+                      {generateMutation.isPending ? <><Loader2 className="h-4 w-4 animate-spin text-amber-400" />Generating…</> : <><Sparkles className="h-4 w-4" />Generate Sound Effect</>}
                     </Button>
                   </div>
                 </div>
@@ -627,12 +627,12 @@ import { useState, useRef } from "react";
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Professional Prompt Examples</p>
                   <div className="space-y-2">
                     {[
-                      { label: "Foley",   tip: "Leather dress shoes on polished marble â sharp heel clicks with slight reverb tail, medium pace, confident stride" },
-                      { label: "Weather", tip: "Deep thunderclap rolling across open mountains â cinematic, 3-second decay, heavy LFE rumble" },
-                      { label: "Vehicle", tip: "Car door slam in a concrete parking garage â sharp metallic resonance, reverb tail 1.5 seconds" },
-                      { label: "Sci-Fi",  tip: "Sci-fi airlock cycling â hiss of pressure equalizing, mechanical clank of bolts releasing, subsonic rumble" },
-                      { label: "Horror",  tip: "Distant children laughing that slowly distorts into dissonant screaming â unsettling, 6 seconds" },
-                      { label: "Crowd",   tip: "Large film festival audience applause swelling then dying down â warm, reverberant, enthusiastic" },
+                      { label: "Foley",   tip: "Leather dress shoes on polished marble — sharp heel clicks with slight reverb tail, medium pace, confident stride" },
+                      { label: "Weather", tip: "Deep thunderclap rolling across open mountains — cinematic, 3-second decay, heavy LFE rumble" },
+                      { label: "Vehicle", tip: "Car door slam in a concrete parking garage — sharp metallic resonance, reverb tail 1.5 seconds" },
+                      { label: "Sci-Fi",  tip: "Sci-fi airlock cycling — hiss of pressure equalizing, mechanical clank of bolts releasing, subsonic rumble" },
+                      { label: "Horror",  tip: "Distant children laughing that slowly distorts into dissonant screaming — unsettling, 6 seconds" },
+                      { label: "Crowd",   tip: "Large film festival audience applause swelling then dying down — warm, reverberant, enthusiastic" },
                     ].map((item, i) => (
                       <button key={i} onClick={() => setAiPrompt(item.tip)}
                         className="w-full text-left p-2.5 rounded-lg border text-xs transition-all hover:border-pink-500/30 hover:bg-pink-500/5 flex items-start gap-2.5"
@@ -646,7 +646,7 @@ import { useState, useRef } from "react";
               </div>
             </TabsContent>
 
-            {/* ââââââââââââââââââ UPLOAD ââââââââââââââââââ */}
+            {/* ══════════════════ UPLOAD ══════════════════ */}
             <TabsContent value="upload">
               <div className="max-w-lg mx-auto space-y-5">
                 <div className="rounded-2xl border-2 border-dashed flex flex-col items-center py-20 gap-5 cursor-pointer transition-all hover:border-pink-500/35"
@@ -658,8 +658,8 @@ import { useState, useRef } from "react";
                     {uploading ? <Loader2 className="h-8 w-8 text-pink-400 animate-spin text-amber-400" /> : <Upload className="h-8 w-8 text-pink-400" />}
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-semibold">{uploading ? "Uploadingâ¦" : "Drop audio file or click to browse"}</p>
-                    <p className="text-xs text-muted-foreground mt-1">WAV Â· MP3 Â· OGG Â· FLAC Â· AAC Â· M4A Â· Max 50 MB</p>
+                    <p className="text-sm font-semibold">{uploading ? "Uploading…" : "Drop audio file or click to browse"}</p>
+                    <p className="text-xs text-muted-foreground mt-1">WAV · MP3 · OGG · FLAC · AAC · M4A · Max 50 MB</p>
                   </div>
                   <Button size="sm" variant="outline" className="gap-2 text-xs border-border/40 hover:border-amber-500/50 hover:text-amber-400" disabled={uploading}><Upload className="h-3.5 w-3.5" />Browse Files</Button>
                 </div>
@@ -676,7 +676,7 @@ import { useState, useRef } from "react";
               </div>
             </TabsContent>
 
-            {/* ââââââââââââââââââ SPOTTING SHEET ââââââââââââââââââ */}
+            {/* ══════════════════ SPOTTING SHEET ══════════════════ */}
             <TabsContent value="spotting">
               <div className="space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-3">
@@ -718,7 +718,7 @@ import { useState, useRef } from "react";
                               <td className="px-3 py-2.5"><span className={`text-[9px] px-1.5 py-0.5 rounded-full ${cat?.bg} ${cat?.color}`}>{sfx.category}</span></td>
                               <td className="px-3 py-2.5"><div className="flex items-center gap-1"><div className="h-1.5 w-1.5 rounded-full" style={{ background: bus.dot }} /><span className={bus.color + " text-[10px]"}>{bus.id}</span></div></td>
                               <td className="px-3 py-2.5 font-mono text-muted-foreground">{sfx.startTime || 0}</td>
-                              <td className="px-3 py-2.5 font-mono text-muted-foreground">{sfx.duration || "â"}</td>
+                              <td className="px-3 py-2.5 font-mono text-muted-foreground">{sfx.duration || "—"}</td>
                               <td className="px-3 py-2.5 text-center">{sfx.loop ? <span className="text-blue-400 font-bold">Y</span> : <span className="text-muted-foreground/40">N</span>}</td>
                               <td className="px-3 py-2.5 font-mono text-muted-foreground">{Math.round((sfx.volume??0.8)*100)}</td>
                               <td className="px-3 py-2.5 font-mono text-muted-foreground">{mix.pan===0?"C":mix.pan<0?`L${Math.abs(Math.round(mix.pan*100))}`:`R${Math.round(mix.pan*100)}`}</td>
@@ -726,9 +726,9 @@ import { useState, useRef } from "react";
                               <td className="px-3 py-2.5 font-mono text-muted-foreground">{mix.fadeOut}s</td>
                               <td className="px-3 py-2.5 font-mono text-muted-foreground">{Math.round(mix.reverb*100)}%</td>
                               <td className="px-3 py-2.5 font-mono text-muted-foreground">{mix.pitchShift>0?"+":""}{mix.pitchShift}st</td>
-                              <td className="px-3 py-2.5 max-w-[180px] truncate text-muted-foreground">{mix.directorNote || "â"}</td>
+                              <td className="px-3 py-2.5 max-w-[180px] truncate text-muted-foreground">{mix.directorNote || "—"}</td>
                               <td className="px-3 py-2.5">
-                                <button onClick={() => { setExpandedId(sfx.id); setActiveTab("mixboard"); }} className="text-[9px] text-pink-400 hover:underline whitespace-nowrap">Edit â</button>
+                                <button onClick={() => { setExpandedId(sfx.id); setActiveTab("mixboard"); }} className="text-[9px] text-pink-400 hover:underline whitespace-nowrap">Edit →</button>
                               </td>
                             </tr>
                           );
