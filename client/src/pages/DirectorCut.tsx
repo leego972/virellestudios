@@ -1233,7 +1233,7 @@ export default function DirectorCut() {
         <Sheet open={mobileInspectorOpen} onOpenChange={setMobileInspectorOpen}>
           <SheetContent side="bottom" className="h-[70vh] bg-zinc-950 border-white/10 p-0">
             <SheetHeader className="px-4 py-3 border-b border-white/10">
-              <SheetTitle className="text-sm text-white flex items-center gap-2 gradient-text-gold">
+              <SheetTitle className="text-sm flex items-center gap-2 gradient-text-gold">
                 <Layers className="w-4 h-4 text-primary" />
                 {selectedScene?.title || "Scene Inspector"}
               </SheetTitle>

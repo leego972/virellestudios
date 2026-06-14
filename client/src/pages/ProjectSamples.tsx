@@ -592,7 +592,7 @@ export default function ProjectSamples() {
             <div className="w-20 h-20 rounded-2xl bg-amber-600/10 flex items-center justify-center mb-4">
               <Clapperboard className="w-10 h-10 text-amber-500/50" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2 gradient-text-gold">No samples yet</h3>
+            <h3 className="text-lg font-semibold mb-2 gradient-text-gold">No samples yet</h3>
             <p className="text-muted-foreground max-w-sm">
               {isAdmin
                 ? "Upload your first AI-generated scene to showcase Virelle Studios' output quality to users."

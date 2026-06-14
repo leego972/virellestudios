@@ -248,7 +248,7 @@ export default function CreditsEditor() {
         {(allCredits?.length || 0) > 0 && (
           <Card className="bg-black text-white border-0">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base text-center text-white/80 gradient-text-gold">Credits Preview</CardTitle>
+              <CardTitle className="text-base text-center /80 gradient-text-gold">Credits Preview</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-6 py-8">
               {openingCredits.length > 0 && (
