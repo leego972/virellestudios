@@ -3787,7 +3787,26 @@ Available fields you can update:
             const data = await resp.json();
             aiResponse = data.choices?.[0]?.message?.content || "";
           } else if (provider === "venice") {
-
+            const resp = await fetch("https://api.venice.ai/api/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "llama-3.3-70b",
+                messages: [{ role: "system", content: systemPrompt }, ...chatMessages],
+                max_tokens: 1000,
+                temperature: 0.7,
+              }),
+            });
+            if (!resp.ok) {
+              const errText = await resp.text();
+              throw new Error(`Venice API error ${resp.status}: ${errText}`);
+            }
+            const data = await resp.json();
+            aiResponse = data.choices?.[0]?.message?.content || "";
+          } else if (provider === "openai") {
             const resp = await fetch("https://api.openai.com/v1/chat/completions", {
               method: "POST",
               headers: {
