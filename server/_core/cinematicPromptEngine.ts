@@ -1,5 +1,5 @@
 /**
- * Cinematic Prompt Engine v2.0 — Hollywood Master Grade
+ * Cinematic Prompt Engine v2.0 â Hollywood Master Grade
  * 
  * Generates elite cinematographer-level image prompts with:
  * - Visual DNA (consistent style across all scenes)
@@ -12,12 +12,12 @@
  * - Tier-based quality scaling (Free/Pro/Industry)
  */
 
-// ─── Minor Protection Integration ───
+// âââ Minor Protection Integration âââ
 import { applyMinorProtection } from "./minorProtectionEngine";
-// ─── Cinema Industry Profiles ───
+// âââ Cinema Industry Profiles âââ
 import { CINEMA_INDUSTRY_PROFILES } from "../../shared/types";
 
-// ─── Hyper-Realism Constants ───
+// âââ Hyper-Realism Constants âââ
 // Defined before GENRE_PROFILES so they can be referenced in genre skinRendering fields
 // These are the gold standard realism directives injected into every scene prompt.
 const PHOTOREALISM_SKIN_AND_EYES = {
@@ -52,7 +52,7 @@ const PHOTOREALISM_SKIN_AND_EYES = {
   ].join("; "),
 };
 
-// ─── Genre Visual Profiles ───
+// âââ Genre Visual Profiles âââ
 // Each genre has a distinct visual language derived from real Hollywood productions
 
 export type GenreProfile = {
@@ -80,7 +80,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     skinRendering: `glistening with sweat, visible pores, cuts and bruises with realistic subsurface scattering, dirt-streaked, high-contrast skin tones. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
   },
   "Drama": {
-    colorPalette: "muted earth tones with selective warm highlights, desaturated backgrounds preserving natural skin tones, subtle color shifts reflecting emotional state — warm for hope, cool for despair",
+    colorPalette: "muted earth tones with selective warm highlights, desaturated backgrounds preserving natural skin tones, subtle color shifts reflecting emotional state â warm for hope, cool for despair",
     lightingStyle: "naturalistic soft lighting, window light with gentle shadows creating Rembrandt triangles on faces, motivated practical lighting from lamps and candles, bounce light filling shadows just enough to see detail",
     lensPreference: "50mm standard lens for naturalism, 85mm f/1.4 for intimate close-ups with creamy bokeh, 35mm for environmental portraits, steady tripod with subtle breathing movement",
     compositionNotes: "rule of thirds with subject in negative space suggesting isolation or contemplation, symmetrical frames for power dynamics, shallow depth of field isolating subjects from world, headroom reflecting emotional state",
@@ -88,7 +88,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "intimate, contemplative, raw, emotional, grounded, achingly human",
     referenceFilms: "Moonlight (James Laxton), Manchester by the Sea (Jody Lee Lipes), Nomadland (Joshua James Richards)",
     cameraMovement: "slow deliberate dolly moves, locked-off static shots for contemplation, gentle handheld for emotional vulnerability, slow push-in during revelations",
-    skinRendering: `natural imperfections visible — freckles, wrinkles, age spots, realistic subsurface scattering showing blood beneath skin, tear tracks, natural makeup or no makeup look. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
+    skinRendering: `natural imperfections visible â freckles, wrinkles, age spots, realistic subsurface scattering showing blood beneath skin, tear tracks, natural makeup or no makeup look. ${PHOTOREALISM_SKIN_AND_EYES.skin}. Eyes: ${PHOTOREALISM_SKIN_AND_EYES.eyes}. Hair: ${PHOTOREALISM_SKIN_AND_EYES.hair}. Face: ${PHOTOREALISM_SKIN_AND_EYES.face}`,
   },
   "Comedy": {
     colorPalette: "bright warm palette, slightly elevated saturation, cheerful color temperature around 5600K, pastel accents, clean whites",
@@ -105,7 +105,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     colorPalette: "desaturated cold blue-green tones, sickly yellows in practicals, deep crushed blacks with detail lost in shadows, selective red accents for blood and danger, greenish skin undertones",
     lightingStyle: "extreme low-key lighting with 8:1+ contrast ratio, single harsh source creating deep impenetrable shadows, underlighting for menace, flickering practicals suggesting instability, motivated moonlight through windows",
     lensPreference: "wide-angle 18-24mm for spatial distortion and unease, extreme close-ups on 100mm macro showing skin detail, slow deliberate camera movements building dread, occasional sudden snap zooms for jump scares",
-    compositionNotes: "negative space creating dread — what's hiding in the dark, subjects off-center with empty threatening space behind them, foreground obstruction creating voyeuristic feel, deep staging with threats lurking in background soft focus",
+    compositionNotes: "negative space creating dread â what's hiding in the dark, subjects off-center with empty threatening space behind them, foreground obstruction creating voyeuristic feel, deep staging with threats lurking in background soft focus",
     textureNotes: "heavy film grain simulating high-ISO fear, slightly soft focus creating dreamlike unease, chromatic aberration at edges, dark heavy vignette, wet glistening surfaces",
     moodKeywords: "dread, claustrophobic, unsettling, ominous, visceral terror, suffocating",
     referenceFilms: "Hereditary (Pawel Pogorzelski), The Shining (John Alcott), It Follows (Mike Gioulakis)",
@@ -143,7 +143,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "paranoid, tense, suffocating, suspenseful, edge-of-seat, psychologically oppressive",
     referenceFilms: "Zodiac (Harris Savides), Sicario (Roger Deakins), Prisoners (Roger Deakins), Se7en (Darius Khondji)",
     cameraMovement: "slow creeping dolly, static shots that refuse to cut building tension, handheld for chase sequences, overhead surveillance-style shots",
-    skinRendering: "stressed skin with visible tension — furrowed brows, clenched jaws, sweat on temples, bags under eyes, skin appearing slightly sallow under fluorescent light",
+    skinRendering: "stressed skin with visible tension â furrowed brows, clenched jaws, sweat on temples, bags under eyes, skin appearing slightly sallow under fluorescent light",
   },
   "Fantasy": {
     colorPalette: "rich saturated jewel tones, deep emeralds and golds, warm amber firelight, magical purple and blue accents, iridescent highlights on magical elements",
@@ -154,7 +154,7 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     moodKeywords: "epic, magical, wondrous, mythic, enchanting, awe-inspiring",
     referenceFilms: "Lord of the Rings (Andrew Lesnie), Pan's Labyrinth (Guillermo Navarro), Harry Potter and the Prisoner of Azkaban (Michael Seresin)",
     cameraMovement: "sweeping crane shots over landscapes, slow push-through doorways into new worlds, helicopter/drone wide shots, gentle handheld in intimate character moments",
-    skinRendering: "varied by race/species — elven skin luminous and flawless, dwarven skin weathered and ruddy, human skin natural with dirt and wear from travel, magical beings with subtle inner glow",
+    skinRendering: "varied by race/species â elven skin luminous and flawless, dwarven skin weathered and ruddy, human skin natural with dirt and wear from travel, magical beings with subtle inner glow",
   },
   "Western": {
     colorPalette: "dusty warm amber and burnt sienna, bleached highlights from harsh sun, deep shadow contrast, sun-baked earth tones, leather browns and gunmetal greys",
@@ -223,143 +223,143 @@ const GENRE_PROFILES: Record<string, GenreProfile> = {
     skinRendering: "mud-caked, blood-splattered, exhausted faces with thousand-yard stare, visible injuries, grime in every pore, sunburned and weathered",
   },
   "Crime": {
-    colorPalette: "urban night palette — sodium vapor orange, neon blues and reds, deep shadows, desaturated daytime with warm criminal underworld interiors",
+    colorPalette: "urban night palette â sodium vapor orange, neon blues and reds, deep shadows, desaturated daytime with warm criminal underworld interiors",
     lightingStyle: "motivated practical lighting from neon signs and car headlights, harsh interrogation overhead light, dim bar and club lighting, streetlight pools in darkness",
     lensPreference: "50mm for naturalistic crime drama, telephoto for surveillance-style shots, wide-angle for cramped interiors, handheld for tension and chase sequences",
     compositionNotes: "characters framed by urban geometry, reflections in car windows and puddles, over-shoulder surveillance framing, tight close-ups during confrontations, wide shots establishing criminal territory",
     textureNotes: "gritty urban texture, rain-slicked streets, neon reflections, cigarette smoke, moderate grain, slightly underexposed for mood",
     moodKeywords: "gritty, tense, morally complex, dangerous, atmospheric, street-level",
-    referenceFilms: "Heat (Dante Spinotti), The Godfather (Gordon Willis), City of God (César Charlone), Drive (Newton Thomas Sigel)",
+    referenceFilms: "Heat (Dante Spinotti), The Godfather (Gordon Willis), City of God (CÃ©sar Charlone), Drive (Newton Thomas Sigel)",
     cameraMovement: "smooth dolly for heist sequences, handheld for chases, slow push-in during threats, static surveillance-style wide shots",
     skinRendering: "urban skin tones under mixed artificial lighting, five o'clock shadow detail, scars and tattoos visible, neon light reflections on skin, sweat under pressure",
   },
   "Superhero": {
-    colorPalette: "bold primary color identity per hero — Superman's red/blue/gold, Batman's desaturated near-monochromatic blacks and deep greys, Spider-Man's vibrant street-level reds; action sequences push contrast and saturation, civilian scenes are warmer and grounded, villain sequences shift to sickly greens or oppressive purples",
+    colorPalette: "bold primary color identity per hero â Superman's red/blue/gold, Batman's desaturated near-monochromatic blacks and deep greys, Spider-Man's vibrant street-level reds; action sequences push contrast and saturation, civilian scenes are warmer and grounded, villain sequences shift to sickly greens or oppressive purples",
     lightingStyle: "god-ray volumetric light for power manifestation, hard directional hero-reveal lighting from below or behind, motivated practical light sources in city environments, neon urban light mixing warm and cold, dramatic rim lighting separating hero from background during standoffs",
     lensPreference: "25-65mm Leica Summicron-C primes for character drama, spherical for civilian/emotional scenes, anamorphic for epic confrontations; graduated to ultra-wide 14mm for environmental scale and overhead shots revealing city scope",
     compositionNotes: "hero framed small against massive environments to emphasize scale, low angle upward shots creating godlike stature, dynamic Dutch angles during power surges and villainous moments, overhead shots revealing city geography, split-diopter for hero/villain shared frame focus",
-    textureNotes: "highly detailed costume material — fabric weave, battle damage, sweat and wear visible; cityscape detail at macro level for environmental texture, metal surfaces reflecting sky and neon, concrete and glass weathering and grime",
+    textureNotes: "highly detailed costume material â fabric weave, battle damage, sweat and wear visible; cityscape detail at macro level for environmental texture, metal surfaces reflecting sky and neon, concrete and glass weathering and grime",
     moodKeywords: "epic, heroic, hopeful, world-at-stake, power, sacrifice, identity, responsibility, spectacle",
     referenceFilms: "Roger Deakins (No Time to Die) for grounded hero sequences, Emmanuel Lubezki for fluid hero action, Newton Thomas Sigel for X-Men visual language, Bill Pope for The Matrix stylization",
     cameraMovement: "sweeping camera arcs around heroes in power stances, rapid zoom-out on reveal of scale, smooth tracking through aerial city sequences, dynamic push-in on villainous reveal, whip cuts during combat",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; costume and suit materials rendered with material-specific light response — fabric absorbs, metal reflects; exertion visible in skin flushing and sweat under physical duress`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; costume and suit materials rendered with material-specific light response â fabric absorbs, metal reflects; exertion visible in skin flushing and sweat under physical duress`,
   },
   "Biopic": {
-    colorPalette: "era-accurate desaturation — 1920s-1940s sequences with warm sepia near-monochrome, 1960s-1970s with Kodachrome punchy oranges and cyan skies, 1980s-1990s with VHS-warm saturation, contemporary with clean naturalistic color; archival footage integration with matched grain and color",
-    lightingStyle: "historically motivated practical light sources — gaslight warmth in pre-electric eras, fluorescent greenish tint of 1970s institutional settings, golden California late afternoon light for period Hollywood sequences; documentary-influenced natural available light for intimate scenes",
-    lensPreference: "vintage anamorphic lenses with era-appropriate optical character — early Panavision for mid-century stories, soft period-appropriate optical aberrations, 50mm equivalent for intimacy in performance scenes",
+    colorPalette: "era-accurate desaturation â 1920s-1940s sequences with warm sepia near-monochrome, 1960s-1970s with Kodachrome punchy oranges and cyan skies, 1980s-1990s with VHS-warm saturation, contemporary with clean naturalistic color; archival footage integration with matched grain and color",
+    lightingStyle: "historically motivated practical light sources â gaslight warmth in pre-electric eras, fluorescent greenish tint of 1970s institutional settings, golden California late afternoon light for period Hollywood sequences; documentary-influenced natural available light for intimate scenes",
+    lensPreference: "vintage anamorphic lenses with era-appropriate optical character â early Panavision for mid-century stories, soft period-appropriate optical aberrations, 50mm equivalent for intimacy in performance scenes",
     compositionNotes: "archival photo composition references for period accuracy, documentary observational framing for key real events, tight performance close-ups to capture actor transformation, environmental wide shots establishing authentic period location",
-    textureNotes: "grain level matched to the era being depicted — heavy grain for 1960s flashbacks, near-clean for contemporary, period-accurate costume and set texture with visible age and wear patina",
+    textureNotes: "grain level matched to the era being depicted â heavy grain for 1960s flashbacks, near-clean for contemporary, period-accurate costume and set texture with visible age and wear patina",
     moodKeywords: "authentic, transformative, historical weight, intimate, revelatory, human, legacy, truth, complexity",
-    referenceFilms: "Robert Elswit (There Will Be Blood period naturalism), Janusz Kamiński (Lincoln historical drama), Roger Deakins (True Grit period texture), Emmanuel Lubezki (The Revenant immersive naturalism)",
+    referenceFilms: "Robert Elswit (There Will Be Blood period naturalism), Janusz KamiÅski (Lincoln historical drama), Roger Deakins (True Grit period texture), Emmanuel Lubezki (The Revenant immersive naturalism)",
     cameraMovement: "observational documentary stillness for key historical moments, slow intimate push-ins during revelation scenes, handheld for raw emotional sequences, locked-off for formal institutional settings",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; aging progression rendered with period-appropriate makeup — visible time on faces; period skin — sun-weathered farmers, aristocratic pallor, stage makeup visible under light; actor physical transformation fully committed`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; aging progression rendered with period-appropriate makeup â visible time on faces; period skin â sun-weathered farmers, aristocratic pallor, stage makeup visible under light; actor physical transformation fully committed`,
   },
   "Historical Epic": {
-    colorPalette: "ancient world palette — terracotta, ochre, burnt sienna, desert gold, Tyrian purple for royalty, verdigris copper, lapis lazuli sky; battle sequences desaturate toward ash and iron, palace scenes warm with oil lamp amber, night sequences blue-black with fire orange, Mediterranean bright-white marble",
-    lightingStyle: "extreme natural light — blazing desert sun creating hard-edged shadows, torchlight flickering on stone walls, golden hour battle scenes, vast fire illumination for night sieges, chamber interiors with shafts of light through narrow windows, underwater or tent diffusion for softer moments",
-    lensPreference: "ultra-wide anamorphic — Panavision Ultra Panatar for scope and grandiosity, 14-18mm for environment domination, 35mm for battle intimacy; aspect ratio emphasized at 2.76:1 for full epic scope",
+    colorPalette: "ancient world palette â terracotta, ochre, burnt sienna, desert gold, Tyrian purple for royalty, verdigris copper, lapis lazuli sky; battle sequences desaturate toward ash and iron, palace scenes warm with oil lamp amber, night sequences blue-black with fire orange, Mediterranean bright-white marble",
+    lightingStyle: "extreme natural light â blazing desert sun creating hard-edged shadows, torchlight flickering on stone walls, golden hour battle scenes, vast fire illumination for night sieges, chamber interiors with shafts of light through narrow windows, underwater or tent diffusion for softer moments",
+    lensPreference: "ultra-wide anamorphic â Panavision Ultra Panatar for scope and grandiosity, 14-18mm for environment domination, 35mm for battle intimacy; aspect ratio emphasized at 2.76:1 for full epic scope",
     compositionNotes: "armies as visual texture in wide shots showing numerical scale, architectural framing through monumental columns and arches, low angle shots making characters monumental against sky, overhead battle geometry showing tactical formations, long lenses compressing massed troops",
-    textureNotes: "hand-crafted texture in all materials — hammered bronze, woven linen, rough wool, worked leather, chipped stone, mosaic tile detail; sweat and dust coating every surface, blood on stone, cloth worn by months of campaign",
+    textureNotes: "hand-crafted texture in all materials â hammered bronze, woven linen, rough wool, worked leather, chipped stone, mosaic tile detail; sweat and dust coating every surface, blood on stone, cloth worn by months of campaign",
     moodKeywords: "grandeur, fate, conquest, sacrifice, civilization, power, legacy, honor, mortality, hubris",
     referenceFilms: "Caleb Deschanel (The Passion of the Christ lighting extremity), John Toll (Braveheart battle scale), Aris Stavrou (Troy) anamorphic scope, Peter Suschitzky (Cronos historical texture)",
     cameraMovement: "soaring crane shots revealing army and landscape scale, slow tracking through monumental architecture, handheld chaos in battle close combat, steady stately camera for throne room scenes, epic dolly moves through crowded markets",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; ancient world skin — sun-baked, wind-chapped, scarred by campaign; olive Mediterranean complexions, Sub-Saharan African skin in African empires, Northern European fair skin reddened by weather; sweat, ash, blood, and dust on skin as authentic period markers`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; ancient world skin â sun-baked, wind-chapped, scarred by campaign; olive Mediterranean complexions, Sub-Saharan African skin in African empires, Northern European fair skin reddened by weather; sweat, ash, blood, and dust on skin as authentic period markers`,
   },
   "Psychological Thriller": {
-    colorPalette: "reality-destabilizing palette shifts — protagonist's safe world in warm yellows and ambers, threat zones bleeding to sickly greens and institutional greys; paranoid sequences desaturate to near-monochrome, hallucinatory moments oversaturate to unnatural intensity, the world increasingly wrong in color as sanity deteriorates",
-    lightingStyle: "wrong light — shadows falling in impossible directions, pools of light with no visible source, faces half-lit creating Rorschach ambiguity, overhead cold fluorescent anxiety, warm light that casts sinister instead of comforting shadows, windows that reveal no outside world",
+    colorPalette: "reality-destabilizing palette shifts â protagonist's safe world in warm yellows and ambers, threat zones bleeding to sickly greens and institutional greys; paranoid sequences desaturate to near-monochrome, hallucinatory moments oversaturate to unnatural intensity, the world increasingly wrong in color as sanity deteriorates",
+    lightingStyle: "wrong light â shadows falling in impossible directions, pools of light with no visible source, faces half-lit creating Rorschach ambiguity, overhead cold fluorescent anxiety, warm light that casts sinister instead of comforting shadows, windows that reveal no outside world",
     lensPreference: "ultra-wide distorting lenses for paranoid subjective POV, 28mm creating spatial anxiety through mild distortion, long telephoto for isolation and surveillance feeling, lens focus shifts used as psychological state markers",
-    compositionNotes: "off-center anxious compositions with protagonist pushed to frame edge by negative space, mirrors and reflections creating doubt about identity, architectural geometry imprisoning characters within frame, subjective vs. objective framing ambiguity — we no longer know what's real",
-    textureNotes: "surface detail that creates unease — carpet patterns that seem to move, wallpaper textures too organic, skin too smooth or too porous depending on paranoid state, institutional surfaces with years of invisible human contact",
+    compositionNotes: "off-center anxious compositions with protagonist pushed to frame edge by negative space, mirrors and reflections creating doubt about identity, architectural geometry imprisoning characters within frame, subjective vs. objective framing ambiguity â we no longer know what's real",
+    textureNotes: "surface detail that creates unease â carpet patterns that seem to move, wallpaper textures too organic, skin too smooth or too porous depending on paranoid state, institutional surfaces with years of invisible human contact",
     moodKeywords: "paranoia, identity fracture, unreliable reality, dread, isolation, gaslighting, obsession, revelation, manipulation",
     referenceFilms: "Roger Deakins (A Beautiful Mind visual schizophrenia), Matthew Libatique (Black Swan psychological dissolution), Seamus McGarvey (Atonement subjective memory), Jeff Cronenweth (Fight Club visual instability)",
     cameraMovement: "imperceptibly slow push-ins that create growing unease, sudden violent handheld breaks from stillness, tracking shots that lose the subject, camera moves that don't match the scene logic, POV that reveals the impossible",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; psychological state expressed through skin — pale and hollow in paranoid sequences, flushed and sweating in revelation moments, eyes that shift between trust and terror; dark circles, tension in the jaw, the body's truth betraying the mind's deception`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; psychological state expressed through skin â pale and hollow in paranoid sequences, flushed and sweating in revelation moments, eyes that shift between trust and terror; dark circles, tension in the jaw, the body's truth betraying the mind's deception`,
   },
   "Sports Drama": {
-    colorPalette: "arena and field saturated vivid — grass green, court orange, pool blue, track red; crowd as color mass — team colors, flags, scarves; locker room desaturated institutional cool, contrast with the saturated brilliance of competition; underdog sequences warmer and grainier, champion sequences clean and vivid",
+    colorPalette: "arena and field saturated vivid â grass green, court orange, pool blue, track red; crowd as color mass â team colors, flags, scarves; locker room desaturated institutional cool, contrast with the saturated brilliance of competition; underdog sequences warmer and grainier, champion sequences clean and vivid",
     lightingStyle: "stadium overcast diffusion for outdoor sports, arena hot spot overhead tungsten for indoor, locker room practical fluorescent, training montage golden afternoon light, slow-motion impact shots with strobe-like freeze-frame quality, underwater pool sequences with caustic light refraction",
     lensPreference: "long telephoto for isolating athlete from crowd, ultra-wide for team formations and stadium scale, 35mm for locker room intimacy, high-speed phantom for slow-motion impact moments, handheld for training and personal struggle",
-    compositionNotes: "athlete and crowd as composition elements — hero isolated in sea of opposition, close framing on face during key moments, sport-specific geometry (field lines, lane markers, court boundaries) as visual structure, crowd as character with own emotional arc",
-    textureNotes: "sweat, mud, blood, and physical effort visible on every surface — grass-stained uniforms, chalk dust on hands, pool water droplets in suspension, court rubber smell translatable through visual texture, equipment wear and personal marking",
+    compositionNotes: "athlete and crowd as composition elements â hero isolated in sea of opposition, close framing on face during key moments, sport-specific geometry (field lines, lane markers, court boundaries) as visual structure, crowd as character with own emotional arc",
+    textureNotes: "sweat, mud, blood, and physical effort visible on every surface â grass-stained uniforms, chalk dust on hands, pool water droplets in suspension, court rubber smell translatable through visual texture, equipment wear and personal marking",
     moodKeywords: "perseverance, defeat, triumph, teamwork, sacrifice, identity, excellence, doubt, heart, legacy, comeback",
-    referenceFilms: "Emmanuel Lubezki (Ali boxer's movement poetry), Tom Stern (Million Dollar Baby fight intimacy), Janusz Kamiński (Saving Private Ryan physicality applied to sport), Matthew Libatique (Requiem for a Dream intensity translated to training)",
+    referenceFilms: "Emmanuel Lubezki (Ali boxer's movement poetry), Tom Stern (Million Dollar Baby fight intimacy), Janusz KamiÅski (Saving Private Ryan physicality applied to sport), Matthew Libatique (Requiem for a Dream intensity translated to training)",
     cameraMovement: "Phantom ultra-slow-motion for key athletic moments at 1000fps, handheld running alongside athlete, static crowd wide for collective moments, rapid cutting during competition sequences, slow push-in for individual emotional reckoning",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; athletic skin — muscle definition visible under exertion, capillaries raised during peak effort, sweat as light-reactive surface element, sport-specific physicality — boxer's damaged hands, swimmer's chlorine-bleached skin, runner's road-worn feet`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; athletic skin â muscle definition visible under exertion, capillaries raised during peak effort, sweat as light-reactive surface element, sport-specific physicality â boxer's damaged hands, swimmer's chlorine-bleached skin, runner's road-worn feet`,
   },
   "Heist": {
-    colorPalette: "sleek jewel-tone cool — sapphire blue, emerald green, steel grey, champagne gold, onyx black; planning sequences monochromatic architectural blue-grey, execution sequences warm amber and red from security systems, safe room sequence green-tinted from night-vision, escape sequences high-contrast black and gold",
-    lightingStyle: "precision motivated lighting — security system red light, vault interior cold blue-white, penthouse warm amber, getaway vehicle headlight hard shadow, underground tunnel total darkness broken by pinpoint practical light, laser grid visualization in blue-violet",
+    colorPalette: "sleek jewel-tone cool â sapphire blue, emerald green, steel grey, champagne gold, onyx black; planning sequences monochromatic architectural blue-grey, execution sequences warm amber and red from security systems, safe room sequence green-tinted from night-vision, escape sequences high-contrast black and gold",
+    lightingStyle: "precision motivated lighting â security system red light, vault interior cold blue-white, penthouse warm amber, getaway vehicle headlight hard shadow, underground tunnel total darkness broken by pinpoint practical light, laser grid visualization in blue-violet",
     lensPreference: "35-50mm clean Zeiss Master Prime for elegance and precision, overhead surveillance shot angles, tight on mechanisms and detail inserts, split-screen possible during parallel planning sequences",
-    compositionNotes: "architectural geometry as obstacle course — guard positions, camera angles, vault door, laser patterns all part of visual composition; precision visible in framing exactness; heist team as precision ensemble — each person compositionally distinct by role",
-    textureNotes: "expensive material texture — safe dial tactile steel, tuxedo lapel weave, marble floor reflection, safe door seam precision; imperfection only as dramatic foreshadowing — the one scuff on the guard's shoe that reveals the flaw in the plan",
+    compositionNotes: "architectural geometry as obstacle course â guard positions, camera angles, vault door, laser patterns all part of visual composition; precision visible in framing exactness; heist team as precision ensemble â each person compositionally distinct by role",
+    textureNotes: "expensive material texture â safe dial tactile steel, tuxedo lapel weave, marble floor reflection, safe door seam precision; imperfection only as dramatic foreshadowing â the one scuff on the guard's shoe that reveals the flaw in the plan",
     moodKeywords: "precision, elegance, tension, wit, camaraderie, stakes, consequence, surprise, style, satisfaction",
-    referenceFilms: "Steven Soderbergh visual economy (Ocean's Eleven), Roger Deakins (No Time to Die precision), Dariusz Wolski (The Italian Job kinetic elegance), Benoît Debie (Spring Breakers neon cool)",
+    referenceFilms: "Steven Soderbergh visual economy (Ocean's Eleven), Roger Deakins (No Time to Die precision), Dariusz Wolski (The Italian Job kinetic elegance), BenoÃ®t Debie (Spring Breakers neon cool)",
     cameraMovement: "surgical precision static shots for planning scenes, smooth tracking through security environments, freeze-frame on critical obstacle, overhead mapping shots of the target location, kinetic handheld during the thing-going-wrong moment",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; controlled professional faces — minimal emotion showing, concentration visible in jaw tension and eye focus; sweat only when the plan breaks down; each team member's skin tells their backstory — the safe-cracker's sensitive fingertips, the hacker's screen-pale complexion`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; controlled professional faces â minimal emotion showing, concentration visible in jaw tension and eye focus; sweat only when the plan breaks down; each team member's skin tells their backstory â the safe-cracker's sensitive fingertips, the hacker's screen-pale complexion`,
   },
   "Martial Arts": {
-    colorPalette: "East Asian palette influences — red and gold for honor sequences, white and black for monastery/zen training, saturated silk fabric colors in formal challenges, desaturated urban grey for modern fights, natural bamboo green for forest battles, blood red as punctuation against otherwise controlled palette",
+    colorPalette: "East Asian palette influences â red and gold for honor sequences, white and black for monastery/zen training, saturated silk fabric colors in formal challenges, desaturated urban grey for modern fights, natural bamboo green for forest battles, blood red as punctuation against otherwise controlled palette",
     lightingStyle: "dramatic raked sidelight revealing muscle definition and movement planes, natural daylight for outdoor training, lantern and torch motivated for traditional settings, skylight through dojo openings, high-contrast back-rim lighting for silhouette fight choreography, slow-motion impact lighting",
     lensPreference: "ultra-wide 14-21mm for sweeping kick arcs and full-body forms, tight 85mm for facial determination during combat, telephoto for distant master observation shots, high-speed phantom for technique revelation at reduced frame rate",
-    compositionNotes: "full body always prioritized in technique shots — feet, hands, stance all visible, no cutting off at the shoulder; master and student in shared frame showing size/power asymmetry; natural environment (bamboo, water, cliff face) as combat arena geometry",
-    textureNotes: "fabric in motion — silk robes catching and releasing air, cotton pants absorbing sweat, bare feet on different surfaces; wooden training equipment grain, stone floor roughness, bamboo elasticity; wounds accumulating as fight progresses",
+    compositionNotes: "full body always prioritized in technique shots â feet, hands, stance all visible, no cutting off at the shoulder; master and student in shared frame showing size/power asymmetry; natural environment (bamboo, water, cliff face) as combat arena geometry",
+    textureNotes: "fabric in motion â silk robes catching and releasing air, cotton pants absorbing sweat, bare feet on different surfaces; wooden training equipment grain, stone floor roughness, bamboo elasticity; wounds accumulating as fight progresses",
     moodKeywords: "discipline, mastery, honor, sacrifice, philosophy, power, speed, precision, respect, redemption, heritage",
-    referenceFilms: "Peter Pau (Crouching Tiger Hidden Dragon — wire-work cinematography elegance), Christopher Doyle (Wong Kar-wai movement poetry), Tony Cheung (The Raid — brutal honesty), Peter Ngor (Ip Man — classical grace)",
+    referenceFilms: "Peter Pau (Crouching Tiger Hidden Dragon â wire-work cinematography elegance), Christopher Doyle (Wong Kar-wai movement poetry), Tony Cheung (The Raid â brutal honesty), Peter Ngor (Ip Man â classical grace)",
     cameraMovement: "wide locked-off frames for full-technique appreciation, sweeping crane for aerial kick moments, extreme slow-motion Phantom for technique breakdown, tracking shot running alongside chase, whip cut matching strike impact timing",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; martial artist skin — callused hands visible at macro, muscle striations under exertion, sweat dynamics changing from cool control to heated desperation as fight intensifies; wounds accumulate authentically — bruising develops through scene, blood dries and darkens`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; martial artist skin â callused hands visible at macro, muscle striations under exertion, sweat dynamics changing from cool control to heated desperation as fight intensifies; wounds accumulate authentically â bruising develops through scene, blood dries and darkens`,
   },
   "K-Drama": {
-    colorPalette: "high-key luminous warmth for romantic sequences — soft peach, rose gold, cherry blossom pink; corporate drama palette in cool steel blue and charcoal grey; revenge arcs shift to muted earth tones and deep navy; seasonal color — spring pink sakura, summer green garden, autumn amber ginkgo, winter blue snow",
+    colorPalette: "high-key luminous warmth for romantic sequences â soft peach, rose gold, cherry blossom pink; corporate drama palette in cool steel blue and charcoal grey; revenge arcs shift to muted earth tones and deep navy; seasonal color â spring pink sakura, summer green garden, autumn amber ginkgo, winter blue snow",
     lightingStyle: "soft beauty lighting on all characters with wraparound key light eliminating harsh shadows, rim lighting creating ethereal glow on protagonists, romantic sequences with golden hour warmth or fairy-light practical, indoor corporate sequences fluorescent-cool, emotional confrontations in available window light",
     lensPreference: "portrait-friendly 85mm anamorphic for faces with compressed background bokeh, 50mm for two-shot romantic frames, long 135mm for emotional isolation close-ups, steady smooth tracking for corridor walks and dramatic exits",
-    compositionNotes: "two-shot symmetry for romantic leads, space between characters as visual measure of emotional distance, rain as composition element — umbrella silhouettes, wet street reflections, window rain droplets in foreground focus, meaningful background detail (the restaurant they first met, the bench, the window)",
-    textureNotes: "flawless Korean skincare aesthetic — dewy luminous skin, lip moisture visible, hair with volume and sheen; fabric quality visible — cashmere, silk, tailored suits; food texture and steam as cultural warmth element",
+    compositionNotes: "two-shot symmetry for romantic leads, space between characters as visual measure of emotional distance, rain as composition element â umbrella silhouettes, wet street reflections, window rain droplets in foreground focus, meaningful background detail (the restaurant they first met, the bench, the window)",
+    textureNotes: "flawless Korean skincare aesthetic â dewy luminous skin, lip moisture visible, hair with volume and sheen; fabric quality visible â cashmere, silk, tailored suits; food texture and steam as cultural warmth element",
     moodKeywords: "longing, misunderstanding, sacrifice, reunion, tenderness, duty, conflict, destiny, warmth, tears, hope",
     referenceFilms: "Lee Sang-il (Flower Boy visual delicacy), Kim Byung-joo (My Love from the Star luminous romance), Choi Sung-ho (Goblin supernatural warmth), Park Sang-hoon (Crash Landing on You location-driven beauty)",
     cameraMovement: "slow push-in on near-kiss moments held on the edge, smooth tracking through meaningful locations, crane for reunion scene scale, handheld whisper for secret shared moments, slow-motion for impact emotional beats",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; Korean beauty standard rendering — glass skin appearance with genuine micro-texture visible, dewy but not oily, natural cushion of youth on all protagonists; tear tracks authentically rendered — eyes redden before tears fall, cheeks flush with emotion`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; Korean beauty standard rendering â glass skin appearance with genuine micro-texture visible, dewy but not oily, natural cushion of youth on all protagonists; tear tracks authentically rendered â eyes redden before tears fall, cheeks flush with emotion`,
   },
   "Nollywood": {
-    colorPalette: "vivid West African palette — rich kente cloth golds and forest greens, deep Ankara print colors, lush Lagos tropical green, ocher and terracotta earth, bold market reds and yellows, ceremonial white and royal blue; supernatural sequences push to oversaturated otherworldly, family scenes warm amber domestic",
-    lightingStyle: "tropical sun as primary character — strong overhead equatorial light creating deep shadows, golden hour extended in Lagos latitude, indoor scenes with motivated practical lamp warmth, market daylight with canopy-dappled light, ancestral/spiritual sequences with cool blue-violet contrast against warm natural",
+    colorPalette: "vivid West African palette â rich kente cloth golds and forest greens, deep Ankara print colors, lush Lagos tropical green, ocher and terracotta earth, bold market reds and yellows, ceremonial white and royal blue; supernatural sequences push to oversaturated otherworldly, family scenes warm amber domestic",
+    lightingStyle: "tropical sun as primary character â strong overhead equatorial light creating deep shadows, golden hour extended in Lagos latitude, indoor scenes with motivated practical lamp warmth, market daylight with canopy-dappled light, ancestral/spiritual sequences with cool blue-violet contrast against warm natural",
     lensPreference: "35-50mm for energetic storytelling, handheld for market and street sequences, smooth gimbal for emotional character moments, wider lenses embracing the energy of Nigerian street life",
-    compositionNotes: "fabric and clothing as character expression — Ankara, Aso-oke, Agbada compositions; family compound architecture as story geography; market crowd as living background texture; Lagos cityscape and village environment equally important as character",
-    textureNotes: "textile richness — Aso-oke weave detail, adire fabric indigo patterns, traditional beadwork macro; food preparation — pounded yam, jollof rice steam, palm oil color; tropical plant texture; vehicle markets, city commerce texture",
+    compositionNotes: "fabric and clothing as character expression â Ankara, Aso-oke, Agbada compositions; family compound architecture as story geography; market crowd as living background texture; Lagos cityscape and village environment equally important as character",
+    textureNotes: "textile richness â Aso-oke weave detail, adire fabric indigo patterns, traditional beadwork macro; food preparation â pounded yam, jollof rice steam, palm oil color; tropical plant texture; vehicle markets, city commerce texture",
     moodKeywords: "family, ambition, tradition, modernity, spirituality, community, humor, resilience, identity, Lagos energy",
     referenceFilms: "Yemi Morafa (Lionheart Lagos vibrancy), CJ Obasi (Mami Wata genre innovation), Kenneth Gyang (Confusion Na Wa urban naturalism), Kunle Afolabi (The Wedding Party commercial polish)",
     cameraMovement: "energetic handheld reflecting Afrobeat rhythm of Lagos life, smooth stabilized for emotional drama, wide establishing shots of Lagos skyline and traffic, slow push-in for confrontational family scenes, crane for compound and crowd scale",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; West African skin tone spectrum — deep ebony, warm umber, golden brown, all rendered with full subsurface scattering appropriate to melanin-rich skin; skin luminosity in tropical heat; traditional body marking (uli, tattoo, scarification) visible at close range; natural hair textures from tight coils to locs to braids with authentic strand detail`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; West African skin tone spectrum â deep ebony, warm umber, golden brown, all rendered with full subsurface scattering appropriate to melanin-rich skin; skin luminosity in tropical heat; traditional body marking (uli, tattoo, scarification) visible at close range; natural hair textures from tight coils to locs to braids with authentic strand detail`,
   },
   "Bollywood": {
-    colorPalette: "exuberant Indian palette — Holi powder rainbow, marigold garland saffron and gold, sari silk jewel tones (emerald, ruby, sapphire), rangoli geometric colors on dark ground, temple gold and vermilion, monsoon grey then explosion of relief color, industrial grey city against old Delhi ochre",
-    lightingStyle: "dramatic lighting that embraces fantasy over naturalism — lavish chandeliers, candelabra rim lighting for romantic sequences, festival lighting mixing warm lamp gold with cool night blue, song sequence lighting shifts freely to serve emotional palette, golden Rajasthani afternoon, monsoon rain diffused overcast",
-    lensPreference: "wide lenses embracing architectural spectacle — palace interiors, outdoor festival grounds, cityscape; 50mm for song sequence intimacy, long lenses for romantic longing looks across distance; song sequences may use multiple focal lengths in rapid succession",
-    compositionNotes: "choreographed group formations as geometric visual art, lead couple centered and elevated compositionally, opulent architectural framing — arches, jali screens, staircase grandeur, natural landscape (Himalayan snow, Rajasthan desert, Kerala backwater) as backdrop canvas for song sequences",
-    textureNotes: "fabric spectacle — Banarasi silk texture, mirror-work embroidery, beaded dupattas catching light, choreography-driven fabric movement; food texture in family sequences; jewellery detail — kundan, meenakari, jadau; environmental texture from urban Mumbai to rural Punjab",
+    colorPalette: "exuberant Indian palette â Holi powder rainbow, marigold garland saffron and gold, sari silk jewel tones (emerald, ruby, sapphire), rangoli geometric colors on dark ground, temple gold and vermilion, monsoon grey then explosion of relief color, industrial grey city against old Delhi ochre",
+    lightingStyle: "dramatic lighting that embraces fantasy over naturalism â lavish chandeliers, candelabra rim lighting for romantic sequences, festival lighting mixing warm lamp gold with cool night blue, song sequence lighting shifts freely to serve emotional palette, golden Rajasthani afternoon, monsoon rain diffused overcast",
+    lensPreference: "wide lenses embracing architectural spectacle â palace interiors, outdoor festival grounds, cityscape; 50mm for song sequence intimacy, long lenses for romantic longing looks across distance; song sequences may use multiple focal lengths in rapid succession",
+    compositionNotes: "choreographed group formations as geometric visual art, lead couple centered and elevated compositionally, opulent architectural framing â arches, jali screens, staircase grandeur, natural landscape (Himalayan snow, Rajasthan desert, Kerala backwater) as backdrop canvas for song sequences",
+    textureNotes: "fabric spectacle â Banarasi silk texture, mirror-work embroidery, beaded dupattas catching light, choreography-driven fabric movement; food texture in family sequences; jewellery detail â kundan, meenakari, jadau; environmental texture from urban Mumbai to rural Punjab",
     moodKeywords: "family, love, sacrifice, honor, destiny, celebration, heartbreak, reunion, music, dance, festivity, drama",
     referenceFilms: "Ravi Varman (Rockstar cinematic romance), Anil Mehta (Lagaan historical grandeur), Binod Pradhan (Don style and kinetics), Manoj Soni (Devdas opulent melodrama)",
     cameraMovement: "grand sweeping choreography-following crane and steadicam in song sequences, slow romantic push-in for longing moments, dramatic family confrontation locked-off with insert cutaways, action sequences with Hong Kong-influenced rapid cutting and whip pans, emotional rain sequences with handheld intimacy",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; South Asian skin spectrum — fair Kashmiri to golden Punjabi to deep Tamil brown, all rendered with appropriate subsurface scattering; traditional makeup — kohl-lined eyes, bindi placement, mehndi patterns visible on hands; monsoon rain on skin, sweat in dance sequences; emotional tears without smearing makeup in lead characters`,
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; South Asian skin spectrum â fair Kashmiri to golden Punjabi to deep Tamil brown, all rendered with appropriate subsurface scattering; traditional makeup â kohl-lined eyes, bindi placement, mehndi patterns visible on hands; monsoon rain on skin, sweat in dance sequences; emotional tears without smearing makeup in lead characters`,
   },
   "Period Drama": {
-    colorPalette: "era-specific palette — Victorian deep maroon and forest green, Edwardian warm ivory and dusty rose, Regency pale primrose and powder blue, Tudor jewel-saturated crimson and gold, Georgian grey-green English landscape, 1920s art deco gold and black lacquer, pre-Raphaelite rich medieval earth tones",
-    lightingStyle: "pre-electric motivated sources — candelabra warmth, window daylight as primary interior light with deep room shadows, fireplace flickering red-orange, oil lamp amber, gas lamp cooler than candle, ballroom chandelier creating warm pools with shadows between; exterior grey English sky or sharp European summer light",
+    colorPalette: "era-specific palette â Victorian deep maroon and forest green, Edwardian warm ivory and dusty rose, Regency pale primrose and powder blue, Tudor jewel-saturated crimson and gold, Georgian grey-green English landscape, 1920s art deco gold and black lacquer, pre-Raphaelite rich medieval earth tones",
+    lightingStyle: "pre-electric motivated sources â candelabra warmth, window daylight as primary interior light with deep room shadows, fireplace flickering red-orange, oil lamp amber, gas lamp cooler than candle, ballroom chandelier creating warm pools with shadows between; exterior grey English sky or sharp European summer light",
     lensPreference: "portrait-painting influenced composition with vintage optical quality, 50-85mm for drawing room intimacy, wider for manor house establishing, extreme close-ups for gloved hands and significant objects, long lenses for estate panorama",
-    compositionNotes: "painterly composition referencing actual period paintings — Gainsborough portrait framing, Vermeer window light, Constable landscape horizon; social hierarchy expressed through vertical composition — servants low, aristocracy elevated; interior architecture as character — the rooms shape the people",
-    textureNotes: "hand-made pre-industrial texture throughout — beeswax candle drips, silk watered-moire, leather book binding, quill and inkpot, garden hedge precision, velvet under light, crystal glass decanters, monogrammed silver, stone floor with centuries of wear",
+    compositionNotes: "painterly composition referencing actual period paintings â Gainsborough portrait framing, Vermeer window light, Constable landscape horizon; social hierarchy expressed through vertical composition â servants low, aristocracy elevated; interior architecture as character â the rooms shape the people",
+    textureNotes: "hand-made pre-industrial texture throughout â beeswax candle drips, silk watered-moire, leather book binding, quill and inkpot, garden hedge precision, velvet under light, crystal glass decanters, monogrammed silver, stone floor with centuries of wear",
     moodKeywords: "propriety, desire, class, repression, duty, scandal, love, inheritance, society, judgment, memory, consequence",
     referenceFilms: "Roger Pratt (Emma period warmth), Dante Spinotti (The Last of the Mohicans wilderness epic), Caleb Deschanel (The Natural golden nostalgia), Eigil Bryld (Becoming Jane period intimacy)",
-    cameraMovement: "stately, deliberate camera movement matching period decorum — no handheld in drawing room scenes, formal symmetrical camera placement, slow revelatory pans through estate interiors, gentle dolly into emotional close-ups, locked formality broken only by passion sequences",
-    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; period skin — powder and lead-based makeup era showing uneven complexion beneath, corset-wearing breathing visible in chest, gloves removed revealing vulnerable hands, sun-bronzed working skin vs. fashionably pale aristocratic skin; era-appropriate aging without modern cosmetic correction`,
+    cameraMovement: "stately, deliberate camera movement matching period decorum â no handheld in drawing room scenes, formal symmetrical camera placement, slow revelatory pans through estate interiors, gentle dolly into emotional close-ups, locked formality broken only by passion sequences",
+    skinRendering: `${PHOTOREALISM_SKIN_AND_EYES.skin}; period skin â powder and lead-based makeup era showing uneven complexion beneath, corset-wearing breathing visible in chest, gloves removed revealing vulnerable hands, sun-bronzed working skin vs. fashionably pale aristocratic skin; era-appropriate aging without modern cosmetic correction`,
   },
 
 };
 
 const DEFAULT_PROFILE: GenreProfile = GENRE_PROFILES["Drama"];
 
-// ─── Time of Day Lighting ───
+// âââ Time of Day Lighting âââ
 
 const TIME_OF_DAY_LIGHTING: Record<string, string> = {
   "dawn": "pre-sunrise blue hour light transitioning to warm pink and gold on horizon, long soft shadows stretching across ground, misty atmospheric haze catching first light, color temperature shifting from cool 7500K to warm 4500K, dew on surfaces catching light",
@@ -370,18 +370,18 @@ const TIME_OF_DAY_LIGHTING: Record<string, string> = {
   "golden-hour": "magic hour backlight with intense warm glow wrapping around subjects, lens flare from low sun, silhouette potential, rich orange and gold tones at 3000K, long horizontal shadows, atmospheric particles glowing like fireflies, most cinematic natural light",
   "twilight": "deep blue ambient light after sunset, neon and practical lights becoming dominant, color temperature 9000K+ ambient with warm practicals, mysterious transitional quality, city lights beginning to glow",
   "midnight": "near-total darkness with selective motivated light sources, deep blue-black sky, moonlight creating silver edges on surfaces, extreme contrast, pools of warm light from windows and fires",
-  // ─ Expanded Time Options ─
-  "pre-dawn": "deepest darkness before first light, 3–4am stillness, city completely asleep, only artificial sources remain, cool blue-black atmosphere, occasional car headlights sweeping, silence made visible, stars at maximum brightness",
+  // â Expanded Time Options â
+  "pre-dawn": "deepest darkness before first light, 3â4am stillness, city completely asleep, only artificial sources remain, cool blue-black atmosphere, occasional car headlights sweeping, silence made visible, stars at maximum brightness",
   "early-morning": "first light breaking horizon as cool blue transitions to warm pink, thin golden line on horizon, air perfectly still and clean, dew on surfaces, birdsong atmosphere, everything hushed and new",
   "midday": "solar noon with overhead harsh light creating short black shadow directly below, maximum brightness, tropical harshness, bleached-out highlights requiring careful exposure, heat shimmer on hot surfaces, cyan-blue sky overhead",
   "magic-hour": "any golden-to-blue or blue-to-golden transition, equal mix of warm golden sky and cool blue ambient, split lighting on faces, the most sought-after cinematographic light, every surface glows",
   "dusk": "civil twilight 20 minutes after sunset, sky still luminous but sun gone, cool blue ambient without artificial warmth, city lights beginning to compete with sky, perfect balance between day and night",
   "blue-hour": "deep twilight with brilliant blue sky, artificial lights now fully dominant and warm, perfect contrast between cool blue sky and warm orange lights, high ISO mood, urban night beginning",
-  "interior-day": "windows acting as large softboxes, daylight fill from outside mixed with practical interior sources, motivated light with clear sources, no direct sun — reflected daylight only, warm practicals in background",
-  "interior-night": "practical sources only — lamps, screens, candles, motivated by visible light sources in frame, pools of warm light in deep darkness, strong fall-off from all practical sources, realistic domestic or professional interior at night",
+  "interior-day": "windows acting as large softboxes, daylight fill from outside mixed with practical interior sources, motivated light with clear sources, no direct sun â reflected daylight only, warm practicals in background",
+  "interior-night": "practical sources only â lamps, screens, candles, motivated by visible light sources in frame, pools of warm light in deep darkness, strong fall-off from all practical sources, realistic domestic or professional interior at night",
 };
 
-// ─── Weather Atmosphere ───
+// âââ Weather Atmosphere âââ
 
 const WEATHER_ATMOSPHERE: Record<string, string> = {
   "clear": "crystal clear atmosphere with sharp distant details, clean sky with subtle gradient, high visibility revealing landscape layers, crisp shadows",
@@ -392,7 +392,7 @@ const WEATHER_ATMOSPHERE: Record<string, string> = {
   "foggy": "heavy atmospheric diffusion creating depth layers, limited visibility making nearby objects precious, halos around every light source, mysterious obscured backgrounds, soft edges on everything, volumetric light beams visible",
   "windy": "dynamic movement in hair, clothing, and vegetation, dust or particles in air catching directional light, sense of force and energy, slightly desaturated from airborne particles, dramatic cloud movement",
   "humid": "hazy tropical atmosphere, visible moisture in air softening distant objects, sweat on skin, lush green saturation, warm heavy air visible as heat distortion, condensation on cold surfaces",
-  // ─ Expanded Weather Options ─
+  // â Expanded Weather Options â
   "partly-cloudy": "broken cloud cover creating alternating bright and diffused light, dramatic cloud shadows racing across landscape, dynamic changing quality of light, deep blue sky contrast with white cumulus",
   "overcast": "total cloud cover creating ultimate natural softbox, zero harsh shadows, perfect diffused light for face beauty work, flat but technically excellent, slightly cool, muted natural colors",
   "light-rain": "fine rain barely visible except as shimmer on surfaces, everything beginning to get wet, fresh smell visible in image, first reflections appearing on pavement, gentle patter atmosphere",
@@ -410,50 +410,50 @@ const WEATHER_ATMOSPHERE: Record<string, string> = {
   "post-rain-clearing": "air scrubbed perfectly clean by rain, maximum atmospheric clarity, wet surfaces creating mirror reflections everywhere, double rainbow potential, freshly washed world",
   "rainbow-aftermath": "prismatic arc spanning full frame background, complementary warm and cool light split by rainbow, post-storm clarity, emotionally optimistic atmosphere",
   "aurora-northern-lights": "supernatural green and purple ribbons dancing in black sky, cold clear arctic night, phenomenon illuminating snow and ice with ethereal glow, otherworldly",
-  "hurricane": "apocalyptic wind force, debris in air, palm trees bending to 45°, rain nearly horizontal, dark ominous sky, extreme dramatic power, survival-scale event",
+  "hurricane": "apocalyptic wind force, debris in air, palm trees bending to 45Â°, rain nearly horizontal, dark ominous sky, extreme dramatic power, survival-scale event",
   "dry-arid": "bleached-out desert light, zero moisture, dusty surfaces, harsh specular on all reflective materials, dried vegetation, bone-dry earth cracking",
   "humid-tropical": "lush green saturation, visible heat, moisture on every surface, insect and jungle sound environment, heavy warm air, rapid cloud development",
 };
 
-// ─── Camera Angle Technical Details ───
+// âââ Camera Angle Technical Details âââ
 
 const CAMERA_ANGLE_DETAILS: Record<string, string> = {
-  // ─ Standard Shot Sizes ─
+  // â Standard Shot Sizes â
   "wide": "wide establishing shot on 24mm lens showing full environment and spatial relationships, deep focus f/8, characters placed in context of their surroundings, architecture and landscape visible",
   "medium": "medium shot on 50mm lens from waist up, natural perspective matching human eye, f/2.8 with gentle background separation, conversational distance, character and environment balanced",
   "close-up": "close-up on 85mm lens capturing face and shoulders, shallow depth of field f/1.8 with creamy bokeh background, intimate emotional connection, every facial detail and micro-expression visible",
-  "extreme-close-up": "extreme close-up on 100mm macro lens isolating specific detail — eyes, hands, object — razor-thin depth of field f/1.4, texture and detail filling frame, hyper-intimate",
+  "extreme-close-up": "extreme close-up on 100mm macro lens isolating specific detail â eyes, hands, object â razor-thin depth of field f/1.4, texture and detail filling frame, hyper-intimate",
   "extreme-wide": "absolute widest framing 12-18mm, human figures reduced to tiny elements within massive environment, landscape and architecture dominate, deep focus reveals every detail across frame",
   "medium-wide": "below-knee framing on 28-35mm, character fully visible with strong environmental context, action readable and setting clear, most used for moving dialogue scenes",
   "medium-close": "chest-to-crown MCU on 50-85mm, single most used dramatic framing, face and upper body gesture both fully readable, slight compression flattening background pleasantly",
-  // ─ Height / Vertical Position ─
+  // â Height / Vertical Position â
   "birds-eye": "overhead birds-eye view looking straight down, showing spatial patterns and geography, god-like perspective, subjects appear small within larger pattern, drone or crane shot",
   "low-angle": "low-angle shot looking up at subject on 35mm lens, subject appears powerful and dominant, sky or ceiling visible behind, heroic or threatening depending on context, ground-level perspective",
   "eye-level": "camera at exact character eye height, neutral democratic perspective, audience feels equal to subject, no implied power relationship, matter-of-fact and direct",
   "worms-eye": "extreme upward angle nearly at ground level looking up, subjects appear godlike and imposing, architecture towers overhead, exaggerated perspective distortion, used for power and superheroic scale",
   "aerial": "high altitude overhead looking directly down, humans become patterns in environment, movement becomes choreography, used for scale revelation and geographic context",
-  // ─ Framing Relative to Subject ─
+  // â Framing Relative to Subject â
   "dutch-angle": "dutch angle tilted 15-30 degrees creating visual unease and disorientation, 35mm lens, psychological tension, world feels off-balance and unstable",
   "over-shoulder": "over-the-shoulder shot on 50mm, foreground shoulder and head out of focus framing the subject in sharp focus, creates conversational dynamic and spatial relationship between characters",
   "pov": "point-of-view shot simulating character's vision, slight handheld movement for realism, 35mm lens matching human field of view, immersive first-person perspective, hands or body parts visible at frame edges",
   "two-shot": "balanced two-shot on 50mm showing both characters in frame, equal visual weight, relationship dynamics visible in body language and spacing, f/2.8 separating from background",
   "profile": "clean profile shot on 85mm, subject facing perpendicular to camera, strong silhouette potential, dramatic nose and jawline visible, single-source side lighting",
-  // ─ Camera Movement / Rig ─
+  // â Camera Movement / Rig â
   "tracking": "smooth tracking shot on 35mm following subject movement, Steadicam or dolly, subject stays in frame while background moves, creates kinetic energy and forward momentum",
   "crane": "camera mounted on crane sweeping vertically from ground to sky revealing full scale, classic Hollywood reveal, God-perspective achieved through vertical move",
   "steadicam": "fluid perfectly-stabilized following shot through environment, Kubrickian smooth pursuit, subjective experience without handheld shake, exploration mode",
-  // ─ Compositional / Special ─
+  // â Compositional / Special â
   "through-glass": "shooting through window, aquarium glass, car windshield or rain-covered surface, voyeuristic remove, subject partially obscured or distorted, observer perspective",
   "mirror-reflection": "composing subject via mirror creating split or doubled image, duality of identity, hidden self vs public self, split personality made visual",
   "underwater-angle": "camera below water surface looking up at subjects above, distorted wavering reality, caustic light patterns dancing on subjects, primal and elemental",
 };
-// ─── Lighting Descriptions — Cinematographer Grade ───
+// âââ Lighting Descriptions â Cinematographer Grade âââ
 // Used when scene.lighting is set to provide rich technical prompt direction
 
 const LIGHTING_DESCRIPTIONS: Record<string, string> = {
   "natural": "natural daylight as primary source, no artificial fill, color temperature following time of day, authentic shadows from available light, environmental motivation for every photon",
   "golden-hour": "warm backlight from low sun at 3000-3500K, rim light halos on subjects, rich amber-gold fill from reflected sky, maximum emotional warmth, magic hour fleeting beauty",
-  "magic-hour-warm": "transitional light between warm and cool, sky acting as giant gradient reflector, equal parts golden fill and blue ambient, simultaneous warm and cool — the most cinematic natural state",
+  "magic-hour-warm": "transitional light between warm and cool, sky acting as giant gradient reflector, equal parts golden fill and blue ambient, simultaneous warm and cool â the most cinematic natural state",
   "blue-hour": "deep twilight cool ambient at 7000-9000K, warm practicals beginning to dominate, excellent skin rendering from cool diffused sky, city lights creating warm points against blue",
   "overcast-diffused": "total cloud cover as ultimate softbox, zero harsh shadows, perfect skin rendering, flat even illumination across entire scene, slightly desaturated, technically excellent beauty light",
   "dramatic": "single hard directional source creating strong shadows, high contrast between light and dark, three-dimensional subject modeling, theatrical quality",
@@ -471,9 +471,9 @@ const LIGHTING_DESCRIPTIONS: Record<string, string> = {
   "studio-three-point": "key + fill + backlight in controlled ratio, classic professional setup, full subject separation from background, broadcast quality",
   "rim-light": "backlight creating bright edge outline separating subject from background, subject extraction from environment, halo of light, action and drama enhancement",
   "motivated": "all light sources motivated by visible or just-off-screen practical sources, complete realism, audience can identify where every photon originates",
-  "practical-only": "only light sources visible in the scene — lamps, candles, screens, signs — nothing else, complete practical motivation, maximum authenticity",
+  "practical-only": "only light sources visible in the scene â lamps, candles, screens, signs â nothing else, complete practical motivation, maximum authenticity",
   "candlelight": "single or multiple candle sources at 1800K, warm flickering amber light creating maximum intimacy, strong fall-off within few feet, deep shadows beyond candle radius",
-  "firelight": "larger fire source — fireplace, campfire, barrel fire — 2000-2500K flickering light, orange-red warm fill dancing on faces, animated shadow play, ancient primal quality",
+  "firelight": "larger fire source â fireplace, campfire, barrel fire â 2000-2500K flickering light, orange-red warm fill dancing on faces, animated shadow play, ancient primal quality",
   "moonlight": "cool silver-blue directional light at 6500-7500K simulating full moon, sharp shadows in cool blue, hard directional source but cool, nocturnal and romantic or threatening depending on subject",
   "fluorescent": "office/institutional fluorescent tubes at 4000-5500K with slight green cast, overhead flat illumination, institutional environment communicated, slight underexposure adds tension",
   "mixed-day-interior": "exterior daylight from windows in cool blue at 5600K mixing with warm tungsten interior practicals at 3200K, natural domestic/workplace tension, realistic and naturalistic",
@@ -481,7 +481,7 @@ const LIGHTING_DESCRIPTIONS: Record<string, string> = {
   "backlit": "primary source behind subject creating silhouette or rim-light effect, subject front in relative darkness, contre-jour quality, shape over detail",
   "silhouette": "complete backlight dominance, subject rendered as pure black shape against bright background, emotion through form alone, most abstract and powerful framing mode",
   "studio": "controlled neutral studio environment, full technical control over all light sources, neutral-to-subject color rendition, commercial and controlled quality",
-  "volumetric-god-rays": "visible light beams through atmospheric particles — dust, smoke, fog, steam — creating cathedral shaft quality, divine scale and drama, cinematographic spectacle",
+  "volumetric-god-rays": "visible light beams through atmospheric particles â dust, smoke, fog, steam â creating cathedral shaft quality, divine scale and drama, cinematographic spectacle",
   "underwater": "caustic light patterns from above-water refraction, green-blue color shift, particles floating in water column, dreamy wavering edges on everything",
   "streetlight-sodium": "sodium vapor streetlights casting warm orange-amber pools on wet pavement, cool blue sky above, classic noir urban night, pools and absence",
   "uv-blacklight": "ultraviolet sources causing fluorescence in white fabrics and select materials, club/venue aesthetic, black background with glowing elements, psychedelic and surreal",
@@ -491,7 +491,7 @@ const LIGHTING_DESCRIPTIONS: Record<string, string> = {
 };
 
 
-// ─── Camera Movement Descriptions ───
+// âââ Camera Movement Descriptions âââ
 
 const CAMERA_MOVEMENTS: Record<string, string> = {
   "static": "locked-off static tripod shot, perfectly still, letting the action unfold within the frame, composed and deliberate",
@@ -501,23 +501,23 @@ const CAMERA_MOVEMENTS: Record<string, string> = {
   "handheld": "controlled handheld with natural breathing movement, creating immediacy and documentary feel, slight instability suggesting tension or vulnerability",
   "crane-up": "crane rising from ground level to elevated position, dramatic reveal of environment, subject shrinking in frame showing context and scale",
   "orbit": "slow 180-degree orbit around subject, background rotating, creating dynamic visual interest while maintaining focus on character",
-  "zoom-in": "slow deliberate zoom pushing into subject, different from dolly — background stays same size, creates unsettling Hitchcock effect",
+  "zoom-in": "slow deliberate zoom pushing into subject, different from dolly â background stays same size, creates unsettling Hitchcock effect",
   "steadicam": "smooth floating Steadicam following character through environment, long take feeling, immersive journey through space",
   "whip-pan": "fast whip pan between subjects, motion blur connecting two moments, energetic and surprising transition",
 };
 
-// ─── Film Stock Emulation ───
+// âââ Film Stock Emulation âââ
 
 const FILM_STOCK_PROFILES: Record<string, string> = {
-  "kodak-5219": "Kodak Vision3 500T — warm skin tones, rich shadows, classic Hollywood look, slight warm bias, beautiful highlight rolloff, organic grain structure",
-  "kodak-5207": "Kodak Vision3 250D — daylight balanced, vibrant saturated colors, fine grain, sharp detail, classic blockbuster look",
-  "fuji-eterna": "Fuji Eterna Vivid 500 — slightly cooler than Kodak, excellent greens and blues, subtle grain, clean modern look",
-  "arri-logc": "ARRI LogC to Rec.709 — clean digital cinema, maximum dynamic range, neutral starting point, modern blockbuster standard",
-  "red-dragon": "RED Dragon sensor — ultra-sharp, slightly clinical, excellent highlight handling, modern digital cinema",
-  "alexa65": "ARRI ALEXA 65 large format — extraordinary shallow depth of field, organic highlight rolloff, film-like digital, the gold standard",
+  "kodak-5219": "Kodak Vision3 500T â warm skin tones, rich shadows, classic Hollywood look, slight warm bias, beautiful highlight rolloff, organic grain structure",
+  "kodak-5207": "Kodak Vision3 250D â daylight balanced, vibrant saturated colors, fine grain, sharp detail, classic blockbuster look",
+  "fuji-eterna": "Fuji Eterna Vivid 500 â slightly cooler than Kodak, excellent greens and blues, subtle grain, clean modern look",
+  "arri-logc": "ARRI LogC to Rec.709 â clean digital cinema, maximum dynamic range, neutral starting point, modern blockbuster standard",
+  "red-dragon": "RED Dragon sensor â ultra-sharp, slightly clinical, excellent highlight handling, modern digital cinema",
+  "alexa65": "ARRI ALEXA 65 large format â extraordinary shallow depth of field, organic highlight rolloff, film-like digital, the gold standard",
 };
 
-// ─── Negative Prompt Library ───
+// âââ Negative Prompt Library âââ
 
 const NEGATIVE_PROMPTS: Record<string, string> = {
   "universal": "blurry, out of focus, low resolution, pixelated, jpeg artifacts, watermark, text overlay, logo, signature, frame border, collage, split image, multiple panels, extra fingers, extra limbs, deformed hands, deformed face, cross-eyed, asymmetric eyes, bad anatomy, bad proportions, mutation, disfigured",
@@ -526,7 +526,7 @@ const NEGATIVE_PROMPTS: Record<string, string> = {
   "cinematic": "amateur photography, snapshot, selfie, phone camera, webcam, security camera, low budget, cheap production, TV show quality, soap opera lighting, flat video look, vertical video, made for TV, direct to video quality",
 };
 
-// ─── Quality Tier Definitions ───
+// âââ Quality Tier Definitions âââ
 
 export type QualityTier = "independent" | "industry";
 // Backward compat: map old tier names
@@ -566,7 +566,7 @@ const QUALITY_NEGATIVE: Record<QualityTier, string> = {
   "industry": `${NEGATIVE_PROMPTS.universal}, ${NEGATIVE_PROMPTS.anti_ai}, ${NEGATIVE_PROMPTS.photorealistic}, ${NEGATIVE_PROMPTS.cinematic}`,
 };
 
-// ─── Visual DNA Builder ───
+// âââ Visual DNA Builder âââ
 
 export type VisualDNA = {
   genreProfile: GenreProfile;
@@ -623,7 +623,7 @@ export function buildVisualDNA(project: {
 
       const parts = [`${c.name}:`];
       if (faceDnaPrompt) {
-        // Photo-analysis anchor — already structured with | separators for max model weight
+        // Photo-analysis anchor â already structured with | separators for max model weight
         parts.push(faceDnaPrompt);
         if (bodyDnaPrompt) parts.push(bodyDnaPrompt);
       } else {
@@ -645,7 +645,7 @@ export function buildVisualDNA(project: {
       return parts.join(", ");
     });
 
-  // Build consistency tokens — these go in EVERY prompt to maintain visual coherence
+  // Build consistency tokens â these go in EVERY prompt to maintain visual coherence
   const consistencyParts = [
     `Film: "${project.title}"`,
     `Genre: ${genre}`,
@@ -675,7 +675,7 @@ export function buildVisualDNA(project: {
   };
 }
 
-// ─── Cinematic Scene Prompt Builder ───
+// âââ Cinematic Scene Prompt Builder âââ
 
 export function buildScenePrompt(
   scene: {
@@ -725,7 +725,7 @@ export function buildScenePrompt(
     cinemaIndustry?: string | null;
     /** Props / set-dressing items from the production props library */
     props?: string[] | null;
-    /** Director's shot intent — emotional / narrative purpose of this shot */
+    /** Director's shot intent â emotional / narrative purpose of this shot */
     shotIntent?: string | null;
     /** Continuity notes from the script supervisor */
     continuityNotes?: string | null;
@@ -741,7 +741,7 @@ export function buildScenePrompt(
     coverageType?: string | null;
     /** Screen direction of primary action (e.g. "screen left to right") */
     screenDirection?: string | null;
-    /** Subtext notes — underlying emotion or tension not in the dialogue */
+    /** Subtext notes â underlying emotion or tension not in the dialogue */
     dialogueSubtext?: string | null;
     /** User-specified negative prompt override; replaces the quality-tier default when set */
     negativePrompt?: string | null;
@@ -761,16 +761,16 @@ export function buildScenePrompt(
     characters?: Array<{
         name: string;
         ageRange?: string | null;
-        /** Face DNA from photo analysis — highest-fidelity character anchor */
+        /** Face DNA from photo analysis â highest-fidelity character anchor */
         faceDnaPrompt?: string | null;
         /** Body proportions anchor from photo analysis */
         bodyDnaPrompt?: string | null;
-        /** Director consistency notes — always injected verbatim */
+        /** Director consistency notes â always injected verbatim */
         consistencyNotes?: string | null;
         /** Database character ID */
         id?: number;
       }>;
-    // v6.77 — Per-project brand allow/block list. Real-world brand names that
+    // v6.77 â Per-project brand allow/block list. Real-world brand names that
     // may, must, or must NEVER appear in this shot (Nike, Pepsi, storefront
     // signage, billboards, road signs, etc.).
     brands?: Array<{
@@ -779,7 +779,7 @@ export function buildScenePrompt(
       policy: "allowed" | "required" | "forbidden";
       notes?: string | null;
     }>;
-    // v6.77 — Designer Wardrobe context. Precomputed structured text block
+    // v6.77 â Designer Wardrobe context. Precomputed structured text block
     // describing wardrobe / costume / shopfront-display assignments the
     // director has attached to this scene's characters or scene set-dressing.
     // Built by getWardrobePromptContextForScene(sceneId, userId) so the
@@ -790,12 +790,12 @@ export function buildScenePrompt(
   const parts: string[] = [];
   const tier = resolveQualityTier(visualDNA.qualityTier || "independent");
 
-  // 2b. AI Prompt Override — if set, skip all auto-building and return override directly
+  // 2b. AI Prompt Override â if set, skip all auto-building and return override directly
   if (scene.aiPromptOverride && scene.aiPromptOverride.trim().length > 0) {
     return scene.aiPromptOverride.trim();
   }
 
-  // 1. Quality anchor FIRST — highest model attention weight
+  // 1. Quality anchor FIRST â highest model attention weight
   parts.push(QUALITY_ANCHORS[tier]);
 
   // 2. Core visual identity (consistency anchor)
@@ -804,7 +804,7 @@ export function buildScenePrompt(
   // 3. Shot type and camera with technical precision
   const cameraAngle = scene.cameraAngle || "medium";
   const cameraDetail = CAMERA_ANGLE_DETAILS[cameraAngle] || CAMERA_ANGLE_DETAILS["medium"];
-  parts.push(`RAW photograph, photorealistic cinematic film frame — ${cameraDetail}`);
+  parts.push(`RAW photograph, photorealistic cinematic film frame â ${cameraDetail}`);
 
   // 2c. Lens and focal length precision
   if (scene.lensType) {
@@ -901,7 +901,7 @@ export function buildScenePrompt(
     parts.push(`Camera movement: ${visualDNA.genreProfile.cameraMovement}`);
   }
 
-  // 4. Scene description (the core content — most important part)
+  // 4. Scene description (the core content â most important part)
   if (scene.description) {
     parts.push(scene.description);
   }
@@ -927,7 +927,7 @@ export function buildScenePrompt(
       parts.push(`Characters present: ${charRefs}`);
     }
 
-    // 5b. Wardrobe / costume — injected immediately after character descriptions so the
+    // 5b. Wardrobe / costume â injected immediately after character descriptions so the
     //     model associates each costume with its character before reading location/lighting.
     //     Moving from position 17d to 5b significantly increases model attention on costumes.
     if (options?.wardrobeContext && options.wardrobeContext.trim().length > 0) {
@@ -969,17 +969,17 @@ export function buildScenePrompt(
     parts.push(`Props and set-dressing (must appear in frame): ${scene.props.join(", ")}`);
   }
 
-  // 6a2. Director's shot intent — emotional/narrative purpose of this specific shot
+  // 6a2. Director's shot intent â emotional/narrative purpose of this specific shot
   if (scene.shotIntent) {
     parts.push(`Shot intent (what this shot must convey emotionally): ${scene.shotIntent}`);
   }
 
-  // 6a3. Script supervisor continuity notes — injected for precise cross-scene matching
+  // 6a3. Script supervisor continuity notes â injected for precise cross-scene matching
   if (scene.continuityNotes) {
     parts.push(`Continuity from previous scene: ${scene.continuityNotes}`);
   }
 
-  // 6a4. Practical lights visible in frame — key for realistic exposure matching
+  // 6a4. Practical lights visible in frame â key for realistic exposure matching
   if (scene.practicalLights) {
     parts.push(`Practical light sources visible in frame: ${scene.practicalLights}`);
   }
@@ -1002,7 +1002,7 @@ export function buildScenePrompt(
     parts.push(`Subtext / emotional undercurrent: ${scene.dialogueSubtext}`);
   }
 
-  // 6b. Crowd/Extras — background population for scene realism
+  // 6b. Crowd/Extras â background population for scene realism
   if (scene.crowdLevel && scene.crowdLevel !== "empty") {
     const crowdDescriptions: Record<string, string> = {
       sparse: "a few background people visible, sparse foot traffic, mostly empty environment with occasional passersby",
@@ -1036,8 +1036,8 @@ export function buildScenePrompt(
   const lighting = scene.lighting || "natural";
   const lightingDesc = LIGHTING_DESCRIPTIONS[lighting] || null;
   const lightingLabel = lightingDesc
-    ? `${lighting} — ${lightingDesc} | Genre default: ${visualDNA.genreProfile.lightingStyle}`
-    : `${lighting} setup — ${visualDNA.genreProfile.lightingStyle}`;
+    ? `${lighting} â ${lightingDesc} | Genre default: ${visualDNA.genreProfile.lightingStyle}`
+    : `${lighting} setup â ${visualDNA.genreProfile.lightingStyle}`;
   parts.push(`Lighting: ${lightingLabel}`);
 
   // 10. Mood and emotional direction
@@ -1087,19 +1087,19 @@ export function buildScenePrompt(
   if (options?.sceneIndex !== undefined && options?.totalScenes) {
     const position = options.sceneIndex / options.totalScenes;
     if (position < 0.1) {
-      parts.push("Opening shot — establishing tone and world, audience's first impression, visually striking introduction, sense of beginning and possibility");
+      parts.push("Opening shot â establishing tone and world, audience's first impression, visually striking introduction, sense of beginning and possibility");
     } else if (position < 0.25) {
-      parts.push("Act 1 — establishing characters and stakes, building visual language, introducing the world's rules and atmosphere");
+      parts.push("Act 1 â establishing characters and stakes, building visual language, introducing the world's rules and atmosphere");
     } else if (position < 0.4) {
-      parts.push("Rising action — building tension through visual escalation, deeper shadows, tighter framing, stakes becoming visible in the environment");
+      parts.push("Rising action â building tension through visual escalation, deeper shadows, tighter framing, stakes becoming visible in the environment");
     } else if (position > 0.45 && position < 0.6) {
-      parts.push("Midpoint — major turning point, dramatic shift in visual language, lighting and color palette may shift to reflect new reality, heightened visual intensity");
+      parts.push("Midpoint â major turning point, dramatic shift in visual language, lighting and color palette may shift to reflect new reality, heightened visual intensity");
     } else if (position > 0.6 && position < 0.75) {
-      parts.push("Escalation — approaching climax, visual tension at near-peak, dramatic lighting contrasts, urgent composition, everything building toward the breaking point");
+      parts.push("Escalation â approaching climax, visual tension at near-peak, dramatic lighting contrasts, urgent composition, everything building toward the breaking point");
     } else if (position > 0.75 && position < 0.9) {
-      parts.push("Climax — peak emotional and visual intensity, most dramatic lighting and composition of the entire film, maximum contrast, most dynamic camera work, the visual crescendo");
+      parts.push("Climax â peak emotional and visual intensity, most dramatic lighting and composition of the entire film, maximum contrast, most dynamic camera work, the visual crescendo");
     } else if (position >= 0.9) {
-      parts.push("Resolution — emotional denouement, softer lighting returning, sense of closure or transformation, visual callback to opening with meaningful difference, audience exhale");
+      parts.push("Resolution â emotional denouement, softer lighting returning, sense of closure or transformation, visual callback to opening with meaningful difference, audience exhale");
     }
   }
 
@@ -1123,10 +1123,10 @@ export function buildScenePrompt(
       parts.push(`Aspect ratio: ${industryProfile.aspectRatio}`);
     }
     parts.push(`Lighting style: ${industryProfile.lightingStyle}`);
-    parts.push(`Color grade: ${industryProfile.colorGrade} — ${industryProfile.colorGradeDescription}`);
+    parts.push(`Color grade: ${industryProfile.colorGrade} â ${industryProfile.colorGradeDescription}`);
   }
 
-  // 17c. Brand directives — v6.77 per-project allow/required/forbidden brands.
+  // 17c. Brand directives â v6.77 per-project allow/required/forbidden brands.
   // These are real-world commercial brands the director has whitelisted,
   // mandated, or banned from this film. The model gets explicit, strongly
   // worded guidance so storefronts, signage, billboards, vehicles, drinks
@@ -1136,22 +1136,22 @@ export function buildScenePrompt(
     const allowed = options.brands.filter((b) => b.policy === "allowed");
     const forbidden = options.brands.filter((b) => b.policy === "forbidden");
     const fmt = (b: { name: string; category?: string | null; notes?: string | null }) => {
-      const tail = [b.category, b.notes].filter((x) => x && String(x).trim()).join(" — ");
+      const tail = [b.category, b.notes].filter((x) => x && String(x).trim()).join(" â ");
       return tail ? `${b.name} (${tail})` : b.name;
     };
     if (required.length > 0) {
       parts.push(
-        `BRAND PLACEMENT — REQUIRED (must appear naturally in this shot if at all plausible — on signage, packaging, vehicles, apparel, or background props): ${required.map(fmt).join("; ")}.`,
+        `BRAND PLACEMENT â REQUIRED (must appear naturally in this shot if at all plausible â on signage, packaging, vehicles, apparel, or background props): ${required.map(fmt).join("; ")}.`,
       );
     }
     if (allowed.length > 0) {
       parts.push(
-        `BRAND PLACEMENT — APPROVED (these real-world brands MAY be shown on storefronts, billboards, road signs, drinks, clothing, vehicles when contextually appropriate; render their actual logos accurately): ${allowed.map(fmt).join("; ")}.`,
+        `BRAND PLACEMENT â APPROVED (these real-world brands MAY be shown on storefronts, billboards, road signs, drinks, clothing, vehicles when contextually appropriate; render their actual logos accurately): ${allowed.map(fmt).join("; ")}.`,
       );
     }
     if (forbidden.length > 0) {
       parts.push(
-        `BRAND EXCLUSION — STRICTLY FORBIDDEN (these brands MUST NOT appear, be named, hinted at, or have their logos visible anywhere in the frame — replace with generic equivalents or unmarked alternatives): ${forbidden.map(fmt).join("; ")}.`,
+        `BRAND EXCLUSION â STRICTLY FORBIDDEN (these brands MUST NOT appear, be named, hinted at, or have their logos visible anywhere in the frame â replace with generic equivalents or unmarked alternatives): ${forbidden.map(fmt).join("; ")}.`,
       );
     }
     if (allowed.length === 0 && required.length === 0) {
@@ -1168,7 +1168,7 @@ export function buildScenePrompt(
 
     // 18. (Quality anchor moved to position 1 for maximum model attention weight)
 
-  // 19. Minor Protection — auto-inject modesty directives for minor characters
+  // 19. Minor Protection â auto-inject modesty directives for minor characters
   if (options?.characters && options.characters.length > 0) {
     const minorProtection = applyMinorProtection(
       scene.description || scene.title || "",
@@ -1208,7 +1208,7 @@ export function buildScenePrompt(
   return parts.join(", ");
 }
 
-// ─── Enhanced LLM System Prompt for Scene Breakdown ───
+// âââ Enhanced LLM System Prompt for Scene Breakdown âââ
 
 /**
  * Returns the default cinematic negative prompt for a given quality tier.
@@ -1235,7 +1235,7 @@ export function buildSceneBreakdownSystemPrompt(project: {
   const actStructure = project.actStructure || "three-act";
   const creativeLeeway = project.creativeLeeway ?? false;
 
-  // Calculate scene count based on duration — be CONSERVATIVE with API credits
+  // Calculate scene count based on duration â be CONSERVATIVE with API credits
   let targetScenes: number;
   if (duration <= 1) {
     targetScenes = 1;
@@ -1261,15 +1261,15 @@ You have been granted creative freedom by the director. Apply your full cinemati
 - Texture and grain: ${profile.textureNotes}
 - Skin rendering: ${profile.skinRendering}
 - Emotional keywords: ${profile.moodKeywords}
-- Vary shot types — never repeat the same camera angle twice in a row.
-- Build visual tension through the narrative arc — escalate intensity toward the climax.
+- Vary shot types â never repeat the same camera angle twice in a row.
+- Build visual tension through the narrative arc â escalate intensity toward the climax.
 - Consider background population: describe extras and ambient life in every scene.`
     : `
 DIRECTOR-FIRST RULES (non-negotiable):
 - Faithfully adapt the director's plot, characters, setting, tone, and themes EXACTLY as described. Do NOT add, remove, or change story elements.
 - Do NOT invent new characters, locations, plot points, or themes that are not in the director's description.
 - Do NOT override the director's genre, tone, rating, or setting choices.
-- Use the genre visual profile below ONLY as a technical reference for filling in unspecified technical fields (lighting, lens, etc.) — never to override the director's story.
+- Use the genre visual profile below ONLY as a technical reference for filling in unspecified technical fields (lighting, lens, etc.) â never to override the director's story.
 - Genre visual reference (use only for unspecified technical fields): ${profile.referenceFilms}, ${profile.colorPalette}, ${profile.lightingStyle}`;
 
   return `You are a professional film production AI breaking down a director's film concept into individual scenes. Your primary obligation is to faithfully serve the director's vision for "${project.title}", a ${duration}-minute ${project.rating || "PG-13"} rated ${genre} film.
@@ -1280,7 +1280,7 @@ ${creativeGuidance}
 
 INSTRUCTIONS:
 1. Structure this with EXACTLY ${targetScenes} scene${targetScenes === 1 ? '' : 's'} for a ${duration}-minute ${duration <= 1 ? 'intro/opener' : 'film'}. Do NOT create more or fewer scenes than specified.
-2. Each scene must be a SPECIFIC, PHOTOGRAPHABLE moment — not a summary. Describe exactly what the camera sees.
+2. Each scene must be a SPECIFIC, PHOTOGRAPHABLE moment â not a summary. Describe exactly what the camera sees.
 3. Every scene must directly serve the director's stated plot, characters, and themes.
 4. The visualDescription must be specific enough that a camera operator could execute it.
 5. For any technical field the director did not specify (lens, depth of field, extras), use a sensible neutral default consistent with the genre.
@@ -1288,7 +1288,7 @@ INSTRUCTIONS:
 Return JSON with an array of scenes.`;
 }
 
-// ─── Enhanced Scene Schema with Cinematic Fields ───
+// âââ Enhanced Scene Schema with Cinematic Fields âââ
 
 export const ENHANCED_SCENE_SCHEMA = {
   type: "object" as const,
@@ -1317,7 +1317,7 @@ export const ENHANCED_SCENE_SCHEMA = {
           emotionalBeat: { type: "string" as const },
           transitionFromPrevious: { type: "string" as const },
           crowdLevel: { type: "string" as const, description: "Background population density: empty, sparse, moderate, crowded, or packed" },
-          extrasDescription: { type: "string" as const, description: "Vivid description of what background extras are doing in this scene — pedestrians walking, dancers moving, diners eating, workers typing, soldiers marching, etc." },
+          extrasDescription: { type: "string" as const, description: "Vivid description of what background extras are doing in this scene â pedestrians walking, dancers moving, diners eating, workers typing, soldiers marching, etc." },
         },
         required: [
           "title", "description", "visualDescription", "timeOfDay", "weather",
@@ -1334,7 +1334,7 @@ export const ENHANCED_SCENE_SCHEMA = {
   additionalProperties: false as const,
 };
 
-// ─── Trailer Prompt Builder ───
+// âââ Trailer Prompt Builder âââ
 
 export function buildTrailerPrompt(
   scene: {
@@ -1353,7 +1353,7 @@ export function buildTrailerPrompt(
       : []),
     `Cinematic Hollywood trailer shot, dramatic and visually stunning`,
     trailerDescription,
-    `${scene.lighting || "dramatic"} lighting — ${visualDNA.genreProfile.lightingStyle}`,
+    `${scene.lighting || "dramatic"} lighting â ${visualDNA.genreProfile.lightingStyle}`,
     `${scene.mood || "epic"} mood, ${visualDNA.genreProfile.moodKeywords}`,
     `Color: ${visualDNA.genreProfile.colorPalette}`,
     `Composition: ${visualDNA.genreProfile.compositionNotes}`,
@@ -1366,9 +1366,9 @@ export function buildTrailerPrompt(
   return parts.join(". ");
 }
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // NEGATIVE PROMPTS — genre-aware list of what the video model should NOT render
-  // ─────────────────────────────────────────────────────────────────────────────
+  // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // NEGATIVE PROMPTS â genre-aware list of what the video model should NOT render
+  // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const GENRE_NEGATIVE_PROMPTS: Record<string, string> = {
     Action:    "blurry, out of focus, low quality, oversaturated, plastic skin, CGI faces, cartoon, anime, illustration, watermark, text overlay, soft lighting, pastel colors, cheerful, boring composition",
