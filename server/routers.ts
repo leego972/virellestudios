@@ -3685,7 +3685,7 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         // Priority: Venice (preferred) ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ user's chosen ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ OpenAI ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Anthropic ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Google ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ admin platform key.
         const preferredLlm = userKeys.preferredLlmProvider;
         const isAdminChat = ctx.user.role === "admin";
-        let provider: "openai" | "anthropic" | "google" | "venice" = "openai";
+        let provider: "openai" | "anthropic" | "google" | "venice" | "groq" = "groq";
         if (preferredLlm === "venice" && userKeys.veniceKey) provider = "venice";
         else if (preferredLlm === "anthropic" && userKeys.anthropicKey) provider = "anthropic";
         else if (preferredLlm === "google" && userKeys.googleAiKey) provider = "google";
@@ -3694,12 +3694,14 @@ Analyze every visible feature with maximum precision. Return as JSON.`,
         else if (userKeys.openaiKey) provider = "openai";
         else if (userKeys.anthropicKey) provider = "anthropic";
         else if (userKeys.googleAiKey) provider = "google";
-        else if (isAdminChat && (ENV.veniceApiKey || ENV.openaiApiKey)) {
-          provider = ENV.veniceApiKey ? "venice" : "openai";
-        } else {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "No LLM key configured. Go to Settings ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ API Keys and add an OpenAI, Anthropic, Google AI, or Venice key to use the Director's Assistant.",
+        else if (ENV.groqApiKey) provider = "groq";
+          else if (isAdminChat && ENV.veniceApiKey) provider = "venice";
+          else if (isAdminChat && ENV.openaiApiKey) provider = "openai";
+          else {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "No LLM key configured. Go to Settings → API Keys and add an OpenAI, Anthropic, Google AI, or Venice key to use the Director's Assistant.",
+            });
           });
         }
 
@@ -3766,8 +3768,24 @@ Available fields you can update:
 
         let aiResponse = "";
 
-        try {
-          if (provider === "venice") {
+        const _abort = new AbortController();
+          const _abortTimer = setTimeout(() => _abort.abort(), 30000);
+          try {          if (provider === "groq") {
+              const resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  model: "llama-3.3-70b-versatile",
+                  messages: [{ role: "system", content: systemPrompt }, ...chatMessages],
+                  max_tokens: 1000,
+                  temperature: 0.7,
+                }),
+                signal: _abort.signal,
+              });
+              if (!resp.ok) { const e = await resp.text(); throw new Error(`Groq API error ${resp.status}: ${e}`); }
+              const data = await resp.json();
+              aiResponse = data.choices?.[0]?.message?.content || "";
+            } else  {
             const resp = await fetch("https://api.venice.ai/api/v1/chat/completions", {
               method: "POST",
               headers: {
