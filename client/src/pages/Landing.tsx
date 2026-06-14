@@ -1126,6 +1126,7 @@ export default function Landing() {
               Download App
             </button>
             <button onClick={() => setLocation("/contact")} className="hover:text-white transition-colors">Contact</button>
+            <button onClick={() => setLocation("/press")} className="hover:text-white transition-colors">Press</button>
           </div>
           <p className="text-[10px] text-white/30 font-medium">© 2026 Virelle Studios. All rights reserved.</p>
         </div>
