@@ -269,7 +269,7 @@ function TimelineClip({
       {/* Transition marker (after clip) */}
       <div className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
         <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-[8px] font-bold
-          ${scene.transitionType === "cut" ? "bg-zinc-800 border-zinc-600 text-zinc-400" : "bg-amber-400/20 border-primary/60 text-amber-400"}`}
+          ${scene.transitionType === "cut" ? "bg-zinc-800 border-amber-500/20 text-zinc-400" : "bg-amber-400/20 border-primary/60 text-amber-400"}`}
           title={`Transition: ${scene.transitionType}`}
         >
           {scene.transitionType === "cut" ? "C" : scene.transitionType === "dissolve" ? "D" : scene.transitionType === "fade" ? "F" : "T"}

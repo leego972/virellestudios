@@ -142,7 +142,7 @@ function SceneCard({
     <div className={`group border rounded-lg transition-all duration-200 ${
       isExcluded
         ? "border-amber-500/20 bg-zinc-900/30 opacity-60"
-        : "border-amber-500/20 bg-zinc-900/60 hover:border-zinc-600"
+        : "border-amber-500/20 bg-zinc-900/60 hover:border-amber-500/20"
     }`}>
       <div className="flex items-center gap-2 px-3 py-2.5">
         {/* Position / reorder */}

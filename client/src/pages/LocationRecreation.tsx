@@ -262,7 +262,7 @@ const LocationRecreation: React.FC = () => {
                         <button
                           key={t}
                           onClick={() => setEnvSettings({...envSettings, timeOfDay: t})}
-                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.timeOfDay === t ? 'border-purple-500 bg-purple-500/10 text-purple-400' : 'border-amber-500/20 hover:border-zinc-600'}`}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.timeOfDay === t ? 'border-purple-500 bg-purple-500/10 text-purple-400' : 'border-amber-500/20 hover:border-amber-500/20'}`}
                         >
                           {t.replace('-', ' ')}
                         </button>
@@ -276,7 +276,7 @@ const LocationRecreation: React.FC = () => {
                         <button
                           key={w}
                           onClick={() => setEnvSettings({...envSettings, weather: w})}
-                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.weather === w ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-amber-500/20 hover:border-zinc-600'}`}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.weather === w ? 'border-blue-500 bg-blue-500/10 text-blue-400' : 'border-amber-500/20 hover:border-amber-500/20'}`}
                         >
                           {w}
                         </button>
@@ -290,7 +290,7 @@ const LocationRecreation: React.FC = () => {
                         <button
                           key={l}
                           onClick={() => setEnvSettings({...envSettings, lighting: l})}
-                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.lighting === l ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-amber-500/20 hover:border-zinc-600'}`}
+                          className={`p-3 rounded-xl border transition-all capitalize text-sm ${envSettings.lighting === l ? 'border-yellow-500 bg-yellow-500/10 text-yellow-400' : 'border-amber-500/20 hover:border-amber-500/20'}`}
                         >
                           {l}
                         </button>
@@ -314,7 +314,7 @@ const LocationRecreation: React.FC = () => {
                           onClick={() => toggleScene(s.id)}
                           className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedSceneIds.includes(s.id) ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-amber-500/20 hover:border-amber-500/20'}`}
                         >
-                          <div className={`w-4 h-4 rounded border flex items-center justify-center ${selectedSceneIds.includes(s.id) ? 'bg-green-500 border-green-500' : 'border-zinc-600'}`}>
+                          <div className={`w-4 h-4 rounded border flex items-center justify-center ${selectedSceneIds.includes(s.id) ? 'bg-green-500 border-green-500' : 'border-amber-500/20'}`}>
                             {selectedSceneIds.includes(s.id) && <CheckCircle className="w-3 h-3 text-black" />}
                           </div>
                           <div className="truncate">

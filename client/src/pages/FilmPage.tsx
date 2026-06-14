@@ -238,7 +238,7 @@ export default function FilmPage() {
           {genres.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {genres.map((g) => (
-                <Badge key={g} variant="outline" className="text-xs border-zinc-600 text-zinc-300 bg-black/40">
+                <Badge key={g} variant="outline" className="text-xs border-amber-500/20 text-zinc-300 bg-black/40">
                   <Tag className="w-2.5 h-2.5 mr-1" />
                   {g}
                 </Badge>
@@ -374,7 +374,7 @@ export default function FilmPage() {
               {scenes.map((scene: any, i: number) => (
                 <div
                   key={scene.id || i}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/60 border border-amber-500/20 hover:border-zinc-600 transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/60 border border-amber-500/20 hover:border-amber-500/20 transition-colors"
                 >
                   <div className="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400 shrink-0">
                     {i + 1}
@@ -431,7 +431,7 @@ export default function FilmPage() {
                 .slice(0, 3)
                 .map((f: any) => (
                   <Link key={f.slug} href={`/films/${f.slug}`}>
-                    <Card className="bg-zinc-900 border-amber-500/20 hover:border-zinc-600 transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
+                    <Card className="bg-zinc-900 border-amber-500/20 hover:border-amber-500/20 transition-all hover:-translate-y-0.5 cursor-pointer overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
                       <div className="aspect-video bg-zinc-800 relative overflow-hidden">
                         {f.thumbnailUrl ? (
                           <img

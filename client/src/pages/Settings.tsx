@@ -1352,7 +1352,7 @@ function ActiveTalentLicensesList() {
               <Badge className={`text-xs border ${
                 e.licenseType === "commercial" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
                 e.licenseType === "episodic"   ? "bg-purple-500/10 text-purple-400 border-purple-500/20" :
-                "bg-zinc-700/50 text-zinc-400 border-zinc-600/30"
+                "bg-zinc-700/50 text-zinc-400 border-amber-500/20/30"
               }`}>{e.licenseType}</Badge>
               {e.createdAt && (
                 <span className="text-xs text-zinc-600">{new Date(e.createdAt).toLocaleDateString()}</span>
