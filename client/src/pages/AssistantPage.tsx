@@ -39,7 +39,7 @@ import { useState, useEffect } from "react";
         >
           {/* Outer bloom behind the mask */}
           <div
-            className="absolute top-1/2 left-[28%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            className="absolute top-1/2 left-[33%] -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
               width: "min(70vh, 70vw)",
               height: "min(70vh, 70vw)",
@@ -49,7 +49,7 @@ import { useState, useEffect } from "react";
           />
           {/* Face container */}
           <div
-            className="absolute top-1/2 left-[28%] -translate-x-1/2 -translate-y-1/2"
+            className="absolute top-1/2 left-[33%] -translate-x-1/2 -translate-y-1/2"
             style={{ width: "min(62vh, 62vw)", height: "min(62vh, 62vw)" }}
           >
             <VirelleFace volume={0} speaking={voiceState === 'speaking'} state={voiceState} />
