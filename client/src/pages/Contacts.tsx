@@ -1,1 +1,156 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHVzZVBhcmFtcywgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBJbnB1dCB9IGZyb20gIkAvY29tcG9uZW50cy91aS9pbnB1dCI7CmltcG9ydCB7IFRleHRhcmVhIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL3RleHRhcmVhIjsKaW1wb3J0IHsgQ2FyZCwgQ2FyZENvbnRlbnQsIENhcmRIZWFkZXIsIENhcmRUaXRsZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9jYXJkIjsKaW1wb3J0IHsgdHJwYyB9IGZyb20gIkAvbGliL3RycGMiOwppbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7CmltcG9ydCB7IEFycm93TGVmdCwgUGx1cywgVXNlcnMsIFRyYXNoMiwgTG9hZGVyMiwgTWFpbCwgUGhvbmUsIEVkaXQyIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKCmNvbnN0IERFUEFSVE1FTlRTID0gWyJDYW1lcmEiLCAiU291bmQiLCAiR3JpcCIsICJFbGVjdHJpYyIsICJBcnQiLCAiV2FyZHJvYmUiLCAiSGFpci9NYWtldXAiLCAiUHJvZHVjdGlvbiIsICJTdHVudHMiLCAiVkZYIiwgIlBvc3QiLCAiT3RoZXIiXTsKCi8qKiB2Ni42MyDigJQgQ3JldyAmIGNvbnRhY3RzIGRpcmVjdG9yeSBwYWdlLiAqLwpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBDb250YWN0cygpIHsKICBjb25zdCB7IGlkIH0gPSB1c2VQYXJhbXM8eyBpZDogc3RyaW5nIH0+KCk7CiAgY29uc3QgcHJvamVjdElkID0gcGFyc2VJbnQoaWQgfHwgIjAiKTsKICBjb25zdCB1dGlscyA9IHRycGMudXNlVXRpbHMoKTsKICBjb25zdCB7IGRhdGE6IGNvbnRhY3RzID0gW10sIGlzTG9hZGluZyB9ID0gdHJwYy5jcmV3Q29udGFjdC5saXN0LnVzZVF1ZXJ5KHsgcHJvamVjdElkIH0sIHsgZW5hYmxlZDogISFwcm9qZWN0SWQgfSk7CiAgY29uc3QgY3JlYXRlTXV0ID0gdHJwYy5jcmV3Q29udGFjdC5jcmVhdGUudXNlTXV0YXRpb24oKTsKICBjb25zdCB1cGRhdGVNdXQgPSB0cnBjLmNyZXdDb250YWN0LnVwZGF0ZS51c2VNdXRhdGlvbigpOwogIGNvbnN0IGRlbGV0ZU11dCA9IHRycGMuY3Jld0NvbnRhY3QuZGVsZXRlLnVzZU11dGF0aW9uKCk7CgogIGNvbnN0IFtvcGVuLCBzZXRPcGVuXSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbZWRpdGluZ0lkLCBzZXRFZGl0aW5nSWRdID0gdXNlU3RhdGU8bnVtYmVyIHwgbnVsbD4obnVsbCk7CiAgY29uc3QgZW1wdHkgPSB7IG5hbWU6ICIiLCByb2xlOiAiIiwgZGVwYXJ0bWVudDogIiIsIGVtYWlsOiAiIiwgcGhvbmU6ICIiLCBjYWxsVGltZU92ZXJyaWRlOiAiIiwgbm90ZXM6ICIiIH07CiAgY29uc3QgW2Zvcm0sIHNldEZvcm1dID0gdXNlU3RhdGUoZW1wdHkpOwoKICBmdW5jdGlvbiBzdGFydE5ldygpIHsgc2V0RWRpdGluZ0lkKG51bGwpOyBzZXRGb3JtKGVtcHR5KTsgc2V0T3Blbih0cnVlKTsgfQogIGZ1bmN0aW9uIHN0YXJ0RWRpdChjOiBhbnkpIHsKICAgIHNldEVkaXRpbmdJZChjLmlkKTsKICAgIHNldEZvcm0oeyBuYW1lOiBjLm5hbWUgfHwgIiIsIHJvbGU6IGMucm9sZSB8fCAiIiwgZGVwYXJ0bWVudDogYy5kZXBhcnRtZW50IHx8ICIiLCBlbWFpbDogYy5lbWFpbCB8fCAiIiwgcGhvbmU6IGMucGhvbmUgfHwgIiIsIGNhbGxUaW1lT3ZlcnJpZGU6IGMuY2FsbFRpbWVPdmVycmlkZSB8fCAiIiwgbm90ZXM6IGMubm90ZXMgfHwgIiIgfSk7CiAgICBzZXRPcGVuKHRydWUpOwogIH0KCiAgYXN5bmMgZnVuY3Rpb24gc2F2ZSgpIHsKICAgIHRyeSB7CiAgICAgIGlmICghZm9ybS5uYW1lLnRyaW0oKSkgeyB0b2FzdC5lcnJvcigiTmFtZSBpcyByZXF1aXJlZCIpOyByZXR1cm47IH0KICAgICAgaWYgKGVkaXRpbmdJZCkgewogICAgICAgIGF3YWl0IHVwZGF0ZU11dC5tdXRhdGVBc3luYyh7IGlkOiBlZGl0aW5nSWQsIHByb2plY3RJZCwgLi4uZm9ybSB9KTsKICAgICAgfSBlbHNlIHsKICAgICAgICBhd2FpdCBjcmVhdGVNdXQubXV0YXRlQXN5bmMoeyBwcm9qZWN0SWQsIC4uLmZvcm0gfSk7CiAgICAgIH0KICAgICAgYXdhaXQgdXRpbHMuY3Jld0NvbnRhY3QubGlzdC5pbnZhbGlkYXRlKCk7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoZWRpdGluZ0lkID8gIkNvbnRhY3QgdXBkYXRlZCIgOiAiQ29udGFjdCBhZGRlZCIpOwogICAgICBzZXRPcGVuKGZhbHNlKTsKICAgICAgc2V0Rm9ybShlbXB0eSk7CiAgICAgIHNldEVkaXRpbmdJZChudWxsKTsKICAgIH0gY2F0Y2ggKGU6IGFueSkgeyB0b2FzdC5lcnJvcihlPy5tZXNzYWdlIHx8ICJGYWlsZWQiKTsgfQogIH0KCiAgYXN5bmMgZnVuY3Rpb24gaGFuZGxlRGVsZXRlKGNpZDogbnVtYmVyKSB7CiAgICBpZiAoIWNvbmZpcm0oIkRlbGV0ZSB0aGlzIGNvbnRhY3Q/IikpIHJldHVybjsKICAgIHRyeSB7IGF3YWl0IGRlbGV0ZU11dC5tdXRhdGVBc3luYyh7IGlkOiBjaWQsIHByb2plY3RJZCB9KTsgYXdhaXQgdXRpbHMuY3Jld0NvbnRhY3QubGlzdC5pbnZhbGlkYXRlKCk7IHRvYXN0LnN1Y2Nlc3MoIkRlbGV0ZWQiKTsgfQogICAgY2F0Y2ggKGU6IGFueSkgeyB0b2FzdC5lcnJvcihlPy5tZXNzYWdlIHx8ICJGYWlsZWQiKTsgfQogIH0KCiAgLy8gR3JvdXAgYnkgZGVwYXJ0bWVudCBmb3IgZGlzcGxheQogIGNvbnN0IGdyb3VwZWQ6IFJlY29yZDxzdHJpbmcsIGFueVtdPiA9IHt9OwogIGZvciAoY29uc3QgYyBvZiAoY29udGFjdHMgYXMgYW55W10pKSB7CiAgICBjb25zdCBrID0gYy5kZXBhcnRtZW50IHx8ICJPdGhlciI7CiAgICAoZ3JvdXBlZFtrXSA9IGdyb3VwZWRba10gfHwgW10pLnB1c2goYyk7CiAgfQoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiB0ZXh0LXppbmMtMTAwIHAtNCBtZDpwLTYiIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTV4bCBteC1hdXRvIHNwYWNlLXktNCI+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiBnYXAtMyBmbGV4LXdyYXAiPgogICAgICAgICAgPGRpdj4KICAgICAgICAgICAgPExpbmsgaHJlZj17YC9wcm9qZWN0cy8ke3Byb2plY3RJZH1gfT4KICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJzbSIgY2xhc3NOYW1lPSJ0ZXh0LXppbmMtNDAwIGhvdmVyOnRleHQtemluYy0xMDAiPgogICAgICAgICAgICAgICAgPEFycm93TGVmdCBjbGFzc05hbWU9InctNCBoLTQgbXItMSIgLz4gQmFjayB0byBwcm9qZWN0CiAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIGZsZXggaXRlbXMtY2VudGVyIGdhcC0yIG10LTEiPgogICAgICAgICAgICAgIDxVc2VycyBjbGFzc05hbWU9InctNiBoLTYgdGV4dC1hbWJlci01MDAiIC8+IENyZXcgJiBDb250YWN0cwogICAgICAgICAgICA8L2gxPgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC16aW5jLTQwMCI+eyhjb250YWN0cyBhcyBhbnlbXSkubGVuZ3RofSBjb250YWN0eyhjb250YWN0cyBhcyBhbnlbXSkubGVuZ3RoID09PSAxID8gIiIgOiAicyJ9PC9wPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8QnV0dG9uIHNpemU9InNtIiBvbkNsaWNrPXtzdGFydE5ld30gY2xhc3NOYW1lPSJiZy1hbWJlci02MDAgaG92ZXI6YmctYW1iZXItNTAwIHRleHQtemluYy05NTAiPgogICAgICAgICAgICA8UGx1cyBjbGFzc05hbWU9InctNCBoLTQgbXItMSIgLz4gQWRkIGNvbnRhY3QKICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgIDwvZGl2PgoKICAgICAgICB7b3BlbiAmJiAoCiAgICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImJnLXppbmMtOTUwIGJvcmRlci16aW5jLTgwMCI+CiAgICAgICAgICAgIDxDYXJkSGVhZGVyPjxDYXJkVGl0bGUgY2xhc3NOYW1lPSJ0ZXh0LWJhc2UiPntlZGl0aW5nSWQgPyAiRWRpdCBjb250YWN0IiA6ICJOZXcgY29udGFjdCJ9PC9DYXJkVGl0bGU+PC9DYXJkSGVhZGVyPgogICAgICAgICAgICA8Q2FyZENvbnRlbnQgY2xhc3NOYW1lPSJzcGFjZS15LTMiPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0xIG1kOmdyaWQtY29scy0yIGdhcC0zIj4KICAgICAgICAgICAgICAgIDxkaXY+PGxhYmVsIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXppbmMtNDAwIj5OYW1lICo8L2xhYmVsPjxJbnB1dCB2YWx1ZT17Zm9ybS5uYW1lfSBvbkNoYW5nZT17KGUpID0+IHNldEZvcm0oKGYpID0+ICh7IC4uLmYsIG5hbWU6IGUudGFyZ2V0LnZhbHVlIH0pKX0gY2xhc3NOYW1lPSJiZy16aW5jLTkwMCBib3JkZXItemluYy04MDAiIC8+PC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2PjxsYWJlbCBjbGFzc05hbWU9InRleHQteHMgdGV4dC16aW5jLTQwMCI+Um9sZSAvIFRpdGxlPC9sYWJlbD48SW5wdXQgdmFsdWU9e2Zvcm0ucm9sZX0gb25DaGFuZ2U9eyhlKSA9PiBzZXRGb3JtKChmKSA9PiAoeyAuLi5mLCByb2xlOiBlLnRhcmdldC52YWx1ZSB9KSl9IHBsYWNlaG9sZGVyPSJEUCwgQm9vbSBvcCwgMXN0IEFE4oCmIiBjbGFzc05hbWU9ImJnLXppbmMtOTAwIGJvcmRlci16aW5jLTgwMCIgLz48L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgIDxsYWJlbCBjbGFzc05hbWU9InRleHQteHMgdGV4dC16aW5jLTQwMCI+RGVwYXJ0bWVudDwvbGFiZWw+CiAgICAgICAgICAgICAgICAgIDxzZWxlY3QgdmFsdWU9e2Zvcm0uZGVwYXJ0bWVudH0gb25DaGFuZ2U9eyhlKSA9PiBzZXRGb3JtKChmKSA9PiAoeyAuLi5mLCBkZXBhcnRtZW50OiBlLnRhcmdldC52YWx1ZSB9KSl9IGNsYXNzTmFtZT0idy1mdWxsIGJnLXppbmMtOTAwIGJvcmRlciBib3JkZXItemluYy04MDAgcm91bmRlZCBweC0yIHB5LTEuNSB0ZXh0LXNtIj4KICAgICAgICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSIiPuKAlDwvb3B0aW9uPgogICAgICAgICAgICAgICAgICAgIHtERVBBUlRNRU5UUy5tYXAoKGQpID0+IDxvcHRpb24ga2V5PXtkfSB2YWx1ZT17ZH0+e2R9PC9vcHRpb24+KX0KICAgICAgICAgICAgICAgICAgPC9zZWxlY3Q+CiAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDxkaXY+PGxhYmVsIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXppbmMtNDAwIj5DYWxsIHRpbWUgb3ZlcnJpZGU8L2xhYmVsPjxJbnB1dCB0eXBlPSJ0aW1lIiB2YWx1ZT17Zm9ybS5jYWxsVGltZU92ZXJyaWRlfSBvbkNoYW5nZT17KGUpID0+IHNldEZvcm0oKGYpID0+ICh7IC4uLmYsIGNhbGxUaW1lT3ZlcnJpZGU6IGUudGFyZ2V0LnZhbHVlIH0pKX0gY2xhc3NOYW1lPSJiZy16aW5jLTkwMCBib3JkZXItemluYy04MDAiIC8+PC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2PjxsYWJlbCBjbGFzc05hbWU9InRleHQteHMgdGV4dC16aW5jLTQwMCI+RW1haWw8L2xhYmVsPjxJbnB1dCB0eXBlPSJlbWFpbCIgdmFsdWU9e2Zvcm0uZW1haWx9IG9uQ2hhbmdlPXsoZSkgPT4gc2V0Rm9ybSgoZikgPT4gKHsgLi4uZiwgZW1haWw6IGUudGFyZ2V0LnZhbHVlIH0pKX0gY2xhc3NOYW1lPSJiZy16aW5jLTkwMCBib3JkZXItemluYy04MDAiIC8+PC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2PjxsYWJlbCBjbGFzc05hbWU9InRleHQteHMgdGV4dC16aW5jLTQwMCI+UGhvbmU8L2xhYmVsPjxJbnB1dCB0eXBlPSJ0ZWwiIHZhbHVlPXtmb3JtLnBob25lfSBvbkNoYW5nZT17KGUpID0+IHNldEZvcm0oKGYpID0+ICh7IC4uLmYsIHBob25lOiBlLnRhcmdldC52YWx1ZSB9KSl9IGNsYXNzTmFtZT0iYmctemluYy05MDAgYm9yZGVyLXppbmMtODAwIiAvPjwvZGl2PgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXY+PGxhYmVsIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXppbmMtNDAwIj5Ob3RlczwvbGFiZWw+PFRleHRhcmVhIHZhbHVlPXtmb3JtLm5vdGVzfSBvbkNoYW5nZT17KGUpID0+IHNldEZvcm0oKGYpID0+ICh7IC4uLmYsIG5vdGVzOiBlLnRhcmdldC52YWx1ZSB9KSl9IHJvd3M9ezJ9IGNsYXNzTmFtZT0iYmctemluYy05MDAgYm9yZGVyLXppbmMtODAwIHRleHQtc20iIC8+PC9kaXY+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTIgcHQtMSI+CiAgICAgICAgICAgICAgICA8QnV0dG9uIHNpemU9InNtIiBkaXNhYmxlZD17Y3JlYXRlTXV0LmlzUGVuZGluZyB8fCB1cGRhdGVNdXQuaXNQZW5kaW5nfSBvbkNsaWNrPXtzYXZlfSBjbGFzc05hbWU9ImJnLWFtYmVyLTYwMCBob3ZlcjpiZy1hbWJlci01MDAgdGV4dC16aW5jLTk1MCI+CiAgICAgICAgICAgICAgICAgIHsoY3JlYXRlTXV0LmlzUGVuZGluZyB8fCB1cGRhdGVNdXQuaXNQZW5kaW5nKSAmJiA8TG9hZGVyMiBjbGFzc05hbWU9InctMy41IGgtMy41IGFuaW1hdGUtc3BpbiBtci0xIiAvPn0KICAgICAgICAgICAgICAgICAge2VkaXRpbmdJZCA/ICJTYXZlIiA6ICJDcmVhdGUifQogICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICA8QnV0dG9uIHNpemU9InNtIiB2YXJpYW50PSJnaG9zdCIgb25DbGljaz17KCkgPT4geyBzZXRPcGVuKGZhbHNlKTsgc2V0RWRpdGluZ0lkKG51bGwpOyB9fT5DYW5jZWw8L0J1dHRvbj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgICAgIDwvQ2FyZD4KICAgICAgICApfQoKICAgICAgICB7aXNMb2FkaW5nID8gKAogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtY2VudGVyIHB5LTEyIHRleHQtemluYy01MDAiPjxMb2FkZXIyIGNsYXNzTmFtZT0idy01IGgtNSBhbmltYXRlLXNwaW4gaW5saW5lIG1yLTIiIC8+TG9hZGluZ+KApjwvZGl2PgogICAgICAgICkgOiAoY29udGFjdHMgYXMgYW55W10pLmxlbmd0aCA9PT0gMCA/ICgKICAgICAgICAgIDxDYXJkIGNsYXNzTmFtZT0iYmctemluYy05NTAgYm9yZGVyLXppbmMtODAwIj4KICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icC04IHRleHQtY2VudGVyIHRleHQtc20gdGV4dC16aW5jLTUwMCI+Tm8gY29udGFjdHMgeWV0LiBBZGQgeW91ciBmaXJzdCBjcmV3IG1lbWJlciBhYm92ZS48L0NhcmRDb250ZW50PgogICAgICAgICAgPC9DYXJkPgogICAgICAgICkgOiAoCiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgICAgICAgICAge09iamVjdC5lbnRyaWVzKGdyb3VwZWQpLm1hcCgoW2RlcHQsIGxpc3RdKSA9PiAoCiAgICAgICAgICAgICAgPENhcmQga2V5PXtkZXB0fSBjbGFzc05hbWU9ImJnLXppbmMtOTUwIGJvcmRlci16aW5jLTgwMCI+CiAgICAgICAgICAgICAgICA8Q2FyZEhlYWRlciBjbGFzc05hbWU9InBiLTIiPjxDYXJkVGl0bGUgY2xhc3NOYW1lPSJ0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlIHRleHQtYW1iZXItNTAwIj57ZGVwdH08L0NhcmRUaXRsZT48L0NhcmRIZWFkZXI+CiAgICAgICAgICAgICAgICA8Q2FyZENvbnRlbnQgY2xhc3NOYW1lPSJwLTAiPgogICAgICAgICAgICAgICAgICA8dGFibGUgY2xhc3NOYW1lPSJ3LWZ1bGwgdGV4dC1zbSI+CiAgICAgICAgICAgICAgICAgICAgPHRoZWFkIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXppbmMtNDAwIGJnLXppbmMtOTAwLzQwIj4KICAgICAgICAgICAgICAgICAgICAgIDx0cj48dGggY2xhc3NOYW1lPSJweC0zIHB5LTIgdGV4dC1sZWZ0Ij5OYW1lPC90aD48dGggY2xhc3NOYW1lPSJweC0zIHB5LTIgdGV4dC1sZWZ0Ij5Sb2xlPC90aD48dGggY2xhc3NOYW1lPSJweC0zIHB5LTIgdGV4dC1sZWZ0Ij5DYWxsPC90aD48dGggY2xhc3NOYW1lPSJweC0zIHB5LTIgdGV4dC1sZWZ0Ij5Db250YWN0PC90aD48dGggY2xhc3NOYW1lPSJweC0zIHB5LTIiPjwvdGg+PC90cj4KICAgICAgICAgICAgICAgICAgICA8L3RoZWFkPgogICAgICAgICAgICAgICAgICAgIDx0Ym9keT4KICAgICAgICAgICAgICAgICAgICAgIHtsaXN0Lm1hcCgoYykgPT4gKAogICAgICAgICAgICAgICAgICAgICAgICA8dHIga2V5PXtjLmlkfSBjbGFzc05hbWU9ImJvcmRlci10IGJvcmRlci16aW5jLTgwMCBob3ZlcjpiZy16aW5jLTkwMC80MCI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPHRkIGNsYXNzTmFtZT0icHgtMyBweS0yIGZvbnQtbWVkaXVtIj57Yy5uYW1lfTwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPHRkIGNsYXNzTmFtZT0icHgtMyBweS0yIHRleHQtemluYy0zMDAiPntjLnJvbGUgfHwgIuKAlCJ9PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgICA8dGQgY2xhc3NOYW1lPSJweC0zIHB5LTIgZm9udC1tb25vIHRleHQteHMiPntjLmNhbGxUaW1lT3ZlcnJpZGUgfHwgIuKAlCJ9PC90ZD4KICAgICAgICAgICAgICAgICAgICAgICAgICA8dGQgY2xhc3NOYW1lPSJweC0zIHB5LTIgdGV4dC14cyBzcGFjZS15LTAuNSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICB7Yy5lbWFpbCAmJiA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTEgdGV4dC16aW5jLTMwMCI+PE1haWwgY2xhc3NOYW1lPSJ3LTMgaC0zIiAvPjxhIGhyZWY9e2BtYWlsdG86JHtjLmVtYWlsfWB9IGNsYXNzTmFtZT0iaG92ZXI6dGV4dC1hbWJlci00MDAiPntjLmVtYWlsfTwvYT48L2Rpdj59CiAgICAgICAgICAgICAgICAgICAgICAgICAgICB7Yy5waG9uZSAmJiA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTEgdGV4dC16aW5jLTMwMCI+PFBob25lIGNsYXNzTmFtZT0idy0zIGgtMyIgLz48YSBocmVmPXtgdGVsOiR7Yy5waG9uZX1gfSBjbGFzc05hbWU9ImhvdmVyOnRleHQtYW1iZXItNDAwIj57Yy5waG9uZX08L2E+PC9kaXY+fQogICAgICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPHRkIGNsYXNzTmFtZT0icHgtMyBweS0yIHRleHQtcmlnaHQgd2hpdGVzcGFjZS1ub3dyYXAiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbiBzaXplPSJzbSIgdmFyaWFudD0iZ2hvc3QiIGNsYXNzTmFtZT0iaC03IHctNyBwLTAiIG9uQ2xpY2s9eygpID0+IHN0YXJ0RWRpdChjKX0+PEVkaXQyIGNsYXNzTmFtZT0idy0zLjUgaC0zLjUiIC8+PC9CdXR0b24+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8QnV0dG9uIHNpemU9InNtIiB2YXJpYW50PSJnaG9zdCIgY2xhc3NOYW1lPSJoLTcgdy03IHAtMCB0ZXh0LXJlZC00MDAgaG92ZXI6dGV4dC1yZWQtMzAwIiBvbkNsaWNrPXsoKSA9PiBoYW5kbGVEZWxldGUoYy5pZCl9PjxUcmFzaDIgY2xhc3NOYW1lPSJ3LTMuNSBoLTMuNSIgLz48L0J1dHRvbj4KICAgICAgICAgICAgICAgICAgICAgICAgICA8L3RkPgogICAgICAgICAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICAgICAgPC90Ym9keT4KICAgICAgICAgICAgICAgICAgPC90YWJsZT4KICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgPC9DYXJkPgogICAgICAgICAgICApKX0KICAgICAgICAgIDwvZGl2PgogICAgICAgICl9CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CiAgKTsKfQo=
+import { useState } from "react";
+import { useParams, Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
+import { ArrowLeft, Plus, Users, Trash2, Loader2, Mail, Phone, Edit2 } from "lucide-react";
+
+const DEPARTMENTS = ["Camera", "Sound", "Grip", "Electric", "Art", "Wardrobe", "Hair/Makeup", "Production", "Stunts", "VFX", "Post", "Other"];
+
+/** v6.63 — Crew & contacts directory page. */
+export default function Contacts() {
+  const { id } = useParams<{ id: string }>();
+  const projectId = parseInt(id || "0");
+  const utils = trpc.useUtils();
+  const { data: contacts = [], isLoading } = trpc.crewContact.list.useQuery({ projectId }, { enabled: !!projectId });
+  const createMut = trpc.crewContact.create.useMutation();
+  const updateMut = trpc.crewContact.update.useMutation();
+  const deleteMut = trpc.crewContact.delete.useMutation();
+
+  const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const empty = { name: "", role: "", department: "", email: "", phone: "", callTimeOverride: "", notes: "" };
+  const [form, setForm] = useState(empty);
+
+  function startNew() { setEditingId(null); setForm(empty); setOpen(true); }
+  function startEdit(c: any) {
+    setEditingId(c.id);
+    setForm({ name: c.name || "", role: c.role || "", department: c.department || "", email: c.email || "", phone: c.phone || "", callTimeOverride: c.callTimeOverride || "", notes: c.notes || "" });
+    setOpen(true);
+  }
+
+  async function save() {
+    try {
+      if (!form.name.trim()) { toast.error("Name is required"); return; }
+      if (editingId) {
+        await updateMut.mutateAsync({ id: editingId, projectId, ...form });
+      } else {
+        await createMut.mutateAsync({ projectId, ...form });
+      }
+      await utils.crewContact.list.invalidate();
+      toast.success(editingId ? "Contact updated" : "Contact added");
+      setOpen(false);
+      setForm(empty);
+      setEditingId(null);
+    } catch (e: any) { toast.error(e?.message || "Failed"); }
+  }
+
+  async function handleDelete(cid: number) {
+    if (!confirm("Delete this contact?")) return;
+    try { await deleteMut.mutateAsync({ id: cid, projectId }); await utils.crewContact.list.invalidate(); toast.success("Deleted"); }
+    catch (e: any) { toast.error(e?.message || "Failed"); }
+  }
+
+  // Group by department for display
+  const grouped: Record<string, any[]> = {};
+  for (const c of (contacts as any[])) {
+    const k = c.department || "Other";
+    (grouped[k] = grouped[k] || []).push(c);
+  }
+
+  return (
+    <div className="min-h-screen text-zinc-100 p-4 md:p-6" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <div className="max-w-5xl mx-auto space-y-4">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <Link href={`/projects/${projectId}`}>
+              <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-zinc-100">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back to project
+              </Button>
+            </Link>
+            <h1 className="text-2xl font-bold flex items-center gap-2 mt-1 gradient-text-gold">
+              <Users className="w-6 h-6 text-amber-500" /> Crew & Contacts
+            </h1>
+            <p className="text-sm text-zinc-400">{(contacts as any[]).length} contact{(contacts as any[]).length === 1 ? "" : "s"}</p>
+          </div>
+          <Button size="sm" onClick={startNew} className="bg-amber-600 hover:bg-amber-500 text-zinc-950">
+            <Plus className="w-4 h-4 mr-1" /> Add contact
+          </Button>
+        </div>
+
+        {open && (
+          <Card className="bg-zinc-950 border-zinc-800">
+            <CardHeader><CardTitle className="text-base">{editingId ? "Edit contact" : "New contact"}</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div><label className="text-xs text-zinc-400">Name *</label><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
+                <div><label className="text-xs text-zinc-400">Role / Title</label><Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} placeholder="DP, Boom op, 1st AD…" className="bg-zinc-900 border-zinc-800" /></div>
+                <div>
+                  <label className="text-xs text-zinc-400">Department</label>
+                  <select value={form.department} onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))} className="w-full bg-zinc-900 border border-zinc-800 rounded px-2 py-1.5 text-sm">
+                    <option value="">—</option>
+                    {DEPARTMENTS.map((d) => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+                <div><label className="text-xs text-zinc-400">Call time override</label><Input type="time" value={form.callTimeOverride} onChange={(e) => setForm((f) => ({ ...f, callTimeOverride: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
+                <div><label className="text-xs text-zinc-400">Email</label><Input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
+                <div><label className="text-xs text-zinc-400">Phone</label><Input type="tel" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} className="bg-zinc-900 border-zinc-800" /></div>
+              </div>
+              <div><label className="text-xs text-zinc-400">Notes</label><Textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} rows={2} className="bg-zinc-900 border-zinc-800 text-sm" /></div>
+              <div className="flex gap-2 pt-1">
+                <Button size="sm" disabled={createMut.isPending || updateMut.isPending} onClick={save} className="bg-amber-600 hover:bg-amber-500 text-zinc-950">
+                  {(createMut.isPending || updateMut.isPending) && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
+                  {editingId ? "Save" : "Create"}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => { setOpen(false); setEditingId(null); }}>Cancel</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {isLoading ? (
+          <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2" />Loading…</div>
+        ) : (contacts as any[]).length === 0 ? (
+          <Card className="bg-zinc-950 border-zinc-800">
+            <CardContent className="p-8 text-center text-sm text-zinc-500">No contacts yet. Add your first crew member above.</CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {Object.entries(grouped).map(([dept, list]) => (
+              <Card key={dept} className="bg-zinc-950 border-zinc-800">
+                <CardHeader className="pb-2"><CardTitle className="text-sm uppercase tracking-wide text-amber-500">{dept}</CardTitle></CardHeader>
+                <CardContent className="p-0">
+                  <table className="w-full text-sm">
+                    <thead className="text-xs text-zinc-400 bg-zinc-900/40">
+                      <tr><th className="px-3 py-2 text-left">Name</th><th className="px-3 py-2 text-left">Role</th><th className="px-3 py-2 text-left">Call</th><th className="px-3 py-2 text-left">Contact</th><th className="px-3 py-2"></th></tr>
+                    </thead>
+                    <tbody>
+                      {list.map((c) => (
+                        <tr key={c.id} className="border-t border-zinc-800 hover:bg-zinc-900/40">
+                          <td className="px-3 py-2 font-medium">{c.name}</td>
+                          <td className="px-3 py-2 text-zinc-300">{c.role || "—"}</td>
+                          <td className="px-3 py-2 font-mono text-xs">{c.callTimeOverride || "—"}</td>
+                          <td className="px-3 py-2 text-xs space-y-0.5">
+                            {c.email && <div className="flex items-center gap-1 text-zinc-300"><Mail className="w-3 h-3" /><a href={`mailto:${c.email}`} className="hover:text-amber-400">{c.email}</a></div>}
+                            {c.phone && <div className="flex items-center gap-1 text-zinc-300"><Phone className="w-3 h-3" /><a href={`tel:${c.phone}`} className="hover:text-amber-400">{c.phone}</a></div>}
+                          </td>
+                          <td className="px-3 py-2 text-right whitespace-nowrap">
+                            <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => startEdit(c)}><Edit2 className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-red-400 hover:text-red-300" onClick={() => handleDelete(c.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
