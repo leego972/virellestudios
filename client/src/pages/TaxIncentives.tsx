@@ -151,7 +151,7 @@ import { useState, useMemo } from "react";
 
         {selected && (
           <Card className="border-primary/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
-            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><span>{selected.name}, {selected.country} ÃÂ¢ÃÂÃÂ {selected.rebate}% {selected.type}</span><a href={selected.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="gap-1 text-xs"><ExternalLink className="h-3 w-3" />Official Site</Button></a></CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><span>{selected.name}, {selected.country} ÃÂ¢ÃÂÃÂ {selected.rebate}% {selected.type}</span><a href={selected.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="gap-1 text-xs hover:border-amber-500/50 hover:text-amber-400"><ExternalLink className="h-3 w-3" />Official Site</Button></a></CardTitle></CardHeader>
             <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <p className="text-sm text-muted-foreground">{selected.notes}</p>
               <div className="flex gap-4 text-xs">
