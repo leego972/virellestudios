@@ -224,7 +224,7 @@ export default function Projects() {
       )}
 
       {isError ? (
-        <Card className="bg-card/50 border-destructive/30">
+        <Card className="bg-card/50 border-destructive/30 glass-card">
           <CardContent className="p-12 flex flex-col items-center text-center">
             <Film className="h-10 w-10 text-destructive/40 mb-3" />
             <p className="text-sm font-medium text-foreground/80 mb-1">We couldn't load your projects</p>
@@ -235,7 +235,7 @@ export default function Projects() {
       ) : isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i} className="bg-card/50">
+            <Card key={i} className="bg-card/50 glass-card">
               <CardContent className="p-4">
                 <Skeleton className="aspect-video w-full rounded-md mb-3" />
                 <Skeleton className="h-4 w-3/4 mb-2" />

@@ -415,7 +415,7 @@ export default function Characters() {
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Card key={i} className="bg-card/50">
+            <Card key={i} className="bg-card/50 glass-card">
               <CardContent className="p-4">
                 <Skeleton className="aspect-[3/4] w-full rounded-md mb-3" />
                 <Skeleton className="h-4 w-3/4 mb-2" />
@@ -425,7 +425,7 @@ export default function Characters() {
           ))}
         </div>
       ) : !characters?.length ? (
-        <Card className="bg-card/50 border-dashed">
+        <Card className="bg-card/50 border-dashed glass-card">
           <CardContent className="p-16 flex flex-col items-center text-center">
             <div className="h-16 w-16 rounded-full bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center mb-4">
               <Users className="h-8 w-8 text-violet-400" />
@@ -459,7 +459,7 @@ export default function Characters() {
           }).map((char) => {
             const attrs = (char.attributes || {}) as any;
             return (
-              <Card key={char.id} className="bg-card/50 group cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => openDetail(char)}>
+              <Card key={char.id} className="bg-card/50 group cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => openDetail(char)}>
                 <CardContent className="p-3">
                   {char.photoUrl ? (
                     <div className="aspect-[3/4] rounded-md overflow-hidden mb-3 bg-muted relative">
@@ -531,7 +531,7 @@ export default function Characters() {
             <DialogDescription className="text-sm">
               Upload a reference photo and AI will analyze every detail — facial structure, skin tone, hair, eyes — then generate a super-realistic cinematic character portrait.
             </DialogDescription>
-            <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs space-y-1.5">
+            <div className="mt-3 p-3 bg-primary/10 border border-amber-500/30 rounded-lg text-xs space-y-1.5">
               <p className="font-semibold text-amber-600 dark:text-amber-400">Photo Requirements for Best Results</p>
               <ul className="space-y-1 text-muted-foreground list-none">
                 <li><span className="text-foreground font-medium">✓ Face photo (required):</span> Clear frontal or 3/4 shot, well-lit, no heavy shadows. The AI reads facial structure, skin tone, hair, and eyes from this.</li>
@@ -714,7 +714,7 @@ export default function Characters() {
 
                   {/* Consent disclaimer */}
                   {selectedSearchImage && (
-                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 space-y-2">
+                    <div className="p-3 rounded-lg bg-primary/10 border border-amber-500/30 space-y-2">
                       <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">Consent & Usage Disclaimer</p>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         Images sourced from Wikimedia Commons are publicly available under their respective licences.

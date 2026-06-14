@@ -806,7 +806,7 @@ export default function ProjectDetail() {
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 glass-card">
               <CardContent className="p-4">
                 <div className="relative aspect-video rounded-md overflow-hidden bg-muted group cursor-pointer"
                   onClick={() => {
@@ -847,14 +847,14 @@ export default function ProjectDetail() {
                   <Badge variant="outline" className="text-xs">{project.resolution}</Badge>
                   <Badge variant="outline" className="text-xs capitalize">{project.quality}</Badge>
                   {scenePlaylist.length > 0 && (
-                    <Badge className="text-xs bg-amber-500/20 text-amber-400 border-amber-500/30 border">
+                    <Badge className="text-xs bg-primary/20 text-amber-400 border-amber-500/30 border">
                       <VideoIcon className="h-3 w-3 mr-1" />{scenePlaylist.length} video{scenePlaylist.length !== 1 ? 's' : ''}
                     </Badge>
                   )}
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-card/50 lg:col-span-2">
+            <Card className="bg-card/50 lg:col-span-2 glass-card">
               <CardHeader className="pb-3 flex flex-row items-center justify-between">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Project Details</CardTitle>
                 {!editingDescription ? (
@@ -916,25 +916,25 @@ export default function ProjectDetail() {
             </Card>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setActiveTab("scenes")}>
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setActiveTab("scenes")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{scenes?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Scenes</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setActiveTab("characters")}>
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setActiveTab("characters")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{characters?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Characters</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setActiveTab("soundtrack")}>
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setActiveTab("soundtrack")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{soundtracks?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Tracks</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setActiveTab("export")}>
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setActiveTab("export")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{jobs?.filter(j => j.status === "completed").length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Generations</p>
@@ -959,7 +959,7 @@ export default function ProjectDetail() {
             </div>
           </div>
           {!characters?.length ? (
-            <Card className="bg-card/50 border-dashed">
+            <Card className="bg-card/50 border-dashed glass-card">
               <CardContent className="p-10 flex flex-col items-center text-center">
                 <Users className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground mb-1">No characters added yet</p>
@@ -979,7 +979,7 @@ export default function ProjectDetail() {
               {characters.map((char) => {
                 const attrs = (char.attributes || {}) as any;
                 return (
-                  <Card key={char.id} className="bg-card/50 group relative">
+                  <Card key={char.id} className="bg-card/50 group relative glass-card">
                     <CardContent className="p-3">
                       {char.photoUrl ? (
                         <div className="aspect-square rounded-md overflow-hidden mb-2 bg-muted">
@@ -1033,7 +1033,7 @@ export default function ProjectDetail() {
                 const cardBorder = isFailed
                   ? "border-red-500/40 bg-red-500/5"
                   : isGenerating
-                    ? "border-amber-500/40 bg-amber-500/5"
+                    ? "border-amber-500/40 bg-primary/5"
                     : isCompleted
                       ? "border-emerald-500/20 bg-card/50"
                       : "bg-card/50";
@@ -1123,14 +1123,14 @@ export default function ProjectDetail() {
                         </button>
                       )}
                       {(scene as any).videoUrl && (
-                        <Badge className="text-[10px] h-5 bg-amber-500/20 text-amber-400 border-amber-500/30 border">
+                        <Badge className="text-[10px] h-5 bg-primary/20 text-amber-400 border-amber-500/30 border">
                           <VideoIcon className="h-2.5 w-2.5 mr-0.5" />Video
                         </Badge>
                       )}
                       {isFailed ? (
                         <Badge className="text-[10px] h-5 bg-red-500/20 text-red-400 border-red-500/30 border capitalize">Failed</Badge>
                       ) : isGenerating ? (
-                        <Badge className="text-[10px] h-5 bg-amber-500/20 text-amber-400 border-amber-500/30 border">
+                        <Badge className="text-[10px] h-5 bg-primary/20 text-amber-400 border-amber-500/30 border">
                           <Loader2 className="h-2.5 w-2.5 mr-0.5 animate-spin" />Generating
                         </Badge>
                       ) : isCompleted ? (
@@ -1145,7 +1145,7 @@ export default function ProjectDetail() {
               })}
             </div>
           ) : (
-            <Card className="bg-card/50 border-dashed">
+            <Card className="bg-card/50 border-dashed glass-card">
               <CardContent className="p-10 flex flex-col items-center text-center">
                 <Clapperboard className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground mb-3">
@@ -1169,7 +1169,7 @@ export default function ProjectDetail() {
             </Button>
           </div>
           {!soundtracks?.length ? (
-            <Card className="bg-card/50 border-dashed">
+            <Card className="bg-card/50 border-dashed glass-card">
               <CardContent className="p-10 flex flex-col items-center text-center">
                 <Music className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground mb-3">No soundtracks added yet</p>
@@ -1181,7 +1181,7 @@ export default function ProjectDetail() {
           ) : (
             <div className="space-y-2">
               {soundtracks.map((track) => (
-                <Card key={track.id} className="bg-card/50 group">
+                <Card key={track.id} className="bg-card/50 group glass-card">
                   <CardContent className="p-4 flex items-center gap-4">
                     <div className="h-12 w-12 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
                       <Music className="h-5 w-5 text-primary" />
@@ -1245,7 +1245,7 @@ export default function ProjectDetail() {
             </div>
           </div>
           {!scenes?.length && (
-            <Card className="bg-card/50 border-dashed">
+            <Card className="bg-card/50 border-dashed glass-card">
               <CardContent className="p-10 flex flex-col items-center text-center">
                 <Play className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground">Create scenes first before generating a trailer</p>
@@ -1253,7 +1253,7 @@ export default function ProjectDetail() {
             </Card>
           )}
           {trailerData && (
-            <Card className="bg-card/50">
+            <Card className="bg-card/50 glass-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium gradient-text-gold">{trailerData.trailerTitle || "Movie Trailer"}</CardTitle>
                 {trailerData.tagline && <p className="text-xs text-muted-foreground italic">{trailerData.tagline}</p>}
@@ -1287,7 +1287,7 @@ export default function ProjectDetail() {
 
         {/* Export Tab */}
         <TabsContent value="export" className="space-y-4">
-          <Card className="bg-card/50">
+          <Card className="bg-card/50 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Download className="h-4 w-4" />
@@ -1470,7 +1470,7 @@ export default function ProjectDetail() {
           </Card>
 
           {/* Export History */}
-          <Card className="bg-card/50">
+          <Card className="bg-card/50 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium gradient-text-gold">Export History</CardTitle>
             </CardHeader>
@@ -1510,7 +1510,7 @@ export default function ProjectDetail() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/schedule`)}>
                 <CardContent className="p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+                  <div className="h-10 w-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
                     <Calendar className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
@@ -1706,9 +1706,9 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all border-amber-500/30 bg-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/pre-production`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all border-amber-500/30 bg-primary/5" onClick={() => setLocation(`/projects/${project.id}/pre-production`)}>
                 <CardContent className="p-4 flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
+                  <div className="h-9 w-9 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                   </div>
                   <div>
@@ -1741,11 +1741,11 @@ export default function ProjectDetail() {
             </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/ai-casting`)}>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <Users2 className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">AI Casting <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-sm font-medium flex items-center gap-1.5">AI Casting <span className="text-xs bg-primary/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
                   <p className="text-xs text-muted-foreground">AI-powered casting suggestions for your script</p>
                 </div>
               </CardContent>
@@ -1810,22 +1810,22 @@ export default function ProjectDetail() {
             </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/multi-shot`)}>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <Layers2 className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">Multi-Shot Sequencer <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-sm font-medium flex items-center gap-1.5">Multi-Shot Sequencer <span className="text-xs bg-primary/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
                   <p className="text-xs text-muted-foreground">Build shot sequences with timeline editing</p>
                 </div>
               </CardContent>
             </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/live-action-plate`)}>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <VideoIcon className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">Live Action Plate <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-sm font-medium flex items-center gap-1.5">Live Action Plate <span className="text-xs bg-primary/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
                   <p className="text-xs text-muted-foreground">Blend AI scenes with real footage</p>
                 </div>
               </CardContent>
@@ -1852,9 +1852,9 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/feature-timeline`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-primary/5" onClick={() => setLocation(`/projects/${project.id}/feature-timeline`)}>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
                   <Layers className="h-5 w-5 text-amber-500" />
                 </div>
                 <div>
@@ -1920,22 +1920,22 @@ export default function ProjectDetail() {
             </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/nle-export`)}>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <Download className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">NLE Export <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-sm font-medium flex items-center gap-1.5">NLE Export <span className="text-xs bg-primary/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
                   <p className="text-xs text-muted-foreground">Export XML/EDL for Premiere, DaVinci, Final Cut</p>
                 </div>
               </CardContent>
             </Card>
             <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/vfx-suite`)}>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <Sparkle className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium flex items-center gap-1.5">VFX Suite <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
+                  <p className="text-sm font-medium flex items-center gap-1.5">VFX Suite <span className="text-xs bg-primary/20 text-amber-400 px-1.5 py-0.5 rounded">Pro</span></p>
                   <p className="text-xs text-muted-foreground">Scene extension, object removal, style transfer</p>
                 </div>
               </CardContent>
@@ -2018,14 +2018,14 @@ export default function ProjectDetail() {
             </div>
             <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0">
+                <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
                   <Globe className="h-5 w-5 text-amber-400" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-amber-400">Pro Studio Controls</p>
                   <p className="text-xs text-muted-foreground">Style bible · Shot versions · Voice/likeness rights · C2PA provenance · Render economics</p>
                 </div>
-                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
+                <Badge className="bg-primary/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
               </CardContent>
             </Card>
           </div>
@@ -2040,12 +2040,12 @@ export default function ProjectDetail() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
                 <CardContent className="p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-amber-400" /></div>
+                  <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-amber-400" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-amber-400">Pro Studio</p>
                     <p className="text-xs text-muted-foreground">Style bible · Shot versions · Voice rights · C2PA · Render economics</p>
                   </div>
-                  <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
+                  <Badge className="bg-primary/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
                 </CardContent>
               </Card>
               <Card className="cursor-pointer hover:ring-2 hover:ring-violet-500/60 transition-all border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5" onClick={() => setLocation(`/projects/${project.id}/studio-ops`)}>
@@ -2885,7 +2885,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       </div>
 
       {/* Structure & Tone */}
-      <Card className="bg-card/50">
+      <Card className="bg-card/50 glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium gradient-text-gold">Structure & Tone</CardTitle>
         </CardHeader>
@@ -2943,7 +2943,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       </Card>
 
       {/* Main Plot & Subplots */}
-      <Card className="bg-card/50">
+      <Card className="bg-card/50 glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium gradient-text-gold">Plot</CardTitle>
         </CardHeader>
@@ -2984,7 +2984,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       </Card>
 
       {/* World & Key Moments */}
-      <Card className="bg-card/50">
+      <Card className="bg-card/50 glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium gradient-text-gold">World & Key Moments</CardTitle>
         </CardHeader>

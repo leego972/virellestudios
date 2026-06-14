@@ -879,7 +879,7 @@ export default function SceneEditor() {
           <Button
             size="sm"
             variant="outline"
-            className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+            className="border-amber-500/40 text-amber-400 hover:bg-primary/10"
             onClick={() => {
               if (!projectId) return;
               const sceneCount = scenes?.length ?? 0;
@@ -955,7 +955,7 @@ export default function SceneEditor() {
 
       {/* Timeline */}
       {scenes && scenes.length > 0 && (
-        <Card className="bg-card/50">
+        <Card className="bg-card/50 glass-card">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider gradient-text-gold">Timeline</CardTitle>
           </CardHeader>
@@ -994,7 +994,7 @@ export default function SceneEditor() {
                     <p className="text-xs font-medium truncate">{scene.title || `Scene ${idx + 1}`}</p>
                     <div className="flex items-center gap-1">
                       <p className="text-[10px] text-muted-foreground">{scene.duration || 60}s</p>
-                      {(scene as any).videoUrl && <Badge className="text-[7px] h-3 px-0.5 bg-amber-500/80 text-white border-0">VIDEO</Badge>}
+                      {(scene as any).videoUrl && <Badge className="text-[7px] h-3 px-0.5 bg-primary/80 text-white border-0">VIDEO</Badge>}
                     </div>
                   </div>
                 ))}
@@ -1008,7 +1008,7 @@ export default function SceneEditor() {
       {(isLoading || (projectId > 0 && scenes === undefined)) ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="bg-card/50">
+            <Card key={i} className="bg-card/50 glass-card">
               <CardContent className="p-4">
                 <Skeleton className="h-16 w-full" />
               </CardContent>
@@ -1031,7 +1031,7 @@ export default function SceneEditor() {
       ) : (
         <div className="space-y-2">
           {scenes.map((scene, idx) => (
-            <Card key={scene.id} className="bg-card/50 group">
+            <Card key={scene.id} className="bg-card/50 group glass-card">
               <CardContent className="p-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <div className="flex flex-col gap-0.5 shrink-0">
                   <Button variant="ghost" size="sm" className="h-5 w-5 p-0" disabled={idx === 0}
@@ -1065,7 +1065,7 @@ export default function SceneEditor() {
                   )}
                   {(scene as any).videoUrl && (
                     <div className="absolute top-0.5 right-0.5">
-                      <Badge className="text-[8px] h-3.5 px-1 bg-amber-500/80 text-white border-0">VIDEO</Badge>
+                      <Badge className="text-[8px] h-3.5 px-1 bg-primary/80 text-white border-0">VIDEO</Badge>
                     </div>
                   )}
                 </div>
@@ -1089,7 +1089,7 @@ export default function SceneEditor() {
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-wrap justify-end max-w-full">
-                  <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                  <Button variant="ghost" size="sm" className="h-7 px-2 text-xs text-amber-400 hover:text-amber-300 hover:bg-primary/10"
                     onClick={() => videoMutation.mutate({ sceneId: scene.id })}
                     disabled={videoMutation.isPending}>
                     {videoMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Film className="h-3 w-3 mr-1" />}
@@ -1388,11 +1388,11 @@ export default function SceneEditor() {
             {/* ── Camera Rig (Pro) ── */}
             <Collapsible open={openSections.cameraRig} onOpenChange={() => toggleSection("cameraRig")}>
               <CollapsibleTrigger asChild>
-                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 transition-colors text-left">
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-primary/5 hover:bg-primary/10 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-amber-400 transition-transform duration-200 ${openSections.cameraRig ? "rotate-90" : ""}`} />
                   <Camera className="h-3.5 w-3.5 text-amber-400" />
                   <span className="text-xs uppercase tracking-wider font-medium text-amber-400 flex-1">Camera Rig</span>
-                  <Badge className="text-[10px] h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
+                  <Badge className="text-[10px] h-4 bg-primary/20 text-amber-400 border-amber-500/40">Pro</Badge>
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -1561,11 +1561,11 @@ export default function SceneEditor() {
             {/* ── Visual Style & Motion (Pro) ── */}
             <Collapsible open={openSections.visualStyle} onOpenChange={() => toggleSection("visualStyle")}>
               <CollapsibleTrigger asChild>
-                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 transition-colors text-left">
+                <button type="button" className="w-full flex items-center gap-2 p-3 rounded-lg border border-amber-500/30 bg-primary/5 hover:bg-primary/10 transition-colors text-left">
                   <ChevronRight className={`h-3.5 w-3.5 text-amber-400 transition-transform duration-200 ${openSections.visualStyle ? "rotate-90" : ""}`} />
                   <Palette className="h-3.5 w-3.5 text-amber-400" />
                   <span className="text-xs uppercase tracking-wider font-medium text-amber-400 flex-1">Visual Style & Motion</span>
-                  <Badge className="text-[10px] h-4 bg-amber-500/20 text-amber-400 border-amber-500/40">Pro</Badge>
+                  <Badge className="text-[10px] h-4 bg-primary/20 text-amber-400 border-amber-500/40">Pro</Badge>
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -1600,7 +1600,7 @@ export default function SceneEditor() {
                     </div>
                   </div>
                     {form.lipSyncMode && form.lipSyncMode !== "none" && (
-                      <div className="col-span-3 flex items-start gap-2 mt-1 p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/20 text-xs text-amber-300/80">
+                      <div className="col-span-3 flex items-start gap-2 mt-1 p-2.5 rounded-lg bg-primary/8 border border-amber-500/20 text-xs text-amber-300/80">
                         <span className="shrink-0">🎙</span>
                         <span>Lip sync uses each character&apos;s assigned ElevenLabs voice — set in <strong className="text-amber-300">Characters → Speech → AI Voice</strong>. Missing voices are auto-assigned.</span>
                       </div>
@@ -2309,7 +2309,7 @@ export default function SceneEditor() {
                 <div className="p-3 border border-t-0 border-border/60 rounded-b-lg space-y-3">
                   <p className="text-xs text-muted-foreground">Upload externally shot footage (MP4, MOV, AVI — max 150MB) to attach to this scene.</p>
                   {form.externalFootageUrl ? (
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-primary/10 border border-amber-500/30">
                       <Video className="h-4 w-4 text-amber-400 shrink-0" />
                       <span className="text-xs text-amber-300 truncate flex-1">{form.externalFootageLabel || "Uploaded footage"}</span>
                       <button
@@ -2428,7 +2428,7 @@ export default function SceneEditor() {
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10"
+                    className="border-amber-500/40 text-amber-400 hover:bg-primary/10"
                     onClick={() => {
                       videoMutation.mutate({ sceneId: selectedSceneId });
                     }}
