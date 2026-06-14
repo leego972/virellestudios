@@ -5,7 +5,7 @@ import { useLocation } from "wouter";
 import { toast } from "sonner";
 
 /**
- * v6.62 â Global Render Queue tray.
+ * v6.62 — Global Render Queue tray.
  *
  * Sits next to NotificationBell in the dashboard header. Shows every in-flight
  * render (jobs + scenes) for the current user across ALL projects, polled
@@ -149,7 +149,7 @@ export default function RenderQueueTray() {
                   <div className="flex items-center justify-between mt-1.5">
                     <span className="text-[10px] text-white/40 flex items-center gap-1">
                       <Loader2 className="h-2.5 w-2.5 animate-spin" />
-                      {r.status === "queued" ? "Queued" : "Rendering"} Â· {formatElapsed(r.elapsedSeconds)}
+                      {r.status === "queued" ? "Queued" : "Rendering"} · {formatElapsed(r.elapsedSeconds)}
                     </span>
                     {typeof r.progress === "number" && r.progress > 0 && (
                       <span className="text-[10px] text-white/50 font-mono">{Math.round(r.progress)}%</span>
@@ -163,7 +163,7 @@ export default function RenderQueueTray() {
           {activeAny && (
             <div className="px-4 py-2 border-t border-white/10 bg-black/30">
               <p className="text-[10px] text-white/40 leading-tight">
-                Updates every 5s. Cancelling refunds nothing â credits already deducted.
+                Updates every 5s. Cancelling refunds nothing — credits already deducted.
               </p>
             </div>
           )}
