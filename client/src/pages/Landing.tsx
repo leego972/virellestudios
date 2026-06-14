@@ -254,12 +254,12 @@ export default function Landing() {
             {/* Trust bar */}
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 max-w-4xl mx-auto">
                 {[
-                  "BYOK Ready",
-                  "Commercial Workflow",
-                  "Digital Cast",
-                  "Funding Targets",
-                  "Production Packages",
-                  "Security-Hardened",
+                  "14 AI Provider Integrations",
+                  "Zero AI Usage Markup",
+                  "7-Day Free Trial",
+                  "Global Film Funding Directory",
+                  "ADR · Foley · Score Suite",
+                  "130+ Subtitle Languages",
                 ].map((label) => (
                   <span key={label} className="text-[11px] font-bold uppercase tracking-widest text-white/35 flex items-center gap-1.5">
                     <span className="w-1 h-1 rounded-full bg-amber-500/50 inline-block" />
