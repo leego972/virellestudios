@@ -5,23 +5,23 @@ const STORAGE_KEY = "virelle_onboarding_dismissed";
 
 const STEPS = [
   {
-    icon: "ð¬",
+    icon: "🎬",
     title: "Create Your Project",
     description:
-      "Start by creating a new project. Give it a title, genre, and logline. Your project is the container for your entire film â script, storyboard, characters, sound, and more.",
+      "Start by creating a new project. Give it a title, genre, and logline. Your project is the container for your entire film — script, storyboard, characters, sound, and more.",
     tip: "Tip: A strong logline (one sentence that captures your story) helps the AI generate better content throughout your project.",
     color: "#b45309",
   },
   {
-    icon: "ð",
+    icon: "📝",
     title: "Write Your Script",
     description:
-      "Use the AI Script Writer to generate a full screenplay from your premise. Choose your genre and tone, then let the AI draft your script â or write it yourself. Edit freely in the built-in editor.",
+      "Use the AI Script Writer to generate a full screenplay from your premise. Choose your genre and tone, then let the AI draft your script — or write it yourself. Edit freely in the built-in editor.",
     tip: "Tip: Script generation costs 10 credits. You can regenerate as many times as you like to find the right voice.",
     color: "#0a7ea4",
   },
   {
-    icon: "ð¨",
+    icon: "🎨",
     title: "Build Your Storyboard",
     description:
       "Visualise your film panel by panel. Describe each scene and camera angle, and the AI generates a storyboard description. Add as many panels as you need to map out your entire film.",
@@ -29,7 +29,7 @@ const STEPS = [
     color: "#7c3aed",
   },
   {
-    icon: "ð­",
+    icon: "🎭",
     title: "Develop Your Characters",
     description:
       "Add your cast with names, roles, and descriptions. The Dialogue Editor lets you write and refine character dialogue scene by scene, with AI assistance to match each character's voice.",
@@ -37,19 +37,19 @@ const STEPS = [
     color: "#059669",
   },
   {
-    icon: "ðµ",
+    icon: "🎵",
     title: "Post-Production Sound",
     description:
       "Add professional sound to your film. Use the Film Post-Production tool to layer ADR (re-recorded dialogue), Foley (ambient sounds), and a Score (AI-generated music cues). Mix all tracks in the Mix Panel.",
-    tip: "Tip: AI suggestions for ADR, Foley, and Score are available â each costs a small number of credits.",
+    tip: "Tip: AI suggestions for ADR, Foley, and Score are available — each costs a small number of credits.",
     color: "#dc2626",
   },
   {
-    icon: "ð",
+    icon: "🌍",
     title: "Subtitles & Funding",
     description:
       "Export your film with subtitles in 130+ languages using the Subtitles tool. When you're ready to fund your project, browse 94 international film funds in the Funding Directory and generate a professional application package.",
-    tip: "Tip: The Funding Directory application is a working pack â always verify exact requirements on each fund's live portal before submitting.",
+    tip: "Tip: The Funding Directory application is a working pack — always verify exact requirements on each fund's live portal before submitting.",
     color: "#d97706",
   },
 ];
@@ -111,7 +111,7 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
               alt="Virelle Studios"
               className="w-7 h-7 rounded-lg"
             />
-            <span className="text-sm font-semibold text-foreground">Virelle Studios â Getting Started</span>
+            <span className="text-sm font-semibold text-foreground">Virelle Studios — Getting Started</span>
           </div>
           <button
             onClick={handleClose}
@@ -137,7 +137,7 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
           ))}
         </div>
 
-        {/* Content â scrollable so all text is reachable on small screens */}
+        {/* Content — scrollable so all text is reachable on small screens */}
         <div className="px-6 pb-2 overflow-y-auto flex-1" style={{ minHeight: 0 }}>
           <div className="flex flex-col items-center text-center gap-4">
             <div
