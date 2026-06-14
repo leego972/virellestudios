@@ -1,1 +1,212 @@
-aW1wb3J0IHsgcm91dGVyLCBwcm90ZWN0ZWRQcm9jZWR1cmUsIHB1YmxpY1Byb2NlZHVyZSB9IGZyb20gIi4vX2NvcmUvdHJwYyI7CiAgaW1wb3J0IHsgeiB9IGZyb20gInpvZCI7CiAgaW1wb3J0IHsgVFJQQ0Vycm9yIH0gZnJvbSAiQHRycGMvc2VydmVyIjsKICBpbXBvcnQgeyBzcWwgfSBmcm9tICJkcml6emxlLW9ybSI7CiAgaW1wb3J0ICogYXMgZGIgZnJvbSAiLi9kYiI7CiAgaW1wb3J0IHsgbG9nZ2VyIH0gZnJvbSAiLi9fY29yZS9sb2dnZXIiOwoKICAvLyBQYWlkLW1lbWJlciBnYXRlOiBhY3RpdmUgb3IgdHJpYWxpbmcgc3Vic2NyaXB0aW9uIHJlcXVpcmVkCiAgZnVuY3Rpb24gcmVxdWlyZVBhaWRNZW1iZXIodXNlcjogYW55KSB7CiAgICBjb25zdCBzdGF0dXMgPSB1c2VyPy5zdWJzY3JpcHRpb25TdGF0dXM7CiAgICBpZiAoc3RhdHVzICE9PSAiYWN0aXZlIiAmJiBzdGF0dXMgIT09ICJ0cmlhbGluZyIpIHsKICAgICAgdGhyb3cgbmV3IFRSUENFcnJvcih7CiAgICAgICAgY29kZTogIkZPUkJJRERFTiIsCiAgICAgICAgbWVzc2FnZTogIk1FTUJFUlNfT05MWTogVGhlIFZpcmVsbGUgQ29tbXVuaXR5IGlzIGF2YWlsYWJsZSB0byBwYXlpbmcgbWVtYmVycyBvbmx5LiBVcGdyYWRlIHlvdXIgcGxhbiB0byBqb2luLiIsCiAgICAgIH0pOwogICAgfQogIH0KCiAgLy8gQ3JlYXRlIHRhYmxlcyBvbiBmaXJzdCB1c2Ug4oCUIG5vIG1pZ3JhdGlvbiBuZWVkZWQKICBhc3luYyBmdW5jdGlvbiBlbnN1cmVGb3J1bVRhYmxlcyhkYkNvbm46IGFueSkgewogICAgYXdhaXQgZGJDb25uLmV4ZWN1dGUoc3FsYAogICAgICBDUkVBVEUgVEFCTEUgSUYgTk9UIEVYSVNUUyBmb3J1bV9wb3N0cyAoCiAgICAgICAgaWQgSU5UIEFVVE9fSU5DUkVNRU5UIFBSSU1BUlkgS0VZLAogICAgICAgIHVzZXJJZCBJTlQgTk9UIE5VTEwsCiAgICAgICAgYXV0aG9yTmFtZSBWQVJDSEFSKDEyOCkgTk9UIE5VTEwsCiAgICAgICAgYXV0aG9yUm9sZSBWQVJDSEFSKDY0KSBERUZBVUxUICdGaWxtbWFrZXInLAogICAgICAgIHRpdGxlIFZBUkNIQVIoMjAwKSBOT1QgTlVMTCwKICAgICAgICBib2R5IFRFWFQgTk9UIE5VTEwsCiAgICAgICAgY2F0ZWdvcnkgVkFSQ0hBUig2NCkgTk9UIE5VTEwgREVGQVVMVCAnR2VuZXJhbCcsCiAgICAgICAgbGlrZXMgSU5UIERFRkFVTFQgMCwKICAgICAgICByZXBseUNvdW50IElOVCBERUZBVUxUIDAsCiAgICAgICAgcGlubmVkIFRJTllJTlQoMSkgREVGQVVMVCAwLAogICAgICAgIGNyZWF0ZWRBdCBEQVRFVElNRSBERUZBVUxUIENVUlJFTlRfVElNRVNUQU1QLAogICAgICAgIHVwZGF0ZWRBdCBEQVRFVElNRSBERUZBVUxUIENVUlJFTlRfVElNRVNUQU1QIE9OIFVQREFURSBDVVJSRU5UX1RJTUVTVEFNUCwKICAgICAgICBJTkRFWCBpZHhfZm9ydW1fcG9zdHNfY3JlYXRlZCAoY3JlYXRlZEF0KSwKICAgICAgICBJTkRFWCBpZHhfZm9ydW1fcG9zdHNfY2F0ZWdvcnkgKGNhdGVnb3J5KQogICAgICApIEVOR0lORT1Jbm5vREIgREVGQVVMVCBDSEFSU0VUPXV0ZjhtYjQKICAgIGApOwogICAgYXdhaXQgZGJDb25uLmV4ZWN1dGUoc3FsYAogICAgICBDUkVBVEUgVEFCTEUgSUYgTk9UIEVYSVNUUyBmb3J1bV9yZXBsaWVzICgKICAgICAgICBpZCBJTlQgQVVUT19JTkNSRU1FTlQgUFJJTUFSWSBLRVksCiAgICAgICAgcG9zdElkIElOVCBOT1QgTlVMTCwKICAgICAgICB1c2VySWQgSU5UIE5PVCBOVUxMLAogICAgICAgIGF1dGhvck5hbWUgVkFSQ0hBUigxMjgpIE5PVCBOVUxMLAogICAgICAgIGF1dGhvclJvbGUgVkFSQ0hBUig2NCkgREVGQVVMVCAnRmlsbW1ha2VyJywKICAgICAgICBib2R5IFRFWFQgTk9UIE5VTEwsCiAgICAgICAgbGlrZXMgSU5UIERFRkFVTFQgMCwKICAgICAgICBjcmVhdGVkQXQgREFURVRJTUUgREVGQVVMVCBDVVJSRU5UX1RJTUVTVEFNUCwKICAgICAgICBJTkRFWCBpZHhfZm9ydW1fcmVwbGllc19wb3N0IChwb3N0SWQpLAogICAgICAgIElOREVYIGlkeF9mb3J1bV9yZXBsaWVzX2NyZWF0ZWQgKGNyZWF0ZWRBdCkKICAgICAgKSBFTkdJTkU9SW5ub0RCIERFRkFVTFQgQ0hBUlNFVD11dGY4bWI0CiAgICBgKTsKICAgIGF3YWl0IGRiQ29ubi5leGVjdXRlKHNxbGAKICAgICAgQ1JFQVRFIFRBQkxFIElGIE5PVCBFWElTVFMgZm9ydW1fbGlrZXMgKAogICAgICAgIGlkIElOVCBBVVRPX0lOQ1JFTUVOVCBQUklNQVJZIEtFWSwKICAgICAgICB1c2VySWQgSU5UIE5PVCBOVUxMLAogICAgICAgIHRhcmdldFR5cGUgRU5VTSgncG9zdCcsJ3JlcGx5JykgTk9UIE5VTEwsCiAgICAgICAgdGFyZ2V0SWQgSU5UIE5PVCBOVUxMLAogICAgICAgIGNyZWF0ZWRBdCBEQVRFVElNRSBERUZBVUxUIENVUlJFTlRfVElNRVNUQU1QLAogICAgICAgIFVOSVFVRSBLRVkgdW5pcXVlX2xpa2UgKHVzZXJJZCwgdGFyZ2V0VHlwZSwgdGFyZ2V0SWQpCiAgICAgICkgRU5HSU5FPUlubm9EQiBERUZBVUxUIENIQVJTRVQ9dXRmOG1iNAogICAgYCk7CiAgfQoKICBjb25zdCBDQVRFR09SSUVTID0gWyJHZW5lcmFsIiwiQ3JhZnQiLCJHZWFyIiwiRmVzdGl2YWxzIiwiRmluYW5jZSIsIk11c2ljIiwiVkZYIiwiV3JpdGluZyIsIkZlZWRiYWNrIiwiQ2FzdGluZyJdOwoKICBjb25zdCBQT1NUX0NBVEVHT1JJRVMgPSBbIkdlbmVyYWwiLCJDcmFmdCIsIkdlYXIiLCJGZXN0aXZhbHMiLCJGaW5hbmNlIiwiTXVzaWMiLCJWRlgiLCJXcml0aW5nIiwiRmVlZGJhY2siLCJDYXN0aW5nIl07CgogIGV4cG9ydCBjb25zdCBjb21tdW5pdHlGb3J1bVJvdXRlciA9IHJvdXRlcih7CiAgICAvLyBFbnN1cmUgdGFibGVzIGV4aXN0IChjYWxsZWQgb24gcGFnZSBsb2FkKQogICAgaW5pdDogcHJvdGVjdGVkUHJvY2VkdXJlLm11dGF0aW9uKGFzeW5jICh7IGN0eCB9KSA9PiB7CiAgICAgIHJlcXVpcmVQYWlkTWVtYmVyKGN0eC51c2VyKTsKICAgICAgY29uc3QgZGJDb25uID0gYXdhaXQgZGIuZ2V0RGIoKTsKICAgICAgaWYgKCFkYkNvbm4pIHRocm93IG5ldyBUUlBDRXJyb3IoeyBjb2RlOiAiSU5URVJOQUxfU0VSVkVSX0VSUk9SIiwgbWVzc2FnZTogIkRhdGFiYXNlIHVuYXZhaWxhYmxlIiB9KTsKICAgICAgYXdhaXQgZW5zdXJlRm9ydW1UYWJsZXMoZGJDb25uKTsKICAgICAgcmV0dXJuIHsgb2s6IHRydWUgfTsKICAgIH0pLAoKICAgIC8vIExpc3QgcG9zdHMg4oCUIHBhZ2luYXRlZCwgd2l0aCBvcHRpb25hbCBjYXRlZ29yeSBmaWx0ZXIKICAgIGxpc3RQb3N0czogcHJvdGVjdGVkUHJvY2VkdXJlCiAgICAgIC5pbnB1dCh6Lm9iamVjdCh7CiAgICAgICAgY2F0ZWdvcnk6IHouc3RyaW5nKCkub3B0aW9uYWwoKSwKICAgICAgICBsaW1pdDogei5udW1iZXIoKS5taW4oMSkubWF4KDUwKS5kZWZhdWx0KDMwKSwKICAgICAgICBvZmZzZXQ6IHoubnVtYmVyKCkubWluKDApLmRlZmF1bHQoMCksCiAgICAgIH0pKQogICAgICAucXVlcnkoYXN5bmMgKHsgY3R4LCBpbnB1dCB9KSA9PiB7CiAgICAgICAgcmVxdWlyZVBhaWRNZW1iZXIoY3R4LnVzZXIpOwogICAgICAgIGNvbnN0IGRiQ29ubiA9IGF3YWl0IGRiLmdldERiKCk7CiAgICAgICAgaWYgKCFkYkNvbm4pIHJldHVybiB7IHBvc3RzOiBbXSwgdG90YWw6IDAgfTsKICAgICAgICB0cnkgewogICAgICAgICAgYXdhaXQgZW5zdXJlRm9ydW1UYWJsZXMoZGJDb25uKTsKICAgICAgICAgIGxldCByb3dzOiBhbnlbXTsKICAgICAgICAgIGlmIChpbnB1dC5jYXRlZ29yeSAmJiBpbnB1dC5jYXRlZ29yeSAhPT0gImFsbCIpIHsKICAgICAgICAgICAgY29uc3QgY2F0ID0gaW5wdXQuY2F0ZWdvcnk7CiAgICAgICAgICAgIHJvd3MgPSBhd2FpdCBkYkNvbm4uZXhlY3V0ZSgKICAgICAgICAgICAgICBzcWxgU0VMRUNUICogRlJPTSBmb3J1bV9wb3N0cyBXSEVSRSBjYXRlZ29yeSA9ICR7Y2F0fSBPUkRFUiBCWSBwaW5uZWQgREVTQywgY3JlYXRlZEF0IERFU0MgTElNSVQgJHtpbnB1dC5saW1pdH0gT0ZGU0VUICR7aW5wdXQub2Zmc2V0fWAKICAgICAgICAgICAgKTsKICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgIHJvd3MgPSBhd2FpdCBkYkNvbm4uZXhlY3V0ZSgKICAgICAgICAgICAgICBzcWxgU0VMRUNUICogRlJPTSBmb3J1bV9wb3N0cyBPUkRFUiBCWSBwaW5uZWQgREVTQywgY3JlYXRlZEF0IERFU0MgTElNSVQgJHtpbnB1dC5saW1pdH0gT0ZGU0VUICR7aW5wdXQub2Zmc2V0fWAKICAgICAgICAgICAgKTsKICAgICAgICAgIH0KICAgICAgICAgIGNvbnN0IHBvc3RzID0gQXJyYXkuaXNBcnJheShyb3dzWzBdKSA/IHJvd3NbMF0gOiByb3dzOwogICAgICAgICAgcmV0dXJuIHsgcG9zdHMgfTsKICAgICAgICB9IGNhdGNoIChlKSB7CiAgICAgICAgICBsb2dnZXIuZXJyb3IoImZvcnVtIGxpc3RQb3N0cyBlcnJvcjoiLCBlKTsKICAgICAgICAgIHJldHVybiB7IHBvc3RzOiBbXSB9OwogICAgICAgIH0KICAgICAgfSksCgogICAgLy8gQ3JlYXRlIGEgbmV3IHBvc3QKICAgIGNyZWF0ZVBvc3Q6IHByb3RlY3RlZFByb2NlZHVyZQogICAgICAuaW5wdXQoei5vYmplY3QoewogICAgICAgIHRpdGxlOiB6LnN0cmluZygpLm1pbig1KS5tYXgoMjAwKSwKICAgICAgICBib2R5OiB6LnN0cmluZygpLm1pbigyMCkubWF4KDUwMDApLAogICAgICAgIGNhdGVnb3J5OiB6LmVudW0oWyJHZW5lcmFsIiwiQ3JhZnQiLCJHZWFyIiwiRmVzdGl2YWxzIiwiRmluYW5jZSIsIk11c2ljIiwiVkZYIiwiV3JpdGluZyIsIkZlZWRiYWNrIiwiQ2FzdGluZyJdKS5kZWZhdWx0KCJHZW5lcmFsIiksCiAgICAgIH0pKQogICAgICAubXV0YXRpb24oYXN5bmMgKHsgY3R4LCBpbnB1dCB9KSA9PiB7CiAgICAgICAgcmVxdWlyZVBhaWRNZW1iZXIoY3R4LnVzZXIpOwogICAgICAgIGNvbnN0IGRiQ29ubiA9IGF3YWl0IGRiLmdldERiKCk7CiAgICAgICAgaWYgKCFkYkNvbm4pIHRocm93IG5ldyBUUlBDRXJyb3IoeyBjb2RlOiAiSU5URVJOQUxfU0VSVkVSX0VSUk9SIiwgbWVzc2FnZTogIkRhdGFiYXNlIHVuYXZhaWxhYmxlIiB9KTsKICAgICAgICBhd2FpdCBlbnN1cmVGb3J1bVRhYmxlcyhkYkNvbm4pOwogICAgICAgIGNvbnN0IGF1dGhvck5hbWUgPSAoY3R4LnVzZXIgYXMgYW55KS5uYW1lIHx8IChjdHgudXNlciBhcyBhbnkpLmVtYWlsPy5zcGxpdCgiQCIpWzBdIHx8ICJGaWxtbWFrZXIiOwogICAgICAgIGNvbnN0IGF1dGhvclJvbGUgPSAoY3R4LnVzZXIgYXMgYW55KS5yb2xlID09PSAiYWRtaW4iID8gIlZpcmVsbGUgVGVhbSIgOiAiRmlsbW1ha2VyIjsKICAgICAgICBhd2FpdCBkYkNvbm4uZXhlY3V0ZShzcWxgCiAgICAgICAgICBJTlNFUlQgSU5UTyBmb3J1bV9wb3N0cyAodXNlcklkLCBhdXRob3JOYW1lLCBhdXRob3JSb2xlLCB0aXRsZSwgYm9keSwgY2F0ZWdvcnkpCiAgICAgICAgICBWQUxVRVMgKCR7Y3R4LnVzZXIuaWR9LCAke2F1dGhvck5hbWV9LCAke2F1dGhvclJvbGV9LCAke2lucHV0LnRpdGxlfSwgJHtpbnB1dC5ib2R5fSwgJHtpbnB1dC5jYXRlZ29yeX0pCiAgICAgICAgYCk7CiAgICAgICAgbG9nZ2VyLmluZm8oYFtGb3J1bV0gVXNlciAke2N0eC51c2VyLmlkfSBjcmVhdGVkIHBvc3Q6ICR7aW5wdXQudGl0bGV9YCk7CiAgICAgICAgcmV0dXJuIHsgb2s6IHRydWUgfTsKICAgICAgfSksCgogICAgLy8gTGlzdCByZXBsaWVzIGZvciBhIHBvc3QKICAgIGxpc3RSZXBsaWVzOiBwcm90ZWN0ZWRQcm9jZWR1cmUKICAgICAgLmlucHV0KHoub2JqZWN0KHsgcG9zdElkOiB6Lm51bWJlcigpIH0pKQogICAgICAucXVlcnkoYXN5bmMgKHsgY3R4LCBpbnB1dCB9KSA9PiB7CiAgICAgICAgcmVxdWlyZVBhaWRNZW1iZXIoY3R4LnVzZXIpOwogICAgICAgIGNvbnN0IGRiQ29ubiA9IGF3YWl0IGRiLmdldERiKCk7CiAgICAgICAgaWYgKCFkYkNvbm4pIHJldHVybiB7IHJlcGxpZXM6IFtdLCBwb3N0OiBudWxsIH07CiAgICAgICAgYXdhaXQgZW5zdXJlRm9ydW1UYWJsZXMoZGJDb25uKTsKICAgICAgICBjb25zdCBbcG9zdFJvd3MsIHJlcGx5Um93c106IGFueVtdID0gYXdhaXQgUHJvbWlzZS5hbGwoWwogICAgICAgICAgZGJDb25uLmV4ZWN1dGUoc3FsYFNFTEVDVCAqIEZST00gZm9ydW1fcG9zdHMgV0hFUkUgaWQgPSAke2lucHV0LnBvc3RJZH0gTElNSVQgMWApLAogICAgICAgICAgZGJDb25uLmV4ZWN1dGUoc3FsYFNFTEVDVCAqIEZST00gZm9ydW1fcmVwbGllcyBXSEVSRSBwb3N0SWQgPSAke2lucHV0LnBvc3RJZH0gT1JERVIgQlkgY3JlYXRlZEF0IEFTQ2ApLAogICAgICAgIF0pOwogICAgICAgIGNvbnN0IHBvc3QgPSBBcnJheS5pc0FycmF5KHBvc3RSb3dzWzBdKSA/IHBvc3RSb3dzWzBdWzBdIDogbnVsbDsKICAgICAgICBjb25zdCByZXBsaWVzID0gQXJyYXkuaXNBcnJheShyZXBseVJvd3NbMF0pID8gcmVwbHlSb3dzWzBdIDogW107CiAgICAgICAgLy8gR2V0IHVzZXIncyBsaWtlcwogICAgICAgIGNvbnN0IGxpa2VkUm93czogYW55ID0gYXdhaXQgZGJDb25uLmV4ZWN1dGUoCiAgICAgICAgICBzcWxgU0VMRUNUIHRhcmdldElkIEZST00gZm9ydW1fbGlrZXMgV0hFUkUgdXNlcklkID0gJHtjdHgudXNlci5pZH0gQU5EIHRhcmdldFR5cGUgPSAncmVwbHknIEFORCBwb3N0SWQgSVMgTk9UIE5VTExgCiAgICAgICAgKTsKICAgICAgICByZXR1cm4geyBwb3N0LCByZXBsaWVzIH07CiAgICAgIH0pLAoKICAgIC8vIFJlcGx5IHRvIGEgcG9zdAogICAgY3JlYXRlUmVwbHk6IHByb3RlY3RlZFByb2NlZHVyZQogICAgICAuaW5wdXQoei5vYmplY3QoewogICAgICAgIHBvc3RJZDogei5udW1iZXIoKSwKICAgICAgICBib2R5OiB6LnN0cmluZygpLm1pbig1KS5tYXgoMzAwMCksCiAgICAgIH0pKQogICAgICAubXV0YXRpb24oYXN5bmMgKHsgY3R4LCBpbnB1dCB9KSA9PiB7CiAgICAgICAgcmVxdWlyZVBhaWRNZW1iZXIoY3R4LnVzZXIpOwogICAgICAgIGNvbnN0IGRiQ29ubiA9IGF3YWl0IGRiLmdldERiKCk7CiAgICAgICAgaWYgKCFkYkNvbm4pIHRocm93IG5ldyBUUlBDRXJyb3IoeyBjb2RlOiAiSU5URVJOQUxfU0VSVkVSX0VSUk9SIiwgbWVzc2FnZTogIkRhdGFiYXNlIHVuYXZhaWxhYmxlIiB9KTsKICAgICAgICBhd2FpdCBlbnN1cmVGb3J1bVRhYmxlcyhkYkNvbm4pOwogICAgICAgIGNvbnN0IGF1dGhvck5hbWUgPSAoY3R4LnVzZXIgYXMgYW55KS5uYW1lIHx8IChjdHgudXNlciBhcyBhbnkpLmVtYWlsPy5zcGxpdCgiQCIpWzBdIHx8ICJGaWxtbWFrZXIiOwogICAgICAgIGNvbnN0IGF1dGhvclJvbGUgPSAoY3R4LnVzZXIgYXMgYW55KS5yb2xlID09PSAiYWRtaW4iID8gIlZpcmVsbGUgVGVhbSIgOiAiRmlsbW1ha2VyIjsKICAgICAgICBhd2FpdCBkYkNvbm4uZXhlY3V0ZShzcWxgCiAgICAgICAgICBJTlNFUlQgSU5UTyBmb3J1bV9yZXBsaWVzIChwb3N0SWQsIHVzZXJJZCwgYXV0aG9yTmFtZSwgYXV0aG9yUm9sZSwgYm9keSkKICAgICAgICAgIFZBTFVFUyAoJHtpbnB1dC5wb3N0SWR9LCAke2N0eC51c2VyLmlkfSwgJHthdXRob3JOYW1lfSwgJHthdXRob3JSb2xlfSwgJHtpbnB1dC5ib2R5fSkKICAgICAgICBgKTsKICAgICAgICBhd2FpdCBkYkNvbm4uZXhlY3V0ZShzcWxgVVBEQVRFIGZvcnVtX3Bvc3RzIFNFVCByZXBseUNvdW50ID0gcmVwbHlDb3VudCArIDEgV0hFUkUgaWQgPSAke2lucHV0LnBvc3RJZH1gKTsKICAgICAgICByZXR1cm4geyBvazogdHJ1ZSB9OwogICAgICB9KSwKCiAgICAvLyBUb2dnbGUgbGlrZSBvbiBhIHBvc3QKICAgIHRvZ2dsZUxpa2U6IHByb3RlY3RlZFByb2NlZHVyZQogICAgICAuaW5wdXQoei5vYmplY3QoeyBwb3N0SWQ6IHoubnVtYmVyKCkgfSkpCiAgICAgIC5tdXRhdGlvbihhc3luYyAoeyBjdHgsIGlucHV0IH0pID0+IHsKICAgICAgICByZXF1aXJlUGFpZE1lbWJlcihjdHgudXNlcik7CiAgICAgICAgY29uc3QgZGJDb25uID0gYXdhaXQgZGIuZ2V0RGIoKTsKICAgICAgICBpZiAoIWRiQ29ubikgdGhyb3cgbmV3IFRSUENFcnJvcih7IGNvZGU6ICJJTlRFUk5BTF9TRVJWRVJfRVJST1IiLCBtZXNzYWdlOiAiRGF0YWJhc2UgdW5hdmFpbGFibGUiIH0pOwogICAgICAgIGF3YWl0IGVuc3VyZUZvcnVtVGFibGVzKGRiQ29ubik7CiAgICAgICAgLy8gQ2hlY2sgaWYgYWxyZWFkeSBsaWtlZAogICAgICAgIGNvbnN0IGV4aXN0aW5nOiBhbnkgPSBhd2FpdCBkYkNvbm4uZXhlY3V0ZSgKICAgICAgICAgIHNxbGBTRUxFQ1QgaWQgRlJPTSBmb3J1bV9saWtlcyBXSEVSRSB1c2VySWQgPSAke2N0eC51c2VyLmlkfSBBTkQgdGFyZ2V0VHlwZSA9ICdwb3N0JyBBTkQgdGFyZ2V0SWQgPSAke2lucHV0LnBvc3RJZH0gTElNSVQgMWAKICAgICAgICApOwogICAgICAgIGNvbnN0IHJvd3MgPSBBcnJheS5pc0FycmF5KGV4aXN0aW5nWzBdKSA/IGV4aXN0aW5nWzBdIDogW107CiAgICAgICAgaWYgKHJvd3MubGVuZ3RoID4gMCkgewogICAgICAgICAgYXdhaXQgZGJDb25uLmV4ZWN1dGUoc3FsYERFTEVURSBGUk9NIGZvcnVtX2xpa2VzIFdIRVJFIHVzZXJJZCA9ICR7Y3R4LnVzZXIuaWR9IEFORCB0YXJnZXRUeXBlID0gJ3Bvc3QnIEFORCB0YXJnZXRJZCA9ICR7aW5wdXQucG9zdElkfWApOwogICAgICAgICAgYXdhaXQgZGJDb25uLmV4ZWN1dGUoc3FsYFVQREFURSBmb3J1bV9wb3N0cyBTRVQgbGlrZXMgPSBHUkVBVEVTVChsaWtlcyAtIDEsIDApIFdIRVJFIGlkID0gJHtpbnB1dC5wb3N0SWR9YCk7CiAgICAgICAgICByZXR1cm4geyBsaWtlZDogZmFsc2UgfTsKICAgICAgICB9IGVsc2UgewogICAgICAgICAgYXdhaXQgZGJDb25uLmV4ZWN1dGUoc3FsYElOU0VSVCBJR05PUkUgSU5UTyBmb3J1bV9saWtlcyAodXNlcklkLCB0YXJnZXRUeXBlLCB0YXJnZXRJZCkgVkFMVUVTICgke2N0eC51c2VyLmlkfSwgJ3Bvc3QnLCAke2lucHV0LnBvc3RJZH0pYCk7CiAgICAgICAgICBhd2FpdCBkYkNvbm4uZXhlY3V0ZShzcWxgVVBEQVRFIGZvcnVtX3Bvc3RzIFNFVCBsaWtlcyA9IGxpa2VzICsgMSBXSEVSRSBpZCA9ICR7aW5wdXQucG9zdElkfWApOwogICAgICAgICAgcmV0dXJuIHsgbGlrZWQ6IHRydWUgfTsKICAgICAgICB9CiAgICAgIH0pLAoKICAgIC8vIEdldCB1c2VyJ3MgbGlrZWQgcG9zdCBJRHMKICAgIG15TGlrZXM6IHByb3RlY3RlZFByb2NlZHVyZS5xdWVyeShhc3luYyAoeyBjdHggfSkgPT4gewogICAgICByZXF1aXJlUGFpZE1lbWJlcihjdHgudXNlcik7CiAgICAgIGNvbnN0IGRiQ29ubiA9IGF3YWl0IGRiLmdldERiKCk7CiAgICAgIGlmICghZGJDb25uKSByZXR1cm4geyBsaWtlZFBvc3RJZHM6IFtdIH07CiAgICAgIGF3YWl0IGVuc3VyZUZvcnVtVGFibGVzKGRiQ29ubik7CiAgICAgIGNvbnN0IHJvd3M6IGFueSA9IGF3YWl0IGRiQ29ubi5leGVjdXRlKAogICAgICAgIHNxbGBTRUxFQ1QgdGFyZ2V0SWQgRlJPTSBmb3J1bV9saWtlcyBXSEVSRSB1c2VySWQgPSAke2N0eC51c2VyLmlkfSBBTkQgdGFyZ2V0VHlwZSA9ICdwb3N0J2AKICAgICAgKTsKICAgICAgY29uc3QgaWRzID0gKEFycmF5LmlzQXJyYXkocm93c1swXSkgPyByb3dzWzBdIDogW10pLm1hcCgocjogYW55KSA9PiBOdW1iZXIoci50YXJnZXRJZCkpOwogICAgICByZXR1cm4geyBsaWtlZFBvc3RJZHM6IGlkcyB9OwogICAgfSksCiAgfSk7CiAg
+import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
+  import { z } from "zod";
+  import { TRPCError } from "@trpc/server";
+  import { sql } from "drizzle-orm";
+  import * as db from "./db";
+  import { logger } from "./_core/logger";
+
+  // Paid-member gate: active or trialing subscription required
+  function requirePaidMember(user: any) {
+    const status = user?.subscriptionStatus;
+    if (status !== "active" && status !== "trialing") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "MEMBERS_ONLY: The Virelle Community is available to paying members only. Upgrade your plan to join.",
+      });
+    }
+  }
+
+  // Create tables on first use — no migration needed
+  async function ensureForumTables(dbConn: any) {
+    await dbConn.execute(sql`
+      CREATE TABLE IF NOT EXISTS forum_posts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        authorName VARCHAR(128) NOT NULL,
+        authorRole VARCHAR(64) DEFAULT 'Filmmaker',
+        title VARCHAR(200) NOT NULL,
+        body TEXT NOT NULL,
+        category VARCHAR(64) NOT NULL DEFAULT 'General',
+        likes INT DEFAULT 0,
+        replyCount INT DEFAULT 0,
+        pinned TINYINT(1) DEFAULT 0,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_forum_posts_created (createdAt),
+        INDEX idx_forum_posts_category (category)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    await dbConn.execute(sql`
+      CREATE TABLE IF NOT EXISTS forum_replies (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        postId INT NOT NULL,
+        userId INT NOT NULL,
+        authorName VARCHAR(128) NOT NULL,
+        authorRole VARCHAR(64) DEFAULT 'Filmmaker',
+        body TEXT NOT NULL,
+        likes INT DEFAULT 0,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_forum_replies_post (postId),
+        INDEX idx_forum_replies_created (createdAt)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    await dbConn.execute(sql`
+      CREATE TABLE IF NOT EXISTS forum_likes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        targetType ENUM('post','reply') NOT NULL,
+        targetId INT NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY unique_like (userId, targetType, targetId)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+  }
+
+  const CATEGORIES = ["General","Craft","Gear","Festivals","Finance","Music","VFX","Writing","Feedback","Casting"];
+
+  const POST_CATEGORIES = ["General","Craft","Gear","Festivals","Finance","Music","VFX","Writing","Feedback","Casting"];
+
+  export const communityForumRouter = router({
+    // Ensure tables exist (called on page load)
+    init: protectedProcedure.mutation(async ({ ctx }) => {
+      requirePaidMember(ctx.user);
+      const dbConn = await db.getDb();
+      if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      await ensureForumTables(dbConn);
+      return { ok: true };
+    }),
+
+    // List posts — paginated, with optional category filter
+    listPosts: protectedProcedure
+      .input(z.object({
+        category: z.string().optional(),
+        limit: z.number().min(1).max(50).default(30),
+        offset: z.number().min(0).default(0),
+      }))
+      .query(async ({ ctx, input }) => {
+        requirePaidMember(ctx.user);
+        const dbConn = await db.getDb();
+        if (!dbConn) return { posts: [], total: 0 };
+        try {
+          await ensureForumTables(dbConn);
+          let rows: any[];
+          if (input.category && input.category !== "all") {
+            const cat = input.category;
+            rows = await dbConn.execute(
+              sql`SELECT * FROM forum_posts WHERE category = ${cat} ORDER BY pinned DESC, createdAt DESC LIMIT ${input.limit} OFFSET ${input.offset}`
+            );
+          } else {
+            rows = await dbConn.execute(
+              sql`SELECT * FROM forum_posts ORDER BY pinned DESC, createdAt DESC LIMIT ${input.limit} OFFSET ${input.offset}`
+            );
+          }
+          const posts = Array.isArray(rows[0]) ? rows[0] : rows;
+          return { posts };
+        } catch (e) {
+          logger.error("forum listPosts error:", e);
+          return { posts: [] };
+        }
+      }),
+
+    // Create a new post
+    createPost: protectedProcedure
+      .input(z.object({
+        title: z.string().min(5).max(200),
+        body: z.string().min(20).max(5000),
+        category: z.enum(["General","Craft","Gear","Festivals","Finance","Music","VFX","Writing","Feedback","Casting"]).default("General"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        requirePaidMember(ctx.user);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        await ensureForumTables(dbConn);
+        const authorName = (ctx.user as any).name || (ctx.user as any).email?.split("@")[0] || "Filmmaker";
+        const authorRole = (ctx.user as any).role === "admin" ? "Virelle Team" : "Filmmaker";
+        await dbConn.execute(sql`
+          INSERT INTO forum_posts (userId, authorName, authorRole, title, body, category)
+          VALUES (${ctx.user.id}, ${authorName}, ${authorRole}, ${input.title}, ${input.body}, ${input.category})
+        `);
+        logger.info(`[Forum] User ${ctx.user.id} created post: ${input.title}`);
+        return { ok: true };
+      }),
+
+    // List replies for a post
+    listReplies: protectedProcedure
+      .input(z.object({ postId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        requirePaidMember(ctx.user);
+        const dbConn = await db.getDb();
+        if (!dbConn) return { replies: [], post: null };
+        await ensureForumTables(dbConn);
+        const [postRows, replyRows]: any[] = await Promise.all([
+          dbConn.execute(sql`SELECT * FROM forum_posts WHERE id = ${input.postId} LIMIT 1`),
+          dbConn.execute(sql`SELECT * FROM forum_replies WHERE postId = ${input.postId} ORDER BY createdAt ASC`),
+        ]);
+        const post = Array.isArray(postRows[0]) ? postRows[0][0] : null;
+        const replies = Array.isArray(replyRows[0]) ? replyRows[0] : [];
+        // Get user's likes
+        const likedRows: any = await dbConn.execute(
+          sql`SELECT targetId FROM forum_likes WHERE userId = ${ctx.user.id} AND targetType = 'reply' AND postId IS NOT NULL`
+        );
+        return { post, replies };
+      }),
+
+    // Reply to a post
+    createReply: protectedProcedure
+      .input(z.object({
+        postId: z.number(),
+        body: z.string().min(5).max(3000),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        requirePaidMember(ctx.user);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        await ensureForumTables(dbConn);
+        const authorName = (ctx.user as any).name || (ctx.user as any).email?.split("@")[0] || "Filmmaker";
+        const authorRole = (ctx.user as any).role === "admin" ? "Virelle Team" : "Filmmaker";
+        await dbConn.execute(sql`
+          INSERT INTO forum_replies (postId, userId, authorName, authorRole, body)
+          VALUES (${input.postId}, ${ctx.user.id}, ${authorName}, ${authorRole}, ${input.body})
+        `);
+        await dbConn.execute(sql`UPDATE forum_posts SET replyCount = replyCount + 1 WHERE id = ${input.postId}`);
+        return { ok: true };
+      }),
+
+    // Toggle like on a post
+    toggleLike: protectedProcedure
+      .input(z.object({ postId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        requirePaidMember(ctx.user);
+        const dbConn = await db.getDb();
+        if (!dbConn) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+        await ensureForumTables(dbConn);
+        // Check if already liked
+        const existing: any = await dbConn.execute(
+          sql`SELECT id FROM forum_likes WHERE userId = ${ctx.user.id} AND targetType = 'post' AND targetId = ${input.postId} LIMIT 1`
+        );
+        const rows = Array.isArray(existing[0]) ? existing[0] : [];
+        if (rows.length > 0) {
+          await dbConn.execute(sql`DELETE FROM forum_likes WHERE userId = ${ctx.user.id} AND targetType = 'post' AND targetId = ${input.postId}`);
+          await dbConn.execute(sql`UPDATE forum_posts SET likes = GREATEST(likes - 1, 0) WHERE id = ${input.postId}`);
+          return { liked: false };
+        } else {
+          await dbConn.execute(sql`INSERT IGNORE INTO forum_likes (userId, targetType, targetId) VALUES (${ctx.user.id}, 'post', ${input.postId})`);
+          await dbConn.execute(sql`UPDATE forum_posts SET likes = likes + 1 WHERE id = ${input.postId}`);
+          return { liked: true };
+        }
+      }),
+
+    // Get user's liked post IDs
+    myLikes: protectedProcedure.query(async ({ ctx }) => {
+      requirePaidMember(ctx.user);
+      const dbConn = await db.getDb();
+      if (!dbConn) return { likedPostIds: [] };
+      await ensureForumTables(dbConn);
+      const rows: any = await dbConn.execute(
+        sql`SELECT targetId FROM forum_likes WHERE userId = ${ctx.user.id} AND targetType = 'post'`
+      );
+      const ids = (Array.isArray(rows[0]) ? rows[0] : []).map((r: any) => Number(r.targetId));
+      return { likedPostIds: ids };
+    }),
+  });
+  
