@@ -323,11 +323,11 @@ export default function AdminAutonomous() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-card/50 border border-border/50">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="controls">Controls</TabsTrigger>
-          <TabsTrigger value="content">Content Queue</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="overview" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Overview</TabsTrigger>
+          <TabsTrigger value="controls" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Controls</TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Content Queue</TabsTrigger>
+          <TabsTrigger value="history" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">History</TabsTrigger>
+          <TabsTrigger value="settings" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Settings</TabsTrigger>
         </TabsList>
 
         {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Overview Tab ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}

@@ -122,10 +122,10 @@ import { useState } from "react";
 
           <Tabs defaultValue="overview">
             <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="world">World</TabsTrigger>
-              <TabsTrigger value="characters">Characters</TabsTrigger>
-              <TabsTrigger value="episodes">Episodes</TabsTrigger>
+              <TabsTrigger value="overview" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Overview</TabsTrigger>
+              <TabsTrigger value="world" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">World</TabsTrigger>
+              <TabsTrigger value="characters" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Characters</TabsTrigger>
+              <TabsTrigger value="episodes" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Episodes</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4 mt-4">

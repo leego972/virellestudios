@@ -58,10 +58,10 @@ export default function FundingProMatch() {
       ) : (
         <Tabs defaultValue="match" className="space-y-3">
           <TabsList>
-            <TabsTrigger value="match"><Sparkles className="h-3.5 w-3.5 mr-1.5" />AI Match Score</TabsTrigger>
-            <TabsTrigger value="saved"><Bookmark className="h-3.5 w-3.5 mr-1.5" />Shortlist</TabsTrigger>
-            <TabsTrigger value="apps"><FileText className="h-3.5 w-3.5 mr-1.5" />My Applications</TabsTrigger>
-            <TabsTrigger value="autofill"><Wand2 className="h-3.5 w-3.5 mr-1.5" />AI Autofill</TabsTrigger>
+            <TabsTrigger value="match" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Sparkles className="h-3.5 w-3.5 mr-1.5" />AI Match Score</TabsTrigger>
+            <TabsTrigger value="saved" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Bookmark className="h-3.5 w-3.5 mr-1.5" />Shortlist</TabsTrigger>
+            <TabsTrigger value="apps" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><FileText className="h-3.5 w-3.5 mr-1.5" />My Applications</TabsTrigger>
+            <TabsTrigger value="autofill" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Wand2 className="h-3.5 w-3.5 mr-1.5" />AI Autofill</TabsTrigger>
           </TabsList>
           <TabsContent value="match"><MatchTab projectId={activeId} /></TabsContent>
           <TabsContent value="saved"><SavedTab projectId={activeId} /></TabsContent>

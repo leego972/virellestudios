@@ -91,20 +91,20 @@ export default function ProStudioOps() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex flex-wrap gap-1 h-auto mb-4">
-          <TabsTrigger value="dashboard"><Gauge className="h-3.5 w-3.5 mr-1.5" />Dashboard</TabsTrigger>
-          <TabsTrigger value="comments"><MessageSquare className="h-3.5 w-3.5 mr-1.5" />Frame Reviews</TabsTrigger>
-          <TabsTrigger value="color"><Palette className="h-3.5 w-3.5 mr-1.5" />Color</TabsTrigger>
-          <TabsTrigger value="versions"><GitBranch className="h-3.5 w-3.5 mr-1.5" />Asset Versions</TabsTrigger>
-          <TabsTrigger value="queue"><ListOrdered className="h-3.5 w-3.5 mr-1.5" />Render Queue</TabsTrigger>
-          <TabsTrigger value="deliver"><Package className="h-3.5 w-3.5 mr-1.5" />Deliverables</TabsTrigger>
-          <TabsTrigger value="clear"><Scale className="h-3.5 w-3.5 mr-1.5" />Clearances</TabsTrigger>
-          <TabsTrigger value="dist"><Send className="h-3.5 w-3.5 mr-1.5" />Distribution</TabsTrigger>
-          <TabsTrigger value="audit"><ScrollText className="h-3.5 w-3.5 mr-1.5" />Audit Log</TabsTrigger>
-          <TabsTrigger value="proxy"><Layers className="h-3.5 w-3.5 mr-1.5" />Proxy Chain</TabsTrigger>
-          <TabsTrigger value="cuts"><Scissors className="h-3.5 w-3.5 mr-1.5" />Cuts & Transitions</TabsTrigger>
-          <TabsTrigger value="locks"><Lock className="h-3.5 w-3.5 mr-1.5" />Locks</TabsTrigger>
-          <TabsTrigger value="approvals"><CheckCheck className="h-3.5 w-3.5 mr-1.5" />Approvals</TabsTrigger>
-          <TabsTrigger value="budget"><DollarSign className="h-3.5 w-3.5 mr-1.5" />Budget & Savings</TabsTrigger>
+          <TabsTrigger value="dashboard" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Gauge className="h-3.5 w-3.5 mr-1.5" />Dashboard</TabsTrigger>
+          <TabsTrigger value="comments" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><MessageSquare className="h-3.5 w-3.5 mr-1.5" />Frame Reviews</TabsTrigger>
+          <TabsTrigger value="color" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Palette className="h-3.5 w-3.5 mr-1.5" />Color</TabsTrigger>
+          <TabsTrigger value="versions" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><GitBranch className="h-3.5 w-3.5 mr-1.5" />Asset Versions</TabsTrigger>
+          <TabsTrigger value="queue" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><ListOrdered className="h-3.5 w-3.5 mr-1.5" />Render Queue</TabsTrigger>
+          <TabsTrigger value="deliver" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Package className="h-3.5 w-3.5 mr-1.5" />Deliverables</TabsTrigger>
+          <TabsTrigger value="clear" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Scale className="h-3.5 w-3.5 mr-1.5" />Clearances</TabsTrigger>
+          <TabsTrigger value="dist" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Send className="h-3.5 w-3.5 mr-1.5" />Distribution</TabsTrigger>
+          <TabsTrigger value="audit" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><ScrollText className="h-3.5 w-3.5 mr-1.5" />Audit Log</TabsTrigger>
+          <TabsTrigger value="proxy" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Layers className="h-3.5 w-3.5 mr-1.5" />Proxy Chain</TabsTrigger>
+          <TabsTrigger value="cuts" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Scissors className="h-3.5 w-3.5 mr-1.5" />Cuts & Transitions</TabsTrigger>
+          <TabsTrigger value="locks" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Lock className="h-3.5 w-3.5 mr-1.5" />Locks</TabsTrigger>
+          <TabsTrigger value="approvals" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><CheckCheck className="h-3.5 w-3.5 mr-1.5" />Approvals</TabsTrigger>
+          <TabsTrigger value="budget" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><DollarSign className="h-3.5 w-3.5 mr-1.5" />Budget & Savings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard"><StudioDashboardTab projectId={projectId} /></TabsContent>

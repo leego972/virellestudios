@@ -419,12 +419,12 @@ export default function CampaignManager() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="h-auto flex-wrap">
-          <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
-          <TabsTrigger value="quick-generate">Quick Generate</TabsTrigger>
+          <TabsTrigger value="campaigns" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Campaigns</TabsTrigger>
+          <TabsTrigger value="quick-generate" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Quick Generate</TabsTrigger>
           <TabsTrigger value="analytics" className="flex items-center gap-1 data-[state=active]:text-amber-400">
             <BarChart3 className="h-3 w-3" /> Analytics
           </TabsTrigger>
-          <TabsTrigger value="platforms">Platforms</TabsTrigger>
+          <TabsTrigger value="platforms" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Platforms</TabsTrigger>
         </TabsList>
 
         {/* Campaigns Tab */}

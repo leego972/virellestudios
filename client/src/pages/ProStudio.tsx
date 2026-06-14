@@ -41,11 +41,11 @@ export default function ProStudio() {
 
       <Tabs defaultValue="style">
         <TabsList className="flex w-full max-w-3xl overflow-x-auto scrollbar-none sm:grid sm:grid-cols-5 h-auto mb-4 [&>*]:shrink-0 [&>*]:whitespace-nowrap">
-          <TabsTrigger value="style"><Palette className="h-3.5 w-3.5 mr-1.5" />Style Bible</TabsTrigger>
-          <TabsTrigger value="versions"><Star className="h-3.5 w-3.5 mr-1.5" />Versions</TabsTrigger>
-          <TabsTrigger value="voice"><Mic className="h-3.5 w-3.5 mr-1.5" />Voice Rights</TabsTrigger>
-          <TabsTrigger value="provenance"><ShieldCheck className="h-3.5 w-3.5 mr-1.5" />Provenance</TabsTrigger>
-          <TabsTrigger value="renders"><History className="h-3.5 w-3.5 mr-1.5" />Renders</TabsTrigger>
+          <TabsTrigger value="style" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Palette className="h-3.5 w-3.5 mr-1.5" />Style Bible</TabsTrigger>
+          <TabsTrigger value="versions" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Star className="h-3.5 w-3.5 mr-1.5" />Versions</TabsTrigger>
+          <TabsTrigger value="voice" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><Mic className="h-3.5 w-3.5 mr-1.5" />Voice Rights</TabsTrigger>
+          <TabsTrigger value="provenance" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><ShieldCheck className="h-3.5 w-3.5 mr-1.5" />Provenance</TabsTrigger>
+          <TabsTrigger value="renders" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50"><History className="h-3.5 w-3.5 mr-1.5" />Renders</TabsTrigger>
         </TabsList>
 
         <TabsContent value="style"><StyleBibleTab projectId={projectId} /></TabsContent>

@@ -141,9 +141,9 @@ import { useState } from "react";
 
         <Tabs defaultValue="discussions">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="discussions">Discussions</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
-            <TabsTrigger value="resources">Directory</TabsTrigger>
+            <TabsTrigger value="discussions" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Discussions</TabsTrigger>
+            <TabsTrigger value="events" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Events</TabsTrigger>
+            <TabsTrigger value="resources" className="data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/50">Directory</TabsTrigger>
           </TabsList>
 
           {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Discussions ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
