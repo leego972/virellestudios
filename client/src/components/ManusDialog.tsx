@@ -78,7 +78,7 @@ export function ManusDialog({
           {/* Login button */}
           <Button
             onClick={onLogin}
-            className="w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[10px] text-sm font-medium leading-5 tracking-[-0.154px]"
+            className="w-full h-10 bg-amber-500 hover:bg-primary/90 text-primary-foreground rounded-[10px] text-sm font-medium leading-5 tracking-[-0.154px]"
           >
             Login to Virelle Studios
           </Button>

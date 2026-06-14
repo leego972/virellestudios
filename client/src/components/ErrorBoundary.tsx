@@ -55,13 +55,13 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // For chunk-load errors on first try — show spinner while auto-retrying
+      // For chunk-load errors on first try â show spinner while auto-retrying
       if (isChunkLoadError(this.state.error) && this.state.retryCount === 0) {
         return (
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="flex flex-col items-center gap-3">
               <RotateCcw className="w-8 h-8 animate-spin text-amber-500" />
-              <p className="text-sm text-muted-foreground">Loading page…</p>
+              <p className="text-sm text-muted-foreground">Loading pageâ¦</p>
             </div>
           </div>
         );
@@ -74,10 +74,10 @@ class ErrorBoundary extends Component<Props, State> {
             </div>
 
             <h2 className="text-2xl font-bold text-foreground mb-2 gradient-text-gold">
-              Cut — something broke on this take
+              Cut â something broke on this take
             </h2>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              The studio hit an unexpected error on this view. Your project work is autosaved — reload this page to roll again, or head back to the home screen.
+              The studio hit an unexpected error on this view. Your project work is autosaved â reload this page to roll again, or head back to the home screen.
             </p>
 
             {/* Show technical details only in development */}
@@ -97,7 +97,7 @@ class ErrorBoundary extends Component<Props, State> {
                 onClick={() => window.location.reload()}
                 className={cn(
                   "flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg",
-                  "bg-primary text-primary-foreground font-medium",
+                  "bg-amber-500 text-primary-foreground font-medium",
                   "hover:opacity-90 transition-opacity cursor-pointer"
                 )}
               >

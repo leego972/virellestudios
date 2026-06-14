@@ -10,7 +10,7 @@ import { useState } from "react";
   export default function WelcomeOutfitPicker() {
     const { data: gift } = (trpc as any).lamaloGifts?.hasClaimedGift?.useQuery?.() ?? {};
 
-    // â Fix: enabled passed as OPTIONS (2nd arg), not input (1st arg)
+    // Ã¢ÂÂ Fix: enabled passed as OPTIONS (2nd arg), not input (1st arg)
     const { data: outfits = [], isLoading: outfitsLoading } = (trpc as any).lamaloGifts?.getStarterOutfits?.useQuery?.(
       undefined,
       { enabled: !!(gift?.eligible && !gift?.claimed) }
@@ -41,7 +41,7 @@ import { useState } from "react";
           <DialogHeader>
             <div className="flex items-center gap-2 mb-1">
               <Gift className="w-5 h-5 text-yellow-500 shrink-0" />
-              <DialogTitle className="text-base leading-snug gradient-text-gold">Welcome Gift â 2 Free Lamalo Outfits</DialogTitle>
+              <DialogTitle className="text-base leading-snug gradient-text-gold">Welcome Gift Ã¢ÂÂ 2 Free Lamalo Outfits</DialogTitle>
             </div>
             <DialogDescription className="text-sm">
               Choose any 2 outfits from Lamalo Fashions as a welcome gift. These are yours permanently at no cost.
@@ -80,7 +80,7 @@ import { useState } from "react";
                         <p className="text-xs font-semibold leading-tight">{item.name}</p>
                         <Badge variant="secondary" className="text-[10px] mt-1">{item.category}</Badge>
                       </div>
-                      {isSelected && <CheckCircle className="w-4 h-4 text-primary absolute top-2 right-2" />}
+                      {isSelected && <CheckCircle className="w-4 h-4 text-amber-400 absolute top-2 right-2" />}
                     </CardContent>
                   </Card>
                 );

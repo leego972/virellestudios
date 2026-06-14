@@ -166,59 +166,59 @@ const adminMenuItems = [
 ];
 
 const SUPPORTED_LANGUAGES = [
-  // âââ English-speaking markets âââ
-  { code: "en", name: "English", dir: "ltr", flag: "ðºð¸" },
-  // âââ South Asian cinema (Bollywood, Tamil, Telugu, Bengali) âââ
-  { code: "hi", name: "à¤¹à¤¿à¤¨à¥à¤¦à¥ (Hindi)", dir: "ltr", flag: "ð®ð³" },
-  { code: "ta", name: "à®¤à®®à®¿à®´à¯ (Tamil)", dir: "ltr", flag: "ð®ð³" },
-  { code: "te", name: "à°¤à±à°²à±à°à± (Telugu)", dir: "ltr", flag: "ð®ð³" },
-  { code: "bn", name: "à¦¬à¦¾à¦à¦²à¦¾ (Bengali)", dir: "ltr", flag: "ð§ð©" },
-  { code: "ml", name: "à´®à´²à´¯à´¾à´³à´ (Malayalam)", dir: "ltr", flag: "ð®ð³" },
-  { code: "mr", name: "à¤®à¤°à¤¾à¤ à¥ (Marathi)", dir: "ltr", flag: "ð®ð³" },
-  // âââ East Asian cinema (Korean Wave, J-Cinema, Chinese) âââ
-  { code: "ko", name: "íêµ­ì´ (Korean)", dir: "ltr", flag: "ð°ð·" },
-  { code: "ja", name: "æ¥æ¬èª (Japanese)", dir: "ltr", flag: "ð¯ðµ" },
-  { code: "zh", name: "ä¸­æ æ®éè¯ (Mandarin)", dir: "ltr", flag: "ð¨ð³" },
-  { code: "zh-TW", name: "ä¸­æ ç¹é« (Cantonese/HK)", dir: "ltr", flag: "ð­ð°" },
-  // âââ Middle Eastern & North African cinema âââ
-  { code: "ar", name: "Ø§ÙØ¹Ø±Ø¨ÙØ© (Arabic)", dir: "rtl", flag: "ð¸ð¦" },
-  { code: "he", name: "×¢××¨××ª (Hebrew)", dir: "rtl", flag: "ð®ð±" },
-  { code: "fa", name: "ÙØ§Ø±Ø³Û (Persian/Farsi)", dir: "rtl", flag: "ð®ð·" },
-  { code: "tr", name: "TÃ¼rkÃ§e (Turkish)", dir: "ltr", flag: "ð¹ð·" },
-  // âââ European cinema âââ
-  { code: "fr", name: "FranÃ§ais", dir: "ltr", flag: "ð«ð·" },
-  { code: "es", name: "EspaÃ±ol", dir: "ltr", flag: "ðªð¸" },
-  { code: "es-MX", name: "EspaÃ±ol (MÃ©xico)", dir: "ltr", flag: "ð²ð½" },
-  { code: "it", name: "Italiano", dir: "ltr", flag: "ð®ð¹" },
-  { code: "de", name: "Deutsch", dir: "ltr", flag: "ð©ðª" },
-  { code: "pt", name: "PortuguÃªs (Brasil)", dir: "ltr", flag: "ð§ð·" },
-  { code: "pt-PT", name: "PortuguÃªs (Portugal)", dir: "ltr", flag: "ðµð¹" },
-  { code: "ru", name: "Ð ÑÑÑÐºÐ¸Ð¹", dir: "ltr", flag: "ð·ðº" },
-  { code: "pl", name: "Polski", dir: "ltr", flag: "ðµð±" },
-  { code: "nl", name: "Nederlands", dir: "ltr", flag: "ð³ð±" },
-  { code: "sv", name: "Svenska", dir: "ltr", flag: "ð¸ðª" },
-  { code: "da", name: "Dansk", dir: "ltr", flag: "ð©ð°" },
-  { code: "no", name: "Norsk", dir: "ltr", flag: "ð³ð´" },
-  { code: "fi", name: "Suomi", dir: "ltr", flag: "ð«ð®" },
-  { code: "el", name: "ÎÎ»Î»Î·Î½Î¹ÎºÎ¬ (Greek)", dir: "ltr", flag: "ð¬ð·" },
-  { code: "cs", name: "ÄeÅ¡tina (Czech)", dir: "ltr", flag: "ð¨ð¿" },
-  { code: "hu", name: "Magyar (Hungarian)", dir: "ltr", flag: "ð­ðº" },
-  { code: "ro", name: "RomÃ¢nÄ", dir: "ltr", flag: "ð·ð´" },
-  { code: "uk", name: "Ð£ÐºÑÐ°ÑÐ½ÑÑÐºÐ° (Ukrainian)", dir: "ltr", flag: "ðºð¦" },
-  // âââ African cinema (Nollywood, South African, East African) âââ
-  { code: "yo", name: "YorÃ¹bÃ¡", dir: "ltr", flag: "ð³ð¬" },
-  { code: "ig", name: "Igbo", dir: "ltr", flag: "ð³ð¬" },
-  { code: "ha", name: "Hausa", dir: "ltr", flag: "ð³ð¬" },
-  { code: "sw", name: "Kiswahili", dir: "ltr", flag: "ð°ðª" },
-  { code: "am", name: "á áá­á (Amharic)", dir: "ltr", flag: "ðªð¹" },
-  { code: "zu", name: "isiZulu", dir: "ltr", flag: "ð¿ð¦" },
-  { code: "af", name: "Afrikaans", dir: "ltr", flag: "ð¿ð¦" },
-  // âââ Southeast Asian cinema âââ
-  { code: "th", name: "à¸ à¸²à¸©à¸²à¹à¸à¸¢ (Thai)", dir: "ltr", flag: "ð¹ð­" },
-  { code: "vi", name: "Tiáº¿ng Viá»t (Vietnamese)", dir: "ltr", flag: "ð»ð³" },
-  { code: "id", name: "Bahasa Indonesia", dir: "ltr", flag: "ð®ð©" },
-  { code: "ms", name: "Bahasa Melayu", dir: "ltr", flag: "ð²ð¾" },
-  { code: "tl", name: "Filipino", dir: "ltr", flag: "ðµð­" },
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ English-speaking markets Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  { code: "en", name: "English", dir: "ltr", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¸" },
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ South Asian cinema (Bollywood, Tamil, Telugu, Bengali) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  { code: "hi", name: "Ã Â¤Â¹Ã Â¤Â¿Ã Â¤Â¨Ã Â¥ÂÃ Â¤Â¦Ã Â¥Â (Hindi)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
+  { code: "ta", name: "Ã Â®Â¤Ã Â®Â®Ã Â®Â¿Ã Â®Â´Ã Â¯Â (Tamil)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
+  { code: "te", name: "Ã Â°Â¤Ã Â±ÂÃ Â°Â²Ã Â±ÂÃ Â°ÂÃ Â±Â (Telugu)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
+  { code: "bn", name: "Ã Â¦Â¬Ã Â¦Â¾Ã Â¦ÂÃ Â¦Â²Ã Â¦Â¾ (Bengali)", dir: "ltr", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ©" },
+  { code: "ml", name: "Ã Â´Â®Ã Â´Â²Ã Â´Â¯Ã Â´Â¾Ã Â´Â³Ã Â´Â (Malayalam)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
+  { code: "mr", name: "Ã Â¤Â®Ã Â¤Â°Ã Â¤Â¾Ã Â¤Â Ã Â¥Â (Marathi)", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³" },
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ East Asian cinema (Korean Wave, J-Cinema, Chinese) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  { code: "ko", name: "Ã­ÂÂÃªÂµÂ­Ã¬ÂÂ´ (Korean)", dir: "ltr", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ·" },
+  { code: "ja", name: "Ã¦ÂÂ¥Ã¦ÂÂ¬Ã¨ÂªÂ (Japanese)", dir: "ltr", flag: "Ã°ÂÂÂ¯Ã°ÂÂÂµ" },
+  { code: "zh", name: "Ã¤Â¸Â­Ã¦ÂÂ Ã¦ÂÂ®Ã©ÂÂÃ¨Â¯Â (Mandarin)", dir: "ltr", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ³" },
+  { code: "zh-TW", name: "Ã¤Â¸Â­Ã¦ÂÂ Ã§Â¹ÂÃ©Â«Â (Cantonese/HK)", dir: "ltr", flag: "Ã°ÂÂÂ­Ã°ÂÂÂ°" },
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Middle Eastern & North African cinema Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  { code: "ar", name: "ÃÂ§ÃÂÃÂ¹ÃÂ±ÃÂ¨ÃÂÃÂ© (Arabic)", dir: "rtl", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¦" },
+  { code: "he", name: "ÃÂ¢ÃÂÃÂ¨ÃÂÃÂª (Hebrew)", dir: "rtl", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ±" },
+  { code: "fa", name: "ÃÂÃÂ§ÃÂ±ÃÂ³ÃÂ (Persian/Farsi)", dir: "rtl", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ·" },
+  { code: "tr", name: "TÃÂ¼rkÃÂ§e (Turkish)", dir: "ltr", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ·" },
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ European cinema Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  { code: "fr", name: "FranÃÂ§ais", dir: "ltr", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ·" },
+  { code: "es", name: "EspaÃÂ±ol", dir: "ltr", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¸" },
+  { code: "es-MX", name: "EspaÃÂ±ol (MÃÂ©xico)", dir: "ltr", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ½" },
+  { code: "it", name: "Italiano", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ¹" },
+  { code: "de", name: "Deutsch", dir: "ltr", flag: "Ã°ÂÂÂ©Ã°ÂÂÂª" },
+  { code: "pt", name: "PortuguÃÂªs (Brasil)", dir: "ltr", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ·" },
+  { code: "pt-PT", name: "PortuguÃÂªs (Portugal)", dir: "ltr", flag: "Ã°ÂÂÂµÃ°ÂÂÂ¹" },
+  { code: "ru", name: "ÃÂ ÃÂÃÂÃÂÃÂºÃÂ¸ÃÂ¹", dir: "ltr", flag: "Ã°ÂÂÂ·Ã°ÂÂÂº" },
+  { code: "pl", name: "Polski", dir: "ltr", flag: "Ã°ÂÂÂµÃ°ÂÂÂ±" },
+  { code: "nl", name: "Nederlands", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ±" },
+  { code: "sv", name: "Svenska", dir: "ltr", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂª" },
+  { code: "da", name: "Dansk", dir: "ltr", flag: "Ã°ÂÂÂ©Ã°ÂÂÂ°" },
+  { code: "no", name: "Norsk", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ´" },
+  { code: "fi", name: "Suomi", dir: "ltr", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ®" },
+  { code: "el", name: "ÃÂÃÂ»ÃÂ»ÃÂ·ÃÂ½ÃÂ¹ÃÂºÃÂ¬ (Greek)", dir: "ltr", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ·" },
+  { code: "cs", name: "ÃÂeÃÂ¡tina (Czech)", dir: "ltr", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ¿" },
+  { code: "hu", name: "Magyar (Hungarian)", dir: "ltr", flag: "Ã°ÂÂÂ­Ã°ÂÂÂº" },
+  { code: "ro", name: "RomÃÂ¢nÃÂ", dir: "ltr", flag: "Ã°ÂÂÂ·Ã°ÂÂÂ´" },
+  { code: "uk", name: "ÃÂ£ÃÂºÃÂÃÂ°ÃÂÃÂ½ÃÂÃÂÃÂºÃÂ° (Ukrainian)", dir: "ltr", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¦" },
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ African cinema (Nollywood, South African, East African) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  { code: "yo", name: "YorÃÂ¹bÃÂ¡", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¬" },
+  { code: "ig", name: "Igbo", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¬" },
+  { code: "ha", name: "Hausa", dir: "ltr", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¬" },
+  { code: "sw", name: "Kiswahili", dir: "ltr", flag: "Ã°ÂÂÂ°Ã°ÂÂÂª" },
+  { code: "am", name: "Ã¡ÂÂ Ã¡ÂÂÃ¡ÂÂ­Ã¡ÂÂ (Amharic)", dir: "ltr", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¹" },
+  { code: "zu", name: "isiZulu", dir: "ltr", flag: "Ã°ÂÂÂ¿Ã°ÂÂÂ¦" },
+  { code: "af", name: "Afrikaans", dir: "ltr", flag: "Ã°ÂÂÂ¿Ã°ÂÂÂ¦" },
+  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Southeast Asian cinema Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  { code: "th", name: "Ã Â¸Â Ã Â¸Â²Ã Â¸Â©Ã Â¸Â²Ã Â¹ÂÃ Â¸ÂÃ Â¸Â¢ (Thai)", dir: "ltr", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ­" },
+  { code: "vi", name: "TiÃ¡ÂºÂ¿ng ViÃ¡Â»Ât (Vietnamese)", dir: "ltr", flag: "Ã°ÂÂÂ»Ã°ÂÂÂ³" },
+  { code: "id", name: "Bahasa Indonesia", dir: "ltr", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ©" },
+  { code: "ms", name: "Bahasa Melayu", dir: "ltr", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¾" },
+  { code: "tl", name: "Filipino", dir: "ltr", flag: "Ã°ÂÂÂµÃ°ÂÂÂ­" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -245,10 +245,10 @@ export default function DashboardLayout({
     '/ai-content-policy', '/ip-policy', '/dmca', '/showcase',
     '/forgot-password', '/reset-password', '/subscription',
     '/signature-cast', '/talent-search',
-    // Publicly shareable content â accessible without login
+    // Publicly shareable content Ã¢ÂÂ accessible without login
     '/share', '/films', '/creators', '/crowdfund', '/collections',
   ];
-  // Use window.location.pathname as the authoritative path â wouter's useLocation()
+  // Use window.location.pathname as the authoritative path Ã¢ÂÂ wouter's useLocation()
   // may not reflect the actual URL during the initial render on hard page load.
   const actualPath = typeof window !== 'undefined' ? window.location.pathname : currentPath;
   const isPublicRoute = PUBLIC_ROUTES.some(r => actualPath === r || actualPath.startsWith(r + '/'));
@@ -274,7 +274,7 @@ export default function DashboardLayout({
   if (!user && isPublicRoute) {
     return <>{children}</>;
   }
-  // Admin route guard â non-admins are silently redirected to home
+  // Admin route guard Ã¢ÂÂ non-admins are silently redirected to home
   if (actualPath.startsWith('/admin') && (user as any)?.role !== 'admin') {
     window.location.href = '/';
     return <DashboardLayoutSkeleton />;
@@ -389,7 +389,7 @@ function DashboardLayoutContent({
             <div className="flex items-center gap-3 px-2 transition-all w-full">
               <button
                 onClick={toggleSidebar}
-                className="h-8 w-8 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0"
+                className="h-8 w-8 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 shrink-0"
                 aria-label="Toggle navigation"
               >
                 <PanelLeft className="h-4 w-4 text-muted-foreground" />
@@ -402,7 +402,7 @@ function DashboardLayoutContent({
                   </span>
                 </div>
               )}
-              {/* v6.62 â RenderQueueTray lives in the top bar only (see below)
+              {/* v6.62 Ã¢ÂÂ RenderQueueTray lives in the top bar only (see below)
                   so we don't end up with two trays polling at the same time on
                   desktop. The sidebar keeps just the NotificationBell. */}
               {!isCollapsed && <NotificationBell />}
@@ -481,7 +481,7 @@ function DashboardLayoutContent({
               <a
                 href="/pricing"
                 className="flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors group-data-[collapsible=icon]:justify-center"
-                title={(user as any).isAdmin ? "Admin â Unlimited credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining â click to top up`}
+                title={(user as any).isAdmin ? "Admin Ã¢ÂÂ Unlimited credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits remaining Ã¢ÂÂ click to top up`}
               >
                 <div className="h-8 w-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden" style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%)", border: "1.5px solid #d4af37" }}>
                   <HollywoodIcon tool="credits" size={20} className="opacity-90" />
@@ -489,10 +489,10 @@ function DashboardLayoutContent({
                 <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold" style={{ color: "#d4af37" }}>
-                      {(user as any).isAdmin ? "â credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits`}
+                      {(user as any).isAdmin ? "Ã¢ÂÂ credits" : `${((user as any).creditBalance ?? 0).toLocaleString()} credits`}
                     </span>
                     {!(user as any).isAdmin && (
-                      <span className="text-[9px] text-muted-foreground hover:text-amber-400 transition-colors">Top up â</span>
+                      <span className="text-[9px] text-muted-foreground hover:text-amber-400 transition-colors">Top up Ã¢ÂÂ</span>
                     )}
                   </div>
                   <div className="mt-1 h-1 rounded-full bg-muted overflow-hidden">
@@ -507,7 +507,7 @@ function DashboardLayoutContent({
                 </div>
               </a>
             )}
-            {/* Leego branding â tap to pulse to ~2cm for 2s, then shrink back */}
+            {/* Leego branding Ã¢ÂÂ tap to pulse to ~2cm for 2s, then shrink back */}
             <div className="flex justify-center items-center py-1 group-data-[collapsible=icon]:px-0 md:flex hidden">
               <LeegoLogo
                 className="h-12 w-auto object-contain group-data-[collapsible=icon]:h-8 leego-glow"
@@ -517,7 +517,7 @@ function DashboardLayoutContent({
             <DropdownMenu open={langMenuOpen} onOpenChange={setLangMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                   aria-label="Change language"
                   type="button"
                 >
@@ -545,7 +545,7 @@ function DashboardLayoutContent({
                   >
                     <span className="text-base">{lang.flag}</span>
                     <span>{lang.name}</span>
-                    {uiLang === lang.code && <span className="ml-auto text-amber-400 text-xs">â</span>}
+                    {uiLang === lang.code && <span className="ml-auto text-amber-400 text-xs">Ã¢ÂÂ</span>}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -557,7 +557,7 @@ function DashboardLayoutContent({
                 <TooltipTrigger asChild>
                   <button
                     onClick={toggleTheme}
-                    className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                     aria-label={theme === "dark" ? "Switch to day mode" : "Switch to night mode"}
                   >
                     {theme === "dark" ? (
@@ -579,7 +579,7 @@ function DashboardLayoutContent({
             {/* User profile */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400">
                   <Avatar className="h-8 w-8 border shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={handleAvatarClick} title="Change profile picture">
                     {avatarSrc && <img src={avatarSrc} alt="" className="absolute inset-0 w-full h-full object-cover rounded-full" />}
                     <AvatarFallback className="p-0 bg-transparent">
@@ -600,7 +600,7 @@ function DashboardLayoutContent({
                       tier === "indie" ? "bg-green-500/10 text-green-400 border border-green-500/20" :
                       "bg-muted text-muted-foreground border border-border"
                     }`}>
-                      {user?.role === "admin" ? "â­ Admin" :
+                      {user?.role === "admin" ? "Ã¢Â­Â Admin" :
                        (tier === "industry" || tier === "independent" || tier === "creator" || tier === "studio") ? "Industry" :
                        tier === "amateur" ? "Creator" :
                        tier === "indie" ? "Indie" :
@@ -670,11 +670,11 @@ function DashboardLayoutContent({
                 onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }))}
                 className="hidden md:flex items-center gap-2 h-9 px-3 rounded-lg transition-colors text-xs text-muted-foreground" style={{ border:"1px solid rgba(255,255,255,0.1)", background:"rgba(255,255,255,0.04)" }}
                 aria-label="Open command palette"
-                title="Quick navigation (âK)"
+                title="Quick navigation (Ã¢ÂÂK)"
               >
                 <Search className="h-3.5 w-3.5" />
-                <span>Searchâ¦</span>
-                <kbd className="ml-2 px-1.5 py-0.5 text-[10px] font-mono rounded bg-background/80 border border-border/40">âK</kbd>
+                <span>SearchÃ¢ÂÂ¦</span>
+                <kbd className="ml-2 px-1.5 py-0.5 text-[10px] font-mono rounded bg-background/80 border border-border/40">Ã¢ÂÂK</kbd>
               </button>
               <RenderQueueTray />
               <NotificationBell />
@@ -709,7 +709,7 @@ function DashboardLayoutContent({
           </div>
         )}
         <main className="flex-1 p-4 sm:p-6 flex flex-col min-h-0 relative z-10 overscroll-contain" style={{ paddingBottom: 'max(4rem, calc(env(safe-area-inset-bottom) + 2rem))' }}>
-          {/* Gold VS watermark branding â bottom-right corner, subtle and non-intrusive */}
+          {/* Gold VS watermark branding Ã¢ÂÂ bottom-right corner, subtle and non-intrusive */}
           <div className="fixed bottom-4 right-4 pointer-events-none z-0">
             {/* Dark mode: soft golden logo */}
             <img
