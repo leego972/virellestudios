@@ -131,7 +131,7 @@ export default function AdminSignatureCast() {
                 <Icon className={`w-5 h-5 ${color}`} />
                 <div>
                   <p className="text-xs text-zinc-500">{label}</p>
-                  <p className="text-lg font-bold text-white">{value}</p>
+                  <p className="text-lg font-bold gradient-text-gold">{value}</p>
                 </div>
               </CardContent>
             </Card>
@@ -438,7 +438,7 @@ export default function AdminSignatureCast() {
                       ].map(({ label, value }) => (
                         <div key={label} className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800">
                           <p className="text-xs text-zinc-500">{label}</p>
-                          <p className="text-xl font-bold text-white mt-1">{value}</p>
+                          <p className="text-xl font-bold mt-1 gradient-text-gold">{value}</p>
                         </div>
                       ))}
                     </div>

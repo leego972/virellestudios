@@ -793,7 +793,7 @@ export default function Landing() {
                 </svg>
                 <div className="text-left">
                   <p className="text-[10px] text-white/50 uppercase tracking-widest">Download on the</p>
-                  <p className="text-lg font-bold text-white leading-tight">App Store</p>
+                  <p className="text-lg font-bold leading-tight gradient-text-gold">App Store</p>
                 </div>
               </button>
               <button
@@ -805,7 +805,7 @@ export default function Landing() {
                 </svg>
                 <div className="text-left">
                   <p className="text-[10px] text-white/50 uppercase tracking-widest">Get it on</p>
-                  <p className="text-lg font-bold text-white leading-tight">Google Play</p>
+                  <p className="text-lg font-bold leading-tight gradient-text-gold">Google Play</p>
                 </div>
               </button>
             </div>
@@ -1014,12 +1014,12 @@ export default function Landing() {
                     Founding Partner Price
                   </div>
                   <div className="flex items-end justify-center gap-3 mt-2 mb-3">
-                    <span className="text-white/25 text-2xl line-through font-bold">A$299</span>
+                    <span className="/25 text-2xl line-through font-bold gradient-text-gold">A$299</span>
                   {foundingStatus?.foundingActive === false ? (
                       <span className="text-6xl font-black leading-none gradient-text-gold">A$299</span>
                     ) : (
                       <>
-                        <span className="text-white/25 text-2xl line-through font-bold">A$299</span>
+                        <span className="/25 text-2xl line-through font-bold gradient-text-gold">A$299</span>
                         <span className="text-amber-400 text-6xl font-black leading-none">A$150</span>
                       </>
                     )}

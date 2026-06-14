@@ -41,7 +41,7 @@ export default function Showcase() {
             />
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4"
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4 gradient-text-gold"
             style={{
               background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 30%, #d4af37 50%, #b8941f 70%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
