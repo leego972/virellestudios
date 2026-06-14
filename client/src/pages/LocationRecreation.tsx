@@ -169,7 +169,7 @@ const LocationRecreation: React.FC = () => {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-xl font-bold gradient-text-gold">{loc.name}</h3>
-                        <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">{loc.locationType || "Interior"}</p>
+                        <p className="text-xs text-amber-400/60 uppercase tracking-widest mt-1">{loc.locationType || "Interior"}</p>
                       </div>
                       <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${loc.aiRecreationStatus === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}`}>
                         {loc.aiRecreationStatus}
@@ -203,7 +203,7 @@ const LocationRecreation: React.FC = () => {
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-zinc-500 mb-2 uppercase tracking-widest">Location Name</label>
+                    <label className="block text-sm font-medium text-amber-400/60 mb-2 uppercase tracking-widest">Location Name</label>
                     <input 
                       type="text"
                       placeholder="e.g., Jerry's Apartment, The Bundy House"
@@ -215,7 +215,7 @@ const LocationRecreation: React.FC = () => {
                   </div>
                   {!selectedLocationId && (
                     <div>
-                      <label className="block text-sm font-medium text-zinc-500 mb-2 uppercase tracking-widest">Video URL (S3 or Reference)</label>
+                      <label className="block text-sm font-medium text-amber-400/60 mb-2 uppercase tracking-widest">Video URL (S3 or Reference)</label>
                       <div className="flex gap-3">
                         <input 
                           type="text"
@@ -256,7 +256,7 @@ const LocationRecreation: React.FC = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Time of Day</label>
+                    <label className="block text-sm font-medium text-amber-400/60 mb-4 uppercase tracking-widest">Time of Day</label>
                     <div className="grid grid-cols-2 gap-2">
                       {["dawn", "morning", "afternoon", "evening", "night", "golden-hour"].map((t) => (
                         <button
@@ -270,7 +270,7 @@ const LocationRecreation: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Weather</label>
+                    <label className="block text-sm font-medium text-amber-400/60 mb-4 uppercase tracking-widest">Weather</label>
                     <div className="grid grid-cols-2 gap-2">
                       {["clear", "cloudy", "rainy", "stormy", "snowy", "foggy", "windy"].map((w) => (
                         <button
@@ -284,7 +284,7 @@ const LocationRecreation: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-500 mb-4 uppercase tracking-widest">Lighting</label>
+                    <label className="block text-sm font-medium text-amber-400/60 mb-4 uppercase tracking-widest">Lighting</label>
                     <div className="grid grid-cols-2 gap-2">
                       {["natural", "dramatic", "soft", "neon", "candlelight", "studio", "backlit", "silhouette"].map((l) => (
                         <button

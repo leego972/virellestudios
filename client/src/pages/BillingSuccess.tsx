@@ -107,7 +107,7 @@ export default function BillingSuccess() {
         {/* Mobile redirect notice */}
         {mobileRedirecting && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 text-center space-y-2">
-            <p className="text-amber-400 font-semibold">Returning to Virelle Studios appâ¦</p>
+            <p className="text-amber-400 font-semibold">Returning to Virelle Studios appÃ¢ÂÂ¦</p>
             <p className="text-zinc-400 text-sm">
               If the app does not open automatically,{" "}
               <a
@@ -126,12 +126,12 @@ export default function BillingSuccess() {
         {/* What's next (web only) */}
         {!mobileRedirecting && (
           <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 text-left space-y-4">
-            <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider gradient-text-gold">What's next</h2>
+            <h2 className="text-sm font-semibold text-amber-400/70 uppercase tracking-wider gradient-text-gold">What's next</h2>
             {isTopUp ? (
               <ul className="space-y-3 text-sm text-zinc-300">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  Credits are live in your account â no delay
+                  Credits are live in your account Ã¢ÂÂ no delay
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
@@ -139,7 +139,7 @@ export default function BillingSuccess() {
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  Credits never expire â use them at your own pace
+                  Credits never expire Ã¢ÂÂ use them at your own pace
                 </li>
               </ul>
             ) : (
@@ -186,7 +186,7 @@ export default function BillingSuccess() {
           <p className="text-xs text-zinc-600">
             Redirecting to your dashboard in{" "}
             <span className="text-zinc-400 font-medium">{countdown}s</span>
-            {" "}â{" "}
+            {" "}Ã¢ÂÂ{" "}
             <button
               className="text-amber-500 hover:text-amber-400 underline"
               onClick={() => setCountdown(0)}
