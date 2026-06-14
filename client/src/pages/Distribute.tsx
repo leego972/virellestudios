@@ -670,6 +670,5 @@ export default function Distribute() {
         </TabsContent>
       </Tabs>
         </div>
-  </div>
   );
 }

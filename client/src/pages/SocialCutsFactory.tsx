@@ -211,10 +211,10 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
         })}
       </div>
 
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-base gradient-text-gold">Brief inputs</CardTitle>
-          <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
+          <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>
             Pulling from {sortedScenes.length} scene{sortedScenes.length === 1 ? "" : "s"} of{" "}
             <span className="font-medium">{project?.title || "your project"}</span>.
           </CardDescription>
@@ -255,17 +255,17 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
       </Card>
 
       {lastBrief && (
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div>
               <CardTitle className="text-base gradient-text-gold">Latest brief</CardTitle>
-              <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>{FORMATS[format].label} ÃÂÃÂ· {angle}</CardDescription>
+              <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>{FORMATS[format].label} ÃÂÃÂ· {angle}</CardDescription>
             </div>
             <Button onClick={() => copy(lastBrief)} size="sm" variant="ghost" className="gap-2">
               <Copy className="h-3 w-3" /> Copy
             </Button>
           </CardHeader>
-          <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+          <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
             <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{lastBrief}</pre>
           </CardContent>
         </Card>

@@ -1163,8 +1163,6 @@ export default function WardrobeMarketplacePage() {
     return <DesignerDetailView designerId={designerId} />;
   }
   return (
-    <MarketplaceGrid search={search} setSearch={setSearch} setLocation={setLocation}
-  </div>
-  </div>
+    <MarketplaceGrid search={search} setSearch={setSearch} setLocation={setLocation} />
   );
 }

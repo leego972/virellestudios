@@ -1398,6 +1398,5 @@ export default function Characters() {
         </AlertDialogContent>
       </AlertDialog>
         </div>
-  </div>
   );
 }

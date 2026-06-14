@@ -782,6 +782,5 @@ export default function AdminAutonomous() {
       </Tabs>
         </div>
   </div>
-  </div>
   );
 }

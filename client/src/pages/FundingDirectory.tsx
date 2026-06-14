@@ -1601,6 +1601,5 @@ export default function FundingDirectory() {
         />
       )}
         </div>
-  </div>
   );
 }

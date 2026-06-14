@@ -227,6 +227,7 @@ export default function ComponentsShowcase() {
   };
 
   return (
+    <>
       <main className="container max-w-6xl mx-auto">
         <div className="space-y-2 justify-between flex">
           <h2 className="text-3xl font-bold tracking-tight mb-6 text-gold-shimmer">
@@ -1431,5 +1432,6 @@ export default function ComponentsShowcase() {
           <p>Shadcn/ui Component Showcase</p>
         </div>
       </footer>
+    </>
   );
 }

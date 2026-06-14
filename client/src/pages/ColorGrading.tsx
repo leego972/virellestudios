@@ -348,7 +348,6 @@ function ColorWheel({ label, sublabel, temp, tint, master, onTempChange, onTintC
     const activeLutName = LUT_LIBRARY.flatMap(c=>c.luts).find(l=>l.id===gs.activeLut)?.name || LEGACY_PRESETS.find(p=>p.name===gs.activeLut)?.label || null;
 
     return (
-        {/* Header */}
         <div className="border-b sticky top-0 z-20" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(7,7,14,0.97)", backdropFilter: "blur(24px)" }}>
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">

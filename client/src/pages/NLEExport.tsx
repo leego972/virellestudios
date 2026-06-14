@@ -144,6 +144,7 @@ function NLEExportInner() {
   };
 
   return (
+    <>
       <div className="border-b sticky top-0 z-20" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }}>
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -290,6 +291,7 @@ function NLEExportInner() {
       </div>
       {!!projectId && <NextStageCTA projectId={projectId} currentStage={7} />}
     </div>
+    </>
   );
 }
 
@@ -303,5 +305,6 @@ export default function NLEExport() {
       <NLEExportInner />
     </SubscriptionGate>
   </div>
+    </>
   );
 }

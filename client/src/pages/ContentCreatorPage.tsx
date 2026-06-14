@@ -1244,7 +1244,6 @@ export default function ContentCreatorPage() {
         </TabsContent>
       </Tabs>
     </div>
-    </div>
   </div>
   </div>
   );

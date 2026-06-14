@@ -68,8 +68,8 @@ function StyleBibleTab({ projectId }: { projectId: number }) {
   const referenceUrlsText = (current.referenceUrls || []).join("\n");
 
   return (
-    <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+    <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
         <CardTitle className="text-base gradient-text-gold">Project Visual Identity</CardTitle>
         <p className="text-xs text-muted-foreground">Locked guidelines that every generated asset should respect. Useful for handing off to AI prompts and human collaborators alike.</p>
       </CardHeader>
@@ -153,8 +153,8 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4">
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Scenes</CardTitle></CardHeader>
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Scenes</CardTitle></CardHeader>
         <CardContent className="p-2 max-h-[60vh] overflow-y-auto">
           {sceneList.length === 0 ? (
             <p className="text-xs text-muted-foreground p-3 leading-relaxed">No scenes loaded Ã¢ÂÂ open a project with scenes to begin a Pro Studio session.</p>
@@ -170,8 +170,8 @@ function ShotVersionsTab({ projectId }: { projectId: number }) {
         </CardContent>
       </Card>
 
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="text-sm gradient-text-gold">{scene ? `Versions Ã¢ÂÂ ${scene.title || scene.name || `Scene ${scene.id}`}` : "Select a scene"}</CardTitle>
           <p className="text-xs text-muted-foreground">Track every render of this shot. Mark one as final so editors and reviewers know what to use.</p>
         </CardHeader>
@@ -227,8 +227,8 @@ function VoiceConsentTab({ projectId }: { projectId: number }) {
   }, [consents.data]);
 
   return (
-    <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+    <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
         <CardTitle className="text-base gradient-text-gold">AI Voice & Likeness Consent</CardTitle>
         <p className="text-xs text-muted-foreground">Required when cloning a real person's voice or using a likeness that resembles a real performer. Distributors and platforms require this paper trail before accepting AI content.</p>
       </CardHeader>
@@ -324,8 +324,8 @@ function ProvenanceTab({ projectId }: { projectId: number }) {
   };
 
   return (
-    <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+    <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
         <CardTitle className="text-base flex items-center gap-2 gradient-text-gold"><FileJson className="h-4 w-4" />Content Provenance Manifest</CardTitle>
         <p className="text-xs text-muted-foreground">C2PA-compatible JSON listing every AI-generated asset in this project, the model used, and required disclosure language. Submit alongside YouTube, Meta, TikTok, and broadcast deliverables.</p>
       </CardHeader>
@@ -365,14 +365,14 @@ function RenderHistoryTab() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" ><CardContent className="p-4"><div className="text-xs text-muted-foreground">Total credits spent</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.totalSpent ?? 0}</div></CardContent></Card>
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" ><CardContent className="p-4"><div className="text-xs text-muted-foreground">Last 30 days</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.last30Days ?? 0}</div></CardContent></Card>
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" ><CardContent className="p-4"><div className="text-xs text-muted-foreground">Distinct actions</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.byAction.length ?? 0}</div></CardContent></Card>
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" ><CardContent className="p-4"><div className="text-xs text-muted-foreground">Total credits spent</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.totalSpent ?? 0}</div></CardContent></Card>
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" ><CardContent className="p-4"><div className="text-xs text-muted-foreground">Last 30 days</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.last30Days ?? 0}</div></CardContent></Card>
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" ><CardContent className="p-4"><div className="text-xs text-muted-foreground">Distinct actions</div><div className="text-2xl font-bold gradient-text-gold">{summary.data?.byAction.length ?? 0}</div></CardContent></Card>
       </div>
 
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Top Cost Drivers</CardTitle></CardHeader>
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Top Cost Drivers</CardTitle></CardHeader>
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
           <div className="space-y-1.5">
             {(summary.data?.byAction || []).slice(0, 12).map(a => (
               <div key={a.action} className="flex items-center justify-between text-xs border-b py-1.5">
@@ -384,9 +384,9 @@ function RenderHistoryTab() {
         </CardContent>
       </Card>
 
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Recent Render Activity</CardTitle></CardHeader>
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header><CardTitle className="text-sm gradient-text-gold">Recent Render Activity</CardTitle></CardHeader>
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Content>
           <div className="space-y-1 max-h-[60vh] overflow-y-auto">
             {(list.data || []).map(r => (
               <div key={r.id} className="flex items-center justify-between text-xs py-1.5 border-b">

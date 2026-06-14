@@ -111,10 +111,10 @@ export default function PitchLab() {
         </div>
       </div>
 
-      <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
-        <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
+      <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow gold-glow" >
+        <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Header>
           <CardTitle className="gradient-text-gold">Project Brief</CardTitle>
-          <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>One brief drives every artifact below â logline, synopsis, treatment, and pitch deck.</CardDescription>
+          <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" Description>One brief drives every artifact below â logline, synopsis, treatment, and pitch deck.</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
@@ -180,7 +180,7 @@ export default function PitchLab() {
                 )}
               </div>
             </div>
-            <CardclassName="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
+            <Card className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow" >
               <CardContent className="p-6">
                 {lastByKind[kind] ? (
                   <pre className="whitespace-pre-wrap text-sm font-sans leading-relaxed">{lastByKind[kind]}</pre>
