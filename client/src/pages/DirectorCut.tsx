@@ -718,7 +718,7 @@ export default function DirectorCut() {
             </div>
             {/* New Cut Dialog */}
             <Dialog open={showNewCutDialog} onOpenChange={setShowNewCutDialog}>
-              <DialogContent className="bg-zinc-900 border-white/10 text-white">
+              <DialogContent className="bg-zinc-900 border-white/10 text-white glass-dark">
                 <DialogHeader><DialogTitle className="gradient-text-gold">Create New Cut</DialogTitle></DialogHeader>
                 <Label className="text-xs text-zinc-400">Cut name</Label>
                 <Input value={newCutTitle} onChange={e => setNewCutTitle(e.target.value)} className="bg-zinc-800 border-white/10" placeholder="Director's Cut v2" />
@@ -1347,7 +1347,7 @@ export default function DirectorCut() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Delete Confirm Dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={deleteConfirmIdx !== null} onOpenChange={() => setDeleteConfirmIdx(null)}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-sm glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-400 gradient-text-gold">
               <Trash2 className="w-4 h-4" /> Remove from Timeline

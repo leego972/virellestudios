@@ -292,7 +292,7 @@ function TemplatePicker({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-dark">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 gradient-text-gold">
             <BookOpen className="h-5 w-5 text-amber-400" />
@@ -455,7 +455,7 @@ function ImportSceneModal({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto glass-dark">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 gradient-text-gold">
             <FilePlus className="h-5 w-5 text-amber-400" />
@@ -566,7 +566,7 @@ function AssistInstructionsModal({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg glass-dark">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 gradient-text-gold">
             {btn?.icon}

@@ -438,7 +438,7 @@ export default function Collaboration() {
 
       {/* Invite by Email Dialog */}
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Invite Team Member</DialogTitle>
           </DialogHeader>
@@ -486,7 +486,7 @@ export default function Collaboration() {
 
       {/* Generated Link Dialog */}
       <Dialog open={showLinkDialog} onOpenChange={setShowLinkDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Invite Link Generated</DialogTitle>
           </DialogHeader>

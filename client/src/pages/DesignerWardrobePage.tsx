@@ -910,7 +910,7 @@ export default function DesignerWardrobePage() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Profile dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">{profile ? "Edit designer profile" : "Set up your designer profile"}</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -1036,7 +1036,7 @@ export default function DesignerWardrobePage() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Collection dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={collectionOpen} onOpenChange={setCollectionOpen}>
-        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">New collection</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -1176,7 +1176,7 @@ export default function DesignerWardrobePage() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Item dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={itemOpen} onOpenChange={setItemOpen}>
-        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Add wardrobe item</DialogTitle>
             <DialogDescription className="text-zinc-400">
@@ -1378,7 +1378,7 @@ export default function DesignerWardrobePage() {
 
       {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Attach dialog ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={attachOpen} onOpenChange={setAttachOpen}>
-        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 max-w-lg glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Attach to project</DialogTitle>
             <DialogDescription className="text-zinc-400">

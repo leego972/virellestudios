@@ -262,7 +262,7 @@ export default function ProjectBrands() {
       </div>
 
       <Dialog open={open} onOpenChange={(o) => (o ? setOpen(o) : closeDialog())}>
-        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 text-zinc-100 glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">{editingId ? "Edit brand" : "Add brand"}</DialogTitle>
             <DialogDescription className="text-zinc-400">

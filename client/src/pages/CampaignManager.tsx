@@ -134,7 +134,7 @@ function EmbedWidget({ title }: { title: string }) {
         <span className="text-xs">Embed</span>
       </Button>
       <Dialog open={showEmbed} onOpenChange={setShowEmbed}>
-        <DialogContent>
+        <DialogContent className="glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Embeddable Ad Widget</DialogTitle>
             <DialogDescription>Copy this code to embed this ad on any website</DialogDescription>
@@ -281,7 +281,7 @@ export default function CampaignManager() {
                 New Campaign
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto glass-dark">
               <DialogHeader>
                 <DialogTitle className="gradient-text-gold">Create Advertising Campaign</DialogTitle>
                 <DialogDescription>
@@ -731,7 +731,7 @@ export default function CampaignManager() {
 
           {/* Preview Dialog */}
           <Dialog open={showContentDialog} onOpenChange={setShowContentDialog}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto glass-dark">
               <DialogHeader>
                 <DialogTitle className="gradient-text-gold">Generated Ad Content</DialogTitle>
                 <DialogDescription>

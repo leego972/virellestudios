@@ -113,7 +113,7 @@ import { useState } from "react";
             <DialogTrigger asChild>
               <Button><Plus className="w-4 h-4 mr-2" />Add Background</Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="max-w-lg glass-dark">
               <DialogHeader><DialogTitle className="gradient-text-gold">New Background Lock</DialogTitle></DialogHeader>
               <BgForm onSave={v => createMut?.mutate?.({ projectId, ...v })} onClose={() => setOpen(false)} />
             </DialogContent>
@@ -175,7 +175,7 @@ import { useState } from "react";
         )}
 
         <Dialog open={!!editing} onOpenChange={v => !v && setEditing(null)}>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg glass-dark">
             <DialogHeader><DialogTitle className="gradient-text-gold">Edit Background</DialogTitle></DialogHeader>
             {editing && (
               <BgForm

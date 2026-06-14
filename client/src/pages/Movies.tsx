@@ -157,7 +157,7 @@ function YouTubeExportModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg glass-dark">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 gradient-text-gold">
             <PlayCircle className="h-5 w-5 text-red-500" />

@@ -216,7 +216,7 @@ function AppsTab() {
       </Card>
 
       <Dialog open={!!statusDialog} onOpenChange={(o) => { if (!o) setStatusDialog(null); }}>
-        <DialogContent>
+        <DialogContent className="glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Change status to "{statusDialog?.label}"</DialogTitle>
             <DialogDescription>Add an optional note explaining the status change.</DialogDescription>

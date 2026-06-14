@@ -109,7 +109,7 @@ import { useState } from "react";
 
         {/* New Post Dialog */}
         <Dialog open={newPostOpen} onOpenChange={setNewPostOpen}>
-          <DialogContent className="sm:max-w-lg">
+          <DialogContent className="sm:max-w-lg glass-dark">
             <DialogHeader><DialogTitle className="gradient-text-gold">Share with the Community</DialogTitle></DialogHeader>
             <div className="space-y-4">
               <div className="space-y-1.5">

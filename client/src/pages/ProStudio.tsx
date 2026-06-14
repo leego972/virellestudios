@@ -271,7 +271,7 @@ function VoiceConsentTab({ projectId }: { projectId: number }) {
         )}
 
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg glass-dark">
             <DialogHeader><DialogTitle className="gradient-text-gold">Voice / Likeness Consent</DialogTitle></DialogHeader>
             <div className="space-y-3">
               <div className="space-y-1.5">

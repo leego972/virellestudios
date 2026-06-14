@@ -1470,7 +1470,7 @@ function AdPosterMakerInner() {
 
       {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Export Dialog ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Download className="h-5 w-5 text-amber-400" /> Export Asset</DialogTitle>
           </DialogHeader>
@@ -1501,7 +1501,7 @@ function AdPosterMakerInner() {
 
       {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ QR Code Dialog ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={showQrDialog} onOpenChange={setShowQrDialog}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-sm glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 gradient-text-gold"><QrCode className="h-5 w-5 text-amber-400" /> QR Code Overlay</DialogTitle>
           </DialogHeader>
@@ -1541,7 +1541,7 @@ function AdPosterMakerInner() {
 
       {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Tagline Variants Dialog ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={showTaglinesDialog} onOpenChange={setShowTaglinesDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Zap className="h-5 w-5 text-amber-400" /> 5 AI Tagline Variants</DialogTitle>
           </DialogHeader>
@@ -1565,7 +1565,7 @@ function AdPosterMakerInner() {
 
       {/* ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Brand Kit Dialog ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
       <Dialog open={showBrandKitDialog} onOpenChange={setShowBrandKitDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Paintbrush className="h-5 w-5 text-purple-400" /> AI Brand Kit</DialogTitle>
           </DialogHeader>

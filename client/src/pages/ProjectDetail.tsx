@@ -2112,7 +2112,7 @@ export default function ProjectDetail() {
 
       {/* Add Character (Photo Upload) Dialog */}
       <Dialog open={charDialogOpen} onOpenChange={setCharDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto glass-dark">
           <DialogHeader>
             <DialogTitle className="text-base gradient-text-gold">Add Character with Photo</DialogTitle>
           </DialogHeader>
@@ -2232,7 +2232,7 @@ export default function ProjectDetail() {
 
       {/* AI Character Generator Dialog */}
       <Dialog open={aiCharDialogOpen} onOpenChange={setAiCharDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto glass-dark">
           <DialogHeader>
             <DialogTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Wand2 className="h-4 w-4 text-amber-400" />
@@ -2514,7 +2514,7 @@ export default function ProjectDetail() {
 
       {/* Add Soundtrack Dialog */}
       <Dialog open={soundtrackDialogOpen} onOpenChange={setSoundtrackDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto glass-dark">
           <DialogHeader>
             <DialogTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Music className="h-4 w-4 text-amber-400" />
@@ -2639,7 +2639,7 @@ export default function ProjectDetail() {
 
       {/* Generate Full Film Dialog */}
       <Dialog open={fullFilmDialogOpen} onOpenChange={setFullFilmDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 gradient-text-gold">
               <Film className="h-5 w-5 text-violet-400" />
@@ -3052,7 +3052,7 @@ function ReviewsButton({ projectId }: { projectId: number }) {
         Reviews{count > 0 ? ` (${count})` : ""}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Screener feedback</DialogTitle>
           </DialogHeader>

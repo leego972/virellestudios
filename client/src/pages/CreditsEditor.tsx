@@ -107,7 +107,7 @@ export default function CreditsEditor() {
             <DialogTrigger asChild>
               <Button size="sm"><Plus className="h-4 w-4 mr-1" />Add Credit</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="glass-dark">
               <DialogHeader>
                 <DialogTitle className="gradient-text-gold">Add Credit</DialogTitle>
               </DialogHeader>

@@ -206,7 +206,7 @@ export default function About() {
           </div>
           <div className="space-y-4">
             {METHODOLOGY.map((m, i) => (
-              <div key={m.step} className="flex gap-5 p-6 rounded-xl border border-border/50 bg-card/40 hover:border-amber-500/20 transition-colors glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20">
+              <div key={m.step} className="flex gap-5 p-6 rounded-xl border border-border/50 bg-card/40 hover:border-amber-500/20 transition-colors glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 gold-glow">
                 <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
                   <span className="text-xs font-bold text-amber-400">{m.step}</span>
                 </div>

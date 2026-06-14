@@ -405,7 +405,7 @@ export default function AdminOutreach() {
 
       {/* Ã¢ÂÂÃ¢ÂÂ ADD CONTACT DIALOG Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Add Contact</DialogTitle>
             <DialogDescription>Add a single contact to your outreach list.</DialogDescription>
@@ -452,7 +452,7 @@ export default function AdminOutreach() {
 
       {/* Ã¢ÂÂÃ¢ÂÂ BULK IMPORT DIALOG Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Bulk Import Contacts</DialogTitle>
             <DialogDescription>
@@ -481,7 +481,7 @@ export default function AdminOutreach() {
 
       {/* Ã¢ÂÂÃ¢ÂÂ CREATE CAMPAIGN DIALOG Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={campaignOpen} onOpenChange={setCampaignOpen}>
-        <DialogContent className="sm:max-w-xl">
+        <DialogContent className="sm:max-w-xl glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">New Campaign</DialogTitle>
             <DialogDescription>
@@ -571,7 +571,7 @@ export default function AdminOutreach() {
 
       {/* Ã¢ÂÂÃ¢ÂÂ CONFIRM SEND DIALOG Ã¢ÂÂÃ¢ÂÂ */}
       <Dialog open={confirmSendId !== null} onOpenChange={() => setConfirmSendId(null)}>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 gradient-text-gold">
               <Send className="h-5 w-5 text-amber-400" />

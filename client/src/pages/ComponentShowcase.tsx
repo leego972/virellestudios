@@ -1024,7 +1024,7 @@ export default function ComponentsShowcase() {
                     <DialogTrigger asChild>
                       <Button variant="outline">Open Dialog</Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="glass-dark">
                       <DialogHeader>
                         <DialogTitle className="gradient-text-gold">Test Input</DialogTitle>
                         <DialogDescription>
@@ -1060,7 +1060,7 @@ export default function ComponentsShowcase() {
                     <SheetTrigger asChild>
                       <Button variant="outline">Open Sheet</Button>
                     </SheetTrigger>
-                    <SheetContent>
+                    <SheetContent className="glass-dark">
                       <SheetHeader>
                         <SheetTitle className="gradient-text-gold">Edit profile</SheetTitle>
                         <SheetDescription>

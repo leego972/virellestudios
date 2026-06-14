@@ -212,7 +212,7 @@ import { useState } from "react";
                 <DialogTrigger asChild>
                   <Button><Plus className="w-4 h-4 mr-2" />Add Act</Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-md glass-dark">
                   <DialogHeader><DialogTitle className="gradient-text-gold">New Act</DialogTitle></DialogHeader>
                   <ActForm onSave={v => createMut?.mutate?.({ projectId, ...v })} onClose={() => setOpen(false)} />
                 </DialogContent>
@@ -259,7 +259,7 @@ import { useState } from "react";
         )}
 
         <Dialog open={!!editing} onOpenChange={v => !v && setEditing(null)}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md glass-dark">
             <DialogHeader><DialogTitle className="gradient-text-gold">Edit Act</DialogTitle></DialogHeader>
             {editing && (
               <ActForm

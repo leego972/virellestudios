@@ -178,7 +178,7 @@ export default function PressKit() {
   {!!id && <NextStageCTA projectId={id} currentStage={8} />}
 
       <Dialog open={emailDialog.open} onOpenChange={(o) => setEmailDialog((s) => ({ ...s, open: o }))}>
-        <DialogContent>
+        <DialogContent className="glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Email Press Pack</DialogTitle>
             <DialogDescription>Enter one or more email addresses, separated by commas.</DialogDescription>

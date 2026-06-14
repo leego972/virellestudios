@@ -338,7 +338,7 @@ export default function DialogueEditor() {
 
       {/* Add Dialogue Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg glass-dark">
           <DialogHeader>
             <DialogTitle className="gradient-text-gold">Add Dialogue Line</DialogTitle>
           </DialogHeader>
@@ -468,7 +468,7 @@ export default function DialogueEditor() {
 
       {/* AI Suggest Dialog */}
       <Dialog open={showAiSuggest} onOpenChange={(open) => { setShowAiSuggest(open); if (!open) setAiSuggestions([]); }}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Sparkles className="h-5 w-5 text-amber-400" /> AI Dialogue Suggestions</DialogTitle>
           </DialogHeader>
@@ -559,7 +559,7 @@ export default function DialogueEditor() {
 
       {/* AI Generate Scene Dialogue Dialog */}
       <Dialog open={showAiScene} onOpenChange={setShowAiScene}>
-        <DialogContent>
+        <DialogContent className="glass-dark">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 gradient-text-gold"><Wand2 className="h-5 w-5 text-amber-400" /> Generate Scene Dialogue</DialogTitle>
           </DialogHeader>

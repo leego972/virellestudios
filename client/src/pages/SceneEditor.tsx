@@ -1134,7 +1134,7 @@ export default function SceneEditor() {
 
       {/* Scene Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={(open) => { if (!open) { setEditDialogOpen(false); setSelectedSceneId(null); } }}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto w-[95vw] md:w-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto w-[95vw] md:w-auto glass-dark">
           <DialogHeader>
             <DialogTitle className="text-base gradient-text-gold">
               {selectedSceneId ? "Edit Scene" : "New Scene"}
@@ -2465,7 +2465,7 @@ export default function SceneEditor() {
 
       {/* Preview Dialog */}
       <Dialog open={!!previewUrl} onOpenChange={() => setPreviewUrl(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg glass-dark">
           <DialogHeader>
             <DialogTitle className="text-base gradient-text-gold">Scene Preview</DialogTitle>
           </DialogHeader>

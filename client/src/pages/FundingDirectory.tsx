@@ -642,7 +642,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
   if (submitted) {
     return (
       <Dialog open onOpenChange={onClose}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg glass-dark">
           <div className="flex flex-col items-center text-center gap-5 py-8">
             <div className="h-20 w-20 rounded-full bg-green-500/15 flex items-center justify-center">
               <CheckCircle2 className="h-10 w-10 text-green-500" />
@@ -686,7 +686,7 @@ function ApplicationModal({ source, onClose, userEmail, userName }: ApplicationM
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[92vh] overflow-hidden flex flex-col p-0">
+      <DialogContent className="max-w-3xl max-h-[92vh] overflow-hidden flex flex-col p-0 glass-dark">
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-border shrink-0">
           <DialogHeader>

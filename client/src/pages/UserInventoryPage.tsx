@@ -269,7 +269,7 @@
 
         {/* Ã¢ÂÂÃ¢ÂÂ Assign to Character Dialog Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         <Dialog open={!!assignTarget} onOpenChange={(open) => !open && resetAssign()}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md glass-dark">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 gradient-text-gold">
                 <UserPlus className="h-4 w-4 text-amber-500" />
