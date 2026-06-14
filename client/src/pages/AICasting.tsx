@@ -18,7 +18,7 @@ import { trpc } from "@/lib/trpc";
 import { AI_PERFORMANCE_STYLE_OPTIONS, AI_PERFORMANCE_STYLE_LABELS } from "@shared/types";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
 
-// ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ VIRELLE SIGNATURE CAST ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+// ─── VIRELLE SIGNATURE CAST ────────────────────────────────────────────────
 const SIGNATURE_CAST = [
   // FLAGSHIP STARS
   {
@@ -26,7 +26,7 @@ const SIGNATURE_CAST = [
     name: "Julian Vance",
     tier: "flagship" as const,
     archetype: "The Dangerous Romantic",
-    age: "32ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ42",
+    age: "32–42",
     specialty: "Crime Thriller / Prestige Drama",
     description: "Sharp, dangerous charisma built for thrillers, prestige drama, and high-stakes romance. Continuity-tuned for close-ups and multi-scene storytelling.",
     chemistry: ["Elena Rostova", "Sofia Reyes"],
@@ -38,7 +38,7 @@ const SIGNATURE_CAST = [
     name: "Elena Rostova",
     tier: "flagship" as const,
     archetype: "The Ice Architect",
-    age: "30ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ44",
+    age: "30–44",
     specialty: "Prestige Drama / Thriller",
     description: "Cold architectural beauty with the emotional intelligence of a chess grandmaster. Premium fit for prestige drama, noir, and luxury campaigns.",
     chemistry: ["Julian Vance", "Kofi Adebayo"],
@@ -50,7 +50,7 @@ const SIGNATURE_CAST = [
     name: "Sofia Reyes",
     tier: "flagship" as const,
     archetype: "The Combustible Heart",
-    age: "28ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ42",
+    age: "28–42",
     specialty: "Drama / Romance / Action",
     description: "The most combustible screen presence in the cast. Warmth that can turn to fire in a single cut. Highest viral potential.",
     chemistry: ["Julian Vance", "Kofi Adebayo"],
@@ -62,7 +62,7 @@ const SIGNATURE_CAST = [
     name: "Kofi Adebayo",
     tier: "flagship" as const,
     archetype: "The Immovable Force",
-    age: "35ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ50",
+    age: "35–50",
     specialty: "Action / Prestige Drama / Crime",
     description: "Immediate, undeniable physical authority. The room changes when he enters it. Premium fit for authority roles, crime drama, and action leads.",
     chemistry: ["Elena Rostova", "Sofia Reyes"],
@@ -75,7 +75,7 @@ const SIGNATURE_CAST = [
     name: "Kenji Sato",
     tier: "premium" as const,
     archetype: "The Quiet Predator",
-    age: "28ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ40",
+    age: "28–40",
     specialty: "Noir / Thriller / Drama",
     description: "Neo-noir's perfect face. Stillness that reads as danger under dramatic lighting. Exceptional close-up presence.",
     chemistry: ["Elena Rostova", "Camille Dubois"],
@@ -87,7 +87,7 @@ const SIGNATURE_CAST = [
     name: "Nina Cross",
     tier: "premium" as const,
     archetype: "The Controlled Observer",
-    age: "30ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ44",
+    age: "30–44",
     specialty: "Drama / Thriller / Crime",
     description: "Perceptive, precise, and sharper than anyone in the room gives her credit for. Premium fit for intelligent female leads in crime drama.",
     chemistry: ["Celeste Vale", "Viktor Saric"],
@@ -99,7 +99,7 @@ const SIGNATURE_CAST = [
     name: "Celeste Vale",
     tier: "premium" as const,
     archetype: "The Velvet Hammer",
-    age: "35ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ50",
+    age: "35–50",
     specialty: "Drama / Thriller / Crime",
     description: "Elegant, cutting, soft-spoken, and socially surgical. She says vicious things beautifully. Best in class for sophisticated antagonists.",
     chemistry: ["Nina Cross", "Marcus Vale"],
@@ -111,7 +111,7 @@ const SIGNATURE_CAST = [
     name: "Marcus Vale",
     tier: "premium" as const,
     archetype: "The Quiet Patriarch",
-    age: "42ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ58",
+    age: "42–58",
     specialty: "Crime / Prestige Drama / Thriller",
     description: "Calm, sparse, precise. He says less than everyone else and means more. Exceptional for authority figures and crime patriarchs.",
     chemistry: ["Celeste Vale", "Viktor Saric"],
@@ -123,7 +123,7 @@ const SIGNATURE_CAST = [
     name: "Viktor Saric",
     tier: "premium" as const,
     archetype: "The Operational Ghost",
-    age: "38ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ52",
+    age: "38–52",
     specialty: "Crime / Thriller / Action",
     description: "The most dangerous man in the room who never raises his voice. Best in class for fixers, enforcers, and consigliere roles.",
     chemistry: ["Marcus Vale", "Nina Cross"],
@@ -135,7 +135,7 @@ const SIGNATURE_CAST = [
     name: "The Gallagher Twins",
     tier: "premium" as const,
     archetype: "The Mirror Pair",
-    age: "28ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ40",
+    age: "28–40",
     specialty: "Drama / Thriller / Narrative Wildcard",
     description: "The ultimate technical flex. Two identical faces, two completely different people. Unmatched for twin-narrative storytelling.",
     chemistry: ["Julian Vance", "Kofi Adebayo"],
@@ -148,7 +148,7 @@ const SIGNATURE_CAST = [
     name: "Mavis Whitlock",
     tier: "standard" as const,
     archetype: "The Invasive Oracle",
-    age: "65ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ80",
+    age: "65–80",
     specialty: "Drama / Crime / Dark Comedy",
     description: "Harmless enough that people forget she is always watching. Funny because she is invasive and too observant.",
     chemistry: ["Nina Cross", "Daniel Cross"],
@@ -160,7 +160,7 @@ const SIGNATURE_CAST = [
     name: "Adrian Vale",
     tier: "standard" as const,
     archetype: "The Magnetic Disruptor",
-    age: "24ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ36",
+    age: "24–36",
     specialty: "Drama / Crime / Dark Comedy",
     description: "Witty, charming, teasing, and verbally agile. He enjoys destabilizing people. Best for charismatic antagonists and scene-stealers.",
     chemistry: ["Mia Cross", "Jaden Vale"],
@@ -172,23 +172,23 @@ const SIGNATURE_CAST = [
     name: "Sammy Vance",
     tier: "standard" as const,
     archetype: "The Reluctant Heir",
-    age: "22ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ32",
+    age: "22–32",
     specialty: "Drama / Thriller / Coming-of-Age",
     description: "Julian Vance's younger brother. The same bone structure, less certainty. Built for family-unit storytelling.",
     chemistry: ["Julian Vance"],
-    badges: ["Family Unit ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Vance"],
+    badges: ["Family Unit — Vance"],
     unlocked: true,
   },
 ];
 
-// ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ GENERIC ARCHETYPE LIBRARY (secondary) ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+// ─── GENERIC ARCHETYPE LIBRARY (secondary) ────────────────────────────────
 const AI_ACTOR_LIBRARY = [
   { id: "actor-001", name: "Marcus Vane", archetype: "Brooding Anti-Hero", age: "35-45", ethnicity: "Mixed", specialty: "Drama / Thriller", rating: 4.9, uses: 12840, description: "A morally conflicted man driven by past trauma. Intense, guarded, and capable of both great violence and unexpected tenderness." },
   { id: "actor-002", name: "Elara Solis", archetype: "Fierce Protagonist", age: "25-35", ethnicity: "Latina", specialty: "Action / Sci-Fi", rating: 4.8, uses: 9320, description: "Relentlessly determined and physically formidable. Leads from the front, earns loyalty through action, not words." },
   { id: "actor-003", name: "Jin Harlow", archetype: "Charming Rogue", age: "28-38", ethnicity: "East Asian", specialty: "Comedy / Romance", rating: 4.7, uses: 7650, description: "Disarmingly charismatic with a quick wit and flexible moral compass. Hides real depth behind a mask of levity." },
   { id: "actor-004", name: "Nadia Voss", archetype: "Cold Intellectual", age: "30-40", ethnicity: "Eastern European", specialty: "Thriller / Sci-Fi", rating: 4.9, uses: 11200, description: "Brilliant, precise, and emotionally detached. Every action is calculated. Vulnerability is a liability she refuses to show." },
   { id: "actor-005", name: "Darius Cole", archetype: "Charismatic Leader", age: "40-55", ethnicity: "African American", specialty: "Drama / Action", rating: 4.8, uses: 8900, description: "Commands rooms without raising his voice. Inspires fierce loyalty. Carries the weight of others' lives with quiet dignity." },
-  { id: "actor-006", name: "Yuki Tanaka", archetype: "Quiet Intensity", age: "20-30", ethnicity: "Japanese", specialty: "Drama / Horror", rating: 4.6, uses: 5430, description: "Says little but observes everything. Still waters run deep ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ when she acts, it is decisive and irreversible." },
+  { id: "actor-006", name: "Yuki Tanaka", archetype: "Quiet Intensity", age: "20-30", ethnicity: "Japanese", specialty: "Drama / Horror", rating: 4.6, uses: 5430, description: "Says little but observes everything. Still waters run deep — when she acts, it is decisive and irreversible." },
   { id: "actor-007", name: "Aleksei Morin", archetype: "Menacing Villain", age: "38-55", ethnicity: "Russian", specialty: "Thriller / Action", rating: 4.9, uses: 14200, description: "Calm, methodical, and utterly without remorse. His politeness is the most frightening thing about him." },
   { id: "actor-008", name: "Priya Anand", archetype: "Idealistic Rebel", age: "22-32", ethnicity: "South Asian", specialty: "Drama / Sci-Fi", rating: 4.7, uses: 6100, description: "Passionate about justice, impatient with compromise. Her idealism is both her greatest strength and her fatal flaw." },
   { id: "actor-009", name: "Tobias Wren", archetype: "Reluctant Hero", age: "30-42", ethnicity: "British", specialty: "Action / Drama", rating: 4.8, uses: 7800, description: "Never wanted to be the one who had to save anything. Does it anyway, every time, because no one else will." },
@@ -246,7 +246,7 @@ function AICastingInner() {
   // Merge static SIGNATURE_CAST with real entitlement data
   const enrichedSignatureCast = useMemo(() => {
     return SIGNATURE_CAST.map((actor) => {
-      // Map sig- prefixed IDs to server IDs (sig-julian-vance ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ julian-vance)
+      // Map sig- prefixed IDs to server IDs (sig-julian-vance → julian-vance)
       const serverId = actor.id.replace(/^sig-/, "");
       const serverActor = actorList?.find((a: any) => a.id === serverId);
       return {
@@ -327,8 +327,8 @@ function AICastingInner() {
           const actor = getActorById(id);
           if (!actor) return Promise.reject("Actor not found");
           const sigNote = actor.isSignature
-            ? `[Virelle Signature Cast ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ${actor.tier === "flagship" ? "Flagship Star" : actor.tier === "premium" ? "Premium Cast" : "Standard"} ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Archetype: ${actor.archetype}]`
-            : `[Cast from AI Actor Library ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Archetype: ${actor.archetype}, Specialty: ${actor.specialty}]`;
+            ? `[Virelle Signature Cast — ${actor.tier === "flagship" ? "Flagship Star" : actor.tier === "premium" ? "Premium Cast" : "Standard"} — Archetype: ${actor.archetype}]`
+            : `[Cast from AI Actor Library — Archetype: ${actor.archetype}, Specialty: ${actor.specialty}]`;
           const groomingNotes = `[Grooming Hard-Locks: Hair=${hairStyle}, Facial Hair=${facialHair}]`;
           return createCharacterMutation.mutateAsync({
             projectId,
@@ -390,7 +390,7 @@ function AICastingInner() {
               </h1>
               <p className="text-xs text-muted-foreground">
                 {selectedActors.length > 0
-                  ? `${selectedActors.length} actor${selectedActors.length > 1 ? "s" : ""} selected ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ set performance direction, then cast`
+                  ? `${selectedActors.length} actor${selectedActors.length > 1 ? "s" : ""} selected — set performance direction, then cast`
                   : "Browse the Signature Cast or build your own archetype"}
               </p>
             </div>
@@ -801,7 +801,7 @@ function AICastingInner() {
   );
 }
 
-// ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ SIGNATURE ACTOR CARD ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+// ─── SIGNATURE ACTOR CARD ──────────────────────────────────────────────────
 function SignatureActorCard({
   actor,
   selected,
@@ -867,7 +867,7 @@ function SignatureActorCard({
   );
 }
 
-// ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ UNLOCK MODAL ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+// ─── UNLOCK MODAL ─────────────────────────────────────────────────────────────
 function UnlockModal({
   actor,
   onClose,
@@ -891,13 +891,13 @@ function UnlockModal({
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-lg font-bold gradient-text-gold">{actor.name}</h2>
-            <p className="text-xs text-amber-400/80 mt-0.5">{actor.archetype} ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ <TierBadge tier={actor.tier} /></p>
+            <p className="text-xs text-amber-400/80 mt-0.5">{actor.archetype} — <TierBadge tier={actor.tier} /></p>
           </div>
           <button onClick={onClose} className="text-zinc-500 hover:text-white text-xl leading-none">&times;</button>
         </div>
         <p className="text-sm text-zinc-400">
           Select a license to unlock <strong className="text-white">{actor.name}</strong> for this project.
-          Virelle Stars are licensed for professional cinematic use ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ not pornography.
+          Virelle Stars are licensed for professional cinematic use — not pornography.
         </p>
         <div className="space-y-2">
           <button
