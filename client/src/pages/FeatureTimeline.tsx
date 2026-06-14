@@ -240,7 +240,7 @@ function SceneCard({
 
       {/* Expanded notes */}
       {expanded && (
-        <div className="px-3 pb-3 border-t border-zinc-800/50 pt-2 space-y-2">
+        <div className="px-3 pb-3 border-t border-amber-500/20/50 pt-2 space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label className="text-[10px] text-zinc-500">Trim In (s)</Label>
@@ -734,7 +734,7 @@ export default function FeatureTimeline() {
           </ScrollArea>
 
           {/* Project stats */}
-          <div className="p-3 border-t border-zinc-800 space-y-2">
+          <div className="p-3 border-t border-amber-500/20 space-y-2">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-600">Project</p>
             <div className="space-y-1">
               <div className="flex justify-between text-[10px]">

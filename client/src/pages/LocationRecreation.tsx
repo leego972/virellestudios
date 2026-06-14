@@ -298,7 +298,7 @@ const LocationRecreation: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="mt-8 border-t border-zinc-800 pt-8">
+                <div className="mt-8 border-t border-amber-500/20 pt-8">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2 gradient-text-gold">
                     <CheckCircle className="text-green-400" />
                     3. Assign to Scenes

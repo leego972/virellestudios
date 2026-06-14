@@ -1287,7 +1287,7 @@ export default function DesignerWardrobePage() {
               />
             </div>
 
-            <div className="border-t border-zinc-800 pt-3">
+            <div className="border-t border-amber-500/20 pt-3">
               <Label className="text-zinc-300 text-xs uppercase tracking-wider">Usage permissions</Label>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {([

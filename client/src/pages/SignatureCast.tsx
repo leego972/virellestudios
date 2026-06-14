@@ -673,7 +673,7 @@ import { useState } from "react";
                     "Reusable across scripts and scenes",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0 text-amber-400" />
+                      <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0 text-amber-400" />
                       {item}
                     </li>
                   ))}

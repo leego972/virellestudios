@@ -328,7 +328,7 @@ export default function AutoRecapPage() {
                         ) : null
                       )}
                     </div>
-                    <div className="border-t border-zinc-800 pt-2 mt-2 text-xs text-zinc-400">
+                    <div className="border-t border-amber-500/20 pt-2 mt-2 text-xs text-zinc-400">
                       Your balance: {estimate.data.creditBalance} credits.{" "}
                       {!estimate.data.hasEnoughCredits && (
                         <span className="text-red-400">
@@ -426,7 +426,7 @@ export default function AutoRecapPage() {
                         ))}
                       </ol>
                       {recapDetail.data.recap.voiceoverScript && (
-                        <div className="mt-3 pt-3 border-t border-zinc-800">
+                        <div className="mt-3 pt-3 border-t border-amber-500/20">
                           <div className="text-xs uppercase tracking-wider text-amber-400/60 mb-1">
                             Voiceover script
                           </div>
@@ -450,7 +450,7 @@ export default function AutoRecapPage() {
                     const isRendering = s === "render_pending";
                     const canRender = !hasAsset && !isRendering && (s === "outline_completed" || s === "completed");
                     return (
-                      <div className="pt-3 border-t border-zinc-800 space-y-2">
+                      <div className="pt-3 border-t border-amber-500/20 space-y-2">
                         {/* v6.70/v6.71 ÃÂ¢ÃÂÃÂ Honest disclaimer when no MP4 exists yet. */}
                         {!hasAsset && !isRendering && (
                           <div className="text-[11px] text-zinc-500">
