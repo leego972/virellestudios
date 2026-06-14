@@ -136,7 +136,7 @@ export default function LocationScout() {
                     <Input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="Add tag" onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())} autoCapitalize="sentences" autoCorrect="on" enterKeyHint="next" />
                     <Button variant="outline" size="sm" onClick={addTag}>Add</Button>
                   </div>
-                  {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} ÃÂÃÂ</Badge>)}</div>}
+                  {tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2">{tags.map(t => <Badge key={t} variant="secondary" className="cursor-pointer" onClick={() => setTags(tags.filter(x => x !== t))}>{t} ×</Badge>)}</div>}
                 </div>
                 <Button className="w-full" onClick={() => createMutation.mutate({ projectId, name, address: address || undefined, locationType: locationType || undefined, description: description || undefined, notes: notes || undefined, tags })} disabled={!name || createMutation.isPending}>
                   {createMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2 text-amber-400" /> : null}
