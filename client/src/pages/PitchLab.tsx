@@ -1,1 +1,201 @@
-aW1wb3J0IHsgdXNlTWVtbywgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHVzZVBhcmFtcywgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IE5leHRTdGFnZUNUQSB9IGZyb20gIkAvY29tcG9uZW50cy9OZXh0U3RhZ2VDVEEiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBDYXJkLCBDYXJkQ29udGVudCwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlLCBDYXJkRGVzY3JpcHRpb24gfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvY2FyZCI7CmltcG9ydCB7IElucHV0IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2lucHV0IjsKaW1wb3J0IHsgTGFiZWwgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvbGFiZWwiOwppbXBvcnQgeyBUZXh0YXJlYSB9IGZyb20gIkAvY29tcG9uZW50cy91aS90ZXh0YXJlYSI7CmltcG9ydCB7IFRhYnMsIFRhYnNDb250ZW50LCBUYWJzTGlzdCwgVGFic1RyaWdnZXIgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvdGFicyI7CmltcG9ydCB7IEJhZGdlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2JhZGdlIjsKaW1wb3J0IHsgdG9hc3QgfSBmcm9tICJzb25uZXIiOwppbXBvcnQgeyBMaWdodGJ1bGIsIEZpbGVUZXh0LCBMYXlvdXQsIFdhbmQyLCBDb3B5LCBEb3dubG9hZCwgQXJyb3dMZWZ0LCBMb2FkZXIyIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKCnR5cGUgRm9ybWF0ID0gIkZlYXR1cmUiIHwgIkxpbWl0ZWQgU2VyaWVzIiB8ICJTaG9ydCBGaWxtIiB8ICJEb2N1bWVudGFyeSIgfCAiUGlsb3QiOwoKY29uc3QgUFJPTVBUUzogUmVjb3JkPHN0cmluZywgKGI6IEJyaWVmU3RhdGUsIHByb2plY3RUaXRsZTogc3RyaW5nKSA9PiBzdHJpbmc+ID0gewogIGxvZ2xpbmU6IChiLCB0KSA9PiBgWW91IGFyZSBhIEhvbGx5d29vZCBkZXZlbG9wbWVudCBleGVjdXRpdmUuIFdyaXRlIFRIUkVFIGRpc3RpbmN0IGxvZ2xpbmVzIChtYXggMzUgd29yZHMgZWFjaCkgZm9yIHRoZSBwcm9qZWN0ICIke3R9Ii4gRm9ybWF0OiAke2IuZm9ybWF0fS4gR2VucmU6ICR7Yi5nZW5yZX0uIEF1ZGllbmNlOiAke2IuYXVkaWVuY2V9LiBUb25lOiAke2IudG9uZX0uIFByZW1pc2U6ICR7Yi5wcmVtaXNlfS4gRWFjaCBsb2dsaW5lIG11c3QgaW5jbHVkZSBwcm90YWdvbmlzdCwgaW5jaXRpbmcgaW5jaWRlbnQsIGNlbnRyYWwgZ29hbCwgYW5kIGFudGFnb25pc3RpYyBmb3JjZS4gT3V0cHV0IGFzIGEgbnVtYmVyZWQgbGlzdCwgbm8gcHJlYW1ibGUuYCwKICBzeW5vcHNpczogKGIsIHQpID0+IGBZb3UgYXJlIGEgc2NyaXB0IGNvbnN1bHRhbnQuIFdyaXRlIGEgb25lLXBhZ2Ugc3lub3BzaXMgKDM1MC00NTAgd29yZHMpIGZvciAiJHt0fSIuIEZvcm1hdDogJHtiLmZvcm1hdH0uIEdlbnJlOiAke2IuZ2VucmV9LiBUb25lOiAke2IudG9uZX0uIFByZW1pc2U6ICR7Yi5wcmVtaXNlfS4gQ292ZXI6IG9wZW5pbmcgaG9vaywgYWN0LW9uZSBpbmNpdGluZyBpbmNpZGVudCwgYWN0LXR3byBtaWRwb2ludCB0d2lzdCwgYWN0LXRocmVlIGNsaW1heCwgcmVzb2x1dGlvbi4gVXNlIHByZXNlbnQgdGVuc2UsIHNjcmVlbnBsYXkgc3R5bGUuIE5vIHByZWFtYmxlLmAsCiAgdHJlYXRtZW50OiAoYiwgdCkgPT4gYFlvdSBhcmUgYW4gQS1saXN0IHNjcmVlbndyaXRlci4gV3JpdGUgYSAzLTUgcGFnZSB0cmVhdG1lbnQgZm9yICIke3R9Ii4gRm9ybWF0OiAke2IuZm9ybWF0fS4gR2VucmU6ICR7Yi5nZW5yZX0uIFRvbmU6ICR7Yi50b25lfS4gQXVkaWVuY2U6ICR7Yi5hdWRpZW5jZX0uIFByZW1pc2U6ICR7Yi5wcmVtaXNlfS4gVXNlIG1hcmtkb3duIGhlYWRpbmdzOiAjIFRpdGxlICAjIyBMb2dsaW5lICAjIyBUaGVtZXMgICMjIE1haW4gQ2hhcmFjdGVycyAgIyMgQWN0IE9uZSAgIyMgQWN0IFR3byAgIyMgQWN0IFRocmVlICAjIyBWaXN1YWwgU3R5bGUgICMjIENvbXBhcmFibGUgVGl0bGVzICAjIyBXaHkgTm93LiBCZSB2aXZpZCwgc3BlY2lmaWMsIGNpbmVtYXRpYy5gLAogIGRlY2s6IChiLCB0KSA9PiBgWW91IGFyZSBhIHBpdGNoLWRlY2sgc3BlY2lhbGlzdC4gUHJvZHVjZSBhIDEwLXNsaWRlIHBpdGNoIGRlY2sgb3V0bGluZSBmb3IgIiR7dH0iIGluIG1hcmtkb3duLiBGb3JtYXQ6ICR7Yi5mb3JtYXR9LiBHZW5yZTogJHtiLmdlbnJlfS4gVG9uZTogJHtiLnRvbmV9LiBBdWRpZW5jZTogJHtiLmF1ZGllbmNlfS4gUHJlbWlzZTogJHtiLnByZW1pc2V9LiBTbGlkZXM6IDEpIFRpdGxlICYgTG9nbGluZSAyKSBUaGUgSG9vayAzKSBTeW5vcHNpcyA0KSBNYWluIENoYXJhY3RlcnMgNSkgVG9uZSAmIFZpc3VhbCBTdHlsZSA2KSBXb3JsZCAmIFNldHRpbmcgNykgVGhlbWVzIDgpIENvbXBhcmFibGUgVGl0bGVzICYgQXVkaWVuY2UgOSkgRGlyZWN0b3IgVmlzaW9uIDEwKSBXaHkgTm93LiBFYWNoIHNsaWRlOiBoZWFkaW5nICsgMy02IGJ1bGxldHMuIE5vIHByZWFtYmxlLmAsCn07CgppbnRlcmZhY2UgQnJpZWZTdGF0ZSB7CiAgZm9ybWF0OiBGb3JtYXQ7CiAgZ2VucmU6IHN0cmluZzsKICBhdWRpZW5jZTogc3RyaW5nOwogIHRvbmU6IHN0cmluZzsKICBwcmVtaXNlOiBzdHJpbmc7Cn0KCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIFBpdGNoTGFiKCkgewogIGNvbnN0IHBhcmFtcyA9IHVzZVBhcmFtczx7IHByb2plY3RJZDogc3RyaW5nIH0+KCk7CiAgY29uc3QgcHJvamVjdElkID0gcGFyc2VJbnQocGFyYW1zLnByb2plY3RJZCB8fCAiMCIpOwogIGNvbnN0IHsgZGF0YTogcHJvamVjdCB9ID0gdHJwYy5wcm9qZWN0LmdldC51c2VRdWVyeSh7IGlkOiBwcm9qZWN0SWQgfSwgeyBlbmFibGVkOiAhIXByb2plY3RJZCB9KTsKICBjb25zdCB7IGRhdGE6IGhpc3RvcnksIHJlZmV0Y2g6IHJlZmV0Y2hIaXN0b3J5IH0gPSB0cnBjLmRpcmVjdG9yQ2hhdC5oaXN0b3J5LnVzZVF1ZXJ5KAogICAgeyBwcm9qZWN0SWQgfSwKICAgIHsgZW5hYmxlZDogISFwcm9qZWN0SWQsIHJlZmV0Y2hJbnRlcnZhbDogNDAwMCB9CiAgKTsKICBjb25zdCBzZW5kTWVzc2FnZSA9IHRycGMuZGlyZWN0b3JDaGF0LnNlbmQudXNlTXV0YXRpb24oKTsKCiAgY29uc3QgW2JyaWVmLCBzZXRCcmllZl0gPSB1c2VTdGF0ZTxCcmllZlN0YXRlPih7CiAgICBmb3JtYXQ6ICJGZWF0dXJlIiwKICAgIGdlbnJlOiAiIiwKICAgIGF1ZGllbmNlOiAiIiwKICAgIHRvbmU6ICIiLAogICAgcHJlbWlzZTogIiIsCiAgfSk7CiAgY29uc3QgW2FjdGl2ZUtpbmQsIHNldEFjdGl2ZUtpbmRdID0gdXNlU3RhdGU8a2V5b2YgdHlwZW9mIFBST01QVFM+KCJsb2dsaW5lIik7CiAgY29uc3QgW2dlbmVyYXRpbmcsIHNldEdlbmVyYXRpbmddID0gdXNlU3RhdGU8a2V5b2YgdHlwZW9mIFBST01QVFMgfCBudWxsPihudWxsKTsKCiAgY29uc3QgbGFzdEJ5S2luZCA9IHVzZU1lbW8oKCkgPT4gewogICAgY29uc3Qgb3V0OiBSZWNvcmQ8c3RyaW5nLCBzdHJpbmc+ID0ge307CiAgICBmb3IgKGNvbnN0IG0gb2YgaGlzdG9yeSA/PyBbXSkgewogICAgICBjb25zdCB0YWcgPSAobSBhcyBhbnkpLm1ldGFkYXRhPy5waXRjaEtpbmQgYXMgc3RyaW5nIHwgdW5kZWZpbmVkOwogICAgICBpZiAodGFnICYmIChtIGFzIGFueSkucm9sZSA9PT0gImFzc2lzdGFudCIpIHsKICAgICAgICBvdXRbdGFnXSA9IChtIGFzIGFueSkuY29udGVudCBhcyBzdHJpbmc7CiAgICAgIH0KICAgIH0KICAgIHJldHVybiBvdXQ7CiAgfSwgW2hpc3RvcnldKTsKCiAgYXN5bmMgZnVuY3Rpb24gZ2VuZXJhdGUoa2luZDoga2V5b2YgdHlwZW9mIFBST01QVFMpIHsKICAgIGlmICghcHJvamVjdCkgcmV0dXJuOwogICAgaWYgKCFicmllZi5wcmVtaXNlLnRyaW0oKSkgewogICAgICB0b2FzdC5lcnJvcigiQWRkIGEgcHJlbWlzZSAoMS0zIHNlbnRlbmNlcykgYmVmb3JlIGdlbmVyYXRpbmcuIik7CiAgICAgIHJldHVybjsKICAgIH0KICAgIHNldEdlbmVyYXRpbmcoa2luZCk7CiAgICB0cnkgewogICAgICBhd2FpdCBzZW5kTWVzc2FnZS5tdXRhdGVBc3luYyh7CiAgICAgICAgcHJvamVjdElkLAogICAgICAgIG1lc3NhZ2U6IGBbUGl0Y2hMYWI6JHtraW5kfV1cblxuJHtQUk9NUFRTW2tpbmRdKGJyaWVmLCBwcm9qZWN0LnRpdGxlIHx8ICJVbnRpdGxlZCIpfWAsCiAgICAgIH0pOwogICAgICBhd2FpdCByZWZldGNoSGlzdG9yeSgpOwogICAgICB0b2FzdC5zdWNjZXNzKGAke2tpbmQuY2hhckF0KDApLnRvVXBwZXJDYXNlKCkgKyBraW5kLnNsaWNlKDEpfSBkcmFmdGVkLmApOwogICAgfSBjYXRjaCAoZTogYW55KSB7CiAgICAgIHRvYXN0LmVycm9yKGU/Lm1lc3NhZ2UgfHwgIkdlbmVyYXRpb24gZmFpbGVkLiIpOwogICAgfSBmaW5hbGx5IHsKICAgICAgc2V0R2VuZXJhdGluZyhudWxsKTsKICAgIH0KICB9CgogIGZ1bmN0aW9uIGNvcHkodGV4dDogc3RyaW5nKSB7CiAgICBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCh0ZXh0KS50aGVuKCgpID0+IHRvYXN0LnN1Y2Nlc3MoIkNvcGllZC4iKSk7CiAgfQoKICBmdW5jdGlvbiBkb3dubG9hZE1kKG5hbWU6IHN0cmluZywgdGV4dDogc3RyaW5nKSB7CiAgICBjb25zdCBibG9iID0gbmV3IEJsb2IoW3RleHRdLCB7IHR5cGU6ICJ0ZXh0L21hcmtkb3duIiB9KTsKICAgIGNvbnN0IHVybCA9IFVSTC5jcmVhdGVPYmplY3RVUkwoYmxvYik7CiAgICBjb25zdCBhID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiYSIpOwogICAgYS5ocmVmID0gdXJsOwogICAgYS5kb3dubG9hZCA9IGAke25hbWV9Lm1kYDsKICAgIGEuY2xpY2soKTsKICAgIFVSTC5yZXZva2VPYmplY3RVUkwodXJsKTsKICB9CgogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIHBiLTEwIiBzdHlsZT17eyBiYWNrZ3JvdW5kOiJsaW5lYXItZ3JhZGllbnQoMTM1ZGVnLCMwNzA3MGUgMCUsIzBjMGIxOCA2MCUsIzA3MDcwYSAxMDAlKSIgfX0+CiAgICA8ZGl2IGNsYXNzTmFtZT0iY29udGFpbmVyIG14LWF1dG8gcC00IG1heC13LTZ4bCBzcGFjZS15LTYiPgogICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMiPgogICAgICAgIDxMaW5rIGhyZWY9e2AvcHJvamVjdHMvJHtwcm9qZWN0SWR9YH0+CiAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Imdob3N0IiBzaXplPSJzbSIgY2xhc3NOYW1lPSJtaW4taC1bNDRweF0iPgogICAgICAgICAgICA8QXJyb3dMZWZ0IGNsYXNzTmFtZT0iaC00IHctNCBtci0yIiAvPkJhY2sgdG8gcHJvamVjdAogICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgPC9MaW5rPgogICAgICAgIDxkaXY+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14cyB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IHRleHQtYW1iZXItNTAwLzgwIj5TdGFnZSAxIMK3IElkZWEgJiBQaXRjaDwvZGl2PgogICAgICAgICAgPGgxIGNsYXNzTmFtZT0iZm9udC1zZXJpZiB0ZXh0LTN4bCBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgIDxMaWdodGJ1bGIgY2xhc3NOYW1lPSJoLTYgdy02IHRleHQtYW1iZXItNDAwIiAvPiBQaXRjaCBMYWIKICAgICAgICAgIDwvaDE+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgoKICAgICAgPENhcmQ+CiAgICAgICAgPENhcmRIZWFkZXI+CiAgICAgICAgICA8Q2FyZFRpdGxlPlByb2plY3QgQnJpZWY8L0NhcmRUaXRsZT4KICAgICAgICAgIDxDYXJkRGVzY3JpcHRpb24+T25lIGJyaWVmIGRyaXZlcyBldmVyeSBhcnRpZmFjdCBiZWxvdyDigJQgbG9nbGluZSwgc3lub3BzaXMsIHRyZWF0bWVudCwgYW5kIHBpdGNoIGRlY2suPC9DYXJkRGVzY3JpcHRpb24+CiAgICAgICAgPC9DYXJkSGVhZGVyPgogICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgbWQ6Z3JpZC1jb2xzLTIgZ2FwLTQiPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij4KICAgICAgICAgICAgPExhYmVsPkZvcm1hdDwvTGFiZWw+CiAgICAgICAgICAgIDxzZWxlY3QKICAgICAgICAgICAgICBjbGFzc05hbWU9InctZnVsbCBoLTEwIHJvdW5kZWQtbWQgYmctYmFja2dyb3VuZCBib3JkZXIgYm9yZGVyLWlucHV0IHB4LTMgdGV4dC1zbSIKICAgICAgICAgICAgICB2YWx1ZT17YnJpZWYuZm9ybWF0fQogICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0QnJpZWYoeyAuLi5icmllZiwgZm9ybWF0OiBlLnRhcmdldC52YWx1ZSBhcyBGb3JtYXQgfSl9CiAgICAgICAgICAgID4KICAgICAgICAgICAgICB7KFsiRmVhdHVyZSIsICJMaW1pdGVkIFNlcmllcyIsICJTaG9ydCBGaWxtIiwgIkRvY3VtZW50YXJ5IiwgIlBpbG90Il0gYXMgRm9ybWF0W10pLm1hcCgoZikgPT4gKAogICAgICAgICAgICAgICAgPG9wdGlvbiBrZXk9e2Z9PntmfTwvb3B0aW9uPgogICAgICAgICAgICAgICkpfQogICAgICAgICAgICA8L3NlbGVjdD4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij4KICAgICAgICAgICAgPExhYmVsPkdlbnJlPC9MYWJlbD4KICAgICAgICAgICAgPElucHV0IHZhbHVlPXticmllZi5nZW5yZX0gb25DaGFuZ2U9eyhlKSA9PiBzZXRCcmllZih7IC4uLmJyaWVmLCBnZW5yZTogZS50YXJnZXQudmFsdWUgfSl9IHBsYWNlaG9sZGVyPSJlLmcuIFNjaS1maSB0aHJpbGxlciwgZGFyayBjb21lZHksIHNvY2lhbCBkcmFtYSIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij4KICAgICAgICAgICAgPExhYmVsPlRhcmdldCBBdWRpZW5jZTwvTGFiZWw+CiAgICAgICAgICAgIDxJbnB1dCB2YWx1ZT17YnJpZWYuYXVkaWVuY2V9IG9uQ2hhbmdlPXsoZSkgPT4gc2V0QnJpZWYoeyAuLi5icmllZiwgYXVkaWVuY2U6IGUudGFyZ2V0LnZhbHVlIH0pfSBwbGFjZWhvbGRlcj0iZS5nLiBBZHVsdHMgMjUtNDksIGZlc3RpdmFsIGNpcmN1aXQsIHN0cmVhbWVycyIgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij4KICAgICAgICAgICAgPExhYmVsPlRvbmUgJiBDb21wYXJhYmxlczwvTGFiZWw+CiAgICAgICAgICAgIDxJbnB1dCB2YWx1ZT17YnJpZWYudG9uZX0gb25DaGFuZ2U9eyhlKSA9PiBzZXRCcmllZih7IC4uLmJyaWVmLCB0b25lOiBlLnRhcmdldC52YWx1ZSB9KX0gcGxhY2Vob2xkZXI9ImUuZy4gQ2hpbGRyZW4gb2YgTWVuIHggQWZ0ZXJzdW4iIC8+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtZDpjb2wtc3Bhbi0yIHNwYWNlLXktMS41Ij4KICAgICAgICAgICAgPExhYmVsPlByZW1pc2UgKDEtMyBzZW50ZW5jZXMpPC9MYWJlbD4KICAgICAgICAgICAgPFRleHRhcmVhCiAgICAgICAgICAgICAgcm93cz17M30KICAgICAgICAgICAgICB2YWx1ZT17YnJpZWYucHJlbWlzZX0KICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHNldEJyaWVmKHsgLi4uYnJpZWYsIHByZW1pc2U6IGUudGFyZ2V0LnZhbHVlIH0pfQogICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJBIGdyaWV2aW5nIHJvYm90aWNpc3QgYnVpbGRzIGEgY29weSBvZiBoZXIgbGF0ZSBkYXVnaHRlciDigJQgYW5kIHNsb3dseSBsb3NlcyB0aGUgYWJpbGl0eSB0byB0ZWxsIHdoaWNoIG9uZSBpcyByZWFsLiIKICAgICAgICAgICAgLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgIDwvQ2FyZD4KCiAgICAgIDxUYWJzIHZhbHVlPXthY3RpdmVLaW5kIGFzIHN0cmluZ30gb25WYWx1ZUNoYW5nZT17KHYpID0+IHNldEFjdGl2ZUtpbmQodiBhcyBrZXlvZiB0eXBlb2YgUFJPTVBUUyl9PgogICAgICAgIDxUYWJzTGlzdCBjbGFzc05hbWU9ImZsZXggdy1mdWxsIG92ZXJmbG93LXgtYXV0byBzY3JvbGxiYXItbm9uZSBzbTpncmlkIHNtOmdyaWQtY29scy00IGgtYXV0byBbJj4qXTpzaHJpbmstMCBbJj4qXTp3aGl0ZXNwYWNlLW5vd3JhcCI+CiAgICAgICAgICA8VGFic1RyaWdnZXIgdmFsdWU9ImxvZ2xpbmUiIGNsYXNzTmFtZT0idGV4dC14cyI+PFdhbmQyIGNsYXNzTmFtZT0iaC0zIHctMyBtci0xIiAvPkxvZ2xpbmVzPC9UYWJzVHJpZ2dlcj4KICAgICAgICAgIDxUYWJzVHJpZ2dlciB2YWx1ZT0ic3lub3BzaXMiIGNsYXNzTmFtZT0idGV4dC14cyI+PEZpbGVUZXh0IGNsYXNzTmFtZT0iaC0zIHctMyBtci0xIiAvPlN5bm9wc2lzPC9UYWJzVHJpZ2dlcj4KICAgICAgICAgIDxUYWJzVHJpZ2dlciB2YWx1ZT0idHJlYXRtZW50IiBjbGFzc05hbWU9InRleHQteHMiPjxGaWxlVGV4dCBjbGFzc05hbWU9ImgtMyB3LTMgbXItMSIgLz5UcmVhdG1lbnQ8L1RhYnNUcmlnZ2VyPgogICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPSJkZWNrIiBjbGFzc05hbWU9InRleHQteHMiPjxMYXlvdXQgY2xhc3NOYW1lPSJoLTMgdy0zIG1yLTEiIC8+UGl0Y2ggRGVjazwvVGFic1RyaWdnZXI+CiAgICAgICAgPC9UYWJzTGlzdD4KCiAgICAgICAgeyhPYmplY3Qua2V5cyhQUk9NUFRTKSBhcyBBcnJheTxrZXlvZiB0eXBlb2YgUFJPTVBUUz4pLm1hcCgoa2luZCkgPT4gKAogICAgICAgICAgPFRhYnNDb250ZW50IGtleT17a2luZH0gdmFsdWU9e2tpbmR9IGNsYXNzTmFtZT0ic3BhY2UteS0zIj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiBnYXAtMyBmbGV4LXdyYXAiPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+CiAgICAgICAgICAgICAgICB7bGFzdEJ5S2luZFtraW5kXSA/IDxCYWRnZSB2YXJpYW50PSJzZWNvbmRhcnkiPkRyYWZ0ZWQ8L0JhZGdlPiA6IDxCYWRnZSB2YXJpYW50PSJvdXRsaW5lIj5Ob3QgeWV0IGdlbmVyYXRlZDwvQmFkZ2U+fQogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGdhcC0yIj4KICAgICAgICAgICAgICAgIDxCdXR0b24gb25DbGljaz17KCkgPT4gZ2VuZXJhdGUoa2luZCl9IGRpc2FibGVkPXtnZW5lcmF0aW5nICE9PSBudWxsfSBjbGFzc05hbWU9ImJnLWFtYmVyLTYwMCBob3ZlcjpiZy1hbWJlci01MDAgdGV4dC1ibGFjayBtaW4taC1bNDRweF0iPgogICAgICAgICAgICAgICAgICB7Z2VuZXJhdGluZyA9PT0ga2luZCA/IDxMb2FkZXIyIGNsYXNzTmFtZT0iaC00IHctNCBtci0yIGFuaW1hdGUtc3BpbiIgLz4gOiA8V2FuZDIgY2xhc3NOYW1lPSJoLTQgdy00IG1yLTIiIC8+fQogICAgICAgICAgICAgICAgICBHZW5lcmF0ZQogICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICB7bGFzdEJ5S2luZFtraW5kXSAmJiAoCiAgICAgICAgICAgICAgICAgIDw+CiAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PSJvdXRsaW5lIiBvbkNsaWNrPXsoKSA9PiBjb3B5KGxhc3RCeUtpbmRba2luZF0pfSBjbGFzc05hbWU9Im1pbi1oLVs0NHB4XSI+PENvcHkgY2xhc3NOYW1lPSJoLTQgdy00IG1yLTIiIC8+Q29weTwvQnV0dG9uPgogICAgICAgICAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0ib3V0bGluZSIgb25DbGljaz17KCkgPT4gZG93bmxvYWRNZChgJHtwcm9qZWN0Py50aXRsZSB8fCAicHJvamVjdCJ9LSR7a2luZH1gLCBsYXN0QnlLaW5kW2tpbmRdKX0gY2xhc3NOYW1lPSJtaW4taC1bNDRweF0iPjxEb3dubG9hZCBjbGFzc05hbWU9ImgtNCB3LTQgbXItMiIgLz5FeHBvcnQgLm1kPC9CdXR0b24+CiAgICAgICAgICAgICAgICAgIDwvPgogICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxDYXJkPgogICAgICAgICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InAtNiI+CiAgICAgICAgICAgICAgICB7bGFzdEJ5S2luZFtraW5kXSA/ICgKICAgICAgICAgICAgICAgICAgPHByZSBjbGFzc05hbWU9IndoaXRlc3BhY2UtcHJlLXdyYXAgdGV4dC1zbSBmb250LXNhbnMgbGVhZGluZy1yZWxheGVkIj57bGFzdEJ5S2luZFtraW5kXX08L3ByZT4KICAgICAgICAgICAgICAgICkgOiAoCiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBweS04IHRleHQtY2VudGVyIj4KICAgICAgICAgICAgICAgICAgICBGaWxsIGluIHRoZSBicmllZiBhYm92ZSBhbmQgcHJlc3MgPHN0cm9uZz5HZW5lcmF0ZTwvc3Ryb25nPiB0byBkcmFmdCB5b3VyIHtraW5kfS4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgIDwvQ2FyZD4KICAgICAgICAgIDwvVGFic0NvbnRlbnQ+CiAgICAgICAgKSl9CiAgICAgIDwvVGFicz4KICB7ISFwcm9qZWN0SWQgJiYgPE5leHRTdGFnZUNUQSBwcm9qZWN0SWQ9e3Byb2plY3RJZH0gY3VycmVudFN0YWdlPXsxfSAvPn0KICAgICAgPC9kaXY+CiAgKTsKfQo=
+import { useMemo, useState } from "react";
+import { useParams, Link } from "wouter";
+import { NextStageCTA } from "@/components/NextStageCTA";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { Lightbulb, FileText, Layout, Wand2, Copy, Download, ArrowLeft, Loader2 } from "lucide-react";
+
+type Format = "Feature" | "Limited Series" | "Short Film" | "Documentary" | "Pilot";
+
+const PROMPTS: Record<string, (b: BriefState, projectTitle: string) => string> = {
+  logline: (b, t) => `You are a Hollywood development executive. Write THREE distinct loglines (max 35 words each) for the project "${t}". Format: ${b.format}. Genre: ${b.genre}. Audience: ${b.audience}. Tone: ${b.tone}. Premise: ${b.premise}. Each logline must include protagonist, inciting incident, central goal, and antagonistic force. Output as a numbered list, no preamble.`,
+  synopsis: (b, t) => `You are a script consultant. Write a one-page synopsis (350-450 words) for "${t}". Format: ${b.format}. Genre: ${b.genre}. Tone: ${b.tone}. Premise: ${b.premise}. Cover: opening hook, act-one inciting incident, act-two midpoint twist, act-three climax, resolution. Use present tense, screenplay style. No preamble.`,
+  treatment: (b, t) => `You are an A-list screenwriter. Write a 3-5 page treatment for "${t}". Format: ${b.format}. Genre: ${b.genre}. Tone: ${b.tone}. Audience: ${b.audience}. Premise: ${b.premise}. Use markdown headings: # Title  ## Logline  ## Themes  ## Main Characters  ## Act One  ## Act Two  ## Act Three  ## Visual Style  ## Comparable Titles  ## Why Now. Be vivid, specific, cinematic.`,
+  deck: (b, t) => `You are a pitch-deck specialist. Produce a 10-slide pitch deck outline for "${t}" in markdown. Format: ${b.format}. Genre: ${b.genre}. Tone: ${b.tone}. Audience: ${b.audience}. Premise: ${b.premise}. Slides: 1) Title & Logline 2) The Hook 3) Synopsis 4) Main Characters 5) Tone & Visual Style 6) World & Setting 7) Themes 8) Comparable Titles & Audience 9) Director Vision 10) Why Now. Each slide: heading + 3-6 bullets. No preamble.`,
+};
+
+interface BriefState {
+  format: Format;
+  genre: string;
+  audience: string;
+  tone: string;
+  premise: string;
+}
+
+export default function PitchLab() {
+  const params = useParams<{ projectId: string }>();
+  const projectId = parseInt(params.projectId || "0");
+  const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
+  const { data: history, refetch: refetchHistory } = trpc.directorChat.history.useQuery(
+    { projectId },
+    { enabled: !!projectId, refetchInterval: 4000 }
+  );
+  const sendMessage = trpc.directorChat.send.useMutation();
+
+  const [brief, setBrief] = useState<BriefState>({
+    format: "Feature",
+    genre: "",
+    audience: "",
+    tone: "",
+    premise: "",
+  });
+  const [activeKind, setActiveKind] = useState<keyof typeof PROMPTS>("logline");
+  const [generating, setGenerating] = useState<keyof typeof PROMPTS | null>(null);
+
+  const lastByKind = useMemo(() => {
+    const out: Record<string, string> = {};
+    for (const m of history ?? []) {
+      const tag = (m as any).metadata?.pitchKind as string | undefined;
+      if (tag && (m as any).role === "assistant") {
+        out[tag] = (m as any).content as string;
+      }
+    }
+    return out;
+  }, [history]);
+
+  async function generate(kind: keyof typeof PROMPTS) {
+    if (!project) return;
+    if (!brief.premise.trim()) {
+      toast.error("Add a premise (1-3 sentences) before generating.");
+      return;
+    }
+    setGenerating(kind);
+    try {
+      await sendMessage.mutateAsync({
+        projectId,
+        message: `[PitchLab:${kind}]\n\n${PROMPTS[kind](brief, project.title || "Untitled")}`,
+      });
+      await refetchHistory();
+      toast.success(`${kind.charAt(0).toUpperCase() + kind.slice(1)} drafted.`);
+    } catch (e: any) {
+      toast.error(e?.message || "Generation failed.");
+    } finally {
+      setGenerating(null);
+    }
+  }
+
+  function copy(text: string) {
+    navigator.clipboard.writeText(text).then(() => toast.success("Copied."));
+  }
+
+  function downloadMd(name: string, text: string) {
+    const blob = new Blob([text], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${name}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+    <div className="container mx-auto p-4 max-w-6xl space-y-6">
+      <div className="flex items-center gap-3">
+        <Link href={`/projects/${projectId}`}>
+          <Button variant="ghost" size="sm" className="min-h-[44px]">
+            <ArrowLeft className="h-4 w-4 mr-2" />Back to project
+          </Button>
+        </Link>
+        <div>
+          <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 1 · Idea & Pitch</div>
+          <h1 className="font-serif text-3xl flex items-center gap-2">
+            <Lightbulb className="h-6 w-6 text-amber-400" /> Pitch Lab
+          </h1>
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Project Brief</CardTitle>
+          <CardDescription>One brief drives every artifact below — logline, synopsis, treatment, and pitch deck.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label>Format</Label>
+            <select
+              className="w-full h-10 rounded-md bg-[#07070e] border border-input px-3 text-sm"
+              value={brief.format}
+              onChange={(e) => setBrief({ ...brief, format: e.target.value as Format })}
+            >
+              {(["Feature", "Limited Series", "Short Film", "Documentary", "Pilot"] as Format[]).map((f) => (
+                <option key={f}>{f}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Genre</Label>
+            <Input value={brief.genre} onChange={(e) => setBrief({ ...brief, genre: e.target.value })} placeholder="e.g. Sci-fi thriller, dark comedy, social drama" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Target Audience</Label>
+            <Input value={brief.audience} onChange={(e) => setBrief({ ...brief, audience: e.target.value })} placeholder="e.g. Adults 25-49, festival circuit, streamers" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Tone & Comparables</Label>
+            <Input value={brief.tone} onChange={(e) => setBrief({ ...brief, tone: e.target.value })} placeholder="e.g. Children of Men x Aftersun" />
+          </div>
+          <div className="md:col-span-2 space-y-1.5">
+            <Label>Premise (1-3 sentences)</Label>
+            <Textarea
+              rows={3}
+              value={brief.premise}
+              onChange={(e) => setBrief({ ...brief, premise: e.target.value })}
+              placeholder="A grieving roboticist builds a copy of her late daughter — and slowly loses the ability to tell which one is real."
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Tabs value={activeKind as string} onValueChange={(v) => setActiveKind(v as keyof typeof PROMPTS)}>
+        <TabsList className="flex w-full overflow-x-auto scrollbar-none sm:grid sm:grid-cols-4 h-auto [&>*]:shrink-0 [&>*]:whitespace-nowrap">
+          <TabsTrigger value="logline" className="text-xs"><Wand2 className="h-3 w-3 mr-1" />Loglines</TabsTrigger>
+          <TabsTrigger value="synopsis" className="text-xs"><FileText className="h-3 w-3 mr-1" />Synopsis</TabsTrigger>
+          <TabsTrigger value="treatment" className="text-xs"><FileText className="h-3 w-3 mr-1" />Treatment</TabsTrigger>
+          <TabsTrigger value="deck" className="text-xs"><Layout className="h-3 w-3 mr-1" />Pitch Deck</TabsTrigger>
+        </TabsList>
+
+        {(Object.keys(PROMPTS) as Array<keyof typeof PROMPTS>).map((kind) => (
+          <TabsContent key={kind} value={kind} className="space-y-3">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="text-sm text-muted-foreground">
+                {lastByKind[kind] ? <Badge variant="secondary">Drafted</Badge> : <Badge variant="outline">Not yet generated</Badge>}
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={() => generate(kind)} disabled={generating !== null} className="bg-amber-600 hover:bg-amber-500 text-black min-h-[44px]">
+                  {generating === kind ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Wand2 className="h-4 w-4 mr-2" />}
+                  Generate
+                </Button>
+                {lastByKind[kind] && (
+                  <>
+                    <Button variant="outline" onClick={() => copy(lastByKind[kind])} className="min-h-[44px]"><Copy className="h-4 w-4 mr-2" />Copy</Button>
+                    <Button variant="outline" onClick={() => downloadMd(`${project?.title || "project"}-${kind}`, lastByKind[kind])} className="min-h-[44px]"><Download className="h-4 w-4 mr-2" />Export .md</Button>
+                  </>
+                )}
+              </div>
+            </div>
+            <Card>
+              <CardContent className="p-6">
+                {lastByKind[kind] ? (
+                  <pre className="whitespace-pre-wrap text-sm font-sans leading-relaxed">{lastByKind[kind]}</pre>
+                ) : (
+                  <div className="text-sm text-muted-foreground py-8 text-center">
+                    Fill in the brief above and press <strong>Generate</strong> to draft your {kind}.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        ))}
+      </Tabs>
+  {!!projectId && <NextStageCTA projectId={projectId} currentStage={1} />}
+      </div>
+  );
+}
