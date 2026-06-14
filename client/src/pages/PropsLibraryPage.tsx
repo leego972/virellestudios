@@ -41,7 +41,7 @@ import { useState } from "react";
         <div>
           <Label>Description / AI Reference Prompt</Label>
           <Textarea value={form.description} onChange={e => set("description", e.target.value)}
-            placeholder="Detailed physical description and prompt fragment injected so this prop looks identical every timeÃ¢ÂÂ¦" rows={4} />
+            placeholder="Detailed physical description and prompt fragment injected so this prop looks identical every time…" rows={4} />
         </div>
         <div>
           <Label>Era / Period</Label>
