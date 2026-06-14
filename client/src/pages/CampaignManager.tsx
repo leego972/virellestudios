@@ -111,7 +111,7 @@ function SocialShareButtons({ content, platforms }: { content: any; platforms: a
         <Button
           size="sm"
           variant="ghost"
-          className="h-7 px-2 text-muted-foreground hover:text-primary"
+          className="h-7 px-2 text-muted-foreground hover:text-amber-400"
           onClick={() => window.open(platform.url, "_blank")}
           title={`Open ${platform.name}`}
         >
@@ -459,10 +459,10 @@ export default function CampaignManager() {
                       <StatusBadge status={campaign.status} />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {campaign.platforms.length} platforms · {campaign.contentType.replace(/_/g, " ")}
+                      {campaign.platforms.length} platforms Â· {campaign.contentType.replace(/_/g, " ")}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {(campaign.postHistory || []).length} posts · {campaign.schedule}
+                      {(campaign.postHistory || []).length} posts Â· {campaign.schedule}
                     </p>
                   </button>
                 ))}
@@ -477,7 +477,7 @@ export default function CampaignManager() {
                         <div>
                           <CardTitle className="gradient-text-gold glass-card">{selectedCampaign.name}</CardTitle>
                           <CardDescription>
-                            {selectedCampaign.contentType.replace(/_/g, " ")} · {selectedCampaign.schedule}
+                            {selectedCampaign.contentType.replace(/_/g, " ")} Â· {selectedCampaign.schedule}
                           </CardDescription>
                         </div>
                         <div className="flex gap-2 flex-wrap">
@@ -672,7 +672,7 @@ export default function CampaignManager() {
                 Quick Content Generator
               </CardTitle>
               <CardDescription>
-                Generate ad copy for a single platform instantly — no campaign needed
+                Generate ad copy for a single platform instantly â no campaign needed
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 glass-card">
@@ -863,7 +863,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.platformBreakdown || Object.entries(analytics?.byPlatform || {})).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet — create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet â create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -897,7 +897,7 @@ export default function CampaignManager() {
                     {((analytics as any)?.contentTypeBreakdown || []).length === 0 ? (
                       <div className="text-center py-8">
                         <BarChart3 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">No data yet — create campaigns to see analytics</p>
+                        <p className="text-sm text-muted-foreground">No data yet â create campaigns to see analytics</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -932,7 +932,7 @@ export default function CampaignManager() {
                   {((analytics as any)?.recentActivity || analytics?.rows || []).length === 0 ? (
                     <div className="text-center py-8">
                       <MessageSquare className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No recent activity — start posting to see your history here</p>
+                      <p className="text-sm text-muted-foreground">No recent activity â start posting to see your history here</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -942,7 +942,7 @@ export default function CampaignManager() {
                             <StatusBadge status={activity.status} />
                             <div>
                               <p className="text-sm font-medium">{activity.campaign}</p>
-                              <p className="text-xs text-muted-foreground">{activity.platformName} · {activity.contentPreview}</p>
+                              <p className="text-xs text-muted-foreground">{activity.platformName} Â· {activity.contentPreview}</p>
                             </div>
                           </div>
                           <span className="text-xs text-muted-foreground">
@@ -968,7 +968,7 @@ export default function CampaignManager() {
                     {[
                       { tip: "Post on Reddit film communities during weekday evenings (6-9pm EST) for maximum engagement" },
                       { tip: "LinkedIn posts with industry insights get 3x more reach than promotional content" },
-                      { tip: "Use 3-5 hashtags on Instagram — more than 10 actually reduces reach" },
+                      { tip: "Use 3-5 hashtags on Instagram â more than 10 actually reduces reach" },
                       { tip: "X/X threads about AI filmmaking consistently outperform single tweets" },
                       { tip: "Engage with comments within the first hour of posting to boost algorithm ranking" },
                       { tip: "Cross-post to multiple subreddits but customize the title for each community" },

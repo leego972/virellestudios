@@ -115,7 +115,7 @@ import { useState } from "react";
             <Button variant="ghost" size="sm" onClick={() => setActiveSeries(null)}><ChevronRight className="h-4 w-4 rotate-180 mr-1" />All Series</Button>
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl font-bold truncate gradient-text-gold">{activeSeries.title}</h1>
-              <div className="flex items-center gap-2 mt-1 flex-wrap"><Badge variant="outline">{activeSeries.format}</Badge><Badge variant="outline">{activeSeries.genre}</Badge><span className="text-xs text-muted-foreground">{activeSeries.seasons.length} season{activeSeries.seasons.length !== 1 ? "s" : ""} · {totalEps} episode{totalEps !== 1 ? "s" : ""}</span></div>
+              <div className="flex items-center gap-2 mt-1 flex-wrap"><Badge variant="outline">{activeSeries.format}</Badge><Badge variant="outline">{activeSeries.genre}</Badge><span className="text-xs text-muted-foreground">{activeSeries.seasons.length} season{activeSeries.seasons.length !== 1 ? "s" : ""} Â· {totalEps} episode{totalEps !== 1 ? "s" : ""}</span></div>
             </div>
             <Button variant="outline" size="sm" onClick={() => setEditingSeries(activeSeries)}><Edit2 className="h-3.5 w-3.5 mr-1" />Edit Bible</Button>
           </div>
@@ -158,7 +158,7 @@ import { useState } from "react";
                             {editingEpisode?.ep.id === ep.id ? (
                               <div className="space-y-2">
                                 <Input placeholder="Episode title" value={editingEpisode.ep.title} onChange={e => setEditingEpisode(prev => prev ? { ...prev, ep: { ...prev.ep, title: e.target.value } } : null)} className="h-7 text-sm" />
-                                <Textarea placeholder="Episode logline…" value={editingEpisode.ep.logline} onChange={e => setEditingEpisode(prev => prev ? { ...prev, ep: { ...prev.ep, logline: e.target.value } } : null)} className="h-16 text-xs" />
+                                <Textarea placeholder="Episode loglineâ¦" value={editingEpisode.ep.logline} onChange={e => setEditingEpisode(prev => prev ? { ...prev, ep: { ...prev.ep, logline: e.target.value } } : null)} className="h-16 text-xs" />
                                 <div className="flex gap-2 items-center">
                                   <Select value={editingEpisode.ep.status} onValueChange={v => setEditingEpisode(prev => prev ? { ...prev, ep: { ...prev.ep, status: v as any } } : null)}>
                                     <SelectTrigger className="h-7 text-xs w-28"><SelectValue /></SelectTrigger>
@@ -209,11 +209,11 @@ import { useState } from "react";
             <div className="sm:col-span-2 space-y-1.5"><Label>Series Title *</Label><Input placeholder="My Series Title" value={form.title} onChange={e => setEditingSeries(p => ({ ...(p ?? form), title: e.target.value }))} /></div>
             <div className="space-y-1.5"><Label>Format</Label><Select value={form.format} onValueChange={v => setEditingSeries(p => ({ ...(p ?? form), format: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{FORMATS.map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent></Select></div>
             <div className="space-y-1.5"><Label>Genre</Label><Select value={form.genre} onValueChange={v => setEditingSeries(p => ({ ...(p ?? form), genre: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{GENRES.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent></Select></div>
-            <div className="sm:col-span-2 space-y-1.5"><Label>Logline</Label><Textarea className="h-16" placeholder="One-sentence description of the series…" value={form.logline} onChange={e => setEditingSeries(p => ({ ...(p ?? form), logline: e.target.value }))} /></div>
-            <div className="sm:col-span-2 space-y-1.5"><Label>Premise</Label><Textarea className="h-24" placeholder="Expand on the central concept, conflict, and world of the series…" value={form.premise} onChange={e => setEditingSeries(p => ({ ...(p ?? form), premise: e.target.value }))} /></div>
-            <div className="sm:col-span-2 space-y-1.5"><Label>World Building</Label><Textarea className="h-24" placeholder="Setting, rules, history, and atmosphere of the show's world…" value={form.worldBuilding} onChange={e => setEditingSeries(p => ({ ...(p ?? form), worldBuilding: e.target.value }))} /></div>
-            <div className="sm:col-span-2 space-y-1.5"><Label>Main Characters</Label><Textarea className="h-24" placeholder="List and describe your central characters and their arcs across the series…" value={form.mainCharacters} onChange={e => setEditingSeries(p => ({ ...(p ?? form), mainCharacters: e.target.value }))} /></div>
-            <div className="sm:col-span-2 space-y-1.5"><Label>Tone & Style</Label><Textarea className="h-20" placeholder="Describe the visual language, pacing, tone, and comparable shows…" value={form.toneAndStyle} onChange={e => setEditingSeries(p => ({ ...(p ?? form), toneAndStyle: e.target.value }))} /></div>
+            <div className="sm:col-span-2 space-y-1.5"><Label>Logline</Label><Textarea className="h-16" placeholder="One-sentence description of the seriesâ¦" value={form.logline} onChange={e => setEditingSeries(p => ({ ...(p ?? form), logline: e.target.value }))} /></div>
+            <div className="sm:col-span-2 space-y-1.5"><Label>Premise</Label><Textarea className="h-24" placeholder="Expand on the central concept, conflict, and world of the seriesâ¦" value={form.premise} onChange={e => setEditingSeries(p => ({ ...(p ?? form), premise: e.target.value }))} /></div>
+            <div className="sm:col-span-2 space-y-1.5"><Label>World Building</Label><Textarea className="h-24" placeholder="Setting, rules, history, and atmosphere of the show's worldâ¦" value={form.worldBuilding} onChange={e => setEditingSeries(p => ({ ...(p ?? form), worldBuilding: e.target.value }))} /></div>
+            <div className="sm:col-span-2 space-y-1.5"><Label>Main Characters</Label><Textarea className="h-24" placeholder="List and describe your central characters and their arcs across the seriesâ¦" value={form.mainCharacters} onChange={e => setEditingSeries(p => ({ ...(p ?? form), mainCharacters: e.target.value }))} /></div>
+            <div className="sm:col-span-2 space-y-1.5"><Label>Tone & Style</Label><Textarea className="h-20" placeholder="Describe the visual language, pacing, tone, and comparable showsâ¦" value={form.toneAndStyle} onChange={e => setEditingSeries(p => ({ ...(p ?? form), toneAndStyle: e.target.value }))} /></div>
           </div>
           <div className="flex gap-3">
             <Button className="flex-1" onClick={() => { if (!form.title.trim()) { toast.error("Title is required"); return; } save({ ...form, id: form.id || Date.now().toString() }); }}><Save className="h-4 w-4 mr-2" />Save Bible</Button>
@@ -236,12 +236,12 @@ import { useState } from "react";
               <Card key={s.id} className="cursor-pointer hover:border-primary/50 transition-colors group glass-card" onClick={() => setActiveSeries(s)}>
                 <CardContent className="p-4 space-y-2 glass-card">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="font-semibold truncate group-hover:text-primary transition-colors">{s.title}</span>
+                    <span className="font-semibold truncate group-hover:text-amber-400 transition-colors">{s.title}</span>
                     <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100" onClick={e => { e.stopPropagation(); deleteSeries(s.id); }}><Trash2 className="h-3 w-3 text-destructive" /></Button>
                   </div>
                   <div className="flex gap-2 flex-wrap"><Badge variant="outline" className="text-[10px]">{s.format}</Badge><Badge variant="outline" className="text-[10px]">{s.genre}</Badge></div>
                   {s.logline && <p className="text-xs text-muted-foreground line-clamp-2">{s.logline}</p>}
-                  <p className="text-xs text-muted-foreground">{s.seasons.length} season{s.seasons.length !== 1 ? "s" : ""} · {totalEps} episode{totalEps !== 1 ? "s" : ""}</p>
+                  <p className="text-xs text-muted-foreground">{s.seasons.length} season{s.seasons.length !== 1 ? "s" : ""} Â· {totalEps} episode{totalEps !== 1 ? "s" : ""}</p>
                 </CardContent>
               </Card>
             );

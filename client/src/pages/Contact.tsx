@@ -53,7 +53,7 @@ export default function Contact() {
   if (submitted) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Card className="max-w-md w-full text-center">
+        <Card className="max-w-md w-full text-center glass-card">
           <CardContent className="pt-10 pb-8 space-y-4">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
             <h2 className="text-2xl font-bold gradient-text-gold">Message Sent</h2>
@@ -76,7 +76,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios — sales, support, partnerships, and press inquiries." />
+      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios â sales, support, partnerships, and press inquiries." />
       {/* Header */}
       <div className="border-b bg-card/50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
@@ -140,7 +140,7 @@ export default function Contact() {
               </Card>
             </div>
 
-            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 glass-card">
               <CardContent className="p-5">
                 <h3 className="font-semibold mb-2">Industry Plan</h3>
                 <p className="text-sm text-muted-foreground mb-3">

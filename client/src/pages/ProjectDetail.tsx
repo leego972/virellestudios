@@ -324,13 +324,13 @@ export default function ProjectDetail() {
       utils.project.get.invalidate({ id: projectId });
       utils.scene.listByProject.invalidate({ projectId });
       utils.generation.listJobs.invalidate({ projectId });
-      toast.success("Film generation started! This runs in the background — check back in a few minutes.");
+      toast.success("Film generation started! This runs in the background â check back in a few minutes.");
     },
     onError: (err) => toast.error(err.message),
   });
 
 
-  // ─── Generate Full Feature Film (60-90 min) ───
+  // âââ Generate Full Feature Film (60-90 min) âââ
   const [fullFilmDialogOpen, setFullFilmDialogOpen] = React.useState(false);
   const [fullFilmConfig, setFullFilmConfig] = React.useState({
     targetDurationMinutes: project?.duration || 90,
@@ -341,7 +341,7 @@ export default function ProjectDetail() {
   });
   const generateFullFilmMutation = trpc.generation.generateFullFilm.useMutation({
     onSuccess: () => {
-      toast.success("🎬 Full film generation started! This will take some time — you'll be notified when complete.");
+      toast.success("ð¬ Full film generation started! This will take some time â you'll be notified when complete.");
       utils.project.get.invalidate({ id: projectId });
       setFullFilmDialogOpen(false);
     },
@@ -395,7 +395,7 @@ export default function ProjectDetail() {
     onSuccess: (result: any) => {
       utils.scene.listByProject.invalidate({ projectId });
       if (result?.status === "generating") {
-        toast.success("Scene regeneration started — check back in 2–5 minutes.");
+        toast.success("Scene regeneration started â check back in 2â5 minutes.");
       } else {
         toast.success("Scene video generation queued.");
       }
@@ -485,11 +485,11 @@ export default function ProjectDetail() {
             <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
               {project.mode === "quick" ? <Zap className="h-3 w-3" /> : <Layers className="h-3 w-3" />}
               <span className="capitalize">{project.mode}</span>
-              {project.rating && <><span>·</span><span>{project.rating}</span></>}
-              {project.genre && <><span>·</span><span>{project.genre}</span></>}
+              {project.rating && <><span>Â·</span><span>{project.rating}</span></>}
+              {project.genre && <><span>Â·</span><span>{project.genre}</span></>}
               {editingDuration ? (
                 <span className="flex items-center gap-1">
-                  <span>·</span>
+                  <span>Â·</span>
                   <input
                     type="number"
                     min={1}
@@ -521,17 +521,17 @@ export default function ProjectDetail() {
               ) : (
                 <>
                   {project.duration && (
-                    <span className="cursor-pointer hover:text-primary transition-colors" title="Click to edit duration" onClick={() => { setDurationInput(String(project.duration)); setEditingDuration(true); }}>
-                      <span>·</span> {project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`} ✎
+                    <span className="cursor-pointer hover:text-amber-400 transition-colors" title="Click to edit duration" onClick={() => { setDurationInput(String(project.duration)); setEditingDuration(true); }}>
+                      <span>Â·</span> {project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`} â
                     </span>
                   )}
                   {!project.duration && scenes?.length ? (
-                    <span className="cursor-pointer hover:text-primary transition-colors" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
-                      <span>·</span> {(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()} ✎
+                    <span className="cursor-pointer hover:text-amber-400 transition-colors" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
+                      <span>Â·</span> {(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()} â
                     </span>
                   ) : !project.duration ? (
-                    <span className="cursor-pointer hover:text-primary transition-colors text-muted-foreground" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
-                      <span>·</span> Set duration ✎
+                    <span className="cursor-pointer hover:text-amber-400 transition-colors text-muted-foreground" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
+                      <span>Â·</span> Set duration â
                     </span>
                   ) : null}
                 </>
@@ -547,7 +547,7 @@ export default function ProjectDetail() {
             onClick={async () => {
               try {
                 const reviewerName = window.prompt(
-                  "Reviewer name (optional)\n\nFor watermarked screeners — leave blank for an unwatermarked link, or enter a name (e.g. \"Studio A24\", \"Jane Producer\") to brand the screener with their name + timestamp on every frame. Pro tip: use a different name per recipient so leaks can be traced.",
+                  "Reviewer name (optional)\n\nFor watermarked screeners â leave blank for an unwatermarked link, or enter a name (e.g. \"Studio A24\", \"Jane Producer\") to brand the screener with their name + timestamp on every frame. Pro tip: use a different name per recipient so leaks can be traced.",
                   "",
                 ) || "";
                 const res = await utils.client.project.getShareLink.query({ id: project.id });
@@ -559,7 +559,7 @@ export default function ProjectDetail() {
                 toast.success(
                   reviewerName.trim()
                     ? `Watermarked screener link copied for "${reviewerName.trim()}"`
-                    : "Review link copied — paste it to share with producers, friends or collaborators.",
+                    : "Review link copied â paste it to share with producers, friends or collaborators.",
                 );
               } catch (e: any) {
                 toast.error(e?.message || "Could not generate share link");
@@ -595,7 +595,7 @@ export default function ProjectDetail() {
                 if (project.status === "completed") {
                   setRegenConfirmOpen(true);
                 } else {
-                  // draft OR failed → kick off generation immediately (no confirm needed —
+                  // draft OR failed â kick off generation immediately (no confirm needed â
                   // a failed run has no output to overwrite, and a draft has nothing to lose).
                   quickGenMutation.mutate({ projectId: project.id });
                 }
@@ -617,7 +617,7 @@ export default function ProjectDetail() {
       </div>
 
       {/* Generation Progress */}
-      {/* Generation Error Banner — surfaces the ACTUAL backend error message instead of a
+      {/* Generation Error Banner â surfaces the ACTUAL backend error message instead of a
           generic "recharge your API keys" template (which was misleading users who had valid,
           funded API keys: the real failure could be a model error, timeout, image-URL issue,
           provider outage, etc.). The actionable hint now lives below in muted text so users
@@ -628,7 +628,7 @@ export default function ProjectDetail() {
         // Detect the most common failure modes and tailor the guidance.
         // The platform's shared LLM key occasionally hits quota; when this happens the
         // generic message "recharge your API keys" was confusing because the user's OWN
-        // video key (e.g. fal.ai) is fine — it's the script-generation step that died.
+        // video key (e.g. fal.ai) is fine â it's the script-generation step that died.
         const lower = rawMsg.toLowerCase();
         const isNoVideoKey = lower.startsWith("no_video_key") || lower.includes("no_video_key:");
         const isLLMExhausted = !isNoVideoKey && (lower.includes("llm fallback invoke failed")
@@ -638,29 +638,29 @@ export default function ProjectDetail() {
         const isVideoQuota = !isNoVideoKey && !isLLMExhausted && (lower.includes("402") || lower.includes("403") || lower.includes("payment required"));
         const isProviderFailed = !isNoVideoKey && (lower.startsWith("video_provider_failed") || lower.includes("video_provider_failed:"));
         return (
-          <Card className="bg-red-500/5 border-red-500/30">
+          <Card className="bg-red-500/5 border-red-500/30 glass-card">
             <CardContent className="p-4 space-y-2">
               <div className="flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-red-400 break-words">
                     {isNoVideoKey ? "Add a video-generation API key to continue"
-                      : isLLMExhausted ? "Script generation paused — AI text quota reached"
+                      : isLLMExhausted ? "Script generation paused â AI text quota reached"
                       : isProviderFailed ? "Your video provider rejected every attempt"
                       : "Video generation failed"}
                   </p>
                   {isNoVideoKey ? (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words">
-                        You haven't connected a video provider yet. Virelle Studios is a Bring-Your-Own-Key platform for video — add a key once and you can generate as many films as your provider's credits allow.
+                        You haven't connected a video provider yet. Virelle Studios is a Bring-Your-Own-Key platform for video â add a key once and you can generate as many films as your provider's credits allow.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        Open <a href="/settings" className="font-medium text-foreground underline">Settings → API Keys</a> and connect at least one of:
+                        Open <a href="/settings" className="font-medium text-foreground underline">Settings â API Keys</a> and connect at least one of:
                         <span className="block mt-1.5 ml-2 leading-relaxed">
-                          • <span className="text-foreground font-medium">fal.ai</span> — cheapest, ~$0.40/clip (recommended)<br/>
-                          • <span className="text-foreground font-medium">Runway</span> — best quality, ~$0.05–0.10/sec<br/>
-                          • <span className="text-foreground font-medium">Hugging Face</span> — free tier (300 req/hr)<br/>
-                          • <span className="text-foreground font-medium">Luma · Replicate · Google Veo 3</span> — alternatives
+                          â¢ <span className="text-foreground font-medium">fal.ai</span> â cheapest, ~$0.40/clip (recommended)<br/>
+                          â¢ <span className="text-foreground font-medium">Runway</span> â best quality, ~$0.05â0.10/sec<br/>
+                          â¢ <span className="text-foreground font-medium">Hugging Face</span> â free tier (300 req/hr)<br/>
+                          â¢ <span className="text-foreground font-medium">Luma Â· Replicate Â· Google Veo 3</span> â alternatives
                         </span>
                         Once saved, return here and tap <span className="font-medium text-foreground">Re-generate Film</span>.
                       </p>
@@ -668,10 +668,10 @@ export default function ProjectDetail() {
                   ) : isLLMExhausted ? (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words">
-                        The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key — that's still fine.
+                        The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key â that's still fine.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        Quickest fix: open <a href="/settings" className="font-medium text-foreground underline">Settings → API Keys</a> and add your own <span className="font-medium text-foreground">Venice AI</span> (cheapest, ~$5 = millions of tokens), <span className="font-medium text-foreground">OpenAI</span>, or <span className="font-medium text-foreground">Anthropic</span> key — script generation will use it automatically. Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Retry Generation</span> below — the shared cap usually clears within the hour.
+                        Quickest fix: open <a href="/settings" className="font-medium text-foreground underline">Settings â API Keys</a> and add your own <span className="font-medium text-foreground">Venice AI</span> (cheapest, ~$5 = millions of tokens), <span className="font-medium text-foreground">OpenAI</span>, or <span className="font-medium text-foreground">Anthropic</span> key â script generation will use it automatically. Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Retry Generation</span> below â the shared cap usually clears within the hour.
                       </p>
                     </>
                   ) : isVideoQuota ? (
@@ -685,12 +685,12 @@ export default function ProjectDetail() {
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        If your API keys are funded and connected (<a href="/settings" className="font-medium text-foreground underline">Settings → API Keys</a>), this is usually a temporary provider issue — tap <span className="font-medium text-foreground">Retry Generation</span> below to retry. Make sure your preferred provider is selected.
+                        If your API keys are funded and connected (<a href="/settings" className="font-medium text-foreground underline">Settings â API Keys</a>), this is usually a temporary provider issue â tap <span className="font-medium text-foreground">Retry Generation</span> below to retry. Make sure your preferred provider is selected.
                       </p>
                     </>
                   )}
 
-                  {/* Inline action buttons — always present so the user is never stranded */}
+                  {/* Inline action buttons â always present so the user is never stranded */}
                   <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-red-500/20">
                     <Button
                       size="sm"
@@ -699,7 +699,7 @@ export default function ProjectDetail() {
                       disabled={quickGenMutation.isPending}
                     >
                       {quickGenMutation.isPending ? (
-                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin text-amber-400" />Retrying…</>
+                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin text-amber-400" />Retryingâ¦</>
                       ) : (
                         <><RefreshCw className="h-3.5 w-3.5 mr-1.5" />Retry Generation</>
                       )}
@@ -721,7 +721,7 @@ export default function ProjectDetail() {
       })()}
 
       {(project.status === "generating" || quickGenMutation.isPending) && (
-        <Card className="bg-amber-400/5 border-primary/20">
+        <Card className="bg-amber-400/5 border-primary/20 glass-card">
           <CardContent className="p-4">
             <div className="flex items-center justify-between gap-3 mb-2">
               <div className="flex items-center gap-3">
@@ -754,8 +754,8 @@ export default function ProjectDetail() {
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-card/50 grid grid-cols-3 sm:flex sm:flex-wrap h-auto gap-1.5 p-1.5 w-full sm:justify-start [&>*]:bg-background/40 [&>*]:border [&>*]:border-border/40 [&>*]:data-[state=active]:bg-primary/15 [&>*]:data-[state=active]:border-primary/40 [&>*]:data-[state=active]:text-primary">
-          {/* Pipeline order: Overview → Story → Characters → Scenes → Soundtrack → Trailer → Export → Tools */}
+        <TabsList className="bg-card/50 grid grid-cols-3 sm:flex sm:flex-wrap h-auto gap-1.5 p-1.5 w-full sm:justify-start [&>*]:bg-background/40 [&>*]:border [&>*]:border-border/40 [&>*]:data-[state=active]:bg-primary/15 [&>*]:data-[state=active]:border-amber-400/40 [&>*]:data-[state=active]:text-primary">
+          {/* Pipeline order: Overview â Story â Characters â Scenes â Soundtrack â Trailer â Export â Tools */}
           <TabsTrigger value="journey" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1 data-[state=active]:text-amber-400">
             <Clapperboard className="h-3 w-3 hidden sm:inline" />Journey
           </TabsTrigger>
@@ -784,7 +784,7 @@ export default function ProjectDetail() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Journey Tab — the unified filmmaker pipeline */}
+        {/* Journey Tab â the unified filmmaker pipeline */}
         <TabsContent value="journey" className="space-y-4">
           <ProjectJourneyNav
             projectId={projectId}
@@ -824,7 +824,7 @@ export default function ProjectDetail() {
                       <Film className="h-10 w-10 text-muted-foreground/30" />
                     </div>
                   )}
-                  {/* Play button overlay — show when full film or scene videos exist */}
+                  {/* Play button overlay â show when full film or scene videos exist */}
                   {(fullFilmItem || scenePlaylist.length > 0) && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
                       <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
@@ -994,7 +994,7 @@ export default function ProjectDetail() {
                       <div className="flex items-center gap-1 mt-0.5">
                         {attrs.aiGenerated && <Badge variant="secondary" className="text-[10px] px-1 py-0">AI</Badge>}
                         <p className="text-xs text-muted-foreground truncate">
-                          {[attrs.role, attrs.age || attrs.ageRange, attrs.gender].filter(Boolean).join(" · ")}
+                          {[attrs.role, attrs.age || attrs.ageRange, attrs.gender].filter(Boolean).join(" Â· ")}
                         </p>
                       </div>
                       <button
@@ -1074,15 +1074,15 @@ export default function ProjectDetail() {
 
                     {scenes && scenes.length > 0 && (
                       <span className="absolute top-2 left-2 text-[10px] text-white/80 bg-black/50 rounded px-1.5 py-0.5">
-                        {scenes.length} scenes · ~{Math.round(scenes.length * 1.5)} min est.
+                        {scenes.length} scenes Â· ~{Math.round(scenes.length * 1.5)} min est.
                       </span>
                     )}                        <p className="text-sm font-medium truncate">{scene.title || "Untitled Scene"}</p>
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" · ")}
+                        {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" Â· ")}
                       </p>
                       {isFailed && (
-                        <p className="text-[11px] text-red-400 mt-0.5">Generation failed — click Retry to regenerate this scene</p>
+                        <p className="text-[11px] text-red-400 mt-0.5">Generation failed â click Retry to regenerate this scene</p>
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
@@ -1189,7 +1189,7 @@ export default function ProjectDetail() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">{track.title}</p>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {[track.artist, track.genre, track.mood].filter(Boolean).join(" · ")}
+                        {[track.artist, track.genre, track.mood].filter(Boolean).join(" Â· ")}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
@@ -1409,7 +1409,7 @@ export default function ProjectDetail() {
                   <div>
                     <p className="text-sm font-medium">Auslan Sign Language Interpreter</p>
                     <p className="text-xs text-muted-foreground">
-                      AI-generated signing interpreter in a circle overlay — optional, requires a D-ID API key in your BYOK settings
+                      AI-generated signing interpreter in a circle overlay â optional, requires a D-ID API key in your BYOK settings
                     </p>
                   </div>
                   <Switch
@@ -1420,7 +1420,7 @@ export default function ProjectDetail() {
                   />
                 </div>
 
-                {/* Auslan position — only shown when Auslan is enabled */}
+                {/* Auslan position â only shown when Auslan is enabled */}
                 {(project as any)?.auslanEnabled && (
                   <div className="flex items-center gap-4 pl-1">
                     <Label className="text-xs text-muted-foreground shrink-0">Interpreter position</Label>
@@ -1500,7 +1500,7 @@ export default function ProjectDetail() {
         {/* Tools Tab Content */}
         <TabsContent value="tools" className="space-y-6">
 
-          {/* v6.63 — Production Spine */}
+          {/* v6.63 â Production Spine */}
           <div>
             <div className="flex items-center gap-2 mb-3">
               <div className="h-px flex-1 bg-border/40" />
@@ -1508,18 +1508,18 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/schedule`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card" onClick={() => setLocation(`/projects/${project.id}/schedule`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
                     <Calendar className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Schedule & Strip Board</p>
-                    <p className="text-xs text-muted-foreground">Shoot days · scene assignment · ordering</p>
+                    <p className="text-xs text-muted-foreground">Shoot days Â· scene assignment Â· ordering</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/day-out-of-days`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/day-out-of-days`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <ListOrdered className="h-5 w-5 text-primary" />
@@ -1530,7 +1530,7 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/call-sheets`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/call-sheets`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <FileText className="h-5 w-5 text-primary" />
@@ -1541,117 +1541,117 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/contacts`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/contacts`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Users className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Crew & Contacts</p>
-                    <p className="text-xs text-muted-foreground">Department directory · call overrides</p>
+                    <p className="text-xs text-muted-foreground">Department directory Â· call overrides</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget-tracker`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/budget-tracker`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <DollarSign className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Budget</p>
-                    <p className="text-xs text-muted-foreground">Estimate vs actual · category tracking</p>
+                    <p className="text-xs text-muted-foreground">Estimate vs actual Â· category tracking</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/activity`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/activity`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Activity className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Activity Timeline</p>
-                    <p className="text-xs text-muted-foreground">Approvals · changes · audit trail</p>
+                    <p className="text-xs text-muted-foreground">Approvals Â· changes Â· audit trail</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/collaborators`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/collaborators`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Users className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Collaborators</p>
-                    <p className="text-xs text-muted-foreground">Invite · roles · permissions</p>
+                    <p className="text-xs text-muted-foreground">Invite Â· roles Â· permissions</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/approvals`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/approvals`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <CheckCircle2 className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Approval Chain</p>
-                    <p className="text-xs text-muted-foreground">Cryptographic audit · sha256</p>
+                    <p className="text-xs text-muted-foreground">Cryptographic audit Â· sha256</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/script-import`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/script-import`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <FileUp className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Script Import</p>
-                    <p className="text-xs text-muted-foreground">Fountain · Final Draft FDX</p>
+                    <p className="text-xs text-muted-foreground">Fountain Â· Final Draft FDX</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/script-export`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/script-export`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <FileDown className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Script Export</p>
-                    <p className="text-xs text-muted-foreground">Fountain · FDX downloads</p>
+                    <p className="text-xs text-muted-foreground">Fountain Â· FDX downloads</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/calendar-feed`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/calendar-feed`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <CalendarDays className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Calendar Feed</p>
-                    <p className="text-xs text-muted-foreground">iCal · Google · Apple subscribe</p>
+                    <p className="text-xs text-muted-foreground">iCal Â· Google Â· Apple subscribe</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget-fringes`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/budget-fringes`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Calculator className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Budget Fringes</p>
-                    <p className="text-xs text-muted-foreground">Union · payroll · taxes</p>
+                    <p className="text-xs text-muted-foreground">Union Â· payroll Â· taxes</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/asset-versions`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/asset-versions`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Layers className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Asset Versions</p>
-                    <p className="text-xs text-muted-foreground">Stack · diff · revert</p>
+                    <p className="text-xs text-muted-foreground">Stack Â· diff Â· revert</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/sides`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/sides`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <FileText className="h-5 w-5 text-primary" />
@@ -1662,18 +1662,18 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/daily-report`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/daily-report`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <ListOrdered className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Daily Production Report</p>
-                    <p className="text-xs text-muted-foreground">Wrap-of-day DPR · signatures</p>
+                    <p className="text-xs text-muted-foreground">Wrap-of-day DPR Â· signatures</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/auto-recap`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/auto-recap`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <RefreshCw className="h-5 w-5 text-primary" />
@@ -1695,7 +1695,7 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/mood-board`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/mood-board`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Palette className="h-5 w-5 text-primary" />
@@ -1706,18 +1706,18 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all border-amber-500/30 bg-amber-400/5" onClick={() => setLocation(`/projects/${project.id}/pre-production`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all border-amber-500/30 bg-amber-400/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/pre-production`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-9 w-9 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                   </div>
                   <div>
                     <p className="text-sm font-medium">Director's Pre-Production Panel</p>
-                    <p className="text-xs text-muted-foreground">Vision · Locations · Vehicles · Atmosphere</p>
+                    <p className="text-xs text-muted-foreground">Vision Â· Locations Â· Vehicles Â· Atmosphere</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <MapPin className="h-5 w-5 text-primary" />
@@ -1728,7 +1728,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/shot-list`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/shot-list`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <ListOrdered className="h-5 w-5 text-primary" />
@@ -1739,7 +1739,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/ai-casting`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card" onClick={() => setLocation(`/projects/${project.id}/ai-casting`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Users2 className="h-5 w-5 text-amber-400" />
@@ -1762,7 +1762,7 @@ export default function ProjectDetail() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Card 
-              className="cursor-pointer hover:ring-1 hover:ring-violet-500/40 transition-all border-violet-500/20 col-span-full"
+              className="cursor-pointer hover:ring-1 hover:ring-violet-500/40 transition-all border-violet-500/20 col-span-full glass-card"
               onClick={() => setFullFilmDialogOpen(true)}
             >
               <CardContent className="p-4 flex items-center gap-3">
@@ -1777,7 +1777,7 @@ export default function ProjectDetail() {
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Generate all {scenes?.length || 0} scenes automatically — dialogue, cinematics, soundtrack, full assembly
+                    Generate all {scenes?.length || 0} scenes automatically â dialogue, cinematics, soundtrack, full assembly
                   </p>
                 </div>
                 <div className="text-xs text-muted-foreground text-right shrink-0">
@@ -1786,7 +1786,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <ShieldCheck className="h-5 w-5 text-primary" />
@@ -1797,7 +1797,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <MessageSquare className="h-5 w-5 text-primary" />
@@ -1808,7 +1808,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/multi-shot`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card" onClick={() => setLocation(`/projects/${project.id}/multi-shot`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Layers2 className="h-5 w-5 text-amber-400" />
@@ -1819,7 +1819,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/live-action-plate`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card" onClick={() => setLocation(`/projects/${project.id}/live-action-plate`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <VideoIcon className="h-5 w-5 text-amber-400" />
@@ -1841,18 +1841,18 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:ring-2 hover:ring-primary/60 transition-all border-primary/40 bg-amber-400/5" onClick={() => setLocation(`/projects/${project.id}/director-cut`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-primary/60 transition-all border-primary/40 bg-amber-400/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/director-cut`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0">
                   <Scissors className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-primary">Director's Cut</p>
-                  <p className="text-xs text-muted-foreground">Timeline editor — trim, reorder &amp; retake scenes</p>
+                  <p className="text-xs text-muted-foreground">Timeline editor â trim, reorder &amp; retake scenes</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-amber-400/5" onClick={() => setLocation(`/projects/${project.id}/feature-timeline`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-amber-400/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/feature-timeline`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0">
                   <Layers className="h-5 w-5 text-amber-500" />
@@ -1863,7 +1863,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Palette className="h-5 w-5 text-primary" />
@@ -1874,7 +1874,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/credits`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/credits`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Award className="h-5 w-5 text-amber-400" />
@@ -1885,40 +1885,40 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/subtitles`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/subtitles`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Languages className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">Subtitles & Translation</p>
-                  <p className="text-xs text-muted-foreground">130+ languages · AI generation & translation</p>
+                  <p className="text-xs text-muted-foreground">130+ languages Â· AI generation & translation</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/sound-effects`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/sound-effects`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Volume2 className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">Film Post-Production</p>
-                  <p className="text-xs text-muted-foreground">ADR · Foley · Score · Mix · SFX library</p>
+                  <p className="text-xs text-muted-foreground">ADR Â· Foley Â· Score Â· Mix Â· SFX library</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/visual-effects`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/visual-effects`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
                   <Sparkles className="h-5 w-5 text-purple-400" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">Visual Effects</p>
-                  <p className="text-xs text-muted-foreground">VFX library — explosions, weather, magic & more</p>
+                  <p className="text-xs text-muted-foreground">VFX library â explosions, weather, magic & more</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/nle-export`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card" onClick={() => setLocation(`/projects/${project.id}/nle-export`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Download className="h-5 w-5 text-amber-400" />
@@ -1929,7 +1929,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/vfx-suite`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card" onClick={() => setLocation(`/projects/${project.id}/vfx-suite`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Sparkle className="h-5 w-5 text-amber-400" />
@@ -1951,7 +1951,7 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:ring-2 hover:ring-blue-500/60 transition-all border-blue-500/40 bg-blue-500/5" onClick={() => setLocation(`/projects/${project.id}/trailer-studio`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-blue-500/60 transition-all border-blue-500/40 bg-blue-500/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/trailer-studio`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
                   <Film className="h-5 w-5 text-blue-400" />
@@ -1962,7 +1962,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-green-500/60 transition-all border-green-500/40 bg-green-500/5" onClick={() => setLocation(`/projects/${project.id}/tv-commercial`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-green-500/60 transition-all border-green-500/40 bg-green-500/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/tv-commercial`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
                   <Tv className="h-5 w-5 text-green-400" />
@@ -1973,7 +1973,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/poster-maker`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/poster-maker`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Megaphone className="h-5 w-5 text-primary" />
@@ -1984,7 +1984,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-pink-500/60 transition-all border-pink-500/40 bg-pink-500/5" onClick={() => setLocation(`/projects/${project.id}/social-cuts`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-pink-500/60 transition-all border-pink-500/40 bg-pink-500/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/social-cuts`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-pink-500/20 flex items-center justify-center shrink-0">
                   <Film className="h-5 w-5 text-pink-400" />
@@ -1995,7 +1995,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/brand-outreach`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/brand-outreach`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Building2 className="h-5 w-5 text-primary" />
@@ -2016,14 +2016,14 @@ export default function ProjectDetail() {
               <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Pro Studio</span>
               <div className="h-px flex-1 bg-border/40" />
             </div>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0">
                   <Globe className="h-5 w-5 text-amber-400" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-amber-400">Pro Studio Controls</p>
-                  <p className="text-xs text-muted-foreground">Style bible · Shot versions · Voice/likeness rights · C2PA provenance · Render economics</p>
+                  <p className="text-xs text-muted-foreground">Style bible Â· Shot versions Â· Voice/likeness rights Â· C2PA provenance Â· Render economics</p>
                 </div>
                 <Badge className="bg-amber-400/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
               </CardContent>
@@ -2038,22 +2038,22 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
+              <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-amber-400" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-amber-400">Pro Studio</p>
-                    <p className="text-xs text-muted-foreground">Style bible · Shot versions · Voice rights · C2PA · Render economics</p>
+                    <p className="text-xs text-muted-foreground">Style bible Â· Shot versions Â· Voice rights Â· C2PA Â· Render economics</p>
                   </div>
                   <Badge className="bg-amber-400/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-2 hover:ring-violet-500/60 transition-all border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5" onClick={() => setLocation(`/projects/${project.id}/studio-ops`)}>
+              <Card className="cursor-pointer hover:ring-2 hover:ring-violet-500/60 transition-all border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 glass-card" onClick={() => setLocation(`/projects/${project.id}/studio-ops`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-violet-500/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-violet-400" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-violet-400">Studio Operations</p>
-                    <p className="text-xs text-muted-foreground">Frame reviews · Color · Versions · Render queue · Deliverables · Clearances · Distribution · Audit · Proxies · Cuts</p>
+                    <p className="text-xs text-muted-foreground">Frame reviews Â· Color Â· Versions Â· Render queue Â· Deliverables Â· Clearances Â· Distribution Â· Audit Â· Proxies Â· Cuts</p>
                   </div>
                   <Badge className="bg-violet-500/20 text-violet-400 border-violet-500/30 text-[10px]">OPS</Badge>
                 </CardContent>
@@ -2069,7 +2069,7 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/budget`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/budget`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <DollarSign className="h-5 w-5 text-primary" />
@@ -2080,7 +2080,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <UserPlus className="h-5 w-5 text-primary" />
@@ -2091,7 +2091,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all" onClick={() => {
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card" onClick={() => {
               setDuplicateConfirmOpen(true);
             }}>
               <CardContent className="p-4 flex items-center gap-3">
@@ -2681,10 +2681,10 @@ export default function ProjectDetail() {
             
             <div className="space-y-2">
               {[
-                ['generateDialogue', 'Generate Voice Acting & Dialogue', '🎙️'],
-                ['generateSoundtrack', 'Generate AI Film Score', '🎵'],
-                ['useCharacterConsistency', 'Character Consistency (LoRA)', '👤'],
-                ['useSceneContinuity', 'Scene-to-Scene Continuity Chain', '🔗'],
+                ['generateDialogue', 'Generate Voice Acting & Dialogue', 'ðï¸'],
+                ['generateSoundtrack', 'Generate AI Film Score', 'ðµ'],
+                ['useCharacterConsistency', 'Character Consistency (LoRA)', 'ð¤'],
+                ['useSceneContinuity', 'Scene-to-Scene Continuity Chain', 'ð'],
               ].map(([key, label, emoji]) => (
                 <label key={key} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -2718,8 +2718,8 @@ export default function ProjectDetail() {
           </div>
         </DialogContent>
       </Dialog>
-      {/* Professional Media Player — scene preview */}
-      {/* Professional Media Player — scene preview */}
+      {/* Professional Media Player â scene preview */}
+      {/* Professional Media Player â scene preview */}
       {activeVideoMovie && !showFullFilm && (
         <ErrorBoundary>
           <MediaPlayer
@@ -2750,7 +2750,7 @@ export default function ProjectDetail() {
         </ErrorBoundary>
       )}
 
-      {/* Professional Media Player — full stitched film */}
+      {/* Professional Media Player â full stitched film */}
       {showFullFilm && fullFilmItem && (
         <ErrorBoundary>
           <MediaPlayer
@@ -2834,7 +2834,7 @@ export default function ProjectDetail() {
     </div>
   );
 }
-// ─── Story Editor Component ─────
+// âââ Story Editor Component âââââ
 function StoryEditor({ project, updateMutation }: { project: any; updateMutation: any }) {
   const [mainPlot, setMainPlot] = useState(project.mainPlot || "");
   const [sidePlots, setSidePlots] = useState(project.sidePlots || "");
@@ -2951,7 +2951,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Main Plot</Label>
             <Textarea
-              placeholder="Describe the main storyline in detail — the central conflict, protagonist's journey, and how events unfold..."
+              placeholder="Describe the main storyline in detail â the central conflict, protagonist's journey, and how events unfold..."
               value={mainPlot}
               onChange={(e) => mark(setMainPlot)(e.target.value)}
               className="bg-background/50 min-h-[120px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -2959,7 +2959,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Side Plots / Subplots</Label>
             <Textarea
-              placeholder="Secondary storylines — romance, rivalry, mystery, parallel journeys..."
+              placeholder="Secondary storylines â romance, rivalry, mystery, parallel journeys..."
               value={sidePlots}
               onChange={(e) => mark(setSidePlots)(e.target.value)}
               className="bg-background/50 min-h-[100px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -3000,7 +3000,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Opening Scene</Label>
             <Textarea
-              placeholder="How does the film begin? The first thing the audience sees — set the tone, introduce the world..."
+              placeholder="How does the film begin? The first thing the audience sees â set the tone, introduce the world..."
               value={openingScene}
               onChange={(e) => mark(setOpeningScene)(e.target.value)}
               className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -3008,7 +3008,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Climax</Label>
             <Textarea
-              placeholder="The peak of tension — the central conflict comes to a head. What happens? Who is involved?"
+              placeholder="The peak of tension â the central conflict comes to a head. What happens? Who is involved?"
               value={climax}
               onChange={(e) => mark(setClimax)(e.target.value)}
               className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -3037,7 +3037,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
 }
 
 /**
- * Reviews inbox — surfaces public reviewer comments left on shared
+ * Reviews inbox â surfaces public reviewer comments left on shared
  * screener links. Producers / directors see them grouped by reviewer
  * with optional scene + timecode references.
  */

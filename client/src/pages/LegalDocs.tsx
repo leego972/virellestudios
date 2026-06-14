@@ -82,7 +82,7 @@ import { useState } from "react";
         { key: "projectTitle", label: "Project Title", placeholder: "Untitled Feature Film" },
         { key: "ownerName", label: "Property Owner / Manager Name", placeholder: "John Doe" },
         { key: "propertyAddress", label: "Property Address", placeholder: "123 Main St, Los Angeles, CA 90001" },
-        { key: "shootDates", label: "Scheduled Shoot Date(s)", placeholder: "June 15–16, 2025" },
+        { key: "shootDates", label: "Scheduled Shoot Date(s)", placeholder: "June 15â16, 2025" },
         { key: "compensation", label: "Compensation (if any)", placeholder: "$500 per day / No compensation" },
       ],
       template: (d) => `LOCATION RELEASE AGREEMENT
@@ -136,7 +136,7 @@ import { useState } from "react";
         { key: "projectTitle", label: "Project Title", placeholder: "Untitled Feature Film" },
         { key: "actorName", label: "Actor Name", placeholder: "Jane Smith" },
         { key: "roleName", label: "Character / Role", placeholder: "Detective Sarah Cole" },
-        { key: "shootDates", label: "Shoot Date(s)", placeholder: "June 10–20, 2025" },
+        { key: "shootDates", label: "Shoot Date(s)", placeholder: "June 10â20, 2025" },
         { key: "compensation", label: "Compensation", placeholder: "$500/day SAG Ultra Low Budget" },
         { key: "creditPosition", label: "Screen Credit", placeholder: 'Starring / "Jane Smith as Detective Sarah Cole"' },
       ],
@@ -244,7 +244,7 @@ import { useState } from "react";
   From: ${d.yourName || "[YOUR NAME/COMPANY]"}
   To: Licensing Department, ${d.publisher || "[PUBLISHER]"}
 
-  RE: Sync Licence Request — "${d.trackTitle || "[TRACK]"}" by ${d.artist || "[ARTIST]"}
+  RE: Sync Licence Request â "${d.trackTitle || "[TRACK]"}" by ${d.artist || "[ARTIST]"}
 
   Dear Licensing Team,
 
@@ -382,7 +382,7 @@ import { useState } from "react";
                         <p className="text-xs text-muted-foreground">{t.description}</p>
                         <div className="flex items-center justify-between">
                           <Badge variant="outline" className="text-[10px]">{t.category}</Badge>
-                          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-amber-400 transition-colors" />
                         </div>
                       </CardContent>
                     </Card>
@@ -410,7 +410,7 @@ import { useState } from "react";
                       </div>
                     ))}
                     <Button className="w-full" onClick={handleGenerate} disabled={generating}>
-                      {generating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />Generating…</> : "Generate Document"}
+                      {generating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin text-amber-400" />Generatingâ¦</> : "Generate Document"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -425,7 +425,7 @@ import { useState } from "react";
                     </div>
                   </div>
                   <Card><CardContent className="p-4 glass-card"><pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed text-foreground/90 max-h-[60vh] overflow-y-auto">{selected.template(formData)}</pre></CardContent></Card>
-                  <p className="text-[10px] text-muted-foreground">⚠️ This template is provided for general informational purposes only and does not constitute legal advice. Have a licensed attorney review all documents before execution.</p>
+                  <p className="text-[10px] text-muted-foreground">â ï¸ This template is provided for general informational purposes only and does not constitute legal advice. Have a licensed attorney review all documents before execution.</p>
                 </div>
               )}
             </div>

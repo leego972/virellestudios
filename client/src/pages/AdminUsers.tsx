@@ -16,7 +16,7 @@ import {
   Zap, Calendar, UserX, UserCheck, Gift,
 } from "lucide-react";
 
-// ─── Status badge for project status ───────────────────────────────────────
+// âââ Status badge for project status âââââââââââââââââââââââââââââââââââââââ
 function ProjectStatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; className: string; icon: any }> = {
     draft:       { label: "Draft",      className: "bg-muted text-muted-foreground border-border",          icon: Clock },
@@ -47,7 +47,7 @@ export default function AdminUsers() {
   const { user: currentUser } = useAuth();
   const utils = trpc.useUtils();
 
-  // ─── Users state ───────────────────────────────────────────────────────────
+  // âââ Users state âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const usersQuery = trpc.admin.listUsers.useQuery(undefined, { retry: false });
 
   const updateRoleMutation = trpc.admin.updateUserRole.useMutation({
@@ -58,7 +58,7 @@ export default function AdminUsers() {
   const assignBetaMutation = trpc.admin.assignBetaTier.useMutation({
     onSuccess: (_, vars) => {
       utils.admin.listUsers.invalidate();
-      toast.success(`Beta tier assigned — expires in ${betaDays[vars.userId] || 90} days`);
+      toast.success(`Beta tier assigned â expires in ${betaDays[vars.userId] || 90} days`);
     },
     onError: (err) => toast.error(err.message || "Failed to assign beta tier"),
   });
@@ -72,13 +72,13 @@ export default function AdminUsers() {
   });
   const [grantAmount, setGrantAmount] = useState<Record<number, number>>({});
 
-    // ─── Beta tester provisioning ──────────────────────────────────────────────
+    // âââ Beta tester provisioning ââââââââââââââââââââââââââââââââââââââââââââââ
     const [betaProvisioning, setBetaProvisioning] = useState(false);
     const provisionBetaTesterMutation = trpc.admin.provisionBetaTester.useMutation({
     onSuccess: (data) => {
       setBetaProvisioning(false);
       if (data.created) {
-        toast.success(`Beta tester account created! Email: ${data.email} · Password: Hello123`);
+        toast.success(`Beta tester account created! Email: ${data.email} Â· Password: Hello123`);
       } else {
         toast.success(`API keys synced to existing ${data.email} account`);
       }
@@ -90,7 +90,7 @@ export default function AdminUsers() {
     },
   });
 
-  // ─── Projects state ────────────────────────────────────────────────────────
+  // âââ Projects state ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const [projectSearch, setProjectSearch] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<{ id: number; title: string } | null>(null);
   const [deleteReason, setDeleteReason] = useState("");
@@ -110,7 +110,7 @@ export default function AdminUsers() {
     onError: (err) => toast.error(err.message || "Failed to delete project"),
   });
 
-  // ─── Access guard ──────────────────────────────────────────────────────────
+  // âââ Access guard ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (currentUser?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
@@ -200,14 +200,14 @@ export default function AdminUsers() {
       </div>
 
       {/* Quick Actions */}
-        <Card className="border-amber-500/20 bg-amber-500/5">
+        <Card className="border-amber-500/20 bg-amber-500/5 glass-card">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
               <Gift className="w-4 h-4 text-amber-500" />
               Beta Tester Account
             </CardTitle>
             <CardDescription>
-              Creates <strong>tester@virelle.life</strong> / <strong>Hello123</strong> with Studio-tier access and copies your saved API keys to their account. Safe to run multiple times — re-running just syncs your latest API keys.
+              Creates <strong>tester@virelle.life</strong> / <strong>Hello123</strong> with Studio-tier access and copies your saved API keys to their account. Safe to run multiple times â re-running just syncs your latest API keys.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -217,10 +217,10 @@ export default function AdminUsers() {
               onClick={() => { setBetaProvisioning(true); provisionBetaTesterMutation.mutate(); }}
             >
               {provisionBetaTesterMutation.isPending || betaProvisioning
-                ? <><Loader2 className="w-4 h-4 animate-spin text-amber-400" /> Provisioning…</>
+                ? <><Loader2 className="w-4 h-4 animate-spin text-amber-400" /> Provisioningâ¦</>
                 : <><Zap className="w-4 h-4" /> Provision / Sync Beta Tester</>}
             </Button>
-            <p className="text-xs text-muted-foreground mt-2">Studio tier · 50,000 credits · 9,999 bonus generations · all your BYOK keys copied</p>
+            <p className="text-xs text-muted-foreground mt-2">Studio tier Â· 50,000 credits Â· 9,999 bonus generations Â· all your BYOK keys copied</p>
           </CardContent>
         </Card>
 
@@ -240,7 +240,7 @@ export default function AdminUsers() {
           </TabsList>
         </div>
 
-        {/* ─── Users Tab ─────────────────────────────────────────────────── */}
+        {/* âââ Users Tab âââââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="users" className="mt-4">
           {usersQuery.isLoading ? (
             <div className="flex items-center justify-center py-12">
@@ -289,7 +289,7 @@ export default function AdminUsers() {
                               </span>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-sm text-muted-foreground">{u.email || "—"}</td>
+                          <td className="py-3 px-4 text-sm text-muted-foreground">{u.email || "â"}</td>
                           <td className="py-3 px-4">
                             <Badge
                               variant={u.role === "admin" ? "default" : "secondary"}
@@ -311,7 +311,7 @@ export default function AdminUsers() {
                           </td>
                           <td className="py-3 px-4 text-right">
                             {u.id === currentUser?.id ? (
-                              <span className="text-xs text-muted-foreground">—</span>
+                              <span className="text-xs text-muted-foreground">â</span>
                             ) : (
                               <Select
                                 value={u.role}
@@ -345,13 +345,13 @@ export default function AdminUsers() {
           )}
         </TabsContent>
 
-        {/* ─── Projects Tab ──────────────────────────────────────────────── */}
+        {/* âââ Projects Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="projects" className="mt-4 space-y-4">
           {/* Search */}
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by title or user email…"
+              placeholder="Search by title or user emailâ¦"
               value={projectSearch}
               onChange={(e) => setProjectSearch(e.target.value)}
               className="pl-9 bg-muted/50"
@@ -399,10 +399,10 @@ export default function AdminUsers() {
                           <td className="py-3 px-4">
                             <div className="text-sm">
                               <p className="text-foreground">{p.userName || "Unknown"}</p>
-                              <p className="text-xs text-muted-foreground">{p.userEmail || "—"}</p>
+                              <p className="text-xs text-muted-foreground">{p.userEmail || "â"}</p>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-sm text-muted-foreground capitalize">{p.genre || "—"}</td>
+                          <td className="py-3 px-4 text-sm text-muted-foreground capitalize">{p.genre || "â"}</td>
                           <td className="py-3 px-4">
                             <ProjectStatusBadge status={p.status || "draft"} />
                           </td>
@@ -411,7 +411,7 @@ export default function AdminUsers() {
                             <span className="text-muted-foreground">/{Number(p.sceneCount) || 0}</span>
                           </td>
                           <td className="py-3 px-4 text-sm text-muted-foreground">
-                            {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "—"}
+                            {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "â"}
                           </td>
                           <td className="py-3 px-4 text-right">
                             <Button
@@ -440,7 +440,7 @@ export default function AdminUsers() {
             </Card>
           )}
         </TabsContent>
-        {/* ─── Beta Testers Tab ───────────────────────────────────────────── */}
+        {/* âââ Beta Testers Tab âââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="beta" className="mt-4">
           <Card className="border-amber-500/30 bg-card/80 glass-card">
             <CardHeader>
@@ -492,7 +492,7 @@ export default function AdminUsers() {
                               <span className="font-medium text-foreground text-sm">{u.name || "Unnamed"}</span>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-sm text-muted-foreground">{u.email || "—"}</td>
+                          <td className="py-3 px-4 text-sm text-muted-foreground">{u.email || "â"}</td>
                           <td className="py-3 px-4">
                             {isBeta ? (
                               <Badge variant="outline" className={`text-xs ${isExpired ? "bg-red-500/10 text-red-400 border-red-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"}`}>
@@ -516,7 +516,7 @@ export default function AdminUsers() {
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-muted-foreground text-xs">—</span>
+                              <span className="text-muted-foreground text-xs">â</span>
                             )}
                           </td>
                           <td className="py-3 px-4">
@@ -593,7 +593,7 @@ export default function AdminUsers() {
         </TabsContent>
       </Tabs>
 
-      {/* ─── Delete Confirmation Dialog ──────────────────────────────────── */}
+      {/* âââ Delete Confirmation Dialog ââââââââââââââââââââââââââââââââââââ */}
       <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) { setDeleteTarget(null); setDeleteReason(""); } }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -610,7 +610,7 @@ export default function AdminUsers() {
             <div>
               <label className="text-sm font-medium text-muted-foreground">Reason (optional)</label>
               <Input
-                placeholder="e.g. Policy violation, test content, duplicate…"
+                placeholder="e.g. Policy violation, test content, duplicateâ¦"
                 value={deleteReason}
                 onChange={(e) => setDeleteReason(e.target.value)}
                 className="mt-1 bg-muted/50"
@@ -630,7 +630,7 @@ export default function AdminUsers() {
               }}
             >
               {adminDeleteMutation.isPending ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> Deleting…</>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin text-amber-400" /> Deletingâ¦</>
               ) : (
                 <><Trash2 className="w-4 h-4 mr-2" /> Delete Permanently</>
               )}

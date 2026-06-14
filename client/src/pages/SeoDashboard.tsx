@@ -1,5 +1,5 @@
 /**
- * SEO Dashboard — VirÉlle Studios
+ * SEO Dashboard â VirÃlle Studios
  *
  * Full-featured SEO management interface:
  *  - Live SEO health score and keyword rankings
@@ -30,7 +30,7 @@ import {
   ExternalLink, Copy, Hash, BookOpen, Clock,
 } from "lucide-react";
 
-// ─── Score Ring ────────────────────────────────────────────────────────────
+// âââ Score Ring ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function ScoreRing({ score, size = 80 }: { score: number; size?: number }) {
   const radius = (size - 12) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -55,7 +55,7 @@ function ScoreRing({ score, size = 80 }: { score: number; size?: number }) {
   );
 }
 
-// ─── Metric Card ───────────────────────────────────────────────────────────
+// âââ Metric Card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   icon: React.ReactNode;
   label: string;
@@ -77,7 +77,7 @@ function MetricCard({ icon, label, value, sub, color = "text-amber-400" }: {
   );
 }
 
-// ─── Keyword Row ───────────────────────────────────────────────────────────
+// âââ Keyword Row âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function KeywordRow({ keyword }: { keyword: any }) {
   const difficultyColor = keyword.difficulty <= 30 ? "text-emerald-400" : keyword.difficulty <= 60 ? "text-yellow-400" : "text-red-400";
   const volumeColor = keyword.searchVolume >= 1000 ? "text-emerald-400" : keyword.searchVolume >= 100 ? "text-yellow-400" : "text-zinc-400";
@@ -92,11 +92,11 @@ function KeywordRow({ keyword }: { keyword: any }) {
       </div>
       <div className="flex items-center gap-4 text-xs flex-shrink-0">
         <div className="text-right">
-          <p className={volumeColor}>{keyword.searchVolume?.toLocaleString() ?? "—"}</p>
+          <p className={volumeColor}>{keyword.searchVolume?.toLocaleString() ?? "â"}</p>
           <p className="text-muted-foreground">vol/mo</p>
         </div>
         <div className="text-right">
-          <p className={difficultyColor}>{keyword.difficulty ?? "—"}/100</p>
+          <p className={difficultyColor}>{keyword.difficulty ?? "â"}/100</p>
           <p className="text-muted-foreground">difficulty</p>
         </div>
         {keyword.currentRank && (
@@ -110,7 +110,7 @@ function KeywordRow({ keyword }: { keyword: any }) {
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────
+// âââ Main Component ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function SeoDashboard() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
@@ -124,7 +124,7 @@ export default function SeoDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [killSwitchEnabled, setKillSwitchEnabled] = useState(false);
 
-  // ─── Queries ─────────────────────────────────────────────────────────────
+  // âââ Queries âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const healthQuery = trpc.seo.getHealthScore.useQuery(undefined, { refetchInterval: 30000 });
   const keywordsQuery = trpc.seo.getKeywords.useQuery();
   const metaQuery = trpc.seo.getMetaOptimizations.useQuery();
@@ -137,10 +137,10 @@ export default function SeoDashboard() {
   const eventLogQuery = trpc.seo.getEventLog.useQuery({ limit: 30 });
   const statusQuery = trpc.seo.getStatus.useQuery();
 
-  // ─── Mutations ────────────────────────────────────────────────────────────
+  // âââ Mutations ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   const runOptimizationMutation = trpc.seo.runOptimization.useMutation({
     onSuccess: () => {
-      toast.success("SEO optimisation complete — all meta tags, structured data, and sitemaps updated");
+      toast.success("SEO optimisation complete â all meta tags, structured data, and sitemaps updated");
       utils.seo.getHealthScore.invalidate();
       utils.seo.getReport.invalidate();
       utils.seo.getMetaOptimizations.invalidate();
@@ -151,7 +151,7 @@ export default function SeoDashboard() {
 
   const submitIndexNowMutation = trpc.seo.submitIndexNow.useMutation({
     onSuccess: (result) => {
-      toast.success(`IndexNow submitted — ${(result as any).urlsSubmitted ?? 0} URLs sent to search engines`);
+      toast.success(`IndexNow submitted â ${(result as any).urlsSubmitted ?? 0} URLs sent to search engines`);
     },
     onError: (err) => toast.error(err.message || "IndexNow submission failed"),
   });
@@ -159,10 +159,10 @@ export default function SeoDashboard() {
   const killSwitchMutation = trpc.seo.killSwitch.useMutation({
     onSuccess: (result) => {
       if ((result as any).killed) {
-        toast.warning("SEO kill switch activated — all SEO features disabled");
+        toast.warning("SEO kill switch activated â all SEO features disabled");
         setKillSwitchEnabled(true);
       } else {
-        toast.success("SEO kill switch deactivated — SEO features restored");
+        toast.success("SEO kill switch deactivated â SEO features restored");
         setKillSwitchEnabled(false);
       }
       utils.seo.getStatus.invalidate();
@@ -170,7 +170,7 @@ export default function SeoDashboard() {
     onError: (err) => toast.error(err.message || "Kill switch operation failed"),
   });
 
-  // ─── Access Guard ─────────────────────────────────────────────────────────
+  // âââ Access Guard âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   if (user?.role !== "admin") {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
@@ -195,7 +195,7 @@ export default function SeoDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* ─── Header ──────────────────────────────────────────────────────── */}
+      {/* âââ Header ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
@@ -203,7 +203,7 @@ export default function SeoDashboard() {
             SEO Dashboard
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Autonomous SEO optimisation, keyword tracking, and search visibility for VirÉlle Studios
+            Autonomous SEO optimisation, keyword tracking, and search visibility for VirÃlle Studios
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -238,7 +238,7 @@ export default function SeoDashboard() {
         </div>
       </div>
 
-      {/* ─── KPI Row ─────────────────────────────────────────────────────── */}
+      {/* âââ KPI Row âââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Health Score */}
         <Card className="border-border/50 bg-card/80 glass-card">
@@ -278,7 +278,7 @@ export default function SeoDashboard() {
         />
       </div>
 
-      {/* ─── Tabs ────────────────────────────────────────────────────────── */}
+      {/* âââ Tabs ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-card/50 border border-border/50">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -288,7 +288,7 @@ export default function SeoDashboard() {
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
-        {/* ─── Overview Tab ──────────────────────────────────────────────── */}
+        {/* âââ Overview Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="overview" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* SEO Report Summary */}
@@ -451,7 +451,7 @@ export default function SeoDashboard() {
           </Card>
         </TabsContent>
 
-        {/* ─── Keywords Tab ──────────────────────────────────────────────── */}
+        {/* âââ Keywords Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="keywords" className="space-y-4 mt-4">
           <Card className="border-border/50 bg-card/80 glass-card">
             <CardHeader className="pb-3">
@@ -460,7 +460,7 @@ export default function SeoDashboard() {
                 Keyword Rankings
               </CardTitle>
               <CardDescription>
-                Target keywords for VirÉlle Studios — AI filmmaking and cinematic production
+                Target keywords for VirÃlle Studios â AI filmmaking and cinematic production
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -527,7 +527,7 @@ export default function SeoDashboard() {
           )}
         </TabsContent>
 
-        {/* ─── Technical Tab ─────────────────────────────────────────────── */}
+        {/* âââ Technical Tab âââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="technical" className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Structured Data */}
@@ -620,7 +620,7 @@ export default function SeoDashboard() {
                   {(internalLinksQuery.data as any)?.suggestedLinks?.map((link: any, i: number) => (
                     <div key={i} className="flex items-center gap-2 text-xs py-1 border-b border-border/20 last:border-0">
                       <span className="text-blue-400 truncate flex-1">{link.from || link.source}</span>
-                      <span className="text-muted-foreground">→</span>
+                      <span className="text-muted-foreground">â</span>
                       <span className="text-emerald-400 truncate flex-1">{link.to || link.target}</span>
                       {link.anchorText && (
                         <span className="text-zinc-500 truncate max-w-[120px]">"{link.anchorText}"</span>
@@ -665,7 +665,7 @@ export default function SeoDashboard() {
           </Card>
         </TabsContent>
 
-        {/* ─── Content Tab ───────────────────────────────────────────────── */}
+        {/* âââ Content Tab âââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="content" className="space-y-4 mt-4">
           {/* SEO Event Log */}
           <Card className="border-border/50 bg-card/80 glass-card">
@@ -701,7 +701,7 @@ export default function SeoDashboard() {
                       <span className="text-xs text-muted-foreground flex-shrink-0">
                         {event.timestamp || event.createdAt
                           ? new Date(event.timestamp || event.createdAt).toLocaleString()
-                          : "—"
+                          : "â"
                         }
                       </span>
                     </div>
@@ -721,15 +721,15 @@ export default function SeoDashboard() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 gradient-text-gold">
                 <Globe className="w-4 h-4 text-amber-400" />
-                IndexNow — Instant Search Engine Notification
+                IndexNow â Instant Search Engine Notification
               </CardTitle>
               <CardDescription>
-                Submit all VirÉlle pages to Bing, Yandex, and other IndexNow-compatible search engines instantly
+                Submit all VirÃlle pages to Bing, Yandex, and other IndexNow-compatible search engines instantly
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="bg-background/50 rounded-lg p-4 text-sm text-muted-foreground">
-                <p>IndexNow allows instant notification to search engines when content is updated. VirÉlle Studios uses this to ensure new film features, blog posts, and landing pages are indexed within hours rather than weeks.</p>
+                <p>IndexNow allows instant notification to search engines when content is updated. VirÃlle Studios uses this to ensure new film features, blog posts, and landing pages are indexed within hours rather than weeks.</p>
               </div>
               <Button
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white"
@@ -746,7 +746,7 @@ export default function SeoDashboard() {
           </Card>
         </TabsContent>
 
-        {/* ─── Settings Tab ──────────────────────────────────────────────── */}
+        {/* âââ Settings Tab ââââââââââââââââââââââââââââââââââââââââââââââââ */}
         <TabsContent value="settings" className="space-y-4 mt-4">
           {/* SEO Engine Status */}
           <Card className="border-border/50 bg-card/80 glass-card">
@@ -810,7 +810,7 @@ export default function SeoDashboard() {
           </Card>
 
           {/* Kill Switch */}
-          <Card className="border-red-500/20 bg-red-500/5">
+          <Card className="border-red-500/20 bg-red-500/5 glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2 text-red-400 gradient-text-gold">
                 <AlertTriangle className="w-4 h-4" />
@@ -853,7 +853,7 @@ export default function SeoDashboard() {
   );
 }
 
-// ─── Missing imports ───────────────────────────────────────────────────────
+// âââ Missing imports âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function Share2({ className }: { className?: string }) {
   return (
     <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>

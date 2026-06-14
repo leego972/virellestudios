@@ -67,7 +67,7 @@ const TYPE_COLORS: Record<MovieType, string> = {
 };
 
 function formatDuration(seconds: number | null | undefined): string {
-  if (!seconds) return "—";
+  if (!seconds) return "â";
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
@@ -77,7 +77,7 @@ function formatDuration(seconds: number | null | undefined): string {
 }
 
 function formatFileSize(bytes: number | null | undefined): string {
-  if (!bytes) return "—";
+  if (!bytes) return "â";
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   if (bytes < 1024 * 1024 * 1024)
@@ -106,7 +106,7 @@ type MovieItem = {
   updatedAt: Date;
 };
 
-// ─── YouTube Export Modal ────────────────────────────────────────────────────
+// âââ YouTube Export Modal ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function YouTubeExportModal({
   movie,
   open,
@@ -146,8 +146,8 @@ function YouTubeExportModal({
     setTitle(movie.title);
     setDescription(
       movie.description
-        ? `${movie.description}\n\nCreated with Virelle Studios — AI-powered cinema.\nhttps://virelle.life`
-        : `Created with Virelle Studios — AI-powered cinema.\nhttps://virelle.life`
+        ? `${movie.description}\n\nCreated with Virelle Studios â AI-powered cinema.\nhttps://virelle.life`
+        : `Created with Virelle Studios â AI-powered cinema.\nhttps://virelle.life`
     );
   }
 
@@ -234,7 +234,7 @@ function YouTubeExportModal({
               }
             >
               <PlayCircle className="h-4 w-4" />
-              {exportMutation.isPending ? "Uploading…" : "Upload to YouTube"}
+              {exportMutation.isPending ? "Uploadingâ¦" : "Upload to YouTube"}
             </Button>
           )}
         </DialogFooter>
@@ -454,7 +454,7 @@ export default function Movies() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 sm:hidden text-primary hover:text-primary"
+                className="h-8 w-8 sm:hidden text-primary hover:text-amber-400"
                 onClick={(e) => {
                   e.stopPropagation();
                   playMovie(movie.id, movie.type);
@@ -642,7 +642,7 @@ export default function Movies() {
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
                 {folderContents.length} item
-                {folderContents.length !== 1 ? "s" : ""} —{" "}
+                {folderContents.length !== 1 ? "s" : ""} â{" "}
                 {folderContents.filter((m) => m.type === "scene").length} scenes
                 {folderContents.filter((m) => m.type === "trailer").length > 0 &&
                   `, ${folderContents.filter((m) => m.type === "trailer").length} trailer${folderContents.filter((m) => m.type === "trailer").length !== 1 ? "s" : ""}`}
