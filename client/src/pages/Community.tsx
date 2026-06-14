@@ -1,1 +1,247 @@
-aW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CiAgaW1wb3J0IHsgdXNlTG9jYXRpb24gfSBmcm9tICJ3b3V0ZXIiOwogIGltcG9ydCB7IE1lc3NhZ2VTcXVhcmUsIFVzZXJzLCBTdGFyLCBDYWxlbmRhciwgVHJlbmRpbmdVcCwgUGx1cywgSGVhcnQsIFNoYXJlMiwgQm9va09wZW4sIEFycm93UmlnaHQsIEV4dGVybmFsTGluaywgTGlnaHRidWxiLCBGaWxtLCBBd2FyZCwgTWVnYXBob25lLCBYIH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKICBpbXBvcnQgeyBCdXR0b24gfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvYnV0dG9uIjsKICBpbXBvcnQgeyBDYXJkLCBDYXJkQ29udGVudCwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwogIGltcG9ydCB7IElucHV0IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2lucHV0IjsKICBpbXBvcnQgeyBCYWRnZSB9IGZyb20gIkAvY29tcG9uZW50cy91aS9iYWRnZSI7CiAgaW1wb3J0IHsgVGFicywgVGFic0NvbnRlbnQsIFRhYnNMaXN0LCBUYWJzVHJpZ2dlciB9IGZyb20gIkAvY29tcG9uZW50cy91aS90YWJzIjsKICBpbXBvcnQgeyBBdmF0YXIsIEF2YXRhckZhbGxiYWNrIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2F2YXRhciI7CiAgaW1wb3J0IHsgU2VwYXJhdG9yIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL3NlcGFyYXRvciI7CiAgaW1wb3J0IHsgRGlhbG9nLCBEaWFsb2dDb250ZW50LCBEaWFsb2dIZWFkZXIsIERpYWxvZ1RpdGxlLCBEaWFsb2dGb290ZXIgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvZGlhbG9nIjsKICBpbXBvcnQgeyBMYWJlbCB9IGZyb20gIkAvY29tcG9uZW50cy91aS9sYWJlbCI7CiAgaW1wb3J0IHsgVGV4dGFyZWEgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvdGV4dGFyZWEiOwogIGltcG9ydCB7IFNlbGVjdCwgU2VsZWN0Q29udGVudCwgU2VsZWN0SXRlbSwgU2VsZWN0VHJpZ2dlciwgU2VsZWN0VmFsdWUgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvc2VsZWN0IjsKICBpbXBvcnQgeyB0b2FzdCB9IGZyb20gInNvbm5lciI7CiAgaW1wb3J0IHsgdXNlQXV0aCB9IGZyb20gIkAvX2NvcmUvaG9va3MvdXNlQXV0aCI7CgogIGNvbnN0IElOSVRJQUxfUE9TVFMgPSBbCiAgICB7IGlkOiAxLCBhdXRob3I6ICJTb2ZpYSBSLiIsIGF2YXRhcjogIlNSIiwgcm9sZTogIkRpcmVjdG9yIiwgdGl0bGU6ICJXaGF0J3MgeW91ciBjdXJyZW50IHNjcmlwdC10by1zY3JlZW4gd29ya2Zsb3c/IiwgYm9keTogIkkndmUgYmVlbiBleHBlcmltZW50aW5nIHdpdGggZ29pbmcgZGlyZWN0bHkgZnJvbSBzY3JpcHQgY292ZXJhZ2UgdG8gc3Rvcnlib2FyZCB3aXRob3V0IGEgZnVsbCBicmVha2Rvd24uIEN1cmlvdXMgd2hhdCBwcm9jZXNzIG90aGVycyBhcmUgZm9sbG93aW5nLiBEbyB5b3UgYnJlYWtkb3duIGZpcnN0IG9yIHN0b3J5Ym9hcmQgZmlyc3Q/IiwgY2F0ZWdvcnk6ICJDcmFmdCIsIGxpa2VzOiA0NywgcmVwbGllczogMjMsIHRpbWU6ICIyaCBhZ28iLCBwaW5uZWQ6IHRydWUgfSwKICAgIHsgaWQ6IDIsIGF1dGhvcjogIk1hcmN1cyBULiIsIGF2YXRhcjogIk1UIiwgcm9sZTogIkRQIiwgdGl0bGU6ICJNaXJyb3JsZXNzIGNhbWVyYXMgZm9yIGxvdy1idWRnZXQgZmVhdHVyZXMgaW4gMjAyNSDigJQgd2hpY2ggb25lIHdpbnM/IiwgYm9keTogIlJ1bm5pbmcgYSB0ZXN0IG9uIFNvbnkgRlgzLCBDYW5vbiBSNUMsIGFuZCBCbGFja21hZ2ljIDZLLiBIYXBweSB0byBzaGFyZSBmb290YWdlIHN0aWxscyBpZiBhbnlvbmUgd2FudHMgdG8gY29tcGFyZS4gVGhlIGxvdy1saWdodCBkaWZmZXJlbmNlIGlzIG1hc3NpdmUuIiwgY2F0ZWdvcnk6ICJHZWFyIiwgbGlrZXM6IDMxLCByZXBsaWVzOiAxOCwgdGltZTogIjVoIGFnbyIsIHBpbm5lZDogZmFsc2UgfSwKICAgIHsgaWQ6IDMsIGF1dGhvcjogIkFueWEgSy4iLCBhdmF0YXI6ICJBSyIsIHJvbGU6ICJXcml0ZXIvRGlyZWN0b3IiLCB0aXRsZTogIkkgZ290IGludG8gU3VuZGFuY2Ugb24gbXkgM3JkIGZlYXR1cmUg4oCUIGhlcmUncyB3aGF0IGNoYW5nZWQiLCBib2R5OiAiTm90IGdlYXIuIE5vdCBidWRnZXQuIFRoZSBvbmUgdGhpbmcgdGhhdCBtYWRlIHRoZSBkaWZmZXJlbmNlIHdhcyBoYXZpbmcgYSBjb21wbGV0ZSBzdG9yeSBiZWZvcmUgc3RhcnRpbmcgdG8gc2hvb3QuIERldGFpbGVkIHdyaXRlLXVwIGluIHRoZSBjb21tZW50cy4iLCBjYXRlZ29yeTogIkZlc3RpdmFscyIsIGxpa2VzOiAyMDMsIHJlcGxpZXM6IDY3LCB0aW1lOiAiMWQgYWdvIiwgcGlubmVkOiBmYWxzZSB9LAogICAgeyBpZDogNCwgYXV0aG9yOiAiSmFtZXMgTy4iLCBhdmF0YXI6ICJKTyIsIHJvbGU6ICJQcm9kdWNlciIsIHRpdGxlOiAiVGF4IGluY2VudGl2ZSBjb21wYXJpc29uOiBHZW9yZ2lhIHZzLiBOZXcgTWV4aWNvIOKAlCB3aGljaCBpcyBlYXNpZXIgdG8gcXVhbGlmeT8iLCBib2R5OiAiSnVzdCBjYW1lIG9mZiBhIHByb2R1Y3Rpb24gaW4gR2VvcmdpYSAoMjglIGNyZWRpdCkgYW5kIGNvbnNpZGVyaW5nIE5NIGZvciBuZXh0IHByb2plY3QuIFRoZSBwYXBlcndvcmsgaW4gR2VvcmdpYSB3YXMgaW50ZW5zZS4gQW55b25lIGRvbmUgYm90aD8iLCBjYXRlZ29yeTogIkZpbmFuY2UiLCBsaWtlczogMjksIHJlcGxpZXM6IDE0LCB0aW1lOiAiMWQgYWdvIiwgcGlubmVkOiBmYWxzZSB9LAogICAgeyBpZDogNSwgYXV0aG9yOiAiUHJpeWEgTS4iLCBhdmF0YXI6ICJQTSIsIHJvbGU6ICJDb21wb3NlciIsIHRpdGxlOiAiQUktYXNzaXN0ZWQgc2NvcmluZzogbGVnaXRpbWF0ZSB0b29sIG9yIGNydXRjaD8iLCBib2R5OiAiSSd2ZSBiZWVuIHVzaW5nIEFJIHRvIGdlbmVyYXRlIGZpcnN0LXBhc3Mgc2tldGNoZXMgZm9yIHNjZW5lcyBhbmQgdGhlbiByZWNvbXBvc2luZyBmcm9tIHRoZXJlLiBEaXJlY3RvcnMgbG92ZSB0aGUgdHVybmFyb3VuZCBzcGVlZC4gVGhvdWdodHMgZnJvbSB0aGUgY29tbXVuaXR5PyIsIGNhdGVnb3J5OiAiTXVzaWMiLCBsaWtlczogODgsIHJlcGxpZXM6IDQ0LCB0aW1lOiAiMmQgYWdvIiwgcGlubmVkOiBmYWxzZSB9LAogICAgeyBpZDogNiwgYXV0aG9yOiAiRGllZ28gRi4iLCBhdmF0YXI6ICJERiIsIHJvbGU6ICJFZGl0b3IiLCB0aXRsZTogIlJlcXVlc3Q6IGZlZWRiYWNrIG9uIG15IHNob3J0IGZpbG0gdHJhaWxlciBjdXQgKDIgbWluKSIsIGJvZHk6ICJGaW5pc2hlZCBteSBmaXJzdCBuYXJyYXRpdmUgc2hvcnQg4oCUIGEgMTItbWludXRlIHRocmlsbGVyLiBXb3VsZCBsb3ZlIGV5ZXMgb24gdGhlIHRyYWlsZXIgY3V0IGJlZm9yZSBJIHN1Ym1pdCB0byBmZXN0aXZhbHMuIExpbmsgaW4gY29tbWVudHMuIiwgY2F0ZWdvcnk6ICJGZWVkYmFjayIsIGxpa2VzOiAxMiwgcmVwbGllczogOSwgdGltZTogIjNkIGFnbyIsIHBpbm5lZDogZmFsc2UgfSwKICBdOwoKICBjb25zdCBFVkVOVFMgPSBbCiAgICB7IHRpdGxlOiAiU3VuZGFuY2UgRmlsbSBGZXN0aXZhbCIsIGRhdGU6ICJKYW4gMjPigJNGZWIgMiwgMjAyNiIsIGxvY2F0aW9uOiAiUGFyayBDaXR5LCBVdGFoIiwgdHlwZTogIkZlc3RpdmFsIiwgdXJsOiAiaHR0cHM6Ly9zdW5kYW5jZS5vcmciIH0sCiAgICB7IHRpdGxlOiAiQmVybGluIEludGVybmF0aW9uYWwgRmlsbSBGZXN0aXZhbCIsIGRhdGU6ICJGZWIgMTPigJMyMywgMjAyNiIsIGxvY2F0aW9uOiAiQmVybGluLCBHZXJtYW55IiwgdHlwZTogIkZlc3RpdmFsIiwgdXJsOiAiaHR0cHM6Ly9iZXJsaW5hbGUuZGUiIH0sCiAgICB7IHRpdGxlOiAiSG90IERvY3MgSW50ZXJuYXRpb25hbCBEb2N1bWVudGFyeSBGZXN0aXZhbCIsIGRhdGU6ICJNYXkgMeKAkzExLCAyMDI2IiwgbG9jYXRpb246ICJUb3JvbnRvLCBDYW5hZGEiLCB0eXBlOiAiRmVzdGl2YWwiLCB1cmw6ICJodHRwczovL2hvdGRvY3MuY2EiIH0sCiAgICB7IHRpdGxlOiAiQ2FubmVzIEZpbG0gTWFya2V0IChNYXJjaMOpIGR1IEZpbG0pIiwgZGF0ZTogIk1heSAxM+KAkzI0LCAyMDI2IiwgbG9jYXRpb246ICJDYW5uZXMsIEZyYW5jZSIsIHR5cGU6ICJNYXJrZXQiLCB1cmw6ICJodHRwczovL21hcmNoZWR1ZmlsbS5jb20iIH0sCiAgICB7IHRpdGxlOiAiQUZNIOKAlCBBbWVyaWNhbiBGaWxtIE1hcmtldCIsIGRhdGU6ICJOb3YgNeKAkzEwLCAyMDI1IiwgbG9jYXRpb246ICJMYXMgVmVnYXMsIE5WIiwgdHlwZTogIk1hcmtldCIsIHVybDogImh0dHBzOi8vYW1lcmljYW5maWxtbWFya2V0LmNvbSIgfSwKICAgIHsgdGl0bGU6ICJTWFNXIEZpbG0gJiBUViBGZXN0aXZhbCIsIGRhdGU6ICJNYXIgNuKAkzE1LCAyMDI2IiwgbG9jYXRpb246ICJBdXN0aW4sIFRleGFzIiwgdHlwZTogIkZlc3RpdmFsIiwgdXJsOiAiaHR0cHM6Ly9zeHN3LmNvbS9maWxtIiB9LAogIF07CgogIGNvbnN0IFJFU09VUkNFUyA9IFsKICAgIHsgdGl0bGU6ICJObyBGaWxtIFNjaG9vbCIsIGRlc2NyaXB0aW9uOiAiRGFpbHkgZmlsbW1ha2luZyBuZXdzLCB0dXRvcmlhbHMsIGFuZCBnZWFyIHJldmlld3MgZnJvbSB3b3JraW5nIHByb2Zlc3Npb25hbHMuIiwgdXJsOiAiaHR0cHM6Ly9ub2ZpbG1zY2hvb2wuY29tIiwgY2F0ZWdvcnk6ICJFZHVjYXRpb24iIH0sCiAgICB7IHRpdGxlOiAiU3RhZ2UgMzIiLCBkZXNjcmlwdGlvbjogIlRoZSB3b3JsZCdzIGxhcmdlc3Qgc29jaWFsIG5ldHdvcmsgZm9yIGZpbG0sIFRWLCBhbmQgdGhlYXRyZSBjcmVhdGl2ZXMuIiwgdXJsOiAiaHR0cHM6Ly9zdGFnZTMyLmNvbSIsIGNhdGVnb3J5OiAiTmV0d29ya2luZyIgfSwKICAgIHsgdGl0bGU6ICJGaWxtRnJlZXdheSIsIGRlc2NyaXB0aW9uOiAiU3VibWl0IHRvIGZpbG0gZmVzdGl2YWxzLCBzY3JlZW5wbGF5IGNvbXBldGl0aW9ucywgYW5kIGdyYW50cyB3b3JsZHdpZGUuIiwgdXJsOiAiaHR0cHM6Ly9maWxtZnJlZXdheS5jb20iLCBjYXRlZ29yeTogIkZlc3RpdmFscyIgfSwKICAgIHsgdGl0bGU6ICJUaGUgQmxhY2sgTGlzdCIsIGRlc2NyaXB0aW9uOiAiU2NyaXB0IGhvc3RpbmcsIGV2YWx1YXRpb25zLCBhbmQgY29ubmVjdGlvbnMgdG8gdGhlIGluZHVzdHJ5J3MgdG9wIGV4ZWN1dGl2ZXMuIiwgdXJsOiAiaHR0cHM6Ly9ibGNrbHN0LmNvbSIsIGNhdGVnb3J5OiAiU2NyZWVud3JpdGluZyIgfSwKICAgIHsgdGl0bGU6ICJDb3ZlcmZseSIsIGRlc2NyaXB0aW9uOiAiU2NyZWVud3JpdGluZyBjb21wZXRpdGlvbnMgYW5kIGZlbGxvd3NoaXBzIGFnZ3JlZ2F0b3Igd2l0aCByYW5raW5nIHN5c3RlbS4iLCB1cmw6ICJodHRwczovL2NvdmVyZmx5LmNvbSIsIGNhdGVnb3J5OiAiU2NyZWVud3JpdGluZyIgfSwKICAgIHsgdGl0bGU6ICJXcmFwYm9vayIsIGRlc2NyaXB0aW9uOiAiUGF5cm9sbCwgaW5zdXJhbmNlLCBhbmQgZmluYW5jZSB0b29scyBidWlsdCBmb3IgZmlsbSBhbmQgVFYgcHJvZHVjdGlvbnMuIiwgdXJsOiAiaHR0cHM6Ly93cmFwYm9vay5jb20iLCBjYXRlZ29yeTogIlByb2R1Y3Rpb24iIH0sCiAgICB7IHRpdGxlOiAiQmFja3N0YWdlIiwgZGVzY3JpcHRpb246ICJDYXN0aW5nIHBsYXRmb3JtIHdoZXJlIHJlYWwgYWN0b3JzIHNlYXJjaCBmb3Igcm9sZXMgYW5kIHN1Ym1pdCBzZWxmLXRhcGVzLiIsIHVybDogImh0dHBzOi8vYmFja3N0YWdlLmNvbSIsIGNhdGVnb3J5OiAiQ2FzdGluZyIgfSwKICAgIHsgdGl0bGU6ICJBY3RvcnMgQWNjZXNzIiwgZGVzY3JpcHRpb246ICJCcmVha2Rvd24gU2VydmljZXMgcGxhdGZvcm0gZm9yIHN1Ym1pdHRpbmcgY2FzdGluZ3MgdG8gdGFsZW50IGFnZW50cy4iLCB1cmw6ICJodHRwczovL2FjdG9yc2FjY2Vzcy5jb20iLCBjYXRlZ29yeTogIkNhc3RpbmciIH0sCiAgICB7IHRpdGxlOiAiTXVzaWMgQmVkIiwgZGVzY3JpcHRpb246ICJQcmVtaXVtIGxpY2Vuc2VkIG11c2ljIGZvciBmaWxtIGFuZCBjb21tZXJjaWFsIHN5bmMgdXNlLiIsIHVybDogImh0dHBzOi8vbXVzaWNiZWQuY29tIiwgY2F0ZWdvcnk6ICJNdXNpYyIgfSwKICAgIHsgdGl0bGU6ICJBcnRsaXN0IiwgZGVzY3JpcHRpb246ICJVbmxpbWl0ZWQgYW5udWFsIG11c2ljIGxpY2VuY2UgZm9yIG9ubGluZSwgZmlsbSwgYW5kIHNvY2lhbCBkaXN0cmlidXRpb24uIiwgdXJsOiAiaHR0cHM6Ly9hcnRsaXN0LmlvIiwgY2F0ZWdvcnk6ICJNdXNpYyIgfSwKICAgIHsgdGl0bGU6ICJTb3VuZGx5IiwgZGVzY3JpcHRpb246ICJQcm9mZXNzaW9uYWwgc291bmQgZWZmZWN0cyBsaWJyYXJ5IHVzZWQgYnkgbWFqb3Igc3R1ZGlvcy4iLCB1cmw6ICJodHRwczovL2dldHNvdW5kbHkuY29tIiwgY2F0ZWdvcnk6ICJTb3VuZCIgfSwKICAgIHsgdGl0bGU6ICJJbmNlbnRpZnkiLCBkZXNjcmlwdGlvbjogIkZpbG0gcHJvZHVjdGlvbiB0YXggaW5jZW50aXZlIGNhbGN1bGF0b3IgYW5kIGluY2VudGl2ZSBjb21wYXJpc29uIHRvb2wuIiwgdXJsOiAiaHR0cHM6Ly9pbmNlbnRpZnkuaW8iLCBjYXRlZ29yeTogIkZpbmFuY2UiIH0sCiAgXTsKCiAgY29uc3QgUE9TVF9DQVRFR09SSUVTID0gWyJDcmFmdCIsICJHZWFyIiwgIkZlc3RpdmFscyIsICJGaW5hbmNlIiwgIk11c2ljIiwgIkZlZWRiYWNrIiwgIkdlbmVyYWwiXTsKCiAgY29uc3QgQ0FURUdPUllfQ09MT1JTOiBSZWNvcmQ8c3RyaW5nLCBzdHJpbmc+ID0gewogICAgQ3JhZnQ6ICJiZy12aW9sZXQtNTAwLzE1IHRleHQtdmlvbGV0LTUwMCIsIEdlYXI6ICJiZy1ibHVlLTUwMC8xNSB0ZXh0LWJsdWUtNTAwIiwgRmVzdGl2YWxzOiAiYmctYW1iZXItNTAwLzE1IHRleHQtYW1iZXItNTAwIiwKICAgIEZpbmFuY2U6ICJiZy1ncmVlbi01MDAvMTUgdGV4dC1ncmVlbi01MDAiLCBNdXNpYzogImJnLXBpbmstNTAwLzE1IHRleHQtcGluay01MDAiLCBGZWVkYmFjazogImJnLXByaW1hcnkvMTUgdGV4dC1wcmltYXJ5IiwKICAgIEdlbmVyYWw6ICJiZy1tdXRlZCB0ZXh0LW11dGVkLWZvcmVncm91bmQiLAogIH07CgogIGV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIENvbW11bml0eSgpIHsKICAgIGNvbnN0IFssIHNldExvY2F0aW9uXSA9IHVzZUxvY2F0aW9uKCk7CiAgICBjb25zdCB7IHVzZXIgfSA9IHVzZUF1dGgoKTsKICAgIGNvbnN0IFtwb3N0cywgc2V0UG9zdHNdID0gdXNlU3RhdGUoSU5JVElBTF9QT1NUUyk7CiAgICBjb25zdCBbbGlrZWRQb3N0cywgc2V0TGlrZWRQb3N0c10gPSB1c2VTdGF0ZTxTZXQ8bnVtYmVyPj4obmV3IFNldCgpKTsKICAgIGNvbnN0IFtjYXRGaWx0ZXIsIHNldENhdEZpbHRlcl0gPSB1c2VTdGF0ZSgiYWxsIik7CiAgICBjb25zdCBbcmVzb3VyY2VGaWx0ZXIsIHNldFJlc291cmNlRmlsdGVyXSA9IHVzZVN0YXRlKCJhbGwiKTsKICAgIGNvbnN0IFtuZXdQb3N0T3Blbiwgc2V0TmV3UG9zdE9wZW5dID0gdXNlU3RhdGUoZmFsc2UpOwogICAgY29uc3QgW25ld1RpdGxlLCBzZXROZXdUaXRsZV0gPSB1c2VTdGF0ZSgiIik7CiAgICBjb25zdCBbbmV3Qm9keSwgc2V0TmV3Qm9keV0gPSB1c2VTdGF0ZSgiIik7CiAgICBjb25zdCBbbmV3Q2F0ZWdvcnksIHNldE5ld0NhdGVnb3J5XSA9IHVzZVN0YXRlKCJHZW5lcmFsIik7CiAgICBjb25zdCBbc3VibWl0dGluZywgc2V0U3VibWl0dGluZ10gPSB1c2VTdGF0ZShmYWxzZSk7CgogICAgY29uc3QgdG9nZ2xlTGlrZSA9IChpZDogbnVtYmVyKSA9PiB7CiAgICAgIHNldExpa2VkUG9zdHMocHJldiA9PiB7IGNvbnN0IG5leHQgPSBuZXcgU2V0KHByZXYpOyBuZXh0LmhhcyhpZCkgPyBuZXh0LmRlbGV0ZShpZCkgOiBuZXh0LmFkZChpZCk7IHJldHVybiBuZXh0OyB9KTsKICAgIH07CgogICAgY29uc3QgaGFuZGxlTmV3UG9zdCA9ICgpID0+IHsKICAgICAgaWYgKCFuZXdUaXRsZS50cmltKCkpIHsgdG9hc3QuZXJyb3IoIkFkZCBhIHRpdGxlIGZvciB5b3VyIHBvc3QiKTsgcmV0dXJuOyB9CiAgICAgIGlmICghbmV3Qm9keS50cmltKCkgfHwgbmV3Qm9keS50cmltKCkubGVuZ3RoIDwgMjApIHsgdG9hc3QuZXJyb3IoIkFkZCBhdCBsZWFzdCAyMCBjaGFyYWN0ZXJzIG9mIGNvbnRlbnQiKTsgcmV0dXJuOyB9CiAgICAgIHNldFN1Ym1pdHRpbmcodHJ1ZSk7CiAgICAgIHNldFRpbWVvdXQoKCkgPT4gewogICAgICAgIGNvbnN0IGRpc3BsYXlOYW1lID0gKHVzZXIgYXMgYW55KT8uZGlzcGxheU5hbWUgfHwgdXNlcj8ubmFtZSB8fCB1c2VyPy5lbWFpbD8uc3BsaXQoIkAiKVswXSB8fCAiWW91IjsKICAgICAgICBjb25zdCBpbml0aWFscyA9IGRpc3BsYXlOYW1lLnNwbGl0KCIgIikubWFwKCh3OiBzdHJpbmcpID0+IHdbMF0pLmpvaW4oIiIpLnRvVXBwZXJDYXNlKCkuc2xpY2UoMCwyKTsKICAgICAgICBzZXRQb3N0cyhwcmV2ID0+IFt7CiAgICAgICAgICBpZDogRGF0ZS5ub3coKSwgYXV0aG9yOiBkaXNwbGF5TmFtZSwgYXZhdGFyOiBpbml0aWFscywgcm9sZTogIkZpbG1tYWtlciIsCiAgICAgICAgICB0aXRsZTogbmV3VGl0bGUudHJpbSgpLCBib2R5OiBuZXdCb2R5LnRyaW0oKSwgY2F0ZWdvcnk6IG5ld0NhdGVnb3J5LAogICAgICAgICAgbGlrZXM6IDAsIHJlcGxpZXM6IDAsIHRpbWU6ICJqdXN0IG5vdyIsIHBpbm5lZDogZmFsc2UsCiAgICAgICAgfSwgLi4ucHJldl0pOwogICAgICAgIHNldE5ld1RpdGxlKCIiKTsgc2V0TmV3Qm9keSgiIik7IHNldE5ld0NhdGVnb3J5KCJHZW5lcmFsIik7CiAgICAgICAgc2V0U3VibWl0dGluZyhmYWxzZSk7IHNldE5ld1Bvc3RPcGVuKGZhbHNlKTsKICAgICAgICB0b2FzdC5zdWNjZXNzKCJQb3N0IHNoYXJlZCB3aXRoIHRoZSBjb21tdW5pdHkiKTsKICAgICAgfSwgNjAwKTsKICAgIH07CgogICAgY29uc3QgcmVzb3VyY2VDYXRlZ29yaWVzID0gQXJyYXkuZnJvbShuZXcgU2V0KFJFU09VUkNFUy5tYXAociA9PiByLmNhdGVnb3J5KSkpOwogICAgY29uc3QgZmlsdGVyZWRQb3N0cyA9IHBvc3RzLmZpbHRlcihwID0+IGNhdEZpbHRlciA9PT0gImFsbCIgfHwgcC5jYXRlZ29yeSA9PT0gY2F0RmlsdGVyKTsKICAgIGNvbnN0IGZpbHRlcmVkUmVzb3VyY2VzID0gUkVTT1VSQ0VTLmZpbHRlcihyID0+IHJlc291cmNlRmlsdGVyID09PSAiYWxsIiB8fCByLmNhdGVnb3J5ID09PSByZXNvdXJjZUZpbHRlcik7CiAgICBjb25zdCBwb3N0Q2F0ZWdvcmllcyA9IEFycmF5LmZyb20obmV3IFNldChwb3N0cy5tYXAocCA9PiBwLmNhdGVnb3J5KSkpOwoKICAgIHJldHVybiAoCiAgICAgIDxkaXYgY2xhc3NOYW1lPSJtaW4taC1zY3JlZW4iIHN0eWxlPXt7IGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcsIzA3MDcwZSAwJSwjMGMwYjE4IDYwJSwjMDcwNzBhIDEwMCUpIiB9fT4KICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTV4bCBteC1hdXRvIHNwYWNlLXktNiI+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiBmbGV4LXdyYXAgZ2FwLTMiPgogICAgICAgICAgPGRpdj4KICAgICAgICAgICAgPGgxIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIGZsZXggaXRlbXMtY2VudGVyIGdhcC0yIj48VXNlcnMgY2xhc3NOYW1lPSJoLTYgdy02IHRleHQtcHJpbWFyeSIgLz5GaWxtbWFrZXIgQ29tbXVuaXR5PC9oMT4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCBtdC0xIj5Db25uZWN0LCBsZWFybiwgYW5kIGNvbGxhYm9yYXRlIHdpdGggaW5kZXBlbmRlbnQgZmlsbW1ha2VycyB3b3JsZHdpZGU8L3A+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxCdXR0b24gb25DbGljaz17KCkgPT4gc2V0TmV3UG9zdE9wZW4odHJ1ZSl9PjxQbHVzIGNsYXNzTmFtZT0iaC00IHctNCBtci0yIiAvPk5ldyBQb3N0PC9CdXR0b24+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHsvKiBOZXcgUG9zdCBEaWFsb2cgKi99CiAgICAgICAgPERpYWxvZyBvcGVuPXtuZXdQb3N0T3Blbn0gb25PcGVuQ2hhbmdlPXtzZXROZXdQb3N0T3Blbn0+CiAgICAgICAgICA8RGlhbG9nQ29udGVudCBjbGFzc05hbWU9InNtOm1heC13LWxnIj4KICAgICAgICAgICAgPERpYWxvZ0hlYWRlcj48RGlhbG9nVGl0bGU+U2hhcmUgd2l0aCB0aGUgQ29tbXVuaXR5PC9EaWFsb2dUaXRsZT48L0RpYWxvZ0hlYWRlcj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktNCI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij4KICAgICAgICAgICAgICAgIDxMYWJlbD5UaXRsZSAqPC9MYWJlbD4KICAgICAgICAgICAgICAgIDxJbnB1dCBwbGFjZWhvbGRlcj0iV2hhdCdzIG9uIHlvdXIgbWluZD8iIHZhbHVlPXtuZXdUaXRsZX0gb25DaGFuZ2U9e2UgPT4gc2V0TmV3VGl0bGUoZS50YXJnZXQudmFsdWUpfSBtYXhMZW5ndGg9ezEyMH0gLz4KICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1bMTBweF0gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIHRleHQtcmlnaHQiPntuZXdUaXRsZS5sZW5ndGh9LzEyMDwvcD4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0xLjUiPgogICAgICAgICAgICAgICAgPExhYmVsPkNhdGVnb3J5PC9MYWJlbD4KICAgICAgICAgICAgICAgIDxTZWxlY3QgdmFsdWU9e25ld0NhdGVnb3J5fSBvblZhbHVlQ2hhbmdlPXtzZXROZXdDYXRlZ29yeX0+CiAgICAgICAgICAgICAgICAgIDxTZWxlY3RUcmlnZ2VyPjxTZWxlY3RWYWx1ZSAvPjwvU2VsZWN0VHJpZ2dlcj4KICAgICAgICAgICAgICAgICAgPFNlbGVjdENvbnRlbnQ+e1BPU1RfQ0FURUdPUklFUy5tYXAoYyA9PiA8U2VsZWN0SXRlbSBrZXk9e2N9IHZhbHVlPXtjfT57Y308L1NlbGVjdEl0ZW0+KX08L1NlbGVjdENvbnRlbnQ+CiAgICAgICAgICAgICAgICA8L1NlbGVjdD4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0xLjUiPgogICAgICAgICAgICAgICAgPExhYmVsPkNvbnRlbnQgKjwvTGFiZWw+CiAgICAgICAgICAgICAgICA8VGV4dGFyZWEgY2xhc3NOYW1lPSJoLTMyIiBwbGFjZWhvbGRlcj0iU2hhcmUgeW91ciBleHBlcmllbmNlLCBhc2sgYSBxdWVzdGlvbiwgb3Igc3RhcnQgYSBkaXNjdXNzaW9u4oCmIiB2YWx1ZT17bmV3Qm9keX0gb25DaGFuZ2U9e2UgPT4gc2V0TmV3Qm9keShlLnRhcmdldC52YWx1ZSl9IC8+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtWzEwcHhdIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+e25ld0JvZHkubGVuZ3RofSBjaGFyYWN0ZXJzIChtaW4gMjApPC9wPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPERpYWxvZ0Zvb3Rlcj4KICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Im91dGxpbmUiIG9uQ2xpY2s9eygpID0+IHNldE5ld1Bvc3RPcGVuKGZhbHNlKX0+Q2FuY2VsPC9CdXR0b24+CiAgICAgICAgICAgICAgPEJ1dHRvbiBvbkNsaWNrPXtoYW5kbGVOZXdQb3N0fSBkaXNhYmxlZD17c3VibWl0dGluZ30+CiAgICAgICAgICAgICAgICB7c3VibWl0dGluZyA/ICJQb3N0aW5n4oCmIiA6ICJQb3N0IHRvIENvbW11bml0eSJ9CiAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgIDwvRGlhbG9nRm9vdGVyPgogICAgICAgICAgPC9EaWFsb2dDb250ZW50PgogICAgICAgIDwvRGlhbG9nPgoKICAgICAgICA8VGFicyBkZWZhdWx0VmFsdWU9ImRpc2N1c3Npb25zIj4KICAgICAgICAgIDxUYWJzTGlzdCBjbGFzc05hbWU9ImdyaWQgdy1mdWxsIGdyaWQtY29scy0zIj4KICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPSJkaXNjdXNzaW9ucyI+RGlzY3Vzc2lvbnM8L1RhYnNUcmlnZ2VyPgogICAgICAgICAgICA8VGFic1RyaWdnZXIgdmFsdWU9ImV2ZW50cyI+RXZlbnRzPC9UYWJzVHJpZ2dlcj4KICAgICAgICAgICAgPFRhYnNUcmlnZ2VyIHZhbHVlPSJyZXNvdXJjZXMiPkRpcmVjdG9yeTwvVGFic1RyaWdnZXI+CiAgICAgICAgICA8L1RhYnNMaXN0PgoKICAgICAgICAgIHsvKiDilIDilIAgRGlzY3Vzc2lvbnMg4pSA4pSAICovfQogICAgICAgICAgPFRhYnNDb250ZW50IHZhbHVlPSJkaXNjdXNzaW9ucyIgY2xhc3NOYW1lPSJzcGFjZS15LTQgbXQtNCI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGdhcC0yIGZsZXgtd3JhcCI+CiAgICAgICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PXtjYXRGaWx0ZXIgPT09ICJhbGwiID8gImRlZmF1bHQiIDogIm91dGxpbmUifSBzaXplPSJzbSIgb25DbGljaz17KCkgPT4gc2V0Q2F0RmlsdGVyKCJhbGwiKX0+QWxsPC9CdXR0b24+CiAgICAgICAgICAgICAge3Bvc3RDYXRlZ29yaWVzLm1hcChjID0+IDxCdXR0b24ga2V5PXtjfSB2YXJpYW50PXtjYXRGaWx0ZXIgPT09IGMgPyAiZGVmYXVsdCIgOiAib3V0bGluZSJ9IHNpemU9InNtIiBvbkNsaWNrPXsoKSA9PiBzZXRDYXRGaWx0ZXIoYyl9PntjfTwvQnV0dG9uPil9CiAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMyI+CiAgICAgICAgICAgICAge2ZpbHRlcmVkUG9zdHMubWFwKHBvc3QgPT4gKAogICAgICAgICAgICAgICAgPENhcmQga2V5PXtwb3N0LmlkfSBjbGFzc05hbWU9e2Bob3Zlcjpib3JkZXItcHJpbWFyeS80MCB0cmFuc2l0aW9uLWNvbG9ycyBjdXJzb3ItcG9pbnRlciAke3Bvc3QucGlubmVkID8gImJvcmRlci1wcmltYXJ5LzIwIiA6ICIifWB9PgogICAgICAgICAgICAgICAgICA8Q2FyZENvbnRlbnQgY2xhc3NOYW1lPSJwLTQiPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLXN0YXJ0IGdhcC0zIj4KICAgICAgICAgICAgICAgICAgICAgIDxBdmF0YXIgY2xhc3NOYW1lPSJoLTkgdy05IHNocmluay0wIG10LTAuNSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxBdmF0YXJGYWxsYmFjayBjbGFzc05hbWU9InRleHQteHMgZm9udC1ib2xkIGJnLXByaW1hcnkvMTAgdGV4dC1wcmltYXJ5Ij57cG9zdC5hdmF0YXJ9PC9BdmF0YXJGYWxsYmFjaz4KICAgICAgICAgICAgICAgICAgICAgIDwvQXZhdGFyPgogICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXgtMSBtaW4tdy0wIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0yIGZsZXgtd3JhcCBtYi0xIj4KICAgICAgICAgICAgICAgICAgICAgICAgICB7cG9zdC5waW5uZWQgJiYgPEJhZGdlIGNsYXNzTmFtZT0idGV4dC1bMTBweF0gaC00Ij7wn5OMIFBpbm5lZDwvQmFkZ2U+fQogICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT17YHRleHQtWzEwcHhdIHB4LTEuNSBweS0wLjUgcm91bmRlZCAke0NBVEVHT1JZX0NPTE9SU1twb3N0LmNhdGVnb3J5XSA/PyAiYmctbXV0ZWQgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIn1gfT57cG9zdC5jYXRlZ29yeX08L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJmb250LXNlbWlib2xkIHRleHQtc20gbGVhZGluZy1zbnVnIG1iLTEiPntwb3N0LnRpdGxlfTwvaDM+CiAgICAgICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQgbGluZS1jbGFtcC0yIj57cG9zdC5ib2R5fTwvcD4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC00IG10LTIiPgogICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQiPntwb3N0LmF1dGhvcn0gwrcge3Bvc3Qucm9sZX0gwrcge3Bvc3QudGltZX08L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0zIG1sLWF1dG8iPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9e2BmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMSB0ZXh0LXhzIHRyYW5zaXRpb24tY29sb3JzICR7bGlrZWRQb3N0cy5oYXMocG9zdC5pZCkgPyAidGV4dC1yZWQtNTAwIiA6ICJ0ZXh0LW11dGVkLWZvcmVncm91bmQgaG92ZXI6dGV4dC1yZWQtNDAwIn1gfSBvbkNsaWNrPXsoKSA9PiB0b2dnbGVMaWtlKHBvc3QuaWQpfT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPEhlYXJ0IGNsYXNzTmFtZT17YGgtMy41IHctMy41ICR7bGlrZWRQb3N0cy5oYXMocG9zdC5pZCkgPyAiZmlsbC1jdXJyZW50IiA6ICIifWB9IC8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHtwb3N0Lmxpa2VzICsgKGxpa2VkUG9zdHMuaGFzKHBvc3QuaWQpID8gMSA6IDApfQogICAgICAgICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0xIHRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj48TWVzc2FnZVNxdWFyZSBjbGFzc05hbWU9ImgtMy41IHctMy41IiAvPntwb3N0LnJlcGxpZXN9PC9zcGFuPgogICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8L0NhcmRDb250ZW50PgogICAgICAgICAgICAgICAgPC9DYXJkPgogICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgIHtmaWx0ZXJlZFBvc3RzLmxlbmd0aCA9PT0gMCAmJiAoCiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1jZW50ZXIgcHktMTIgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj4KICAgICAgICAgICAgICAgICAgPE1lc3NhZ2VTcXVhcmUgY2xhc3NOYW1lPSJoLTEwIHctMTAgbXgtYXV0byBtYi0zIG9wYWNpdHktMjAiIC8+CiAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSI+Tm8gcG9zdHMgaW4gdGhpcyBjYXRlZ29yeSB5ZXQuPC9wPgogICAgICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9Im91dGxpbmUiIHNpemU9InNtIiBjbGFzc05hbWU9Im10LTMiIG9uQ2xpY2s9eygpID0+IHNldE5ld1Bvc3RPcGVuKHRydWUpfT5CZSB0aGUgZmlyc3QgdG8gcG9zdDwvQnV0dG9uPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LWNlbnRlciBweS00Ij4KICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG1iLTMiPkNvbm5lY3Qgd2l0aCB0aGUgZ2xvYmFsIFZpcmVsbGUgZmlsbW1ha2VyIG5ldHdvcmsuIFBvc3QgcXVlc3Rpb25zLCBzaGFyZSBwcm9qZWN0cywgZ2l2ZSBmZWVkYmFjaywgYW5kIGdyb3cgdG9nZXRoZXIuPC9wPgogICAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0ib3V0bGluZSIgb25DbGljaz17KCkgPT4gc2V0TG9jYXRpb24oIi9zZXR0aW5ncyIpfT48QXJyb3dSaWdodCBjbGFzc05hbWU9ImgtNCB3LTQgbXItMiIgLz5NYW5hZ2UgQ29tbXVuaXR5IFNldHRpbmdzPC9CdXR0b24+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9UYWJzQ29udGVudD4KCiAgICAgICAgICB7Lyog4pSA4pSAIEV2ZW50cyDilIDilIAgKi99CiAgICAgICAgICA8VGFic0NvbnRlbnQgdmFsdWU9ImV2ZW50cyIgY2xhc3NOYW1lPSJzcGFjZS15LTMgbXQtNCI+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LW11dGVkLWZvcmVncm91bmQiPlVwY29taW5nIGluZHVzdHJ5IGV2ZW50cywgZmlsbSBtYXJrZXRzLCBhbmQgZmVzdGl2YWxzLjwvcD4KICAgICAgICAgICAge0VWRU5UUy5tYXAoZXYgPT4gKAogICAgICAgICAgICAgIDxDYXJkIGtleT17ZXYudGl0bGV9IGNsYXNzTmFtZT0iaG92ZXI6Ym9yZGVyLXByaW1hcnkvMzAgdHJhbnNpdGlvbi1jb2xvcnMiPgogICAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icC00IGZsZXggaXRlbXMtY2VudGVyIGdhcC00Ij4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImgtMTAgdy0xMCByb3VuZGVkLWxnIGJnLXByaW1hcnkvMTAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgdGV4dC1wcmltYXJ5IHNocmluay0wIj4KICAgICAgICAgICAgICAgICAgICB7ZXYudHlwZSA9PT0gIkZlc3RpdmFsIiA/IDxGaWxtIGNsYXNzTmFtZT0iaC01IHctNSIgLz4gOiA8TWVnYXBob25lIGNsYXNzTmFtZT0iaC01IHctNSIgLz59CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleC0xIG1pbi13LTAiPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+PHNwYW4gY2xhc3NOYW1lPSJmb250LW1lZGl1bSB0ZXh0LXNtIj57ZXYudGl0bGV9PC9zcGFuPjxCYWRnZSB2YXJpYW50PSJvdXRsaW5lIiBjbGFzc05hbWU9InRleHQtWzEwcHhdIj57ZXYudHlwZX08L0JhZGdlPjwvZGl2PgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyBtdC0wLjUgdGV4dC14cyB0ZXh0LW11dGVkLWZvcmVncm91bmQiPgogICAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMSI+PENhbGVuZGFyIGNsYXNzTmFtZT0iaC0zIHctMyIgLz57ZXYuZGF0ZX08L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgICA8c3Bhbj57ZXYubG9jYXRpb259PC9zcGFuPgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgPGEgaHJlZj17ZXYudXJsfSB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciBub3JlZmVycmVyIj48QnV0dG9uIHZhcmlhbnQ9Im91dGxpbmUiIHNpemU9InNtIiBjbGFzc05hbWU9ImgtNyB0ZXh0LXhzIGdhcC0xIHNocmluay0wIj48RXh0ZXJuYWxMaW5rIGNsYXNzTmFtZT0iaC0zIHctMyIgLz5WaXNpdDwvQnV0dG9uPjwvYT4KICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgPC9DYXJkPgogICAgICAgICAgICApKX0KICAgICAgICAgIDwvVGFic0NvbnRlbnQ+CgogICAgICAgICAgey8qIOKUgOKUgCBSZXNvdXJjZXMgRGlyZWN0b3J5IOKUgOKUgCAqL30KICAgICAgICAgIDxUYWJzQ29udGVudCB2YWx1ZT0icmVzb3VyY2VzIiBjbGFzc05hbWU9InNwYWNlLXktNCBtdC00Ij4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTIgZmxleC13cmFwIj4KICAgICAgICAgICAgICA8QnV0dG9uIHZhcmlhbnQ9e3Jlc291cmNlRmlsdGVyID09PSAiYWxsIiA/ICJkZWZhdWx0IiA6ICJvdXRsaW5lIn0gc2l6ZT0ic20iIG9uQ2xpY2s9eygpID0+IHNldFJlc291cmNlRmlsdGVyKCJhbGwiKX0+QWxsPC9CdXR0b24+CiAgICAgICAgICAgICAge3Jlc291cmNlQ2F0ZWdvcmllcy5tYXAoYyA9PiA8QnV0dG9uIGtleT17Y30gdmFyaWFudD17cmVzb3VyY2VGaWx0ZXIgPT09IGMgPyAiZGVmYXVsdCIgOiAib3V0bGluZSJ9IHNpemU9InNtIiBvbkNsaWNrPXsoKSA9PiBzZXRSZXNvdXJjZUZpbHRlcihjKX0+e2N9PC9CdXR0b24+KX0KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdhcC0zIHNtOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy0zIj4KICAgICAgICAgICAgICB7ZmlsdGVyZWRSZXNvdXJjZXMubWFwKHIgPT4gKAogICAgICAgICAgICAgICAgPENhcmQga2V5PXtyLnRpdGxlfSBjbGFzc05hbWU9ImhvdmVyOmJvcmRlci1wcmltYXJ5LzQwIHRyYW5zaXRpb24tY29sb3JzIj4KICAgICAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icC0zIHNwYWNlLXktMS41Ij4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIGdhcC0yIj4KICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9udC1zZW1pYm9sZCB0ZXh0LXNtIj57ci50aXRsZX08L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgICA8QmFkZ2UgdmFyaWFudD0ib3V0bGluZSIgY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSBzaHJpbmstMCI+e3IuY2F0ZWdvcnl9PC9CYWRnZT4KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQteHMgdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj57ci5kZXNjcmlwdGlvbn08L3A+CiAgICAgICAgICAgICAgICAgICAgPGEgaHJlZj17ci51cmx9IHRhcmdldD0iX2JsYW5rIiByZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiIGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTEgdGV4dC14cyB0ZXh0LXByaW1hcnkgaG92ZXI6dW5kZXJsaW5lIj48RXh0ZXJuYWxMaW5rIGNsYXNzTmFtZT0iaC0zIHctMyIgLz57ci51cmwucmVwbGFjZSgiaHR0cHM6Ly8iLCIiKX08L2E+CiAgICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgICA8L0NhcmQ+CiAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9UYWJzQ29udGVudD4KICAgICAgICA8L1RhYnM+CiAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KICAgICk7CiAgfQ==
+import { useState } from "react";
+  import { useLocation } from "wouter";
+  import { MessageSquare, Users, Star, Calendar, TrendingUp, Plus, Heart, Share2, BookOpen, ArrowRight, ExternalLink, Lightbulb, Film, Award, Megaphone, X } from "lucide-react";
+  import { Button } from "@/components/ui/button";
+  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  import { Input } from "@/components/ui/input";
+  import { Badge } from "@/components/ui/badge";
+  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+  import { Separator } from "@/components/ui/separator";
+  import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+  import { Label } from "@/components/ui/label";
+  import { Textarea } from "@/components/ui/textarea";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { toast } from "sonner";
+  import { useAuth } from "@/_core/hooks/useAuth";
+
+  const INITIAL_POSTS = [
+    { id: 1, author: "Sofia R.", avatar: "SR", role: "Director", title: "What's your current script-to-screen workflow?", body: "I've been experimenting with going directly from script coverage to storyboard without a full breakdown. Curious what process others are following. Do you breakdown first or storyboard first?", category: "Craft", likes: 47, replies: 23, time: "2h ago", pinned: true },
+    { id: 2, author: "Marcus T.", avatar: "MT", role: "DP", title: "Mirrorless cameras for low-budget features in 2025 — which one wins?", body: "Running a test on Sony FX3, Canon R5C, and Blackmagic 6K. Happy to share footage stills if anyone wants to compare. The low-light difference is massive.", category: "Gear", likes: 31, replies: 18, time: "5h ago", pinned: false },
+    { id: 3, author: "Anya K.", avatar: "AK", role: "Writer/Director", title: "I got into Sundance on my 3rd feature — here's what changed", body: "Not gear. Not budget. The one thing that made the difference was having a complete story before starting to shoot. Detailed write-up in the comments.", category: "Festivals", likes: 203, replies: 67, time: "1d ago", pinned: false },
+    { id: 4, author: "James O.", avatar: "JO", role: "Producer", title: "Tax incentive comparison: Georgia vs. New Mexico — which is easier to qualify?", body: "Just came off a production in Georgia (28% credit) and considering NM for next project. The paperwork in Georgia was intense. Anyone done both?", category: "Finance", likes: 29, replies: 14, time: "1d ago", pinned: false },
+    { id: 5, author: "Priya M.", avatar: "PM", role: "Composer", title: "AI-assisted scoring: legitimate tool or crutch?", body: "I've been using AI to generate first-pass sketches for scenes and then recomposing from there. Directors love the turnaround speed. Thoughts from the community?", category: "Music", likes: 88, replies: 44, time: "2d ago", pinned: false },
+    { id: 6, author: "Diego F.", avatar: "DF", role: "Editor", title: "Request: feedback on my short film trailer cut (2 min)", body: "Finished my first narrative short — a 12-minute thriller. Would love eyes on the trailer cut before I submit to festivals. Link in comments.", category: "Feedback", likes: 12, replies: 9, time: "3d ago", pinned: false },
+  ];
+
+  const EVENTS = [
+    { title: "Sundance Film Festival", date: "Jan 23–Feb 2, 2026", location: "Park City, Utah", type: "Festival", url: "https://sundance.org" },
+    { title: "Berlin International Film Festival", date: "Feb 13–23, 2026", location: "Berlin, Germany", type: "Festival", url: "https://berlinale.de" },
+    { title: "Hot Docs International Documentary Festival", date: "May 1–11, 2026", location: "Toronto, Canada", type: "Festival", url: "https://hotdocs.ca" },
+    { title: "Cannes Film Market (Marché du Film)", date: "May 13–24, 2026", location: "Cannes, France", type: "Market", url: "https://marchedufilm.com" },
+    { title: "AFM — American Film Market", date: "Nov 5–10, 2025", location: "Las Vegas, NV", type: "Market", url: "https://americanfilmmarket.com" },
+    { title: "SXSW Film & TV Festival", date: "Mar 6–15, 2026", location: "Austin, Texas", type: "Festival", url: "https://sxsw.com/film" },
+  ];
+
+  const RESOURCES = [
+    { title: "No Film School", description: "Daily filmmaking news, tutorials, and gear reviews from working professionals.", url: "https://nofilmschool.com", category: "Education" },
+    { title: "Stage 32", description: "The world's largest social network for film, TV, and theatre creatives.", url: "https://stage32.com", category: "Networking" },
+    { title: "FilmFreeway", description: "Submit to film festivals, screenplay competitions, and grants worldwide.", url: "https://filmfreeway.com", category: "Festivals" },
+    { title: "The Black List", description: "Script hosting, evaluations, and connections to the industry's top executives.", url: "https://blcklst.com", category: "Screenwriting" },
+    { title: "Coverfly", description: "Screenwriting competitions and fellowships aggregator with ranking system.", url: "https://coverfly.com", category: "Screenwriting" },
+    { title: "Wrapbook", description: "Payroll, insurance, and finance tools built for film and TV productions.", url: "https://wrapbook.com", category: "Production" },
+    { title: "Backstage", description: "Casting platform where real actors search for roles and submit self-tapes.", url: "https://backstage.com", category: "Casting" },
+    { title: "Actors Access", description: "Breakdown Services platform for submitting castings to talent agents.", url: "https://actorsaccess.com", category: "Casting" },
+    { title: "Music Bed", description: "Premium licensed music for film and commercial sync use.", url: "https://musicbed.com", category: "Music" },
+    { title: "Artlist", description: "Unlimited annual music licence for online, film, and social distribution.", url: "https://artlist.io", category: "Music" },
+    { title: "Soundly", description: "Professional sound effects library used by major studios.", url: "https://getsoundly.com", category: "Sound" },
+    { title: "Incentify", description: "Film production tax incentive calculator and incentive comparison tool.", url: "https://incentify.io", category: "Finance" },
+  ];
+
+  const POST_CATEGORIES = ["Craft", "Gear", "Festivals", "Finance", "Music", "Feedback", "General"];
+
+  const CATEGORY_COLORS: Record<string, string> = {
+    Craft: "bg-violet-500/15 text-violet-500", Gear: "bg-blue-500/15 text-blue-500", Festivals: "bg-amber-500/15 text-amber-500",
+    Finance: "bg-green-500/15 text-green-500", Music: "bg-pink-500/15 text-pink-500", Feedback: "bg-primary/15 text-primary",
+    General: "bg-muted text-muted-foreground",
+  };
+
+  export default function Community() {
+    const [, setLocation] = useLocation();
+    const { user } = useAuth();
+    const [posts, setPosts] = useState(INITIAL_POSTS);
+    const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+    const [catFilter, setCatFilter] = useState("all");
+    const [resourceFilter, setResourceFilter] = useState("all");
+    const [newPostOpen, setNewPostOpen] = useState(false);
+    const [newTitle, setNewTitle] = useState("");
+    const [newBody, setNewBody] = useState("");
+    const [newCategory, setNewCategory] = useState("General");
+    const [submitting, setSubmitting] = useState(false);
+
+    const toggleLike = (id: number) => {
+      setLikedPosts(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
+    };
+
+    const handleNewPost = () => {
+      if (!newTitle.trim()) { toast.error("Add a title for your post"); return; }
+      if (!newBody.trim() || newBody.trim().length < 20) { toast.error("Add at least 20 characters of content"); return; }
+      setSubmitting(true);
+      setTimeout(() => {
+        const displayName = (user as any)?.displayName || user?.name || user?.email?.split("@")[0] || "You";
+        const initials = displayName.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0,2);
+        setPosts(prev => [{
+          id: Date.now(), author: displayName, avatar: initials, role: "Filmmaker",
+          title: newTitle.trim(), body: newBody.trim(), category: newCategory,
+          likes: 0, replies: 0, time: "just now", pinned: false,
+        }, ...prev]);
+        setNewTitle(""); setNewBody(""); setNewCategory("General");
+        setSubmitting(false); setNewPostOpen(false);
+        toast.success("Post shared with the community");
+      }, 600);
+    };
+
+    const resourceCategories = Array.from(new Set(RESOURCES.map(r => r.category)));
+    const filteredPosts = posts.filter(p => catFilter === "all" || p.category === catFilter);
+    const filteredResources = RESOURCES.filter(r => resourceFilter === "all" || r.category === resourceFilter);
+    const postCategories = Array.from(new Set(posts.map(p => p.category)));
+
+    return (
+      <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Users className="h-6 w-6 text-primary" />Filmmaker Community</h1>
+            <p className="text-sm text-muted-foreground mt-1">Connect, learn, and collaborate with independent filmmakers worldwide</p>
+          </div>
+          <Button onClick={() => setNewPostOpen(true)}><Plus className="h-4 w-4 mr-2" />New Post</Button>
+        </div>
+
+        {/* New Post Dialog */}
+        <Dialog open={newPostOpen} onOpenChange={setNewPostOpen}>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader><DialogTitle>Share with the Community</DialogTitle></DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label>Title *</Label>
+                <Input placeholder="What's on your mind?" value={newTitle} onChange={e => setNewTitle(e.target.value)} maxLength={120} />
+                <p className="text-[10px] text-muted-foreground text-right">{newTitle.length}/120</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Category</Label>
+                <Select value={newCategory} onValueChange={setNewCategory}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{POST_CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Content *</Label>
+                <Textarea className="h-32" placeholder="Share your experience, ask a question, or start a discussion…" value={newBody} onChange={e => setNewBody(e.target.value)} />
+                <p className="text-[10px] text-muted-foreground">{newBody.length} characters (min 20)</p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setNewPostOpen(false)}>Cancel</Button>
+              <Button onClick={handleNewPost} disabled={submitting}>
+                {submitting ? "Posting…" : "Post to Community"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Tabs defaultValue="discussions">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="discussions">Discussions</TabsTrigger>
+            <TabsTrigger value="events">Events</TabsTrigger>
+            <TabsTrigger value="resources">Directory</TabsTrigger>
+          </TabsList>
+
+          {/* ── Discussions ── */}
+          <TabsContent value="discussions" className="space-y-4 mt-4">
+            <div className="flex gap-2 flex-wrap">
+              <Button variant={catFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setCatFilter("all")}>All</Button>
+              {postCategories.map(c => <Button key={c} variant={catFilter === c ? "default" : "outline"} size="sm" onClick={() => setCatFilter(c)}>{c}</Button>)}
+            </div>
+
+            <div className="space-y-3">
+              {filteredPosts.map(post => (
+                <Card key={post.id} className={`hover:border-primary/40 transition-colors cursor-pointer ${post.pinned ? "border-primary/20" : ""}`}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <Avatar className="h-9 w-9 shrink-0 mt-0.5">
+                        <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">{post.avatar}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          {post.pinned && <Badge className="text-[10px] h-4">📌 Pinned</Badge>}
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded ${CATEGORY_COLORS[post.category] ?? "bg-muted text-muted-foreground"}`}>{post.category}</span>
+                        </div>
+                        <h3 className="font-semibold text-sm leading-snug mb-1">{post.title}</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{post.body}</p>
+                        <div className="flex items-center gap-4 mt-2">
+                          <span className="text-xs text-muted-foreground">{post.author} · {post.role} · {post.time}</span>
+                          <div className="flex items-center gap-3 ml-auto">
+                            <button className={`flex items-center gap-1 text-xs transition-colors ${likedPosts.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-red-400"}`} onClick={() => toggleLike(post.id)}>
+                              <Heart className={`h-3.5 w-3.5 ${likedPosts.has(post.id) ? "fill-current" : ""}`} />
+                              {post.likes + (likedPosts.has(post.id) ? 1 : 0)}
+                            </button>
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground"><MessageSquare className="h-3.5 w-3.5" />{post.replies}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {filteredPosts.length === 0 && (
+                <div className="text-center py-12 text-muted-foreground">
+                  <MessageSquare className="h-10 w-10 mx-auto mb-3 opacity-20" />
+                  <p className="text-sm">No posts in this category yet.</p>
+                  <Button variant="outline" size="sm" className="mt-3" onClick={() => setNewPostOpen(true)}>Be the first to post</Button>
+                </div>
+              )}
+            </div>
+            <div className="text-center py-4">
+              <p className="text-sm text-muted-foreground mb-3">Connect with the global Virelle filmmaker network. Post questions, share projects, give feedback, and grow together.</p>
+              <Button variant="outline" onClick={() => setLocation("/settings")}><ArrowRight className="h-4 w-4 mr-2" />Manage Community Settings</Button>
+            </div>
+          </TabsContent>
+
+          {/* ── Events ── */}
+          <TabsContent value="events" className="space-y-3 mt-4">
+            <p className="text-sm text-muted-foreground">Upcoming industry events, film markets, and festivals.</p>
+            {EVENTS.map(ev => (
+              <Card key={ev.title} className="hover:border-primary/30 transition-colors">
+                <CardContent className="p-4 flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                    {ev.type === "Festival" ? <Film className="h-5 w-5" /> : <Megaphone className="h-5 w-5" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2"><span className="font-medium text-sm">{ev.title}</span><Badge variant="outline" className="text-[10px]">{ev.type}</Badge></div>
+                    <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{ev.date}</span>
+                      <span>{ev.location}</span>
+                    </div>
+                  </div>
+                  <a href={ev.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="h-7 text-xs gap-1 shrink-0"><ExternalLink className="h-3 w-3" />Visit</Button></a>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+
+          {/* ── Resources Directory ── */}
+          <TabsContent value="resources" className="space-y-4 mt-4">
+            <div className="flex gap-2 flex-wrap">
+              <Button variant={resourceFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setResourceFilter("all")}>All</Button>
+              {resourceCategories.map(c => <Button key={c} variant={resourceFilter === c ? "default" : "outline"} size="sm" onClick={() => setResourceFilter(c)}>{c}</Button>)}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredResources.map(r => (
+                <Card key={r.title} className="hover:border-primary/40 transition-colors">
+                  <CardContent className="p-3 space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-sm">{r.title}</span>
+                      <Badge variant="outline" className="text-[10px] shrink-0">{r.category}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{r.description}</p>
+                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-primary hover:underline"><ExternalLink className="h-3 w-3" />{r.url.replace("https://","")}</a>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+      </div>
+    );
+  }
