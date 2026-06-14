@@ -48,7 +48,7 @@ const PLATFORM_CONFIGS = [
     key: "tiktok" as const,
     label: "TikTok",
     icon: TikTokIcon,
-    description: "Vertical 9:16 ÃÂ· 60s max",
+    description: "Vertical 9:16 · 60s max",
     color: "text-pink-500",
     bg: "bg-pink-500/10 border-pink-500/20",
   },
@@ -56,7 +56,7 @@ const PLATFORM_CONFIGS = [
     key: "instagram" as const,
     label: "Camera Reels",
     icon: Camera,
-    description: "Vertical 9:16 ÃÂ· 90s max",
+    description: "Vertical 9:16 · 90s max",
     color: "text-purple-500",
     bg: "bg-purple-500/10 border-purple-500/20",
   },
@@ -64,7 +64,7 @@ const PLATFORM_CONFIGS = [
     key: "youtubeShorts" as const,
     label: "YouTube Shorts",
     icon: PlayCircle,
-    description: "Vertical 9:16 ÃÂ· 60s max",
+    description: "Vertical 9:16 · 60s max",
     color: "text-red-500",
     bg: "bg-red-500/10 border-red-500/20",
   },
@@ -72,7 +72,7 @@ const PLATFORM_CONFIGS = [
     key: "square" as const,
     label: "Square Cut",
     icon: Share2,
-    description: "Square 1:1 ÃÂ· All platforms",
+    description: "Square 1:1 · All platforms",
     color: "text-blue-500",
     bg: "bg-blue-500/10 border-blue-500/20",
   },
@@ -175,7 +175,7 @@ export default function Distribute() {
   // Phase 2: Submit for feature (admin curation)
   const submitForFeatureMutation = trpc.submissions.submit.useMutation({
     onSuccess: () => {
-      toast.success("Submitted for editorial review! Our team will review your film within 5Ã¢ÂÂ7 business days.");
+      toast.success("Submitted for editorial review! Our team will review your film within 5–7 business days.");
     },
     onError: (e) => toast.error(e.message),
   });
@@ -210,7 +210,7 @@ export default function Distribute() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
-      <SiteHead title="Distribute" description="Promote, package and ship your AI film Ã¢ÂÂ promo packs, festival submissions, and one-click distribution." />
+      <SiteHead title="Distribute" description="Promote, package and ship your AI film — promo packs, festival submissions, and one-click distribution." />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <Link href={`/projects/${projectId}`}>
@@ -309,7 +309,7 @@ export default function Distribute() {
                   disabled={submitForFeatureMutation.isPending}
                 >
                   <Star className="w-3.5 h-3.5" />
-                  {submitForFeatureMutation.isPending ? "SubmittingÃ¢ÂÂ¦" : "Submit for Feature"}
+                  {submitForFeatureMutation.isPending ? "Submitting…" : "Submit for Feature"}
                 </Button>
               </div>
             </div>
@@ -337,7 +337,7 @@ export default function Distribute() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Exports Tab Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ── Exports Tab ── */}
         <TabsContent value="exports" className="space-y-4 mt-4">
           <p className="text-sm text-muted-foreground">
             Every export automatically prepends the <strong>VirElle Studios opener</strong> as opening credits.
@@ -411,7 +411,7 @@ export default function Distribute() {
           </div>
         </TabsContent>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Promo Copy Tab Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ── Promo Copy Tab ── */}
         <TabsContent value="assets" className="space-y-4 mt-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
@@ -488,7 +488,7 @@ export default function Distribute() {
           )}
         </TabsContent>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Film Page Tab Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ── Film Page Tab ── */}
         <TabsContent value="filmpage" className="space-y-5 mt-4">
           <p className="text-sm text-muted-foreground">
             Create a public landing page for your film at{" "}
@@ -613,7 +613,7 @@ export default function Distribute() {
           </div>
         </TabsContent>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Phase 2: Creator Profile Tab Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ── Phase 2: Creator Profile Tab ── */}
         <TabsContent value="profile" className="space-y-5 mt-4">
           <p className="text-sm text-muted-foreground">
             Set up your public creator profile at{" "}
