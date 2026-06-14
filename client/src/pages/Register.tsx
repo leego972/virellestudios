@@ -11,6 +11,7 @@ import {
   User, Building2, Palette, ChevronDown, Phone,
 } from "lucide-react";
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
+  import StudioOpener from "@/components/StudioOpener";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 
 // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Country Codes ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
@@ -299,6 +300,7 @@ export default function Register() {
 
   const utils = trpc.useUtils();
   const [showWelcome, setShowWelcome] = useState(false);
+    const [showStudioOpener, setShowStudioOpener] = useState(false);
 
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
@@ -382,7 +384,20 @@ export default function Register() {
     });
   };
 
-  if (showWelcome) {
+  if (showStudioOpener) {
+      return (
+        <StudioOpener
+          mode="login"
+          skippable
+          onComplete={() => {
+            setShowStudioOpener(false);
+            setShowWelcome(true);
+          }}
+        />
+      );
+    }
+
+    if (showWelcome) {
     const PROVIDER_LINKS = [
       { name: "fal.ai", tag: "Video ÃÂÃÂ· Cheapest", url: "https://fal.ai/dashboard/keys", note: "~$0.40/clip ÃÂÃÂ· Recommended", required: false },
       { name: "ElevenLabs", tag: "Voice & SFX ÃÂÃÂ· Required", url: "https://elevenlabs.io/app/settings/api-keys", note: "Free tier available", required: true },
