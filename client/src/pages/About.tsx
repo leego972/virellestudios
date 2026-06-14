@@ -130,7 +130,7 @@ export default function About() {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-6 gradient-text-gold">
+              <h2 className="text-3xl font-bold mb-6 text-gold-shimmer">
                 The Studio Behind{" "}
                 <span className="text-amber-400">the Studio</span>
               </h2>
@@ -177,7 +177,7 @@ export default function About() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30 border-y border-border/40">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">What We Stand For</h2>
+            <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">What We Stand For</h2>
             <p className="text-foreground/60 max-w-xl mx-auto">The principles that guide every decision in how Virelle is built and operated.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -201,7 +201,7 @@ export default function About() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Production Methodology</h2>
+            <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">Production Methodology</h2>
             <p className="text-foreground/60 max-w-xl mx-auto">Virelle follows a structured five-stage production pipeline ÃÂ¢ÃÂÃÂ the same sequence used in professional film production, powered by AI at every stage.</p>
           </div>
           <div className="space-y-4">
@@ -224,7 +224,7 @@ export default function About() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30 border-y border-border/40">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Technical Capabilities</h2>
+            <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">Technical Capabilities</h2>
             <p className="text-foreground/60 max-w-xl mx-auto">The AI infrastructure powering Virelle's production pipeline.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -271,7 +271,7 @@ export default function About() {
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center border-t border-border/40">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Join the founding directors</h2>
+          <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">Join the founding directors</h2>
           <p className="text-foreground/60 mb-8">Virelle is in its founding phase. The first 50 directors who join get half price on their first year's membership.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 h-12" onClick={() => setLocation("/register")}>

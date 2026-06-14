@@ -67,7 +67,7 @@ export default function Blog() {
           <BookOpen className="h-6 w-6 text-amber-400" />
           <span className="text-amber-400 font-medium text-sm uppercase tracking-wider">The AI Filmmaking Journal</span>
         </div>
-        <h2 className="text-3xl sm:text-5xl font-bold mb-4 gradient-text-gold">
+        <h2 className="text-3xl sm:text-5xl font-bold mb-4 text-gold-shimmer">
           Insights on <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">AI Cinema</span>
         </h2>
         <p className="text-white/60 text-lg max-w-2xl mx-auto">

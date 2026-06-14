@@ -491,7 +491,7 @@ export default function Pricing() {
 
         {/* Feature Comparison Table */}
         <div id="comparison" className="max-w-7xl mx-auto mb-20 scroll-mt-20">
-          <h2 className="text-3xl font-bold text-center mb-12 gradient-text-gold">Feature Comparison</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-gold-shimmer">Feature Comparison</h2>
           <div className="overflow-x-auto rounded-xl border border-amber-500/20 bg-zinc-900/30">
             <table className="w-full text-sm text-left">
               <thead>
@@ -553,7 +553,7 @@ export default function Pricing() {
         {/* Credit Packs */}
         <div className="max-w-5xl mx-auto mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 gradient-text-gold">Credit Top-ups</h2>
+            <h2 className="text-3xl font-bold mb-4 text-gold-shimmer">Credit Top-ups</h2>
             <p className="text-muted-foreground">Need more credits mid-production? Purchase a one-time pack.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -585,7 +585,7 @@ export default function Pricing() {
 
         {/* FAQ */}
         <div className="max-w-3xl mx-auto mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12 gradient-text-gold">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-gold-shimmer">Frequently Asked Questions</h2>
           <div className="space-y-8">
             {FAQ.map((item, i) => (
               <div key={i}>

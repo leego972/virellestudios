@@ -173,7 +173,7 @@ export default function Showcase() {
       {/* ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Phase 3: Public Discovery Feed ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 pb-16">
         <div className="mb-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 gradient-text-gold"
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gold-shimmer"
             style={{
               background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
@@ -191,7 +191,7 @@ export default function Showcase() {
       <footer className="relative z-10 border-t border-neutral-900 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <Sparkles className="w-8 h-8 mx-auto mb-4 text-amber-400 gold-glow" style={{ color: "#d4af37" }} />
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text-gold"
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gold-shimmer"
             style={{
               background: "linear-gradient(135deg, #d4af37 0%, #f5e6a3 50%, #d4af37 100%)",
               WebkitBackgroundClip: "text",
@@ -285,7 +285,7 @@ function FilmCard({
         <div className="absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight gradient-text-gold">{film.title}</h2>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gold-shimmer">{film.title}</h2>
               <div className="flex items-center gap-3 mt-1 text-sm text-neutral-400">
                 {film.genre && (
                   <span className="px-2 py-0.5 rounded-full text-xs font-medium border"

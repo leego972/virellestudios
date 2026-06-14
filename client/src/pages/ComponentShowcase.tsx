@@ -230,7 +230,7 @@ export default function ComponentsShowcase() {
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
       <main className="container max-w-6xl mx-auto">
         <div className="space-y-2 justify-between flex">
-          <h2 className="text-3xl font-bold tracking-tight mb-6 gradient-text-gold">
+          <h2 className="text-3xl font-bold tracking-tight mb-6 text-gold-shimmer">
             Shadcn/ui Component Library
           </h2>
           <Button variant="outline" size="icon" onClick={toggleTheme}>
