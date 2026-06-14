@@ -18,19 +18,19 @@ import { NextStageCTA } from "@/components/NextStageCTA";
 import { SubscriptionGate } from "@/components/SubscriptionGate";
 import StudioOpener from "@/components/StudioOpener";
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Trailer Types ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ─── Trailer Types ───
 const TRAILER_TYPES = [
-  { id: "teaser", label: "Teaser", duration: "30-60s", icon: "ÃÂ°ÃÂÃÂÃÂ¬", description: "Short, mysterious ÃÂ¢ÃÂÃÂ builds curiosity with minimal plot reveal. Usually released 6+ months before premiere.", beats: 3 },
-  { id: "theatrical", label: "Theatrical", duration: "2:00-2:30", icon: "ÃÂ°ÃÂÃÂÃÂ¥", description: "Full cinematic trailer ÃÂ¢ÃÂÃÂ three-act structure with rising tension, hero shots, and climactic montage.", beats: 8 },
-  { id: "tv-spot", label: "TV Spot", duration: "15-30s", icon: "ÃÂ°ÃÂÃÂÃÂº", description: "Broadcast-ready TV advertisement ÃÂ¢ÃÂÃÂ punchy, high-energy, single hook with release date.", beats: 4 },
-  { id: "international", label: "International", duration: "2:00-3:00", icon: "ÃÂ°ÃÂÃÂÃÂ", description: "Extended cut for international markets ÃÂ¢ÃÂÃÂ more context, slower pacing, culturally neutral imagery.", beats: 10 },
-  { id: "red-band", label: "Red Band", duration: "2:00-2:30", icon: "ÃÂ°ÃÂÃÂÃÂ´", description: "Restricted trailer for mature audiences ÃÂ¢ÃÂÃÂ showcases the film's true tone and intensity.", beats: 8 },
-  { id: "final", label: "Final Trailer", duration: "2:00-2:30", icon: "ÃÂ¢ÃÂ­ÃÂ", description: "Last trailer before release ÃÂ¢ÃÂÃÂ maximum hype, key moments, critical acclaim quotes.", beats: 8 },
+  { id: "teaser", label: "Teaser", duration: "30-60s", icon: "🎬", description: "Short, mysterious — builds curiosity with minimal plot reveal. Usually released 6+ months before premiere.", beats: 3 },
+  { id: "theatrical", label: "Theatrical", duration: "2:00-2:30", icon: "🎥", description: "Full cinematic trailer — three-act structure with rising tension, hero shots, and climactic montage.", beats: 8 },
+  { id: "tv-spot", label: "TV Spot", duration: "15-30s", icon: "📺", description: "Broadcast-ready TV advertisement — punchy, high-energy, single hook with release date.", beats: 4 },
+  { id: "international", label: "International", duration: "2:00-3:00", icon: "🌍", description: "Extended cut for international markets — more context, slower pacing, culturally neutral imagery.", beats: 10 },
+  { id: "red-band", label: "Red Band", duration: "2:00-2:30", icon: "🔴", description: "Restricted trailer for mature audiences — showcases the film's true tone and intensity.", beats: 8 },
+  { id: "final", label: "Final Trailer", duration: "2:00-2:30", icon: "⭐", description: "Last trailer before release — maximum hype, key moments, critical acclaim quotes.", beats: 8 },
 ] as const;
 
 type TrailerType = typeof TRAILER_TYPES[number]["id"];
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Beat Templates ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ─── Beat Templates ───
 interface Beat {
   id: string;
   label: string;
@@ -49,25 +49,25 @@ interface Beat {
 
 const THEATRICAL_BEATS: Omit<Beat, "id" | "sceneId">[] = [
   { label: "Studio Logos", description: "Production company logos with ambient sound", durationSec: 5, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "ambient", pacing: "slow", transition: "fade-black", soundEffect: "" },
-  { label: "World Establishment", description: "Wide establishing shots ÃÂ¢ÃÂÃÂ introduce the world, time period, setting", durationSec: 15, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "atmospheric", pacing: "slow", transition: "dissolve", soundEffect: "" },
-  { label: "Character Introduction", description: "Meet the protagonist ÃÂ¢ÃÂÃÂ their normal life, desires, personality", durationSec: 12, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "emotional", pacing: "medium", transition: "cut", soundEffect: "" },
-  { label: "Inciting Incident", description: "The event that disrupts everything ÃÂ¢ÃÂÃÂ the call to adventure", durationSec: 10, customText: "", titleCard: true, titleCardText: "THIS SUMMER", titleCardStyle: "slam", musicMood: "tension", pacing: "medium", transition: "smash-cut", soundEffect: "boom" },
-  { label: "Rising Action", description: "Escalating conflict ÃÂ¢ÃÂÃÂ montage of challenges, obstacles, stakes", durationSec: 20, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "driving", pacing: "fast", transition: "whip", soundEffect: "" },
-  { label: "Emotional Core", description: "The heart of the story ÃÂ¢ÃÂÃÂ key relationship moment or revelation", durationSec: 10, customText: "", titleCard: true, titleCardText: "ONE CHANCE", titleCardStyle: "typewriter", musicMood: "emotional", pacing: "slow", transition: "dissolve", soundEffect: "" },
-  { label: "Climactic Montage", description: "Rapid-fire peak moments ÃÂ¢ÃÂÃÂ action, drama, spectacle at maximum intensity", durationSec: 15, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "epic", pacing: "frenetic", transition: "smash-cut", soundEffect: "bass-drop" },
+  { label: "World Establishment", description: "Wide establishing shots — introduce the world, time period, setting", durationSec: 15, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "atmospheric", pacing: "slow", transition: "dissolve", soundEffect: "" },
+  { label: "Character Introduction", description: "Meet the protagonist — their normal life, desires, personality", durationSec: 12, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "emotional", pacing: "medium", transition: "cut", soundEffect: "" },
+  { label: "Inciting Incident", description: "The event that disrupts everything — the call to adventure", durationSec: 10, customText: "", titleCard: true, titleCardText: "THIS SUMMER", titleCardStyle: "slam", musicMood: "tension", pacing: "medium", transition: "smash-cut", soundEffect: "boom" },
+  { label: "Rising Action", description: "Escalating conflict — montage of challenges, obstacles, stakes", durationSec: 20, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "driving", pacing: "fast", transition: "whip", soundEffect: "" },
+  { label: "Emotional Core", description: "The heart of the story — key relationship moment or revelation", durationSec: 10, customText: "", titleCard: true, titleCardText: "ONE CHANCE", titleCardStyle: "typewriter", musicMood: "emotional", pacing: "slow", transition: "dissolve", soundEffect: "" },
+  { label: "Climactic Montage", description: "Rapid-fire peak moments — action, drama, spectacle at maximum intensity", durationSec: 15, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "epic", pacing: "frenetic", transition: "smash-cut", soundEffect: "bass-drop" },
   { label: "Title Card & Date", description: "Film title reveal with release date and credits", durationSec: 8, customText: "", titleCard: true, titleCardText: "", titleCardStyle: "cinematic", musicMood: "resolve", pacing: "slow", transition: "fade-black", soundEffect: "stinger" },
 ];
 
 const TEASER_BEATS: Omit<Beat, "id" | "sceneId">[] = [
-  { label: "Mystery Open", description: "Cryptic imagery ÃÂ¢ÃÂÃÂ a single evocative shot that raises questions", durationSec: 10, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "mysterious", pacing: "slow", transition: "fade-black", soundEffect: "" },
-  { label: "Glimpse", description: "Brief flashes of the world and characters ÃÂ¢ÃÂÃÂ tantalizing fragments", durationSec: 15, customText: "", titleCard: true, titleCardText: "", titleCardStyle: "glitch", musicMood: "tension", pacing: "medium", transition: "smash-cut", soundEffect: "whoosh" },
-  { label: "Title Reveal", description: "Film title with release window ÃÂ¢ÃÂÃÂ leave them wanting more", durationSec: 8, customText: "", titleCard: true, titleCardText: "", titleCardStyle: "cinematic", musicMood: "resolve", pacing: "slow", transition: "fade-black", soundEffect: "stinger" },
+  { label: "Mystery Open", description: "Cryptic imagery — a single evocative shot that raises questions", durationSec: 10, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "mysterious", pacing: "slow", transition: "fade-black", soundEffect: "" },
+  { label: "Glimpse", description: "Brief flashes of the world and characters — tantalizing fragments", durationSec: 15, customText: "", titleCard: true, titleCardText: "", titleCardStyle: "glitch", musicMood: "tension", pacing: "medium", transition: "smash-cut", soundEffect: "whoosh" },
+  { label: "Title Reveal", description: "Film title with release window — leave them wanting more", durationSec: 8, customText: "", titleCard: true, titleCardText: "", titleCardStyle: "cinematic", musicMood: "resolve", pacing: "slow", transition: "fade-black", soundEffect: "stinger" },
 ];
 
 const TV_SPOT_BEATS: Omit<Beat, "id" | "sceneId">[] = [
-  { label: "Hook", description: "Immediate attention grab ÃÂ¢ÃÂÃÂ the single most compelling moment", durationSec: 5, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "impact", pacing: "fast", transition: "cut", soundEffect: "boom" },
-  { label: "Sell", description: "Quick montage of the best shots ÃÂ¢ÃÂÃÂ action, emotion, spectacle", durationSec: 10, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "driving", pacing: "frenetic", transition: "whip", soundEffect: "" },
-  { label: "Quote", description: "Critical acclaim or audience reaction quote", durationSec: 5, customText: "", titleCard: true, titleCardText: "\"A MASTERPIECE\" ÃÂ¢ÃÂÃÂ Critics", titleCardStyle: "slam", musicMood: "epic", pacing: "fast", transition: "smash-cut", soundEffect: "" },
+  { label: "Hook", description: "Immediate attention grab — the single most compelling moment", durationSec: 5, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "impact", pacing: "fast", transition: "cut", soundEffect: "boom" },
+  { label: "Sell", description: "Quick montage of the best shots — action, emotion, spectacle", durationSec: 10, customText: "", titleCard: false, titleCardText: "", titleCardStyle: "fade", musicMood: "driving", pacing: "frenetic", transition: "whip", soundEffect: "" },
+  { label: "Quote", description: "Critical acclaim or audience reaction quote", durationSec: 5, customText: "", titleCard: true, titleCardText: "\"A MASTERPIECE\" — Critics", titleCardStyle: "slam", musicMood: "epic", pacing: "fast", transition: "smash-cut", soundEffect: "" },
   { label: "CTA", description: "Title, release date, 'In Theaters Now' or 'Streaming on...'", durationSec: 5, customText: "", titleCard: true, titleCardText: "", titleCardStyle: "cinematic", musicMood: "resolve", pacing: "medium", transition: "fade-black", soundEffect: "stinger" },
 ];
 
@@ -78,14 +78,14 @@ function getDefaultBeats(type: TrailerType): Beat[] {
   return templates.map((b, i) => ({ ...b, id: `beat-${i}-${Date.now()}`, sceneId: null }));
 }
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Music Moods ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ─── Music Moods ───
 const MUSIC_MOODS = [
   "ambient", "atmospheric", "mysterious", "emotional", "tension",
   "driving", "epic", "frenetic", "impact", "resolve", "heroic",
   "dark", "hopeful", "melancholy", "triumphant", "suspense"
 ];
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Title Card Styles ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ─── Title Card Styles ───
 const TITLE_CARD_STYLES = [
   { id: "fade", label: "Fade In", description: "Classic elegant fade" },
   { id: "slam", label: "Slam Cut", description: "Hard impact with sound" },
@@ -94,10 +94,10 @@ const TITLE_CARD_STYLES = [
   { id: "cinematic", label: "Cinematic", description: "Slow zoom with lens flare" },
 ] as const;
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Sound Effects ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ─── Sound Effects ───
 const SOUND_EFFECTS = ["", "boom", "whoosh", "stinger", "bass-drop", "riser", "hit", "reverse-cymbal", "thunder", "heartbeat", "glass-shatter", "door-slam"];
 
-// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Pacing Labels ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+// ─── Pacing Labels ───
 const PACING_COLORS: Record<string, string> = {
   slow: "bg-blue-500/20 text-blue-400",
   medium: "bg-amber-500/20 text-amber-400",
@@ -110,7 +110,7 @@ function TrailerStudioInner() {
   const projectId = Number(params.projectId);
   const [, setLocation] = useLocation();
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Data ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── Data ───
   const { data: project } = trpc.project.get.useQuery({ id: projectId }, { enabled: !!projectId });
   const { data: scenes } = trpc.scene.listByProject.useQuery({ projectId }, { enabled: !!projectId });
   const generateTrailer = trpc.generation.generateTrailer.useMutation({
@@ -121,7 +121,7 @@ function TrailerStudioInner() {
     onError: (err) => toast.error(err.message),
   });
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ State ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── State ───
   const [trailerType, setTrailerType] = useState<TrailerType>("theatrical");
   const [beats, setBeats] = useState<Beat[]>(getDefaultBeats("theatrical"));
   const [selectedBeatId, setSelectedBeatId] = useState<string | null>(null);
@@ -149,14 +149,14 @@ function TrailerStudioInner() {
     }
   }, [project]);
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Trailer Type Change ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── Trailer Type Change ───
   const handleTypeChange = (type: TrailerType) => {
     setTrailerType(type);
     setBeats(getDefaultBeats(type));
     setSelectedBeatId(null);
   };
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Beat Management ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── Beat Management ───
   const selectedBeat = beats.find(b => b.id === selectedBeatId);
 
   const updateBeat = (id: string, updates: Partial<Beat>) => {
@@ -208,7 +208,7 @@ function TrailerStudioInner() {
     setBeats(prev => [...prev.slice(0, idx + 1), newBeat, ...prev.slice(idx + 1)]);
   };
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Auto-assign scenes to beats ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── Auto-assign scenes to beats ───
   const autoAssignScenes = () => {
     if (!scenes?.length) return toast.error("No scenes available");
     const sorted = [...scenes].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
@@ -218,10 +218,10 @@ function TrailerStudioInner() {
       const sceneIdx = i % firstHalf.length;
       return { ...beat, sceneId: firstHalf[sceneIdx]?.id ?? null };
     }));
-    toast.success("Scenes auto-assigned (first half only ÃÂ¢ÃÂÃÂ no spoilers)");
+    toast.success("Scenes auto-assigned (first half only — no spoilers)");
   };
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Total Duration ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── Total Duration ───
   const totalDuration = beats.reduce((sum, b) => sum + b.durationSec, 0);
   const formatTime = (sec: number) => {
     const m = Math.floor(sec / 60);
@@ -229,7 +229,7 @@ function TrailerStudioInner() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Preview Playback ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── Preview Playback ───
   const togglePreview = () => {
     if (previewPlaying) {
       if (previewTimerRef.current) clearInterval(previewTimerRef.current);
@@ -255,13 +255,13 @@ function TrailerStudioInner() {
     }
   };
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Generate ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── Generate ───
   const handleGenerate = () => {
     if (!projectId) return;
     generateTrailer.mutate({ projectId });
   };
 
-  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Get scene thumbnail for a beat ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
+  // ─── Get scene thumbnail for a beat ───
   const getSceneThumbnail = (sceneId: number | null) => {
     if (!sceneId || !scenes) return null;
     const scene = scenes.find(s => s.id === sceneId);
@@ -292,7 +292,7 @@ function TrailerStudioInner() {
     }
     return (
     <div className="min-h-screen text-foreground" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Header ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+      {/* ─── Header ─── */}
       <div className="border-b sticky top-0 z-40" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.97)", backdropFilter:"blur(24px)" }}>
         <div className="flex items-center justify-between px-2 md:px-4 py-2 md:py-3">
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
@@ -304,7 +304,7 @@ function TrailerStudioInner() {
                 <Film className="h-4 w-4 md:h-5 md:w-5 text-amber-500 shrink-0" />
                 <span className="truncate">Trailer Studio</span>
               </h1>
-              <p className="text-[10px] md:text-xs text-muted-foreground truncate">{project?.title || "Loading..."} ÃÂ¢ÃÂÃÂ {formatTime(totalDuration)}</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground truncate">{project?.title || "Loading..."} — {formatTime(totalDuration)}</p>
             </div>
           </div>
           <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
@@ -330,7 +330,7 @@ function TrailerStudioInner() {
       </div>
 
       <div className="flex h-[calc(100vh-57px)]">
-        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Left Panel: Trailer Config (desktop) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+        {/* ─── Left Panel: Trailer Config (desktop) ─── */}
         {!isMobile && (
         <div className="w-80 border-r border-border overflow-y-auto p-4 space-y-4 bg-card/30">
           {/* Trailer Type Selector */}
@@ -429,7 +429,7 @@ function TrailerStudioInner() {
 
         )}
 
-        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Center: Beat Timeline ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+        {/* ─── Center: Beat Timeline ─── */}
         <div className="flex-1 overflow-y-auto p-2 md:p-4 min-w-0">
           {/* Preview Area */}
           <div className="mb-4">
@@ -461,7 +461,7 @@ function TrailerStudioInner() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
                   <Film className="h-10 w-10 mb-2 opacity-30" />
                   <p className="text-sm">Click Preview to see your trailer structure</p>
-                  <p className="text-xs opacity-50 mt-1">{formatTime(totalDuration)} ÃÂÃÂ· {beats.length} beats ÃÂÃÂ· {trailerType}</p>
+                  <p className="text-xs opacity-50 mt-1">{formatTime(totalDuration)} · {beats.length} beats · {trailerType}</p>
                 </div>
               )}
             </div>
@@ -472,7 +472,7 @@ function TrailerStudioInner() {
             <h3 className="text-sm font-semibold flex items-center gap-2 gradient-text-gold">
               <Layers className="h-4 w-4 text-amber-500" />
               Beat Structure
-              <span className="text-xs text-muted-foreground font-normal">({beats.length} beats ÃÂÃÂ· {formatTime(totalDuration)})</span>
+              <span className="text-xs text-muted-foreground font-normal">({beats.length} beats · {formatTime(totalDuration)})</span>
             </h3>
             <Button variant="outline" size="sm" onClick={addBeat}>
               <Plus className="h-3 w-3 mr-1" />Add Beat
@@ -546,8 +546,8 @@ function TrailerStudioInner() {
                     <div className="flex items-center gap-2 mt-1">
                       <span className={`text-[9px] px-1.5 py-0.5 rounded ${PACING_COLORS[beat.pacing]}`}>{beat.pacing}</span>
                       <span className="text-[9px] text-muted-foreground">{beat.musicMood}</span>
-                      <span className="text-[9px] text-muted-foreground">ÃÂ¢ÃÂÃÂ {beat.transition}</span>
-                      {beat.soundEffect && <span className="text-[9px] text-purple-400">ÃÂ¢ÃÂÃÂª {beat.soundEffect}</span>}
+                      <span className="text-[9px] text-muted-foreground">→ {beat.transition}</span>
+                      {beat.soundEffect && <span className="text-[9px] text-purple-400">♪ {beat.soundEffect}</span>}
                     </div>
                   </div>
 
@@ -601,7 +601,7 @@ function TrailerStudioInner() {
           )}
         </div>
 
-        {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Right Panel: Beat Inspector (desktop) ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+        {/* ─── Right Panel: Beat Inspector (desktop) ─── */}
         {!isMobile && (
         <div className="w-80 border-l border-border overflow-y-auto p-4 space-y-4 bg-card/30">
           {selectedBeat ? (
@@ -631,7 +631,7 @@ function TrailerStudioInner() {
                   onChange={e => updateBeat(selectedBeat.id, { sceneId: e.target.value ? Number(e.target.value) : null })}
                   className="mt-1 w-full h-8 text-sm bg-background border border-border rounded px-2"
                 >
-                  <option value="">ÃÂ¢ÃÂÃÂ None ÃÂ¢ÃÂÃÂ</option>
+                  <option value="">— None —</option>
                   {scenes?.map(s => (
                     <option key={s.id} value={s.id}>{s.title || `Scene ${s.id}`}</option>
                   ))}
@@ -723,7 +723,7 @@ function TrailerStudioInner() {
         )}
       </div>
 
-      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Mobile Config Sheet ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+      {/* ─── Mobile Config Sheet ─── */}
       {isMobile && (
         <Sheet open={mobileConfigOpen} onOpenChange={setMobileConfigOpen}>
           <SheetContent side="left" className="glass-dark w-[85vw] max-w-sm p-0">
@@ -774,7 +774,7 @@ function TrailerStudioInner() {
         </Sheet>
       )}
 
-      {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Mobile Beat Inspector Sheet ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
+      {/* ─── Mobile Beat Inspector Sheet ─── */}
       {isMobile && (
         <Sheet open={mobileBeatOpen} onOpenChange={setMobileBeatOpen}>
           <SheetContent side="bottom" className="glass-dark h-[70vh] p-0">
@@ -799,7 +799,7 @@ function TrailerStudioInner() {
                   <div>
                     <label className="text-xs text-muted-foreground">Assign Scene</label>
                     <select value={selectedBeat.sceneId ?? ""} onChange={e => updateBeat(selectedBeat.id, { sceneId: e.target.value ? Number(e.target.value) : null })} className="mt-1 w-full h-8 text-sm bg-background border border-border rounded px-2">
-                      <option value="">ÃÂ¢ÃÂÃÂ None ÃÂ¢ÃÂÃÂ</option>
+                      <option value="">— None —</option>
                       {scenes?.map(s => (<option key={s.id} value={s.id}>{s.title || `Scene ${s.id}`}</option>))}
                     </select>
                   </div>
