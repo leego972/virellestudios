@@ -62,7 +62,7 @@ const STAGES: Stage[] = [
     key: "characters",
     number: 2,
     title: "Casting Studio",
-    blurb: "Photo or description â consistent screen-ready actor",
+    blurb: "Photo or description Ã¢ÂÂ consistent screen-ready actor",
     icon: Users,
     hrefFor: (id) => `/projects/${id}/casting-board`,
     isDone: (s) => s.characterCount >= 1,
@@ -182,7 +182,7 @@ export function ProjectJourneyNav({
               <div className="text-xs uppercase tracking-widest text-amber-500/80 mb-1">
                 The Filmmaker's Journey
               </div>
-              <h3 className="font-serif text-2xl">
+              <h3 className="font-serif text-2xl gradient-text-gold">
                 {currentStage.status === "active" ? "Next: " : "Complete: "}
                 <span className="text-amber-400">{currentStage.title}</span>
               </h3>
@@ -198,7 +198,7 @@ export function ProjectJourneyNav({
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
-                Stage {currentStage.number} of {STAGES.length} Â· {completedCount} complete
+                Stage {currentStage.number} of {STAGES.length} ÃÂ· {completedCount} complete
               </span>
               <span>{percent}%</span>
             </div>

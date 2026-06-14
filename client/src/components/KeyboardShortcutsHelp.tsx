@@ -9,7 +9,7 @@ const GROUPS: ShortcutGroup[] = [
   {
     title: "Global",
     rows: [
-      { keys: ["⌘", "K"], label: "Open command palette / search" },
+      { keys: ["â", "K"], label: "Open command palette / search" },
       { keys: ["?"], label: "Show this keyboard help" },
       { keys: ["g", "h"], label: "Go to Home dashboard" },
       { keys: ["g", "p"], label: "Go to Projects" },
@@ -34,7 +34,7 @@ const GROUPS: ShortcutGroup[] = [
   {
     title: "Scene editor",
     rows: [
-      { keys: ["⌘", "S"], label: "Save scene now" },
+      { keys: ["â", "S"], label: "Save scene now" },
       { keys: ["Esc"], label: "Close editor without saving" },
     ],
   },
@@ -74,7 +74,7 @@ export default function KeyboardShortcutsHelp() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 gradient-text-gold">
             <Keyboard className="h-5 w-5 text-amber-500" />
             Keyboard shortcuts
           </DialogTitle>

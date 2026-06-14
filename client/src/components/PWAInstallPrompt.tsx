@@ -116,7 +116,7 @@ export default function PWAInstallPrompt() {
           <img src="/virelle-favicon-192.png" alt="" className="w-10 h-10 rounded-lg" />
         </div>
         <div className="min-w-0">
-          <h3 className="font-serif text-base text-white leading-tight">Install Virelle Studios</h3>
+          <h3 className="font-serif text-base leading-tight gradient-text-gold">Install Virelle Studios</h3>
           <p className="text-xs text-white/60 mt-1">
             {showIOSHint
               ? "Add Virelle to your Home Screen for a full-screen, app-like experience."

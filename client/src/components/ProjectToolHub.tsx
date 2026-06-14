@@ -140,7 +140,7 @@ export default function ProjectToolHub({ projectId }: { projectId: number | stri
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
           <div>
             <div className="text-[10px] uppercase tracking-widest text-amber-500/80 mb-1">Complete workflow</div>
-            <h3 className="font-serif text-xl leading-tight">Plan â Create â Produce â Finish â Release</h3>
+            <h3 className="font-serif text-xl leading-tight gradient-text-gold">Plan Ã¢ÂÂ Create Ã¢ÂÂ Produce Ã¢ÂÂ Finish Ã¢ÂÂ Release</h3>
             <p className="text-sm text-muted-foreground mt-1 max-w-3xl">
               All major tools are grouped by the real film-production process. Nothing is removed; this hub makes hidden features easier to find.
             </p>

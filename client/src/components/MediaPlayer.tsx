@@ -53,7 +53,7 @@ interface MediaPlayerProps {
   playlist?: MovieItem[];
   onClose: () => void;
   onNavigate?: (movieId: number) => void;
-  // v6.62 â When set, enables the Frame Comments panel + scrubber markers.
+  // v6.62 Ã¢ÂÂ When set, enables the Frame Comments panel + scrubber markers.
   // Pass projectId + (sceneId OR movieId). Movies-list view typically only
   // has movieId; in-project review views pass both.
   projectId?: number;
@@ -84,7 +84,7 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export default function MediaPlayer({ movie, playlist, onClose, onNavigate, projectId, sceneId }: MediaPlayerProps) {
-  // v6.62 â Frame comments panel toggle
+  // v6.62 Ã¢ÂÂ Frame comments panel toggle
   const [commentsOpen, setCommentsOpen] = useState(false);
   const commentsEnabled = !!projectId && (!!sceneId || !!movie.id);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -156,14 +156,14 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
       // Auto-unmute after the muted-autoplay handshake succeeds.
       // We check video.muted directly (not React state) to avoid the stale-closure
       // race where state hasn't caught up to the muted attribute set in JSX.
-      // iOS Safari may still reject programmatic unmute without a user gesture â
+      // iOS Safari may still reject programmatic unmute without a user gesture Ã¢ÂÂ
       // in that case the user taps the volume icon to unmute.
       if (video.muted) {
         try {
           video.muted = false;
           setIsMuted(false);
         } catch {
-          /* iOS gesture requirement â surface via volume button */
+          /* iOS gesture requirement Ã¢ÂÂ surface via volume button */
         }
       }
     };
@@ -307,7 +307,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
           resetControlsTimeout();
           break;
         case "<":
-          // Decrease playback speed â functional update so repeated presses
+          // Decrease playback speed Ã¢ÂÂ functional update so repeated presses
           // step cumulatively (avoids stale closure on playbackSpeed).
           e.preventDefault();
           setPlaybackSpeed((prev) => {
@@ -319,7 +319,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
           resetControlsTimeout();
           break;
         case ">":
-          // Increase playback speed â functional update so repeated presses
+          // Increase playback speed Ã¢ÂÂ functional update so repeated presses
           // step cumulatively (avoids stale closure on playbackSpeed).
           e.preventDefault();
           setPlaybackSpeed((prev) => {
@@ -392,7 +392,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
     setCurrentTime(value[0]);
   };
 
-  // v6.62 â Imperative seek used by frame-comment markers + comments panel.
+  // v6.62 Ã¢ÂÂ Imperative seek used by frame-comment markers + comments panel.
   const seekToSeconds = useCallback((sec: number) => {
     const video = videoRef.current;
     if (!video) return;
@@ -434,7 +434,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
 
   const playableMovies = playlist?.filter((m) => m.fileUrl || m.thumbnailUrl) ?? [];
 
-  // ââ Minimised mini-player bar ââ
+  // Ã¢ÂÂÃ¢ÂÂ Minimised mini-player bar Ã¢ÂÂÃ¢ÂÂ
   if (isMinimised) {
     return (
       <div
@@ -475,12 +475,12 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
 
   return (
     <div className="fixed inset-0 z-50 bg-black/95 flex flex-col" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      {/* Top Bar â always-visible window controls strip */}
+      {/* Top Bar Ã¢ÂÂ always-visible window controls strip */}
       <div
         className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between"
         style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}
       >
-        {/* Always-visible Back button â closes the player AND pops browser history so the user
+        {/* Always-visible Back button Ã¢ÂÂ closes the player AND pops browser history so the user
             actually returns to the previous page. Without history.back, onClose just unmounts the
             overlay and the user lands on the same page they opened the player from, which they
             (correctly) interpret as 'back didn't work'. */}
@@ -502,10 +502,10 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
         >
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
         </Button>
-        {/* Left: title â fades with controls */}
+        {/* Left: title Ã¢ÂÂ fades with controls */}
         <div className={`flex items-center gap-2 min-w-0 flex-1 px-3 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
           <div className="min-w-0">
-            <h2 className="text-white font-medium text-sm sm:text-base truncate drop-shadow gradient-text-gold">{movie.title}</h2>
+            <h2 className="font-medium text-sm sm:text-base truncate drop-shadow gradient-text-gold">{movie.title}</h2>
             <div className="flex items-center gap-2 mt-0.5">
               <Badge className={`${TYPE_COLORS[movie.type] || TYPE_COLORS.film} border text-[10px]`}>
                 {TYPE_LABELS[movie.type] || movie.type}
@@ -517,7 +517,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
           </div>
         </div>
 
-        {/* Right: window controls â ALWAYS VISIBLE */}
+        {/* Right: window controls Ã¢ÂÂ ALWAYS VISIBLE */}
         <div className="flex items-center gap-0.5 shrink-0 pr-2 bg-black/40 backdrop-blur-sm rounded-bl-xl">
           {playlist && playlist.length > 1 && (
             <Button
@@ -625,7 +625,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
                   </p>
                   <p className="text-[10px] text-white/40 mt-0.5">
                     {TYPE_LABELS[m.type] || m.type}
-                    {m.duration ? ` Â· ${formatTime(m.duration)}` : ""}
+                    {m.duration ? ` ÃÂ· ${formatTime(m.duration)}` : ""}
                   </p>
                 </div>
               </button>
@@ -641,7 +641,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
         onClick={(e) => {
           // Don't toggle play if clicking on controls
           if ((e.target as HTMLElement).closest("[data-controls]")) return;
-          // Double-tap-to-seek (YouTube/Netflix UX) â only on touch-likely devices,
+          // Double-tap-to-seek (YouTube/Netflix UX) Ã¢ÂÂ only on touch-likely devices,
           // and only inside the video area, never on top of controls.
           const now = Date.now();
           const target = e.currentTarget as HTMLElement;
@@ -695,7 +695,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
             <div className="absolute bottom-20 left-0 right-0 text-center">
               <div className="inline-flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-4 py-2">
                 <Film className="h-4 w-4 text-amber-400" />
-                <span className="text-white/80 text-sm">Scene Preview â Video generating or awaiting generation</span>
+                <span className="text-white/80 text-sm">Scene Preview Ã¢ÂÂ Video generating or awaiting generation</span>
               </div>
             </div>
             <style>{`
@@ -768,7 +768,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
               {seekFlash.side === "left"
                 ? <ChevronDown className="h-8 w-8 -rotate-90" />
                 : <ChevronDown className="h-8 w-8 rotate-90" />}
-              <span className="text-xs font-medium">{seekFlash.side === "left" ? "â10s" : "+10s"}</span>
+              <span className="text-xs font-medium">{seekFlash.side === "left" ? "Ã¢ÂÂ10s" : "+10s"}</span>
             </div>
           </div>
         )}
@@ -824,7 +824,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
                   className="absolute top-1/2 -translate-y-1/2 w-4 h-4 sm:w-3 sm:h-3 bg-amber-500 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-lg"
                   style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, transform: "translate(-50%, -50%)" }}
                 />
-                {/* v6.62 â Frame comment markers (pinned to specific seconds) */}
+                {/* v6.62 Ã¢ÂÂ Frame comment markers (pinned to specific seconds) */}
                 {commentsEnabled && projectId && (
                   <FrameCommentMarkers
                     projectId={projectId}
@@ -954,7 +954,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
 
               {/* Right Controls */}
               <div className="flex items-center gap-1">
-                {/* v6.62 â Frame comments toggle */}
+                {/* v6.62 Ã¢ÂÂ Frame comments toggle */}
                 {commentsEnabled && (
                   <TooltipProvider delayDuration={300}>
                     <Tooltip>
@@ -974,7 +974,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
                     </Tooltip>
                   </TooltipProvider>
                 )}
-                {/* Download â mirrored here in the bottom bar so mobile users (whose top bar
+                {/* Download Ã¢ÂÂ mirrored here in the bottom bar so mobile users (whose top bar
                     can be obscured by Safari/Chrome chrome) always have a visible Download. */}
                 {movie.fileUrl && (
                   <TooltipProvider delayDuration={300}>
@@ -1095,7 +1095,7 @@ export default function MediaPlayer({ movie, playlist, onClose, onNavigate, proj
           </div>
         )}
 
-        {/* v6.62 â Frame comments side panel (overlay, slides in from right) */}
+        {/* v6.62 Ã¢ÂÂ Frame comments side panel (overlay, slides in from right) */}
         {commentsEnabled && commentsOpen && projectId && (
           <div
             data-controls
