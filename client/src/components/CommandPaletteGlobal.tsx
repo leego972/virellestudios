@@ -1,1 +1,161 @@
-aW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgdXNlTG9jYXRpb24gfSBmcm9tICJ3b3V0ZXIiOwppbXBvcnQgewogIENvbW1hbmREaWFsb2csCiAgQ29tbWFuZElucHV0LAogIENvbW1hbmRMaXN0LAogIENvbW1hbmRFbXB0eSwKICBDb21tYW5kR3JvdXAsCiAgQ29tbWFuZEl0ZW0sCiAgQ29tbWFuZFNlcGFyYXRvciwKICBDb21tYW5kU2hvcnRjdXQsCn0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NvbW1hbmQiOwppbXBvcnQgewogIEhvbWUsIEZvbGRlck9wZW4sIFBsdXMsIFVzZXJzLCBGaWxtLCBNaWMyLCBTcGFya2xlcywgV2FuZDIsIE1lZ2FwaG9uZSwgRG9sbGFyU2lnbiwKICBJbWFnZSBhcyBJbWFnZUljb24sIFRyb3BoeSwgQmFyQ2hhcnQzLCBTZXR0aW5ncywgQ3JlZGl0Q2FyZCwgRmlsZVRleHQsIE11c2ljLCBDYW1lcmEsCiAgQ2xhcHBlcmJvYXJkLCBMYXllcnMsIFNjcm9sbFRleHQsIEF3YXJkLCBHbG9iZSwgQnJpZWZjYXNlLCBUYXJnZXQsIExpc3RDaGVja3MsIFNoaWVsZENoZWNrLAogIENhbGVuZGFyLCBNZXNzYWdlU3F1YXJlLCBCZWxsLCBMb2dPdXQsIFR2LCBOZXdzcGFwZXIsIEJvb2tPcGVuLCBCdWlsZGluZzIsIFBhaW50QnVja2V0LAogIEhlYWRwaG9uZXMsIFNjaXNzb3JzLCBTdWJ0aXRsZXMgYXMgU3Vic0ljb24sIEdpdEJyYW5jaCwgQmFkZ2VEb2xsYXJTaWduLCBCb3QsIFNob3BwaW5nQmFnLCBMaW5lQ2hhcnQsCn0gZnJvbSAibHVjaWRlLXJlYWN0IjsKCnR5cGUgQ21kID0geyBpZDogc3RyaW5nOyBsYWJlbDogc3RyaW5nOyBncm91cDogc3RyaW5nOyBwYXRoPzogc3RyaW5nOyBpY29uPzogYW55OyBhY3Rpb24/OiAoKSA9PiB2b2lkOyBrZXl3b3Jkcz86IHN0cmluZyB9OwoKY29uc3QgUkVDRU5UU19LRVkgPSAidnNfY21kcGFsX3JlY2VudHMiOwpjb25zdCBNQVhfUkVDRU5UUyA9IDY7Cgpjb25zdCBDT01NQU5EUzogQ21kW10gPSBbCiAgLy8gQ29yZQogIHsgaWQ6ICJob21lIiwgICAgICAgIGxhYmVsOiAiSG9tZSAvIERhc2hib2FyZCIsICAgICAgICAgIGdyb3VwOiAiQ29yZSIsICAgICAgcGF0aDogIi8iLCAgICAgICAgICAgICAgICAgICAgIGljb246IEhvbWUsIGtleXdvcmRzOiAiZGFzaGJvYXJkIHN0YXJ0IiB9LAogIHsgaWQ6ICJwcm9qZWN0cyIsICAgIGxhYmVsOiAiQWxsIFByb2plY3RzIiwgICAgICAgICAgICAgIGdyb3VwOiAiQ29yZSIsICAgICAgcGF0aDogIi9wcm9qZWN0cyIsICAgICAgICAgICAgIGljb246IEZvbGRlck9wZW4gfSwKICB7IGlkOiAibmV3cHJvamVjdCIsICBsYWJlbDogIkNyZWF0ZSBOZXcgUHJvamVjdCIsICAgICAgICBncm91cDogIkNvcmUiLCAgICAgIHBhdGg6ICIvcHJvamVjdHMvbmV3IiwgICAgICAgICBpY29uOiBQbHVzLCBrZXl3b3JkczogInN0YXJ0IG5ldyBmaWxtIiB9LAogIHsgaWQ6ICJtb3ZpZXMiLCAgICAgIGxhYmVsOiAiTXkgTW92aWVzIiwgICAgICAgICAgICAgICAgIGdyb3VwOiAiQ29yZSIsICAgICAgcGF0aDogIi9tb3ZpZXMiLCAgICAgICAgICAgICAgIGljb246IEZpbG0gfSwKICB7IGlkOiAic2hvd2Nhc2UiLCAgICBsYWJlbDogIlB1YmxpYyBTaG93Y2FzZSIsICAgICAgICAgICBncm91cDogIkNvcmUiLCAgICAgIHBhdGg6ICIvc2hvd2Nhc2UiLCAgICAgICAgICAgICBpY29uOiBBd2FyZCB9LAoKICAvLyBQcm9kdWN0aW9uCiAgeyBpZDogInNjZW5lcyIsICAgICAgIGxhYmVsOiAiU2NlbmUgRWRpdG9yIChsYXN0IHByb2plY3QpIiwgZ3JvdXA6ICJQcm9kdWN0aW9uIiwgcGF0aDogIi9zY2VuZXMiLCAgICAgICAgICBpY29uOiBDbGFwcGVyYm9hcmQgfSwKICB7IGlkOiAiY2hhcmFjdGVycyIsICAgbGFiZWw6ICJDaGFyYWN0ZXJzICYgQ2FzdCIsICAgICAgICAgZ3JvdXA6ICJQcm9kdWN0aW9uIiwgcGF0aDogIi9jaGFyYWN0ZXJzIiwgICAgICAgICBpY29uOiBVc2VycyB9LAogIHsgaWQ6ICJ0YWxlbnQiLCAgICAgICBsYWJlbDogIlRhbGVudCBTZWFyY2giLCAgICAgICAgICAgICBncm91cDogIlByb2R1Y3Rpb24iLCBwYXRoOiAiL3RhbGVudC1zZWFyY2giLCAgICAgIGljb246IFVzZXJzIH0sCiAgeyBpZDogImNhc3RpbmciLCAgICAgIGxhYmVsOiAiQUkgQ2FzdGluZyBEaXJlY3RvciIsICAgICAgIGdyb3VwOiAiUHJvZHVjdGlvbiIsIHBhdGg6ICIvYWktY2FzdGluZyIsICAgICAgICAgaWNvbjogQm90IH0sCiAgeyBpZDogInByZXByb2QiLCAgICAgIGxhYmVsOiAiUHJlLVByb2R1Y3Rpb24gUGFuZWwiLCAgICAgIGdyb3VwOiAiUHJvZHVjdGlvbiIsIHBhdGg6ICIvcHJlLXByb2R1Y3Rpb24iLCAgICAgaWNvbjogTGlzdENoZWNrcyB9LAogIHsgaWQ6ICJ0aW1lbGluZSIsICAgICBsYWJlbDogIkZlYXR1cmUgVGltZWxpbmUiLCAgICAgICAgICBncm91cDogIlByb2R1Y3Rpb24iLCBwYXRoOiAiL2ZlYXR1cmUtdGltZWxpbmUiLCAgIGljb246IEdpdEJyYW5jaCB9LAogIHsgaWQ6ICJkaXJlY3RvcmN1dCIsICBsYWJlbDogIkRpcmVjdG9yJ3MgQ3V0IFN1aXRlIiwgICAgICBncm91cDogIlByb2R1Y3Rpb24iLCBwYXRoOiAiL2RpcmVjdG9yLWN1dCIsICAgICAgIGljb246IFNjaXNzb3JzIH0sCiAgeyBpZDogInNjcmlwdCIsICAgICAgIGxhYmVsOiAiU2NyaXB0IFdyaXRlciIsICAgICAgICAgICAgIGdyb3VwOiAiUHJvZHVjdGlvbiIsIHBhdGg6ICIvc2NyaXB0IiwgICAgICAgICAgICAgaWNvbjogU2Nyb2xsVGV4dCB9LAogIHsgaWQ6ICJkaWFsb2d1ZSIsICAgICBsYWJlbDogIkRpYWxvZ3VlIEVkaXRvciIsICAgICAgICAgICBncm91cDogIlByb2R1Y3Rpb24iLCBwYXRoOiAiL2RpYWxvZ3VlLWVkaXRvciIsICAgIGljb246IE1lc3NhZ2VTcXVhcmUgfSwKICB7IGlkOiAic2VxdWVuY2VyIiwgICAgbGFiZWw6ICJNdWx0aS1TaG90IFNlcXVlbmNlciIsICAgICAgZ3JvdXA6ICJQcm9kdWN0aW9uIiwgcGF0aDogIi9tdWx0aS1zaG90IiwgICAgICAgICBpY29uOiBMYXllcnMgfSwKICB7IGlkOiAidmZ4IiwgICAgICAgICAgbGFiZWw6ICJWaXN1YWwgRWZmZWN0cyIsICAgICAgICAgICAgZ3JvdXA6ICJQcm9kdWN0aW9uIiwgcGF0aDogIi92ZngiLCAgICAgICAgICAgICAgICBpY29uOiBTcGFya2xlcyB9LAogIHsgaWQ6ICJzZngiLCAgICAgICAgICBsYWJlbDogIlNvdW5kIEVmZmVjdHMiLCAgICAgICAgICAgICBncm91cDogIlByb2R1Y3Rpb24iLCBwYXRoOiAiL3NvdW5kLWVmZmVjdHMiLCAgICAgIGljb246IEhlYWRwaG9uZXMgfSwKICB7IGlkOiAic3VicyIsICAgICAgICAgbGFiZWw6ICJTdWJ0aXRsZXMiLCAgICAgICAgICAgICAgICAgZ3JvdXA6ICJQcm9kdWN0aW9uIiwgcGF0aDogIi9zdWJ0aXRsZXMiLCAgICAgICAgICBpY29uOiBTdWJzSWNvbiB9LAogIHsgaWQ6ICJvZmZpY2UiLCAgICAgICBsYWJlbDogIlByb2R1Y3Rpb24gT2ZmaWNlIiwgICAgICAgICBncm91cDogIlByb2R1Y3Rpb24iLCBwYXRoOiAiL3Byb2R1Y3Rpb24tb2ZmaWNlIiwgIGljb246IEJ1aWxkaW5nMiB9LAogIHsgaWQ6ICJzdHVkaW9vcHMiLCAgICBsYWJlbDogIlBybyBTdHVkaW8gT3BzIChxdWV1ZSwgbG9ja3MsIGFwcHJvdmFscykiLCBncm91cDogIlByb2R1Y3Rpb24iLCBwYXRoOiAiL3Byby1zdHVkaW8tb3BzIiwgaWNvbjogU2hpZWxkQ2hlY2ssIGtleXdvcmRzOiAicmVuZGVyIHF1ZXVlIGxvY2tzIGFwcHJvdmFscyBidWRnZXQiIH0sCgogIC8vIE1hcmtldGluZwogIHsgaWQ6ICJhZHMiLCAgICAgICAgICBsYWJlbDogIkFkdmVydGlzaW5nIERhc2hib2FyZCIsICAgICBncm91cDogIk1hcmtldGluZyIsICBwYXRoOiAiL2FkdmVydGlzaW5nIiwgICAgICAgIGljb246IE1lZ2FwaG9uZSB9LAogIHsgaWQ6ICJhZHBvc3RlcnMiLCAgICBsYWJlbDogIkFkL1Bvc3RlciBNYWtlciIsICAgICAgICAgICBncm91cDogIk1hcmtldGluZyIsICBwYXRoOiAiL2FkLXBvc3Rlci1tYWtlciIsICAgIGljb246IEltYWdlSWNvbiB9LAogIHsgaWQ6ICJjYW1wYWlnbnMiLCAgICBsYWJlbDogIkNhbXBhaWduIE1hbmFnZXIiLCAgICAgICAgICBncm91cDogIk1hcmtldGluZyIsICBwYXRoOiAiL2NhbXBhaWducyIsICAgICAgICAgIGljb246IFRhcmdldCB9LAogIHsgaWQ6ICJ0cmFpbGVycyIsICAgICBsYWJlbDogIlRyYWlsZXIgU3R1ZGlvIiwgICAgICAgICAgICBncm91cDogIk1hcmtldGluZyIsICBwYXRoOiAiL3RyYWlsZXItc3R1ZGlvIiwgICAgIGljb246IFR2IH0sCiAgeyBpZDogInR2YyIsICAgICAgICAgIGxhYmVsOiAiVFYgQ29tbWVyY2lhbCBDcmVhdG9yIiwgICAgIGdyb3VwOiAiTWFya2V0aW5nIiwgIHBhdGg6ICIvdHYtY29tbWVyY2lhbCIsICAgICAgaWNvbjogVHYgfSwKICB7IGlkOiAicHJlc3MiLCAgICAgICAgbGFiZWw6ICJQcmVzcyBLaXQgQnVpbGRlciIsICAgICAgICAgZ3JvdXA6ICJNYXJrZXRpbmciLCAgcGF0aDogIi9wcmVzcy1raXQiLCAgICAgICAgICBpY29uOiBOZXdzcGFwZXIgfSwKICB7IGlkOiAicGl0Y2giLCAgICAgICAgbGFiZWw6ICJQaXRjaCBMYWIiLCAgICAgICAgICAgICAgICAgZ3JvdXA6ICJNYXJrZXRpbmciLCAgcGF0aDogIi9waXRjaC1sYWIiLCAgICAgICAgICBpY29uOiBCYXJDaGFydDMgfSwKICB7IGlkOiAiY29udGVudCIsICAgICAgbGFiZWw6ICJDb250ZW50IENyZWF0b3IgKHNvY2lhbCkiLCAgZ3JvdXA6ICJNYXJrZXRpbmciLCAgcGF0aDogIi9jb250ZW50LWNyZWF0b3IiLCAgICBpY29uOiBQYWludEJ1Y2tldCB9LAoKICAvLyBCdXNpbmVzcwogIHsgaWQ6ICJmdW5kaW5nIiwgICAgICBsYWJlbDogIkZ1bmRpbmcgRGlyZWN0b3J5IiwgICAgICAgICBncm91cDogIkJ1c2luZXNzIiwgICBwYXRoOiAiL2Z1bmRpbmciLCAgICAgICAgICAgIGljb246IERvbGxhclNpZ24gfSwKICB7IGlkOiAiZnVuZGluZ3BybyIsICAgbGFiZWw6ICJGdW5kaW5nIOKAlCBBSSBNYXRjaCAmIFRyYWNrZXIiLCBncm91cDogIkJ1c2luZXNzIiwgcGF0aDogIi9mdW5kaW5nLXBybyIsICAgICAgIGljb246IFNwYXJrbGVzLCBrZXl3b3JkczogIm1hdGNoIHNjb3JlIGFwcGx5IGdyYW50IiB9LAogIHsgaWQ6ICJmZXN0aXZhbHMiLCAgICBsYWJlbDogIkZlc3RpdmFsIFRyYWNrZXIiLCAgICAgICAgICBncm91cDogIkJ1c2luZXNzIiwgICBwYXRoOiAiL2Zlc3RpdmFscyIsICAgICAgICAgIGljb246IFRyb3BoeSB9LAogIHsgaWQ6ICJkaXN0cmlidXRlIiwgICBsYWJlbDogIkRpc3RyaWJ1dGUgKGxhc3QgcHJvamVjdCkiLCBncm91cDogIkJ1c2luZXNzIiwgICBwYXRoOiAiL2Rpc3RyaWJ1dGUiLCAgICAgICAgIGljb246IEdsb2JlIH0sCiAgeyBpZDogIm1hcmtldHBsYWNlIiwgIGxhYmVsOiAiQXNzZXQgTWFya2V0cGxhY2UiLCAgICAgICAgIGdyb3VwOiAiQnVzaW5lc3MiLCAgIHBhdGg6ICIvbWFya2V0cGxhY2UiLCAgICAgICAgaWNvbjogU2hvcHBpbmdCYWcgfSwKICB7IGlkOiAiY3JlZGl0cyIsICAgICAgbGFiZWw6ICJCdXkgQ3JlZGl0cyIsICAgICAgICAgICAgICAgZ3JvdXA6ICJCdXNpbmVzcyIsICAgcGF0aDogIi9jcmVkaXRzIiwgICAgICAgICAgICBpY29uOiBCYWRnZURvbGxhclNpZ24gfSwKICB7IGlkOiAicHJpY2luZyIsICAgICAgbGFiZWw6ICJQbGFucyAmIFByaWNpbmciLCAgICAgICAgICAgZ3JvdXA6ICJCdXNpbmVzcyIsICAgcGF0aDogIi9wcmljaW5nIiwgICAgICAgICAgICBpY29uOiBDcmVkaXRDYXJkIH0sCgogIC8vIEluc2lnaHRzCiAgeyBpZDogInNlbyIsICAgICAgICAgIGxhYmVsOiAiU0VPIERhc2hib2FyZCIsICAgICAgICAgICAgIGdyb3VwOiAiSW5zaWdodHMiLCAgIHBhdGg6ICIvc2VvLWRhc2hib2FyZCIsICAgICAgaWNvbjogTGluZUNoYXJ0IH0sCiAgeyBpZDogImJsb2ciLCAgICAgICAgIGxhYmVsOiAiQmxvZyIsICAgICAgICAgICAgICAgICAgICAgIGdyb3VwOiAiSW5zaWdodHMiLCAgIHBhdGg6ICIvYmxvZyIsICAgICAgICAgICAgICAgaWNvbjogQm9va09wZW4gfSwKCiAgLy8gQWNjb3VudAogIHsgaWQ6ICJzZXR0aW5ncyIsICAgICBsYWJlbDogIlNldHRpbmdzIiwgICAgICAgICAgICAgICAgICBncm91cDogIkFjY291bnQiLCAgICBwYXRoOiAiL3NldHRpbmdzIiwgICAgICAgICAgIGljb246IFNldHRpbmdzIH0sCiAgeyBpZDogImJpbGxpbmciLCAgICAgIGxhYmVsOiAiQmlsbGluZyBQb3J0YWwiLCAgICAgICAgICAgIGdyb3VwOiAiQWNjb3VudCIsICAgIHBhdGg6ICIvYmlsbGluZy9wb3J0YWwiLCAgICAgaWNvbjogQ3JlZGl0Q2FyZCB9LAogIHsgaWQ6ICJyZWZlcnJhbHMiLCAgICBsYWJlbDogIlJlZmVycmFscyIsICAgICAgICAgICAgICAgICBncm91cDogIkFjY291bnQiLCAgICBwYXRoOiAiL3JlZmVycmFscyIsICAgICAgICAgIGljb246IFVzZXJzIH0sCiAgeyBpZDogImNvbnRhY3QiLCAgICAgIGxhYmVsOiAiQ29udGFjdCBTdXBwb3J0IiwgICAgICAgICAgIGdyb3VwOiAiQWNjb3VudCIsICAgIHBhdGg6ICIvY29udGFjdCIsICAgICAgICAgICAgaWNvbjogTWVzc2FnZVNxdWFyZSB9LApdOwoKZnVuY3Rpb24gbG9hZFJlY2VudHMoKTogc3RyaW5nW10gewogIHRyeSB7IHJldHVybiBKU09OLnBhcnNlKGxvY2FsU3RvcmFnZS5nZXRJdGVtKFJFQ0VOVFNfS0VZKSB8fCAiW10iKTsgfSBjYXRjaCB7IHJldHVybiBbXTsgfQp9CmZ1bmN0aW9uIHB1c2hSZWNlbnQoaWQ6IHN0cmluZykgewogIHRyeSB7CiAgICBjb25zdCBjdXIgPSBsb2FkUmVjZW50cygpLmZpbHRlcih4ID0+IHggIT09IGlkKTsKICAgIGN1ci51bnNoaWZ0KGlkKTsKICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKFJFQ0VOVFNfS0VZLCBKU09OLnN0cmluZ2lmeShjdXIuc2xpY2UoMCwgTUFYX1JFQ0VOVFMpKSk7CiAgfSBjYXRjaCB7fQp9CgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBDb21tYW5kUGFsZXR0ZUdsb2JhbCgpIHsKICBjb25zdCBbb3Blbiwgc2V0T3Blbl0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgWywgc2V0TG9jYXRpb25dID0gdXNlTG9jYXRpb24oKTsKCiAgdXNlRWZmZWN0KCgpID0+IHsKICAgIGNvbnN0IG9uS2V5ID0gKGU6IEtleWJvYXJkRXZlbnQpID0+IHsKICAgICAgaWYgKChlLmtleSA9PT0gImsiIHx8IGUua2V5ID09PSAiSyIpICYmIChlLm1ldGFLZXkgfHwgZS5jdHJsS2V5KSkgewogICAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgICBzZXRPcGVuKG8gPT4gIW8pOwogICAgICB9CiAgICAgIGlmIChlLmtleSA9PT0gIi8iICYmICFlLm1ldGFLZXkgJiYgIWUuY3RybEtleSAmJiAhZS5hbHRLZXkpIHsKICAgICAgICBjb25zdCB0YWcgPSAoZS50YXJnZXQgYXMgSFRNTEVsZW1lbnQpPy50YWdOYW1lOwogICAgICAgIGlmICh0YWcgIT09ICJJTlBVVCIgJiYgdGFnICE9PSAiVEVYVEFSRUEiICYmICEoZS50YXJnZXQgYXMgSFRNTEVsZW1lbnQpPy5pc0NvbnRlbnRFZGl0YWJsZSkgewogICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgICAgc2V0T3BlbihvID0+ICFvKTsKICAgICAgICB9CiAgICAgIH0KICAgIH07CiAgICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigia2V5ZG93biIsIG9uS2V5KTsKICAgIHJldHVybiAoKSA9PiB3aW5kb3cucmVtb3ZlRXZlbnRMaXN0ZW5lcigia2V5ZG93biIsIG9uS2V5KTsKICB9LCBbXSk7CgogIGNvbnN0IHJ1biA9IChjOiBDbWQpID0+IHsKICAgIHNldE9wZW4oZmFsc2UpOwogICAgcHVzaFJlY2VudChjLmlkKTsKICAgIGlmIChjLmFjdGlvbikgYy5hY3Rpb24oKTsKICAgIGVsc2UgaWYgKGMucGF0aCkgc2V0TG9jYXRpb24oYy5wYXRoKTsKICB9OwoKICBjb25zdCByZWNlbnRJZHMgPSBsb2FkUmVjZW50cygpOwogIGNvbnN0IHJlY2VudENtZHMgPSByZWNlbnRJZHMubWFwKGlkID0+IENPTU1BTkRTLmZpbmQoYyA9PiBjLmlkID09PSBpZCkpLmZpbHRlcihCb29sZWFuKSBhcyBDbWRbXTsKICBjb25zdCBncm91cHMgPSBDT01NQU5EUy5yZWR1Y2UoKGFjYywgYykgPT4geyAoYWNjW2MuZ3JvdXBdIHx8PSBbXSkucHVzaChjKTsgcmV0dXJuIGFjYzsgfSwge30gYXMgUmVjb3JkPHN0cmluZywgQ21kW10+KTsKCiAgcmV0dXJuICgKICAgIDxDb21tYW5kRGlhbG9nIG9wZW49e29wZW59IG9uT3BlbkNoYW5nZT17c2V0T3Blbn0gdGl0bGU9IlNlYXJjaCAmIGp1bXAgYW55d2hlcmUiIGRlc2NyaXB0aW9uPSJUeXBlIHRvIHNlYXJjaCBldmVyeSBwYWdlLiBQcmVzcyBFc2MgdG8gY2xvc2UuIiBjbGFzc05hbWU9IlsmX1tjbWRrLXJvb3RdXTpiZy1bIzBjMGIxOF0gWyZfW2NtZGstaW5wdXQtd3JhcHBlcl1dOmJvcmRlci1iIFsmX1tjbWRrLWlucHV0LXdyYXBwZXJdXTpib3JkZXItd2hpdGUvMTAiPgogICAgICA8Q29tbWFuZElucHV0IHBsYWNlaG9sZGVyPSJTZWFyY2ggcGFnZXMsIHRvb2xzLCBhY3Rpb25z4oCmIChDbWQvQ3RybCtLKSIgLz4KICAgICAgPENvbW1hbmRMaXN0PgogICAgICAgIDxDb21tYW5kRW1wdHk+Tm8gbWF0Y2hlcy4gVHJ5ICJmdW5kaW5nIiwgInRyYWlsZXIiLCAic2NlbmUi4oCmPC9Db21tYW5kRW1wdHk+CiAgICAgICAge3JlY2VudENtZHMubGVuZ3RoID4gMCAmJiAoCiAgICAgICAgICA8PgogICAgICAgICAgICA8Q29tbWFuZEdyb3VwIGhlYWRpbmc9IlJlY2VudCI+CiAgICAgICAgICAgICAge3JlY2VudENtZHMubWFwKGMgPT4gewogICAgICAgICAgICAgICAgY29uc3QgSWNvbiA9IGMuaWNvbiB8fCBTcGFya2xlczsKICAgICAgICAgICAgICAgIHJldHVybiA8Q29tbWFuZEl0ZW0ga2V5PXtgci0ke2MuaWR9YH0gdmFsdWU9e2ByZWNlbnQgJHtjLmxhYmVsfSAke2Mua2V5d29yZHMgfHwgIiJ9YH0gb25TZWxlY3Q9eygpID0+IHJ1bihjKX0+PEljb24gY2xhc3NOYW1lPSJoLTQgdy00IG1yLTIgb3BhY2l0eS03MCIgLz57Yy5sYWJlbH08L0NvbW1hbmRJdGVtPjsKICAgICAgICAgICAgICB9KX0KICAgICAgICAgICAgPC9Db21tYW5kR3JvdXA+CiAgICAgICAgICAgIDxDb21tYW5kU2VwYXJhdG9yIC8+CiAgICAgICAgICA8Lz4KICAgICAgICApfQogICAgICAgIHtPYmplY3QuZW50cmllcyhncm91cHMpLm1hcCgoW2hlYWRpbmcsIGl0ZW1zXSkgPT4gKAogICAgICAgICAgPENvbW1hbmRHcm91cCBrZXk9e2hlYWRpbmd9IGhlYWRpbmc9e2hlYWRpbmd9PgogICAgICAgICAgICB7aXRlbXMubWFwKGMgPT4gewogICAgICAgICAgICAgIGNvbnN0IEljb24gPSBjLmljb24gfHwgU3BhcmtsZXM7CiAgICAgICAgICAgICAgcmV0dXJuICgKICAgICAgICAgICAgICAgIDxDb21tYW5kSXRlbSBrZXk9e2MuaWR9IHZhbHVlPXtgJHtjLmxhYmVsfSAke2Mua2V5d29yZHMgfHwgIiJ9ICR7Yy5ncm91cH1gfSBvblNlbGVjdD17KCkgPT4gcnVuKGMpfT4KICAgICAgICAgICAgICAgICAgPEljb24gY2xhc3NOYW1lPSJoLTQgdy00IG1yLTIgb3BhY2l0eS03MCIgLz57Yy5sYWJlbH0KICAgICAgICAgICAgICAgIDwvQ29tbWFuZEl0ZW0+CiAgICAgICAgICAgICAgKTsKICAgICAgICAgICAgfSl9CiAgICAgICAgICA8L0NvbW1hbmRHcm91cD4KICAgICAgICApKX0KICAgICAgICA8Q29tbWFuZFNlcGFyYXRvciAvPgogICAgICAgIDxDb21tYW5kR3JvdXAgaGVhZGluZz0iVGlwcyI+CiAgICAgICAgICA8Q29tbWFuZEl0ZW0gdmFsdWU9InRpcC1zaG9ydGN1dCIgZGlzYWJsZWQ+PENvbW1hbmRTaG9ydGN1dD7ijJggSzwvQ29tbWFuZFNob3J0Y3V0Pk9wZW4gdGhpcyBwYWxldHRlIGFueXdoZXJlPC9Db21tYW5kSXRlbT4KICAgICAgICAgIDxDb21tYW5kSXRlbSB2YWx1ZT0idGlwLXNsYXNoIiBkaXNhYmxlZD48Q29tbWFuZFNob3J0Y3V0Pi88L0NvbW1hbmRTaG9ydGN1dD5RdWljay1vcGVuIHdpdGhvdXQgbW9kaWZpZXJzPC9Db21tYW5kSXRlbT4KICAgICAgICA8L0NvbW1hbmRHcm91cD4KICAgICAgPC9Db21tYW5kTGlzdD4KICAgIDwvQ29tbWFuZERpYWxvZz4KICApOwp9Cg==
+import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
+import {
+  Home, FolderOpen, Plus, Users, Film, Mic2, Sparkles, Wand2, Megaphone, DollarSign,
+  Image as ImageIcon, Trophy, BarChart3, Settings, CreditCard, FileText, Music, Camera,
+  Clapperboard, Layers, ScrollText, Award, Globe, Briefcase, Target, ListChecks, ShieldCheck,
+  Calendar, MessageSquare, Bell, LogOut, Tv, Newspaper, BookOpen, Building2, PaintBucket,
+  Headphones, Scissors, Subtitles as SubsIcon, GitBranch, BadgeDollarSign, Bot, ShoppingBag, LineChart,
+} from "lucide-react";
+
+type Cmd = { id: string; label: string; group: string; path?: string; icon?: any; action?: () => void; keywords?: string };
+
+const RECENTS_KEY = "vs_cmdpal_recents";
+const MAX_RECENTS = 6;
+
+const COMMANDS: Cmd[] = [
+  // Core
+  { id: "home",        label: "Home / Dashboard",          group: "Core",      path: "/",                     icon: Home, keywords: "dashboard start" },
+  { id: "projects",    label: "All Projects",              group: "Core",      path: "/projects",             icon: FolderOpen },
+  { id: "newproject",  label: "Create New Project",        group: "Core",      path: "/projects/new",         icon: Plus, keywords: "start new film" },
+  { id: "movies",      label: "My Movies",                 group: "Core",      path: "/movies",               icon: Film },
+  { id: "showcase",    label: "Public Showcase",           group: "Core",      path: "/showcase",             icon: Award },
+
+  // Production
+  { id: "scenes",       label: "Scene Editor (last project)", group: "Production", path: "/scenes",          icon: Clapperboard },
+  { id: "characters",   label: "Characters & Cast",         group: "Production", path: "/characters",         icon: Users },
+  { id: "talent",       label: "Talent Search",             group: "Production", path: "/talent-search",      icon: Users },
+  { id: "casting",      label: "AI Casting Director",       group: "Production", path: "/ai-casting",         icon: Bot },
+  { id: "preprod",      label: "Pre-Production Panel",      group: "Production", path: "/pre-production",     icon: ListChecks },
+  { id: "timeline",     label: "Feature Timeline",          group: "Production", path: "/feature-timeline",   icon: GitBranch },
+  { id: "directorcut",  label: "Director's Cut Suite",      group: "Production", path: "/director-cut",       icon: Scissors },
+  { id: "script",       label: "Script Writer",             group: "Production", path: "/script",             icon: ScrollText },
+  { id: "dialogue",     label: "Dialogue Editor",           group: "Production", path: "/dialogue-editor",    icon: MessageSquare },
+  { id: "sequencer",    label: "Multi-Shot Sequencer",      group: "Production", path: "/multi-shot",         icon: Layers },
+  { id: "vfx",          label: "Visual Effects",            group: "Production", path: "/vfx",                icon: Sparkles },
+  { id: "sfx",          label: "Sound Effects",             group: "Production", path: "/sound-effects",      icon: Headphones },
+  { id: "subs",         label: "Subtitles",                 group: "Production", path: "/subtitles",          icon: SubsIcon },
+  { id: "office",       label: "Production Office",         group: "Production", path: "/production-office",  icon: Building2 },
+  { id: "studioops",    label: "Pro Studio Ops (queue, locks, approvals)", group: "Production", path: "/pro-studio-ops", icon: ShieldCheck, keywords: "render queue locks approvals budget" },
+
+  // Marketing
+  { id: "ads",          label: "Advertising Dashboard",     group: "Marketing",  path: "/advertising",        icon: Megaphone },
+  { id: "adposters",    label: "Ad/Poster Maker",           group: "Marketing",  path: "/ad-poster-maker",    icon: ImageIcon },
+  { id: "campaigns",    label: "Campaign Manager",          group: "Marketing",  path: "/campaigns",          icon: Target },
+  { id: "trailers",     label: "Trailer Studio",            group: "Marketing",  path: "/trailer-studio",     icon: Tv },
+  { id: "tvc",          label: "TV Commercial Creator",     group: "Marketing",  path: "/tv-commercial",      icon: Tv },
+  { id: "press",        label: "Press Kit Builder",         group: "Marketing",  path: "/press-kit",          icon: Newspaper },
+  { id: "pitch",        label: "Pitch Lab",                 group: "Marketing",  path: "/pitch-lab",          icon: BarChart3 },
+  { id: "content",      label: "Content Creator (social)",  group: "Marketing",  path: "/content-creator",    icon: PaintBucket },
+
+  // Business
+  { id: "funding",      label: "Funding Directory",         group: "Business",   path: "/funding",            icon: DollarSign },
+  { id: "fundingpro",   label: "Funding — AI Match & Tracker", group: "Business", path: "/funding-pro",       icon: Sparkles, keywords: "match score apply grant" },
+  { id: "festivals",    label: "Festival Tracker",          group: "Business",   path: "/festivals",          icon: Trophy },
+  { id: "distribute",   label: "Distribute (last project)", group: "Business",   path: "/distribute",         icon: Globe },
+  { id: "marketplace",  label: "Asset Marketplace",         group: "Business",   path: "/marketplace",        icon: ShoppingBag },
+  { id: "credits",      label: "Buy Credits",               group: "Business",   path: "/credits",            icon: BadgeDollarSign },
+  { id: "pricing",      label: "Plans & Pricing",           group: "Business",   path: "/pricing",            icon: CreditCard },
+
+  // Insights
+  { id: "seo",          label: "SEO Dashboard",             group: "Insights",   path: "/seo-dashboard",      icon: LineChart },
+  { id: "blog",         label: "Blog",                      group: "Insights",   path: "/blog",               icon: BookOpen },
+
+  // Account
+  { id: "settings",     label: "Settings",                  group: "Account",    path: "/settings",           icon: Settings },
+  { id: "billing",      label: "Billing Portal",            group: "Account",    path: "/billing/portal",     icon: CreditCard },
+  { id: "referrals",    label: "Referrals",                 group: "Account",    path: "/referrals",          icon: Users },
+  { id: "contact",      label: "Contact Support",           group: "Account",    path: "/contact",            icon: MessageSquare },
+];
+
+function loadRecents(): string[] {
+  try { return JSON.parse(localStorage.getItem(RECENTS_KEY) || "[]"); } catch { return []; }
+}
+function pushRecent(id: string) {
+  try {
+    const cur = loadRecents().filter(x => x !== id);
+    cur.unshift(id);
+    localStorage.setItem(RECENTS_KEY, JSON.stringify(cur.slice(0, MAX_RECENTS)));
+  } catch {}
+}
+
+export default function CommandPaletteGlobal() {
+  const [open, setOpen] = useState(false);
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen(o => !o);
+      }
+      if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const tag = (e.target as HTMLElement)?.tagName;
+        if (tag !== "INPUT" && tag !== "TEXTAREA" && !(e.target as HTMLElement)?.isContentEditable) {
+          e.preventDefault();
+          setOpen(o => !o);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const run = (c: Cmd) => {
+    setOpen(false);
+    pushRecent(c.id);
+    if (c.action) c.action();
+    else if (c.path) setLocation(c.path);
+  };
+
+  const recentIds = loadRecents();
+  const recentCmds = recentIds.map(id => COMMANDS.find(c => c.id === id)).filter(Boolean) as Cmd[];
+  const groups = COMMANDS.reduce((acc, c) => { (acc[c.group] ||= []).push(c); return acc; }, {} as Record<string, Cmd[]>);
+
+  return (
+    <CommandDialog open={open} onOpenChange={setOpen} title="Search & jump anywhere" description="Type to search every page. Press Esc to close." className="[&_[cmdk-root]]:bg-[#0c0b18] [&_[cmdk-input-wrapper]]:border-b [&_[cmdk-input-wrapper]]:border-white/10">
+      <CommandInput placeholder="Search pages, tools, actions… (Cmd/Ctrl+K)" />
+      <CommandList>
+        <CommandEmpty>No matches. Try "funding", "trailer", "scene"…</CommandEmpty>
+        {recentCmds.length > 0 && (
+          <>
+            <CommandGroup heading="Recent">
+              {recentCmds.map(c => {
+                const Icon = c.icon || Sparkles;
+                return <CommandItem key={`r-${c.id}`} value={`recent ${c.label} ${c.keywords || ""}`} onSelect={() => run(c)}><Icon className="h-4 w-4 mr-2 opacity-70" />{c.label}</CommandItem>;
+              })}
+            </CommandGroup>
+            <CommandSeparator />
+          </>
+        )}
+        {Object.entries(groups).map(([heading, items]) => (
+          <CommandGroup key={heading} heading={heading}>
+            {items.map(c => {
+              const Icon = c.icon || Sparkles;
+              return (
+                <CommandItem key={c.id} value={`${c.label} ${c.keywords || ""} ${c.group}`} onSelect={() => run(c)}>
+                  <Icon className="h-4 w-4 mr-2 opacity-70" />{c.label}
+                </CommandItem>
+              );
+            })}
+          </CommandGroup>
+        ))}
+        <CommandSeparator />
+        <CommandGroup heading="Tips">
+          <CommandItem value="tip-shortcut" disabled><CommandShortcut>⌘ K</CommandShortcut>Open this palette anywhere</CommandItem>
+          <CommandItem value="tip-slash" disabled><CommandShortcut>/</CommandShortcut>Quick-open without modifiers</CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
+  );
+}

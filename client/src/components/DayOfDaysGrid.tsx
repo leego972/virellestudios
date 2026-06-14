@@ -1,1 +1,136 @@
-aW1wb3J0IHsgdXNlTWVtbyB9IGZyb20gInJlYWN0IjsKCmludGVyZmFjZSBTY2VuZSB7CiAgaWQ6IG51bWJlcjsKICBzaG9vdERheUlkPzogbnVtYmVyIHwgbnVsbDsKICBjaGFyYWN0ZXJJZHM/OiBudW1iZXJbXSB8IG51bGw7Cn0KaW50ZXJmYWNlIFNob290RGF5IHsgaWQ6IG51bWJlcjsgZGF5TnVtYmVyOiBudW1iZXI7IHNob290RGF0ZT86IHN0cmluZyB8IERhdGUgfCBudWxsOyB9CmludGVyZmFjZSBDaGFyYWN0ZXIgeyBpZDogbnVtYmVyOyBuYW1lOiBzdHJpbmc7IH0KCmludGVyZmFjZSBQcm9wcyB7CiAgc2NlbmVzOiBTY2VuZVtdOwogIGRheXM6IFNob290RGF5W107CiAgY2hhcmFjdGVyczogQ2hhcmFjdGVyW107Cn0KCi8qKgogKiB2Ni42MyDigJQgRGF5IE91dCBvZiBEYXlzLiBUaGUgY2xhc3NpYyAxQUQgZ3JpZCBzaG93aW5nIHdoaWNoIGFjdG9yIHdvcmtzCiAqIG9uIHdoaWNoIGRheS4gQ2VsbHM6IFNXID0gU3RhcnQvV3JhcCwgVyA9IFdvcmssIEggPSBIb2xkLCAiIiA9IG9mZi4KICogUG93ZXJzIHBheXJvbGwvaG9sZC1kYXkgY2FsY3VsYXRpb25zIGFuZCBzY2hlZHVsZSBndXQtY2hlY2tzLgogKi8KZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gRGF5T2ZEYXlzR3JpZCh7IHNjZW5lcywgZGF5cywgY2hhcmFjdGVycyB9OiBQcm9wcykgewogIGNvbnN0IHNvcnRlZERheXMgPSB1c2VNZW1vKCgpID0+IFsuLi5kYXlzXS5zb3J0KChhLCBiKSA9PiBhLmRheU51bWJlciAtIGIuZGF5TnVtYmVyKSwgW2RheXNdKTsKCiAgLy8gQnVpbGQgcGVyLWNoYXJhY3RlciBzZXQgb2Ygd29ya2luZyBkYXlzCiAgY29uc3Qgd29ya2luZ0J5Q2hhciA9IHVzZU1lbW8oKCkgPT4gewogICAgY29uc3QgbSA9IG5ldyBNYXA8bnVtYmVyLCBTZXQ8bnVtYmVyPj4oKTsKICAgIGZvciAoY29uc3QgYyBvZiBjaGFyYWN0ZXJzKSBtLnNldChjLmlkLCBuZXcgU2V0KCkpOwogICAgZm9yIChjb25zdCBzIG9mIHNjZW5lcykgewogICAgICBpZiAoIXMuc2hvb3REYXlJZCkgY29udGludWU7CiAgICAgIGZvciAoY29uc3QgY2lkIG9mIChzLmNoYXJhY3RlcklkcyB8fCBbXSkpIHsKICAgICAgICBpZiAobS5oYXMoY2lkKSkgbS5nZXQoY2lkKSEuYWRkKHMuc2hvb3REYXlJZCk7CiAgICAgIH0KICAgIH0KICAgIHJldHVybiBtOwogIH0sIFtzY2VuZXMsIGNoYXJhY3RlcnNdKTsKCiAgZnVuY3Rpb24gY2VsbExhYmVsKGNpZDogbnVtYmVyLCBkYXlJZDogbnVtYmVyKTogeyBsYWJlbDogc3RyaW5nOyBjb2xvcjogc3RyaW5nIH0gewogICAgY29uc3Qgc2V0ID0gd29ya2luZ0J5Q2hhci5nZXQoY2lkKTsKICAgIGlmICghc2V0KSByZXR1cm4geyBsYWJlbDogIiIsIGNvbG9yOiAiIiB9OwogICAgY29uc3Qgd29ya3MgPSBzZXQuaGFzKGRheUlkKTsKICAgIGlmICghd29ya3MpIHsKICAgICAgLy8gSG9sZCBkYXkgPSBiZXR3ZWVuIGZpcnN0IGFuZCBsYXN0IHdvcmtpbmcgZGF5CiAgICAgIGNvbnN0IGRheU51bXMgPSBzb3J0ZWREYXlzLm1hcCgoZCkgPT4gZC5pZCk7CiAgICAgIGNvbnN0IGlkeCA9IGRheU51bXMuaW5kZXhPZihkYXlJZCk7CiAgICAgIGNvbnN0IHdvcmtJZHhzID0gZGF5TnVtcy5tYXAoKGlkLCBpKSA9PiBzZXQuaGFzKGlkKSA/IGkgOiAtMSkuZmlsdGVyKChpKSA9PiBpID49IDApOwogICAgICBpZiAod29ya0lkeHMubGVuZ3RoID09PSAwKSByZXR1cm4geyBsYWJlbDogIiIsIGNvbG9yOiAiIiB9OwogICAgICBjb25zdCBmaXJzdCA9IHdvcmtJZHhzWzBdOyBjb25zdCBsYXN0ID0gd29ya0lkeHNbd29ya0lkeHMubGVuZ3RoIC0gMV07CiAgICAgIGlmIChpZHggPiBmaXJzdCAmJiBpZHggPCBsYXN0KSByZXR1cm4geyBsYWJlbDogIkgiLCBjb2xvcjogImJnLWFtYmVyLTkwMC81MCB0ZXh0LWFtYmVyLTIwMCIgfTsKICAgICAgcmV0dXJuIHsgbGFiZWw6ICIiLCBjb2xvcjogInRleHQtemluYy03MDAiIH07CiAgICB9CiAgICAvLyBXb3JraW5nIGRheS4gTWFyayBTdGFydC9XcmFwIGlmIGZpcnN0IG9yIGxhc3QuCiAgICBjb25zdCBkYXlOdW1zID0gc29ydGVkRGF5cy5tYXAoKGQpID0+IGQuaWQpOwogICAgY29uc3QgaWR4ID0gZGF5TnVtcy5pbmRleE9mKGRheUlkKTsKICAgIGNvbnN0IHdvcmtJZHhzID0gZGF5TnVtcy5tYXAoKGlkLCBpKSA9PiBzZXQuaGFzKGlkKSA/IGkgOiAtMSkuZmlsdGVyKChpKSA9PiBpID49IDApOwogICAgY29uc3QgaXNGaXJzdCA9IHdvcmtJZHhzWzBdID09PSBpZHg7CiAgICBjb25zdCBpc0xhc3QgPSB3b3JrSWR4c1t3b3JrSWR4cy5sZW5ndGggLSAxXSA9PT0gaWR4OwogICAgaWYgKGlzRmlyc3QgJiYgaXNMYXN0KSByZXR1cm4geyBsYWJlbDogIlNXIiwgY29sb3I6ICJiZy1lbWVyYWxkLTcwMCB0ZXh0LXdoaXRlIGZvbnQtc2VtaWJvbGQiIH07CiAgICBpZiAoaXNGaXJzdCkgcmV0dXJuIHsgbGFiZWw6ICJTIiwgY29sb3I6ICJiZy1lbWVyYWxkLTcwMCB0ZXh0LXdoaXRlIGZvbnQtc2VtaWJvbGQiIH07CiAgICBpZiAoaXNMYXN0KSByZXR1cm4geyBsYWJlbDogIlciLCBjb2xvcjogImJnLXJvc2UtNzAwIHRleHQtd2hpdGUgZm9udC1zZW1pYm9sZCIgfTsKICAgIHJldHVybiB7IGxhYmVsOiAiwrciLCBjb2xvcjogImJnLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDQpXSB0ZXh0LXppbmMtMjAwIiB9OwogIH0KCiAgaWYgKGNoYXJhY3RlcnMubGVuZ3RoID09PSAwIHx8IHNvcnRlZERheXMubGVuZ3RoID09PSAwKSB7CiAgICByZXR1cm4gKAogICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LXppbmMtNTAwIGl0YWxpYyBib3JkZXIgYm9yZGVyLWRhc2hlZCBib3JkZXItW3JnYmEoMjU1LDI1NSwyNTUsMC4wNyldIHJvdW5kZWQgcC04IHRleHQtY2VudGVyIj4KICAgICAgICBOZWVkIGF0IGxlYXN0IG9uZSBjaGFyYWN0ZXIgYW5kIG9uZSBzaG9vdCBkYXkgdG8gcmVuZGVyIHRoZSBEYXktT3V0LW9mLURheXMgZ3JpZC4KICAgICAgPC9kaXY+CiAgICApOwogIH0KCiAgLy8gUGVyLWNoYXJhY3RlciB3b3JrIGRheSBjb3VudAogIGNvbnN0IHRvdGFscyA9IG5ldyBNYXA8bnVtYmVyLCB7IHdvcms6IG51bWJlcjsgaG9sZDogbnVtYmVyIH0+KCk7CiAgZm9yIChjb25zdCBjIG9mIGNoYXJhY3RlcnMpIHsKICAgIGxldCB3b3JrID0gMCwgaG9sZCA9IDA7CiAgICBmb3IgKGNvbnN0IGQgb2Ygc29ydGVkRGF5cykgewogICAgICBjb25zdCByID0gY2VsbExhYmVsKGMuaWQsIGQuaWQpOwogICAgICBpZiAoci5sYWJlbCA9PT0gIlMiIHx8IHIubGFiZWwgPT09ICJXIiB8fCByLmxhYmVsID09PSAiU1ciIHx8IHIubGFiZWwgPT09ICLCtyIpIHdvcmsrKzsKICAgICAgaWYgKHIubGFiZWwgPT09ICJIIikgaG9sZCsrOwogICAgfQogICAgdG90YWxzLnNldChjLmlkLCB7IHdvcmssIGhvbGQgfSk7CiAgfQoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMyI+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJvdmVyZmxvdy14LWF1dG8gYm9yZGVyIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0gcm91bmRlZCI+CiAgICAgICAgPHRhYmxlIGNsYXNzTmFtZT0idGV4dC14cyI+CiAgICAgICAgICA8dGhlYWQgY2xhc3NOYW1lPSJiZy1bcmdiYSgyNTUsMjU1LDI1NSwwLjA0KV0gdGV4dC16aW5jLTQwMCI+CiAgICAgICAgICAgIDx0cj4KICAgICAgICAgICAgICA8dGggY2xhc3NOYW1lPSJzdGlja3kgbGVmdC0wIGJnLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDQpXSBweC0zIHB5LTIgdGV4dC1sZWZ0IGZvbnQtc2VtaWJvbGQgYm9yZGVyLXIgYm9yZGVyLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDcpXSBtaW4tdy1bMTQwcHhdIj5DYXN0PC90aD4KICAgICAgICAgICAgICB7c29ydGVkRGF5cy5tYXAoKGQpID0+ICgKICAgICAgICAgICAgICAgIDx0aCBrZXk9e2QuaWR9IGNsYXNzTmFtZT0icHgtMiBweS0yIHRleHQtY2VudGVyIG1pbi13LVs0MnB4XSBib3JkZXItciBib3JkZXItW3JnYmEoMjU1LDI1NSwyNTUsMC4wNyldLzUwIj4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtYW1iZXItNTAwIj5Ee2QuZGF5TnVtYmVyfTwvZGl2PgogICAgICAgICAgICAgICAgICB7ZC5zaG9vdERhdGUgJiYgKAogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LVs5cHhdIHRleHQtemluYy01MDAiPntuZXcgRGF0ZShkLnNob290RGF0ZSBhcyBhbnkpLnRvTG9jYWxlRGF0ZVN0cmluZyh1bmRlZmluZWQsIHsgbW9udGg6ICJudW1lcmljIiwgZGF5OiAibnVtZXJpYyIgfSl9PC9kaXY+CiAgICAgICAgICAgICAgICAgICl9CiAgICAgICAgICAgICAgICA8L3RoPgogICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgIDx0aCBjbGFzc05hbWU9InB4LTIgcHktMiB0ZXh0LWNlbnRlciBiZy1bcmdiYSgyNTUsMjU1LDI1NSwwLjAyKV0gYm9yZGVyLWwgYm9yZGVyLXppbmMtNzAwIG1pbi13LVs1MHB4XSI+V29yazwvdGg+CiAgICAgICAgICAgICAgPHRoIGNsYXNzTmFtZT0icHgtMiBweS0yIHRleHQtY2VudGVyIGJnLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDIpXSBtaW4tdy1bNTBweF0iPkhvbGQ8L3RoPgogICAgICAgICAgICA8L3RyPgogICAgICAgICAgPC90aGVhZD4KICAgICAgICAgIDx0Ym9keT4KICAgICAgICAgICAge2NoYXJhY3RlcnMubWFwKChjKSA9PiB7CiAgICAgICAgICAgICAgY29uc3QgdCA9IHRvdGFscy5nZXQoYy5pZCkgfHwgeyB3b3JrOiAwLCBob2xkOiAwIH07CiAgICAgICAgICAgICAgcmV0dXJuICgKICAgICAgICAgICAgICAgIDx0ciBrZXk9e2MuaWR9IGNsYXNzTmFtZT0iYm9yZGVyLXQgYm9yZGVyLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDcpXSBob3ZlcjpiZy1bcmdiYSgyNTUsMjU1LDI1NSwwLjAyKV0vNDAiPgogICAgICAgICAgICAgICAgICA8dGQgY2xhc3NOYW1lPSJzdGlja3kgbGVmdC0wIGJnLVsjMDcwNzBlXSBweC0zIHB5LTEuNSB0ZXh0LXppbmMtMjAwIGZvbnQtbWVkaXVtIGJvcmRlci1yIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0iPntjLm5hbWV9PC90ZD4KICAgICAgICAgICAgICAgICAge3NvcnRlZERheXMubWFwKChkKSA9PiB7CiAgICAgICAgICAgICAgICAgICAgY29uc3QgciA9IGNlbGxMYWJlbChjLmlkLCBkLmlkKTsKICAgICAgICAgICAgICAgICAgICByZXR1cm4gKAogICAgICAgICAgICAgICAgICAgICAgPHRkIGtleT17ZC5pZH0gY2xhc3NOYW1lPSJweC0xIHB5LTAgdGV4dC1jZW50ZXIgYm9yZGVyLXIgYm9yZGVyLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDcpXS81MCI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPXtgbXgtYXV0byB3LTcgaC03IGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHJvdW5kZWQgdGV4dC1bMTBweF0gJHtyLmNvbG9yfWB9PgogICAgICAgICAgICAgICAgICAgICAgICAgIHtyLmxhYmVsfQogICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+CiAgICAgICAgICAgICAgICAgICAgKTsKICAgICAgICAgICAgICAgICAgfSl9CiAgICAgICAgICAgICAgICAgIDx0ZCBjbGFzc05hbWU9InB4LTIgcHktMS41IHRleHQtY2VudGVyIHRleHQtZW1lcmFsZC0zMDAgYm9yZGVyLWwgYm9yZGVyLXppbmMtNzAwIj57dC53b3JrfTwvdGQ+CiAgICAgICAgICAgICAgICAgIDx0ZCBjbGFzc05hbWU9InB4LTIgcHktMS41IHRleHQtY2VudGVyIHRleHQtYW1iZXItMzAwIj57dC5ob2xkfTwvdGQ+CiAgICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICAgICk7CiAgICAgICAgICAgIH0pfQogICAgICAgICAgPC90Ym9keT4KICAgICAgICA8L3RhYmxlPgogICAgICA8L2Rpdj4KICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtWzExcHhdIHRleHQtemluYy01MDAgZmxleCBmbGV4LXdyYXAgZ2FwLTMiPgogICAgICAgIDxzcGFuPjxzcGFuIGNsYXNzTmFtZT0iYmctZW1lcmFsZC03MDAgdGV4dC13aGl0ZSBweC0xLjUgcm91bmRlZCI+Uzwvc3Bhbj4gU3RhcnQgZGF5PC9zcGFuPgogICAgICAgIDxzcGFuPjxzcGFuIGNsYXNzTmFtZT0iYmctcm9zZS03MDAgdGV4dC13aGl0ZSBweC0xLjUgcm91bmRlZCI+Vzwvc3Bhbj4gV3JhcCBkYXk8L3NwYW4+CiAgICAgICAgPHNwYW4+PHNwYW4gY2xhc3NOYW1lPSJiZy1lbWVyYWxkLTcwMCB0ZXh0LXdoaXRlIHB4LTEuNSByb3VuZGVkIj5TVzwvc3Bhbj4gU3RhcnQgJiBXcmFwIChvbmUtZGF5IGFjdG9yKTwvc3Bhbj4KICAgICAgICA8c3Bhbj48c3BhbiBjbGFzc05hbWU9ImJnLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDQpXSB0ZXh0LXppbmMtMjAwIHB4LTEuNSByb3VuZGVkIj7Ctzwvc3Bhbj4gV29ya2luZzwvc3Bhbj4KICAgICAgICA8c3Bhbj48c3BhbiBjbGFzc05hbWU9ImJnLWFtYmVyLTkwMC81MCB0ZXh0LWFtYmVyLTIwMCBweC0xLjUgcm91bmRlZCI+SDwvc3Bhbj4gSG9sZDwvc3Bhbj4KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9Cg==
+import { useMemo } from "react";
+
+interface Scene {
+  id: number;
+  shootDayId?: number | null;
+  characterIds?: number[] | null;
+}
+interface ShootDay { id: number; dayNumber: number; shootDate?: string | Date | null; }
+interface Character { id: number; name: string; }
+
+interface Props {
+  scenes: Scene[];
+  days: ShootDay[];
+  characters: Character[];
+}
+
+/**
+ * v6.63 — Day Out of Days. The classic 1AD grid showing which actor works
+ * on which day. Cells: SW = Start/Wrap, W = Work, H = Hold, "" = off.
+ * Powers payroll/hold-day calculations and schedule gut-checks.
+ */
+export default function DayOfDaysGrid({ scenes, days, characters }: Props) {
+  const sortedDays = useMemo(() => [...days].sort((a, b) => a.dayNumber - b.dayNumber), [days]);
+
+  // Build per-character set of working days
+  const workingByChar = useMemo(() => {
+    const m = new Map<number, Set<number>>();
+    for (const c of characters) m.set(c.id, new Set());
+    for (const s of scenes) {
+      if (!s.shootDayId) continue;
+      for (const cid of (s.characterIds || [])) {
+        if (m.has(cid)) m.get(cid)!.add(s.shootDayId);
+      }
+    }
+    return m;
+  }, [scenes, characters]);
+
+  function cellLabel(cid: number, dayId: number): { label: string; color: string } {
+    const set = workingByChar.get(cid);
+    if (!set) return { label: "", color: "" };
+    const works = set.has(dayId);
+    if (!works) {
+      // Hold day = between first and last working day
+      const dayNums = sortedDays.map((d) => d.id);
+      const idx = dayNums.indexOf(dayId);
+      const workIdxs = dayNums.map((id, i) => set.has(id) ? i : -1).filter((i) => i >= 0);
+      if (workIdxs.length === 0) return { label: "", color: "" };
+      const first = workIdxs[0]; const last = workIdxs[workIdxs.length - 1];
+      if (idx > first && idx < last) return { label: "H", color: "bg-amber-900/50 text-amber-200" };
+      return { label: "", color: "text-zinc-700" };
+    }
+    // Working day. Mark Start/Wrap if first or last.
+    const dayNums = sortedDays.map((d) => d.id);
+    const idx = dayNums.indexOf(dayId);
+    const workIdxs = dayNums.map((id, i) => set.has(id) ? i : -1).filter((i) => i >= 0);
+    const isFirst = workIdxs[0] === idx;
+    const isLast = workIdxs[workIdxs.length - 1] === idx;
+    if (isFirst && isLast) return { label: "SW", color: "bg-emerald-700 text-white font-semibold" };
+    if (isFirst) return { label: "S", color: "bg-emerald-700 text-white font-semibold" };
+    if (isLast) return { label: "W", color: "bg-rose-700 text-white font-semibold" };
+    return { label: "·", color: "bg-[rgba(255,255,255,0.04)] text-zinc-200" };
+  }
+
+  if (characters.length === 0 || sortedDays.length === 0) {
+    return (
+      <div className="text-sm text-zinc-500 italic border border-dashed border-[rgba(255,255,255,0.07)] rounded p-8 text-center">
+        Need at least one character and one shoot day to render the Day-Out-of-Days grid.
+      </div>
+    );
+  }
+
+  // Per-character work day count
+  const totals = new Map<number, { work: number; hold: number }>();
+  for (const c of characters) {
+    let work = 0, hold = 0;
+    for (const d of sortedDays) {
+      const r = cellLabel(c.id, d.id);
+      if (r.label === "S" || r.label === "W" || r.label === "SW" || r.label === "·") work++;
+      if (r.label === "H") hold++;
+    }
+    totals.set(c.id, { work, hold });
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="overflow-x-auto border border-[rgba(255,255,255,0.07)] rounded">
+        <table className="text-xs">
+          <thead className="bg-[rgba(255,255,255,0.04)] text-zinc-400">
+            <tr>
+              <th className="sticky left-0 bg-[rgba(255,255,255,0.04)] px-3 py-2 text-left font-semibold border-r border-[rgba(255,255,255,0.07)] min-w-[140px]">Cast</th>
+              {sortedDays.map((d) => (
+                <th key={d.id} className="px-2 py-2 text-center min-w-[42px] border-r border-[rgba(255,255,255,0.07)]/50">
+                  <div className="text-amber-500">D{d.dayNumber}</div>
+                  {d.shootDate && (
+                    <div className="text-[9px] text-zinc-500">{new Date(d.shootDate as any).toLocaleDateString(undefined, { month: "numeric", day: "numeric" })}</div>
+                  )}
+                </th>
+              ))}
+              <th className="px-2 py-2 text-center bg-[rgba(255,255,255,0.02)] border-l border-zinc-700 min-w-[50px]">Work</th>
+              <th className="px-2 py-2 text-center bg-[rgba(255,255,255,0.02)] min-w-[50px]">Hold</th>
+            </tr>
+          </thead>
+          <tbody>
+            {characters.map((c) => {
+              const t = totals.get(c.id) || { work: 0, hold: 0 };
+              return (
+                <tr key={c.id} className="border-t border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.02)]/40">
+                  <td className="sticky left-0 bg-[#07070e] px-3 py-1.5 text-zinc-200 font-medium border-r border-[rgba(255,255,255,0.07)]">{c.name}</td>
+                  {sortedDays.map((d) => {
+                    const r = cellLabel(c.id, d.id);
+                    return (
+                      <td key={d.id} className="px-1 py-0 text-center border-r border-[rgba(255,255,255,0.07)]/50">
+                        <div className={`mx-auto w-7 h-7 flex items-center justify-center rounded text-[10px] ${r.color}`}>
+                          {r.label}
+                        </div>
+                      </td>
+                    );
+                  })}
+                  <td className="px-2 py-1.5 text-center text-emerald-300 border-l border-zinc-700">{t.work}</td>
+                  <td className="px-2 py-1.5 text-center text-amber-300">{t.hold}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className="text-[11px] text-zinc-500 flex flex-wrap gap-3">
+        <span><span className="bg-emerald-700 text-white px-1.5 rounded">S</span> Start day</span>
+        <span><span className="bg-rose-700 text-white px-1.5 rounded">W</span> Wrap day</span>
+        <span><span className="bg-emerald-700 text-white px-1.5 rounded">SW</span> Start & Wrap (one-day actor)</span>
+        <span><span className="bg-[rgba(255,255,255,0.04)] text-zinc-200 px-1.5 rounded">·</span> Working</span>
+        <span><span className="bg-amber-900/50 text-amber-200 px-1.5 rounded">H</span> Hold</span>
+      </div>
+    </div>
+  );
+}

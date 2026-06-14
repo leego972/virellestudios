@@ -1,1 +1,173 @@
-aW1wb3J0IHsgdXNlU3RhdGUsIHVzZUVmZmVjdCB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7CmltcG9ydCB7IElucHV0IH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2lucHV0IjsKaW1wb3J0IHsgVGV4dGFyZWEgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvdGV4dGFyZWEiOwppbXBvcnQgeyB0cnBjIH0gZnJvbSAiQC9saWIvdHJwYyI7CmltcG9ydCB7IHRvYXN0IH0gZnJvbSAic29ubmVyIjsKaW1wb3J0IHsgUGx1cywgVHJhc2gyLCBTYXZlLCBHcmlwVmVydGljYWwsIExvYWRlcjIgfSBmcm9tICJsdWNpZGUtcmVhY3QiOwoKZXhwb3J0IGludGVyZmFjZSBTaG90Um93IHsKICBudW1iZXI6IHN0cmluZyB8IG51bWJlcjsKICBzaG90VHlwZT86IHN0cmluZzsKICBsZW5zPzogc3RyaW5nOwogIG1vdmVtZW50Pzogc3RyaW5nOwogIGZyYW1pbmc/OiBzdHJpbmc7CiAgbm90ZXM/OiBzdHJpbmc7CiAgZHVyYXRpb25TZWM/OiBudW1iZXI7Cn0KCmludGVyZmFjZSBQcm9wcyB7CiAgc2NlbmVJZDogbnVtYmVyOwogIGluaXRpYWw/OiBTaG90Um93W10gfCBudWxsOwp9Cgpjb25zdCBTSE9UX1RZUEVTID0gWyJXUyIsICJNUyIsICJDVSIsICJFQ1UiLCAiTUNVIiwgIk9UUyIsICJJbnNlcnQiLCAiRXN0YWJsaXNoaW5nIiwgIlR3by1zaG90Il07CmNvbnN0IE1PVkVNRU5UUyA9IFsiU3RhdGljIiwgIlBhbiIsICJUaWx0IiwgIkRvbGx5IiwgIlB1c2gtaW4iLCAiUHVsbC1vdXQiLCAiVHJhY2tpbmciLCAiSGFuZGhlbGQiLCAiQ3JhbmUiLCAiU3RlYWRpY2FtIl07CgovKioKICogdjYuNjMg4oCUIFBlci1zY2VuZSBzdHJ1Y3R1cmVkIHNob3QgbGlzdCBlZGl0b3IuIFNhdmVzIHRvIHNjZW5lcy5zaG90TGlzdAogKiB2aWEgdGhlIHNjZW5lU2hvdExpc3Quc2F2ZSB0UlBDIHJvdXRlLiBSZW5kZXJzIGlubGluZSBpbiBTY2VuZUVkaXRvcgogKiBhbmQgb24gdGhlIHN0YW5kYWxvbmUgc2hvdCBsaXN0IHBhZ2UuCiAqLwpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBTaG90TGlzdEVkaXRvcih7IHNjZW5lSWQsIGluaXRpYWwgfTogUHJvcHMpIHsKICBjb25zdCBbcm93cywgc2V0Um93c10gPSB1c2VTdGF0ZTxTaG90Um93W10+KCgpID0+IHsKICAgIGlmIChBcnJheS5pc0FycmF5KGluaXRpYWwpKSByZXR1cm4gaW5pdGlhbCBhcyBTaG90Um93W107CiAgICByZXR1cm4gW107CiAgfSk7CiAgY29uc3QgW2RpcnR5LCBzZXREaXJ0eV0gPSB1c2VTdGF0ZShmYWxzZSk7CiAgY29uc3QgdXRpbHMgPSB0cnBjLnVzZVV0aWxzKCk7CiAgY29uc3Qgc2F2ZU11dCA9IHRycGMuc2NlbmVTaG90TGlzdC5zYXZlLnVzZU11dGF0aW9uKCk7CgogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBpZiAoQXJyYXkuaXNBcnJheShpbml0aWFsKSAmJiByb3dzLmxlbmd0aCA9PT0gMCAmJiAhZGlydHkpIHsKICAgICAgc2V0Um93cyhpbml0aWFsIGFzIFNob3RSb3dbXSk7CiAgICB9CiAgICAvLyBlc2xpbnQtZGlzYWJsZS1uZXh0LWxpbmUgcmVhY3QtaG9va3MvZXhoYXVzdGl2ZS1kZXBzCiAgfSwgW2luaXRpYWxdKTsKCiAgZnVuY3Rpb24gYWRkUm93KCkgewogICAgc2V0Um93cygocikgPT4gWy4uLnIsIHsgbnVtYmVyOiByLmxlbmd0aCArIDEsIHNob3RUeXBlOiAiTVMiLCBtb3ZlbWVudDogIlN0YXRpYyIsIGR1cmF0aW9uU2VjOiA0IH1dKTsKICAgIHNldERpcnR5KHRydWUpOwogIH0KICBmdW5jdGlvbiByZW1vdmVSb3coaWR4OiBudW1iZXIpIHsKICAgIHNldFJvd3MoKHIpID0+IHIuZmlsdGVyKChfLCBpKSA9PiBpICE9PSBpZHgpLm1hcCgocm93LCBpKSA9PiAoeyAuLi5yb3csIG51bWJlcjogaSArIDEgfSkpKTsKICAgIHNldERpcnR5KHRydWUpOwogIH0KICBmdW5jdGlvbiB1cGRhdGUoaWR4OiBudW1iZXIsIHBhdGNoOiBQYXJ0aWFsPFNob3RSb3c+KSB7CiAgICBzZXRSb3dzKChyKSA9PiByLm1hcCgocm93LCBpKSA9PiAoaSA9PT0gaWR4ID8geyAuLi5yb3csIC4uLnBhdGNoIH0gOiByb3cpKSk7CiAgICBzZXREaXJ0eSh0cnVlKTsKICB9CiAgZnVuY3Rpb24gbW92ZShpZHg6IG51bWJlciwgZGlyOiAtMSB8IDEpIHsKICAgIHNldFJvd3MoKHIpID0+IHsKICAgICAgY29uc3QgbmV4dCA9IFsuLi5yXTsKICAgICAgY29uc3QgdGFyZ2V0ID0gaWR4ICsgZGlyOwogICAgICBpZiAodGFyZ2V0IDwgMCB8fCB0YXJnZXQgPj0gbmV4dC5sZW5ndGgpIHJldHVybiByOwogICAgICBbbmV4dFtpZHhdLCBuZXh0W3RhcmdldF1dID0gW25leHRbdGFyZ2V0XSwgbmV4dFtpZHhdXTsKICAgICAgcmV0dXJuIG5leHQubWFwKChyb3csIGkpID0+ICh7IC4uLnJvdywgbnVtYmVyOiBpICsgMSB9KSk7CiAgICB9KTsKICAgIHNldERpcnR5KHRydWUpOwogIH0KICBhc3luYyBmdW5jdGlvbiBzYXZlKCkgewogICAgdHJ5IHsKICAgICAgYXdhaXQgc2F2ZU11dC5tdXRhdGVBc3luYyh7IHNjZW5lSWQsIHNob3RMaXN0OiByb3dzIGFzIGFueSB9KTsKICAgICAgYXdhaXQgdXRpbHMuc2NlbmUuZ2V0LmludmFsaWRhdGUoeyBpZDogc2NlbmVJZCB9KS5jYXRjaCgoKSA9PiB7fSk7CiAgICAgIHRvYXN0LnN1Y2Nlc3MoYFNhdmVkICR7cm93cy5sZW5ndGh9IHNob3Qke3Jvd3MubGVuZ3RoID09PSAxID8gIiIgOiAicyJ9YCk7CiAgICAgIHNldERpcnR5KGZhbHNlKTsKICAgIH0gY2F0Y2ggKGU6IGFueSkgewogICAgICB0b2FzdC5lcnJvcihlPy5tZXNzYWdlIHx8ICJGYWlsZWQgdG8gc2F2ZSIpOwogICAgfQogIH0KCiAgY29uc3QgdG90YWxEdXJhdGlvbiA9IHJvd3MucmVkdWNlKChzdW0sIHIpID0+IHN1bSArIChyLmR1cmF0aW9uU2VjIHx8IDApLCAwKTsKCiAgcmV0dXJuICgKICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTMiPgogICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIGZsZXgtd3JhcCBnYXAtMiI+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtc20gdGV4dC16aW5jLTQwMCI+CiAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvbnQtc2VtaWJvbGQgdGV4dC16aW5jLTIwMCI+e3Jvd3MubGVuZ3RofTwvc3Bhbj4gc2hvdHtyb3dzLmxlbmd0aCA9PT0gMSA/ICIiIDogInMifSDCtwogICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJtbC0yIj50b3RhbDwvc3Bhbj4gPHNwYW4gY2xhc3NOYW1lPSJmb250LXNlbWlib2xkIHRleHQtemluYy0yMDAiPnt0b3RhbER1cmF0aW9ufXM8L3NwYW4+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTIiPgogICAgICAgICAgPEJ1dHRvbiBzaXplPSJzbSIgdmFyaWFudD0ib3V0bGluZSIgb25DbGljaz17YWRkUm93fT48UGx1cyBjbGFzc05hbWU9InctMy41IGgtMy41IG1yLTEiIC8+IEFkZCBzaG90PC9CdXR0b24+CiAgICAgICAgICA8QnV0dG9uIHNpemU9InNtIiBkaXNhYmxlZD17IWRpcnR5IHx8IHNhdmVNdXQuaXNQZW5kaW5nfSBvbkNsaWNrPXtzYXZlfSBjbGFzc05hbWU9ImJnLWFtYmVyLTYwMCBob3ZlcjpiZy1hbWJlci01MDAgdGV4dC16aW5jLTk1MCI+CiAgICAgICAgICAgIHtzYXZlTXV0LmlzUGVuZGluZyA/IDxMb2FkZXIyIGNsYXNzTmFtZT0idy0zLjUgaC0zLjUgYW5pbWF0ZS1zcGluIG1yLTEiIC8+IDogPFNhdmUgY2xhc3NOYW1lPSJ3LTMuNSBoLTMuNSBtci0xIiAvPn0KICAgICAgICAgICAgU2F2ZQogICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgICB7cm93cy5sZW5ndGggPT09IDAgPyAoCiAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtc20gdGV4dC16aW5jLTUwMCBpdGFsaWMgYm9yZGVyIGJvcmRlci1kYXNoZWQgYm9yZGVyLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDcpXSByb3VuZGVkIHAtNiB0ZXh0LWNlbnRlciI+CiAgICAgICAgICBObyBzaG90cyB5ZXQuIENsaWNrIDxzcGFuIGNsYXNzTmFtZT0idGV4dC16aW5jLTMwMCI+QWRkIHNob3Q8L3NwYW4+IHRvIHN0YXJ0IHRoZSBsaXN0LgogICAgICAgIDwvZGl2PgogICAgICApIDogKAogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJvdmVyZmxvdy14LWF1dG8gYm9yZGVyIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0gcm91bmRlZCI+CiAgICAgICAgICA8dGFibGUgY2xhc3NOYW1lPSJ3LWZ1bGwgdGV4dC14cyI+CiAgICAgICAgICAgIDx0aGVhZCBjbGFzc05hbWU9ImJnLVsjMGMwYjE4XS84MCB0ZXh0LXppbmMtNDAwIj4KICAgICAgICAgICAgICA8dHI+CiAgICAgICAgICAgICAgICA8dGggY2xhc3NOYW1lPSJweC0yIHB5LTIgdGV4dC1sZWZ0IHctMTAiPiM8L3RoPgogICAgICAgICAgICAgICAgPHRoIGNsYXNzTmFtZT0icHgtMiBweS0yIHRleHQtbGVmdCB3LTI0Ij5UeXBlPC90aD4KICAgICAgICAgICAgICAgIDx0aCBjbGFzc05hbWU9InB4LTIgcHktMiB0ZXh0LWxlZnQgdy0yMCI+TGVuczwvdGg+CiAgICAgICAgICAgICAgICA8dGggY2xhc3NOYW1lPSJweC0yIHB5LTIgdGV4dC1sZWZ0IHctMzIiPk1vdmVtZW50PC90aD4KICAgICAgICAgICAgICAgIDx0aCBjbGFzc05hbWU9InB4LTIgcHktMiB0ZXh0LWxlZnQgdy0yNCI+RnJhbWluZzwvdGg+CiAgICAgICAgICAgICAgICA8dGggY2xhc3NOYW1lPSJweC0yIHB5LTIgdGV4dC1sZWZ0Ij5Ob3RlczwvdGg+CiAgICAgICAgICAgICAgICA8dGggY2xhc3NOYW1lPSJweC0yIHB5LTIgdGV4dC1sZWZ0IHctMTYiPlNlYzwvdGg+CiAgICAgICAgICAgICAgICA8dGggY2xhc3NOYW1lPSJweC0yIHB5LTIgdy0yMCI+PC90aD4KICAgICAgICAgICAgICA8L3RyPgogICAgICAgICAgICA8L3RoZWFkPgogICAgICAgICAgICA8dGJvZHk+CiAgICAgICAgICAgICAge3Jvd3MubWFwKChyb3csIGlkeCkgPT4gKAogICAgICAgICAgICAgICAgPHRyIGtleT17aWR4fSBjbGFzc05hbWU9ImJvcmRlci10IGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0gaG92ZXI6YmctWyMwYzBiMThdLzQwIj4KICAgICAgICAgICAgICAgICAgPHRkIGNsYXNzTmFtZT0icHgtMiBweS0xLjUgdGV4dC16aW5jLTMwMCBmb250LW1vbm8iPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMSI+CiAgICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIG9uQ2xpY2s9eygpID0+IG1vdmUoaWR4LCAtMSl9IGNsYXNzTmFtZT0idGV4dC16aW5jLTUwMCBob3Zlcjp0ZXh0LXppbmMtMjAwIiBhcmlhLWxhYmVsPSJNb3ZlIHVwIj4KICAgICAgICAgICAgICAgICAgICAgICAgPEdyaXBWZXJ0aWNhbCBjbGFzc05hbWU9InctMyBoLTMiIC8+CiAgICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICAgICAgICAgICAgIHtyb3cubnVtYmVyfQogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8L3RkPgogICAgICAgICAgICAgICAgICA8dGQgY2xhc3NOYW1lPSJweC0xIHB5LTEiPgogICAgICAgICAgICAgICAgICAgIDxzZWxlY3QKICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXtyb3cuc2hvdFR5cGUgfHwgIiJ9CiAgICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHVwZGF0ZShpZHgsIHsgc2hvdFR5cGU6IGUudGFyZ2V0LnZhbHVlIH0pfQogICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgYmctemluYy05NTAgYm9yZGVyIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0gcm91bmRlZCBweC0xIHB5LTEgdGV4dC14cyIKICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSIiPuKAlDwvb3B0aW9uPgogICAgICAgICAgICAgICAgICAgICAge1NIT1RfVFlQRVMubWFwKCh0KSA9PiA8b3B0aW9uIGtleT17dH0gdmFsdWU9e3R9Pnt0fTwvb3B0aW9uPil9CiAgICAgICAgICAgICAgICAgICAgPC9zZWxlY3Q+CiAgICAgICAgICAgICAgICAgIDwvdGQ+CiAgICAgICAgICAgICAgICAgIDx0ZCBjbGFzc05hbWU9InB4LTEgcHktMSI+CiAgICAgICAgICAgICAgICAgICAgPElucHV0IHZhbHVlPXtyb3cubGVucyB8fCAiIn0gb25DaGFuZ2U9eyhlKSA9PiB1cGRhdGUoaWR4LCB7IGxlbnM6IGUudGFyZ2V0LnZhbHVlIH0pfSBjbGFzc05hbWU9ImgtNyB0ZXh0LXhzIGJnLXppbmMtOTUwIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0iIHBsYWNlaG9sZGVyPSIzNW1tIiAvPgogICAgICAgICAgICAgICAgICA8L3RkPgogICAgICAgICAgICAgICAgICA8dGQgY2xhc3NOYW1lPSJweC0xIHB5LTEiPgogICAgICAgICAgICAgICAgICAgIDxzZWxlY3QKICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXtyb3cubW92ZW1lbnQgfHwgIiJ9CiAgICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHVwZGF0ZShpZHgsIHsgbW92ZW1lbnQ6IGUudGFyZ2V0LnZhbHVlIH0pfQogICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgYmctemluYy05NTAgYm9yZGVyIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0gcm91bmRlZCBweC0xIHB5LTEgdGV4dC14cyIKICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPSIiPuKAlDwvb3B0aW9uPgogICAgICAgICAgICAgICAgICAgICAge01PVkVNRU5UUy5tYXAoKG0pID0+IDxvcHRpb24ga2V5PXttfSB2YWx1ZT17bX0+e219PC9vcHRpb24+KX0KICAgICAgICAgICAgICAgICAgICA8L3NlbGVjdD4KICAgICAgICAgICAgICAgICAgPC90ZD4KICAgICAgICAgICAgICAgICAgPHRkIGNsYXNzTmFtZT0icHgtMSBweS0xIj4KICAgICAgICAgICAgICAgICAgICA8SW5wdXQgdmFsdWU9e3Jvdy5mcmFtaW5nIHx8ICIifSBvbkNoYW5nZT17KGUpID0+IHVwZGF0ZShpZHgsIHsgZnJhbWluZzogZS50YXJnZXQudmFsdWUgfSl9IGNsYXNzTmFtZT0iaC03IHRleHQteHMgYmctemluYy05NTAgYm9yZGVyLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDcpXSIgcGxhY2Vob2xkZXI9IkV5ZS1sZXZlbCIgLz4KICAgICAgICAgICAgICAgICAgPC90ZD4KICAgICAgICAgICAgICAgICAgPHRkIGNsYXNzTmFtZT0icHgtMSBweS0xIj4KICAgICAgICAgICAgICAgICAgICA8VGV4dGFyZWEgdmFsdWU9e3Jvdy5ub3RlcyB8fCAiIn0gb25DaGFuZ2U9eyhlKSA9PiB1cGRhdGUoaWR4LCB7IG5vdGVzOiBlLnRhcmdldC52YWx1ZSB9KX0gY2xhc3NOYW1lPSJ0ZXh0LXhzIGJnLXppbmMtOTUwIGJvcmRlci1bcmdiYSgyNTUsMjU1LDI1NSwwLjA3KV0gbWluLWgtWzI4cHhdIHB5LTEiIHJvd3M9ezF9IC8+CiAgICAgICAgICAgICAgICAgIDwvdGQ+CiAgICAgICAgICAgICAgICAgIDx0ZCBjbGFzc05hbWU9InB4LTEgcHktMSI+CiAgICAgICAgICAgICAgICAgICAgPElucHV0IHR5cGU9Im51bWJlciIgbWluPXswfSBtYXg9ezcyMDB9IHZhbHVlPXtyb3cuZHVyYXRpb25TZWMgPz8gMH0gb25DaGFuZ2U9eyhlKSA9PiB1cGRhdGUoaWR4LCB7IGR1cmF0aW9uU2VjOiBOdW1iZXIoZS50YXJnZXQudmFsdWUpIHx8IDAgfSl9IGNsYXNzTmFtZT0iaC03IHRleHQteHMgYmctemluYy05NTAgYm9yZGVyLVtyZ2JhKDI1NSwyNTUsMjU1LDAuMDcpXSB3LTE0IiAvPgogICAgICAgICAgICAgICAgICA8L3RkPgogICAgICAgICAgICAgICAgICA8dGQgY2xhc3NOYW1lPSJweC0xIHB5LTEgdGV4dC1yaWdodCI+CiAgICAgICAgICAgICAgICAgICAgPEJ1dHRvbiBzaXplPSJzbSIgdmFyaWFudD0iZ2hvc3QiIGNsYXNzTmFtZT0iaC03IHctNyBwLTAgdGV4dC1yZWQtNDAwIGhvdmVyOnRleHQtcmVkLTMwMCIgb25DbGljaz17KCkgPT4gcmVtb3ZlUm93KGlkeCl9IGFyaWEtbGFiZWw9IlJlbW92ZSBzaG90Ij4KICAgICAgICAgICAgICAgICAgICAgIDxUcmFzaDIgY2xhc3NOYW1lPSJ3LTMuNSBoLTMuNSIgLz4KICAgICAgICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICAgICAgPC90ZD4KICAgICAgICAgICAgICAgIDwvdHI+CiAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgIDwvdGJvZHk+CiAgICAgICAgICA8L3RhYmxlPgogICAgICAgIDwvZGl2PgogICAgICApfQogICAgPC9kaXY+CiAgKTsKfQo=
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
+import { Plus, Trash2, Save, GripVertical, Loader2 } from "lucide-react";
+
+export interface ShotRow {
+  number: string | number;
+  shotType?: string;
+  lens?: string;
+  movement?: string;
+  framing?: string;
+  notes?: string;
+  durationSec?: number;
+}
+
+interface Props {
+  sceneId: number;
+  initial?: ShotRow[] | null;
+}
+
+const SHOT_TYPES = ["WS", "MS", "CU", "ECU", "MCU", "OTS", "Insert", "Establishing", "Two-shot"];
+const MOVEMENTS = ["Static", "Pan", "Tilt", "Dolly", "Push-in", "Pull-out", "Tracking", "Handheld", "Crane", "Steadicam"];
+
+/**
+ * v6.63 — Per-scene structured shot list editor. Saves to scenes.shotList
+ * via the sceneShotList.save tRPC route. Renders inline in SceneEditor
+ * and on the standalone shot list page.
+ */
+export default function ShotListEditor({ sceneId, initial }: Props) {
+  const [rows, setRows] = useState<ShotRow[]>(() => {
+    if (Array.isArray(initial)) return initial as ShotRow[];
+    return [];
+  });
+  const [dirty, setDirty] = useState(false);
+  const utils = trpc.useUtils();
+  const saveMut = trpc.sceneShotList.save.useMutation();
+
+  useEffect(() => {
+    if (Array.isArray(initial) && rows.length === 0 && !dirty) {
+      setRows(initial as ShotRow[]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initial]);
+
+  function addRow() {
+    setRows((r) => [...r, { number: r.length + 1, shotType: "MS", movement: "Static", durationSec: 4 }]);
+    setDirty(true);
+  }
+  function removeRow(idx: number) {
+    setRows((r) => r.filter((_, i) => i !== idx).map((row, i) => ({ ...row, number: i + 1 })));
+    setDirty(true);
+  }
+  function update(idx: number, patch: Partial<ShotRow>) {
+    setRows((r) => r.map((row, i) => (i === idx ? { ...row, ...patch } : row)));
+    setDirty(true);
+  }
+  function move(idx: number, dir: -1 | 1) {
+    setRows((r) => {
+      const next = [...r];
+      const target = idx + dir;
+      if (target < 0 || target >= next.length) return r;
+      [next[idx], next[target]] = [next[target], next[idx]];
+      return next.map((row, i) => ({ ...row, number: i + 1 }));
+    });
+    setDirty(true);
+  }
+  async function save() {
+    try {
+      await saveMut.mutateAsync({ sceneId, shotList: rows as any });
+      await utils.scene.get.invalidate({ id: sceneId }).catch(() => {});
+      toast.success(`Saved ${rows.length} shot${rows.length === 1 ? "" : "s"}`);
+      setDirty(false);
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to save");
+    }
+  }
+
+  const totalDuration = rows.reduce((sum, r) => sum + (r.durationSec || 0), 0);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="text-sm text-zinc-400">
+          <span className="font-semibold text-zinc-200">{rows.length}</span> shot{rows.length === 1 ? "" : "s"} ·
+          <span className="ml-2">total</span> <span className="font-semibold text-zinc-200">{totalDuration}s</span>
+        </div>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={addRow}><Plus className="w-3.5 h-3.5 mr-1" /> Add shot</Button>
+          <Button size="sm" disabled={!dirty || saveMut.isPending} onClick={save} className="bg-amber-600 hover:bg-amber-500 text-zinc-950">
+            {saveMut.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <Save className="w-3.5 h-3.5 mr-1" />}
+            Save
+          </Button>
+        </div>
+      </div>
+      {rows.length === 0 ? (
+        <div className="text-sm text-zinc-500 italic border border-dashed border-[rgba(255,255,255,0.07)] rounded p-6 text-center">
+          No shots yet. Click <span className="text-zinc-300">Add shot</span> to start the list.
+        </div>
+      ) : (
+        <div className="overflow-x-auto border border-[rgba(255,255,255,0.07)] rounded">
+          <table className="w-full text-xs">
+            <thead className="bg-[#0c0b18]/80 text-zinc-400">
+              <tr>
+                <th className="px-2 py-2 text-left w-10">#</th>
+                <th className="px-2 py-2 text-left w-24">Type</th>
+                <th className="px-2 py-2 text-left w-20">Lens</th>
+                <th className="px-2 py-2 text-left w-32">Movement</th>
+                <th className="px-2 py-2 text-left w-24">Framing</th>
+                <th className="px-2 py-2 text-left">Notes</th>
+                <th className="px-2 py-2 text-left w-16">Sec</th>
+                <th className="px-2 py-2 w-20"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, idx) => (
+                <tr key={idx} className="border-t border-[rgba(255,255,255,0.07)] hover:bg-[#0c0b18]/40">
+                  <td className="px-2 py-1.5 text-zinc-300 font-mono">
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => move(idx, -1)} className="text-zinc-500 hover:text-zinc-200" aria-label="Move up">
+                        <GripVertical className="w-3 h-3" />
+                      </button>
+                      {row.number}
+                    </div>
+                  </td>
+                  <td className="px-1 py-1">
+                    <select
+                      value={row.shotType || ""}
+                      onChange={(e) => update(idx, { shotType: e.target.value })}
+                      className="w-full bg-zinc-950 border border-[rgba(255,255,255,0.07)] rounded px-1 py-1 text-xs"
+                    >
+                      <option value="">—</option>
+                      {SHOT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </td>
+                  <td className="px-1 py-1">
+                    <Input value={row.lens || ""} onChange={(e) => update(idx, { lens: e.target.value })} className="h-7 text-xs bg-zinc-950 border-[rgba(255,255,255,0.07)]" placeholder="35mm" />
+                  </td>
+                  <td className="px-1 py-1">
+                    <select
+                      value={row.movement || ""}
+                      onChange={(e) => update(idx, { movement: e.target.value })}
+                      className="w-full bg-zinc-950 border border-[rgba(255,255,255,0.07)] rounded px-1 py-1 text-xs"
+                    >
+                      <option value="">—</option>
+                      {MOVEMENTS.map((m) => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                  </td>
+                  <td className="px-1 py-1">
+                    <Input value={row.framing || ""} onChange={(e) => update(idx, { framing: e.target.value })} className="h-7 text-xs bg-zinc-950 border-[rgba(255,255,255,0.07)]" placeholder="Eye-level" />
+                  </td>
+                  <td className="px-1 py-1">
+                    <Textarea value={row.notes || ""} onChange={(e) => update(idx, { notes: e.target.value })} className="text-xs bg-zinc-950 border-[rgba(255,255,255,0.07)] min-h-[28px] py-1" rows={1} />
+                  </td>
+                  <td className="px-1 py-1">
+                    <Input type="number" min={0} max={7200} value={row.durationSec ?? 0} onChange={(e) => update(idx, { durationSec: Number(e.target.value) || 0 })} className="h-7 text-xs bg-zinc-950 border-[rgba(255,255,255,0.07)] w-14" />
+                  </td>
+                  <td className="px-1 py-1 text-right">
+                    <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-red-400 hover:text-red-300" onClick={() => removeRow(idx)} aria-label="Remove shot">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

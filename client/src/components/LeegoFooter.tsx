@@ -1,1 +1,61 @@
-aW1wb3J0IExlZWdvTG9nbyBmcm9tICJAL2NvbXBvbmVudHMvTGVlZ29Mb2dvIjsKCi8qKgogKiBMZWVnb0Zvb3RlciDigJQgcHJvZHVjdGlvbiAvIGxhdW5jaCB2ZXJzaW9uLgogKiBDbGVhbiwgcmVzdHJhaW5lZCBmb290ZXIgd2l0aCBwcm9mZXNzaW9uYWwgY29udGFjdCBlbWFpbHMuCiAqLwpjb25zdCBDT05UQUNUX0VNQUlMUyA9IFsKICB7IGxhYmVsOiAiU3VwcG9ydCIsIGVtYWlsOiAic3R1ZGlvc3ZpcmVsbGVAZ21haWwuY29tIiB9LAogIHsgbGFiZWw6ICJCaWxsaW5nIiwgZW1haWw6ICJzdHVkaW9zdmlyZWxsZUBnbWFpbC5jb20iIH0sCiAgeyBsYWJlbDogIlBhcnRuZXJzaGlwcyIsIGVtYWlsOiAic3R1ZGlvc3ZpcmVsbGVAZ21haWwuY29tIiB9LAogIHsgbGFiZWw6ICJQcmVzcyIsIGVtYWlsOiAic3R1ZGlvc3ZpcmVsbGVAZ21haWwuY29tIiB9LAogIHsgbGFiZWw6ICJMZWdhbCAmIFByaXZhY3kiLCBlbWFpbDogInN0dWRpb3N2aXJlbGxlQGdtYWlsLmNvbSIgfSwKXTsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIExlZWdvRm9vdGVyKCkgewogIHJldHVybiAoCiAgICA8Zm9vdGVyIGNsYXNzTmFtZT0idy1mdWxsIG10LTE2IGJvcmRlci10IiBzdHlsZT17eyBib3JkZXJDb2xvcjoicmdiYSgyNTUsMjU1LDI1NSwwLjA3KSIsIGJhY2tncm91bmQ6InJnYmEoNyw3LDE0LDAuOTUpIiB9fT4KICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTd4bCBteC1hdXRvIHB4LTQgc206cHgtNiBsZzpweC04IHB5LTEwIj4KICAgICAgICB7LyogQ29udGFjdCBlbWFpbHMgZ3JpZCAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBncmlkLWNvbHMtMiBzbTpncmlkLWNvbHMtMyBsZzpncmlkLWNvbHMtNSBnYXAtNCBtYi04Ij4KICAgICAgICAgIHtDT05UQUNUX0VNQUlMUy5tYXAoKHsgbGFiZWwsIGVtYWlsIH0pID0+ICgKICAgICAgICAgICAgPGRpdiBrZXk9e2VtYWlsfSBjbGFzc05hbWU9ImZsZXggZmxleC1jb2wgZ2FwLTAuNSI+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IHRleHQtZm9yZWdyb3VuZC80MCBmb250LXNlbWlib2xkIj57bGFiZWx9PC9zcGFuPgogICAgICAgICAgICAgIDxhCiAgICAgICAgICAgICAgICBocmVmPXtgbWFpbHRvOiR7ZW1haWx9YH0KICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LWZvcmVncm91bmQvNzAgaG92ZXI6dGV4dC1hbWJlci00MDAgdHJhbnNpdGlvbi1jb2xvcnMgdHJ1bmNhdGUiCiAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAge2VtYWlsfQogICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICApKX0KICAgICAgICA8L2Rpdj4KCiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImJvcmRlci10IGJvcmRlci1ib3JkZXIvMzAgbWItNiIgLz4KCiAgICAgICAgey8qIEJyYW5kaW5nICsgbGVnYWwgbGlua3MgKi99CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZmxleC1jb2wgc206ZmxleC1yb3cgaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiBnYXAtNCI+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMiPgogICAgICAgICAgICA8TGVlZ29Mb2dvCiAgICAgICAgICAgICAgYWx0PSJMZWVnbyIKICAgICAgICAgICAgICBjbGFzc05hbWU9ImgtOCB3LTggb2JqZWN0LWNvbnRhaW4gb3BhY2l0eS05MCIKICAgICAgICAgICAgLz4KICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gZm9udC1tZWRpdW0gdGV4dC1mb3JlZ3JvdW5kLzgwIj5Qb3dlcmVkIGJ5IExlZWdvPC9wPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LWZvcmVncm91bmQvNTAiPlRlY2hub2xvZ3kgcGFydG5lcjwvcD4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtd3JhcCBpdGVtcy1jZW50ZXIgZ2FwLTMgdGV4dC14cyB0ZXh0LWZvcmVncm91bmQvNDUiPgogICAgICAgICAgICA8YSBocmVmPSIvdGVybXMiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC1mb3JlZ3JvdW5kLzcwIHRyYW5zaXRpb24tY29sb3JzIj5UZXJtcyBvZiBTZXJ2aWNlPC9hPgogICAgICAgICAgICA8c3Bhbj7Ctzwvc3Bhbj4KICAgICAgICAgICAgPGEgaHJlZj0iL3ByaXZhY3kiIGNsYXNzTmFtZT0iaG92ZXI6dGV4dC1mb3JlZ3JvdW5kLzcwIHRyYW5zaXRpb24tY29sb3JzIj5Qcml2YWN5IFBvbGljeTwvYT4KICAgICAgICAgICAgPHNwYW4+wrc8L3NwYW4+CiAgICAgICAgICAgIDxhIGhyZWY9Ii9hY2NlcHRhYmxlLXVzZSIgY2xhc3NOYW1lPSJob3Zlcjp0ZXh0LWZvcmVncm91bmQvNzAgdHJhbnNpdGlvbi1jb2xvcnMiPkFjY2VwdGFibGUgVXNlPC9hPgogICAgICAgICAgICA8c3Bhbj7Ctzwvc3Bhbj4KICAgICAgICAgICAgPGEgaHJlZj0ibWFpbHRvOnN0dWRpb3N2aXJlbGxlQGdtYWlsLmNvbSIgY2xhc3NOYW1lPSJob3Zlcjp0ZXh0LWFtYmVyLTQwMCB0cmFuc2l0aW9uLWNvbG9ycyI+c3R1ZGlvc3ZpcmVsbGVAZ21haWwuY29tPC9hPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9mb290ZXI+CiAgKTsKfQo=
+import LeegoLogo from "@/components/LeegoLogo";
+
+/**
+ * LeegoFooter — production / launch version.
+ * Clean, restrained footer with professional contact emails.
+ */
+const CONTACT_EMAILS = [
+  { label: "Support", email: "studiosvirelle@gmail.com" },
+  { label: "Billing", email: "studiosvirelle@gmail.com" },
+  { label: "Partnerships", email: "studiosvirelle@gmail.com" },
+  { label: "Press", email: "studiosvirelle@gmail.com" },
+  { label: "Legal & Privacy", email: "studiosvirelle@gmail.com" },
+];
+
+export default function LeegoFooter() {
+  return (
+    <footer className="w-full mt-16 border-t" style={{ borderColor:"rgba(255,255,255,0.07)", background:"rgba(7,7,14,0.95)" }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Contact emails grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+          {CONTACT_EMAILS.map(({ label, email }) => (
+            <div key={email} className="flex flex-col gap-0.5">
+              <span className="text-[10px] uppercase tracking-widest text-foreground/40 font-semibold">{label}</span>
+              <a
+                href={`mailto:${email}`}
+                className="text-xs text-foreground/70 hover:text-amber-400 transition-colors truncate"
+              >
+                {email}
+              </a>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t border-border/30 mb-6" />
+
+        {/* Branding + legal links */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <LeegoLogo
+              alt="Leego"
+              className="h-8 w-8 object-contain opacity-90"
+            />
+            <div>
+              <p className="text-sm font-medium text-foreground/80">Powered by Leego</p>
+              <p className="text-xs text-foreground/50">Technology partner</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-xs text-foreground/45">
+            <a href="/terms" className="hover:text-foreground/70 transition-colors">Terms of Service</a>
+            <span>·</span>
+            <a href="/privacy" className="hover:text-foreground/70 transition-colors">Privacy Policy</a>
+            <span>·</span>
+            <a href="/acceptable-use" className="hover:text-foreground/70 transition-colors">Acceptable Use</a>
+            <span>·</span>
+            <a href="mailto:studiosvirelle@gmail.com" className="hover:text-amber-400 transition-colors">studiosvirelle@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

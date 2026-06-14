@@ -1,1 +1,88 @@
-aW1wb3J0IHsgdXNlU3RhdGUsIHVzZUVmZmVjdCB9IGZyb20gInJlYWN0IjsKICBpbXBvcnQgeyBNaWMsIFggfSBmcm9tICJsdWNpZGUtcmVhY3QiOwogIGltcG9ydCBEaXJlY3RvckNoYXQgZnJvbSAiQC9jb21wb25lbnRzL0RpcmVjdG9yQ2hhdCI7CiAgaW1wb3J0IHsgVmlyZWxsZUZhY2UgfSBmcm9tICJAL2NvbXBvbmVudHMvVmlyZWxsZUZhY2UiOwoKICB0eXBlIFZvaWNlU3RhdGUgPSAnaWRsZScgfCAnaW5hY3RpdmUnIHwgJ2xpc3RlbmluZycgfCAndGhpbmtpbmcnIHwgJ3NwZWFraW5nJzsKCiAgZXhwb3J0IGRlZmF1bHQgZnVuY3Rpb24gQXNzaXN0YW50UGFnZSgpIHsKICAgIGNvbnN0IFtzaG93Vm9pY2VIaW50LCBzZXRTaG93Vm9pY2VIaW50XSA9IHVzZVN0YXRlKGZhbHNlKTsKICAgIGNvbnN0IFt2b2ljZVN0YXRlLCBzZXRWb2ljZVN0YXRlXSA9IHVzZVN0YXRlPFZvaWNlU3RhdGU+KCdpZGxlJyk7CgogICAgdXNlRWZmZWN0KCgpID0+IHsKICAgICAgY29uc3QgZGlzbWlzc2VkID0gbG9jYWxTdG9yYWdlLmdldEl0ZW0oInZpcmVsbGUudm9pY2VIaW50RGlzbWlzc2VkIik7CiAgICAgIGlmICghZGlzbWlzc2VkKSBzZXRTaG93Vm9pY2VIaW50KHRydWUpOwogICAgfSwgW10pOwoKICAgIC8vIE1pcnJvciBEaXJlY3RvckNoYXQgdm9pY2Ugc3RhdGUgc28gdGhlIGFtYmllbnQgZmFjZSByZWFjdHMKICAgIHVzZUVmZmVjdCgoKSA9PiB7CiAgICAgIGNvbnN0IGhhbmRsZXIgPSAoZTogRXZlbnQpID0+IHsKICAgICAgICBzZXRWb2ljZVN0YXRlKChlIGFzIEN1c3RvbUV2ZW50PFZvaWNlU3RhdGU+KS5kZXRhaWwgPz8gJ2lkbGUnKTsKICAgICAgfTsKICAgICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3ZpcmVsbGUtdm9pY2Utc3RhdGUnLCBoYW5kbGVyKTsKICAgICAgcmV0dXJuICgpID0+IHdpbmRvdy5yZW1vdmVFdmVudExpc3RlbmVyKCd2aXJlbGxlLXZvaWNlLXN0YXRlJywgaGFuZGxlcik7CiAgICB9LCBbXSk7CgogICAgY29uc3QgZGlzbWlzcyA9ICgpID0+IHsKICAgICAgbG9jYWxTdG9yYWdlLnNldEl0ZW0oInZpcmVsbGUudm9pY2VIaW50RGlzbWlzc2VkIiwgIjEiKTsKICAgICAgc2V0U2hvd1ZvaWNlSGludChmYWxzZSk7CiAgICB9OwoKICAgIHJldHVybiAoCiAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtY29sIGgtW2NhbGMoMTAwdmgtNHJlbSldIG92ZXJmbG93LWhpZGRlbiByZWxhdGl2ZSIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgoKICAgICAgICB7Lyog4pSA4pSAIFdoaXRlIG1hc2sgZmFjZSDigJQgbGFyZ2UgYW1iaWVudCBiYWNrZ3JvdW5kLCBleWVzIHJlYWN0IHRvIHZvaWNlIHN0YXRlIOKUgOKUgCAqL30KICAgICAgICA8ZGl2CiAgICAgICAgICBjbGFzc05hbWU9ImZpeGVkIGluc2V0LTAgcG9pbnRlci1ldmVudHMtbm9uZSBzZWxlY3Qtbm9uZSIKICAgICAgICAgIHN0eWxlPXt7IHpJbmRleDogMCB9fQogICAgICAgICAgYXJpYS1oaWRkZW49InRydWUiCiAgICAgICAgPgogICAgICAgICAgey8qIE91dGVyIGJsb29tIGJlaGluZCB0aGUgbWFzayAqL30KICAgICAgICAgIDxkaXYKICAgICAgICAgICAgY2xhc3NOYW1lPSJhYnNvbHV0ZSB0b3AtWzQwJV0gbGVmdC1bNDAlXSAtdHJhbnNsYXRlLXgtMS8yIC10cmFuc2xhdGUteS0xLzIgcm91bmRlZC1mdWxsIgogICAgICAgICAgICBzdHlsZT17ewogICAgICAgICAgICAgIHdpZHRoOiAibWluKDcwdmgsIDcwdncpIiwKICAgICAgICAgICAgICBoZWlnaHQ6ICJtaW4oNzB2aCwgNzB2dykiLAogICAgICAgICAgICAgIGJhY2tncm91bmQ6ICJyYWRpYWwtZ3JhZGllbnQoY2lyY2xlLCByZ2JhKDE2MCwxODAsMjU1LDAuMTUpIDAlLCByZ2JhKDEwMCwxMzAsMjU1LDAuMDgpIDQwJSwgdHJhbnNwYXJlbnQgNzIlKSIsCiAgICAgICAgICAgICAgZmlsdGVyOiAiYmx1cigzMnB4KSIsCiAgICAgICAgICAgIH19CiAgICAgICAgICAvPgogICAgICAgICAgey8qIEZhY2UgY29udGFpbmVyICovfQogICAgICAgICAgPGRpdgogICAgICAgICAgICBjbGFzc05hbWU9ImFic29sdXRlIHRvcC1bNDAlXSBsZWZ0LVs0MCVdIC10cmFuc2xhdGUteC0xLzIgLXRyYW5zbGF0ZS15LTEvMiIKICAgICAgICAgICAgc3R5bGU9e3sgd2lkdGg6ICJtaW4oNjJ2aCwgNjJ2dykiLCBoZWlnaHQ6ICJtaW4oNjJ2aCwgNjJ2dykiIH19CiAgICAgICAgICA+CiAgICAgICAgICAgIDxWaXJlbGxlRmFjZSB2b2x1bWU9ezB9IHNwZWFraW5nPXt2b2ljZVN0YXRlID09PSAnc3BlYWtpbmcnfSBzdGF0ZT17dm9pY2VTdGF0ZX0gLz4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgoKICAgICAgICB7LyogVm9pY2UgaGludCBiYW5uZXIgKi99CiAgICAgICAge3Nob3dWb2ljZUhpbnQgJiYgKAogICAgICAgICAgPGRpdgogICAgICAgICAgICBjbGFzc05hbWU9Im14LTMgbXQtMiBtYi0xIHJvdW5kZWQtbGcgYm9yZGVyIGJvcmRlci1hbWJlci01MDAvMzAgYmctYW1iZXItNTAwLzEwIHB4LTMgcHktMiBmbGV4IGl0ZW1zLXN0YXJ0IGdhcC0yIgogICAgICAgICAgICBzdHlsZT17eyBwb3NpdGlvbjogInJlbGF0aXZlIiwgekluZGV4OiAxIH19CiAgICAgICAgICA+CiAgICAgICAgICAgIDxNaWMgY2xhc3NOYW1lPSJoLTQgdy00IHRleHQtYW1iZXItNDAwIG10LTAuNSBzaHJpbmstMCIgLz4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXgtMSB0ZXh0LXhzIGxlYWRpbmctcmVsYXhlZCI+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWFtYmVyLTMwMCBmb250LXNlbWlib2xkIj5Wb2ljZSBtb2RlIGlzIG9uLjwvc3Bhbj57IiAifQogICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC1hbWJlci0yMDAvOTAiPgogICAgICAgICAgICAgICAgVGFwIHRoZSBnb2xkIDxzdHJvbmc+VGFsazwvc3Ryb25nPiBidXR0b24gYmVsb3cgdGhlIG1lc3NhZ2UgYm94IHRvIHNwZWFrLgogICAgICAgICAgICAgICAgVGhlIGFzc2lzdGFudCB3aWxsIGxpc3RlbiwgcmVwbHkgb3V0IGxvdWQsIGFuZCBjYW4gbmF2aWdhdGUgVmlyZWxsZSwgY3JlYXRlIHByb2plY3RzLAogICAgICAgICAgICAgICAgZ2VuZXJhdGUgc2NlbmVzLCBhbmQgbW9yZSBvbiB5b3VyIGJlaGFsZi4KICAgICAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgICAgb25DbGljaz17ZGlzbWlzc30KICAgICAgICAgICAgICBjbGFzc05hbWU9InRleHQtYW1iZXItMzAwLzcwIGhvdmVyOnRleHQtYW1iZXItMjAwIHNocmluay0wIgogICAgICAgICAgICAgIGFyaWEtbGFiZWw9IkRpc21pc3MiCiAgICAgICAgICAgID4KICAgICAgICAgICAgICA8WCBjbGFzc05hbWU9ImgtNCB3LTQiIC8+CiAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgKX0KCiAgICAgICAgPERpcmVjdG9yQ2hhdCBkZWZhdWx0T3Blbj17dHJ1ZX0gaGlkZVZvaWNlT3ZlcmxheSAvPgogICAgICA8L2Rpdj4KICAgICk7CiAgfQogIA==
+import { useState, useEffect } from "react";
+  import { Mic, X } from "lucide-react";
+  import DirectorChat from "@/components/DirectorChat";
+  import { VirelleFace } from "@/components/VirelleFace";
+
+  type VoiceState = 'idle' | 'inactive' | 'listening' | 'thinking' | 'speaking';
+
+  export default function AssistantPage() {
+    const [showVoiceHint, setShowVoiceHint] = useState(false);
+    const [voiceState, setVoiceState] = useState<VoiceState>('idle');
+
+    useEffect(() => {
+      const dismissed = localStorage.getItem("virelle.voiceHintDismissed");
+      if (!dismissed) setShowVoiceHint(true);
+    }, []);
+
+    // Mirror DirectorChat voice state so the ambient face reacts
+    useEffect(() => {
+      const handler = (e: Event) => {
+        setVoiceState((e as CustomEvent<VoiceState>).detail ?? 'idle');
+      };
+      window.addEventListener('virelle-voice-state', handler);
+      return () => window.removeEventListener('virelle-voice-state', handler);
+    }, []);
+
+    const dismiss = () => {
+      localStorage.setItem("virelle.voiceHintDismissed", "1");
+      setShowVoiceHint(false);
+    };
+
+    return (
+      <div className="flex flex-col h-[calc(100vh-4rem)] overflow-hidden relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+
+        {/* ── White mask face — large ambient background, eyes react to voice state ── */}
+        <div
+          className="fixed inset-0 pointer-events-none select-none"
+          style={{ zIndex: 0 }}
+          aria-hidden="true"
+        >
+          {/* Outer bloom behind the mask */}
+          <div
+            className="absolute top-[40%] left-[40%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{
+              width: "min(70vh, 70vw)",
+              height: "min(70vh, 70vw)",
+              background: "radial-gradient(circle, rgba(160,180,255,0.15) 0%, rgba(100,130,255,0.08) 40%, transparent 72%)",
+              filter: "blur(32px)",
+            }}
+          />
+          {/* Face container */}
+          <div
+            className="absolute top-[40%] left-[40%] -translate-x-1/2 -translate-y-1/2"
+            style={{ width: "min(62vh, 62vw)", height: "min(62vh, 62vw)" }}
+          >
+            <VirelleFace volume={0} speaking={voiceState === 'speaking'} state={voiceState} />
+          </div>
+        </div>
+
+        {/* Voice hint banner */}
+        {showVoiceHint && (
+          <div
+            className="mx-3 mt-2 mb-1 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 flex items-start gap-2"
+            style={{ position: "relative", zIndex: 1 }}
+          >
+            <Mic className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+            <div className="flex-1 text-xs leading-relaxed">
+              <span className="text-amber-300 font-semibold">Voice mode is on.</span>{" "}
+              <span className="text-amber-200/90">
+                Tap the gold <strong>Talk</strong> button below the message box to speak.
+                The assistant will listen, reply out loud, and can navigate Virelle, create projects,
+                generate scenes, and more on your behalf.
+              </span>
+            </div>
+            <button
+              onClick={dismiss}
+              className="text-amber-300/70 hover:text-amber-200 shrink-0"
+              aria-label="Dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
+        <DirectorChat defaultOpen={true} hideVoiceOverlay />
+      </div>
+    );
+  }
+  

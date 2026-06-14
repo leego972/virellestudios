@@ -69,8 +69,7 @@ function StatusBadge({ status }: { status: string }) {
   const v = variants[status] || variants.draft;
   const Icon = v.icon;
   return (
-    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${v.color}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${v.color}`}>
       <Icon className="h-3 w-3" />
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
@@ -1048,7 +1047,6 @@ export default function CampaignManager() {
           })}
         </TabsContent>
       </Tabs>
-    </div>
     </div>
   );
 }
