@@ -92,7 +92,7 @@ function VFXSuiteInner() {
         sceneId,
       });
       setUploadedFrameUrl(result.url);
-      toast.success("Source frame uploaded Ã¢ÂÂ it will be used as a visual reference for VFX processing");
+      toast.success("Source frame uploaded — it will be used as a visual reference for VFX processing");
     } catch (err: any) {
       toast.error(err.message || "Upload failed");
     } finally {
@@ -134,7 +134,7 @@ function VFXSuiteInner() {
       // Trigger video regeneration with VFX parameters embedded in the prompt
       await generateVideoMutation.mutateAsync({ sceneId });
       setProcessComplete(true);
-      toast.success(`${selectedOps.length} VFX operation${selectedOps.length > 1 ? "s" : ""} saved Ã¢ÂÂ video regeneration queued`);
+      toast.success(`${selectedOps.length} VFX operation${selectedOps.length > 1 ? "s" : ""} saved — video regeneration queued`);
     } catch (err: any) {
       toast.error(err?.message || "VFX processing failed. Please try again.");
     } finally {
