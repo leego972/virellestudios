@@ -205,7 +205,7 @@ export default function DownloadApp() {
 
           {/* Mobile feature grid */}
           <div className="mt-12">
-            <h3 className="text-center text-lg font-semibold mb-6 text-white/60">Every tool, on mobile</h3>
+            <h3 className="text-center text-lg font-semibold mb-6 /60">Every tool, on mobile</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {MOBILE_FEATURES.map(f => (
                 <div key={f.label} className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/8 transition-colors">

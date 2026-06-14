@@ -810,7 +810,7 @@ import { useState, useEffect } from "react";
                     {/* Info */}
                     <div className="p-4 space-y-2">
                       <div>
-                        <h3 className="font-semibold text-white text-sm">{actor.name}</h3>
+                        <h3 className="font-semibold text-sm">{actor.name}</h3>
                         <p className="text-xs text-zinc-500">{actor.nationality} · {actor.age}</p>
                       </div>
                       <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{actor.hook}</p>
@@ -993,7 +993,7 @@ import { useState, useEffect } from "react";
                           </Badge>
                         )}
                       </div>
-                      <h2 className="text-3xl sm:text-4xl font-bold text-white leading-none tracking-tight gradient-text-gold">{selectedActor.name}</h2>
+                      <h2 className="text-3xl sm:text-4xl font-bold leading-none tracking-tight gradient-text-gold">{selectedActor.name}</h2>
                       <p className={`text-sm mt-1.5 font-medium tracking-wide ${selectedAccent?.text ?? "text-zinc-400"}`}>{selectedActor.archetype}</p>
                     </div>
                     <div className="text-right shrink-0">

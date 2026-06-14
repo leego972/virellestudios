@@ -191,7 +191,7 @@ export default function CreatorProfile() {
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-2 mb-6">
             <Film className="w-5 h-5" style={{ color: "#d4af37" }} />
-            <h2 className="text-lg font-semibold text-white gradient-text-gold">Films</h2>
+            <h2 className="text-lg font-semibold  gradient-text-gold">Films</h2>
             <span className="text-xs text-neutral-500">({films.length})</span>
           </div>
 
@@ -208,7 +208,7 @@ export default function CreatorProfile() {
                         <img src={film.thumbnailUrl} alt={film.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Film className="w-8 h-8 text-neutral-600" />
+                          <Film className="text-amber-400/80 w-8 h-8 text-neutral-600" />
                         </div>
                       )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -219,7 +219,7 @@ export default function CreatorProfile() {
                     </div>
                     {/* Info */}
                     <div className="p-3">
-                      <h3 className="text-sm font-semibold text-white truncate">{film.title}</h3>
+                      <h3 className="text-sm font-semibold  truncate">{film.title}</h3>
                       {film.description && (
                         <p className="text-xs text-neutral-400 mt-1 line-clamp-2">{film.description}</p>
                       )}
@@ -239,13 +239,13 @@ export default function CreatorProfile() {
             <div className="h-px bg-neutral-800 mb-8" />
             <div className="flex items-center gap-2 mb-6">
               <Layers className="w-5 h-5" style={{ color: "#d4af37" }} />
-              <h2 className="text-lg font-semibold text-white gradient-text-gold">Collections</h2>
+              <h2 className="text-lg font-semibold  gradient-text-gold">Collections</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {collections.map((col: any) => (
                 <Link key={col.id} href={`/collections/${col.slug}`}>
                   <div className="group rounded-lg overflow-hidden bg-neutral-900 border border-neutral-800 hover:border-yellow-600/50 transition-all cursor-pointer p-4">
-                    <h3 className="text-sm font-semibold text-white mb-1">{col.title}</h3>
+                    <h3 className="text-sm font-semibold  mb-1">{col.title}</h3>
                     {col.description && (
                       <p className="text-xs text-neutral-400 line-clamp-2">{col.description}</p>
                     )}

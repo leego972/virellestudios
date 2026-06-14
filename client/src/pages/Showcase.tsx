@@ -658,7 +658,7 @@ function DiscoveryFeed() {
 
                 {/* Info */}
                 <div className="p-4">
-                  <h3 className="font-semibold text-white text-sm truncate">{film.title}</h3>
+                  <h3 className="font-semibold text-sm truncate">{film.title}</h3>
                   {film.logline && (
                     <p className="text-xs text-neutral-400 mt-1 line-clamp-2">{film.logline}</p>
                   )}
@@ -807,7 +807,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               The Inciting Email
             </div>
-            <h3 className="text-2xl font-bold text-white">
+            <h3 className="text-2xl font-bold ">
               One email reminded him he was a storyteller.
             </h3>
           </div>
@@ -841,7 +841,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Cast
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white">
+            <h3 className="text-2xl md:text-3xl font-bold ">
               Main characters
             </h3>
           </div>
@@ -892,7 +892,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Short Film
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white">
+            <h3 className="text-2xl md:text-3xl font-bold ">
               Full script
             </h3>
           </div>
@@ -1005,7 +1005,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Show Within The Show
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+            <h3 className="text-3xl md:text-4xl font-bold tracking-tight">
               {showrunner.signalBlackMiniTrailer.title}
             </h3>
             <p className="text-sm text-amber-300/70 italic mt-2">
@@ -1099,7 +1099,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               What Virelle Built
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white">
+            <h3 className="text-2xl md:text-3xl font-bold ">
               A complete production package
             </h3>
             <p className="text-sm text-neutral-500 mt-2 max-w-xl mx-auto">
@@ -1133,7 +1133,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               The Difference
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white">
+            <h3 className="text-2xl md:text-3xl font-bold ">
               {showrunner.comparisonCopy.headline}
             </h3>
             <p className="text-sm text-neutral-400 max-w-2xl mx-auto mt-3 leading-relaxed">
@@ -1196,7 +1196,7 @@ function DiscoveryFeed() {
             <div className="text-xs text-amber-400/70 uppercase tracking-widest mb-2 font-semibold">
               Social Cuts
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white">
+            <h3 className="text-2xl md:text-3xl font-bold ">
               3 ready-to-post versions
             </h3>
           </div>
@@ -1241,7 +1241,7 @@ function DiscoveryFeed() {
         <div className="mb-16">
           <div className="flex items-center gap-3 mb-6">
             <div>
-              <h3 className="text-xl font-bold text-white tracking-tight">
+              <h3 className="text-xl font-bold tracking-tight">
                 Film Structure
               </h3>
               <p className="text-xs text-neutral-500">
@@ -1279,7 +1279,7 @@ function DiscoveryFeed() {
         {/* ── SCENE GENERATION PROMPTS ── */}
         <div className="mb-16">
           <div className="mb-6">
-            <h3 className="text-xl font-bold text-white tracking-tight">
+            <h3 className="text-xl font-bold tracking-tight">
               Scene Generation Prompts
             </h3>
             <p className="text-xs text-neutral-500 mt-1">
@@ -1313,7 +1313,7 @@ function DiscoveryFeed() {
 
         {/* ── VOICE DIRECTION ── */}
         <div className="mb-16">
-          <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+          <h3 className="text-xl font-bold mb-1 tracking-tight">
             Voice Direction
           </h3>
           <p className="text-xs text-neutral-500 mb-6">
@@ -1350,7 +1350,7 @@ function DiscoveryFeed() {
 
         {/* ── MUSIC DIRECTION ── */}
         <div className="mb-16">
-          <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+          <h3 className="text-xl font-bold mb-1 tracking-tight">
             Music Direction
           </h3>
           <p className="text-xs text-neutral-500 mb-6">
@@ -1386,7 +1386,7 @@ function DiscoveryFeed() {
 
         {/* ── SOUND DESIGN ── */}
         <div className="mb-16">
-          <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+          <h3 className="text-xl font-bold mb-1 tracking-tight">
             Sound Design
           </h3>
           <p className="text-xs text-neutral-500 mb-6">
@@ -1416,7 +1416,7 @@ function DiscoveryFeed() {
 
         {/* ── EDIT PLAN ── */}
         <div className="mb-16">
-          <h3 className="text-xl font-bold text-white mb-1 tracking-tight">
+          <h3 className="text-xl font-bold mb-1 tracking-tight">
             Edit Plan
           </h3>
           <p className="text-xs text-neutral-500 mb-6">
@@ -1465,7 +1465,7 @@ function DiscoveryFeed() {
         <div className="mb-16">
           <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
             <div>
-              <h3 className="text-xl font-bold text-white tracking-tight">
+              <h3 className="text-xl font-bold tracking-tight">
                 Asset Placeholders
               </h3>
               <p className="text-xs text-neutral-500 mt-1">
@@ -1549,7 +1549,7 @@ function DiscoveryFeed() {
               Start building your show
             </div>
 
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 tracking-tight">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 tracking-tight">
               {showrunner.landingCopy.headline}
             </h3>
             <p className="text-sm md:text-base text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">

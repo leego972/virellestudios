@@ -81,7 +81,7 @@ export default function Contact() {
       <div className="border-b bg-card/50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
-            <ArrowLeft className="h-4 w-4 mr-1" />
+            <ArrowLeft className="h-4 w-4 mr-1 text-amber-400/70" />
             Back
           </Button>
           <div>

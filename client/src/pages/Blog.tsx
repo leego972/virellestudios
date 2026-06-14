@@ -105,7 +105,7 @@ export default function Blog() {
         ) : !articles || articles.length === 0 ? (
           <div className="text-center py-20">
             <BookOpen className="h-12 w-12 text-white/20 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white/60 mb-2">No articles yet</h3>
+            <h3 className="text-xl font-semibold /60 mb-2">No articles yet</h3>
             <p className="text-white/40">Check back soon — new articles are published automatically every day.</p>
           </div>
         ) : (
@@ -131,7 +131,7 @@ export default function Blog() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-lg font-semibold text-white group-hover:text-amber-400 transition-colors mb-2 line-clamp-2">
+                    <h3 className="text-lg font-semibold group-hover:text-amber-400 transition-colors mb-2 line-clamp-2">
                       {article.title}
                     </h3>
 

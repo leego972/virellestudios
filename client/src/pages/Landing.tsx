@@ -311,7 +311,7 @@ export default function Landing() {
 
               {/* Headline */}
               <div className="text-center mb-10">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white mb-5 leading-tight gradient-text-gold">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-5 leading-tight gradient-text-gold">
                   {LANDING_COPY.headline}
                 </h2>
                 <p className="text-base md:text-lg text-neutral-400 max-w-3xl mx-auto leading-relaxed">
@@ -409,7 +409,7 @@ export default function Landing() {
                 <ZapIcon className="h-3.5 w-3.5" />
                 The Pipeline
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white gradient-text-gold">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">
                 Concept to Complete Film —{" "}
                 <span className="text-amber-400">4 Steps</span>
               </h2>
@@ -426,7 +426,7 @@ export default function Landing() {
                     <span className={`text-${s.color}-400 font-black text-lg`}>{s.step}</span>
                   </div>
                   <div className={`inline-block px-2.5 py-1 rounded-full bg-${s.color}-500/10 text-${s.color}-400 text-[11px] font-bold mb-3 uppercase tracking-wider`}>{s.time}</div>
-                  <h3 className="text-base font-bold mb-2 text-white">{s.title}</h3>
+                  <h3 className="text-base font-bold mb-2 ">{s.title}</h3>
                   <p className="text-xs text-white/60 leading-relaxed">{s.desc}</p>
                 </div>
               ))}
@@ -443,7 +443,7 @@ export default function Landing() {
                 <Key className="h-3.5 w-3.5" />
                 3-Minute Setup
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white gradient-text-gold">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">
                 Connect Your AI Providers
               </h2>
               <p className="mt-3 text-sm text-white/50 max-w-xl mx-auto">
@@ -494,7 +494,7 @@ export default function Landing() {
         <section id="use-cases" className="py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-y border-white/10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white gradient-text-gold">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">
                 Two Ways to Use{" "}
                 <span className="text-amber-400">Virelle Studios</span>
               </h2>
@@ -506,7 +506,7 @@ export default function Landing() {
                   <div className="h-14 w-14 rounded-xl bg-amber-500/10 flex items-center justify-center mb-5 group-hover:bg-amber-500/20 transition-colors">
                     <Film className="h-7 w-7 text-amber-400" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-white">Full AI Film Generation</h3>
+                  <h3 className="text-xl font-bold mb-2 ">Full AI Film Generation</h3>
                   <p className="text-sm text-white/60 leading-relaxed mb-6">
                     Describe your movie concept and Virelle generates the entire film — screenplay, 60–90 cinematic scenes with clip chaining, AI voice-acted dialogue, original soundtrack, and scene-to-scene continuity.
                   </p>
@@ -527,7 +527,7 @@ export default function Landing() {
                   <div className="h-14 w-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5 group-hover:bg-purple-500/20 transition-colors">
                     <Sparkles className="h-7 w-7 text-purple-400" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-white">VFX Scene Studio</h3>
+                  <h3 className="text-xl font-bold mb-2 ">VFX Scene Studio</h3>
                   <p className="text-sm text-white/60 leading-relaxed mb-6">
                     Shooting a live-action film with a real cast? Use Virelle to generate the scenes that would be cost-prohibitive to shoot. Export individual scenes to composite into your production.
                   </p>
@@ -554,7 +554,7 @@ export default function Landing() {
                 <Crown className="h-3.5 w-3.5" />
                 Virelle Signature Cast
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4 gradient-text-gold">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 gradient-text-gold">
                 Create your cast before you{" "}
                 <span className="text-amber-400">create the film.</span>
               </h2>
@@ -593,7 +593,7 @@ export default function Landing() {
         <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white gradient-text-gold">Professional Infrastructure.</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">Professional Infrastructure.</h2>
               <p className="mt-4 text-white/60 max-w-2xl mx-auto">Virelle is built for the rigorous demands of professional film production.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -626,14 +626,14 @@ export default function Landing() {
           <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/10">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4 gradient-text-gold">Clips are not a production.</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 gradient-text-gold">Clips are not a production.</h2>
                 <p className="text-white/50 max-w-2xl mx-auto text-sm leading-relaxed">
                   AI video generators can create individual shots. Virelle is built for the full production workflow — story, cast, scene continuity, trailer structure, poster direction, music notes, funding targets, and export-ready production packages.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
                 <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-7">
-                  <h3 className="text-xs font-bold text-white/30 uppercase tracking-widest mb-5">Generic clip tools</h3>
+                  <h3 className="text-xs font-bold /30 uppercase tracking-widest mb-5">Generic clip tools</h3>
                   <ul className="space-y-3">
                     {["Random clips", "Inconsistent characters", "Limited story structure", "Weak continuity", "No pitch package"].map(item => (
                       <li key={item} className="flex items-center gap-3 text-sm text-white/35">
@@ -663,7 +663,7 @@ export default function Landing() {
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-amber-500/70 mb-3">Production range</p>
-                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white gradient-text-gold">What filmmakers build here</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">What filmmakers build here</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
@@ -691,7 +691,7 @@ export default function Landing() {
                 ].map(card => (
                   <div key={card.type} className={`rounded-2xl border ${card.border} bg-white/[0.02] p-7 ${card.ring ? "ring-1 ring-amber-500/10" : ""}`}>
                     <div className="flex items-center justify-between mb-5">
-                      <h3 className="text-base font-bold text-white">{card.type}</h3>
+                      <h3 className="text-base font-bold ">{card.type}</h3>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/60 bg-amber-500/5 border border-amber-500/15 px-2 py-0.5 rounded-full">{card.tag}</span>
                     </div>
                     <ul className="space-y-2.5">
@@ -716,7 +716,7 @@ export default function Landing() {
                 <CreditCard className="h-3.5 w-3.5" />
                 Transparent Pricing
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white gradient-text-gold">Production Tiers</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight gradient-text-gold">Production Tiers</h2>
               <p className="mt-3 text-sm text-white/50">7-day free trial on all plans. Bring your own API keys — you pay providers directly, no markup.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -728,7 +728,7 @@ export default function Landing() {
               ].map(plan => (
                 <Card key={plan.tier} className={`relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-white/10 hover:border-amber-500/30 bg-white/[0.02]"}`}>
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-2 text-white">{plan.tier}</h3>
+                    <h3 className="text-xl font-bold mb-2 ">{plan.tier}</h3>
                     <div className="mb-1">
                       <span className="text-3xl font-black text-white">{plan.price}</span>
                       {plan.price !== "Custom" && <span className="text-xs text-white/40 ml-1">/mo</span>}
@@ -777,7 +777,7 @@ export default function Landing() {
               <Smartphone className="h-3.5 w-3.5" />
               Mobile Apps
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-4 gradient-text-gold">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 gradient-text-gold">
               Take Your Studio Everywhere
             </h2>
             <p className="text-white/60 mb-10 max-w-xl mx-auto">
@@ -817,7 +817,7 @@ export default function Landing() {
         <section className="py-24 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-black">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight text-white gradient-text-gold">Frequently Asked Questions</h2>
+              <h2 className="text-3xl font-bold tracking-tight gradient-text-gold">Frequently Asked Questions</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
@@ -856,7 +856,7 @@ export default function Landing() {
 
               {/* Main headline */}
               <div className="text-center mb-16">
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-none mb-6 text-white gradient-text-gold">
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-none mb-6 gradient-text-gold">
                   Clothing built <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400">for the camera.</span>
                 </h2>
@@ -898,7 +898,7 @@ export default function Landing() {
                     }`}
                   >
                     <div className="text-3xl mb-4">{p.icon}</div>
-                    <h3 className="text-base font-bold text-white mb-3">{p.title}</h3>
+                    <h3 className="text-base font-bold mb-3">{p.title}</h3>
                     <p className="text-sm text-white/50 leading-relaxed">{p.body}</p>
                   </div>
                 ))}
@@ -913,7 +913,7 @@ export default function Landing() {
                   {/* Left — copy */}
                   <div className="p-8 md:p-10 flex flex-col justify-center">
                     <p className="text-xs font-black uppercase tracking-widest text-amber-500/60 mb-3">23 collections · 1,400+ items</p>
-                    <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-4 leading-tight">
+                    <h3 className="text-2xl sm:text-3xl font-black tracking-tight mb-4 leading-tight">
                       Menswear. Womenswear. Kids. Sport.<br />
                       <span className="text-amber-400">From 30 cents per item.</span>
                     </h3>
@@ -998,7 +998,7 @@ export default function Landing() {
                         ? `★ Founding Partner — ${foundingStatus.spotsRemaining} of ${foundingStatus.totalSpots} spots left`
                         : "★ Limited — Founding Designer Partner Program"}
                 </div>
-                <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 text-white leading-none gradient-text-gold">
+                <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-6 leading-none gradient-text-gold">
                   GET IN <span className="text-amber-400">FIRST.</span>
                 </h2>
                 <p className="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
@@ -1074,7 +1074,7 @@ export default function Landing() {
               <div className="border-t border-white/8 pt-16 flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div>
                   <p className="text-white/35 text-xs font-bold uppercase tracking-wider mb-1">Already a filmmaker?</p>
-                  <h3 className="text-xl font-black text-white">Browse the Wardrobe Marketplace</h3>
+                  <h3 className="text-xl font-black ">Browse the Wardrobe Marketplace</h3>
                   <p className="text-white/40 text-sm mt-1">
                     Lease designer collections — they appear in your characters for AI scene generation.
                   </p>
@@ -1095,7 +1095,7 @@ export default function Landing() {
         <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden border-t border-white/10 bg-black">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(212,175,55,0.04)_0%,transparent_70%)] pointer-events-none" />
           <div className="relative z-10 max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-8 text-white gradient-text-gold">READY TO PRODUCE?</h2>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-8 gradient-text-gold">READY TO PRODUCE?</h2>
             <p className="text-lg text-white/50 mb-8">Your next production starts with a single click.</p>
             <p className="text-sm text-white/30 mb-12">No credit card required to explore every tool. Cancel anytime.</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

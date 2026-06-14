@@ -170,7 +170,7 @@ Be concrete: name actual scene numbers from the list above. No fluff.`;
       <div className="flex items-center justify-between">
         <Link href={`/projects/${projectId}`}>
           <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" /> Back to project
+            <ArrowLeft className="h-4 w-4 text-amber-400/70" /> Back to project
           </Button>
         </Link>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

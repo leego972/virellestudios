@@ -91,7 +91,7 @@ import { useState, useMemo } from "react";
         {/* Summary cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "Comps shown", value: filtered.length.toString(), icon: <Film className="h-4 w-4" /> },
+            { label: "Comps shown", value: filtered.length.toString(), icon: <Film className="text-amber-400/80 h-4 w-4" /> },
             { label: "Avg ROI", value: `${avgROI}x`, icon: <TrendingUp className="h-4 w-4" /> },
             { label: "Avg worldwide", value: fmt(avgWorldwide), icon: <Globe className="h-4 w-4" /> },
             { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "—", icon: <Star className="h-4 w-4" /> },

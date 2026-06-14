@@ -221,7 +221,7 @@ import { useState } from "react";
 
             {acts.length === 0 ? (
               <div className="border-2 border-dashed rounded-xl p-12 text-center text-muted-foreground">
-                <Film className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                <Film className="text-amber-400/80 w-10 h-10 mx-auto mb-3 opacity-30" />
                 <p className="font-medium">No acts defined yet</p>
                 <p className="text-sm mt-1">Structure your film into acts to organize scenes and story beats.</p>
               </div>

@@ -101,7 +101,7 @@ export default function Collections() {
           {collection.creatorSlug && (
             <Link href={`/creators/${collection.creatorSlug}`}>
               <button className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-white transition-colors mb-6">
-                <ArrowLeft className="w-3.5 h-3.5" />
+                <ArrowLeft className="w-3.5 h-3.5 text-amber-400/70" />
                 <span>{collection.creatorName || "Creator"}</span>
               </button>
             </Link>
@@ -151,7 +151,7 @@ export default function Collections() {
                         <img src={item.filmThumbnail} alt={item.filmTitle} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Film className="w-8 h-8 text-neutral-600" />
+                          <Film className="text-amber-400/80 w-8 h-8 text-neutral-600" />
                         </div>
                       )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -161,7 +161,7 @@ export default function Collections() {
                       </div>
                     </div>
                     <div className="p-3">
-                      <h3 className="text-sm font-semibold text-white truncate">{item.filmTitle}</h3>
+                      <h3 className="text-sm font-semibold  truncate">{item.filmTitle}</h3>
                     </div>
                   </div>
                 </Link>

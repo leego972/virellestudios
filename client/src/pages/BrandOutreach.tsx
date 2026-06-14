@@ -176,7 +176,7 @@ export default function BrandOutreach() {
       <div className="flex items-center justify-between">
         <Link href={hasProject ? `/projects/${projectId}` : "/funding"}>
           <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" /> Back
+            <ArrowLeft className="h-4 w-4 text-amber-400/70" /> Back
           </Button>
         </Link>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

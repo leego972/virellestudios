@@ -209,7 +209,7 @@ export default function AssetMarketplace() {
                 </div>
                 <CardContent className="p-4 space-y-3">
                   <div>
-                    <h3 className="font-bold text-sm line-clamp-1 text-white">{asset.name}</h3>
+                    <h3 className="font-bold text-sm line-clamp-1 ">{asset.name}</h3>
                     <p className="text-[10px] text-white/40 uppercase tracking-wider mt-0.5">{asset.author}</p>
                   </div>
                   
@@ -282,7 +282,7 @@ export default function AssetMarketplace() {
         {filteredAssets.length === 0 && !isLoading && (category === "all" || category === "wardrobes" || category === "funding") && (
           <div className="text-center py-20">
             <Search className="w-12 h-12 mx-auto mb-4 text-white/10" />
-            <h2 className="text-lg font-medium text-white/40 gradient-text-gold">No items found</h2>
+            <h2 className="text-lg font-medium /40 gradient-text-gold">No items found</h2>
             <p className="text-sm text-white/20">Try adjusting your search or category filters.</p>
           </div>
         )}

@@ -91,7 +91,7 @@ function VideoPlayerModal({
         {/* Info bar */}
         <div className="mt-3 flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-white font-semibold text-lg gradient-text-gold">{sample.title}</h2>
+            <h2 className=" font-semibold text-lg gradient-text-gold">{sample.title}</h2>
             {sample.description && (
               <p className="text-white/60 text-sm mt-1 line-clamp-2">{sample.description}</p>
             )}
