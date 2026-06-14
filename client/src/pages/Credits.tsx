@@ -94,7 +94,7 @@ export default function Credits() {
 
       {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Header ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 gradient-text-gold">
+        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 text-gold-shimmer">
           <HollywoodIcon tool="credits" size={36} />
           Credits &amp; History
         </h1>

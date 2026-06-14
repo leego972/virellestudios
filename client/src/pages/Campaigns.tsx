@@ -54,7 +54,7 @@ import { useLocation } from "wouter";
                 <Film className="w-5 h-5 text-amber-400" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Film Campaigns</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Film Campaigns</h1>
                 <p className="text-muted-foreground text-sm">Back independent films directly. Every pledge matters.</p>
               </div>
             </div>

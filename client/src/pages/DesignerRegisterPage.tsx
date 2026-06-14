@@ -242,7 +242,7 @@ export default function DesignerRegisterPage() {
               <Store className="h-3.5 w-3.5" />
               Designer Marketplace
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tighter mb-3 gradient-text-gold">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tighter mb-3 text-gold-shimmer">
               List Your Collections
             </h1>
             <p className="text-white/50 text-sm leading-relaxed max-w-sm mx-auto">

@@ -44,7 +44,7 @@ import React, { useState } from "react";
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold gradient-text-gold">Admin Dashboard</h1>
+              <h1 className="text-3xl font-bold text-gold-shimmer">Admin Dashboard</h1>
               <p className="text-white/60">One-click seeding for marketplace, funding, and crowdfunding</p>
             </div>
             <Button variant="outline" onClick={() => setLocation("/")}>Back to App</Button>

@@ -112,7 +112,7 @@ export default function About() {
             <Clapperboard className="h-3.5 w-3.5" />
             Our Studio
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 gradient-text-gold">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 text-gold-shimmer">
             Built for{" "}
             <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
               Directors

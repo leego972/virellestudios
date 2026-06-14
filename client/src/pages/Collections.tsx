@@ -116,7 +116,7 @@ export default function Collections() {
               </div>
             )}
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold mb-2 gradient-text-gold">{collection.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-gold-shimmer">{collection.title}</h1>
               {collection.description && (
                 <p className="text-neutral-400 text-sm leading-relaxed max-w-2xl">{collection.description}</p>
               )}

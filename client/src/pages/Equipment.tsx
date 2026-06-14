@@ -124,7 +124,7 @@ import { useState, useMemo } from "react";
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => setLocation(`/projects/${projectId}`)}><ArrowLeft className="h-4 w-4" /></Button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Package className="h-6 w-6 text-amber-400" />Equipment & Props</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><Package className="h-6 w-6 text-amber-400" />Equipment & Props</h1>
             <p className="text-sm text-muted-foreground">Track all gear, props, and costumes for this production</p>
           </div>
           <div className="flex gap-2 shrink-0">

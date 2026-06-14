@@ -265,7 +265,7 @@ export default function CampaignManager() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer">
             <Megaphone className="h-6 w-6 text-amber-400" />
             Campaign Manager
           </h1>

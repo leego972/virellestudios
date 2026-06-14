@@ -123,7 +123,7 @@ export default function CreatorProfile() {
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-3 mb-2">
-                <h1 className="text-2xl sm:text-3xl font-bold gradient-text-gold">{profile.displayName}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gold-shimmer">{profile.displayName}</h1>
                 <Badge
                   variant="outline"
                   className="text-xs border-yellow-600/50 text-yellow-500"

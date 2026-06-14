@@ -171,7 +171,7 @@ export default function DialogueEditor() {
               <ArrowLeft className="h-5 w-5" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
-              <h1 className="text-lg sm:text-xl font-semibold truncate gradient-text-gold">Dialogue Editor</h1>
+              <h1 className="text-lg sm:text-xl font-semibold truncate text-gold-shimmer">Dialogue Editor</h1>
               <p className="text-sm text-muted-foreground truncate">{project.data?.title || "Loading..."}</p>
             </div>
           </div>

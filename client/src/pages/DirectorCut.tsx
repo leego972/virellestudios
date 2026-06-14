@@ -583,7 +583,7 @@ export default function DirectorCut() {
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div className="min-w-0">
-            <h1 className="text-xs md:text-sm font-semibold flex items-center gap-1.5 md:gap-2 gradient-text-gold">
+            <h1 className="text-xs md:text-sm font-semibold flex items-center gap-1.5 md:gap-2 text-gold-shimmer">
               <Scissors className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-400 shrink-0" />
               <span className="truncate">Director's Cut</span>
               {hasUnsavedChanges && <span className="text-[10px] text-amber-400 font-normal shrink-0">ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span>}

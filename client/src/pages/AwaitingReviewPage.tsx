@@ -13,7 +13,7 @@ export default function AwaitingReviewPage() {
   return (
     <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="container mx-auto px-4 py-6 max-w-5xl">
-      <h1 className="text-2xl font-semibold mb-1 gradient-text-gold">Awaiting your review</h1>
+      <h1 className="text-2xl font-semibold mb-1 text-gold-shimmer">Awaiting your review</h1>
       <p className="text-sm text-zinc-400 mb-4">
         Scenes across all of your projects that are ready for review. Open a
         scene to approve or send it back with notes.

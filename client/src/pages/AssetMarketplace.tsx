@@ -111,7 +111,7 @@ export default function AssetMarketplace() {
               <div className="w-8 h-8 bg-amber-500 rounded flex items-center justify-center">
                 <ShoppingCart className="w-5 h-5 text-black" />
               </div>
-              <h1 className="text-lg font-bold tracking-tight uppercase italic gradient-text-gold">
+              <h1 className="text-lg font-bold tracking-tight uppercase italic text-gold-shimmer">
                 Asset <span className="text-amber-500">Marketplace</span>
               </h1>
             </div>

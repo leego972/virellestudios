@@ -384,7 +384,7 @@ function AICastingInner() {
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-lg font-semibold flex items-center gap-2 gradient-text-gold">
+              <h1 className="text-lg font-semibold flex items-center gap-2 text-gold-shimmer">
                 <Crown className="w-5 h-5 text-amber-400" />
                 Cast a Virelle Star
               </h1>

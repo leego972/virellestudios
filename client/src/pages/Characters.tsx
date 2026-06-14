@@ -360,7 +360,7 @@ export default function Characters() {
     <div className="max-w-6xl mx-auto space-y-6 py-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">Character Library</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gold-shimmer">Character Library</h1>
           <p className="text-muted-foreground text-sm mt-1">
             Build your cast ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ upload photos, generate with AI, or create from scratch
           </p>

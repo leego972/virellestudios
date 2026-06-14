@@ -107,7 +107,7 @@ export default function AdminSignatureCast() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
+            <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer">
               <Crown className="w-6 h-6 text-amber-400" />
               Signature Cast Admin
             </h1>

@@ -85,7 +85,7 @@ export default function Contact() {
             Back
           </Button>
           <div>
-            <h1 className="text-lg font-bold gradient-text-gold">Contact Us</h1>
+            <h1 className="text-lg font-bold text-gold-shimmer">Contact Us</h1>
             <p className="text-xs text-muted-foreground">Get in touch with the Virelle Studios team</p>
           </div>
         </div>

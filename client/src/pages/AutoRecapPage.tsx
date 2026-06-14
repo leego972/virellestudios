@@ -142,7 +142,7 @@ export default function AutoRecapPage() {
           <Link href={`/projects/${projectId}`}>
             <a className="text-sm text-zinc-400 hover:text-zinc-200">ÃÂ¢ÃÂÃÂ Back to project</a>
           </Link>
-          <h1 className="text-2xl font-bold mt-2 gradient-text-gold">Auto Recap</h1>
+          <h1 className="text-2xl font-bold mt-2 text-gold-shimmer">Auto Recap</h1>
           <p className="text-sm text-zinc-400 mt-1">
             Generate a "Previously On" recap from earlier episodes. Available for episodic
             projects only. Credits are charged only if generation succeeds.

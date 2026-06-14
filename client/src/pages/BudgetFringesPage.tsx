@@ -83,7 +83,7 @@ export default function BudgetFringesPage() {
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)", color: "#fff", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         <Link href={`/projects/${projectId}`} style={{ color: "rgba(255,215,140,.8)", textDecoration: "none", fontSize: ".85rem" }}>← Back to project</Link>
-        <h1 className="gradient-text-gold" style={{ margin: "1rem 0 .25rem", fontSize: "1.8rem", color: "#FFD78C" }}>Fringes & loaded labor</h1>
+        <h1 className="text-gold-shimmer" style={{ margin: "1rem 0 .25rem", fontSize: "1.8rem", color: "#FFD78C" }}>Fringes & loaded labor</h1>
         <p style={{ color: "rgba(255,255,255,.6)", marginTop: 0, marginBottom: "1.6rem", fontSize: ".95rem" }}>
           Layer payroll taxes, union benefits, and rental taxes on top of your budget categories. Categories are matched by tag (cast, crew, equipment).
         </p>

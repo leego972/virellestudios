@@ -630,7 +630,7 @@ export default function DesignerWardrobePage() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-2 gradient-text-gold">
+          <h1 className="text-3xl font-semibold tracking-tight flex items-center gap-2 text-gold-shimmer">
             <Shirt className="w-7 h-7 text-amber-400" />
             Designer Wardrobe
             {inProjectMode && projectQ.data?.title ? (

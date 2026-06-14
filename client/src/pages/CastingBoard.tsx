@@ -207,7 +207,7 @@ Output: a self-contained scene with 1 scene-partner, ~12-18 lines of dialogue, a
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Casting Board</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Casting Board</h1>
         <p className="text-muted-foreground mt-1">
           {characters?.length ?? 0} role{characters?.length === 1 ? "" : "s"} ÃÂ· attach actors, draft sides, and lock consent.
         </p>

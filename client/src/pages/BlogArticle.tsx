@@ -183,7 +183,7 @@ export default function BlogArticle() {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight gradient-text-gold">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight text-gold-shimmer">
           {article.title}
         </h1>
 
@@ -201,7 +201,7 @@ export default function BlogArticle() {
           </div>
         )}
 
-        <hr className="border-white/10 mb-8 border-amber-500/20" />
+        <hr className="border-white/10 mb-8" />
 
         {/* Content */}
         <div

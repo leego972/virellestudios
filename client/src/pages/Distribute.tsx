@@ -221,7 +221,7 @@ export default function Distribute() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2 gradient-text-gold">
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2 text-gold-shimmer">
             <Megaphone className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
             Distribute
           </h1>

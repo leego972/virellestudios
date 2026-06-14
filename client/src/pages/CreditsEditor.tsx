@@ -99,7 +99,7 @@ export default function CreditsEditor() {
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <div className="min-w-0">
-              <h1 className="text-base sm:text-lg font-semibold truncate gradient-text-gold">{project?.title} ÃÂ¢ÃÂÃÂ Credits</h1>
+              <h1 className="text-base sm:text-lg font-semibold truncate text-gold-shimmer">{project?.title} ÃÂ¢ÃÂÃÂ Credits</h1>
               <p className="text-xs text-muted-foreground">{allCredits?.length || 0} credits</p>
             </div>
           </div>

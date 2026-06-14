@@ -135,7 +135,7 @@ export default function AdminUsers() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer">
             <Shield className="w-6 h-6 text-amber-500" />
             Admin Panel
           </h1>

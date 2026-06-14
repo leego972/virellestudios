@@ -465,7 +465,7 @@ export default function ContentCreatorPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer">
             <PenTool className="h-6 w-6 text-blue-400" />
             Content Creator
           </h1>

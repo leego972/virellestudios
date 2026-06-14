@@ -363,7 +363,7 @@ export default function AdminGrowthDashboard() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <BarChart3 className="w-6 h-6" style={{ color: "#d4af37" }} />
-            <h1 className="text-2xl font-bold gradient-text-gold">Growth Dashboard</h1>
+            <h1 className="text-2xl font-bold text-gold-shimmer">Growth Dashboard</h1>
           </div>
           <p className="text-neutral-400 text-sm">Showcase curation, submission review, abuse moderation, and conversion analytics.</p>
         </div>

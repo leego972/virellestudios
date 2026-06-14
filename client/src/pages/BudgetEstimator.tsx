@@ -240,7 +240,7 @@ export default function BudgetEstimator() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="min-w-0">
-              <h1 className="text-lg sm:text-xl font-semibold truncate gradient-text-gold">Production Budget</h1>
+              <h1 className="text-lg sm:text-xl font-semibold truncate text-gold-shimmer">Production Budget</h1>
               <p className="text-sm text-muted-foreground truncate">{project.data?.title || "Loading..."}</p>
             </div>
           </div>

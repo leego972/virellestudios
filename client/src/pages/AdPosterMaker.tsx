@@ -832,7 +832,7 @@ function AdPosterMakerInner() {
                 <ChevronLeft className="h-4 w-4" /> Dashboard
               </Button>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-3 gradient-text-gold">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-3 text-gold-shimmer">
               <div className="p-2 rounded-xl bg-amber-400/10 border border-primary/20">
                 <Megaphone className="h-6 w-6 text-amber-400" />
               </div>

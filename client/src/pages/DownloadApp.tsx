@@ -110,7 +110,7 @@ export default function DownloadApp() {
           <Badge className="mb-6 bg-amber-500/20 text-amber-400 border-amber-500/30 px-4 py-1.5 text-sm">
             ÃÂ°ÃÂÃÂÃÂ± {heroBadge}
           </Badge>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 leading-tight gradient-text-gold">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 leading-tight text-gold-shimmer">
             Virelle Studios
             <span className="block text-amber-400">Everywhere You Work</span>
           </h1>

@@ -216,7 +216,7 @@ export default function FAQ() {
       {/* Hero */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 text-center border-b border-border/40">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-4xl font-bold tracking-tight mb-4 gradient-text-gold">
+          <h1 className="text-4xl font-bold tracking-tight mb-4 text-gold-shimmer">
             Frequently Asked{" "}
             <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
               Questions

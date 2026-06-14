@@ -360,7 +360,7 @@ function CrowdfundingHubInner() {
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Crowdfunding Hub</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Crowdfunding Hub</h1>
         <p className="text-muted-foreground mt-1">
           {platforms.length} platforms ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· launch-ready campaign copy, reward tiers, and pitch-video scripts.
         </p>

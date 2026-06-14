@@ -50,7 +50,7 @@ export default function ActivityTimeline() {
               <ArrowLeft className="w-4 h-4 mr-1" /> Back to project
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold flex items-center gap-2 mt-1 gradient-text-gold">
+          <h1 className="text-2xl font-bold flex items-center gap-2 mt-1 text-gold-shimmer">
             <Activity className="w-6 h-6 text-amber-500" /> Activity
           </h1>
           <p className="text-sm text-zinc-400">{project?.title || "Ã¢ÂÂ"} ÃÂ· last 200 events.</p>

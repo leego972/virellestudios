@@ -210,7 +210,7 @@ export default function AdminOutreach() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold">
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer">
             <Mail className="h-6 w-6 text-amber-400" />
             Outreach &amp; Email Campaigns
           </h1>

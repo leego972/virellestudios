@@ -71,7 +71,7 @@ export default function Contacts() {
                 <ArrowLeft className="w-4 h-4 mr-1" /> Back to project
               </Button>
             </Link>
-            <h1 className="text-2xl font-bold flex items-center gap-2 mt-1 gradient-text-gold">
+            <h1 className="text-2xl font-bold flex items-center gap-2 mt-1 text-gold-shimmer">
               <Users className="w-6 h-6 text-amber-500" /> Crew & Contacts
             </h1>
             <p className="text-sm text-zinc-400">{(contacts as any[]).length} contact{(contacts as any[]).length === 1 ? "" : "s"}</p>

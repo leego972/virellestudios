@@ -68,7 +68,7 @@ export default function BYOKControlCenterPage() {
           <div className="text-xs uppercase tracking-wider text-amber-400/80">
             Provider control
           </div>
-          <h1 className="text-3xl font-semibold mt-1 gradient-text-gold">BYOK Control Center</h1>
+          <h1 className="text-3xl font-semibold mt-1 text-gold-shimmer">BYOK Control Center</h1>
           <p className="text-zinc-400 text-sm mt-1">
             See which AI providers you have configured and choose how Virelle
             generates your scenes. Your keys are never shown back to your

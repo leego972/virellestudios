@@ -101,7 +101,7 @@ import { useState } from "react";
       <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2 gradient-text-gold"><Users className="h-6 w-6 text-amber-400" />Filmmaker Community</h1>
+            <h1 className="text-2xl font-bold flex items-center gap-2 text-gold-shimmer"><Users className="h-6 w-6 text-amber-400" />Filmmaker Community</h1>
             <p className="text-sm text-muted-foreground mt-1">Connect, learn, and collaborate with independent filmmakers worldwide</p>
           </div>
           <Button onClick={() => setNewPostOpen(true)}><Plus className="h-4 w-4 mr-2" />New Post</Button>

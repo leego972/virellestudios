@@ -185,7 +185,7 @@ export default function BrandOutreach() {
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight gradient-text-gold">Brand Outreach Desk</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gold-shimmer">Brand Outreach Desk</h1>
         <p className="text-muted-foreground mt-1">
           {brands.length} brand & sponsor desks ÃÂ· pitch tailored cold emails for product placement, integrations, and co-marketing.
         </p>

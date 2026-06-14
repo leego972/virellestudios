@@ -351,7 +351,7 @@ export default function DesignerStudioPage() {
           <div className="max-w-6xl mx-auto px-6 py-8">
             <div className="flex items-end justify-between mb-6">
               <div>
-                <h1 className="text-3xl font-black mb-1 gradient-text-gold">Lamalo Fashion</h1>
+                <h1 className="text-3xl font-black mb-1 text-gold-shimmer">Lamalo Fashion</h1>
                 <p className="text-white/40 text-sm">Browse the full wardrobe catalogue and lease items for your production.</p>
               </div>
               <span className="text-white/30 text-xs">{publicItems?.length ?? 0} items</span>
@@ -430,7 +430,7 @@ export default function DesignerStudioPage() {
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-black tracking-tight truncate gradient-text-gold">{profile?.brandName ?? "My Brand"}</h1>
+            <h1 className="text-xl font-black tracking-tight truncate text-gold-shimmer">{profile?.brandName ?? "My Brand"}</h1>
             {profile?.displayName && <p className="text-sm text-white/50">{profile.displayName}</p>}
           </div>
           <Button
