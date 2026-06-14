@@ -372,7 +372,7 @@ pre{white-space:pre-wrap;font:inherit}
                     {days.map((working: boolean, i: number) => (
                       <td key={i} className="text-center">
                         {working ? (
-                          <span className="inline-block w-4 h-4 rounded bg-primary text-primary-foreground text-[10px] leading-4">W</span>
+                          <span className="inline-block w-4 h-4 rounded bg-amber-500 text-white text-[10px] leading-4">W</span>
                         ) : (
                           <span className="text-muted-foreground/40">·</span>
                         )}

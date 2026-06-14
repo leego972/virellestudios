@@ -75,7 +75,7 @@ function ReviewerCommentBox({
         <button
           onClick={submit}
           disabled={!name.trim() || !comment.trim() || add.isPending}
-          className="h-7 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium disabled:opacity-50 hover:opacity-90"
+          className="h-7 px-3 rounded-md bg-amber-500 text-white text-xs font-medium disabled:opacity-50 hover:opacity-90"
         >
           {add.isPending ? "Sending…" : "Send note"}
         </button>
@@ -325,7 +325,7 @@ export default function SharePreview() {
           </p>
           <a
             href="/"
-            className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90"
+            className="inline-block px-4 py-2 rounded-md bg-amber-500 text-white text-sm font-medium hover:bg-primary/90"
           >
             Try VirElle Studios free
           </a>

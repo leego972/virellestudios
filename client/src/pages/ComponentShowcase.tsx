@@ -328,7 +328,7 @@ export default function ComponentsShowcase() {
             <Card>
               <CardContent className="pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="bg-primary text-primary-foreground rounded-lg p-4">
+                  <div className="bg-amber-500 text-white rounded-lg p-4">
                     <p className="font-medium mb-1">Primary</p>
                     <p className="text-sm opacity-90">
                       Primary background with foreground text
