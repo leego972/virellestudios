@@ -272,7 +272,7 @@ export default function Landing() {
             <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 mt-10 mb-2">
               {[
                 { value: "130+", label: "Subtitle Languages" },
-                { value: "3,000+", label: "Voice Actors" },
+                { value: "14", label: "AI Providers" },
                 { value: "8-Stage", label: "Production Pipeline" },
                 { value: "50+", label: "Production Tools" },
               ].map((stat) => (
@@ -721,9 +721,9 @@ export default function Landing() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {[
-                { tier: "Indie",    price: "A$149",   credits: "500 credits/mo",   desc: "Solo filmmakers and students.",          cta: "Select Indie" },
-                { tier: "Creator",  price: "A$490",   credits: "2,000 credits/mo",  desc: "Serious indie producers.",               cta: "Select Creator", highlight: true },
-                { tier: "Industry", price: "A$1,490", credits: "6,000 credits/mo",  desc: "Boutique studios and agencies.",         cta: "Select Industry" },
+                { tier: "Indie",    price: "A$149",   usd: "~$97 USD",  credits: "500 credits/mo",   desc: "Solo filmmakers and students.",          cta: "Select Indie" },
+                { tier: "Creator",  price: "A$490",   usd: "~$318 USD", credits: "2,000 credits/mo",  desc: "Serious indie producers.",               cta: "Select Creator", highlight: true },
+                { tier: "Industry", price: "A$1,490", usd: "~$965 USD", credits: "6,000 credits/mo",  desc: "Boutique studios and agencies.",         cta: "Select Industry" },
                 { tier: "Industry+", price: "Custom", credits: "Unlimited + BYOK", desc: "Major studios and broadcasters.",         cta: "Contact Sales" },
               ].map(plan => (
                 <Card key={plan.tier} className={`glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow relative overflow-hidden transition-all duration-300 ${plan.highlight ? "border-amber-500/50 shadow-lg shadow-amber-500/10 scale-[1.02] bg-amber-500/5" : "border-amber-500/20 hover:border-amber-500/30 bg-white/[0.02]"}`}>
@@ -732,6 +732,7 @@ export default function Landing() {
                     <div className="mb-1">
                       <span className="text-3xl font-black gradient-text-gold">{plan.price}</span>
                       {plan.price !== "Custom" && <span className="text-xs text-white/40 ml-1">/mo</span>}
+                      {(plan as any).usd && <p className="text-[10px] text-white/30 mt-0.5 tracking-wide">{(plan as any).usd}</p>}
                     </div>
                     <p className="text-[11px] font-semibold text-amber-400 mb-3">{plan.credits}</p>
                     <p className="text-xs text-white/50 mb-6 leading-relaxed">{plan.desc}</p>
