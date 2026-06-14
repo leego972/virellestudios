@@ -371,7 +371,7 @@ export default function Settings() {
       <SiteHead title="Settings" description="Manage your profile, security, billing, API keys and connected platforms on Virelle Studios." />
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+        <h1 className="text-3xl font-bold flex items-center gap-3 gradient-text-gold">
           <HollywoodIcon tool="settings" size={36} />
           Settings
         </h1>
