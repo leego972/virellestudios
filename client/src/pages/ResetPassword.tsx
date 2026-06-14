@@ -165,7 +165,7 @@ export default function ResetPassword() {
             <Film className="w-7 h-7 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">Virelle Studios</h1>
+            <h1 className="text-2xl font-bold tracking-tight gradient-text-gold">Virelle Studios</h1>
             <p className="text-sm text-muted-foreground mt-1">Set a new password</p>
           </div>
         </div>
