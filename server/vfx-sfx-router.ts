@@ -282,7 +282,7 @@ import { router, protectedProcedure } from "./_core/trpc";
         const sceneDesc = [(scene as any).description, (scene as any).actionDescription, (scene as any).vfxNotes]
           .filter(Boolean).join(" | ");
 
-        const reply = await invokeLLM([{
+        const reply = await invokeLLM({ messages: [{
           role: "system",
           content: `You are a Hollywood VFX supervisor and sound designer. Analyse this scene and recommend the most impactful VFX and SFX packs. 
   Return ONLY a JSON object: { "vfxIds": [numbers], "sfxIds": [numbers], "reasoning": "brief explanation", "sfxPrompt": "a detailed 1-sentence SFX generation prompt for the scene's key sound moment" }
@@ -293,7 +293,8 @@ import { router, protectedProcedure } from "./_core/trpc";
         }], { maxTokens: 400, temperature: 0.3 });
 
         try {
-          const parsed = JSON.parse(reply.replace(/```json|\n|```/g, "").trim());
+          const replyText = typeof reply.choices[0]?.message?.content === "string" ? reply.choices[0].message.content : "";
+            const parsed = JSON.parse(replyText.replace(/```json|\n|```/g, "").trim());
           return {
             vfxIds: (parsed.vfxIds || []).filter((id: any) => VFX_PACKS.find(p => p.id === id)),
             sfxIds: (parsed.sfxIds || []).filter((id: any) => SFX_PACKS.find(p => p.id === id)),
