@@ -1,1 +1,252 @@
-aW1wb3J0IFNpdGVIZWFkIGZyb20gIkAvY29tcG9uZW50cy9TaXRlSGVhZCI7CmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gIkAvY29tcG9uZW50cy91aS9idXR0b24iOwppbXBvcnQgeyBDYXJkLCBDYXJkQ29udGVudCwgQ2FyZEhlYWRlciwgQ2FyZFRpdGxlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2NhcmQiOwppbXBvcnQgeyBJbnB1dCB9IGZyb20gIkAvY29tcG9uZW50cy91aS9pbnB1dCI7CmltcG9ydCB7IExhYmVsIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2xhYmVsIjsKaW1wb3J0IHsgVGV4dGFyZWEgfSBmcm9tICJAL2NvbXBvbmVudHMvdWkvdGV4dGFyZWEiOwppbXBvcnQgeyBTZWxlY3QsIFNlbGVjdENvbnRlbnQsIFNlbGVjdEl0ZW0sIFNlbGVjdFRyaWdnZXIsIFNlbGVjdFZhbHVlIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL3NlbGVjdCI7CmltcG9ydCB7IEFycm93TGVmdCwgTWFpbCwgTWVzc2FnZVNxdWFyZSwgQnVpbGRpbmcyLCBQaG9uZSwgTWFwUGluLCBTZW5kLCBMb2FkZXIyLCBDaGVja0NpcmNsZSB9IGZyb20gImx1Y2lkZS1yZWFjdCI7CmltcG9ydCB7IHVzZUxvY2F0aW9uIH0gZnJvbSAid291dGVyIjsKaW1wb3J0IHsgdXNlU3RhdGUgfSBmcm9tICJyZWFjdCI7CmltcG9ydCB7IHRvYXN0IH0gZnJvbSAic29ubmVyIjsKaW1wb3J0IHsgdHJwYyB9IGZyb20gIkAvbGliL3RycGMiOwppbXBvcnQgTGVlZ29Gb290ZXJMYXVuY2ggZnJvbSAiQC9jb21wb25lbnRzL0xlZWdvRm9vdGVyTGF1bmNoIjsKCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIENvbnRhY3QoKSB7CiAgY29uc3QgWywgc2V0TG9jYXRpb25dID0gdXNlTG9jYXRpb24oKTsKICBjb25zdCBbc3VibWl0dGVkLCBzZXRTdWJtaXR0ZWRdID0gdXNlU3RhdGUoZmFsc2UpOwogIGNvbnN0IFtsb2FkaW5nLCBzZXRMb2FkaW5nXSA9IHVzZVN0YXRlKGZhbHNlKTsKICBjb25zdCBbZm9ybSwgc2V0Rm9ybV0gPSB1c2VTdGF0ZSh7CiAgICBuYW1lOiAiIiwKICAgIGVtYWlsOiAiIiwKICAgIGNvbXBhbnk6ICIiLAogICAgc3ViamVjdDogImdlbmVyYWwiLAogICAgbWVzc2FnZTogIiIsCiAgfSk7CgogIGNvbnN0IGNvbnRhY3RNdXRhdGlvbiA9IHRycGMuY29udGFjdC5zdWJtaXQudXNlTXV0YXRpb24oKTsKCiAgY29uc3QgaGFuZGxlU3VibWl0ID0gYXN5bmMgKGU6IFJlYWN0LkZvcm1FdmVudCkgPT4gewogICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgaWYgKCFmb3JtLm5hbWUgfHwgIWZvcm0uZW1haWwgfHwgIWZvcm0ubWVzc2FnZSkgewogICAgICB0b2FzdC5lcnJvcigiUGxlYXNlIGZpbGwgaW4gYWxsIHJlcXVpcmVkIGZpZWxkcyIpOwogICAgICByZXR1cm47CiAgICB9CiAgICBzZXRMb2FkaW5nKHRydWUpOwogICAgdHJ5IHsKICAgICAgYXdhaXQgY29udGFjdE11dGF0aW9uLm11dGF0ZUFzeW5jKHsKICAgICAgICBuYW1lOiBmb3JtLm5hbWUsCiAgICAgICAgZW1haWw6IGZvcm0uZW1haWwsCiAgICAgICAgY29tcGFueTogZm9ybS5jb21wYW55IHx8IHVuZGVmaW5lZCwKICAgICAgICBzdWJqZWN0OiBmb3JtLnN1YmplY3QsCiAgICAgICAgbWVzc2FnZTogZm9ybS5tZXNzYWdlLAogICAgICB9KTsKICAgICAgc2V0U3VibWl0dGVkKHRydWUpOwogICAgICB0b2FzdC5zdWNjZXNzKCJNZXNzYWdlIHNlbnQhIFdlJ2xsIGdldCBiYWNrIHRvIHlvdSB3aXRoaW4gMjQgaG91cnMuIik7CiAgICB9IGNhdGNoIChlcnI6IGFueSkgewogICAgICB0b2FzdC5lcnJvcihlcnI/Lm1lc3NhZ2UgfHwgIkZhaWxlZCB0byBzZW5kIG1lc3NhZ2UuIFBsZWFzZSB0cnkgYWdhaW4uIik7CiAgICB9IGZpbmFsbHkgewogICAgICBzZXRMb2FkaW5nKGZhbHNlKTsKICAgIH0KICB9OwoKICBpZiAoc3VibWl0dGVkKSB7CiAgICByZXR1cm4gKAogICAgICA8ZGl2IGNsYXNzTmFtZT0ibWluLWgtc2NyZWVuIGJnLWJhY2tncm91bmQgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgcC00Ij4KICAgICAgICA8Q2FyZCBjbGFzc05hbWU9Im1heC13LW1kIHctZnVsbCB0ZXh0LWNlbnRlciI+CiAgICAgICAgICA8Q2FyZENvbnRlbnQgY2xhc3NOYW1lPSJwdC0xMCBwYi04IHNwYWNlLXktNCI+CiAgICAgICAgICAgIDxDaGVja0NpcmNsZSBjbGFzc05hbWU9ImgtMTYgdy0xNiB0ZXh0LWdyZWVuLTUwMCBteC1hdXRvIiAvPgogICAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJ0ZXh0LTJ4bCBmb250LWJvbGQiPk1lc3NhZ2UgU2VudDwvaDI+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj4KICAgICAgICAgICAgICBUaGFuayB5b3UgZm9yIHJlYWNoaW5nIG91dC4gT3VyIHRlYW0gd2lsbCByZXZpZXcgeW91ciBtZXNzYWdlIGFuZCBnZXQgYmFjayB0byB5b3Ugd2l0aGluIDI0IGhvdXJzLgogICAgICAgICAgICA8L3A+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGdhcC0zIGp1c3RpZnktY2VudGVyIHB0LTQiPgogICAgICAgICAgICAgIDxCdXR0b24gdmFyaWFudD0ib3V0bGluZSIgb25DbGljaz17KCkgPT4gc2V0TG9jYXRpb24oIi8iKX0+CiAgICAgICAgICAgICAgICBCYWNrIHRvIEhvbWUKICAgICAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgICAgICA8QnV0dG9uIG9uQ2xpY2s9eygpID0+IHsgc2V0U3VibWl0dGVkKGZhbHNlKTsgc2V0Rm9ybSh7IG5hbWU6ICIiLCBlbWFpbDogIiIsIGNvbXBhbnk6ICIiLCBzdWJqZWN0OiAiZ2VuZXJhbCIsIG1lc3NhZ2U6ICIiIH0pOyB9fT4KICAgICAgICAgICAgICAgIFNlbmQgQW5vdGhlcgogICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgPC9DYXJkPgogICAgICA8L2Rpdj4KICAgICk7CiAgfQoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiIgc3R5bGU9e3sgYmFja2dyb3VuZDoibGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcwNzBlIDAlLCMwYzBiMTggNjAlLCMwNzA3MGEgMTAwJSkiIH19PgogICAgICA8U2l0ZUhlYWQgdGl0bGU9IkNvbnRhY3QgU2FsZXMgJiBTdXBwb3J0IiBkZXNjcmlwdGlvbj0iR2V0IGluIHRvdWNoIHdpdGggVmlyZWxsZSBTdHVkaW9zIOKAlCBzYWxlcywgc3VwcG9ydCwgcGFydG5lcnNoaXBzLCBhbmQgcHJlc3MgaW5xdWlyaWVzLiIgLz4KICAgICAgey8qIEhlYWRlciAqL30KICAgICAgPGRpdiBjbGFzc05hbWU9ImJvcmRlci1iIGJnLWNhcmQvNTAiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy02eGwgbXgtYXV0byBweC00IHB5LTQgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTMiPgogICAgICAgICAgPEJ1dHRvbiB2YXJpYW50PSJnaG9zdCIgc2l6ZT0ic20iIG9uQ2xpY2s9eygpID0+IHNldExvY2F0aW9uKCIvIil9PgogICAgICAgICAgICA8QXJyb3dMZWZ0IGNsYXNzTmFtZT0iaC00IHctNCBtci0xIiAvPgogICAgICAgICAgICBCYWNrCiAgICAgICAgICA8L0J1dHRvbj4KICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgIDxoMSBjbGFzc05hbWU9InRleHQtbGcgZm9udC1ib2xkIj5Db250YWN0IFVzPC9oMT4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXhzIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+R2V0IGluIHRvdWNoIHdpdGggdGhlIFZpcmVsbGUgU3R1ZGlvcyB0ZWFtPC9wPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgoKICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LTZ4bCBteC1hdXRvIHB4LTQgcHktOCBtZDpweS0xMiI+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgbGc6Z3JpZC1jb2xzLTUgZ2FwLTgiPgogICAgICAgICAgey8qIENvbnRhY3QgSW5mbyAqL30KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJsZzpjb2wtc3Bhbi0yIHNwYWNlLXktNiI+CiAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgPGgyIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1ib2xkIG1iLTIiPkxldCdzIFRhbGs8L2gyPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj4KICAgICAgICAgICAgICAgIFdoZXRoZXIgeW91J3JlIGludGVyZXN0ZWQgaW4gb3VyIEluZHVzdHJ5IHBsYW4sIG5lZWQgdGVjaG5pY2FsIHN1cHBvcnQsIG9yIHdhbnQgdG8gZXhwbG9yZSBhIHBhcnRuZXJzaGlwLCB3ZSdkIGxvdmUgdG8gaGVhciBmcm9tIHlvdS4KICAgICAgICAgICAgICA8L3A+CiAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktNCI+CiAgICAgICAgICAgICAgPENhcmQgY2xhc3NOYW1lPSJiZy1jYXJkLzUwIj4KICAgICAgICAgICAgICAgIDxDYXJkQ29udGVudCBjbGFzc05hbWU9InAtNCBmbGV4IGl0ZW1zLXN0YXJ0IGdhcC0zIj4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImgtMTAgdy0xMCByb3VuZGVkLWxnIGJnLXByaW1hcnkvMTAgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgc2hyaW5rLTAiPgogICAgICAgICAgICAgICAgICAgIDxNYWlsIGNsYXNzTmFtZT0iaC01IHctNSB0ZXh0LXByaW1hcnkiIC8+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSBmb250LW1lZGl1bSI+RW1haWw8L3A+CiAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+c3R1ZGlvc3ZpcmVsbGVAZ21haWwuY29tPC9wPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgPC9DYXJkPgoKICAgICAgICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImJnLWNhcmQvNTAiPgogICAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icC00IGZsZXggaXRlbXMtc3RhcnQgZ2FwLTMiPgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iaC0xMCB3LTEwIHJvdW5kZWQtbGcgYmctcHJpbWFyeS8xMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBzaHJpbmstMCI+CiAgICAgICAgICAgICAgICAgICAgPE1lc3NhZ2VTcXVhcmUgY2xhc3NOYW1lPSJoLTUgdy01IHRleHQtcHJpbWFyeSIgLz4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtbWVkaXVtIj5MaXZlIENoYXQ8L3A+CiAgICAgICAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtbXV0ZWQtZm9yZWdyb3VuZCI+QXZhaWxhYmxlIE1vbi1GcmksIDlhbS02cG0gRVNUPC9wPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgPC9DYXJkPgoKICAgICAgICAgICAgICA8Q2FyZCBjbGFzc05hbWU9ImJnLWNhcmQvNTAiPgogICAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icC00IGZsZXggaXRlbXMtc3RhcnQgZ2FwLTMiPgogICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iaC0xMCB3LTEwIHJvdW5kZWQtbGcgYmctcHJpbWFyeS8xMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBzaHJpbmstMCI+CiAgICAgICAgICAgICAgICAgICAgPEJ1aWxkaW5nMiBjbGFzc05hbWU9ImgtNSB3LTUgdGV4dC1wcmltYXJ5IiAvPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gZm9udC1tZWRpdW0iPkVudGVycHJpc2UgJiBJbmR1c3RyeTwvcD4KICAgICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIj5DdXN0b20gcGxhbnMgZm9yIHN0dWRpb3MgYW5kIHByb2R1Y3Rpb24gaG91c2VzPC9wPgogICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgICAgPC9DYXJkPgogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgIDxDYXJkIGNsYXNzTmFtZT0iYmctZ3JhZGllbnQtdG8tYnIgZnJvbS1wcmltYXJ5LzEwIHRvLXByaW1hcnkvNSBib3JkZXItcHJpbWFyeS8yMCI+CiAgICAgICAgICAgICAgPENhcmRDb250ZW50IGNsYXNzTmFtZT0icC01Ij4KICAgICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9ImZvbnQtc2VtaWJvbGQgbWItMiI+SW5kdXN0cnkgUGxhbjwvaDM+CiAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtc20gdGV4dC1tdXRlZC1mb3JlZ3JvdW5kIG1iLTMiPgogICAgICAgICAgICAgICAgICBOZWVkIHVubGltaXRlZCBnZW5lcmF0aW9ucywgZGVkaWNhdGVkIHN1cHBvcnQsIGFuZCBjdXN0b20gaW50ZWdyYXRpb25zPyBPdXIgSW5kdXN0cnkgcGxhbiBpcyBidWlsdCBmb3IgcHJvZmVzc2lvbmFsIHN0dWRpb3MuCiAgICAgICAgICAgICAgICA8L3A+CiAgICAgICAgICAgICAgICA8QnV0dG9uIHNpemU9InNtIiBvbkNsaWNrPXsoKSA9PiBzZXRMb2NhdGlvbigiL3ByaWNpbmciKX0+CiAgICAgICAgICAgICAgICAgIFZpZXcgUGxhbnMKICAgICAgICAgICAgICAgIDwvQnV0dG9uPgogICAgICAgICAgICAgIDwvQ2FyZENvbnRlbnQ+CiAgICAgICAgICAgIDwvQ2FyZD4KICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgIHsvKiBDb250YWN0IEZvcm0gKi99CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibGc6Y29sLXNwYW4tMyI+CiAgICAgICAgICAgIDxDYXJkPgogICAgICAgICAgICAgIDxDYXJkSGVhZGVyPgogICAgICAgICAgICAgICAgPENhcmRUaXRsZSBjbGFzc05hbWU9InRleHQtbGciPlNlbmQgdXMgYSBtZXNzYWdlPC9DYXJkVGl0bGU+CiAgICAgICAgICAgICAgPC9DYXJkSGVhZGVyPgogICAgICAgICAgICAgIDxDYXJkQ29udGVudD4KICAgICAgICAgICAgICAgIDxmb3JtIG9uU3VibWl0PXtoYW5kbGVTdWJtaXR9IGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgZ2FwLTQiPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSI+CiAgICAgICAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3NOYW1lPSJ0ZXh0LXNtIj5OYW1lICo8L0xhYmVsPgogICAgICAgICAgICAgICAgICAgICAgPElucHV0CiAgICAgICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJZb3VyIG5hbWUiCiAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXtmb3JtLm5hbWV9CiAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXtlID0+IHNldEZvcm0oZiA9PiAoeyAuLi5mLCBuYW1lOiBlLnRhcmdldC52YWx1ZSB9KSl9CiAgICAgICAgICAgICAgICAgICAgICAgIHJlcXVpcmVkCiAgICAgICAgICAgICAgICAgICAgICAgIGF1dG9DYXBpdGFsaXplPSJ3b3JkcyIKICAgICAgICAgICAgICAgICAgICAgICAgYXV0b0NvcnJlY3Q9Im9mZiIKICAgICAgICAgICAgICAgICAgICAgICAgZW50ZXJLZXlIaW50PSJuZXh0IgogICAgICAgICAgICAgICAgICAgICAgLz4KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0xLjUiPgogICAgICAgICAgICAgICAgICAgICAgPExhYmVsIGNsYXNzTmFtZT0idGV4dC1zbSI+RW1haWwgKjwvTGFiZWw+CiAgICAgICAgICAgICAgICAgICAgICA8SW5wdXQKICAgICAgICAgICAgICAgICAgICAgICAgdHlwZT0iZW1haWwiCiAgICAgICAgICAgICAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJ5b3VAZXhhbXBsZS5jb20iCiAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXtmb3JtLmVtYWlsfQogICAgICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17ZSA9PiBzZXRGb3JtKGYgPT4gKHsgLi4uZiwgZW1haWw6IGUudGFyZ2V0LnZhbHVlIH0pKX0KICAgICAgICAgICAgICAgICAgICAgICAgcmVxdWlyZWQKICAgICAgICAgICAgICAgICAgICAgICAgaW5wdXRNb2RlPSJlbWFpbCIKICAgICAgICAgICAgICAgICAgICAgICAgYXV0b0NhcGl0YWxpemU9Im5vbmUiCiAgICAgICAgICAgICAgICAgICAgICAgIGF1dG9Db3JyZWN0PSJvZmYiCiAgICAgICAgICAgICAgICAgICAgICAgIGVudGVyS2V5SGludD0ibmV4dCIKICAgICAgICAgICAgICAgICAgICAgIC8+CiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgZ2FwLTQiPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSI+CiAgICAgICAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3NOYW1lPSJ0ZXh0LXNtIj5Db21wYW55PC9MYWJlbD4KICAgICAgICAgICAgICAgICAgICAgIDxJbnB1dAogICAgICAgICAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj0iWW91ciBjb21wYW55IChvcHRpb25hbCkiCiAgICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXtmb3JtLmNvbXBhbnl9CiAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXtlID0+IHNldEZvcm0oZiA9PiAoeyAuLi5mLCBjb21wYW55OiBlLnRhcmdldC52YWx1ZSB9KSl9CiAgICAgICAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSI+CiAgICAgICAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3NOYW1lPSJ0ZXh0LXNtIj5TdWJqZWN0PC9MYWJlbD4KICAgICAgICAgICAgICAgICAgICAgIDxTZWxlY3QgdmFsdWU9e2Zvcm0uc3ViamVjdH0gb25WYWx1ZUNoYW5nZT17diA9PiBzZXRGb3JtKGYgPT4gKHsgLi4uZiwgc3ViamVjdDogdiB9KSl9PgogICAgICAgICAgICAgICAgICAgICAgICA8U2VsZWN0VHJpZ2dlcj4KICAgICAgICAgICAgICAgICAgICAgICAgICA8U2VsZWN0VmFsdWUgLz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9TZWxlY3RUcmlnZ2VyPgogICAgICAgICAgICAgICAgICAgICAgICA8U2VsZWN0Q29udGVudD4KICAgICAgICAgICAgICAgICAgICAgICAgICA8U2VsZWN0SXRlbSB2YWx1ZT0iZ2VuZXJhbCI+R2VuZXJhbCBJbnF1aXJ5PC9TZWxlY3RJdGVtPgogICAgICAgICAgICAgICAgICAgICAgICAgIDxTZWxlY3RJdGVtIHZhbHVlPSJzYWxlcyI+U2FsZXMgLyBJbmR1c3RyeSBQbGFuPC9TZWxlY3RJdGVtPgogICAgICAgICAgICAgICAgICAgICAgICAgIDxTZWxlY3RJdGVtIHZhbHVlPSJzdXBwb3J0Ij5UZWNobmljYWwgU3VwcG9ydDwvU2VsZWN0SXRlbT4KICAgICAgICAgICAgICAgICAgICAgICAgICA8U2VsZWN0SXRlbSB2YWx1ZT0icGFydG5lcnNoaXAiPlBhcnRuZXJzaGlwPC9TZWxlY3RJdGVtPgogICAgICAgICAgICAgICAgICAgICAgICAgIDxTZWxlY3RJdGVtIHZhbHVlPSJidWciPkJ1ZyBSZXBvcnQ8L1NlbGVjdEl0ZW0+CiAgICAgICAgICAgICAgICAgICAgICAgICAgPFNlbGVjdEl0ZW0gdmFsdWU9ImZlYXR1cmUiPkZlYXR1cmUgUmVxdWVzdDwvU2VsZWN0SXRlbT4KICAgICAgICAgICAgICAgICAgICAgICAgPC9TZWxlY3RDb250ZW50PgogICAgICAgICAgICAgICAgICAgICAgPC9TZWxlY3Q+CiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMS41Ij4KICAgICAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3NOYW1lPSJ0ZXh0LXNtIj5NZXNzYWdlICo8L0xhYmVsPgogICAgICAgICAgICAgICAgICAgIDxUZXh0YXJlYQogICAgICAgICAgICAgICAgICAgICAgcGxhY2Vob2xkZXI9IlRlbGwgdXMgaG93IHdlIGNhbiBoZWxwLi4uIgogICAgICAgICAgICAgICAgICAgICAgcm93cz17Nn0KICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXtmb3JtLm1lc3NhZ2V9CiAgICAgICAgICAgICAgICAgICAgICBvbkNoYW5nZT17ZSA9PiBzZXRGb3JtKGYgPT4gKHsgLi4uZiwgbWVzc2FnZTogZS50YXJnZXQudmFsdWUgfSkpfQogICAgICAgICAgICAgICAgICAgICAgcmVxdWlyZWQKICAgICAgICAgICAgICAgICAgICAgIGF1dG9DYXBpdGFsaXplPSJzZW50ZW5jZXMiCiAgICAgICAgICAgICAgICAgICAgICBhdXRvQ29ycmVjdD0ib24iCiAgICAgICAgICAgICAgICAgICAgICBlbnRlcktleUhpbnQ9ImRvbmUiCiAgICAgICAgICAgICAgICAgICAgLz4KICAgICAgICAgICAgICAgICAgPC9kaXY+CgogICAgICAgICAgICAgICAgICA8QnV0dG9uIHR5cGU9InN1Ym1pdCIgY2xhc3NOYW1lPSJ3LWZ1bGwiIGRpc2FibGVkPXtsb2FkaW5nfT4KICAgICAgICAgICAgICAgICAgICB7bG9hZGluZyA/ICgKICAgICAgICAgICAgICAgICAgICAgIDxMb2FkZXIyIGNsYXNzTmFtZT0iaC00IHctNCBhbmltYXRlLXNwaW4gbXItMiIgLz4KICAgICAgICAgICAgICAgICAgICApIDogKAogICAgICAgICAgICAgICAgICAgICAgPFNlbmQgY2xhc3NOYW1lPSJoLTQgdy00IG1yLTIiIC8+CiAgICAgICAgICAgICAgICAgICAgKX0KICAgICAgICAgICAgICAgICAgICBTZW5kIE1lc3NhZ2UKICAgICAgICAgICAgICAgICAgPC9CdXR0b24+CiAgICAgICAgICAgICAgICA8L2Zvcm0+CiAgICAgICAgICAgICAgPC9DYXJkQ29udGVudD4KICAgICAgICAgICAgPC9DYXJkPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgoKICAgICAgPExlZWdvRm9vdGVyTGF1bmNoIC8+CiAgICA8L2Rpdj4KICApOwp9Cg==
+import SiteHead from "@/components/SiteHead";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Mail, MessageSquare, Building2, Phone, MapPin, Send, Loader2, CheckCircle } from "lucide-react";
+import { useLocation } from "wouter";
+import { useState } from "react";
+import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
+import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
+
+export default function Contact() {
+  const [, setLocation] = useLocation();
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    company: "",
+    subject: "general",
+    message: "",
+  });
+
+  const contactMutation = trpc.contact.submit.useMutation();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    setLoading(true);
+    try {
+      await contactMutation.mutateAsync({
+        name: form.name,
+        email: form.email,
+        company: form.company || undefined,
+        subject: form.subject,
+        message: form.message,
+      });
+      setSubmitted(true);
+      toast.success("Message sent! We'll get back to you within 24 hours.");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
+        <Card className="max-w-md w-full text-center">
+          <CardContent className="pt-10 pb-8 space-y-4">
+            <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+            <h2 className="text-2xl font-bold">Message Sent</h2>
+            <p className="text-muted-foreground">
+              Thank you for reaching out. Our team will review your message and get back to you within 24 hours.
+            </p>
+            <div className="flex gap-3 justify-center pt-4">
+              <Button variant="outline" onClick={() => setLocation("/")}>
+                Back to Home
+              </Button>
+              <Button onClick={() => { setSubmitted(false); setForm({ name: "", email: "", company: "", subject: "general", message: "" }); }}>
+                Send Another
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
+      <SiteHead title="Contact Sales & Support" description="Get in touch with Virelle Studios — sales, support, partnerships, and press inquiries." />
+      {/* Header */}
+      <div className="border-b bg-card/50">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-lg font-bold">Contact Us</h1>
+            <p className="text-xs text-muted-foreground">Get in touch with the Virelle Studios team</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-8 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          {/* Contact Info */}
+          <div className="lg:col-span-2 space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Let's Talk</h2>
+              <p className="text-muted-foreground">
+                Whether you're interested in our Industry plan, need technical support, or want to explore a partnership, we'd love to hear from you.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <Card className="bg-card/50">
+                <CardContent className="p-4 flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Mail className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Email</p>
+                    <p className="text-sm text-muted-foreground">studiosvirelle@gmail.com</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card/50">
+                <CardContent className="p-4 flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <MessageSquare className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Live Chat</p>
+                    <p className="text-sm text-muted-foreground">Available Mon-Fri, 9am-6pm EST</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card/50">
+                <CardContent className="p-4 flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Building2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Enterprise & Industry</p>
+                    <p className="text-sm text-muted-foreground">Custom plans for studios and production houses</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+              <CardContent className="p-5">
+                <h3 className="font-semibold mb-2">Industry Plan</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Need unlimited generations, dedicated support, and custom integrations? Our Industry plan is built for professional studios.
+                </p>
+                <Button size="sm" onClick={() => setLocation("/pricing")}>
+                  View Plans
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Contact Form */}
+          <div className="lg:col-span-3">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Send us a message</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm">Name *</Label>
+                      <Input
+                        placeholder="Your name"
+                        value={form.name}
+                        onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                        required
+                        autoCapitalize="words"
+                        autoCorrect="off"
+                        enterKeyHint="next"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm">Email *</Label>
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        value={form.email}
+                        onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                        required
+                        inputMode="email"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        enterKeyHint="next"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm">Company</Label>
+                      <Input
+                        placeholder="Your company (optional)"
+                        value={form.company}
+                        onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm">Subject</Label>
+                      <Select value={form.subject} onValueChange={v => setForm(f => ({ ...f, subject: v }))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="general">General Inquiry</SelectItem>
+                          <SelectItem value="sales">Sales / Industry Plan</SelectItem>
+                          <SelectItem value="support">Technical Support</SelectItem>
+                          <SelectItem value="partnership">Partnership</SelectItem>
+                          <SelectItem value="bug">Bug Report</SelectItem>
+                          <SelectItem value="feature">Feature Request</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-sm">Message *</Label>
+                    <Textarea
+                      placeholder="Tell us how we can help..."
+                      rows={6}
+                      value={form.message}
+                      onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                      required
+                      autoCapitalize="sentences"
+                      autoCorrect="on"
+                      enterKeyHint="done"
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    ) : (
+                      <Send className="h-4 w-4 mr-2" />
+                    )}
+                    Send Message
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      <LeegoFooterLaunch />
+    </div>
+  );
+}
