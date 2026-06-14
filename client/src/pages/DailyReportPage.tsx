@@ -65,7 +65,7 @@ export default function DailyReportPage() {
           <Link href={`/projects/${projectId}`}>
             <a className="text-sm text-zinc-400 hover:text-zinc-200">← Back to project</a>
           </Link>
-          <h1 className="text-2xl font-bold">Daily Production Report — pick a day</h1>
+          <h1 className="text-2xl font-bold gradient-text-gold">Daily Production Report — pick a day</h1>
           <p className="text-sm text-zinc-400">
             The Daily Production Report (DPR) is the wrap-of-day summary the AD signs every
             night. It captures call/wrap, scenes shot, page count completed, weather, and
