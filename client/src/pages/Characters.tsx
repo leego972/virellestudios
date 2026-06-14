@@ -388,10 +388,10 @@ export default function Characters() {
               <span className="font-semibold">Wardrobe not assigned.</span>
               {" "}Characters without a wardrobe assignment will render in a plain all-black outfit.
               Lease costumes from the{" "}
-              <a href="/wardrobe" className="underline font-medium hover:text-amber-900 dark:hover:text-amber-200">
+              <a href="/wardrobe-marketplace" className="underline font-medium hover:text-amber-900 dark:hover:text-amber-200">
                 Wardrobe Marketplace
               </a>{" "}or{" "}
-              <a href="/inventory" className="underline font-medium hover:text-amber-900 dark:hover:text-amber-200">
+              <a href="/wardrobe-inventory" className="underline font-medium hover:text-amber-900 dark:hover:text-amber-200">
                 assign already-leased items
               </a>{" "}
               to your cast.

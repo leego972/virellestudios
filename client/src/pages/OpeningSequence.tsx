@@ -155,8 +155,8 @@ import { useState, useEffect, useCallback } from "react";
   }
 
   export default function OpeningSequence() {
-    const params = useParams<{ projectId: string }>();
-    const projectId = parseInt(params.projectId || "0");
+    const params = useParams<{ id: string }>();
+    const projectId = parseInt(params.id || "0");
     const [, setLocation] = useLocation();
 
     const [elements, setElements] = useState<SequenceElement[]>([

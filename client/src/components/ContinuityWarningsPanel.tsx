@@ -95,7 +95,7 @@ import { useMemo } from "react";
                 size="sm"
                 variant="outline"
                 className="w-full gap-1.5 text-xs border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-                onClick={() => navigate(`/projects/${projectId}/continuity-check`)}
+                onClick={() => navigate(`/projects/${projectId}/continuity`)}
               >
                 Full Continuity Check
                 <ArrowRight className="h-3.5 w-3.5" />
