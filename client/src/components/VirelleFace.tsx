@@ -4,8 +4,8 @@ import React from 'react';
   // cy:73 = ~55% from top of portrait (below beret, in the actual eye socket area)
   // cx 41/59 = closer together than previous 38/62
   const GEO = {
-    leftEye:  { cx: 41, cy: 73, rx: 2.6, ry: 1.9 },
-    rightEye: { cx: 59, cy: 73, rx: 2.6, ry: 1.9 },
+    leftEye:  { cx: 43, cy: 69, rx: 2.6, ry: 1.9 },
+    rightEye: { cx: 63, cy: 69, rx: 2.6, ry: 1.9 },
   };
 
   type VoiceState = 'idle' | 'inactive' | 'listening' | 'thinking' | 'speaking';
