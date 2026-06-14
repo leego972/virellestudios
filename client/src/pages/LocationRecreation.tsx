@@ -127,7 +127,7 @@ const LocationRecreation: React.FC = () => {
         <div className="flex gap-4">
           <button 
             onClick={() => navigate(`/projects/${projectId}/scenes`)}
-            className="px-6 py-2 border border-zinc-700 hover:bg-zinc-900 rounded-full transition-all flex items-center gap-2"
+            className="px-6 py-2 border border-amber-500/20 hover:bg-amber-500/10 rounded-full transition-all flex items-center gap-2"
           >
             Back to Scenes
           </button>
@@ -137,7 +137,7 @@ const LocationRecreation: React.FC = () => {
       <div className="flex gap-4 mb-8">
         <button 
           onClick={() => setView("gallery")}
-          className={`px-6 py-2 rounded-full font-bold transition-all ${view === "gallery" ? "bg-blue-600 text-white" : "bg-zinc-900 text-zinc-500 hover:bg-zinc-800"}`}
+          className={`px-6 py-2 rounded-full font-bold transition-all ${view === "gallery" ? "bg-amber-500 text-white" : "bg-zinc-900 text-zinc-500 hover:bg-amber-500/10"}`}
         >
           My Locations
         </button>
@@ -146,7 +146,7 @@ const LocationRecreation: React.FC = () => {
             setView("upload");
             setSelectedLocationId(null);
           }}
-          className={`px-6 py-2 rounded-full font-bold transition-all ${view === "upload" && !selectedLocationId ? "bg-blue-600 text-white" : "bg-zinc-900 text-zinc-500 hover:bg-zinc-800"}`}
+          className={`px-6 py-2 rounded-full font-bold transition-all ${view === "upload" && !selectedLocationId ? "bg-amber-500 text-white" : "bg-zinc-900 text-zinc-500 hover:bg-amber-500/10"}`}
         >
           New Recreation
         </button>
@@ -178,7 +178,7 @@ const LocationRecreation: React.FC = () => {
                     <div className="flex gap-2 mt-6">
                       <button 
                         onClick={() => selectLocation(loc)}
-                        className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-2 rounded-xl text-sm font-bold transition-all"
+                        className="flex-1 bg-zinc-800 hover:bg-amber-500/10 py-2 rounded-xl text-sm font-bold transition-all"
                       >
                         Edit Environment
                       </button>
@@ -227,7 +227,7 @@ const LocationRecreation: React.FC = () => {
                         <button 
                           onClick={handleUpload}
                           disabled={uploading || !videoUrl}
-                          className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 px-8 rounded-xl font-bold transition-all flex items-center gap-2"
+                          className="bg-amber-500 hover:bg-blue-500 disabled:opacity-50 px-8 rounded-xl font-bold transition-all flex items-center gap-2"
                         >
                           {uploading ? <Zap className="animate-spin" /> : <Upload />}
                           ANALYZE
@@ -312,7 +312,7 @@ const LocationRecreation: React.FC = () => {
                         <button
                           key={s.id}
                           onClick={() => toggleScene(s.id)}
-                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedSceneIds.includes(s.id) ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-zinc-800 hover:border-zinc-700'}`}
+                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedSceneIds.includes(s.id) ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-zinc-800 hover:border-amber-500/20'}`}
                         >
                           <div className={`w-4 h-4 rounded border flex items-center justify-center ${selectedSceneIds.includes(s.id) ? 'bg-green-500 border-green-500' : 'border-zinc-600'}`}>
                             {selectedSceneIds.includes(s.id) && <CheckCircle className="w-3 h-3 text-black" />}
@@ -362,7 +362,7 @@ const LocationRecreation: React.FC = () => {
             </ul>
           </div>
 
-          <div className="bg-blue-600/10 p-8 rounded-3xl border border-blue-500/20">
+          <div className="bg-amber-500/10 p-8 rounded-3xl border border-blue-500/20">
             <h3 className="text-lg font-bold mb-2 flex items-center gap-2 gradient-text-gold">
               <AlertCircle className="text-blue-400" />
               Pro Tip

@@ -1,5 +1,5 @@
 /**
- * Feature Timeline — Persistent versioned cut editor for feature-length films
+ * Feature Timeline â Persistent versioned cut editor for feature-length films
  *
  * Capabilities:
  * - Create / duplicate / delete versioned cuts
@@ -38,7 +38,7 @@ import {
   Save, Eye, BarChart3,
 } from "lucide-react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// âââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 interface CutScene {
   id: number;
@@ -75,7 +75,7 @@ interface ActGroup {
   orderIndex: number;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// âââ Helpers ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function formatDuration(seconds: number): string {
   if (!seconds || seconds <= 0) return "0:00";
@@ -109,7 +109,7 @@ const ACT_COLORS = [
   "#ef4444", "#06b6d4", "#84cc16", "#f97316", "#6366f1",
 ];
 
-// ─── Scene Card ───────────────────────────────────────────────────────────────
+// âââ Scene Card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function SceneCard({
   cs,
@@ -142,13 +142,13 @@ function SceneCard({
     <div className={`group border rounded-lg transition-all duration-200 ${
       isExcluded
         ? "border-zinc-800 bg-zinc-900/30 opacity-60"
-        : "border-zinc-700 bg-zinc-900/60 hover:border-zinc-600"
+        : "border-amber-500/20 bg-zinc-900/60 hover:border-zinc-600"
     }`}>
       <div className="flex items-center gap-2 px-3 py-2.5">
         {/* Position / reorder */}
         <div className="flex flex-col items-center gap-0.5 w-7 shrink-0">
           <span className="font-mono text-[10px] text-zinc-500 leading-none">
-            {isExcluded ? "—" : String(index + 1).padStart(2, "0")}
+            {isExcluded ? "â" : String(index + 1).padStart(2, "0")}
           </span>
           {!isLocked && (
             <div className="flex flex-col gap-0.5 mt-0.5">
@@ -249,7 +249,7 @@ function SceneCard({
                 min={0}
                 value={cs.trimIn}
                 readOnly={isLocked}
-                className="h-6 text-xs bg-zinc-800 border-zinc-700"
+                className="h-6 text-xs bg-zinc-800 border-amber-500/20"
               />
             </div>
             <div>
@@ -259,7 +259,7 @@ function SceneCard({
                 min={0}
                 value={cs.trimOut}
                 readOnly={isLocked}
-                className="h-6 text-xs bg-zinc-800 border-zinc-700"
+                className="h-6 text-xs bg-zinc-800 border-amber-500/20"
               />
             </div>
           </div>
@@ -271,7 +271,7 @@ function SceneCard({
                 onChange={(e) => setNote(e.target.value)}
                 onBlur={() => onNoteChange(cs.id, note)}
                 rows={2}
-                className="text-xs bg-zinc-800 border-zinc-700 resize-none"
+                className="text-xs bg-zinc-800 border-amber-500/20 resize-none"
                 placeholder="Add a note for this scene..."
               />
             </div>
@@ -285,7 +285,7 @@ function SceneCard({
   );
 }
 
-// ─── Act Group Panel ──────────────────────────────────────────────────────────
+// âââ Act Group Panel ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 function ActGroupPanel({
   actGroups,
@@ -307,7 +307,7 @@ function ActGroupPanel({
   const includedScenes = cutScenes.filter((cs) => cs.isIncluded);
 
   if (actGroups.length === 0) {
-    // No act groups — render flat list
+    // No act groups â render flat list
     return (
       <div className="space-y-2">
         {cutScenes.map((cs, idx) => {
@@ -351,7 +351,7 @@ function ActGroupPanel({
             >
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold text-zinc-200">{act.label}</span>
-                <Badge variant="outline" className="text-[10px] font-mono border-zinc-700 text-zinc-400">
+                <Badge variant="outline" className="text-[10px] font-mono border-amber-500/20 text-zinc-400">
                   {actIncluded.length} scenes
                 </Badge>
                 {act.targetDuration && (
@@ -399,9 +399,9 @@ function ActGroupPanel({
         if (unassigned.length === 0) return null;
         return (
           <div className="rounded-lg border border-zinc-800/50 overflow-hidden">
-            <div className="flex items-center gap-2 px-3 py-2 border-l-2 border-zinc-700">
+            <div className="flex items-center gap-2 px-3 py-2 border-l-2 border-amber-500/20">
               <span className="text-xs font-semibold text-zinc-500">Unassigned</span>
-              <Badge variant="outline" className="text-[10px] border-zinc-700 text-zinc-500">{unassigned.length}</Badge>
+              <Badge variant="outline" className="text-[10px] border-amber-500/20 text-zinc-500">{unassigned.length}</Badge>
             </div>
             <div className="p-2 space-y-1.5 bg-zinc-950/20">
               {unassigned.map((cs, idx) => (
@@ -426,7 +426,7 @@ function ActGroupPanel({
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// âââ Main Page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export default function FeatureTimeline() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -636,7 +636,7 @@ export default function FeatureTimeline() {
               <Layers size={16} className="text-amber-500" />
               <span className="font-semibold text-sm text-zinc-100">Feature Timeline</span>
               {summary?.project?.title && (
-                <span className="text-xs text-zinc-500">— {summary.project.title}</span>
+                <span className="text-xs text-zinc-500">â {summary.project.title}</span>
               )}
             </div>
           </div>
@@ -673,7 +673,7 @@ export default function FeatureTimeline() {
             )}
 
             {/* New cut */}
-            <Button size="sm" variant="outline" className="gap-1.5 border-zinc-700" onClick={() => setNewCutDialogOpen(true)}>
+            <Button size="sm" variant="outline" className="gap-1.5 border-amber-500/20" onClick={() => setNewCutDialogOpen(true)}>
               <Plus size={14} /> New Cut
             </Button>
           </div>
@@ -681,7 +681,7 @@ export default function FeatureTimeline() {
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Left sidebar — cut list */}
+        {/* Left sidebar â cut list */}
         <aside className="w-64 shrink-0 border-r border-zinc-800 bg-zinc-950 flex flex-col">
           <div className="p-3 border-b border-zinc-800">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Cuts</p>
@@ -692,11 +692,11 @@ export default function FeatureTimeline() {
                 <div className="text-center py-6">
                   <Layers size={24} className="text-zinc-700 mx-auto mb-2" />
                   <p className="text-xs font-medium text-zinc-400">No cuts yet</p>
-                  <p className="text-[11px] text-zinc-600 mt-0.5 leading-snug px-2">A cut is a saved version of your edit — name your first one to start.</p>
+                  <p className="text-[11px] text-zinc-600 mt-0.5 leading-snug px-2">A cut is a saved version of your edit â name your first one to start.</p>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="mt-2 text-xs border-zinc-700"
+                    className="mt-2 text-xs border-amber-500/20"
                     onClick={() => setNewCutDialogOpen(true)}
                   >
                     <Plus size={12} className="mr-1" /> Create First Cut
@@ -710,7 +710,7 @@ export default function FeatureTimeline() {
                     className={`w-full text-left px-3 py-2.5 rounded-lg transition-all ${
                       (selectedCutId || cuts[0]?.id) === cut.id
                         ? "bg-amber-500/10 border border-amber-500/30"
-                        : "hover:bg-zinc-800/60 border border-transparent"
+                        : "hover:bg-amber-500/10/60 border border-transparent"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -803,7 +803,7 @@ export default function FeatureTimeline() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="gap-1.5 border-zinc-700 text-xs"
+                      className="gap-1.5 border-amber-500/20 text-xs"
                       onClick={() => setGenerateActsDialogOpen(true)}
                       disabled={generateActsMutation.isPending}
                     >
@@ -828,7 +828,7 @@ export default function FeatureTimeline() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="gap-1.5 border-zinc-700 text-xs"
+                    className="gap-1.5 border-amber-500/20 text-xs"
                     onClick={() => activeCut && duplicateCutMutation.mutate({ cutId: activeCut.id, newName: `${activeCut.name} (copy)` })}
                     disabled={duplicateCutMutation.isPending}
                   >
@@ -854,19 +854,19 @@ export default function FeatureTimeline() {
               <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
                 <div className="border-b border-zinc-800 px-4">
                   <TabsList className="bg-transparent border-0 h-9 gap-1">
-                    <TabsTrigger value="timeline" className="text-xs data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">
+                    <TabsTrigger value="timeline" className="text-xs data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-100">
                       <Clapperboard size={12} className="mr-1" /> Timeline
                     </TabsTrigger>
-                    <TabsTrigger value="acts" className="text-xs data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">
+                    <TabsTrigger value="acts" className="text-xs data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-100">
                       <BarChart3 size={12} className="mr-1" /> Act Structure
                     </TabsTrigger>
-                    <TabsTrigger value="continuity" className="text-xs data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">
+                    <TabsTrigger value="continuity" className="text-xs data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-100">
                       <Eye size={12} className="mr-1" /> Continuity
                     </TabsTrigger>
-                    <TabsTrigger value="audio" className="text-xs data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">
+                    <TabsTrigger value="audio" className="text-xs data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-100">
                       <Music size={12} className="mr-1" /> Audio Plan
                     </TabsTrigger>
-                    <TabsTrigger value="arcs" className="text-xs data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">
+                    <TabsTrigger value="arcs" className="text-xs data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-100">
                       <Users size={12} className="mr-1" /> Character Arcs
                     </TabsTrigger>
                   </TabsList>
@@ -942,7 +942,7 @@ export default function FeatureTimeline() {
                                   <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: act.colorCode || "#3b82f6" }} />
                                     <span className="text-sm font-medium text-zinc-200">{act.label}</span>
-                                    <Badge variant="outline" className="text-[10px] border-zinc-700 text-zinc-400">{actScenes.length} scenes</Badge>
+                                    <Badge variant="outline" className="text-[10px] border-amber-500/20 text-zinc-400">{actScenes.length} scenes</Badge>
                                   </div>
                                   <div className="text-right">
                                     <span className="font-mono text-xs text-blue-400">{formatDuration(actDuration)}</span>
@@ -955,7 +955,7 @@ export default function FeatureTimeline() {
                                 )}
                                 {act.targetDuration && (
                                   <p className="text-[10px] text-zinc-600 mt-1">
-                                    Target: {formatDuration(act.targetDuration)} — {actDuration > act.targetDuration ? "over" : "under"} by {formatDuration(Math.abs(actDuration - act.targetDuration))}
+                                    Target: {formatDuration(act.targetDuration)} â {actDuration > act.targetDuration ? "over" : "under"} by {formatDuration(Math.abs(actDuration - act.targetDuration))}
                                   </p>
                                 )}
                               </div>
@@ -1083,7 +1083,7 @@ export default function FeatureTimeline() {
                             <div key={arc.id} className="bg-zinc-900 rounded-lg p-3 border border-zinc-800">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-medium text-zinc-200">Character #{arc.characterId}</span>
-                                <Badge variant="outline" className="text-[10px] border-zinc-700 text-zinc-400">{arc.arcType}</Badge>
+                                <Badge variant="outline" className="text-[10px] border-amber-500/20 text-zinc-400">{arc.arcType}</Badge>
                               </div>
                               {arc.arcSummary && <p className="text-xs text-zinc-400">{arc.arcSummary}</p>}
                               {arc.startingState && arc.endingState && (
@@ -1108,7 +1108,7 @@ export default function FeatureTimeline() {
 
       {/* New Cut Dialog */}
       <Dialog open={newCutDialogOpen} onOpenChange={setNewCutDialogOpen}>
-        <DialogContent className="bg-zinc-900 border-zinc-700 max-w-md">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 max-w-md">
           <DialogHeader>
             <DialogTitle className="text-zinc-100 gradient-text-gold">Create New Cut</DialogTitle>
           </DialogHeader>
@@ -1119,7 +1119,7 @@ export default function FeatureTimeline() {
                 value={newCutForm.name}
                 onChange={(e) => setNewCutForm({ ...newCutForm, name: e.target.value })}
                 placeholder="e.g. Director's Cut v2"
-                className="bg-zinc-800 border-zinc-700 text-zinc-100 mt-1"
+                className="bg-zinc-800 border-amber-500/20 text-zinc-100 mt-1"
               />
             </div>
             <div>
@@ -1128,16 +1128,16 @@ export default function FeatureTimeline() {
                 value={newCutForm.version}
                 onChange={(e) => setNewCutForm({ ...newCutForm, version: e.target.value })}
                 placeholder="v1.0"
-                className="bg-zinc-800 border-zinc-700 text-zinc-100 mt-1"
+                className="bg-zinc-800 border-amber-500/20 text-zinc-100 mt-1"
               />
             </div>
             <div>
               <Label className="text-xs text-zinc-400">Act Structure</Label>
               <Select value={newCutForm.actStructure} onValueChange={(v) => setNewCutForm({ ...newCutForm, actStructure: v })}>
-                <SelectTrigger className="bg-zinc-800 border-zinc-700 text-zinc-100 mt-1">
+                <SelectTrigger className="bg-zinc-800 border-amber-500/20 text-zinc-100 mt-1">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-800 border-zinc-700">
+                <SelectContent className="bg-zinc-800 border-amber-500/20">
                   {ACT_STRUCTURE_OPTIONS.map((o) => (
                     <SelectItem key={o.value} value={o.value} className="text-zinc-200">{o.label}</SelectItem>
                   ))}
@@ -1150,7 +1150,7 @@ export default function FeatureTimeline() {
                 value={newCutForm.description}
                 onChange={(e) => setNewCutForm({ ...newCutForm, description: e.target.value })}
                 rows={2}
-                className="bg-zinc-800 border-zinc-700 text-zinc-100 mt-1 resize-none"
+                className="bg-zinc-800 border-amber-500/20 text-zinc-100 mt-1 resize-none"
                 placeholder="Notes about this cut..."
               />
             </div>
@@ -1168,7 +1168,7 @@ export default function FeatureTimeline() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="border-zinc-700 text-zinc-300" onClick={() => setNewCutDialogOpen(false)}>
+            <Button variant="outline" className="border-amber-500/20 text-zinc-300" onClick={() => setNewCutDialogOpen(false)}>
               Cancel
             </Button>
             <Button
@@ -1192,7 +1192,7 @@ export default function FeatureTimeline() {
 
       {/* Generate Act Structure Dialog */}
       <Dialog open={generateActsDialogOpen} onOpenChange={setGenerateActsDialogOpen}>
-        <DialogContent className="bg-zinc-900 border-zinc-700 max-w-sm">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-zinc-100 gradient-text-gold">Generate Act Structure</DialogTitle>
           </DialogHeader>
@@ -1203,10 +1203,10 @@ export default function FeatureTimeline() {
             <div>
               <Label className="text-xs text-zinc-400">Act Structure</Label>
               <Select value={generateActsStructure} onValueChange={setGenerateActsStructure}>
-                <SelectTrigger className="bg-zinc-800 border-zinc-700 text-zinc-100 mt-1">
+                <SelectTrigger className="bg-zinc-800 border-amber-500/20 text-zinc-100 mt-1">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-800 border-zinc-700">
+                <SelectContent className="bg-zinc-800 border-amber-500/20">
                   {ACT_STRUCTURE_OPTIONS.map((o) => (
                     <SelectItem key={o.value} value={o.value} className="text-zinc-200">{o.label}</SelectItem>
                   ))}
@@ -1215,7 +1215,7 @@ export default function FeatureTimeline() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="border-zinc-700 text-zinc-300" onClick={() => setGenerateActsDialogOpen(false)}>
+            <Button variant="outline" className="border-amber-500/20 text-zinc-300" onClick={() => setGenerateActsDialogOpen(false)}>
               Cancel
             </Button>
             <Button
@@ -1236,14 +1236,14 @@ export default function FeatureTimeline() {
 
       {/* Compile Film Dialog */}
       <Dialog open={compileDialogOpen} onOpenChange={setCompileDialogOpen}>
-        <DialogContent className="bg-zinc-900 border-zinc-700 max-w-md">
+        <DialogContent className="bg-zinc-900 border-amber-500/20 max-w-md">
           <DialogHeader>
             <DialogTitle className="text-zinc-100 flex items-center gap-2 gradient-text-gold">
               <Film size={16} className="text-amber-500" /> Compile Full Film
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="bg-zinc-800/50 rounded-lg p-3 border border-zinc-700">
+            <div className="bg-zinc-800/50 rounded-lg p-3 border border-amber-500/20">
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-zinc-400">Scenes with video</span>
                 <span className="text-zinc-200 font-mono">{scenesWithVideo} / {includedScenes.length}</span>
@@ -1267,10 +1267,10 @@ export default function FeatureTimeline() {
               <div className="flex items-center justify-between">
                 <Label className="text-xs text-zinc-400">Resolution</Label>
                 <Select value={compileOptions.resolution} onValueChange={(v) => setCompileOptions({ ...compileOptions, resolution: v as any })}>
-                  <SelectTrigger className="w-28 h-7 bg-zinc-800 border-zinc-700 text-zinc-100 text-xs">
+                  <SelectTrigger className="w-28 h-7 bg-zinc-800 border-amber-500/20 text-zinc-100 text-xs">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700">
+                  <SelectContent className="bg-zinc-800 border-amber-500/20">
                     <SelectItem value="720p" className="text-zinc-200 text-xs">720p</SelectItem>
                     <SelectItem value="1080p" className="text-zinc-200 text-xs">1080p</SelectItem>
                     <SelectItem value="4k" className="text-zinc-200 text-xs">4K</SelectItem>
@@ -1297,7 +1297,7 @@ export default function FeatureTimeline() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" className="border-zinc-700 text-zinc-300" onClick={() => setCompileDialogOpen(false)}>
+            <Button variant="outline" className="border-amber-500/20 text-zinc-300" onClick={() => setCompileDialogOpen(false)}>
               Cancel
             </Button>
             <Button

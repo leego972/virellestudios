@@ -13,7 +13,7 @@ import {
   Shield, Zap, RefreshCw,
 } from "lucide-react";
 
-// ─── Stat card ───────────────────────────────────────────────────────────────
+// âââ Stat card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function StatCard({ label, value, icon: Icon, color }: { label: string; value: number | string; icon: any; color: string }) {
   return (
     <Card className="bg-neutral-900 border-neutral-800 glass-card">
@@ -30,7 +30,7 @@ function StatCard({ label, value, icon: Icon, color }: { label: string; value: n
   );
 }
 
-// ─── Submission Review Panel ──────────────────────────────────────────────────
+// âââ Submission Review Panel ââââââââââââââââââââââââââââââââââââââââââââââââââ
 function SubmissionsPanel() {
   const utils = trpc.useUtils();
   const { data: pending, isLoading } = trpc.submissions.listPending.useQuery();
@@ -59,7 +59,7 @@ function SubmissionsPanel() {
             <div className="flex flex-col sm:flex-row sm:items-start gap-4">
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-white truncate">{sub.projectTitle || `Project #${sub.projectId}`}</p>
-                <p className="text-sm text-neutral-400 mt-0.5">{sub.creatorName} · {sub.creatorEmail}</p>
+                <p className="text-sm text-neutral-400 mt-0.5">{sub.creatorName} Â· {sub.creatorEmail}</p>
                 {sub.genre && <Badge variant="outline" className="mt-1 text-xs border-neutral-700 text-neutral-400">{sub.genre}</Badge>}
                 <p className="text-xs text-neutral-500 mt-1">Submitted {new Date(sub.createdAt).toLocaleDateString()}</p>
               </div>
@@ -99,7 +99,7 @@ function SubmissionsPanel() {
   );
 }
 
-// ─── Abuse Flags Panel ────────────────────────────────────────────────────────
+// âââ Abuse Flags Panel ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function AbuseFlagsPanel() {
   const utils = trpc.useUtils();
   const { data: flags, isLoading } = trpc.abuse.listPending.useQuery();
@@ -133,7 +133,7 @@ function AbuseFlagsPanel() {
                 </div>
                 <p className="text-sm text-neutral-300 mt-1">{flag.reason}</p>
                 <p className="text-xs text-neutral-500 mt-1">
-                  Reported by {flag.reporterName || "Anonymous"} · {new Date(flag.createdAt).toLocaleDateString()}
+                  Reported by {flag.reporterName || "Anonymous"} Â· {new Date(flag.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -164,7 +164,7 @@ function AbuseFlagsPanel() {
   );
 }
 
-// ─── Showcase Curation Panel ──────────────────────────────────────────────────
+// âââ Showcase Curation Panel ââââââââââââââââââââââââââââââââââââââââââââââââââ
 function ShowcaseCurationPanel() {
   const utils = trpc.useUtils();
   const { data: topFilms, isLoading } = trpc.conversion.getTopFilms.useQuery({ limit: 20 });
@@ -253,17 +253,17 @@ function ShowcaseCurationPanel() {
   );
 }
 
-// ─── Conversion Funnel Panel ──────────────────────────────────────────────────
+// âââ Conversion Funnel Panel ââââââââââââââââââââââââââââââââââââââââââââââââââ
 function ConversionFunnelPanel() {
   const { data: funnel, isLoading } = trpc.conversion.getFunnelStats.useQuery({ days: 30 });
   const { data: topCreators } = trpc.conversion.getTopCreators.useQuery({ limit: 10 });
 
   const eventLabels: Record<string, string> = {
-    showcase_to_film: "Showcase → Film Page",
-    view_to_watch: "Film Page → Watch",
-    watch_to_profile: "Watch → Creator Profile",
-    profile_to_signup: "Profile → Sign Up",
-    film_to_create: "Film Page → Create Account",
+    showcase_to_film: "Showcase â Film Page",
+    view_to_watch: "Film Page â Watch",
+    watch_to_profile: "Watch â Creator Profile",
+    profile_to_signup: "Profile â Sign Up",
+    film_to_create: "Film Page â Create Account",
   };
 
   if (isLoading) return <div className="flex items-center gap-2 text-neutral-400 py-8"><Loader2 className="w-4 h-4 animate-spin text-amber-400" /> Loading funnel data...</div>;
@@ -329,7 +329,7 @@ function ConversionFunnelPanel() {
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// âââ Main Component âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 export default function AdminGrowthDashboard() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
@@ -370,8 +370,8 @@ export default function AdminGrowthDashboard() {
 
         {/* Summary Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Public Films" value={topFilms?.length ?? "—"} icon={Film} color="#d4af37" />
-          <StatCard label="Public Creators" value={topCreators?.length ?? "—"} icon={Users} color="#60a5fa" />
+          <StatCard label="Public Films" value={topFilms?.length ?? "â"} icon={Film} color="#d4af37" />
+          <StatCard label="Public Creators" value={topCreators?.length ?? "â"} icon={Users} color="#60a5fa" />
           <StatCard label="Pending Submissions" value={pending?.length ?? 0} icon={Clock} color="#f59e0b" />
           <StatCard label="Abuse Flags" value={abuseFlags?.length ?? 0} icon={AlertTriangle} color="#ef4444" />
         </div>
@@ -379,22 +379,22 @@ export default function AdminGrowthDashboard() {
         {/* Main Tabs */}
         <Tabs defaultValue="showcase">
           <TabsList className="bg-neutral-900 border border-neutral-800 mb-6 flex-wrap h-auto gap-1 p-1">
-            <TabsTrigger value="showcase" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
+            <TabsTrigger value="showcase" className="data-[state=active]:bg-amber-500/15 text-xs sm:text-sm">
               <Star className="w-3.5 h-3.5 mr-1.5" /> Showcase Curation
             </TabsTrigger>
-            <TabsTrigger value="submissions" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
+            <TabsTrigger value="submissions" className="data-[state=active]:bg-amber-500/15 text-xs sm:text-sm">
               <Megaphone className="w-3.5 h-3.5 mr-1.5" /> Submissions
               {(pending?.length ?? 0) > 0 && (
                 <Badge className="ml-1.5 bg-amber-600 text-white text-[10px] px-1.5 py-0">{pending!.length}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="abuse" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
+            <TabsTrigger value="abuse" className="data-[state=active]:bg-amber-500/15 text-xs sm:text-sm">
               <Shield className="w-3.5 h-3.5 mr-1.5" /> Abuse Flags
               {(abuseFlags?.length ?? 0) > 0 && (
                 <Badge className="ml-1.5 bg-red-600 text-white text-[10px] px-1.5 py-0">{abuseFlags!.length}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="funnel" className="data-[state=active]:bg-neutral-700 text-xs sm:text-sm">
+            <TabsTrigger value="funnel" className="data-[state=active]:bg-amber-500/15 text-xs sm:text-sm">
               <TrendingUp className="w-3.5 h-3.5 mr-1.5" /> Conversion Funnel
             </TabsTrigger>
           </TabsList>
