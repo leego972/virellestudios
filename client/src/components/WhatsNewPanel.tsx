@@ -1,1 +1,48 @@
-aW1wb3J0IHsgdXNlU3RhdGUsIHVzZUVmZmVjdCB9IGZyb20gInJlYWN0IjsKaW1wb3J0IHsgTGluayB9IGZyb20gIndvdXRlciI7CmltcG9ydCB7IFNwYXJrbGVzLCBYLCBBcnJvd1JpZ2h0IH0gZnJvbSAibHVjaWRlLXJlYWN0IjsKaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAiQC9jb21wb25lbnRzL3VpL2J1dHRvbiI7Cgpjb25zdCBTVE9SQUdFX0tFWSA9ICJ2c193aGF0c25ld19kaXNtaXNzZWRfdjUiOwoKY29uc3QgSElHSExJR0hUUyA9IFsKICB7IHRhZzogInY1IiwgdGl0bGU6ICJQcmVzcyDijJhLIGFueXdoZXJlIHRvIGp1bXAgdG8gYW55IHBhZ2UiLCBib2R5OiAiQSB1bmlmaWVkIHNlYXJjaCBwYWxldHRlIGFjcm9zcyBhbGwgMTAwKyBwYWdlcyB3aXRoIGdyb3VwZWQgY29tbWFuZHMgYW5kIHJlY2VudCBpdGVtcy4iLCB0bzogbnVsbCBhcyBzdHJpbmcgfCBudWxsIH0sCiAgeyB0YWc6ICJ2NCIsIHRpdGxlOiAiQUkgRnVuZGluZyBNYXRjaCAmIEFwcGxpY2F0aW9uIFRyYWNrZXIiLCBib2R5OiAiU2NvcmUgZXZlcnkgZnVuZGVyIGFnYWluc3QgeW91ciBwcm9qZWN0LCBzaG9ydGxpc3QgZmF2b3JpdGVzLCBhbmQgdHJhY2sgYXBwbGljYXRpb25zIGFjcm9zcyBhbGwgeW91ciBwcm9qZWN0cy4iLCB0bzogIi9mdW5kaW5nLXBybyIgfSwKICB7IHRhZzogInYzIiwgdGl0bGU6ICJTdHVkaW8gYXBwcm92YWxzICsgYnVkZ2V0IHRyYWNrZXIgKyBEaXJlY3RvciBTYXZpbmdzIiwgYm9keTogIjMtdGllciBzaWduLW9mZiBjaGFpbiAoZGlyZWN0b3Ig4oaSIHByb2R1Y2VyIOKGkiBleGVjKSwgNS1zdGFnZSBidWRnZXQgYWxsb2NhdGlvbiwgYW5kIGEgaGVybyBjYXJkIHNob3dpbmcgJCBzYXZlZCB2cyB0cmFkaXRpb25hbCBwcm9kdWN0aW9uLiIsIHRvOiAiL3Byby1zdHVkaW8tb3BzIiB9LAogIHsgdGFnOiAidjIiLCB0aXRsZTogIlNjZW5lIGxvY2tzLCByZW5kZXIgY29zdCBmb3JlY2FzdGluZywgUnVuIE5vdyBwZXIgam9iIiwgYm9keTogIkxvY2sgc2NlbmVzIGZyb20gZWRpdHMgZHVyaW5nIHNpZ24tb2ZmLCBzZWUgY29zdCBmb3JlY2FzdCBiZWZvcmUgeW91IGdlbmVyYXRlLCBhbmQgcmUtcnVuIGFueSBxdWV1ZWQgam9iIG9uIGRlbWFuZC4iLCB0bzogIi9wcm8tc3R1ZGlvLW9wcyIgfSwKICB7IHRhZzogInYxIiwgdGl0bGU6ICJSZW5kZXIgUXVldWUsIExpdmUgUHJlc2VuY2UsIFN0dWRpbyBEYXNoYm9hcmQiLCBib2R5OiAiU2VydmVyLWVuZm9yY2VkIHJlbmRlciBxdWV1ZSwgbGl2ZSBwcmVzZW5jZSBpbmRpY2F0b3JzLCBidWxrIG9wZXJhdGlvbnMsIGFuZCBhbiBOTEUtc3R5bGUga2V5Ym9hcmQgc2hvcnRjdXQgbGF5ZXIuIiwgdG86ICIvcHJvLXN0dWRpby1vcHMiIH0sCl07CgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBXaGF0c05ld1BhbmVsKCkgewogIGNvbnN0IFtvcGVuLCBzZXRPcGVuXSA9IHVzZVN0YXRlKGZhbHNlKTsKICB1c2VFZmZlY3QoKCkgPT4gewogICAgdHJ5IHsgc2V0T3BlbighbG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVkpKTsgfSBjYXRjaCB7IHNldE9wZW4odHJ1ZSk7IH0KICB9LCBbXSk7CiAgY29uc3QgZGlzbWlzcyA9ICgpID0+IHsgdHJ5IHsgbG9jYWxTdG9yYWdlLnNldEl0ZW0oU1RPUkFHRV9LRVksIFN0cmluZyhEYXRlLm5vdygpKSk7IH0gY2F0Y2gge30gc2V0T3BlbihmYWxzZSk7IH07CiAgaWYgKCFvcGVuKSByZXR1cm4gbnVsbDsKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9InJvdW5kZWQteGwiIHN0eWxlPXt7IGJvcmRlcjoiMXB4IHNvbGlkIHJnYmEoMjEyLDE3NSw1NSwwLjI1KSIsIGJhY2tncm91bmQ6ImxpbmVhci1ncmFkaWVudCgxMzVkZWcscmdiYSgyMTIsMTc1LDU1LDAuMDYpIDAlLHJnYmEoMjU1LDI1NSwyNTUsMC4wMSkgMTAwJSkiIH19PgogICAgICA8ZGl2IGNsYXNzTmFtZT0iYWJzb2x1dGUgLXJpZ2h0LTEwIC10b3AtMTAgaC0zMiB3LTMyIHJvdW5kZWQtZnVsbCBiZy12aW9sZXQtNTAwLzIwIGJsdXItM3hsIHBvaW50ZXItZXZlbnRzLW5vbmUiIC8+CiAgICAgIDxidXR0b24gb25DbGljaz17ZGlzbWlzc30gY2xhc3NOYW1lPSJhYnNvbHV0ZSB0b3AtMiByaWdodC0yIGgtNyB3LTcgcm91bmRlZC1tZCBob3ZlcjpiZy13aGl0ZS8xMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciB0ZXh0LW11dGVkLWZvcmVncm91bmQiIGFyaWEtbGFiZWw9IkRpc21pc3MiPgogICAgICAgIDxYIGNsYXNzTmFtZT0iaC00IHctNCIgLz4KICAgICAgPC9idXR0b24+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiBtYi0zIj4KICAgICAgICA8U3BhcmtsZXMgY2xhc3NOYW1lPSJoLTQgdy00IHRleHQtdmlvbGV0LTQwMCIgLz4KICAgICAgICA8aDMgY2xhc3NOYW1lPSJ0ZXh0LXNtIGZvbnQtc2VtaWJvbGQgdHJhY2tpbmctdGlnaHQiPldoYXQncyBuZXcgaW4gVmlyZWxsZSBTdHVkaW9zPC9oMz4KICAgICAgPC9kaXY+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIHNtOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy0zIGdhcC0yIj4KICAgICAgICB7SElHSExJR0hUUy5tYXAoKGgsIGkpID0+ICgKICAgICAgICAgIDxkaXYga2V5PXtpfSBjbGFzc05hbWU9InJvdW5kZWQtbGcgYmctYmFja2dyb3VuZC80MCBib3JkZXIgYm9yZGVyLWJvcmRlci80MCBwLTMgdGV4dC14cyBzcGFjZS15LTEuNSBob3Zlcjpib3JkZXItdmlvbGV0LTUwMC80MCB0cmFuc2l0aW9uLWNvbG9ycyI+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LVsxMHB4XSBweC0xLjUgcHktMC41IHJvdW5kZWQgYmctdmlvbGV0LTUwMC8yMCB0ZXh0LXZpb2xldC0zMDAgZm9udC1tb25vIHVwcGVyY2FzZSB0cmFja2luZy13aWRlciI+e2gudGFnfTwvc3Bhbj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZm9udC1zZW1pYm9sZCBsZWFkaW5nLXRpZ2h0IGZsZXgtMSI+e2gudGl0bGV9PC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1tdXRlZC1mb3JlZ3JvdW5kIGxlYWRpbmctcmVsYXhlZCI+e2guYm9keX08L2Rpdj4KICAgICAgICAgICAge2gudG8gJiYgPExpbmsgaHJlZj17aC50b30+PEJ1dHRvbiBzaXplPSJzbSIgdmFyaWFudD0iZ2hvc3QiIGNsYXNzTmFtZT0iaC02IHRleHQtWzEwcHhdIHB4LTIgLW1sLTIgdGV4dC12aW9sZXQtMzAwIGhvdmVyOnRleHQtdmlvbGV0LTIwMCBob3ZlcjpiZy12aW9sZXQtNTAwLzEwIj5UcnkgaXQ8QXJyb3dSaWdodCBjbGFzc05hbWU9ImgtMyB3LTMgbWwtMSIgLz48L0J1dHRvbj48L0xpbms+fQogICAgICAgICAgPC9kaXY+CiAgICAgICAgKSl9CiAgICAgIDwvZGl2PgogICAgICA8ZGl2IGNsYXNzTmFtZT0ibXQtMyB0ZXh0LVsxMHB4XSB0ZXh0LW11dGVkLWZvcmVncm91bmQiPlRpcDogcHJlc3MgPGtiZCBjbGFzc05hbWU9InB4LTEgcHktMC41IHJvdW5kZWQgYmctbXV0ZWQgYm9yZGVyIGJvcmRlci1ib3JkZXIvNTAgdGV4dC1bOXB4XSI+4oyYSzwva2JkPiB0byBvcGVuIHRoZSBjb21tYW5kIHBhbGV0dGUgYW5kIGp1bXAgYW55d2hlcmUuPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9Cg==
+import { useState, useEffect } from "react";
+import { Link } from "wouter";
+import { Sparkles, X, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const STORAGE_KEY = "vs_whatsnew_dismissed_v5";
+
+const HIGHLIGHTS = [
+  { tag: "v5", title: "Press âK anywhere to jump to any page", body: "A unified search palette across all 100+ pages with grouped commands and recent items.", to: null as string | null },
+  { tag: "v4", title: "AI Funding Match & Application Tracker", body: "Score every funder against your project, shortlist favorites, and track applications across all your projects.", to: "/funding-pro" },
+  { tag: "v3", title: "Studio approvals + budget tracker + Director Savings", body: "3-tier sign-off chain (director â producer â exec), 5-stage budget allocation, and a hero card showing $ saved vs traditional production.", to: "/pro-studio-ops" },
+  { tag: "v2", title: "Scene locks, render cost forecasting, Run Now per job", body: "Lock scenes from edits during sign-off, see cost forecast before you generate, and re-run any queued job on demand.", to: "/pro-studio-ops" },
+  { tag: "v1", title: "Render Queue, Live Presence, Studio Dashboard", body: "Server-enforced render queue, live presence indicators, bulk operations, and an NLE-style keyboard shortcut layer.", to: "/pro-studio-ops" },
+];
+
+export default function WhatsNewPanel() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    try { setOpen(!localStorage.getItem(STORAGE_KEY)); } catch { setOpen(true); }
+  }, []);
+  const dismiss = () => { try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch {} setOpen(false); };
+  if (!open) return null;
+  return (
+    <div className="rounded-xl" style={{ border:"1px solid rgba(212,175,55,0.25)", background:"linear-gradient(135deg,rgba(212,175,55,0.06) 0%,rgba(255,255,255,0.01) 100%)" }}>
+      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet-500/20 blur-3xl pointer-events-none" />
+      <button onClick={dismiss} className="absolute top-2 right-2 h-7 w-7 rounded-md hover:bg-white/10 flex items-center justify-center text-muted-foreground" aria-label="Dismiss">
+        <X className="h-4 w-4" />
+      </button>
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles className="h-4 w-4 text-violet-400" />
+        <h3 className="text-sm font-semibold tracking-tight gradient-text-gold">What's new in Virelle Studios</h3>
+      </div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        {HIGHLIGHTS.map((h, i) => (
+          <div key={i} className="rounded-lg bg-background/40 border border-border/40 p-3 text-xs space-y-1.5 hover:border-violet-500/40 transition-colors">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300 font-mono uppercase tracking-wider">{h.tag}</span>
+              <div className="font-semibold leading-tight flex-1">{h.title}</div>
+            </div>
+            <div className="text-muted-foreground leading-relaxed">{h.body}</div>
+            {h.to && <Link href={h.to}><Button size="sm" variant="ghost" className="h-6 text-[10px] px-2 -ml-2 text-violet-300 hover:text-violet-200 hover:bg-violet-500/10">Try it<ArrowRight className="h-3 w-3 ml-1" /></Button></Link>}
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 text-[10px] text-muted-foreground">Tip: press <kbd className="px-1 py-0.5 rounded bg-muted border border-border/50 text-[9px]">âK</kbd> to open the command palette and jump anywhere.</div>
+    </div>
+  );
+}

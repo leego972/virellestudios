@@ -247,7 +247,7 @@ export default function VirelleChatBubble({
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+              <h3 className="text-sm font-semibold flex items-center gap-1.5 gradient-text-gold">
                 Virelle
                 <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-[9px] h-4 px-1">ONLINE</Badge>
               </h3>
