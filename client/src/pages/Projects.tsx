@@ -71,13 +71,13 @@ export default function Projects() {
       toast.success("Project deleted");
       setDeleteId(null);
     },
-    onError: () => toast.error("Couldn't delete that project ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ please try again, or refresh if it persists."),
+    onError: () => toast.error("Couldn't delete that project ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ please try again, or refresh if it persists."),
   });
 
     const createDemoMut = trpc.project.createDemoShort.useMutation({
       onSuccess: (data) => {
         utils.project.list.invalidate();
-        toast.success("Demo short generating ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 5 scenes firing now!");
+        toast.success("Demo short generating ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 5 scenes firing now!");
         setLocation(`/projects/${data.projectId}`);
       },
       onError: (err) => toast.error(err.message ?? "Could not create demo short"),
@@ -132,7 +132,7 @@ export default function Projects() {
   return (
     <div className="min-h-screen pb-10" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
     <div className="max-w-5xl mx-auto space-y-6 py-6 px-4">
-      <SiteHead title="Projects" description="Manage all your AI film productions in one place ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scripts, scenes, casting, scoring, and distribution." />
+      <SiteHead title="Projects" description="Manage all your AI film productions in one place ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scripts, scenes, casting, scoring, and distribution." />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight gradient-text-gold">Projects</h1>
@@ -150,7 +150,7 @@ export default function Projects() {
             onClick={() => createDemoMut.mutate()}
           >
             {createDemoMut.isPending
-              ? <><Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />GeneratingÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦</>
+              ? <><Loader2 className="h-4 w-4 mr-1 animate-spin text-amber-400" />GeneratingÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦</>
               : <><Film className="h-4 w-4 mr-1" />Demo Short</>}
           </Button>
       </div>
@@ -224,18 +224,18 @@ export default function Projects() {
       )}
 
       {isError ? (
-        <Card className="bg-card/50 border-destructive/30 glass-card shadow-lg shadow-amber-500/5">
+        <Card className="bg-card/50 border-destructive/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardContent className="p-12 flex flex-col items-center text-center">
             <Film className="h-10 w-10 text-destructive/40 mb-3" />
             <p className="text-sm font-medium text-foreground/80 mb-1">We couldn't load your projects</p>
-            <p className="text-xs text-muted-foreground mb-4">Network or server hiccup ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ your work is safe. Retry below or refresh the page.</p>
+            <p className="text-xs text-muted-foreground mb-4">Network or server hiccup ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ your work is safe. Retry below or refresh the page.</p>
             <Button size="sm" variant="outline" onClick={() => window.location.reload()}>Retry</Button>
           </CardContent>
         </Card>
       ) : isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i} className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
+            <Card key={i} className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardContent className="p-4">
                 <Skeleton className="aspect-video w-full rounded-md mb-3" />
                 <Skeleton className="h-4 w-3/4 mb-2" />
@@ -252,7 +252,7 @@ export default function Projects() {
           description={
             search || filterStatus !== "all"
               ? "Try clearing your search or status filter to see your other projects."
-              : "Every Virelle film starts as a project ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ title, genre, characters, scenes. Open a fresh slate and start writing."
+              : "Every Virelle film starts as a project ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ title, genre, characters, scenes. Open a fresh slate and start writing."
           }
           action={
             !search && filterStatus === "all" ? (
@@ -307,21 +307,21 @@ export default function Projects() {
                         const meta = JOURNEY_STAGES[stage - 1];
                         return (
                           <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium border-primary/30 bg-amber-400/5 text-amber-400">
-                            Stage {stage}/8 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {meta.title}
+                            Stage {stage}/8 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {meta.title}
                           </Badge>
                         );
                       })()}
-                      <span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
+                      <span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
                       <span className="capitalize">{project.mode}</span>
                       {project.rating && (
                         <>
-                          <span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
+                          <span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
                           <span>{project.rating}</span>
                         </>
                       )}
                       {project.genre && (
                         <>
-                          <span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
+                          <span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
                           <span>{project.genre}</span>
                         </>
                       )}
@@ -345,7 +345,7 @@ export default function Projects() {
                       </span>
                       {project.createdAt && (
                         <>
-                          <span className="text-border text-xs">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
+                          <span className="text-border text-xs">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
                           <span className="text-xs text-muted-foreground flex items-center gap-0.5">
                             <Calendar className="h-2.5 w-2.5" />
                             {timeAgo(project.createdAt)}
@@ -418,8 +418,8 @@ export default function Projects() {
                   <h3 className="font-medium text-sm truncate gradient-text-gold">{project.title}</h3>
                   <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
                     <span className="capitalize">{project.mode}</span>
-                    {project.genre && <><span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.genre}</span></>}
-                    {project.createdAt && <><span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{timeAgo(project.createdAt)}</span></>}
+                    {project.genre && <><span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.genre}</span></>}
+                    {project.createdAt && <><span className="text-border">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{timeAgo(project.createdAt)}</span></>}
                   </div>
                 </div>
                 <Badge

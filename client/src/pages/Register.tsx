@@ -13,62 +13,62 @@ import {
 import LeegoFooterLaunch from "@/components/LeegoFooterLaunch";
 import GoldWatermarkLaunch from "@/components/GoldWatermarkLaunch";
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Country Codes Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Country Codes ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
 const COUNTRY_CODES = [
-  { code: "+972", country: "IL", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ±", label: "Israel" },
-  { code: "+1", country: "US", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¸", label: "United States" },
-  { code: "+1", country: "CA", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ¦", label: "Canada" },
-  { code: "+44", country: "GB", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ§", label: "United Kingdom" },
-  { code: "+33", country: "FR", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ·", label: "France" },
-  { code: "+49", country: "DE", flag: "Ã°ÂÂÂ©Ã°ÂÂÂª", label: "Germany" },
-  { code: "+61", country: "AU", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂº", label: "Australia" },
-  { code: "+81", country: "JP", flag: "Ã°ÂÂÂ¯Ã°ÂÂÂµ", label: "Japan" },
-  { code: "+82", country: "KR", flag: "Ã°ÂÂÂ°Ã°ÂÂÂ·", label: "South Korea" },
-  { code: "+86", country: "CN", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ³", label: "China" },
-  { code: "+91", country: "IN", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ³", label: "India" },
-  { code: "+55", country: "BR", flag: "Ã°ÂÂÂ§Ã°ÂÂÂ·", label: "Brazil" },
-  { code: "+52", country: "MX", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ½", label: "Mexico" },
-  { code: "+34", country: "ES", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¸", label: "Spain" },
-  { code: "+39", country: "IT", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ¹", label: "Italy" },
-  { code: "+31", country: "NL", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ±", label: "Netherlands" },
-  { code: "+46", country: "SE", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂª", label: "Sweden" },
-  { code: "+47", country: "NO", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ´", label: "Norway" },
-  { code: "+45", country: "DK", flag: "Ã°ÂÂÂ©Ã°ÂÂÂ°", label: "Denmark" },
-  { code: "+41", country: "CH", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ­", label: "Switzerland" },
-  { code: "+43", country: "AT", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ¹", label: "Austria" },
-  { code: "+48", country: "PL", flag: "Ã°ÂÂÂµÃ°ÂÂÂ±", label: "Poland" },
-  { code: "+351", country: "PT", flag: "Ã°ÂÂÂµÃ°ÂÂÂ¹", label: "Portugal" },
-  { code: "+353", country: "IE", flag: "Ã°ÂÂÂ®Ã°ÂÂÂª", label: "Ireland" },
-  { code: "+32", country: "BE", flag: "Ã°ÂÂÂ§Ã°ÂÂÂª", label: "Belgium" },
-  { code: "+7", country: "RU", flag: "Ã°ÂÂÂ·Ã°ÂÂÂº", label: "Russia" },
-  { code: "+90", country: "TR", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ·", label: "Turkey" },
-  { code: "+966", country: "SA", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¦", label: "Saudi Arabia" },
-  { code: "+971", country: "AE", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂª", label: "UAE" },
-  { code: "+27", country: "ZA", flag: "Ã°ÂÂÂ¿Ã°ÂÂÂ¦", label: "South Africa" },
-  { code: "+234", country: "NG", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¬", label: "Nigeria" },
-  { code: "+254", country: "KE", flag: "Ã°ÂÂÂ°Ã°ÂÂÂª", label: "Kenya" },
-  { code: "+20", country: "EG", flag: "Ã°ÂÂÂªÃ°ÂÂÂ¬", label: "Egypt" },
-  { code: "+62", country: "ID", flag: "Ã°ÂÂÂ®Ã°ÂÂÂ©", label: "Indonesia" },
-  { code: "+60", country: "MY", flag: "Ã°ÂÂÂ²Ã°ÂÂÂ¾", label: "Malaysia" },
-  { code: "+65", country: "SG", flag: "Ã°ÂÂÂ¸Ã°ÂÂÂ¬", label: "Singapore" },
-  { code: "+66", country: "TH", flag: "Ã°ÂÂÂ¹Ã°ÂÂÂ­", label: "Thailand" },
-  { code: "+63", country: "PH", flag: "Ã°ÂÂÂµÃ°ÂÂÂ­", label: "Philippines" },
-  { code: "+84", country: "VN", flag: "Ã°ÂÂÂ»Ã°ÂÂÂ³", label: "Vietnam" },
-  { code: "+64", country: "NZ", flag: "Ã°ÂÂÂ³Ã°ÂÂÂ¿", label: "New Zealand" },
-  { code: "+54", country: "AR", flag: "Ã°ÂÂÂ¦Ã°ÂÂÂ·", label: "Argentina" },
-  { code: "+56", country: "CL", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ±", label: "Chile" },
-  { code: "+57", country: "CO", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ´", label: "Colombia" },
-  { code: "+51", country: "PE", flag: "Ã°ÂÂÂµÃ°ÂÂÂª", label: "Peru" },
-  { code: "+380", country: "UA", flag: "Ã°ÂÂÂºÃ°ÂÂÂ¦", label: "Ukraine" },
-  { code: "+40", country: "RO", flag: "Ã°ÂÂÂ·Ã°ÂÂÂ´", label: "Romania" },
-  { code: "+30", country: "GR", flag: "Ã°ÂÂÂ¬Ã°ÂÂÂ·", label: "Greece" },
-  { code: "+36", country: "HU", flag: "Ã°ÂÂÂ­Ã°ÂÂÂº", label: "Hungary" },
-  { code: "+420", country: "CZ", flag: "Ã°ÂÂÂ¨Ã°ÂÂÂ¿", label: "Czech Republic" },
-  { code: "+358", country: "FI", flag: "Ã°ÂÂÂ«Ã°ÂÂÂ®", label: "Finland" },
+  { code: "+972", country: "IL", flag: "ÃÂ°ÃÂÃÂÃÂ®ÃÂ°ÃÂÃÂÃÂ±", label: "Israel" },
+  { code: "+1", country: "US", flag: "ÃÂ°ÃÂÃÂÃÂºÃÂ°ÃÂÃÂÃÂ¸", label: "United States" },
+  { code: "+1", country: "CA", flag: "ÃÂ°ÃÂÃÂÃÂ¨ÃÂ°ÃÂÃÂÃÂ¦", label: "Canada" },
+  { code: "+44", country: "GB", flag: "ÃÂ°ÃÂÃÂÃÂ¬ÃÂ°ÃÂÃÂÃÂ§", label: "United Kingdom" },
+  { code: "+33", country: "FR", flag: "ÃÂ°ÃÂÃÂÃÂ«ÃÂ°ÃÂÃÂÃÂ·", label: "France" },
+  { code: "+49", country: "DE", flag: "ÃÂ°ÃÂÃÂÃÂ©ÃÂ°ÃÂÃÂÃÂª", label: "Germany" },
+  { code: "+61", country: "AU", flag: "ÃÂ°ÃÂÃÂÃÂ¦ÃÂ°ÃÂÃÂÃÂº", label: "Australia" },
+  { code: "+81", country: "JP", flag: "ÃÂ°ÃÂÃÂÃÂ¯ÃÂ°ÃÂÃÂÃÂµ", label: "Japan" },
+  { code: "+82", country: "KR", flag: "ÃÂ°ÃÂÃÂÃÂ°ÃÂ°ÃÂÃÂÃÂ·", label: "South Korea" },
+  { code: "+86", country: "CN", flag: "ÃÂ°ÃÂÃÂÃÂ¨ÃÂ°ÃÂÃÂÃÂ³", label: "China" },
+  { code: "+91", country: "IN", flag: "ÃÂ°ÃÂÃÂÃÂ®ÃÂ°ÃÂÃÂÃÂ³", label: "India" },
+  { code: "+55", country: "BR", flag: "ÃÂ°ÃÂÃÂÃÂ§ÃÂ°ÃÂÃÂÃÂ·", label: "Brazil" },
+  { code: "+52", country: "MX", flag: "ÃÂ°ÃÂÃÂÃÂ²ÃÂ°ÃÂÃÂÃÂ½", label: "Mexico" },
+  { code: "+34", country: "ES", flag: "ÃÂ°ÃÂÃÂÃÂªÃÂ°ÃÂÃÂÃÂ¸", label: "Spain" },
+  { code: "+39", country: "IT", flag: "ÃÂ°ÃÂÃÂÃÂ®ÃÂ°ÃÂÃÂÃÂ¹", label: "Italy" },
+  { code: "+31", country: "NL", flag: "ÃÂ°ÃÂÃÂÃÂ³ÃÂ°ÃÂÃÂÃÂ±", label: "Netherlands" },
+  { code: "+46", country: "SE", flag: "ÃÂ°ÃÂÃÂÃÂ¸ÃÂ°ÃÂÃÂÃÂª", label: "Sweden" },
+  { code: "+47", country: "NO", flag: "ÃÂ°ÃÂÃÂÃÂ³ÃÂ°ÃÂÃÂÃÂ´", label: "Norway" },
+  { code: "+45", country: "DK", flag: "ÃÂ°ÃÂÃÂÃÂ©ÃÂ°ÃÂÃÂÃÂ°", label: "Denmark" },
+  { code: "+41", country: "CH", flag: "ÃÂ°ÃÂÃÂÃÂ¨ÃÂ°ÃÂÃÂÃÂ­", label: "Switzerland" },
+  { code: "+43", country: "AT", flag: "ÃÂ°ÃÂÃÂÃÂ¦ÃÂ°ÃÂÃÂÃÂ¹", label: "Austria" },
+  { code: "+48", country: "PL", flag: "ÃÂ°ÃÂÃÂÃÂµÃÂ°ÃÂÃÂÃÂ±", label: "Poland" },
+  { code: "+351", country: "PT", flag: "ÃÂ°ÃÂÃÂÃÂµÃÂ°ÃÂÃÂÃÂ¹", label: "Portugal" },
+  { code: "+353", country: "IE", flag: "ÃÂ°ÃÂÃÂÃÂ®ÃÂ°ÃÂÃÂÃÂª", label: "Ireland" },
+  { code: "+32", country: "BE", flag: "ÃÂ°ÃÂÃÂÃÂ§ÃÂ°ÃÂÃÂÃÂª", label: "Belgium" },
+  { code: "+7", country: "RU", flag: "ÃÂ°ÃÂÃÂÃÂ·ÃÂ°ÃÂÃÂÃÂº", label: "Russia" },
+  { code: "+90", country: "TR", flag: "ÃÂ°ÃÂÃÂÃÂ¹ÃÂ°ÃÂÃÂÃÂ·", label: "Turkey" },
+  { code: "+966", country: "SA", flag: "ÃÂ°ÃÂÃÂÃÂ¸ÃÂ°ÃÂÃÂÃÂ¦", label: "Saudi Arabia" },
+  { code: "+971", country: "AE", flag: "ÃÂ°ÃÂÃÂÃÂ¦ÃÂ°ÃÂÃÂÃÂª", label: "UAE" },
+  { code: "+27", country: "ZA", flag: "ÃÂ°ÃÂÃÂÃÂ¿ÃÂ°ÃÂÃÂÃÂ¦", label: "South Africa" },
+  { code: "+234", country: "NG", flag: "ÃÂ°ÃÂÃÂÃÂ³ÃÂ°ÃÂÃÂÃÂ¬", label: "Nigeria" },
+  { code: "+254", country: "KE", flag: "ÃÂ°ÃÂÃÂÃÂ°ÃÂ°ÃÂÃÂÃÂª", label: "Kenya" },
+  { code: "+20", country: "EG", flag: "ÃÂ°ÃÂÃÂÃÂªÃÂ°ÃÂÃÂÃÂ¬", label: "Egypt" },
+  { code: "+62", country: "ID", flag: "ÃÂ°ÃÂÃÂÃÂ®ÃÂ°ÃÂÃÂÃÂ©", label: "Indonesia" },
+  { code: "+60", country: "MY", flag: "ÃÂ°ÃÂÃÂÃÂ²ÃÂ°ÃÂÃÂÃÂ¾", label: "Malaysia" },
+  { code: "+65", country: "SG", flag: "ÃÂ°ÃÂÃÂÃÂ¸ÃÂ°ÃÂÃÂÃÂ¬", label: "Singapore" },
+  { code: "+66", country: "TH", flag: "ÃÂ°ÃÂÃÂÃÂ¹ÃÂ°ÃÂÃÂÃÂ­", label: "Thailand" },
+  { code: "+63", country: "PH", flag: "ÃÂ°ÃÂÃÂÃÂµÃÂ°ÃÂÃÂÃÂ­", label: "Philippines" },
+  { code: "+84", country: "VN", flag: "ÃÂ°ÃÂÃÂÃÂ»ÃÂ°ÃÂÃÂÃÂ³", label: "Vietnam" },
+  { code: "+64", country: "NZ", flag: "ÃÂ°ÃÂÃÂÃÂ³ÃÂ°ÃÂÃÂÃÂ¿", label: "New Zealand" },
+  { code: "+54", country: "AR", flag: "ÃÂ°ÃÂÃÂÃÂ¦ÃÂ°ÃÂÃÂÃÂ·", label: "Argentina" },
+  { code: "+56", country: "CL", flag: "ÃÂ°ÃÂÃÂÃÂ¨ÃÂ°ÃÂÃÂÃÂ±", label: "Chile" },
+  { code: "+57", country: "CO", flag: "ÃÂ°ÃÂÃÂÃÂ¨ÃÂ°ÃÂÃÂÃÂ´", label: "Colombia" },
+  { code: "+51", country: "PE", flag: "ÃÂ°ÃÂÃÂÃÂµÃÂ°ÃÂÃÂÃÂª", label: "Peru" },
+  { code: "+380", country: "UA", flag: "ÃÂ°ÃÂÃÂÃÂºÃÂ°ÃÂÃÂÃÂ¦", label: "Ukraine" },
+  { code: "+40", country: "RO", flag: "ÃÂ°ÃÂÃÂÃÂ·ÃÂ°ÃÂÃÂÃÂ´", label: "Romania" },
+  { code: "+30", country: "GR", flag: "ÃÂ°ÃÂÃÂÃÂ¬ÃÂ°ÃÂÃÂÃÂ·", label: "Greece" },
+  { code: "+36", country: "HU", flag: "ÃÂ°ÃÂÃÂÃÂ­ÃÂ°ÃÂÃÂÃÂº", label: "Hungary" },
+  { code: "+420", country: "CZ", flag: "ÃÂ°ÃÂÃÂÃÂ¨ÃÂ°ÃÂÃÂÃÂ¿", label: "Czech Republic" },
+  { code: "+358", country: "FI", flag: "ÃÂ°ÃÂÃÂÃÂ«ÃÂ°ÃÂÃÂÃÂ®", label: "Finland" },
 ];
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Constants Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Constants ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
 const PROFESSIONAL_ROLES = [
   { value: "director", label: "Director" },
@@ -111,9 +111,9 @@ const INDUSTRY_TYPES = [
 
 const TEAM_SIZES = [
   { value: "solo", label: "Solo Creator" },
-  { value: "2-5", label: "Small Team (2Ã¢ÂÂ5)" },
-  { value: "6-20", label: "Medium Team (6Ã¢ÂÂ20)" },
-  { value: "21-50", label: "Large Team (21Ã¢ÂÂ50)" },
+  { value: "2-5", label: "Small Team (2ÃÂ¢ÃÂÃÂ5)" },
+  { value: "6-20", label: "Medium Team (6ÃÂ¢ÃÂÃÂ20)" },
+  { value: "21-50", label: "Large Team (21ÃÂ¢ÃÂÃÂ50)" },
   { value: "50+", label: "Enterprise (50+)" },
 ];
 
@@ -148,7 +148,7 @@ const HOW_HEARD = [
   { value: "other", label: "Other" },
 ];
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Step Indicator Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Step Indicator ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
   const steps = [
@@ -190,7 +190,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
   );
 }
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Select Component Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Select Component ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
 function SelectField({
   label,
@@ -230,7 +230,7 @@ function SelectField({
   );
 }
 
-// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Main Component Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Main Component ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
 export default function Register() {
   const [, navigate] = useLocation();
@@ -318,7 +318,7 @@ export default function Register() {
     );
   };
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Validation Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Validation ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
   const validateStep1 = (): boolean => {
     if (!name.trim()) { toast.error("Please enter your name"); return false; }
@@ -336,7 +336,7 @@ export default function Register() {
     return true;
   };
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Navigation Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Navigation ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
   const nextStep = () => {
     if (step === 1 && !validateStep1()) return;
@@ -357,7 +357,7 @@ export default function Register() {
     }
   };
 
-  // Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Submit Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Submit ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 
   const handleSubmit = () => {
     registerMutation.mutate({
@@ -384,9 +384,9 @@ export default function Register() {
 
   if (showWelcome) {
     const PROVIDER_LINKS = [
-      { name: "fal.ai", tag: "Video ÃÂ· Cheapest", url: "https://fal.ai/dashboard/keys", note: "~$0.40/clip ÃÂ· Recommended", required: false },
-      { name: "ElevenLabs", tag: "Voice & SFX ÃÂ· Required", url: "https://elevenlabs.io/app/settings/api-keys", note: "Free tier available", required: true },
-      { name: "Runway", tag: "Video ÃÂ· Premium", url: "https://app.runwayml.com/settings", note: "~$0.50/clip", required: false },
+      { name: "fal.ai", tag: "Video ÃÂÃÂ· Cheapest", url: "https://fal.ai/dashboard/keys", note: "~$0.40/clip ÃÂÃÂ· Recommended", required: false },
+      { name: "ElevenLabs", tag: "Voice & SFX ÃÂÃÂ· Required", url: "https://elevenlabs.io/app/settings/api-keys", note: "Free tier available", required: true },
+      { name: "Runway", tag: "Video ÃÂÃÂ· Premium", url: "https://app.runwayml.com/settings", note: "~$0.50/clip", required: false },
       { name: "OpenAI", tag: "Script Writing", url: "https://platform.openai.com/api-keys", note: "~$0.01/scene", required: false },
       { name: "Google AI Studio", tag: "LLM + Veo 3", url: "https://aistudio.google.com/apikey", note: "Free tier available", required: false },
       { name: "Suno", tag: "Music Scores", url: "https://app.suno.ai/account", note: "Free tier available", required: false },
@@ -395,7 +395,7 @@ export default function Register() {
       <div className="min-h-screen flex flex-col items-center justify-center p-4 relative" style={{ background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)" }}>
         <GoldWatermarkLaunch />
         <div className="w-full max-w-lg relative z-10">
-          <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10 glass-card">
+          <Card className="border-amber-500/30 bg-card/80 backdrop-blur-sm shadow-2xl shadow-amber-500/10 glass-card hover:shadow-amber-500/20 transition-shadow">
             <CardContent className="pt-8 pb-8 flex flex-col items-center text-center space-y-5">
               <div className="w-16 h-16 rounded-full bg-amber-600/20 flex items-center justify-center">
                 <Check className="w-8 h-8 text-amber-500" />
@@ -409,8 +409,8 @@ export default function Register() {
 
               {/* Step 1 callout */}
               <div className="w-full p-3 rounded-lg bg-amber-600/5 border border-amber-500/20 text-left">
-                <p className="text-xs font-semibold text-amber-400 mb-1">Step 1 Ã¢ÂÂ Get your API keys (3 min)</p>
-                <p className="text-xs text-muted-foreground">Click each provider below to open their key page. Paste the keys into <strong>Settings Ã¢ÂÂ API Keys</strong> after.</p>
+                <p className="text-xs font-semibold text-amber-400 mb-1">Step 1 ÃÂ¢ÃÂÃÂ Get your API keys (3 min)</p>
+                <p className="text-xs text-muted-foreground">Click each provider below to open their key page. Paste the keys into <strong>Settings ÃÂ¢ÃÂÃÂ API Keys</strong> after.</p>
               </div>
 
               {/* Provider quick-links */}
@@ -435,8 +435,8 @@ export default function Register() {
 
               {/* Step 2 */}
               <div className="w-full p-3 rounded-lg bg-muted/20 border border-border text-left">
-                <p className="text-xs font-semibold text-foreground mb-0.5">Step 2 Ã¢ÂÂ Paste keys in Settings</p>
-                <p className="text-xs text-muted-foreground">Settings Ã¢ÂÂ API Keys. ElevenLabs is required for voice and sound in every film.</p>
+                <p className="text-xs font-semibold text-foreground mb-0.5">Step 2 ÃÂ¢ÃÂÃÂ Paste keys in Settings</p>
+                <p className="text-xs text-muted-foreground">Settings ÃÂ¢ÃÂÃÂ API Keys. ElevenLabs is required for voice and sound in every film.</p>
               </div>
 
               <div className="w-full space-y-2 pt-1">
@@ -451,7 +451,7 @@ export default function Register() {
                   onClick={() => navigate("/?opener=1")}
                   className="w-full text-muted-foreground text-sm"
                 >
-                  Skip for now Ã¢ÂÂ do this later
+                  Skip for now ÃÂ¢ÃÂÃÂ do this later
                 </Button>
               </div>
             </CardContent>
@@ -467,9 +467,9 @@ export default function Register() {
       <div className="w-full max-w-md space-y-5 relative z-10">
         {/* Virelle Studios Logo */}
         <div className="flex flex-col items-center gap-3">
-          {/* Radial glow wrapper Ã¢ÂÂ extends the logo's warm amber light into the page */}
+          {/* Radial glow wrapper ÃÂ¢ÃÂÃÂ extends the logo's warm amber light into the page */}
           <div className="relative flex items-center justify-center">
-            {/* Outer ambient glow Ã¢ÂÂ large, very soft */}
+            {/* Outer ambient glow ÃÂ¢ÃÂÃÂ large, very soft */}
             <div
               className="absolute rounded-full pointer-events-none"
               style={{
@@ -478,7 +478,7 @@ export default function Register() {
                 background: "radial-gradient(ellipse at center, rgba(180,100,10,0.35) 0%, rgba(120,60,5,0.18) 35%, transparent 70%)",
               }}
             />
-            {/* Inner glow ring Ã¢ÂÂ tighter, warmer */}
+            {/* Inner glow ring ÃÂ¢ÃÂÃÂ tighter, warmer */}
             <div
               className="absolute rounded-full pointer-events-none"
               style={{
@@ -506,7 +506,7 @@ export default function Register() {
           <div className="flex items-center gap-2 bg-amber-600/10 border border-amber-500/20 rounded-lg px-4 py-3 text-sm">
             <Gift className="h-4 w-4 text-amber-400 shrink-0" />
             <span className="text-amber-400">
-              You've been referred! Sign up to receive <strong>7,000 bonus credits</strong> Ã¢ÂÂ both you and your referrer get rewarded.
+              You've been referred! Sign up to receive <strong>7,000 bonus credits</strong> ÃÂ¢ÃÂÃÂ both you and your referrer get rewarded.
             </span>
           </div>
         )}
@@ -515,7 +515,7 @@ export default function Register() {
           <div className="flex items-center gap-2 bg-green-600/10 border border-green-500/20 rounded-lg px-4 py-3 text-sm">
             <Check className="h-4 w-4 text-green-400 shrink-0" />
             <span className="text-green-400">
-              Promo code <strong>{promoCode}</strong> applied Ã¢ÂÂ you'll get <strong>50% off your first payment</strong>.
+              Promo code <strong>{promoCode}</strong> applied ÃÂ¢ÃÂÃÂ you'll get <strong>50% off your first payment</strong>.
             </span>
           </div>
         )}
@@ -524,8 +524,8 @@ export default function Register() {
         <StepIndicator current={step} total={totalSteps} />
 
         {/* Registration Card */}
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5">
-          {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ STEP 1: Account Details Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+        <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-xl glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+          {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ STEP 1: Account Details ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
           {step === 1 && (
             <>
               <CardHeader className="space-y-1 pb-3">
@@ -698,12 +698,12 @@ export default function Register() {
                     <p className="text-xs text-amber-400">You and your referrer will each receive 7,000 bonus credits when you sign up.</p>
                   )}
                 </div>
-                {/* Promo Code Ã¢ÂÂ 50% off first payment */}
+                {/* Promo Code ÃÂ¢ÃÂÃÂ 50% off first payment */}
                 <div className="space-y-1.5">
                   <Label htmlFor="promoCode" className="flex items-center gap-1.5">
                     <Check className="h-3.5 w-3.5 text-green-400" />
                     Promo Code
-                    <span className="text-muted-foreground font-normal">(optional Ã¢ÂÂ 50% off first payment)</span>
+                    <span className="text-muted-foreground font-normal">(optional ÃÂ¢ÃÂÃÂ 50% off first payment)</span>
                   </Label>
                   <div className="relative">
                     <Input
@@ -742,7 +742,7 @@ export default function Register() {
             </>
           )}
 
-          {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ STEP 2: Professional Details Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+          {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ STEP 2: Professional Details ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
           {step === 2 && (
             <>
               <CardHeader className="space-y-1 pb-3">
@@ -847,7 +847,7 @@ export default function Register() {
             </>
           )}
 
-          {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ STEP 3: Creative Profile Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
+          {/* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ STEP 3: Creative Profile ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */}
           {step === 3 && (
             <>
               <CardHeader className="space-y-1 pb-3">
@@ -961,7 +961,7 @@ export default function Register() {
                 </div>
                 {agreedToTerms && (
                   <Button variant="ghost" onClick={skipToEnd} className="w-full text-muted-foreground hover:text-foreground text-sm">
-                    Skip for now Ã¢ÂÂ complete profile later
+                    Skip for now ÃÂ¢ÃÂÃÂ complete profile later
                   </Button>
                 )}
               </CardFooter>

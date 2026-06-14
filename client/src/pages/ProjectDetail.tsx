@@ -324,13 +324,13 @@ export default function ProjectDetail() {
       utils.project.get.invalidate({ id: projectId });
       utils.scene.listByProject.invalidate({ projectId });
       utils.generation.listJobs.invalidate({ projectId });
-      toast.success("Film generation started! This runs in the background ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ check back in a few minutes.");
+      toast.success("Film generation started! This runs in the background ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ check back in a few minutes.");
     },
     onError: (err) => toast.error(err.message),
   });
 
 
-  // ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Generate Full Feature Film (60-90 min) ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+  // ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Generate Full Feature Film (60-90 min) ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
   const [fullFilmDialogOpen, setFullFilmDialogOpen] = React.useState(false);
   const [fullFilmConfig, setFullFilmConfig] = React.useState({
     targetDurationMinutes: project?.duration || 90,
@@ -341,7 +341,7 @@ export default function ProjectDetail() {
   });
   const generateFullFilmMutation = trpc.generation.generateFullFilm.useMutation({
     onSuccess: () => {
-      toast.success("ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬ Full film generation started! This will take some time ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ you'll be notified when complete.");
+      toast.success("ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬ Full film generation started! This will take some time ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ you'll be notified when complete.");
       utils.project.get.invalidate({ id: projectId });
       setFullFilmDialogOpen(false);
     },
@@ -395,7 +395,7 @@ export default function ProjectDetail() {
     onSuccess: (result: any) => {
       utils.scene.listByProject.invalidate({ projectId });
       if (result?.status === "generating") {
-        toast.success("Scene regeneration started ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ check back in 2ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ5 minutes.");
+        toast.success("Scene regeneration started ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ check back in 2ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ5 minutes.");
       } else {
         toast.success("Scene video generation queued.");
       }
@@ -485,11 +485,11 @@ export default function ProjectDetail() {
             <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
               {project.mode === "quick" ? <Zap className="h-3 w-3" /> : <Layers className="h-3 w-3" />}
               <span className="capitalize">{project.mode}</span>
-              {project.rating && <><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.rating}</span></>}
-              {project.genre && <><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.genre}</span></>}
+              {project.rating && <><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.rating}</span></>}
+              {project.genre && <><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.genre}</span></>}
               {editingDuration ? (
                 <span className="flex items-center gap-1">
-                  <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
+                  <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span>
                   <input
                     type="number"
                     min={1}
@@ -522,16 +522,16 @@ export default function ProjectDetail() {
                 <>
                   {project.duration && (
                     <span className="cursor-pointer hover:text-amber-400 transition-colors" title="Click to edit duration" onClick={() => { setDurationInput(String(project.duration)); setEditingDuration(true); }}>
-                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> {project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`} ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> {project.duration < 2 ? `${Math.round(project.duration * 60)}s` : `${project.duration} min`} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                     </span>
                   )}
                   {!project.duration && scenes?.length ? (
                     <span className="cursor-pointer hover:text-amber-400 transition-colors" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
-                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> {(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()} ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> {(() => { const totalSec = (scenes || []).reduce((sum: number, s: any) => sum + (s.duration || 30), 0); return totalSec < 120 ? `${totalSec}s` : `${Math.round(totalSec / 60)} min`; })()} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                     </span>
                   ) : !project.duration ? (
                     <span className="cursor-pointer hover:text-amber-400 transition-colors text-muted-foreground" title="Click to set duration" onClick={() => { setDurationInput("5"); setEditingDuration(true); }}>
-                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> Set duration ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+                      <span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span> Set duration ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                     </span>
                   ) : null}
                 </>
@@ -547,7 +547,7 @@ export default function ProjectDetail() {
             onClick={async () => {
               try {
                 const reviewerName = window.prompt(
-                  "Reviewer name (optional)\n\nFor watermarked screeners ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ leave blank for an unwatermarked link, or enter a name (e.g. \"Studio A24\", \"Jane Producer\") to brand the screener with their name + timestamp on every frame. Pro tip: use a different name per recipient so leaks can be traced.",
+                  "Reviewer name (optional)\n\nFor watermarked screeners ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ leave blank for an unwatermarked link, or enter a name (e.g. \"Studio A24\", \"Jane Producer\") to brand the screener with their name + timestamp on every frame. Pro tip: use a different name per recipient so leaks can be traced.",
                   "",
                 ) || "";
                 const res = await utils.client.project.getShareLink.query({ id: project.id });
@@ -559,7 +559,7 @@ export default function ProjectDetail() {
                 toast.success(
                   reviewerName.trim()
                     ? `Watermarked screener link copied for "${reviewerName.trim()}"`
-                    : "Review link copied ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ paste it to share with producers, friends or collaborators.",
+                    : "Review link copied ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ paste it to share with producers, friends or collaborators.",
                 );
               } catch (e: any) {
                 toast.error(e?.message || "Could not generate share link");
@@ -595,7 +595,7 @@ export default function ProjectDetail() {
                 if (project.status === "completed") {
                   setRegenConfirmOpen(true);
                 } else {
-                  // draft OR failed ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ kick off generation immediately (no confirm needed ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+                  // draft OR failed ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ kick off generation immediately (no confirm needed ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                   // a failed run has no output to overwrite, and a draft has nothing to lose).
                   quickGenMutation.mutate({ projectId: project.id });
                 }
@@ -617,7 +617,7 @@ export default function ProjectDetail() {
       </div>
 
       {/* Generation Progress */}
-      {/* Generation Error Banner ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ surfaces the ACTUAL backend error message instead of a
+      {/* Generation Error Banner ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ surfaces the ACTUAL backend error message instead of a
           generic "recharge your API keys" template (which was misleading users who had valid,
           funded API keys: the real failure could be a model error, timeout, image-URL issue,
           provider outage, etc.). The actionable hint now lives below in muted text so users
@@ -628,7 +628,7 @@ export default function ProjectDetail() {
         // Detect the most common failure modes and tailor the guidance.
         // The platform's shared LLM key occasionally hits quota; when this happens the
         // generic message "recharge your API keys" was confusing because the user's OWN
-        // video key (e.g. fal.ai) is fine ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ it's the script-generation step that died.
+        // video key (e.g. fal.ai) is fine ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ it's the script-generation step that died.
         const lower = rawMsg.toLowerCase();
         const isNoVideoKey = lower.startsWith("no_video_key") || lower.includes("no_video_key:");
         const isLLMExhausted = !isNoVideoKey && (lower.includes("llm fallback invoke failed")
@@ -638,29 +638,29 @@ export default function ProjectDetail() {
         const isVideoQuota = !isNoVideoKey && !isLLMExhausted && (lower.includes("402") || lower.includes("403") || lower.includes("payment required"));
         const isProviderFailed = !isNoVideoKey && (lower.startsWith("video_provider_failed") || lower.includes("video_provider_failed:"));
         return (
-          <Card className="bg-red-500/5 border-red-500/30 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="bg-red-500/5 border-red-500/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardContent className="p-4 space-y-2">
               <div className="flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-400 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-red-400 break-words">
                     {isNoVideoKey ? "Add a video-generation API key to continue"
-                      : isLLMExhausted ? "Script generation paused ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ AI text quota reached"
+                      : isLLMExhausted ? "Script generation paused ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ AI text quota reached"
                       : isProviderFailed ? "Your video provider rejected every attempt"
                       : "Video generation failed"}
                   </p>
                   {isNoVideoKey ? (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words">
-                        You haven't connected a video provider yet. Virelle Studios is a Bring-Your-Own-Key platform for video ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ add a key once and you can generate as many films as your provider's credits allow.
+                        You haven't connected a video provider yet. Virelle Studios is a Bring-Your-Own-Key platform for video ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ add a key once and you can generate as many films as your provider's credits allow.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        Open <a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a> and connect at least one of:
+                        Open <a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a> and connect at least one of:
                         <span className="block mt-1.5 ml-2 leading-relaxed">
-                          ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">fal.ai</span> ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ cheapest, ~$0.40/clip (recommended)<br/>
-                          ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Runway</span> ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ best quality, ~$0.05ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ0.10/sec<br/>
-                          ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Hugging Face</span> ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ free tier (300 req/hr)<br/>
-                          ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Luma ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Replicate ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Google Veo 3</span> ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ alternatives
+                          ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">fal.ai</span> ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ cheapest, ~$0.40/clip (recommended)<br/>
+                          ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Runway</span> ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ best quality, ~$0.05ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ0.10/sec<br/>
+                          ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Hugging Face</span> ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ free tier (300 req/hr)<br/>
+                          ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ <span className="text-foreground font-medium">Luma ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Replicate ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Google Veo 3</span> ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ alternatives
                         </span>
                         Once saved, return here and tap <span className="font-medium text-foreground">Re-generate Film</span>.
                       </p>
@@ -668,10 +668,10 @@ export default function ProjectDetail() {
                   ) : isLLMExhausted ? (
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words">
-                        The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ that's still fine.
+                        The shared text-AI used to write your script and scene prompts has hit its temporary usage cap. This is <span className="font-medium">not</span> your fal.ai / video key ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ that's still fine.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        Quickest fix: open <a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a> and add your own <span className="font-medium text-foreground">Venice AI</span> (cheapest, ~$5 = millions of tokens), <span className="font-medium text-foreground">OpenAI</span>, or <span className="font-medium text-foreground">Anthropic</span> key ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ script generation will use it automatically. Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Retry Generation</span> below ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the shared cap usually clears within the hour.
+                        Quickest fix: open <a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a> and add your own <span className="font-medium text-foreground">Venice AI</span> (cheapest, ~$5 = millions of tokens), <span className="font-medium text-foreground">OpenAI</span>, or <span className="font-medium text-foreground">Anthropic</span> key ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ script generation will use it automatically. Otherwise wait a few minutes and tap <span className="font-medium text-foreground">Retry Generation</span> below ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the shared cap usually clears within the hour.
                       </p>
                     </>
                   ) : isVideoQuota ? (
@@ -685,12 +685,12 @@ export default function ProjectDetail() {
                     <>
                       <p className="text-xs text-red-300/80 mt-1 break-words whitespace-pre-wrap">{rawMsg}</p>
                       <p className="text-[11px] text-muted-foreground mt-2">
-                        If your API keys are funded and connected (<a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a>), this is usually a temporary provider issue ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ tap <span className="font-medium text-foreground">Retry Generation</span> below to retry. Make sure your preferred provider is selected.
+                        If your API keys are funded and connected (<a href="/settings" className="font-medium text-foreground underline">Settings ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ API Keys</a>), this is usually a temporary provider issue ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ tap <span className="font-medium text-foreground">Retry Generation</span> below to retry. Make sure your preferred provider is selected.
                       </p>
                     </>
                   )}
 
-                  {/* Inline action buttons ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ always present so the user is never stranded */}
+                  {/* Inline action buttons ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ always present so the user is never stranded */}
                   <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-red-500/20">
                     <Button
                       size="sm"
@@ -699,7 +699,7 @@ export default function ProjectDetail() {
                       disabled={quickGenMutation.isPending}
                     >
                       {quickGenMutation.isPending ? (
-                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin text-amber-400" />RetryingÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦</>
+                        <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin text-amber-400" />RetryingÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦</>
                       ) : (
                         <><RefreshCw className="h-3.5 w-3.5 mr-1.5" />Retry Generation</>
                       )}
@@ -721,7 +721,7 @@ export default function ProjectDetail() {
       })()}
 
       {(project.status === "generating" || quickGenMutation.isPending) && (
-        <Card className="bg-amber-400/5 border-primary/20 glass-card shadow-lg shadow-amber-500/5">
+        <Card className="bg-amber-400/5 border-primary/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardContent className="p-4">
             <div className="flex items-center justify-between gap-3 mb-2">
               <div className="flex items-center gap-3">
@@ -755,7 +755,7 @@ export default function ProjectDetail() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-card/50 grid grid-cols-3 sm:flex sm:flex-wrap h-auto gap-1.5 p-1.5 w-full sm:justify-start [&>*]:bg-background/40 [&>*]:border [&>*]:border-border/40 [&>*]:data-[state=active]:bg-amber-500/15 [&>*]:data-[state=active]:border-amber-400/40 [&>*]:data-[state=active]:text-amber-400">
-          {/* Pipeline order: Overview ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Story ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Characters ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Scenes ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Soundtrack ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Trailer ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Export ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Tools */}
+          {/* Pipeline order: Overview ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Story ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Characters ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Scenes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Soundtrack ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Trailer ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Export ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Tools */}
           <TabsTrigger value="journey" className="text-[11px] sm:text-xs whitespace-nowrap px-2 sm:px-3 py-2 rounded-md min-h-9 flex items-center justify-center gap-1 data-[state=active]:text-amber-400">
             <Clapperboard className="h-3 w-3 hidden sm:inline" />Journey
           </TabsTrigger>
@@ -784,7 +784,7 @@ export default function ProjectDetail() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Journey Tab ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the unified filmmaker pipeline */}
+        {/* Journey Tab ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the unified filmmaker pipeline */}
         <TabsContent value="journey" className="space-y-4">
           <ProjectJourneyNav
             projectId={projectId}
@@ -806,7 +806,7 @@ export default function ProjectDetail() {
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
+            <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardContent className="p-4">
                 <div className="relative aspect-video rounded-md overflow-hidden bg-muted group cursor-pointer"
                   onClick={() => {
@@ -824,7 +824,7 @@ export default function ProjectDetail() {
                       <Film className="h-10 w-10 text-muted-foreground/30" />
                     </div>
                   )}
-                  {/* Play button overlay ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ show when full film or scene videos exist */}
+                  {/* Play button overlay ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ show when full film or scene videos exist */}
                   {(fullFilmItem || scenePlaylist.length > 0) && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
                       <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
@@ -854,7 +854,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-card/50 lg:col-span-2 glass-card shadow-lg shadow-amber-500/5">
+            <Card className="bg-card/50 lg:col-span-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 flex flex-row items-center justify-between">
                 <CardTitle className="text-sm font-medium gradient-text-gold">Project Details</CardTitle>
                 {!editingDescription ? (
@@ -916,25 +916,25 @@ export default function ProjectDetail() {
             </Card>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setActiveTab("scenes")}>
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setActiveTab("scenes")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{scenes?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Scenes</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setActiveTab("characters")}>
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setActiveTab("characters")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{characters?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Characters</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setActiveTab("soundtrack")}>
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setActiveTab("soundtrack")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{soundtracks?.length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Tracks</p>
               </CardContent>
             </Card>
-            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setActiveTab("export")}>
+            <Card className="bg-card/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setActiveTab("export")}>
               <CardContent className="p-4 text-center">
                 <p className="text-2xl font-semibold">{jobs?.filter(j => j.status === "completed").length || 0}</p>
                 <p className="text-xs text-muted-foreground mt-1">Generations</p>
@@ -959,7 +959,7 @@ export default function ProjectDetail() {
             </div>
           </div>
           {!characters?.length ? (
-            <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
+            <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardContent className="p-10 flex flex-col items-center text-center">
                 <Users className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground mb-1">No characters added yet</p>
@@ -979,7 +979,7 @@ export default function ProjectDetail() {
               {characters.map((char) => {
                 const attrs = (char.attributes || {}) as any;
                 return (
-                  <Card key={char.id} className="bg-card/50 group relative glass-card shadow-lg shadow-amber-500/5">
+                  <Card key={char.id} className="bg-card/50 group relative glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <CardContent className="p-3">
                       {char.photoUrl ? (
                         <div className="aspect-square rounded-md overflow-hidden mb-2 bg-muted">
@@ -994,7 +994,7 @@ export default function ProjectDetail() {
                       <div className="flex items-center gap-1 mt-0.5">
                         {attrs.aiGenerated && <Badge variant="secondary" className="text-[10px] px-1 py-0">AI</Badge>}
                         <p className="text-xs text-muted-foreground truncate">
-                          {[attrs.role, attrs.age || attrs.ageRange, attrs.gender].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
+                          {[attrs.role, attrs.age || attrs.ageRange, attrs.gender].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
                         </p>
                       </div>
                       <button
@@ -1074,15 +1074,15 @@ export default function ProjectDetail() {
 
                     {scenes && scenes.length > 0 && (
                       <span className="absolute top-2 left-2 text-[10px] text-white/80 bg-black/50 rounded px-1.5 py-0.5">
-                        {scenes.length} scenes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ~{Math.round(scenes.length * 1.5)} min est.
+                        {scenes.length} scenes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ~{Math.round(scenes.length * 1.5)} min est.
                       </span>
                     )}                        <p className="text-sm font-medium truncate">{scene.title || "Untitled Scene"}</p>
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
+                        {[scene.timeOfDay, scene.locationType, scene.mood].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
                       </p>
                       {isFailed && (
-                        <p className="text-[11px] text-red-400 mt-0.5">Generation failed ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ click Retry to regenerate this scene</p>
+                        <p className="text-[11px] text-red-400 mt-0.5">Generation failed ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ click Retry to regenerate this scene</p>
                       )}
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
@@ -1145,7 +1145,7 @@ export default function ProjectDetail() {
               })}
             </div>
           ) : (
-            <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
+            <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardContent className="p-10 flex flex-col items-center text-center">
                 <Clapperboard className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground mb-3">
@@ -1169,7 +1169,7 @@ export default function ProjectDetail() {
             </Button>
           </div>
           {!soundtracks?.length ? (
-            <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
+            <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardContent className="p-10 flex flex-col items-center text-center">
                 <Music className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground mb-3">No soundtracks added yet</p>
@@ -1181,7 +1181,7 @@ export default function ProjectDetail() {
           ) : (
             <div className="space-y-2">
               {soundtracks.map((track) => (
-                <Card key={track.id} className="bg-card/50 group glass-card shadow-lg shadow-amber-500/5">
+                <Card key={track.id} className="bg-card/50 group glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <CardContent className="p-4 flex items-center gap-4">
                     <div className="h-12 w-12 rounded-md bg-amber-400/10 flex items-center justify-center shrink-0">
                       <Music className="h-5 w-5 text-amber-400" />
@@ -1189,7 +1189,7 @@ export default function ProjectDetail() {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">{track.title}</p>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {[track.artist, track.genre, track.mood].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
+                        {[track.artist, track.genre, track.mood].filter(Boolean).join(" ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ")}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
@@ -1245,7 +1245,7 @@ export default function ProjectDetail() {
             </div>
           </div>
           {!scenes?.length && (
-            <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5">
+            <Card className="bg-card/50 border-dashed glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardContent className="p-10 flex flex-col items-center text-center">
                 <Play className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground">Create scenes first before generating a trailer</p>
@@ -1253,7 +1253,7 @@ export default function ProjectDetail() {
             </Card>
           )}
           {trailerData && (
-            <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
+            <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium gradient-text-gold">{trailerData.trailerTitle || "Movie Trailer"}</CardTitle>
                 {trailerData.tagline && <p className="text-xs text-muted-foreground italic">{trailerData.tagline}</p>}
@@ -1287,7 +1287,7 @@ export default function ProjectDetail() {
 
         {/* Export Tab */}
         <TabsContent value="export" className="space-y-4">
-          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2 gradient-text-gold">
                 <Download className="h-4 w-4" />
@@ -1409,7 +1409,7 @@ export default function ProjectDetail() {
                   <div>
                     <p className="text-sm font-medium">Auslan Sign Language Interpreter</p>
                     <p className="text-xs text-muted-foreground">
-                      AI-generated signing interpreter in a circle overlay ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ optional, requires a D-ID API key in your BYOK settings
+                      AI-generated signing interpreter in a circle overlay ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ optional, requires a D-ID API key in your BYOK settings
                     </p>
                   </div>
                   <Switch
@@ -1420,7 +1420,7 @@ export default function ProjectDetail() {
                   />
                 </div>
 
-                {/* Auslan position ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ only shown when Auslan is enabled */}
+                {/* Auslan position ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ only shown when Auslan is enabled */}
                 {(project as any)?.auslanEnabled && (
                   <div className="flex items-center gap-4 pl-1">
                     <Label className="text-xs text-muted-foreground shrink-0">Interpreter position</Label>
@@ -1470,7 +1470,7 @@ export default function ProjectDetail() {
           </Card>
 
           {/* Export History */}
-          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium gradient-text-gold">Export History</CardTitle>
             </CardHeader>
@@ -1500,7 +1500,7 @@ export default function ProjectDetail() {
         {/* Tools Tab Content */}
         <TabsContent value="tools" className="space-y-6">
 
-          {/* v6.63 ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Production Spine */}
+          {/* v6.63 ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Production Spine */}
           <div>
             <div className="flex items-center gap-2 mb-3">
               <div className="h-px flex-1 bg-border/40" />
@@ -1508,18 +1508,18 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/schedule`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/schedule`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
                     <Calendar className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Schedule & Strip Board</p>
-                    <p className="text-xs text-muted-foreground">Shoot days ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· scene assignment ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ordering</p>
+                    <p className="text-xs text-muted-foreground">Shoot days ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· scene assignment ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ordering</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/day-out-of-days`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/day-out-of-days`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <ListOrdered className="h-5 w-5 text-amber-400" />
@@ -1530,7 +1530,7 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/call-sheets`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/call-sheets`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <FileText className="h-5 w-5 text-amber-400" />
@@ -1541,117 +1541,117 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/contacts`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/contacts`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Users className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Crew & Contacts</p>
-                    <p className="text-xs text-muted-foreground">Department directory ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· call overrides</p>
+                    <p className="text-xs text-muted-foreground">Department directory ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· call overrides</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/budget-tracker`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/budget-tracker`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <DollarSign className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Budget</p>
-                    <p className="text-xs text-muted-foreground">Estimate vs actual ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· category tracking</p>
+                    <p className="text-xs text-muted-foreground">Estimate vs actual ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· category tracking</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/activity`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/activity`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Activity className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Activity Timeline</p>
-                    <p className="text-xs text-muted-foreground">Approvals ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· changes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· audit trail</p>
+                    <p className="text-xs text-muted-foreground">Approvals ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· changes ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· audit trail</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/collaborators`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/collaborators`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Users className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Collaborators</p>
-                    <p className="text-xs text-muted-foreground">Invite ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· roles ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· permissions</p>
+                    <p className="text-xs text-muted-foreground">Invite ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· roles ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· permissions</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/approvals`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/approvals`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <CheckCircle2 className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Approval Chain</p>
-                    <p className="text-xs text-muted-foreground">Cryptographic audit ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· sha256</p>
+                    <p className="text-xs text-muted-foreground">Cryptographic audit ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· sha256</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/script-import`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/script-import`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <FileUp className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Script Import</p>
-                    <p className="text-xs text-muted-foreground">Fountain ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Final Draft FDX</p>
+                    <p className="text-xs text-muted-foreground">Fountain ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Final Draft FDX</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/script-export`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/script-export`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <FileDown className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Script Export</p>
-                    <p className="text-xs text-muted-foreground">Fountain ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· FDX downloads</p>
+                    <p className="text-xs text-muted-foreground">Fountain ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· FDX downloads</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/calendar-feed`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/calendar-feed`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <CalendarDays className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Calendar Feed</p>
-                    <p className="text-xs text-muted-foreground">iCal ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Google ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Apple subscribe</p>
+                    <p className="text-xs text-muted-foreground">iCal ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Google ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Apple subscribe</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/budget-fringes`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/budget-fringes`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Calculator className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Budget Fringes</p>
-                    <p className="text-xs text-muted-foreground">Union ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· payroll ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· taxes</p>
+                    <p className="text-xs text-muted-foreground">Union ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· payroll ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· taxes</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/asset-versions`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/asset-versions`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <Layers className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Asset Versions</p>
-                    <p className="text-xs text-muted-foreground">Stack ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· diff ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· revert</p>
+                    <p className="text-xs text-muted-foreground">Stack ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· diff ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· revert</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/sides`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/sides`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <FileText className="h-5 w-5 text-amber-400" />
@@ -1662,18 +1662,18 @@ export default function ProjectDetail() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/daily-report`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/daily-report`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <ListOrdered className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Daily Production Report</p>
-                    <p className="text-xs text-muted-foreground">Wrap-of-day DPR ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· signatures</p>
+                    <p className="text-xs text-muted-foreground">Wrap-of-day DPR ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· signatures</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/auto-recap`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/auto-recap`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                     <RefreshCw className="h-5 w-5 text-amber-400" />
@@ -1695,7 +1695,7 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/mood-board`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/mood-board`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Palette className="h-5 w-5 text-amber-400" />
@@ -1706,18 +1706,18 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all border-amber-500/30 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/pre-production`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all border-amber-500/30 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/pre-production`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-9 w-9 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                   </div>
                   <div>
                     <p className="text-sm font-medium">Director's Pre-Production Panel</p>
-                    <p className="text-xs text-muted-foreground">Vision ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Locations ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Vehicles ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Atmosphere</p>
+                    <p className="text-xs text-muted-foreground">Vision ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Locations ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Vehicles ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Atmosphere</p>
                   </div>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
+              <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/locations`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <MapPin className="h-5 w-5 text-amber-400" />
@@ -1728,7 +1728,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/shot-list`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/shot-list`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <ListOrdered className="h-5 w-5 text-amber-400" />
@@ -1739,7 +1739,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/ai-casting`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/ai-casting`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Users2 className="h-5 w-5 text-amber-400" />
@@ -1762,7 +1762,7 @@ export default function ProjectDetail() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Card 
-              className="cursor-pointer hover:ring-1 hover:ring-violet-500/40 transition-all border-violet-500/20 col-span-full glass-card shadow-lg shadow-amber-500/5"
+              className="cursor-pointer hover:ring-1 hover:ring-violet-500/40 transition-all border-violet-500/20 col-span-full glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20"
               onClick={() => setFullFilmDialogOpen(true)}
             >
               <CardContent className="p-4 flex items-center gap-3">
@@ -1777,7 +1777,7 @@ export default function ProjectDetail() {
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Generate all {scenes?.length || 0} scenes automatically ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ dialogue, cinematics, soundtrack, full assembly
+                    Generate all {scenes?.length || 0} scenes automatically ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ dialogue, cinematics, soundtrack, full assembly
                   </p>
                 </div>
                 <div className="text-xs text-muted-foreground text-right shrink-0">
@@ -1786,7 +1786,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/continuity`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <ShieldCheck className="h-5 w-5 text-amber-400" />
@@ -1797,7 +1797,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/dialogue`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <MessageSquare className="h-5 w-5 text-amber-400" />
@@ -1808,7 +1808,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/multi-shot`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/multi-shot`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Layers2 className="h-5 w-5 text-amber-400" />
@@ -1819,7 +1819,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/live-action-plate`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/live-action-plate`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <VideoIcon className="h-5 w-5 text-amber-400" />
@@ -1841,18 +1841,18 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:ring-2 hover:ring-primary/60 transition-all border-primary/40 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/director-cut`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-primary/60 transition-all border-primary/40 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/director-cut`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0">
                   <Scissors className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-amber-400">Director's Cut</p>
-                  <p className="text-xs text-muted-foreground">Timeline editor ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ trim, reorder &amp; retake scenes</p>
+                  <p className="text-xs text-muted-foreground">Timeline editor ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ trim, reorder &amp; retake scenes</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/feature-timeline`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-amber-400/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/feature-timeline`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0">
                   <Layers className="h-5 w-5 text-amber-500" />
@@ -1863,7 +1863,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/color-grading`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Palette className="h-5 w-5 text-amber-400" />
@@ -1874,7 +1874,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/credits`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/credits`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Award className="h-5 w-5 text-amber-400" />
@@ -1885,40 +1885,40 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/subtitles`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/subtitles`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Languages className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">Subtitles & Translation</p>
-                  <p className="text-xs text-muted-foreground">130+ languages ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· AI generation & translation</p>
+                  <p className="text-xs text-muted-foreground">130+ languages ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· AI generation & translation</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/sound-effects`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/sound-effects`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Volume2 className="h-5 w-5 text-amber-400" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">Film Post-Production</p>
-                  <p className="text-xs text-muted-foreground">ADR ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Foley ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Score ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Mix ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· SFX library</p>
+                  <p className="text-xs text-muted-foreground">ADR ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Foley ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Score ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Mix ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· SFX library</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/visual-effects`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/visual-effects`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
                   <Sparkles className="h-5 w-5 text-purple-400" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">Visual Effects</p>
-                  <p className="text-xs text-muted-foreground">VFX library ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ explosions, weather, magic & more</p>
+                  <p className="text-xs text-muted-foreground">VFX library ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ explosions, weather, magic & more</p>
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/nle-export`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/nle-export`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Download className="h-5 w-5 text-amber-400" />
@@ -1929,7 +1929,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/vfx-suite`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-amber-500/40 transition-all border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/vfx-suite`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Sparkle className="h-5 w-5 text-amber-400" />
@@ -1951,7 +1951,7 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:ring-2 hover:ring-blue-500/60 transition-all border-blue-500/40 bg-blue-500/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/trailer-studio`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-blue-500/60 transition-all border-blue-500/40 bg-blue-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/trailer-studio`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
                   <Film className="h-5 w-5 text-blue-400" />
@@ -1962,7 +1962,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-green-500/60 transition-all border-green-500/40 bg-green-500/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/tv-commercial`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-green-500/60 transition-all border-green-500/40 bg-green-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/tv-commercial`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
                   <Tv className="h-5 w-5 text-green-400" />
@@ -1973,7 +1973,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/poster-maker`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/poster-maker`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Megaphone className="h-5 w-5 text-amber-400" />
@@ -1984,7 +1984,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-pink-500/60 transition-all border-pink-500/40 bg-pink-500/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/social-cuts`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-pink-500/60 transition-all border-pink-500/40 bg-pink-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/social-cuts`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-pink-500/20 flex items-center justify-center shrink-0">
                   <Film className="h-5 w-5 text-pink-400" />
@@ -1995,7 +1995,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/brand-outreach`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/brand-outreach`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <Building2 className="h-5 w-5 text-amber-400" />
@@ -2016,14 +2016,14 @@ export default function ProjectDetail() {
               <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-2">Pro Studio</span>
               <div className="h-px flex-1 bg-border/40" />
             </div>
-            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
+            <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0">
                   <Globe className="h-5 w-5 text-amber-400" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-amber-400">Pro Studio Controls</p>
-                  <p className="text-xs text-muted-foreground">Style bible ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Shot versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Voice/likeness rights ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· C2PA provenance ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render economics</p>
+                  <p className="text-xs text-muted-foreground">Style bible ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Shot versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Voice/likeness rights ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· C2PA provenance ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render economics</p>
                 </div>
                 <Badge className="bg-amber-400/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
               </CardContent>
@@ -2038,22 +2038,22 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
+              <Card className="cursor-pointer hover:ring-2 hover:ring-amber-500/60 transition-all border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-rose-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/pro-studio`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-amber-400/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-amber-400" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-amber-400">Pro Studio</p>
-                    <p className="text-xs text-muted-foreground">Style bible ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Shot versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Voice rights ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· C2PA ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render economics</p>
+                    <p className="text-xs text-muted-foreground">Style bible ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Shot versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Voice rights ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· C2PA ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render economics</p>
                   </div>
                   <Badge className="bg-amber-400/20 text-amber-400 border-amber-500/30 text-[10px]">PRO</Badge>
                 </CardContent>
               </Card>
-              <Card className="cursor-pointer hover:ring-2 hover:ring-violet-500/60 transition-all border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/studio-ops`)}>
+              <Card className="cursor-pointer hover:ring-2 hover:ring-violet-500/60 transition-all border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/studio-ops`)}>
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-violet-500/20 flex items-center justify-center shrink-0"><Globe className="h-5 w-5 text-violet-400" /></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-violet-400">Studio Operations</p>
-                    <p className="text-xs text-muted-foreground">Frame reviews ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Color ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render queue ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Deliverables ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Clearances ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Distribution ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Audit ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Proxies ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Cuts</p>
+                    <p className="text-xs text-muted-foreground">Frame reviews ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Color ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Versions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Render queue ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Deliverables ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Clearances ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Distribution ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Audit ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Proxies ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Cuts</p>
                   </div>
                   <Badge className="bg-violet-500/20 text-violet-400 border-violet-500/30 text-[10px]">OPS</Badge>
                 </CardContent>
@@ -2069,7 +2069,7 @@ export default function ProjectDetail() {
               <div className="h-px flex-1 bg-border/40" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/budget`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/budget`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <DollarSign className="h-5 w-5 text-amber-400" />
@@ -2080,7 +2080,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => setLocation(`/projects/${project.id}/collaboration`)}>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
                   <UserPlus className="h-5 w-5 text-amber-400" />
@@ -2091,7 +2091,7 @@ export default function ProjectDetail() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5" onClick={() => {
+            <Card className="cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20" onClick={() => {
               setDuplicateConfirmOpen(true);
             }}>
               <CardContent className="p-4 flex items-center gap-3">
@@ -2681,10 +2681,10 @@ export default function ProjectDetail() {
             
             <div className="space-y-2">
               {[
-                ['generateDialogue', 'Generate Voice Acting & Dialogue', 'ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ'],
-                ['generateSoundtrack', 'Generate AI Film Score', 'ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂµ'],
-                ['useCharacterConsistency', 'Character Consistency (LoRA)', 'ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤'],
-                ['useSceneContinuity', 'Scene-to-Scene Continuity Chain', 'ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ'],
+                ['generateDialogue', 'Generate Voice Acting & Dialogue', 'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ'],
+                ['generateSoundtrack', 'Generate AI Film Score', 'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂµ'],
+                ['useCharacterConsistency', 'Character Consistency (LoRA)', 'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤'],
+                ['useSceneContinuity', 'Scene-to-Scene Continuity Chain', 'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ'],
               ].map(([key, label, emoji]) => (
                 <label key={key} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -2718,8 +2718,8 @@ export default function ProjectDetail() {
           </div>
         </DialogContent>
       </Dialog>
-      {/* Professional Media Player ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scene preview */}
-      {/* Professional Media Player ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scene preview */}
+      {/* Professional Media Player ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scene preview */}
+      {/* Professional Media Player ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ scene preview */}
       {activeVideoMovie && !showFullFilm && (
         <ErrorBoundary>
           <MediaPlayer
@@ -2750,7 +2750,7 @@ export default function ProjectDetail() {
         </ErrorBoundary>
       )}
 
-      {/* Professional Media Player ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ full stitched film */}
+      {/* Professional Media Player ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ full stitched film */}
       {showFullFilm && fullFilmItem && (
         <ErrorBoundary>
           <MediaPlayer
@@ -2834,7 +2834,7 @@ export default function ProjectDetail() {
     </div>
   );
 }
-// ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Story Editor Component ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
+// ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Story Editor Component ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
 function StoryEditor({ project, updateMutation }: { project: any; updateMutation: any }) {
   const [mainPlot, setMainPlot] = useState(project.mainPlot || "");
   const [sidePlots, setSidePlots] = useState(project.sidePlots || "");
@@ -2885,7 +2885,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       </div>
 
       {/* Structure & Tone */}
-      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
+      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium gradient-text-gold">Structure & Tone</CardTitle>
         </CardHeader>
@@ -2943,7 +2943,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       </Card>
 
       {/* Main Plot & Subplots */}
-      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
+      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium gradient-text-gold">Plot</CardTitle>
         </CardHeader>
@@ -2951,7 +2951,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Main Plot</Label>
             <Textarea
-              placeholder="Describe the main storyline in detail ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the central conflict, protagonist's journey, and how events unfold..."
+              placeholder="Describe the main storyline in detail ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the central conflict, protagonist's journey, and how events unfold..."
               value={mainPlot}
               onChange={(e) => mark(setMainPlot)(e.target.value)}
               className="bg-background/50 min-h-[120px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -2959,7 +2959,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Side Plots / Subplots</Label>
             <Textarea
-              placeholder="Secondary storylines ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ romance, rivalry, mystery, parallel journeys..."
+              placeholder="Secondary storylines ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ romance, rivalry, mystery, parallel journeys..."
               value={sidePlots}
               onChange={(e) => mark(setSidePlots)(e.target.value)}
               className="bg-background/50 min-h-[100px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -2984,7 +2984,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
       </Card>
 
       {/* World & Key Moments */}
-      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5">
+      <Card className="bg-card/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium gradient-text-gold">World & Key Moments</CardTitle>
         </CardHeader>
@@ -3000,7 +3000,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Opening Scene</Label>
             <Textarea
-              placeholder="How does the film begin? The first thing the audience sees ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ set the tone, introduce the world..."
+              placeholder="How does the film begin? The first thing the audience sees ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ set the tone, introduce the world..."
               value={openingScene}
               onChange={(e) => mark(setOpeningScene)(e.target.value)}
               className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -3008,7 +3008,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Climax</Label>
             <Textarea
-              placeholder="The peak of tension ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the central conflict comes to a head. What happens? Who is involved?"
+              placeholder="The peak of tension ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ the central conflict comes to a head. What happens? Who is involved?"
               value={climax}
               onChange={(e) => mark(setClimax)(e.target.value)}
               className="bg-background/50 min-h-[80px] text-xs resize-y" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
@@ -3037,7 +3037,7 @@ function StoryEditor({ project, updateMutation }: { project: any; updateMutation
 }
 
 /**
- * Reviews inbox ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ surfaces public reviewer comments left on shared
+ * Reviews inbox ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ surfaces public reviewer comments left on shared
  * screener links. Producers / directors see them grouped by reviewer
  * with optional scene + timecode references.
  */

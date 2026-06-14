@@ -22,24 +22,24 @@ import { useState, useMemo } from "react";
   }
 
   const JURISDICTIONS: Jurisdiction[] = [
-    { name: "Georgia", country: "USA", rebate: 30, maxRebate: "Uncapped", minSpend: "$500K", type: "Tax Credit", notes: "30% transferable tax credit. Additional 10% if Georgia peach logo used. No annual cap Ã¢ÂÂ most popular US state for production.", url: "https://www.georgia.org/film", category: "US State" },
-    { name: "New Mexico", country: "USA", rebate: 35, maxRebate: "Uncapped", minSpend: "$0", type: "Rebate", notes: "25Ã¢ÂÂ35% direct rebate. Higher % for qualifying spend in-state. No min spend for shorts.", url: "https://nmfilm.com", category: "US State" },
+    { name: "Georgia", country: "USA", rebate: 30, maxRebate: "Uncapped", minSpend: "$500K", type: "Tax Credit", notes: "30% transferable tax credit. Additional 10% if Georgia peach logo used. No annual cap ÃÂ¢ÃÂÃÂ most popular US state for production.", url: "https://www.georgia.org/film", category: "US State" },
+    { name: "New Mexico", country: "USA", rebate: 35, maxRebate: "Uncapped", minSpend: "$0", type: "Rebate", notes: "25ÃÂ¢ÃÂÃÂ35% direct rebate. Higher % for qualifying spend in-state. No min spend for shorts.", url: "https://nmfilm.com", category: "US State" },
     { name: "New York", country: "USA", rebate: 30, maxRebate: "$420M/yr", minSpend: "$1M", type: "Tax Credit", notes: "30% refundable tax credit. Additional 10% for upstate NYC production. Strong crew base.", url: "https://esd.ny.gov/nyfilm", category: "US State" },
-    { name: "California", country: "USA", rebate: 20, maxRebate: "$330M/yr", minSpend: "$1M", type: "Tax Credit", notes: "20Ã¢ÂÂ25% non-refundable. Competitive application process. Strong for TV series.", url: "https://film.ca.gov/tax-credit/", category: "US State" },
-    { name: "Louisiana", country: "USA", rebate: 40, maxRebate: "$150M/yr", minSpend: "$300K", type: "Tax Credit", notes: "25Ã¢ÂÂ40% transferable credit. Additional 10% for Louisiana-resident payroll.", url: "https://louisianaentertainment.gov", category: "US State" },
+    { name: "California", country: "USA", rebate: 20, maxRebate: "$330M/yr", minSpend: "$1M", type: "Tax Credit", notes: "20ÃÂ¢ÃÂÃÂ25% non-refundable. Competitive application process. Strong for TV series.", url: "https://film.ca.gov/tax-credit/", category: "US State" },
+    { name: "Louisiana", country: "USA", rebate: 40, maxRebate: "$150M/yr", minSpend: "$300K", type: "Tax Credit", notes: "25ÃÂ¢ÃÂÃÂ40% transferable credit. Additional 10% for Louisiana-resident payroll.", url: "https://louisianaentertainment.gov", category: "US State" },
     { name: "Massachusetts", country: "USA", rebate: 25, maxRebate: "Uncapped", minSpend: "$50K", type: "Tax Credit", notes: "25% transferable credit on all in-state spend. No annual cap.", url: "https://www.mafilm.org", category: "US State" },
     { name: "North Carolina", country: "USA", rebate: 25, maxRebate: "$31M/yr", minSpend: "$250K", type: "Tax Credit", notes: "25% refundable credit. Strong crew base in Charlotte and Wilmington.", url: "https://www.ncfilm.com", category: "US State" },
-    { name: "Texas", country: "USA", rebate: 22, maxRebate: "$95M/yr", minSpend: "$250K", type: "Grant", notes: "5Ã¢ÂÂ22.5% grant. Tiered by in-state spend percentage. Austin and Dallas strong production bases.", url: "https://gov.texas.gov/film", category: "US State" },
+    { name: "Texas", country: "USA", rebate: 22, maxRebate: "$95M/yr", minSpend: "$250K", type: "Grant", notes: "5ÃÂ¢ÃÂÃÂ22.5% grant. Tiered by in-state spend percentage. Austin and Dallas strong production bases.", url: "https://gov.texas.gov/film", category: "US State" },
     { name: "Illinois", country: "USA", rebate: 30, maxRebate: "Uncapped", minSpend: "$100K", type: "Tax Credit", notes: "30% transferable credit. Chicago is a top 3 US production hub.", url: "https://www.illinois.gov/film", category: "US State" },
-    { name: "United Kingdom", country: "UK", rebate: 34, maxRebate: "Uncapped", minSpend: "ÃÂ£1M", type: "Tax Credit", notes: "34% AVEC credit for high-end TV and film. 28% for children's TV. 40% for animation. Strong studio infrastructure.", url: "https://www.bfi.org.uk/certification-funding", category: "International" },
+    { name: "United Kingdom", country: "UK", rebate: 34, maxRebate: "Uncapped", minSpend: "ÃÂÃÂ£1M", type: "Tax Credit", notes: "34% AVEC credit for high-end TV and film. 28% for children's TV. 40% for animation. Strong studio infrastructure.", url: "https://www.bfi.org.uk/certification-funding", category: "International" },
     { name: "Canada (Federal)", country: "Canada", rebate: 25, maxRebate: "Uncapped", minSpend: "CAD$1M", type: "Tax Credit", notes: "25% CPTC on qualified labour. Provincial credits stack on top (Ontario + Federal can reach 40%+).", url: "https://www.canada.ca/en/canadian-heritage/services/funding/cptc.html", category: "International" },
     { name: "Ontario", country: "Canada", rebate: 21.5, maxRebate: "Uncapped", minSpend: "CAD$1M", type: "Tax Credit", notes: "21.5% OFTTC on Ontario labour. Stacks with Federal CPTC for ~46% combined on qualifying labour.", url: "https://www.ontario.ca/page/ontario-film-and-television-tax-credit", category: "International" },
-    { name: "Australia", country: "Australia", rebate: 20, maxRebate: "Uncapped", minSpend: "AUD$1M", type: "Rebate", notes: "16.5Ã¢ÂÂ20% Location Offset for qualifying foreign productions. Additional PDV offset for post-production.", url: "https://www.screenaustralia.gov.au/funding-and-support/co-productions/international-co-productions", category: "International" },
-    { name: "Ireland", country: "Ireland", rebate: 32, maxRebate: "Ã¢ÂÂ¬70M/project", minSpend: "Ã¢ÂÂ¬125K", type: "Tax Credit", notes: "32% refundable Section 481 tax credit. No annual cap. Strong crew, lush locations.", url: "https://screenireland.ie/funding/the-section-481-film-relief/", category: "International" },
-    { name: "France", country: "France", rebate: 30, maxRebate: "Ã¢ÂÂ¬30M/project", minSpend: "Ã¢ÂÂ¬1M", type: "Tax Credit", notes: "30% TRIP credit. Additional 20% on visual effects. Co-production treaties with 50+ countries.", url: "https://www.cnc.fr/professionnels/aides-et-financements/credit-dimpot-cinema", category: "International" },
-    { name: "Germany", country: "Germany", rebate: 25, maxRebate: "Ã¢ÂÂ¬25M/project", minSpend: "Ã¢ÂÂ¬1M", type: "Tax Credit", notes: "25% DFFF incentive on German spend. Berlin, Bavaria, and Hamburg have additional state incentives.", url: "https://www.ffa.de/german-film-fund-dfff.html", category: "International" },
+    { name: "Australia", country: "Australia", rebate: 20, maxRebate: "Uncapped", minSpend: "AUD$1M", type: "Rebate", notes: "16.5ÃÂ¢ÃÂÃÂ20% Location Offset for qualifying foreign productions. Additional PDV offset for post-production.", url: "https://www.screenaustralia.gov.au/funding-and-support/co-productions/international-co-productions", category: "International" },
+    { name: "Ireland", country: "Ireland", rebate: 32, maxRebate: "ÃÂ¢ÃÂÃÂ¬70M/project", minSpend: "ÃÂ¢ÃÂÃÂ¬125K", type: "Tax Credit", notes: "32% refundable Section 481 tax credit. No annual cap. Strong crew, lush locations.", url: "https://screenireland.ie/funding/the-section-481-film-relief/", category: "International" },
+    { name: "France", country: "France", rebate: 30, maxRebate: "ÃÂ¢ÃÂÃÂ¬30M/project", minSpend: "ÃÂ¢ÃÂÃÂ¬1M", type: "Tax Credit", notes: "30% TRIP credit. Additional 20% on visual effects. Co-production treaties with 50+ countries.", url: "https://www.cnc.fr/professionnels/aides-et-financements/credit-dimpot-cinema", category: "International" },
+    { name: "Germany", country: "Germany", rebate: 25, maxRebate: "ÃÂ¢ÃÂÃÂ¬25M/project", minSpend: "ÃÂ¢ÃÂÃÂ¬1M", type: "Tax Credit", notes: "25% DFFF incentive on German spend. Berlin, Bavaria, and Hamburg have additional state incentives.", url: "https://www.ffa.de/german-film-fund-dfff.html", category: "International" },
     { name: "New Zealand", country: "New Zealand", rebate: 20, maxRebate: "Uncapped", minSpend: "NZD$15M", type: "Rebate", notes: "20% Large Budget Screen Production Grant. LOTR / Avatar track record. Stunning natural locations.", url: "https://www.nzfilm.co.nz/resources/practical-guides/new-zealand-screen-industry-tax-credits-and-grants", category: "International" },
-    { name: "Spain", country: "Spain", rebate: 30, maxRebate: "Ã¢ÂÂ¬10M/project", minSpend: "Ã¢ÂÂ¬1M", type: "Tax Credit", notes: "30% deduction on first Ã¢ÂÂ¬1M spend, 25% on the rest. Canary Islands offers 50%. Strong co-pro network.", url: "https://www.spainfilmcommission.org/en/production-in-spain/incentives", category: "International" },
+    { name: "Spain", country: "Spain", rebate: 30, maxRebate: "ÃÂ¢ÃÂÃÂ¬10M/project", minSpend: "ÃÂ¢ÃÂÃÂ¬1M", type: "Tax Credit", notes: "30% deduction on first ÃÂ¢ÃÂÃÂ¬1M spend, 25% on the rest. Canary Islands offers 50%. Strong co-pro network.", url: "https://www.spainfilmcommission.org/en/production-in-spain/incentives", category: "International" },
     { name: "Hungary", country: "Hungary", rebate: 30, maxRebate: "Uncapped", minSpend: "HUF 20M", type: "Tax Credit", notes: "30% transferable tax credit. One of Europe's most competitive incentives. Budapest frequently doubles for period productions.", url: "https://mnf.hu/en", category: "International" },
     { name: "Czech Republic", country: "Czech Republic", rebate: 20, maxRebate: "Uncapped", minSpend: "CZK 4M", type: "Rebate", notes: "20% cash rebate on all qualifying spend. Prague is a top European production hub.", url: "https://www.filmcommission.cz/incentives/", category: "International" },
   ];
@@ -73,8 +73,8 @@ import { useState, useMemo } from "react";
         {/* Budget input + top picks */}
         <div className="grid gap-4 sm:grid-cols-2">
           <Card>
-            <CardHeader><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Your Production Budget</CardTitle></CardHeader>
-            <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5">
+            <CardHeader><CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Your Production Budget</CardTitle></CardHeader>
+            <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="space-y-1.5">
                 <Label>Total Budget (USD equivalent)</Label>
                 <Input placeholder="e.g. 500000" value={budget} onChange={e => setBudget(e.target.value)} type="number" min="0" />
@@ -92,15 +92,15 @@ import { useState, useMemo } from "react";
               )}
             </CardContent>
           </Card>
-          <Card className="bg-amber-400/5 border-primary/20 glass-card shadow-lg shadow-amber-500/5">
-            <CardContent className="p-4 space-y-2 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="bg-amber-400/5 border-primary/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardContent className="p-4 space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <p className="text-sm font-semibold flex items-center gap-2"><TrendingUp className="h-4 w-4 text-amber-400" />Top 3 Incentives Right Now</p>
               {top3.map((j, i) => (
                 <div key={j.name} className="flex items-center gap-3 p-2 rounded-lg bg-background/60">
                   <span className="text-lg font-bold text-amber-400 w-5">#{i + 1}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{j.name}, {j.country}</p>
-                    <p className="text-xs text-muted-foreground">{j.type} ÃÂ· Min: {j.minSpend}</p>
+                    <p className="text-xs text-muted-foreground">{j.type} ÃÂÃÂ· Min: {j.minSpend}</p>
                   </div>
                   <Badge className="shrink-0 text-sm font-bold">{j.rebate}%</Badge>
                 </div>
@@ -111,7 +111,7 @@ import { useState, useMemo } from "react";
 
         {/* Filters */}
         <div className="flex gap-3 flex-wrap">
-          <Input placeholder="Search jurisdictionÃ¢ÂÂ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
+          <Input placeholder="Search jurisdictionÃÂ¢ÃÂÃÂ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
           <Select value={filter} onValueChange={setFilter}><SelectTrigger className="w-44"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All regions</SelectItem><SelectItem value="US State">US States</SelectItem><SelectItem value="International">International</SelectItem></SelectContent></Select>
           <Button variant="outline" size="icon" onClick={() => setSortBy(s => s === "rebate" ? "name" : "rebate")} title="Toggle sort"><ArrowUpDown className="h-4 w-4" /></Button>
         </div>
@@ -150,9 +150,9 @@ import { useState, useMemo } from "react";
         </div>
 
         {selected && (
-          <Card className="border-primary/30 glass-card shadow-lg shadow-amber-500/5">
-            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><span>{selected.name}, {selected.country} Ã¢ÂÂ {selected.rebate}% {selected.type}</span><a href={selected.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="gap-1 text-xs"><ExternalLink className="h-3 w-3" />Official Site</Button></a></CardTitle></CardHeader>
-            <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="border-primary/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><span>{selected.name}, {selected.country} ÃÂ¢ÃÂÃÂ {selected.rebate}% {selected.type}</span><a href={selected.url} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="gap-1 text-xs"><ExternalLink className="h-3 w-3" />Official Site</Button></a></CardTitle></CardHeader>
+            <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <p className="text-sm text-muted-foreground">{selected.notes}</p>
               <div className="flex gap-4 text-xs">
                 <span><span className="text-muted-foreground">Max Rebate:</span> <span className="font-medium">{selected.maxRebate}</span></span>

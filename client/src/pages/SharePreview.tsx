@@ -46,7 +46,7 @@ function ReviewerCommentBox({
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Leave a note on "{sceneTitle}"
         </p>
-        {sent && <span className="text-[11px] text-green-500 font-medium">ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Sent to filmmaker</span>}
+        {sent && <span className="text-[11px] text-green-500 font-medium">ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Sent to filmmaker</span>}
       </div>
       <div className="flex gap-2 mb-2">
         <input
@@ -65,7 +65,7 @@ function ReviewerCommentBox({
         />
       </div>
       <textarea
-        placeholder="Your note for the filmmaker ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ pacing, performance, sound, storyÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦"
+        placeholder="Your note for the filmmaker ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ pacing, performance, sound, storyÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦"
         value={comment}
         onChange={(e) => setComment(e.target.value.slice(0, 2000))}
         rows={2}
@@ -77,7 +77,7 @@ function ReviewerCommentBox({
           disabled={!name.trim() || !comment.trim() || add.isPending}
           className="h-7 px-3 rounded-md bg-amber-500 text-white text-xs font-medium disabled:opacity-50 hover:opacity-90"
         >
-          {add.isPending ? "SendingÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" : "Send note"}
+          {add.isPending ? "SendingÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦" : "Send note"}
         </button>
       </div>
       {add.error && <p className="mt-1 text-[11px] text-red-500">{add.error.message}</p>}
@@ -88,7 +88,7 @@ function ReviewerCommentBox({
 function ScreenerWatermark({ name }: { name: string }) {
   if (!name) return null;
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const label = `${name} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ${stamp} UTC ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· CONFIDENTIAL`;
+  const label = `${name} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· ${stamp} UTC ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· CONFIDENTIAL`;
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
       <div className="absolute inset-0 flex items-center justify-center">
@@ -114,7 +114,7 @@ function ScreenerWatermark({ name }: { name: string }) {
  *
  * Producers, friends, or collaborators receive a /share/:projectId/:token
  * URL from the project owner and can review the film without signing up.
- * No comments / approvals yet ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ that's stage 2 of the review system.
+ * No comments / approvals yet ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ that's stage 2 of the review system.
  */
 export default function SharePreview() {
   const params = useParams<{ projectId: string; token: string }>();
@@ -149,9 +149,9 @@ export default function SharePreview() {
   if (error || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{background:"linear-gradient(135deg,#07070e 0%,#0c0b18 60%,#07070a 100%)"}}>
-        <Card className="max-w-md w-full glass-card shadow-lg shadow-amber-500/5">
+        <Card className="max-w-md w-full glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
+            <CardTitle className="flex items-center gap-2 text-destructive gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <AlertCircle className="h-5 w-5" />
               Link expired or invalid
             </CardTitle>
@@ -190,10 +190,10 @@ export default function SharePreview() {
           <h1 className="text-3xl sm:text-4xl font-bold mb-3 gradient-text-gold">{project.title}</h1>
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-4">
             {project.directorName && <span>Directed by {project.directorName}</span>}
-            {project.genre && (<><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.genre}</span></>)}
-            {project.mode && (<><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span className="capitalize">{project.mode}</span></>)}
-            {project.duration && (<><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.duration}s</span></>)}
-            {project.resolution && (<><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.resolution}</span></>)}
+            {project.genre && (<><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.genre}</span></>)}
+            {project.mode && (<><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span className="capitalize">{project.mode}</span></>)}
+            {project.duration && (<><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.duration}s</span></>)}
+            {project.resolution && (<><span>ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·</span><span>{project.resolution}</span></>)}
           </div>
           {project.logline && (
             <p className="text-base text-foreground/90 italic mb-2">"{project.logline}"</p>
@@ -215,7 +215,7 @@ export default function SharePreview() {
         )}
 
         {active && (
-          <Card className="mb-6 overflow-hidden glass-card shadow-lg shadow-amber-500/5">
+          <Card className="mb-6 overflow-hidden glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
             <ReviewerCommentBox
               projectId={projectId}
               token={token}
@@ -241,10 +241,10 @@ export default function SharePreview() {
               )}
               <ScreenerWatermark name={reviewerName} />
             </div>
-            <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5">
+            <CardContent className="p-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-semibold gradient-text-gold">Scene {active.sceneNumber} ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ {active.title}</h3>
+                  <h3 className="font-semibold gradient-text-gold">Scene {active.sceneNumber} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ {active.title}</h3>
                   {active.description && (
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{active.description}</p>
                   )}
@@ -269,7 +269,7 @@ export default function SharePreview() {
 
         {scenes.length === 0 ? (
           <Card>
-            <CardContent className="p-8 text-center text-sm text-muted-foreground glass-card shadow-lg shadow-amber-500/5">
+            <CardContent className="p-8 text-center text-sm text-muted-foreground glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               No scenes generated yet. Check back soon.
             </CardContent>
           </Card>
@@ -307,7 +307,7 @@ export default function SharePreview() {
                     )}
                   </div>
                 </div>
-                <CardContent className="p-3 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="p-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="text-xs text-muted-foreground mb-1">Scene {s.sceneNumber}</div>
                   <h3 className="font-medium text-sm truncate gradient-text-gold">{s.title}</h3>
                   {s.description && (

@@ -92,7 +92,7 @@ function VFXSuiteInner() {
         sceneId,
       });
       setUploadedFrameUrl(result.url);
-      toast.success("Source frame uploaded â it will be used as a visual reference for VFX processing");
+      toast.success("Source frame uploaded Ã¢ÂÂ it will be used as a visual reference for VFX processing");
     } catch (err: any) {
       toast.error(err.message || "Upload failed");
     } finally {
@@ -134,7 +134,7 @@ function VFXSuiteInner() {
       // Trigger video regeneration with VFX parameters embedded in the prompt
       await generateVideoMutation.mutateAsync({ sceneId });
       setProcessComplete(true);
-      toast.success(`${selectedOps.length} VFX operation${selectedOps.length > 1 ? "s" : ""} saved â video regeneration queued`);
+      toast.success(`${selectedOps.length} VFX operation${selectedOps.length > 1 ? "s" : ""} saved Ã¢ÂÂ video regeneration queued`);
     } catch (err: any) {
       toast.error(err?.message || "VFX processing failed. Please try again.");
     } finally {
@@ -221,11 +221,11 @@ function VFXSuiteInner() {
 
         {/* Settings Panel */}
         <div className="space-y-4">
-          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-            <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
-              <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Processing Settings</CardTitle>
+          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Processing Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
+            <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div>
                 <div className="flex justify-between mb-1">
                   <Label className="text-xs text-muted-foreground">Effect Intensity</Label>
@@ -285,9 +285,9 @@ function VFXSuiteInner() {
           </Card>
 
           {selectedOps.length > 0 && (
-            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
-                <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Selected Operations</CardTitle>
+            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Selected Operations</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-1">

@@ -41,7 +41,7 @@ import { useState } from "react";
         <div>
           <Label>Description / AI Reference Prompt</Label>
           <Textarea value={form.description} onChange={e => set("description", e.target.value)}
-            placeholder="Detailed physical description and prompt fragment injected so this prop looks identical every timeâ¦" rows={4} />
+            placeholder="Detailed physical description and prompt fragment injected so this prop looks identical every timeÃ¢ÂÂ¦" rows={4} />
         </div>
         <div>
           <Label>Era / Period</Label>
@@ -115,16 +115,16 @@ import { useState } from "react";
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((prop: any) => (
               <Card key={prop.id}>
-                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
+                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <Package className="w-4 h-4 text-muted-foreground" />
-                      <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5">{prop.name}</CardTitle>
+                      <CardTitle className="text-base gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{prop.name}</CardTitle>
                     </div>
                     <Badge variant="outline">{prop.category}</Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
+                <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   {prop.description && (
                     <p className="text-sm text-muted-foreground line-clamp-3">{prop.description}</p>
                   )}
