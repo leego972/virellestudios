@@ -104,7 +104,7 @@ export default function PitchLab() {
           </Button>
         </Link>
         <div>
-          <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 1 Â· Idea & Pitch</div>
+          <div className="text-xs uppercase tracking-widest text-amber-500/80">Stage 1 · Idea & Pitch</div>
           <h1 className="font-serif text-3xl flex items-center gap-2 text-gold-shimmer">
             <Lightbulb className="h-6 w-6 text-amber-400" /> Pitch Lab
           </h1>
@@ -115,7 +115,7 @@ export default function PitchLab() {
         <CardHeader className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <CardTitle className="gradient-text-gold">Project Brief</CardTitle>
           </CardHeader>
-          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">One brief drives every artifact below â logline, synopsis, treatment, and pitch deck.</CardDescription>
+          <CardDescription className="glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">One brief drives every artifact below — logline, synopsis, treatment, and pitch deck.</CardDescription>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label>Format</Label>
@@ -147,7 +147,7 @@ export default function PitchLab() {
               rows={3}
               value={brief.premise}
               onChange={(e) => setBrief({ ...brief, premise: e.target.value })}
-              placeholder="A grieving roboticist builds a copy of her late daughter â and slowly loses the ability to tell which one is real."
+              placeholder="A grieving roboticist builds a copy of her late daughter — and slowly loses the ability to tell which one is real."
             />
           </div>
         </CardContent>
