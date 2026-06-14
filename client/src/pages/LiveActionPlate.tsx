@@ -104,7 +104,7 @@ function LiveActionPlateInner() {
       });
       await generateVideoMutation.mutateAsync({ sceneId });
       setProcessComplete(true);
-      toast.success("Live action composite saved Ã¢ÂÂ video regeneration queued");
+      toast.success("Live action composite saved — video regeneration queued");
     } catch (err: any) {
       toast.error(err?.message || "Composite generation failed. Please try again.");
     } finally {
