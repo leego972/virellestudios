@@ -31,48 +31,48 @@ const EMOTION_GROUPS: Record<string, string[]> = {
 
 const EMOTION_DELIVERY_NOTES: Record<string, string> = {
   neutral: "Natural, conversational delivery",
-  happy: "Warm and upbeat â smile in the voice",
-  cheerful: "Bright and energetic â light, bouncy delivery",
-  excited: "Fast and breathless â energy spilling over",
-  loving: "Slow and tender â intimate, close delivery",
-  hopeful: "Measured and earnest â vulnerability beneath the hope",
-  confident: "Deliberate and commanding â no hesitation",
+  happy: "Warm and upbeat Ã¢ÂÂ smile in the voice",
+  cheerful: "Bright and energetic Ã¢ÂÂ light, bouncy delivery",
+  excited: "Fast and breathless Ã¢ÂÂ energy spilling over",
+  loving: "Slow and tender Ã¢ÂÂ intimate, close delivery",
+  hopeful: "Measured and earnest Ã¢ÂÂ vulnerability beneath the hope",
+  confident: "Deliberate and commanding Ã¢ÂÂ no hesitation",
   proud: "Elevated and self-assured",
-  sad: "Heavy and slow â words cost something to say",
-  crying: "Broken and halting â voice cracks on key words",
-  grief: "Hollow and devastated â barely audible at times",
-  angry: "Clipped and tense â controlled rage is more frightening than shouting",
-  aggressive: "Loud and driving â physical aggression in the voice",
-  shouting: "Full-volume shout â raw and uncontrolled",
-  bitter: "Cold and deliberate â every word chosen to sting",
-  contemptuous: "Dismissive and slow â the other person isn't worth full effort",
-  disgusted: "Clipped and recoiling â physical revulsion in the voice",
-  threatening: "Quiet and slow â the quieter the voice, the more dangerous",
-  fearful: "Uneven and catching â fear makes the voice unreliable",
-  panicked: "Very fast and breathless â words trip over each other",
-  nervous: "Halting with small pauses â the mind working faster than the mouth",
-  surprised: "Starts fast then slows â the brain catching up to the mouth",
-  shocked: "Slow and halting â the mind has gone blank",
-  cold: "Flat and even â emotion has been deliberately removed",
-  resigned: "Slow and flat â they've stopped fighting",
-  grumpy: "Clipped and muttered â low-level irritation throughout",
-  tired: "Slow and low â every word is an effort",
-  bored: "Monotone and trailing â they'd rather be anywhere else",
-  confused: "Halting with rising intonation â thinking out loud",
-  sarcastic: "Deliberate and exaggerated â the performance is the point",
-  mocking: "Exaggerated and sing-song â cruelty dressed as humour",
-  pleading: "Raw and urgent â dignity abandoned",
-  desperate: "Fast and cracking â nothing held back",
-  whisper: "Barely above breath â intimate and close",
-  seductive: "Slow and low â every word chosen for effect",
+  sad: "Heavy and slow Ã¢ÂÂ words cost something to say",
+  crying: "Broken and halting Ã¢ÂÂ voice cracks on key words",
+  grief: "Hollow and devastated Ã¢ÂÂ barely audible at times",
+  angry: "Clipped and tense Ã¢ÂÂ controlled rage is more frightening than shouting",
+  aggressive: "Loud and driving Ã¢ÂÂ physical aggression in the voice",
+  shouting: "Full-volume shout Ã¢ÂÂ raw and uncontrolled",
+  bitter: "Cold and deliberate Ã¢ÂÂ every word chosen to sting",
+  contemptuous: "Dismissive and slow Ã¢ÂÂ the other person isn't worth full effort",
+  disgusted: "Clipped and recoiling Ã¢ÂÂ physical revulsion in the voice",
+  threatening: "Quiet and slow Ã¢ÂÂ the quieter the voice, the more dangerous",
+  fearful: "Uneven and catching Ã¢ÂÂ fear makes the voice unreliable",
+  panicked: "Very fast and breathless Ã¢ÂÂ words trip over each other",
+  nervous: "Halting with small pauses Ã¢ÂÂ the mind working faster than the mouth",
+  surprised: "Starts fast then slows Ã¢ÂÂ the brain catching up to the mouth",
+  shocked: "Slow and halting Ã¢ÂÂ the mind has gone blank",
+  cold: "Flat and even Ã¢ÂÂ emotion has been deliberately removed",
+  resigned: "Slow and flat Ã¢ÂÂ they've stopped fighting",
+  grumpy: "Clipped and muttered Ã¢ÂÂ low-level irritation throughout",
+  tired: "Slow and low Ã¢ÂÂ every word is an effort",
+  bored: "Monotone and trailing Ã¢ÂÂ they'd rather be anywhere else",
+  confused: "Halting with rising intonation Ã¢ÂÂ thinking out loud",
+  sarcastic: "Deliberate and exaggerated Ã¢ÂÂ the performance is the point",
+  mocking: "Exaggerated and sing-song Ã¢ÂÂ cruelty dressed as humour",
+  pleading: "Raw and urgent Ã¢ÂÂ dignity abandoned",
+  desperate: "Fast and cracking Ã¢ÂÂ nothing held back",
+  whisper: "Barely above breath Ã¢ÂÂ intimate and close",
+  seductive: "Slow and low Ã¢ÂÂ every word chosen for effect",
 };
 
 const PACING_OPTIONS = [
   { value: "normal", label: "Normal", hint: "Natural conversational pace" },
   { value: "slow", label: "Slow", hint: "Deliberate, heavy, or grief-stricken" },
   { value: "fast", label: "Fast", hint: "Excited, panicked, or urgent" },
-  { value: "staccato", label: "Staccato", hint: "Each word clipped and separate â anger, emphasis" },
-  { value: "trailing", label: "Trailing off", hint: "Voice fades at the end â resignation, exhaustion" },
+  { value: "staccato", label: "Staccato", hint: "Each word clipped and separate Ã¢ÂÂ anger, emphasis" },
+  { value: "trailing", label: "Trailing off", hint: "Voice fades at the end Ã¢ÂÂ resignation, exhaustion" },
 ];
 
 const EMOTIONS = Object.values(EMOTION_GROUPS).flat();
@@ -235,7 +235,7 @@ export default function DialogueEditor() {
                   <button
                     onClick={() => setSelectedSceneId(undefined)}
                     className={`w-full text-left px-4 py-3 text-sm border-b border-border/30 hover:bg-accent/50 transition-colors ${
-                      !selectedSceneId ? "bg-accent text-accent-foreground" : ""
+                      !selectedSceneId ? "bg-accent text-accent-amber-500" : ""
                     }`}
                   >
                     All Scenes
@@ -245,18 +245,18 @@ export default function DialogueEditor() {
                       key={scene.id}
                       onClick={() => setSelectedSceneId(scene.id)}
                       className={`w-full text-left px-4 py-3 text-sm border-b border-border/30 hover:bg-accent/50 transition-colors ${
-                        selectedSceneId === scene.id ? "bg-accent text-accent-foreground" : ""
+                        selectedSceneId === scene.id ? "bg-accent text-accent-amber-500" : ""
                       }`}
                     >
                       <div className="font-medium">{scene.title || `Scene ${scene.orderIndex + 1}`}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{scene.timeOfDay} Â· {scene.mood || "neutral"}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{scene.timeOfDay} ÃÂ· {scene.mood || "neutral"}</div>
                     </button>
                   ))}
                   {sceneList.length === 0 && (
                     <div className="px-4 py-8 text-center">
                       <p className="text-sm font-medium text-foreground/80">No scenes to write for yet</p>
                       <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                        Create your scenes in the Scene Editor first â they'll appear here ready for dialogue.
+                        Create your scenes in the Scene Editor first Ã¢ÂÂ they'll appear here ready for dialogue.
                       </p>
                     </div>
                   )}
@@ -392,7 +392,7 @@ export default function DialogueEditor() {
                             setEmotion(result.emotion);
                             setPacing(result.pacing);
                             setDirection(result.direction);
-                            toast.success(`AI detected: ${result.emotion} â ${result.reasoning}`);
+                            toast.success(`AI detected: ${result.emotion} Ã¢ÂÂ ${result.reasoning}`);
                           } catch { toast.error("Could not infer emotion"); }
                           finally { setInferringEmotion(false); }
                         }}
@@ -445,7 +445,7 @@ export default function DialogueEditor() {
             <div>
               <Label>Acting Direction</Label>
               <Input value={direction} onChange={(e) => setDirection(e.target.value)} placeholder="e.g. jaw tight, eyes not leaving the door" autoCapitalize="sentences" autoCorrect="on" enterKeyHint="done" />
-              <p className="text-xs text-muted-foreground mt-1">Physical, specific, actable â this guides the voice performance</p>
+              <p className="text-xs text-muted-foreground mt-1">Physical, specific, actable Ã¢ÂÂ this guides the voice performance</p>
             </div>
             <Button
               className="w-full"

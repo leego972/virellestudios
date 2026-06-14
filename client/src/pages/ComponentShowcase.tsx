@@ -288,7 +288,7 @@ export default function ComponentsShowcase() {
                       <p className="text-sm text-muted-foreground mb-1">
                         Accent Foreground
                       </p>
-                      <p className="text-accent-foreground text-lg">
+                      <p className="text-accent-amber-500 text-lg">
                         Accent text for emphasis
                       </p>
                     </div>
@@ -346,7 +346,7 @@ export default function ComponentsShowcase() {
                       Muted background with foreground text
                     </p>
                   </div>
-                  <div className="bg-accent text-accent-foreground rounded-lg p-4">
+                  <div className="bg-accent text-accent-amber-500 rounded-lg p-4">
                     <p className="font-medium mb-1">Accent</p>
                     <p className="text-sm opacity-90">
                       Accent background with foreground text
@@ -1158,7 +1158,7 @@ export default function ComponentsShowcase() {
                       <div className="space-y-2">
                         <h4 className="text-sm font-semibold">@nextjs</h4>
                         <p className="text-sm">
-                          The React Framework â created and maintained by
+                          The React Framework Ã¢ÂÂ created and maintained by
                           @vercel.
                         </p>
                       </div>

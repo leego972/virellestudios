@@ -19,7 +19,7 @@ import {
   ChevronDown, ChevronUp, Zap, CalendarDays, Sun, Eye, Star, Save,
 } from "lucide-react";
 
-// âââ Types ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Types Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 type Constants = {
   eras: string[]; countries: string[]; cameras: string[]; lenses: string[];
   aspectRatios: string[]; frameRates: string[]; shootingFormats: string[];
@@ -70,7 +70,7 @@ const GROUPED_LOCATION_TYPES = [
   { group: "Custom", items: ["custom"] },
 ];
 
-// âââ Reusable micro-components ââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Reusable micro-components Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   return (
@@ -78,7 +78,7 @@ function CopyButton({ text }: { text: string }) {
       size="sm" variant="ghost" className="h-7 px-2 text-xs"
       onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
     >
-      {copied ? "â Copied" : "Copy"}
+      {copied ? "Ã¢ÂÂ Copied" : "Copy"}
     </Button>
   );
 }
@@ -118,7 +118,7 @@ function SelectField({ value, onValueChange, placeholder, options }: {
   );
 }
 
-// âââ TAB 1: Director's Vision âââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ TAB 1: Director's Vision Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function VisionTab({ projectId, constants }: { projectId: number; constants: Constants | null }) {
   const utils = trpc.useUtils();
   const { data: vision, isLoading } = trpc.productionAssets.vision.get.useQuery(
@@ -224,7 +224,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
               <Textarea
                 value={setting} onChange={e => setSetting(e.target.value)} rows={2}
                 className="text-sm resize-none"
-                placeholder='e.g. "1940s occupied Paris â mostly exterior streets, Haussmann apartment interiors, wartime offices"'
+                placeholder='e.g. "1940s occupied Paris Ã¢ÂÂ mostly exterior streets, Haussmann apartment interiors, wartime offices"'
               />
             </FieldGroup>
           </div>
@@ -358,7 +358,7 @@ function VisionTab({ projectId, constants }: { projectId: number; constants: Con
   );
 }
 
-// âââ TAB 2: Location Scout âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ TAB 2: Location Scout Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function LocationScoutTab({ projectId, constants }: { projectId: number; constants: Constants | null }) {
   const utils = trpc.useUtils();
   const { data: locationList = [], isLoading } = trpc.productionAssets.locationScout.list.useQuery(
@@ -496,7 +496,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
               </div>
 
               <FieldGroup label="Seasonal Notes">
-                <Input value={seasonNotes} onChange={e => setSeasonNotes(e.target.value)} placeholder="Best in autumn â leaf colour; avoid summer tourist crowds" className="text-sm" />
+                <Input value={seasonNotes} onChange={e => setSeasonNotes(e.target.value)} placeholder="Best in autumn Ã¢ÂÂ leaf colour; avoid summer tourist crowds" className="text-sm" />
               </FieldGroup>
               <FieldGroup label="Shooting Constraints">
                 <Input value={constraints} onChange={e => setConstraints(e.target.value)} placeholder="No filming after 10pm; noise limit applies" className="text-sm" />
@@ -647,7 +647,7 @@ function LocationScoutTab({ projectId, constants }: { projectId: number; constan
   );
 }
 
-// âââ TAB 3: Vehicle Registry ââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ TAB 3: Vehicle Registry Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function VehicleRegistryTab({ projectId, constants }: { projectId: number; constants: Constants | null }) {
   const utils = trpc.useUtils();
   const { data: vehicles = [], isLoading } = trpc.productionAssets.vehicleRegistry.list.useQuery(
@@ -829,7 +829,7 @@ function VehicleRegistryTab({ projectId, constants }: { projectId: number; const
   );
 }
 
-// âââ TAB 4: Atmosphere Generator ââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ TAB 4: Atmosphere Generator Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function AtmosphereTab({ projectId, constants }: { projectId: number; constants: Constants | null }) {
   const { data: vision } = trpc.productionAssets.vision.get.useQuery({ projectId }, { enabled: !!projectId });
   const [timeOfDay, setTimeOfDay] = useState("");
@@ -987,7 +987,7 @@ function AtmosphereTab({ projectId, constants }: { projectId: number; constants:
 }
 
 
-// âââ Wardrobe Upload Tab ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Wardrobe Upload Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const WARDROBE_CATEGORIES = [
   { value: "all",         label: "All" },
   { value: "top",         label: "Tops" },
@@ -1141,7 +1141,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
                       <Camera className="h-7 w-7 text-violet-400" />
                     </div>
                     <p className="text-sm font-medium">Drop your garment photo here</p>
-                    <p className="text-xs text-muted-foreground mt-1">or click to browse â JPEG, PNG, WEBP up to 8 MB</p>
+                    <p className="text-xs text-muted-foreground mt-1">or click to browse Ã¢ÂÂ JPEG, PNG, WEBP up to 8 MB</p>
                   </div>
                 )}
               </div>
@@ -1241,7 +1241,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
           </div>
           <p className="font-medium text-sm">Your wardrobe is empty</p>
           <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
-            Upload photos of real costumes, garments, or reference clothing. The AI costume designer will analyse each piece â detecting fabric, era, social class, and generating cinematic prompts for consistent character rendering.
+            Upload photos of real costumes, garments, or reference clothing. The AI costume designer will analyse each piece Ã¢ÂÂ detecting fabric, era, social class, and generating cinematic prompts for consistent character rendering.
           </p>
           <Button size="sm" className="mt-4 bg-violet-600 hover:bg-violet-700 gap-2"
             onClick={() => setShowUpload(true)}>
@@ -1349,7 +1349,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
                     ) : (
                       <div className="text-center py-3">
                         <Sparkles className="h-5 w-5 text-violet-300 mx-auto mb-1.5" />
-                        <p className="text-[11px] text-muted-foreground">Click AI Analyse to get garment analysis â era, silhouette, cinematic lighting notes, and an AI generation prompt.</p>
+                        <p className="text-[11px] text-muted-foreground">Click AI Analyse to get garment analysis Ã¢ÂÂ era, silhouette, cinematic lighting notes, and an AI generation prompt.</p>
                       </div>
                     )}
                     {(item.color || item.fabric || item.brand || item.condition) && (
@@ -1372,7 +1372,7 @@ function WardrobeTab({ projectId }: { projectId: number; constants?: any }) {
 }
 
 
-// âââ Shot List Tab ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Shot List Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const SHOT_TYPES = ["ECU","CU","MCU","MS","MLS","LS","WS","EWS","OTS","POV","TWO-SHOT","INSERT","AERIAL","DUTCH"];
 const CAMERA_MOVEMENTS = ["STATIC","DOLLY IN","DOLLY OUT","PAN L","PAN R","TILT U","TILT D","TRACK","CRANE UP","CRANE DOWN","HANDHELD","STEADICAM","ZOOM IN","ZOOM OUT","DUTCH TILT"];
 
@@ -1425,7 +1425,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
             <Film className="h-4 w-4 text-violet-500" />Shot List Generator
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Paste your scene script â the AI reads your Director&apos;s Vision and generates a full shot list
+            Paste your scene script Ã¢ÂÂ the AI reads your Director&apos;s Vision and generates a full shot list
           </p>
         </div>
         <Badge variant="outline" className="text-xs">
@@ -1481,7 +1481,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
                 <Sparkles className="h-4 w-4 text-violet-500" />
-                {generatedShots.length} shots â {totalDuration(generatedShots)} screen time
+                {generatedShots.length} shots Ã¢ÂÂ {totalDuration(generatedShots)} screen time
               </CardTitle>
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" onClick={() => setGeneratedShots([])}>Discard</Button>
@@ -1523,7 +1523,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
                         <p className="font-medium">{shot.frameDescription}</p>
                         <p className="text-muted-foreground">{shot.action}</p>
                         {shot.dialogue && <p className="italic mt-0.5 text-violet-600">&ldquo;{shot.dialogue}&rdquo;</p>}
-                        {shot.directorNote && <p className="text-amber-700 mt-0.5">â¦ {shot.directorNote}</p>}
+                        {shot.directorNote && <p className="text-amber-700 mt-0.5">Ã¢ÂÂ¦ {shot.directorNote}</p>}
                       </td>
                       <td className="p-2 text-muted-foreground text-[10px]">{shot.lightingNote}</td>
                       <td className="p-2 text-muted-foreground">{shot.estimatedDuration}s</td>
@@ -1551,7 +1551,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
                     <Film className="h-4 w-4 text-violet-400 shrink-0" />
                     <div>
                       <p className="text-sm font-medium">{sName}</p>
-                      <p className="text-xs text-muted-foreground">{sShots.length} shots Â· {totalDuration(sShots)} screen time</p>
+                      <p className="text-xs text-muted-foreground">{sShots.length} shots ÃÂ· {totalDuration(sShots)} screen time</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1605,7 +1605,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
           <Film className="h-10 w-10 text-violet-300 mx-auto mb-3" />
           <p className="font-medium text-sm">No shot lists yet</p>
           <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
-            Paste a scene from your script above. The AI reads your Director&apos;s Vision â era, camera format, lens profile, movement style â and generates a complete shot list with timing, framing, and lighting notes.
+            Paste a scene from your script above. The AI reads your Director&apos;s Vision Ã¢ÂÂ era, camera format, lens profile, movement style Ã¢ÂÂ and generates a complete shot list with timing, framing, and lighting notes.
           </p>
         </div>
       )}
@@ -1614,7 +1614,7 @@ function ShotListTab({ projectId }: { projectId: number }) {
 }
 
 
-// âââ Shooting Schedule Tab ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Shooting Schedule Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function ScheduleTab({ projectId }: { projectId: number }) {
   const utils = trpc.useUtils();
   const { data: days = [], isLoading } = trpc.productionAssets.shootingSchedule.list.useQuery({ projectId }, { enabled: !!projectId });
@@ -1668,7 +1668,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
         <div className="flex items-center justify-between bg-violet-50 border border-violet-200 rounded-lg p-3">
           <p className="text-sm text-violet-700 font-medium">
             <Sparkles className="h-4 w-4 inline mr-1" />
-            {generatedDays.length}-day schedule ready â review then save
+            {generatedDays.length}-day schedule ready Ã¢ÂÂ review then save
           </p>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" onClick={() => setGeneratedDays([])}>Discard</Button>
@@ -1716,7 +1716,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
                     <div>
                       <p className="font-semibold text-sm">{day.locationName}</p>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
-                        <span className="flex items-center gap-1"><Sun className="h-3 w-3" />{day.callTime} â {day.wrapTime}</span>
+                        <span className="flex items-center gap-1"><Sun className="h-3 w-3" />{day.callTime} Ã¢ÂÂ {day.wrapTime}</span>
                         <span>{day.estimatedPages} pages</span>
                       </div>
                     </div>
@@ -1771,7 +1771,7 @@ function ScheduleTab({ projectId }: { projectId: number }) {
 }
 
 
-// âââ Continuity Checker Tab âââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Continuity Checker Tab Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function ContinuityTab({ projectId }: { projectId: number }) {
   const [result, setResult] = useState<any>(null);
   const checkMutation = trpc.productionAssets.continuityCheck.run.useMutation({
@@ -1790,7 +1790,7 @@ function ContinuityTab({ projectId }: { projectId: number }) {
     info:     "border-l-blue-500 bg-blue-50/50",
   };
   const severityIcons: Record<string, string> = {
-    critical: "ð´", warning: "ð¡", info: "ðµ",
+    critical: "Ã°ÂÂÂ´", warning: "Ã°ÂÂÂ¡", info: "Ã°ÂÂÂµ",
   };
   const catLabels: Record<string, string> = {
     era:"Era / Period", geography:"Geography", class:"Social Class",
@@ -1838,13 +1838,13 @@ function ContinuityTab({ projectId }: { projectId: number }) {
           {/* Overall risk */}
           <div className={["rounded-xl border p-4 flex items-start gap-3", riskColors[result.overallRisk] || riskColors.low].join(" ")}>
             <div className="text-2xl mt-0.5">
-              {result.overallRisk === "high" ? "ð´" : result.overallRisk === "medium" ? "ð¡" : "ð¢"}
+              {result.overallRisk === "high" ? "Ã°ÂÂÂ´" : result.overallRisk === "medium" ? "Ã°ÂÂÂ¡" : "Ã°ÂÂÂ¢"}
             </div>
             <div>
               <p className="font-semibold capitalize">{result.overallRisk} Continuity Risk</p>
               <p className="text-sm mt-1">{result.summary}</p>
               <p className="text-xs mt-1 opacity-70">
-                {result.issues.length} issue{result.issues.length !== 1 ? "s" : ""} found Â· {result.strengths.length} strength{result.strengths.length !== 1 ? "s" : ""} identified
+                {result.issues.length} issue{result.issues.length !== 1 ? "s" : ""} found ÃÂ· {result.strengths.length} strength{result.strengths.length !== 1 ? "s" : ""} identified
               </p>
             </div>
           </div>
@@ -1856,7 +1856,7 @@ function ContinuityTab({ projectId }: { projectId: number }) {
               {result.issues.map((issue: any, i: number) => (
                 <div key={i} className={["rounded-lg border-l-4 p-3 space-y-1", severityColors[issue.severity] || severityColors.info].join(" ")}>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm">{severityIcons[issue.severity] || "ðµ"}</span>
+                    <span className="text-sm">{severityIcons[issue.severity] || "Ã°ÂÂÂµ"}</span>
                     <p className="text-sm font-semibold">{issue.title}</p>
                     <Badge variant="outline" className="text-[10px] h-4 ml-auto">
                       {catLabels[issue.category] || issue.category}
@@ -1878,7 +1878,7 @@ function ContinuityTab({ projectId }: { projectId: number }) {
               <div className="rounded-xl bg-green-50 border border-green-200 p-3 space-y-1.5">
                 {result.strengths.map((s: string, i: number) => (
                   <div key={i} className="flex items-start gap-2 text-xs text-green-800">
-                    <span className="text-green-600 shrink-0">â</span>
+                    <span className="text-green-600 shrink-0">Ã¢ÂÂ</span>
                     <span>{s}</span>
                   </div>
                 ))}
@@ -1897,7 +1897,7 @@ function ContinuityTab({ projectId }: { projectId: number }) {
 }
 
 
-// âââ Title Card / Text Overlay Tool ââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Title Card / Text Overlay Tool Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const TITLE_PRESETS = [
   { label: "TO BE CONTINUED...",  text: "TO BE CONTINUED...",  style: "cinematic", align: "center", pos: "bottom" },
   { label: "GUEST STAR",          text: "GUEST STAR\n[Name]",  style: "credits",   align: "center", pos: "bottom" },
@@ -2057,7 +2057,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
           <Star className="h-4 w-4 text-violet-500" />Title Card Creator
         </h2>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Add cinematic text overlays â &ldquo;TO BE CONTINUED&rdquo;, &ldquo;GUEST STAR&rdquo;, chapter titles, time cards, and more
+          Add cinematic text overlays Ã¢ÂÂ &ldquo;TO BE CONTINUED&rdquo;, &ldquo;GUEST STAR&rdquo;, chapter titles, time cards, and more
         </p>
       </div>
 
@@ -2102,7 +2102,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
                   <div>
                     <Camera className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
                     <p className="text-xs text-muted-foreground">Click to upload background image</p>
-                    <p className="text-[10px] text-muted-foreground">(Optional â black background if none)</p>
+                    <p className="text-[10px] text-muted-foreground">(Optional Ã¢ÂÂ black background if none)</p>
                   </div>
                 )}
               </div>
@@ -2177,7 +2177,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
               {overlayDim && (
                 <div className="pl-5 space-y-1">
                   <label className="text-xs text-muted-foreground">Strength: {dimStrength}%</label>
-                  <input type="range" min={10} max={90} value={dimStrength} onChange={e => setDimStrength(+e.target.value)} className="w-full h-1.5 accent-violet-600" />
+                  <input type="range" min={10} max={90} value={dimStrength} onChange={e => setDimStrength(+e.target.value)} className="w-full h-1.5 accent-amber-500600" />
                 </div>
               )}
               <div className="flex items-center gap-2">
@@ -2186,11 +2186,11 @@ function TitleCardTab({ projectId }: { projectId: number }) {
               </div>
               <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Margin from edges: {paddingX}px</label>
-                <input type="range" min={20} max={200} value={paddingX} onChange={e => setPaddingX(+e.target.value)} className="w-full h-1.5 accent-violet-600" />
+                <input type="range" min={20} max={200} value={paddingX} onChange={e => setPaddingX(+e.target.value)} className="w-full h-1.5 accent-amber-500600" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Line spacing: {lineSpacing}x</label>
-                <input type="range" min={1} max={2} step={0.05} value={lineSpacing} onChange={e => setLineSpacing(+e.target.value)} className="w-full h-1.5 accent-violet-600" />
+                <input type="range" min={1} max={2} step={0.05} value={lineSpacing} onChange={e => setLineSpacing(+e.target.value)} className="w-full h-1.5 accent-amber-500600" />
               </div>
             </CardContent>
           </Card>
@@ -2208,11 +2208,11 @@ function TitleCardTab({ projectId }: { projectId: number }) {
           </div>
           <div className="flex gap-2">
             <Button className="flex-1 bg-violet-600 hover:bg-violet-700 gap-2" onClick={downloadImage} disabled={!rendered}>
-              <Zap className="h-4 w-4" />Download Title Card (1920Ã1080 PNG)
+              <Zap className="h-4 w-4" />Download Title Card (1920ÃÂ1080 PNG)
             </Button>
           </div>
           <p className="text-[10px] text-muted-foreground text-center">
-            Rendered at 1920Ã1080 â broadcast quality. The preview is live; changes update automatically.
+            Rendered at 1920ÃÂ1080 Ã¢ÂÂ broadcast quality. The preview is live; changes update automatically.
           </p>
         </div>
       </div>
@@ -2220,7 +2220,7 @@ function TitleCardTab({ projectId }: { projectId: number }) {
   );
 }
 
-// âââ Main Page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ Main Page Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 export default function PreProductionPanel() {
   const { loading: authLoading, isAuthenticated } = useAuth();
   const [, params] = useRoute("/projects/:id/pre-production");

@@ -210,7 +210,7 @@ const LocationRecreation: React.FC = () => {
                       value={locationName || (selectedLocationId ? locationsList?.find(l => l.id === selectedLocationId)?.name : "")}
                       readOnly={!!selectedLocationId}
                       onChange={(e) => setLocationName(e.target.value)}
-                      className="w-full bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      className="w-full bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-amber-400500 outline-none transition-all"
                     />
                   </div>
                   {!selectedLocationId && (
@@ -222,7 +222,7 @@ const LocationRecreation: React.FC = () => {
                           placeholder="https://..."
                           value={videoUrl}
                           onChange={(e) => setVideoUrl(e.target.value)}
-                          className="flex-1 bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                          className="flex-1 bg-black border border-zinc-800 rounded-xl p-4 focus:ring-2 focus:ring-amber-400500 outline-none transition-all"
                         />
                         <button 
                           onClick={handleUpload}
