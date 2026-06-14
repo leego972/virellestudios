@@ -126,7 +126,7 @@ export default function AdminSignatureCast() {
             { label: "Active Licenses", value: entitlements?.length ?? "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", icon: CheckCircle2, color: "text-blue-400" },
             { label: "Conversion Rate", value: analytics?.conversionRate ? `${analytics.conversionRate}%` : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ", icon: TrendingUp, color: "text-purple-400" },
           ].map(({ label, value, icon: Icon, color }) => (
-            <Card key={label} className="border-zinc-800 bg-zinc-900/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card key={label} className="border-amber-500/20 bg-zinc-900/50 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardContent className="p-4 flex items-center gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <Icon className={`w-5 h-5 ${color}`} />
                 <div>
@@ -139,7 +139,7 @@ export default function AdminSignatureCast() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="bg-zinc-900 border border-zinc-800">
+          <TabsList className="bg-zinc-900 border border-amber-500/20">
             <TabsTrigger value="actors" className="text-sm data-[state=active]:text-amber-400">Actor Config</TabsTrigger>
             <TabsTrigger value="pricing" className="text-sm data-[state=active]:text-amber-400">Pricing</TabsTrigger>
             <TabsTrigger value="entitlements" className="text-sm data-[state=active]:text-amber-400">Active Licenses</TabsTrigger>
@@ -148,7 +148,7 @@ export default function AdminSignatureCast() {
 
           {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ACTOR CONFIG TAB ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
           <TabsContent value="actors" className="mt-4">
-            <Card className="border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Actor Registry ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Tier, Commercial Eligibility, Featured, Retired, Restricted</CardTitle>
               </CardHeader>
@@ -185,7 +185,7 @@ export default function AdminSignatureCast() {
                 </div>
                                 <div className="space-y-2">
                   {actors.map((actor) => (
-                    <div key={actor.id} className="flex items-center gap-3 p-3 rounded-lg border border-zinc-800 bg-zinc-900/30">
+                    <div key={actor.id} className="flex items-center gap-3 p-3 rounded-lg border border-amber-500/20 bg-zinc-900/30">
                       {editingId === actor.id ? (
                         // Edit mode
                         <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -250,7 +250,7 @@ export default function AdminSignatureCast() {
                             </div>
                           </div>
                           <div className="col-span-2 md:col-span-4 flex gap-2 justify-end">
-                            <Button size="sm" variant="outline" onClick={cancelEdit} className="h-7 text-xs border-zinc-700 hover:border-amber-500/50 hover:text-amber-400">
+                            <Button size="sm" variant="outline" onClick={cancelEdit} className="h-7 text-xs border-amber-500/20 hover:border-amber-500/50 hover:text-amber-400">
                               <X className="w-3 h-3 mr-1" /> Cancel
                             </Button>
                             <Button size="sm" onClick={() => saveEdit(actor.id)} className="h-7 text-xs bg-amber-500 text-black hover:bg-amber-400">
@@ -302,7 +302,7 @@ export default function AdminSignatureCast() {
 
           {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ PRICING TAB ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
           <TabsContent value="pricing" className="mt-4">
-            <Card className="border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">License Pricing by Tier (AUD)</CardTitle>
               </CardHeader>
@@ -310,7 +310,7 @@ export default function AdminSignatureCast() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-zinc-800">
+                      <tr className="border-b border-amber-500/20">
                         <th className="text-left py-2 text-xs text-zinc-500 font-medium">Tier</th>
                         <th className="text-right py-2 text-xs text-zinc-500 font-medium">Creator</th>
                         <th className="text-right py-2 text-xs text-zinc-500 font-medium">Commercial</th>
@@ -319,7 +319,7 @@ export default function AdminSignatureCast() {
                     </thead>
                     <tbody>
                       {(["standard", "premium", "flagship"] as const).map((tier) => (
-                        <tr key={tier} className="border-b border-zinc-800/50">
+                        <tr key={tier} className="border-b border-amber-500/20/50">
                           <td className="py-3"><TierBadge tier={tier} /></td>
                           <td className="text-right py-3 text-white font-mono">A${TIER_PRICES[tier].creator}</td>
                           <td className="text-right py-3 text-white font-mono">A${TIER_PRICES[tier].commercial}</td>
@@ -329,7 +329,7 @@ export default function AdminSignatureCast() {
                     </tbody>
                   </table>
                 </div>
-                <div className="mt-4 p-3 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                <div className="mt-4 p-3 rounded-lg bg-zinc-800/50 border border-amber-500/20/50">
                   <p className="text-xs text-zinc-400">
                     <strong className="text-white">Commercial = Creator + A$79 add-on.</strong>{" "}
                     Episodic = Creator ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ 4. Prices are configured in{" "}
@@ -351,7 +351,7 @@ export default function AdminSignatureCast() {
 
           {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ACTIVE LICENSES TAB ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
           <TabsContent value="entitlements" className="mt-4">
-            <Card className="border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 flex flex-row items-center justify-between glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">All Active Actor Licenses</CardTitle>
                 <Button
@@ -373,7 +373,7 @@ export default function AdminSignatureCast() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead>
-                        <tr className="border-b border-zinc-800">
+                        <tr className="border-b border-amber-500/20">
                           <th className="text-left py-2 text-zinc-500 font-medium">User ID</th>
                           <th className="text-left py-2 text-zinc-500 font-medium">Actor</th>
                           <th className="text-left py-2 text-zinc-500 font-medium">License</th>
@@ -384,7 +384,7 @@ export default function AdminSignatureCast() {
                       </thead>
                       <tbody>
                         {entitlements.map((e: any, i: number) => (
-                          <tr key={i} className="border-b border-zinc-800/50">
+                          <tr key={i} className="border-b border-amber-500/20/50">
                             <td className="py-2 text-zinc-400">{e.userId}</td>
                             <td className="py-2 text-white font-medium">{e.actorId}</td>
                             <td className="py-2">
@@ -415,7 +415,7 @@ export default function AdminSignatureCast() {
 
           {/* ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ANALYTICS TAB ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ */}
           <TabsContent value="analytics" className="mt-4">
-            <Card className="border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <CardHeader className="pb-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Revenue & Conversion Analytics</CardTitle>
               </CardHeader>
@@ -436,7 +436,7 @@ export default function AdminSignatureCast() {
                         { label: "Total Revenue (AUD)", value: analytics.totalRevenue ? `A$${(analytics.totalRevenue / 100).toFixed(2)}` : "A$0" },
                         { label: "Avg License Value", value: analytics.avgLicenseValue ? `A$${(analytics.avgLicenseValue / 100).toFixed(2)}` : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" },
                       ].map(({ label, value }) => (
-                        <div key={label} className="p-3 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                        <div key={label} className="p-3 rounded-lg bg-zinc-900/50 border border-amber-500/20">
                           <p className="text-xs text-zinc-500">{label}</p>
                           <p className="text-xl font-bold mt-1 gradient-text-gold">{value}</p>
                         </div>

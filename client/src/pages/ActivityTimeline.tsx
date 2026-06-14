@@ -59,7 +59,7 @@ export default function ActivityTimeline() {
         {isLoading ? (
           <div className="text-center py-12 text-zinc-500"><Loader2 className="w-5 h-5 animate-spin inline mr-2 text-amber-400" />LoadingÃ¢ÂÂ¦</div>
         ) : (events as any[]).length === 0 ? (
-          <Card className="bg-zinc-950 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CardContent className="p-8 text-center text-sm text-zinc-500 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No activity yet. Approvals, schedule changes, and crew updates will show up here.</CardContent></Card>
+          <Card className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><CardContent className="p-8 text-center text-sm text-zinc-500 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">No activity yet. Approvals, schedule changes, and crew updates will show up here.</CardContent></Card>
         ) : (
           <div className="space-y-2">
             {(events as any[]).map((e) => {
@@ -67,7 +67,7 @@ export default function ActivityTimeline() {
               const isApprove = e.eventType.endsWith("approval.set");
               const status = e.payload?.status;
               return (
-                <Card key={e.id} className="bg-zinc-950 border-zinc-800 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <Card key={e.id} className="bg-zinc-950 border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <CardContent className="p-3 flex items-start gap-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <div className={`flex-shrink-0 mt-0.5 ${isApprove && status === "approved" ? "text-emerald-400" : isApprove && status === "changes_requested" ? "text-amber-400" : "text-zinc-500"}`}>
                       {isApprove && status === "changes_requested" ? <AlertTriangle className="w-4 h-4" /> : <Icon className="w-4 h-4" />}

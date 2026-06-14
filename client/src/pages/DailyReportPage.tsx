@@ -81,7 +81,7 @@ export default function DailyReportPage() {
                 const count = scenes.filter((s: any) => s.shootDayId === d.id).length;
                 return (
                   <Link key={d.id} href={`/projects/${projectId}/daily-report/${d.id}`}>
-                    <a className="block border border-zinc-800 hover:border-amber-500/50 rounded-lg p-4 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40">
+                    <a className="block border border-amber-500/20 hover:border-amber-500/50 rounded-lg p-4 bg-gradient-to-r from-amber-950/10 via-zinc-900/40 to-zinc-900/40">
                       <div className="text-xs text-zinc-500">Day {d.dayNumber}</div>
                       <div className="text-base font-medium">
                         {d.shootDate ? new Date(d.shootDate).toLocaleDateString() : "Unscheduled"}

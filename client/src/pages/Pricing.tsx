@@ -388,7 +388,7 @@ export default function Pricing() {
             const Icon = tier.icon;
 
             return (
-              <Card key={tier.id} className={`relative flex flex-col border-zinc-800 bg-zinc-900/50 backdrop-blur-sm transition-all hover:border-zinc-700 ${tier.color}`}>
+              <Card key={tier.id} className={`relative flex flex-col border-amber-500/20 bg-zinc-900/50 backdrop-blur-sm transition-all hover:border-amber-500/20 ${tier.color}`}>
                 {tier.badge && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge className={`${tier.badgeColor} text-white px-4 py-1`}>{tier.badge}</Badge>
@@ -444,7 +444,7 @@ export default function Pricing() {
           {ENTERPRISE_TIERS.map((tier) => {
             const Icon = tier.icon;
             return (
-              <Card key={tier.id} className={`relative flex flex-col border-zinc-800 bg-zinc-900/50 backdrop-blur-sm ${tier.color}`}>
+              <Card key={tier.id} className={`relative flex flex-col border-amber-500/20 bg-zinc-900/50 backdrop-blur-sm ${tier.color}`}>
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <Badge className={`${tier.badgeColor} text-white px-4 py-1`}>{tier.badge}</Badge>
                 </div>
@@ -478,7 +478,7 @@ export default function Pricing() {
                 <CardFooter>
                   <Button 
                     variant="outline"
-                    className="w-full border-zinc-700 hover:bg-amber-500/10"
+                    className="w-full border-amber-500/20 hover:bg-amber-500/10"
                     onClick={() => handleEnterpriseContact(tier.id)}
                   >
                     {tier.primaryCTA}
@@ -492,10 +492,10 @@ export default function Pricing() {
         {/* Feature Comparison Table */}
         <div id="comparison" className="max-w-7xl mx-auto mb-20 scroll-mt-20">
           <h2 className="text-3xl font-bold text-center mb-12 gradient-text-gold">Feature Comparison</h2>
-          <div className="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-900/30">
+          <div className="overflow-x-auto rounded-xl border border-amber-500/20 bg-zinc-900/30">
             <table className="w-full text-sm text-left">
               <thead>
-                <tr className="border-b border-zinc-800 bg-zinc-900/50">
+                <tr className="border-b border-amber-500/20 bg-zinc-900/50">
                   <th className="py-4 px-6 font-semibold">Feature</th>
                   <th className="py-4 px-6 text-center font-semibold text-blue-400">
                     <div className="flex flex-col items-center gap-1">
@@ -558,7 +558,7 @@ export default function Pricing() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {CREDIT_PACKS.map((pack) => (
-              <Card key={pack.id} className={`border-zinc-800 bg-zinc-900/50 ${pack.popular ? "ring-1 ring-amber-500/50 border-amber-500/50" : ""}`}>
+              <Card key={pack.id} className={`border-amber-500/20 bg-zinc-900/50 ${pack.popular ? "ring-1 ring-amber-500/50 border-amber-500/50" : ""}`}>
                 <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">{pack.label}</CardTitle>
@@ -570,7 +570,7 @@ export default function Pricing() {
                 <CardFooter>
                   <Button
                     variant="outline"
-                    className="w-full border-zinc-700 hover:bg-amber-500/10"
+                    className="w-full border-amber-500/20 hover:bg-amber-500/10"
                     onClick={() => handleTopUp(pack.id)}
                     disabled={loadingPack === pack.id}
                   >
