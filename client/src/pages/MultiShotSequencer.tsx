@@ -99,8 +99,8 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
     };
 
     return (
-      <Card className="border border-amber-500/20 bg-black/40 glass-card shadow-lg shadow-amber-500/5">
-        <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
+      <Card className="border border-amber-500/20 bg-black/40 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+        <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <GripVertical className="w-4 h-4 text-muted-foreground" />
@@ -127,7 +127,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3 pt-0 glass-card shadow-lg shadow-amber-500/5">
+        <CardContent className="space-y-3 pt-0 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
           <div>
             <Label className="text-xs text-muted-foreground mb-1 block">Duration (seconds)</Label>
             <div className="flex items-center gap-3">
@@ -200,7 +200,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
               </div>
               {shotCharIds.length === 0 && (
                 <p className="text-xs text-muted-foreground/60 mt-1">
-                  Tap characters to assign them â their costumes &amp; likeness will be locked in.
+                  Tap characters to assign them Ã¢ÂÂ their costumes &amp; likeness will be locked in.
                 </p>
               )}
             </div>
@@ -225,7 +225,7 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
     const [lensBrand, setLensBrand] = useState("zeiss-supreme-prime");
     const [aperture, setAperture] = useState("t2.8");
     const [sequenceMode, setSequenceMode] = useState<"auto" | "manual">("manual");
-    /** Scene-level character roster â union of all per-shot selections */
+    /** Scene-level character roster Ã¢ÂÂ union of all per-shot selections */
     const [sceneCharacterIds, setSceneCharacterIds] = useState<number[]>([]);
 
     const { data: characters = [] } = trpc.character.listByProject.useQuery(
@@ -311,13 +311,13 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
     };
 
     const updateSceneMutation = trpc.scene.update.useMutation({
-      onSuccess: () => toast.success(`Multi-shot sequence saved â ${shots.length} shots, ${totalDuration}s total`),
+      onSuccess: () => toast.success(`Multi-shot sequence saved Ã¢ÂÂ ${shots.length} shots, ${totalDuration}s total`),
       onError: (err) => toast.error(err.message || "Failed to save sequence"),
     });
 
     const generatePreviewMutation = trpc.scene.generatePreview.useMutation({
       onSuccess: (data) => {
-        toast.success("Scene preview generated â costume & character consistency applied");
+        toast.success("Scene preview generated Ã¢ÂÂ costume & character consistency applied");
       },
       onError: (err) => toast.error(err.message || "Preview generation failed"),
     });
@@ -384,8 +384,8 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                   Multi-Shot Sequencer
                 </h1>
                 <p className="text-xs text-muted-foreground">
-                  {shots.length} shots Â· {totalDuration}s total Â· {sequenceMode} mode
-                  {sceneCharacterIds.length > 0 && ` Â· ${sceneCharacterIds.length} characters cast`}
+                  {shots.length} shots ÃÂ· {totalDuration}s total ÃÂ· {sequenceMode} mode
+                  {sceneCharacterIds.length > 0 && ` ÃÂ· ${sceneCharacterIds.length} characters cast`}
                 </p>
               </div>
             </div>
@@ -423,14 +423,14 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
         <div className="max-w-6xl mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Left: Camera Rig + Cast Setup */}
           <div className="col-span-1 space-y-4">
-            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
-                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
+            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <Camera className="w-4 h-4 text-amber-400" />
                   Camera Rig Setup
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5">
+              <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Camera Body / Sensor</Label>
                   <Select value={cameraBody} onValueChange={setCameraBody}>
@@ -495,11 +495,11 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
               </CardContent>
             </Card>
 
-            {/* Scene Cast â select characters that appear anywhere in this scene */}
+            {/* Scene Cast Ã¢ÂÂ select characters that appear anywhere in this scene */}
             {characters.length > 0 && (
-              <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
-                  <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
+              <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                  <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                     <Users className="w-4 h-4 text-amber-400" />
                     Scene Cast
                   </CardTitle>
@@ -521,21 +521,21 @@ import { SubscriptionGate } from "@/components/SubscriptionGate";
                   {sceneCharacterIds.length > 0 && (
                     <p className="text-xs text-emerald-400 mt-2 flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" />
-                      {sceneCharacterIds.length} character{sceneCharacterIds.length > 1 ? "s" : ""} locked in â costumes auto-applied per shot
+                      {sceneCharacterIds.length} character{sceneCharacterIds.length > 1 ? "s" : ""} locked in Ã¢ÂÂ costumes auto-applied per shot
                     </p>
                   )}
                 </CardContent>
               </Card>
             )}
 
-            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
-                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
+            <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+                <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                   <Clock className="w-4 h-4 text-amber-400" />
                   Sequence Summary
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5">
+              <CardContent className="space-y-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Total Shots</span>
                   <span className="text-amber-400 font-medium">{shots.length} / {maxShots}</span>

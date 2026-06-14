@@ -46,8 +46,8 @@ import { useState, useMemo } from "react";
 
   const BUDGET_TIERS = [
     { value: "micro", label: "Micro (< $500K)" },
-    { value: "low", label: "Low ($500KÃÂ¢ÃÂÃÂ$5M)" },
-    { value: "mid", label: "Mid ($5MÃÂ¢ÃÂÃÂ$20M)" },
+    { value: "low", label: "Low ($500KÃÂÃÂ¢ÃÂÃÂÃÂÃÂ$5M)" },
+    { value: "mid", label: "Mid ($5MÃÂÃÂ¢ÃÂÃÂÃÂÃÂ$20M)" },
     { value: "high", label: "High ($20M+)" },
   ];
 
@@ -83,7 +83,7 @@ import { useState, useMemo } from "react";
 
         {/* Filters */}
         <div className="flex gap-3 flex-wrap">
-          <Input placeholder="Search title, genre, distributorÃÂ¢ÃÂÃÂ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
+          <Input placeholder="Search title, genre, distributorÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦" value={search} onChange={e => setSearch(e.target.value)} className="max-w-xs" />
           <Select value={genreFilter} onValueChange={setGenreFilter}><SelectTrigger className="w-36"><SelectValue placeholder="Genre" /></SelectTrigger><SelectContent><SelectItem value="all">All genres</SelectItem>{genres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent></Select>
           <Select value={tierFilter} onValueChange={setTierFilter}><SelectTrigger className="w-44"><SelectValue placeholder="Budget tier" /></SelectTrigger><SelectContent><SelectItem value="all">All budgets</SelectItem>{BUDGET_TIERS.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select>
         </div>
@@ -94,10 +94,10 @@ import { useState, useMemo } from "react";
             { label: "Comps shown", value: filtered.length.toString(), icon: <Film className="text-amber-400/80 h-4 w-4" /> },
             { label: "Avg ROI", value: `${avgROI}x`, icon: <TrendingUp className="h-4 w-4" /> },
             { label: "Avg worldwide", value: fmt(avgWorldwide), icon: <Globe className="h-4 w-4" /> },
-            { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "ÃÂ¢ÃÂÃÂ", icon: <Star className="h-4 w-4" /> },
+            { label: "Top distributor", value: filtered[0]?.distribution.split(" ")[0] ?? "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ", icon: <Star className="h-4 w-4" /> },
           ].map(s => (
             <Card key={s.label}>
-              <CardContent className="p-3 flex items-center gap-2 glass-card shadow-lg shadow-amber-500/5">
+              <CardContent className="p-3 flex items-center gap-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <div className="h-8 w-8 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400 shrink-0">{s.icon}</div>
                 <div className="min-w-0"><p className="font-bold text-base truncate">{s.value}</p><p className="text-[10px] text-muted-foreground truncate">{s.label}</p></div>
               </CardContent>
@@ -130,9 +130,9 @@ import { useState, useMemo } from "react";
         </div>
 
         {selected && (
-          <Card className="border-primary/30 glass-card shadow-lg shadow-amber-500/5">
-            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold glass-card shadow-lg shadow-amber-500/5"><span>{selected.title} ({selected.year})</span><div className="flex gap-2"><Badge variant="outline">{selected.budgetTier} budget</Badge><Badge className="text-sm font-bold">{selected.roi}x ROI</Badge></div></CardTitle></CardHeader>
-            <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="border-primary/30 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardHeader><CardTitle className="text-base flex items-center justify-between gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow"><span>{selected.title} ({selected.year})</span><div className="flex gap-2"><Badge variant="outline">{selected.budgetTier} budget</Badge><Badge className="text-sm font-bold">{selected.roi}x ROI</Badge></div></CardTitle></CardHeader>
+            <CardContent className="space-y-3 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                 {[["Budget", selected.budget],["Domestic", selected.domestic],["Worldwide", selected.worldwide],["Distributor", selected.distribution],["Festival", selected.festivalRun],["Tone", selected.tone]].map(([k, v]) => (
                   <div key={k}><p className="text-xs text-muted-foreground">{k}</p><p className="font-medium text-xs mt-0.5">{v}</p></div>
@@ -143,7 +143,7 @@ import { useState, useMemo } from "react";
             </CardContent>
           </Card>
         )}
-        <p className="text-xs text-muted-foreground">Box office data is approximate. ROI = worldwide gross ÃÂÃÂ· production budget (does not include P&A, distribution, or backend costs). Use as directional benchmarks only.</p>
+        <p className="text-xs text-muted-foreground">Box office data is approximate. ROI = worldwide gross ÃÂÃÂÃÂÃÂ· production budget (does not include P&A, distribution, or backend costs). Use as directional benchmarks only.</p>
           </div>
   );
 }

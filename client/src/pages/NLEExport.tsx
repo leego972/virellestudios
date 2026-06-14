@@ -65,13 +65,13 @@ function NLEExportInner() {
   const projectId = parseInt(params.projectId || "0");
 
   const [selectedFormat, setSelectedFormat] = useState("xml-premiere-pro");
-  // v6.62 â Aspect ratio preset. Embeds matching frame dimensions in the
+  // v6.62 Ã¢ÂÂ Aspect ratio preset. Embeds matching frame dimensions in the
   // exported sequence header (FCPXML/Premiere XML) and adds metadata for EDL/CSV.
   // Initial value is 16:9 but we hydrate from the project's sticky preference
-  // (project.exportAspectRatio) once loaded â see useEffect below.
+  // (project.exportAspectRatio) once loaded Ã¢ÂÂ see useEffect below.
   type AspectRatioValue = "16:9" | "9:16" | "1:1" | "4:5" | "21:9" | "2.39:1";
   const [aspectRatio, setAspectRatio] = useState<AspectRatioValue>("16:9");
-  // Track whether the user has touched the chooser this session â once they
+  // Track whether the user has touched the chooser this session Ã¢ÂÂ once they
   // have, we stop overwriting their choice with the project's stored value.
   const [aspectTouched, setAspectTouched] = useState(false);
   const [includeOptions, setIncludeOptions] = useState({
@@ -131,7 +131,7 @@ function NLEExportInner() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       setExportComplete(true);
-      toast.success(`Export downloaded â ${result.sceneCount} scene${result.sceneCount !== 1 ? "s" : ""} included`);
+      toast.success(`Export downloaded Ã¢ÂÂ ${result.sceneCount} scene${result.sceneCount !== 1 ? "s" : ""} included`);
     } catch (err: any) {
       toast.error(err?.message || "Export failed. Please try again.");
     } finally {
@@ -164,7 +164,7 @@ function NLEExportInner() {
             disabled={isExporting}
           >
             {isExporting ? (
-              <><Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />Exportingâ¦</>
+              <><Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />ExportingÃ¢ÂÂ¦</>
             ) : exportComplete ? (
               <><CheckCircle2 className="h-3.5 w-3.5" />Download</>
             ) : (
@@ -206,7 +206,7 @@ function NLEExportInner() {
 
         <Separator />
 
-        {/* v6.62 â Aspect ratio presets */}
+        {/* v6.62 Ã¢ÂÂ Aspect ratio presets */}
         <div>
           <h2 className="text-sm font-medium mb-3 gradient-text-gold">Aspect Ratio</h2>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -252,8 +252,8 @@ function NLEExportInner() {
         {/* Export Options */}
         <div>
           <h2 className="text-sm font-medium mb-3 gradient-text-gold">Include in Export</h2>
-          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-            <CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {Object.entries(includeOptions).map(([key, value]) => (
                   <div key={key} className="flex items-center gap-2">
@@ -274,8 +274,8 @@ function NLEExportInner() {
 
         {/* Export Preview */}
         {exportComplete && (
-          <Card className="border-green-500/40 bg-green-500/5 glass-card shadow-lg shadow-amber-500/5">
-            <CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5">
+          <Card className="border-green-500/40 bg-green-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="w-8 h-8 text-green-400 flex-shrink-0" />
                 <div>

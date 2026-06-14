@@ -104,7 +104,7 @@ function LiveActionPlateInner() {
       });
       await generateVideoMutation.mutateAsync({ sceneId });
       setProcessComplete(true);
-      toast.success("Live action composite saved â video regeneration queued");
+      toast.success("Live action composite saved Ã¢ÂÂ video regeneration queued");
     } catch (err: any) {
       toast.error(err?.message || "Composite generation failed. Please try again.");
     } finally {
@@ -150,9 +150,9 @@ function LiveActionPlateInner() {
       <div className="max-w-5xl mx-auto p-3 md:p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left: Upload & Mode */}
         <div className="space-y-4">
-          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-            <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
-              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5">
+          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardTitle className="text-sm flex items-center gap-2 gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <Upload className="w-4 h-4 text-amber-400" />
                 Upload Live Action Plate
               </CardTitle>
@@ -196,9 +196,9 @@ function LiveActionPlateInner() {
             </CardContent>
           </Card>
 
-          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-            <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
-              <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Composite Mode</CardTitle>
+          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Composite Mode</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -228,11 +228,11 @@ function LiveActionPlateInner() {
 
         {/* Right: Settings */}
         <div className="space-y-4">
-          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5">
-            <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5">
-              <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5">Composite Settings</CardTitle>
+          <Card className="border-amber-500/20 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+            <CardHeader className="pb-2 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardTitle className="text-sm gradient-text-gold glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">Composite Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5">
+            <CardContent className="space-y-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
               <div>
                 <div className="flex justify-between mb-1">
                   <Label className="text-xs text-muted-foreground">Blend Strength</Label>
@@ -274,8 +274,8 @@ function LiveActionPlateInner() {
           </Card>
 
           {processComplete && (
-            <Card className="border-green-500/40 bg-green-500/5 glass-card shadow-lg shadow-amber-500/5">
-              <CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5">
+            <Card className="border-green-500/40 bg-green-500/5 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
+              <CardContent className="pt-4 glass-card shadow-lg shadow-amber-500/5 hover:shadow-amber-500/20 transition-shadow">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-8 h-8 text-green-400 flex-shrink-0" />
                   <div>
